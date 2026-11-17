@@ -67,6 +67,7 @@
 | `09ai-d3d-render-lifetime.wat` | Render-instance heap retirement and handoff exports |
 | `09aj-d3d-fixed.wat` | Native fixed-function pipeline lowering |
 | `09ak-d3d-depth.wat` | D3D9 depth-surface identities, state and lifetime |
+| `09akg-d3d9-gps.wat` | D3D8/9 GPU stream v2 producer (ring api 4), the only D3D8/9 render path since d3d9-retire S4 deleted the JS host (`lib/d3d9-host.js`); `lib/gpu-stream-host.js` executes it |
 | `09al-d3d-reset.wat` | Transactional D3D9 device reset implementation |
 | `09am-d3d-color.wat` | Independent D3D9 color-surface state and ownership |
 | `09b-dispatch.wat` | Manual dispatch helpers, including the guest-stack DLGPROC return continuation (CACA003C) |

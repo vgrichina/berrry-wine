@@ -46,7 +46,8 @@ const deployAssets = new Set(Object.values(DLL_PATHS));
 for (const [id] of [...DESKTOP_APPS, ...LOCAL_CANDIDATE_APPS, ...DEBUG_ONLY_APPS]) {
   const app = APPS[id];
   if (!app) continue;
-  deployAssets.add(app.exe);
+  // A multi-exe entry (the screensaver collection) has no single exe.
+  if (app.exe) deployAssets.add(app.exe);
   for (const dll of app.dlls || []) if (dll.includes('/')) deployAssets.add(dll);
   for (const file of app.files || []) deployAssets.add(appFileUrl(file));
 }
@@ -98,9 +99,11 @@ assertDeployFile('binaries/entertainment-pack/tictac.exe');
 assertDeployFile('binaries/entertainment-pack/winmine.exe');
 assertDeployFile('binaries/plus98/SPIDER.EXE');
 assertDeployFile('binaries/plus98/SPIDER.CHM');
-assert(/'comctl32\.dll':\s*'binaries\/dlls\/comctl32\.dll'/.test(webApp), 'web DLL auto-loader should map comctl32.dll');
+// The common controls are WAT only. The Win98 COMCTL32.DLL is a Microsoft
+// file: neither the web loader nor the deploy may carry it.
+assert(!/'comctl32\.dll':\s*'binaries\/dlls\/comctl32\.dll'/.test(webApp), 'web DLL auto-loader must not map comctl32.dll');
+assert(!deployAssets.has('binaries/dlls/comctl32.dll'), 'deploy must not publish the Win98 comctl32.dll');
 for (const rel of [
-  'binaries/dlls/comctl32.dll',
   'binaries/winamp.exe',
   'binaries/demo.mp3',
   'binaries/whatsnew.txt',

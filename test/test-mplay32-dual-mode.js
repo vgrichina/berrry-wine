@@ -11,12 +11,11 @@ const ROOT = path.join(__dirname, '..');
 const RUN = path.join(__dirname, 'run.js');
 const EXE = path.join(__dirname, 'binaries', 'win98-apps', 'mplay32.exe');
 const MSVCRT = path.join(__dirname, 'binaries', 'dlls', 'msvcrt.dll');
-const COMCTL32 = path.join(__dirname, 'binaries', 'dlls', 'comctl32.dll');
 const MIDI = path.join(__dirname, 'binaries', 'pinball', 'PINBALL.MID');
 const WAV = path.join(__dirname, 'binaries', 'plus98', '2.WAV');
 const OUT = path.join(ROOT, 'scratch', 'mplay32-dual-mode');
 
-for (const file of [EXE, MSVCRT, COMCTL32, MIDI, WAV]) {
+for (const file of [EXE, MSVCRT, MIDI, WAV]) {
   if (!fs.existsSync(file)) {
     console.log('SKIP  missing fixture:', file);
     process.exit(0);
@@ -39,9 +38,7 @@ function runMode(name, dlls, openBatch) {
   const wavePickBatch = waveOpenBatch + 60;
   const wavePlayBatch = wavePickBatch + 30;
   const exitBatch = wavePlayBatch + 25;
-  const playInput = (batch, label) => name === 'wat'
-    ? [`${batch}:mousedown:39:123`, `${batch + 5}:mouseup:39:123`]
-    : [`${batch}:toolbar-click:501:${label}`];
+  const playInput = batch => [`${batch}:mousedown:39:123`, `${batch + 5}:mouseup:39:123`];
   const input = [
     `8:vfs-import:PINBALL.MID:${MIDI}`,
     `9:vfs-import:TEST.WAV:${WAV}`,
@@ -59,9 +56,8 @@ function runMode(name, dlls, openBatch) {
     // down the window -- 79 is inside MPlayerTrackMap now, so Play was never
     // pressed and "Play reaches MCI" failed while every other check passed.
     // The WAT toolbar needs the same time between DOWN and UP as real browser
-    // events. Native comctl32 resolves the command-based helper to its actual
-    // button rectangle, then performs the equivalent native-control click.
-    ...playInput(playBatch, 'play-midi'),
+    // events.
+    ...playInput(playBatch),
     `${screenshotBatch}:png:${png}`,
     // Introspection sends synchronous control messages. Keep it after the
     // user click so it cannot perturb focus/capture before playback starts.
@@ -79,7 +75,7 @@ function runMode(name, dlls, openBatch) {
     `${waveOpenBatch + 4}:keydown:40`,
     `${waveOpenBatch + 6}:keydown:13`,
     `${wavePickBatch}:open-dlg-pick:TEST.WAV`,
-    ...playInput(wavePlayBatch, 'play-wave'),
+    ...playInput(wavePlayBatch),
     `${wavePlayBatch + 12}:png:${wavePng}`,
     `${wavePlayBatch + 14}:dump-windows:${name}-wave`,
     // Finish through File > Exit instead of injecting WM_CLOSE. Besides being
@@ -116,9 +112,12 @@ function runMode(name, dlls, openBatch) {
   }
 }
 
+// There used to be a second, "native" arm with the Win98 COMCTL32.DLL loaded
+// as a PE. That file is no longer loadable (lib/dll-registry.js): the common
+// controls are WAT only, so the checks it carried now hold the WAT toolbar to
+// the same Win98 rendering.
 const wat = runMode('wat', [MSVCRT], 140);
-const native = runMode('native', [MSVCRT, COMCTL32], 160);
-const runs = [wat, native];
+const runs = [wat];
 const checks = [];
 const check = (name, pass) => checks.push([name, !!pass]);
 
@@ -186,7 +185,7 @@ function toolbarRect(output, name, controlId) {
   return m ? { x: +m[1], y: +m[2], w: +m[3], h: +m[4] } : null;
 }
 
-// At startup every transport command is disabled. Native comctl32 draws each
+// At startup every transport command is disabled. Win98 comctl32 draws each
 // disabled glyph as a white highlight plus a gray shadow over COLOR_BTNFACE.
 // The old indexed-DIB mask bug instead filled the entire 16x16 icon interior
 // with COLOR_BTNSHADOW, which looked like a row of blank dark rectangles.
@@ -221,15 +220,8 @@ check('WAT: toolbar uses Win98 padded 23x22 transport faces',
   /toolbar:wat:[^\n]*#0[^\n]*rect=2,2,25,24/.test(wat.output));
 check('WAT: named LoadMenuW attaches the Media Player menu bar',
   /window:wat[^\n]*class="MPlayer"[^\n]*menuBar=true/.test(wat.output));
-const nativeTrackbarInk = paintedInk(native.png, trackbarRect(native.output, 'native'));
-check(`native: loaded comctl32 owns toolbar and trackbar classes (${nativeTrackbarInk} colors)`,
-  /window:native[^\n]*class="msctls_trackbar32" ctrlClass=0/.test(native.output) &&
-  /window:native[^\n]*class="ToolbarWindow32" ctrlClass=0/.test(native.output) &&
-  nativeTrackbarInk >= 3);
-check('native: disabled startup transport glyphs are embossed, not solid rectangles',
-  disabledTransportGlyphsVisible(native.startupPng, toolbarRect(native.output, 'native', 301)));
-check('native: named LoadMenuW attaches the Media Player menu bar',
-  /window:native[^\n]*class="MPlayer"[^\n]*menuBar=true/.test(native.output));
+check('WAT: disabled startup transport glyphs are embossed, not solid rectangles',
+  disabledTransportGlyphsVisible(wat.startupPng, toolbarRect(wat.output, 'wat', 301)));
 
 let failed = 0;
 for (const [name, pass] of checks) {

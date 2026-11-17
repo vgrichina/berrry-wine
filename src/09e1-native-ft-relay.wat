@@ -371,6 +371,29 @@
     (global.set $yield_reason (i32.const 0)) (global.set $yield_flag (i32.const 0))
     (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 1))
 
+  ;; The 16-bit companion is not installed (its NE image was looked up and is
+  ;; absent: file not found, never a malformed or refused image). Settle the
+  ;; parked attach as the emulator answered ThunkConnect32 before native
+  ;; pairing existed: TRUE with nothing published. The LS01/LB01 header and
+  ;; QT/FT relay bytes stay untouched, so a later call through the
+  ;; unconnected thunk still traps at the zero INSTDATA block (07-decoder).
+  ;; COMCTL32's DllMain fails its whole attach on FALSE, which would take
+  ;; every common-controls app down with a component the guest never uses.
+  (func (export "win16_guest_ls32_settle_absent") (param $request i64) (result i32)
+    (if (i32.eqz (call $win16_guest_request_valid (local.get $request))) (then (return (i32.const 0))))
+    (if (i32.ne (global.get $win16_guest_op) (i32.const 5)) (then (return (i32.const 0))))
+    (if (i32.gt_u (global.get $win16_guest_esp) (i32.const 0xffffffe3)) (then (return (i32.const 0))))
+    ;; Attach only: detach owns a native connection and settles through it.
+    (if (i32.ne (call $gl32 (i32.add (global.get $win16_guest_esp) (i32.const 24))) (i32.const 1))
+      (then (return (i32.const 0))))
+    (call $win16_ls32_cancel)
+    (i32.store (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (global.get $win16_guest_esp) (i32.const 28)))
+    (global.set $eip (global.get $win16_guest_return))
+    (global.set $win16_guest_pending (i64.const 0))
+    (global.set $yield_reason (i32.const 0)) (global.set $yield_flag (i32.const 0))
+    (i32.const 1))
+
   (func $win16_ft_parent (param $token i64) (result i32)
     (local $f i32) (local $p i32) (local $b i32)
     (if (i64.eqz (local.get $token)) (then (return (i32.const 0))))

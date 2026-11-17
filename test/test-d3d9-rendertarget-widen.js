@@ -12,9 +12,12 @@ const D3DPOOL_DEFAULT = 0, D3DPOOL_MANAGED = 1;
 const D3DERR_INVALIDCALL = 0x8876086c;
 
 (async () => {
-  let software565=false;
+  // The precision contract is the programmable software profile on an open
+  // ring (09akg d3d9_caps_software; d3d9-retire S4 removed host op 0x30017).
   const { exports: e } = await bootRenderHarness({ fonts: 'none',
-    extraHostOverrides:{gpu_gl_call:(op,p,a)=>op===0x30017&&a===23&&software565?1:0},extraWat: `
+    beforeInstantiate: hostCtx => { hostCtx.d3d9GpsBackend = 'software'; hostCtx.createCanvas = (w, h) => require('../lib/canvas-compat').createCanvas(w, h); },
+    extraWat: `
+    (func (export "open_ring") (result i32) (call $d9g_open))
     (func (export "new_device") (result i32)
       (local $device i32)
       (local.set $device (call $dx_create_com_obj (i32.const 20) (global.get $DX_VTBL_D3DDEV9)))
@@ -37,6 +40,8 @@ const D3DERR_INVALIDCALL = 0x8876086c;
         (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)) (i32.load offset=0 (global.get $reg_base)))
   ` });
   e.init_dx_com_thunks();
+  assert.strictEqual(e.open_ring(), 1, 'the software executor drains the ring');
+  e.d3d9_profile_set(2); // software, not programmable: no packed 565
   const d = e.new_device(), out = 0x00409000, desc = out + 256, locked = out + 512;
 
   // Returns the format the record actually stores, or the failing HRESULT.
@@ -53,7 +58,7 @@ const D3DERR_INVALIDCALL = 0x8876086c;
   // The case B&W2 actually asks for, at its actual size.
   assert.strictEqual(storedFormat(D3DUSAGE_RENDERTARGET,D3DFMT_R5G6B5,D3DPOOL_DEFAULT).format,
     D3DFMT_X8R8G8B8,'preserve historical BW2 widening without software precision contract');
-  software565=true;
+  e.d3d9_profile_set(3);
   const rt565 = storedFormat(D3DUSAGE_RENDERTARGET, D3DFMT_R5G6B5, D3DPOOL_DEFAULT);
   assert.strictEqual(rt565.format, D3DFMT_R5G6B5,'software target retains actual packed565 format');
   assert.strictEqual(e.guest_read32(rt565.texture+64+8),512*2,'real 16-bit texture pitch');

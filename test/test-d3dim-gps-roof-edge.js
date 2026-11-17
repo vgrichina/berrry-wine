@@ -4,8 +4,7 @@
 // producer into the software executor, for 565, X1/A1 555, 4444 and 32-bit
 // targets: a 4x4 quad at integer pixel edges samples texel row y-origin, and
 // the stored pixel is S*As + D*(1-As) in the target's native component bits,
-// byte-identical to the WAT software rasterizer ($d3dim_gpu_on = 0). A
-// diffuse-only selector must fail the same oracle. Ported from the deleted
+// A diffuse-only selector must fail the same oracle. Ported from the deleted
 // WebGL test-d3dim-gpu-edge-web.js (public-COM page fixture over D3DIMGpu).
 const assert = require('assert');
 const { bootGpsDevice } = require('./helpers/d3dim-gps-device');
@@ -20,9 +19,7 @@ const { bootGpsDevice } = require('./helpers/d3dim-gps-device');
     const widths = pf.slice(2).map(v => { let n = 0; while (v) { n += v & 1; v >>>= 1; } return n; });
     const shifts = pf.slice(2).map(v => { let n = 0; while (v && !(v & 1)) { n++; v >>>= 1; } return n; });
     const encode = rgba => rgba.reduce((p, b, i) => p | (((b >>> (8 - widths[i])) << shifts[i]) & pf[i + 2]), 0) >>> 0;
-    const results = {};
-    for (const gpu of [1, 0]) for (const negative of [null, ...(target === 'rgb565' ? ['diffuse'] : [])]) {
-      g.setGpu(gpu);
+    for (const negative of [null, ...(target === 'rgb565' ? ['diffuse'] : [])]) {
       const rt = g.surface(8, 8, { caps: 0x2840, pf }), dev = g.device(rt);
       const rs = (r, v) => e.gd_rs(dev, r, v), tss = (t, v) => e.gd_tss(dev, 0, t, v);
       for (const [id, v] of [[7, 0], [9, 1], [14, 0], [15, 0], [19, 5], [20, 6], [22, 1], [27, 1], [28, 0], [41, 0], [137, 0]]) rs(id, v);
@@ -60,15 +57,13 @@ const { bootGpsDevice } = require('./helpers/d3dim-gps-device');
         cases.push(actual);
         if (!failed && JSON.stringify(actual) !== JSON.stringify(expected)) failed = `${alpha}/${shape}: ${JSON.stringify(actual)} != ${JSON.stringify(expected)}`;
       }
-      const label = `${gpu ? 'GPS' : 'WAT software'} ${target}`;
+      const label = `GPS ${target}`;
       if (negative) { assert(failed, label + ' diffuse-only selector must fail the roof pixel oracle'); continue; }
       assert(!failed, 'ROOF PIXEL ORACLE ' + label + ' ' + failed);
-      results[gpu] = cases;
     }
-    assert.deepStrictEqual(results[1], results[0], `${target}: GPS and WAT software store identical native pixels`);
     if (g.stat(14)) declined.push(target);
   }
   const s = g.stats();
   assert.strictEqual(s.fallbacks, 0, 'no software fallback');
-  console.log(`PASS GPS producer roof edges: 5 targets x 12 cases match the native oracle and WAT software byte for byte (draws=${s.draws} declined=${s.declined})`);
+  console.log(`PASS GPS producer roof edges: 5 targets x 12 cases match the native oracle (draws=${s.draws} declined=${s.declined})`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

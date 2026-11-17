@@ -206,7 +206,7 @@ const failed=boot('',true);failed.v.setUint32(272,0x402800,true);failed.v.setUin
 assert.throws(()=>failed.e.invoke(0,0,0,0),WebAssembly.RuntimeError,'allocation failure cannot silently draw');
 assert.strictEqual(failed.v.getUint32(272,true),0x402800);assert.strictEqual(failed.v.getUint32(256,true),0xdeadbeef);
 for(const m of ['corner','bits'])assert.throws(()=>acceptance(boot(m)),assert.AssertionError,m+' mutation rejected');
-const compat=require('../lib/gl-compat'),stream=require('../lib/gl-command-stream');
+const stream=require('../lib/gl-command-stream'),compat=stream;
 assert.strictEqual(compat.CALL_INDEX.glRectf,142);assert.strictEqual(stream.ARG_WORDS[142],4);
 assert.strictEqual(compat.CALL_INDEX.gluScaleImage,141);
 console.log(JSON.stringify({PASS:true,...result,moduleSHA:h.moduleSHA,sourceSHA:files.map((p,i)=>[p,hash(sources[i])])}));

@@ -84,7 +84,7 @@
 //
 // A NOTE ON WHAT THIS IS NOT. It says nothing about how many pixels a real
 // frame shades, so it cannot be turned into an fps prediction. Pair it with a
-// draw census (tools/black-white-software-probe.js prints one) before claiming
+// draw census (run.js --d3d9-gps=software stats print the executor's) before claiming
 // any app-level win from a rasterizer change.
 const path = require('path');
 const { bootRenderHarness } = require(path.join(__dirname, '..', 'test', 'render-helper'));

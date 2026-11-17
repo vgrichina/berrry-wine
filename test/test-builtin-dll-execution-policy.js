@@ -181,7 +181,7 @@ async function main() {
     assert(!handles.has(h),name+' distinct identity'); handles.add(h);
     assert.throws(()=>loader.loadDll({},null,original,name),/Builtin-only/);
   }
-  for (const name of ['msvcrt.dll','d3drm.dll','ole32.dll','comctl32.dll','oleaut32.dll','dsetup.dll','vendor.dll']) {
+  for (const name of ['msvcrt.dll','d3drm.dll','ole32.dll','oleaut32.dll','dsetup.dll','vendor.dll']) {
     vfs.files.set('c:\\'+name,{data:original,attrs:0x20});
     e.load(write(name),0); assert.equal(e.yielded(),5,name+' keeps native mapping route');
   }

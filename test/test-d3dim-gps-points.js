@@ -2,8 +2,8 @@
 'use strict';
 // D3D POINTLIST through the WAT GPU stream producer ($d3g_points: 2x2 quads,
 // D3D integer snapping, viewport clip, native-format storage) into the
-// software executor, against an independent native-pixel oracle, and the same
-// cases through the WAT software rasterizer ($d3dim_gpu_on = 0). Texture,
+// software executor, against an independent native-pixel oracle, for 565,
+// 555, A1 555 and 32-bit targets (the producer lowers all four). Texture,
 // blend and alpha are ignored by points; a later triangle gets its blending
 // back. Ported from the deleted WebGL test-d3dim-gpu-points-web.js (its
 // batchDraws/boundedReadback option matrix and WebGL1/2 split were executor
@@ -43,8 +43,7 @@ function nativePointOracle(c) {
   const vertices = e.guest_alloc(512), tex = g.surface(2, 2, { caps: 0x1000 });
   const pfName = { 1: 'rgb565', 2: 'x1', 3: 'a1', 6: 'rgb32' };
   let n = 0;
-  for (const gpu of [1, 0]) for (const format of [1, 2, 3, 6]) for (const clip of [null, [1, 2, 7, 6]]) {
-    g.setGpu(gpu);
+  for (const format of [1, 2, 3, 6]) for (const clip of [null, [1, 2, 7, 6]]) {
     const bpp = format === 6 ? 32 : 16;
     const rt = g.surface(8, 8, { caps: 0x2840, pf: g.PF[pfName[format]] }), dev = g.device(rt);
     const rs = (r, v) => e.gd_rs(dev, r, v), tss = (t, v) => e.gd_tss(dev, 0, t, v);
@@ -66,24 +65,20 @@ function nativePointOracle(c) {
     new Uint8Array(g.memory().buffer).fill(255, vertices, vertices + 64);
     g.fence();
     const actual = Array.from(new Uint8Array(g.memory().buffer, g.dib(rt), c.pitch * 8));
-    const label = `${gpu ? 'GPS' : 'WAT software'} format${format}${clip ? ' clipped' : ''}`;
-    assert.deepStrictEqual(actual, nativePointOracle(c), label + ' independent native bytes');
-    // $d3g_points lowers RGB565 only; 555, A1 and 32-bit targets are
-    // declined back to the WAT rasterizer (stat 14), same bytes either way.
-    if (gpu && format === 1) {
-      assert.strictEqual(g.stat(12) - before, points.length, label + ' every point lowered by the producer');
-      assert.strictEqual(g.stat(14), declinedBefore, label + ' nothing declined');
-    } else if (gpu) {
-      assert.strictEqual(g.stat(12), before, label + ' no point lowered');
-      assert.strictEqual(g.stat(14) - declinedBefore, points.length - 1, label + ' every draw call declined to software');
-    }
-    if (gpu) assert.strictEqual(g.stat(1), 0, 'no software fallback');
+    const label = `GPS format${format}${clip ? ' clipped' : ''}`;
+    // X1R5G5B5's top bit and X8R8G8B8's top byte are unused (DDPF has no
+    // mask for them): the executor sets them its own way when it lands the
+    // target, so compare them out.
+    const unusedX = bytes => format === 2 ? bytes.map((b, i) => i & 1 ? b & 0x7f : b)
+      : format === 6 ? bytes.map((b, i) => (i & 3) === 3 ? 0 : b) : bytes;
+    assert.deepStrictEqual(unusedX(actual), unusedX(nativePointOracle(c)), label + ' independent native bytes');
+    assert.strictEqual(g.stat(12) - before, points.length, label + ' every point lowered by the producer');
+    assert.strictEqual(g.stat(14), declinedBefore, label + ' nothing declined');
+    assert.strictEqual(g.stat(1), 0, 'no software fallback');
     n++;
   }
-  assert.deepStrictEqual(g.hostCalls.filter(c => c[0] === 0x20000).length > 0, true, 'software arm drew through the host seam');
 
   // Blending is ignored by a point and restored for the next triangle.
-  g.setGpu(1);
   const rt = g.surface(8, 8, { caps: 0x2840, pf: g.PF.rgb565 }), dev = g.device(rt);
   const rs = (r, v) => e.gd_rs(dev, r, v), tss = (t, v) => e.gd_tss(dev, 0, t, v);
   tss(1, 2); tss(2, 0); tss(4, 2); tss(5, 0); rs(7, 0); rs(22, 1); rs(27, 1); rs(19, 5); rs(20, 6);
@@ -93,5 +88,5 @@ function nativePointOracle(c) {
   g.fence();
   assert.strictEqual(m.getUint16(g.dib(rt) + 2 * g.pitch(rt) + 2 * 2, true), 0xf800,
     'alpha-zero point overwrites without blending; the alpha-zero triangle after it blends to nothing');
-  console.log(`PASS GPS producer POINTLIST: ${n} native-oracle cases (GPS and WAT software), clip, ignored texture/blend/alpha/fog, blend restored`);
+  console.log(`PASS GPS producer POINTLIST: ${n} native-oracle cases, clip, ignored texture/blend/alpha/fog, blend restored`);
 })().catch(error => { console.error(error.stack || error); process.exitCode = 1; });

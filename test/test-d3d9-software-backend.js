@@ -4,7 +4,20 @@ const assert=require('assert');
 const {bootRenderHarness}=require('./render-helper');
 const {Device}=require('../lib/d3d9-software-backend');
 const IR=require('../lib/d3d-shader-ir');
-const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
+// The neutral CommandQueue/execute() transport went with the old JS D3D9 path
+// (d3d9-retire S4). This shim drives the Device entry points
+// lib/gpu-stream-software.js calls, returning a synchronous validation error
+// as a value the way execute() did, so later draws still run.
+const OP={DRAW:'draw',CLEAR:'clear',PRESENT:'present'};
+function directQueue(device){
+  const queue={error:null,submitted:0,completed:0,submit(op,payload){
+    queue.submitted++;let value;
+    try{value=op===OP.DRAW?device.draw(payload):op===OP.CLEAR?device.clearCommand(payload):device.present();}
+    catch(error){value={error};}
+    queue.completed++;return {value};
+  }};
+  return queue;
+}
 (async()=>{
   const {exports:e,memory}=await bootRenderHarness({fonts:'none'});
   const fixedLive=new Set();let fixedCreated=0,fixedFreed=0;
@@ -108,7 +121,7 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
   }
   const device=new Device(options),base=device.bytes;
   try{
-    const queue=new CommandQueue({deviceId:11,consumer:device});
+    const queue=directQueue(device);
     queue.submit(OP.CLEAR,{color:[0,0,0,1],flags:3});
     const draw=snapshot();draw.vertexShader=native(vs);draw.pixelShader=native(ps);
     queue.submit(OP.DRAW,draw);
@@ -583,115 +596,6 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
   assert.strictEqual(device.bytes,0);
   assert.throws(()=>device.readPixels(),/destroyed/);
 
-  const scheduled=[],asyncDevice=new Device({...options,quadBudget:1,schedule:callback=>scheduled.push(callback)});
-  try{
-    const queue=new CommandQueue({deviceId:12,consumer:asyncDevice}),source=snapshot();
-    const draw=queue.submit(OP.DRAW,source);
-    const clearRects=[[7,7,8,8]],clear=queue.submit(OP.CLEAR,{color:[0,0,1,1],flags:3,depth:.375,rects:clearRects});
-    clearRects[0].fill(0);
-    const frame=queue.submit(OP.PRESENT);
-    source.vertices.fill(0);source.pixelConstants.fill(0);
-    assert.strictEqual(draw.status,'consumed');assert.strictEqual(frame.status,'submitted');
-    assert.throws(()=>asyncDevice.readPixels(),/in flight/);
-    let steps=0;
-    while(scheduled.length){scheduled.shift()();await Promise.resolve();assert(++steps<100);}
-    await queue.fence();
-    assert(steps>1,'real WAT tile execution yields and resumes');
-    assert.deepStrictEqual([...frame.value.pixels.slice(0,4)],[0,0,128,255],'queued inputs survive guest overwrite');
-    assert.deepStrictEqual([...frame.value.pixels.slice(252,256)],[255,0,0,255],'rectangle clear waits for draw and owns its rectangle snapshot');
-    assert.strictEqual(new Float32Array(memory.buffer,asyncDevice.depth.wa,64)[63],.375);
-    assert.strictEqual(clear.status,'completed');
-    const fixedSource=fixedSnapshot(true),fixedDraw=queue.submit(OP.DRAW,fixedSource),fixedFrame=queue.submit(OP.PRESENT);
-    // Setup (and with it the fixed compile) is deferred into the scheduled
-    // work since 5a1d94309, so nothing is compiled at submit; the ownership
-    // rule is checked where it applies -- while the draw's quad work runs.
-    assert.strictEqual(fixedDraw.status,'consumed');assert.strictEqual(fixedLive.size,0,'fixed compile is deferred with setup');
-    fixedSource.vertices.fill(0);fixedSource.fixedFunction.world.fill(0);fixedSource.fixedFunction.stages[0].colorOp=12;
-    let liveDuringWork=0;
-    while(scheduled.length){scheduled.shift()();await Promise.resolve();if(scheduled.length)liveDuringWork=Math.max(liveDuringWork,fixedLive.size);}
-    assert.strictEqual(liveDuringWork,1,'bundle retained while quad work remains');
-    await queue.fence();assert.deepStrictEqual([...fixedFrame.value.pixels.slice(0,4)],[0,0,255,255],'queued fixed descriptor and vertex snapshots survive mutation');
-    assert.strictEqual(fixedLive.size,0);
-    const bumpSource=bumpSnapshot(3,68,[127,127,255,0]);
-    const bumpDraw=queue.submit(OP.DRAW,bumpSource),bumpFrame=queue.submit(OP.PRESENT);
-    assert.strictEqual(bumpDraw.status,'consumed');
-    bumpSource.vertices.fill(0);bumpSource.bumpStates[3].fill(NaN);
-    bumpSource.textures[0].pixels.fill(0);bumpSource.textures[3].pixels.fill(0);
-    bumpSource.textures[3].sampler.min=99;bumpSource.attributes.length=0;
-    while(scheduled.length){scheduled.shift()();await Promise.resolve();}
-    await queue.fence();assert.deepStrictEqual([...bumpFrame.value.pixels.slice(0,4)],[191,191,191,191],
-      'queued UVs, both textures, sampler and bump coefficients are immutable native snapshots');
-    const baseline=asyncDevice.bytes;
-    for(const fixedVertex of [false,true]){
-      const mixed=()=>{const s=fixedSnapshot();if(fixedVertex)s.pixelShader=ps;else s.vertexShader=vs;return s;};
-      asyncDevice.clear([0,0,0,1],3);
-      const source=mixed(),task=asyncDevice.drawAsync(source);
-      source.vertices.fill(0);source.vertexConstants.fill(0);source.pixelConstants.fill(0);
-      source.fixedFunction.world.fill(NaN);source.fixedFunction.stages[0].colorOp=999;
-      let mixedLive=0;
-      while(scheduled.length){scheduled.shift()();if(scheduled.length)mixedLive=Math.max(mixedLive,fixedLive.size);}
-      await task;
-      assert.strictEqual(mixedLive,1,'only selected fixed stage bundle retained (deferred setup, checked during work)');
-      assert.deepStrictEqual([...asyncDevice.readPixels().slice(0,4)],fixedVertex?[0,0,128,255]:[0,0,255,255],'mixed stage resources survive caller mutation');
-      assert.strictEqual(asyncDevice.bytes,baseline);assert.strictEqual(fixedLive.size,0);
-      const cancelled=asyncDevice.drawAsync(mixed());asyncDevice.cancel();await assert.rejects(cancelled,/cancel/);
-      while(scheduled.length)scheduled.shift()();
-      assert.strictEqual(asyncDevice.bytes,baseline);assert.strictEqual(fixedLive.size,0,'cancel releases selected bundle exactly once');
-    }
-    asyncDevice.clear([0,0,1,1],3);
-    const alphaSource=snapshot();alphaSource.state={...alphaSource.state,alphaTest:true,alphaFunc:1};
-    const alphaTask=asyncDevice.drawAsync(alphaSource);alphaSource.state.alphaFunc=8;
-    while(scheduled.length)scheduled.shift()();await alphaTask;
-    assert(new Uint32Array(asyncDevice.readPixels().buffer).every(v=>v===0xff0000ff),'queued alpha test state is copied');
-    assert.strictEqual(asyncDevice.bytes,baseline);
-    const cancelledAlpha=asyncDevice.drawAsync(alphaSource);asyncDevice.cancel();
-    await assert.rejects(cancelledAlpha,/cancel/);while(scheduled.length)scheduled.shift()();
-    assert.strictEqual(asyncDevice.bytes,baseline,'cancel retires alpha descriptor');
-    const stripSource=topologySnapshot(5,[[-1,1],[1,1],[-1,-1],[1,-1]],[0,1,2,3]);
-    const stripTask=asyncDevice.drawAsync(stripSource);stripSource.indices.fill(65535);stripSource.vertices.fill(0);
-    while(scheduled.length)scheduled.shift()();await stripTask;
-    assert(new Uint32Array(asyncDevice.readPixels().buffer).every(v=>v===0xff800000),'expanded strip indices survive caller mutation');
-    assert.strictEqual(asyncDevice.bytes,baseline);
-    asyncDevice.clear([0,0,1,1],3);
-    const blendSource=snapshot();blendSource.pixelConstants=new Float32Array([1,1,1,128/255]);
-    blendSource.state={blend:true,srcblend:5,dstblend:6,blendop:1,cull:1};
-    const blendTask=asyncDevice.drawAsync(blendSource);blendSource.state.srcblend=16;blendSource.state.colorWriteMask=0;
-    while(scheduled.length)scheduled.shift()();await blendTask;
-    assert.deepStrictEqual([...asyncDevice.readPixels().slice(0,4)],[127,0,128,191],'native blend snapshot survives deferred state mutation');
-    assert.strictEqual(asyncDevice.bytes,baseline);
-    const cancelledBlend=snapshot();cancelledBlend.state={blend:true,srcblend:5,dstblend:6};
-    const cancelledBlendTask=asyncDevice.drawAsync(cancelledBlend);asyncDevice.cancel();
-    await assert.rejects(cancelledBlendTask,/cancel/);while(scheduled.length)scheduled.shift()();
-    assert.strictEqual(asyncDevice.bytes,baseline,'cancel releases copied blend descriptor and raster context');
-    const matrixSource=matrixSnapshot(4,.75,.25),matrixTask=asyncDevice.drawAsync(matrixSource);
-    matrixSource.vertexConstants.fill(0);matrixSource.pixelConstants.fill(0);matrixSource.textures[2].pixels.fill(0);
-    while(scheduled.length)scheduled.shift()();await matrixTask;
-    assert.deepStrictEqual([...asyncDevice.readPixels().slice(0,4)],[0,255,0,255],'matrix macro constants and sampler survive queued mutation');
-    assert.strictEqual(asyncDevice.bytes,baseline);
-    const matrixCancel=asyncDevice.drawAsync(matrixSnapshot());asyncDevice.cancel();await assert.rejects(matrixCancel,/cancel/);
-    while(scheduled.length)scheduled.shift()();assert.strictEqual(asyncDevice.bytes,baseline,'matrix sampler ownership retires on cancellation');
-    // Setup is deferred (5a1d94309): run its first scheduled slice so the
-    // fixed bundle exists, then cancel with quad work still pending.
-    const runSetup=()=>{if(scheduled.length)scheduled.shift()();};
-    queue.submit(OP.DRAW,fixedSnapshot());runSetup();assert.strictEqual(fixedLive.size,1,'setup compiled the fixed bundle');
-    const fence=queue.fence();queue.cancel();
-    await assert.rejects(fence,/cancel/i);
-    assert.strictEqual(asyncDevice.bytes,baseline,'cancellation retires WAT context and snapshots');
-    assert.strictEqual(fixedLive.size,0,'cancellation releases fixed bundle');
-    while(scheduled.length)scheduled.shift()();
-    for(let i=0;i<10;i++){
-      const task=asyncDevice.drawAsync(fixedSnapshot(i%2));runSetup();assert.strictEqual(fixedLive.size,1);asyncDevice.cancel();
-      await assert.rejects(task,/cancel/);while(scheduled.length)scheduled.shift()();
-      assert.strictEqual(fixedLive.size,0);assert.strictEqual(asyncDevice.bytes,baseline);
-      const bumpTask=asyncDevice.drawAsync(bumpSnapshot(1+i%3));asyncDevice.cancel();
-      await assert.rejects(bumpTask,/cancel/);while(scheduled.length)scheduled.shift()();
-      assert.strictEqual(asyncDevice.bytes,baseline,'cancel frees all native multisampler snapshots');
-      const stripTask=asyncDevice.drawAsync(topologySnapshot(i%2?5:6,[[-1,1],[1,1],[-1,-1],[1,-1]]));
-      asyncDevice.cancel();await assert.rejects(stripTask,/cancel/);while(scheduled.length)scheduled.shift()();
-      assert.strictEqual(asyncDevice.bytes,baseline,'cancel frees topology expansion');
-    }
-  }finally{asyncDevice.destroy();}
-  assert.strictEqual(asyncDevice.bytes,0);
   let refuseRelease=true;
   const guardedExports={...e,guest_map_free(guest){return refuseRelease?0:e.guest_map_free(guest);}};
   const retryDevice=new Device({...options,getExports:()=>guardedExports}),ownedBytes=retryDevice.bytes;
@@ -726,7 +630,7 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     for(let i=0;i<3;i++)draw.vertices.set([93,137,181,128],i*24+12);
     draw.state={zenable:false,cull:1,blend:true,srcblend:5,dstblend:6,blendop:1};
     rgb565.clear([0,0,0,0],1);
-    const cpuRead=rgb565.execute({opcode:OP.READBACK,payload:{}}).value;
+    const cpuRead=rgb565.readColor();
     assert.strictEqual(cpuRead.format,23);assert.strictEqual(cpuRead.pixels.length,128,'ordered backbuffer READBACK is packed');
     assert.strictEqual(rgb565.readPixels()[3],255,'opaque565 alpha is established before the first blend');
     let expected=[0,0,0,255];
@@ -749,20 +653,6 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.deepStrictEqual([...rgb565.readPixels().slice(0,4)],[q(181),q(137,true),q(93),255],'565 render-to-texture sampling preserves color');
     assert.strictEqual(rgb565.present().pixels.length,8*8*4,'presentation remains BGRA8');
   }finally{rgb565.destroy();}
-  const constrained=new Device({...options,format:23,maxBytes:2048,fixedCacheBytes:0});
-  try{
-    constrained.clear([1,0,0,1],1);const old=constrained.target,pixels=constrained.readPixels();
-    assert.throws(()=>constrained.reset({width:32,height:32,format:22,depthAttachment:null}),/budget/);
-    assert.strictEqual(constrained.target,old);assert.strictEqual(constrained.format,23);
-    assert.deepStrictEqual(constrained.readPixels(),pixels,'failed allocation retains565 rendering storage');
-    constrained.reset({width:8,height:8,format:22,depthAttachment:null});
-    assert.strictEqual(constrained.format,22,'reset preserves X8 format for renderer-owned copies');
-    const resource={id:901,width:1,height:1,format:21},rect={x:0,y:0,width:1,height:1};
-    constrained.createColor(resource,new Uint8Array([10,20,30,40]),4);
-    constrained.copyColor({source:resource,destination:null,sourceRect:rect,destinationRect:rect,filter:1});
-    constrained.copyColor({source:null,destination:resource,sourceRect:rect,destinationRect:rect,filter:1});
-    assert.deepStrictEqual([...constrained.readColor(resource).pixels],[10,20,30,255],'X8 copy roundtrip discards alpha');
-  }finally{constrained.destroy();}
   // BW2-RASTER-BUDGET-LATCH: each split batch keeps its native context (~1.15 KB
   // per triangle) until the draw ends, so one large draw beside B&W2's resident
   // textures exceeded the 64 MB budget and latched the queue. A draw whose
@@ -789,24 +679,6 @@ const {CommandQueue,OPCODES:OP}=require('../lib/d3d-command-stream');
     assert.strictEqual(streamed.samples,atomic.samples,'streamed batches publish the same sample count');
     assert.deepStrictEqual(streamed.pixels,atomic.pixels,'streamed batches draw the same pixels in the same order');
   }
-  {
-    // The default slice scheduler must not wait out a timer per slice:
-    // setTimeout(cb,0) is >=1 ms in Node and 4 ms once a browser clamps nested
-    // timers, and B&W2's world (~670 draws a frame) ran its render worker at
-    // 40% CPU on it. yieldTask runs callbacks in order with no timer at all.
-    const {yieldTask}=require('../lib/d3d9-software-backend');
-    assert.strictEqual(typeof yieldTask,'function','the backend exports its slice scheduler');
-    const realTimeout=global.setTimeout;let timers=0;
-    global.setTimeout=(...args)=>{timers++;return realTimeout(...args);};
-    try{
-      const order=[];await new Promise(resolve=>{yieldTask(()=>order.push(1));yieldTask(()=>order.push(2));yieldTask(()=>{order.push(3);resolve();});});
-      assert.deepStrictEqual(order,[1,2,3],'yieldTask runs callbacks in submission order');
-      const device=new Device({...options,quadBudget:1,sliceMs:4});
-      try{assert.strictEqual(await device.drawAsync(snapshot()),1,'a default-scheduled sliced draw completes');}
-      finally{device.destroy();}
-      assert.strictEqual(timers,0,'neither yieldTask nor the default drawAsync scheduler uses setTimeout');
-    }finally{global.setTimeout=realTimeout;}
-  }
   assert.ok(fixedCreated>40);assert.strictEqual(fixedCreated,fixedFreed);assert.strictEqual(fixedLive.size,0);
-  console.log('PASS D3D9 software backend: native fixed/programmed, strips/fans, bump sampling, blend/separate-alpha/ops/factor/write masks, immutable snapshots, yields/cancel and exact ownership');
+  console.log('PASS D3D9 software backend: native fixed/programmed, strips/fans, bump sampling, blend/separate-alpha/ops/factor/write masks, immutable snapshots and exact ownership');
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -8,8 +8,11 @@ Since GPU stream v2 slice D2 the D3DIM GPU path is the WAT producer
 which an executor drains: WebGL in a browser, `lib/gpu-stream-software.js`
 headless. The old JS WebGL executor `lib/d3dim-gpu.js` (D3DIMGpu, its DXP3
 record kind 4 in `d3d-command-stream.js`, `PARKED_LIMIT`, `_materialize`,
-`_gammaRamp`) was deleted in D2c. `lib/d3dim-render-worker.js` remains, but
-only as the software render Worker adapter.
+`_gammaRamp`) was deleted in D2c. Since D4 (retire/d3dim-20261117) the producer
+is the only D3DIM path: the WAT software rasterizer's draw entries, the
+`d3dim_gpu_enable`/`set_d3dim_gpu_present` switches and the render Worker's
+D3DIM replay are gone. The executor is WebGL, software or null.
+`lib/d3dim-render-worker.js` remains only to replay software OpenGL.
 
 ## Why
 
@@ -53,8 +56,6 @@ The producer block (`$D3DIM_GPS` +8) records:
 **Eligibility.** `$d3dim_gpu_try_present` (src/09ab) runs at the top of the Blt
 handler, before any fence. It answers 1 only when all of these hold:
 
-- GPU present is on (`set_d3dim_gpu_present`) and the GPU stream is on
-  (`$d3dim_gpu_on`);
 - the instance is not cooperative;
 - the source is the last GPU render target (`$d3dim_gpu_last_rt`, set by an
   accepted GPU draw or clear);
@@ -119,10 +120,11 @@ readback is charged to a site (`d3dim_gps_stat` 16 + site, printed by
 The next Blt(primary <- back) re-parks the frame without materializing, because
 the destination is overwritten. A global fence (length 0) does not materialize.
 
-Draws and clears the producer declines go to the WAT software rasterizer, which
-first reads the target back (site 6, `swDraw`). The reason for each decline is
-counted (`d3dim_gps_stat` 35 + reason, printed as `[d3dim-gps] decline
-reasons`):
+A draw or clear the producer cannot lower traps (`$d3g_decline`, fail-fast):
+there is no software rasterizer left to fall back to. The reason is counted
+first (`d3dim_gps_stat` 35 + reason, printed as `[d3dim-gps] decline
+reasons`) and logged as 0x44334744 + reason. A malformed primitive (bad type,
+vertex type or count) is a counted no-op (stat 14), as before:
 
 | Reason | Index |
 |---|---|
@@ -143,9 +145,8 @@ longer declines (index 0 is unused since D2c).
 
 | Switch | Effect |
 |---|---|
-| `--d3dim-gpu` (CLI) | The WAT producer, through `lib/d3dim-host.js`. Without it the CLI uses the software rasterizer. |
-| `?d3d-renderer=software` or `?d3dim-gpu=0` (page) | `gpu_on` stays 0: the software render Worker (`lib/d3dim-render-worker.js`) or the in-instance rasterizer. No present switch can fire. |
-| `?no-d3dim-gpu-present` (page) | Sets `window.WINE_D3DIM_GPU_PRESENT = false`. The host then calls `set_d3dim_gpu_present(0)` on the main instance and the guest Worker, and records it in `INHERITED_WASM_GLOBALS` so threads inherit it. Every Blt present then takes the CPU path: a readback, then `dx_present`. Draws stay on the GPU. |
+| (none, CLI) | The WAT producer always. Executor: WebGL with `--headless-gl`, else the software executor. `--d3dim-renderer=webgl\|software\|null` picks one. `--d3dim-gpu` is accepted and does nothing. |
+| `?d3d-renderer=software` (page) | The same producer on the software executor instead of WebGL. `?d3dim-gpu=0` and `?no-d3dim-gpu-present` are gone; frames always present from the executor. |
 | `?no-lazy-sync` (page) | Turns off lazy Lock: a Lock of a GPU-owned surface reads back eagerly instead of arming the range. |
 
 Cooperative threads (`d3dim_gpu_cooperative_enable`) are not eligible for the

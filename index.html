@@ -2119,7 +2119,6 @@ Resource-aware Win98 emulator
       "lib/d3d9-shader.js",
       "lib/d3d-shader-ir.js",
       "lib/render-clear.js",
-      "lib/d3d9-backend.js",
       "lib/d3d-command-stream.js",
       "lib/render-worker.js",
       "lib/d3d-geometry-batches.js",
@@ -2127,9 +2126,7 @@ Resource-aware Win98 emulator
       "lib/gpu-stream-webgl.js",
       "lib/gpu-stream-software.js",
       "lib/gpu-stream-host.js",
-      "lib/glide-host.js",
       "lib/d3dim-host.js",
-      "lib/d3d9-host.js",
       "lib/gl-command-stream.js",
       "lib/worker-imports.js",
       "lib/vfs-seed.js",
@@ -2745,21 +2742,21 @@ Resource-aware Win98 emulator
       });
     })();
     // One control for both Direct3D generations. They really are separate code
-    // paths — D3D8/9 goes to lib/d3d9-backend.js or to the software backend on
-    // a render Worker, DX2-7 immediate mode to the WAT GPU stream producer
+    // paths — D3D8/9 goes to the WAT GPU stream producer (src/09akg-d3d9-gps.wat)
+    // run by the WebGL or software executor, DX2-7 immediate mode to the WAT GPU stream producer
     // (src/09abg-d3dim-gps.wat) or to the WAT rasterizer — and the WebGL sides share a backend while the software
     // sides do not, so "Software" means two different rasterizers. But "which
     // renderer do I want" is one question to whoever is looking at the
     // toolbar, and a dropdown next to a checkbox made it look like two.
     //
     // Both flags are read once per launch (host.js passes
-    // window.WineD3D.renderer as ctx.d3d9Backend), so this steers the NEXT
+    // window.WineD3D.renderer as ctx.d3d9GpsBackend), so this steers the NEXT
     // launch. WebGL is preferred for both generations; their executors retain
     // software fallback when a context or operation is unavailable.
     window.WineD3D = window.WineD3D || {};
     const D3D_MODES = {
-      'webgl':     { renderer: 'webgl',    d3dim: true },
-      'software':  { renderer: 'software', d3dim: false },
+      'webgl':     { renderer: 'webgl' },
+      'software':  { renderer: 'software' },
     };
     function d3dModeName() {
       return window.WineD3D.renderer === 'software' ? 'software' : 'webgl';
@@ -2774,16 +2771,14 @@ Resource-aware Win98 emulator
       const q = new URLSearchParams(location.search);
       // Keep old URLs usable, but every selector now controls both versions.
       // The unified parameter takes precedence over the old D3D9 spelling.
-      const wanted = q.get('d3d-renderer') ?? q.get('d3d9-renderer') ??
-        (q.has('d3dim-gpu') && /^(0|false|off)$/i.test(q.get('d3dim-gpu')) ? 'software' : 'webgl');
+      const wanted = q.get('d3d-renderer') ?? q.get('d3d9-renderer') ?? 'webgl';
       window.WineD3D.renderer = wanted === 'software' ? 'software' : 'webgl';
-      window.WINE_D3DIM_GPU = window.WineD3D.renderer === 'webgl';
+      // ?d3d9-gps=webgl|software|null|none names the D3D8/9 executor alone;
+      // without it D3D8/9 follows the renderer above.
+      if (/^(webgl|software|null|none)$/.test(q.get('d3d9-gps') || '')) window.WineD3D.d3d9Gps = q.get('d3d9-gps');
       window.addEventListener('load', syncD3DSelect);
       // Lazy surface sync is on unless ?no-lazy-sync; the toolbar box follows.
       window.WINE_D3DIM_LAZY_SYNC = !q.has('no-lazy-sync');
-      // D3DIM frames go straight from the GPU to the page unless
-      // ?no-d3dim-gpu-present (docs/d3dim-gpu-present.md).
-      window.WINE_D3DIM_GPU_PRESENT = !q.has('no-d3dim-gpu-present');
       window.addEventListener('load', () => {
         const box = document.getElementById('lazy-sync-toggle');
         if (box) box.checked = window.WINE_D3DIM_LAZY_SYNC;
@@ -2793,10 +2788,8 @@ Resource-aware Win98 emulator
       const mode = D3D_MODES[value];
       if (!mode) return;
       window.WineD3D.renderer = mode.renderer;
-      window.WINE_D3DIM_GPU = mode.d3dim;
       syncD3DSelect();
-      appendDebugLog(`[gpu] Glide and D3D8/9 on ${mode.renderer === 'software' ? 'the software backend' : 'WebGL'}, ` +
-        `DX2-7 on ${mode.d3dim ? 'WebGL' : 'the WAT software rasterizer'}` +
+      appendDebugLog(`[gpu] Glide, DX2-7 and D3D8/9 on ${mode.renderer === 'software' ? 'the software executor' : 'WebGL'}` +
         ' — takes effect on the next launch');
     }
     async function setLazySync(on) {

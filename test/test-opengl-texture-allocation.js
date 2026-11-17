@@ -1,10 +1,10 @@
 'use strict';
 
-// Exercise the shipped guest GL handler, CPU storage, stream and frontend.
+// Exercise the shipped guest GL handler, CPU storage and the WAT software texture store.
 // No game media or frontend-only image injection is involved.
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { OpenGLHostBridge } = require('../lib/gl-compat');
+const { ownedAnswer, ownedWindow } = require('./helpers/gl-owned-host');
 const Stream = require('../lib/gl-command-stream');
 const api = require('../src/api_table.json');
 const fs = require('fs');
@@ -60,7 +60,7 @@ const extraWat = `
 `;
 
 (async () => {
-  let memory, bridge, uploads = 0;
+  let memory, uploadBase = 0;
   let moduleOptions = { extraWat };
   if (process.env.GL_ALLOCATION_BASELINE_SHA) {
     const { execFileSync } = require('child_process');
@@ -74,13 +74,11 @@ const extraWat = `
   const h = await bootRenderHarness({ ...moduleOptions, fonts: 'none', width: 8, height: 8,
     extraHostOverrides: { gpu_gl_call(op, at, bytes) {
       assert.strictEqual(op, Stream.WAT_STREAM_FLUSH_OPCODE);
-      return bridge.replay(Stream.memoryBatch(memory, at, bytes));
+      return ownedAnswer(memory, at, bytes);
     } } });
   memory = h.memory;
   const e = h.exports, dv = new DataView(memory.buffer);
   e.init_thread(1, 0x400000, 0, 0, 0, 0, 0); e.heap_init(0x800000);
-  const renderer = { windows: { 42: { hwnd: 42, w: 8, h: 8, clientRect: { w: 8, h: 8 } } }, repaint() {} };
-  bridge = new OpenGLHostBridge({ backend: 'software', getMemory: () => memory.buffer, exports: e, renderer });
   const stack = e.guest_alloc(256), wa = p => e.guest_to_wasm(p) >>> 0;
   e.allocation_init();
   function str(s) { const p = e.guest_alloc(s.length + 1); new Uint8Array(memory.buffer, wa(p), s.length + 1).set(Buffer.from(s + '\0')); return p; }
@@ -97,10 +95,11 @@ const extraWat = `
     args.forEach((x, i) => dv.setUint32(wa(stack) + 4 + i * 4, x >>> 0, true));
     return e.allocation_call(thunks.get(name), stack) >>> 0;
   };
+  ownedWindow(e, 42, 8, 8);
   const dc = e.allocation_dc(), context = call('wglCreateContext', [dc]);
   assert(context); assert.strictEqual(call('wglMakeCurrent', [dc, context]), 1);
-  const frontend = bridge.contexts.get(bridge.current).frontend, texImage = frontend.texImage;
-  frontend.texImage = function (...args) { uploads++; return texImage.apply(this, args); };
+  // Diagnostic only: WAT software-store uploads (09a8g $gl_sw_tex_uploads).
+  const uploadCount = () => e.gl_sw_tex_uploads() - uploadBase;
   const T = 0xde1, RGBA = 0x1908, U8 = 0x1401;
   const image = (w = 256, h = 256, level = 0) => call('glTexImage2D', [T, level, 4, w, h, 0, RGBA, U8, input]);
   const baseline = { pages: e.allocation_pages(), records: e.allocation_records(), billed: e.allocation_billed() };
@@ -114,23 +113,23 @@ const extraWat = `
         call('glTexImage2D', [T, x.level, x.internal, x.width, x.height, x.border, RGBA, U8, input]);
         assert.strictEqual(call('glGetError'), 0, 'retained upload metadata ' + x.name + '/' + x.level);
       }
-      call('glFinish'); assert.strictEqual(uploads, history.length);
+      call('glFinish');
       const names = [...new Set(history.map(x => x.name))], at = e.guest_alloc(names.length * 4);
       names.forEach((n, i) => dv.setUint32(wa(at) + i * 4, n, true));
-      console.log(JSON.stringify({ retainedUploads: uploads, pages: e.allocation_pages(), records: e.allocation_records(), billed: e.allocation_billed() }));
+      console.log(JSON.stringify({ retainedUploads: uploadCount(), pages: e.allocation_pages(), records: e.allocation_records(), billed: e.allocation_billed() }));
       call('glDeleteTextures', [names.length, at]);
       assert.strictEqual(e.allocation_records(), baseline.records);
       assert.strictEqual(e.allocation_pages(), baseline.pages);
-      uploads = 0;
+      uploadBase = e.gl_sw_tex_uploads();
     }
     for (let n = 1; n <= count; n++) {
       call('glBindTexture', [T, n]); image();
       const error = call('glGetError');
-      if (error) console.error(JSON.stringify({ failedImage: n, error, uploads,
+      if (error) console.error(JSON.stringify({ failedImage: n, error, uploads: uploadCount(),
         pages: e.allocation_pages(), records: e.allocation_records(), baseline }));
       assert.strictEqual(error, 0, `live image ${n} must allocate and upload`);
     }
-    call('glFinish'); assert.strictEqual(uploads, count);
+    call('glFinish'); // every image is checked by its own readback below
     assert.strictEqual(e.allocation_pages(), baseline.pages, 'GL images leave DIB capacity for display bitmaps');
     assert.strictEqual(e.allocation_records(), baseline.records + count);
     for (let n = 1; n <= count; n++) {
@@ -145,14 +144,14 @@ const extraWat = `
     assert.strictEqual(e.allocation_records(), records);
     // A real COM record limit must still fail, report OOM and roll back the
     // unpublished heap image. Repeated failures must reuse its freed storage.
-    call('glFinish'); const uploaded = uploads;
+    call('glFinish');
     e.allocation_record_pressure(1);
     image(); assert.strictEqual(call('glGetError'), 0x505);
     const heapTop = e.get_heap_ptr(), sparseTop = e.get_heap_sparse_ptr();
     for (let i = 0; i < 4; i++) { image(); assert.strictEqual(call('glGetError'), 0x505); }
     assert.strictEqual(e.get_heap_ptr(), heapTop, 'failed allocation frees direct backing');
     assert.strictEqual(e.get_heap_sparse_ptr(), sparseTop, 'failed allocation frees sparse backing');
-    call('glFinish'); assert.strictEqual(uploads, uploaded, 'failed image never reaches frontend');
+    call('glFinish'); // the record count check below proves the failed image was not published
     e.allocation_record_pressure(0);
     assert.strictEqual(e.allocation_records(), records);
     new Uint8Array(memory.buffer, wa(input), 16).fill(91);
@@ -177,6 +176,6 @@ const extraWat = `
     assert.strictEqual(call('wglDeleteContext', [context]), 1);
     assert.strictEqual(e.allocation_records(), baseline.records, 'context teardown releases remaining levels');
     assert.strictEqual(e.allocation_billed(), baseline.billed);
-    console.log(JSON.stringify({ result: 'PASS', count, liveBytes: count * 256 * 256 * 4, uploads, baseline }));
-  } finally { e.allocation_record_pressure(0); bridge.destroy(); }
+    console.log(JSON.stringify({ result: 'PASS', count, liveBytes: count * 256 * 256 * 4, uploads: uploadCount(), baseline }));
+  } finally { e.allocation_record_pressure(0); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

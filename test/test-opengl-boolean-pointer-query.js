@@ -1,8 +1,9 @@
 'use strict';
+const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
 const {bootRenderHarness}=req('test/render-helper');
-const {OpenGLHostBridge,CALL_INDEX:GL}=req('lib/gl-compat');
+const {CALL_INDEX:GL}=req('lib/gl-command-stream');
 const Stream=req('lib/gl-command-stream');
 const table=req('src/api_table.json');
 const extraWat=`
@@ -76,14 +77,12 @@ const extraWat=`
 
 // Resolve and execute the real stdcall ABI, including output byte canaries.
 (async()=>{
- let memory,bridge,encoder=null,manager=null,render=null,producer=null;
+ let memory,encoder=null,manager=null,render=null,producer=null;
  const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();
  const h=await bootRenderHarness({...(prebuiltModule ? {prebuiltModule} : {extraWat}),fonts:'none',width:8,height:8,
   extraHostOverrides:{gpu_gl_call(op,at,bytes){
    if(op===Stream.WAT_STREAM_FLUSH_OPCODE){
-     if(!render)return bridge.replay(Stream.memoryBatch(memory,at,bytes));
-     const reply=render.execute({memoryOffset:at,bytes,owner:0,windows:Object.values(renderer.windows),softwareFront:e.gl_sw_front()});
-     producer.configure(reply.producerConfig);return reply.value;
+     return ownedAnswer(memory,at,bytes);
    }
    // No queued software executor: real synchronous WAT raster path.
    if(op>=0x20000&&op<=0x20006)return encoder ? encoder.call(op,at,bytes) : 0;
@@ -91,27 +90,10 @@ const extraWat=`
   }}});
  memory=h.memory;const e=h.exports,dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0;
  e.init_thread(1,0x400000,0,0,0,0,0);e.heap_init(0x800000);
- const renderer={windows:{42:{hwnd:42,w:8,h:8,clientRect:{w:8,h:8}}},repaint(){}};
- bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:e,renderer});
+ const renderer=ownedRenderer(()=>e,{42:{hwnd:42,w:8,h:8,clientRect:{w:8,h:8}}});
+ 
  try {
- if(queued){
-   const {Manager}=req('lib/render-worker'),{Encoder}=req('lib/d3d-command-stream');
-   const {Worker}=require('worker_threads');
-   producer=new (req('lib/gl-software-producer').Producer)(()=>e);
-   const consumer=new WebAssembly.Instance(h.module,{host:h.host});
-   consumer.exports.d3dim_worker_init(e.get_image_base()>>>0);
-   assert.strictEqual(consumer.exports.gl_sw_front(),0,'consumer has independent mutable globals');
-   render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});
-   manager=new Manager({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     imageBase:e.get_image_base()>>>0,workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),
-     reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-   await manager.ready;
-   const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-   encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,explicitFence:true,strictReady:true});
-   assert(encoder.ready());
- }
- e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
+  e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
  function str(s){const p=e.guest_alloc(s.length+1)>>>0;new Uint8Array(memory.buffer,wa(p),s.length+1).set(Buffer.from(s+'\0'));return p;}
  const module=e.probe_module(str('opengl32.dll'))>>>0;assert(module);
  const user32=e.probe_module(str('user32.dll'))>>>0;assert(user32);
@@ -150,7 +132,7 @@ const extraWat=`
  }
  const b=(p,w)=>query('glGetBooleanv',p,w),p=(name,w)=>query('glGetPointerv',name,[w]);
  function rejected(name,pname,error=0x500,output=at){fill();call(name,[pname,output]);
-  assert(new Uint8Array(memory.buffer,ow,256).every(v=>v===0xa7),'error writes nothing '+name);
+  assert(new Uint8Array(memory.buffer,ow,256).every(v=>v===0xa7),'error writes nothing '+name+' 0x'+(pname>>>0).toString(16));
   assert.strictEqual(call('glGetError'),error,'query GL error '+name);checks++;}
  for(const name of (process.argv.includes('--pointer-first')?['glGetPointerv','glGetBooleanv']:['glGetBooleanv','glGetPointerv'])){
   assert(resolve(name),'genuine native resolver '+name);
@@ -317,5 +299,5 @@ const extraWat=`
  const result={passed:true,route:queued?'queued':'direct',checks,expected};
  console.log(JSON.stringify({passed:true,route:result.route,checks}));
  if(process.env.GL_BOOLEAN_POINTER_EVIDENCE)fs.writeFileSync(process.env.GL_BOOLEAN_POINTER_EVIDENCE,JSON.stringify(result,null,2));
- }finally{if(encoder)encoder.stop();if(manager)await manager.stop();if(render)render.destroy();}
+ }finally{if(encoder)encoder.stop();if(manager)await manager.stop();}
 })().catch(error=>{console.error(error);process.exitCode=1;});

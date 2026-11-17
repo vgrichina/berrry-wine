@@ -38,7 +38,6 @@ for (const name of [
   assert.strictEqual(classifyTest(`test/${name}`), 'e2e', `${name} should follow the E2E convention`);
 }
 assert.strictEqual(classifyTest('test/test-future-api.js'), 'unit');
-assert.strictEqual(classifyTest('test/test-d3d9-typed-gpu.js'), 'e2e');
 assert.strictEqual(classifyTest('test/test-d3d-vs20-loop-glsl.js'), 'e2e');
 for (const name of ['test-d3d-shader-ir-vs20-loop.js', 'test-d3d-shader-vm-loop.js']) {
   assert(result.actual.includes(`test/${name}`), `${name} is discovered`);

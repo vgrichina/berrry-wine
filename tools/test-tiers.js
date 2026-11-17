@@ -45,8 +45,6 @@ const UNIT_EXCEPTIONS = Object.freeze([
 // tests should prefer a descriptive -web/-gameplay/-candidate suffix instead
 // of growing this compatibility list.
 const E2E_EXCEPTIONS = Object.freeze([
-  // Explicit prebuilt diagnostic module/provenance and 512 MiB admission only.
-  'test-d3d9-positiont-com-qualification.js',
   'test-about-cancel.js',
   'test-aoe-menu.js',
   'test-baldurs-gate-demos.js',
@@ -57,7 +55,6 @@ const E2E_EXCEPTIONS = Object.freeze([
   'test-cruel-maximized-launch-layout.js',
   'test-cs-owndc-stats-font.js',
   'test-d3d-vs20-loop-glsl.js',
-  'test-d3d9-typed-gpu.js',
   'test-deus-ex-demo.js',
   'test-diablo-shareware-art.js',
   'test-dos-corpus-live-page.js',

@@ -14,7 +14,7 @@
 //      reading would differ: checked against the unprojected frame);
 //   S  a guest ps_1_4 ignores PROJECTED (it projects explicitly): ring
 //      COUNT4 | PROJECTED == old path COUNT4.
-// PROJECTED | COUNT1 (nothing left after the divide) still declines 12.
+// PROJECTED | COUNT1 (nothing left after the divide) still declines 12 (a trap).
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -149,7 +149,9 @@ async function render(gps, ring, extra = []) {
 }
 
 (async () => {
-  const old = await render('off');
+  // The old JS D3D9 path was deleted (d3d9-retire S4): `old` is its output for
+  // this exact sequence, recorded at 3eea041c5 (test/fixtures/d3d9-old-oracle).
+  const old = require('./fixtures/d3d9-old-oracle/projected.json');
   const ring = await render('software', true);
   const bad = [], lines = [];
   const hex = n => (n >>> 0).toString(16);
@@ -167,8 +169,10 @@ async function render(gps, ring, extra = []) {
   same(ring.frames.Q, ring.frames.Qref, 'Q (POSITIONT COUNT3|PROJECTED) vs FLOAT4 (u,v,0,q)');
   if (ring.frames.Q.every((v, i) => v === ring.frames.Qaffine[i])) bad.push('Q equals the affine (u/q, v/q) frame');
   same(ring.frames.S, old.frames.Sref, 'S (ps_1_4 under PROJECTED) vs old non-projected');
-  const count1 = await render('software', 'count1');
-  if (JSON.stringify(count1.st.reasons) !== '{"12":1}') bad.push(`COUNT1|PROJECTED reasons ${JSON.stringify(count1.st)}`);
+  // COUNT1|PROJECTED still declines 12, which traps: no other path draws it.
+  let count1 = null;
+  try { count1 = await render('software', 'count1'); } catch (_) { /* the trap */ }
+  if (count1) bad.push(`COUNT1|PROJECTED did not trap ${JSON.stringify(count1.st)}`);
   // --webgl (needs a display): the same equalities on the WebGL executor.
   if (process.argv.includes('--webgl')) {
     const gl = await render('webgl', true, ['--headless-gl']);

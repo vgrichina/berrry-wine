@@ -36,7 +36,6 @@ const extraWat = `
   ;; test-d3dim-surface-fence.js; flag 4 stands in for an earlier draw).
   (func (export "pr_paint") (param $this i32) (param $color i32) (result i32)
     (local $entry i32) (local $pb i32) (local $t i32) (local $ga i32) (local $d i32) (local $r i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (local.set $entry (call $dx_from_this (local.get $this)))
     (call $lock_acquire (global.get $D3DIM_GPS))
     (local.set $pb (call $d3g_pb))
@@ -62,7 +61,6 @@ const extraWat = `
   (func (export "pr_present") (param $dst i32) (param $src i32) (param $dx i32) (param $dy i32)
       (param $w i32) (param $h i32) (param $sx i32) (param $sy i32) (result i32)
     (local $ga i32) (local $d i32) (local $r i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (local.set $ga (call $heap_alloc (i32.const 48)))
     (local.set $d (call $g2w (local.get $ga)))
     (memory.fill (local.get $d) (i32.const 0) (i32.const 48))
@@ -80,11 +78,9 @@ const extraWat = `
     (call $heap_free (local.get $ga))
     (local.get $r))
   (func (export "pr_fence") (param $wa i32) (param $len i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
   ;; Final release of a surface's GPU resources, as $dx_free does it.
   (func (export "pr_forget") (param $this i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gps_forget (call $dx_from_this (local.get $this))))
   ;; SetGammaRamp's process-shared publication: ramp guest pointer + generation.
   (func (export "pr_gamma") (param $guest i32) (param $gen i32)

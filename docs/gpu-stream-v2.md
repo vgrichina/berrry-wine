@@ -9,8 +9,9 @@ executor, dump tool and Glide (2 and 3) run on it. Run
 `20261114-gpu-stream-v2-glide` has the evidence. D3DIM's GPU path is the WAT
 producer `src/09abg-d3dim-gps.wat` (slice D2). Its old JS WebGL executor,
 `lib/d3dim-gpu.js`, and its 0x20007/0x2000A host records were deleted in D2c.
-The D3DIM software arm is still the render Worker
-(`lib/d3dim-render-worker.js`) until D4. D3D9 and OpenGL are being migrated;
+Since D4 the producer is the only D3DIM path, on the
+WebGL, software or null executor; the WAT software rasterizer and the render
+Worker's D3DIM replay are retired. D3D9 and OpenGL are being migrated;
 see the migration plan.
 
 **Why.** Before v2, WAT wrote API-level records (Glide ops, D3DIM method calls,
@@ -147,8 +148,8 @@ The return value is 1 when an executor exists, 0 when none can (the open
 fails). After a SYNC/CLOSE kick the producer checks `read_pos == write_pos`
 and traps otherwise. Hosts:
 
-- **Local** (`lib/gpu-stream-host.js` Bridge; `lib/glide-host.js` is a shim
-  that only names the API): the kick drains the ring synchronously. This is
+- **Local** (`lib/gpu-stream-host.js` Bridge, constructed with `api: 'glide'`
+  for Glide): the kick drains the ring synchronously. This is
   cooperative mode, where the page main thread cannot block for a SYNC kick.
 - **Render Worker** (`lib/gpu-stream-render-worker.js`, API-neutral): the
   first `{t:'gps-kick', ring, mode}` message *arms* the ring by writing the

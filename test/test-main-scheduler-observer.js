@@ -23,7 +23,7 @@ function extract(run, tm) {
     window: cut(run, 'const TRACE_FROM =', '// --decode-stats[=FROM_BATCH]:'),
     flag: run.match(/^const hasFlag = .*;$/m)[0],
     init: cut(run, '  const mainSchedulerObserver =', '  const inputConsumptionTrace ='),
-    gate: cut(run, '  const mainExecutionSuspended =', '\n\n  // A main thread parked'),
+    gate: cut(run, '  const mainExecutionSuspended =', '\n\n  let lastSchedSig = null;'),
     ordinary: cut(run, '      if (!await mainExecutionSuspended(', '\n    } catch (e) {'),
     worker: cut(run, '      let ran = 0;', '\n      if (TRACE_BATCH_TIMING)'),
     cooperative: cut(run, '      for (let s = 0; s < slices; s++) {', '\n      if (TRACE_BATCH_TIMING)'),
@@ -145,7 +145,9 @@ async function acceptance(parts) {
     { deadline: 0, sleepFlag: 1, sleepTimeout: 6 },
     { live: false }, { live: false, real: true }, { real: true },
     { named: true }, { renderSend: true }, { yieldReason: 10 },
-    { yieldReason: 16, render: true }, { now: 25025, suspended: true },
+    // No yield-16 case: the D3D9 render wait went with the old JS D3D9 path
+    // (d3d9-retire S4); the WAT no longer yields 16.
+    { now: 25025, suspended: true },
     { now: 25025, suspended: true, timer: true }, { now: 25025, throws: true },
     { now: 25025, stopped: true }, { now: 25025, active: false },
     { now: 25025, serial: true }, { now: 25025, workerRan: 0 },

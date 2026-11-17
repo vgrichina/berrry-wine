@@ -55,14 +55,12 @@ for (const name of fs.readdirSync(sourceDir)) {
   const src = path.join(sourceDir, name);
   if (fs.statSync(src).isFile()) fs.copyFileSync(src, path.join(fixtureDir, name));
 }
-const commonControls = path.join(root, 'test', 'binaries', 'dlls', 'comctl32.dll');
-if (!fs.existsSync(commonControls)) throw new Error('Win98 comctl32.dll fixture is missing');
-fs.copyFileSync(commonControls, path.join(fixtureDir, 'comctl32.dll'));
+// No comctl32.dll beside the viewer: Help Topics runs on the WAT common
+// controls, and the file WinHelp searches for is the system placeholder.
 const viewer = path.join(fixtureDir, 'winhlp32.exe');
 for (const name of ['winhlp32.exe', 'freecell.hlp']) {
   fs.copyFileSync(path.join(sourceDir, name), path.join(contentDir, name));
 }
-fs.copyFileSync(commonControls, path.join(contentDir, 'comctl32.dll'));
 const contentViewer = path.join(contentDir, 'winhlp32.exe');
 for (const stem of ['notepad', 'freecell']) {
   const gid = path.join(fixtureDir, `${stem}.gid`);
@@ -72,11 +70,11 @@ for (const stem of ['notepad', 'freecell']) {
     `--exe=${viewer}`,
     `--args=${stem}.hlp`,
     // A bare --exe mounts only the executable, so the viewer would not find
-    // the help file it is being asked to open, nor the comctl32 next to it.
+    // the help file it is being asked to open.
     // No *.gid here: generating one is what this run is for, and an include
     // pattern that matches nothing is a hard error. The .cnt files are the
     // contents definitions the Help Topics dialog is built from.
-    '--vfs-include=*.hlp,*.cnt,*.dll',
+    '--vfs-include=*.hlp,*.cnt',
     '--max-batches=500',
     '--no-build',
     '--quiet-api',
@@ -99,8 +97,8 @@ const run = spawnSync(process.execPath, [
   path.join(root, 'test', 'run.js'),
   `--exe=${contentViewer}`,
   '--args=freecell.hlp',
-  // contentDir holds only the viewer, the help file and comctl32 -- no .gid.
-  '--vfs-include=*.hlp,*.dll',
+  // contentDir holds only the viewer and the help file -- no .gid.
+  '--vfs-include=*.hlp',
   '--screen=800x600',
   '--max-batches=500',
   '--no-build',
@@ -215,7 +213,7 @@ const contentsRun = spawnSync(process.execPath, [
   path.join(root, 'test', 'run.js'),
   `--exe=${viewer}`,
   '--args=freecell.hlp',
-  '--vfs-include=*.hlp,*.cnt,*.gid,*.dll',
+  '--vfs-include=*.hlp,*.cnt,*.gid',
   '--max-batches=320',
   '--no-build',
   '--quiet-api',

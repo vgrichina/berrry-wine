@@ -64,23 +64,7 @@ const fixtures=require('./fixtures/d3d9-lighting-cases');
    const s=stats(small);assert(s[2]<=4000&&s[7]<=64,'byte/count bounds');assert(s[6]>0,'small cache evicts');
   }finally{small.destroy();assert.strictEqual(small.bytes,0);}
   const second=create(65536);try{pixel(second,fixtures.draw());assert(stats(second)[5]>0,'separate device owns its cache');assert.notStrictEqual(second.fixedCache,d.fixedCache);}finally{second.destroy();}
-  // Cached templates are not execution storage. Retiring every template while
-  // a scheduled draw holds its private packet clones must not change pixels.
-  const scheduled=[],asyncDevice=new Device({getExports:()=>e,getMemory:()=>memory.buffer,width:4,height:4,
-   fixedCacheBytes:65536,schedule:fn=>scheduled.push(fn),quadBudget:1});
-  try{
-   // Setup is deferred into scheduled steps; run them until the variant is
-   // compiled, then retire every template before the raster steps finish.
-   const pending=asyncDevice.drawAsync(fixtures.draw());
-   for(let guard=0;stats(asyncDevice)[7]===0&&scheduled.length&&guard<64;guard++)scheduled.shift()();
-   assert(stats(asyncDevice)[7]>0,'scheduled setup compiled a variant');
-   asyncDevice.freeFixedCache();while(scheduled.length)scheduled.shift()();await pending;
-   const b=asyncDevice.present().pixels;close([b[2],b[1],b[0],b[3]],[128,64,32,191]);
-   const cancelled=asyncDevice.drawAsync(fixtures.draw());asyncDevice.cancel();
-   while(scheduled.length)scheduled.shift()();await assert.rejects(cancelled);
-  }finally{asyncDevice.destroy();assert.strictEqual(asyncDevice.bytes,0);}
-  d.reset({width:4,height:4,depthAttachment:null});assert.strictEqual(stats(d)[7],0,'Reset retires variants');
   close(pixel(d,fixtures.draw()),[128,64,32,191]);
  }finally{d.destroy();assert.strictEqual(d.bytes,0);}
- console.log('PASS native semantic fixed packet cache: constant rebind pixels, compile counts, variants, eviction, OOM, invalid-state safety, async leases/cancel, reset and device lifetime');
+ console.log('PASS native semantic fixed packet cache: constant rebind pixels, compile counts, variants, eviction, OOM, invalid-state safety and device lifetime (async leases and Reset went with the old JS D3D9 host, d3d9-retire S4)');
 })().catch(e=>{console.error(e);process.exitCode=1;});

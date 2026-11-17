@@ -28,8 +28,7 @@
 const path = require('path');
 
 const ROOT = path.join(__dirname, '..');
-const { CALLS } = require(path.join(ROOT, 'lib/gl-compat'));
-const { BARRIERS } = require(path.join(ROOT, 'lib/gl-command-stream'));
+const { CALLS, BARRIERS } = require(path.join(ROOT, 'lib/gl-command-stream'));
 if (!require('./gen-gl-encoder-abi').check()) {
   console.error('Native GL barriers are stale; run node tools/gen-gl-encoder-abi.js');
   process.exit(1);

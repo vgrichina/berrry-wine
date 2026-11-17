@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { bootRenderHarness } = require('./render-helper');
-const { OpenGLHostBridge } = require('../lib/gl-compat');
+const { ownedAnswer } = require('./helpers/gl-owned-host');
 const Stream = require('../lib/gl-command-stream');
 const { BASE } = require('../lib/region-map.generated');
 const { Worker } = require('node:worker_threads');
@@ -26,7 +26,7 @@ const distance = (a, b) => Math.max(...a.map((v, i) => Math.abs(v - b[i])));
 
 async function run(name) {
   const modulePath = path.join(root, 'build', name), bytes = fs.readFileSync(modulePath);
-  let memory, bridge, queue, worker;
+  let memory, queue, worker;
   // Hold only transport delivery, never rasterization. The untouched production
   // Worker consumes the Encoder's original shared packets after state mutation.
   let held = false;
@@ -37,7 +37,7 @@ async function run(name) {
     prebuiltModule: new WebAssembly.Module(bytes),
     extraHostOverrides: { gpu_gl_call(op, at, size) {
       if (op === Stream.WAT_STREAM_FLUSH_OPCODE)
-        return bridge.replay(Stream.memoryBatch(memory, at, size));
+        return ownedAnswer(memory, at, size);
       if (op >= 0x20000 && op <= 0x20007) {
         if (!queue) return 0; // context bootstrap precedes worker attachment
         assert(!(held && op===0x20001),'unexpected fence while transport delivery is held');
@@ -52,7 +52,6 @@ async function run(name) {
   new Uint8Array(memory.buffer, e.get_staging(), pe.length).set(pe);
   assert(e.load_pe(pe.length), 'ordinary PE initializes public thunk dispatch');
   const renderer = h.renderer;
-  bridge = new OpenGLHostBridge({backend: 'software', getMemory: () => memory.buffer, exports: e, renderer});
   const stack = (e.guest_alloc(8192) >>> 0) + 4096, result = e.guest_alloc(8) >>> 0;
   let calls = 0;
   function invoke(target, args) {

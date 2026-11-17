@@ -49,11 +49,9 @@ const extraWat = String.raw`
   (func (export "test_fog_set_rs") (param $device i32) (param $state i32) (param $value i32)
     (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
   (func (export "test_fog_draw") (param $device i32) (param $rt i32) (param $vertices i32)
-    (call $d3dim_draw_tl_triangle_dp
-      (local.get $device) (call $dx_from_this (local.get $rt)) (i32.const 0)
-      (call $g2w (local.get $vertices))
-      (call $g2w (i32.add (local.get $vertices) (i32.const 32)))
-      (call $g2w (i32.add (local.get $vertices) (i32.const 64)))))
+    ;; One TL triangle through the GPU stream producer, landed for the CPU.
+    (call $d3dim_worker_route (local.get $device) (i32.const 4) (local.get $vertices) (i32.const 3))
+    (call $d3dim_worker_fence))
   (func (export "test_fog_on") (result i32) (global.get $rast_fog_on))
 `;
 

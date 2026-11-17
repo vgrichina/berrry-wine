@@ -46,7 +46,9 @@ const { bootRenderHarness } = require('./render-helper');
   assert(textureRows.every((row, i) => row.id === textureRows[0].id + i),
     'IDirect3DTexture8 API IDs are contiguous in vtable order');
 
-  const { exports: e } = await bootRenderHarness({ fonts: 'none', extraWat: `
+  // D3D8 has a device only with a ring executor (d3d9-retire S4).
+  const { exports: e } = await bootRenderHarness({ fonts: 'none',
+    beforeInstantiate: hostCtx => { hostCtx.d3d9GpsBackend = 'software'; hostCtx.createCanvas = (w, h) => require('../lib/canvas-compat').createCanvas(w, h); }, extraWat: `
     (func (export "d3d8_create") (result i32)
       (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
       (call $handle_Direct3DCreate8 (i32.const 220) (i32.const 0) (i32.const 0)

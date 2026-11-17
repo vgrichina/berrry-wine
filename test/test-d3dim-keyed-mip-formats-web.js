@@ -213,14 +213,14 @@ async function runtime(){
     publicFixtureSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-legacy-texture-rendered-contract.js'))),
     mipFixtureSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-legacy-public-mip-webgl.js'))),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
-    renderSourceHashes:Object.fromEntries(['d3d9-shader','d3d9-backend'].map(n=>[n,sha(fs.readFileSync(path.join(ROOT,'lib',n+'.js')))])),
+    renderSourceHashes:Object.fromEntries(['d3d9-shader'].map(n=>[n,sha(fs.readFileSync(path.join(ROOT,'lib',n+'.js')))])),
     node:process.version,plan:plan(),modules:[],results:[],failures:[],physicalGPU:false};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(result,null,2)+'\n');
   const fixture=Function('return ('+fixtureSource()+')')();
   let wasm,server,browser,page;
   try{
     const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
+      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear'];
     server=await require(path.join(ROOT,'test/static-server')).startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       res.setHeader('Cache-Control','no-store');
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');

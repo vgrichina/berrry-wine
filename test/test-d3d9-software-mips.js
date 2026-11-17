@@ -49,13 +49,5 @@ const {Device}=require('../lib/d3d9-software-backend');
     assert.deepStrictEqual(d.readPixels(),before);assert.strictEqual(d.bytes,base);
   }
   d.destroy();
-  const pending=[],a=new Device({...options,quadBudget:1,schedule:fn=>pending.push(fn)}),owned=a.bytes;
-  const s=source(),task=a.drawAsync(s);s.vertices.fill(0);s.textures[0].sampler.lodBias=3;
-  for(const level of s.textures[0].levels)level.pixels.fill(0);s.textures[0].levels.length=0;
-  while(pending.length)pending.shift()();await task;
-  assert.strictEqual(new Uint32Array(a.readPixels().buffer)[9],0xff00ff00,'all mip bytes and metadata retained before guest resumes');
-  assert.strictEqual(a.bytes,owned);
-  const cancelled=a.drawAsync(source());a.cancel();await assert.rejects(cancelled,/cancel/);
-  while(pending.length)pending.shift()();assert.strictEqual(a.bytes,owned);a.destroy();
-  console.log('PASS software mip adapter: native implicit LOD, filters/bias/residency, full-chain snapshots, invalid-chain cleanup and cancellation');
+  console.log('PASS software mip adapter: native implicit LOD, filters/bias/residency, invalid-chain cleanup (async snapshots/cancel went with the old JS D3D9 host, d3d9-retire S4)');
 })().catch(error=>{console.error(error);process.exitCode=1;});

@@ -61,7 +61,8 @@ async function main() {
     page.on('console', m => fs.appendFileSync(path.join(out, 'browser.log'), m.type() + ': ' + m.text() + '\n'));
     page.on('pageerror', e => fs.appendFileSync(path.join(out, 'browser.log'), 'PAGEERROR: ' + e.message + '\n'));
     const probes = ['arm-backing-census.js', 'arm-memory-series.js'];
-    if (process.env.WA_CAPTURE_DECLARATION === '1') probes.push('arm-kkrieger-declaration.js');
+    // arm-kkrieger-declaration.js patched the old JS D3D9Backend (deleted, d3d9-retire S4).
+    if (process.env.WA_CAPTURE_DECLARATION === '1') throw new Error('WA_CAPTURE_DECLARATION: the D3D9Backend probe was removed with the old JS D3D9 path');
     if (process.env.WA_CAPTURE_AUDIO === '1') probes.push('arm-kkrieger-audio.js');
     meta.audioCapture = process.env.WA_CAPTURE_AUDIO === '1';
     meta.declarationCapture = process.env.WA_CAPTURE_DECLARATION === '1';

@@ -18,7 +18,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 const { VERTEX_FLOATS } = require('../lib/gl-command-stream.js');
 
 const MODELVIEW = 0x1700, PROJECTION = 0x1701;

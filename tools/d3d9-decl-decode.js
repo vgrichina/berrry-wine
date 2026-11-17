@@ -6,8 +6,9 @@
 // $d3d9_declaration_create (src/09ae-d3d9-resources.wat) sets eax to
 // D3DERR_INVALIDCALL, leaves *out at 0 and returns. The guest binds NULL, and
 // the consequence surfaces much later and somewhere else, as a draw with
-// neither a declaration nor an FVF that lib/d3d9-host.js drops with a bare
-// "D3D9 FVF 0 is not implemented". Black & White 2's world pass loses 316,572
+// neither a declaration nor an FVF that the renderer drops (the old JS host,
+// deleted d3d9-retire S4, logged a bare "D3D9 FVF 0 is not implemented").
+// Black & White 2's world pass lost 316,572
 // draws that way. So the useful question is never "did it fail" but "which
 // ELEMENT did it fail on, and which rule refused it" -- which is what this
 // prints.

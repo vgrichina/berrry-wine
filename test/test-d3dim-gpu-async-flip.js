@@ -71,7 +71,6 @@ const extraWat = `
   ;; has drawn on (flag 4, set by a draw); the test marks that instead.
   (func (export "flip_paint") (param $this i32) (param $color i32) (result i32)
     (local $entry i32) (local $pb i32) (local $t i32) (local $ga i32) (local $d i32) (local $r i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (local.set $entry (call $dx_from_this (local.get $this)))
     (call $lock_acquire (global.get $D3DIM_GPS))
     (local.set $pb (call $d3g_pb))
@@ -96,17 +95,14 @@ const extraWat = `
     (local.get $r))
   ;; IDirectDrawSurface::Flip's queued path, as the handler takes it.
   (func (export "flip_try") (param $front i32) (param $back i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (global.set $d3dim_worker_pending (i32.const 1))
     (call $d3dim_worker_try_flip (call $dx_from_this (local.get $front)) (call $dx_from_this (local.get $back))))
   (func (export "flip_present_pending") (result i32) (global.get $d3dim_present_pending))
   ;; A raw producer fence (0x20001) over [wa, wa+len); len 0 = global.
   (func (export "flip_fence") (param $wa i32) (param $len i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
   ;; A CPU reader of one surface (Lock/GetDC/CPU present all fence this way).
   (func (export "flip_reader") (param $this i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (global.set $d3dim_worker_pending (i32.const 1))
     (call $d3dim_surface_fence (call $dx_from_this (local.get $this))))
 `;

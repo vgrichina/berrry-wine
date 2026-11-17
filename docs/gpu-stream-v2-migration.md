@@ -198,6 +198,7 @@ Without this, every new backend would have to reimplement the 846 lines of
 - **D3. 2D drawing onto GPU surfaces on the GPU.** A Blt or BltFast from a DIB surface becomes an UPLOAD plus a keyed, textured quad. ColorFill becomes a CLEAR. This removes the HUD and sprite readbacks.
   - Apps: gta2_demo, Forsaken, Blood2, Re-Volt.
 - **D4. Move the D3DIM software arm to the v2 software executor.**
+  - **Status (2026-11-17, branch retire/d3dim-20261117): done.** `$d3dim_gpu_call` always calls the producer; the WAT software draw entries (29 functions, ~90 KB), `d3dim_gpu_enable`/`set_d3dim_gpu_present`, the 0x20000-0x20004 host forwarding and the render Worker's D3DIM replay are deleted. A state decline traps. Executors: WebGL, software, null (`--d3dim-renderer`). `test-d3dim-native-mip`, `test-d3dim-worker-parity` and `test-d3dim-publication-source-lifetime` were deleted with the paths they tested. Known gaps the software rasterizer covered: DITHERENABLE/ANTIALIAS pixels, near/far clipping of pre-transformed vertices, and the attached Z surface's DIB (depth is executor-private).
 - **D5. DX6/7 multi-stage texture stages and specular through the 09aj cascade.** Removes the software fallback.
 
 **Risks:**
@@ -395,6 +396,48 @@ Without this, every new backend would have to reimplement the 846 lines of
     the executors' DZ / DW divide, see above). `test-d3d9-gps-cpu.js`
     compares each reshaped frame to an equivalent plain draw on both
     executors (`--webgl`) and to the old path where it draws the same.
+  - **Status (d3d9-retire S4, 2026-11-17): the old JS path is deleted.**
+    JS half: `lib/d3d9-host.js` (the Bridge, gpu_gl_call 0x30000-0x30019),
+    `lib/d3d9-backend.js` (the WebGL Device), `lib/d3d9-render-worker.js`
+    and `lib/render-wait-attribution.js` are gone, as are the yield-16
+    render wait and its tokens, the api-4 snapshot publication in
+    guest-rpc / guest-worker / thread-manager, the D3D9 half of
+    `d3d-command-stream.js` (now only the D3DIM `Encoder`) and the neutral
+    endpoint in `d3d-render-worker.js`; `d3d9-software-backend.js` keeps
+    only the native `Device` the software executor runs (and
+    `copyPayload`). The host picks the executor through
+    `ctx.d3d9GpsBackend` (`webgl` / `software` / `null` / `none`): on the
+    CLI `--d3d9-gps=...` (`--d3d9-renderer=software` is an alias; the
+    default is webgl with `--headless-gl`, else software for an app with
+    `d3d9WithoutGpu: 'software'`, else none), in the browser `?d3d9-gps=`
+    or the D3D select. `--no-d3d9-gps` / `--d3d9-gps=off` are errors, so
+    the `test-d3d9-gps-*` comparisons against the old path (`render('off')`)
+    need a new oracle. 122 files / 21,142 lines deleted, mostly
+    old-path-only tests and diagnostics.
+    WAT half: `src/09akg-d3d9-gps.wat` is the only renderer. CreateDevice
+    asks `$d3d9_executor_ok` (the ring's open kick) and returns
+    D3DERR_NOTAVAILABLE when no executor answers; caps, the shader-VM gate
+    and the R5G6B5 back buffer come from the launch profile and the ring's
+    capability block alone. Clear, every Draw*, Present (device and swap
+    chain), ColorFill, UpdateSurface, StretchRect, GetRenderTargetData and
+    occlusion queries lower onto the ring; there is no shadow / lead mode,
+    no handover (readback site 4 retired) and no old call behind any of
+    them. Occlusion queries are FENCE brackets on completion slot 1 (one
+    open at a time; an event query completes at Issue). Release / Reset
+    drop the device's ring targets with RELEASE records, synchronously:
+    the render token (`$d3d_render_token`, yield 16, its park / poll and
+    the get/set exports) and the world-matrix trace (host_dx_trace kind 30)
+    are gone, and the only D3D9 host opcode left is the state-guard wait
+    0x30018. Fail fast: a decline (`d3d9_gps_stat` 12 / 16 + reason) and
+    every operation the ring cannot express (ColorFill / UpdateSurface /
+    StretchRect / GetRenderTargetData of an unknown surface, a Present
+    with no window, a full surface table) traps through `$d9g_fail`
+    (log 0x44394750, then the code). Pixels reach guest memory only on
+    LockRect / GetDC of the back buffer, Lock of a colour surface,
+    GetRenderTargetData and the CLI capture, each a READBACK (or a CPU
+    fill when the target is one known Clear colour). The tests that
+    compared the ring to `render('off')` now compare it to the old path's
+    frames recorded at 3eea041c5 (`test/fixtures/d3d9-old-oracle/`).
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 
@@ -452,8 +495,8 @@ The v2 lowering reuses the 09a8g pipeline:
   - **Status (G3a/G3a-2/G3b/G3c).** `src/09a8gt-gl-gps.wat` lowers the
     09a8g pipeline onto ring api 3. The browser's default GL renderer is
     `software` with gps on, on the WebGL executor (the page GPU select
-    "Software" picks the software executor; `?gl-gps=off|software|webgl|null`
-    overrides it). In Threads mode the guest instance's producer is turned on
+    "Software" picks the software executor; `?gl-gps=software|webgl|null`
+    overrides it; `off` was removed in S4). In Threads mode the guest instance's producer is turned on
     through word 4 of the software-GL producer mailbox
     (`lib/gl-software-producer.js`, written by `lib/gl-render-host.js` from
     the host's `glGps`), its kicks reach the render Worker through
@@ -507,13 +550,24 @@ The v2 lowering reuses the 09a8g pipeline:
     the 0x10008 mode query; any other GL batch reaching a host throws. Still
     in the tree, and why: `lib/gl-command-stream.js` is the encoder's record
     ABI (ARG_WORDS/BARRIERS, generated into `09a8d-gl-abi.generated.wat` and
-    checked by the build gates) and the Worker's query transport;
-    `lib/gl-compat.js` is no longer loaded by any page or host, but it holds
-    the `CALLS` opcode table the GL tools and gates read and the
-    `OpenGLHostBridge` oracle about a hundred GL tests (including
-    `test-gl-wgl-owned`) replay the stream into. Retiring it means moving
-    those tests onto the owned harness (`test/helpers/gl-gps-context.js`
-    with `owned: true`) and the table into the stream ABI file.
+    checked by the build gates) and the Worker's query transport.
+  - **Status (gl-retire S4).** `lib/gl-compat.js` and `lib/glide-host.js`
+    are deleted. The `CALLS`/`CALL_INDEX` opcode table moved into
+    `lib/gl-command-stream.js` (one data table, checked name-for-name
+    against `tools/gen_dispatch.js` gpuApis by
+    `tools/check-wat-js-constants.js`). The GL tests that replayed the
+    stream into the `OpenGLHostBridge` oracle now run WAT-owned through
+    `test/helpers/gl-owned-host.js` (answers the 0x10008 query, throws on
+    any other batch, registers WAT windows) or `gl-gps-context.js`, and
+    assert on WAT state, readbacks and pixels; tests that only exercised
+    the JS frontend (FixedFunctionGL, its WebGL backend, the bridge's
+    bookkeeping) are deleted, and `test-gl-wgl-owned` compares against a
+    fixture recorded from the oracle before deletion
+    (`test/fixtures/gl-wgl-owned-oracle.json`). Glide's bridge is
+    `GpuStreamHost.Bridge` with `api: 'glide'`. `--gl-gps=off` and
+    `?gl-gps=off` are gone: the only GL choice left is the executor
+    (webgl, software, null). Readback happens only for glReadPixels and
+    the other guest pixel reads WAT answers in place.
 - **G4. Optional: GPU transform and lighting through vertex-shader IR.**
 
 **Readbacks:**
@@ -530,7 +584,7 @@ The v2 lowering reuses the 09a8g pipeline:
 **Risks:**
 
 - The glGet and validation surface is large.
-- 09a8g's coverage may not match gl-compat (texgen is sphere-map only).
+- 09a8g's coverage may not match the retired JS frontend (texgen is sphere-map only).
   `test-cli-gl-software-worker-parity` is the gate.
 - CPU transform and lighting cost on Quake III.
 - Accumulation must stay Float32.

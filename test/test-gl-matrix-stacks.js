@@ -39,7 +39,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { identity, multiply, frustum, ortho } = require('../lib/gl-compat.js');
+const { identity, multiply, frustum, ortho } = require('./helpers/gl-matrix-reference');
 
 const MODELVIEW = 0x1700, PROJECTION = 0x1701, TEXTURE = 0x1702;
 const GL_STACK_OVERFLOW = 0x0503, GL_STACK_UNDERFLOW = 0x0504;

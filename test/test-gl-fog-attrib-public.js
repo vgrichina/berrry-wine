@@ -39,9 +39,7 @@ const root=process.cwd(),target=path.join(root,'test/test-gl-period-server-state
 let text=fs.readFileSync(target,'utf8');
 function replace(from,to){assert.strictEqual(text.split(from).length,2,'unique public harness anchor '+from.slice(0,60));text=text.replace(from,to);}
 replace('source.init_thread(1,0x400000,0,0,0,0,0);source.heap_init(0x800000);'," const {makeFixture,iat}=req('tools/kernel32-native-fixture');\n const pe=makeFixture();new Uint8Array(memory.buffer).set(pe,e.get_staging());assert(e.load_pe(pe.length),'real PE/thunk initialization');\n");
-replace(' let memory,e,owner=1,bridge,render,producer,manager,encoder,delay=false;', ' const gdiSurfaces=[];let memory,e,owner=1,bridge,render,producer,manager,encoder,delay=false;');
-replace('softwareFront:e.gl_sw_front()','surfaces:gdiSurfaces,softwareFront:e.gl_sw_front()');
-replace("renderer:{windows:","getGdiSurface:id=>{const s=gdiSurfaces.find(s=>s.id===id);return s?{surface:s}:null;},renderer:{windows:");
+replace(' let memory,e,owner=1,render,producer,manager,encoder,delay=false;', ' const gdiSurfaces=[];let memory,e,owner=1,render,producer,manager,encoder,delay=false;');
 const begin=text.indexOf(' function call(name,args=[],floats=[])'),end=text.indexOf(' const bind=',begin);assert(begin>0&&end>begin);
 text=text.slice(0,begin)+publicABI+text.slice(end);
 replace(" const bind=c=>assert.strictEqual(call('wglMakeCurrent',[c?123:0,c]),1);"," const bind=c=>assert.strictEqual(call('wglMakeCurrent',[c?fogDc:0,c]),1);");

@@ -38,7 +38,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const { CALLS } = require('../lib/gl-compat.js');
+const { CALLS } = require('../lib/gl-command-stream.js');
 
 // The families src/09a8f-gl-matrix.wat does not mirror. Kept as a default
 // rather than read from the WAT, because the honest version of this question
@@ -101,7 +101,7 @@ function main(argv) {
   const glCalls = new Set(CALLS);
   for (const name of families) {
     if (!glCalls.has(name)) {
-      console.error(`[gl-name-census] note: ${name} is not in lib/gl-compat.js`
+      console.error(`[gl-name-census] note: ${name} is not in lib/gl-command-stream.js`
         + ' CALLS, so no run can ever count it -- the mirror cannot see it either');
     }
   }

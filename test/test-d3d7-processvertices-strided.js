@@ -594,8 +594,9 @@ async function clipExtentsFixture(c) {
     await draw(A,method,indexed,method+' strip fan '+prim+' indexed '+indexed,black,green,prim,4,6);
   }
   await words(indices,[0x00010002,0]);
-  // The existing point/line rasterizer is software; check its public consumers too.
-  if(mode==='software')for(const method of ['buffer','strided'])for(const indexed of [false,true])for(const prim of [1,2,3]){
+  // Points and lines lower onto the GPU stream; check their public consumers too.
+  // Each POINTLIST draw counts as points, not a draw (gpsPointDraws below).
+  if(mode==='gps')for(const method of ['buffer','strided'])for(const indexed of [false,true])for(const prim of [1,2,3]){
     const points=prim===1?[[2,2],[6,2],[6,6]]:[[-8,2],[24,2],[24,6]];
     await configure(A,[.5,0]);await seed(points);await fill();await ok(process(method,A));
     await words(indices,[0x00010000,0x00000002]);
@@ -734,11 +735,12 @@ module.exports={pvsFixture,viewportDepthFixture,clipExtentsFixture};
 // The same public COM fixture runs against both shipped modules.
 async function main(){
   const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-  const root=path.resolve(__dirname,'..'),{browserFixture,plan,oracle}=require('./test-legacy-texture-rendered-contract');
+  const root=path.resolve(__dirname,'..'),{runOffline,plan,oracle}=require('./test-legacy-texture-rendered-contract');
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
   const pe=fs.readFileSync(path.join(root,'test/binaries/calc.exe'));
   const source=`async c=>{await (${pvsFixture.toString()})(c);await (${viewportDepthFixture.toString()})(c);await (${clipExtentsFixture.toString()})(c);}`;
-  const config={...plan(),immediate:true,immediateSource:source,noPreview:!process.argv.includes('--browser'),
+  // 4 POINTLIST draws: 2 methods x {non-indexed, indexed} in the point/line loop.
+  const config={...plan(),immediate:true,immediateSource:source,gpsDeclined:0,gpsPointDraws:4,noPreview:!process.argv.includes('--browser'),
     thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id,
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52)};
@@ -762,29 +764,29 @@ async function main(){
     'secondary-queued':/PIXEL ORACLE queued viewport depth B buffer/,
     'secondary-indexed-queued':/PIXEL ORACLE queued viewport depth B strided/,
   })[negative]||/DESTINATION BYTE ORACLE/;
+  // Node: the WAT GPU stream producer drained into the software executor in a
+  // vm context (the old 'software' mode was the retired WAT rasterizer).
   if(!process.argv.includes('--browser')){
-    const saved=globalThis.fetch;
-    try{for(const name of modules){
-      globalThis.fetch=async url=>{const p=url==='/legacy-render.wasm'?path.join(root,'build',name):path.join(root,url.slice(1));
-        const b=fs.readFileSync(p);return {arrayBuffer:async()=>b.buffer.slice(b.byteOffset,b.byteOffset+b.byteLength),json:async()=>JSON.parse(b)};};
+    for(const name of modules){
+      const wasmBytes=fs.readFileSync(path.join(root,'build',name));
       let result;
-      try{result=await browserFixture('software',config,oracle.toString());}
-      catch(error){save(name+'-failure.json',{error:String(error),partial:globalThis.legacyTextureEvidence});throw error;}
+      try{result=await runOffline('gps',config,oracle.toString(),null,wasmBytes);}
+      catch(error){save(name+'-failure.json',{error:String(error),partial:config.lastEvidence});throw error;}
       assert.equal(result.status,'PASS');save(name+'.json',result);
       console.log('PASS real x86 PVS '+name+' '+result.calls.length+' COM records '+result.observations.length+' pixel checkpoints');
-      for(const negative of negatives){let failure;try{await browserFixture('software',config,oracle.toString(),negative);}catch(e){failure=e;}
-        const partial=globalThis.legacyTextureEvidence;save(name+'-negative-'+negative+'.json',{failure:String(failure),partial});
+      for(const negative of negatives){let failure;try{await runOffline('gps',config,oracle.toString(),negative,wasmBytes);}catch(e){failure=e;}
+        const partial=config.lastEvidence;save(name+'-negative-'+negative+'.json',{failure:String(failure),partial});
         assert.match(String(failure),failureOracle(negative),'designated oracle must discriminate '+negative);
         assert(partial.calls.some(x=>x.label==='ProcessVerticesStrided7'&&x.result===0),'successful faulty public call');
       }
-    }}finally{globalThis.fetch=saved;}
+    }
     return;
   }
   assert(dir,'D3D7_PVS_EVIDENCE required for browser captures');
   const {startStaticServer,closeServer}=require('./static-server'),puppeteer=require('puppeteer');
   const scripts=['lib/region-map.generated.js','lib/gl-command-stream.js','lib/d3d-command-stream.js','lib/guest-rpc.js',
     'lib/guest-thread-host.js','lib/render-worker.js','lib/gpu-backend.js','lib/d3d9-shader.js','lib/d3d-shader-ir.js',
-    'lib/render-clear.js','lib/d3d9-backend.js'];
+    'lib/render-clear.js'];
   let wasm,browser,server,page,deadline;const report={cells:[],negativeControls:[]};
   try{
     server=await startStaticServer({root,crossOriginIsolated:true,handleRequest(req,res){

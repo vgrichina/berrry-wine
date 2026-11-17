@@ -4,7 +4,7 @@
 //   1. Runs test/gpu-stream-webgl-scenario.js (the same record scenario as
 //      test/test-gpu-stream-webgl.js, which uses desktop GLSL under headless GL)
 //      on WebGL1 (ESSL1) and WebGL2 (ESSL3) contexts.
-//   2. Drives lib/glide-host.js Bridge.kick() over a real ring into the actual
+//   2. Drives lib/gpu-stream-host.js Bridge.kick() (api 'glide') over a real ring into the actual
 //      Win98Renderer desktop compositor: top-level window, close, GPU child.
 //
 //   node test/test-glide-web.js [--no-sandbox] [--swiftshader]
@@ -19,7 +19,7 @@ const puppeteer = require('puppeteer');
 
 const LIB = path.join(__dirname, '../lib');
 const LIB_SCRIPTS = ['surface.js', 'renderer.js', 'gpu-backend.js', 'gpu-stream.generated.js', 'gpu-stream.js',
-  'd3d-shader-ir.js', 'd3d9-shader.js', 'gpu-stream-webgl.js', 'gpu-stream-doorbell.js', 'gpu-stream-host.js', 'glide-host.js'];
+  'd3d-shader-ir.js', 'd3d9-shader.js', 'gpu-stream-webgl.js', 'gpu-stream-doorbell.js', 'gpu-stream-host.js'];
 // test/gpu-stream-fixture.js is a CommonJS module; give it the page's GpuStream.
 const FIXTURE = `(function(){var module={exports:{}};var require=function(){return globalThis.GpuStream;};\n${
   fs.readFileSync(path.join(__dirname, 'gpu-stream-fixture.js'), 'utf8')}\nglobalThis.GpsFixture=module.exports;})();`;
@@ -78,7 +78,7 @@ const FIXTURE = `(function(){var module={exports:{}};var require=function(){retu
       renderer.createWindow(1, 0x90000000, 8, 8, 32, 32, 'Glide only', 0);
       const withoutBacking = !renderer.windows[1]._backCanvas;
       const memory = new ArrayBuffer(1 << 16);
-      const bridge = new GlideHost.Bridge({ getMemory: () => memory, renderer: () => renderer,
+      const bridge = new GpuStreamHost.Bridge({ api: 'glide', getMemory: () => memory, renderer: () => renderer,
         getExports: () => ({ get_dx_present_hwnd: () => 1 }) });
       const C = GpuStream.CONST;
       const p = GpsFixture.makeProducer({ buffer: memory, ringBytes: 4096, arenaBytes: 4096 });

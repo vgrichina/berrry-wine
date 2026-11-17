@@ -306,7 +306,7 @@ const deferred = () => {
     assert(first.enabled && second.enabled, 'live switch reaches every existing guest thread');
     host.d3dimGpu = false;
     await host.setLazySync(true);
-    assert(!first.enabled && !second.enabled, 'software remains eager');
+    assert(first.enabled && second.enabled, 'shared software preserves native deferred completion');
     host.d3dimGpu = true; host.sharedRenderWorker = false;
     await host.setLazySync(true);
     assert(!first.enabled && !second.enabled, 'private executors remain eager');

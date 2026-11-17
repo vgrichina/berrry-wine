@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 'use strict';
 // Small production excerpts, authentic WATX compiler, one 64KiB fixture memory.
-// Allocation/device lookups are explicit doubles; real software spans write a
-// fixture surface. This is not a COM/GL test.
+// Allocation/device lookups are explicit doubles. The WAT software triangle
+// routes this fixture used to draw through were deleted with the D3DIM
+// software path; stage pixels through the GPU stream producer are rendered by
+// test-legacy-texture-operation-web.js --offline. This is not a COM/GL test.
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
@@ -51,15 +53,16 @@ function form(source, marker, file) {
 }
 const names = ['d3dim_fill_device_desc7', 'd3dim_div255', 'd3dim_modulate_rgb',
   'd3dim_texture_stage_combine', 'd3dim_bound_texture_entry', 'd3dim_set_tss',
-  'd3dim_tss_load', 'd3dim_draw_tl_triangle_maybe_textured',
-  'd3dim_draw_tl_triangle_dp_raw', 'd3dim_draw_tl_triangle_textured'];
-const argumentStateRepair = core.includes('(func $d3dim_stage_operation ');
-names.push('d3dim_tss_addr', 'd3dim_mip_filters', 'rasterize_triangle_textured', 'viewport_draw_textured_span');
+  'd3dim_tss_load'];
+const argumentStateRepair = core.includes('(func $d3dim_tss_init');
+const stageOperation = core.includes('(func $d3dim_stage_operation ');
+names.push('d3dim_tss_addr', 'd3dim_mip_filters', 'viewport_draw_textured_span');
 names.push('d3dim_color_lerp', 'd3dim_texture_sample_prepared', 'd3dim_point_index',
   'd3dim_decode_surface_pixel_fmt', 'd3dim_alpha_pass', 'd3dim_clip_row_out',
   'd3dim_texture_sample_keyed', 'd3dim_decode_surface_pixel', 'd3dim_address_texel',
   'd3dim_texture_fetch_keyed', 'd3dim_texture_fetch_prepared');
-if (argumentStateRepair) names.push('d3dim_stage_operation', 'd3dim_tss_init');
+if (argumentStateRepair) names.push('d3dim_tss_init');
+if (stageOperation) names.push('d3dim_stage_operation');
 const forms = names.map(n => form(core, `(func $${n}`, 'src/09ab-handlers-d3dim-core.wat'));
 forms.push(form(rasterSource, '(func $gl_sw_sample_prepared', 'src/09a8g-gl-raster.wat'));
 forms.push(form(colorMaskSource, '(func $gl_color_merge', 'src/09a8cd-gl-color-mask.wat'));
@@ -75,9 +78,6 @@ const builtins = {
   g2w: '(param i32) (result i32)', gl32: '(param i32) (result i32)',
   gs32: '(param i32 i32)', zero_memory: '(param i32 i32)',
   host_dx_trace: '(param i32 i32 i32 i32 i32)',
-  // Signature: exact-main src/09a8g-gl-raster.wat:2106-2109. Fog is off;
-  // invoking this unrelated fixture dependency throws below.
-  rast_fog_plane: '(param i32 i32 f32 i32 i32 f32 i32 i32 f32 i32)',
 };
 const imported = [...calls].filter(n => !selected.has(n));
 const signatures = {};
@@ -122,7 +122,7 @@ if (process.argv.includes('--manifest-only')) {
 }
 
 function makeFixture(source) {
-  let e, op = 4, alpha = 4, untextured = 0;
+  let e;
   const overrides = {
     g2w: a => a, gl32: a => new DataView(e.memory.buffer).getUint32(a, true),
     gs32: (a, v) => new DataView(e.memory.buffer).setUint32(a, v, true),
@@ -140,11 +140,9 @@ function makeFixture(source) {
     d3dim_texture_entry_from_slot: slot => { assert(slot === 0 || slot === 1); return slot ? 8192 : 0; },
     d3ddev_rt_entry: () => 24576, d3dim_gpu_buffer: () => 16384,
     dx_surf_fmt_get: entry => entry === 8192 ? 5 : 1, dx_surf_pal_get: () => 0, dx_surf_pal_alpha: () => 0,
-    d3dim_wrap_flags: () => 0, d3dim_vertex_fog_on: () => 0,
-    d3dim_clip_compute: () => 0, d3dim_cull_tri: () => 0,
+    d3dim_wrap_flags: () => 0, d3dim_clip_compute: () => 0,
     d3dim_coord_i: x => Math.trunc(x), host_dx_trace: () => {},
     d3dim_exec_extent_draw: () => {},
-    d3dim_draw_tl_triangle: () => { untextured++; },
   };
   const fixture = Object.fromEntries(imported.map(n => [n, overrides[n] || (() => { throw Error(`unexpected fixture import ${n}`); })]));
   const result = compile(source, new Map(), {mode: 'production'});
@@ -173,22 +171,11 @@ function makeFixture(source) {
     dv.setUint32(a + 16, 0x8060a0e0, true);
   }
   function setOps(c, a) {
-    op = c; alpha = a;
     e.d3dim_set_tss(1, 0, 1, c); e.d3dim_set_tss(1, 0, 4, a);
   }
-  return {e, dv, setOps, softwareUnbound() {
-    for (const n of ['d3dim_draw_tl_triangle_maybe_textured', 'd3dim_draw_tl_triangle_dp_raw']) {
-      untextured = 0; e[n](1, 24576, 0, 20480, 20512, 20544);
-      assert.equal(untextured, 1, `${n} unbound routes to diffuse triangle`);
-    }
-  }, softwareOuter(want) {
-    for (const n of ['d3dim_draw_tl_triangle_maybe_textured', 'd3dim_draw_tl_triangle_dp_raw']) {
-      new Uint8Array(e.memory.buffer, 32768, 16).fill(0);
-      e[n](1, 24576, 0, 20480, 20512, 20544);
-      if (want !== undefined) assert.equal(dv.getUint32(32768, true) >>> 0, want >>> 0,
-        `${n} actual software pixel ${op}/${alpha}: got ${dv.getUint32(32768, true).toString(16)}, want ${(want >>> 0).toString(16)}`);
-    }
-  }};
+  // The software triangle routes (softwareUnbound/softwareOuter) are deleted;
+  // their callers keep the combiner checks and these stay as no-ops.
+  return {e, dv, setOps, softwareUnbound() {}, softwareOuter() {}};
 }
 // The GPU-lowering half (gpuDraw: the deleted JS executor lib/d3dim-gpu.js
 // lowering a WAT d3dim_gpu_describe record) is gone with that executor. Stage
@@ -293,11 +280,10 @@ try {
     f.softwareOuter(want);
     receipts.cases.push({operation: op, observed: got.toString(16), observedRed: got >>> 16 & 255,
       semanticRed: redExpected,
-      bothOuterSoftwareRoutes: op === 7 ? 'actual software triangle and span, saturated RGB ADD / MODULATE alpha'
-        : 'actual software triangle and span, legacy MODULATE fallback'});
+      combiner: op === 7 ? 'saturated RGB ADD / MODULATE alpha' : 'legacy MODULATE fallback'});
   }
   receipts.descriptorHex = caps(f);
-  if (argumentStateRepair) receipts.argumentCases = argumentCases(makeFixture(assembled));
+  if (stageOperation) receipts.argumentCases = argumentCases(makeFixture(assembled));
   const acceptedDescriptor = receipts.descriptorHex;
   if (mutations) {
     for (const mask of ['0x0000E', '0x0001F', '0x00007']) {
@@ -308,7 +294,7 @@ try {
       '(then (local.set $rgb (i32.and (local.get $diffuse)');
     assert.notEqual(wrongSoftware, assembled);
     reject('software SELECTARG1 operand mutation', () => supported(makeFixture(wrongSoftware)));
-    if (argumentStateRepair) {
+    if (stageOperation) {
       // The hardcoded-argument mutations targeted d3dim_gpu_describe's argument
       // stores, which left src with the JS executor's descriptor ABI.
       const raw = assembled.replaceAll('(call $d3dim_stage_operation (local.get $state)',
@@ -321,7 +307,7 @@ try {
   }
   receipts.descriptorHex = acceptedDescriptor;
   receipts.status = 'PASS';
-  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 unadvertised operations (RGB ADD and 5 fallbacks); ${receipts.argumentCases || 0} argument combinations, real software pixels; ${receipts.controls.length} rejecting controls`);
+  console.log(`PASS legacy texture-operation caps: 9 pairs, 6 unadvertised operations (RGB ADD and 5 fallbacks); ${receipts.argumentCases || 0} argument combinations, ${receipts.controls.length} rejecting controls`);
 } catch (e) {
   receipts.status = 'FAIL'; receipts.error = e.message;
   console.error('FAIL legacy texture-operation caps: ' + e.message); process.exitCode = 1;

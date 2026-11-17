@@ -54,7 +54,7 @@ function installPawnObservation(scope, options = {}) {
     function surfaceState() {
       const base = scope.RegionMap?.BASE;
       if (!base) return {unavailable:'owning-region-map-absent'};
-      const surface = u32(0x423fc0), token = e.get_d3d_render_token() >>> 0;
+      const surface = u32(0x423fc0), token = e.get_d3d_render_token ? e.get_d3d_render_token() >>> 0 : null; // export removed in d3d9-retire S4
       const raw = p => dv.getUint32(p >>> 0, true);
       if (!surface) return {surface,token};
       const header = Array.from({length:5},(_,i)=>u32(surface+i*4));

@@ -12,8 +12,8 @@
       "file": "lib/renderer-input.js",
       "name": "host-file",
       "baseSHA256": "a8de6b537ff492cebe763fee3a9e30bd5b7e16a0751a63e922671045f73c4fcf",
-      "sha256": "46daf41c272cbc6c154314be435a22c4b224ae16163a48accf4b0c41e725b1fd",
-      "reason": "Review 20261117: class12 native file-dialog keys and WM_CHAR now enqueue ordinary physical events for the owning native modal pump instead of synchronously executing shadow dialog/edit functions. All other modal/menu routes, physical release, guard rules and immutable deadlines remain unchanged. No native receipt is fabricated. Main and actual CPUWorker authored keyboard/focus and unchanged input regressions qualify the bounded routing change; general retained callback ownership remains pending."
+      "sha256": "be58e49e07260151e6c1e1137036183f42b60ec778f2e1fd74aa81eed8de01cd",
+      "reason": "Review 20261117 coordinate press hover: retain the original canvas coordinates in local constants before native mapping and cursor clipping, then pass them to the existing synchronous handleMouseMove call. Non-strict argument aliasing previously remapped the native point. No callback, scheduling, retained owner, continuation, input receipt, physical release or context-restoration rule changes; ownership remains pending. Actual native hover and DOWN coordinates plus production transform and refusal regressions qualify this bounded repair. Review 20261117 comctl32: inputHoldDeadlineMs only reports when queued press/hover holds release; it calls no guest code. Review 20261117: class12 native file-dialog keys and WM_CHAR now enqueue ordinary physical events for the owning native modal pump instead of synchronously executing shadow dialog/edit functions. All other modal/menu routes, physical release, guard rules and immutable deadlines remain unchanged. No native receipt is fabricated. Main and actual CPUWorker authored keyboard/focus and unchanged input regressions qualify the bounded routing change; general retained callback ownership remains pending."
     },
     {
       "file": "src/09a5-handlers-window.wat",
@@ -58,11 +58,60 @@
       "reason": "Reject actual QT call continuations as FT parents at either alignment, preserving FT compiler frames, alignment and restoration. Native FT and invalidQT-asFT controls retained in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending."
     },
     {
+      "file": "lib/process-boot.js",
+      "name": "host-file",
+      "baseSHA256": "ba54542269320d2a6bcf82d33445989840a872a62d27448e349afe0f97113a9c",
+      "sha256": "a9bb737744fc93f5d4c5b8aed3bd648615f968c2175ad49b2e4006a7e92a9bba",
+      "reason": "Review 20261117 comctl32: COMCTL32.DLL joins the static system-module placeholder files (file presence and RT_VERSION only, never mapped); no host boundary, run loop or guest-control change. Review 20261117 web LS16 release blocker: handleLoadLibraryYield routes an NE request (yield 18) on a non-Worker host through the existing owned asynchronous NE preflight whenever the caller supplies an awaitable findDll, under the same acquired callback gate as PE loads; the parked request token is revalidated after every await. Hosts without findDll keep the synchronous service. No new guest entry or context restoration; ownership remains pending."
+    },
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
+      "sha256": "7973610e8fd4b708b39fc7fee2dbfc0e934dcbdc72df34a255d8ed8e54f8dd0b",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change. Review 20261117 web LS16 release blocker: the main-thread page boot maps its startup DLL set with the existing owned DllLoader.loadDllsAsync (the loader the guest Worker already runs) instead of the synchronous loader, and services a nested LoadLibrary/NE yield through ProcessBoot.handleLoadLibraryYield with the page asynchronous resolver. The synchronous loader remains the fallback when the async entry is unavailable. No new guest entry, continuation or context restoration; DllMain frames, gate ownership and quarantine are the existing loader ones; ownership remains pending. Review 20261117 current-display ticket servicing: existing ordinary completed host boundary services only clean live host/shared DirectDraw queues and unheld renderer/paint/damage. A ticket armed with pending host damage still requires later ordinary publication. Readback uses retained published canvases, preserves exact publication/timestamp and schedules no frame, guest entry, flush, timer or callback. Host stop explicitly fails only its own pending current-display ticket and invalidates its retained display receipt. Scoped producer loss/retirement invalidation preserves foreign tickets and completed immutable bytes. Actual x86 GL guest/render Worker clean-slice before timeout versus same-publication serviced after, literal source/output, cancellation/identity/writer/fault regressions in run20261117-gl-gps-current-display-ticket-servicing-repair. Broader retained callback ownership remains pending."
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "name": "host-file",
+      "baseSHA256": "490dadce6dac421df16529b075919ff5effe3c7dc4679e1ad9d1d2d8be3c8253",
+      "sha256": "e827d39aab719aaeb7bfdbf96d3fb85e846195cd6f7625ba017344417af2ea3d",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
+    },
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "9fa351560f5e7d865ff366eb8ee8049cd948cedbe10efd8ca1d3cd73aba3088e",
+      "sha256": "a3841cde6aec3eadfee73c063f53d355701e092fa6c584aff5842a66d240f122",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
+    },
+    {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "baseSHA256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
-      "sha256": "9265109c8b2184b389116c01804d6f74482ab3e56caf6e5b93061af1c03b222b",
-      "reason": "Review 20261117 Boids repair: native per-window primary allocation and actual PRESENT rt/record identity validate delayed frames. Actual native window GDI uploads retain disjoint dirty rectangles ordered by their preceding native PRESENT. GPU-only or read-only materialized primary DIBs do not become signature-polled CPU publications; later watched CPU Lock writes remain eligible. No guest callback, continuation, host clock, stepping, pause or extra publication is introduced. Existing process/endpoint retirement and CPU-present guards remain active; general invocation ownership remains pending. Qualification: run 20261117-boids-primary-gdi-ownership-repair."
+      "baseSHA256": "c3aad3ad155217dd7b7480825a8f250766c7299564e63fccae1d25295d4081d9",
+      "sha256": "958ce8d14e7129331fbde9a8892d2a5a615c58c2c75949fe65940e3ffb2b8fde",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change. Review 20261117 Boids repair: native per-window primary allocation and actual PRESENT rt/record identity validate delayed frames. Actual native window GDI uploads retain disjoint dirty rectangles ordered by their preceding native PRESENT. GPU-only or read-only materialized primary DIBs do not become signature-polled CPU publications; later watched CPU Lock writes remain eligible. No guest callback, continuation, host clock, stepping, pause or extra publication is introduced. Existing process/endpoint retirement and CPU-present guards remain active; general invocation ownership remains pending. Qualification: run 20261117-boids-primary-gdi-ownership-repair."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "a71ff357dbdf0d47c9f7333247a168ebd9a63cf2ba37a97ab8e401d3de8fdbd3",
+      "sha256": "e4a12430ea3109f0ac161185a00746005a9db90b49df0ff82ae5dda355410f74",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "53d6f5370385dcd23c45d263c7cc08a02f46f2d1e82ed08dcb24f97b8ee59d05",
+      "sha256": "4dd4c6dbc032c1168b755e47be9c3ba36010f18943bda7744e66f02edad29717",
+      "reason": "retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "name": "host-file",
+      "baseSHA256": "e2fbe5e0307efb4bb6e805b51b850ef51763b00d5afda1055cb9dfb1733fa419",
+      "sha256": "794d03ac69f8f10c1954e2fc62af931f5ba93586b5b032b43bc392d41888461a",
+      "reason": "Review 20261117 web LS16 release blocker: a ThunkConnect32 attach whose 16-bit companion is definitely absent (NeLoadError guest code 2 from source preflight) settles once through the native win16_guest_ls32_settle_absent export; the asynchronous LS32 preflight stops on a typed absence and leaves translation to the same synchronous service. Malformed, refused and asynchronous-only sources still throw. No NE execution, pairing, publication or new restoration path; ownership remains pending. Review 20261117 QT nested native image loading: a distinct per-frame request serial plus full frame-generation token parks only KERNEL.95/96 below the exact active QT/LS connection. Settlement validates actor, caller EIP/ESP/CS/SS/far return, original alias descriptor and backing lease, module lifetime and PE generation; the PE request is untouched. Source bytes use the process resolver and canonical resident identity. Actual LibMain, Win4 semantic usage notifications, native handles/exports/pins/refcounts, rollback, WEP and final unload remain owned by the native lifecycle. Worker source I/O parks the same command/callback owner and checks it after each await; synchronous initializer reentry cannot fetch unavailable async sources. Native success, reference reuse, reentry, cancellation/fault/missing/wrong source, generation/actor/selector/lease/retired refusal and actual CPUWorker proofs are in run20261117-neverhood-native-nested-image-load. No FT, general callback or unrelated direction admission; general ownership remains pending."
     },
     {
       "file": "lib/renderer.js",
@@ -72,25 +121,11 @@
       "reason": "Review 20261117 current-display ticket servicing: existing ordinary completed host boundary services only clean live host/shared DirectDraw queues and unheld renderer/paint/damage. A ticket armed with pending host damage still requires later ordinary publication. Readback uses retained published canvases, preserves exact publication/timestamp and schedules no frame, guest entry, flush, timer or callback. Host stop explicitly fails only its own pending current-display ticket and invalidates its retained display receipt. Scoped producer loss/retirement invalidation preserves foreign tickets and completed immutable bytes. Actual x86 GL guest/render Worker clean-slice before timeout versus same-publication serviced after, literal source/output, cancellation/identity/writer/fault regressions in run20261117-gl-gps-current-display-ticket-servicing-repair. Broader retained callback ownership remains pending."
     },
     {
-      "file": "lib/ne-guest-bridge.js",
-      "name": "host-file",
-      "baseSHA256": "e2fbe5e0307efb4bb6e805b51b850ef51763b00d5afda1055cb9dfb1733fa419",
-      "sha256": "fc597a4850bf20c2cb3a1d9f6dd3595b59cab130abae2e04e6bae2859e617208",
-      "reason": "Review 20261117 QT nested native image loading: a distinct per-frame request serial plus full frame-generation token parks only KERNEL.95/96 below the exact active QT/LS connection. Settlement validates actor, caller EIP/ESP/CS/SS/far return, original alias descriptor and backing lease, module lifetime and PE generation; the PE request is untouched. Source bytes use the process resolver and canonical resident identity. Actual LibMain, Win4 semantic usage notifications, native handles/exports/pins/refcounts, rollback, WEP and final unload remain owned by the native lifecycle. Worker source I/O parks the same command/callback owner and checks it after each await; synchronous initializer reentry cannot fetch unavailable async sources. Native success, reference reuse, reentry, cancellation/fault/missing/wrong source, generation/actor/selector/lease/retired refusal and actual CPUWorker proofs are in run20261117-neverhood-native-nested-image-load. No FT, general callback or unrelated direction admission; general ownership remains pending."
-    },
-    {
       "file": "lib/ne-invoke.js",
       "name": "host-file",
       "baseSHA256": "7ba05ed04385218cd0da7fdb9639531bdfcf3c973729aab7304daf5c5be5da88",
       "sha256": "d0c0c80910e34c4adc7a07dad8f78cdd94bf7ff518e422a911d8494e4306dfb0",
       "reason": "Review 20261117 QT nested native image loading: a distinct per-frame request serial plus full frame-generation token parks only KERNEL.95/96 below the exact active QT/LS connection. Settlement validates actor, caller EIP/ESP/CS/SS/far return, original alias descriptor and backing lease, module lifetime and PE generation; the PE request is untouched. Source bytes use the process resolver and canonical resident identity. Actual LibMain, Win4 semantic usage notifications, native handles/exports/pins/refcounts, rollback, WEP and final unload remain owned by the native lifecycle. Worker source I/O parks the same command/callback owner and checks it after each await; synchronous initializer reentry cannot fetch unavailable async sources. Native success, reference reuse, reentry, cancellation/fault/missing/wrong source, generation/actor/selector/lease/retired refusal and actual CPUWorker proofs are in run20261117-neverhood-native-nested-image-load. No FT, general callback or unrelated direction admission; general ownership remains pending."
-    },
-    {
-      "file": "host.js",
-      "name": "host-file",
-      "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
-      "sha256": "0b2b8e47e215112c95dad3444d21afecab630711725ed668127d44666589e084",
-      "reason": "Review 20261117 current-display ticket servicing: existing ordinary completed host boundary services only clean live host/shared DirectDraw queues and unheld renderer/paint/damage. A ticket armed with pending host damage still requires later ordinary publication. Readback uses retained published canvases, preserves exact publication/timestamp and schedules no frame, guest entry, flush, timer or callback. Host stop explicitly fails only its own pending current-display ticket and invalidates its retained display receipt. Scoped producer loss/retirement invalidation preserves foreign tickets and completed immutable bytes. Actual x86 GL guest/render Worker clean-slice before timeout versus same-publication serviced after, literal source/output, cancellation/identity/writer/fault regressions in run20261117-gl-gps-current-display-ticket-servicing-repair. Broader retained callback ownership remains pending."
     },
     {
       "file": "src/13-exports.wat",
@@ -209,6 +244,25 @@
       "sha256": "10fb71d7574aed4e9ffea326770f061505c89591434c99143fb9444cd873780e",
       "kind": "continuation",
       "reason": "Remote QI retains the existing proxy root while awaiting authenticated exporter work. It reads the full-width current invocation token before suspension and validates token, exact IID and owner around every await. Ordinary HRESULT completion cancels pending work and releases the pin; traps and changed ownership do not replay or clean an abandoned guest frame. No new guest entry or context restoration; broader ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_guest_ls32_settle_absent",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "win16_guest_ls32_settle_absent"
+      ],
+      "targets": [
+        [
+          "global.get",
+          "$win16_guest_return"
+        ]
+      ],
+      "sha256": "b972570e58b350f2fda4ed6bb6041595941ea00a3f02144eb44bb5c8e363f30a",
+      "kind": "lifecycle",
+      "reason": "Absent-companion ThunkConnect32 attach settlement: valid parked op-5 request with attach reason only; cancels any lease owned by that request, returns TRUE and consumes the exact 28-byte stdcall frame to the recorded return like win16_guest_ft_connect_settle, publishing nothing into the LS32 header or relays. Single settlement; the request token is cleared. Ownership remains pending.",
       "ownership": "pending"
     },
     {

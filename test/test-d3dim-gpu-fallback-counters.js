@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 'use strict';
 // D3DIM GPU-route fallback accounting in the WAT GPU stream producer
-// (src/09abg-d3dim-gps.wat). Every 0x20000 draw the producer hands back to
-// the software rasterizer counts once in d3dim_gps_stat 14 (declined draws);
-// a draw or clear whose SHAPE was fine but whose STATE the GPU cannot
-// reproduce also counts once in stat 1 (fallbacks), by reason
-// (d3dim_gps_stat 35 + why, $d3g_decline). Shape rejections (primitive,
-// vertex type, count) stop before describe and count only as declined. An
-// accepted draw counts in stat 0 and never as a fallback; a clear of a
-// target the GPU never drew on is declined without counting as a fallback.
+// (src/09abg-d3dim-gps.wat). There is no software D3DIM rasterizer behind
+// the producer. A draw whose SHAPE has nothing to draw (primitive, vertex
+// type, count) is dropped before describe and counts once in d3dim_gps_stat
+// 14. A draw or clear whose STATE the GPU cannot reproduce counts once in
+// stat 1, by reason (d3dim_gps_stat 35 + why, $d3g_decline), and traps. An
+// accepted draw counts in stat 0; a clear of a target the GPU never drew on
+// is left to the CPU fill without counting.
 //
 // Driven through the real seam: DirectDraw surfaces + D3D devices built by
-// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) with
-// $d3dim_gpu_on = 1, the ring drained into lib/gpu-stream-software.js.
+// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000), the
+// ring drained into lib/gpu-stream-software.js.
 const assert = require('assert');
 const GS = require('../lib/gpu-stream');
 const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
@@ -49,15 +48,14 @@ const extraWat = String.raw`
     (i32.load offset=0 (global.get $reg_base)))
   (func (export "test_gpu_draw") (param $device i32) (param $prim i32) (param $vtype i32)
       (param $verts i32) (param $count i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_worker_try_draw (local.get $device) (local.get $prim) (local.get $vtype)
-      (local.get $verts) (local.get $count)))
+      (local.get $verts) (local.get $count))
+    (i32.const 1))
   ;; A whole-surface D3DCLEAR_TARGET through the producer's 0x20004; with
   ;; $bg, a background-image clear whose texture words (+32..+52) are
   ;; $tex, 0, 0, 0.
   (func (export "test_gpu_clear") (param $this i32) (param $bg i32) (param $tex i32) (result i32)
     (local $entry i32) (local $ga i32) (local $d i32) (local $r i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (local.set $entry (call $dx_from_this (local.get $this)))
     (local.set $ga (call $heap_alloc (i32.const 64)))
     (local.set $d (call $g2w (local.get $ga)))
@@ -72,7 +70,6 @@ const extraWat = String.raw`
     (call $heap_free (local.get $ga))
     (local.get $r))
   (func (export "test_gps_fence") (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
 
@@ -141,14 +138,13 @@ const extraWat = String.raw`
   }
   const draw = (label, prim, vtype, count, counts, device = dev, verts = VERTS) => {
     const before = snap(), d0 = draws;
-    const r = ex.test_gpu_draw(device, prim, vtype, verts, count);
+    ex.test_gpu_draw(device, prim, vtype, verts, count);
     ex.test_gps_fence();
-    assert.strictEqual(r, counts.drawn ? 1 : 0, `${label}: result`);
     assert.strictEqual(draws - d0, counts.drawn ? 1 : 0, `${label}: DRAW_UP records`);
     expect(before, counts, label);
   };
 
-  // Shape predicates: declined before describe, never a state fallback.
+  // Shape predicates: dropped before describe, never a state decline.
   for (const [prim, vtype, count] of [[4, 2, 3], [2, 3, 1], [3, 3, 0], [0, 3, 3], [7, 3, 3],
     [4, 3, 2], [0, 2, 0], [6, 3, 2], [4, 7, 3], [0xffffffff, 0xffffffff, 0xffffffff]])
     draw(`shape ${prim}/${vtype}/${count}`, prim, vtype, count, { declined: 1 });
@@ -157,19 +153,10 @@ const extraWat = String.raw`
     draw(`primitive ${prim}`, prim, 3, prim <= 3 ? 2 : 3, { drawn: 1 });
   for (const vtype of [4, 5, 6]) draw(`vertex type ${vtype}`, 4, vtype, 3, { drawn: 1 });
 
-  // A render target the GPU cannot hold (8-bit indexed): declined, not a
-  // state fallback.
-  const indexed = surface(W, W, 8, [0, 0, 0], 0x60);
-  draw('8-bit render target', 4, 3, 3, { declined: 1 }, device(indexed));
-
-  // State the GPU cannot reproduce: one fallback each, with its reason.
-  ex.test_set_rs(dev, 7, 1); ex.test_set_rs(dev, 23, 9);  // ZFUNC out of range
-  draw('ZFUNC 9', 4, 3, 3, { declined: 1, fallback: 1, why: 2 });
-  ex.test_set_rs(dev, 23, 4);
+  ex.test_set_rs(dev, 7, 1); ex.test_set_rs(dev, 23, 4);
   draw('ZFUNC LESSEQUAL', 4, 3, 3, { drawn: 1 });
   ex.test_set_rs(dev, 7, 0);
-  ex.test_set_rs(dev, 27, 1); ex.test_set_rs(dev, 19, 14);  // SRCBLEND out of range
-  draw('SRCBLEND 14', 4, 3, 3, { declined: 1, fallback: 1, why: 3 });
+  ex.test_set_rs(dev, 27, 1);
   for (const sb of [12, 13]) {  // BOTHSRCALPHA / BOTHINVSRCALPHA are rewritten
     ex.test_set_rs(dev, 19, sb);
     draw(`SRCBLEND ${sb}`, 4, 3, 3, { drawn: 1 });
@@ -177,10 +164,9 @@ const extraWat = String.raw`
   ex.test_set_rs(dev, 27, 0);
   draw('SRCBLEND ignored with blending off', 4, 3, 3, { drawn: 1 });
 
-  // Textured. Stage-0 operands follow the software rasterizer's rule
+  // Textured. Stage-0 operands follow the old software rasterizer's rule
   // (any selector, SPECULAR included, gets its approximation), so they never
-  // decline; a texture the GPU cannot upload -- here the render target
-  // itself -- is a counted fallback.
+  // decline.
   const api = require('../src/api_table.json').find(e => e.name === 'IDirect3DTexture2_GetHandle');
   const handle = (s, at) => { assert.strictEqual(ex.test_get_handle(api.id, s, dev, at) >>> 0, 0); return gr(at); };
   const texture = surface(4, 4, 16, RGB565);
@@ -190,7 +176,7 @@ const extraWat = String.raw`
   draw('COLORARG1 SPECULAR', 4, 3, 3, { drawn: 1 });
   assert.strictEqual(ex.test_set_tss(dev, 2, 2) >>> 0, 0);
   // COLORARG2 = TFACTOR (giants): ARG2 is the texture only for TEXTURE,
-  // diffuse otherwise, as $d3dim_stage_operation reads it. Same pixels as
+  // diffuse otherwise. Same pixels as
   // COLORARG2 = DIFFUSE, drawn on the GPU with no fallback.
   {
     // A fresh texture, filled before its first upload (raw stores bump no
@@ -217,14 +203,11 @@ const extraWat = String.raw`
     assert.notStrictEqual(vary[2], vary[0], 'TEXTURE as ARG2 reads the texture (the probe tells them apart)');
     assert.strictEqual(ex.test_set_tss(dev, 3, 0) >>> 0, 0);
   }
-  ex.test_set_rs(dev, 1, handle(rt, OUT + 0x84));
-  draw('render target as its own texture', 4, 3, 3, { declined: 1, fallback: 1, why: 1 });
   draw('lines ignore the texture', 2, 3, 2, { drawn: 1 });
   ex.test_set_rs(dev, 1, 0);
 
-  // Clears: a target the GPU never drew on stays in software uncounted; a
-  // drawn one is cleared on the GPU; a background clear without its texture
-  // words is a counted fallback.
+  // Clears: a target the GPU never drew on is left to the CPU fill
+  // uncounted; a drawn one is cleared on the GPU.
   const fresh = surface(W, W, 16, RGB565);
   let before = snap();
   assert.strictEqual(ex.test_gpu_clear(fresh, 0, 0), 0, 'undrawn target clear declines');
@@ -232,10 +215,14 @@ const extraWat = String.raw`
   before = snap();
   assert.strictEqual(ex.test_gpu_clear(rt, 0, 0), 1, 'drawn target clears on the GPU');
   expect(before, { clears: 1 }, 'GPU clear');
-  before = snap();
-  assert.strictEqual(ex.test_gpu_clear(rt, 1, 1), 0, 'background clear without texture words declines');
-  expect(before, { fallback: 1, why: 6 }, 'background clear');
   assert(draws > 0, 'records went through the GPU stream consumer');
+
+  // State the GPU cannot reproduce: counted with its reason, then a trap.
+  // Last: the trap leaves the producer lock held.
+  ex.test_set_rs(dev, 7, 1); ex.test_set_rs(dev, 23, 9);  // ZFUNC out of range
+  before = snap();
+  assert.throws(() => ex.test_gpu_draw(dev, 4, 3, VERTS, 3), WebAssembly.RuntimeError, 'ZFUNC 9 traps');
+  expect(before, { fallback: 1, why: 2 }, 'ZFUNC 9');
 
   console.log('test-d3dim-gpu-fallback-counters: OK');
 })().catch(e => { console.error(e.stack || e); process.exit(1); });

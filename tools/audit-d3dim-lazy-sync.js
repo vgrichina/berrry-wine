@@ -36,7 +36,6 @@ const { bootRenderHarness } = require('../test/render-helper');
         (i32.add (global.get $DIB_BACKING_BASE) (i32.const 4096)))
       (func (export "audit_arm") (param $this i32) (param $on i32)
         (global.set $d3dim_lazy_on (local.get $on))
-        (global.set $d3dim_gpu_on (i32.const 1))
         (global.set $d3dim_worker_pending (i32.const 1))
         (call $d3dim_lock_fence (call $dx_from_this (local.get $this))))
       (func (export "audit_read") (param $wa i32) (result i32)

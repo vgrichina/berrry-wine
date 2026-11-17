@@ -1,8 +1,9 @@
 'use strict';
+const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
 const {bootRenderHarness}=req('test/render-helper');
-const {OpenGLHostBridge,CALL_INDEX}=req('lib/gl-compat');
+const {CALL_INDEX}=req('lib/gl-command-stream');
 const Stream=req('lib/gl-command-stream');
 const table=req('src/api_table.json');
 const extraWat=`
@@ -36,14 +37,12 @@ const extraWat=`
      (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
    (i32.load (global.get $reg_base)))`;
 (async()=>{
- let memory,bridge,encoder=null,manager=null,render=null,producer=null;
+ let memory,encoder=null,manager=null,render=null,producer=null;
  const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();
  const h=await bootRenderHarness({fonts:'none',width:4,height:4,extraWat,
   extraHostOverrides:{gpu_gl_call(op,at,bytes){
    if(op===Stream.WAT_STREAM_FLUSH_OPCODE){
-     if(!render)return bridge.replay(Stream.memoryBatch(memory,at,bytes));
-     const reply=render.execute({memoryOffset:at,bytes,owner:0,windows:Object.values(renderer.windows),softwareFront:e.gl_sw_front()});
-     producer.configure(reply.producerConfig);return reply.value;
+     return ownedAnswer(memory,at,bytes);
    }
    // No queued software executor: real synchronous WAT raster path.
    if(op>=0x20000&&op<=0x20006)return encoder ? encoder.call(op,at,bytes) : 0;
@@ -51,27 +50,10 @@ const extraWat=`
   }}});
  memory=h.memory;const e=h.exports,dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0;
  e.init_thread(1,0x400000,0,0,0,0,0);e.heap_init(0x800000);
- const renderer={windows:{42:{hwnd:42,w:4,h:4,clientRect:{w:4,h:4}}},repaint(){}};
- bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:e,renderer});
+ const renderer=ownedRenderer(()=>e,{42:{hwnd:42,w:4,h:4,clientRect:{w:4,h:4}}});
+ 
  try {
- if(queued){
-   const {Manager}=req('lib/render-worker'),{Encoder}=req('lib/d3d-command-stream');
-   const {Worker}=require('worker_threads');
-   producer=new (req('lib/gl-software-producer').Producer)(()=>e);
-   const consumer=new WebAssembly.Instance(h.module,{host:h.host});
-   consumer.exports.d3dim_worker_init(e.get_image_base()>>>0);
-   assert.strictEqual(consumer.exports.gl_sw_front(),0,'consumer has independent mutable globals');
-   render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});
-   manager=new Manager({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     imageBase:e.get_image_base()>>>0,workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),
-     reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-   await manager.ready;
-   const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-   encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,explicitFence:true,strictReady:true});
-   assert(encoder.ready());
- }
- e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
+  e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
  function str(s){const p=e.guest_alloc(s.length+1)>>>0;new Uint8Array(memory.buffer,wa(p),s.length+1).set(Buffer.from(s+'\0'));return p;}
  const module=e.probe_module(str('opengl32.dll'))>>>0;assert(module);
  const user32=e.probe_module(str('user32.dll'))>>>0;assert(user32);
@@ -116,19 +98,9 @@ const extraWat=`
  expect('software draw NONE preserves BACK',nativePixel(e.gl_sw_entry()),0xff0000ff);
  call('glReadBuffer',[0x404]);call('glReadPixels',[0,0,1,1,0x1908,0x1401,output]);
  expect('software FRONT readback',Array.from(new Uint8Array(memory.buffer,outWa,4)),[0,255,0,255]);
- // One context can bind a different HDC/drawable. The real native handler
- // computes aux for that HDC, but the consumer currently ignores it.
- const c=bridge.contexts.get(context),originalHwnd=c?.hwnd;
  renderer.windows[123]={hwnd:123,w:4,h:4,clientRect:{w:4,h:4}};
  const secondDc=e.probe_dc(123)>>>0;assert(secondDc);
  assert.strictEqual(call('wglMakeCurrent',[secondDc,context]),1);
- if(!queued)expect('consumer applies make-current drawable aux',c.hwnd,123);
- // A real consumer call spy proves selections never reach its backend contract.
- if(!queued){ const invoked=[];const oldBackend=c.frontend.backend;
- c.frontend.backend=new Proxy(oldBackend,{get(t,k){if(['setDrawBuffer','setReadBuffer'].includes(k))return (...args)=>invoked.push([k,...args]);return t[k];}});
- call('glDrawBuffer',[0x404]);call('glReadBuffer',[0x404]);call('glFinish');
- console.log(JSON.stringify({diagnostic:'consumer selector calls observed',invoked}));
- c.frontend.backend=oldBackend; }
 
  // Both the selected readback and raw attachments must match independently.
  const read=(mode,format=0x1908,type=0x1401,w=1,h=1)=>{call('glReadBuffer',[mode]);
@@ -238,11 +210,10 @@ const extraWat=`
  assert.strictEqual(call('DestroyWindow',[window]),1);assert.strictEqual(e.probe_drawables(),beforeDelete,'DestroyWindow retires its attachments');
  assert.deepStrictEqual(read(0x405).slice(0,4),[255,0,0,255]);
  assert.strictEqual(call('glGetError'),0);
- if(queued){encoder.fence();assert(encoder.snapshot().glQueued>=3,'actual native renderer queued points');}
-
+ 
  assert.strictEqual(call('wglDeleteContext',[context]),1);
  assert.strictEqual(observations.filter(x=>!x.passed).length,0);
  console.log('PASS resolved drawable-owned front/back, rebind, independent blend, NONE depth, mask/scissor, pack/formats, contexts/errors/lists/resize; '+(queued?'queued native and software consumer':'direct native and software consumer'));
- } finally { if(encoder)encoder.stop();if(manager)await manager.stop();if(render)render.destroy(); }
+ } finally { if(encoder)encoder.stop();if(manager)await manager.stop(); }
 })().catch(e=>{console.error(e);process.exitCode=1;});
 

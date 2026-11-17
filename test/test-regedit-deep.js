@@ -62,6 +62,9 @@ try {
     `--input=${input}`,
     '--max-batches=1320',
     '--batch-size=50000',
+    // The input timeline is scripted, so idle is expected between steps; the
+    // default 10-batch stuck detector would end the run and drop later input.
+    '--stuck-after=0',
     '--no-close',
     '--quiet-api',
     '--quiet-blocks',
@@ -134,8 +137,10 @@ async function countStatusInk(file) {
       // subkeys, SOFTWARE and System. It went 9 -> 10 when 88c6a72 seeded
       // HKLM\System for Welcome98, and back to 9 once registry key names
       // became case-insensitive: HKLM used to carry both a SOFTWARE and a
-      // Software child because our own seed data spelled it both ways.
-      /dump-tree:double-click:[^\n]*paintVisible=9[^\n]*state=0x40000062[^\n]*text="HKEY_LOCAL_MACHINE"[^\n]*text="SOFTWARE"/.test(output)],
+      // Software child because our own seed data spelled it both ways. It is
+      // 10 since b1b631f12 seeded the Win9x device registry, HKLM\Enum, which
+      // a real Win98 machine has too.
+      /dump-tree:double-click:[^\n]*paintVisible=10[^\n]*state=0x40000062[^\n]*text="HKEY_LOCAL_MACHINE"[^\n]*text="Enum"[^\n]*text="SOFTWARE"/.test(output)],
     ['nested TreeView contains HKCU, Control Panel, Desktop, and Mouse',
       /dump-tree:deep:[^\n]*HKEY_CURRENT_USER[^\n]*Control Panel[^\n]*Desktop[^\n]*Mouse/.test(output)],
     ['Desktop TreeView row is selected and remains a collapsed leaf',

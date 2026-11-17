@@ -1,6 +1,7 @@
 'use strict';
+const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
-const root=process.env.WINE_ROOT||'/home/user/wine-assembly',req=p=>require(path.join(root,p));
+const root=process.env.WINE_ROOT||path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
 const {bootRenderHarness}=req('test/render-helper');
 const Stream=req('lib/gl-command-stream');
 const extraWat=`
@@ -12,7 +13,7 @@ const extraWat=`
   (call $handle_gpu_api (i32.const 50) (i32.const 1) (local.get $p) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
   (local.set $answer (i32.load (global.get $reg_base)))
   (i32.store offset=16 (global.get $reg_base) (local.get $esp)) (local.get $answer))
- (func (export "eval_pending") (result i32) (global.get $d3dim_worker_pending))
+ (func (export "eval_pending") (result i32) (global.get $gl_sw_host_pending))
  (func (export "eval_init")
    (global.set $thunk_guest_base (i32.add (global.get $image_base) (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
    (call $update_thunk_end))
@@ -50,26 +51,15 @@ const extraWat=`
    const batch=Stream.memoryBatch(memory,at,bytes);let lifecycle=false;
    Stream.replay(batch,op=>{if(op===48||op===51)lifecycle=true;});
    if(!lifecycle)batches.push(Array.from(new Uint8Array(memory.buffer,at,bytes)));
-   if(!render)return bridge.replay(Stream.memoryBatch(memory,at,bytes));
-   const reply=render.execute({memoryOffset:at,bytes,owner:0,windows:Object.values(renderer.windows),softwareFront:e.gl_sw_front()});producer.configure(reply.producerConfig);return reply.value;
+   return ownedAnswer(memory,at,bytes);
   }
   return encoder?encoder.call(op,at,bytes):0;
  }}});
  memory=h.memory;const e=h.exports,dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0;
  e.init_thread(1,0x400000,0,0,0,0,0);e.heap_init(0x800000);
- const renderer={windows:{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}},repaint(){}};
- const GL=req('lib/gl-compat');bridge=new GL.OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:e,renderer});
- if(queued){const {Worker}=require('worker_threads'),{Manager}=req('lib/render-worker'),{Encoder}=req('lib/d3d-command-stream');
-  producer=new (req('lib/gl-software-producer').Producer)(()=>e);
-  const consumer=new WebAssembly.Instance(h.module,{host:h.host});consumer.exports.d3dim_worker_init(e.get_image_base()>>>0);
-  const Base=GL.OpenGLHostBridge;GL.OpenGLHostBridge=class extends Base {constructor(o){super(o);bridge=this;}};
-  try{render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});}finally{GL.OpenGLHostBridge=Base;}
-  manager=new Manager({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,imageBase:e.get_image_base()>>>0,workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-  await manager.ready;const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-  // Keep whole polygon records and their state in the actual Worker queue.
-  encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,capacity:0x400000,explicitFence:true,strictReady:true});assert(encoder.ready());
- }
- try {
+ const renderer=ownedRenderer(()=>e,{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}});
+ 
+  try {
  e.eval_init();const regs=e.eval_regs(),stackGuest=e.guest_alloc(256)>>>0,stack=wa(stackGuest),input=e.guest_alloc(1024)>>>0,output=e.guest_alloc(1024)>>>0;
  function str(s){const p=e.guest_alloc(s.length+1)>>>0;new Uint8Array(memory.buffer,wa(p),s.length+1).set(Buffer.from(s+'\0'));return p;}
  const module=e.eval_module(str('opengl32.dll'));assert(module);const resolved=new Map(),table=req('src/api_table.json');

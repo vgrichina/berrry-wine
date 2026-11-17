@@ -59,7 +59,6 @@ const extraWat = String.raw`
   (func (export "pa_palette_data") (param $palette i32) (result i32)
     (load.field DxObject misc1 (call $dx_from_this (local.get $palette))))
   (export "pa_heap_top" (func $heap_low_watermark))
-  (func (export "pa_gpu") (param $on i32) (global.set $d3dim_gpu_on (local.get $on)))
   ;; DrawPrimitive(D3DPT_TRIANGLELIST, D3DVT_TLVERTEX) as the handler does it.
   (func (export "pa_draw") (param $device i32) (param $vertices i32) (param $count i32)
     (call $d3dim_draw_primitive (local.get $device) (i32.const 4) (i32.const 3)
@@ -161,7 +160,6 @@ const extraWat = String.raw`
     for (const [off, value] of [[0,f32(x)],[4,f32(y)],[8,f32(0.5)],[12,f32(1)],[16,0xffffffff],[20,0],[24,f32(u)],[28,f32(v)]])
       e.guest_write32(vertices + i * 32 + off, value);
   });
-  e.pa_gpu(1);
   const uploads = () => e.d3dim_gps_stat(8);
   const draw = () => {
     const draws = e.d3dim_gps_stat(0), fallbacks = e.d3dim_gps_stat(1);

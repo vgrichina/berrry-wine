@@ -7,8 +7,8 @@
 // cannot reproduce exactly (32-bit, 555, 1555, 4444) in software.
 //
 // Driven through the real seam: DirectDraw surfaces + a D3D device built by
-// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) with
-// $d3dim_gpu_on = 1, the ring drained into lib/gpu-stream-software.js. The
+// the WAT handlers, $d3dim_worker_try_draw -> $d3dim_gpu_call(0x20000) (the GPU stream
+// producer, unconditional), the ring drained into lib/gpu-stream-software.js. The
 // test reads the DRAW_UP vertices, RASTER/BIND state and READBACK rects the
 // executor sees, and the RGB565 pixels the fence lands in the DIB.
 'use strict';
@@ -40,11 +40,10 @@ const extraWat = String.raw`
     (call $d3dim_set_render_state (local.get $device) (local.get $state) (local.get $value)))
   (func (export "test_gpu_draw") (param $device i32) (param $prim i32) (param $vtype i32)
       (param $verts i32) (param $count i32) (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_worker_try_draw (local.get $device) (local.get $prim) (local.get $vtype)
-      (local.get $verts) (local.get $count)))
+      (local.get $verts) (local.get $count))
+    (i32.const 1))
   (func (export "test_gps_fence") (result i32)
-    (global.set $d3dim_gpu_on (i32.const 1))
     (call $d3dim_gpu_call (i32.const 0x20001) (i32.const 0) (i32.const 0)))
 `;
 
@@ -193,18 +192,21 @@ const extraWat = String.raw`
   ex.test_gps_fence();
   assert.strictEqual(px(4, 4), 0x07e0, 'the star behind the wall fails the depth test');
 
-  // Targets the producer cannot reproduce exactly stay in software.
+  // Every target format is lowered (there is no software rasterizer to
+  // decline to): 555, A1 555, 4444 and 32-bit points each count one point.
   ex.test_set_rs(device, 7, 0);
-  const statsBefore = ex.d3dim_gps_stat(12);
+  let points = ex.d3dim_gps_stat(12);
   for (const fmt of [2, 3, 4]) {
     ex.test_set_fmt(rt, fmt);
-    assert.strictEqual(draw([[1, 1]]).r, 0, `16-bit format ${fmt} points stay in software`);
+    assert.strictEqual(draw([[1, 1]]).r, 1, `16-bit format ${fmt} points are lowered`);
+    assert.strictEqual(ex.d3dim_gps_stat(12), ++points, `format ${fmt} point counted`);
   }
   ex.test_set_fmt(rt, 1);
   const wide = surface(32, 1);
   writePoints([[1, 1, 0xff123456]]);
-  assert.strictEqual(ex.test_gpu_draw(wide.device, 1, 3, VERTS, 1), 0, '32-bit points stay in software');
-  assert.strictEqual(ex.d3dim_gps_stat(12), statsBefore, 'declined points are not counted as drawn');
+  assert.strictEqual(ex.test_gpu_draw(wide.device, 1, 3, VERTS, 1), 1, '32-bit points are lowered');
+  assert.strictEqual(ex.d3dim_gps_stat(12), ++points, '32-bit point counted');
+  assert.strictEqual(ex.d3dim_gps_stat(14), 0, 'nothing declined');
   assert.strictEqual(draw([[2, 2]]).r, 1, 'RGB565 is taken again');
-  console.log('PASS D3DIM point lowering in the WAT producer: rounding, clipping, depth, state independence, software formats');
+  console.log('PASS D3DIM point lowering in the WAT producer: rounding, clipping, depth, state independence, every target format');
 })().catch(e => { console.error(e.stack || e); process.exit(1); });

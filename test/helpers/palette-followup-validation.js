@@ -28,11 +28,8 @@ const suites=mode==='conformance'?[
 ]:mode==='worker'?[['test-d3dim-palette-worker-web.js',[]]]:[
   ['test-directdraw-palette-format.js',[]],['test-directdraw-palette-query-interface.js',[]],
   ['test-d3dim-texture-stage-alias.js',[]],['test-page-watch.js',[]],
-  ['test-d3d-shader-vm.js',[]],['test-d3d9-color-surfaces.js',[]],
-  ['test-d3d9-texture-residency.js',[]],['test-d3d9-textures.js',[]],
-  ['test-d3d9-webgl-versions.js',[]],['test-d3d9-pipeline-web.js',[]],
-  ['test-d3d9-shader-web.js',[],{D3D9_WEBGL_VERSION:'1'}],
-  ['test-d3d9-shader-web.js',[],{D3D9_WEBGL_VERSION:'2'}],
+  // The old JS D3D9 path's web tests went with it (d3d9-retire S4).
+  ['test-d3d-shader-vm.js',[]],['test-d3d9-textures.js',[]],
   ['test-d3dim-gps-boids.js',[]],['test-d3dim-render-worker-web.js',['--no-sandbox','--swiftshader']],
 ];
 try{

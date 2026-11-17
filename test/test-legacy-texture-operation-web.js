@@ -11,7 +11,7 @@ const vm=require('node:vm'),crypto=require('node:crypto'),cp=require('node:child
 const base=require('./test-legacy-texture-rendered-contract');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-  'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend','gpu-stream.generated',
+  'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','gpu-stream.generated',
   'gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
 
 // Independent channel arithmetic. Chosen bytes make every multiply integral;

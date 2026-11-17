@@ -100,7 +100,7 @@ async function runtime() {
     imageBase:pe.readUInt32LE(pe.readUInt32LE(0x3c)+52),thunkBase:require('../lib/region-map.generated').BASE.THUNK_BASE,
     factoryId:require('../src/api_table.json').find(x=>x.name==='DirectDrawCreateEx').id};
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host','render-worker',
-    'gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
+    'gpu-backend','d3d9-shader','d3d-shader-ir','render-clear'];
   const evidence={startedAt:new Date().toISOString(),source:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),
     fixture:hash(fs.readFileSync(__filename)),calc:hash(pe),results:[],controls:[],
     productionJS:Object.fromEntries(scripts.map(n=>['lib/'+n+'.js',hash(fs.readFileSync(path.join(root,'lib',n+'.js')))]))};
