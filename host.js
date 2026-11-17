@@ -8,6 +8,9 @@ const ProcessBoot = (typeof window !== 'undefined' && window.processBoot) || nul
 const HostMemUtils = (typeof window !== 'undefined' && window.memUtils) ||
   (typeof require !== 'undefined' ? require('./lib/mem-utils') : null);
 
+const createBrowserNativeInput = typeof window !== 'undefined'
+  ? window.createBrowserNativeInput : require('./lib/browser-native-input').createBrowserNativeInput;
+
 // Private provenance, populated only at the actual compile boundary. A public
 // Module or a caller-provided buffer cannot authenticate one another.
 const drakanCompiledBytes = new WeakMap();
@@ -2855,7 +2858,9 @@ class WineAssembly {
     };
 
     // --- Input ---
-    h.check_input = () => {
+    h.check_input = (...nativeContext) => {
+      ctx.guardedInput?.observe(nativeContext);
+      ctx.guardedInput?.sweep();
       if (!self.renderer) return 0;
       // Retained main/auxiliary imports may still be polled after Stop or
       // reinitialization. Their captured process incarnation is authoritative.
@@ -2895,6 +2900,7 @@ class WineAssembly {
           return !win || !win.wasm || win.wasm === ownerInstance;
         };
       const owns = e => {
+        if (ctx.guardedInput && !ctx.guardedInput.owns(e)) return false;
         if (e && e.pointerProcess) {
           return e.pointerProcess === ctx.windowLookupLifetime && !e.pointerProcess.exited;
         }
@@ -2910,6 +2916,9 @@ class WineAssembly {
         if (self.renderer.inputQueue.length === 0) clearInactiveInput();
         return 0;
       }
+      if (ctx.guardedInput?.dequeued(evt) === false) {
+        clearInactiveInput();return 0;
+      }
       self._lastInputEvent = evt;
       self.renderer._activeInputEvent = evt;
       if (evt.msg !== 0x200) {
@@ -2917,6 +2926,15 @@ class WineAssembly {
       }
       return (evt.wParam << 16) | (evt.msg & 0xFFFF);
     };
+    if (typeof window!=='undefined' && window.WINE_BROWSER_NATIVE_INPUT===true && !opts.detached) {
+      const guard=self._browserNativeInput || (self._browserNativeInput=createBrowserNativeInput(self));
+      ctx.guardedInput=guard;
+      ctx.nativeInputActor=()=>guard.snapshot();
+      Object.defineProperty(h,'browserInputScope',{value:guard});
+      h.check_input_token=()=>guard.token(self._lastInputEvent);
+      h.input_validate=(token,...values)=>guard.validate(token,values);
+      h.input_consumed=(token,tid,ptr,kind,remove,...values)=>guard.consumed(token,tid,ptr,kind,remove,values);
+    }
     h.check_input_lparam = () => {
       return self._lastInputEvent ? (self._lastInputEvent.lParam | 0) : 0;
     };
@@ -8113,5 +8131,5 @@ for (const name of ['_loadWin16Dlls', '_stageWin16Module', 'loadDlls', 'handleCo
 }
 
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness };
+  module.exports = { parseShellLaunchCommand, resolveShellLaunchPath, createWinExecReadiness, createBrowserNativeInput };
 }
