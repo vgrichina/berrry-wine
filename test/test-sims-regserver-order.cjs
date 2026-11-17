@@ -33,6 +33,10 @@ static H activate(void){P o=0;H hr=CoCreateInstance(cls,0,1,unk,&o);if(!hr&&o){P
 static void parent(void){U si[17]={68},pi[4]={0},code=259,w;char cmd[]="C:\\order\\registrar.exe -RegServer";
  CoInitialize(0);check(query()==2,16);check((U)activate()==0x80040154,17);
  check(CreateProcessA(0,cmd,0,0,0,0,0,0,si,pi),10);report("parent.process",pi[0]);
+#if POLL_FIRST
+ w=WaitForSingleObject((P)pi[0],0);report("parent.poll",w);check(w==258,18);
+ check(GetExitCodeProcess((P)pi[0],&code),11);report("parent.pending-code",code);check(code==259,19);
+#endif
  w=WaitForSingleObject((P)pi[0],10000);report("parent.wait",w);
  check(GetExitCodeProcess((P)pi[0],&code),11);report("parent.child-code",code);
  report("after.query",query());report("after.activation",activate());
@@ -78,10 +82,10 @@ function prepare(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.j
  for(const [name,names]of Object.entries(libs)){fs.writeFileSync(path.join(out,name+'.def'),'LIBRARY '+name+'.dll\nEXPORTS\n'+names.join('\n')+'\n');run('llvm-dlltool',['-m','i386','-k','-d',path.join(out,name+'.def'),'-l',path.join(out,name+'.lib')]);}
  function compile(name,file,defs=[],shared=false){run('clang',['--target=i686-pc-windows-msvc','-ffreestanding','-fno-stack-protector','-fno-builtin','-O1',...defs,'-c',path.join(out,file),'-o',path.join(out,name+'.obj')]);run('ld',['-mi386pe','--entry',shared?'_entry@12':'_start','--subsystem','console','--disable-dynamicbase','--no-insert-timestamp',...(shared?['--shared','--kill-at']:[]),'-o',path.join(out,name+(shared?'.dll':'.exe')),path.join(out,name+'.obj'),...Object.keys(libs).map(n=>path.join(out,n+'.lib'))]);}
  compile('factory','factory.c',[],true);
- for(const [name,child,code,dialog]of [['registrar',1,0,0],['failure',1,37,0],['parent',0,0,0],['parent-failure',0,37,0],['parent-dialog',0,0,1],['parent-visible',0,0,2]])compile(name,'client.c',[`-DCHILD=${child}`,`-DCHILD_CODE=${code}`,`-DDIALOG=${dialog}`]);
+ for(const [name,child,code,dialog,poll=0]of [['registrar',1,0,0],['failure',1,37,0],['parent',0,0,0],['parent-failure',0,37,0],['parent-dialog',0,0,1],['parent-visible',0,0,2],['parent-poll',0,0,0,1]])compile(name,'client.c',[`-DCHILD=${child}`,`-DCHILD_CODE=${code}`,`-DDIALOG=${dialog}`,`-DPOLL_FIRST=${poll}`]);
 }
 const sha=file=>crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
-function verifyNative(out, failure=false){
+function verifyNative(out, failure=false, poll=false){
  const read=name=>JSON.parse(fs.readFileSync(path.join(out,name),'utf8'));
  for(const name of ['native-wait.json','watchdog-wait.json','outer-child-wait.json']){
   const w=read(name);assert.equal(w.exit,0,name);for(const k of ['actualWait','stdoutEOF','stderrEOF'])assert.equal(w[k],true,name+': '+k);
@@ -90,6 +94,7 @@ function verifyNative(out, failure=false){
  const w=read(child[0]);for(const k of ['actualWait','stdoutEOF','stderrEOF','closed'])assert.equal(w[k],true);
  assert.equal(w.exit,0);assert.equal(w.guardedMerge.merged,true);
  const report=fs.readFileSync(path.join(out,'saves/parent-report.txt'),'utf8');
+ if(poll)for(const line of ['parent.poll=00000102','parent.pending-code=00000103'])assert(report.includes(line),line+' missing: '+report);
  for(const line of ['parent.wait=00000000','parent.child-code='+(failure?'00000025':'00000000'),'after.query='+(failure?'00000002':'00000000'),'after.activation='+(failure?'80040154':'00000000'),'parent.done=00000000'])assert(report.includes(line),line+' missing: '+report);
  const registrar=fs.readFileSync(path.join(out,'saves/registrar-report.txt'),'utf8');
  assert(registrar.includes('child.exit='+(failure?'00000025':'00000000')));
@@ -102,15 +107,15 @@ function native(directory,wasm){
  const pins={module:{path:path.resolve(wasm),sha256:sha(wasm)},testSHA256:sha(__filename),fixtures:fs.readdirSync(fixtures).filter(n=>/\.(exe|dll|c)$/.test(n)).map(n=>({name:n,sha256:sha(path.join(fixtures,n))}))};
  fs.writeFileSync(path.join(out,'before-exec.json'),JSON.stringify(pins,null,2));
  const results=[];
- for(const [name,exe,failure]of [['normal','parent',false],['dialog','parent-dialog',false],['visible','parent-visible',false],['failure','parent-failure',true]]){
+ for(const [name,exe,failure,poll=false]of [['normal','parent',false],['dialog','parent-dialog',false],['visible','parent-visible',false],['failure','parent-failure',true],['poll','parent-poll',false,true]]){
   const dir=path.join(out,name);fs.mkdirSync(dir);
   const args=[process.execPath,path.join(root,'test/run.js'),'--exe='+path.join(fixtures,exe+'.exe'),'--no-build','--wasm='+path.resolve(wasm),'--exe-guest-path=C:\\order\\parent.exe','--vfs-mount='+path.join(fixtures,failure?'failure.exe':'registrar.exe')+'=C:\\order\\registrar.exe','--vfs-mount='+path.join(fixtures,'factory.dll')+'=C:\\order\\factory.dll','--dll-seed='+path.join(fixtures,'factory.dll'),'--spawn-processes','--real-ticks','--max-seconds=30','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--save-vfs='+path.join(dir,'saves')];
   fs.writeFileSync(path.join(dir,'recipe.json'),JSON.stringify({args,cwd:root,seconds:40,watchdogGrace:5,env:{WINE_COM_PROTOCOL_DIR:dir}},null,2));
   const p=cp.spawnSync('python3',['-B',path.join(root,'tools/forsaken-supervisor.py'),'outerwait',dir],{encoding:'utf8',timeout:55000});
   fs.writeFileSync(path.join(dir,'direct-wait.json'),JSON.stringify({pid:p.pid,exit:p.status,signal:p.signal,actualWait:p.status!==null,stdoutEOF:!p.error,stderrEOF:!p.error,stdout:p.stdout,stderr:p.stderr,error:p.error?.message},null,2));assert.equal(p.status,0,p.stderr||p.error?.message);
-  results.push({name,...verifyNative(dir,failure)});assert.equal(sha(wasm),pins.module.sha256);
+  results.push({name,...verifyNative(dir,failure,poll)});assert.equal(sha(wasm),pins.module.sha256);
  }
- fs.writeFileSync(path.join(out,'verified.json'),JSON.stringify({pins,results},null,2));console.log('PASS native parent/RegServer ordering: normal, dialog, visible, failure');
+ fs.writeFileSync(path.join(out,'verified.json'),JSON.stringify({pins,results},null,2));console.log('PASS native parent/RegServer ordering: normal, dialog, visible, failure, poll');
 }
 if(require.main===module){
  if(process.argv[2]==='--prepare')prepare(path.resolve(process.argv[3]));
