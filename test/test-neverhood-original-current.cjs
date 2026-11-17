@@ -38,6 +38,11 @@ s=importlib.util.spec_from_file_location('control','tools/neverhood-original-cur
 w=dict(hwnd='0x123',live=True,visible=True,generation='1',processId=1,threadId=1,isChild=True,controlClass=1,style=0x50000000,nativeTextAvailable=True,textBytes='4f4b',title='OK',parent='0x100',buttonFlags=0)
 r=dict(targetHwnd='0x123',kind='install',visibleLabel='OK');rr=dict(snapshot=dict(windows=[w],physicalUp=True,capture='0x0'))
 assert m.button(rr,r)==w
+assert m.presented(dict(modalHwnd='0x0',windows=[]))
+modal=dict(hwnd='0x200',live=True,visible=False,isChild=False)
+assert not m.presented(dict(modalHwnd='0x200',windows=[modal]))
+modal['visible']=True
+assert m.presented(dict(modalHwnd='0x200',windows=[modal]))
 for key,value in [('isChild',False),('controlClass',16),('style',0x58000000),('title','Exit'),('generation',''),('nativeTextAvailable',False)]:
  old=w[key];w[key]=value
  try:m.button(rr,r)
@@ -137,7 +142,7 @@ fs.writeFileSync(image,fixture,{flag:'wx'});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function main(){
- const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','game-positive','repaint-positive','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
+ const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','game-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
  for(const [index,mode] of modes.entries()){
   const run=path.join(out,mode);fs.mkdirSync(run);
   fs.copyFileSync(path.join(out,'../runtime-inputs.json'),path.join(run,'runtime-inputs.json'));
@@ -185,7 +190,13 @@ async function main(){
   try{
     let scene;const due=Date.now()+15000;
     do{scene=await s.send({action:'snapshot'});if(scene.modalHwnd!=='0x0')break;assert(Date.now()<due);await pause(30);}while(true);
-    if(!['positive','game-positive','repaint-positive'].includes(mode)){
+    if(mode.startsWith('transition-hidden-')){
+      // Authored lifecycle injection only: use the actual next native modal's
+      // visibility bit. The original application is never modified or resumed.
+      const proof=path.join(run,'native-visibility-transition.json');
+      await s.send({action:'eval',code:`(()=>{const e=instance.exports,first=e.modal_dialog_hwnd();const timer=setInterval(()=>{const h=e.modal_dialog_hwnd();if(!h||h===first)return;clearInterval(timer);const style=e.wnd_get_style_export(h);e.wnd_set_style_export(h,style&~0x10000000);renderer.showWindow(h,0);const p={authoredOnly:true,hwnd:h,hiddenAt:Date.now(),restored:false};console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));${mode==='transition-hidden-positive'?`setTimeout(()=>{e.wnd_set_style_export(h,style);renderer.showWindow(h,1);renderer.repaint();p.restored=true;p.shownAt=Date.now();console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));},650);`:''}},1);return true})()`});
+    }
+    if(!['positive','game-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
       await s.send({action:'frozen',mode:'on'});
       await controller(['capture','fault-scene']);
       const rr=JSON.parse(fs.readFileSync(path.join(run,'fault-scene.json')));scene=rr.snapshot;
@@ -249,10 +260,31 @@ async function main(){
           save(name+'-repaint-proof.json',{original:record.pngSHA256,current:hash,unchangedTarget:true});
         }
         if(!i)await controller(['bind',name]);
-        await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),i?'quit':mode==='game-positive'?'game':'install']);
+        await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),i?'quit':mode==='game-positive'?'game':'install'],mode==='transition-hidden-timeout'&&!i?1:0);
+        if(!i&&mode.startsWith('transition-hidden-')){
+          const pending=JSON.parse(fs.readFileSync(path.join(run,'press0-pending-presentation.json')));
+          assert.equal(pending.snapshot.windows.find(w=>w.hwnd===pending.snapshot.modalHwnd).visible,false);
+          const up=JSON.parse(fs.readFileSync(path.join(run,'press0-up.json')));assert(up.physicalUpACK);
+          const visibility=[...s.output().matchAll(/^NV_NATIVE_VISIBILITY (.+)$/gm)].map(m=>JSON.parse(m[1])).at(-1);assert(visibility);fs.writeFileSync(path.join(run,'native-visibility-transition.json'),JSON.stringify(visibility),{flag:'wx'});
+          if(mode==='transition-hidden-timeout'){
+            assert(fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')));
+            assert(!fs.existsSync(path.join(run,'press0-after.png')),'unpresented modal must never be captured');
+            const ledger=fs.readFileSync(path.join(run,'requests.jsonl'),'utf8');
+            assert.equal(ledger.trim().split('\n').map(JSON.parse).filter(r=>r.action==='native-reviewed-capture').length,1);
+            await controller(['capture','after-unknown'],1);
+            assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger,'UNKNOWN sends no later HTTP');
+            assert.equal(visibility.restored,false);save(mode+'-timeout.json',{nativePendingObserved:true,noInvalidCapture:true,independentPhysicalUp:true,permanentUNKNOWN:true,laterRequests:0});break;
+          }
+          const complete=JSON.parse(fs.readFileSync(path.join(run,'press0-completion.json')));
+          const observation=JSON.parse(fs.readFileSync(path.join(run,'press0-observation.json')));
+          assert(visibility.restored&&observation.at*1000>=visibility.shownAt);
+          assert(complete.elapsedMs<3000);assert(observation.image.snapshot.physicalUp);
+        }
       }
-      const end=Date.now()+4000;while(s.child.exitCode===null){assert(Date.now()<end,'native ExitProcess not observed');await pause(20);}
-      assert.equal(s.child.exitCode,0);save(mode+'-positive.json',{nativeExit:0,ordinaryNativeUser:true,twoGenerations:true});
+      if(mode!=='transition-hidden-timeout'){
+        const end=Date.now()+4000;while(s.child.exitCode===null){assert(Date.now()<end,'native ExitProcess not observed');await pause(20);}
+        assert.equal(s.child.exitCode,0);save(mode+'-positive.json',{nativeExit:0,ordinaryNativeUser:true,twoGenerations:true});
+      }
     }
   }catch(error){
     const terminal=path.join(run,'PERMANENT-UNKNOWN.json');
@@ -264,7 +296,7 @@ async function main(){
     if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(error){if(error.code!=='ESRCH')throw error;}
     await s.exited;
     fs.writeFileSync(path.join(run,'native.log'),s.output());
-    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['positive','game-positive','repaint-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['positive','game-positive','repaint-positive'].includes(mode)});
+    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['positive','game-positive','repaint-positive','transition-hidden-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['positive','game-positive','repaint-positive','transition-hidden-positive'].includes(mode)});
     watchdog.stdin.end();const w=await wclosed;save(mode+'-watchdog-wait.json',{pid:watchdog.pid,...w,actualWait:true,stdoutEOF:watchdog.stdout.readableEnded,stderrEOF:watchdog.stderr.readableEnded,stdout:ws,stderr:we});
     assert.equal(w.exit,0,'independent watchdog must close normally');
   }

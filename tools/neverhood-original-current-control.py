@@ -69,6 +69,14 @@ def capture(name):
 def context(s):
     return {k:s[k] for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow',
                             'capture','physicalUp','nativeProcess','nativeMessageBox','screen')}
+def presented(s):
+    # DialogBox publishes its HWND before WM_INITDIALOG/ShowWindow finishes.
+    # A changed USER graph is not yet a presented scene. Only defer observation;
+    # never relax native capture validation or extend the original 3000ms bound.
+    modal=s['modalHwnd']
+    if modal=='0x0':return True
+    matches=[w for w in s['windows'] if w['hwnd']==modal]
+    return len(matches)==1 and matches[0]['live'] and matches[0]['visible'] and not matches[0]['isChild']
 def button(rr,r):
     s=rr['snapshot']
     matches=[w for w in s['windows'] if w['hwnd']==r['targetHwnd']]
@@ -208,14 +216,12 @@ def intent(name,scene,x,y,kind):
                 time.sleep(.005);continue # Quit is proved by parent wait, never a request to a retiring endpoint.
             if not pathlib.Path(f"/proc/{read('native-pid.json')['pid']}").exists():
                 time.sleep(.005);continue # Parent still drains pipes/publishes its actual wait.
-            if kind=='game':
-                image=R/(name+'-after.png')
-                cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))
-                assert cap['contract']=='native-reviewed-context-v1' and cap['snapshot']['physicalUp']
-                save(name+'-observation.json',dict(at=time.time(),image=cap,pngSHA256=hashlib.sha256(image.read_bytes()).hexdigest()))
-                break
             after=call(dict(action='snapshot'),timeout=max(.001,start+3-time.time()))
-            if kind!='quit' and after['physicalUp'] and context(after)!=context(rr['snapshot']):
+            if after['physicalUp'] and not presented(after):
+                if not (R/(name+'-pending-presentation.json')).exists():
+                    save(name+'-pending-presentation.json',dict(at=time.time(),snapshot=after,originalObservationDeadline=start+3))
+                time.sleep(.005);continue
+            if after['physicalUp'] and (kind=='game' or context(after)!=context(rr['snapshot'])):
                 image=R/(name+'-after.png')
                 cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))
                 assert cap['contract']=='native-reviewed-context-v1' and cap['snapshot']['physicalUp']
