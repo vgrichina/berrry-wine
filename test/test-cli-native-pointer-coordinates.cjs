@@ -29,6 +29,19 @@ function units(){
     const mapped=r._mapExclusiveInputPoint(x,y),actual=r._applyCursorClip(mapped.x,mapped.y);
     assert.deepEqual(p,{x:actual.x,y:actual.y},name+':'+x+','+y);checked++;
    }
+  // Exercise the real press-to-hover call. This non-strict renderer mutates
+  // its formal coordinates; reading arguments afterwards aliases those
+  // native values and maps a scaled point a second time.
+  r._coordinatePressHoverMs=30;r._mouseX=-1;r._mouseY=-1;
+  let hover;const stop={};
+  r.handleMouseMove=function(x,y){
+   const p=this._mapExclusiveInputPoint(x,y);
+   hover={input:{x,y},native:this._applyCursorClip(p.x,p.y)};throw stop;
+  };
+  try{r.handleMouseDown(500,300,1);assert.fail('hover expected');}catch(e){assert.equal(e,stop);}
+  assert.deepEqual(hover.input,{x:500,y:300},name+' press must forward original canvas point');
+  const p=r._mapExclusiveInputPoint(500,300);
+  assert.deepEqual(hover.native,r._applyCursorClip(p.x,p.y),name+' hover maps exactly once');
  }
  const m=captureMapping(cases[1][1]);
  assert.deepEqual(nativePoint(m,947,682),{x:739,y:574});
@@ -159,6 +172,12 @@ async function native(out){
    await pause(80);snap=await s.send({action:'snapshot'});save('after.json',snap);
    if(buttonMode){assert.notEqual(snap.modalHwnd,capture.snapshot.modalHwnd);save('assertions.json',{screen,expectedNative:expected,syntheticAuthoredAttestation:true,nativeButton:true,physicalUp:true});continue;}
    assert.equal(snap.windows.find(w=>w.hwnd===snap.mainHwnd).title,'UP after DOWN');
+   const moves=[...s.output().matchAll(/\[check_input\] msg=0x200 wParam=0x[0-9a-f]+ lParam=0x([0-9a-f]+)/g)];
+   assert(moves.length,'actual native hover required');
+   const hoverLP=parseInt(moves.at(-1)[1],16)>>>0;
+   assert.equal(hoverLP&65535,700-point.clientX,'native hover and DOWN must share client X');
+   assert.equal(hoverLP>>>16,300-point.clientY,'native hover and DOWN must share client Y');
+   save('hover-coordinate.json',{source:'actual native check_input log',clientX:hoverLP&65535,clientY:hoverLP>>>16,matchingDown:true});
    await s.send({cmd:'keydown:27'});await pause(30);await s.send({cmd:'keyup:27'});s.child.stdin.end();await s.exited;
    assert.equal(s.child.exitCode,0);save('assertions.json',{screen,expectedNative:{x:700,y:300},syntheticAuthoredAttestation:true,queuedDown:true,physicalUp:true});
   }finally{

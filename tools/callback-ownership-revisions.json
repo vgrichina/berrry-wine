@@ -2,6 +2,13 @@
   "version": 1,
   "revisions": [
     {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "a8de6b537ff492cebe763fee3a9e30bd5b7e16a0751a63e922671045f73c4fcf",
+      "sha256": "a37789c7a971c4c96967c4e28ac54ff20c70024d6b67206038f41d69cd0a27d4",
+      "reason": "Review 20261117 coordinate press hover: retain the original canvas coordinates in local constants before native mapping and cursor clipping, then pass them to the existing synchronous handleMouseMove call. Non-strict argument aliasing previously remapped the native point. No callback, scheduling, retained owner, continuation, input receipt, physical release or context-restoration rule changes; ownership remains pending. Actual native hover and DOWN coordinates plus production transform and refusal regressions qualify this bounded repair."
+    },
+    {
       "file": "src/09a5-handlers-window.wat",
       "name": "$handle_PeekMessageA_fetch",
       "baseSHA256": "efcb7dda81314d186771f176b66ff594a7ebb82b6718db9cccd3a7b1270ef929",

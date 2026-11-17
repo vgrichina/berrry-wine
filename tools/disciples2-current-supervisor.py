@@ -10,6 +10,7 @@ def seal(label,body):
 OWNED={'tools/disciples2-current-supervisor.py','tools/disciples2-current-native-source-view.cjs',
        'tools/disciples2-current-preflight.cjs','tools/disciples2-current-controller.py',
        'test/test-disciples2-current-quest.cjs',
+       'lib/renderer-input.js',
        'lib/cli-native-pointer-coordinates.js','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
        'test/run.js','test/test-cli-native-pointer-coordinates.cjs',
        'test/test-disciples2-native-paint-binding.cjs','test/test-vb5-native-dialog-identity.cjs'}
