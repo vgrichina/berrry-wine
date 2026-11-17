@@ -88,3 +88,22 @@ driverControls().catch(e=>{console.error(e);process.exitCode=1;});
   for(let i=0;i<100;i++)p.present(f);
   assert.equal(root.__boidsPresentationTrace.rows.length,64);assert.equal(root.__boidsPresentationTrace.count,102);assert.equal(root.__boidsPresentationTrace.errors,1);
 }
+// Observation runs after native completion, once per selected frame, and
+// preserves the callback and thrown completion. These are observer unit controls.
+{
+  const {installPixelObserver}=require('../tools/boids-current-runtime.cjs');
+  const rgba=new Uint8Array([0,0,255,255,0,0,0,255]);let sends=0;
+  class Canvas{constructor(w,h){this.width=w;this.height=h;}getContext(){return {drawImage(){},getImageData(){return {data:rgba};}};}}
+  class PixelExecutor{constructor(){this.onPresent=()=>{sends++;return 7;};}execute(rec){if(rec.fail)throw Error('completion failed');return this.onPresent({pixels:rgba,width:2,height:1,hwnd:71,stamp:0});}}
+  const r={GpuStreamWebGL:{Executor:PixelExecutor},OffscreenCanvas:Canvas};installPixelObserver(r);installPixelObserver(r);r.__boidsPixelStages.startedAt-=16000;
+  const executor=new PixelExecutor(),callback=executor.onPresent;
+  for(let i=0;i<8;i++)assert.equal(executor.execute({name:'PRESENT',seq:i,fields:{rt:3}}),7);
+  assert.equal(r.__boidsPixelStages.rows.length,2);assert.equal(sends,8);assert.equal(executor.onPresent,callback);
+  assert.equal(r.__boidsPixelStages.rows[0].pixels.nonblack,1);assert.equal(r.__boidsPixelStages.rows[0].pixels.opaque,2);
+  r.__boidsPixelStages.rows=[];
+  assert.throws(()=>executor.execute({name:'PRESENT',fail:true}),/completion failed/);assert.equal(executor.onPresent,callback);
+  assert.equal(r.__boidsPixelStages.rows.length,0);
+  const source=require('../tools/boids-current-fixture.cjs').device2Source();
+  for(const fragment of ['0x6aae1ec1','C1(device,6,vp)','C1(device,13,vp)','C0(device,10)','C0(device,11)','[30])(device,4,2','C3(vp,12,1,rect,3)','640,480,16'])assert(source.includes(fragment),fragment);
+  console.log('PASS bounded ordinary completion pixel observer, callback/errors preserved, Device2 ABI source controls');
+}

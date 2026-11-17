@@ -1,11 +1,12 @@
 'use strict';
 const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),cp=require('node:child_process'),crypto=require('node:crypto'),vm=require('node:vm');
-const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver}=require('./boids-current-runtime.cjs');
+const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver,installPixelObserver}=require('./boids-current-runtime.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const {installDriver}=require('./boids-current-driver.cjs');
 async function run(out,commit,backend,mode,fixtureFile){
   fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2));
   save('harness-pins.json',['tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs'].map(path=>({path,sha256:sha(fs.readFileSync(path))})));
+  fs.writeFileSync(path.join(out,'owned-harness.patch'),cp.execFileSync('git',['diff','--binary',commit,'--','tools/boids-current-fixture.cjs','tools/boids-current-runtime.cjs','tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs']));
   const files=gitFiles(commit);
   if(process.env.BOIDS_CAPTURE_OWNED_OVERLAY){
     if(!fixtureFile)throw Error('Owned overlay is fixture-only');
@@ -24,6 +25,10 @@ async function run(out,commit,backend,mode,fixtureFile){
   if(process.env.BOIDS_CONTENT_DIAGNOSTIC){
     const n='lib/gpu-stream-host.js',old=files.get(n),suffix='\n;('+installPresentationObserver.toString()+')(globalThis);\n';
     files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});save('observer-patches.json',observerPatches);
+  }
+  if(process.env.BOIDS_PIXEL_STAGES){
+    for(const n of ['lib/gpu-stream-webgl.js','lib/gpu-stream-render-worker.js','lib/gpu-stream-host.js','lib/renderer.js']){const old=files.get(n),suffix='\n;('+installPixelObserver.toString()+')(globalThis);\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}
+    save('observer-patches.json',observerPatches);
   }
   save('prepared.json',{at:Date.now(),commit,moduleSHA256:sha(module),fixture:!!fixtureFile});
   while(!fs.existsSync(path.join(out,'runtime-start.json')))await sleep(20);
@@ -54,7 +59,7 @@ async function run(out,commit,backend,mode,fixtureFile){
     save('identity-start.json',await identity());
     // One selected queued boundary suffices for the authored delay regression.
     // Originals retain all three independent passive observations.
-    for(const delay of fixtureFile&&(process.env.BOIDS_CAPTURE_ACTIVE||process.env.BOIDS_FLIP_DIAGNOSTIC)?[15000]:[15000,15000,15000]){
+    for(const delay of fixtureFile&&(process.env.BOIDS_CAPTURE_ACTIVE||process.env.BOIDS_FLIP_DIAGNOSTIC||process.env.BOIDS_DEVICE2)?[15000]:[15000,15000,15000]){
       await sleep(delay);const i=captures.length;
       const captureStarted=Date.now();let captureTimer;
       const snapshot=await Promise.race([page.evaluate(async active=>{
@@ -75,7 +80,7 @@ async function run(out,commit,backend,mode,fixtureFile){
         return __boidsDriver.capture();
       },!!fixtureFile&&!!process.env.BOIDS_CAPTURE_ACTIVE),new Promise((_,reject)=>{captureTimer=setTimeout(()=>reject(Error('DISPLAY_UNKNOWN controller capture deadline')),Math.max(1,Math.min(3000,deadline-Date.now())));})]).finally(()=>clearTimeout(captureTimer));
       if(Date.now()>=Math.min(deadline,captureStarted+3000))throw Error('late controller capture delivery');
-      if(fixtureFile){
+      if(fixtureFile&&!process.env.BOIDS_DEVICE2){
         save(`literal-reference-${i}.json`,process.env.BOIDS_FLIP_DIAGNOSTIC?require('./boids-current-fixture.cjs').qualifyFlip(snapshot,process.env.BOIDS_FLIP_DIAGNOSTIC==='black'):require('./boids-current-fixture.cjs').qualify(snapshot,mode));
         if(process.env.BOIDS_CAPTURE_ACTIVE){
           save(`pending-host-${i}.json`,await page.evaluate(()=>__boidsPendingAttempt));
@@ -86,11 +91,12 @@ async function run(out,commit,backend,mode,fixtureFile){
       }
       for(const kind of ['source','output']){const dims=snapshot.metadata[kind],png=new PNG({width:dims.width,height:dims.height});png.data=Buffer.from(snapshot[kind],'base64');fs.writeFileSync(path.join(out,`frame-${i}-${kind}.png`),PNG.sync.write(png));}
       const row={index:i,metadata:snapshot.metadata,identity:await identity(),at:new Date().toISOString()};save(`frame-${i}.json`,row);captures.push(row);
-      const traces=[{target:'page',trace:await page.evaluate(()=>globalThis.__boidsPublicTrace||null)}];for(const {session,target}of workerSessions)try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify({executors:globalThis.__boidsPublicTraces||null,presentation:globalThis.__boidsPresentationTrace||null})',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);
-      if(process.env.BOIDS_CONTENT_DIAGNOSTIC)save(`content-boundary-${i}.json`,await page.evaluate(()=>{
+      const traces=[{target:'page',trace:await page.evaluate(()=>({records:globalThis.__boidsPublicTrace||null,pixelStages:globalThis.__boidsPixelStages||null,bridge:(()=>{const b=runningApps.find(a=>a.name==='dx_boids').wine.hostCtx.d3dimBridge;return {workerEpoch:b?.workerEpoch,endpointId:b?.endpoint?.id};})()}))}];for(const {session,target}of workerSessions)try{const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify({executors:globalThis.__boidsPublicTraces||null,presentation:globalThis.__boidsPresentationTrace||null,pixelStages:globalThis.__boidsPixelStages||null})',returnByValue:true});traces.push({target:target.url(),trace:JSON.parse(r.result.value)});}catch(e){traces.push({target:target.url(),error:String(e)});}save(`public-trace-${i}.json`,traces);
+      if(process.env.BOIDS_CONTENT_DIAGNOSTIC||process.env.BOIDS_PIXEL_STAGES)save(`content-boundary-${i}.json`,await page.evaluate(()=>{
         const w=runningApps.find(a=>a.name==='dx_boids').wine,b=w.hostCtx.d3dimBridge,r=w.renderer;
         const layer=b?.presenter?.layer;
-        return {at:Date.now(),presentation:globalThis.__boidsPresentationTrace,apiCounts:globalThis.__boidsApiCounts,
+        const win=b?.presenter?.win;const summarize=c=>c&&globalThis.__boidsSummarizeCanvas?.(c);
+        return {pixelStages:globalThis.__boidsPixelStages,layerPixels:summarize(layer?.canvas),backPixels:summarize(win?._backCanvas),sourcePixels:summarize(r._exclusivePresentationSource),windowDetails:win?{clientRect:win.clientRect,gdiWriteSeq:win._gdiWriteSeq,style:win.style,off:r._frameLayerOffset(win,layer)}:null,at:Date.now(),presentation:globalThis.__boidsPresentationTrace,apiCounts:globalThis.__boidsApiCounts,
           presentCount:b?.presenter?.presents,staleCount:b?.presenter?.stale,
           layer:layer?{kind:layer.kind,api:layer.api,width:layer.canvas?.width,height:layer.canvas?.height,writeSeq:layer.writeSeq,merged:layer.mergedIntoWindow,stale:layer.stale?.(),window:b.presenter.win?.hwnd}:null,
           publicState:{focus:w.instance.exports.get_focus_hwnd?.(),exclusive:w.instance.exports.get_dx_exclusive_hwnd?.(),presentHwnd:w.instance.exports.get_dx_present_hwnd?.(),cpuPresentSeq:w.instance.exports.get_d3dim_cpu_present_seq?.()},

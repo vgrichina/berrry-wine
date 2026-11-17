@@ -63,4 +63,57 @@ function installSoftwareObserver(root){
     };return adapter;
   };
 }
-module.exports={gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver};
+// Bounded pixel observations at existing completed PRESENT callbacks only.
+// Reading a completed framebuffer never submits a guest operation or flush.
+function installPixelObserver(root){
+  function pixels(bytes,width,height){
+    let hash=2166136261,nonblack=0,opaque=0,transparent=0;const colors={};
+    for(let i=0;i<bytes.length;i++){hash=Math.imul(hash^bytes[i],16777619)>>>0;
+      if(i%4===0){if(bytes[i]||bytes[i+1]||bytes[i+2])nonblack++;if(bytes[i+3]===255)opaque++;if(!bytes[i+3])transparent++;
+        const key=Array.from(bytes.subarray(i,i+4)).join(',');if(Object.keys(colors).length<32||colors[key])colors[key]=(colors[key]||0)+1;}}
+    return {width,height,bytes:bytes.length,fnv1a:hash,nonblack,opaque,transparent,colors};
+  }
+  function canvas(c){return pixels(c.getContext('2d').getImageData(0,0,c.width,c.height).data,c.width,c.height);}
+  function bitmap(b){const c=new root.OffscreenCanvas(b.width,b.height);c.getContext('2d').drawImage(b,0,0);return canvas(c);}
+  root.__boidsSummarizeCanvas=canvas;
+  const trace=root.__boidsPixelStages||(root.__boidsPixelStages={rows:[],errors:[],startedAt:Date.now(),counts:{}});
+  const take=stage=>{trace.counts[stage]=(trace.counts[stage]||0)+1;return Date.now()-trace.startedAt>=12000&&trace.rows.filter(r=>r.stage===stage).length<2;};
+  const keep=row=>{if(trace.rows.length===8)trace.rows.shift();trace.rows.push(row);};
+  const p=root.GpuStreamWebGL?.Executor?.prototype;
+  if(p&&!p.__boidsPixels){p.__boidsPixels=true;const execute=p.execute;
+    p.execute=function(rec){
+      if(rec.name!=='PRESENT'||!take('completed-gpu-default-framebuffer'))return execute.call(this,rec);
+      const callback=this.onPresent;
+      this.onPresent=frame=>{try{root.__boidsCompletedPixel={seq:rec.seq,presentOrdinal:trace.counts['completed-gpu-default-framebuffer']};keep({observation:root.__boidsCompletedPixel,stage:'completed-gpu-default-framebuffer',at:Date.now(),seq:rec.seq,fields:{...rec.fields},hwnd:frame.hwnd,stamp:frame.stamp,pixels:pixels(frame.pixels,frame.width,frame.height)});}catch(e){trace.errors.push(String(e));}return callback?.(frame);};
+      try{return execute.call(this,rec);}finally{this.onPresent=callback;}
+    };
+  }
+  const api=root.GpuStreamRenderWorker;
+  if(api&&!api.__boidsPixels){api.__boidsPixels=true;const create=api.create;
+    api.create=function(options){const send=options.sendFrame;let ordinal=0;
+      return create.call(this,{...options,sendFrame(frame,transfer){try{if(root.__boidsCompletedPixel){frame.__boidsPixelObservation={...root.__boidsCompletedPixel,endpointId:options.endpointId,ordinal:++ordinal};root.__boidsCompletedPixel=null;keep({observation:frame.__boidsPixelObservation,stage:'bitmap-before-transfer',at:Date.now(),endpointId:options.endpointId,hwnd:frame.hwnd,stamp:frame.stamp,pixels:frame.bitmap?bitmap(frame.bitmap):pixels(frame.pixels,frame.width,frame.height)});}}catch(e){trace.errors.push(String(e));}return send(frame,transfer);}});
+    };
+  }
+  const h=root.GpuStreamHost;
+  const pp=h?.Presenter?.prototype;
+  if(pp&&!pp.__boidsPixels){pp.__boidsPixels=true;const present=pp.present;
+    pp.present=function(frame){let row;
+      try{if(frame.__boidsPixelObservation)row={observation:frame.__boidsPixelObservation,stage:'transferred-bitmap-and-window-layer',at:Date.now(),hwnd:frame.hwnd,stamp:frame.stamp,before:this.presents,bitmap:frame.bitmap?bitmap(frame.bitmap):null};}catch(e){trace.errors.push(String(e));}
+      const result=present.call(this,frame);
+      if(row){try{row.after=this.presents;row.writeSeq=this.layer?.writeSeq;row.window=this.win?.hwnd;row.layer=canvas(this.layer.canvas);keep(row);}catch(e){trace.errors.push(String(e));}}
+      return result;
+    };
+  }
+  const rp=root.Win98Renderer?.prototype;
+  if(rp&&!rp.__boidsPixels){rp.__boidsPixels=true;const transfer=rp.observePresentationTransfer;
+    rp.observePresentationTransfer=function(source,destination,geometry){
+      const result=transfer.call(this,source,destination,geometry);
+      const win=Object.values(this.windows||{}).find(w=>w._dxFrameLayer?.canvas===source);
+      if(win&&Date.now()-trace.startedAt>=12000&&trace.rows.filter(r=>r.stage==='ordinary-compositor-transfer').length<2){
+        try{const ctx=destination.getContext('2d');keep({stage:'ordinary-compositor-transfer',at:Date.now(),hwnd:win.hwnd,writeSeq:win._dxFrameLayer.writeSeq,geometry,source:canvas(source),destination:canvas(destination),alpha:ctx.globalAlpha,operation:ctx.globalCompositeOperation,transform:Array.from(ctx.getTransform().toFloat64Array()),exclusiveDestination:destination===this._exclusivePresentationCanvas});}catch(e){trace.errors.push(String(e));}
+      }
+      return result;
+    };
+  }
+}
+module.exports={gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver,installPixelObserver};
