@@ -56,6 +56,27 @@
       "baseSHA256": "38b7b4a34b859a10d1be548cffcaec7b91f0ed802dd4fdd1190ffdf487bcb303",
       "sha256": "ddbb708bd495f1b89629aef8a1e65574f3028f5ac298fdc8ac2c0c19c557029c",
       "reason": "Reject actual QT call continuations as FT parents at either alignment, preserving FT compiler frames, alignment and restoration. Native FT and invalidQT-asFT controls retained in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending."
+    },
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
+      "sha256": "c038c239ac29412c9470c00936c5a844e5e71dde496d2ea188af3d33d067ebce",
+      "reason": "Review 20261117 web LS16 release blocker: the main-thread page boot maps its startup DLL set with the existing owned DllLoader.loadDllsAsync (the loader the guest Worker already runs) instead of the synchronous loader, and services a nested LoadLibrary/NE yield through ProcessBoot.handleLoadLibraryYield with the page asynchronous resolver. The synchronous loader remains the fallback when the async entry is unavailable. No new guest entry, continuation or context restoration; DllMain frames, gate ownership and quarantine are the existing loader ones; ownership remains pending."
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "name": "host-file",
+      "baseSHA256": "e2fbe5e0307efb4bb6e805b51b850ef51763b00d5afda1055cb9dfb1733fa419",
+      "sha256": "5bd63e31bba47c228a4ccab81588fd2ad25dbd6d3d55f25e508eef3128e8c0bd",
+      "reason": "Review 20261117 web LS16 release blocker: a ThunkConnect32 attach whose 16-bit companion is definitely absent (NeLoadError guest code 2 from source preflight) settles once through the native win16_guest_ls32_settle_absent export; the asynchronous LS32 preflight stops on a typed absence and leaves translation to the same synchronous service. Malformed, refused and asynchronous-only sources still throw. No NE execution, pairing, publication or new restoration path; ownership remains pending."
+    },
+    {
+      "file": "lib/process-boot.js",
+      "name": "host-file",
+      "baseSHA256": "ba54542269320d2a6bcf82d33445989840a872a62d27448e349afe0f97113a9c",
+      "sha256": "e635142ac786b39de3a0f1160189132afa1a54f4514d7da3d6053ed2f1c7ac2b",
+      "reason": "Review 20261117 web LS16 release blocker: handleLoadLibraryYield routes an NE request (yield 18) on a non-Worker host through the existing owned asynchronous NE preflight whenever the caller supplies an awaitable findDll, under the same acquired callback gate as PE loads; the parked request token is revalidated after every await. Hosts without findDll keep the synchronous service. No new guest entry or context restoration; ownership remains pending."
     }
   ],
   "additions": [
@@ -146,6 +167,25 @@
       "sha256": "10fb71d7574aed4e9ffea326770f061505c89591434c99143fb9444cd873780e",
       "kind": "continuation",
       "reason": "Remote QI retains the existing proxy root while awaiting authenticated exporter work. It reads the full-width current invocation token before suspension and validates token, exact IID and owner around every await. Ordinary HRESULT completion cancels pending work and releases the pin; traps and changed ownership do not replay or clean an abandoned guest frame. No new guest entry or context restoration; broader ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_guest_ls32_settle_absent",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "win16_guest_ls32_settle_absent"
+      ],
+      "targets": [
+        [
+          "global.get",
+          "$win16_guest_return"
+        ]
+      ],
+      "sha256": "b972570e58b350f2fda4ed6bb6041595941ea00a3f02144eb44bb5c8e363f30a",
+      "kind": "lifecycle",
+      "reason": "Absent-companion ThunkConnect32 attach settlement: valid parked op-5 request with attach reason only; cancels any lease owned by that request, returns TRUE and consumes the exact 28-byte stdcall frame to the recorded return like win16_guest_ft_connect_settle, publishing nothing into the LS32 header or relays. Single settlement; the request token is cleared. Ownership remains pending.",
       "ownership": "pending"
     }
   ]
