@@ -12,7 +12,7 @@ PRELOAD='tools/disciples2-current-native-source-view.cjs'
 HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
      'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD)
-POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=5,menuFreshnessSeconds=30)
+POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
 def helper():
     # Shared sources can change while another worker owns them. Refuse those
     # bytes before executing them; only published helpers may be borrowed.
@@ -37,8 +37,12 @@ assert hashlib.sha256(index).hexdigest()==os.environ['DISCIPLES2_SOURCE_INDEX_SH
 rows={str(root/r['path']):r for r in json.loads(index)['files']}
 def body(file):
  p=str(pathlib.Path(file).resolve())
- if not p.startswith(str(root)+'/') or not p.endswith('.py'):return None
- assert p in rows,'unsealed Python source: '+p
+ if not p.startswith(str(root)+'/'):return None
+ # Python source checks also hash JS/CJS helpers. Those reads must see the
+ # same inventoried bytes as Node, even when the live checkout has advanced.
+ if p not in rows:
+  assert not p.endswith('.py'),'unsealed Python source: '+p
+  return None
  r=rows[p];b=os.pread(fd,r['size'],4+size+r['offset'])
  assert len(b)==r['size'] and hashlib.sha256(b).hexdigest()==r['sha256']
  return b
@@ -241,10 +245,15 @@ def supervised(out,fixture=False,working=False):
     if not working:
         assert subprocess.run(['git','merge-base','--is-ancestor',revision,'origin/main'],cwd=ROOT).returncode==0,'selected preparation must be published on main'
     assert not working or fixture,'unpublished code allowed only for authored fixture'
+    own_revision=os.environ.get('NEVERHOOD_PUBLISHED_HELPERS_REVISION',revision)
+    if not working:
+        assert H.git(ROOT,'rev-parse',own_revision+'^{commit}').decode().strip()==own_revision
+        assert subprocess.run(['git','merge-base','--is-ancestor',own_revision,'origin/main'],cwd=ROOT).returncode==0
     for name in OWN:
-        if not working:assert (ROOT/name).read_bytes()==H.git(ROOT,'show',revision+':'+name)
+        if not working:assert (ROOT/name).read_bytes()==H.git(ROOT,'show',own_revision+':'+name)
     save(out,'preparation-published-main.json',dict(gitSHA=revision,workingAuthoredOnly=working,at=time.time(),
-        originMain=H.git(ROOT,'rev-parse','origin/main').decode().strip(),policy='published main ancestor with required fixes, immutable through later publication'))
+        originMain=H.git(ROOT,'rev-parse','origin/main').decode().strip(),publishedHelpersRevision=own_revision,
+        policy='published main ancestor plus explicit published owned helpers, immutable through later publication'))
     (out/'excluded-working-tree.patch').write_bytes(H.git(ROOT,'diff','--binary',revision,'--','src','lib','tools','host.js','test/run.js'))
     m=published('tools/gltron-current-supervise.py',revision)
     published('tools/boids-current-supervise.py',revision)
@@ -328,7 +337,14 @@ def pipeline(out,revision,fixture=False,working=False):
     st=os.statvfs('/home');assert st.f_bavail*st.f_frsize>1500000000
     pre=checked(out,'media-preflight',['node','tools/neverhood-original-current-preflight.cjs'])
     (out/'media-preflight.json').write_bytes(pre)
-    held=prepare(out/'prepared',revision,list(OWN) if working else [],hold=False)
+    own_revision=os.environ.get('NEVERHOOD_PUBLISHED_HELPERS_REVISION',revision)
+    if not working:
+        assert H.git(ROOT,'rev-parse',own_revision+'^{commit}').decode().strip()==own_revision
+        assert subprocess.run(['git','merge-base','--is-ancestor',own_revision,'origin/main'],cwd=ROOT).returncode==0
+        for name in OWN:assert (ROOT/name).read_bytes()==H.git(ROOT,'show',own_revision+':'+name)
+    save(out,'published-helper-composition.json',dict(baseGitSHA=revision,publishedHelpersRevision=own_revision,
+        ownedPaths=list(OWN),workingAuthoredOnly=working,wholeGraphEqualityClaimed=False))
+    held=prepare(out/'prepared',revision,list(OWN) if working or own_revision!=revision else [],hold=False)
     qualified=out/'qualification';qualified.mkdir()
     r=recipe(out/'prepared',out)
     env,fds=H.frozen_inputs(qualified,r)

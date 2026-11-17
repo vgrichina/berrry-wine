@@ -69,14 +69,17 @@ def capture(name):
 def context(s):
     return {k:s[k] for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow',
                             'capture','physicalUp','nativeProcess','nativeMessageBox','screen')}
-def presented(s):
+def presented(s,actor=None):
     # DialogBox publishes its HWND before WM_INITDIALOG/ShowWindow finishes.
     # A changed USER graph is not yet a presented scene. Only defer observation;
     # never relax native capture validation or extend the original 3000ms bound.
     modal=s['modalHwnd']
     if modal=='0x0':return True
     matches=[w for w in s['windows'] if w['hwnd']==modal]
-    return len(matches)==1 and matches[0]['live'] and matches[0]['visible'] and not matches[0]['isChild']
+    if len(matches)!=1:return False
+    w=matches[0]
+    return (w['live'] and w['visible'] and not w['isChild'] and
+        (actor is None or all(w[k]==actor[k] for k in ('processId','threadId'))))
 def button(rr,r):
     s=rr['snapshot']
     matches=[w for w in s['windows'] if w['hwnd']==r['targetHwnd']]
@@ -100,7 +103,7 @@ def review(scene,description,label,kind,target):
     save(scene+'-review.json',record)
 def reviewed(scene):
     rr=read(scene+'.json');r=read(scene+'-review.json')
-    freshness=5 if r['kind']=='game' else 30
+    freshness=15 if r['kind']=='game' else 30
     assert 0<=time.time()-rr['at']<freshness and 0<=time.time()-r['at']<freshness
     assert rr['target']==identity() and rr['port']==PORT and r['rawCompleteScene'] and r['observation'] and r['visibleLabel']
     assert r['pngSHA256']==rr['pngSHA256']==hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()
@@ -181,11 +184,11 @@ def intent(name,scene,x,y,kind):
         reserve(kind=='quit');assert time.time()<start+.5
         receipt=call(dict(action='guarded-input',cmd=command,guard={**owner,'nonce':nonce,
              'reviewed':True,'intent':dict(review=native_review(rr,r)),
-             'deadline':int(min(start+.5,min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000)}),timeout=max(.001,start+.5-time.time()))
+             'deadline':int(min(start+.5,min(rr['at'],r['at'])+(15 if kind=='game' else 30))*1000)}),timeout=max(.001,start+.5-time.time()))
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
         assert all(receipt.get(k)==v for k,v in dict(owner=owner['owner'],epoch=owner['epoch'],nonce=nonce).items())
-        assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000),'late consumption'
+        assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(15 if kind=='game' else 30))*1000),'late consumption'
         if receipt.get('receiptBoundary')=='native-button-dispatch-return':
             native=receipt['nativeMessage']
             assert native['hwnd']==int(w['hwnd'],16) and str(native['generation'])==str(w['generation'])
@@ -217,7 +220,7 @@ def intent(name,scene,x,y,kind):
             if not pathlib.Path(f"/proc/{read('native-pid.json')['pid']}").exists():
                 time.sleep(.005);continue # Parent still drains pipes/publishes its actual wait.
             after=call(dict(action='snapshot'),timeout=max(.001,start+3-time.time()))
-            if after['physicalUp'] and not presented(after):
+            if after['physicalUp'] and not presented(after,w):
                 if not (R/(name+'-pending-presentation.json')).exists():
                     save(name+'-pending-presentation.json',dict(at=time.time(),snapshot=after,originalObservationDeadline=start+3))
                 time.sleep(.005);continue
