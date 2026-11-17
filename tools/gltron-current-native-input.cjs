@@ -105,3 +105,91 @@ async function release(out,file){
   }finally{c.ws.close();process.stdin.destroy();}
 }
 if(require.main===module&&process.argv[2]==='release')release(process.argv[3],process.argv[4]).catch(e=>{console.error(e);process.exitCode=1;});
+
+// Connect once before the reviewed input interval. Per-edge arming is local
+// IPC, independent of Node startup, WebSocket negotiation and Runtime.enable.
+// No key is armed by connection readiness; every edge gets its own 1750ms
+// deadline, nonce, cancellation and actual trusted renderer-UP receipt.
+async function releaseParticipant(out,file){
+  const fs=require('node:fs'),assert=require('node:assert/strict');
+  const cfg=JSON.parse(fs.readFileSync(file)),{connection}=require('./gltron-browser-controller.cjs');
+  const phase=(name,extra={})=>fs.appendFileSync(out+'/release-phases.jsonl',JSON.stringify({name,at:Date.now(),...extra})+'\n');
+  const identity=()=>assert.equal(fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],cfg.startToken,'release browser identity changed');
+  const emit=v=>process.stdout.write(JSON.stringify(v)+'\n');
+  let active=null,ended=false,task=null;const nonces=new Set();
+  phase('started',{processStartedAt:Date.now()-process.uptime()*1000});identity();const c=connection(cfg.url);
+  try{
+    await c.ready;phase('websocket-ready');
+    const session=(await c.send('Target.attachToTarget',{targetId:cfg.targetId,flatten:true})).sessionId;phase('target-attached');
+    await c.send('Runtime.enable',{},session);phase('runtime-enabled');
+    c.event=v=>{if(v.sessionId===session&&v.method==='Runtime.consoleAPICalled'&&v.params.args?.[0]?.value==='GLTRON_NATIVE_PHYSICAL_UP'){
+      const receipt=JSON.parse(v.params.args[1].value);if(active&&receipt.nonce===active.nonce)active.receipt=receipt;
+    }};
+    const done=new Promise((resolve,reject)=>{
+      const finish=()=>{if(ended&&!task)resolve();};
+      let buffer='';
+      process.stdin.on('end',()=>{ended=true;finish();});
+      process.stdin.on('data',b=>{buffer+=b;let i;try{while((i=buffer.indexOf('\n'))>=0){
+        const v=JSON.parse(buffer.slice(0,i));buffer=buffer.slice(i+1);
+        identity();assert(!c.closed,'release connection retired');
+        if(v.command==='arm'){
+          assert(!active&&!nonces.has(v.nonce)&&typeof v.nonce==='string');
+          assert(/^action-\d+$/.test(v.name)&&Number.isInteger(v.code)&&v.code>0&&typeof v.key==='string');
+          nonces.add(v.nonce);const armed=Date.now();active={...v,armed,fallback:armed+1750,due:armed+1500,receipt:null};
+          const a=active;phase('armed',{nonce:a.nonce});emit({event:'armed',nonce:a.nonce,armed:true,at:armed,fallback:a.fallback,releaseDue:a.due,pid:process.pid});
+          task=(async()=>{
+            while(!a.cancelNoDown&&Date.now()<a.due)await new Promise(r=>setTimeout(r,Math.max(1,Math.min(5,a.due-Date.now()))));
+            if(a.cancelNoDown){
+              fs.writeFileSync(out+'/'+a.name+'-up.json',JSON.stringify({armed:a.armed,fallback:a.fallback,cancelNoDown:true,inputDispatches:0,independent:true})+'\n',{flag:'wx'});
+            }else{
+              identity();assert(!c.closed);a.fired=Date.now();
+              await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:a.key,code:a.key,windowsVirtualKeyCode:a.code},session);a.ack=Date.now();
+              while(!a.receipt&&Date.now()<a.fallback+500)await new Promise(r=>setTimeout(r,5));
+              fs.writeFileSync(out+'/'+a.name+'-up.json',JSON.stringify({...a,independent:true})+'\n',{flag:'wx'});
+              assert(a.fired<=a.fallback+50&&a.receipt?.trusted&&!a.receipt.down,'independent trusted physical UP missing or late');
+            }
+            active=null;phase('done',{nonce:a.nonce});emit({event:'done',nonce:a.nonce,ok:true,cancelNoDown:!!a.cancelNoDown});
+          })().then(()=>{task=null;finish();},reject);
+        }else{
+          assert(active&&active.nonce===v.nonce,'release nonce is stale');
+          if(v.command==='cancel')active.cancelNoDown=true;
+          else{assert(v.command==='due'&&v.at>=active.armed&&v.at<=active.fallback);active.due=Math.min(active.due,v.at);}
+        }
+      }}catch(e){reject(e);}});
+      emit({event:'ready',pid:process.pid,at:Date.now(),inputDispatches:0});
+    });
+    await done;
+  }finally{c.ws.close();process.stdin.destroy();phase('closed');}
+}
+async function createReleaseParticipant(out,cfg){
+  const fs=require('node:fs'),cp=require('node:child_process'),path=require('node:path');
+  const file=out+'/release-participant.json';fs.writeFileSync(file,JSON.stringify(cfg)+'\n',{flag:'wx'});
+  const child=cp.spawn(process.execPath,[__filename,'participant',out,file],{stdio:['pipe','pipe','pipe']});
+  let stdout='',stderr='',lines='',failure=null,closed=false;const messages=[],waiters=new Set();
+  const notify=()=>{for(const f of waiters)f();};
+  child.stdin.on('error',error=>{failure??=error;notify();});
+  child.on('error',error=>{failure??=error;notify();});
+  child.stdout.on('data',b=>{stdout+=b;lines+=b;let i;while((i=lines.indexOf('\n'))>=0){messages.push(JSON.parse(lines.slice(0,i)));lines=lines.slice(i+1);}notify();});
+  child.stderr.on('data',b=>stderr+=b);
+  const joined=new Promise(resolve=>child.once('close',(code,signal)=>{failure=Error('independent release participant closed '+code+' '+stderr);notify();
+    const receipt={pid:child.pid,code,signal,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr};
+    fs.writeFileSync(path.join(out,'release-participant-wait.json'),JSON.stringify(receipt,null,2)+'\n',{flag:'wx'});resolve(receipt);
+  }));
+  const receive=(event,nonce,ms)=>new Promise((resolve,reject)=>{
+    let timer;const check=()=>{const found=messages.find(v=>v.event===event&&(nonce===undefined||v.nonce===nonce));
+      if(!found&&!failure)return;clearTimeout(timer);waiters.delete(check);found?resolve(found):reject(failure);};
+    timer=setTimeout(()=>{waiters.delete(check);reject(Error('independent physical UP '+event+' deadline'));},ms);waiters.add(check);check();
+  });
+  const send=v=>{if(failure)throw failure;child.stdin.write(JSON.stringify(v)+'\n');};
+  const nonces=new Set();
+  const api={get alive(){return !failure;},
+    async arm(v){if(nonces.has(v.nonce))throw Error('independent release nonce is stale');nonces.add(v.nonce);
+      const at=Date.now();send({...v,command:'arm'});const result=await receive('armed',v.nonce,1000);return {...result,requestedAt:at,latencyMs:Date.now()-at};},
+    due:(nonce,at)=>send({command:'due',nonce,at}),cancel:nonce=>send({command:'cancel',nonce}),
+    finish:nonce=>receive('done',nonce,3000),
+    async close(){if(!closed){closed=true;child.stdin.end();}return joined;},
+  };
+  try{await receive('ready',undefined,1000);return api;}catch(e){child.stdin.end();await joined;throw e;}
+}
+module.exports.createReleaseParticipant=createReleaseParticipant;
+if(require.main===module&&process.argv[2]==='participant')releaseParticipant(process.argv[3],process.argv[4]).catch(e=>{console.error(e);process.exitCode=1;});

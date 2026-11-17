@@ -18,6 +18,20 @@ async function fixture(failure) {
   }else{await task;assert.equal(retained,1);assert.equal(closed,0);assert.equal(phases.at(-1).phase,'complete');}
 }
 (async()=>{for(const mode of [null,'request','ticket','host'])await fixture(mode);
+  for(const late of [false,true]){
+    let hostDone,bytesDone,fire,clock=0,closed=0,retained=0;
+    const began=[];
+    const task=completeCapture({now:()=>clock,timers:{set:fn=>{fire=fn;return 1;},clear:()=>{}},
+      requestTicket:async()=>{},readTicket:async()=>({status:'complete',metadata:{publication:19}}),
+      captureHost:()=>{began.push('host');return new Promise(r=>hostDone=r);},
+      transportTicket:shot=>{assert.equal(shot.metadata.publication,19);began.push('bytes');return new Promise(r=>bytesDone=r);},
+      retain:shot=>{assert.equal(shot.source,'same-ticket');retained++;},close:()=>closed++,record:()=>{}});
+    while(began.length<2)await Promise.resolve();assert.deepEqual(began,['host','bytes']);
+    if(late){clock=3000;fire();await assert.rejects(task,/DISPLAY_UNKNOWN/);}
+    hostDone({data:'whole-host'});bytesDone({source:'same-ticket'});
+    if(!late)await task;else for(let i=0;i<10;i++)await Promise.resolve();
+    assert.equal(retained,late?0:1);assert.equal(closed,late?1:0);
+  }
   for(const status of ['failed','cancelled','unknown']){
     let reads=0,closed=0,host=0,retained=0;
     await assert.rejects(completeCapture({requestTicket:async()=>{},

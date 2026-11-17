@@ -32,6 +32,52 @@ const arm = ({ r, h }) => {
   return h.requestCurrentDisplayCapture({ hwnd: 123 });
 };
 
+test('active native writer reads exact retained ordinary publication without joining future pixels', () => {
+  for (const kind of ['writer', 'paint', 'dirty', 'due', 'shared', 'scheduled']) {
+    const {r,h,win}=fixture();
+    h.requestCurrentDisplayCapture({hwnd:123}); // opt in before next ordinary frame
+    r.repaint();
+    const record=r._currentDisplayRecord,seq=r._immutablePublicationSequence;
+    const literal=Uint8ClampedArray.from(Array.from({length:64},()=>[23,57,91,255]).flat());
+    r.beginWorkerGuestSlice();
+    win._backCanvas.getContext('2d').fillStyle='#ff0000';
+    win._backCanvas.getContext('2d').fillRect(0,0,8,8);
+    // Even a directly mutable published canvas cannot replace its retained
+    // source. No new composition occurs in this continuously writing slice.
+    r.canvas.getContext('2d').fillStyle='#00ff00';
+    r.canvas.getContext('2d').fillRect(0,0,8,8);
+    if(kind==='paint')r.beginWorkerGdiPaint(123);
+    if(kind==='dirty')h._dxDirty=true;
+    if(kind==='due')h._presentFrameDue=true;
+    if(kind==='shared')h.guestWorker={broker:{dxState:()=>({dirty:7})}};
+    if(kind==='scheduled')r._repaintScheduled=true;
+    const ticket=h.requestCurrentDisplayCapture({hwnd:123});
+    assert.equal(ticket.status,'complete',ticket.error);
+    const got=ticket.read();
+    assert.deepEqual(got.sourceRGBA,literal,kind);assert.deepEqual(got.outputRGBA,literal,kind);
+    assert.equal(got.metadata.publication,seq);assert.equal(got.metadata.displayedAt,record.displayedAt);
+    assert.equal(got.metadata.content,'already-displayed');assert.equal(r._workerGuestSliceDepth,1);
+    assert.equal(r._immutablePublicationSequence,seq);
+    r._workerGdiPaintDepth=0;r.endWorkerGuestSlice();r.repaint();
+    assert.deepEqual(ticket.read(),got,'ordinary later publication cannot rewrite retained bytes');
+  }
+});
+
+test('retained canvas capture keeps identity, display, context and read-error fences under an active writer', () => {
+  for(const kind of ['window','process','instance','display','error','read','hidden']){
+    const {r,h,win}=fixture();h.requestCurrentDisplayCapture({hwnd:123});r.repaint();r.beginWorkerGuestSlice();
+    if(kind==='window')r.windows[123]={...win};
+    if(kind==='process')win.processId++;
+    if(kind==='instance')win.wasm={};
+    if(kind==='display')r._presentDisplayCanvas();
+    if(kind==='error')r.failCurrentDisplayCapture({processId:h.processId,instance:h.instance},Error('actual context loss'));
+    if(kind==='read')r._currentDisplayRecord.pixels.output.getContext('2d').getImageData=()=>{throw Error('retained read lost');};
+    if(kind==='hidden')win.visible=false;
+    let ticket;try{ticket=h.requestCurrentDisplayCapture({hwnd:123});}catch(e){assert(['window','process','instance'].includes(kind));continue;}
+    assert.notEqual(ticket.status,'complete',kind);assert.equal(ticket.read(),null,kind);ticket.cancel();
+  }
+});
+
 test('clean completed slice services already displayed literal pixels without a new publication', () => {
   const f = fixture(), { r, h } = f;
   const record = r._currentDisplayRecord, seq = r._immutablePublicationSequence;
@@ -204,4 +250,12 @@ test('passive page inspection with no producer cannot certify a retired native b
   verifyNativeProducer(pinned, { ...pinned });
   assert.throws(() => verifyNativeProducer(pinned, { ...pinned, renderEndpoint: 'none' }), /identity changed/);
   assert.throws(() => verifyNativeProducer(pinned, { ...pinned, renderGeneration: 2 }), /identity changed/);
+});
+
+
+test('host refuses a new current-display request after native producer error even with an active writer', () => {
+  const f=fixture();f.r.beginWorkerGuestSlice();
+  f.h.hostCtx={getGlGpsBridge:()=>({workerAsyncError:Error('actual native context lost')})};
+  assert.throws(()=>f.h.requestCurrentDisplayCapture({hwnd:123}),/actual native context lost/);
+  assert.equal(f.r._immutableCaptureRequest,null);
 });

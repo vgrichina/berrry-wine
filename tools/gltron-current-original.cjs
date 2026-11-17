@@ -15,7 +15,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  const files=gitFiles(commit),sizes={module:{exports:{}}};vm.runInNewContext(files.get('lib/app-file-sizes.generated.js').toString(),sizes);
  const candidate=process.env.GLTRON_BRIDGE_CANDIDATE==='1';
  assert(!candidate||authored,'candidate runtime only for authored qualification');
- if(candidate)for(const n of ['host.js','index.html','lib/browser-native-input.js','lib/guest-rpc.js'])files.set(n,fs.readFileSync(path.join(ROOT,n)));
+ if(candidate)for(const n of ['host.js','lib/renderer.js','index.html','lib/browser-native-input.js','lib/guest-rpc.js'])files.set(n,fs.readFileSync(path.join(ROOT,n)));
  const registry={module:{exports:{}},console,URL,require:()=>sizes.module.exports};vm.runInNewContext(files.get('lib/apps.js').toString(),registry);
  const app=registry.module.exports.APPS.gltron;assert(app?.exe);
  const media=[],seen=new Set(),add=n=>{if(seen.has(n))return;seen.add(n);const b=fs.readFileSync(path.join(ROOT,n));files.set(n,b);media.push({path:n,bytes:b.length,sha256:sha(b)});};
@@ -45,7 +45,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
  while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
  const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+420000);
- let server,browser,c,session,browserWait,terminal=false,lastImage,nativeQuit=false,nativeDownAttempts=0;const workers=new Map(),tasks=[],destroyed=[];
+ let server,browser,c,session,browserWait,physicalRelease,terminal=false,lastImage,nativeQuit=false,nativeDownAttempts=0;const workers=new Map(),tasks=[],destroyed=[];
  const evaluate=async(expression,s=session)=>{const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const bounded=async work=>{let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>{terminal=true;c?.ws.close();reject(Error('DISPLAY_UNKNOWN complete 3000ms deadline; permanently closed'));},3000);})]);}finally{clearTimeout(timer);}};
  async function capture(label){
@@ -53,24 +53,26 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   try{const shot=await completeCapture({
    close:()=>{terminal=true;c?.ws.close();},record:v=>append(label+'-phases.jsonl',v),
    requestTicket:async()=>{
-   await evaluate(`(()=>{if(globalThis.__originalTicket)throw Error('existing ticket');const w=runningApps[0].wine,r=w.renderer;const wins=Object.values(r.windows).filter(v=>v.visible&&!v.isChild&&v.processId===w.processId&&v.wasm===w.instance);if(wins.length!==1)throw Error('ambiguous owner');const win=wins[0];globalThis.__originalPin={w,r,win,instance:w.instance};globalThis.__originalTicket=w.requestCurrentDisplayCapture({hwnd:win.hwnd});return true;})()`);
+   await evaluate(`(()=>{if(globalThis.__originalTicket)throw Error('existing ticket');const w=runningApps[0].wine,r=w.renderer;const wins=Object.values(r.windows).filter(v=>v.visible&&!v.isChild&&v.processId===w.processId&&v.wasm===w.instance);if(wins.length!==1)throw Error('ambiguous owner');const win=wins[0];const b=w.hostCtx.getGlGpsBridge(),endpoint=b.endpoint,epoch=b.workerEpoch,device=b.device,layer=b.presenter.layer,process=w._processObject,processId=w.processId,instance=w.instance,canvas=r.canvas,presentation=r.presentationCanvas;const verify=()=>{if(w._stopped||!w.running||w.instance!==instance||w.processId!==processId||w._processObject!==process||w.renderer!==r||r.windows[win.hwnd]!==win||win.wasm!==instance||r.canvas!==canvas||r.presentationCanvas!==presentation||w.hostCtx.getGlGpsBridge()!==b||b.endpoint!==endpoint||endpoint.closed||b.workerEpoch!==epoch||b.workerAsyncError||b.device!==device||b.presenter.layer!==layer)throw Error('capture native/host identity retired or replaced');};verify();globalThis.__originalPin={w,r,win,instance,verify};globalThis.__originalTicket=w.requestCurrentDisplayCapture({hwnd:win.hwnd});return true;})()`);
    },
-   readTicket:async()=>{const shot=await evaluate(`(async()=>{const p=__originalPin,t=__originalTicket;const verify=()=>{if(p.w._stopped||!p.w.running||p.w.instance!==p.instance||p.r.windows[p.win.hwnd]!==p.win)throw Error('owner retired');};verify();if(t.status!=='complete')return {status:t.status,error:t.error,participant:__nativeInitialized.ticketEvents};const r=t.read(),receipt=__nativeInitialized.receipts.find(v=>v.publication===r.metadata.publication);if(!receipt)throw Error('capture lacks initialized GL producer join');const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});const source=await encode(r.sourceRGBA),output=await encode(r.outputRGBA);verify();return {status:'complete',metadata:r.metadata,receipt,source,output};})()`);
+   readTicket:async()=>{const shot=await evaluate(`(()=>{const p=__originalPin,t=__originalTicket;p.verify();if(t.status!=='complete')return {status:t.status,error:t.error,participant:__nativeInitialized.ticketEvents};if(globalThis.__originalCapture)throw Error('existing transported capture');const r=globalThis.__originalCapture=t.read(),receipt=__nativeInitialized.receipts.find(v=>v.publication===r.metadata.publication);if(!receipt)throw Error('capture lacks initialized GL producer join');return {status:'complete',metadata:r.metadata,receipt};})()`);
     if(shot.participant)append(label+'-participants.jsonl',{at:Date.now(),status:shot.status,events:shot.participant});return shot;},
+   transportTicket:async()=>evaluate(`(async()=>{const p=__originalPin,r=__originalCapture;const verify=()=>{p.verify();};verify();const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});const [source,output]=await Promise.all([encode(r.sourceRGBA),encode(r.outputRGBA)]);verify();return {source,output};})()`),
    captureHost:async()=>{const host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);hostCapturedAt=Date.now();return host;},
    retain:async(shot,host)=>{
+   await evaluate('(__originalPin.verify(),true)');
    for(const k of ['source','output']){const dim=shot.metadata[k],b=Buffer.from(shot[k],'base64');fs.writeFileSync(out+'/'+label+'-'+k+'.png',encodeCapturePNG(dim.width,dim.height,b),{flag:'wx'});}
    fs.writeFileSync(out+'/'+label+'-host.png',Buffer.from(host.data,'base64'),{flag:'wx'});
-   save(label+'.json',{at,completedAt:Date.now(),hostCapturedAt,elapsedMs:Date.now()-at,metadata:shot.metadata,receipt:shot.receipt,authored,inputEvents:nativeDownAttempts});
+   save(label+'.json',{at,completedAt:Date.now(),hostCapturedAt,elapsedMs:Date.now()-at,metadata:shot.metadata,receipt:shot.receipt,hostJoin:{samePinnedNativeAndHostIdentity:true,screenshotAfterTicketSelection:true,pixelSynchronized:false},authored,inputEvents:nativeDownAttempts});
    }});
-   await evaluate('delete globalThis.__originalTicket;delete globalThis.__originalPin;true');
+   await evaluate('delete globalThis.__originalTicket;delete globalThis.__originalPin;delete globalThis.__originalCapture;true');
    lastImage={label,completedAt:hostCapturedAt,sha256:sha(fs.readFileSync(out+'/'+label+'-host.png'))};return shot;
   }catch(e){terminal=true;c?.ws.close();throw e;}
  }
  try{
   server=http.createServer((req,res)=>{const n=decodeURIComponent(new URL(req.url,'http://localhost').pathname).slice(1)||'index.html',b=files.get(n);append('requests.jsonl',{at:Date.now(),path:n,status:b?200:404,sha256:b?sha(b):null});res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Content-Type',n.endsWith('.js')?'text/javascript':n.endsWith('.wasm')?'application/wasm':n.endsWith('.html')?'text/html':n.endsWith('.json')?'application/json':'application/octet-stream');res.statusCode=b?200:404;res.end(b||'not found');});
   await new Promise(r=>server.listen(0,'127.0.0.1',r));save('server.json',{port:server.address().port});
-  const launched=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,userDataDir:out+'/profile',defaultViewport:{width:1400,height:1031},timeout:30000,args:['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader','--window-size=1400,1031']});
+  const launched=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,userDataDir:out+'/profile',defaultViewport:{width:1400,height:1031},timeout:30000,args:['--no-sandbox','--disable-dev-shm-usage','--disable-component-update','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader','--window-size=1400,1031']});
   browser=launched.process();const endpoint=launched.wsEndpoint();await launched.disconnect();
   browser.stdout.on('data',b=>fs.appendFileSync(out+'/browser.stdout.log',b));browser.stderr.on('data',b=>fs.appendFileSync(out+'/browser.stderr.log',b));
   browserWait=new Promise(resolve=>browser.once('close',(code,signal)=>{save('browser-wait.json',{pid:browser.pid,code,signal,actualWait:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded});resolve();}));
@@ -99,6 +101,10 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   if(qualifyNative)await evaluate('window.WINE_BROWSER_NATIVE_INPUT=true;true');
   if(qualifyNative)await evaluate(`(${installNativeRouteObserver.toString()})(globalThis,WineAssembly);true`);
   if(authored)await evaluate('wineApps.APPS.lifecycle_gl_authored={exe:"authored-native.exe",threads:true};true');
+  if(qualifyNative){
+    physicalRelease=await require('./gltron-current-native-input.cjs').createReleaseParticipant(out,{
+      pid:browser.pid,startToken:fs.readFileSync('/proc/'+browser.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],url:endpoint,targetId:pages[0].targetId});
+  }
   save('invocation.json',{at:Date.now(),app:authored?'lifecycle_gl_authored':'gltron',authored,registeredDefaults:!authored,originalInvocations:authored?0:1,inputDispatches:0});
   await evaluate(`wineShell.launchApp(${JSON.stringify(authored?'lifecycle_gl_authored':'gltron')});true`);
   const startupAt=Date.now();let startupHost=false;
@@ -132,31 +138,29 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
         'finite input requires the fresh complete selected host image');
       save('action-'+n+'-image-join.json',{...lastImage,reviewAge,reviewedAt:intent.reviewedAt,nonce:intent.nonce});
       // A separate process owns physical UP before any DOWN may be sent.
-      const cfg={name:'action-'+n,pid:browser.pid,startToken:fs.readFileSync('/proc/'+browser.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],url:endpoint,targetId:pages[0].targetId,nonce:intent.nonce,key:intent.key,code:intent.code};
-      const cfgPath=out+'/action-'+n+'-release.json';save('action-'+n+'-release.json',cfg);
-      const release=cp.spawn(process.execPath,['tools/gltron-current-native-input.cjs','release',out,cfgPath],{cwd:ROOT,stdio:['pipe','pipe','pipe']});
-      let stdout='',stderr='';release.stdout.on('data',b=>stdout+=b);release.stderr.on('data',b=>stderr+=b);
-      const joined=new Promise(resolve=>release.once('close',(code,signal)=>resolve({code,signal,actualWait:true,stdoutEOF:release.stdout.readableEnded,stderrEOF:release.stderr.readableEnded,stdout,stderr})));
-      let downSent=false,actionError=null;
+      let downSent=false,actionError=null,nativeProof=null;
       try{
-        const until=Date.now()+1000;while(!stdout.includes('\n')){assert(release.exitCode===null&&Date.now()<until,'independent physical UP arm');await sleep(5);}
-        const armed=JSON.parse(stdout.split('\n')[0]);save('action-'+n+'-up-armed.json',armed);
+        const armed=await physicalRelease.arm({name:'action-'+n,nonce:intent.nonce,key:intent.key,code:intent.code});save('action-'+n+'-up-armed.json',armed);
+        if(intent.cancelNoDown){assert(authored,'noDown rehearsal is authored only');physicalRelease.cancel(intent.nonce);}
+        else {
         const notBefore=Date.now(),admission=await waitForNativeOwner({
-          deadline:Math.min(deadline-4000,lastImage.completedAt+(intent.mode==='game'?15000:30000),armed.fallback-500),
+          deadline:Math.min(deadline-4000,lastImage.completedAt+(intent.mode==='game'?15000:30000),armed.releaseDue-500),
           observe:()=>evaluate(`(${observeAndPrepareNativeIntent.toString()})(__nativeBridgeOwner,${JSON.stringify({...intent,owner:binding.owner,reviewed:true})},${notBefore})`),
           record:v=>append('action-'+n+'-ready-phases.jsonl',v),close:()=>{terminal=true;c?.ws.close();}});
         const ready=admission.prepared;
         save('action-'+n+'-prepared.json',ready);assert.equal(ready.state,'PREPARED');
-        assert(release.exitCode===null&&Date.now()<armed.fallback-500,'independent UP must remain armed through native receipt deadline');
+        assert(physicalRelease.alive&&Date.now()<armed.releaseDue-500,'independent UP must remain armed through native receipt deadline');
         const before=Date.now();nativeDownAttempts++;downSent=true;await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
         if(authored&&intent.parentStallMs){assert(intent.parentStallMs>=1800&&intent.parentStallMs<=2500);
           save('action-'+n+'-parent-stall.json',{at:Date.now(),milliseconds:intent.parentStallMs});
           Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,intent.parentStallMs);}
         let proof;do{proof=await evaluate(`__nativeBridgeOwner._browserNativeInput.status(${JSON.stringify(intent.nonce)})`);if(proof.state==='CONSUMED')break;assert(proof.state==='DELIVERY_PENDING'||proof.state==='PREPARED',JSON.stringify(proof));await sleep(5);}while(Date.now()-before<500);
-        save('action-'+n+'-native.json',proof);requireNativeRoute(JSON.parse(fs.readFileSync(out+'/native-route.json')),proof);
-        if(!intent.parentStallMs)release.stdin.write(JSON.stringify({at:Date.now()+50})+'\n');
-      }catch(error){actionError=error;if(!downSent)release.stdin.write(JSON.stringify({cancelNoDown:true})+'\n');throw error;
-      }finally{release.stdin.end();const wait=await joined;save('action-'+n+'-physical-wait.json',wait);if(!actionError)assert.equal(wait.code,0);}
+        nativeProof=proof;save('action-'+n+'-native.json',proof);requireNativeRoute(JSON.parse(fs.readFileSync(out+'/native-route.json')),proof);
+        if(!intent.parentStallMs)physicalRelease.due(intent.nonce,Date.now()+50);
+        }
+      }catch(error){actionError=error;if(!downSent)physicalRelease.cancel(intent.nonce);throw error;
+      }finally{const result=await physicalRelease.finish(intent.nonce);save('action-'+n+'-physical-result.json',result);if(!actionError){assert(result.ok);
+        if(downSent){const up=JSON.parse(fs.readFileSync(out+'/action-'+n+'-up.json'));assert(up.receipt.at-nativeProof.appliedAt<=1750,'physical UP exceeded unchanged 1750ms edge deadline');}}}
       if(intent.expectQuit){
         const until=Math.min(deadline,Date.now()+3000);let exit;
         do{exit=await evaluate('({running:__nativeBridgeOwner.running,exited:__nativeBridgeOwner._processObject.exited,nativeCode:__nativeBridgeOwner._exitCode})');if(exit.exited&&!exit.running&&Number.isInteger(exit.nativeCode))break;await sleep(10);}while(Date.now()<until);
@@ -173,6 +177,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   save('worker-closure.json',{workers:[...workers.values()],destroyed});await c.send('Browser.close');
  }catch(e){terminal=true;save('failure.json',{at:Date.now(),error:e.stack,endpointPermanentlyClosed:true,noLaterQueries:true,nativeQuit:false});process.exitCode=1;
  }finally{
+  if(physicalRelease)await physicalRelease.close();
   c?.ws.close();if(browser){if(terminal&&browser.exitCode===null&&browser.signalCode===null)browser.kill('SIGTERM');let timer;try{timer=setTimeout(()=>browser.kill('SIGKILL'),3000);await browserWait;}finally{clearTimeout(timer);}}
   if(server)await new Promise(r=>server.close(r));await Promise.allSettled(tasks);
   if(browser&&browser.exitCode!==null||browser?.signalCode!==null&&browser?.signalCode!==undefined)fs.rmSync(out+'/profile',{recursive:true,force:true});

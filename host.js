@@ -7244,6 +7244,10 @@ class WineAssembly {
   requestCurrentDisplayCapture(options) {
     if (!this.renderer || !options) throw new Error('Current display capture requires a renderer and owner');
     if (this._stopped || this.running === false) throw new Error('Current display capture owner is stopped');
+    // A reported native producer failure stays terminal for new observations,
+    // including requests made while its next guest slice is still running.
+    const producer = this.hostCtx?.getGlGpsBridge?.();
+    if (producer?.workerAsyncError) throw producer.workerAsyncError;
     // A queued surface is not a completed display. Arm the existing capture
     // transaction for its next ordinary unheld publication instead of refusing
     // observation merely because the application keeps rendering. Never upload

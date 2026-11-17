@@ -1,7 +1,7 @@
 'use strict';
 // One deadline for the whole observation. Diagnostics are local writes only;
 // UNKNOWN never triggers a final endpoint inspection or adopts late pixels.
-async function completeCapture({requestTicket,readTicket,captureHost,retain,close,record,
+async function completeCapture({requestTicket,readTicket,captureHost,transportTicket=async shot=>shot,retain,close,record,
   wait=ms=>new Promise(r=>setTimeout(r,ms)),now=Date.now,
   timers={set:setTimeout,clear:clearTimeout}}) {
   const started=now();let closed=false,phase='request-ticket',timer;
@@ -20,7 +20,11 @@ async function completeCapture({requestTicket,readTicket,captureHost,retain,clos
           await wait(10);
         }
         mark('ticket-complete',{metadata:shot.metadata,receipt:shot.receipt});
-        live();mark('host-capture');const host=await captureHost();live();
+        // The ticket's immutable publication has already been selected. Its
+        // byte transport and the later host screenshot are independent reads;
+        // join both under the same original deadline before retaining either.
+        live();mark('host-capture');const [host,transported]=await Promise.all([captureHost(),transportTicket(shot)]);live();
+        shot={...shot,...transported};
         mark('host-complete');await retain(shot,host);live();mark('complete');return shot;
       })()
     ]);

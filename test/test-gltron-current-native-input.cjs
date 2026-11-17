@@ -189,3 +189,37 @@ console.log('PASS production Worker/broker metadata and MSG translation, native 
   assert.equal(closed,2);
   console.log('PASS passive pre-USER startup readiness, no early bind/input and terminal deadline/retirement closure');
 })().catch(error=>{console.error(error);process.exitCode=1;});
+
+// Optional real-browser, real-child protocol exercise. This never installs a
+// receipt stand-in or sends DOWN/UP; native physical UP is qualified only by
+// the separately supervised full guest recipes.
+if(process.env.GLTRON_RELEASE_PROTOCOL_OUT)(async()=>{
+  const path=require('node:path'),out=path.resolve(process.env.GLTRON_RELEASE_PROTOCOL_OUT);
+  const {createReleaseParticipant}=require('../tools/gltron-current-native-input.cjs');
+  fs.mkdirSync(out,{recursive:true});let browser,child;
+  try{
+    browser=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,
+      userDataDir:out+'/profile',args:['--no-sandbox','--disable-dev-shm-usage','--disable-component-update']});
+    const p=browser.process();p.stdout.resume();p.stderr.resume();
+    const wait=new Promise(resolve=>p.once('close',(code,signal)=>{fs.writeFileSync(out+'/browser-wait.json',JSON.stringify({pid:p.pid,code,signal,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded})+'\n');resolve();}));
+    const {connection}=require('../tools/gltron-browser-controller.cjs'),c=connection(browser.wsEndpoint());await c.ready;
+    const targets=(await c.send('Target.getTargets')).targetInfos.filter(t=>t.type==='page');c.ws.close();assert.equal(targets.length,1);
+    const cfg={pid:p.pid,startToken:fs.readFileSync('/proc/'+p.pid+'/stat','utf8').split(') ').at(-1).split(' ')[19],url:browser.wsEndpoint(),targetId:targets[0].targetId};
+    const cancel=out+'/cancel';fs.mkdirSync(cancel);child=await createReleaseParticipant(cancel,cfg);
+    for(let i=0;i<2;i++){
+      const nonce='noDown-'+i,armed=await child.arm({name:'action-'+i,nonce,key:'a',code:65});
+      assert(armed.latencyMs<1000);child.cancel(nonce);assert((await child.finish(nonce)).cancelNoDown);
+      assert.equal(JSON.parse(fs.readFileSync(cancel+'/action-'+i+'-up.json')).inputDispatches,0);
+    }
+    await assert.rejects(child.arm({name:'action-2',nonce:'noDown-0',key:'a',code:65}));
+    assert.equal((await child.close()).code,0,'a stale nonce is refused before any repeated arm transport');child=null;
+    const stale=out+'/stale';fs.mkdirSync(stale);
+    await assert.rejects(createReleaseParticipant(stale,{...cfg,startToken:'0'}));
+    assert.equal(JSON.parse(fs.readFileSync(stale+'/release-participant-wait.json')).code,1);
+    const idle=out+'/idle';fs.mkdirSync(idle);child=await createReleaseParticipant(idle,cfg);
+    assert.equal((await child.close()).code,0,'parent EOF with no arm sends no release');child=null;
+    await browser.close();await wait;browser=null;
+    fs.writeFileSync(out+'/result.json',JSON.stringify({passed:true,realChrome:true,realChildren:true,inputDispatches:0,cancelNoDown:2,staleNonceRefused:true,staleBrowserIdentityRefused:true,idleEOF:true,nativeReceiptQualification:false})+'\n');
+    console.log('PASS real Chrome release participant cancellation, nonce/identity refusals and idle EOF; zero input');
+  }finally{if(child)await child.close();if(browser)await browser.close();fs.rmSync(out+'/profile',{recursive:true,force:true});}
+})().catch(error=>{console.error(error);process.exitCode=1;});

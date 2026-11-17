@@ -115,7 +115,7 @@ async function run(out,commit){
   const files=gitFiles(commit),messageDriven=process.env.GLTRON_FIXTURE_MESSAGE_DRIVEN==='1',drawOnce=process.env.GLTRON_FIXTURE_DRAW_ONCE==='1'||timerMs>0,exe=fixture({messageDriven,drawOnce,timerMs});
   // Explicit authored-only runtime candidate. All other runtime sources stay
   // on the immutable Git graph, including concurrent foreign Worker edits.
-  if(process.env.GLTRON_CAPTURE_HOST_CANDIDATE==='1')files.set('host.js',fs.readFileSync(path.join(ROOT,'host.js')));
+  if(process.env.GLTRON_CAPTURE_HOST_CANDIDATE==='1')for(const n of ['host.js','lib/renderer.js'])files.set(n,fs.readFileSync(path.join(ROOT,n)));
   const [viewportWidth,viewportHeight]=(process.env.GLTRON_NATIVE_VIEWPORT||'1280x960').split('x').map(Number);
   assert(Number.isInteger(viewportWidth)&&viewportWidth>=800&&viewportWidth<=1920&&Number.isInteger(viewportHeight)&&viewportHeight>=600&&viewportHeight<=1440);
   const helpers=['tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py'];
@@ -193,10 +193,9 @@ async function run(out,commit){
         const state={at:Date.now(),status:t.status,error:t.error,publication:p.r._immutablePublicationSequence,held:p.r._workerPublicationHeld(),slice:p.w._workerLastSlice?.seq,pending:{dirty:!!p.w._dxDirty,lockDeferred:!!p.w._dxLockDeferred,presentDue:!!p.w._presentFrameDue},gdi:p.r._workerGdiPaintDepth};
         state.ticketEvents=__nativeInitialized.ticketEvents;
         if(t.status!=='complete')return {state};const first=t.read();globalThis.__gltronRetainedFirst=first;
-        const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});
         const receipt=__nativeInitialized.receipts.find(r=>r.publication===first.metadata.publication);
         if(!receipt)throw Error('capture is not joined to an initialized GPS publication');
-        const source=await encode(first.sourceRGBA),output=await encode(first.outputRGBA);p.verify();return {state,snapshot:{metadata:first.metadata,receipt,source,output}};
+        p.verify();return {state,snapshot:{metadata:first.metadata,receipt}};
       })()`);
       observations.push({stage:'poll',...row.state});fs.writeFileSync(out+'/capture-observations.json',JSON.stringify({nonce,observations},null,2)+'\n');
       if(row.snapshot){snapshot=row.snapshot;break;}
@@ -205,14 +204,21 @@ async function run(out,commit){
     }
     assert(snapshot,'DISPLAY_UNKNOWN current-display completion deadline; no replay');
     assert(Date.now()-captureStart<3000,'late controller current-display completion');
+    // The host image and immutable-byte transport share the original total
+    // deadline and begin only after selecting the complete native ticket.
+    const hostStart=Date.now();
+    save('host-capture-start.json',{at:hostStart,boundMs:3000,params:{format:'png',captureBeyondViewport:false}});
+    const [host,bytes]=await Promise.all([
+      c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session),
+      evaluate(`(async()=>{const p=__gltronCurrentPin;p.verify();const first=__gltronRetainedFirst;
+        const encode=b=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('immutable byte transport failed'));reader.onload=()=>resolve(reader.result.slice(reader.result.indexOf(',')+1));reader.readAsDataURL(new Blob([b],{type:'application/octet-stream'}));});
+        const [source,output]=await Promise.all([encode(first.sourceRGBA),encode(first.outputRGBA)]);p.verify();return {source,output};})()`)
+    ]);
+    assert(Date.now()-captureStart<3000,'late complete native pixels/host observation');
+    Object.assign(snapshot,bytes);
     save('capture.json',{startedAt:captureStart,completedAt:Date.now(),elapsedMs:Date.now()-captureStart,...snapshot,source:undefined,output:undefined});
-    for(const kind of ['source','output']){const dim=snapshot.metadata[kind],bytes=Buffer.from(snapshot[kind],'base64');assert.equal(bytes.length,dim.width*dim.height*4);fs.writeFileSync(out+'/authored-'+kind+'.png',require('./gltron-current-capture.cjs').encodeCapturePNG(dim.width,dim.height,bytes),{flag:'wx'});}
-    // Canvas bytes do not depict host HTML consent/occlusion. The required
-    // full host capture shares the original unchanged 3000ms deadline.
-    // Retention/oracle tests follow its completion, outside that transaction.
-    save('host-capture-start.json',{at:Date.now(),boundMs:3000,params:{format:'png',captureBeyondViewport:false}});
-    const hostStart=Date.now(),host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);
-    assert(Date.now()-hostStart<3000&&Date.now()-captureStart<3000,'late complete native pixels/host observation');const png=Buffer.from(host.data,'base64');fs.writeFileSync(out+'/authored-host.png',png,{flag:'wx'});save('host-capture.json',{at:hostStart,elapsedMs:Date.now()-hostStart,totalObservationMs:Date.now()-captureStart,sha256:sha(png),reviewed:false});
+    for(const kind of ['source','output']){const dim=snapshot.metadata[kind],data=Buffer.from(snapshot[kind],'base64');assert.equal(data.length,dim.width*dim.height*4);fs.writeFileSync(out+'/authored-'+kind+'.png',require('./gltron-current-capture.cjs').encodeCapturePNG(dim.width,dim.height,data),{flag:'wx'});}
+    const png=Buffer.from(host.data,'base64');fs.writeFileSync(out+'/authored-host.png',png,{flag:'wx'});save('host-capture.json',{at:hostStart,elapsedMs:Date.now()-hostStart,totalObservationMs:Date.now()-captureStart,sha256:sha(png),reviewed:false});
     return snapshot;
     })(),new Promise((_,reject)=>{captureTimer=setTimeout(()=>{c.ws.close();reject(Error('DISPLAY_UNKNOWN controller current-display deadline; permanent close'));},Math.max(1,3000-(Date.now()-captureStart)));})]).finally(()=>clearTimeout(captureTimer));
     save('scene-characterization.json',characterizeSource(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source));
@@ -231,7 +237,7 @@ async function run(out,commit){
           const old={epoch:b.workerEpoch,endpoint:b.endpoint.id},t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});
           const closing=b.close(),immediate={status:t.status,error:t.error};
           Promise.resolve(closing).then(()=>resolve({at:Date.now(),old,epoch:b.workerEpoch,endpoint:b.endpoint?.id??null,
-            immediate,status:t.status,error:t.error,read:t.read(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
+            immediate,status:t.status,error:t.error,read:(()=>{const a=t.read();return a?{metadata:a.metadata,sourceLength:a.sourceRGBA.length,outputLength:a.outputRGBA.length}:null;})(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
       let afterRetirement;
       try{
         afterRetirement=await evaluate(binding.PAGE_READ);
@@ -264,7 +270,7 @@ async function run(out,commit){
       const shutdown=await evaluate(`(async()=>{const p=__gltronCurrentPin,w=p.w;let ticket=null;
         if(!w._stopped){await new Promise(resolve=>{const r=p.r,prior=r.beginWorkerGuestSlice;
           r.beginWorkerGuestSlice=function(){r.beginWorkerGuestSlice=prior;prior.apply(this,arguments);
-            const t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});w.stop({repaint:false});ticket={status:t.status,error:t.error,read:t.read()};resolve();};});}
+            const t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});w.stop({repaint:false});ticket={status:t.status,error:t.error,read:(()=>{const a=t.read();return a?{metadata:a.metadata,sourceLength:a.sourceRGBA.length,outputLength:a.outputRGBA.length}:null;})()};resolve();};});}
         const guest=await w._guestRuntimeStopPromise;
         const end=Date.now()+2000;while(!w._renderWorkerRetired&&!w._renderWorkerRetirementError&&Date.now()<end)await new Promise(r=>setTimeout(r,10));
         return {at:Date.now(),kind:'explicit-host-stop',nativeQuit:false,ticket,guest:guest?{ok:guest.ok,error:String(guest.error||'')}:null,
@@ -322,7 +328,7 @@ function verifyObserved(out,{published=false}={}){
   if(fs.existsSync(path.join(out,'host-shutdown.json'))){
     const stop=read('host-shutdown.json'),targets=read('worker-target-close.json');
     assert.equal(stop.nativeQuit,false);assert.equal(stop.guest.ok,true);assert.equal(stop.renderRetired,true);assert.equal(stop.renderError,'');
-    if(stop.ticket){assert.equal(stop.ticket.status,'failed');assert.match(stop.ticket.error,/owner stopped/);assert.equal(stop.ticket.read,null);}
+    if(stop.ticket){if(stop.ticket.status==='complete'){assert(stop.ticket.read?.metadata);assert(stop.ticket.read.sourceLength>0&&stop.ticket.read.outputLength>0);}else{assert.equal(stop.ticket.status,'failed');assert.match(stop.ticket.error,/owner stopped/);assert.equal(stop.ticket.read,null);}}
     assert(targets.workers.length>=2&&targets.workers.every(w=>w.closed));
     for(const w of targets.workers)assert(targets.events.some(e=>e.method==='Target.targetDestroyed'&&e.targetId===w.targetId));
   }
