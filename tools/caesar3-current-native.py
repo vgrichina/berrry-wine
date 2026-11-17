@@ -8,7 +8,7 @@ import ast, fcntl, hashlib, json, os, pathlib, select, signal, socket, subproces
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RUN = pathlib.Path(os.environ.get('CAESAR3_RUN', ROOT/'scratch/runs/20261117-caesar3-current-native-assignment2-food'))
-NATIVE_SECONDS, WATCHDOG_SECONDS, QUIT_RESERVE = 2400, 2420, 240
+NATIVE_SECONDS, WATCHDOG_SECONDS, QUIT_RESERVE = 1200, 1220, 180
 GAME_FRESHNESS_SECONDS, MENU_FRESHNESS_SECONDS = 15, 30
 COMPONENTS = ('tools/caesar3-current-native.py',)
 REPAIR_PROOF = ROOT/'scratch/runs/20261117-caesar3-reviewed-hover-city-construction/repair-outer'
@@ -403,13 +403,14 @@ def run():
     RUN.mkdir(parents=True, exist_ok=True); free_disk()
     requested = '--original' in sys.argv
     text_diagnostic = '--text-diagnostic' in sys.argv
+    modal_fixture = '--modal-fixture' in sys.argv
     personal_fixture = '--personal-fixture' in sys.argv
     controller_fixtures = '--controller-fixtures' in sys.argv
     readiness_fixture = '--input-readiness-fixture' in sys.argv
     hover_fixture = '--hover-fixtures' in sys.argv
     shutdown_fixture = '--adapter-shutdown' in sys.argv
     outer_fixture = '--outer-fixture' in sys.argv
-    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture or hover_fixture or shutdown_fixture
+    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture or hover_fixture or shutdown_fixture or modal_fixture
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
@@ -453,6 +454,12 @@ def run():
         assert git('show', component_revision(revision)+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
+            if modal_fixture:
+                helper.checked('modal-fixture', ['python3', '-B', 'test/test-caesar3-reviewed-modal.py',
+                    str(RUN/'modal')], dict(env, CAESAR3_TEST_INPUTS=str(RUN/'runtime-inputs.json')), (source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,
+                    gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
             if shutdown_fixture:
                 helper.checked('adapter-shutdown',['node','test/test-caesar3-current-native.cjs',
                     '--adapter-shutdown',str(RUN/'adapter-shutdown')],env,(source,module))
