@@ -191,3 +191,66 @@ try {
 }
 
 console.log('PASS Worker GDI repaint publishes only at completed slice boundaries');
+
+// A real render-Worker bridge publishes into the page renderer. The page's
+// idle WASM instance has no D3D9 ring: its active getter must not hide the
+// frame that the CPU Worker's different instance just presented.
+(async () => {
+  const { createHostImports } = require('../lib/host-imports');
+  const { createCanvas } = require('../lib/raster-canvas');
+  const G = require('../lib/gpu-stream.generated');
+  const memory = new SharedArrayBuffer(4096);
+  const apiOffset = G.LAYOUTS.GpsRing.fields.find(f => f.name === 'api').offset;
+  new DataView(memory).setUint32(256 + apiOffset, 4, true);
+  const renderer = new Win98Renderer(createCanvas(8, 8));
+  const win = { hwnd: 0x10001, w: 8, h: 8, visible: true, _backCanvas: createCanvas(8, 8) };
+  renderer.windows[win.hwnd] = win;
+  const endpoints = [];
+  let idleActive = 0, getterCalls = 0;
+  const ctx = { getMemory: () => memory, renderer, createCanvas,
+    exports: { d3d9_gps_active: () => { getterCalls++; return idleActive; } },
+    sharedRenderWorkerEnabled: true,
+    createRenderEndpoint: async () => {
+      const listeners = [];
+      const endpoint = { id: endpoints.length + 1, ready: Promise.resolve(), closed: false,
+        addEventListener: (_, listener) => listeners.push(listener),
+        request: async () => ({ result: 1, stats: {} }),
+        terminate: async () => { endpoint.closed = true; },
+        frame: () => listeners.forEach(listener => listener({ data: { t: 'frame', frame: {
+          hwnd: win.hwnd, width: 8, height: 8, stamp: 1,
+          pixels: new Uint8Array(8 * 8 * 4).fill(255),
+        } } })),
+      };
+      endpoints.push(endpoint);return endpoint;
+    },
+  };
+  const { host } = createHostImports(ctx);
+  await host.gpu_stream_kick(256, 1);
+  const bridge = ctx.getD3d9GpsBridge();
+  endpoints[0].frame();
+  const first = bridge.layer;
+  assert.strictEqual(renderer._overlayFrameLayer(win), first,
+    'an accepted Worker frame remains visible when the idle page ring is inactive');
+  assert.strictEqual(getterCalls, 0, 'Worker publication must not query the idle page ring');
+  bridge.workerAsyncError = new Error('render failure');
+  assert.strictEqual(renderer._overlayFrameLayer(win), null, 'failed endpoint is stale');
+  bridge.workerAsyncError = null;
+  endpoints[0].closed = true;
+  assert.strictEqual(renderer._overlayFrameLayer(win), null, 'closed endpoint is stale');
+  endpoints[0].closed = false;
+  await bridge.close();
+  assert.strictEqual(win._dxFrameLayer, null, 'retirement detaches the frame');
+  assert.strictEqual(first.stale(), true, 'retired frame never adopts a replacement');
+  await host.gpu_stream_kick(256, 1);
+  endpoints[1].frame();
+  assert.notStrictEqual(bridge.layer, first);
+  assert.strictEqual(renderer._overlayFrameLayer(win), bridge.layer, 'replacement endpoint can display');
+  assert.strictEqual(first.stale(), true, 'old endpoint identity remains retired');
+  await bridge.close();
+  const local = { canvas: createCanvas(8, 8) };
+  bridge.options.onPresent(local);
+  assert.strictEqual(local.stale(), true, 'local route still rejects an inactive native ring');
+  idleActive = 1;
+  assert.strictEqual(local.stale(), false, 'local route keeps its active native ring');
+  console.log('PASS D3D9 Worker frame visibility, failure, close, retirement and replacement');
+})().catch(error => { console.error(error); process.exitCode = 1; });
