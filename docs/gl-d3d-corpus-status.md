@@ -8,17 +8,24 @@ below. Current original-game checks and the full 27-app requirement remain open.
 | Path | Result | Scope and evidence |
 | --- | --- | --- |
 | Repeatable browser palette oracle | `c2a980c5f`: all32 observations pass on each software/WebGL executor | Permanent `test/test-d3dim-gps-palette-web.js` runs the unchanged native oracle in Chrome, with26 draws/32 readbacks per backend and zero fallbacks/declines. Actual driver/Chrome exit and EOF checked; cooperative component fixture, no original-game or Worker-lifetime claim. [Regression and provenance](re-notes/browser-gps-palette-regression-20261117.md); run `20261117-coordinator-palette-browser-regression-final`. |
+| Browser Worker palette lifetime | `b06190e7b`: current GPS fixture passes23 exact pixel observations and26 producer draws per backend | Real guest/shared render Workers on software and Chrome WebGL cover caller Release, SetEntries generations, final detach, natural COM-slot reuse, queued state snapshots, alpha/key/depth pixels, pending CPU fences and retirement. Actual scheduled callbacks are held at the supported boundary; no decoder or Release substitute. Run `20261117-d3dim-current-browser-worker-palette-lifetime`. |
 | D3DIM palette color-key rejection | Fixed in `280503c1a`; mandatory palette oracle passes all 32 observations | The producer saturated alpha-minus-threshold before `TEXKILL`, so keyed fragments survived. The fix preserves the negative intermediate. Real WAT palette handlers/stream production into the software executor, shader canonicalization, keyed-mipmap regression and locked build pass. No browser/game claim. [Cause and tests](re-notes/d3dim-key-kill-saturation-20261117.md); run `20261117-coordinator-gps-palette-fixed`. |
 | Browser D3DIM palette pixels | All 32 existing observations pass on each of software and WebGL, with identical pixel values | Real WAT producer and READBACK into Chrome, 26 draws/32 readbacks per backend, zero producer fallbacks/declines. Retained module `ad38e26f…`; cooperative executor fixture, no Worker lifetime or original-game claim. Both driver and Chrome actual exit/EOF observed. [Route and limits](re-notes/browser-gps-palette-pixels-20261117.md); run `20261117-coordinator-browser-gps-palette`. |
 | Shared browser render Worker | RGBA8 wire test corrected in `5cf975062`; actual Chrome WebGL and native software arms pass | One physical shared Worker, four readbacks, 4,096 channel comparisons, 576 padding/end-canary comparisons and four presents. Chrome process exit/close and both EOFs observed. Raw RGB565 requests correctly refused; native Glide conversion tested separately. ANGLE SwiftShader, no physical-GPU claim. Run `20261117-coordinator-browser-shared-graphics`. |
 | D3DIM surface fences | Native regression passes | Real WAT stream producer/software executor checks alias-specific/global readback, RGB565 pixels, dirty state, lazy Lock/Unlock and old/new backing replacement. Native process and watchdog waits/EOFs complete. Instrumented authored fixture, no original app or WebGL claim. Run `20261117-coordinator-d3dim-surface-fences`. |
 
-The separate current browser palette-lifetime fixture stopped before its first
-pixel observation: its retired legacy transport rejected `gpu_stream_kick`.
-Run `20261117-coordinator-browser-palette-lifetime` retains that failure. It
-establishes a stale fixture dependency, not a production rendering defect or
-browser palette-lifetime success. Original GLTron gameplay through the current
-GPS paths is assigned for fresh native-input/backend evidence.
+The earlier browser palette-lifetime failure is retained in
+`20261117-coordinator-browser-palette-lifetime`: its retired legacy transport
+rejected `gpu_stream_kick` before rendering. The fixture migration in
+`b06190e7b` resolves that dependency through the current production GPS path.
+Queued records own their palette snapshot, so palette API completion may precede
+drain; a real pending CPU fence and unchanged old-generation pixels verify the
+current contract. Pending readback completes on CLOSE, and a reopened completed
+empty ring rejects an old scheduled callback. This does not claim that destroyed
+resource IDs can resume. All four actual browser Worker targets retire; Chrome
+and driver exit/close and both EOFs are recorded. These authored component
+results establish no original-game, historical27 or physical-GPU coverage.
+Original GLTron gameplay remains assigned for native-input/backend evidence.
 
 The later original checks in
 `20261117-gltron-continuous-capture-release-arm-gameplay` use published
