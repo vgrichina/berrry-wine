@@ -6,7 +6,7 @@ const {gitFiles,compile}=require('./boids-current-runtime.cjs');
 const {installInitializedObserver,fixture}=require('./gltron-current-native-capture.cjs');
 const {connection,GL_OBSERVER}=require('./gltron-browser-controller.cjs');
 const {completeCapture,prepareCapturePNGs}=require('./gltron-current-capture.cjs');
-const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner,observeAndPrepareNativeIntent}=require('./gltron-current-native-input.cjs');
+const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner,observeAndPrepareNativeIntent,finishNativeRelease,waitForNativeConsumption}=require('./gltron-current-native-input.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function run(out,commit,authored=false,backend='webgl',qualifyNative=false){
  assert(['software','webgl'].includes(backend));
@@ -159,16 +159,21 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
         const ready=admission.prepared;
         save('action-'+n+'-prepared.json',ready);assert.equal(ready.state,'PREPARED');
         assert(physicalRelease.alive&&Date.now()<armed.releaseDue-500,'independent UP must remain armed through native receipt deadline');
-        const before=Date.now();nativeDownAttempts++;downSent=true;await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
+        const before=Date.now();nativeDownAttempts++;downSent=true;
+        const proof=await waitForNativeConsumption({deadline:before+500,
+          close:()=>{terminal=true;c?.ws.close();},
+          record:v=>append('action-'+n+'-native-status.jsonl',v),
+          observe:()=>evaluate(`__nativeBridgeOwner._browserNativeInput.status(${JSON.stringify(intent.nonce)})`),
+          dispatch:async()=>{await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
         if(authored&&intent.parentStallMs){assert(intent.parentStallMs>=1800&&intent.parentStallMs<=2500);
           save('action-'+n+'-parent-stall.json',{at:Date.now(),milliseconds:intent.parentStallMs});
           Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,intent.parentStallMs);}
-        let proof;do{proof=await evaluate(`__nativeBridgeOwner._browserNativeInput.status(${JSON.stringify(intent.nonce)})`);if(proof.state==='CONSUMED')break;assert(proof.state==='DELIVERY_PENDING'||proof.state==='PREPARED',JSON.stringify(proof));await sleep(5);}while(Date.now()-before<500);
+          }});
         nativeProof=proof;save('action-'+n+'-native.json',proof);requireNativeRoute(JSON.parse(fs.readFileSync(out+'/native-route.json')),proof);
         if(!intent.parentStallMs)physicalRelease.due(intent.nonce,Date.now()+50);
         }
       }catch(error){actionError=error;if(!downSent)physicalRelease.cancel(intent.nonce);throw error;
-      }finally{const result=await physicalRelease.finish(intent.nonce);save('action-'+n+'-physical-result.json',result);if(!actionError){assert(result.ok);
+      }finally{const result=await finishNativeRelease(physicalRelease,intent.nonce,actionError);save('action-'+n+'-physical-result.json',result);if(!actionError){assert(result.ok);
         if(downSent){const up=JSON.parse(fs.readFileSync(out+'/action-'+n+'-up.json'));assert(up.receipt.at-nativeProof.appliedAt<=1750,'physical UP exceeded unchanged 1750ms edge deadline');}}}
       if(intent.expectQuit){
         const until=Math.min(deadline,Date.now()+3000);let exit;
@@ -184,7 +189,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   else save('native-quit-retired.json',await evaluate('(async()=>({guest:await __nativeBridgeOwner._guestRuntimeStopPromise,render:await __nativeBridgeOwner._renderWorkerRetirement}))()'));
   const end=Math.min(deadline,Date.now()+2000);while(Date.now()<end&&![...workers.values()].every(w=>destroyed.some(d=>d.targetId===w.targetId)))await sleep(10);
   save('worker-closure.json',{workers:[...workers.values()],destroyed});await c.send('Browser.close');
- }catch(e){terminal=true;save('failure.json',{at:Date.now(),error:e.stack,endpointPermanentlyClosed:true,noLaterQueries:true,nativeQuit:false});process.exitCode=1;
+ }catch(e){terminal=true;save('failure.json',{at:Date.now(),error:e.stack,causes:e.errors?.map(error=>({name:error.name,error:error.stack})),endpointPermanentlyClosed:true,noLaterQueries:true,nativeQuit:false});process.exitCode=1;
  }finally{
   if(physicalRelease)await physicalRelease.close();
   c?.ws.close();if(browser){if(terminal&&browser.exitCode===null&&browser.signalCode===null)browser.kill('SIGTERM');let timer;try{timer=setTimeout(()=>browser.kill('SIGKILL'),3000);await browserWait;}finally{clearTimeout(timer);}}

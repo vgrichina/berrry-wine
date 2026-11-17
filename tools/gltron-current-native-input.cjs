@@ -193,3 +193,45 @@ async function createReleaseParticipant(out,cfg){
 }
 module.exports.createReleaseParticipant=createReleaseParticipant;
 if(require.main===module&&process.argv[2]==='participant')releaseParticipant(process.argv[3],process.argv[4]).catch(e=>{console.error(e);process.exitCode=1;});
+
+// UP must finish even after native refusal. Retain the first failure and the
+// independent release failure together: a null UP receipt cannot explain why
+// the native DOWN was refused, nor replace its authoritative status.
+async function finishNativeRelease(participant,nonce,nativeError){
+  try{return await participant.finish(nonce);}catch(releaseError){
+    if(nativeError)throw new AggregateError([nativeError,releaseError],
+      'native input failed: '+nativeError.message+'; independent physical release failed: '+releaseError.message,
+      {cause:nativeError});
+    throw releaseError;
+  }
+}
+module.exports.finishNativeRelease=finishNativeRelease;
+
+// The 500ms delivery deadline covers DOWN and the native status reply. A loop
+// condition alone cannot reject a CONSUMED reply that arrives after its final
+// await, or prevent a later status query following a stalled DOWN callback.
+async function waitForNativeConsumption({dispatch,observe,deadline,close,record=()=>{},
+  now=Date.now,monotonic=()=>performance.now(),wait=ms=>new Promise(r=>setTimeout(r,ms))}){
+  let timer,closed=false;const until=monotonic()+Math.max(0,deadline-now());
+  const fail=message=>{if(!closed){closed=true;close();}return Error('NATIVE_INPUT_UNKNOWN '+message+'; permanently closed');};
+  const expired=()=>closed||now()>=deadline||monotonic()>=until;
+  try{return await Promise.race([
+    new Promise((_,reject)=>{timer=setTimeout(()=>reject(fail('500ms delivery deadline')),Math.max(0,deadline-now()));}),
+    (async()=>{
+      if(expired())throw fail('500ms delivery deadline before DOWN');
+      await dispatch();
+      for(;;){
+        if(expired())throw fail('late DOWN/status boundary');
+        const proof=await observe(),receivedAt=now(),receivedMonotonic=monotonic();
+        const late=closed||receivedAt>=deadline||receivedMonotonic>=until;
+        record({receivedAt,receivedMonotonic,late,proof});
+        if(late)throw fail('late native status reply discarded');
+        if(proof.state==='CONSUMED')return proof;
+        if(!['DELIVERY_PENDING','PREPARED'].includes(proof.state))
+          throw Error('native input refused: '+JSON.stringify(proof));
+        await wait(5);
+      }
+    })(),
+  ]);}finally{clearTimeout(timer);}
+}
+module.exports.waitForNativeConsumption=waitForNativeConsumption;

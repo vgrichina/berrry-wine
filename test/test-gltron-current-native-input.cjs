@@ -174,6 +174,52 @@ console.log('PASS production Worker/broker metadata and MSG translation, native 
 }
 
 (async()=>{
+  {
+  const {waitForNativeConsumption}=require('../tools/gltron-current-native-input.cjs');
+  for(const mode of ['success','cancelled','late-reply','late-down','monotonic','pending']){
+    let wall=0,mono=0,queries=0,closed=0;const rows=[];
+    const work=waitForNativeConsumption({deadline:500,now:()=>wall,monotonic:()=>mono,
+      close:()=>closed++,record:v=>rows.push(v),
+      dispatch:async()=>{if(mode==='late-down')wall=mono=501;},
+      observe:async()=>{queries++;
+        if(mode==='late-reply')wall=mono=501;
+        if(mode==='monotonic')mono=501;
+        return {state:mode==='cancelled'?'CANCELLED':mode==='pending'?'DELIVERY_PENDING':'CONSUMED'};
+      },wait:async()=>{wall=mono=501;}});
+    if(mode==='success'){assert.equal((await work).state,'CONSUMED');assert.equal(closed,0);}
+    else if(mode==='cancelled'){await assert.rejects(work,/native input refused.*CANCELLED/);assert.equal(rows[0].late,false);}
+    else {await assert.rejects(work,/NATIVE_INPUT_UNKNOWN/);assert.equal(closed,1);}
+    assert.equal(queries,mode==='late-down'?0:1,'no queries after the immutable boundary '+mode);
+    if(['late-reply','monotonic'].includes(mode))assert.equal(rows[0].late,true,'late CONSUMED is evidence, never success');
+  }
+  // An actually pending promise also closes, and its later completion cannot
+  // trigger another observation. This exercises the timer as well as clocks.
+  let lateResolve,queries=0,closed=0;
+  const pending=waitForNativeConsumption({deadline:Date.now()+20,dispatch:async()=>{},
+    observe:()=>{queries++;return new Promise(resolve=>lateResolve=resolve);},close:()=>closed++});
+  await assert.rejects(pending,/NATIVE_INPUT_UNKNOWN/);assert.equal(closed,1);
+  lateResolve({state:'CONSUMED'});await new Promise(resolve=>setTimeout(resolve,5));
+  assert.equal(queries,1);assert.equal(closed,1);
+  console.log('PASS immutable native delivery boundary: timely success, cancellation, late DOWN/reply, monotonic expiry, pending timer and zero later queries');
+  }
+
+  const {finishNativeRelease}=require('../tools/gltron-current-native-input.cjs');
+  const nativeError=Error('CANCELLED native owner context age 275ms');
+  const releaseError=Error('independent trusted physical UP missing');
+  let calls=0;
+  const participant={finish:async nonce=>{calls++;assert.equal(nonce,'cancelled');throw releaseError;}};
+  await assert.rejects(finishNativeRelease(participant,'cancelled',nativeError),error=>{
+    assert(error instanceof AggregateError);assert.equal(error.cause,nativeError);
+    assert.deepEqual(error.errors,[nativeError,releaseError]);
+    assert.match(error.message,/CANCELLED.*275ms.*physical UP missing/);return true;
+  });
+  assert.equal(calls,1,'failure reporting never retries release');
+  await assert.rejects(finishNativeRelease(participant,'cancelled',null),error=>error===releaseError);
+  const receipt={ok:true};assert.equal(await finishNativeRelease({finish:async()=>receipt},'success',null),receipt);
+  assert.equal(await finishNativeRelease({finish:async()=>receipt},'cancelled',nativeError),receipt,
+    'successful independent UP does not suppress caller native failure');
+  console.log('PASS native cancellation and independent release failures remain distinct with original cause and no retry');
+
   const {waitForNativeOwner}=require('../tools/gltron-current-native-input.cjs');
   let clock=0,observed=0,closed=0;
   const states=[{healthy:true,ready:false},{healthy:true,ready:false},{healthy:true,ready:true}];
