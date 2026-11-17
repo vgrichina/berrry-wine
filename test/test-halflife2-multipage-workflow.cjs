@@ -5,10 +5,11 @@ const fs=require('node:fs'),assert=require('node:assert/strict');
 function fixture(){
  const b=require('./test-halflife2-native-wizard.cjs').dialogFixture(),raw=r=>r-0x1000+0x200;
  const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
- for(const [slot,r,name]of [[0x1964,0x1e00,'DestroyWindow'],[0x1968,0x1e30,'CreateWindowExA'],[0x196c,0x1e60,'SetFocus']]){
+ for(const [slot,r,name]of [[0x1964,0x1e00,'DestroyWindow'],[0x1968,0x1e30,'CreateWindowExA'],[0x196c,0x1e60,'SetFocus'],
+  [0x1970,0x1e90,'GetAsyncKeyState'],[0x1974,0x1ec0,'SetTimer'],[0x1978,0x1ee0,'KillTimer']]){
   b.writeUInt32LE(r,raw(slot));b.write(name+'\0',raw(r+2));
  }
- b.writeUInt32LE(0,raw(0x1970));
+ b.writeUInt32LE(0,raw(0x197c));
  b.write('Wizard: Internet Required\0',raw(0x2580));
  b.write('Authored page two: current Next has a new HWND.\0',raw(0x25c0));
  b.write('Wizard: SubscriberAgreement\0',raw(0x2700));
@@ -26,7 +27,11 @@ function fixture(){
  const a=[],labels={},fix=[],e=(...v)=>a.push(...v),push=n=>e(0x68,...u32(n));
  const call=slot=>e(0xff,0x15,...u32(0x400000+slot));
  const label=n=>labels[n]=a.length,j=(n,op)=>{e(...op);fix.push([a.length,n]);e(0,0,0,0);};
- e(0x55,0x89,0xe5,0x81,0x7d,12,...u32(0x111));j('done',[0x0f,0x85]);
+ e(0x55,0x89,0xe5);
+ e(0x81,0x7d,12,...u32(0x10));j('cancel',[0x0f,0x84]); // WM_CLOSE
+ e(0x81,0x7d,12,...u32(0x113));j('timer',[0x0f,0x84]);
+ e(0x81,0x7d,12,...u32(0x111));j('done',[0x0f,0x85]);
+ e(0x83,0x7d,16,2);j('cancel',[0x0f,0x84]);
  e(0x83,0x7d,16,1);j('done',[0x0f,0x85]);
  e(0xff,0x05,...u32(0x4026a0));
  e(0x83,0x3d,...u32(0x4026a0),1);j('third',[0x0f,0x85]);
@@ -37,6 +42,16 @@ function fixture(){
  for(const n of [0,0x400000,1])push(n);e(0xff,0x75,8);
  for(const n of [30,120,130,140,0x50010000,0x402760,0x402740,0])push(n);
  call(0x1968);e(0x50);call(0x196c);
+ j('done',[0xe9]);
+ // Return from the real Cancel BUTTON callback before waiting for UP, so
+ // its native dispatch fence can acknowledge DOWN. A real guest timer then
+ // observes physical release through USER32, as in the proven 9acca gate.
+ label('cancel');e(0xc7,0x05,...u32(0x4026a4),...u32(1));
+ push(0);push(10);push(1);e(0xff,0x75,8);call(0x1974);j('done',[0xe9]);
+ label('timer');e(0x83,0x3d,...u32(0x4026a4),0);j('done',[0x0f,0x84]);
+ for(const key of [1,13]){push(key);call(0x1970);e(0xa9,...u32(0x8000));j('done',[0x0f,0x85]);}
+ push(1);e(0xff,0x75,8);call(0x1978);
+ push(0);e(0xff,0x75,8);call(0x1954); // EndDialog -> ordinary entry ExitProcess
  label('done');e(0xb8,1,0,0,0,0xc9,0xc2,16,0);
  assert(a.length<0x200);const out=Buffer.from(a);
  for(const [o,n]of fix)out.writeInt32LE(labels[n]-o-4,o);
@@ -64,9 +79,16 @@ function verify(dir){
  assert(!fs.existsSync(path.join(dir,'PERMANENT-UNKNOWN.json')));
  const requests=fs.readFileSync(path.join(dir,'requests.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
  assert.equal(requests.filter(r=>r.action==='guarded-bind').length,1,'one permanent binding across pages');
- assert.equal(requests.filter(r=>r.action==='guarded-input').length,2);
- const wait=read('native-wait');assert(wait.actualWait&&wait.stdoutEOF&&wait.stderrEOF&&wait.hostCleanup&&!wait.nativeQuit);
- console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,changingNextHWNDs:targets,oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,noOriginal:true}));
+ assert.equal(requests.filter(r=>r.action==='guarded-input').length,3);
+ const cancel=read('cancel-down'),up=read('cancel-up'),intent=read('cancel-intent');
+ assert(cancel.receipt.consumed&&cancel.receipt.receiptBoundary==='native-button-dispatch-return');
+ assert(cancel.at<intent.confirmationDeadline&&up.physicalUpACK&&up.at<intent.physicalUpDeadline);
+ const release=read('cancel-release-wait');assert(release.actualWait&&release.stdoutEOF&&release.stderrEOF);
+ assert(read('cancel-completion').elapsedMs<3000);
+ const observation=read('cancel-observation');assert(observation.outcome==='process-exited'&&observation.noPostExitRequest);
+ const wait=read('native-wait');assert(wait.actualWait&&wait.stdoutEOF&&wait.stderrEOF&&!wait.hostCleanup&&wait.exit===0&&wait.disposition==='normal');
+ assert(read('native-exit').exitCode===0);
+ console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,changingNextHWNDs:targets,oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,nativeQuit:true,hostCleanup:false,noOriginal:true}));
 }
 module.exports={fixture,verify};
 if(require.main===module){if(process.argv[2]==='--verify')verify(process.argv[3]);else fs.writeFileSync(process.argv[2],fixture(),{flag:'wx'});}

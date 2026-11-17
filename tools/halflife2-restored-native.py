@@ -86,7 +86,24 @@ def main():
  retained=EDIT_PROOF/'fixture/module.wasm';retained_body=retained.read_bytes()
  assert m.sha(retained_body)==editpins['moduleSHA256']==editproof['moduleSHA256']
  tested_body=retained_body
- if layout_repair:
+ retained_repair=os.environ.get('HL2_RETAINED_LAYOUT_REPAIR')
+ if retained_repair:
+  assert layout_repair,'retained repair requires the exact repaired Edit graph'
+  repair=pathlib.Path(retained_repair).resolve()
+  assert repair.is_relative_to(ROOT/'scratch/runs')
+  repairpins=read(repair/'runtime-inputs.json')
+  repairproof=read(repair/'layout-repair-module.json')
+  for name,digest in repairpins['sources'].items():
+   if name.startswith(('src/','tools/watx')):
+    assert name in files and m.sha(files[name])==digest,'retained repair input differs: '+name
+  retained=repair/'module.wasm';tested_body=retained.read_bytes()
+  assert m.sha(tested_body)==repairpins['moduleSHA256']==repairproof['moduleSHA256']
+  assert repairproof['otherWATAndCompilerInputsExact']
+  assert repairproof['fixedWATSHA256']==m.sha(files['src/09c3-wndprocs5-edit.wat'])
+  assert os.write(module,tested_body)==len(tested_body)
+  m.save('layout-repair-module.json',{**repairproof,'retainedFrom':str(repair.relative_to(ROOT)),
+      'retainedInputsSHA256':m.sha((repair/'runtime-inputs.json').read_bytes()),'recompiled':False})
+ elif layout_repair:
   # Start from the exact proved Edit graph and replace only its wrapping
   # measurement body. Every other WAT/compiler input was checked above.
   assert m.sha(m.git('show','f1aa883e1c4ce63d433050f7d04f15ace9b1ecff:src/09c3-wndprocs5-edit.wat'))==editpins['sources']['src/09c3-wndprocs5-edit.wat']
@@ -106,19 +123,21 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,h.appendSection(Buffer.from(r.was
  os.lseek(module,0,0);body=os.read(module,os.fstat(module).st_size)
  import fcntl
  fcntl.fcntl(module,fcntl.F_ADD_SEALS,15);assert body[:4]==b'\0asm'
- if layout_repair:(m.RUN/'module.wasm').write_bytes(body)
+ if layout_repair and not retained_repair:(m.RUN/'module.wasm').write_bytes(body)
  else:os.link(retained,m.RUN/'module.wasm')
  assert m.sha((m.RUN/'module.wasm').read_bytes())==m.sha(body)
  manifest={**manifest,'moduleSHA256':m.sha(body),'priorModuleSHA256':m.sha(old_body),
            'nativeEditDelta':{n:changed[n] for n in DIAGNOSTICS if n.startswith('src/')}}
  encoded=json.dumps(manifest,sort_keys=True).encode()
- # Preserve paths and bytes without duplicate manifest/module writes.
- m.save('compile-inputs.json',dict(gitSHA=revision,sources={n:m.sha(b) for n,b in files.items()},
-     moduleSHA256=m.sha(body),priorModuleSHA256=m.sha(old_body),nativeEditDelta=manifest['nativeEditDelta'],
-     retainedModuleReference=str(retained.relative_to(ROOT)),exactPublishedEditProofReuse=not layout_repair,editLayoutRepair=layout_repair))
+ # The full input inventory is retained once below; the compile receipt pins
+ # those exact bytes rather than writing a second copy of every source hash.
  m.save('immutable-manifest.json',manifest)
  pins={**pins,'sources':{n:m.sha(b) for n,b in files.items()},'diagnosticGit':revision,'diagnosticChanges':changed,'moduleSHA256':m.sha(body)}
  m.save('runtime-inputs.json',pins)
+ m.save('compile-inputs.json',dict(gitSHA=revision,sourcesReference='runtime-inputs.json',
+     runtimeInputsSHA256=m.sha((m.RUN/'runtime-inputs.json').read_bytes()),
+     moduleSHA256=m.sha(body),priorModuleSHA256=m.sha(old_body),nativeEditDelta=manifest['nativeEditDelta'],
+     retainedModuleReference=str(retained.relative_to(ROOT)),exactPublishedEditProofReuse=not layout_repair,editLayoutRepair=layout_repair))
  (m.RUN/'diagnostic.patch').write_bytes(m.git('diff','--binary',COMPONENT,'--',*DIAGNOSTICS))
  (m.RUN/'desktop-observations').mkdir()
  env=dict(os.environ,NODE_OPTIONS='--preserve-symlinks --require='+f'/proc/{os.getpid()}/fd/{preload}',
