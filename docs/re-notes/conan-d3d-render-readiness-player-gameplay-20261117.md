@@ -16,7 +16,7 @@ actual CPU Worker's slot/endpoint to the page owner. All live target identities
 remain in the strict before/after comparison. Destroyed targets are explicitly
 retired; secondary CPU slots are distinguished from the unique main slot.
 
-The final fresh control had 97 pending samples across initial startup and a
+The initial fully qualified control had 97 pending samples across initial startup and a
 replacement. Samples explicitly show a real render endpoint with zero presents
 before readiness. Public requestCurrentDisplayCapture completes actual native
 whole-output readback; the selected whole browser image visibly shows the blue
@@ -26,14 +26,20 @@ the same render manager, actual closed endpoint/app, and an old receipt after
 ordinary page/app replacement all reject before taking another image.
 
 Earlier disposable iterations retained a wrong API-label predicate and stale
-DevTools-target bookkeeping failure, both repaired and retested. An additional
-replacement PNG shows only the desktop despite native readback completing with
-the same output digest as the visible blue initial fixture. This discrepancy
-is retained; no positive visible replacement claim or product diagnosis is
-made. Positive visible startup qualification uses the initial full route;
-replacement qualification is rejection of the genuine prior owner receipt.
+DevTools-target bookkeeping failure, both repaired and retested. The initial
+late-control test backdated a genuine receipt; a subsequent fresh disposable
+fixture also ages an unchanged genuine receipt beyond 120 seconds in real time
+and rejects it. This supplemental elapsed-age test follows the original run;
+the original used the already-qualified common readiness/capture route.
 
-The ONE authorized fresh Conan original used the identical final driver after
+Correction to the first published review: the retained replacement PNG does
+contain the blue D3D9 window. A new individual whole-image review and PNG byte
+audit confirm the exact 440-by-300 blue rectangle. The earlier desktop-only
+review was incorrect; the raw image is unchanged. No native/PNG discrepancy is
+established. The genuine prior owner's receipt is rejected on replacement,
+and a fresh capture of the replacement owner succeeds.
+
+The ONE authorized fresh Conan original used the initial qualified driver after
 this full initial-route proof. Exact pins are b063d11ee8b53ca6ee4239f9c56b3f7691d4e9c2
 with only published da9ac26cc8c56a161b044e3705873420aecadaed host-imports,
 module SHA-256 87ef39648a61ed6f54ca4ab8de1926de02c651eb2d99655015dc7e5de5407009,
