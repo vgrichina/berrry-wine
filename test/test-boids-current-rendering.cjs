@@ -77,6 +77,26 @@ async function driverControls(){
   console.log('PASS shared exact driver delayed window, absent/wrong/replaced owners, failed/UNKNOWN/pending, fixed deadlines and sticky refusal');
 }
 driverControls().catch(e=>{console.error(e);process.exitCode=1;});
+// The ownership oracle refuses even a single corrupted pixel anywhere in
+// the full frame, including alpha, and never derives expected pixels from it.
+{
+  const {classifyOwnershipPixels}=require('../tools/boids-current-owner.cjs');
+  for(const kind of ['blue','black','red','green']){
+    const b=Buffer.alloc(640*480*4);
+    for(let y=0;y<480;y++)for(let x=0;x<640;x++){
+      const rect=x<320&&y>=1&&y<=240;
+      const c=kind==='red'?[255,0,0,255]:kind==='green'?[0,255,0,255]:rect?[0,0,kind==='blue'?255:0,255]:[255,255,255,255];
+      b.set(c,(y*640+x)*4);
+    }
+    assert.equal(classifyOwnershipPixels(b,640,480).kind,kind);
+    b[b.length-1]=254;assert.equal(classifyOwnershipPixels(b,640,480).kind,'other');
+  }
+  assert.equal(classifyOwnershipPixels(Buffer.alloc(4),1,1).reason,'extent');
+  const sequence=require('../tools/boids-current-fixture.cjs').ownershipSequenceSource();
+  assert(sequence.includes('((GetTickCount()-started)/2000)%4'));
+  assert(sequence.includes('FillRect(dc,r,brush)'));assert(!sequence.includes('GetAsyncKeyState(27)'));
+  console.log('PASS independent full-pixel GPU/GDI oracle, single-pixel alpha corruption, extent refusal and public native sequence');
+}
 // The passive presenter observer preserves errors/returns and bounds storage.
 {
   const {installPresentationObserver}=require('../tools/boids-current-runtime.cjs');

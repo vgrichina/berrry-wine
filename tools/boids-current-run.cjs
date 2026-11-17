@@ -3,10 +3,12 @@ const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),
 const {PNG}=require('pngjs'),{gitFiles,compile,installObserver,selectWindow,installSoftwareObserver,installPresentationObserver,installPixelObserver}=require('./boids-current-runtime.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const {installDriver}=require('./boids-current-driver.cjs');
+const {installOwnershipObserver,classifyOwnershipPixels}=require('./boids-current-owner.cjs');
 async function run(out,commit,backend,mode,fixtureFile){
   fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2));
-  save('harness-pins.json',['tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs'].map(path=>({path,sha256:sha(fs.readFileSync(path))})));
+  save('harness-pins.json',['tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py','tools/boids-current-fixture.cjs','tools/boids-current-owner.cjs','test/test-boids-current-rendering.cjs'].map(path=>({path,sha256:sha(fs.readFileSync(path))})));
   fs.writeFileSync(path.join(out,'owned-harness.patch'),cp.execFileSync('git',['diff','--binary',commit,'--','tools/boids-current-fixture.cjs','tools/boids-current-runtime.cjs','tools/boids-current-run.cjs','tools/boids-current-driver.cjs','tools/boids-current-supervise.py','test/test-boids-current-rendering.cjs']));
+  fs.writeFileSync(path.join(out,'owner-helper.patch'),cp.spawnSync('git',['diff','--no-index','--binary','--','/dev/null','tools/boids-current-owner.cjs']).stdout);
   const files=gitFiles(commit);
   if(process.env.BOIDS_CAPTURE_OWNED_OVERLAY){
     if(!fixtureFile)throw Error('Owned overlay is fixture-only');
@@ -28,6 +30,11 @@ async function run(out,commit,backend,mode,fixtureFile){
   }
   if(process.env.BOIDS_PIXEL_STAGES){
     for(const n of ['lib/gpu-stream-webgl.js','lib/gpu-stream-render-worker.js','lib/gpu-stream-host.js','lib/renderer.js']){const old=files.get(n),suffix='\n;('+installPixelObserver.toString()+')(globalThis);\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}
+    save('observer-patches.json',observerPatches);
+  }
+  if(process.env.BOIDS_OWNERSHIP_SEQUENCE){
+    if(!fixtureFile)throw Error('ownership sequence instrumentation is authored-only');
+    for(const n of ['lib/gpu-stream-host.js','lib/renderer.js']){const old=files.get(n),suffix='\n;('+installOwnershipObserver.toString()+')(globalThis,('+classifyOwnershipPixels.toString()+'));\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));observerPatches.push({path:n,baseSHA256:sha(old),servedSHA256:sha(files.get(n)),suffix});}
     save('observer-patches.json',observerPatches);
   }
   save('prepared.json',{at:Date.now(),commit,moduleSHA256:sha(module),fixture:!!fixtureFile});
@@ -103,6 +110,7 @@ async function run(out,commit,backend,mode,fixtureFile){
           compositorLayer:Object.values(r.windows).filter(v=>v.visible&&!v.isChild).map(v=>({hwnd:v.hwnd,layerAPI:v._dxFrameLayer?.api,writeSeq:v._dxFrameLayer?.writeSeq,stale:v._dxFrameLayer?.stale?.(),overlay:!!r._overlayFrameLayer(v)}))};
       }));
     }
+    if(process.env.BOIDS_OWNERSHIP_SEQUENCE)save('ownership-sequence.json',await page.evaluate(()=>globalThis.__boidsOwnership));
     terminal.outcome='observed';save('identity-end.json',await identity());
     if(fixtureFile){
       // Fault only the authored fixture's ownership records. Never runs on originals.

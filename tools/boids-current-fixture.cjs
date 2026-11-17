@@ -29,9 +29,11 @@ function prepare(out, active = false, flip = false, device2 = false){
       .replace(/if\(!checked\)\{[\s\S]*?checked=1;\}/,'if(!checked){SetWindowTextA(hwnd,"AUTHORED native COM FLIP geometry");checked=1;}');
     if(flip==='black')source=source.replace('v[i*8+4]=0xff3344cc','v[i*8+4]=0xff000000');
   }
-  if(device2)source=device2Source(device2);
+  if(device2)source=['sequence','paint-sequence'].includes(device2)?ownershipSequenceSource(device2==='paint-sequence'):device2Source(device2);
   const imports={kernel32:['ExitProcess@4','Sleep@4','OutputDebugStringA@4','GetTickCount@0'],user32:['CreateWindowExA@48','SetFocus@4','SetForegroundWindow@4','SetWindowTextA@8'],gdi32:['GetPixel@12'],ddraw:['DirectDrawCreateEx@16']};
   if(device2){imports.user32.push('GetDC@4','ReleaseDC@8');imports.gdi32.push('TextOutA@20');}
+  if(['sequence','paint-sequence'].includes(device2)){imports.user32.push('FillRect@12');imports.gdi32.push('CreateSolidBrush@4','DeleteObject@4');}
+  if(device2==='paint-sequence')imports.user32.push('RegisterClassA@4','DefWindowProcA@16','BeginPaint@8','EndPaint@8','InvalidateRect@12','PeekMessageA@20','TranslateMessage@4','DispatchMessageA@4');
   for(const [dll,names]of Object.entries(imports)){
     fs.writeFileSync(path.join(out,dll+'.def'),'LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n',{flag:'wx'});
     cp.execFileSync('llvm-dlltool',['-m','i386','-k','-d',path.join(out,dll+'.def'),'-l',path.join(out,dll+'.lib')]);
@@ -123,5 +125,30 @@ function qualifyDevice2(snapshot,black=false){
   }
   return result;
 }
-module.exports={prepare,qualify,qualifyFlip,device2Source,qualifyDevice2};
+// Real guest API writes on real clocks. GPU blue -> GDI red -> GPU black ->
+// GDI green repeats; no input, private simulation reads or host-driven stepping.
+function ownershipSequenceSource(paint=false){
+  let source=device2Source().replace('void start(void){',
+    'I P S CreateSolidBrush(U);I int S DeleteObject(P);I int S FillRect(P,P,P);\nvoid start(void){')
+    .replace('for(;;){',`for(;;){
+  U phase=((GetTickCount()-started)/2000)%4;
+  if(phase&1){P dc=GetDC(hwnd);P brush=CreateSolidBrush(phase==1?0x000000ff:0x0000ff00);int r[4]={0,0,640,480};
+    if(!FillRect(dc,r,brush))ExitProcess(46);DeleteObject(brush);ReleaseDC(hwnd,dc);Sleep(10);continue;}
+  for(U i=0;i<4;i++)v[i*8+4]=phase==0?0x000000ff:0;
+`);
+  if(paint){
+    source=source.replace('void start(void){',`I U S RegisterClassA(P);I int S DefWindowProcA(P,U,U,U);I P S BeginPaint(P,P);I int S EndPaint(P,P);I int S InvalidateRect(P,P,int);I int S PeekMessageA(P,P,U,U,U);I int S TranslateMessage(P);I int S DispatchMessageA(P);
+static U ownerPhase=1;
+static int S ownerProc(P hwnd,U msg,U wp,U lp){
+ if(msg==15){U ps[16]={0};P dc=BeginPaint(hwnd,ps);P brush=CreateSolidBrush(ownerPhase==1?0x000000ff:0x0000ff00);int r[4]={0,0,640,480};
+  if(!FillRect(dc,r,brush))ExitProcess(47);DeleteObject(brush);EndPaint(hwnd,ps);return 0;}
+ return DefWindowProcA(hwnd,msg,wp,lp);}
+void start(void){U wc[10]={0};wc[1]=(U)ownerProc;wc[9]=(U)"OWNER_SEQUENCE";if(!RegisterClassA(wc))ExitProcess(48);
+`).replace('0,"STATIC","AUTHORED software capture latency fixture"','0,"OWNER_SEQUENCE","AUTHORED WM_PAINT Device2 ownership"')
+      .replace('if(phase&1){P dc=GetDC(hwnd);P brush=CreateSolidBrush(phase==1?0x000000ff:0x0000ff00);int r[4]={0,0,640,480};\n    if(!FillRect(dc,r,brush))ExitProcess(46);DeleteObject(brush);ReleaseDC(hwnd,dc);Sleep(10);continue;}',
+        'if(phase&1){ownerPhase=phase;InvalidateRect(hwnd,0,0);U msg[7]={0};while(PeekMessageA(msg,0,0,0,1)){TranslateMessage(msg);DispatchMessageA(msg);}Sleep(10);continue;}');
+  }
+  return source;
+}
+module.exports={prepare,qualify,qualifyFlip,device2Source,qualifyDevice2,ownershipSequenceSource};
 if(require.main===module)prepare(path.resolve(process.argv[2]),process.argv[3]==='active',process.argv[4]==='black'?'black':process.argv[4]==='flip');
