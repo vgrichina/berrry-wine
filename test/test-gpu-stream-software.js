@@ -258,6 +258,36 @@ function raster(over = {}) {
     x.close();
   }
 
+  // D16 readback: native quantized depth, top-down subrect, padded rows,
+  // slot completion, and fail-fast format/kind/pitch/rectangle controls.
+  {
+    const q = makeProducer({ ringBytes: 4096, arenaBytes: 4096, memBytes: 1 << 16 });
+    const x = new Executor({ getExports: () => e, getMemory: () => memory.buffer });
+    q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 4, height: 4 });
+    q.emit('CREATE', { id: 2, kind: KIND.DS, fmt: FMT.D16, levels: 1, width: 4, height: 4 });
+    q.emit('TARGETS', { color: 1, depth: 2 });
+    q.emit('CLEAR', { mask: 2, z: 0.25, left: 0, top: 0, right: 4, bottom: 2 });
+    const pos = q.arenaAlloc(24); q.arenaView(pos, 24).fill(0xa5);
+    q.emit('READBACK', { rt: 2, x: 1, y: 1, w: 2, h: 2, fmt: FMT.D16, dst: pos, pitch: 6, slot: 2 });
+    const ring = q.ring(); GS.drain([ring], x);
+    const d = new DataView(q.buffer, q.arenaData + pos, 24);
+    assert.strictEqual(d.getUint16(0, true), Math.round(0.25 * 65535));
+    assert.strictEqual(d.getUint16(2, true), Math.round(0.25 * 65535));
+    assert.strictEqual(d.getUint16(6, true), 65535); assert.strictEqual(d.getUint16(8, true), 65535);
+    assert.strictEqual(d.getUint16(4, true), 0xa5a5, 'row padding untouched');
+    assert.ok(x.caps().flags & CONST.CAP_DEPTH_READBACK);
+    for (let i = 0; i <= 65535; i++)
+      assert.strictEqual(Math.round(e.d3d_software_quantize_depth(80, i / 65535) * 65535), i, 'all D16 values round-trip through native f32 storage');
+    x.close();
+    for (const [over, pattern] of [[{rt:1}, /kind/], [{pitch:3}, /pitch/], [{x:4}, /rect/], [{fmt:FMT.D24S8}, /kind/]])
+      expectFail(() => lone(q => {
+        q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 4, height: 4 });
+        q.emit('CREATE', { id: 2, kind: KIND.DS, fmt: FMT.D16, levels: 1, width: 4, height: 4 });
+        q.emit('READBACK', { rt:2, x:0, y:0, w:2, h:2, fmt:FMT.D16, dst:q.arenaAlloc(24), pitch:4, slot:0, ...over });
+      }), pattern, 'invalid depth readback');
+    console.log('PASS native D16 readback and fail-fast controls');
+  }
+
   // ── occlusion: a FENCE pair counts the samples that passed between them ──
   {
     const q = makeProducer({ ringBytes: 4096, arenaBytes: 4096, memBytes: 1 << 16 });

@@ -145,6 +145,8 @@
   (global $GPS_CAP_WBUFFER i32 (i32.const 256))
   ;; COPY records (RT -> RT stretch, RT -> TEX2D/CUBE level): see GpsCopy.
   (global $GPS_CAP_COPY i32 (i32.const 512))
+  ;; Exact D16 depth-target readback (no colour/stencil conversion).
+  (global $GPS_CAP_DEPTH_READBACK i32 (i32.const 1024))
 
   ;; CLEAR mask bits; RASTER colormask bits (R,G,B,A = 1,2,4,8).
   (global $GPS_CLEAR_COLOR i32 (i32.const 1))
@@ -337,7 +339,8 @@
   (layout GpsFence (field slot i32) (field kind u8) (field pad u8) (field pad2 u16) (field dst i32))
   ;; Pixels go to the arena at dst, rows top-down, pitch bytes apart; then the
   ;; executor stores this record's seq into slots[slot]. fmt must be
-  ;; A8B8G8R8; producers convert to the guest's format in WAT.
+  ;; A8B8G8R8 for RTs; with CAP_DEPTH_READBACK, D16 for D16 DSs
+  ;; (little-endian uint16, pitch >= w*2). Producers convert in WAT.
   (layout GpsReadback
     (field rt i32) (field x i32) (field y i32) (field w i32) (field h i32)
     (field fmt i32) (field dst i32) (field pitch i32) (field slot i32))

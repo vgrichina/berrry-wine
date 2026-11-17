@@ -687,6 +687,58 @@
       (call $glg_readback (global.get $glg_back_id) (global.get $glg_back_e) (local.get $site))
       (global.set $glg_back_gpu (i32.const 0)))))
 
+  ;; Recover the exact D16 depth before a CPU fallback tests it.
+  (func $glg_depth_readback
+    (local $w i32) (local $hgt i32) (local $pitch i32) (local $dib i32) (local $h i32)
+    (local $y i32) (local $n i32) (local $k i32) (local $pos i32) (local $src i32) (local $p i32)
+    (local $band i32) (local $seq i32)
+    (local $entry i32)
+    ;; Other executors and D24S8 keep the original lost-depth guard.
+    (if (i32.or (i32.eqz (call $glg_cap (global.get $GPS_CAP_DEPTH_READBACK)))
+          (global.get $glg_ds_s)) (then (return)))
+    (local.set $entry (global.get $gl_sw_zbuf))
+    (local.set $h (global.get $glg_h))
+    (local.set $w (load.field DxObject width (local.get $entry)))
+    (local.set $hgt (load.field DxObject height (local.get $entry)))
+    (local.set $pitch (load.field DxObject pitch (local.get $entry)))
+    (local.set $dib (load.field DxObject misc1 (local.get $entry)))
+    (local.set $band (call $glg_band (local.get $w)))
+    (block $done (loop $bands
+      (br_if $done (i32.ge_u (local.get $y) (local.get $hgt)))
+      (local.set $n (i32.sub (local.get $hgt) (local.get $y)))
+      (if (i32.gt_u (local.get $n) (local.get $band)) (then (local.set $n (local.get $band))))
+      (local.set $pos (call $glg_arena (i32.mul (i32.shl (local.get $w) (i32.const 1)) (local.get $n))))
+      (call $gps_slot_arm (local.get $h) (i32.const 0))
+      (local.set $p (call $glg_begin (global.get $GPS_OP_READBACK) (size-of GpsReadback)))
+      (store.field GpsReadback rt (local.get $p) (global.get $glg_ds_id))
+      (store.field GpsReadback x (local.get $p) (i32.const 0))
+      (store.field GpsReadback y (local.get $p) (local.get $y))
+      (store.field GpsReadback w (local.get $p) (local.get $w))
+      (store.field GpsReadback h (local.get $p) (local.get $n))
+      (store.field GpsReadback fmt (local.get $p) (global.get $GPS_FMT_D16))
+      (store.field GpsReadback dst (local.get $p) (local.get $pos))
+      (store.field GpsReadback pitch (local.get $p) (i32.shl (local.get $w) (i32.const 1)))
+      (store.field GpsReadback slot (local.get $p) (i32.const 0))
+      (local.set $seq (call $glg_end (local.get $p)))
+      (call $glg_stat (i32.const 12) (i32.const 1))
+      (call $gps_slot_wait (local.get $h) (i32.const 0) (local.get $seq))
+      (local.set $src (call $glg_aptr (local.get $pos)))
+      (local.set $k (i32.const 0))
+      (block $rd (loop $rows
+        (br_if $rd (i32.ge_u (local.get $k) (local.get $n)))
+        (memory.copy
+          (i32.add (local.get $dib) (i32.mul (i32.add (local.get $y) (local.get $k)) (local.get $pitch)))
+          (i32.add (local.get $src) (i32.mul (local.get $k) (i32.shl (local.get $w) (i32.const 1))))
+          (i32.shl (local.get $w) (i32.const 1)))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br $rows)))
+      (local.set $y (i32.add (local.get $y) (local.get $n)))
+      (br $bands)))
+    (call $page_watch_write (local.get $dib)
+      (i32.add (i32.mul (i32.sub (local.get $hgt) (i32.const 1)) (local.get $pitch)) (i32.shl (local.get $w) (i32.const 1))))
+    ;; Ownership changes only after every acknowledged band is copied.
+    (global.set $glg_zlost (i32.const 0)))
+
   ;; A primitive the software rasterizer is about to draw.
   (func $glg_cpu_prim
     (local $s i32)
@@ -705,6 +757,7 @@
     (local.set $s (global.get $gl_sw_st))
     (if (i32.and (i32.ne (i32.and (i32.load (local.get $s)) (i32.const 8)) (i32.const 0))
           (i32.ne (global.get $gl_sw_zbuf) (i32.const 0))) (then
+      (if (global.get $glg_zlost) (then (call $glg_depth_readback)))
       (if (global.get $glg_zlost) (then (call $glg_fail (i32.const 20))))
       (if (i32.load offset=24 (local.get $s)) (then (global.set $glg_z_cpu (i32.const 1))))))
     (if (global.get $rast_stencil_state) (then

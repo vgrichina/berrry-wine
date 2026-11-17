@@ -14,7 +14,7 @@
 //      target is D16 and holds no stencil); the next full depth+stencil clear
 //      makes it D24S8 and the stencil frame runs on the GPU.
 const assert = require('assert');
-const { bothArms } = require('./helpers/gl-gps-context');
+const { bothArms, bootGlGps } = require('./helpers/gl-gps-context');
 
 const GL_COLOR_LOGIC_OP = 0xbf2, GL_XOR = 0x1506, GL_POLYGON_STIPPLE = 0xb42, GL_STENCIL_TEST = 0xb90;
 const ALL = 0x4000 | 0x100 | 0x400;
@@ -72,6 +72,33 @@ const ALL = 0x4000 | 0x100 | 0x400;
     assert.strictEqual(s.reasons[3], 1, `one stipple decline: ${JSON.stringify(s.reasons)}`);
     assert.ok(s.swFrames === 2 && s.gpuFrames === 1, `two SW frames, then a GPU one: sw=${s.swFrames} gpu=${s.gpuFrames}`);
     console.log(`PASS decline-to-software frame then GPU (sw=${s.swFrames} gpu=${s.gpuFrames} sites=${JSON.stringify(s.sites)})`);
+  }
+  // GPU depth must survive a mid-frame CPU fallback (Q3 glEnd trap).
+  {
+    const scene = g => {
+      g.clear([0, 0, 0, 1], ALL);
+      g.call('glEnable', [0xb71]); // DEPTH_TEST, default LESS and writes on
+      const q = (x0, y0, x1, y1, z, c) => g.prim(7,
+        [{x:x0,y:y0,z}, {x:x1,y:y0,z}, {x:x1,y:y1,z}, {x:x0,y:y1,z}], c);
+      q(-1, -1, 0, 0, -1, [0, 1, 0, 1]);
+      q(0, 0, 1, 1, 0.5, [0, 0, 1, 1]);
+      const pat = g.e.guest_alloc(128) >>> 0;
+      new Uint8Array(g.memory.buffer, g.wa(pat), 128).fill(255);
+      g.call('glPolygonStipple', [pat]); g.call('glEnable', [GL_POLYGON_STIPPLE]);
+      // Near green must survive LESS; nearer red replaces blue;
+      // red also fills the two untouched (clear-depth) quadrants.
+      q(-1, -1, 1, 1, -0.5, [1, 0, 0, 1]);
+      g.call('glDisable', [GL_POLYGON_STIPPLE]);
+      q(-1, -1, 1, 1, 0, [1, 1, 1, 1]); // must remain occluded by CPU writes
+      g.swap();
+    };
+    const r = await bothArms(scene);
+    assert.ok(r.cmp.ok, `GPU depth -> CPU depth matches native software: ${JSON.stringify(r.cmp)}`);
+    assert.deepStrictEqual([...new Set(r.gpPic.px)].sort(), [0x00ff00, 0xff0000].sort(), 'both depth outcomes visible');
+    assert.ok(r.gp.stats().draws >= 1 && r.gp.stats().reasons[3] >= 1, `GPU writes precede stipple fallback: ${JSON.stringify(r.gp.stats())}`);
+    const unsupported = await bootGlGps({ dropCaps: 1024 });
+    assert.throws(() => scene(unsupported), WebAssembly.RuntimeError, 'missing depth-readback capability retains lost-depth trap');
+    console.log('PASS depth handoff: occlusion, orientation, CPU writes and missing-capability guard');
   }
   // 3. Stencil.
   {

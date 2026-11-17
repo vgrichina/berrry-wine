@@ -3697,28 +3697,173 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
-  ;; VariantClear(pvarg: VARIANTARG*) → HRESULT. Full impl would free BSTR/dispatch
-  ;; fields based on vt, but Spider stores only simple VT_I4/VT_BOOL variants, and
-  ;; any cached BSTR leaks are bounded. A by-value VT_ARRAY owns its SAFEARRAY
-  ;; (devenum's FilterData is VT_UI1|VT_ARRAY), so that one is destroyed. Zero
-  ;; the whole 16-byte VARIANT so callers don't re-read stale tagged pointers.
-  (func $handle_VariantClear (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $vt i32) (local $hr i32)
-    (if (local.get $arg0)
+  ;; VARIANT ownership is shared by Copy, CopyInd and Clear. -1 requests the
+  ;; existing owner-thread COM continuation for actual IUnknown callbacks.
+  ;; No source tag is inferred from the caller or application.
+  (func $variant_span (param $p i32) (param $n i32) (result i32)
+    (local $end i32) (local $w i32)
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (local.set $end (i32.add (local.get $p) (i32.sub (local.get $n) (i32.const 1))))
+    (if (i32.lt_u (local.get $end) (local.get $p)) (then (return (i32.const 0))))
+    (local.set $w (call $g2w (local.get $p)))
+    (i32.and (i32.gt_u (local.get $w) (i32.const 255))
+      (i32.eq (call $g2w (local.get $end)) (i32.add (local.get $w) (i32.sub (local.get $n) (i32.const 1))))))
+
+  (func $variant_type_check (param $vt i32) (result i32)
+    (local $base i32)
+    (if (i32.and (local.get $vt) (i32.const 0x9000)) (then (return (i32.const 0x80020008))))
+    (local.set $base (i32.and (local.get $vt) (i32.const 0xfff)))
+    (if (i32.eq (local.get $base) (i32.const 36)) (then (return (i32.const 0x80004001)))) ;; RECORD needs IRecordInfo
+    (if (i32.and (local.get $vt) (i32.const 0x2000))
       (then
-        (local.set $vt (call $gl16 (local.get $arg0)))
-        (if (i32.eq (i32.and (local.get $vt) (i32.const 0x6000)) (i32.const 0x2000)) ;; VT_ARRAY, not VT_BYREF
-          (then
-            (local.set $hr (call $safearray_destroy (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))))
-            ;; A failed clear retains the array owner and the complete VARIANT.
-            (if (local.get $hr) (then
-              (i32.store offset=0 (global.get $reg_base) (local.get $hr))
-              (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-              (return)))))
-        (call $zero_memory (call $g2w (local.get $arg0)) (i32.const 16))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))  ;; S_OK
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-  )
+        (if (i32.or (i32.eq (local.get $base) (i32.const 9))
+              (i32.or (i32.eq (local.get $base) (i32.const 12)) (i32.eq (local.get $base) (i32.const 13))))
+          (then (return (i32.const 0x80004001))))
+        (if (i32.eqz (call $safearray_elem_size (local.get $base))) (then (return (i32.const 0x80020008))))
+        (return (i32.const 0))))
+    (if (i32.or (i32.lt_s (call $variant_value_size (local.get $base)) (i32.const 0))
+          (i32.eq (local.get $base) (i32.const 15))) (then (return (i32.const 0x80020008))))
+    (if (i32.and (local.get $vt) (i32.const 0x4000))
+      (then (if (i32.le_u (local.get $base) (i32.const 1)) (then (return (i32.const 0x80070057)))))
+      (else (if (i32.eq (local.get $base) (i32.const 12)) (then (return (i32.const 0x80020008))))))
+    (i32.const 0))
+
+  (func $variant_clear_check (export "variant_clear_check") (param $p i32) (result i32)
+    (local $vt i32) (local $hr i32) (local $array i32)
+    (if (i32.eqz (call $variant_span (local.get $p) (i32.const 16))) (then (return (i32.const 0x80070057))))
+    (local.set $vt (call $gl16 (local.get $p)))
+    (local.set $hr (call $variant_type_check (local.get $vt)))
+    (if (local.get $hr) (then (return (local.get $hr))))
+    (if (i32.eq (i32.and (local.get $vt) (i32.const 0x6000)) (i32.const 0x2000))
+      (then
+        (local.set $array (call $gl32 (i32.add (local.get $p) (i32.const 8))))
+        (if (local.get $array) (then
+          (if (call $gl32 (i32.add (local.get $array) (i32.const 8))) (then (return (i32.const 0x8002000d))))))))
+    (i32.const 0))
+
+  (func $variant_clear_value (export "variant_clear_native") (param $p i32) (param $refs i32) (result i32)
+    (local $vt i32) (local $value i32) (local $hr i32)
+    (local.set $hr (call $variant_clear_check (local.get $p)))
+    (if (local.get $hr) (then (return (local.get $hr))))
+    (local.set $vt (call $gl16 (local.get $p)))
+    (if (i32.eqz (i32.and (local.get $vt) (i32.const 0x4000)))
+      (then
+        (local.set $value (call $gl32 (i32.add (local.get $p) (i32.const 8))))
+        (if (i32.and (i32.eqz (local.get $refs))
+              (i32.and (i32.ne (local.get $value) (i32.const 0))
+                (i32.or (i32.eq (local.get $vt) (i32.const 9)) (i32.eq (local.get $vt) (i32.const 13)))))
+          (then (return (i32.const -1))))
+        (if (i32.and (local.get $vt) (i32.const 0x2000))
+          (then (local.set $hr (call $safearray_destroy (local.get $value)))
+            (if (local.get $hr) (then (return (local.get $hr))))))
+        (if (i32.and (i32.eq (local.get $vt) (i32.const 8)) (i32.ne (local.get $value) (i32.const 0)))
+          (then (call $heap_free (i32.sub (local.get $value) (i32.const 4)))))))
+    (call $zero_memory (call $g2w (local.get $p)) (i32.const 16))
+    (i32.const 0))
+
+  (func $variant_copy_value (export "variant_copy_native") (param $dst i32) (param $src i32) (param $ind i32) (param $refs i32) (result i32)
+    (local $vt i32) (local $data i32) (local $size i32) (local $depth i32) (local $tmp i32)
+    (local $hr i32) (local $value i32) (local $copy i32) (local $esp i32) (local $old i32) (local $ignored i32) (local $len i32)
+    (if (i32.or (i32.eqz (local.get $dst)) (i32.eqz (local.get $src))) (then (return (i32.const 0x80070057))))
+    (local.set $hr (call $variant_clear_check (local.get $dst)))
+    (if (local.get $hr) (then (return (local.get $hr))))
+    (block $resolved (loop $resolve
+      (if (i32.eqz (call $variant_span (local.get $src) (i32.const 16))) (then (return (i32.const 0x80070057))))
+      (local.set $vt (call $gl16 (local.get $src)))
+      (local.set $hr (call $variant_type_check (local.get $vt)))
+      (if (local.get $hr) (then (return (local.get $hr))))
+      (br_if $resolved (i32.or (i32.eqz (local.get $ind)) (i32.ne (local.get $vt) (i32.const 0x400c))))
+      (local.set $src (call $gl32 (i32.add (local.get $src) (i32.const 8))))
+      (local.set $depth (i32.add (local.get $depth) (i32.const 1)))
+      (if (i32.or (i32.eqz (local.get $src)) (i32.gt_u (local.get $depth) (i32.const 32))) (then (return (i32.const 0x80070057))))
+      (br $resolve)))
+    ;; Direct self-copy is a no-op; indirect self-copy must still dereference.
+    (if (i32.and (i32.eq (local.get $dst) (local.get $src))
+          (i32.or (i32.eqz (local.get $ind)) (i32.eqz (i32.and (local.get $vt) (i32.const 0x4000)))))
+      (then (return (i32.const 0))))
+    (local.set $data (i32.add (local.get $src) (i32.const 8)))
+    (local.set $size (i32.const 8))
+    (if (i32.and (i32.ne (local.get $ind) (i32.const 0)) (i32.ne (i32.and (local.get $vt) (i32.const 0x4000)) (i32.const 0)))
+      (then
+        (local.set $data (call $gl32 (local.get $data)))
+        (if (i32.eqz (local.get $data)) (then (return (i32.const 0x80070057))))
+        (local.set $vt (i32.xor (local.get $vt) (i32.const 0x4000)))
+        (local.set $size (if (result i32) (i32.and (local.get $vt) (i32.const 0x2000))
+          (then (i32.const 4)) (else (call $variant_value_size (local.get $vt))))))
+      (else (if (i32.eq (local.get $vt) (i32.const 14)) (then (local.set $data (local.get $src)) (local.set $size (i32.const 16))))))
+    (if (i32.ne (local.get $size) (i32.const 0))
+      (then (if (i32.eqz (call $variant_span (local.get $data) (local.get $size))) (then (return (i32.const 0x80070057))))))
+    (if (i32.or (i32.eq (local.get $vt) (i32.const 8))
+          (i32.or (i32.eq (local.get $vt) (i32.const 9)) (i32.or (i32.eq (local.get $vt) (i32.const 13)) (i32.ne (i32.and (local.get $vt) (i32.const 0x2000)) (i32.const 0)))))
+      (then (local.set $value (call $gl32 (local.get $data)))))
+    ;; Counted byte BSTRs may be odd-length and contain embedded NULs.
+    ;; Reject overflowing allocation sizes before the shared clone helper.
+    (if (i32.and (i32.eq (local.get $vt) (i32.const 8)) (i32.ne (local.get $value) (i32.const 0)))
+      (then
+        (if (i32.or (i32.lt_u (local.get $value) (i32.const 4))
+              (i32.eqz (call $variant_span (i32.sub (local.get $value) (i32.const 4)) (i32.const 4)))) (then (return (i32.const 0x80070057))))
+        (local.set $len (call $gl32 (i32.sub (local.get $value) (i32.const 4))))
+        (if (i32.gt_u (local.get $len) (i32.const 0x7fffffea)) (then (return (i32.const 0x8007000e))))
+        (if (i32.eqz (call $variant_span (local.get $value) (i32.add (local.get $len) (i32.const 2)))) (then (return (i32.const 0x80070057))))))
+    (local.set $old (call $gl16 (local.get $dst)))
+    (if (i32.and (i32.eqz (local.get $refs))
+          (i32.or
+            (i32.and (i32.ne (local.get $value) (i32.const 0)) (i32.or (i32.eq (local.get $vt) (i32.const 9)) (i32.eq (local.get $vt) (i32.const 13))))
+            (i32.and (i32.ne (call $gl32 (i32.add (local.get $dst) (i32.const 8))) (i32.const 0)) (i32.or (i32.eq (local.get $old) (i32.const 9)) (i32.eq (local.get $old) (i32.const 13))))))
+      (then (return (i32.const -1))))
+    (local.set $tmp (call $heap_alloc (i32.const 16)))
+    (if (i32.eqz (local.get $tmp)) (then (return (i32.const 0x8007000e))))
+    (call $zero_memory (call $g2w (local.get $tmp)) (i32.const 16))
+    (memory.copy (call $g2w (i32.add (local.get $tmp) (if (result i32) (i32.eq (local.get $vt) (i32.const 14)) (then (i32.const 0)) (else (i32.const 8)))))
+      (call $g2w (local.get $data)) (local.get $size))
+    (call $gs16 (local.get $tmp) (local.get $vt))
+    (block $staged
+      (if (i32.eq (local.get $vt) (i32.const 8))
+        (then
+          (local.set $copy (call $tl_clone_bstr (local.get $value)))
+          (if (i32.and (i32.ne (local.get $value) (i32.const 0)) (i32.eqz (local.get $copy)))
+            (then (local.set $hr (i32.const 0x8007000e)) (br $staged)))
+          (call $gs32 (i32.add (local.get $tmp) (i32.const 8)) (local.get $copy))))
+      (if (i32.eq (i32.and (local.get $vt) (i32.const 0x6000)) (i32.const 0x2000))
+        (then
+          (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+          (call $handle_SafeArrayCopy (local.get $value) (i32.add (local.get $tmp) (i32.const 8)) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+          (local.set $hr (i32.load offset=0 (global.get $reg_base)))
+          (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+          (br_if $staged (local.get $hr))))
+      (local.set $hr (call $variant_clear_value (local.get $dst) (local.get $refs)))
+      (if (local.get $hr) (then (local.set $ignored (call $variant_clear_value (local.get $tmp) (i32.const 1))) (br $staged)))
+      (memory.copy (call $g2w (local.get $dst)) (call $g2w (local.get $tmp)) (i32.const 16)))
+    (call $heap_free (local.get $tmp))
+    (local.get $hr))
+
+  (func $handle_VariantClear (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $hr i32)
+    (if (call $host_com_interface_operation (i32.const 277) (i32.load offset=16 (global.get $reg_base)) (global.get $current_thread_id))
+      (then (call $com_interface_bridge (i32.const 21) (i32.const 1)) (return)))
+    (local.set $hr (call $variant_clear_value (local.get $arg0) (i32.const 0)))
+    (if (i32.eq (local.get $hr) (i32.const -1)) (then (call $com_interface_bridge (i32.const 21) (i32.const 1)) (return)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_VariantCopy (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $hr i32)
+    (if (call $host_com_interface_operation (i32.const 278) (i32.load offset=16 (global.get $reg_base)) (global.get $current_thread_id))
+      (then (call $com_interface_bridge (i32.const 22) (i32.const 2)) (return)))
+    (local.set $hr (call $variant_copy_value (local.get $arg0) (local.get $arg1) (i32.const 0) (i32.const 0)))
+    (if (i32.eq (local.get $hr) (i32.const -1)) (then (call $com_interface_bridge (i32.const 22) (i32.const 2)) (return)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  ;; OLEAUT32 #11: HRESULT WINAPI VariantCopyInd(VARIANT*, const VARIANTARG*).
+  (func $handle_VariantCopyInd (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $hr i32)
+    (if (call $host_com_interface_operation (i32.const 279) (i32.load offset=16 (global.get $reg_base)) (global.get $current_thread_id))
+      (then (call $com_interface_bridge (i32.const 23) (i32.const 2)) (return)))
+    (local.set $hr (call $variant_copy_value (local.get $arg0) (local.get $arg1) (i32.const 1) (i32.const 0)))
+    (if (i32.eq (local.get $hr) (i32.const -1)) (then (call $com_interface_bridge (i32.const 23) (i32.const 2)) (return)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; VariantInit(pvarg) — mark the VARIANT as VT_EMPTY. Unlike VariantClear
   ;; this must NOT release anything: the struct is assumed to hold garbage.
@@ -3727,40 +3872,6 @@
     (if (local.get $arg0)
       (then (call $zero_memory (call $g2w (local.get $arg0)) (i32.const 16))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-  )
-
-  ;; VariantCopy(pvargDest, pvargSrc) → HRESULT. Release the destination, then
-  ;; take a copy of the source. A BSTR has to be duplicated rather than
-  ;; aliased, since both variants are independently owned and either may be
-  ;; cleared first; every other type in a VARIANT is inline.
-  (func $handle_VariantCopy (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $vt i32) (local $src_bstr i32) (local $len i32) (local $copy i32) (local $dst_wa i32)
-    (if (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
-      (then
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))  ;; E_INVALIDARG
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-        (return)))
-    (local.set $dst_wa (call $g2w (local.get $arg0)))
-    (call $zero_memory (local.get $dst_wa) (i32.const 16))
-    (memory.copy (local.get $dst_wa) (call $g2w (local.get $arg1)) (i32.const 16))
-    (local.set $vt (call $gl16 (local.get $arg1)))
-    (if (i32.eq (local.get $vt) (i32.const 8))    ;; VT_BSTR
-      (then
-        (local.set $src_bstr (call $gl32 (i32.add (local.get $arg1) (i32.const 8))))
-        (if (local.get $src_bstr)
-          (then
-            ;; A BSTR stores its byte length in the dword before the data.
-            (local.set $len (call $gl32 (i32.sub (local.get $src_bstr) (i32.const 4))))
-            (local.set $copy (call $heap_alloc (i32.add (local.get $len) (i32.const 6))))
-            (if (local.get $copy)
-              (then
-                (local.set $copy (i32.add (local.get $copy) (i32.const 4)))
-                (call $gs32 (i32.sub (local.get $copy) (i32.const 4)) (local.get $len))
-                (memory.copy (call $g2w (local.get $copy)) (call $g2w (local.get $src_bstr))
-                  (i32.add (local.get $len) (i32.const 2)))))
-            (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (local.get $copy))))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))  ;; S_OK
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
   ;; Native Automation loading, including builtin stdole and bounded MSFT/SLTG.
@@ -3846,6 +3957,39 @@
         (call $zero_memory (call $g2w (local.get $data)) (i32.wrap_i64 (local.get $count)))))
     (call $gs32 (i32.add (local.get $sa) (i32.const 12)) (local.get $data))
     (i32.store offset=0 (global.get $reg_base) (local.get $sa)))
+
+  ;; Dimension metadata is a UINT return, with a one-argument stdcall ABI.
+  (func $handle_SafeArrayGetDim (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (local.get $arg0) (then (call $gl16 (local.get $arg0))) (else (i32.const 0)))))
+
+  ;; Dimension numbers are one-based, opposite the descriptor bounds order.
+  ;; Metadata queries neither acquire a lock nor transfer element ownership.
+  (func $safearray_bound (param $sa i32) (param $dim i32) (param $out i32) (param $upper i32) (result i32)
+    (local $dims i32) (local $bound i32) (local $value i64)
+    (if (i32.or (i32.eqz (local.get $sa)) (i32.eqz (local.get $out))) (then (return (i32.const 0x80070057))))
+    (local.set $dims (call $gl16 (local.get $sa)))
+    (if (i32.or (i32.eqz (local.get $dim)) (i32.gt_u (local.get $dim) (local.get $dims)))
+      (then (return (i32.const 0x8002000B))))
+    (local.set $bound (i32.add (local.get $sa) (i32.add (i32.const 16)
+      (i32.shl (i32.sub (local.get $dims) (local.get $dim)) (i32.const 3)))))
+    (local.set $value (i64.extend_i32_s (call $gl32 (i32.add (local.get $bound) (i32.const 4)))))
+    (if (local.get $upper)
+      (then
+        (local.set $value (i64.sub (i64.add (local.get $value) (i64.extend_i32_u (call $gl32 (local.get $bound)))) (i64.const 1)))
+        (if (i32.or (i64.lt_s (local.get $value) (i64.const -2147483648)) (i64.gt_s (local.get $value) (i64.const 2147483647)))
+          (then (return (i32.const 0x8002000A))))))
+    (call $gs32 (local.get $out) (i32.wrap_i64 (local.get $value)))
+    (i32.const 0))
+
+  (func $handle_SafeArrayGetLBound (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (call $safearray_bound (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0))))
+
+  (func $handle_SafeArrayGetUBound (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (call $safearray_bound (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 1))))
 
   ;; Shared by SafeArrayDestroy and VariantClear. A locked array is not freed.
   (func $safearray_destroy (param $sa i32) (result i32)

@@ -29,6 +29,32 @@ async function main(){
  const frame=()=>({regs:['eax','ecx','edx','ebx','esp','ebp','esi','edi'].map(x=>e['get_'+x]()>>>0),eip:e.get_eip(),yield:e.get_yield_reason(),flags:Array.from({length:6},(_,i)=>e.com_callback_get_flags(e.com_owner_token(),i))});
  const call=async(name,args)=>{const before=frame(),v=await api(name,args);assert.deepEqual(frame(),before);assert.equal(c.frames.length,0);return v;};
  const create=async(dims)=>{dims.forEach(([n,lo],i)=>{put(p+80+i*8,n);put(p+84+i*8,lo);});return call('SafeArrayCreate',[8,dims.length,p+80]);};
+ // Exact iKernel 40e921/40e924/40e92a caller bytes: push [ebp+8],
+ // call [46c290], cmp eax,1. Observe EAX and ESP before restoring the
+ // caller frame, so continuation restoration cannot hide wrong ret 8.
+ const exactDll=a.string('oleaut32.dll',false),exactModule=await api('LoadLibraryA',[exactDll]);m.free(exactDll);
+ const exactOrdinal=await api('GetProcAddress',[exactModule,17]);assert(exactOrdinal);
+ const exactRows=[];
+ for(const dimensions of [1,2,3]){
+  const array=await create(Array.from({length:dimensions},()=>[1,0])),out=p+192,canary=p+224;
+  put(canary,0x13579bdf);put(canary+4,0x2468ace0);put(out+16,0xabcdef12);
+  put(0x46c290,exactOrdinal);
+  // prologue ends at 40e921. Store observations after CMP, then restore
+  // from EBP and RET 4, even in the intentionally wrong-map control.
+  const code=Buffer.from('5589e5ff7508ff1590c2460083f801a3000000008925000000000f940500000000892d0000000089ec5dc20400','hex');
+  code.writeUInt32LE(out,16);code.writeUInt32LE(out+4,22);code.writeUInt32LE(out+8,29);code.writeUInt32LE(out+12,35);
+  m.write(0x40e91e,code);
+  const savedEbp=e.get_ebp();e.set_ebp(canary);
+  try{await c.invoke(0x40e91e,[array]);}finally{e.set_ebp(savedEbp);}
+  const row={dimensions,eax:word(out),esp:word(out+4),expectedESP:word(out+12),equalOne:m.read(out+8,1)[0],canaries:[word(canary),word(canary+4),word(out+16)]};
+  row.pass=row.eax===dimensions&&row.esp===row.expectedESP&&row.equalOne===(dimensions===1?1:0)&&row.canaries[0]===0x13579bdf&&row.canaries[1]===0x2468ace0&&row.canaries[2]===0xabcdef12;
+  exactRows.push(row);
+  if(process.env.SAFEARRAY_OLD_MAPPING_CONTROL){const clone=word(canary);if(clone&&clone!==0x13579bdf)await call('SafeArrayDestroy',[clone]);}
+  await call('SafeArrayDestroy',[array]);
+ }
+ console.log(JSON.stringify({exactIKernelCaller:true,rows:exactRows}));
+ if(process.env.SAFEARRAY_OLD_MAPPING_CONTROL){assert(exactRows.every(x=>!x.pass),'old ordinal17 Copy must fail exact one-arg caller');m.free(p);await m.drain();return;}
+ assert(exactRows.every(x=>x.pass),'ordinal17 must return dimensions, ret4, and preserve canaries');
  assert.equal(await call('SafeArrayCreate',[8,0,p+80]),0);
  assert.equal(await call('SafeArrayCreate',[8,1,0]),0);
  put(p+80,0x10000001);assert.equal(await call('SafeArrayCreate',[8,1,p+80]),0);
@@ -93,33 +119,35 @@ async function main(){
  assert.equal(await assign(numbers,[0],0),0x80070057);assert.equal(await get(numbers,[0]),0);assert.equal(word(p+72),0x88776655);assert.equal(await call('SafeArrayDestroy',[numbers]),0);
  assert.equal(await assign(0,[0],0),0x80070057);
 
- const copyName=a.string('SafeArrayCopy',false),copyNamed=await api('GetProcAddress',[module,copyName]),copyOrdinal=await api('GetProcAddress',[module,17]);assert(copyNamed&&copyOrdinal);m.free(copyName);
- assert.equal(await call('SafeArrayCopy',[0,0]),0x80070057);put(p+72,0x12345678);assert.equal(await call('SafeArrayCopy',[0,p+72]),0);assert.equal(word(p+72),0);
+ const copyName=a.string('SafeArrayCopy',false),copyNamed=await api('GetProcAddress',[module,copyName]),copyOrdinal=await api('GetProcAddress',[module,27]);assert(copyNamed&&copyOrdinal);m.free(copyName);
+ const copyCall=async args=>{const before=frame(),v=await c.invoke(copyOrdinal,args);assert.deepEqual(frame(),before);assert.equal(c.frames.length,0);return v;};
+ assert.equal(await c.invoke(copyNamed,[0,p+72]),0);assert.equal(word(p+72),0);
+ assert.equal(await copyCall([0,0]),0x80070057);put(p+72,0x12345678);assert.equal(await copyCall([0,p+72]),0);assert.equal(word(p+72),0);
  const copyCycle=async()=>{
   const array=await create([[2,-3],[3,7]]),data=word(array+12);
   for(const [i,text]of [[0,'first\0tail'],[2,''],[5,'last']])put(data+4*i,await str(text));
   assert.equal(await call('SafeArrayAccessData',[array,p+64]),0);
-  assert.equal(await call('SafeArrayCopy',[array,p+72]),0);const copied=word(p+72),copiedData=word(copied+12);assert(copied!==array&&copiedData!==data);
+  assert.equal(await copyCall([array,p+72]),0);const copied=word(p+72),copiedData=word(copied+12);assert(copied!==array&&copiedData!==data);
   assert.equal(word(array+8),1);assert.equal(word(copied+8),0);assert.deepEqual(m.read(copied+16,16),m.read(array+16,16));
   for(let i=0;i<6;i++){const old=word(data+4*i),cloned=word(copiedData+4*i);if(old){assert(cloned&&old!==cloned);assert.equal(readString(cloned),readString(old));}else assert.equal(cloned,0);}
   // Fail after one BSTR was cloned. The oversized counted prefix is an
   // authored allocation-refusal fixture; restore it before freeing source.
   const failing=word(data+8),length=word(failing-4);put(failing-4,0x7ffffff0);put(p+72,0x12345678);
-  try{assert.equal(await call('SafeArrayCopy',[array,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(array+8),1);}finally{put(failing-4,length);}
+  try{assert.equal(await copyCall([array,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(array+8),1);}finally{put(failing-4,length);}
   assert.equal(await call('SafeArrayUnaccessData',[array]),0);assert.equal(await call('SafeArrayDestroy',[array]),0);
   assert.equal(readString(word(copiedData)),'first\0tail');assert.equal(readString(word(copiedData+20)),'last');
   assert.equal(await call('SafeArrayDestroy',[copied]),0);
  };
  for(let i=0;i<4;i++)await copyCycle();const copyHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await copyCycle();assert.equal(e.get_heap_ptr(),copyHeap,'copied owners and partially staged failure owners reclaimed');
  const emptyCopy=await create([[0,-7],[2,5]]);assert.equal(await c.invoke(copyOrdinal,[emptyCopy,p+72]),0);const emptyClone=word(p+72);assert(emptyClone&&emptyClone!==emptyCopy);assert.equal(word(emptyClone+12),0);assert.equal(await call('SafeArrayDestroy',[emptyCopy]),0);assert.equal(await call('SafeArrayDestroy',[emptyClone]),0);
- put(p+80,2);put(p+84,-2);const values=await call('SafeArrayCreate',[5,1,p+80]);const valueData=word(values+12);m.write(valueData,Uint8Array.from({length:16},(_,i)=>i*13));assert.equal(await call('SafeArrayCopy',[values,p+72]),0);const scalarClone=word(p+72);assert.deepEqual(m.read(word(scalarClone+12),16),m.read(valueData,16));assert.equal(await call('SafeArrayDestroy',[scalarClone]),0);
- put(values+8,0xffffffff);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x8000ffff);assert.equal(word(p+72),0);put(values+8,0);
- put(values+4,4);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x80070057);assert.equal(word(p+72),0);put(values+4,8);
+ put(p+80,2);put(p+84,-2);const values=await call('SafeArrayCreate',[5,1,p+80]);const valueData=word(values+12);m.write(valueData,Uint8Array.from({length:16},(_,i)=>i*13));assert.equal(await copyCall([values,p+72]),0);const scalarClone=word(p+72);assert.deepEqual(m.read(word(scalarClone+12),16),m.read(valueData,16));assert.equal(await call('SafeArrayDestroy',[scalarClone]),0);
+ put(values+8,0xffffffff);assert.equal(await copyCall([values,p+72]),0x8000ffff);assert.equal(word(p+72),0);put(values+8,0);
+ put(values+4,4);assert.equal(await copyCall([values,p+72]),0x80070057);assert.equal(word(p+72),0);put(values+4,8);
  // Descriptor/data allocation failure must not publish or free source data.
- put(values+16,0x10000000);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(values+12),valueData);put(values+16,2);
+ put(values+16,0x10000000);assert.equal(await copyCall([values,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(values+12),valueData);put(values+16,2);
  assert.equal(await call('SafeArrayDestroy',[values]),0);
 
- const ptrName=a.string('SafeArrayPtrOfIndex',false),ptrNamed=await api('GetProcAddress',[module,ptrName]),ptrOrdinal=await api('GetProcAddress',[module,202]);assert(ptrNamed&&ptrOrdinal);m.free(ptrName);
+ const ptrName=a.string('SafeArrayPtrOfIndex',false),ptrNamed=await api('GetProcAddress',[module,ptrName]),ptrOrdinal=await api('GetProcAddress',[module,148]);assert(ptrNamed&&ptrOrdinal);m.free(ptrName);
  const ptrArray=await create([[2,-2],[3,7],[4,-9]]),ptrData=word(ptrArray+12);assert.equal(await call('SafeArrayAccessData',[ptrArray,p+64]),0);
  const pointer=async(array,indices,out=p+72)=>{indices.forEach((v,i)=>put(p+128+i*4,v));return call('SafeArrayPtrOfIndex',[array,p+128,out]);};
  assert.equal(await pointer(ptrArray,[-1,9,-6]),0);assert.equal(word(p+72),ptrData+23*4);assert.equal(word(ptrArray+8),1);
@@ -133,8 +161,108 @@ async function main(){
  const record=m.allocate(24),recordData=m.allocate(32);m.write(record,new Uint8Array(24));dv.setUint16(address(record),1,true);dv.setUint16(address(record+2),2,true);put(record+4,16);put(record+8,1);put(record+12,recordData);put(record+16,2);put(record+20,-5);
  assert.equal(await pointer(record,[-4]),0);assert.equal(word(p+72),recordData+16);assert.equal(word(record+8),1);
  put(record+4,0);put(p+72,0x11223344);assert.equal(await pointer(record,[-4]),0x80070057);assert.equal(word(p+72),0x11223344);put(record+4,16);put(record+16,0);assert.equal(await pointer(record,[-5]),0x8002000b);m.free(recordData);m.free(record);
+ const dimName=a.string('SafeArrayGetDim',false),dimNamed=await api('GetProcAddress',[module,dimName]),dimOrdinal=await api('GetProcAddress',[module,17]);assert(dimNamed&&dimOrdinal);m.free(dimName);
+ assert.equal(await api('GetProcAddress',[module,202]),0,'CreateErrorInfo must never resolve to a SAFEARRAY function');
+ ctx.apiTable=table;const hostDll=a.string('OLEAUT32.DLL',false);
+ for(const [ord,n]of [[17,'SafeArrayGetDim'],[27,'SafeArrayCopy'],[148,'SafeArrayPtrOfIndex']])assert.equal(imports.host.resolve_ordinal(address(hostDll),ord),table.find(x=>x.name===n).id);
+ assert.equal(imports.host.resolve_ordinal(address(hostDll),202),-1);m.free(hostDll);
+ assert.equal(await call('SafeArrayGetDim',[0]),0);
+ for(const dims of [[[1,0]],[[2,-3],[3,7]],[[2,-2],[3,7],[4,-9]]]){const array=await create(dims),before=m.read(array-4,20+dims.length*8);assert.equal(await call('SafeArrayGetDim',[array]),dims.length);const frameBefore=frame();assert.equal(await c.invoke(dimOrdinal,[array]),dims.length);assert.deepEqual(frame(),frameBefore);assert.deepEqual(m.read(array-4,20+dims.length*8),before);assert.equal(await call('SafeArrayDestroy',[array]),0);}
+ // Public native bounds queries use one-based dimensions and reversed
+ // descriptor order, including empty and extreme signed lower bounds.
+ const boundThunks={};
+ for(const [ordinal,name]of [[20,'SafeArrayGetLBound'],[19,'SafeArrayGetUBound']]){
+  const text=a.string(name,false),named=await api('GetProcAddress',[module,text]),ord=await api('GetProcAddress',[module,ordinal]);m.free(text);assert(named&&ord);boundThunks[name]=ord;
+  const dll=a.string('OLEAUT32.DLL',false);assert.equal(imports.host.resolve_ordinal(address(dll),ordinal),table.find(x=>x.name===name).id);m.free(dll);
+ }
+ const bound=async(name,array,dim,out=p+72)=>{const before=frame(),hr=await c.invoke(boundThunks[name],[array,dim,out]);assert.deepEqual(frame(),before);assert.equal(c.frames.length,0);return hr;};
+ for(const dims of [[[2,-3],[3,7],[4,-9]],[[0,-7],[2,5]],[[1,-2147483648]],[[1,2147483647]]]){
+  const array=await create(dims),descriptor=m.read(array-4,20+dims.length*8),data=word(array+12);
+  for(let i=0;i<dims.length;i++){
+   assert.equal(await bound('SafeArrayGetLBound',array,i+1),0);assert.equal(word(p+72),dims[i][1]>>>0);
+   assert.equal(await bound('SafeArrayGetUBound',array,i+1),0);assert.equal(word(p+72),(dims[i][1]+dims[i][0]-1)>>>0);
+  }
+  for(const name of Object.keys(boundThunks)){
+   for(const dim of [0,dims.length+1,0xffffffff]){put(p+72,0x12345678);assert.equal(await bound(name,array,dim),0x8002000b);assert.equal(word(p+72),0x12345678);}
+   assert.equal(await bound(name,array,1,0),0x80070057);put(p+72,0x12345678);assert.equal(await bound(name,0,1),0x80070057);assert.equal(word(p+72),0x12345678);
+  }
+  assert.deepEqual(m.read(array-4,20+dims.length*8),descriptor);assert.equal(word(array+12),data);assert.equal(await call('SafeArrayDestroy',[array]),0);
+ }
+ const boundDescriptor=m.allocate(24);m.write(boundDescriptor,new Uint8Array(24));dv.setUint16(address(boundDescriptor),1,true);put(boundDescriptor+16,2);put(boundDescriptor+20,0x7fffffff);put(p+72,0x11223344);
+ assert.equal(await bound('SafeArrayGetUBound',boundDescriptor,1),0x8002000a);assert.equal(word(p+72),0x11223344);
+ put(boundDescriptor+16,0);put(boundDescriptor+20,0x80000000);assert.equal(await bound('SafeArrayGetUBound',boundDescriptor,1),0x8002000a);assert.equal(word(p+72),0x11223344);
+ // Metadata does not require VARTYPE, element data, or a new array lock.
+ dv.setUint16(address(boundDescriptor),65,true);put(boundDescriptor+20,-42);put(boundDescriptor+8,9);assert.equal(await bound('SafeArrayGetLBound',boundDescriptor,65),0);assert.equal(word(p+72),(-42)>>>0);assert.equal(word(boundDescriptor+8),9);m.free(boundDescriptor);
+ // Native VariantCopyInd #11. No serialized host values or provider DLLs.
+ const indName=a.string('VariantCopyInd',false),indNamed=await api('GetProcAddress',[exactModule,indName]),indOrdinal=await api('GetProcAddress',[exactModule,11]);m.free(indName);assert(indNamed&&indOrdinal);
+ const ind=async(dst,src)=>call('VariantCopyInd',[dst,src]);
+ const clear=async at=>{assert.equal(await call('VariantClear',[at]),0);};
+ for(const [tag,size,bits]of [[0,0,0n],[1,0,0n],[2,2,0xff81n],[3,4,0x89abcdefn],[4,4,0x7fc00001n],[5,8,0x7ff8000000000123n],[6,8,0x123456789abcdef0n],[7,8,0xc004000000000000n],[10,4,0x80020004n],[11,2,0xffffn],[16,1,0x81n],[17,1,0xffn],[18,2,0xfe01n],[19,4,0xffffffffn],[20,8,0x8000000000000001n],[21,8,0xffffffffffffffffn],[22,4,0x80000000n],[23,4,0xfedcba98n]]){
+  variant(p,tag,bits);variant(p+16,0);assert.equal(await ind(p+16,p),0);assert.equal(vt(p+16),tag);assert.deepEqual(m.read(p+24,size),m.read(p+8,size));
+  assert.equal(await ind(p+16,p+16),0);await clear(p+16);
+  if(tag>1){variant(p+32,tag|0x4000,p+8);assert.equal(await ind(p+16,p+32),0);assert.equal(vt(p+16),tag);assert.deepEqual(m.read(p+24,size),m.read(p+8,size));assert.equal(vt(p+32),tag|0x4000);await clear(p+16);await clear(p+32);}
+ }
+ // DECIMAL overlays the tag in its reserved word, rather than union +8.
+ const decimal=Uint8Array.from(Buffer.from('0e00028078563412f0debc9a78563412','hex'));m.write(p,decimal);variant(p+32,0x400e,p);variant(p+16,0);assert.equal(await ind(p+16,p+32),0);assert.deepEqual(m.read(p+16,16),decimal);await clear(p+16);await clear(p+32);await clear(p);
+ // Nested references and indirect self-copy own the terminal value.
+ variant(p+64,3,0x12345678);variant(p+48,0x4003,p+72);variant(p+32,0x400c,p+48);variant(p+16,0x400c,p+32);
+ assert.equal(await ind(p+16,p+16),0);assert.equal(vt(p+16),3);assert.equal(word(p+24),0x12345678);await clear(p+16);
+ // Failure is atomic for both source and an already-owned destination.
+ const bad=async(tag,data,expected)=>{const old=await str('keep\0owner');variant(p+16,8,old);variant(p,tag,data);const before=m.read(p+16,16),source=m.read(p,16);assert.equal(await ind(p+16,p),expected);assert.deepEqual(m.read(p+16,16),before);assert.deepEqual(m.read(p,16),source);assert.equal(readString(old),'keep\0owner');await clear(p+16);variant(p,0);};
+ await bad(0x4003,0,0x80070057);await bad(0x4000,p+64,0x80070057);await bad(0x4001,p+64,0x80070057);await bad(0x400c,p,0x80070057);await bad(0xffff,0,0x80020008);await bad(12,0,0x80020008);await bad(36,0,0x80004001);await bad(0x200c,0,0x80004001);
+ variant(p+16,0);assert.equal(await ind(0,p+16),0x80070057);assert.equal(await ind(p+16,0),0x80070057);
+ assert.equal(await ind(p+16,0xdeadbeef),0x80070057);assert.equal(await ind(0xdeadbeef,p+16),0x80070057);await bad(0x4003,0xdeadbeef,0x80070057);await bad(8,1,0x80070057);
+ // Overflow is an allocation failure, never a wrapped successful clone.
+ put(p+80,0xfffffffc);await bad(8,p+84,0x8007000e);
+ const fake=m.allocate(32);put(fake,3);dv.setUint16(address(fake+4),1,true);dv.setUint16(address(fake+6),0x80,true);put(fake+8,4);put(fake+16,p+64);put(fake+20,0x10000000);await bad(0x2003,fake+4,0x8007000e);put(fake+20,1);put(fake+16,0);await bad(0x2003,fake+4,0x80070057);m.free(fake);
+ // Exact original iKernel call shape, including native return stack cleanup.
+ const emit32=n=>{const b=Buffer.alloc(4);b.writeUInt32LE(n>>>0);return b;};
+ const machine=[];const hex=s=>machine.push(Buffer.from(s,'hex'));const store=(opcode,at)=>{hex(opcode);machine.push(emit32(at));};
+ hex('5589e583ec30c745d800000000c745dc00000000c745e000000000c745e400000000c745d4df9b5713c745e8e0ac6824');
+ hex('8d451c508d45d850ff15c4c24600');store('a3',p+192);store('8925',p+196);hex('8d45d0');store('a3',p+200);hex('8b45d4');store('a3',p+204);hex('8b45e8');store('a3',p+208);hex('0fb745d8');store('a3',p+212);hex('8b45e0');store('a3',p+216);hex('89ec5dc22400');
+ const caller=m.allocate(Buffer.concat(machine).length);m.write(caller,Buffer.concat(machine));variant(p+64,3,0xfedcba98);variant(p+48,0x4003,p+72);
+ const exactInd=[];
+ for(const [tag,data,entry]of [[3,0xfedcba98,indNamed],[0x4003,p+72,indOrdinal],[0x400c,p+48,indOrdinal]]){
+  put(0x46c2c4,entry);await c.invoke(caller,[0,0,0,0,0,tag,0,data,0]);
+  const row={tag,eax:word(p+192),esp:word(p+196),expectedESP:word(p+200),canaries:[word(p+204),word(p+208)],vt:word(p+212),value:word(p+216)};
+  assert.equal(row.eax,0);assert.equal(row.esp,row.expectedESP);assert.deepEqual(row.canaries,[0x13579bdf,0x2468ace0]);assert.equal(row.vt,3);assert.equal(row.value,0xfedcba98);exactInd.push(row);
+ }
+ m.free(caller);await clear(p+48);await clear(p+64);console.log(JSON.stringify({exactVariantCopyIndCaller:exactInd}));
+ // Actual guest x86 IUnknown AddRef/Release; counts live in native memory.
+ const object=m.allocate(128),vtable=object+16;put(object,vtable);put(object+4,1);put(vtable+4,object+32);put(vtable+8,object+64);
+ m.write(object+32,Buffer.from('8b442404ff40048b4004c20400','hex'));m.write(object+64,Buffer.from('8b442404ff48048b4004c20400','hex'));
+ // A failed native AddRef lookup preserves the destination and restores the
+ // parked caller, rather than manufacturing a successful owned pointer.
+ variant(p,13,object);variant(p+16,8,await str('callback-failure'));const callbackBefore=frame(),callbackDest=m.read(p+16,16);put(vtable+4,0);
+ await assert.rejects(()=>ind(p+16,p),/null method/);assert.deepEqual(frame(),callbackBefore);assert.deepEqual(m.read(p+16,16),callbackDest);assert.equal(readString(word(p+24)),'callback-failure');assert.equal(word(object+4),1);assert.equal(runtime.pending.size,0);assert.equal(c.frames.length,0);put(vtable+4,object+32);variant(p,0);await clear(p+16);
+ const indCycle=async()=>{
+  const bstr=await str('copy\0ind');variant(p,8,bstr);variant(p+16,0);
+  assert.equal(await ind(p,p),0);assert.equal(word(p+8),bstr);
+  assert.equal(await ind(p+16,p),0);const clone=word(p+24);assert.notEqual(clone,bstr);await clear(p);assert.equal(readString(clone),'copy\0ind');await clear(p+16);
+  const owned=await str('alias');variant(p,8,owned);variant(p+32,0x4008,p+8);assert.equal(await ind(p,p+32),0);assert.notEqual(word(p+8),owned);assert.equal(readString(word(p+8)),'alias');await clear(p);await clear(p+32);
+  const sa=await create([[2,-3]]);put(word(sa+12),await str('array\0ind'));variant(p,0x2008,sa);variant(p+32,0x6008,p+8);variant(p+16,0);
+  assert.equal(await ind(p,p),0);assert.equal(word(p+8),sa);
+  assert.equal(await ind(p+16,p),0);assert.notEqual(word(p+24),sa);await clear(p+16);
+  assert.equal(await ind(p+16,p+32),0);const copied=word(p+24);assert.notEqual(copied,sa);assert.equal(readString(word(word(copied+12))),'array\0ind');await clear(p+32);await clear(p);assert.equal(readString(word(word(copied+12))),'array\0ind');await clear(p+16);
+  // Array owner replacement must fail atomically while locked.
+  const locked=await create([[1,0]]);variant(p+16,0x2008,locked);put(locked+8,1);variant(p,3,42);const snapshot=m.read(p+16,16);assert.equal(await ind(p+16,p),0x8002000d);assert.deepEqual(m.read(p+16,16),snapshot);put(locked+8,0);await clear(p+16);await clear(p);
+  for(const tag of [9,13]){
+   variant(p,tag,object);variant(p+16,0);assert.equal(await ind(p+16,p),0);assert.equal(word(object+4),2);await clear(p+16);assert.equal(word(object+4),1);
+   // Borrowed Copy keeps a wrapper; CopyInd takes an independent reference.
+   put(p+80,object);variant(p+32,tag|0x4000,p+80);assert.equal(await call('VariantCopy',[p+16,p+32]),0);assert.equal(vt(p+16),tag|0x4000);assert.equal(word(object+4),1);await clear(p+16);assert.equal(word(object+4),1);
+   assert.equal(await ind(p+16,p+32),0);assert.equal(word(object+4),2);assert.equal(await call('VariantCopy',[p+16,p+16]),0);assert.equal(word(object+4),2);
+   variant(p+64,0x400c,p+32);await clear(p+16);assert.equal(await ind(p+16,p+64),0);assert.equal(word(object+4),2);await clear(p+64);
+   // Replacing an owned interface with a scalar consumes the pending bridge
+   // result once; a re-entry must never rerun the changed destination.
+   variant(p+48,3,123);assert.equal(await ind(p+16,p+48),0);assert.equal(word(object+4),1);await clear(p+16);
+   assert.equal(await ind(p+32,p+32),0);assert.equal(vt(p+32),tag);assert.equal(word(object+4),2);await clear(p+32);await clear(p+32);assert.equal(word(object+4),1);variant(p,0);await clear(p+48);
+  }
+  assert.equal(runtime.pending.size,0);assert.equal(c.frames.length,0);
+ };
+ for(let i=0;i<4;i++)await indCycle();const indHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await indCycle();assert.equal(e.get_heap_ptr(),indHeap,'CopyInd owns and repeatedly reclaims strings/arrays/interfaces');assert.equal(word(object+4),1);await m.release(object);assert.equal(word(object+4),0);m.free(object);
+ console.log(JSON.stringify({nativeVariantCopyIndOrdinal11:true,scalarAndByref:true,decimalOverlay:true,nestedAndSelf:true,aliasOwnedBSTR:true,borrowedArray:true,actualIUnknownCounts:true,failureAtomic:true,exactCaller:true,ownershipCycles:128,heapStable:true}));
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
- console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal17:true,nativePtrOfIndexOrdinal202:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
+ console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeLBoundOrdinal20:true,nativeUBoundOrdinal19:true,boundOverflowAtomic:true,nativeBSTRArray:true,nativeGetDimOrdinal17:true,ordinal202Closed:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal27:true,nativePtrOfIndexOrdinal148:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};
