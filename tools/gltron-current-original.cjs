@@ -44,7 +44,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
  while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
  const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+300000);
- let server,browser,c,session,browserWait,terminal=false,lastImage,nativeQuit=false;const workers=new Map(),tasks=[],destroyed=[];
+ let server,browser,c,session,browserWait,terminal=false,lastImage,nativeQuit=false,nativeDownAttempts=0;const workers=new Map(),tasks=[],destroyed=[];
  const evaluate=async(expression,s=session)=>{const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const bounded=async work=>{let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>{terminal=true;c?.ws.close();reject(Error('DISPLAY_UNKNOWN complete 3000ms deadline; permanently closed'));},3000);})]);}finally{clearTimeout(timer);}};
  async function capture(label){
@@ -60,7 +60,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
    retain:async(shot,host)=>{
    for(const k of ['source','output']){const dim=shot.metadata[k],b=Buffer.from(shot[k],'base64');fs.writeFileSync(out+'/'+label+'-'+k+'.png',encodeCapturePNG(dim.width,dim.height,b),{flag:'wx'});}
    fs.writeFileSync(out+'/'+label+'-host.png',Buffer.from(host.data,'base64'),{flag:'wx'});
-   save(label+'.json',{at,completedAt:Date.now(),hostCapturedAt,elapsedMs:Date.now()-at,metadata:shot.metadata,receipt:shot.receipt,authored,inputEvents:0});
+   save(label+'.json',{at,completedAt:Date.now(),hostCapturedAt,elapsedMs:Date.now()-at,metadata:shot.metadata,receipt:shot.receipt,authored,inputEvents:nativeDownAttempts});
    }});
    await evaluate('delete globalThis.__originalTicket;delete globalThis.__originalPin;true');
    lastImage={label,completedAt:hostCapturedAt,sha256:sha(fs.readFileSync(out+'/'+label+'-host.png'))};return shot;
@@ -113,7 +113,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
     observe:()=>evaluate(`(()=>{const w=runningApps[0].wine,state=(${observeAndBindNativeOwner.toString()})(w);if(state.binding)globalThis.__nativeBridgeOwner=w;return state;})()`),
     record:v=>append('native-ready-phases.jsonl',v),close:()=>{terminal=true;c?.ws.close();}});
     assert(ownership.binding,'native owner binding missing');save('native-ready.json',ownership);save('native-binding.json',ownership.binding);}
-  await capture('selected-0');save('ready.json',{at:Date.now(),authored,readOnly:true});
+  await capture('selected-0');save('ready.json',{at:Date.now(),authored,readOnly:!qualifyNative});
   if(qualifyNative){
     const binding=ownership.binding;
     save('input-ready.json',{at:Date.now(),binding});
@@ -142,7 +142,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
         const ready=await evaluate(`runningApps[0].wine._browserNativeInput.prepare(${JSON.stringify({...intent,owner:binding.owner,reviewed:true})})`);
         save('action-'+n+'-prepared.json',ready);assert.equal(ready.state,'PREPARED');
         assert(release.exitCode===null&&Date.now()<armed.fallback-500,'independent UP must remain armed through native receipt deadline');
-        const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
+        const before=Date.now();nativeDownAttempts++;await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
         if(authored&&intent.parentStallMs){assert(intent.parentStallMs>=1800&&intent.parentStallMs<=2500);
           save('action-'+n+'-parent-stall.json',{at:Date.now(),milliseconds:intent.parentStallMs});
           Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,intent.parentStallMs);}
