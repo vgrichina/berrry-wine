@@ -3,7 +3,7 @@
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX } = require('../lib/gl-compat');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 
 (async () => {
   // Exercise the shipped rasterizer, canonical GDI upload and real compositor.

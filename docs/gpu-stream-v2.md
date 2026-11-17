@@ -147,8 +147,8 @@ The return value is 1 when an executor exists, 0 when none can (the open
 fails). After a SYNC/CLOSE kick the producer checks `read_pos == write_pos`
 and traps otherwise. Hosts:
 
-- **Local** (`lib/gpu-stream-host.js` Bridge; `lib/glide-host.js` is a shim
-  that only names the API): the kick drains the ring synchronously. This is
+- **Local** (`lib/gpu-stream-host.js` Bridge, constructed with `api: 'glide'`
+  for Glide): the kick drains the ring synchronously. This is
   cooperative mode, where the page main thread cannot block for a SYNC kick.
 - **Render Worker** (`lib/gpu-stream-render-worker.js`, API-neutral): the
   first `{t:'gps-kick', ring, mode}` message *arms* the ring by writing the

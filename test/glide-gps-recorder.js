@@ -2,7 +2,7 @@
 // Recording host for the Glide ABI tests (test-glide-abi.js, test-glide3-abi.js).
 //
 // tl;dr: implements host.gpu_stream_kick(ring, mode) the way the local route
-// in lib/glide-host.js does (GpuStream.drain into an executor), but the
+// in lib/gpu-stream-host.js (api 'glide') does (GpuStream.drain into an executor), but the
 // executor only RECORDS: every decoded record (op name, fields, trailing bytes
 // and the arena bytes it reads, copied at drain time) plus the sticky state a
 // DRAW_UP executes under. A NullExecutor runs alongside to validate resource

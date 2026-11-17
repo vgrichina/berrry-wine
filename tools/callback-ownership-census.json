@@ -225,7 +225,8 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "sha256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
+      "sha256": "c3aad3ad155217dd7b7480825a8f250766c7299564e63fccae1d25295d4081d9",
+      "glRetireS4Review20261117": "gl-retire S4: the Glide bridge is constructed from lib/gpu-stream-host.js directly with api 'glide' (the lib/glide-host.js subclass that only added that option is deleted), and ?gl-gps=off no longer exists: a browser host always puts software GL on GPU stream v2 and ?gl-gps= only selects the software, webgl or null executor (anything else throws). Same bridge, same callbacks; no guest invocation, callback owner, continuation or retained guest reference added.",
       "glRetireS3Review20261116": "gl-retire S3 deletes the JS GL bridge (OpenGLHostBridge / gl-render-host Bridge, its onPresent/clearWindowOwnership/onContextCountChange callbacks and Worker synchronize); gpu_gl_call and gpu_gl_batch answer only the synchronous 0x10008 query and otherwise throw; the D3DIM render bridge moved inline unchanged.",
       "glRetireS2TagReview20261116": "gl-retire S2 tags the 0x10008 WGL-mode answer with 0x5747 so untagged host answers claim nothing; still a synchronous header peek with no retained callback, scheduling or ownership writes.",
       "glRetireS2Review20261116": "gl-retire S2 adds the synchronous 0x10008 WGL-mode answer to gpu_gl_call and gpu_gl_batch: it peeks one record header in the caller's own memory and returns backend/glGps bits, retains no callback, schedules nothing and writes no ownership state.",

@@ -4,7 +4,8 @@
 // encoder -> native matrix observer and captured replay payload.
 const assert = require('assert');
 const {bootRenderHarness} = require('./render-helper');
-const {CALL_INDEX: GL, multiply} = require('../lib/gl-compat');
+const {CALL_INDEX: GL} = require('../lib/gl-command-stream');
+const {multiply} = require('./helpers/gl-matrix-reference');
 const stream = require('../lib/gl-command-stream');
 const api = require('../src/api_table.json');
 const id = api.findIndex(a=>a.name==='glMultMatrixd');

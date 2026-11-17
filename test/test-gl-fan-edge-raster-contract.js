@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 'use strict';
+const {ownedAnswer,ownedWindow}=require('./helpers/gl-owned-host');
 
 // Literal complete 8x8 frames frozen before implementation changes. GL 2.1
 // sections 2.6, 2.14.7, 3.4.1 and 3.5.1; independent system OpenGL witnesses
@@ -100,26 +101,26 @@ function checkOracle(){
 }
 async function softwareFrames(){
   const {bootRenderHarness}=require('./render-helper');
-  const {CALL_INDEX,OpenGLHostBridge}=require('../lib/gl-compat');
+  const {CALL_INDEX}=require('../lib/gl-command-stream');
   const Stream=require('../lib/gl-command-stream');
   const bytes=fs.readFileSync(process.env.WINE_TEST_WASM||'build/wine-assembly.wasm');
-  let memory,bridge;
+  let memory;
   const h=await bootRenderHarness({prebuiltModule:new WebAssembly.Module(bytes),fonts:'none',width:W,height:H,
     extraHostOverrides:{gpu_gl_call(op,at,bytes){
       if(op===0x20005)return 0; // Exercise actual synchronous WAT software fallback.
       assert.equal(op,Stream.WAT_STREAM_FLUSH_OPCODE);
-      return bridge.replay(Stream.memoryBatch(memory,at,bytes));
+      return ownedAnswer(memory,at,bytes);
     }}});
   memory=h.memory;const e=h.exports;
   e.init_thread(1,0x400000,0,0,0,0,0,0);e.heap_init(0x800000);
-  bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:e,
-    renderer:{windows:{42:{hwnd:42,w:W,h:H,clientRect:{w:W,h:H}}},repaint(){}}});
+  
   const stack=e.guest_to_wasm(e.guest_alloc(128));
   function call(name,values=[],floats=false,aux=0){
     new Uint32Array(memory.buffer,stack,32).fill(0);
     (floats?new Float32Array(memory.buffer,stack,32):new Int32Array(memory.buffer,stack,32)).set(values,1);
     return e.gl_wat_encoder_call(CALL_INDEX[name],stack,aux);
   }
+  ownedWindow(e,42,W,H);
   const context=call('wglCreateContext',[],false,42);assert(context);
   assert.equal(call('wglMakeCurrent',[0,context],false,42),1);
   e.gl_sw_set_enabled(1);e.gl_sw_set_default_size(W,H);

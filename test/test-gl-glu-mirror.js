@@ -27,8 +27,8 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX, identity, multiply, perspective, lookAt, ortho }
-  = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
+const { identity, multiply, perspective, lookAt, ortho } = require('./helpers/gl-matrix-reference');
 
 const MODELVIEW = 0x1700, PROJECTION = 0x1701;
 

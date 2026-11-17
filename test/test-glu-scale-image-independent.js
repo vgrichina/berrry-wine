@@ -1,64 +1,32 @@
 'use strict';
-// Independent acceptance of 19eee921: hand-calculated oracles, real call/replay.
-// No resize/conversion algorithm is copied into this test.
+// Independent acceptance of gluScaleImage: hand-calculated oracles through the
+// public opengl32/glu32 dispatch into the WAT implementation
+// (src/09a8cw-gl-wgl.wat "gluScaleImage"). No resize/conversion algorithm is
+// copied into this test. (The JS host implementation this once accepted, in
+// lib/gl-compat.js, is retired; its sparse-page cases needed a synthetic
+// guest->wasm map only that harness could supply.)
 const assert = require('assert');
-const fs = require('fs');
-const crypto = require('crypto');
-const filename = require.resolve('../lib/gl-compat');
-let source = fs.readFileSync(filename, 'utf8');
-assert.strictEqual(crypto.createHash('sha256').update(source).digest('hex'),
-  '6593bc0ae954d750f1800513799005c1797cdefeb3e68c70a46e06f209ec41a2',
-  'acceptance must start from exact candidate production bridge');
-const control = process.argv[2] || 'candidate';
-const changes = {
-  math: ['Math.max(1, wi / wo) / 2', 'Math.max(1, wi / wo) / 4'],
-};
-if (control === 'math') {
-  const [from, to] = changes.math;
-  assert.strictEqual(source.split(from).length, 2, 'unique math mutation site');
-  source = source.replace(from, to);
-} else assert.strictEqual(control, 'candidate');
-let gl;
-if (control === 'candidate') gl = require(filename);
-else {
-  const Module = require('module'), m = new Module(filename, module);
-  m.filename = filename; m.paths = module.paths;
-  m._compile(source, filename); gl = m.exports;
-}
+const { bootGlGps } = require('./helpers/gl-gps-context');
 const stream = require('../lib/gl-command-stream');
-assert.strictEqual(gl.CALL_INDEX.gluScaleImage, 141);
+assert.strictEqual(stream.CALL_INDEX.gluScaleImage, 141);
 assert.strictEqual(stream.ARG_WORDS[141], 9);
 assert(stream.BARRIERS.has(141));
-console.log(JSON.stringify({control, loaded: true,
-  sourceSHA256: crypto.createHash('sha256').update(source).digest('hex')}));
 const L = 0x1909, RGB = 0x1907, U8 = 0x1401, U16 = 0x1403, BIT = 0x1a00;
 let checks = 0;
-function fixture(mode) {
-  const memory = new ArrayBuffer(131072), bytes = new Uint8Array(memory), dv = new DataView(memory);
-  let translate = p => p;
-  const bridge = new gl.OpenGLHostBridge({getMemory: () => memory,
-    exports: {guest_to_wasm: p => translate(p)}});
-  const backend = {gl: {}, createProgram: () => ({}), createBuffer: () => ({}),
-    createTexture: () => ({}), getError: () => 0};
-  const frontend = new gl.FixedFunctionGL(backend);
-  bridge.current = 1; bridge.contexts.set(1, {frontend});
-  function invoke(name, args) {
-    if (mode === 'call') {
-      dv.setUint32(256, 0x87654321, true);
-      args.forEach((v,i) => dv.setUint32(260+i*4, v >>> 0, true));
-      return bridge.call(gl.CALL_INDEX[name], 256, 0);
-    }
-    const size = 36 + args.length*4, buffer = new ArrayBuffer(size), d = new DataView(buffer);
-    d.setUint32(0, size, true); d.setUint32(4, gl.CALL_INDEX[name], true);
-    d.setUint32(12, 4+args.length*4, true); d.setUint32(32, 0x87654321, true);
-    args.forEach((v,i) => d.setUint32(36+i*4,v >>> 0,true));
-    return bridge.replay({buffer, bytes: size, commands: 1}, 0);
-  }
-  const store = (p,v) => invoke('glPixelStorei',[p,v]);
+(async () => {
+const G = await bootGlGps({ gps: 0 });
+const base = G.e.guest_alloc(131072) >>> 0;
+function fixture() {
+  const bytes = new Uint8Array(G.memory.buffer, G.wa(base), 131072);
+  const dv = new DataView(G.memory.buffer, G.wa(base), 131072);
+  bytes.fill(0);
+  const store = (p,v) => G.call('glPixelStorei',[p,v]);
+  for (const p of [0xcf0,0xcf1,0xcf2,0xcf3,0xcf4,0xd00,0xd01,0xd02,0xd03,0xd04]) store(p,0);
   store(0xcf5,1); store(0xd05,1);
-  return {bytes, dv, bridge, invoke, store, frontend,
-    map: fn => {translate=fn;}, at: p => translate(p),
-    scale: args => invoke('gluScaleImage',args)};
+  // Buffer offsets are guest offsets from `base`.
+  const ptr = o => o === 0 ? 0 : (base + o) >>> 0;
+  return {bytes, dv, store,
+    scale: a => G.call('gluScaleImage',[a[0],a[1],a[2],a[3],ptr(a[4]),a[5],a[6],a[7],ptr(a[8])]) | 0};
 }
 function equal(actual, expected, label) {assert.deepStrictEqual(actual, expected, label); checks++;}
 function resize(f, values, wi, hi, wo, ho, expected, label) {
@@ -67,8 +35,8 @@ function resize(f, values, wi, hi, wo, ho, expected, label) {
   equal(Array.from(f.bytes.slice(16384,16384+wo*ho)),expected,label);
   equal(f.bytes[16384+wo*ho],0xcd,label+' trailing canary');
 }
-for (const mode of ['call','replay']) {
-  let f=fixture(mode);
+for (const mode of ['owned']) {
+  let f=fixture();
   // Preflight: unchanged load and useful one-pixel behavior precede mutation kill.
   resize(f,[73],1,1,1,1,[73],mode+' preflight identity');
   console.log(mode+' preflight identity PASS');
@@ -83,7 +51,7 @@ for (const mode of ['call','replay']) {
 
   // Packed 565 input with byte swap, skipped rows/pixels and independent PACK
   // row state. Endpoints are exact primary colors; padding must remain intact.
-  f=fixture(mode); f.store(0xcf0,1); f.store(0xcf2,4);
+  f=fixture(); f.store(0xcf0,1); f.store(0xcf2,4);
   f.store(0xcf3,1); f.store(0xcf4,1); f.store(0xd02,5);
   f.store(0xd03,1); f.store(0xd04,2); f.store(0xd05,4);
   f.bytes.fill(0xcd,16384,16480);
@@ -94,7 +62,7 @@ for (const mode of ['call','replay']) {
   equal(Array.from(f.bytes.slice(16384,16480)),want,mode+' packed offsets and padding');
 
   // Bitmap row crossing byte boundaries, opposite LSB modes and unrelated bits.
-  f=fixture(mode); f.store(0xcf1,1); f.store(0xcf2,16); f.store(0xcf3,1); f.store(0xcf4,7);
+  f=fixture(); f.store(0xcf1,1); f.store(0xcf2,16); f.store(0xcf3,1); f.store(0xcf4,7);
   f.store(0xd02,24); f.store(0xd03,1); f.store(0xd04,5);
   f.bytes.set([0x80,0x02,0x00,0x02],4098); // [1,0,1], [0,0,1]
   f.bytes.fill(0xaa,16384,16400);
@@ -102,7 +70,7 @@ for (const mode of ['call','replay']) {
   const bitmapWant=new Array(16).fill(0xaa); bitmapWant[3]=0xad; bitmapWant[6]=0xa9;
   equal(Array.from(f.bytes.slice(16384,16400)),bitmapWant,mode+' bitmap offsets and untouched bits');
 
-  f=fixture(mode);
+  f=fixture();
   [0,0.5,1].forEach((v,i)=>f.dv.setFloat32(4096+i*4,v,true));
   equal(f.scale([L,3,1,0x1406,4096,3,1,U16,16384]),0,mode+' float to ushort status');
   equal([0,1,2].map(i=>f.dv.getUint16(16384+i*2,true)),[0,32767,65535],
@@ -111,31 +79,7 @@ for (const mode of ['call','replay']) {
   equal(f.scale([L,4,1,U8,4096,4,1,BIT,16384]),0,mode+' scalar to bitmap status');
   equal(f.bytes[16384],0x8d,mode+' bitmap half-range threshold and preserved outside bits');
 
-  // Scalar straddles discontiguous physical pages, with swapped input bytes;
-  // overlapping guest output must snapshot every input before writing.
-  f=fixture(mode);
-  const base=0x10000000, pages=[65536,81920,73728];
-  f.map(p => p>=base && p<base+12288 ? pages[(p-base)>>>12]+((p-base)&4095) : p);
-  const input=base+4095;
-  f.store(0xcf0,1);
-  [0x12,0x34,0xab,0xcd,0x7f,0xff].forEach((v,i) => f.bytes[f.at(input+i)]=v);
-  equal(f.scale([L,3,1,U16,input,3,1,U16,input+1]),0,mode+' overlap sparse scalar status');
-  equal(Array.from({length:6},(_,i)=>f.bytes[f.at(input+1+i)]),
-    [0x34,0x12,0xcd,0xab,0xff,0x7f],mode+' overlap sparse scalar bytes');
-
-  // A later missing page must fail before *any* output, including the valid
-  // prefix. Check both input and output failures through each real boundary.
-  for (const invalidSide of ['input','output']) {
-    f=fixture(mode); f.bytes.fill(0xcd,16384,32768); f.bytes.fill(39,4096,8192);
-    const faultBase = 0x30000000; // Synthetic guest VA, not a WASM region boundary.
-    f.map(p => p>=faultBase && p<faultBase+8192
-      ? (p<faultBase+4096 ? 24576+(p&4095) : 0xf0) : p);
-    const before=f.bytes.slice(16384,32768);
-    equal(f.scale([L,4,1,U8,invalidSide==='input'?faultBase+4094:4096,
-      4,1,U8,invalidSide==='output'?faultBase+4094:16384]),100901,mode+' malformed '+invalidSide+' status');
-    equal(f.bytes.slice(16384,32768),before,mode+' malformed '+invalidSide+' whole-output atomicity');
-  }
-  f=fixture(mode); f.bytes.fill(0xcd,16384,16400);
+  f=fixture(); f.bytes.fill(0xcd,16384,16400);
   // SGI explicitly returns zero before checking negatives or enum validity.
   equal(f.scale([0xdead,0,-1,0xdead,0,1,1,0xdead,0]),0,mode+' zero-before-negative');
   equal(f.scale([L,-1,1,U8,4096,1,1,U8,16384]),100901,mode+' negative');
@@ -143,8 +87,7 @@ for (const mode of ['call','replay']) {
   equal(f.scale([L,1,1,U8,4096,1,1,0x8363,16384]),100904,mode+' packed incompatibility');
   equal(f.scale([L,8388608,1,U8,4096,1,1,U8,16384]),100902,mode+' bounded scratch');
   equal(Array.from(f.bytes.slice(16384,16400)),new Array(16).fill(0xcd),mode+' errors preserve output');
-  // Return from actual replay is the synchronous publication boundary.
-  equal(f.bridge._capture,null,mode+' capture restored');
   console.log(mode+' independent challenges PASS');
 }
-console.log(JSON.stringify({control,checks,result:'PASS'}));
+console.log(JSON.stringify({checks,result:'PASS'}));
+})().catch(e => { console.error(e); process.exitCode = 1; });

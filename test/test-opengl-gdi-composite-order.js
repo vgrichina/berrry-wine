@@ -163,19 +163,3 @@ win.isChild = false;
 ctxFront.getImageData = originalRead;
 console.log('PASS deferred GL ownership, GDI barrier, ordering and retry');
 
-const { OpenGLHostBridge } = require('../lib/gl-compat');
-const bridge = new OpenGLHostBridge({ renderer: () => renderer,
-  exports: wasm.exports, getMemory: () => new ArrayBuffer(0) });
-fill(front, '#0000ff', 0, 0, 16, 16);
-assert(renderer.deferGpuWindowReadback(hwnd));
-let destroyed = false;
-bridge.contexts.set(1, { hwnd, win, layer: win._gpuFrameLayer,
-  frontend: { destroy() { destroyed = true; } } });
-assert.strictEqual(bridge.deleteContext(1), 1);
-assert(destroyed);
-assert.strictEqual(win._gpuFrameLayer, null);
-renderer.repaint();
-assert.deepStrictEqual(pixel(9, 9), [0, 0, 255, 255],
-  'deleting the context preserves its last GPU-owned front in window pixels');
-console.log('PASS deferred GL context destruction preserves the last frame');
-

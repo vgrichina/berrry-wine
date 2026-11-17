@@ -19,7 +19,6 @@ const runtimeSources = [
   'lib/app-profiles.js',
   'lib/dll-loader.js',
   'lib/filesystem.js',
-  'lib/gl-compat.js',
   'lib/guest-worker.js',
   'lib/host-imports.js',
   'lib/renderer-input.js',

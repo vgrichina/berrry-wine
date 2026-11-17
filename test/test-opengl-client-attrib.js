@@ -1,49 +1,41 @@
 #!/usr/bin/env node
 'use strict';
+// Client attribute stack (glPush/PopClientAttrib) in the WAT encoder, observed
+// on the command stream it emits: draw payloads, and the finished RGBA8
+// texture rows (_glTexImage2D) WAT unpacks with the restored pixel-store
+// state. (The host-side FixedFunctionGL that used to mirror unpack state is
+// retired with lib/gl-compat.js; unpacking happens only in WAT.)
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 const Stream = require('../lib/gl-command-stream');
-const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-compat');
+const { CALL_INDEX: O } = Stream;
 
 (async () => {
-  let memory, bridge;
+  let memory, e;
   const draws = [];
   const uploads = [];
-  const frontends = new Map();
-  let current = 0;
   const harness = await bootRenderHarness({ fonts: 'none', extraHostOverrides: {
     gpu_gl_call(op, at, length) {
       if (op !== Stream.WAT_STREAM_FLUSH_OPCODE) return 0;
       return Stream.replay({ buffer: memory.buffer, byteOffset: at, bytes: length }, (code, aux, capture) => {
         const words = new DataView(capture.buffer, capture.stackOffset);
-        if (code === O.wglMakeCurrent) {
-          current = words.getUint32(8, true);
-          if (!frontends.has(current)) {
-            const frontend = new FixedFunctionGL({gl:{}, createProgram:()=>({}),
-              createBuffer:()=>({}), createTexture:()=>({}), bindTexture(){}, setTextureParameter(){}, setCapability(){}});
-            frontend.texImage = function(level,internal,w,h,border,format,type,pixels) {
-              uploads.push({alignment:this.unpackAlignment, pixels:Array.from(pixels)});
-            };
-            frontends.set(current, frontend);
-          }
-          bridge.current = current;
-          bridge.contexts.set(current, { frontend: frontends.get(current), backend: {} });
-          return 1;
-        }
-        if (code === O.wglDeleteContext) { frontends.delete(words.getUint32(4, true)); return 1; }
+        const arg = i => words.getUint32(4 + i * 4, true);
+        if (code === O.wglMakeCurrent || code === O.wglDeleteContext) return 1;
         if (code === Stream.PACKED_DRAW_OPCODE || code === Stream.EXACT_DRAW_OPCODE) {
           draws.push(Array.from(new Float32Array(capture.buffer, capture.pointerOffset, capture.pointerLength / 4)));
-        } else if ([O.glPixelStorei, O.glPushClientAttrib, O.glPopClientAttrib,
-          O.glPushAttrib, O.glPopAttrib, O.glTexImage2D, O._glTexImage2D].includes(code)) {
-          bridge.call(code, 0, aux, capture);
+        } else if (code === O._glTexImage2D) {
+          const width = arg(3), height = arg(4), pointer = arg(8), n = width * height * 4;
+          const pixels = capture.pointerGuest === pointer && !capture.pointerBorrowed && capture.pointerOffset
+            ? new Uint8Array(capture.buffer, capture.pointerOffset, n)
+            : new Uint8Array(memory.buffer, e.guest_to_wasm(pointer) >>> 0, n);
+          uploads.push({ pixels: Array.from(pixels) });
         }
         return 0;
       });
     },
   }});
   memory = harness.memory;
-  const e = harness.exports;
-  bridge = new OpenGLHostBridge({ getMemory: () => memory.buffer, exports: e });
+  e = harness.exports;
   const guest = e.guest_alloc(4096) >>> 0;
   const wa = p => e.guest_to_wasm(p) >>> 0;
   const stack = wa(guest), dv = new DataView(memory.buffer);
@@ -110,17 +102,14 @@ const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-
   call('glClientActiveTextureARB',[0x84C0]);
   pop(); flush();
   assert.deepStrictEqual(pnames.map(p=>query(p)),saved,'pixel mask restores all supported bitmap unpack modes');
-  assert.strictEqual(frontends.get(1).unpackAlignment,8,'host texture unpack state follows native pop');
   new Uint8Array(memory.buffer,wa(ptr)+137,6).set([11,23,37,41,53,67]);
   new Uint8Array(memory.buffer,wa(ptr)+201,6).set([71,83,97,101,113,127]);
   call('glTexImage2D',[0xDE1,0,3,2,2,0,0x1907,0x1401,ptr]); flush();
-  assert.strictEqual(uploads.at(-1).alignment,8);
   assert.strictEqual(uploads.at(-1).pixels.length,16,'native unpack capture reaches the canonical RGBA upload payload');
   assert.deepStrictEqual(uploads.at(-1).pixels,[11,23,37,255,41,53,67,255,71,83,97,255,101,113,127,255],'restored row length and skips select actual source bytes');
   assert.strictEqual(query(0x84E1),0x84C0,'pixel mask leaves array state changed');
   call('glPushAttrib',[0xffffffff]); pixel(0xCF5,2); call('glPopAttrib'); flush();
   assert.strictEqual(query(0xCF5),2,'server attrib pop does not restore native client unpack state');
-  assert.strictEqual(frontends.get(1).unpackAlignment,2,'server attrib pop does not restore host client unpack state');
   for (const mask of [0,0x80000000]) {
     push(mask); pixel(0xCF5,1); pop(); assert.strictEqual(query(0xCF5),1);
   }
@@ -148,5 +137,5 @@ const { FixedFunctionGL, OpenGLHostBridge, CALL_INDEX: O } = require('../lib/gl-
   pop(); call('glEndList'); call('glCallList',[500]);
   assert.strictEqual(depth(),0); assert.strictEqual(error(),0);
   flush();
-  console.log('PASS OpenGL client attribute stack: native draw restoration, selective pixel modes, errors, contexts, lists and host replay');
+  console.log('PASS OpenGL client attribute stack: native draw restoration, selective pixel modes, errors, contexts, lists and the unpacked upload rows');
 })().catch(e => { console.error(e); process.exitCode=1; });

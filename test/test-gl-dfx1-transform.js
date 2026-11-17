@@ -35,7 +35,8 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { identity, ortho, CALL_INDEX } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
+const { identity, ortho } = require('./helpers/gl-matrix-reference');
 
 const MODELVIEW = 0x1700, PROJECTION = 0x1701;
 const DFX1_MAGIC = 0x44465831;

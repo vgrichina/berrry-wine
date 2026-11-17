@@ -10,9 +10,8 @@ const { hasPageScript, hasWorkerScript } = require('./browser-runtime-scripts');
 
 assert(hasPageScript('lib/gpu-backend.js') &&
   hasPageScript('lib/gl-command-stream.js') &&
-  hasPageScript('lib/gl-compat.js') &&
   hasWorkerScript('gl-command-stream.js'),
-  'the centrally versioned graph includes the GPU backend, command stream, and GL frontend');
+  'the centrally versioned graph includes the GPU backend and command stream');
 
 const copies = [];
 const presentationContext = {

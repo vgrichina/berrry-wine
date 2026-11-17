@@ -15,7 +15,9 @@ const GS = require('../lib/gpu-stream');
 const regions = require('../lib/region-map.generated');
 const { makeProducer } = require('./gpu-stream-fixture');
 const { bootRenderHarness } = require('./render-helper');
-const { Bridge } = require('../lib/glide-host');
+// Glide's endpoint is the API-neutral GPU stream bridge under api 'glide'.
+const GpuStreamHost = require('../lib/gpu-stream-host');
+class Bridge extends GpuStreamHost.Bridge { constructor(options = {}) { super({ ...options, api: 'glide' }); } }
 const GlideRenderWorker = require('../lib/gpu-stream-render-worker');
 
 const { KIND, FMT, CONST } = GS;

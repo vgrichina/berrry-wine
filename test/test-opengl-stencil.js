@@ -3,7 +3,7 @@
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 const Stream = require('../lib/gl-command-stream');
-const { CALL_INDEX: O } = require('../lib/gl-compat');
+const { CALL_INDEX: O } = require('../lib/gl-command-stream');
 
 (async () => {
   let memory, queued = false;

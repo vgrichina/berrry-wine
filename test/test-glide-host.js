@@ -1,5 +1,5 @@
 'use strict';
-// tl;dr: the process Glide bridge (lib/glide-host.js) on the local route.
+// tl;dr: the process Glide bridge (lib/gpu-stream-host.js, api 'glide') on the local route.
 // A JS producer (test/gpu-stream-fixture.js) stands in for the WAT and an
 // injected executor records what the bridge drains: kick drains every
 // published record in order, PRESENT reaches the window compositor layer,
@@ -10,7 +10,9 @@
 const assert = require('assert');
 const GS = require('../lib/gpu-stream');
 const { makeProducer } = require('./gpu-stream-fixture');
-const { Bridge } = require('../lib/glide-host');
+// Glide's endpoint is the API-neutral GPU stream bridge under api 'glide'.
+const GpuStreamHost = require('../lib/gpu-stream-host');
+class Bridge extends GpuStreamHost.Bridge { constructor(options = {}) { super({ ...options, api: 'glide' }); } }
 const { processSharedCtx } = require('../lib/worker-imports');
 
 const { KIND, FMT, CONST } = GS;

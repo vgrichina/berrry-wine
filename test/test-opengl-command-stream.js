@@ -5,7 +5,6 @@ const assert = require('assert');
 const vm = require('vm');
 const Stream = require('./helpers/gl-reference-encoder');
 const RPC = require('../lib/guest-rpc');
-const { OpenGLHostBridge } = require('../lib/gl-compat');
 
 const memory = new ArrayBuffer(64 * 1024);
 const dv = new DataView(memory);
@@ -300,60 +299,32 @@ assert.strictEqual(borrowed.pointerOffset, 0, 'texture bytes are not copied into
 assert.strictEqual(borrowed.pointerLength, textureBytes);
 assert(borrowed.stackBytes + Stream.HEADER_BYTES < 128,
   'large upload batch contains only command metadata and arguments');
+// G2: the canonical finished-RGBA8 upload (158 _glTexImage2D) carries tight
+// RGBA8 rows on the stream. (Host replay into the retired JS GL frontend,
+// with its raw-45 refusal and per-owner current context, went with
+// lib/gl-compat.js: WAT owns WGL and executes its own records.)
 let replayPixels = null;
-const bridge = new OpenGLHostBridge({
-  getMemory: () => memory,
-  exports: { guest_to_wasm: pointer => pointer },
-});
-assert.strictEqual(bridge._dv(), bridge._dv(),
-  'host replay reuses one DataView for fixed guest memory');
-bridge.current = 1;
-bridge.contexts.set(1, {
-  frontend: {
-    gl: {},
-    texImage(_level, _internal, _width, _height, _border, _format, _type, pixels) {
-      replayPixels = pixels;
-    },
-  },
-});
-const bridgeEncoder = new Stream.Encoder({
+const uploadBatches = [];
+const uploadEncoder = new Stream.Encoder({
   getMemory: () => memory,
   guestToWasm: pointer => pointer,
   shared: false,
-  submit: batch => bridge.replay(batch),
+  submit: batch => { uploadBatches.push({ ...batch }); return 0; },
 });
-// G2: the executor consumes only WAT's canonical finished-RGBA8 upload
-// (158 _glTexImage2D); a raw 45 record is refused.
 dv.setUint32(stack + 4 + 3 * 4, 16, true);
 dv.setUint32(stack + 4 + 4 * 4, 16, true);
-bridgeEncoder.call(158, stack, 0);
-bridgeEncoder.flush();
+uploadEncoder.call(158, stack, 0);
+uploadEncoder.flush();
+Stream.replay(uploadBatches[0], (code, _aux, capture) => {
+  if (code !== 158) return 0;
+  const pointer = new DataView(capture.buffer, capture.stackOffset).getUint32(4 + 8 * 4, true);
+  replayPixels = capture.pointerGuest === pointer && !capture.pointerBorrowed && capture.pointerOffset
+    ? new Uint8Array(capture.buffer, capture.pointerOffset, 16 * 16 * 4)
+    : new Uint8Array(memory, pointer, 16 * 16 * 4);
+  return 0;
+});
 assert.strictEqual(replayPixels.length, 16 * 16 * 4, 'canonical upload carries tight RGBA8 rows');
 assert(replayPixels.every(b => b === 0xA7), 'canonical upload carries the guest texels');
-assert.throws(() => bridgeEncoder.call(45, stack, 0), /canonical _glTexImage2D/);
-
-// A buffered stream can outlive another guest thread's wglMakeCurrent call.
-// Replay therefore resolves the current context by originating Worker slot.
-const ownerCalls = [];
-const ownerBridge = new OpenGLHostBridge({ getMemory: () => memory, exports: {} });
-ownerBridge.contexts.set(11, { frontend: { gl: {}, setEnabled: value => ownerCalls.push(['a', value]) } });
-ownerBridge.contexts.set(22, { frontend: { gl: {}, setEnabled: value => ownerCalls.push(['b', value]) } });
-ownerBridge.currentByOwner.set(1, 11);
-ownerBridge.currentByOwner.set(2, 22);
-dv.setUint32(stack + 4, 0x0BE2, true);
-const ownerBatches = [];
-const ownerEncoder = new Stream.Encoder({
-  getMemory: () => memory,
-  guestToWasm: pointer => pointer,
-  shared: false,
-  submit: batch => { ownerBatches.push({ ...batch }); return 0; },
-});
-ownerEncoder.call(10, stack, 0);
-ownerEncoder.flush();
-ownerBridge.replay(ownerBatches[0], 2);
-ownerBridge.replay(ownerBatches[0], 1);
-assert.deepStrictEqual(ownerCalls, [['b', 0x0BE2], ['a', 0x0BE2]],
-  'batch replay retains per-thread WGL current-context ownership');
 
 // Pin the Worker-side protocol endpoint independently of WebGL: one pending
 // RPC status is acknowledged only after the whole batch has replayed.

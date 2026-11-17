@@ -11,9 +11,10 @@
 // READBACK records ($glg_front_sync on gl_gps_sync_front).
 //
 // opts.gps: 1 = producer on; opts.dropCaps: GPS_CAP_* bits the executor
-// pretends it lacks (the caps-missing decline paths); opts.owned: answer the
-// instance's 0x10008 query as host-imports does for the software backend, so
-// WAT owns WGL (src/09a8cw-gl-wgl.wat) and no command batch reaches a host.
+// pretends it lacks (the caps-missing decline paths). The instance's 0x10008
+// query is answered as lib/host-imports.js does, so WAT owns WGL
+// (src/09a8cw-gl-wgl.wat) and no command batch reaches a host
+// (test/helpers/gl-owned-host.js throws if one does).
 const assert = require('assert');
 const path = require('path');
 const root = path.resolve(__dirname, '../..');
@@ -21,8 +22,7 @@ const req = p => require(path.join(root, p));
 const GS = req('lib/gpu-stream');
 const { Executor } = req('lib/gpu-stream-software');
 const { bootRenderHarness } = req('test/render-helper');
-const { OpenGLHostBridge } = req('lib/gl-compat');
-const Stream = req('lib/gl-command-stream');
+const { ownedGlCall } = req('test/helpers/gl-owned-host');
 const table = req('src/api_table.json');
 
 const WAT = String.raw`
@@ -55,21 +55,12 @@ const STAT_NAMES = ['draws', 'tris', 'spanQuads', 'clears', 'presents', 'readbac
   'rtUploads', 'rtUploadRows', 'texUploads', 'gpuFrames', 'swFrames', 'syncs', 'texHits',
   'declines', 'declinedFrames'];
 
-async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, owned = false } = {}) {
-  let memory, bridge, executor = null, ring = null, ringAddr = 0;
+async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
+  let memory, executor = null, ring = null, ringAddr = 0;
   const kicks = { n: 0, records: {} };
   const h = await bootRenderHarness({ fonts: 'none', width: size, height: size, extraWat: WAT,
     extraHostOverrides: {
-      gpu_gl_call(op, at, bytes) {
-        if (op === Stream.WAT_STREAM_FLUSH_OPCODE) {
-          const d = new DataView(memory.buffer, at >>> 0, 8);
-          if (bytes === d.getUint32(0, true) && d.getUint32(4, true) === 0x10008) return owned ? 0x57470000 | 1 | 2 | (gps ? 4 : 0) : 0;
-          if (owned) throw Error('WAT-owned GL sent a command batch');
-          return bridge.replay(Stream.memoryBatch(memory, at, bytes));
-        }
-        if (op >= 0x20000 && op <= 0x20006) return 0;
-        throw Error('unexpected host opcode ' + op);
-      },
+      gpu_gl_call: ownedGlCall(() => memory, { gps }),
       gpu_stream_kick(addr, mode) {
         addr >>>= 0; kicks.n++;
         if (!executor) {
@@ -93,8 +84,6 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, owned = false } = {
   memory = h.memory;
   const e = h.exports, dv = () => new DataView(memory.buffer), wa = p => e.guest_to_wasm(p) >>> 0;
   e.init_thread(1, 0x400000, 0, 0, 0, 0, 0); e.heap_init(0x800000);
-  const renderer = { windows: { 42: { hwnd: 42, w: size, h: size, clientRect: { w: size, h: size } } }, repaint() {} };
-  bridge = new OpenGLHostBridge({ backend: 'software', getMemory: () => memory.buffer, exports: e, renderer });
   if (gps) e.gl_gps_enable(1);
   e.probe_init();
   const regs = e.probe_regs(), stack = e.guest_alloc(256) >>> 0, stackWa = wa(stack);
@@ -159,7 +148,7 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, owned = false } = {
     { x: x0, y: y0, t: extra.t && extra.t[0] }, { x: x1, y: y0, t: extra.t && extra.t[1] },
     { x: x1, y: y1, t: extra.t && extra.t[2] }, { x: x0, y: y1, t: extra.t && extra.t[3] }], color);
   const clear = (rgba, mask = 0x4000) => { call('glClearColor', rgba.map(f)); call('glClear', [mask]); };
-  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context, bridge };
+  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context };
 }
 
 // The two arms' presented pictures: equal within $tol per channel.

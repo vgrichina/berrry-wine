@@ -1,10 +1,13 @@
 'use strict';
 // WAT-owned WGL (src/09a8cw-gl-wgl.wat): the software GL context lifecycle,
 // presentation, glReadPixels, glGenTextures and the GLU entry points answered
-// in WAT with no command batch reaching a host. The oracle for every answer is
-// the same guest call sequence on the JS-hosted path (OpenGLHostBridge), which
-// this slice retires; the owned arm's harness throws if WAT sends a batch.
+// in WAT with no command batch reaching a host (the harness throws if one
+// does). The oracle for every answer and for the presented picture is
+// test/fixtures/gl-wgl-owned-oracle.json: the same guest call sequence on the
+// retired JS-hosted path (OpenGLHostBridge, lib/gl-compat.js), recorded at
+// 3eea041c5 before that frontend was deleted.
 const assert = require('assert');
+const path = require('path');
 const { bootGlGps, comparePictures } = require('./helpers/gl-gps-context');
 
 const scene = async g => {
@@ -82,12 +85,19 @@ const scene = async g => {
   return out;
 };
 
-(async () => {
+module.exports = { scene };
+
+function oraclePicture(p) {
+  return { w: p.w, h: p.h, px: Uint32Array.from(p.px.match(/.{6}/g), v => parseInt(v, 16)) };
+}
+
+if (require.main === module) (async () => {
+  const ORACLE = require(path.join(__dirname, 'fixtures/gl-wgl-owned-oracle.json'));
   for (const gps of [0, 1]) {
-    const js = await bootGlGps({ gps });
-    const jsOut = await scene(js); const jsPic = js.front();
-    const wat = await bootGlGps({ gps, owned: true });
-    const watOut = await scene(wat); const watPic = wat.front();
+    const { answers: jsOut, picture } = ORACLE.arms[gps];
+    const jsPic = oraclePicture(picture);
+    const wat = await bootGlGps({ gps });
+    const watOut = JSON.parse(JSON.stringify(await scene(wat))); const watPic = wat.front();
     assert.strictEqual(wat.e.gl_sw_enabled(), 1, 'owned arm draws in WAT');
     for (const key of Object.keys(jsOut)) {
       if (key === 'flush' || key === 'flushNone') continue;

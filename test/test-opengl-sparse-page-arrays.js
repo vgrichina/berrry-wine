@@ -20,7 +20,7 @@ const assert = require('assert');
 const { compileSrcWasm } = require('./compile-src');
 const Stream = require('../lib/gl-command-stream');
 const RegionMap = require('../lib/region-map.generated');
-const { CALL_INDEX } = require('../lib/gl-compat');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 
 const STACK = RegionMap.BASE.GUEST_STACK + 0x1000;
 const GL_TRIANGLES = 0x0004, GL_FLOAT = 0x1406, GL_UNSIGNED_SHORT = 0x1403;

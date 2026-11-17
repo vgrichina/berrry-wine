@@ -175,6 +175,13 @@ const wordsBody = stream.slice(stream.indexOf('const ARG_WORDS = ['),
 const argWords = [...wordsBody.matchAll(/\b([0-9]+)\b/g)].map(match => number(match[1]));
 assert.deepStrictEqual(argWords, gpuWords,
   'lib/gl-command-stream.js ARG_WORDS must match tools/gen_dispatch.js gpuApis order and word counts');
+// CALLS names the same opcodes; 55 is the one alias (gpuPresent there is
+// the presentation wglSwapBuffers and GDI32!SwapBuffers both reach).
+const gpuNames = [...mapBody.matchAll(/\['([^']+)'\s*,\s*[0-9]+\]/g)].map(match => match[1]);
+const streamCalls = require(path.join(ROOT, 'lib/gl-command-stream.js')).CALLS
+  .map((name, op) => op === 55 && name === 'gpuPresent' ? 'wglSwapBuffers' : name);
+assert.deepStrictEqual(streamCalls, gpuNames,
+  'lib/gl-command-stream.js CALLS must name tools/gen_dispatch.js gpuApis in order');
 assert(require('./gen-gl-encoder-abi').check(),
   'native GL stack lengths/barriers are stale; run node tools/gen-gl-encoder-abi.js');
 

@@ -14,7 +14,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 
 const VP = 32;
 const GL_FOG = 0x0B60, GL_QUADS = 7;

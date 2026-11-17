@@ -1,5 +1,5 @@
 'use strict';
-// tl;dr: the Glide bridge's render-Worker route (lib/glide-host.js) against a
+// tl;dr: the Glide bridge's render-Worker route (lib/gpu-stream-host.js, api 'glide') against a
 // fake endpoint. With GPU stream v2 the guest's records already sit in the
 // shared ring, so the bridge only posts {t:'gps-kick', ring, mode}: ASYNC
 // kicks answer at once, SYNC kicks resolve after every earlier kick ran, kicks
@@ -8,7 +8,9 @@
 // drains queued kicks before terminating, a CLOSE kick retires the Worker and
 // the next kick opens a fresh one, and a failed kick poisons the context.
 const assert = require('assert');
-const { Bridge } = require('../lib/glide-host');
+// Glide's endpoint is the API-neutral GPU stream bridge under api 'glide'.
+const GpuStreamHost = require('../lib/gpu-stream-host');
+class Bridge extends GpuStreamHost.Bridge { constructor(options = {}) { super({ ...options, api: 'glide' }); } }
 
 const ASYNC = 0, SYNC = 1, CLOSE = 2, RING = 0x1000;
 function deferred() {

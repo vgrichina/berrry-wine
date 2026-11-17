@@ -25,7 +25,7 @@
 
 const assert = require('assert');
 const Stream = require('./helpers/gl-reference-encoder');
-const { CALL_INDEX } = require('../lib/gl-compat');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 const apis = require('../src/api_table.json');
 
 const GL_TRIANGLES = 0x0004, GL_FLOAT = 0x1406, GL_UNSIGNED_BYTE = 0x1401;

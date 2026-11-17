@@ -16,7 +16,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 
 const MODELVIEW = 0x1700, PROJECTION = 0x1701;
 const VERT_BYTES = 60, VERT_FLOATS = 15;  // w is the 15th float
