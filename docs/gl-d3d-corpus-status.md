@@ -27,9 +27,34 @@ software Tunnel and Flip runs include complete enclosing waits and EOFs.
 The earlier software Tunnel capture refusal and earlier Flip software missing
 enclosing waits remain separate UNKNOWN results. These observations do not
 establish visual parity, FPS, audio, native Quit or the complete historical
-27-app goal. Globe and Viewer remain active work.
+27-app goal. Later Globe and Viewer results are recorded below.
 Evidence: `scratch/runs/20261117-dxsdk-four-examples-paired-rendering/result.json`
 and `scratch/runs/20261117-dxsdk-software-tunnel-flip-rendering-finish/result.json`.
+
+## November 17 Globe/Viewer window creation repair
+
+[Globe/Viewer report](re-notes/dxsdk-globe-viewer-paired-retained-rendering-20261117.md)
+records published repair `3ab982f2d` and report `58bca5d7f`. A native
+counterexample showed WM_SIZE reaching a hidden overlapped window before
+CreateWindow returned and before Viewer initialized its device. The repair
+defers that size notification; popup, creation rejection, positioning, showing,
+child/startup neighbors and callback-review refusal controls passed, along with
+the canonical locked build.
+
+Four serial affected originals used the published source graph and module
+`06eaa397…`. Globe software and WebGL produced textured spheres with natural
+motion; Viewer WebGL produced a rotating extruded Microsoft model. Actual
+native D3DRM/Device2 and software/WebGL GPS execution were recorded. The
+coordinator reviewed the whole software Globe and WebGL Viewer before/after
+pairs. Viewer software produced one meaningful model image, but its later
+pair was blank after an attached inspector implicitly changed the viewport to
+800×600. Its motion remains unproved. The scope is closed; a corrected
+non-resizing inspector requires a fresh run. Initial failures remain recorded
+separately. All nine scopes, including the authored viewport control, retained
+actual native/browser/helper/watchdog/enclosing waits and EOFs. No native Quit,
+visual parity, FPS, audio or full27 result is inferred.
+
+Evidence: `scratch/runs/20261117-dxsdk-globe-viewer-paired-retained-rendering/result.json`.
 
 ## November 17 Quake III arena, depth repair and delayed input
 
