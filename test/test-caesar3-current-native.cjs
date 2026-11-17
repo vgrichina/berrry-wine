@@ -44,10 +44,10 @@ function controllerFixture(){
  const code=Buffer.from([0x68,...u32(50),0xff,0x15,...u32(0x401204),...quit,0xe9,...u32(guestAt+quit.length-(stub+11+quit.length+5))]);
  code.copy(b,raw(0x2d00));b.fill(0x90,at,at+quit.length);b[at]=0xe9;b.writeInt32LE(stub-guestAt-5,at+1);return b;
 }
-async function reviewedController(out,late=false){
+async function reviewedController(out,late=false,printable=false){
  fs.mkdirSync(out);const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  fs.copyFileSync(path.join(out,'../../runtime-inputs.json'),path.join(out,'runtime-inputs.json'));
- const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,controllerFixture());
+ const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,printable?require('../tools/native-printable-fixture.cjs').fixture():controllerFixture());
  const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
  const invocationToken=crypto.randomUUID(),start=Date.now()/1000;
  save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,rootPort:port});
@@ -77,9 +77,15 @@ async function reviewedController(out,late=false){
   }else{
    await control(['capture','before']);
    await control(['review','before','Authored test only: complete ordinary USER window, finite left press.','Fixture','install',snap.mainHwnd]);
-   await control(['bind','before']);await control(['intent','click','before','500','220','install']);
+   await control(['bind','before']);await control(printable?['intent','click','before','-2','67','install','67']:['intent','click','before','500','220','install']);
    const rr=JSON.parse(fs.readFileSync(path.join(out,'click-observed.json')));
-   assert.equal(rr.snapshot.windows.find(w=>w.hwnd===snap.mainHwnd).title,'UP after DOWN');
+   assert.equal(rr.snapshot.windows.find(w=>w.hwnd===snap.mainHwnd).title,printable?'DCU':'UP after DOWN');
+   if(printable){
+    const receipt=JSON.parse(fs.readFileSync(path.join(out,'click-down.json'))).receipt;
+    assert.deepEqual(receipt.nativeMessages.map(p=>p.msg),[0x100,0x102]);
+    save('assertions.json',{pass:true,exactController:true,nativePhysicalAndCharacter:true,publicCaption:'DCU',syntheticAuthoredAttestation:true});
+    return;
+   }
    await control(['review','click-observed','Authored test only: release completed, ordinary Escape key route exits fixture.','Escape','quit',rr.snapshot.focus]);
    await control(['intent','quit','click-observed','-1','27','quit']);
    assert(JSON.parse(fs.readFileSync(path.join(out,'quit-native-quit.json'))).proven);
@@ -103,8 +109,12 @@ async function main(out){
  fs.writeFileSync(path.join(out,'late-capture.json'),JSON.stringify({refused:true,wrote:false,elapsedMs:Date.now()-started}));
  await require('./test-cli-native-pointer-coordinates.cjs').native(path.join(out,'mapping'));
  await keyboard(path.join(out,'keyboard'));
+ require('./test-native-printable-input.cjs').units();
+ for(const worker of [false,true])await require('./test-native-printable-input.cjs').native(path.join(out,worker?'printable-CPUWorker':'printable-cooperative'),{worker});
+ await require('./test-native-printable-input.cjs').ownerNative(out);
  await consumerDiagnostic(path.join(out,'consumer'));
  await reviewedController(path.join(out,'controller'));
+ await reviewedController(path.join(out,'printable-controller'),false,true);
  await reviewedController(path.join(out,'late-controller'),true);
  fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,sealedManifest:globalThis.__disciples2Manifest}));
 }

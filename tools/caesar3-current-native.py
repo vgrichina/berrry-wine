@@ -51,6 +51,7 @@ def media_inventory():
 def original(env, source, module):
     free_disk()
     pins = media_inventory()
+    assert len(pins)==114, 'complete installed recursive media inventory required before clocks'
     assert next(p['sha256'] for p in pins if p['path'].endswith('/c3.exe')) == 'd7c73f21d3837b1fc465a6035f4fea6ab5a7eddf62907c72c4dd076a5193d236'
     save('media.json', dict(files=pins, recursive=True, beforeNativeClock=True, at=time.time()))
     with socket.socket() as s:
@@ -132,6 +133,8 @@ def controller():
     if mode=='bind': return m.bind(sys.argv[3])
     assert mode=='intent'
     name,scene,x,y,kind=sys.argv[3:8];x=int(x);y=int(y)
+    char_code=int(sys.argv[8]) if x==-2 else None
+    if x==-2: assert kind!='quit' and 32<=char_code<=126 and 1<=y<=255
     child=None
     try:
         launch=m.reserve(kind=='quit'); rr,r=m.reviewed(scene)
@@ -143,12 +146,12 @@ def controller():
         if kind!='quit': assert not (RUN/'quit-phase.json').exists() and time.time()+3<launch['gameplayCutoff']
         owner=m.read('input-owner.json'); start=time.time(); nonce=str(uuid.uuid4())
         invocation=dict(rr['target']); assert invocation==m.identity() and m.same_live_invocation(invocation)
-        save(name+'-intent.json',dict(scene=scene,x=x,y=y,kind=kind,nonce=nonce,at=start,
+        save(name+'-intent.json',dict(scene=scene,x=x,y=y,charCode=char_code,kind=kind,nonce=nonce,at=start,
              confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3))
         child=m.ArmedRelease(name,owner['owner'],start+1.4)
         ready,_,_=select.select([child.stdout],[],[],.15); assert ready,'independent release not prearmed'
         arm=json.loads(child.stdout.readline());save(name+'-release-arm.json',arm);assert arm['armed']
-        command=f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
+        command=f'keytext:{y}:{char_code}' if x==-2 else f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
         guard={**owner,'nonce':nonce,'reviewed':True,'intent':dict(review=m.native_review(rr,r)),
                'deadline':int(min(start+.5,min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000)}
         m.reserve(kind=='quit');assert time.time()<start+.5
@@ -160,6 +163,13 @@ def controller():
             proof=receipt['nativeMessage']
             assert proof['consumption']=='owner-user-return' and proof['nonce']==nonce and proof['token']>0
             assert proof['apiKind'] in (1,2,3) and proof['threadId']>0
+            if x==-2:
+                pair=receipt['nativeMessages'];assert len(pair)==2
+                assert [p['msg'] for p in pair]==[0x100,0x102]
+                assert [p['wParam'] for p in pair]==[y,char_code] and pair[0]['lParam']==pair[1]['lParam']
+                assert pair[0]['token']!=pair[1]['token']
+                assert all(p['consumption']=='owner-user-return' and p['nonce']==nonce and p['token']>0 and
+                    p['apiKind'] in (1,2,3) and p['threadId']==proof['threadId'] and p['hwnd']==proof['hwnd'] for p in pair)
         assert all(receipt.get(k)==guard[k] for k in ('owner','epoch','nonce','deadline'))
         assert start*1000<=receipt['consumedAt']<guard['deadline']
         save(name+'-up-at.json',dict(at=receipt['consumedAt']/1000+.1))
@@ -207,7 +217,8 @@ def run():
     helper = published_module('tools/vb5cce-original-runtime.py', revision)
     helper.ROOT, helper.RUN, helper.HEAD = ROOT, RUN, revision
     helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
-        'test/run.js', 'test/public-consumer-observer.js')
+        'test/run.js', 'lib/cli-guarded-input.js', 'lib/cli-input-owner.js', 'lib/cli-native-printable.js',
+        'tools/native-printable-fixture.cjs', 'test/test-native-printable-input.cjs')
     if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
     if not working:
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()

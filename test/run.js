@@ -2303,6 +2303,10 @@ async function main() {
         // parent dialog. Generic helper for simple modal prompt dialogs.
         scheduledInput.push({ batch, action: 'edit-ok',
           ctrlId: parseInt(parts[2]), text: parts.slice(3).join(':') });
+      } else if (kind === 'keytext') {
+        if (parts.length !== 4 || !/^\d+$/.test(parts[2]) || !/^\d+$/.test(parts[3]))
+          throw new Error('keytext needs explicit VK and printable character code');
+        scheduledInput.push({ batch, action: 'keydown', code: Number(parts[2]), charCode: Number(parts[3]) });
       } else if (kind === 'keypress' || kind === 'keydown' || kind === 'keyup' ||
                  kind === 'di-keydown' || kind === 'di-keyup') {
         scheduledInput.push({ batch, action: kind, code: parseInt(parts[2]) });
@@ -7743,7 +7747,8 @@ async function main() {
     confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),
     captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
     validateDelivery: expected => JSON.stringify(nativeScene.reviewedContext(controlSnapshot())) === JSON.stringify(expected),
-    validateIntent: intent => {
+    validateIntent: (intent,event) => {
+      if (event.charCode !== undefined) require('../lib/cli-native-printable').validatePrintable(event,controlSnapshot(),renderer);
       if (!nativeSceneLease) return true;
       if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
         try { reviewedContexts.verify(controlSnapshot(),intent.review,intent.event,intent.nonce); return true; }
@@ -7821,7 +7826,10 @@ async function main() {
     renderer.takeInput = function(...args) { guardedInput.sweep(); return take.apply(this, args); };
   }
   const applyGuardedInput = ev => {
-    if (ev.action === 'keydown') renderer.handleKeyDown(ev.code);
+    if (ev.action === 'keydown') {
+      renderer.handleKeyDown(ev.code);
+      if (ev.charCode !== undefined) renderer.handleKeyPress(ev.charCode);
+    }
     else if (ev.action === 'keyup') renderer.handleKeyUp(ev.code);
     else if (ev.action === 'mousemove') renderer.handleMouseMove(ev.x, ev.y);
     else if (ev.action === 'mousedown') renderer.handleMouseDown(ev.x, ev.y, 1);
@@ -7943,9 +7951,10 @@ async function main() {
       if (['keydown', 'keyup'].includes(ev.action) ?
           !Number.isInteger(ev.code) || ev.code < 1 || ev.code > 255 :
           !Number.isFinite(ev.x) || !Number.isFinite(ev.y)) throw new Error('invalid guarded input arguments');
+      if (ev.charCode !== undefined) require('../lib/cli-native-printable').validatePrintable(ev,controlSnapshot(),renderer);
       if (nativeSceneContract===nativeScene.REVIEWED_CONTEXT) {
         // Bind the actual parsed edge and nonce, never caller-provided event data.
-        cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
+        cmd.guard={...cmd.guard,intent:{review:cmd.guard?.intent?.review,event:{action:ev.action,code:ev.code,charCode:ev.charCode,x:ev.x,y:ev.y},nonce:cmd.guard?.nonce}};
       }
       const ticket = guardedInput.prepare(cmd.guard, ev);
       if (ticket.state === 'QUEUED') {
@@ -10519,6 +10528,7 @@ async function main() {
         logs.push(`[input] ime-commit text=${JSON.stringify(ev.text)} at batch ${batch}`);
       } else if (ev.action === 'keydown' && renderer && renderer.handleKeyDown) {
         renderer.handleKeyDown(ev.code);
+        if (ev.charCode !== undefined) renderer.handleKeyPress(ev.charCode);
         logs.push(`[input] keydown vk=${ev.code} at batch ${batch}`);
       } else if (ev.action === 'keyup' && renderer && renderer.handleKeyUp) {
         renderer.handleKeyUp(ev.code);
