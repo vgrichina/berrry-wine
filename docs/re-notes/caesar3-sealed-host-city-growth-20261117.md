@@ -35,3 +35,36 @@ The locked build initially encountered concurrent callback metadata integration,
 then three upstream media-size metadata mismatches. Foreign owners repaired
 those shared gates; no foreign source or media was changed here. Final build
 and original outcome are recorded in the run's final `result.json`.
+
+## Original outcome
+
+Code repair `1e585c16b3bb58117959ed3657877a4e062ce616` passed the
+canonical locked build and strict pull/push. One fresh original used exactly the
+same source hashes as the passing native fixture, with all 114 original media
+files checked before its clock. It reached the normal title, Start new game,
+entered `C` once through native DOWN/CHAR, then Assignment 1 Aventine and the
+city at Dn 2000 / Pop 0 / Jan 500 BC. Selected whole-image captures and exact
+full Git/component/module/map pins are listed in the final run metadata.
+
+The first city action selected the road tool at (731,314). Its personally
+reviewed capture was 6849.665 ms old, within the unchanged 15-second game
+freshness limit. The handler applied at approximately 100 ms but no native
+DOWN-return receipt arrived within the immutable 500 ms deadline. The receipt
+was CANCELLED, consumed=false, with no native message token. The controller
+correctly entered permanent UNKNOWN. Independent physical release acknowledged
+at 1452.554 ms, within 1750 ms. Local trace shows pointer move/hit-test events,
+then expiration; this does not prove road selection or a specific code defect.
+
+No endpoint request followed permanent UNKNOWN. No replay, rebind or second
+original occurred. Host cancellation closed the game promptly; actual native,
+outer, persistent-owner and independent-watchdog waits completed with both
+EOFs and an empty runtime scope. A SIGTERM cancellation receipt is not native
+Quit. No connected road, placed/occupied dwelling, immigrant, population growth,
+food/service consequence, native Save or Quit is proved. The last visible
+population remained zero and funds 2000.
+
+Next work must localize the missing native button-return boundary on an authored
+city-like fixture before any newly authorized original. The sealed-source
+preparation dependency is repaired and published; the current blocker is the
+first city action's input confirmation. No box was created (ID/expiry null,
+state NOT_CREATED, stop receipt NOT_APPLICABLE).
