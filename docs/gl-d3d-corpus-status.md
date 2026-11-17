@@ -7,6 +7,7 @@ below. Current original-game checks and the full 27-app requirement remain open.
 
 | Path | Result | Scope and evidence |
 | --- | --- | --- |
+| Repeatable browser palette oracle | `c2a980c5f`: all32 observations pass on each software/WebGL executor | Permanent `test/test-d3dim-gps-palette-web.js` runs the unchanged native oracle in Chrome, with26 draws/32 readbacks per backend and zero fallbacks/declines. Actual driver/Chrome exit and EOF checked; cooperative component fixture, no original-game or Worker-lifetime claim. [Regression and provenance](re-notes/browser-gps-palette-regression-20261117.md); run `20261117-coordinator-palette-browser-regression-final`. |
 | D3DIM palette color-key rejection | Fixed in `280503c1a`; mandatory palette oracle passes all 32 observations | The producer saturated alpha-minus-threshold before `TEXKILL`, so keyed fragments survived. The fix preserves the negative intermediate. Real WAT palette handlers/stream production into the software executor, shader canonicalization, keyed-mipmap regression and locked build pass. No browser/game claim. [Cause and tests](re-notes/d3dim-key-kill-saturation-20261117.md); run `20261117-coordinator-gps-palette-fixed`. |
 | Browser D3DIM palette pixels | All 32 existing observations pass on each of software and WebGL, with identical pixel values | Real WAT producer and READBACK into Chrome, 26 draws/32 readbacks per backend, zero producer fallbacks/declines. Retained module `ad38e26f…`; cooperative executor fixture, no Worker lifetime or original-game claim. Both driver and Chrome actual exit/EOF observed. [Route and limits](re-notes/browser-gps-palette-pixels-20261117.md); run `20261117-coordinator-browser-gps-palette`. |
 | Shared browser render Worker | RGBA8 wire test corrected in `5cf975062`; actual Chrome WebGL and native software arms pass | One physical shared Worker, four readbacks, 4,096 channel comparisons, 576 padding/end-canary comparisons and four presents. Chrome process exit/close and both EOFs observed. Raw RGB565 requests correctly refused; native Glide conversion tested separately. ANGLE SwiftShader, no physical-GPU claim. Run `20261117-coordinator-browser-shared-graphics`. |
@@ -18,6 +19,15 @@ Run `20261117-coordinator-browser-palette-lifetime` retains that failure. It
 establishes a stale fixture dependency, not a production rendering defect or
 browser palette-lifetime success. Original GLTron gameplay through the current
 GPS paths is assigned for fresh native-input/backend evidence.
+
+The later original checks in
+`20261117-gltron-continuous-capture-release-arm-gameplay` use published
+`b29ef843a`: continuous software arena capture completes in655 ms and
+independent-UP arms in6–7 ms. Native input subsequently cancels because
+context age at dequeue reaches293 ms software and259 ms WebGL, beyond the
+unchanged250 ms fence. Physical release succeeds; no two-turn, round or native
+Quit result follows. A fresh native workload reproducer targets this remaining
+delay. [Repairs, observations and limits](re-notes/gltron-continuous-capture-release-arm-gameplay-20261117.md).
 
 ## November 12 current original-game progress
 
