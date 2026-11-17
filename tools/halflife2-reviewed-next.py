@@ -41,15 +41,15 @@ def preflight(snapshot,target,x,y,label):
 
 def controller():
     run=pathlib.Path(os.environ['DELPHI5_RUN']);pins=json.loads((run/'runtime-inputs.json').read_text())
-    name='tools/vb5cce-reviewed-control.py'
-    body=subprocess.check_output(['git','show',pins['gitSHA']+':'+name],cwd=ROOT)
-    assert hashlib.sha256(body).hexdigest()==pins['sources'][name]
-    m=types.ModuleType('hl2_pinned_control');m.__file__=str(ROOT/name)
+    helper_name='tools/vb5cce-reviewed-control.py'
+    body=subprocess.check_output(['git','show',pins['gitSHA']+':'+helper_name],cwd=ROOT)
+    assert hashlib.sha256(body).hexdigest()==pins['sources'][helper_name]
+    m=types.ModuleType('hl2_pinned_control');m.__file__=str(ROOT/helper_name)
     exec(compile(body,m.__file__,'exec'),m.__dict__)
     def sourcecheck():
         # The borrowed controller above was compiled from this exact Git blob,
         # not imported from its concurrently leased mutable checkout path.
-        assert hashlib.sha256(body).hexdigest()==pins['sources'][name]
+        assert hashlib.sha256(body).hexdigest()==pins['sources'][helper_name]
         assert hashlib.sha256(pathlib.Path(__file__).read_bytes()).hexdigest()==pins['sources']['tools/halflife2-reviewed-next.py']
     m.sourcecheck=sourcecheck
     reviewed=m.reviewed

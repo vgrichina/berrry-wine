@@ -43,7 +43,7 @@ function dialogFixture(){
   0xb8,1,0,0,0,0xc2,16,0]);
  code.copy(b,raw(0x2300));return b;
 }
-async function runOne(out,dialog=false){
+async function runOne(out,dialog=false,wrapper=false){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
  const exe=path.join(out,'wizard.exe');fs.writeFileSync(exe,dialog?dialogFixture():fixture(),{flag:'wx'});
  let wo='',we='';const wd=cp.spawn(process.execPath,['-e',"let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},25000);console.log('ARMED');process.stdin.on('data',b=>pid=+b);process.stdin.on('end',()=>clearTimeout(t))"]);wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=new Promise(r=>wd.on('close',(exit,signal)=>r({exit,signal})));
@@ -52,6 +52,31 @@ async function runOne(out,dialog=false){
  const s=startControlSession(['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--png-canvas','--screen=640x480','--control-stdin','--control='+port,'--max-seconds=20','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});wd.stdin.write(String(s.child.pid));
  try{
   let snap;const due=Date.now()+10000;do{snap=await s.send({action:'snapshot'});if(snap.windows.filter(w=>w.controlClass===1).length===2)break;assert(Date.now()<due);await pause(20);}while(true);
+  if(wrapper){
+   const crypto=require('node:crypto'),hash=b=>crypto.createHash('sha256').update(b).digest('hex');
+   const gitSHA=cp.execFileSync('git',['rev-parse','8d4973866'],{encoding:'utf8'}).trim();
+   const helper='tools/vb5cce-reviewed-control.py',own='tools/halflife2-reviewed-next.py';
+   const sources={[helper]:hash(cp.execFileSync('git',['show',gitSHA+':'+helper])),[own]:hash(fs.readFileSync(own))};
+   save('runtime-inputs.json',{gitSHA,sources,authoredWrapperTest:true});
+   fs.writeFileSync(path.join(out,'wrapper.patch'),cp.execFileSync('git',['diff','--binary','--',own,'test/test-halflife2-native-wizard.cjs']));
+   const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),started=Date.now()/1000;
+   save('native-pid.json',{pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken:crypto.randomUUID(),bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()});
+   save('launch.json',{rootPort:port,deadline:started+20,gameplayCutoff:started+17,reserveSeconds:3});
+   let number=0;
+   async function control(args,ok=true){const child=cp.spawn('python3',['-B','tools/halflife2-reviewed-next.py',...args],{env:{...process.env,DELPHI5_RUN:out,DELPHI5_PORT:String(port)}});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);const status=await new Promise(r=>child.on('close',r));save('wrapper-'+(++number)+'-wait.json',{args,pid:child.pid,status,stdout,stderr,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded});if(ok)assert.equal(status,0,stderr);else assert.notEqual(status,0);}
+   await control(['capture','wrapper-scene']);const rr=JSON.parse(fs.readFileSync(path.join(out,'wrapper-scene.json'))),button=rr.snapshot.windows.find(w=>w.title==='Next >');
+   const x=button.screenX+10,y=button.screenY+10;
+   await control(['review','wrapper-scene','Automated authored wizard complete image protocol test','Next >','install',button.hwnd,String(x),String(y)]);
+   await control(['bind','wrapper-scene']);await control(['intent','wrapper-next','wrapper-scene',String(x),String(y),'install']);
+   const receipt=JSON.parse(fs.readFileSync(path.join(out,'wrapper-next-down.json'))).receipt,after=JSON.parse(fs.readFileSync(path.join(out,'wrapper-next-observation.json'))).snapshot;
+   assert(receipt.consumed);assert.equal(receipt.receiptBoundary,'native-button-dispatch-return');assert(after.windows.some(w=>w.title==='License page: read the authored terms.'));
+   // A terminal fixture latch must refuse every later helper operation before
+   // HTTP, including a different finite name that formerly shadowed source ID.
+   const ledger=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');save('PERMANENT-UNKNOWN.json',{authoredTest:true,noLaterRequests:true});
+   for(const args of [['capture','later'],['bind','wrapper-scene'],['intent','different-name','wrapper-scene',String(x),String(y),'install']])await control(args,false);
+   assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),ledger);
+   save('proof.json',{passed:true,fullWrapperCaptureReviewBindIntent:true,arbitraryIntentName:true,actualPageChanged:true,receiptBoundary:receipt.receiptBoundary,physicalUpConfirmed:true,permanentUnknownLaterHTTP:0,noOriginal:true});return;
+  }
   const c=await s.send({action:'native-reviewed-capture',path:path.join(out,'wizard.png')});save('capture.json',c);
   const button=c.snapshot.windows.find(w=>w.title==='Next >'),review={contract:c.contract,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:Date.now(),scope:'menu',targetHwnd:button.hwnd};
   const targetCheck=cp.spawnSync('python3',['-B','-c',`import importlib.util,json,sys
@@ -78,5 +103,5 @@ print('PASS actual captured tree Next binding; wrong frame/sibling refused befor
   save('proof.json',{passed:true,actualPageChanged:true,receiptBoundary:receipt.receiptBoundary,actualNativeReturn:true,physicalUpMs:release.at-start,reuseRefused:true,noOriginal:true});
  }finally{if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch{}await s.exited;save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});fs.writeFileSync(path.join(out,'native.log'),s.output());wd.stdin.end();save('watchdog-wait.json',{...await ww,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});}
 }
-async function run(out){await runOne(path.join(out,'ordinary'));await runOne(path.join(out,'dialog'),true);}
+async function run(out){await runOne(path.join(out,'ordinary'));await runOne(path.join(out,'dialog'),true);await runOne(path.join(out,'wrapper'),true,true);}
 module.exports={fixture,dialogFixture,run};if(require.main===module)run(path.resolve(process.argv[2])).catch(e=>{console.error(e);process.exitCode=1;});
