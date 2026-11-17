@@ -110,7 +110,8 @@ its sole diagnostic original and cannot run another under this authorization.
 
 ## Shutdown and retained images
 
-Terminal UNKNOWN triggered file-based supervisor cancellation with no later HTTP.
+Terminal UNKNOWN triggered file-based supervisor cancellation with no further
+interactive HTTP; the independently prearmed release completed as recorded above.
 Native, independent watchdog, supervisor child and holder all recorded actual
 exit 0 and both log streams at EOF. These are host shutdown receipts, not native
 Quit. The retained module was hash-verified before the holder's normal stop.
