@@ -475,24 +475,6 @@
       "kind": "context-restore",
       "reason": "Token-checked lazy x86 flags snapshot/restore for the exact owned COM child; stale invocation traps before mutation. No guest callback or success acknowledgment. Focused native continuation proof in run20261117-sims-native-com-yield12-continuation-repair; general ownership remains pending.",
       "ownership": "pending"
-    },
-    {
-      "file": "src/09akg-d3d9-gps.wat",
-      "name": "export:d3d9_gps_sync_front",
-      "writes": 0,
-      "boundaryCalls": [
-        "$d3d_state_try_enter",
-        "$d9g_sync_front_locked",
-        "$d3d_state_leave"
-      ],
-      "exports": [
-        "d3d9_gps_sync_front"
-      ],
-      "targets": [],
-      "sha256": "57a71879da653dcb4d285d8808eaa4a7a1909ddc1ebc74f825ba7757babee8fa",
-      "kind": "host-entry",
-      "reason": "Review 20261117 Conan cross-instance GPS state: the existing public synchronous front sync now acquires the existing reentrant process D3D state lock, restores shared frontend state, executes the unchanged sync body and saves state before releasing. Contention follows the existing runnable refusal/retry boundary; no new guest callback, asynchronous retained frame, owner bypass, restoration authority or scheduler is introduced. Native two-instance contention/nesting and 4003 actual GPS CREATE/frame handoffs fail before repair and pass after repair in run20261117-conan-persistent-release-menu-gameplay. General invocation ownership remains pending.",
-      "ownership": "pending"
     }
   ]
 }
