@@ -79,6 +79,7 @@
 (include "09a7g-video-icm.wat")
 (include "09a7h-video-mciavi.wat")
 (include "09a7i-video-mciwnd.wat")
+(include "09a7j-typelib.wat")
 (include "09a8-handlers-directx.wat")
 (include "09a8b-handlers-opengl.wat")
 (include "09a8bf-wgl-font.wat")

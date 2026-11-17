@@ -3755,14 +3755,13 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
-  ;; LoadTypeLib(szFile: LPCOLESTR, pptlib: ITypeLib**) → HRESULT. We don't
-  ;; implement type libraries; return TYPE_E_CANTLOADLIBRARY (0x80029C4A) so the
-  ;; caller can take its "no typelib" fallback path. Zero out *pptlib.
+  ;; Native Automation loading, including builtin stdole and bounded MSFT/SLTG.
   (func $handle_LoadTypeLib (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (local.get $arg1)
-      (then (call $gs32 (local.get $arg1) (i32.const 0))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0x80029C4A))
+    (local $hr i32)
+    (local.set $hr (call $tl_load (local.get $arg0) (local.get $arg1)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+    (if (i32.eq (local.get $hr) (i32.const -2)) (then (call $io_block (i32.const 12))))
   )
 
   ;; SAFEARRAY: USHORT cDims +0, USHORT fFeatures +2, ULONG cbElements +4,
@@ -3935,10 +3934,13 @@
     (call $gs32 (local.get $arg3) (i32.wrap_i64 (local.get $v)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
-  ;; Real OLEAUT32 provides these automation helpers. Without that DLL, keep
-  ;; unsupported behavior explicit rather than forging registration/results.
+  ;; Native registry loading and registration use the ordinary registry owner.
   (func $handle_LoadRegTypeLib (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (local $hr i32)
+    (local.set $hr (call $tl_load_reg (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+    (if (i32.eq (local.get $hr) (i32.const -2)) (then (call $io_block (i32.const 24))))
   )
 
   (func $handle_QueryPathOfRegTypeLib (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -3946,11 +3948,13 @@
   )
 
   (func $handle_RegisterTypeLib (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (i32.store offset=0 (global.get $reg_base) (call $tl_register (local.get $arg0) (local.get $arg1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
   (func $handle_DispGetIDsOfNames (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (i32.store offset=0 (global.get $reg_base) (call $tl_method (i32.const 1) (i32.const 10) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 
   ;; 770: CoTaskMemAlloc(cb) — 1 arg stdcall, allocate from heap
