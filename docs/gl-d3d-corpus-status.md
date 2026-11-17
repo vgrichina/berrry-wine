@@ -1,16 +1,20 @@
 # OpenGL / Direct3D corpus status, updated 2026-11-17
 
-## November 17 Quake III arena and unresolved trap
+## November 17 Quake III arena, depth repair and delayed input
 
 The registered original on pinned `e7c13db29` / module `f40fc54c…` reached
 Q3DM1 with an actual guest Worker and owning software GPS executor. The
 coordinator reviewed the complete before/after images and verified a turn;
 the arena image was delivered on Telegram as message2995.
 
-Mouse1 was followed by a guest `unreachable` at `0x4629e8`, whose retained
-instruction is `call *0x7bde6c`. The actual callee and trap cause remain
-unknown; temporal proximity does not establish a firing or GL defect. Forward
-movement, visible firing/enemy consequence and native Quit remain unproved.
+The guest `unreachable` at `0x4629e8` was resolved by a fresh diagnostic to
+the actual `glEnd` thunk and the lost-depth guard during CPU fallback.
+Published `337b6205c` preserves GPU-owned D16 depth before that fallback;
+the guard remains in place. Native old-fail/new-occlusion controls, all65,536
+D16 roundtrips, five focused suites and the locked build pass. The affected
+original reached the main menu, then stopped on DOWN acknowledgement887ms
+against a200ms bound. Forward movement, visible firing/enemy consequence,
+affected-original arena verification and native Quit remain unproved.
 Health125→124→123 is excess-health decay, not evidence of enemy damage.
 All21 gestures completed independent physical release; host dequeue is separate
 from the uninstrumented native USER return boundary. The terminal UNKNOWN run
@@ -22,6 +26,18 @@ Findings `f44b5577c` and run
 helper wait. [Detailed result and next investigation](re-notes/quake3-known-menu-focus-arena-gameplay-20261117.md).
 This updates that software original only; earlier backend results below and
 the full27, parity, FPS and audio requirements remain separate and open.
+
+The subsequent diagnostic, published as `4ce3e278f`, establishes that the
+original already used a software render Worker. A representative native
+render load did not reproduce the input refusal. One fresh original instead
+had prompt DOWN acknowledgement59ms and handler9ms, followed by host dequeue
+about3,680ms after DOM DOWN; UP also dequeued later. Native USER/game
+consumption was not proved, and the selected image remained at the main menu.
+This identifies a delayed boundary, not its production cause or an input fix.
+The fresh diagnostic's browser, driver, helper, supervisor and watchdog have
+normal actual waits and EOFs; browser closure is not game Quit. Earlier
+UNKNOWN runs remain closed. [Depth repair and affected-run limits](re-notes/quake3-arena-indirect-call-trap-repair-20261117.md);
+[timing, ownership and unresolved cause](re-notes/quake3-render-load-down-delivery-gameplay-20261117.md).
 
 ## November 17 renderer regression results
 
