@@ -106,30 +106,36 @@ if(process.argv[2]==='--unit'){
     v=>v.windows[1].threadId++,v=>v.windows[1].generation='2',v=>v.windows[1].live=false,v=>v.focusTopLevel='0x9']){
     const v=structuredClone(noMain);mutate(v);assert.throws(()=>registry.verify(v,review));
   }
-  const code=`import importlib.util, pathlib, tempfile, time
-s=importlib.util.spec_from_file_location('control','tools/vb5cce-reviewed-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-with tempfile.TemporaryDirectory() as d:
- m.R=pathlib.Path(d);m.save('PERMANENT-UNKNOWN.json',{})
- m.identity=lambda: (_ for _ in ()).throw(AssertionError('identity must not run'))
- for cleanup in (False,True):
-  try:m.call({'action':'quit'},cleanup=cleanup)
-  except AssertionError as e:assert 'permanent UNKNOWN' in str(e)
-  else:raise AssertionError('postUNKNOWN request')
- assert not (m.R/'requests.jsonl').exists()
- # Exercise the real freshness predicate with aged evidence, not altered clocks.
- m.identity=lambda:{'pid':1};(m.R/'scene.png').write_bytes(b'fixture')
- digest=m.hashlib.sha256(b'fixture').hexdigest()
- for kind,age,allowed in [('game',10,True),('game',16,False),('install',6,True),('install',31,False)]:
-  rows={'scene.json':dict(at=time.time()-age,target={'pid':1},port=m.PORT,pngSHA256=digest),
-        'scene-review.json':dict(at=time.time()-age,kind=kind,pngSHA256=digest,rawCompleteScene=True,observation='fixture',visibleLabel='OK')}
-  m.read=lambda n:rows[n]
-  try:m.reviewed('scene');passed=True
-  except AssertionError:passed=False
-  assert passed==allowed,(kind,age)
-print('PASS permanent UNKNOWN forbids normal and cleanup requests before identity/network')`;
-  const p=cp.spawnSync('python3',['-B','-c',code],{cwd:path.resolve(__dirname,'..'),encoding:'utf8'});
-  process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);process.exit(0);
-}
+  (async()=>{
+    // A fresh controller instance: the checks below replace its identity/read.
+    const controlPath=require.resolve('../tools/vb5cce-reviewed-control.js');delete require.cache[controlPath];
+    const m=require(controlPath),isAssertion=e=>e&&e.code==='ERR_ASSERTION';
+    const d=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'vb5-control-unit-'));
+    try{
+      m.R=d;m.save('PERMANENT-UNKNOWN.json',{});
+      m.identity=()=>{throw new assert.AssertionError({message:'identity must not run'});};
+      for(const cleanup of [false,true]){
+        let refused=false;
+        try{await m.call({action:'quit'},1,cleanup);}
+        catch(e){if(!isAssertion(e))throw e;assert(String(e.message).includes('permanent UNKNOWN'));refused=true;}
+        assert(refused,'postUNKNOWN request');
+      }
+      assert(!fs.existsSync(path.join(d,'requests.jsonl')));
+      // Exercise the real freshness predicate with aged evidence, not altered clocks.
+      m.identity=()=>({pid:1});fs.writeFileSync(path.join(d,'scene.png'),'fixture');
+      const digest=require('node:crypto').createHash('sha256').update('fixture').digest('hex');
+      for(const [kind,age,allowed] of [['game',10,true],['game',16,false],['install',6,true],['install',31,false]]){
+        const rows={'scene.json':{at:Date.now()/1000-age,target:{pid:1},port:m.PORT,pngSHA256:digest},
+          'scene-review.json':{at:Date.now()/1000-age,kind,pngSHA256:digest,rawCompleteScene:true,observation:'fixture',visibleLabel:'OK'}};
+        m.read=n=>{if(!(n in rows))throw new Error('KeyError: '+n);return rows[n];};
+        let passed;
+        try{m.reviewed('scene');passed=true;}catch(e){if(!isAssertion(e))throw e;passed=false;}
+        assert.equal(passed,allowed,JSON.stringify([kind,age]));
+      }
+    }finally{fs.rmSync(d,{recursive:true,force:true});}
+    console.log('PASS permanent UNKNOWN forbids normal and cleanup requests before identity/network');
+  })().then(()=>process.exit(0),e=>{console.error(e);process.exit(1);});
+}else{
 const out=path.resolve(process.argv[2]),root=path.resolve(__dirname,'..');
 fs.mkdirSync(out,{recursive:true});
 const image=path.join(out,'generated-context.exe');
@@ -189,14 +195,14 @@ async function main(){
   };
   s.child.once('close',(exit,signal)=>publishJSON(path.join(run,'native-wait.json'),{...nativeIdentity,exit,signal,actualWait:true,disposition:'normal',atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
   watchdog.stdin.write(String(s.child.pid));
-  const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
-  const nativeIdentity={pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19],invocationToken,bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()};
+  const np=require('../tools/native-proc.cjs');
+  const nativeIdentity={pid:s.child.pid,startToken:np.token(s.child.pid),invocationToken,bootId:np.bootId()};
   fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify(nativeIdentity));
   let controllerRuns=0;
   const controller=async(args,expected=0)=>{
     const startedAt=Date.now();
     const p=await new Promise(resolve=>{
-      const child=cp.spawn('python3',['-B','tools/vb5cce-reviewed-control.py',...args],{cwd:root,env:{...process.env,DELPHI5_RUN:run,DELPHI5_PORT:String(port)},timeout:7000});
+      const child=cp.spawn(process.execPath,['tools/vb5cce-reviewed-control.js',...args],{cwd:root,env:{...process.env,DELPHI5_RUN:run,DELPHI5_PORT:String(port)},timeout:7000});
       let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);
       child.on('close',(status,signal)=>resolve({pid:child.pid,status,signal,stdout,stderr,actualWait:true,
         stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,startedAt,waitedAt:Date.now()}));
@@ -302,4 +308,5 @@ async function main(){
  console.log('PASS actual native two-dialog transition/independent UP/ExitProcess, focus/owner/semantic/stale faults, repaint admitted and permanent UNKNOWN zero later requests');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});
+}
 }

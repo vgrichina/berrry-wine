@@ -83,21 +83,82 @@ async function observerUnit(file){
  assert(r.rows.some(r=>r.phase==='guard-consume-enter'&&r.nonce==='late'&&r.state==='QUEUED'));
  assert(r.rows.some(r=>r.phase==='guard-consume-return'&&r.nonce==='late'&&r.state==='CANCELLED'));
  console.log('PASS passive wrapper forwards success, thrown refusal, true expiry, cleanup and restores factory; clocks remain native guard authority');
- const cp=require('node:child_process');
- const check=cp.spawnSync('python3',['-B','-c',`import importlib.util,subprocess
-s=importlib.util.spec_from_file_location('h','tools/halflife2-restored-native.py');h=importlib.util.module_from_spec(s);s.loader.exec_module(h)
-b=subprocess.check_output(['git','show',h.COMPONENT+':test/run.js']);r=h.input_latency_runner(b)
-lines=r.splitlines(True);clean=b''.join(l for l in lines if b"globalThis[Symbol.for('wine.hl2.inputLatency')]" not in l)
-assert clean==b
-assert r.count(b"?.('queue-enqueue'")==r.count(b"?.('queue-dequeue'")==1
-try:h.input_latency_runner(r)
-except AssertionError:pass
-else:raise AssertionError('duplicated instrumentation accepted')
-print('PASS sealed queue instrumentation adds only two observations and refuses duplicate/different anchors')
-`],{encoding:'utf8'});assert.equal(check.status,0,check.stderr);process.stdout.write(check.stdout);
+ {
+ const cp=require('node:child_process'),h=require('../tools/halflife2-restored-native.js');
+ const b=cp.execFileSync('git',['show',h.COMPONENT+':test/run.js'],{maxBuffer:1<<30}),r=h.input_latency_runner(b);
+ const marker="globalThis[Symbol.for('wine.hl2.inputLatency')]";
+ const clean=r.toString('latin1').split(/(?<=\n)/).filter(l=>!l.includes(marker)).join('');
+ assert(Buffer.from(clean,'latin1').equals(b));
+ const count=(s,n)=>s.split(n).length-1,text=r.toString('latin1');
+ assert(count(text,"?.('queue-enqueue'")===1&&count(text,"?.('queue-dequeue'")===1);
+ assert.throws(()=>h.input_latency_runner(r),/^AssertionError/,'duplicated instrumentation accepted');
+ }
+ console.log('PASS sealed queue instrumentation adds only two observations and refuses duplicate/different anchors');
 }
+// Authored-only profiling/refusal seam around the actual pinned controller
+// (formerly test-halflife2-age-input-latency.py). No success result uses an
+// injected pause. A late request retains its original absolute deadline, and
+// must cause terminal UNKNOWN with no further requests.
+async function profile(args){
+ const path=require('node:path'),run=process.env.DELPHI5_RUN;
+ assert(fs.existsSync(path.join(run,'authored-input.json'))&&fs.statSync(path.join(run,'authored-input.json')).isFile(),'authored native input required');
+ const p=require.resolve('../tools/halflife2-reviewed-next.js');delete require.cache[p];
+ const h=require(p);delete require.cache[p];
+ const delay=Number(process.env.HL2_TEST_TRANSPORT_PAUSE||'0');
+ assert([0,.55].includes(delay));
+ const adapt=h.receipt_clock_body;
+ h.receipt_clock_body=body=>Buffer.concat([adapt(body),Buffer.from(`
+;(()=>{
+ const M=module.exports,fs=require('node:fs'),path=require('node:path');
+ ${delay?`const transport=M.call;M.call=async(command,...rest)=>{if(command&&command.action==='guarded-input')await new Promise(r=>setTimeout(r,550)); /* authored refusal only */ return transport(command,...rest);};`:''}
+ globalThis._hl2_age_timings=[];
+ const measured=(name,fn)=>function(...args){
+  const at=Date.now()/1000,mono=process.hrtime.bigint(),cpu=process.cpuUsage();
+  const done=()=>{const c=process.cpuUsage(cpu);globalThis._hl2_age_timings.push({function:name,argument:args.length?(name==='call'?(args[0]&&args[0].action):args[0]):null,
+   pid:process.pid,at,returnedAt:Date.now()/1000,elapsedMs:Number(process.hrtime.bigint()-mono)/1e6,cpuMs:(c.user+c.system)/1000});};
+  let r;try{r=fn.apply(this,args);}catch(e){done();throw e;}
+  if(r&&typeof r.then==='function')return r.finally(done);
+  done();return r;
+ };
+ for(const n of ['save','identity','reserve','call'])M[n]=measured(n,M[n]);
+ const original_fail=M.fail;
+ M.fail=(name,error)=>{fs.writeFileSync(path.join(String(M.R),'profile-before-UNKNOWN-'+name+'.json'),JSON.stringify({authoredOnly:true,calls:globalThis._hl2_age_timings}));return original_fail(name,error);};
+})();
+`)]);
+ // cProfile -> the V8 sampling profiler over the same controller call.
+ const inspector=require('node:inspector'),session=new inspector.Session();session.connect();
+ const post=(m,p)=>new Promise((res,rej)=>session.post(m,p||{},(e,r)=>e?rej(e):res(r)));
+ await post('Profiler.enable');await post('Profiler.start');
+ const started=Date.now()/1000;
+ try{return await h.controller(args);}
+ finally{
+  const {profile:cpu}=await post('Profiler.stop');session.disconnect();
+  const rows=profileRows(cpu);
+  fs.writeFileSync(path.join(run,'profile-'+args[1]+'.json'),JSON.stringify({startedAt:started,completedAt:Date.now()/1000,
+   authoredOnly:true,injectedTransportPause:delay,calls:globalThis._hl2_age_timings||[],
+   rows:rows.sort((a,b)=>b.cumulativeSeconds-a.cumulativeSeconds)},null,2)+'\n');
+ }
+}
+// Aggregate a V8 CPU profile per function: self and inclusive sampled time.
+// Sampling has no call counts; primitiveCalls/calls are null.
+function profileRows(cpu){
+ const byId=new Map(cpu.nodes.map(n=>[n.id,n])),parent=new Map(),dt=new Map();
+ for(const n of cpu.nodes)for(const c of n.children||[])parent.set(c,n.id);
+ cpu.samples.forEach((id,i)=>dt.set(id,(dt.get(id)||0)+(cpu.timeDeltas[i]||0)));
+ const rows=new Map(),key=f=>f.url+':'+f.lineNumber+':'+f.functionName;
+ for(const n of cpu.nodes){
+  const f=n.callFrame,k=key(f);
+  if(!rows.has(k))rows.set(k,{file:f.url,line:f.lineNumber+1,function:f.functionName||'(anonymous)',primitiveCalls:null,calls:null,selfSeconds:0,cumulativeSeconds:0});
+  const self=(dt.get(n.id)||0)/1e6;rows.get(k).selfSeconds+=self;
+  // Inclusive time: charge each sample once to every distinct function on its stack.
+  const seen=new Set();for(let id=n.id;id!==undefined;id=parent.get(id)){const kk=key(byId.get(id).callFrame);if(!seen.has(kk)){seen.add(kk);if(!rows.has(kk)){const g=byId.get(id).callFrame;rows.set(kk,{file:g.url,line:g.lineNumber+1,function:g.functionName||'(anonymous)',primitiveCalls:null,calls:null,selfSeconds:0,cumulativeSeconds:0});}rows.get(kk).cumulativeSeconds+=self;}}
+ }
+ return [...rows.values()];
+}
+module.exports.profile=profile;
 if(require.main===module){
- if(process.argv[2]==='--observer-unit')observerUnit(process.argv[3]).catch(e=>{console.error(e);process.exitCode=1;});
+ if(process.argv[2]==='--profile')profile(process.argv.slice(3)).then(rc=>{process.exitCode=rc??0;},e=>{if(e&&e.name==='SystemExit')process.exitCode=e.exitCode;else{console.error(e);process.exitCode=1;}});
+ else if(process.argv[2]==='--observer-unit')observerUnit(process.argv[3]).catch(e=>{console.error(e);process.exitCode=1;});
  else if(process.argv[2]==='--verify')verify(process.argv[3],process.argv.includes('--late'));
  else fs.writeFileSync(process.argv[2],fixture(),{flag:'wx'});
 }

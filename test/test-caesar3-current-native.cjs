@@ -4,31 +4,33 @@ const fs=require('node:fs'),path=require('node:path'),assert=require('node:asser
 const cp=require('node:child_process'),net=require('node:net'),crypto=require('node:crypto');
 const {once}=require('node:events'),{startControlSession}=require('./control-session');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
+const NP=require('../tools/native-proc.cjs');
+const isAssert=e=>e?.code==='ERR_ASSERTION';
+// Expect an AssertionError refusal; any other error propagates.
+function refused(fn,message){
+ try{fn();}catch(e){if(!isAssert(e))throw e;return;}
+ throw new assert.AssertionError({message});
+}
 function reuseProofUnits(){
- const code=String.raw`import runpy,tempfile,pathlib,json,copy
-f=runpy.run_path('tools/caesar3-current-native.py')['verify_native_proof']
-sources={'owned.py':'abc','broker.js':'def'};module='module'
-wait=dict(exit=0,actualWait=True,stdoutEOF=True,stderrEOF=True)
-pins=dict(sources=sources,moduleSHA256=module,sourceSeals=15,moduleSeals=15,foreignWIPAdopted=False,gitSHA='published')
-outer=dict(actualWait=True,nativeWait=dict(actualWait=True),returncode=0,supervisorExitCode=0,stdoutEOF=True,stderrEOF=True,timedOut=False,remainingAfterRuntime=[],watchdogs=[dict(actualWait=True,returncode=0,stdoutEOF=True,stderrEOF=True,result=dict(fired=False))]*2)
-records={'runtime-inputs.json':pins,'compile-inputs.json':dict(sources=sources,moduleSHA256=module,workingQualification=False),'qualification.json':dict(passed=True,originalStarted=False,gitSHA='published',moduleSHA256=module),'runtime-release.json':dict(success=True,descriptorsClosed=True),'authored-native-wait.json':wait,'outer-native-printable-wait.json':wait,'inheritance-wait.json':wait,'authored/assertions.json':dict(pass_=True),'outer/wait.json':outer}
-records['authored/assertions.json']={'pass':True}
-def write(root,rows):
- for n,v in rows.items():
-  p=root/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_text(json.dumps(v))
-with tempfile.TemporaryDirectory() as d:
- root=pathlib.Path(d);write(root,records);assert f(root,sources,module)
- for s,m in [(dict(sources,extra='x'),module),({'owned.py':'changed','broker.js':'def'},module),(sources,'changed')]:
-  try:f(root,s,m)
-  except AssertionError:pass
-  else:raise AssertionError('changed graph accepted')
- for name,field,value in [('runtime-inputs.json','sourceSeals',0),('compile-inputs.json','workingQualification',True),('qualification.json','gitSHA','different'),('authored-native-wait.json','actualWait',False),('outer-native-printable-wait.json','stderrEOF',False),('runtime-release.json','descriptorsClosed',False),('outer/wait.json','remainingAfterRuntime',[123]),('outer/wait.json','returncode',143)]:
-  rows=copy.deepcopy(records);rows[name][field]=value;write(root,rows)
-  try:f(root,sources,module)
-  except AssertionError:pass
-  else:raise AssertionError(name+' '+field+' accepted')
-print('PASS native proof reuse: exact graph, module, seals, published identity, actual waits, EOF, closure and empty parent scope')`;
- return cp.execFileSync('python3',['-B','-c',code],{encoding:'utf8'});
+ const f=require('../tools/caesar3-current-native.js').verify_native_proof;
+ const sources={'owned.js':'abc','broker.js':'def'},module='module';
+ const wait={exit:0,actualWait:true,stdoutEOF:true,stderrEOF:true};
+ const pins={sources,moduleSHA256:module,sourceSeals:15,moduleSeals:15,foreignWIPAdopted:false,gitSHA:'published'};
+ const watchdog={actualWait:true,returncode:0,stdoutEOF:true,stderrEOF:true,result:{fired:false}};
+ const outer={actualWait:true,nativeWait:{actualWait:true},returncode:0,supervisorExitCode:0,stdoutEOF:true,stderrEOF:true,timedOut:false,remainingAfterRuntime:[],watchdogs:[watchdog,watchdog]};
+ const records={'runtime-inputs.json':pins,'compile-inputs.json':{sources,moduleSHA256:module,workingQualification:false},'qualification.json':{passed:true,originalStarted:false,gitSHA:'published',moduleSHA256:module},'runtime-release.json':{success:true,descriptorsClosed:true},'authored-native-wait.json':wait,'outer-native-printable-wait.json':wait,'inheritance-wait.json':wait,'authored/assertions.json':{pass:true},'outer/wait.json':outer};
+ const write=(root,rows)=>{for(const [n,v] of Object.entries(rows)){const p=path.join(root,n);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(v));}};
+ const root=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'c3-proof-'));
+ try{
+  write(root,records);assert(f(root,sources,module));
+  for(const [s,m] of [[{...sources,extra:'x'},module],[{'owned.js':'changed','broker.js':'def'},module],[sources,'changed']])
+   refused(()=>f(root,s,m),'changed graph accepted');
+  for(const [name,field,value] of [['runtime-inputs.json','sourceSeals',0],['compile-inputs.json','workingQualification',true],['qualification.json','gitSHA','different'],['authored-native-wait.json','actualWait',false],['outer-native-printable-wait.json','stderrEOF',false],['runtime-release.json','descriptorsClosed',false],['outer/wait.json','remainingAfterRuntime',[123]],['outer/wait.json','returncode',143]]){
+   const rows=structuredClone(records);rows[name][field]=value;write(root,rows);
+   refused(()=>f(root,sources,module),name+' '+field+' accepted');
+  }
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+ return 'PASS native proof reuse: exact graph, module, seals, published identity, actual waits, EOF, closure and empty parent scope\n';
 }
 async function keyboard(out){
  fs.mkdirSync(out);const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
@@ -103,12 +105,12 @@ async function reviewedController(out,late=false,printable=false,personal=false,
  while(!wo.includes('ARMED'))await pause(2);save('watchdog-arm.json',{pid:wd.pid,beforeNative:true,seconds:personal?120:35});
  const s=startControlSession(['test/run.js','--exe='+image,'--public-consumer-trace='+path.join(out,'public-consumers.jsonl'),'--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+invocationToken,'--no-build','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds='+ (personal?115:30),'--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
  wd.stdin.write(String(s.child.pid));
- const st=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),info={pid:s.child.pid,startToken:st.slice(st.lastIndexOf(')')+2).split(' ')[19],invocationToken,bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()};save('native-pid.json',info);
+ const info={pid:s.child.pid,startToken:NP.token(s.child.pid),invocationToken,bootId:NP.bootId()};save('native-pid.json',info);
  let hostCleanup=false;
  s.child.once('close',(exit,signal)=>save('native-wait.json',{...info,exit,signal,actualWait:true,hostCleanup,disposition:hostCleanup?'cleanup':'normal',atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
  let seq=0;
  async function control(args,expected=0){
-  const c=cp.spawn('python3',['-B','tools/caesar3-current-native.py','control',...args],{env:{...process.env,CAESAR3_RUN:out},timeout:7000});let a='',b='';c.stdout.on('data',v=>a+=v);c.stderr.on('data',v=>b+=v);const [exit,signal]=await once(c,'close');
+  const c=cp.spawn(process.execPath,['tools/caesar3-current-native.js','control',...args],{env:{...process.env,CAESAR3_RUN:out},timeout:7000});let a='',b='';c.stdout.on('data',v=>a+=v);c.stderr.on('data',v=>b+=v);const [exit,signal]=await once(c,'close');
   save('controller-'+(++seq)+'-wait.json',{args,pid:c.pid,exit,signal,actualWait:true,stdoutEOF:c.stdout.readableEnded,stderrEOF:c.stderr.readableEnded,stdout:a,stderr:b});
   if(expected===0)assert.equal(exit,0,a+b);else assert.notEqual(exit,0);
  }
@@ -265,17 +267,10 @@ async function main(out){
 async function adapterShutdown(out){
  fs.mkdirSync(out,{recursive:true});
  const fixture=path.join(out,'authored.exe');fs.writeFileSync(fixture,controllerFixture());
- const adapterSHA=crypto.createHash('sha256').update(fs.readFileSync('tools/caesar3-current-native.py')).digest('hex');
+ const adapterSHA=crypto.createHash('sha256').update(fs.readFileSync('tools/caesar3-current-native.js')).digest('hex');
  for(const [name,sig,status] of [['term','SIGTERM',143],['int','SIGINT',130]]){
   const dir=path.join(out,name);fs.mkdirSync(dir);
-  const code=String.raw`import runpy,os,sys,pathlib,hashlib,time,uuid
-assert hashlib.sha256(pathlib.Path('tools/caesar3-current-native.py').read_bytes()).hexdigest()==sys.argv[2]
-m=runpy.run_path('tools/caesar3-current-native.py')
-h=m['published_module']('tools/vb5cce-original-runtime.py',os.environ['CAESAR3_PINNED_REVISION'])
-h.install_shutdown_handlers()
-args=['node','test/run.js','--exe='+sys.argv[1],'--no-build','--threads','--real-ticks','--wasm='+os.environ['DELPHI5_MODULE_FD'],'--no-close','--max-seconds=20','--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks']
-m['execute_native'](args,os.environ.copy(),(),0,str(uuid.uuid4()),time.time()+25)`;
-  const c=cp.spawn('python3',['-B','-c',code,fixture,adapterSHA],{env:{...process.env,CAESAR3_RUN:dir}});
+  const c=cp.spawn(process.execPath,[__filename,'--adapter-shutdown-child',fixture,adapterSHA],{env:{...process.env,CAESAR3_RUN:dir}});
   let stdout='',stderr='';c.stdout.on('data',b=>stdout+=b);c.stderr.on('data',b=>stderr+=b);const done=once(c,'close');
   try{
    const due=Date.now()+15000;
@@ -293,6 +288,18 @@ m['execute_native'](args,os.environ.copy(),(),0,str(uuid.uuid4()),time.time()+25
   }
  }
 }
+// The separately signalled adapter process (formerly an inline python -c):
+// the published helper's shutdown handlers turn TERM/INT into 128+signum
+// after execute_native has joined the native process, pipes and watchdog.
+async function adapterShutdownChild(fixture,adapterSHA){
+ const env=k=>{if(!(k in process.env))throw Error('KeyError: '+k);return process.env[k];};
+ assert.equal(crypto.createHash('sha256').update(fs.readFileSync('tools/caesar3-current-native.js')).digest('hex'),adapterSHA);
+ const m=require('../tools/caesar3-current-native.js');
+ const h=m.published_module('tools/vb5cce-original-runtime.js',env('CAESAR3_PINNED_REVISION'));
+ h.install_shutdown_handlers();m.shutdown_helper=h;
+ const args=['node','test/run.js','--exe='+fixture,'--no-build','--threads','--real-ticks','--wasm='+env('DELPHI5_MODULE_FD'),'--no-close','--max-seconds=20','--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks'];
+ await m.execute_native(args,{...process.env},[],0,crypto.randomUUID(),NP.now()+25);
+}
 async function controllerFixtures(out){
  fs.mkdirSync(out,{recursive:true});
  await reviewedController(path.join(out,'controller'));
@@ -307,6 +314,29 @@ async function hoverFixtures(out){
  await reviewedController(path.join(out,'combined'),false,false,false,false,'slow-combined');
  await reviewedController(path.join(out,'separate'),false,false,false,false,'slow-hover');
  fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,syntheticAuthoredAttestation:true}));
+}
+function readinessUnits(r){
+ const f=require('../tools/caesar3-current-native.js').public_input_ready;
+ const lines=fs.readFileSync(path.join(r,'observer-limit.jsonl'),'utf8').replace(/\n$/,'').split('\n'),p=JSON.parse(lines.at(-2));
+ fs.writeFileSync(path.join(r,'launch.json'),JSON.stringify({at:Date.now()/1000-60}));
+ const s={focus:'0x10001',mainHwnd:'0x10001',modalHwnd:'0x0',capture:'0x0',physicalUp:true,focusWindow:{threadId:1,processId:7,generation:'1',live:true},windows:[{hwnd:'0x10001',threadId:1,processId:7,generation:'1',live:true}]};
+ const write=v=>fs.writeFileSync(path.join(r,'public-consumers.jsonl'),JSON.stringify(v)+'\n');
+ write(p);assert(f(r,s));
+ for(const [field,value] of [['threadId',2],['phase','handler-exit'],['yieldFlag',1],['yieldReason',1],['doneSp',0],['at',0],['at',Date.now()-3100],['name','GetAsyncKeyState'],['sameInstanceMemory',false]]){
+  const q=structuredClone(p);q[field]=value;write(q);assert.equal(f(r,s),null,field);
+ }
+ for(const [i,value] of [[0,0],[1,0x10002],[2,0x100],[3,0x201]]){
+  const q=structuredClone(p);q.args[i]=value;write(q);assert.equal(f(r,s),null,String(i));
+ }
+ for(const [field,value] of [['processId',8],['threadId',2],['focusThread',2],['focus',0x10002],['focusGeneration','2'],['mainGeneration','2'],['main',0x10002],['modal',0x10002],['capture',0x10001],['live',false],['memoryBytes',0]]){
+  const q=structuredClone(p);q.actor[field]=value;write(q);assert.equal(f(r,s),null,field);
+ }
+ write(p);
+ for(const [field,value] of [['modalHwnd','0x10002'],['capture','0x10001'],['physicalUp',false]]){
+  const q=structuredClone(s);q[field]=value;assert.equal(f(r,q),null,field);
+ }
+ fs.unlinkSync(path.join(r,'public-consumers.jsonl'));
+ return 'PASS current USER poll survives trace cap; stale/foreign actor/generation/target/filter/yield/stack/memory/modal/capture/non-poll refused\n';
 }
 async function inputReadinessFixture(out){
  fs.mkdirSync(out,{recursive:true});
@@ -326,24 +356,7 @@ call('PeekMessageA',[0x2000,0,0,0,0]);`;
  cp.execFileSync(process.execPath,['-e',code,trace]);
  const rows=fs.readFileSync(trace,'utf8').trim().split('\n').map(l=>JSON.parse(l)),polls=rows.filter(r=>r.phase==='input-poll-return');
  assert.equal(polls.length,1);assert(rows.find(r=>r.phase==='summary').seen>=8192);assert.equal(polls[0].receipt,false);
- const unit=String.raw`import runpy,pathlib,json,sys,copy,time
-f=runpy.run_path('tools/caesar3-current-native.py')['public_input_ready'];r=pathlib.Path(sys.argv[1]);p=json.loads((r/'observer-limit.jsonl').read_text().splitlines()[-2])
-(r/'launch.json').write_text(json.dumps(dict(at=time.time()-60)))
-s=dict(focus='0x10001',mainHwnd='0x10001',modalHwnd='0x0',capture='0x0',physicalUp=True,focusWindow=dict(threadId=1,processId=7,generation='1',live=True),windows=[dict(hwnd='0x10001',threadId=1,processId=7,generation='1',live=True)])
-def write(v):(r/'public-consumers.jsonl').write_text(json.dumps(v)+'\n')
-write(p);assert f(r,s)
-for field,value in [('threadId',2),('phase','handler-exit'),('yieldFlag',1),('yieldReason',1),('doneSp',0),('at',0),('at',time.time()*1000-3100),('name','GetAsyncKeyState'),('sameInstanceMemory',False)]:
- q=copy.deepcopy(p);q[field]=value;write(q);assert f(r,s) is None,field
-for i,value in [(0,0),(1,0x10002),(2,0x100),(3,0x201)]:
- q=copy.deepcopy(p);q['args'][i]=value;write(q);assert f(r,s) is None,str(i)
-for field,value in [('processId',8),('threadId',2),('focusThread',2),('focus',0x10002),('focusGeneration','2'),('mainGeneration','2'),('main',0x10002),('modal',0x10002),('capture',0x10001),('live',False),('memoryBytes',0)]:
- q=copy.deepcopy(p);q['actor'][field]=value;write(q);assert f(r,s) is None,field
-write(p)
-for field,value in [('modalHwnd','0x10002'),('capture','0x10001'),('physicalUp',False)]:
- q=copy.deepcopy(s);q[field]=value;assert f(r,q) is None,field
-(r/'public-consumers.jsonl').unlink()
-print('PASS current USER poll survives trace cap; stale/foreign actor/generation/target/filter/yield/stack/memory/modal/capture/non-poll refused')`;
- const text=cp.execFileSync('python3',['-B','-c',unit,out],{encoding:'utf8'});fs.writeFileSync(path.join(out,'readiness-units.log'),text);
+ const text=readinessUnits(out);fs.writeFileSync(path.join(out,'readiness-units.log'),text);
  await reviewedController(path.join(out,'native'),false,false,false,false,'initial-pump');
 }
 // Authored consumer diagnostic also runs in full qualification. Running it alone
@@ -571,5 +584,11 @@ async function textBoundary(out){
   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
-if(require.main===module)(process.argv[2]==='--adapter-shutdown'?adapterShutdown(path.resolve(process.argv[3])):process.argv[2]==='--hover-fixtures'?hoverFixtures(path.resolve(process.argv[3])):process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+if(require.main===module&&process.argv[2]==='--adapter-shutdown-child')adapterShutdownChild(process.argv[3],process.argv[4]).catch(e=>{
+ // ShutdownRequested(128+signum) exits with its status, like Python's SystemExit.
+ const code=e?.exitCode??(Number.isInteger(e?.code)?e.code:null);
+ if(Number.isInteger(code)){process.exitCode=code;return;}
+ console.error(e);process.exitCode=1;
+});
+else if(require.main===module)(process.argv[2]==='--adapter-shutdown'?adapterShutdown(path.resolve(process.argv[3])):process.argv[2]==='--hover-fixtures'?hoverFixtures(path.resolve(process.argv[3])):process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary,reuseProofUnits};
