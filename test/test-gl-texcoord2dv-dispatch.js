@@ -10,27 +10,13 @@ const crypto = require('crypto');
 const {compile} = require('../tools/watx');
 const read = p => fs.readFileSync(path.join(__dirname, '..', p), 'utf8');
 const hash = s => crypto.createHash('sha256').update(s).digest('hex');
-function form(s, start) {
-  let d=0, quote=false, comment=false;
-  for(let i=start;i<s.length;i++) {
-    const c=s[i];
-    if(comment){if(c==='\n')comment=false;continue;}
-    if(!quote&&c===';'&&s[i+1]===';'){comment=true;continue;}
-    if(c==='"'&&s[i-1]!=='\\')quote=!quote;
-    if(quote)continue;
-    if(c==='(')d++;
-    if(c===')'&&--d===0)return s.slice(start,i+1);
-  }
-  throw Error('unterminated form');
-}
+const {closure,supply}=require('./helpers/wat-closure-fixture');
 const files=['src/09b2-dispatch-table.generated.wat','src/09a8b-handlers-opengl.wat',
   'src/09a8c-gl-encoder.wat','src/09a8d-gl-abi.generated.wat',
-  'src/09a8e-gl-state.wat','src/09a8ca-gl-lists.wat','src/03-registers.wat'];
-const sources=files.map(read), funcs=new Map(), globals=new Map();
-for(const s of sources) {
-  for(const m of s.matchAll(/\(func (\$[\w?]+)/g))funcs.set(m[1],form(s,m.index));
-  for(const m of s.matchAll(/\(global (\$\w+) /g))globals.set(m[1],form(s,m.index));
-}
+  'src/09a8e-gl-state.wat','src/09a8ca-gl-lists.wat','src/03-registers.wat',
+  // The selection/feedback (91da9cb83) and evaluator (4ec8732ba) query and
+  // enable intercepts run on every encoded call; non-matching ops pass through.
+  'src/09a8ce-gl-selection.wat','src/09a8cd-gl-evaluators.wat'];
 const api=JSON.parse(read('src/api_table.json'));
 const id=4415;assert.strictEqual(api[id].name,'glTexCoord2dv');
 const scalarId=4414;assert.strictEqual(api[scalarId].name,'glTexCoord2d');
@@ -45,6 +31,9 @@ const roots=['$dispatch_api_table',page,'$wgl_api_available','$handle_glTexCoord
 // No matrix/raster/backend work is needed for a texture or list setter. These
 // observers are inert fixture endpoints. All other excluded paths trap.
 const seams=new Map([
+  // WGL ownership is a host stream round trip (09a8cw). Answer what production
+  // sets for an untagged host reply: WGL not WAT-owned, GPU stream off.
+  ['$gl_wgl_query_mode','(global.set $gl_owned (i32.const 0))'],
   // General state queries have a separate full-source resolved-ABI fixture.
   ['$gl_native_query','(param i32 i32) (result i32) (i32.const 0)'],
   ['$gl_sw_consume','(param i32 i32)'],['$gl_mtx_observe','(param i32 i32)'],['$gl_sw_observe','(param i32 i32)'],
@@ -59,33 +48,17 @@ const seams=new Map([
 // Full-source 1D pixel fixtures cover allocation/reclamation. Trap those
 // unrelated endpoints in this isolated current-state/list ABI fixture.
 const excluded=new Set(['$gl_pixels_validate','$gl_pixels_execute','$gl_pixel_map_validate','$gl_pixel_map_set','$gl_pixel_map_get','$gl_texture_get_image','$gl_2d_upload','$gl_texture_copy_validate','$gl_texture_copy_execute','$gl_2d_store','$gl_texture_storage_free','$gl_texture_image_level','$gl_1d_store','$gl_1d_free','$gl_emit_record','$gl_pointer_length',
-  '$gl_wat_stream_flush','$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
-const selected=new Map(), traps=new Map();
-function visit(n) {
-  if(selected.has(n)||traps.has(n)||seams.has(n)||['$g2w','$w2g','$heap_alloc','$heap_free'].includes(n))return;
-  const s=funcs.get(n);
-  if(!s && (n.startsWith('$handle_') || n.startsWith('$dispatch_api_table_page_'))) {
-    const count=n==='$handle_fallback'?2:n.startsWith('$dispatch_api_table_page_')?7:6;
-    traps.set(n,`(func ${n} (param ${Array(count).fill('i32').join(' ')}) (unreachable))`);return;
-  }
-  assert(s,'missing production signature '+n);
-  if(excluded.has(n)||n.startsWith('$handle_')&&!roots.includes(n)||
-      n.startsWith('$dispatch_api_table_page_')&&!roots.includes(n)) {
-    const signature=s.slice(n.length+6).replace(/^\s*\(export "[^"]*"\)/, '').match(/^(\s*\((?:param|result)[^)]*\))*/)[0];
-    traps.set(n,`(func ${n} ${signature} (unreachable))`);return;
-  }
-  selected.set(n,s);
-  for(const m of s.matchAll(/\(call (\$\w+)/g)){try {visit(m[1]);} catch(e) {throw Error(e.message+' <- '+n);}};
-}
-// Supply exact signatures for external paths referenced by selected functions.
-for(const p of ['src/09a8cb-gl-bitmap.wat','src/09a8cc-gl-stencil.wat','src/09a8cd-gl-color-mask.wat','src/09a8f-gl-matrix.wat','src/09a8g-gl-raster.wat']) {
-  const s=read(p);
-  for(const m of s.matchAll(/\(func (\$\w+)/g)) {
-    if(!funcs.has(m[1])) {funcs.set(m[1],form(s,m.index));excluded.add(m[1]);}
-  }
-  for(const m of s.matchAll(/\(global (\$\w+) /g))if(!globals.has(m[1]))globals.set(m[1],form(s,m.index));
-}
-roots.forEach(n=>{if(funcs.has(n))visit(n);});
+  '$gl_state_set_context','$gl_state_context_deleted','$gl_state_context_changed','$gs32','$gs64','$gs8','$gs16','$gl_copy_from_guest']);
+// Real production bodies: the files above plus the per-producer state claim.
+// Any other production callee is an exact-signature trap.
+// gl_sw_state_defaults seeds the template the per-producer state copies; the
+// host runs it at launch through gl_sw_set_enabled, the fixture at start.
+const {selected,traps}=closure({roots:[...roots,'$gl_sw_state_defaults'],excluded,seams,
+  real:[...files,'$gl_sw_private_state','$gl_sw_state_defaults','$gl_stipple_defaults','$gl_period_defaults','$gl_stipple_mask',
+  // Per-call observers and intercepts; each passes through ops it does not own.
+  // glColorMaterial tracking (09a8g) is gated on its enable bit, off here.
+  '$gl_period_observe','$gl_period_validate','$gl_period_color','$gl_period_track',
+  '$gl_stipple_intercept','$gl_sw_context_publish','$gl_wgl_owned']});
 function boot(mutation='',failAlloc=false,failPage=-1) {
   const parts=[...selected.values()];
   if(mutation) {
@@ -105,21 +78,18 @@ function boot(mutation='',failAlloc=false,failPage=-1) {
     }
     if(mutation!=='route')assert.notStrictEqual(parts[i],before,'mutation changes production');
   }
-  const needed=new Set([...parts.join('\n').matchAll(/\(global\.(?:get|set) (\$\w+)/g)].map(m=>m[1]));
-  const definedGlobals=new Map([...globals].filter(([n])=>needed.has(n)));
-  for(const n of ['$reg_base','$image_base','$GUEST_BASE','$NULL_SENTINEL','$fault_sync_epoch'])definedGlobals.delete(n);
   const src=`(memory 64) (export "memory" (memory 0))
-    (region.declare-fixed $GL_SW_SCRATCH (base 0x003ff000) (size 0x800) (align 0x1000))
-    (region.declare-fixed $GL_SW_STATE (base 0x003fe000) (size 0x800) (align 0x1000))
     (import "fixture" "g2w" (func $g2w (param i32) (result i32)))
     (import "fixture" "alloc" (func $heap_alloc (param i32) (result i32)))
     (import "fixture" "free" (func $heap_free (param i32)))
+    (import "fixture" "gpu" (func $host_gpu_gl_call (param i32 i32 i32) (result i32)))
     (func $w2g (param $p i32) (result i32) (i32.add (local.get $p) (i32.const 4190208)))
     (global $reg_base i32 (i32.const 256))
     (global $image_base i32 (i32.const 4194304)) (global $GUEST_BASE i32 (i32.const 4096))
     (global $NULL_SENTINEL i32 (i32.const 240)) (global $fault_sync_epoch (mut i32) (i32.const 0))
     (defmacro (g2w-fast $ga) (call $g2w $ga))
-    ${[...definedGlobals.values()].join('\n')}
+    (start $gl_sw_state_defaults)
+    ;;@supply
     ${[...seams].map(([n,s])=>`(func ${n} ${s})`).join('\n')}
     ${[...traps.values()].join('\n')}
     ${parts.join('\n')}
@@ -164,14 +134,23 @@ function boot(mutation='',failAlloc=false,failPage=-1) {
     (func (export "stream") (result i32) (global.get $gl_stream_wa))
     (func (export "bytes") (result i32) (global.get $gl_stream_used_bytes))
     (func (export "count") (result i32) (global.get $gl_immediate_floats))`;
-  const transformed=src.replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)');
+  const transformed=src.replace(';;@supply',supply(src)).replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)');
   const result=compile(transformed,new Map(),{mode:'production'});
   let next=0x10000, frees=0;
   const t=p=>(p>>>12)===failPage?240:p>=0x50000000?
     0x8000+(((p-0x50000000)>>>12)*0x2000)+(p&4095):p-0x400000+4096;
-  const e=new WebAssembly.Instance(new WebAssembly.Module(result.wasmBinary),{fixture:{g2w:t,
+  // The host side of a stream flush (0x10001): keep the batch, answer 0 as
+  // the GL host does for a batch with no query in it.
+  const sent=[];let mem=null;
+  const gpu=(cmd,wa,len)=>{assert.strictEqual(cmd,0x10001);sent.push(mem.buffer.slice(wa,wa+len));return 0;};
+  const e=new WebAssembly.Instance(new WebAssembly.Module(result.wasmBinary),{fixture:{g2w:t,gpu,
     alloc:n=>{if(failAlloc)return 0;const p=next;next=(next+n+7)&~7;return p+4190208;},free:()=>frees++}}).exports;
-  return {e,t,v:new DataView(e.memory.buffer),frees:()=>frees,moduleSHA:hash(result.wasmBinary),transformSHA:hash(transformed)};
+  mem=e.memory;
+  // Everything this producer emitted: flushed batches, then the pending one.
+  const batches=()=>[...sent.map(b=>({buffer:b,byteOffset:0,bytes:b.byteLength})),
+    {buffer:e.memory.buffer,byteOffset:e.stream(),bytes:e.bytes()}];
+  const emitted=()=>sent.reduce((n,b)=>n+b.byteLength,e.bytes());
+  return {e,t,v:new DataView(e.memory.buffer),sent,batches,emitted,frees:()=>frees,moduleSHA:hash(result.wasmBinary),transformSHA:hash(transformed)};
 }
 function doubles(h,p,a) {
   const b=Buffer.alloc(a.length*8);a.forEach((x,i)=>b.writeDoubleLE(x,i*8));
@@ -277,7 +256,8 @@ for(const esp of [0xffffffec,0xfffffffc,0xffffffff]) {
   assert.strictEqual(h.v.getUint32(272,true),esp,'wrapping scalar stack rejected');
 }
 for(const p of [0xfffffff1,0xffffffff])assert.throws(()=>h.e.invoke(p),WebAssembly.RuntimeError,'vector wrap rejected');
-for(const name of ['glMap1d']) {
+// glMap1d is real since 4ec8732ba (evaluators); glLockArraysEXT is still unimplemented.
+for(const name of ['glLockArraysEXT']) {
   const row=api.find(a=>a.name===name);assert.strictEqual(row.handler,'gl_unimplemented');
   assert.strictEqual(h.e.available(row.id),0);assert.throws(()=>h.e.other(row.id),WebAssembly.RuntimeError);
 }
@@ -288,6 +268,6 @@ assert.strictEqual(compat.CALLS.length,stream.ARG_WORDS.length);
 assert.strictEqual(compat.CALL_INDEX.glAccum,143);assert.strictEqual(compat.CALL_INDEX.glClearAccum,144);
 console.log(JSON.stringify({PASS:true,cases:36,scalarAndVector:true,nonAffineStack:true,displayLists:true,
   mutations:['cleanup','source','stride','opcode','route'],failureStatePreserved:true,
-  moduleSHA:h.moduleSHA,sourceSHA:files.map((p,i)=>[p,hash(sources[i])])}));
+  moduleSHA:h.moduleSHA,sourceSHA:files.map((p,i)=>[p,hash(read(p))])}));
 
 assert.strictEqual(compat.CALL_INDEX.glRasterPos4f,146);

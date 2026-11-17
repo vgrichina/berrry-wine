@@ -91,6 +91,10 @@ function draw(vbuf, ibuf) {
   VERTS.forEach((v, i) => v.forEach((c, k) => putF(vbuf + i * 12 + k * 4, c)));
   INDICES.forEach((v, i) => put16(ibuf + i * 2, v));
   draws = [];
+  // No context sets the polygon-mode defaults here, and a non-FILL mode makes
+  // the encoder emit boundary (edge-flag) polygons since 36f205f11. State
+  // GL_FILL explicitly so the ordinary compact packed draw is what is checked.
+  call(CALL_INDEX.glPolygonMode, [0x0408, 0x1B02]);
   call(CALL_INDEX.glEnableClientState, [GL_VERTEX_ARRAY]);
   call(CALL_INDEX.glVertexPointer, [3, GL_FLOAT, 12, vbuf]);
   call(CALL_INDEX.glDrawElements, [GL_TRIANGLES, INDICES.length, GL_UNSIGNED_SHORT, ibuf]);

@@ -231,9 +231,15 @@ const extraWat=`
  call('glClientActiveTextureARB',[0x84c1]);p(0x8092,0x12345679);
  call('wglMakeCurrent',[dc,other]);p(0x8092,0xaabbccdd);b(0xb00,[0,0,1,0]);
  call('wglMakeCurrent',[dc,context]);call('wglDeleteContext',[other]);
- // Invalid/unsupported names do not fabricate selection, feedback or extension state.
- for(const n of [0xdeadbeef,0x808e,0x8092,0xc40,0xd70,0x8894,0x8b8d,0xdf0,0xdf1,0xdf2,0xdf3,0xdf4,0xdf5,0xdf6,0xdf7,0xdf8])rejected('glGetBooleanv',n);
- for(const n of [0xdeadbeef,0x808e-1,0x8091,0x8093,0xdf0,0xdf3,0x8894,0xba6])rejected('glGetPointerv',n);
+ // Selection/feedback state is real since 91da9cb83: render mode GL_RENDER,
+ // empty name stack, no feedback or selection buffer, feedback type GL_2D.
+ b(0xc40,[1]);query('glGetIntegerv',0xc40,[0x1c00]);b(0xd70,[0]);b(0xdf1,[0]);b(0xdf2,[1]);query('glGetIntegerv',0xdf2,[0x600]);b(0xdf4,[0]);p(0xdf0,0);p(0xdf3,0);
+ // Invalid/unsupported names do not fabricate extension state; buffer
+ // pointers are pointer queries, never boolean ones.
+ for(const n of [0xdeadbeef,0x808e,0x8092,0x8894,0x8b8d,0xdf0,0xdf3,0xdf5,0xdf6,0xdf7,0xdf8])rejected('glGetBooleanv',n);
+ // Color-index (c96b1b241) and edge-flag (36f205f11) arrays are real: unset pointers are NULL.
+ p(0x8091,0);p(0x8093,0);
+ for(const n of [0xdeadbeef,0x808e-1,0x8094,0x8894,0xba6,0xc40,0xdf1,0xdf4])rejected('glGetPointerv',n);
  for(const name of ['glGetBooleanv','glGetPointerv'])rejected(name,0xdeadbeef,0x500,0x44000000);
  call('glBegin',[0]);
  // GetError itself is illegal during Begin; read it only after End.
@@ -279,7 +285,7 @@ const extraWat=`
   for(let i=available ? -9 : 0;i<available;i++)dv.setUint8(wa(addr+i),0xb6);
   const thunk=resolve(name);dv.setUint32(regs+16,stack,true);dv.setUint32(stackWa,0x12345678,true);
   dv.setUint32(stackWa+4,n,true);dv.setUint32(stackWa+8,addr,true);
-  assert.throws(()=>e.probe_invoke(thunk),n===0xc22 ? RangeError : WebAssembly.RuntimeError,'invalid span traps '+name);
+  assert.throws(()=>e.probe_invoke(thunk),WebAssembly.RuntimeError,'invalid span traps '+name);
   assert.strictEqual(dv.getUint32(regs+16,true),stack,'trap keeps ESP');
   for(let i=available ? -9 : 0;i<available;i++)assert.strictEqual(dv.getUint8(wa(addr+i)),0xb6,'atomic output validation '+name);checks++;
  }
@@ -293,7 +299,8 @@ const extraWat=`
  call('glColor4f',[f(1),0,0,f(1)]);call('glRectf',[-1,-1,1,1].map(f));call('glClearColor',[0,f(.5),0,0]);b(0xc22,[0,1,0,0]);
  if(encoder){encoder.fence();assert(encoder.snapshot().glQueued>=1,'actual queued draw');}
  assert.strictEqual(call('glGetError'),0);
- // A host exception aborts replay before its stream reset. End this harness
+ // Clear color is a WAT-owned query since 0ef043248 (no host replay to throw
+ // RangeError): it validates its span like every other query. End this harness
  // after verifying its failure, as a guest memory fault is terminal.
  atomicTrap('glGetBooleanv',0xc22,exact+4094,2);
  const result={passed:true,route:queued?'queued':'direct',checks,expected};
