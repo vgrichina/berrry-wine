@@ -4966,16 +4966,34 @@ class WineAssembly {
       opts.advanceGuestTime = ms => this._advanceGuestTickMs(ms,
         this.hostCtx && this.hostCtx.sharedAudio);
       // A LoadLibraryA from inside a DllMain (UBER.DLL loading Myth's
-      // modules\TCPIP.DLL) must be serviced in place: callDllMain is
-      // synchronous. Only resident bytes qualify; anything needing a fetch
-      // falls back to the async yield path as before.
-      const onLoadLibraryYield = ex => ProcessBoot.serviceLoadLibraryYieldSync({
-        exports: ex, memoryBuffer: this.memory.buffer, resourceHost: this, log: console.log,
-        advanceGuestTime: opts.advanceGuestTime, onLoadLibraryYield,
-        findDllSync: (fileName, fullName) => this._findDllBytesSync(fileName, fullName),
-      });
-      opts.onLoadLibraryYield = onLoadLibraryYield;
-      results = _loadDlls(this.instance.exports, this.memory.buffer, exeBytes, readyConfigs, console.log, opts);
+      // modules\TCPIP.DLL), or the 16-bit companion COMCTL32's DllMain
+      // thunk-connects to, is serviced while that initializer stays parked.
+      // This page can await its lookups, so it uses the owned asynchronous
+      // loader -- the same one the guest Worker runs -- instead of a
+      // synchronous resolver that can only answer from resident bytes.
+      const _loadDllsAsync = typeof DllLoader !== 'undefined' && DllLoader.loadDllsAsync;
+      if (_loadDllsAsync) {
+        opts.onGateWait = owner => this._advanceDllCallbackOwner(owner);
+        opts.onLoadLibraryYield = async ex => {
+          await ProcessBoot.handleLoadLibraryYield({
+            onDllCallbackGateWait: owner => this._advanceDllCallbackOwner(owner),
+            exports: ex, memoryBuffer: this.memory.buffer, resourceHost: this, log: console.log,
+            advanceGuestTime: opts.advanceGuestTime,
+            findDll: (fileName, fullName) => this._findDllBytes(fileName, fullName, { exeDir: true }),
+            findDllSync: (fileName, fullName) => this._findDllBytesSync(fileName, fullName),
+          });
+          return true;
+        };
+        results = await _loadDllsAsync(this.instance.exports, this.memory.buffer, exeBytes, readyConfigs, console.log, opts);
+      } else {
+        const onLoadLibraryYield = ex => ProcessBoot.serviceLoadLibraryYieldSync({
+          exports: ex, memoryBuffer: this.memory.buffer, resourceHost: this, log: console.log,
+          advanceGuestTime: opts.advanceGuestTime, onLoadLibraryYield,
+          findDllSync: (fileName, fullName) => this._findDllBytesSync(fileName, fullName),
+        });
+        opts.onLoadLibraryYield = onLoadLibraryYield;
+        results = _loadDlls(this.instance.exports, this.memory.buffer, exeBytes, readyConfigs, console.log, opts);
+      }
     }
     // Where a `module+0xVA` probe in the browser gets its arithmetic from. The
     // original image base is only on disk: the loader copies sections, not the

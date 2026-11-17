@@ -157,11 +157,15 @@ async function main() {
   const nested=neGuestCaller(e.get_next_dll_addr()>>>0,{dll:true});
   vfs.files.set('c:\\outlaws\\dynamic.dll',{data:nested.bytes});
   e.run(1000);assert.equal(e.get_yield_reason(),5);
-  let syncLookups=0;
+  // The nested NE request is serviced through the same awaitable resolver as
+  // the outer PE load (owned asynchronous preflight), never a synchronous
+  // lookup that a fetching host could only answer with a Promise.
+  const asyncLookups=[];let syncLookups=0;
   await handleLoadLibraryYield({exports:e,memoryBuffer:memory.buffer,
-    findDll:async(file,full)=>findVfsDllBytes(vfs,file,full),
+    findDll:async(file,full)=>{asyncLookups.push(file);return findVfsDllBytes(vfs,file,full);},
     findDllSync:(file,full)=>{syncLookups++;return findVfsDllBytes(vfs,file,full);}});
-  run();assert(read(dynamic.result));assert(syncLookups>0);
+  run();assert(read(dynamic.result));
+  assert.equal(syncLookups,0);assert(asyncLookups.length>1,'outer PE and nested NE lookups: '+asyncLookups);
   assert.equal(read(nested.result),read(nested.result+4));
   assert(read(nested.result+8));assert.equal(finished,1);assert.deepEqual(records(),[]);
 

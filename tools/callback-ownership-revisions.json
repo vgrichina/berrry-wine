@@ -61,15 +61,15 @@
       "file": "lib/process-boot.js",
       "name": "host-file",
       "baseSHA256": "ba54542269320d2a6bcf82d33445989840a872a62d27448e349afe0f97113a9c",
-      "sha256": "bc411b912e4a67c2dcfbdbbb1b402181b89a88cd21754f9c57e8680a9cf3d89b",
-      "reason": "Review 20261117 comctl32: COMCTL32.DLL joins the static system-module placeholder files (file presence and RT_VERSION only, never mapped); no host boundary, run loop or guest-control change."
+      "sha256": "a9bb737744fc93f5d4c5b8aed3bd648615f968c2175ad49b2e4006a7e92a9bba",
+      "reason": "Review 20261117 comctl32: COMCTL32.DLL joins the static system-module placeholder files (file presence and RT_VERSION only, never mapped); no host boundary, run loop or guest-control change. Review 20261117 web LS16 release blocker: handleLoadLibraryYield routes an NE request (yield 18) on a non-Worker host through the existing owned asynchronous NE preflight whenever the caller supplies an awaitable findDll, under the same acquired callback gate as PE loads; the parked request token is revalidated after every await. Hosts without findDll keep the synchronous service. No new guest entry or context restoration; ownership remains pending."
     },
     {
       "file": "host.js",
       "name": "host-file",
       "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
-      "sha256": "f8af8edb70a8b91c98cc43768d31e314f851a12563aa6cf9db45b62e7288d336",
-      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
+      "sha256": "801cb3a3a3c880b0c3dfec59414c463a399847338ad83124602c1d16964436d5",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change. Review 20261117 web LS16 release blocker: the main-thread page boot maps its startup DLL set with the existing owned DllLoader.loadDllsAsync (the loader the guest Worker already runs) instead of the synchronous loader, and services a nested LoadLibrary/NE yield through ProcessBoot.handleLoadLibraryYield with the page asynchronous resolver. The synchronous loader remains the fallback when the async entry is unavailable. No new guest entry, continuation or context restoration; DllMain frames, gate ownership and quarantine are the existing loader ones; ownership remains pending."
     },
     {
       "file": "lib/guest-thread-host.js",
@@ -89,7 +89,7 @@
       "file": "lib/host-imports.js",
       "name": "host-file",
       "baseSHA256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
-      "sha256": "f710a023427ccba46834717b67dbe845b403d59e24a44086bcd745ed0c60e795",
+      "sha256": "ed7bca329d259e1bb73152bb313508042977f731e4f226ff767487db18aba6fb",
       "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     },
     {
@@ -105,6 +105,13 @@
       "baseSHA256": "53d6f5370385dcd23c45d263c7cc08a02f46f2d1e82ed08dcb24f97b8ee59d05",
       "sha256": "4dd4c6dbc032c1168b755e47be9c3ba36010f18943bda7744e66f02edad29717",
       "reason": "retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
+    },
+    {
+      "file": "lib/ne-guest-bridge.js",
+      "name": "host-file",
+      "baseSHA256": "e2fbe5e0307efb4bb6e805b51b850ef51763b00d5afda1055cb9dfb1733fa419",
+      "sha256": "5bd63e31bba47c228a4ccab81588fd2ad25dbd6d3d55f25e508eef3128e8c0bd",
+      "reason": "Review 20261117 web LS16 release blocker: a ThunkConnect32 attach whose 16-bit companion is definitely absent (NeLoadError guest code 2 from source preflight) settles once through the native win16_guest_ls32_settle_absent export; the asynchronous LS32 preflight stops on a typed absence and leaves translation to the same synchronous service. Malformed, refused and asynchronous-only sources still throw. No NE execution, pairing, publication or new restoration path; ownership remains pending."
     }
   ],
   "additions": [
@@ -195,6 +202,25 @@
       "sha256": "10fb71d7574aed4e9ffea326770f061505c89591434c99143fb9444cd873780e",
       "kind": "continuation",
       "reason": "Remote QI retains the existing proxy root while awaiting authenticated exporter work. It reads the full-width current invocation token before suspension and validates token, exact IID and owner around every await. Ordinary HRESULT completion cancels pending work and releases the pin; traps and changed ownership do not replay or clean an abandoned guest frame. No new guest entry or context restoration; broader ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "export:win16_guest_ls32_settle_absent",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [
+        "win16_guest_ls32_settle_absent"
+      ],
+      "targets": [
+        [
+          "global.get",
+          "$win16_guest_return"
+        ]
+      ],
+      "sha256": "b972570e58b350f2fda4ed6bb6041595941ea00a3f02144eb44bb5c8e363f30a",
+      "kind": "lifecycle",
+      "reason": "Absent-companion ThunkConnect32 attach settlement: valid parked op-5 request with attach reason only; cancels any lease owned by that request, returns TRUE and consumes the exact 28-byte stdcall frame to the recorded return like win16_guest_ft_connect_settle, publishing nothing into the LS32 header or relays. Single settlement; the request token is cleared. Ownership remains pending.",
       "ownership": "pending"
     }
   ]
