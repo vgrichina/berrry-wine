@@ -64,3 +64,36 @@ before original execution because one shared guest timer counter could alias
 when outer and nested dialogs ticked together. Each dialog now has its own
 counter. The range-change assertion remains required; no production getter,
 review policy, timeout or refusal was relaxed. The failed preflight is retained.
+
+The one authorized original pipeline used exact published
+`2f2a7217c0aeaca2b9fae63c666f7840b0fce423` and sealed production module
+`33ef36c2de1c86ca1302b5659f02bb48f1794dfc4e20945821251198f04cb03e`.
+The complete post-publication preflight, including actual child inheritance,
+passed with no owned source patch. Genuine installer and SetupAPI hashes were
+checked before launch. The independent 2420-second watchdog was armed before
+the native process, with a 2400-second native limit and 240-second Quit reserve.
+
+Personally reviewed ordinary Yes and license acceptance completed in 292 ms
+and 250 ms. The actual ownerless initialization dialog `0x1000b`, generation
+11, callback `0x1003241`, then captured successfully. Its actual ProgressBar
+`0x10010` / ID 2106 reported range `0..100`, step 10 and position 10 while
+extracting `Mso97rt.dll`, then position 36 while extracting `Oleaut32.dll`.
+No input targeted the progress widget. The changing filename is retained as
+meaningful caption metadata, independently of harmless progress repaint.
+
+Automatic initialization reached a new genuine modal: **Error loading
+SETUPAPI.DLL**. The personally reviewed actual OK button was acknowledged with
+native consumption, independent physical UP and completion in 270 ms. The
+parent recorded actual native process exit 0 and closed regular output files;
+the guest log reports exit `0x8007042b`. This is a failed installation, not an
+installed IDE/sample or IDE Quit result. No original child installer was
+launched, no second original was attempted, and no endpoint was rebound.
+The exact SetupAPI load failure needs separate diagnosis; the visible error
+alone does not establish which loader operation failed.
+
+The pipeline was closed after the actual native wait. Its independent watchdog
+recorded self-exit because of that wait. The outer supervisor shell returned
+143 before publishing its final watchdog-wait/runtime-release records; those
+receipts are unavailable and are not claimed as successful waits. The native
+wait and all three finite-intent release waits are present. All recorded task
+PIDs are absent and both original control ports are closed. No box was created.
