@@ -3978,93 +3978,227 @@
     (global.set $steps (i32.const 0)))
 
   ;; ---- The registry ----
+  ;; KERNEL.216-227 use DWORD HKEYs and Pascal DWORD/far-pointer arguments,
+  ;; returning a LONG in DX:AX. See Wine's krnl386.exe16.spec/registry.c.
+  ;; The synchronous backend is shared with Win32. No call32 scratch frame,
+  ;; pending request, new handle namespace or installer-specific keys exist.
+  (func $win16_reg_selector (param $sel i32) (param $data i32) (result i32)
+    (local $base i32) (local $limit i32) (local $flags i32)
+    (if (call $win16_bridge_selector_valid (local.get $sel) (local.get $data)) (then (return (i32.const 1))))
+    ;; Standalone NE executables place their first code segment at index 1;
+    ;; the PE bridge reserves that index and therefore rejects it above.
+    (if (i32.or (i32.eqz (global.get $is_win16))
+      (i32.or (i64.ne (global.get $win16_bridge_frame) (i64.const 0))
+        (i32.ne (local.get $sel) (call $win16_index_to_sel (i32.const 1))))) (then (return (i32.const 0))))
+    (local.set $base (call $win16_seg_base (i32.const 1)))
+    (local.set $limit (call $win16_seg_limit (i32.const 1)))
+    (local.set $flags (i32.load offset=24 (global.get $WIN16_SEG_TABLE)))
+    (i32.and (i32.eq (local.get $base) (call $win16_arena_base))
+      (i32.and (i32.ne (local.get $limit) (i32.const 0))
+        (i32.and (i32.le_u (local.get $limit) (i32.const 65536))
+          (i32.and (i32.eqz (i32.and (local.get $flags) (global.get $WIN16_SEG_BIG)))
+            (i32.eq (i32.and (local.get $flags) (i32.const 1)) (local.get $data)))))))
+
+  (func $win16_reg_span (param $far i32) (param $bytes i32) (param $write i32) (result i32)
+    (local $sel i32) (local $off i32) (local $limit i32) (local $flags i32)
+    (local $alias i32) (local $token i64) (local $f i32) (local $n i32) (local $p i32)
+    (local.set $sel (i32.shr_u (local.get $far) (i32.const 16)))
+    (local.set $off (i32.and (local.get $far) (i32.const 65535)))
+    (if (i32.eqz (local.get $sel)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.or (call $win16_reg_selector (local.get $sel) (i32.const 1))
+      (call $win16_reg_selector (local.get $sel) (i32.const 0)))) (then
+      ;; Only the running QT ancestor's exact leased stack may name memory
+      ;; outside the arena. nested_owner checks actor, request, connection,
+      ;; generation, process, retirement and native return ownership.
+      (if (i32.eqz (call $win16_nested_owner)) (then (return (i32.const 0))))
+      (local.set $token (global.get $win16_bridge_frame))
+      (block $found (loop $parents
+        (local.set $f (i32.wrap_i64 (local.get $token)))
+        (if (i32.eq (local.get $sel) (i32.load offset=352 (local.get $f))) (then
+          (local.set $alias (call $win16_bridge_qt_alias_valid (local.get $token))) (br $found)))
+        (local.set $token (i64.load (local.get $f)))
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (br_if $found (i32.or (i64.eqz (local.get $token)) (i32.ge_u (local.get $n) (i32.const 31))))
+        (br $parents)))
+      (if (i32.eqz (local.get $alias)) (then (return (i32.const 0))))))
+    (local.set $flags (i32.load offset=8 (i32.add (global.get $WIN16_SEG_TABLE)
+      (i32.shl (call $win16_sel_to_index (local.get $sel)) (i32.const 4)))))
+    ;; NE bit 7 is read-only data / execute-only code. A read-only data
+    ;; descriptor is readable, while neither code nor read-only data is output.
+    (if (local.get $write) (then
+      (if (i32.or (i32.eqz (i32.and (local.get $flags) (i32.const 1)))
+        (i32.ne (i32.and (local.get $flags) (i32.const 0x80)) (i32.const 0))) (then (return (i32.const 0)))))
+      (else (if (i32.eq (i32.and (local.get $flags) (i32.const 0x81)) (i32.const 0x80))
+        (then (return (i32.const 0))))))
+    (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (local.get $sel))))
+    (if (i32.or (i32.gt_u (local.get $bytes) (local.get $limit))
+      (i32.gt_u (local.get $off) (i32.sub (local.get $limit) (local.get $bytes)))) (then (return (i32.const 0))))
+    (local.set $p (call $win16_far_to_guest (local.get $sel) (local.get $off)))
+    (if (i32.eq (call $g2w_affine_span (local.get $p) (local.get $bytes)) (global.get $NULL_SENTINEL))
+      (then (return (i32.const 0))))
+    (local.get $p))
+
+  (func $win16_reg_string (param $far i32) (result i32)
+    (local $p i32) (local $n i32) (local $off i32) (local $limit i32)
+    (local.set $p (call $win16_reg_span (local.get $far) (i32.const 1) (i32.const 0)))
+    (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
+    (local.set $off (i32.and (local.get $far) (i32.const 65535)))
+    (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (i32.shr_u (local.get $far) (i32.const 16)))))
+    (loop $scan
+      (if (i32.eqz (call $gl8 (i32.add (local.get $p) (local.get $n)))) (then (return (local.get $p))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br_if $scan (i32.lt_u (i32.add (local.get $off) (local.get $n)) (local.get $limit))))
+    (i32.const 0))
+
+  (func $win16_reg_stack (param $bytes i32) (result i32)
+    (local $token i64) (local $f i32) (local $n i32) (local $sp i32) (local $sel i32)
+    (if (i64.ne (global.get $win16_bridge_frame) (i64.const 0)) (then
+      (if (i32.eqz (call $win16_bridge_fixed_api_stack (local.get $bytes))) (then (return (i32.const 0))))
+      ;; Even arena-only parameters cannot bypass a cancelled/stale QT owner.
+      (local.set $token (global.get $win16_bridge_frame))
+      (loop $parents
+        (local.set $f (i32.wrap_i64 (local.get $token)))
+        (if (i32.load offset=352 (local.get $f)) (then (return (call $win16_nested_owner))))
+        (local.set $token (i64.load (local.get $f)))
+        (local.set $n (i32.add (local.get $n) (i32.const 1)))
+        (if (i64.eqz (local.get $token)) (then (return (i32.const 1))))
+        (if (i32.ge_u (local.get $n) (i32.const 31)) (then (return (i32.const 0))))
+        (br $parents)))
+      (else
+        (if (i32.eqz (global.get $is_win16)) (then (return (i32.const 0))))
+        (local.set $sp (i32.sub (i32.load offset=16 (global.get $reg_base)) (global.get $seg_base_ss)))
+        (if (i32.gt_u (local.get $sp) (i32.const 65535)) (then (return (i32.const 0))))
+        (if (i32.eqz (call $win16_reg_span
+          (i32.or (i32.shl (global.get $sreg_ss) (i32.const 16)) (local.get $sp))
+          (local.get $bytes) (i32.const 1))) (then (return (i32.const 0))))
+        (local.set $sel (call $gl16 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2))))
+        (if (i32.eqz (call $win16_reg_selector (local.get $sel) (i32.const 0))) (then (return (i32.const 0))))
+        (return (i32.lt_u (call $gl16 (i32.load offset=16 (global.get $reg_base)))
+          (call $win16_seg_limit (call $win16_sel_to_index (local.get $sel)))))))
+    (i32.const 0))
+
+  ;; All pointer validation precedes the first backend call, including outputs
+  ;; on a missing-key path. Invalid memory returns ERROR_INVALID_PARAMETER;
+  ;; an invalid execution owner/stack traps without reading arguments.
+  (func $win16_registry_run (param $op i32) (result i32)
+    (local $key i32) (local $name i32) (local $out i32) (local $type i32)
+    (local $data i32) (local $cb i32) (local $size i32) (local $far i32)
+    (local $reserved i32) (local $index i32) (local $namesize i32) (local $count i32)
+    (local.set $count (i32.const 2))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 219)) (i32.eq (local.get $op) (i32.const 222)))
+      (then (local.set $count (i32.const 4))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 217)) (i32.eq (local.get $op) (i32.const 218)))
+      (then (local.set $count (i32.const 6))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 216)) (i32.eq (local.get $op) (i32.const 224)))
+      (then (local.set $count (i32.const 8))))
+    (if (i32.eq (local.get $op) (i32.const 221)) (then (local.set $count (i32.const 10))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 225)) (i32.eq (local.get $op) (i32.const 226)))
+      (then (local.set $count (i32.const 12))))
+    (if (i32.eq (local.get $op) (i32.const 223)) (then (local.set $count (i32.const 16))))
+    (local.set $key (call $win16_arg32 (i32.sub (local.get $count) (i32.const 2))))
+    ;; Win16's historical 0/1 root aliases name HKCR, not new handles.
+    (if (i32.le_u (local.get $key) (i32.const 1)) (then (local.set $key (i32.const 0x80000000))))
+    (if (i32.eq (local.get $op) (i32.const 220)) (then (return (call $host_reg_close_key (local.get $key)))))
+    (if (i32.eq (local.get $op) (i32.const 227)) (then (return (call $host_reg_flush_key (local.get $key)))))
+    (if (i32.eq (local.get $op) (i32.const 216)) (then
+      (local.set $size (call $win16_arg32 (i32.const 0)))
+      (local.set $name (call $win16_reg_span (call $win16_arg32 (i32.const 2)) (local.get $size) (i32.const 1)))
+      (if (i32.eqz (local.get $name)) (then (return (i32.const 87))))
+      (return (call $host_reg_enum_key (local.get $key) (call $win16_arg32 (i32.const 4))
+        (local.get $name) (local.get $size) (i32.const 0)))))
+    (if (i32.eq (local.get $op) (i32.const 223)) (then
+      (local.set $index (call $win16_arg32 (i32.const 12)))
+      (if (call $win16_arg32 (i32.const 6)) (then (return (i32.const 87))))
+      (local.set $namesize (call $win16_reg_span (call $win16_arg32 (i32.const 8)) (i32.const 4) (i32.const 1)))
+      (if (i32.eqz (local.get $namesize)) (then (return (i32.const 87))))
+      (local.set $name (call $win16_reg_span (call $win16_arg32 (i32.const 10))
+        (call $gl32 (local.get $namesize)) (i32.const 1)))
+      (if (i32.eqz (local.get $name)) (then (return (i32.const 87)))))
+      (else
+        (local.set $far (call $win16_arg32 (i32.sub (local.get $count) (i32.const 4))))
+        (if (local.get $far) (then
+          (local.set $name (call $win16_reg_string (local.get $far)))
+          (if (i32.eqz (local.get $name)) (then (return (i32.const 87))))))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 217)) (i32.eq (local.get $op) (i32.const 218))) (then
+      (local.set $out (call $win16_reg_span (call $win16_arg32 (i32.const 0)) (i32.const 4) (i32.const 1)))
+      (if (i32.eqz (local.get $out)) (then (return (i32.const 87))))
+      (if (i32.eq (local.get $op) (i32.const 218)) (then
+        (return (call $host_reg_create_key (local.get $key)
+          (if (result i32) (local.get $name) (then (call $g2w (local.get $name))) (else (i32.const 0)))
+          (local.get $out) (i32.const 0) (i32.const 0)))))
+      (local.set $key (call $reg_open_key_legacy (local.get $key) (local.get $name) (i32.const 0)))
+      (if (i32.eqz (local.get $key)) (then (return (i32.const 2))))
+      (call $gs32 (local.get $out) (local.get $key)) (return (i32.const 0))))
+    (if (i32.eq (local.get $op) (i32.const 219)) (then
+      (return (call $host_reg_delete_key (local.get $key)
+        (if (result i32) (local.get $name) (then (call $g2w (local.get $name))) (else (i32.const 0))) (i32.const 0)))))
+    (if (i32.eq (local.get $op) (i32.const 222)) (then
+      (return (call $host_reg_delete_value (local.get $key)
+        (if (result i32) (local.get $name) (then (call $g2w (local.get $name))) (else (i32.const 0))) (i32.const 0)))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 221)) (i32.eq (local.get $op) (i32.const 226))) (then
+      (local.set $type (call $win16_arg32 (i32.const 4)))
+      (if (i32.eq (local.get $op) (i32.const 226)) (then
+        (if (call $win16_arg32 (i32.const 6)) (then (return (i32.const 87))))))
+      (local.set $size (call $win16_arg32 (i32.const 0)))
+      (local.set $far (call $win16_arg32 (i32.const 2)))
+      (if (i32.and (i32.eqz (local.get $size)) (i32.eq (local.get $type) (i32.const 1))) (then
+        (local.set $data (call $win16_reg_string (local.get $far)))
+        (if (i32.eqz (local.get $data)) (then (return (i32.const 87))))
+        (loop $length
+          (if (call $gl8 (i32.add (local.get $data) (local.get $size))) (then
+            (local.set $size (i32.add (local.get $size) (i32.const 1))) (br $length)))))
+        (else
+          (local.set $data (call $win16_reg_span (local.get $far)
+            (select (i32.const 4) (local.get $size) (i32.eq (local.get $type) (i32.const 4))) (i32.const 0)))
+          (if (i32.eqz (local.get $data)) (then (return (i32.const 87))))))
+      (if (i32.eq (local.get $op) (i32.const 221)) (then
+        (return (call $reg_set_value (local.get $key) (local.get $name) (local.get $type)
+          (local.get $data) (local.get $size) (i32.const 0)))))
+      (return (call $reg_set_value_ex (local.get $key) (local.get $name) (local.get $type)
+        (local.get $data) (local.get $size) (i32.const 0)))))
+    ;; Query/Enum: all optional DWORD outputs and the entire declared buffer
+    ;; must be writable, including the sizing-only and ERROR_MORE_DATA paths.
+    (if (i32.eq (local.get $op) (i32.const 225)) (then
+      (if (call $win16_arg32 (i32.const 6)) (then (return (i32.const 87))))))
+    (if (i32.ne (local.get $op) (i32.const 224)) (then
+      (local.set $far (call $win16_arg32 (i32.const 4)))
+      (if (local.get $far) (then
+        (local.set $type (call $win16_reg_span (local.get $far) (i32.const 4) (i32.const 1)))
+        (if (i32.eqz (local.get $type)) (then (return (i32.const 87))))))))
+    (local.set $far (call $win16_arg32 (i32.const 0)))
+    (if (local.get $far) (then
+      (local.set $cb (call $win16_reg_span (local.get $far) (i32.const 4) (i32.const 1)))
+      (if (i32.eqz (local.get $cb)) (then (return (i32.const 87))))
+      (local.set $size (call $gl32 (local.get $cb)))))
+    (if (i32.and (i32.eqz (local.get $cb)) (i32.eq (local.get $op) (i32.const 224))) (then (return (i32.const 87))))
+    (local.set $far (call $win16_arg32 (i32.const 2)))
+    (if (local.get $far) (then
+      (if (i32.eqz (local.get $cb)) (then (return (i32.const 87))))
+      (local.set $data (call $win16_reg_span (local.get $far) (local.get $size) (i32.const 1)))
+      (if (i32.eqz (local.get $data)) (then (return (i32.const 87))))))
+    (if (i32.eq (local.get $op) (i32.const 224)) (then
+      (return (call $reg_query_value (local.get $key) (local.get $name) (local.get $data) (local.get $cb) (i32.const 0)))))
+    (if (i32.eq (local.get $op) (i32.const 223)) (then
+      (return (call $host_reg_enum_value (local.get $key) (local.get $index) (local.get $name)
+        (local.get $namesize) (local.get $type) (local.get $data) (local.get $cb) (i32.const 0)))))
+    (call $reg_query_value_ex (local.get $key) (local.get $name) (local.get $type)
+      (local.get $data) (local.get $cb) (i32.const 0)))
+
+  (func $win16_registry (param $op i32)
+    (local $bytes i32) (local $res i32)
+    (local.set $bytes (i32.const 4))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 219)) (i32.eq (local.get $op) (i32.const 222))) (then (local.set $bytes (i32.const 8))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 217)) (i32.eq (local.get $op) (i32.const 218))) (then (local.set $bytes (i32.const 12))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 216)) (i32.eq (local.get $op) (i32.const 224))) (then (local.set $bytes (i32.const 16))))
+    (if (i32.eq (local.get $op) (i32.const 221)) (then (local.set $bytes (i32.const 20))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 225)) (i32.eq (local.get $op) (i32.const 226))) (then (local.set $bytes (i32.const 24))))
+    (if (i32.eq (local.get $op) (i32.const 223)) (then (local.set $bytes (i32.const 32))))
+    (if (i32.eqz (call $win16_reg_stack (i32.add (local.get $bytes) (i32.const 4)))) (then (unreachable)))
+    (local.set $res (call $win16_registry_run (local.get $op)))
+    (i32.store (global.get $reg_base) (i32.and (local.get $res) (i32.const 65535)))
+    (i32.store offset=8 (global.get $reg_base) (i32.shr_u (local.get $res) (i32.const 16)))
+    (call $win16_api_return (local.get $bytes)))
   ;;
-  ;; The Win 3.1 registry API is the Win32 one at its smallest: HKEY is a
-  ;; DWORD in both, and the two calls that exist here take far pointers where
-  ;; Win32 takes flat ones.
-
-  ;; KERNEL.218 RegCreateKey(hKey, lpSubKey, lphkResult).
-  (func $win16_RegCreateKey
-    (local $key i32) (local $sub i32) (local $out i32)
-    (local.set $key (call $win16_arg32 (i32.const 4)))
-    (local.set $sub (call $win16_far_to_guest
-      (call $win16_arg16 (i32.const 3)) (call $win16_arg16 (i32.const 2))))
-    (local.set $out (call $win16_far_to_guest
-      (call $win16_arg16 (i32.const 1)) (call $win16_arg16 (i32.const 0))))
-    (call $win16_call32_begin (i32.const 3))
-    (call $handle_RegCreateKeyA (local.get $key) (local.get $sub) (local.get $out)
-      (i32.const 0) (i32.const 0) (i32.const 0))
-    (call $win16_call32_end)
-    (i32.store offset=8 (global.get $reg_base) (i32.shr_u (i32.load offset=0 (global.get $reg_base)) (i32.const 16)))
-    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
-    (call $win16_api_return (i32.const 12)))
-
-  ;; KERNEL.220 RegCloseKey(hKey), KERNEL.227 RegFlushKey(hKey). Flushing is a
-  ;; no-op because the store behind the registry is written through on every
-  ;; set; saying so with success is the truthful answer.
-  (func $win16_RegCloseKey
-    (local $key i32)
-    (local.set $key (call $win16_arg32 (i32.const 0)))
-    (call $win16_call32_begin (i32.const 1))
-    (call $handle_RegCloseKey (local.get $key)
-      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
-    (call $win16_call32_end)
-    (i32.store offset=8 (global.get $reg_base) (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
-    (call $win16_api_return (i32.const 4)))
-
-  ;; KERNEL.221 RegSetValue(hKey, lpSubKey, dwType, lpData, cbData).
-  (func $win16_RegSetValue
-    (local $key i32) (local $sub i32) (local $type i32) (local $data i32) (local $cb i32)
-    (local.set $key (call $win16_arg32 (i32.const 7)))
-    (local.set $sub (call $win16_far_to_guest
-      (call $win16_arg16 (i32.const 6)) (call $win16_arg16 (i32.const 5))))
-    (local.set $type (call $win16_arg32 (i32.const 3)))
-    (local.set $data (call $win16_far_to_guest
-      (call $win16_arg16 (i32.const 2)) (call $win16_arg16 (i32.const 1))))
-    (local.set $cb (call $win16_arg32 (i32.const 0)))
-    (call $win16_call32_begin (i32.const 5))
-    (call $win16_call32_arg (i32.const 4) (local.get $cb))
-    (call $handle_RegSetValueA (local.get $key) (local.get $sub) (local.get $type)
-      (local.get $data) (local.get $cb) (i32.const 0))
-    (call $win16_call32_end)
-    (i32.store offset=8 (global.get $reg_base) (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
-    (call $win16_api_return (i32.const 20)))
-
-  ;; KERNEL.225 RegQueryValueEx(hKey, lpValueName, lpReserved, lpType, lpData,
-  ;; lpcbData) and KERNEL.226 RegSetValueEx(hKey, lpValueName, dwReserved,
-  ;; dwType, lpData, cbData). Six far-or-dword arguments each, 24 bytes.
-  (func $win16_reg_value_ex (param $is_set i32)
-    (local $key i32) (local $name i32) (local $type i32) (local $data i32)
-    (local $cb i32) (local $reserved i32)
-    (local.set $key (call $win16_arg32 (i32.const 10)))
-    (local.set $name (call $win16_far_to_guest
-      (call $win16_arg16 (i32.const 9)) (call $win16_arg16 (i32.const 8))))
-    (local.set $reserved (call $win16_arg32 (i32.const 6)))
-    (local.set $type (if (result i32) (local.get $is_set)
-      (then (call $win16_arg32 (i32.const 4)))
-      (else (call $win16_far_to_guest
-        (call $win16_arg16 (i32.const 5)) (call $win16_arg16 (i32.const 4))))))
-    (local.set $data (call $win16_far_to_guest
-      (call $win16_arg16 (i32.const 3)) (call $win16_arg16 (i32.const 2))))
-    (local.set $cb (if (result i32) (local.get $is_set)
-      (then (call $win16_arg32 (i32.const 0)))
-      (else (call $win16_far_to_guest
-        (call $win16_arg16 (i32.const 1)) (call $win16_arg16 (i32.const 0))))))
-    (call $win16_call32_begin (i32.const 6))
-    (call $win16_call32_arg (i32.const 4) (local.get $data))
-    (call $win16_call32_arg (i32.const 5) (local.get $cb))
-    (if (local.get $is_set)
-      (then (call $handle_RegSetValueExA (local.get $key) (local.get $name)
-              (local.get $reserved) (local.get $type) (local.get $data) (i32.const 0)))
-      (else (call $handle_RegQueryValueExA (local.get $key) (local.get $name)
-              (local.get $reserved) (local.get $type) (local.get $data) (i32.const 0))))
-    (call $win16_call32_end)
-    (i32.store offset=8 (global.get $reg_base) (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
-    (call $win16_api_return (i32.const 24)))
-
   ;; ---- The local heap ----
   ;;
   ;; A Win16 local handle is a near pointer: an offset within the task's own
@@ -6987,20 +7121,9 @@
       (then (call $win16_Catch) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 56))
       (then (call $win16_Throw) (return (i32.const 1))))
-    (if (i32.eq (local.get $ordinal) (i32.const 218))
-      (then (call $win16_RegCreateKey) (return (i32.const 1))))
-    (if (i32.eq (local.get $ordinal) (i32.const 220))
-      (then (call $win16_RegCloseKey) (return (i32.const 1))))
-    (if (i32.eq (local.get $ordinal) (i32.const 221))
-      (then (call $win16_RegSetValue) (return (i32.const 1))))
-    (if (i32.eq (local.get $ordinal) (i32.const 225))
-      (then (call $win16_reg_value_ex (i32.const 0)) (return (i32.const 1))))
-    (if (i32.eq (local.get $ordinal) (i32.const 226))
-      (then (call $win16_reg_value_ex (i32.const 1)) (return (i32.const 1))))
-    (if (i32.eq (local.get $ordinal) (i32.const 227))   ;; RegFlushKey
-      (then (i32.store offset=8 (global.get $reg_base) (i32.const 0))
-            (call $win16_local_identity (i32.const 4) (i32.const 0))
-            (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $ordinal) (i32.const 216))
+      (i32.le_u (local.get $ordinal) (i32.const 227)))
+      (then (call $win16_registry (local.get $ordinal)) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 60))
       (then (call $win16_FindResource) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 61))
