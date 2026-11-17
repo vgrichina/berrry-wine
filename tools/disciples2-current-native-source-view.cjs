@@ -44,6 +44,25 @@ const files = new Map(pool.files.map(row => {
 }));
 if (4+indexSize+end !== sourceSize) throw Error('sealed source closure differs');
 observed('source-inventory-validated');
+// Source enumeration is part of the pinned graph too. The shared checkout can
+// gain or lose WAT fragments while an older published graph is compiling.
+const sourceDirectory = path.join(root, 'src');
+const sourceNames = pool.files.filter(row => path.dirname(path.join(root, row.path)) === sourceDirectory)
+  .map(row => path.basename(row.path)).sort();
+const readdir = fs.readdirSync.bind(fs), exists = fs.existsSync.bind(fs);
+fs.readdirSync = (directory, options) => {
+  if (path.resolve(String(directory)) !== sourceDirectory) return readdir(directory, options);
+  if (options?.withFileTypes) throw Error('sealed source Dirent enumeration unsupported');
+  const encoding = typeof options === 'string' ? options : options?.encoding;
+  return sourceNames.map(name => encoding === 'buffer' ? Buffer.from(name) : name);
+};
+fs.existsSync = file => {
+  const full = path.resolve(String(file));
+  if (full === sourceDirectory) return true;
+  if (full.startsWith(sourceDirectory + path.sep)) return files.has(full);
+  return exists(file);
+};
+
 if (process.env.DISCIPLES2_PHASE === 'runtime') {
   if (!/^[a-f0-9]{64}$/.test(process.env.DISCIPLES2_MANIFEST_SHA256 || '')) throw Error('runtime manifest missing');
   const wasm = read(process.env.DISCIPLES2_MODULE_FD);

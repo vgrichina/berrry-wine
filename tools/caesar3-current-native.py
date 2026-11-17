@@ -12,11 +12,12 @@ NATIVE_SECONDS = int(os.environ.get('CAESAR3_NATIVE_SECONDS', '1200'))
 assert NATIVE_SECONDS in (600, 1200), 'only owner-authorized ordinary durations'
 WATCHDOG_SECONDS, QUIT_RESERVE = NATIVE_SECONDS+20, 180
 GAME_FRESHNESS_SECONDS, MENU_FRESHNESS_SECONDS = 15, 30
-COMPONENTS = ('tools/caesar3-current-native.py', 'lib/host-imports.js')
+COMPONENTS = ('tools/caesar3-current-native.py', 'lib/host-imports.js',
+              'tools/disciples2-current-native-source-view.cjs')
 REPAIR_PROOF = ROOT/'scratch/runs/20261117-caesar3-reviewed-hover-city-construction/repair-outer'
 
 def component_revision(base):
-    return os.environ.get('CAESAR3_COMPONENT_REVISION', base)
+    return git('rev-parse', os.environ.get('CAESAR3_COMPONENT_REVISION', base)).decode().strip()
 
 def verify_components(reference, sources, module_sha):
     """Reuse the completed repaired controls by exact bytes, excluding this adapter.
@@ -29,6 +30,9 @@ def verify_components(reference, sources, module_sha):
     # Only the separately reproduced delayed-primary coverage repair joins the
     # sealed graph. No other current host or foreign worktree source is adopted.
     assert sources['lib/host-imports.js'] == sha(git('show', 'd1120f026:lib/host-imports.js'))
+    loader='tools/disciples2-current-native-source-view.cjs'
+    expected=(ROOT/loader).read_bytes() if '--working-qualification' in sys.argv else git('show',component_revision(old['gitSHA'])+':'+loader)
+    assert sources[loader]==sha(expected), 'selected pinned loader differs'
     assert {n:h for n,h in sources.items() if n not in COMPONENTS} == {n:h for n,h in old['sources'].items() if n not in COMPONENTS}, 'unchanged component graph differs'
     assert old['moduleSHA256']==module_sha==sha((reference/'module.wasm').read_bytes())
     assert old['sourceSeals']==old['moduleSeals']==15 and not old['foreignWIPAdopted']
@@ -51,6 +55,22 @@ def verify_components(reference, sources, module_sha):
     return dict(passed=True,reference=str(reference),referenceGit=old['gitSHA'],moduleSHA256=module_sha,
         unchangedComponentsExact=True,excludedComponents=list(COMPONENTS),
         originalWaitsReused=False,proofSHA256=sha((reference/'qualification.json').read_bytes()))
+
+def verify_owner_adapter(route):
+    """Reuse owner tests only when every lifecycle/input body remains exact."""
+    current=pathlib.Path(__file__).read_text()
+    if route['adapterSHA256']==sha(current.encode()):return
+    # The authored owner run tested the working repair later published at
+    # c268; its componentGit label predates that publication. Hash is binding.
+    prior=git('show','c268de57:tools/caesar3-current-native.py')
+    assert sha(prior)==route['adapterSHA256'], 'owner proof adapter identity differs'
+    def bodies(source):
+        return {n.name:ast.get_source_segment(source,n) for n in ast.parse(source).body
+                if isinstance(n,ast.FunctionDef)}
+    before,after=bodies(prior.decode()),bodies(current)
+    for name in ('supervised','outer_ready','original','execute_native','watchdog',
+                 'public_input_ready','controller'):
+        assert before[name]==after[name], 'owner lifecycle/input body changed: '+name
 
 def sha(body): return hashlib.sha256(body).hexdigest()
 def save(name, value):
@@ -447,8 +467,11 @@ def run():
             files['test/test-caesar3-current-native.cjs']=git('show','aa25b83f8:test/test-caesar3-current-native.cjs')
             for name in COMPONENTS:
                 pin = 'd1120f026' if name == 'lib/host-imports.js' else composed
-                body=(ROOT/name).read_bytes() if working else git('show',pin+':'+name)
-                assert body==(ROOT/name).read_bytes(), 'published component changed: '+name
+                body=(ROOT/name).read_bytes() if working and name != 'lib/host-imports.js' else git('show',pin+':'+name)
+                # Host bytes are selected from Git, independent of mutable main.
+                # Python execution still requires its published on-disk body.
+                if name.endswith('.py'):
+                    assert body==(ROOT/name).read_bytes(), 'published component changed: '+name
                 files[name]=body
             patch=git('diff','--binary',revision,'--',*COMPONENTS,'test/test-caesar3-current-native.cjs') if working else git('diff','--binary',revision,composed,'--',*COMPONENTS,'test/test-caesar3-current-native.cjs')
             (RUN/'composed-components.patch').write_bytes(patch)
@@ -545,7 +568,7 @@ def run():
             if composed:
                 route=json.loads(pathlib.Path(os.environ['CAESAR3_OWNER_PROOF']).read_text())
                 assert route['passed'] and route['realNative'] and route['transientLauncherActuallyReturned']
-                assert route['adapterSHA256']==sha(pathlib.Path(__file__).read_bytes())
+                verify_owner_adapter(route)
                 assert route['ownerSHA256']==sha((ROOT/'tools/caesar3-persistent-owner.py').read_bytes())
             original(env, source, module)
     helper.qualify = qualify

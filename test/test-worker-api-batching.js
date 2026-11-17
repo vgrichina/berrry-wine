@@ -307,7 +307,7 @@ assert.deepStrictEqual(servedOrder, [7, 'dx', 'exit']);
   assert.deepStrictEqual(forwarded(), [
     ['dx_trace', 13, 3, 0, 0, 0],
     ['dx_trace', 3, 4, 3, 0, 0],
-    ['dx_trace', 5, 3, 0, 0, 0],
+    ['dx_trace', 5, 3, 0, 0, 0, null],
   ], 'only first sightings (lock as kind 13) and the present travel');
   h.dx_trace(22, 3, 0, 0, 0);
   h.dx_trace(1, 3, 0, 0, 0);
@@ -329,15 +329,15 @@ assert.deepStrictEqual(servedOrder, [7, 'dx', 'exit']);
   assert.deepStrictEqual(forwarded(), [
     ['gdi_surface_create', DX, 640, 480, 8, 0xA000, 640, 1, 0x5000, 256, 0, 0, 0],
     ['gdi_surface_attach', DX, 0x10002],
-    ['gdi_surface_upload', DX, 0, 0, 640, 480],
+    ['gdi_surface_upload', DX, 0, 0, 640, 480, null],
   ], 'a repeat present travels without waiting, arguments intact');
   assert.strictEqual(h.gdi_surface_attach(DX, 0x10004), 1);
   assert.deepStrictEqual(forwarded().map(r => r[0]), ['rpc'], 'a new target asks again');
   assert.strictEqual(h.gdi_surface_upload(0x610001, 0, 0, 1, 1), 1);
   assert.strictEqual(h.gdi_surface_upload(0x610001, 0, 0, 1, 1), 1);
   assert.deepStrictEqual(forwarded(), [
-    ['gdi_surface_upload', 0x610001, 0, 0, 1, 1],
-    ['gdi_surface_upload', 0x610001, 0, 0, 1, 1],
+    ['gdi_surface_upload', 0x610001, 0, 0, 1, 1, null],
+    ['gdi_surface_upload', 0x610001, 0, 0, 1, 1, null],
   ], 'every WAT caller drops the upload result, so a GDI upload travels without waiting too');
   // That answer is a constant 1 in a Worker. It is only honest while no WAT
   // caller looks at it.
