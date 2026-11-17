@@ -30,13 +30,13 @@ async function completeCapture({requestTicket,readTicket,captureHost,transportTi
     ]);
   }catch(error){terminal(error);throw error;}finally{timers.clear(timer);}
 }
-// These are evidence pixels, not size-critical downloads. Avoid trying five
-// row filters and maximum deflate on the observation's single 3000ms budget.
-// The decoder recovers exactly the same RGBA bytes.
+// Fixed filter 0 avoids row-filter search on the single 3000ms budget.
+// Fast lossless deflate bounds compression effort while avoiding stored-RGBA
+// artifact growth. Dimensions and every RGBA byte (including hidden RGB) stay exact.
 function encodeCapturePNG(width,height,rgba) {
   if(!Number.isInteger(width)||!Number.isInteger(height)||width<=0||height<=0||
     width*height>16777216||rgba.length!==width*height*4)throw Error('invalid complete RGBA capture');
   return require('pngjs').PNG.sync.write({width,height,data:Buffer.from(rgba)},
-    {filterType:0,deflateLevel:0});
+    {filterType:0,deflateLevel:1,deflateStrategy:0});
 }
 module.exports={completeCapture,encodeCapturePNG};
