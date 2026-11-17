@@ -87,3 +87,18 @@ patches, module/source hashes and actual command waits are retained in the run.
 Canonical shared-tree build and focused regressions are required before the
 material commit. The original outcome and publication receipts are recorded in
 `result.json`; do not infer them from the fixture results.
+
+## Publication boundary
+
+Material capability commit: `655fd301db04fbc5432961a961a4a1bb52a9079c`.
+The canonical flock build and all focused native suites passed. Strict pull
+returned exit 2 because incoming main would overwrite foreign WIP in
+`lib/d3d-render-worker.js`, `lib/guest-thread-host.js`, the two GL composition
+tests and the callback census. No push followed. Foreign NE/lifecycle changes
+were preserved exactly and excluded from the capability commit and module.
+
+The fresh original pipeline was not started: publication and the current
+published helper qualification are prerequisites. Installation, Play, room and
+native Quit remain unqualified. Next, the respective owners must reconcile
+the incoming main changes; then publish and qualify the immutable current
+runtime before consuming the single authorized original run.
