@@ -259,7 +259,39 @@ async function main(out){
  await require('./test-native-printable-input.cjs').ownerNative(out);
  await consumerDiagnostic(path.join(out,'consumer'));
  await controllerFixtures(out);
+ await adapterShutdown(path.join(out,'adapter-shutdown'));
  fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,sealedManifest:globalThis.__disciples2Manifest}));
+}
+async function adapterShutdown(out){
+ fs.mkdirSync(out,{recursive:true});
+ const fixture=path.join(out,'authored.exe');fs.writeFileSync(fixture,controllerFixture());
+ const adapterSHA=crypto.createHash('sha256').update(fs.readFileSync('tools/caesar3-current-native.py')).digest('hex');
+ for(const [name,sig,status] of [['term','SIGTERM',143],['int','SIGINT',130]]){
+  const dir=path.join(out,name);fs.mkdirSync(dir);
+  const code=String.raw`import runpy,os,sys,pathlib,hashlib,time,uuid
+assert hashlib.sha256(pathlib.Path('tools/caesar3-current-native.py').read_bytes()).hexdigest()==sys.argv[2]
+m=runpy.run_path('tools/caesar3-current-native.py')
+h=m['published_module']('tools/vb5cce-original-runtime.py',os.environ['CAESAR3_PINNED_REVISION'])
+h.install_shutdown_handlers()
+args=['node','test/run.js','--exe='+sys.argv[1],'--no-build','--threads','--real-ticks','--wasm='+os.environ['DELPHI5_MODULE_FD'],'--no-close','--max-seconds=20','--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks']
+m['execute_native'](args,os.environ.copy(),(),0,str(uuid.uuid4()),time.time()+25)`;
+  const c=cp.spawn('python3',['-B','-c',code,fixture,adapterSHA],{env:{...process.env,CAESAR3_RUN:dir}});
+  let stdout='',stderr='';c.stdout.on('data',b=>stdout+=b);c.stderr.on('data',b=>stderr+=b);const done=once(c,'close');
+  try{
+   const due=Date.now()+15000;
+   while(!fs.existsSync(path.join(dir,'native.stdout.log'))||!fs.readFileSync(path.join(dir,'native.stdout.log'),'utf8').includes('[CreateWindow]')){
+    assert(c.exitCode===null&&c.signalCode===null,stdout+stderr);assert(Date.now()<due,'incremental native stdout before cancellation');await pause(10);
+   }
+   c.kill(sig);const [exit,signal]=await done;assert.equal(exit,status,stderr);assert.equal(signal,null);
+   const w=JSON.parse(fs.readFileSync(path.join(dir,'native-wait.json'))),watch=JSON.parse(fs.readFileSync(path.join(dir,'watchdog-wait.json')));
+   assert(w.actualWait&&w.stdoutEOF&&w.stderrEOF&&w.hostCleanup&&w.interrupted&&w.nativeQuit===false);
+   assert.equal(w.exit,0);assert(watch.actualWait&&watch.stdoutEOF&&watch.stderrEOF);assert.equal(watch.exit,0);
+   fs.writeFileSync(path.join(dir,'assertions.json'),JSON.stringify({pass:true,signal:sig,adapterExit:exit,nativeWait:w,watchdogWait:watch,incrementalOutputBeforeSignal:true,originalStarted:false}));
+  }finally{
+   if(c.exitCode===null&&c.signalCode===null){c.kill('SIGTERM');await done;}
+   fs.writeFileSync(path.join(dir,'adapter-wait.json'),JSON.stringify({exit:c.exitCode,signal:c.signalCode,actualWait:true,stdoutEOF:c.stdout.readableEnded,stderrEOF:c.stderr.readableEnded,stdout,stderr}));
+  }
+ }
 }
 async function controllerFixtures(out){
  fs.mkdirSync(out,{recursive:true});
@@ -539,5 +571,5 @@ async function textBoundary(out){
   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
-if(require.main===module)(process.argv[2]==='--hover-fixtures'?hoverFixtures(path.resolve(process.argv[3])):process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+if(require.main===module)(process.argv[2]==='--adapter-shutdown'?adapterShutdown(path.resolve(process.argv[3])):process.argv[2]==='--hover-fixtures'?hoverFixtures(path.resolve(process.argv[3])):process.argv[2]==='--input-readiness-fixture'?inputReadinessFixture(path.resolve(process.argv[3])):process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary,reuseProofUnits};

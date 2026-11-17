@@ -145,22 +145,27 @@ def original(env, source, module):
          watchdogSeconds=WATCHDOG_SECONDS, nativeScene=True, bindingContract='native-reviewed-context-v1',
          inputPolicy=dict(confirmationMs=500, physicalUpMs=1750, observationMs=3000,
                           gameFreshnessSeconds=GAME_FRESHNESS_SECONDS, menuFreshnessSeconds=MENU_FRESHNESS_SECONDS)))
-    w = subprocess.Popen([sys.executable, '-B', __file__, 'watchdog', str(start+WATCHDOG_SECONDS)],
+    execute_native(args, env, (source, module), port, invocation, start+WATCHDOG_SECONDS)
+    assert media_inventory() == pins, 'recursive media paths, sizes or hashes changed'
+    save('media-after.json', dict(unchanged=True, files=len(pins)))
+
+def execute_native(args, env, fds, port, invocation, deadline):
+    """Join the native process, both pipes and watchdog even on outer TERM/INT."""
+    w = subprocess.Popen([sys.executable, '-B', __file__, 'watchdog', str(deadline)],
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
-    p = None; cleanup = False
+    p = None; cleanup = False; info = {}; ends = {}; threads = []
     try:
         while not (RUN/'watchdog-armed.json').exists():
             assert w.poll() is None; time.sleep(.01)
         native_env = dict(env, WINE_PUBLIC_INPUT_TRACE=str(RUN/'public-input.jsonl'))
-        p = subprocess.Popen(args, cwd=ROOT, env=native_env, pass_fds=(source, module),
+        p = subprocess.Popen(args, cwd=ROOT, env=native_env, pass_fds=fds,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
         info = dict(pid=p.pid, startToken=token(p.pid), port=port, invocationToken=invocation,
                     bootId=pathlib.Path('/proc/sys/kernel/random/boot_id').read_text().strip())
         save('native-pid.json', info)
-        ends = {}; threads = []
         def drain(pipe, name):
             with (RUN/('native.'+name+'.log')).open('xb') as f:
-                while b := pipe.read(65536): f.write(b); f.flush()
+                while b := pipe.read1(65536): f.write(b); f.flush()
             ends[name] = True
         for name in ('stdout', 'stderr'):
             t = threading.Thread(target=drain, args=(getattr(p, name), name)); t.start(); threads.append(t)
@@ -180,14 +185,24 @@ def original(env, source, module):
               disposition='normal' if rc==0 and not cleanup else 'cleanup', hostCleanup=cleanup))
     finally:
         if p is not None and p.poll() is None:
-            os.killpg(p.pid, signal.SIGTERM); p.wait()
+            cleanup = True
+            try: os.killpg(p.pid, signal.SIGTERM)
+            except ProcessLookupError: pass
+            try: p.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                os.killpg(p.pid, signal.SIGKILL); p.wait()
+        if p is not None: p.wait() # poll/absence never substitutes for wait
+        for t in threads: t.join()
         if not (RUN/'native-wait.json').exists():
-            save('native-wait.json', dict(actualWait=p is not None, exit=None if p is None else p.returncode, failedStartup=True))
-        a, b = w.communicate(timeout=10)
+            save('native-wait.json', dict(**info, actualWait=p is not None,
+                exit=None if p is None else p.returncode, stdoutEOF=ends.get('stdout',False),
+                stderrEOF=ends.get('stderr',False), atWait=time.time(), atWaitMono=time.monotonic(),
+                disposition='cleanup', hostCleanup=True, nativeQuit=False, interrupted=True))
+        try: a, b = w.communicate(timeout=10)
+        except subprocess.TimeoutExpired:
+            w.terminate(); a,b=w.communicate(timeout=5)
         save('watchdog-wait.json', dict(pid=w.pid, exit=w.returncode, actualWait=True,
                                       stdoutEOF=True, stderrEOF=True, stdout=a.decode(), stderr=b.decode()))
-    assert media_inventory() == pins, 'recursive media paths, sizes or hashes changed'
-    save('media-after.json', dict(unchanged=True, files=len(pins)))
 def public_input_ready(run, snapshot):
     """First unfiltered USER poll of this native focus actor, not a receipt.
 
@@ -355,8 +370,9 @@ def run():
     controller_fixtures = '--controller-fixtures' in sys.argv
     readiness_fixture = '--input-readiness-fixture' in sys.argv
     hover_fixture = '--hover-fixtures' in sys.argv
+    shutdown_fixture = '--adapter-shutdown' in sys.argv
     outer_fixture = '--outer-fixture' in sys.argv
-    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture or hover_fixture
+    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture or hover_fixture or shutdown_fixture
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
@@ -367,6 +383,8 @@ def run():
     # The imported supervisor body comes from Git, never the shared worktree.
     helper = published_module('tools/vb5cce-original-runtime.py', revision)
     helper.ROOT, helper.RUN, helper.HEAD = ROOT, RUN, revision
+    # Importing the helper bypasses its __main__ signal-handler installation.
+    helper.install_shutdown_handlers()
     helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
         'test/run.js', 'lib/cli-guarded-input.js', 'lib/cli-input-owner.js', 'lib/cli-native-printable.js',
         'tools/native-printable-fixture.cjs', 'test/test-native-printable-input.cjs')
@@ -379,6 +397,12 @@ def run():
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
+            if shutdown_fixture:
+                helper.checked('adapter-shutdown',['node','test/test-caesar3-current-native.cjs',
+                    '--adapter-shutdown',str(RUN/'adapter-shutdown')],env,(source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,
+                    gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
             if hover_fixture:
                 helper.checked('hover-fixtures',['node','test/test-caesar3-current-native.cjs',
                     '--hover-fixtures',str(RUN/'hover')],env,(source,module))
