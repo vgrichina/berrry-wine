@@ -88,7 +88,7 @@
     {
       "file": "lib/host-imports.js",
       "name": "host-file",
-      "baseSHA256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
+      "baseSHA256": "c3aad3ad155217dd7b7480825a8f250766c7299564e63fccae1d25295d4081d9",
       "sha256": "ed7bca329d259e1bb73152bb313508042977f731e4f226ff767487db18aba6fb",
       "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches. retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
     },
