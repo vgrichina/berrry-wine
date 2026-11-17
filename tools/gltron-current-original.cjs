@@ -6,7 +6,7 @@ const {gitFiles,compile}=require('./boids-current-runtime.cjs');
 const {installInitializedObserver,fixture}=require('./gltron-current-native-capture.cjs');
 const {connection,GL_OBSERVER}=require('./gltron-browser-controller.cjs');
 const {completeCapture,encodeCapturePNG}=require('./gltron-current-capture.cjs');
-const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner}=require('./gltron-current-native-input.cjs');
+const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner,observeAndPrepareNativeIntent}=require('./gltron-current-native-input.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function run(out,commit,authored=false,backend='webgl',qualifyNative=false){
  assert(['software','webgl'].includes(backend));
@@ -136,20 +136,26 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
       const release=cp.spawn(process.execPath,['tools/gltron-current-native-input.cjs','release',out,cfgPath],{cwd:ROOT,stdio:['pipe','pipe','pipe']});
       let stdout='',stderr='';release.stdout.on('data',b=>stdout+=b);release.stderr.on('data',b=>stderr+=b);
       const joined=new Promise(resolve=>release.once('close',(code,signal)=>resolve({code,signal,actualWait:true,stdoutEOF:release.stdout.readableEnded,stderrEOF:release.stderr.readableEnded,stdout,stderr})));
+      let downSent=false,actionError=null;
       try{
         const until=Date.now()+1000;while(!stdout.includes('\n')){assert(release.exitCode===null&&Date.now()<until,'independent physical UP arm');await sleep(5);}
         const armed=JSON.parse(stdout.split('\n')[0]);save('action-'+n+'-up-armed.json',armed);
-        const ready=await evaluate(`runningApps[0].wine._browserNativeInput.prepare(${JSON.stringify({...intent,owner:binding.owner,reviewed:true})})`);
+        const notBefore=Date.now(),admission=await waitForNativeOwner({
+          deadline:Math.min(deadline-4000,lastImage.completedAt+(intent.mode==='game'?15000:30000),armed.fallback-500),
+          observe:()=>evaluate(`(${observeAndPrepareNativeIntent.toString()})(__nativeBridgeOwner,${JSON.stringify({...intent,owner:binding.owner,reviewed:true})},${notBefore})`),
+          record:v=>append('action-'+n+'-ready-phases.jsonl',v),close:()=>{terminal=true;c?.ws.close();}});
+        const ready=admission.prepared;
         save('action-'+n+'-prepared.json',ready);assert.equal(ready.state,'PREPARED');
         assert(release.exitCode===null&&Date.now()<armed.fallback-500,'independent UP must remain armed through native receipt deadline');
-        const before=Date.now();nativeDownAttempts++;await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
+        const before=Date.now();nativeDownAttempts++;downSent=true;await c.send('Input.dispatchKeyEvent',{type:'rawKeyDown',key:intent.key,code:intent.key,windowsVirtualKeyCode:intent.code},session);
         if(authored&&intent.parentStallMs){assert(intent.parentStallMs>=1800&&intent.parentStallMs<=2500);
           save('action-'+n+'-parent-stall.json',{at:Date.now(),milliseconds:intent.parentStallMs});
           Atomics.wait(new Int32Array(new SharedArrayBuffer(4)),0,0,intent.parentStallMs);}
         let proof;do{proof=await evaluate(`__nativeBridgeOwner._browserNativeInput.status(${JSON.stringify(intent.nonce)})`);if(proof.state==='CONSUMED')break;assert(proof.state==='DELIVERY_PENDING'||proof.state==='PREPARED',JSON.stringify(proof));await sleep(5);}while(Date.now()-before<500);
         save('action-'+n+'-native.json',proof);requireNativeRoute(JSON.parse(fs.readFileSync(out+'/native-route.json')),proof);
         if(!intent.parentStallMs)release.stdin.write(JSON.stringify({at:Date.now()+50})+'\n');
-      }finally{release.stdin.end();const wait=await joined;save('action-'+n+'-physical-wait.json',wait);assert.equal(wait.code,0);}
+      }catch(error){actionError=error;if(!downSent)release.stdin.write(JSON.stringify({cancelNoDown:true})+'\n');throw error;
+      }finally{release.stdin.end();const wait=await joined;save('action-'+n+'-physical-wait.json',wait);if(!actionError)assert.equal(wait.code,0);}
       if(intent.expectQuit){
         const until=Math.min(deadline,Date.now()+3000);let exit;
         do{exit=await evaluate('({running:__nativeBridgeOwner.running,exited:__nativeBridgeOwner._processObject.exited,nativeCode:__nativeBridgeOwner._exitCode})');if(exit.exited&&!exit.running&&Number.isInteger(exit.nativeCode))break;await sleep(10);}while(Date.now()<until);

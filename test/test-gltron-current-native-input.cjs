@@ -38,7 +38,7 @@ function nativeFixture(buffer=new ArrayBuffer(4096),bindImmediately=true){
   call('check_input',()=>guard.observe(scene));const binding=bindImmediately?guard.bind():null;
   const prepare=(nonce='n')=>guard.prepare({owner:binding.owner,nonce,code:37,reviewed:true,
     reviewedAt:time,imageSHA256:'a'.repeat(64),mode:'game'});
-  const down=()=>{renderer.handleKeyDown(37);const event=renderer.inputQueue.shift();
+  const down=(code=37)=>{renderer.handleKeyDown(code);const event=renderer.inputQueue.shift();
     const token=call('check_input',()=>guard.dequeued(event));
     const dv=new DataView(buffer);[10,event.msg,event.wParam,event.lParam].forEach((n,i)=>dv.setUint32(32+4*i,n,true));
     return {event,token};};
@@ -143,6 +143,34 @@ console.log('PASS production Worker/broker metadata and MSG translation, native 
   f.clock(1600);assert.equal(f.guard.snapshot().ready,false);assert(f.guard.snapshot().bound,
     'a later screenshot does not move the already completed bind across the freshness fence');
   assert(!observeAndBindNativeOwner(f.wine).binding,'never rebind an existing owner');
+}
+{
+  const {observeAndPrepareNativeIntent}=require('../tools/gltron-current-native-input.cjs');
+  const f=nativeFixture(new ArrayBuffer(4096),false);f.wine._browserNativeInput=f.guard;
+  const binding=f.guard.bind();
+  const intent={owner:binding.owner,nonce:'fresh-native-poll',code:13,reviewed:true,
+    reviewedAt:1589,imageSHA256:'b'.repeat(64),mode:'menu'};
+  f.clock(1589);
+  const old=f.guard.prepare({...intent,nonce:'old-order'});
+  assert.equal(old.state,'CANCELLED');assert.equal(old.fence.sceneAge,589,
+    'exact original software preparation age, with every other predicate valid');
+  const pending=observeAndPrepareNativeIntent(f.wine,intent,1500);
+  assert.equal(pending.ready,false);assert.equal(pending.prepared,undefined);
+  assert.throws(()=>f.guard.status(intent.nonce),/unknown browser native nonce/,
+    'stale observation must not create a ticket');
+  f.clock(1600);f.call('check_input',()=>f.guard.observe(f.scene));
+  const fresh=observeAndPrepareNativeIntent(f.wine,intent,1500);
+  assert.equal(fresh.prepared.state,'PREPARED');assert(fresh.observedAt>1500);
+  assert.equal(fresh.preparedAt>0,true);assert.equal(f.guard.snapshot().bound,true);
+  const {token}=f.down(13);f.clock(1610);
+  assert.equal(f.call('input_consumed',()=>f.guard.consumed(token,1,32,2,1,[...f.scene,32])),1);
+  assert.equal(f.guard.status(intent.nonce).consumed,true);
+  assert.equal(f.guard.status('old-order').state,'CANCELLED','no replay of original refused nonce');
+  assert.throws(()=>observeAndPrepareNativeIntent(f.wine,intent,1500),/refused/);
+  const idle={...intent,nonce:'no-new-poll'};
+  assert.equal(observeAndPrepareNativeIntent(f.wine,idle,1600).ready,false,
+    'even a fresh earlier poll cannot stand for the required new native observation');
+  console.log('PASS measured 589ms original stale prepare refusal, passive new USER scene and atomic ticket admission without rebind');
 }
 
 (async()=>{

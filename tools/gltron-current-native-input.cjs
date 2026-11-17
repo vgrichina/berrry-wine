@@ -45,6 +45,19 @@ function observeAndBindNativeOwner(wine) {
   if(state.ready&&!state.bound)return {...state,bound:true,binding:guard.bind(),boundAt:Date.now()};
   return state;
 }
+// A reviewed image may remain valid while the last native poll ages out.
+// Wait for a genuinely new owning USER observation; never create an expiring
+// ticket from that stale scene, rebind, or drive a guest poll to refresh it.
+function observeAndPrepareNativeIntent(wine,intent,notBefore) {
+  const guard=wine?._browserNativeInput;
+  if(!guard)throw Error('browser native owner bridge missing');
+  const state=guard.snapshot();
+  if(!state.bound)throw Error('browser native owner is not bound');
+  if(!state.healthy||state.terminal)return {...state,ready:false};
+  if(!state.ready||state.observedAt<=notBefore)return {...state,ready:false};
+  const prepared=guard.prepare(intent);
+  return {...state,prepared,preparedAt:Date.now()};
+}
 async function waitForNativeOwner({observe,deadline,record=()=>{},close=()=>{},
   now=Date.now,wait=ms=>new Promise(r=>setTimeout(r,ms))}) {
   let timer,count=0,closed=false;
@@ -62,7 +75,7 @@ async function waitForNativeOwner({observe,deadline,record=()=>{},close=()=>{},
     }})(),
   ]);}catch(error){throw fail(error);}finally{clearTimeout(timer);}
 }
-module.exports={installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner};
+module.exports={installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner,observeAndPrepareNativeIntent};
 
 // Dedicated physical-release participant. Arm before DOWN, then send only UP
 // on its immutable deadline, even if the parent stops running. Observe the
@@ -78,10 +91,13 @@ async function release(out,file){
     c.event=v=>{if(v.sessionId===session&&v.method==='Runtime.consoleAPICalled'&&v.params.args?.[0]?.value==='GLTRON_NATIVE_PHYSICAL_UP'){
       const value=JSON.parse(v.params.args[1].value);if(value.nonce===cfg.nonce)receipt=value;
     }};
-    const armed=Date.now(),fallback=armed+1750;let due=fallback;
-    process.stdin.on('data',b=>{stdout+=b;const i=stdout.indexOf('\n');if(i>=0){const v=JSON.parse(stdout.slice(0,i));assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
+    const armed=Date.now(),fallback=armed+1750;let due=fallback,cancelNoDown=false;
+    process.stdin.on('data',b=>{stdout+=b;const i=stdout.indexOf('\n');if(i>=0){const v=JSON.parse(stdout.slice(0,i));
+      if(v.cancelNoDown===true){cancelNoDown=true;return;}
+      assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
     process.stdout.write(JSON.stringify({armed:true,at:armed,fallback,pid:process.pid})+'\n');
-    while(Date.now()<due)await new Promise(r=>setTimeout(r,Math.min(5,due-Date.now())));
+    while(!cancelNoDown&&Date.now()<due)await new Promise(r=>setTimeout(r,Math.min(5,due-Date.now())));
+    if(cancelNoDown){fs.writeFileSync(out+'/'+cfg.name+'-up.json',JSON.stringify({armed,fallback,cancelNoDown:true,inputDispatches:0,independent:true})+'\n',{flag:'wx'});return;}
     const fired=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyUp',key:cfg.key,code:cfg.key,windowsVirtualKeyCode:cfg.code},session);
     const ack=Date.now();while(!receipt&&Date.now()<fallback+500)await new Promise(r=>setTimeout(r,5));
     fs.writeFileSync(out+'/'+cfg.name+'-up.json',JSON.stringify({armed,fallback,due,fired,ack,receipt,independent:true})+'\n',{flag:'wx'});
