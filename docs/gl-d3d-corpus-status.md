@@ -30,11 +30,16 @@ Original GLTron gameplay remains assigned for native-input/backend evidence.
 The later original checks in
 `20261117-gltron-continuous-capture-release-arm-gameplay` use published
 `b29ef843a`: continuous software arena capture completes in655 ms and
-independent-UP arms in6–7 ms. Native input subsequently cancels because
-context age at dequeue reaches293 ms software and259 ms WebGL, beyond the
-unchanged250 ms fence. Physical release succeeds; no two-turn, round or native
-Quit result follows. A fresh native workload reproducer targets this remaining
-delay. [Repairs, observations and limits](re-notes/gltron-continuous-capture-release-arm-gameplay-20261117.md).
+independent-UP arms in6–7 ms. Subsequent input cancels with reported context
+ages293 ms software and259 ms WebGL, beyond the unchanged250 ms fence.
+Diagnostic report `60371e9f3` establishes that these token-zero receipts do not
+prove native USER dequeue. Its authored software workload reproduces cancellation
+at255 ms while the guest waits492 ms for rendering, but equivalence to either
+original workload remains unproved. No production fix follows. Physical release
+succeeds; no two-turn, round or native Quit result follows. A fresh original
+diagnostic targets the missing command-mix and phase evidence.
+[Repairs and original limits](re-notes/gltron-continuous-capture-release-arm-gameplay-20261117.md);
+[phase evidence and attribution limits](re-notes/gltron-native-user-context-dequeue-latency-20261117.md).
 
 ## November 12 current original-game progress
 
