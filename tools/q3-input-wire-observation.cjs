@@ -41,30 +41,6 @@ function create({write,now=()=>performance.now(),capacity=64,eventCap=512,schedu
     terminal,flush,status
   };
 }
-function integrate(source) {
-  const {replaceOnce}=require('./q3-native-driver-composition.cjs');
-  source=replaceOnce(source,"const pending=new Map(),workers=new Map(),workerPromises=[];",
-    "const pending=new Map(),workers=new Map(),workerPromises=[];const inputWire=require(root+'/tools/q3-input-wire-observation.cjs').create({write:value=>log('input-wire.jsonl',value)});process.once('exit',()=>inputWire.flush());");
-  source=replaceOnce(source,"terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);",
-    "terminalFailure=Error('Q3 terminal UNKNOWN; no replay: '+reason);inputWire.terminal(terminalFailure);");
-  source=replaceOnce(source,'ws.send(JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})}));',
-    'const inputWirePayload=JSON.stringify({id:n,method,params,...(sessionId?{sessionId}:{})});inputWire.send(meta,()=>ws.send(inputWirePayload));');
-  source=replaceOnce(source,'const v=JSON.parse(msg.data);screenshotCompletion.receive',
-    'const v=JSON.parse(msg.data);inputWire.receive(v,pending.get(v.id));screenshotCompletion.receive');
-  source=replaceOnce(source,"()=>{screenshotCompletion.transport(event);", "()=>{inputWire.transport(event);screenshotCompletion.transport(event);");
-  return source;
-}
-function install() {
-  const Module=require('node:module'),path=require('node:path');
-  const consumer=path.resolve(__dirname,'..',require('./q3-native-driver-composition.cjs').consumerPath);
-  if(path.resolve(process.argv[1]||'')!==consumer||process.env.Q3_NATIVE_COMPOSITION!=='1')throw Error('input wire requires actual composed Q3 consumer');
-  const extension=Module._extensions['.cjs'];
-  Module._extensions['.cjs']=function(module,filename){
-    if(filename!==consumer)return extension(module,filename);
-    const compile=module._compile;
-    module._compile=function(source,name){return compile.call(this,integrate(source),name);};
-    try{return extension(module,filename);}finally{module._compile=compile;}
-  };
-}
-module.exports={create,integrate,install};
-if(process.env.Q3_INPUT_WIRE==='1')install();
+// The Q3 native-composition integrate()/install() hooks were retired with
+// the kernel custody layer; redline-native-trace.cjs uses create() only.
+module.exports={create};
