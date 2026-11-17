@@ -3,7 +3,8 @@
 // The control uses the immutable host snapshot immediately before this guard.
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
 const source='../host.js';
-const context={console,setTimeout,clearTimeout,performance};
+const context={console,setTimeout,clearTimeout,performance,
+ require:require('module').createRequire(require.resolve('../host'))};
 vm.runInNewContext(fs.readFileSync(__dirname+'/'+source,'utf8')+'\n;globalThis.WineAssembly=WineAssembly;',context);
 async function oneStep(pending,yieldReason) {
  const wine=new context.WineAssembly(), calls={slice:0,resolve:0,complete:0,load:0};

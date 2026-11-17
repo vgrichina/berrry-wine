@@ -178,8 +178,86 @@ function makeManager(backend, extraOpts) {
   return tm;
 }
 
+// AoWII's actual audio fault had two slice replies for the same parked frame,
+// followed by two completeWait requests. Exercise the production completion
+// handler with that stack shape while a nested pump races each await boundary.
+async function waitCompletionOwnershipProtocol() {
+  const deferred = () => { let resolve; const promise = new Promise(r => { resolve = r; }); return { promise, resolve }; };
+  let esp = 0x100, eip = 0x13439e3, yieldReason = 1, eax = 0;
+  const stack = new Map([[0x100, 0x13439f5], [0x104, 0xe0003], [0x108, 15], [0x10c, 0]]);
+  const replies = [];
+  const sandbox = { URL, importScripts() {}, location: { href: 'https://example.invalid/guest-worker.js' },
+    performance, setTimeout, clearTimeout, GuestRpc: require('../lib/guest-rpc'),
+    ThreadSendWaits: require('../lib/thread-send-waits'), RenderWorker: require('../lib/render-worker'),
+    postMessage: m => replies.push(m), fixture: { exports: {
+      get_esp: () => esp, guest_read32: a => stack.get(a),
+      get_code_start: () => 0x401000, get_code_end: () => 0xa00000,
+      get_dbg_prev_eip: () => 0x13439e3, get_image_base: () => 0x400000,
+      clear_yield() { yieldReason = 0; }, set_eax(v) { eax = v; },
+      set_esp(v) { esp = v; }, set_eip(v) { eip = v; },
+    } } };
+  sandbox.self = sandbox;
+  const context = vm.createContext(sandbox);
+  vm.runInContext(fs.readFileSync(require.resolve('../lib/guest-worker'), 'utf8'), context);
+  vm.runInContext('instance=fixture;', context);
+  for (const parked of [false, true]) {
+    esp = 0x100; eip = 0x13439e3; yieldReason = 1;
+    const sliceGate = deferred(), completionGate = deferred(), entered = deferred();
+    let slices = 0, completions = 0;
+    const wait = { eip: 0x13439e3, esp: 0x100, yield: 1, waitHandle: 0xe0003, waitTimeout: 15, waitStackBytes: 12 };
+    const backend = makeBackend([]), tm = makeManager(backend);
+    tm.resolveWait = () => ({ result: 0x102, waitStackBytes: 12 });
+    const link = new FakeLink(1, [{}]);
+    link.slice = async () => { slices++; await sliceGate.promise; return parked ? { eip, yield: 0 } : wait; };
+    link.completeWait = async (result, waitStackBytes) => {
+      completions++;
+      await sandbox.onmessage({ data: { t: 'completeWait', seq: completions, result, waitStackBytes } });
+      entered.resolve();
+      await completionGate.promise;
+      return replies.at(-1);
+    };
+    const thread = { tid: 1, state: 'active', link, suspendCount: 0, waitPolls: 0,
+      _firstRunEmitted: true, parkedWait: parked ? wait : null };
+    tm.threads.set(0xe1001, thread);
+    const first = tm._runWorkerThread(0xe1001, thread, 1000, {});
+    if (!parked) {
+      const duplicate = tm._runWorkerThread(0xe1001, thread, 1000, {});
+      await Promise.resolve();
+      assert.equal(slices, 1, 'nested pump must not issue a second slice for the live frame');
+      await duplicate;
+      sliceGate.resolve();
+    }
+    await entered.promise;
+    assert.equal(tm._workerSkipReason(thread, tm._waitNow(), true), 'inflight', 'completion acknowledgement remains owned');
+    const duplicate = tm._runWorkerThread(0xe1001, thread, 1000, {});
+    await Promise.resolve();
+    assert.equal(completions, 1, 'the parked frame must complete exactly once');
+    assert.equal(slices, parked ? 0 : 1, 'no slice may overtake the completion acknowledgement');
+    await duplicate;
+    completionGate.resolve(); sliceGate.resolve(); await first;
+    assert.equal(esp, 0x10c); assert.equal(eip, 0x13439f5);
+    assert.equal(eax, 0x102); assert.equal(yieldReason, 0);
+    assert.equal(thread.inFlight, false, 'completed operation releases admission');
+    thread.parkedWait = wait;
+    tm.resolveWait = () => null;
+    await tm._runWorkerThread(0xe1001, thread, 1000, {});
+    assert.equal(thread.inFlight, false, 'unsatisfied wait releases admission');
+    tm.resolveWait = () => ({ result: 0x102, waitStackBytes: 12 });
+    link.completeWait = async () => { throw Error('completion transport lost'); };
+    await assert.rejects(tm._runWorkerThread(0xe1001, thread, 1000, {}), /completion transport lost/);
+    assert.equal(thread.inFlight, false, 'completion failure releases admission');
+  }
+}
+
 (async () => {
   console.log('ThreadManager worker backend\n');
+  let ownershipTimer;
+  try {
+    await Promise.race([waitCompletionOwnershipProtocol(), new Promise((_, reject) => {
+      ownershipTimer = setTimeout(() => reject(Error('wait ownership regression stalled')), 3000);
+    })]);
+  } finally { clearTimeout(ownershipTimer); }
+  check(true, 'nested pumps cannot duplicate slices or overtake wait completion; all paths release ownership');
   await retrySliceProtocol();
   check(true,'retry clear rides slice, checks live yield, and follows incoming-send guards');
 
