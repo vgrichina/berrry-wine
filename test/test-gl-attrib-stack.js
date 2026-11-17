@@ -35,7 +35,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 
 const TEXTURE_MODE = 0x1702;
 const AMBIENT = 0x1200, DIFFUSE = 0x1201, SHININESS = 0x1601;

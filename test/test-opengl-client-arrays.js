@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 const Stream = require('./helpers/gl-reference-encoder');
-const { CALL_INDEX } = require('../lib/gl-compat');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 const apis = require('../src/api_table.json');
 
 const memory = new ArrayBuffer(64 * 1024);

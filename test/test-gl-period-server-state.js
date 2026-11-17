@@ -1,27 +1,25 @@
 'use strict';
+const {ownedAnswer,ownedWindow}=require('./helpers/gl-owned-host');
 // Independent period GL server state, raster, lighting and immutable Worker
 // contract. This does not exercise or qualify wglCopyContext.
 const fs=require('fs'),path=require('path'),assert=require('assert'),crypto=require('crypto');
 const root=process.cwd(),req=p=>require(path.join(root,p));
-const {CALL_INDEX:O,OpenGLHostBridge}=req('lib/gl-compat'),Stream=req('lib/gl-command-stream');
+const {CALL_INDEX:O}=req('lib/gl-command-stream'),Stream=req('lib/gl-command-stream');
 async function main(){
  const bytes=process.env.GL_PERIOD_MODULE?fs.readFileSync(process.env.GL_PERIOD_MODULE):req('test/compile-src').compileSrcWasm();
  const module=new WebAssembly.Module(bytes);
  const queued=false; // --worker drove the retired GL render Worker
- let memory,e,owner=1,bridge,render,producer,manager,encoder,delay=false;const events=[],captures=[],delayed=[];
+ let memory,e,owner=1,render,producer,manager,encoder,delay=false;const events=[],captures=[],delayed=[];
  const h=await req('test/render-helper').bootRenderHarness({fonts:'none',width:64,height:64,prebuiltModule:module,
   extraHostOverrides:{gpu_gl_call(op,at,used){
    if(op>=0x20000&&op<=0x20006)return encoder?encoder.call(op,at,used):0;
    assert.strictEqual(op,Stream.WAT_STREAM_FLUSH_OPCODE);
    const batch=Stream.memoryBatch(memory,at,used);Stream.replay(batch,op=>{events.push({owner,op});return 0;});
    captures.push({owner,bytes:Array.from(new Uint8Array(memory.buffer,at,used))});
-   if(!render)return bridge.replay(batch,owner);
-   const reply=render.execute({memoryOffset:at,bytes:used,owner,windows:[{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}],softwareFront:e.gl_sw_front()});
-   producer.configure(reply.producerConfig);return reply.value;}}});
+   return ownedAnswer(memory,at,used);}}});
  memory=h.memory;e=h.exports;const source=e,dv=new DataView(memory.buffer);
  source.init_thread(1,0x400000,0,0,0,0,0);source.heap_init(0x800000);
- bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:()=>e,
-  renderer:{windows:{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}},repaint(){}}});
+ 
  const stack=e.guest_to_wasm(e.guest_alloc(256))>>>0,out=e.guest_alloc(256)>>>0,wa=p=>e.guest_to_wasm(p)>>>0;
  function call(name,args=[],floats=[]){assert(Number.isInteger(O[name]),name);dv.setUint32(stack,0,true);
   args.forEach((v,i)=>floats.includes(i)?dv.setFloat32(stack+4+i*4,v,true):dv.setUint32(stack+4+i*4,v>>>0,true));
@@ -29,6 +27,7 @@ async function main(){
  const bind=c=>assert.strictEqual(call('wglMakeCurrent',[c?123:0,c]),1);
  const query=(p,n=1)=>{new Uint32Array(memory.buffer,wa(out),n).fill(0xdeadbeef);call('glGetIntegerv',[p,out]);return Array.from(new Uint32Array(memory.buffer,wa(out),n));};
  try {
+  ownedWindow(e,42,64,64);
   const a=call('wglCreateContext',[0]),b=call('wglCreateContext',[0]);assert(a&&b&&a!==b);bind(a);
   const other=new WebAssembly.Instance(module,{host:h.host}).exports;
   other.init_thread(2,0x400000,0,0,0,0,0);other.heap_init(0x1000000);
@@ -100,8 +99,8 @@ async function main(){
   call('glPolygonMode',[0x404,0x1b01]);call('glPolygonMode',[0x405,0x1b00]);call('glColorMaterial',[0x404,0x1202]);
   assert.strictEqual(source.gl_wat_stream_commands(),0);
   e=other;owner=2;
-  eq('source remains current',bridge.currentByOwner.get(1),a);eq('foreign destination remains unbound',bridge.currentByOwner.get(2),0);
-  eq('published frontend independent polygon modes',bridge.contexts.get(a).frontend.polygonModes,[0x1b01,0x1b00]);
+  
+  
   bind(b);eq('destination defaults independent',[...query(0xb40,2),...selector()],[0x1b02,0x1b02,0x408,0x1602,0]);
   call('glPolygonMode',[0x408,0x1b00]);bind(0);e=source;owner=1;
   eq('foreign changes preserve source',[...query(0xb40,2),...selector()],[0x1b01,0x1b00,0x404,0x1202,0]);
@@ -197,6 +196,6 @@ async function main(){
   const result={kind:'period-polygon-color-material',queued,module:{bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')},checks,cases,leases,captures,worker,copySupported:false};
   if(process.env.GL_PERIOD_RESULT)fs.writeFileSync(process.env.GL_PERIOD_RESULT,JSON.stringify(result,null,2)+'\n');
   console.log('PASS period polygon/color-material',JSON.stringify({...result,captures:captures.length}));
- } finally {encoder?.releaseHeld();encoder?.stop();if(manager)await manager.stop();if(render)render.destroy();else bridge.destroy();}
+ } finally {encoder?.releaseHeld();encoder?.stop();if(manager)await manager.stop();}
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});

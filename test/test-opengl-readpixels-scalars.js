@@ -1,8 +1,9 @@
 'use strict';
+const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
 const {bootRenderHarness}=req('test/render-helper');
-const {OpenGLHostBridge}=req('lib/gl-compat');
+
 const Stream=req('lib/gl-command-stream');
 const table=req('src/api_table.json');
 const extraWat=`
@@ -36,14 +37,12 @@ const extraWat=`
      (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
    (i32.load (global.get $reg_base)))`;
 (async()=>{
- let memory,bridge,encoder=null,manager=null,render=null,producer=null;
+ let memory,encoder=null,manager=null,render=null,producer=null;
  const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();
  const h=await bootRenderHarness({fonts:'none',width:8,height:4,extraWat,
   extraHostOverrides:{gpu_gl_call(op,at,bytes){
    if(op===Stream.WAT_STREAM_FLUSH_OPCODE){
-     if(!render)return bridge.replay(Stream.memoryBatch(memory,at,bytes));
-     const reply=render.execute({memoryOffset:at,bytes,owner:0,windows:Object.values(renderer.windows),softwareFront:e.gl_sw_front()});
-     producer.configure(reply.producerConfig);return reply.value;
+     return ownedAnswer(memory,at,bytes);
    }
    // No queued software executor: real synchronous WAT raster path.
    if(op>=0x20000&&op<=0x20006)return encoder ? encoder.call(op,at,bytes) : 0;
@@ -51,27 +50,10 @@ const extraWat=`
   }}});
  memory=h.memory;const e=h.exports,dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0;
  e.init_thread(1,0x400000,0,0,0,0,0);e.heap_init(0x800000);
- const renderer={windows:{42:{hwnd:42,w:8,h:4,clientRect:{w:8,h:4}}},repaint(){}};
- bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:e,renderer});
+ const renderer=ownedRenderer(()=>e,{42:{hwnd:42,w:8,h:4,clientRect:{w:8,h:4}}});
+ 
  try {
- if(queued){
-   const {Manager}=req('lib/render-worker'),{Encoder}=req('lib/d3d-command-stream');
-   const {Worker}=require('worker_threads');
-   producer=new (req('lib/gl-software-producer').Producer)(()=>e);
-   const consumer=new WebAssembly.Instance(h.module,{host:h.host});
-   consumer.exports.d3dim_worker_init(e.get_image_base()>>>0);
-   assert.strictEqual(consumer.exports.gl_sw_front(),0,'consumer has independent mutable globals');
-   render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});
-   manager=new Manager({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     imageBase:e.get_image_base()>>>0,workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),
-     reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-   await manager.ready;
-   const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-   encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,explicitFence:true,strictReady:true});
-   assert(encoder.ready());
- }
- e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
+  e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
  function str(s){const p=e.guest_alloc(s.length+1)>>>0;new Uint8Array(memory.buffer,wa(p),s.length+1).set(Buffer.from(s+'\0'));return p;}
  const module=e.probe_module(str('opengl32.dll'))>>>0;assert(module);
  const user32=e.probe_module(str('user32.dll'))>>>0;assert(user32);
@@ -205,8 +187,7 @@ const extraWat=`
  const entry=e.gl_sw_entry(),bits=dv.getUint32(entry+20,true),pitch=dv.getUint16(entry+18,true);
  assert.strictEqual(dv.getUint32(bits+pitch,true),0xffff0000,'independent native source control');
  read(0,2,1,1,0x1908,0x1401);assert.deepStrictEqual(Array.from(new Uint8Array(memory.buffer,outWa,4)),[255,0,0,255]);guards([0,1,2,3],'native point');cleanError('native point');
- if(queued){encoder.fence();assert(encoder.snapshot().glQueued>=1,'actual queued native point');}
- console.log(JSON.stringify({stage:'scalar-pack-controls',route:queued?'queued':'direct',checks,negativeControls,passed:true}));
+  console.log(JSON.stringify({stage:'scalar-pack-controls',route:queued?'queued':'direct',checks,negativeControls,passed:true}));
  // GL1.1 3.6.3 makes BITMAP legal only with index formats. This is last so
  // baseline logs retain all scalar/PACK/control results before any error defect.
  for(const format of [0x1903,0x1907,0x1908,0x1909,0x190a,0x1902,0xdead])
@@ -214,6 +195,6 @@ const extraWat=`
  noWrite('index BITMAP still rejected in RGBA context',[0,0,1,1,0x1900,0x1a00,output],0x502);
  assert.strictEqual(call('wglDeleteContext',[context]),1);
  console.log(JSON.stringify({stage:'complete',route:queued?'queued':'direct',checks,negativeControls,passed:true}));
- } finally { if(encoder)encoder.stop();if(manager)await manager.stop();if(render)render.destroy(); }
+ } finally { if(encoder)encoder.stop();if(manager)await manager.stop(); }
 })().catch(e=>{console.error(e);process.exitCode=1;});
 

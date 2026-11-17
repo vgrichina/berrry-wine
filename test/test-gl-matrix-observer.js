@@ -18,7 +18,8 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX, identity, multiply, ortho } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
+const { identity, multiply, ortho } = require('./helpers/gl-matrix-reference');
 
 const MODELVIEW = 0x1700, PROJECTION = 0x1701, TEXTURE = 0x1702;
 const LIGHT0 = 0x4000, POSITION = 0x1203, DIFFUSE = 0x1201;

@@ -1,8 +1,9 @@
 'use strict';
+const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
 const {bootRenderHarness}=req('test/render-helper');
-const {OpenGLHostBridge,CALL_INDEX:GL}=req('lib/gl-compat');
+const {CALL_INDEX:GL}=req('lib/gl-command-stream');
 const Stream=req('lib/gl-command-stream');
 const table=req('src/api_table.json');
 const extraWat=`
@@ -65,7 +66,7 @@ function checkSparseDoubles(){
     (import "fixture" "encode" (func $gl_wat_encode_call (param i32 i32 i32) (result i32)))
     (global $reg_base i32 (i32.const 256)) (global $image_base i32 (i32.const 4194304))
     (global $GUEST_BASE i32 (i32.const 4096)) (global $NULL_SENTINEL i32 (i32.const 240))
-    (global $fault_sync_epoch (mut i32) (i32.const 0))
+    (global $fault_sync_epoch (mut i32) (i32.const 0)) (global $eip_redirected (mut i32) (i32.const 0))
     (defmacro (g2w-fast $ga) (call $g2w $ga)) ${common} ${body}
     (func (export "invoke") (param $p i32)
      (call $handle_${name} (local.get $p) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))`;
@@ -93,7 +94,7 @@ function checkSparseDoubles(){
 if(!process.env.GL_DOUBLE_MATRIX_BASELINE)checkSparseDoubles();
 
 (async()=>{
- let memory,bridge,encoder=null,manager=null,render=null,producer=null;
+ let memory,encoder=null,manager=null,render=null,producer=null;
  const queued=(()=>{if(process.argv.some(a=>a==='--worker'||a==='--worker-fallback'))throw new Error('the --worker arm replayed through lib/gl-render-worker.js, retired in gl-retire S3 (WAT owns WGL)');return false;})();
  const mutation=process.env.GL_DOUBLE_MATRIX_MUTATION;
  const baseline=process.env.GL_DOUBLE_MATRIX_BASELINE;
@@ -123,9 +124,7 @@ if(!process.env.GL_DOUBLE_MATRIX_BASELINE)checkSparseDoubles();
  const h=await bootRenderHarness({...(prebuiltModule?{prebuiltModule}:{extraWat}),fonts:'none',width:8,height:8,
   extraHostOverrides:{gpu_gl_call(op,at,bytes){
    if(op===Stream.WAT_STREAM_FLUSH_OPCODE){
-     if(!render)return bridge.replay(Stream.memoryBatch(memory,at,bytes));
-     const reply=render.execute({memoryOffset:at,bytes,owner:0,windows:Object.values(renderer.windows),softwareFront:e.gl_sw_front()});
-     producer.configure(reply.producerConfig);return reply.value;
+     return ownedAnswer(memory,at,bytes);
    }
    // No queued software executor: real synchronous WAT raster path.
    if(op>=0x20000&&op<=0x20006)return encoder ? encoder.call(op,at,bytes) : 0;
@@ -133,27 +132,10 @@ if(!process.env.GL_DOUBLE_MATRIX_BASELINE)checkSparseDoubles();
   }}});
  memory=h.memory;const e=h.exports,dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0;
  e.init_thread(1,0x400000,0,0,0,0,0);e.heap_init(0x800000);
- const renderer={windows:{42:{hwnd:42,w:8,h:8,clientRect:{w:8,h:8}}},repaint(){}};
- bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:e,renderer});
+ const renderer=ownedRenderer(()=>e,{42:{hwnd:42,w:8,h:8,clientRect:{w:8,h:8}}});
+ 
  try {
- if(queued){
-   const {Manager}=req('lib/render-worker'),{Encoder}=req('lib/d3d-command-stream');
-   const {Worker}=require('worker_threads');
-   producer=new (req('lib/gl-software-producer').Producer)(()=>e);
-   const consumer=new WebAssembly.Instance(h.module,{host:h.host});
-   consumer.exports.d3dim_worker_init(e.get_image_base()>>>0);
-   assert.strictEqual(consumer.exports.gl_sw_front(),0,'consumer has independent mutable globals');
-   render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});
-   manager=new Manager({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     imageBase:e.get_image_base()>>>0,workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),
-     reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-   await manager.ready;
-   const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-   encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,
-     getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,explicitFence:true,strictReady:true});
-   assert(encoder.ready());
- }
- e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
+  e.probe_init();const regs=e.probe_regs(),stack=e.guest_alloc(256)>>>0,stackWa=wa(stack);
  function str(s){const p=e.guest_alloc(s.length+1)>>>0;new Uint8Array(memory.buffer,wa(p),s.length+1).set(Buffer.from(s+'\0'));return p;}
  const module=e.probe_module(str('opengl32.dll'))>>>0;assert(module);
  const user32=e.probe_module(str('user32.dll'))>>>0;assert(user32);
@@ -202,19 +184,15 @@ if(!process.env.GL_DOUBLE_MATRIX_BASELINE)checkSparseDoubles();
  call('glActiveTextureARB',[0x84c0]);call('glMatrixMode',[0x1700]);
  const special=[-0,Math.PI,1+2**-24,1+3*2**-24,2**-149,2**-150,1e-300,1e300,-Infinity,NaN,-.25,.5,7,8,9,1];
  load(special);matrix(special.map(Math.fround),'f64 conversion tie/subnormal/signed zero/extremes');
- put(Array(16).fill(99));const snapshots=[];
- Stream.replay(Stream.memoryBatch(memory,e.gl_wat_stream_base(),e.gl_wat_stream_used()),(op,aux,c)=>{
-  if(op===GL.glLoadMatrixf)snapshots.push(Array.from(new Float32Array(c.buffer,c.pointerOffset,16)));return 0;
- });assert.deepStrictEqual(snapshots.at(-1),special.map(Math.fround),'stream owns converted matrix after source mutation');checks++;
+ put(Array(16).fill(99));
+ matrix(special.map(Math.fround),'WAT owns converted matrix after source mutation');
 
- // Inspect converted scalar payloads too: multiplication may canonicalize -0.
- call('glLoadIdentity');e.gl_wat_stream_flush();
+ // Converted scalar payloads too: multiplication may canonicalize -0. (WAT
+ // owns WGL, so the records are executed in place, never left on a stream to
+ // inspect: the converted values are read off the resulting matrix.)
+ call('glLoadIdentity');
  translate([-0,1+2**-24,2**-149]);scale([Math.PI,1+3*2**-24,2**-150]);
- const converted=[];
- Stream.replay(Stream.memoryBatch(memory,e.gl_wat_stream_base(),e.gl_wat_stream_used()),(op,aux,c)=>{
-  if(op===GL.glTranslatef||op===GL.glScalef)converted.push([op,...[4,8,12].map(n=>new DataView(c.buffer).getFloat32(c.stackOffset+n,true))]);return 0;
- });
- assert.deepStrictEqual(converted,[[GL.glTranslatef,-0,1,2**-149],[GL.glScalef,Math.fround(Math.PI),1+2**-22,0]],'scalar converted stream values');checks++;
+ matrix([Math.fround(Math.PI),0,0,0, 0,1+2**-22,0,0, 0,0,0,0, 0,1,2**-149,1],'scalar converted values (-0 + 0 translation is +0)');
  // Lists capture pointed values and scalar arguments, but use mode at replay.
  const lists=[];
  for(const mode of [0x1300,0x1301]){
@@ -291,5 +269,5 @@ if(!process.env.GL_DOUBLE_MATRIX_BASELINE)checkSparseDoubles();
  const result={passed:true,route:queued?'queued':'direct',checks,negativeControls:3,mutation:mutation||null};
  if(process.env.GL_DOUBLE_MATRIX_EVIDENCE)fs.writeFileSync(process.env.GL_DOUBLE_MATRIX_EVIDENCE,JSON.stringify({...result,matrixEvidence,pixelEvidence},null,2));
  console.log(JSON.stringify(result));
- }finally{if(encoder)encoder.stop();if(manager)await manager.stop();if(render)render.destroy();}
+ }finally{if(encoder)encoder.stop();if(manager)await manager.stop();}
 })().catch(e=>{console.error(e);process.exitCode=1;});

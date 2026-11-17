@@ -123,7 +123,8 @@ batch limit, before the production reference switch was removed:
 These counts include startup work. They establish fewer WASM-to-JavaScript
 crossings, not an FPS improvement or full gameplay acceptance.
 
-To reproduce those historical A/B results, check out `8fda9913`, preload
+To reproduce those historical A/B results, check out `8fda9913` (the preload
+and `lib/gl-compat.js` are deleted on main), preload
 `tools/gl-stats-preload.js` in `test/run.js`, and use
 `--headless-gl --gl-encoder=js` and `--gl-encoder=wat` with the same pinned
 `--no-build --wasm=PATH`, and compare the whole-run counters. Quake II uses

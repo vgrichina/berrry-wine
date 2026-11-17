@@ -31,7 +31,6 @@
     "test/test-lut-run-generalized.js": 1,
     "test/test-lut-span.js": 1,
     "test/test-quake2-gl-switch-web.js": 1,
-    "test/test-quake2-gl-web.js": 1,
     "test/test-renderer-mouse-drag-mask.js": 1,
     "test/test-system-parameters-info-nonclient.js": 1,
     "test/test-win16-civ2-apis.js": 1,

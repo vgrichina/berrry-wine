@@ -2,7 +2,7 @@
 'use strict';
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX: O } = require('../lib/gl-compat');
+const { CALL_INDEX: O } = require('../lib/gl-command-stream');
 
 (async () => {
   const { exports: e, memory } = await bootRenderHarness({fonts:'none', extraHostOverrides:{gpu_gl_call:op=>op>=0x20000?0:1}});

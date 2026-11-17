@@ -3,8 +3,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const GL = require('../lib/gl-compat');
-const { CALL_INDEX: O } = GL;
+const { CALL_INDEX: O } = require('../lib/gl-command-stream');
 const Stream = require('../lib/gl-command-stream');
 
 (async () => {
@@ -256,23 +255,6 @@ const Stream = require('../lib/gl-command-stream');
   assert(red > 0, 'native raster draws the point with its earlier red material');
   assert.strictEqual(green, 0, 'final green material is not applied to an earlier vertex');
   e.gl_sw_set_enabled(0);
-  // The JS replay bypass is scoped to this draw and survives a draw exception.
-  const events = [], f = {
-    enabled: new Set([0x0B50]),
-    flushPendingDraw() { events.push('flush'); },
-    setEnabled(cap, on) { if(on) this.enabled.add(cap); else this.enabled.delete(cap); events.push(on); },
-    enqueuePacked(mode) { assert.strictEqual(mode, 4); assert(!this.enabled.has(0x0B50)); events.push('draw'); },
-  };
-  const fakeBridge = {_current: () => ({frontend: f}), _capture: {
-    buffer: new ArrayBuffer(76), pointerOffset: 4, pointerLength: 0,
-  }};
-  GL.OpenGLHostBridge.prototype._call.call(fakeBridge, Stream.PACKED_DRAW_OPCODE, 0, 0x20004);
-  assert(f.enabled.has(0x0B50));
-  assert.deepStrictEqual(events, ['flush', false, 'draw', 'flush', true]);
-  f.enqueuePacked = () => {throw new Error('draw failure');};
-  assert.throws(() => GL.OpenGLHostBridge.prototype._call.call(fakeBridge,
-    Stream.PACKED_DRAW_OPCODE, 0, 0x20004), /draw failure/);
-  assert(f.enabled.has(0x0B50), 'replay restores lighting after failure');
   call('glDisable', [0x0B50]);
   call('glColor4f', [.25,.5,.75,.5], true);
   call('glBegin', [0]); material([1,0,0,1]); vertex(0,0); call('glEnd');

@@ -123,34 +123,6 @@ function changedPixels(before, after) {
     await page.evaluate(() => {
       window.__q2ColdStop = null;
       window.__q2GpuCalls = [];
-      const bridge = OpenGLCompat && OpenGLCompat.OpenGLHostBridge;
-      const originalGpuCall = bridge && bridge.prototype.call;
-      if (originalGpuCall) {
-        bridge.prototype.call = function(opcode, stack, aux) {
-          const ex = this._exports();
-          const esp = ex && ex.get_esp ? ex.get_esp() >>> 0 : 0;
-          const args = [];
-          if (ex && ex.guest_read32 && esp) {
-            for (let i = 0; i < 12; i++) {
-              args.push(ex.guest_read32((esp + 4 + i * 4) >>> 0) >>> 0);
-            }
-          }
-          const event = { name: OpenGLCompat.CALLS[opcode | 0] || `opcode${opcode}`,
-            opcode: opcode | 0, eip: ex && ex.get_eip ? ex.get_eip() >>> 0 : 0,
-            esp, returnAddress: ex && ex.guest_read32 && esp
-              ? ex.guest_read32(esp) >>> 0 : 0,
-            stack: stack >>> 0, aux: aux >>> 0, args };
-          let result;
-          try { result = originalGpuCall.apply(this, arguments); }
-          catch (error) { event.error = error && (error.stack || String(error)); throw error; }
-          finally {
-            event.result = result >>> 0;
-            window.__q2GpuCalls.push(event);
-            if (window.__q2GpuCalls.length > 512) window.__q2GpuCalls.shift();
-          }
-          return result;
-        };
-      }
       const originalStop = WineAssembly.prototype.stop;
       WineAssembly.prototype.stop = function() {
         const ex = this.instance && this.instance.exports;

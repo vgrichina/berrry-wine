@@ -32,7 +32,7 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { CALL_INDEX } = require('../lib/gl-compat.js');
+const { CALL_INDEX } = require('../lib/gl-command-stream');
 
 const MODELVIEW = 0x1700;
 const GL_LIGHT0 = 0x4000;

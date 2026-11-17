@@ -353,7 +353,8 @@ dispatch/hash files regenerated, and new WAT fragments included in
 Since GPU stream v2 ([gpu-stream-v2.md](gpu-stream-v2.md#glide-lowering))
 all Glide lowering is in `src/09a8h-glide.wat`, which writes byte records
 that `lib/gpu-stream-webgl.js` and `lib/gpu-stream-software.js` execute;
-`lib/glide-host.js` only drains the ring and presents. The two old JS
+`lib/gpu-stream-host.js` (Bridge, `api: 'glide'`) only drains the ring and
+presents; the `lib/glide-host.js` shim that named it is deleted (gl-retire S4). The two old JS
 backends are deleted.
 
 ## Semantic differences to implement explicitly

@@ -1,7 +1,8 @@
 'use strict';
+const {ownedAnswer,ownedRenderer}=require('./helpers/gl-owned-host');
 const assert=require('assert'),fs=require('fs'),path=require('path');
 const root=process.env.WINE_ROOT||path.resolve(__dirname,'..'),req=p=>require(path.join(root,p));
-const {bootRenderHarness}=req('test/render-helper'),{CALL_INDEX:O}=req('lib/gl-compat');
+const {bootRenderHarness}=req('test/render-helper'),{CALL_INDEX:O}=req('lib/gl-command-stream');
 const Stream=req('lib/gl-command-stream');
 const extraWat=`
  (func (export "contract_last_error") (result i32) (global.get $last_error))
@@ -52,27 +53,15 @@ async function run(){
     record.set(new Uint8Array(c.buffer,c.pointerOffset,c.pointerLength),32);
     captures.push({vertices,record:Array.from(record)});
    }return 0;});
-   if(!render)return bridge.replay(Stream.memoryBatch(memory,at,bytes),owner);
-   const reply=render.execute({memoryOffset:at,bytes,owner,windows:Object.values(renderer.windows),softwareFront:e.gl_sw_front()});producer.configure(reply.producerConfig);return reply.value;
+   return ownedAnswer(memory,at,bytes);
   }
   return encoder?encoder.call(op,at,bytes):0;
  }}});
  memory=h.memory;let e=h.exports;const mainExports=e,dv=new DataView(memory.buffer),wa=p=>e.guest_to_wasm(p)>>>0;
  e.init_thread(1,0x400000,0,0,0,0,0);e.heap_init(0x800000);
- const renderer={windows:{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}},repaint(){}};
- const GL=req('lib/gl-compat');bridge=new GL.OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:()=>e,renderer});
- if(queued){const {Worker}=require('worker_threads'),{Manager}=req('lib/render-worker'),{Encoder}=req('lib/d3d-command-stream');
-  producer=new (req('lib/gl-software-producer').Producer)(()=>e);
-  const consumer=new WebAssembly.Instance(h.module,{host:h.host});consumer.exports.d3dim_worker_init(e.get_image_base()>>>0);
-  const Base=GL.OpenGLHostBridge;GL.OpenGLHostBridge=class extends Base {constructor(o){super(o);bridge=this;}};
-  try{render=req('lib/gl-render-worker').create({instance:consumer,memory,backend:'software',sendFrame(){}});}finally{GL.OpenGLHostBridge=Base;}
-  manager=new Manager({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,imageBase:e.get_image_base()>>>0,workerFactory:()=>new Worker(path.join(root,'lib/d3d-render-worker.js')),reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-  await manager.ready;const port=manager.createEndpoint({api:'legacy',backend:'software'});await port.ready;
-  // Use the production encoder's supported capacity option and require
-  // every queued record to render without falling back to the direct path.
-  encoder=new Encoder({module:h.module,memory,sigs:req('lib/host-import-sigs.generated.json').sigs,getImageBase:()=>e.get_image_base()>>>0,guestToWasm:wa,workerFactory:()=>port,capacity:0x400000,explicitFence:true,strictReady:true});assert(encoder.ready());
- }
- try {
+ const renderer=ownedRenderer(()=>e,{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}});
+ 
+  try {
  e.contract_init();const regs=e.contract_regs(),stackGuest=e.guest_alloc(256)>>>0,stack=wa(stackGuest),input=e.guest_alloc(1024)>>>0,output=e.guest_alloc(1024)>>>0;
  function str(s){const p=e.guest_alloc(s.length+1)>>>0;new Uint8Array(memory.buffer,wa(p),s.length+1).set(Buffer.from(s+'\0'));return p;}
  const module=e.contract_module(str('opengl32.dll'));assert(module);const resolved=new Map(),table=req('src/api_table.json');
@@ -147,8 +136,6 @@ async function run(){
    observations.push({label,api,value});
   }
   call('glFinish');if(encoder)encoder.fence();
-  const actual=bridge._current().frontend.getTexParameter(PR,target)[0];
-  assert.strictEqual(actual,want,label+' actual frontend priority');
   events.push({owner,priority:{target,value:want,label}});checkError(0,label+' error');
  }
  function prioritize(names,values,{np=input+1,vp=input+513}={}){
@@ -243,7 +230,7 @@ async function run(){
  const result={passed:true,queued,cases,events,observations,queue};
  if(process.env.GL_COLOR_PRIORITY_OUT)fs.writeFileSync(process.env.GL_COLOR_PRIORITY_OUT,JSON.stringify(result));
  console.log('PASS color priority',JSON.stringify({queued,cases:cases.length,queries:observations.length,queue}));return result;
- } finally {encoder?.stop();if(manager)await manager.stop();if(render)render.destroy();else if(bridge)bridge.destroy();}
+ } finally {encoder?.stop();if(manager)await manager.stop();}
 }
 if(require.main===module)run().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={run};

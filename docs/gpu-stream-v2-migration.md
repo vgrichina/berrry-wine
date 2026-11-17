@@ -495,8 +495,8 @@ The v2 lowering reuses the 09a8g pipeline:
   - **Status (G3a/G3a-2/G3b/G3c).** `src/09a8gt-gl-gps.wat` lowers the
     09a8g pipeline onto ring api 3. The browser's default GL renderer is
     `software` with gps on, on the WebGL executor (the page GPU select
-    "Software" picks the software executor; `?gl-gps=off|software|webgl|null`
-    overrides it). In Threads mode the guest instance's producer is turned on
+    "Software" picks the software executor; `?gl-gps=software|webgl|null`
+    overrides it; `off` was removed in S4). In Threads mode the guest instance's producer is turned on
     through word 4 of the software-GL producer mailbox
     (`lib/gl-software-producer.js`, written by `lib/gl-render-host.js` from
     the host's `glGps`), its kicks reach the render Worker through
@@ -550,13 +550,24 @@ The v2 lowering reuses the 09a8g pipeline:
     the 0x10008 mode query; any other GL batch reaching a host throws. Still
     in the tree, and why: `lib/gl-command-stream.js` is the encoder's record
     ABI (ARG_WORDS/BARRIERS, generated into `09a8d-gl-abi.generated.wat` and
-    checked by the build gates) and the Worker's query transport;
-    `lib/gl-compat.js` is no longer loaded by any page or host, but it holds
-    the `CALLS` opcode table the GL tools and gates read and the
-    `OpenGLHostBridge` oracle about a hundred GL tests (including
-    `test-gl-wgl-owned`) replay the stream into. Retiring it means moving
-    those tests onto the owned harness (`test/helpers/gl-gps-context.js`
-    with `owned: true`) and the table into the stream ABI file.
+    checked by the build gates) and the Worker's query transport.
+  - **Status (gl-retire S4).** `lib/gl-compat.js` and `lib/glide-host.js`
+    are deleted. The `CALLS`/`CALL_INDEX` opcode table moved into
+    `lib/gl-command-stream.js` (one data table, checked name-for-name
+    against `tools/gen_dispatch.js` gpuApis by
+    `tools/check-wat-js-constants.js`). The GL tests that replayed the
+    stream into the `OpenGLHostBridge` oracle now run WAT-owned through
+    `test/helpers/gl-owned-host.js` (answers the 0x10008 query, throws on
+    any other batch, registers WAT windows) or `gl-gps-context.js`, and
+    assert on WAT state, readbacks and pixels; tests that only exercised
+    the JS frontend (FixedFunctionGL, its WebGL backend, the bridge's
+    bookkeeping) are deleted, and `test-gl-wgl-owned` compares against a
+    fixture recorded from the oracle before deletion
+    (`test/fixtures/gl-wgl-owned-oracle.json`). Glide's bridge is
+    `GpuStreamHost.Bridge` with `api: 'glide'`. `--gl-gps=off` and
+    `?gl-gps=off` are gone: the only GL choice left is the executor
+    (webgl, software, null). Readback happens only for glReadPixels and
+    the other guest pixel reads WAT answers in place.
 - **G4. Optional: GPU transform and lighting through vertex-shader IR.**
 
 **Readbacks:**
@@ -573,7 +584,7 @@ The v2 lowering reuses the 09a8g pipeline:
 **Risks:**
 
 - The glGet and validation surface is large.
-- 09a8g's coverage may not match gl-compat (texgen is sphere-map only).
+- 09a8g's coverage may not match the retired JS frontend (texgen is sphere-map only).
   `test-cli-gl-software-worker-parity` is the gate.
 - CPU transform and lighting cost on Quake III.
 - Accumulation must stay Float32.

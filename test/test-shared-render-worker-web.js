@@ -25,7 +25,7 @@ const {startStaticServer,closeServer}=require('./static-server');
     page.on('console',message=>{if(message.type()==='error')console.error('browser console:',message.text());});
     await page.goto(`http://127.0.0.1:${server.address().port}/shared-render-test`);
     for(const file of ['region-map.generated','render-worker','d3d-command-stream','gl-command-stream','gpu-backend','mem-utils',
-      'gpu-stream.generated','gpu-stream','gpu-stream-doorbell','gpu-stream-host','glide-host'])
+      'gpu-stream.generated','gpu-stream','gpu-stream-doorbell','gpu-stream-host'])
       await page.addScriptTag({url:`/lib/${file}.js`});
     // test/gpu-stream-fixture.js (CommonJS) writes the ring the WAT would.
     await page.addScriptTag({content:`(function(){var module={exports:{}};var require=function(){return globalThis.GpuStream;};\n${
@@ -61,7 +61,7 @@ const {startStaticServer,closeServer}=require('./static-server');
         const kicks=[],presented=[];
         let readbacks=0;
         const renderer={windows:{7:{}},scheduleRepaint(){}};
-        const bridge=new GlideHost.Bridge({backend,getMemory:()=>memory,getExports:()=>e,renderer,
+        const bridge=new GpuStreamHost.Bridge({api:'glide',backend,getMemory:()=>memory,getExports:()=>e,renderer,
           createRenderEndpoint(options){
             const port=manager.createEndpoint(options),request=port.request.bind(port);
             port.request=async message=>{kicks.push(message);return request(message);};

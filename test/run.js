@@ -214,13 +214,13 @@ if (D3DIM_RENDERER !== null && !['webgl', 'software', 'null'].includes(D3DIM_REN
 // swaps into a ring an executor drains. On by default: the WebGL executor
 // with --headless-gl, the software executor (lib/gpu-stream-software.js)
 // without one. --gl-gps (bare) forces the software executor,
-// --gl-gps=webgl|software|null picks one, --gl-gps=off keeps software GL
-// drawing the DIB.
+// --gl-gps=webgl|software|null picks one. There is no switch back to the
+// DIB path: executor selection is the only choice.
 const GL_GPS_ARG = getArg('gl-gps', null);
-if (GL_GPS_ARG !== null && !['off', 'software', 'webgl', 'null'].includes(GL_GPS_ARG))
-  throw new Error('--gl-gps must be off, software, webgl or null');
-const GL_GPS = GL_GPS_ARG !== 'off';
-const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
+if (GL_GPS_ARG !== null && !['software', 'webgl', 'null'].includes(GL_GPS_ARG))
+  throw new Error('--gl-gps must be software, webgl or null');
+const GL_GPS = true;
+const GL_GPS_BACKEND = GL_GPS_ARG !== null ? GL_GPS_ARG
   : hasFlag('gl-gps') || !hasFlag('headless-gl') ? 'software' : 'webgl';
 // --d3d9-gps=software|webgl|null|none: D3D9 / D3D8 run only on GPU stream v2
 // (src/09akg-d3d9-gps.wat, ring api 4); this names its executor. Default:
@@ -12985,7 +12985,7 @@ if (VERBOSE) {
     // WAT's own readings: the GL mirror's untrusted latch and the software
     // rasterizer's counters. (The JS per-entry-point histogram went with the
     // JS GL transport; --host-census / --trace-api count calls.)
-    const GLCalls = require('../lib/gl-compat').CALLS;
+    const GLCalls = require('../lib/gl-command-stream').CALLS;
     const latched = instance.exports.gl_mtx_untrusted
       ? instance.exports.gl_mtx_untrusted() | 0 : -1;
     const latchedName = latched > 0 ? (GLCalls[latched] || `op${latched}`) : '';

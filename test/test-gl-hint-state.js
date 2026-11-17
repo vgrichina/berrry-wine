@@ -1,27 +1,25 @@
 'use strict';
+const {ownedAnswer,ownedWindow}=require('./helpers/gl-owned-host');
 // Independent GL1.1 hint state, public queries, lists, masked attributes,
 // cross-producer publication and immutable real Worker draws. Copy stays unavailable.
 const fs=require('fs'),path=require('path'),assert=require('assert'),crypto=require('crypto');
 const root=process.cwd(),req=p=>require(path.join(root,p));
-const {CALL_INDEX:O,OpenGLHostBridge}=req('lib/gl-compat'),Stream=req('lib/gl-command-stream');
+const {CALL_INDEX:O}=req('lib/gl-command-stream'),Stream=req('lib/gl-command-stream');
 async function main(){
  const bytes=process.env.GL_HINT_MODULE?fs.readFileSync(process.env.GL_HINT_MODULE):req('test/compile-src').compileSrcWasm();
  const module=new WebAssembly.Module(bytes);
  const queued=false; // --worker drove the retired GL render Worker
- let memory,e,owner=1,bridge,render,producer,manager,encoder,delay=false;const events=[],captures=[],delayed=[];
+ let memory,e,owner=1,render,producer,manager,encoder,delay=false;const events=[],captures=[],delayed=[];
  const h=await req('test/render-helper').bootRenderHarness({fonts:'none',width:64,height:64,prebuiltModule:module,
   extraHostOverrides:{gpu_gl_call(op,at,used){
    if(op>=0x20000&&op<=0x20006)return encoder?encoder.call(op,at,used):0;
    assert.strictEqual(op,Stream.WAT_STREAM_FLUSH_OPCODE);
    const batch=Stream.memoryBatch(memory,at,used);Stream.replay(batch,op=>{events.push({owner,op});return 0;});
    captures.push({owner,bytes:Array.from(new Uint8Array(memory.buffer,at,used))});
-   if(!render)return bridge.replay(batch,owner);
-   const reply=render.execute({memoryOffset:at,bytes:used,owner,windows:[{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}],softwareFront:e.gl_sw_front()});
-   producer.configure(reply.producerConfig);return reply.value;}}});
+   return ownedAnswer(memory,at,used);}}});
  memory=h.memory;e=h.exports;const source=e,dv=new DataView(memory.buffer);
  source.init_thread(1,0x400000,0,0,0,0,0);source.heap_init(0x800000);
- bridge=new OpenGLHostBridge({backend:'software',getMemory:()=>memory.buffer,exports:()=>e,
-  renderer:{windows:{42:{hwnd:42,w:64,h:64,clientRect:{w:64,h:64}}},repaint(){}}});
+ 
  const stack=e.guest_to_wasm(e.guest_alloc(256))>>>0,out=e.guest_alloc(256)>>>0,wa=p=>e.guest_to_wasm(p)>>>0;
  function call(name,args=[],floats=[]){assert(Number.isInteger(O[name]),name);dv.setUint32(stack,0,true);
   args.forEach((v,i)=>floats.includes(i)?dv.setFloat32(stack+4+i*4,v,true):dv.setUint32(stack+4+i*4,v>>>0,true));
@@ -29,6 +27,7 @@ async function main(){
  const bind=c=>assert.strictEqual(call('wglMakeCurrent',[c?123:0,c]),1);
  const query=(p,n=1)=>{new Uint32Array(memory.buffer,wa(out),n).fill(0xdeadbeef);call('glGetIntegerv',[p,out]);return Array.from(new Uint32Array(memory.buffer,wa(out),n));};
  try {
+  ownedWindow(e,42,64,64);
   const a=call('wglCreateContext',[0]),b=call('wglCreateContext',[0]);assert(a&&b&&a!==b);bind(a);
   const other=new WebAssembly.Instance(module,{host:h.host}).exports;
   other.init_thread(2,0x400000,0,0,0,0,0);other.heap_init(0x1000000);
@@ -71,8 +70,8 @@ async function main(){
   call('glPushClientAttrib',[0xffffffff]);setHints(first);call('glPopClientAttrib');eq('client attributes do not restore server hints',hints(),first);
   // Foreign observation occurs before a source query, flush, finish or rebind.
   setHints(first);assert.strictEqual(source.gl_wat_stream_commands(),0);
-  e=other;owner=2;eq('source remains current to producer1',bridge.currentByOwner.get(1),a);eq('producer2 stays unbound',bridge.currentByOwner.get(2),0);
-  eq('completed frontend hint values visible abroad',Array.from(bridge.contexts.get(a).frontend.hints),first);
+  e=other;owner=2;
+  
   const {REGIONS}=req('lib/region-map.generated');let context=0;
   for(let p=dv.getUint32(REGIONS.GL_MTX_BLOCKS.base+4,true);p;p=dv.getUint32(p,true))if(dv.getUint32(p+4,true)===a){context=p;break;}
   assert(context);eq('shared native completed hint values visible abroad',Array.from(new Uint32Array(memory.buffer,context+1008,5)),first);
@@ -102,6 +101,6 @@ async function main(){
   const result={kind:'hint-state-prerequisite',queued,module:{bytes:bytes.length,sha256:crypto.createHash('sha256').update(bytes).digest('hex')},checks,checkpoints,leases,captures,worker,copySupported:false};
   if(process.env.GL_HINT_RESULT)fs.writeFileSync(process.env.GL_HINT_RESULT,JSON.stringify(result,null,2)+'\n');
   console.log('PASS hint state',JSON.stringify({...result,captures:captures.length}));
- } finally {encoder?.releaseHeld();encoder?.stop();if(manager)await manager.stop();if(render)render.destroy();else bridge.destroy();}
+ } finally {encoder?.releaseHeld();encoder?.stop();if(manager)await manager.stop();}
 }
 main().catch(error=>{console.error(error);process.exitCode=1;});
