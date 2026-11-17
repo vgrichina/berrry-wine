@@ -6,6 +6,8 @@ TASK=pathlib.Path(os.environ.get('HL2_TASK_RUN',ROOT/'scratch/runs/20261117-half
 PRIOR=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-progress/working-final5'
 BASE='70e85792eefac2489f655a415490f9e0a5c9297d'
 COMPONENT='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692'
+DIAGNOSTICS=('lib/cli-native-user-windows.js','lib/cli-native-scene.js',
+             'test/test-cli-native-capture-refusal-details.cjs')
 def load(name):
  s=importlib.util.spec_from_file_location(name.replace('/','_'),ROOT/name)
  m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
@@ -27,7 +29,8 @@ def main():
       nativeSeconds=600,independentWatchdogSeconds=620))
   parent=m.published('tools/gltron-current-supervise.py',BASE)
   return parent.ParentProcessSupervisor(out,[sys.executable,'-B',__file__,'--child',
-      '--original' if '--original' in sys.argv else '--fixture'],preparation=900,runtime=600,
+      '--original' if '--original' in sys.argv else '--fixture',
+      *(['--diagnostic-qualification'] if '--diagnostic-qualification' in sys.argv else [])],preparation=900,runtime=600,
       preparation_watchdog=920,runtime_watchdog=620,grace=5).run()
  h=m.published('tools/vb5cce-original-runtime.py',BASE)
  h.ROOT,h.RUN,h.HEAD=ROOT,m.RUN,BASE;h.OWN_SOURCES=();h.install_shutdown_handlers()
@@ -49,14 +52,30 @@ def main():
  exec(compile(files['tools/disciples2-current-supervisor.py'],sealhelper.__file__,'exec'),sealhelper.__dict__)
  pool,index,rows=sealhelper.indexed_sources(files)
  assert m.sha(pool)==manifest['sourceSHA256'] and m.sha(index)==manifest['sourceIndexSHA256']
+ original_source_sha=m.sha(pool)
+ # Reuse the exact native module and unchanged source graph. Only the public
+ # numeric observer/diagnostic and its authored tests change; no native API,
+ # controller, renderer, private app state or capture policy is substituted.
+ changed={}
+ for name in DIAGNOSTICS:
+  b=(ROOT/name).read_bytes()
+  if not working:assert m.git('show',revision+':'+name)==b,'publish diagnostic first'
+  changed[name]=dict(before=m.sha(files[name]),after=m.sha(b));files[name]=b
+ pool,index,rows=sealhelper.indexed_sources(files)
+ manifest={**manifest,'sourceSHA256':m.sha(pool),'sourceIndexSHA256':m.sha(index),'sources':rows,
+           'diagnosticGit':revision,'diagnosticChanges':changed,'unchangedNativeSourceSHA256':original_source_sha}
  body=(PRIOR/'native/module.wasm').read_bytes()
  assert m.sha(body)==pins['moduleSHA256']==proof['moduleSHA256']==manifest['moduleSHA256']
  source=h.seal('hl2-restored-source',pool);module=h.seal('hl2-restored-module',body)
  preload=h.seal('hl2-restored-preload',files['tools/disciples2-current-native-source-view.cjs'])
  encoded=json.dumps(manifest,sort_keys=True).encode()
  # Preserve paths and bytes without duplicate manifest/module writes.
- for name in ('runtime-inputs.json','immutable-manifest.json','compile-inputs.json','module.wasm'):
+ for name in ('compile-inputs.json','module.wasm'):
   os.link(PRIOR/'native'/name,m.RUN/name)
+ m.save('immutable-manifest.json',manifest)
+ pins={**pins,'sources':{n:m.sha(b) for n,b in files.items()},'diagnosticGit':revision,'diagnosticChanges':changed}
+ m.save('runtime-inputs.json',pins)
+ (m.RUN/'diagnostic.patch').write_bytes(m.git('diff','--binary',COMPONENT,'--',*DIAGNOSTICS))
  (m.RUN/'desktop-observations').mkdir()
  env=dict(os.environ,NODE_OPTIONS='--preserve-symlinks --require='+f'/proc/{os.getpid()}/fd/{preload}',
      DISCIPLES2_ROOT=str(ROOT),DISCIPLES2_SOURCE_FD=f'/proc/{os.getpid()}/fd/{source}',
@@ -71,12 +90,25 @@ def main():
      adapterGit=revision,moduleSHA256=m.sha(body),sourceSHA256=m.sha(pool),sourceIndexSHA256=m.sha(index),
      exactSourceInventory=True,sourceCount=len(files),moduleBeforeClock=True,allMediaBeforeClock=True,
      previous=str(PRIOR.relative_to(ROOT)),fullProofSHA256=m.sha((fixture/'full-native-qualification.json').read_bytes()),
-     coreSuitesRepeated=False,at=time.time()))
+     coreSuitesRepeated=False,unchangedNativeSourceSHA256=original_source_sha,diagnosticChanges=changed,at=time.time()))
  try:
+  if '--diagnostic-qualification' in sys.argv:
+   assert '--original' not in sys.argv,'authored qualification only'
+   for name,args in (
+       ('numeric-refusal',['node','test/test-cli-native-capture-refusal-details.cjs']),
+       ('large-native-edit',['node','test/test-cli-native-capture-refusal-details.cjs','--native-large',str(m.RUN/'large-native-edit')]),
+       ('password-native-edit',['node','test/test-cli-native-capture-refusal-details.cjs','--native',str(m.RUN/'password-native-edit')]),
+       ('captured-next',['node','test/test-halflife2-reviewed-next.cjs']),
+       ('scene-context',['node','test/test-cli-native-scene-context.cjs'])):
+    h.checked(name,args,env,(source,module))
+   m.save('diagnostic-qualification.json',dict(passed=True,diagnosticChanges=changed,
+       moduleSHA256=m.sha(body),unchangedNativeGraph=True,noOriginal=True))
   if '--original' in sys.argv:
    f=TASK/'fixture';w=read(f/'outer/wait.json');assert w['supervisorExitCode']==0
    assert read(f/'native-wait.json')['actualWait']
    assert read(f/'qualification-reuse.json')['adapterGit']==revision
+   assert read(f/'diagnostic-qualification.json')['passed']
+   assert read(f/'diagnostic-qualification.json')['diagnosticChanges']==changed
    m.original(env,source,module,h)
   else:
    import socket,uuid
