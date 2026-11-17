@@ -11,8 +11,11 @@ PRIOR_RUN=ROOT/'scratch/runs/20261116-neverhood-original-install-after-setupx'
 PRELOAD='tools/disciples2-current-native-source-view.cjs'
 HELPER='tools/disciples2-current-supervisor.py'
 OWN=('tools/neverhood-original-current-runtime.py','tools/neverhood-original-current-control.py',
-     'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js')
+     'tools/neverhood-original-current-preflight.cjs','test/test-neverhood-original-current.cjs',PRELOAD,'test/run.js',
+     'tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs')
 POLICY=dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
+def installed():return os.environ.get('NEVERHOOD_INSTALLED_SHORTCUT')=='1'
+def limits():return (1800,1820,180) if installed() else (900,920,90)
 def helper():
     # Shared sources can change while another worker owns them. Refuse those
     # bytes before executing them; only published helpers may be borrowed.
@@ -191,14 +194,22 @@ def prepare(out,revision,patches,hold=True):
     for fd in (source,preload,module,manifestfd,mediafd):os.close(fd)
     save(out,'holder-closed.json',dict(at=time.time(),descriptorsClosed=True))
 def validate_recipe(recipe):
-    assert recipe['seconds']==900 and recipe['watchdogGrace']==20 and recipe['reserveSeconds']==90
+    seconds,watch,reserve=limits()
+    assert recipe['seconds']==seconds and recipe['watchdogGrace']==watch-seconds and recipe['reserveSeconds']==reserve
     assert recipe['inputPolicy']==POLICY and recipe['childInheritance']=='sealed-node-v1'
     assert pathlib.Path(recipe['cwd']).resolve()==ROOT
     args=recipe['args'];assert args[:2]==['node','test/run.js']
-    for flag in ('--iso-drive=D','--iso-exe=SETUP95.EXE','--max-seconds=900','--real-ticks','--threads','--spawn-processes','--no-build'):
+    for flag in ('--iso-drive=D','--max-seconds='+str(seconds),'--real-ticks','--threads','--spawn-processes','--no-build'):
         assert flag in args,flag
+    if installed():
+        state=json.loads((RUN/'installed-state.json').read_text());s=state['shortcut']
+        assert state['verified'] and state['pendingRenamesUnchanged']
+        for flag in ('--exe='+state['exePath'],'--exe-guest-path='+s['exe'],'--cwd='+s['cwd'],
+                     '--reg-import='+state['registryPath'],'--overlay-dir='+state['overlayPath']):assert flag in args
+        assert not s['args'] and not any(a.startswith('--iso-exe=') for a in args)
+    else:assert '--iso-exe=SETUP95.EXE' in args
     assert sum(a.startswith('--iso=') for a in args)==1
-    for prefix in ('--tick-ms-per-batch','--winver','--force-host','--input=','--reg-import','--args='):
+    for prefix in ('--tick-ms-per-batch','--winver','--force-host','--input=','--args=')+(() if installed() else ('--reg-import',)):
         assert not any(a.startswith(prefix) for a in args),'unqualified original option '+prefix
     assert recipe.get('originalPipelineOrdinal')==1
 def recipe(holderdir,out):
@@ -218,7 +229,13 @@ def recipe(holderdir,out):
         '--native-exit-receipt='+str(out/'native-exit.json'),'--native-invocation-token='+str(uuid.uuid4()),
         '--overlay-dir='+str(out/'guest-overlay'),'--overlay-flush-ms=0','--reg-export='+str(out/'guest-registry.json'),
         '--trace-api=ThunkConnect32,FT_Prolog,DirectXSetup,LoadLibraryA,GetProcAddress,CreateDialogParamA,DialogBoxParamA,MessageBoxA,CopyFileA,RegSetValueExA,CreateProcessA,ExitProcess']
-    r=dict(cwd=str(ROOT),args=args,seconds=900,watchdogGrace=20,reserveSeconds=90,inputPolicy=POLICY,
+    seconds,watch,reserve=limits()
+    if installed():
+        state=json.loads((RUN/'installed-state.json').read_text());s=state['shortcut']
+        args=[a for a in args if not a.startswith(('--iso-exe=','--max-seconds=','--overlay-dir='))]
+        args+=['--exe='+state['exePath'],'--exe-guest-path='+s['exe'],'--cwd='+s['cwd'],
+               '--reg-import='+state['registryPath'],'--overlay-dir='+state['overlayPath'],'--max-seconds='+str(seconds)]
+    r=dict(cwd=str(ROOT),args=args,seconds=seconds,watchdogGrace=watch-seconds,reserveSeconds=reserve,inputPolicy=POLICY,
         childInheritance='sealed-node-v1',originalPipelineOrdinal=1,moduleHolder=str(holderdir/'holder.json'),
         immutableManifest={k:manifest[k] for k in ('gitSHA','sourceSHA256','moduleSHA256','preloadSHA256')})
     r['immutableManifest']['manifestSHA256']=holder['manifestSHA256'];validate_recipe(r)
@@ -227,6 +244,18 @@ def admit(out,recipe):
     fds=()
     try:
         validate_recipe(recipe)
+        if installed():
+            state=json.loads((RUN/'installed-state.json').read_text())
+            assert H.digest(pathlib.Path(state['registryPath']).read_bytes())==state['registrySHA256']
+            overlay=pathlib.Path(state['overlayPath'])
+            index=overlay/'index.json';assert H.digest(index.read_bytes())==state['indexSHA256']
+            records={r['path']:r for r in json.loads(index.read_text())['records']}
+            for row in state['files']:
+                b=(overlay/'blobs'/records[row['path']]['blob']).read_bytes()
+                assert len(b)==row['size'] and H.digest(b)==row['sha256']
+            assert H.digest(pathlib.Path(state['exePath']).read_bytes())==state['shortcut']['targetSHA256']
+            save(out,'installed-preclock-verification.json',dict(passed=True,files=len(state['files']),
+                registrySHA256=state['registrySHA256'],indexSHA256=state['indexSHA256'],pendingRenamesUnchanged=True,at=time.time()))
         env,fds=H.frozen_inputs(out,recipe)
         holder=json.loads(pathlib.Path(recipe['moduleHolder']).read_text())
         media=H.holder_bytes(holder,'mediaPath');assert H.digest(media)==holder['mediaSHA256']=='94de724bb47eb2aa588ac4eff28ddc6fd10edebcf2be4dd131ef76875ef5ffd3'
@@ -255,12 +284,13 @@ def run(out,recipe,only_admit=False):
         for fd in fds:os.close(fd)
         return
     assert not (RUN/'original-spawned.json').exists(), 'one current pipeline permanently consumed'
-    start=time.time();deadline=start+900
-    w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(out),str(start+920)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
+    seconds,watch,reserve=limits()
+    start=time.time();deadline=start+seconds
+    w=subprocess.Popen([sys.executable,'-B',__file__,'watchdog',str(out),str(start+watch)],stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     while not (out/'watchdog-armed.json').exists():assert w.poll() is None;time.sleep(.01)
     port=int(next(a.split('=')[1] for a in args if a.startswith('--control=')))
     childport=int(next(a.split('--control=')[1].split()[0] for a in args if a.startswith('--pipe-child-args=')))
-    save(out,'launch.json',dict(at=start,deadline=deadline,gameplayCutoff=deadline-90,reserveSeconds=90,rootPort=port,childPort=childport,args=args,clock='real-defaults',inputPolicy=POLICY))
+    save(out,'launch.json',dict(at=start,deadline=deadline,gameplayCutoff=deadline-reserve,reserveSeconds=reserve,rootPort=port,childPort=childport,args=args,clock='real-defaults',inputPolicy=POLICY))
     save(RUN,'original-spawned.json',dict(at=time.time(),ordinal=1,secondOriginalForbidden=True))
     p=subprocess.Popen(args,cwd=ROOT,env=env,pass_fds=fds,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
     info=dict(pid=p.pid,startToken=H.token(p.pid),at=time.time(),
@@ -320,8 +350,9 @@ def supervised(out,fixture=False,working=False):
     command=[sys.executable,'-B',__file__,'pipeline',str(out),revision]
     if fixture:command.append('--fixture')
     if working:command.append('--owned-patches')
-    return m.ParentProcessSupervisor(out/'outer',command,preparation=600,runtime=900,
-        preparation_watchdog=620,runtime_watchdog=920,grace=5).run()
+    seconds,watch,reserve=limits()
+    return m.ParentProcessSupervisor(out/'outer',command,preparation=600,runtime=seconds,
+        preparation_watchdog=620,runtime_watchdog=watch,grace=5).run()
 
 def material_native_pins(inputs):
     return {row['path']:row['sha256'] for row in inputs['sources']
@@ -333,7 +364,11 @@ def startup_proof(out,module):
     prior=pathlib.Path(os.environ['NEVERHOOD_STARTUP_PROOF'])
     old=json.loads((prior/'runtime-inputs.json').read_text())
     current=json.loads((out/'runtime-inputs.json').read_text())
-    pins=lambda m:{r['path']:r['sha256'] for r in m['sources']}
+    # Installed preparation changes only the adapter and adds its shortcut
+    # recovery tests. All native, input, capture and lifecycle components match.
+    excluded={'tools/neverhood-original-current-runtime.py','tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs'} if installed() else set()
+    if installed():excluded.add(str(pathlib.Path(json.loads((RUN/'installed-state.json').read_text())['exePath']).relative_to(ROOT)))
+    pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path'] not in excluded}
     assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']==H.digest(module)
     for label in ('unit','participants','startup-native'):
         wait=json.loads((prior/(label+'-wait.json')).read_text())
@@ -359,6 +394,8 @@ def startup_proof(out,module):
         exactInventorySHA256=H.digest(json.dumps(pins(current),sort_keys=True).encode()),
         moduleSHA256=H.digest(module),unchangedControllerPolicySHA256=H.digest(policy(controller)),
         priorControllerRevision='97670c226',qualificationSHA256=H.digest((native/'initial-presentation-qualification.json').read_bytes())))
+    if installed():save(out,'startup-component-exclusions.json',dict(paths=sorted(excluded),
+        reason='adapter separately unit/lifecycle tested; authentic restored executable data independently hashed, not protocol code'))
     return prior
 
 def reuse_native_proof(out,revision,module):
@@ -452,6 +489,13 @@ def pipeline(out,revision,fixture=False,working=False):
     st=os.statvfs('/home');assert st.f_bavail*st.f_frsize>1500000000
     pre=checked(out,'media-preflight',['node','tools/neverhood-original-current-preflight.cjs'])
     (out/'media-preflight.json').write_bytes(pre)
+    if installed():
+        state=json.loads(checked(out,'installed-restore',['node','tools/neverhood-installed-shortcut.cjs',str(out)]))
+        data=json.loads(pre);b=pathlib.Path(state['exePath']).read_bytes()
+        assert H.digest(b)==state['shortcut']['targetSHA256']
+        data['inputs']['installedLauncher']=dict(path=str(pathlib.Path(state['exePath']).relative_to(ROOT)),size=len(b),sha256=H.digest(b))
+        save(out,'media-with-installed.json',data)
+        (out/'media-preflight.json').write_text(json.dumps(data))
     own_revision=os.environ.get('NEVERHOOD_PUBLISHED_HELPERS_REVISION',revision)
     if not working:
         assert H.git(ROOT,'rev-parse',own_revision+'^{commit}').decode().strip()==own_revision
