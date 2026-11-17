@@ -133,9 +133,10 @@
   ;; c40..c95 staging (56 x 16), +105824 its memo {valid, len, matrices
   ;; 128, DLT1 1152}, +107136 value-scratch IR (32 + 32 x 128), +111616
   ;; fixed VS texture-matrix c16..c39 staging (24 x 16), +112000 cube face
-  ;; seqs, 256 x 312 beside the texture cache's slots (d9cpu).
+  ;; seqs, 256 x 312 beside the texture cache's slots (d9cpu), +191872
+  ;; d9rt surface table 128 x 32 (see "d9rt").
 
-  (global $D9G_MEM_SIZE i32 (i32.const 191872))
+  (global $D9G_MEM_SIZE i32 (i32.const 195968))
   (global $d9g_on (mut i32) (i32.const 1))
   (global $d9g_dead (mut i32) (i32.const 0))
   (global $d9g_h (mut i32) (i32.const 0))
@@ -378,12 +379,13 @@
     (call $d9g_stat (i32.add (i32.const 16) (local.get $why)) (i32.const 1))
     (global.set $d9g_mode (i32.const 2))
     (global.set $d9g_cstale (i32.const 1))
-    (global.set $d9g_zstale (i32.const 6)))
+    (global.set $d9g_zstale (i32.const 6))
+    (call $d9r_old_drew (global.get $d9g_dev))) ;; d9rt
 
   ;; ---- targets ---------------------------------------------------------------
   (func $d9g_drop_targets
     (call $d9g_release (global.get $d9g_rt))
-    (call $d9g_release (global.get $d9g_ds))
+    (call $d9r_drop_all)
     (global.set $d9g_rt (i32.const 0))
     (global.set $d9g_ds (i32.const 0))
     (global.set $d9g_ds_ptr (i32.const 0))
@@ -396,15 +398,11 @@
     (global.set $d9g_c_color (i32.const -1))
     (global.set $d9g_c_depth (i32.const -1)))
 
-  ;; Make the device's back buffer (and bound depth surface) the executor
-  ;; targets. 0, or a decline reason.
-  (func $d9g_bind (param $device i32) (param $desc i32) (result i32)
-    (local $w i32) (local $hgt i32) (local $fmt i32) (local $p i32) (local $pw i32) (local $dfmt i32)
-    (local $t i32)
-    (local.set $w (i32.load offset=12 (local.get $desc)))
-    (local.set $hgt (i32.load offset=16 (local.get $desc)))
+  ;; The device's back buffer as executor RT $d9g_rt ($w x $hgt, from the
+  ;; old call's descriptor or the swap chain entry). 0, or a decline reason.
+  (func $d9g_bb (param $device i32) (param $w i32) (param $hgt i32) (result i32)
+    (local $fmt i32)
     (local.set $fmt (call $d3d9_backbuffer_format (local.get $device)))
-    (if (i32.load offset=22020 (global.get $d9g_pw)) (then (return (i32.const 4))))
     (if (i32.eqz (call $d9g_pix (local.get $fmt))) (then (return (i32.const 23))))
     (if (i32.or (i32.or (i32.gt_u (local.get $w) (i32.const 4096)) (i32.gt_u (local.get $hgt) (i32.const 4096)))
           (i32.or (i32.eqz (local.get $w)) (i32.eqz (local.get $hgt))))
@@ -423,40 +421,103 @@
         (global.set $d9g_rt_fmt (local.get $fmt))
         (global.set $d9g_rt (call $d9g_id))
         (call $gps_create (global.get $d9g_h) (global.get $d9g_rt) (global.get $GPS_KIND_RT)
-          (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))))
-    ;; Depth surface: +36 id, +20 w, +24 h, +28 format.
+          (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
+        (call $d9r_lead0 (local.get $device) (local.get $w) (local.get $hgt) (local.get $fmt))))
+    (i32.const 0))
+
+  ;; d9rt lead0: the first back buffer the ring makes for $device starts
+  ;; from the back buffer DIB (what the old path's lazy create and every old
+  ;; upload start from) and leads from this frame on: no shadow frames.
+  (global $d9r_led_dev (mut i32) (i32.const 0))
+  (func $d9r_lead0 (param $device i32) (param $w i32) (param $hgt i32) (param $fmt i32)
+    (local $rt i32)
+    (if (i32.eq (global.get $d9r_led_dev) (local.get $device)) (then (return)))
+    (global.set $d9r_led_dev (local.get $device))
+    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return)))
+    (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
+    (if (i32.eqz (local.get $rt)) (then (return)))
+    (if (i32.or (i32.eqz (load.field DxObject misc1 (local.get $rt)))
+          (i32.or (i32.ne (load.field DxObject width (local.get $rt)) (local.get $w))
+            (i32.ne (load.field DxObject height (local.get $rt)) (local.get $hgt))))
+      (then (return)))
+    ;; Held like an Unlock's upload ($d9g_flush): a full Clear first drops it.
+    (global.set $d9g_cstale (i32.const 0))
+    (global.set $d9g_cpu_bits (load.field DxObject misc1 (local.get $rt)))
+    (global.set $d9g_cpu_pitch (load.field DxObject pitch (local.get $rt)))
+    (global.set $d9g_px0 (i32.const 0))
+    (global.set $d9g_py0 (i32.const 0))
+    (global.set $d9g_px1 (local.get $w))
+    (global.set $d9g_py1 (local.get $hgt))
+    (global.set $d9g_cpu (i32.const 2))
+    (global.set $d9g_lead (i32.const 1))
+    (global.set $d9g_good (i32.const 0))
+    (call $d9g_stat (i32.const 81) (i32.const 1))
+    (call $d9g_stat (i32.const 88) (i32.const 1)))
+
+  ;; Make the device's bound RT0 (the back buffer, or a colour surface's ring
+  ;; RT -- d9rt) and its bound depth surface the executor targets. 0, or a
+  ;; decline reason.
+  (func $d9g_bind (param $device i32) (param $desc i32) (result i32)
+    (local $r i32) (local $p i32) (local $e i32) (local $color i32) (local $ds i32)
+    (local.set $r (call $d9g_bb (local.get $device) (i32.load offset=12 (local.get $desc)) (i32.load offset=16 (local.get $desc))))
+    (if (local.get $r) (then (return (local.get $r))))
+    ;; d9rt: colour target.
+    (local.set $p (i32.load offset=22020 (global.get $d9g_pw)))
+    (if (local.get $p)
+      (then
+        (local.set $e (call $d9r_color (local.get $device) (local.get $p)))
+        (if (i32.eqz (local.get $e)) (then (return (i32.const 4))))
+        (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 13))))
+        (global.set $d9r_tgt (local.get $e))
+        (local.set $color (i32.load offset=8 (local.get $e)))
+        (global.set $d9g_tw (i32.load offset=12 (local.get $e)))
+        (global.set $d9g_th (i32.load offset=16 (local.get $e)))
+        (global.set $d9g_tfmt (i32.load offset=20 (local.get $e)))
+        (call $d9r_wrote (local.get $e)))
+      (else
+        (global.set $d9r_tgt (i32.const 0))
+        (local.set $color (global.get $d9g_rt))
+        (global.set $d9g_tw (global.get $d9g_rt_w))
+        (global.set $d9g_th (global.get $d9g_rt_h))
+        (global.set $d9g_tfmt (global.get $d9g_rt_fmt))))
+    ;; Depth surface: its own ring DS (d9rt), its staleness in $d9g_zstale
+    ;; while bound. +20 w, +24 h, +28 format.
     (local.set $p (i32.load offset=21752 (global.get $d9g_pw)))
     (if (i32.ne (local.get $p) (global.get $d9g_ds_ptr)) (then
-      (call $d9g_release (global.get $d9g_ds))
-      (global.set $d9g_ds (i32.const 0))
-      (global.set $d9g_ds_bad (i32.const 0))
+      (if (global.get $d9r_dse) (then (i32.store offset=28 (global.get $d9r_dse) (global.get $d9g_zstale))))
+      (global.set $d9r_dse (i32.const 0))
       (global.set $d9g_ds_ptr (local.get $p))
       (global.set $d9g_zstale (i32.const 6))
       (if (local.get $p) (then
-        (local.set $pw (call $g2w (local.get $p)))
-        (if (i32.or (i32.ne (i32.load offset=20 (local.get $pw)) (local.get $w))
-              (i32.ne (i32.load offset=24 (local.get $pw)) (local.get $hgt)))
-          (then (global.set $d9g_ds_bad (i32.const 1)))
-          (else
-            (local.set $dfmt (i32.load offset=28 (local.get $pw)))
-            (global.set $d9g_ds_d24 (i32.eqz (i32.or (i32.eq (local.get $dfmt) (i32.const 70))
-              (i32.eq (local.get $dfmt) (i32.const 80)))))
-            (global.set $d9g_ds (call $d9g_id))
-            (call $gps_create (global.get $d9g_h) (global.get $d9g_ds) (global.get $GPS_KIND_DS)
-              (select (global.get $GPS_FMT_D24S8) (global.get $GPS_FMT_D16) (global.get $d9g_ds_d24))
-              (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))))))))
-    (if (i32.or (i32.ne (global.get $d9g_c_color) (global.get $d9g_rt))
-          (i32.ne (global.get $d9g_c_depth) (global.get $d9g_ds)))
-      (then
-        (local.set $t (call $d9g_begin (global.get $GPS_OP_TARGETS) (size-of GpsTargets)))
-        (store.field GpsTargets color (local.get $t) (global.get $d9g_rt))
-        (store.field GpsTargets depth (local.get $t) (global.get $d9g_ds))
-        (drop (call $d9g_end (local.get $t)))
-        (global.set $d9g_c_color (global.get $d9g_rt))
-        (global.set $d9g_c_depth (global.get $d9g_ds))
-        ;; TARGETS reset the executor viewport.
-        (i32.store offset=704 (call $d9g_m) (i32.const -1))))
+        (local.set $e (call $d9r_depth (local.get $device) (local.get $p)))
+        (if (local.get $e) (then
+          (global.set $d9r_dse (local.get $e))
+          (global.set $d9g_zstale (i32.load offset=28 (local.get $e)))))))))
+    (global.set $d9g_ds (i32.const 0))
+    (global.set $d9g_ds_bad (i32.const 0))
+    (if (global.get $d9g_ds_ptr) (then
+      (if (i32.or (i32.eqz (global.get $d9r_dse))
+            (i32.or (i32.ne (i32.load offset=12 (global.get $d9r_dse)) (global.get $d9g_tw))
+              (i32.ne (i32.load offset=16 (global.get $d9r_dse)) (global.get $d9g_th))))
+        (then (global.set $d9g_ds_bad (i32.const 1)))
+        (else
+          (global.set $d9g_ds_d24 (i32.ne (i32.and (i32.load offset=24 (global.get $d9r_dse)) (i32.const 8)) (i32.const 0)))
+          (global.set $d9g_ds (i32.load offset=8 (global.get $d9r_dse)))))))
+    (call $d9r_targets (local.get $color) (global.get $d9g_ds))
     (i32.const 0))
+
+  ;; TARGETS, sent only when they changed (they reset the executor viewport).
+  (func $d9r_targets (param $color i32) (param $ds i32)
+    (local $t i32)
+    (if (i32.and (i32.eq (global.get $d9g_c_color) (local.get $color)) (i32.eq (global.get $d9g_c_depth) (local.get $ds)))
+      (then (return)))
+    (local.set $t (call $d9g_begin (global.get $GPS_OP_TARGETS) (size-of GpsTargets)))
+    (store.field GpsTargets color (local.get $t) (local.get $color))
+    (store.field GpsTargets depth (local.get $t) (local.get $ds))
+    (drop (call $d9g_end (local.get $t)))
+    (global.set $d9g_c_color (local.get $color))
+    (global.set $d9g_c_depth (local.get $ds))
+    (i32.store offset=704 (call $d9g_m) (i32.const -1)))
 
   ;; The device viewport (+21728 x, y, w, h; w = 0 is the whole target),
   ;; clamped to the target, into $out (x, y, r, b).
@@ -468,13 +529,13 @@
     (local.set $hgt (i32.load offset=21740 (global.get $d9g_pw)))
     (if (i32.eqz (local.get $w)) (then
       (local.set $x (i32.const 0)) (local.set $y (i32.const 0))
-      (local.set $w (global.get $d9g_rt_w)) (local.set $hgt (global.get $d9g_rt_h))))
-    (if (i32.gt_u (local.get $x) (global.get $d9g_rt_w)) (then (local.set $x (global.get $d9g_rt_w))))
-    (if (i32.gt_u (local.get $y) (global.get $d9g_rt_h)) (then (local.set $y (global.get $d9g_rt_h))))
-    (if (i32.gt_u (local.get $w) (i32.sub (global.get $d9g_rt_w) (local.get $x)))
-      (then (local.set $w (i32.sub (global.get $d9g_rt_w) (local.get $x)))))
-    (if (i32.gt_u (local.get $hgt) (i32.sub (global.get $d9g_rt_h) (local.get $y)))
-      (then (local.set $hgt (i32.sub (global.get $d9g_rt_h) (local.get $y)))))
+      (local.set $w (global.get $d9g_tw)) (local.set $hgt (global.get $d9g_th))))
+    (if (i32.gt_u (local.get $x) (global.get $d9g_tw)) (then (local.set $x (global.get $d9g_tw))))
+    (if (i32.gt_u (local.get $y) (global.get $d9g_th)) (then (local.set $y (global.get $d9g_th))))
+    (if (i32.gt_u (local.get $w) (i32.sub (global.get $d9g_tw) (local.get $x)))
+      (then (local.set $w (i32.sub (global.get $d9g_tw) (local.get $x)))))
+    (if (i32.gt_u (local.get $hgt) (i32.sub (global.get $d9g_th) (local.get $y)))
+      (then (local.set $hgt (i32.sub (global.get $d9g_th) (local.get $y)))))
     (i32.store (local.get $out) (local.get $x))
     (i32.store offset=4 (local.get $out) (local.get $y))
     (i32.store offset=8 (local.get $out) (i32.add (local.get $x) (local.get $w)))
@@ -849,15 +910,15 @@
     ;; An X8 / 565 / X1 target has no alpha to write; its alpha stays 255.
     (store.field GpsRaster colormask (local.get $s)
       (i32.and (i32.and (call $d9g_rs (i32.const 168)) (i32.const 15))
-        (select (i32.const 15) (i32.const 7) (call $d9g_has_alpha (global.get $d9g_rt_fmt)))))
+        (select (i32.const 15) (i32.const 7) (call $d9g_has_alpha (global.get $d9g_tfmt)))))
     (store.field GpsRaster fog_mode (local.get $s) (select (global.get $GPS_FOG_VERTEX_ALPHA) (i32.const 0) (local.get $fog)))
     (store.field GpsRaster fill (local.get $s) (i32.const 3))
     (store.field GpsRaster fog_color (local.get $s) (select (call $d9g_rgba (call $d9g_rs (i32.const 34))) (i32.const 0) (local.get $fog)))
     (local.set $r (i32.add (local.get $m) (i32.const 744)))
     (i32.store (local.get $r) (i32.const 0))
     (i32.store offset=4 (local.get $r) (i32.const 0))
-    (i32.store offset=8 (local.get $r) (global.get $d9g_rt_w))
-    (i32.store offset=12 (local.get $r) (global.get $d9g_rt_h))
+    (i32.store offset=8 (local.get $r) (global.get $d9g_tw))
+    (i32.store offset=12 (local.get $r) (global.get $d9g_th))
     (call $d9g_scissor_clip (local.get $r))
     (if (i32.lt_s (i32.load offset=8 (local.get $r)) (i32.load (local.get $r)))
       (then (i32.store offset=8 (local.get $r) (i32.load (local.get $r)))))
@@ -1005,8 +1066,11 @@
     (if (i32.and (i32.ne (i32.load offset=12 (local.get $t)) (i32.const 3)) (i32.eqz (local.get $cube)))
       (then (return (i32.const -10))))
     (local.set $faces (select (i32.const 6) (i32.const 1) (local.get $cube)))
-    (if (i32.load offset=56 (local.get $t)) (then (return (i32.const -5))))
     (local.set $levels (i32.load offset=32 (local.get $t)))
+    ;; d9rt: a RENDERTARGET texture samples its levels' ring RTs.
+    (if (i32.load offset=56 (local.get $t)) (then
+      (if (i32.and (i32.eq (local.get $levels) (i32.const 1)) (i32.eqz (local.get $cube)))
+        (then (return (call $d9r_rt_texture (local.get $t)))))))
     (local.set $fmt (i32.load offset=36 (local.get $t)))
     (if (i32.or (i32.eqz (local.get $levels)) (i32.gt_u (local.get $levels) (i32.const 13)))
       (then (return (i32.const -10))))
@@ -1080,6 +1144,17 @@
             (i32.mul (i32.div_u (i32.sub (local.get $slot) (local.get $base)) (i32.const 80)) (i32.const 312)))
             (i32.shl (i32.add (i32.mul (local.get $f) (i32.const 13)) (local.get $l)) (i32.const 2))))
           (else (i32.add (local.get $slot) (i32.add (i32.const 24) (i32.shl (local.get $l) (i32.const 2)))))))
+        (block $next_level
+        ;; d9rt: a RENDERTARGET level is COPYed from its RT (by generation).
+        (if (i32.load offset=56 (local.get $t)) (then
+          (local.set $mip (call $d9r_rt_level (local.get $id) (local.get $t) (local.get $idx) (local.get $l)
+            (local.get $f) (i32.load (local.get $e)) (local.get $fresh)))
+          (if (i32.lt_s (local.get $mip) (i32.const 0)) (then
+            (i32.store (local.get $slot) (i32.const 0))
+            (call $d9g_release (local.get $id))
+            (return (local.get $mip))))
+          (i32.store (local.get $e) (local.get $mip))
+          (br $next_level)))
         ;; seq (mip+28) is the level's content identity; a new level always
         ;; uploads. Store seq+1 so a zero-content level still counts as sent.
         (if (i32.or (local.get $fresh) (i32.ne (i32.load (local.get $e)) (i32.add (i32.load offset=28 (local.get $mip)) (i32.const 1))))
@@ -1090,7 +1165,7 @@
                 (call $d9g_release (local.get $id))
                 (return (i32.const -10))))
             (i32.store (local.get $e) (i32.add (i32.load offset=28 (local.get $mip)) (i32.const 1))))
-          (else (call $d9g_stat (i32.const 9) (i32.const 1))))
+          (else (call $d9g_stat (i32.const 9) (i32.const 1)))))
         (local.set $l (i32.add (local.get $l) (i32.const 1)))
         (br_if $levels_loop (i32.lt_u (local.get $l) (local.get $levels))))
       (local.set $f (i32.add (local.get $f) (i32.const 1)))
@@ -4034,7 +4109,10 @@
     (if (local.get $r) (then (return (local.get $r))))
     (local.set $r (call $d9g_bind (local.get $device) (local.get $desc)))
     (if (local.get $r) (then (return (local.get $r))))
-    (if (global.get $d9g_cstale) (then (return (i32.const 13))))
+    ;; d9rt lead0: the bind may have just taken the DIB as a held upload.
+    (call $d9g_flush)
+    (if (i32.eqz (global.get $d9r_tgt)) (then (global.set $d9g_cpu (i32.const 0))))
+    (if (i32.and (i32.ne (global.get $d9g_cstale) (i32.const 0)) (i32.eqz (global.get $d9r_tgt))) (then (return (i32.const 13))))
     (if (i32.ne (call $d9g_rs (i32.const 8)) (i32.const 3)) (then (return (i32.const 15))))
     ;; d9cpu: flat shading expands when the colours are vertex data.
     ;; d9fv: colours a vertex stage computes: that stage runs on the CPU.
@@ -4419,6 +4497,7 @@
       (then (global.set $d9g_need (i32.shl (global.get $d9g_need) (i32.const 1)))))
     (call $d9g_stat (i32.const 80) (i32.const 1))
     (call $d9g_flush)
+    (call $d9r_push_all) ;; d9rt
     (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (call $d9g_fail (i32.const 6))))
     (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
     (if (i32.eqz (local.get $rt)) (then (call $d9g_fail (i32.const 7))))
@@ -4465,7 +4544,7 @@
     (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
     (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return (i32.const 0))))
-    (global.set $d9g_cpu (i32.const 0))
+    (if (i32.eqz (i32.load offset=22020 (global.get $d9g_pw))) (then (global.set $d9g_cpu (i32.const 0))))
     (local.set $r (call $d9g_draw_try (local.get $device) (local.get $desc) (local.get $kind)))
     (if (local.get $r) (then (call $d9g_decline (local.get $r)) (return (i32.const 0))))
     (global.set $d9g_took (i32.const 1))
@@ -4498,8 +4577,10 @@
       (call $d9g_stat (i32.const 13) (i32.const 1)) (return)))
     (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
-    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return)))
-    (global.set $d9g_cpu (i32.const 0))
+    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then
+      (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (call $d9r_old_drew (local.get $device)))) ;; d9rt
+      (return)))
+    (if (i32.eqz (i32.load offset=22020 (global.get $d9g_pw))) (then (global.set $d9g_cpu (i32.const 0))))
     (local.set $r (call $d9g_draw_try (local.get $device) (local.get $desc) (local.get $kind)))
     (if (local.get $r) (then (call $d9g_decline (local.get $r)))))
 
@@ -4514,7 +4595,9 @@
       (call $d9g_stat (i32.const 13) (i32.const 1)) (return)))
     (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
-    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return)))
+    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then
+      (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (call $d9r_old_drew (local.get $device)))) ;; d9rt
+      (return)))
     (local.set $r (call $d9g_clear_lower (local.get $device) (local.get $desc)))
     (if (local.get $r) (then (call $d9g_decline (local.get $r)))))
 
@@ -4526,7 +4609,21 @@
     (local.set $r (call $d9g_bind (local.get $device) (local.get $desc)))
     (if (local.get $r) (then (return (local.get $r))))
     (local.set $flags (i32.and (i32.load offset=44 (local.get $desc)) (i32.const 7)))
-    (if (i32.and (local.get $flags) (i32.const 1)) (then (global.set $d9g_cpu (i32.const 0))))
+    ;; d9rt lead0: a held upload (the bind's DIB) survives only a clear that
+    ;; replaces every pixel: whole-target viewport, no scissor, no rects.
+    (if (i32.eq (global.get $d9g_cpu) (i32.const 2)) (then
+      (local.set $m (call $d9g_m))
+      (call $d9g_vp_rect (i32.add (local.get $m) (i32.const 1008)))
+      (call $d9g_scissor_clip (i32.add (local.get $m) (i32.const 1008)))
+      (if (i32.eqz (i32.and (i32.and (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))
+                (i32.eqz (global.get $d9r_tgt)))
+              (i32.or (i32.eqz (i32.load offset=56 (local.get $desc))) (i32.eqz (i32.load offset=60 (local.get $desc)))))
+            (i32.and (i32.and (i32.eqz (i32.load offset=1008 (local.get $m))) (i32.eqz (i32.load offset=1012 (local.get $m))))
+              (i32.and (i32.eq (i32.load offset=1016 (local.get $m)) (global.get $d9g_tw))
+                (i32.eq (i32.load offset=1020 (local.get $m)) (global.get $d9g_th))))))
+        (then (call $d9g_flush)))))
+    (if (i32.and (i32.and (local.get $flags) (i32.const 1)) (i32.eqz (global.get $d9r_tgt)))
+      (then (global.set $d9g_cpu (i32.const 0))))
     (if (i32.or (i32.eqz (global.get $d9g_ds)) (global.get $d9g_ds_bad))
       (then (local.set $flags (i32.and (local.get $flags) (i32.const 1)))))
     (if (i32.eqz (global.get $d9g_ds_d24)) (then (local.set $flags (i32.and (local.get $flags) (i32.const 3)))))
@@ -4536,7 +4633,7 @@
     (call $d9g_vp_rect (local.get $clip))
     (call $d9g_scissor_clip (local.get $clip))
     (local.set $rgba (call $d9g_rgba (i32.load offset=48 (local.get $desc))))
-    (if (i32.eqz (call $d9g_has_alpha (global.get $d9g_rt_fmt)))
+    (if (i32.eqz (call $d9g_has_alpha (global.get $d9g_tfmt)))
       (then (local.set $rgba (i32.or (local.get $rgba) (i32.const 0xff000000)))))
     (local.set $z (f32.min (f32.const 1) (f32.max (f32.const 0) (f32.reinterpret_i32 (i32.load offset=52 (local.get $desc))))))
     (local.set $count (i32.load offset=56 (local.get $desc)))
@@ -4559,8 +4656,8 @@
             (i32.lt_s (i32.load offset=4 (local.get $p)) (i32.load offset=12 (local.get $p))))
         (then
           (if (i32.and (i32.and (i32.eqz (i32.load (local.get $p))) (i32.eqz (i32.load offset=4 (local.get $p))))
-                (i32.and (i32.eq (i32.load offset=8 (local.get $p)) (global.get $d9g_rt_w))
-                  (i32.eq (i32.load offset=12 (local.get $p)) (global.get $d9g_rt_h))))
+                (i32.and (i32.eq (i32.load offset=8 (local.get $p)) (global.get $d9g_tw))
+                  (i32.eq (i32.load offset=12 (local.get $p)) (global.get $d9g_th))))
             (then (local.set $full (i32.const 1))))
           (local.set $r (call $d9g_begin (global.get $GPS_OP_CLEAR) (size-of GpsClear)))
           (store.field GpsClear mask (local.get $r) (local.get $flags))
@@ -4578,7 +4675,9 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $each (i32.lt_u (local.get $i) (local.get $count)))))
     (if (local.get $full) (then
-      (if (i32.and (local.get $flags) (i32.const 1)) (then
+      ;; d9rt: the back buffer's coherence globals; a colour surface's ring
+      ;; RT was made fresh when it was bound.
+      (if (i32.and (i32.and (local.get $flags) (i32.const 1)) (i32.eqz (global.get $d9r_tgt))) (then
         (global.set $d9g_cstale (i32.const 0))
         (global.set $d9g_cpu (i32.const 3))
         (global.set $d9g_cpu_rgba (local.get $rgba))))
@@ -4659,11 +4758,15 @@
   ;; ---- readbacks and CPU writes ---------------------------------------------
   ;; Executor RT -> guest pixels at wasm $bits (pitch, D3DFORMAT $fmt).
   (func $d9g_readback (param $bits i32) (param $pitch i32) (param $fmt i32) (param $site i32)
-    (local $w i32) (local $hgt i32) (local $pix i32) (local $band i32) (local $y i32) (local $n i32)
+    (call $d9g_rb (global.get $d9g_rt) (i32.const 0) (i32.const 0) (global.get $d9g_rt_w) (global.get $d9g_rt_h)
+      (local.get $bits) (local.get $pitch) (local.get $fmt) (local.get $site)))
+  ;; d9rt: rect [x, x+w) x [y, y+hgt) of executor RT $id -> guest pixels, the
+  ;; rect's top-left at wasm $bits.
+  (func $d9g_rb (param $id i32) (param $x i32) (param $y0 i32) (param $w i32) (param $hgt i32)
+      (param $bits i32) (param $pitch i32) (param $fmt i32) (param $site i32)
+    (local $pix i32) (local $band i32) (local $y i32) (local $n i32)
     (local $pos i32) (local $p i32) (local $seq i32) (local $src i32) (local $k i32) (local $h i32)
     (local.set $h (global.get $d9g_h))
-    (local.set $w (global.get $d9g_rt_w))
-    (local.set $hgt (global.get $d9g_rt_h))
     (local.set $pix (call $d9g_pix (local.get $fmt)))
     (if (i32.eqz (local.get $pix)) (then (return)))
     (local.set $band (i32.div_u (i32.const 0x200000) (i32.shl (local.get $w) (i32.const 2))))
@@ -4675,9 +4778,9 @@
       (local.set $pos (call $d9g_arena (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n))))
       (call $gps_slot_arm (local.get $h) (i32.const 0))
       (local.set $p (call $d9g_begin (global.get $GPS_OP_READBACK) (size-of GpsReadback)))
-      (store.field GpsReadback rt (local.get $p) (global.get $d9g_rt))
-      (store.field GpsReadback x (local.get $p) (i32.const 0))
-      (store.field GpsReadback y (local.get $p) (local.get $y))
+      (store.field GpsReadback rt (local.get $p) (local.get $id))
+      (store.field GpsReadback x (local.get $p) (local.get $x))
+      (store.field GpsReadback y (local.get $p) (i32.add (local.get $y0) (local.get $y)))
       (store.field GpsReadback w (local.get $p) (local.get $w))
       (store.field GpsReadback h (local.get $p) (local.get $n))
       (store.field GpsReadback fmt (local.get $p) (global.get $GPS_FMT_A8B8G8R8))
@@ -4706,6 +4809,11 @@
   ;; Guest pixels -> executor RT rows [x, x+w) x [y, y+h).
   (func $d9g_upload_rect (param $bits i32) (param $pitch i32) (param $fmt i32)
       (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
+    (call $d9g_upload_to (global.get $d9g_rt) (local.get $bits) (local.get $pitch) (local.get $fmt)
+      (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)))
+  ;; d9rt: the same into executor RT $id ($bits is the surface's pixel 0,0).
+  (func $d9g_upload_to (param $id i32) (param $bits i32) (param $pitch i32) (param $fmt i32)
+      (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
     (local $pix i32) (local $band i32) (local $row i32) (local $n i32) (local $pos i32) (local $p i32) (local $k i32)
     (local $dst i32) (local $bpp i32)
     (local.set $pix (call $d9g_pix (local.get $fmt)))
@@ -4731,7 +4839,7 @@
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br $rows)))
       (local.set $p (call $d9g_begin (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
-      (store.field GpsUpload id (local.get $p) (global.get $d9g_rt))
+      (store.field GpsUpload id (local.get $p) (local.get $id))
       (store.field GpsUpload level (local.get $p) (i32.const 0))
       (store.field GpsUpload face (local.get $p) (i32.const 0))
       (store.field GpsUpload x (local.get $p) (local.get $x))
@@ -4917,3 +5025,551 @@
     (global.set $d9g_cpu_pitch (load.field DxObject pitch (local.get $rt)))
     (global.set $d9g_cpu (i32.const 1))
     (call $dx_present (local.get $rt)))
+
+  ;; ---- d9rt: render targets and surfaces begin --------------------------------
+  ;; Colour surfaces (0xd3d90006 records: CreateRenderTarget, offscreen plain
+  ;; surfaces, the levels of RENDERTARGET textures and cubes) and depth
+  ;; surfaces (0xd3d90005) get their own executor RT / DS, created on first
+  ;; use. A colour RT starts from the record's CPU bits (+40), as the old
+  ;; path's lazy colour create does; a DS starts stale (zstale 6, waits for a
+  ;; full Clear) as the device's always did.
+  ;;
+  ;; Table at $d9g_mem+191872, 128 entries x 32: +0 record (guest), +4 its
+  ;; serial (+36: identity across heap reuse), +8 executor id, +12 w, +16 h,
+  ;; +20 D3DFORMAT, +24 flags, +28 colour: write generation ($d9r_gen, so a
+  ;; sampled copy knows it is current) / depth: zstale bits while unbound.
+  ;; Flags: 1 depth, 2 ring stale (the old path wrote it last: pulled back
+  ;; with an old readback + UPLOAD before the ring uses it), 4 old stale (the
+  ;; ring wrote it while leading: pushed to the old path, READBACK + old
+  ;; upload, before the old path uses it), 8 D24S8.
+  ;;
+  ;; Sampling: a one-level 2D RENDERTARGET texture BINDs its level's RT
+  ;; directly (RT row 0 is the top row, as for TEX2D); a mipmapped or cube
+  ;; one keeps a TEX2D / CUBE in the texture cache, each level / face COPYed
+  ;; in (GPS_CAP_COPY) when its RT's generation moved. Sampling the bound
+  ;; colour target stays reason 5 (the old path refuses it too).
+  (global $d9r_tgt (mut i32) (i32.const 0))
+  (global $d9r_dse (mut i32) (i32.const 0))
+  (global $d9g_tw (mut i32) (i32.const 0))
+  (global $d9g_th (mut i32) (i32.const 0))
+  (global $d9g_tfmt (mut i32) (i32.const 0))
+  (global $d9r_gen (mut i32) (i32.const 0))
+  ;; Entries were dropped while the old path may hold newer pixels than the
+  ;; CPU bits: later ones start ring stale (pulled from the old path).
+  (global $d9r_lost (mut i32) (i32.const 0))
+
+  (func $d9r_tab (result i32) (i32.add (call $d9g_m) (i32.const 191872)))
+
+  ;; Entry of surface record $rec (guest), or 0.
+  (func $d9r_find (param $rec i32) (result i32)
+    (local $e i32) (local $end i32) (local $serial i32)
+    (if (i32.or (i32.eqz (local.get $rec)) (i32.eqz (global.get $d9g_mem))) (then (return (i32.const 0))))
+    (local.set $serial (i32.load offset=36 (call $g2w (local.get $rec))))
+    (local.set $e (call $d9r_tab))
+    (local.set $end (i32.add (local.get $e) (i32.const 4096)))
+    (loop $scan
+      (if (i32.and (i32.eq (i32.load (local.get $e)) (local.get $rec))
+            (i32.eq (i32.load offset=4 (local.get $e)) (local.get $serial)))
+        (then (return (local.get $e))))
+      (local.set $e (i32.add (local.get $e) (i32.const 32)))
+      (br_if $scan (i32.lt_u (local.get $e) (local.get $end))))
+    (i32.const 0))
+
+  (func $d9r_new (param $rec i32) (param $flags i32) (result i32)
+    (local $e i32) (local $end i32) (local $wa i32)
+    (local.set $e (call $d9r_tab))
+    (local.set $end (i32.add (local.get $e) (i32.const 4096)))
+    (block $found (loop $scan
+      (br_if $found (i32.eqz (i32.load (local.get $e))))
+      (local.set $e (i32.add (local.get $e) (i32.const 32)))
+      (br_if $scan (i32.lt_u (local.get $e) (local.get $end)))
+      (return (i32.const 0))))
+    (local.set $wa (call $g2w (local.get $rec)))
+    (i32.store (local.get $e) (local.get $rec))
+    (i32.store offset=4 (local.get $e) (i32.load offset=36 (local.get $wa)))
+    (i32.store offset=8 (local.get $e) (call $d9g_id))
+    (i32.store offset=12 (local.get $e) (i32.load offset=20 (local.get $wa)))
+    (i32.store offset=16 (local.get $e) (i32.load offset=24 (local.get $wa)))
+    (i32.store offset=20 (local.get $e) (i32.load offset=28 (local.get $wa)))
+    (i32.store offset=24 (local.get $e) (local.get $flags))
+    (i32.store offset=28 (local.get $e) (i32.const 0))
+    (local.get $e))
+
+  ;; The ring is up and holds $device's back buffer (created by a draw or
+  ;; Clear, so it is the first RT the executor saw).
+  (func $d9r_live (param $device i32) (result i32)
+    (i32.and
+      (i32.and (i32.ne (global.get $d9g_on) (i32.const 0)) (i32.eqz (global.get $d9g_dead)))
+      (i32.and (i32.and (i32.ne (global.get $d9g_h) (i32.const 0)) (i32.ne (global.get $d9g_rt) (i32.const 0)))
+        (i32.and (i32.ne (local.get $device) (i32.const 0)) (i32.eq (global.get $d9g_dev) (local.get $device))))))
+
+  ;; Executor RT entry of colour record $rec (guest) of $device, created on
+  ;; first use. 0 = not lowerable (no ring yet, format, size, table full).
+  (func $d9r_color (param $device i32) (param $rec i32) (result i32)
+    (local $e i32) (local $wa i32) (local $w i32) (local $hgt i32) (local $fmt i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (local.get $e) (then (return (local.get $e))))
+    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    (local.set $wa (call $g2w (local.get $rec)))
+    (if (i32.ne (i32.load offset=12 (local.get $wa)) (i32.const 0xd3d90006)) (then (return (i32.const 0))))
+    (local.set $w (i32.load offset=20 (local.get $wa)))
+    (local.set $hgt (i32.load offset=24 (local.get $wa)))
+    (local.set $fmt (i32.load offset=28 (local.get $wa)))
+    (if (i32.eqz (call $d9g_pix (local.get $fmt))) (then (return (i32.const 0))))
+    (if (i32.or (i32.or (i32.eqz (local.get $w)) (i32.eqz (local.get $hgt)))
+          (i32.or (i32.gt_u (local.get $w) (i32.const 2048)) (i32.gt_u (local.get $hgt) (i32.const 2048))))
+      (then (return (i32.const 0))))
+    (local.set $e (call $d9r_new (local.get $rec) (select (i32.const 2) (i32.const 0) (global.get $d9r_lost))))
+    (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+    (call $gps_create (global.get $d9g_h) (i32.load offset=8 (local.get $e)) (global.get $GPS_KIND_RT)
+      (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
+    (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
+      (i32.load offset=48 (local.get $wa)) (local.get $fmt) (i32.const 0) (i32.const 0) (local.get $w) (local.get $hgt))
+    (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
+    (i32.store offset=28 (local.get $e) (global.get $d9r_gen))
+    (local.get $e))
+
+  ;; Executor DS entry of depth record $rec (guest), created on first use.
+  (func $d9r_depth (param $device i32) (param $rec i32) (result i32)
+    (local $e i32) (local $wa i32) (local $w i32) (local $hgt i32) (local $fmt i32) (local $d24 i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (local.get $e) (then (return (local.get $e))))
+    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    (local.set $wa (call $g2w (local.get $rec)))
+    (local.set $w (i32.load offset=20 (local.get $wa)))
+    (local.set $hgt (i32.load offset=24 (local.get $wa)))
+    (local.set $fmt (i32.load offset=28 (local.get $wa)))
+    (if (i32.or (i32.or (i32.eqz (local.get $w)) (i32.eqz (local.get $hgt)))
+          (i32.or (i32.gt_u (local.get $w) (i32.const 4096)) (i32.gt_u (local.get $hgt) (i32.const 4096))))
+      (then (return (i32.const 0))))
+    (local.set $d24 (i32.eqz (i32.or (i32.eq (local.get $fmt) (i32.const 70)) (i32.eq (local.get $fmt) (i32.const 80)))))
+    (local.set $e (call $d9r_new (local.get $rec) (i32.or (i32.const 1) (i32.shl (local.get $d24) (i32.const 3)))))
+    (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+    (i32.store offset=28 (local.get $e) (i32.const 6))
+    (call $gps_create (global.get $d9g_h) (i32.load offset=8 (local.get $e)) (global.get $GPS_KIND_DS)
+      (select (global.get $GPS_FMT_D24S8) (global.get $GPS_FMT_D16) (local.get $d24))
+      (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
+    (local.get $e))
+
+  ;; The ring wrote colour entry $e.
+  (func $d9r_wrote (param $e i32)
+    (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
+    (i32.store offset=28 (local.get $e) (global.get $d9r_gen))
+    (i32.store offset=24 (local.get $e) (i32.or
+      (i32.and (i32.load offset=24 (local.get $e)) (i32.const -7))
+      (select (i32.const 4) (i32.const 0) (global.get $d9g_lead)))))
+
+  ;; The old path wrote colour entry $e last.
+  (func $d9r_stale (param $e i32)
+    (i32.store offset=24 (local.get $e) (i32.or
+      (i32.and (i32.load offset=24 (local.get $e)) (i32.const -7)) (i32.const 2))))
+
+  ;; Make $e's ring RT current (pull what the old path wrote). 0 = could not.
+  ;; An old readback a pull is waiting on (render token), and its entry.
+  (global $d9r_pull_tok (mut i32) (i32.const 0))
+  (global $d9r_pull_e (mut i32) (i32.const 0))
+  (func $d9r_fresh (param $e i32) (result i32)
+    (local $wa i32) (local $r i32)
+    (if (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 2))) (then (return (i32.const 1))))
+    (local.set $wa (call $g2w (i32.load (local.get $e))))
+    (call $d9g_ho_reap)
+    (if (global.get $d9r_pull_tok)
+      (then
+        (local.set $r (call $host_gpu_gl_call (i32.const 0x30007) (i32.const 0) (global.get $d9r_pull_tok)))
+        (if (i32.eq (local.get $r) (global.get $d9r_pull_tok)) (then (return (i32.const 0))))
+        (global.set $d9r_pull_tok (i32.const 0))
+        (if (i32.ne (global.get $d9r_pull_e) (local.get $e))
+          (then (local.set $r (call $host_gpu_gl_call (i32.const 0x30010) (local.get $wa) (i32.load offset=8 (local.get $wa)))))))
+      (else (local.set $r (call $host_gpu_gl_call (i32.const 0x30010) (local.get $wa) (i32.load offset=8 (local.get $wa))))))
+    (if (i32.lt_s (local.get $r) (i32.const -1)) (then
+      (global.set $d9r_pull_tok (local.get $r)) (global.set $d9r_pull_e (local.get $e)) (return (i32.const 0))))
+    (if (i32.ne (local.get $r) (i32.const 1)) (then (return (i32.const 0))))
+    (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
+      (i32.load offset=48 (local.get $wa)) (i32.load offset=20 (local.get $e))
+      (i32.const 0) (i32.const 0) (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e)))
+    (call $d9g_stat (i32.const 85) (i32.const 1))
+    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -3)))
+    (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
+    (i32.store offset=28 (local.get $e) (global.get $d9r_gen))
+    (i32.const 1))
+
+  ;; Give the old path $e's ring pixels (CPU bits + old upload). Readback
+  ;; site 5.
+  (func $d9r_push (param $e i32)
+    (local $wa i32) (local $r i32)
+    (if (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 4))) (then (return)))
+    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -5)))
+    (local.set $wa (call $g2w (i32.load (local.get $e))))
+    (call $d9g_rb (i32.load offset=8 (local.get $e)) (i32.const 0) (i32.const 0)
+      (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e))
+      (call $g2w (i32.load offset=40 (local.get $wa))) (i32.load offset=48 (local.get $wa))
+      (i32.load offset=20 (local.get $e)) (i32.const 5))
+    (call $d9g_ho_reap)
+    (local.set $r (call $host_gpu_gl_call (i32.const 0x30011) (local.get $wa) (i32.load offset=8 (local.get $wa))))
+    (if (i32.lt_s (local.get $r) (i32.const -1)) (then (global.set $d9g_ho_token (local.get $r)) (return)))
+    (if (i32.ne (local.get $r) (i32.const 1)) (then (call $d9g_fail (i32.const 9)))))
+
+  (func $d9r_push_all
+    (local $e i32) (local $end i32)
+    (if (i32.eqz (global.get $d9g_mem)) (then (return)))
+    (local.set $e (call $d9r_tab))
+    (local.set $end (i32.add (local.get $e) (i32.const 4096)))
+    (loop $scan
+      (if (i32.load (local.get $e)) (then (call $d9r_push (local.get $e))))
+      (local.set $e (i32.add (local.get $e) (i32.const 32)))
+      (br_if $scan (i32.lt_u (local.get $e) (local.get $end)))))
+
+  ;; Release every entry (device change, Reset, device release).
+  (func $d9r_drop_all
+    (local $e i32) (local $end i32)
+    (if (i32.eqz (global.get $d9g_mem)) (then (return)))
+    (local.set $e (call $d9r_tab))
+    (local.set $end (i32.add (local.get $e) (i32.const 4096)))
+    (loop $scan
+      (if (i32.load (local.get $e)) (then
+        (if (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 1)))
+          (then (global.set $d9r_lost (i32.const 1))))
+        (call $d9g_release (i32.load offset=8 (local.get $e)))
+        (memory.fill (local.get $e) (i32.const 0) (i32.const 32))))
+      (local.set $e (i32.add (local.get $e) (i32.const 32)))
+      (br_if $scan (i32.lt_u (local.get $e) (local.get $end))))
+    (global.set $d9r_tgt (i32.const 0))
+    (global.set $d9r_dse (i32.const 0))
+    (global.set $d9g_ds (i32.const 0)))
+
+  ;; A surface record is being freed (09ak $d3d9_depth_retire).
+  (func $d9r_forget (param $rec i32)
+    (local $e i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (i32.eqz (local.get $e)) (then (return)))
+    (if (i32.eq (local.get $e) (global.get $d9r_tgt)) (then
+      (global.set $d9r_tgt (i32.const 0)) (global.set $d9g_c_color (i32.const -1))))
+    (if (i32.eq (local.get $e) (global.get $d9r_dse)) (then
+      (global.set $d9r_dse (i32.const 0)) (global.set $d9g_ds_ptr (i32.const 0))
+      (global.set $d9g_ds (i32.const 0)) (global.set $d9g_c_depth (i32.const -1))))
+    (call $d9g_release (i32.load offset=8 (local.get $e)))
+    (memory.fill (local.get $e) (i32.const 0) (i32.const 32)))
+
+  ;; A RENDERTARGET texture (wasm $t) is being freed: its level records and
+  ;; its texture-cache slot (the sampled copy) go.
+  (func $d9r_forget_texture (param $t i32)
+    (local $base i32) (local $n i32) (local $i i32) (local $e i32)
+    (if (i32.eqz (global.get $d9g_mem)) (then (return)))
+    (local.set $base (i32.load offset=56 (local.get $t)))
+    (local.set $n (i32.mul (i32.load offset=32 (local.get $t))
+      (select (i32.const 6) (i32.const 1) (i32.eq (i32.load offset=12 (local.get $t)) (i32.const 5)))))
+    (block $done (loop $levels
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (call $d9r_forget (i32.add (local.get $base) (i32.mul (local.get $i) (i32.const 80))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $levels)))
+    (local.set $i (i32.const 0))
+    (loop $slots
+      (local.set $e (i32.add (i32.add (call $d9g_m) (i32.const 52224)) (i32.mul (local.get $i) (i32.const 80))))
+      (if (i32.eq (i32.load (local.get $e)) (local.get $t)) (then
+        (call $d9g_release (i32.load offset=4 (local.get $e)))
+        (i32.store (local.get $e) (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $slots (i32.lt_u (local.get $i) (i32.const 256)))))
+
+  ;; The old path drew / cleared for $device without the ring (a declined
+  ;; frame): its RT0 surface and depth surface are newer there.
+  (func $d9r_old_drew (param $device i32)
+    (local $state i32) (local $e i32) (local $p i32)
+    (local.set $state (call $d3d9_program_state (local.get $device)))
+    (if (i32.eqz (local.get $state)) (then (return)))
+    (local.set $state (call $g2w (local.get $state)))
+    (local.set $p (i32.load offset=22020 (local.get $state)))
+    (if (local.get $p) (then (call $d9r_old_wrote (local.get $device) (local.get $p))))
+    (local.set $e (call $d9r_find (i32.load offset=21752 (local.get $state))))
+    (if (local.get $e) (then
+      (i32.store offset=28 (local.get $e) (i32.const 6))
+      (if (i32.eq (local.get $e) (global.get $d9r_dse)) (then (global.set $d9g_zstale (i32.const 6)))))))
+
+  ;; The old path is about to write colour record $rec (guest; never the
+  ;; back buffer): keep the ring's pixels it does not overwrite, then mark
+  ;; the ring copy stale.
+  (func $d9r_old_wrote (param $device i32) (param $rec i32)
+    (local $e i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (i32.eqz (local.get $e)) (then
+      ;; Never seen by the ring: a later create must pull, not trust the CPU bits.
+      (local.set $e (call $d9r_color (local.get $device) (local.get $rec)))
+      (if (i32.eqz (local.get $e)) (then (global.set $d9r_lost (i32.const 1)) (return)))))
+    (call $d9r_push (local.get $e))
+    (call $d9r_stale (local.get $e)))
+
+  ;; The old path is about to read colour record $rec (guest).
+  (func $d9r_old_read (param $rec i32)
+    (local $e i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (local.get $e) (then (call $d9r_push (local.get $e)))))
+
+  ;; The old path uploaded $rec's CPU bits whole (Unlock): the ring takes the
+  ;; same bits, so both hold them.
+  (func $d9r_old_uploaded (param $rec i32)
+    (local $e i32) (local $wa i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (i32.eqz (local.get $e)) (then (return)))
+    (if (i32.eqz (call $d9r_live (global.get $d9g_dev))) (then (call $d9r_stale (local.get $e)) (return)))
+    (local.set $wa (call $g2w (local.get $rec)))
+    (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
+      (i32.load offset=48 (local.get $wa)) (i32.load offset=20 (local.get $e))
+      (i32.const 0) (i32.const 0) (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e)))
+    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -7)))
+    (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
+    (i32.store offset=28 (local.get $e) (global.get $d9r_gen)))
+
+  ;; ColorFill of colour record $rec (guest; 0 = the back buffer) on the
+  ;; ring: TARGETS (no depth) + CLEAR of the rect. 1 = lowered.
+  (func $d9r_fill (param $device i32) (param $rec i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32)
+      (param $argb i32) (result i32)
+    (local $e i32) (local $id i32) (local $fmt i32) (local $w i32) (local $hgt i32) (local $full i32) (local $p i32)
+    (local $rgba i32)
+    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    ;; A declined frame keeps the old path authoritative until its end.
+    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
+    (call $d9g_ho_reap)
+    (call $d9g_flush)
+    (if (local.get $rec)
+      (then
+        (local.set $e (call $d9r_color (local.get $device) (local.get $rec)))
+        (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+        (local.set $id (i32.load offset=8 (local.get $e)))
+        (local.set $w (i32.load offset=12 (local.get $e)))
+        (local.set $hgt (i32.load offset=16 (local.get $e)))
+        (local.set $fmt (i32.load offset=20 (local.get $e))))
+      (else
+        (local.set $id (global.get $d9g_rt))
+        (local.set $w (global.get $d9g_rt_w))
+        (local.set $hgt (global.get $d9g_rt_h))
+        (local.set $fmt (global.get $d9g_rt_fmt))))
+    (local.set $full (i32.and (i32.and (i32.eqz (local.get $l)) (i32.eqz (local.get $t)))
+      (i32.and (i32.eq (local.get $r) (local.get $w)) (i32.eq (local.get $b) (local.get $hgt)))))
+    ;; A partial fill keeps the rest: that must be current.
+    (if (i32.eqz (local.get $full)) (then
+      (if (local.get $e)
+        (then (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 0)))))
+        (else (if (global.get $d9g_cstale) (then (return (i32.const 0))))))))
+    (local.set $rgba (call $d9g_rgba (local.get $argb)))
+    (if (i32.eqz (call $d9g_has_alpha (local.get $fmt)))
+      (then (local.set $rgba (i32.or (local.get $rgba) (i32.const 0xff000000)))))
+    (call $d9r_targets (local.get $id) (i32.const 0))
+    (local.set $p (call $d9g_begin (global.get $GPS_OP_CLEAR) (size-of GpsClear)))
+    (store.field GpsClear mask (local.get $p) (global.get $GPS_CLEAR_COLOR))
+    (store.field GpsClear colormask (local.get $p) (i32.const 15))
+    (store.field GpsClear pad (local.get $p) (i32.const 0))
+    (store.field GpsClear rgba (local.get $p) (local.get $rgba))
+    (store.field GpsClear z (local.get $p) (f32.const 1))
+    (store.field GpsClear stencil (local.get $p) (i32.const 0))
+    (store.field GpsClear left (local.get $p) (local.get $l))
+    (store.field GpsClear top (local.get $p) (local.get $t))
+    (store.field GpsClear right (local.get $p) (local.get $r))
+    (store.field GpsClear bottom (local.get $p) (local.get $b))
+    (drop (call $d9g_end (local.get $p)))
+    (call $d9g_stat (i32.const 2) (i32.const 1))
+    (if (local.get $e)
+      (then
+        (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -3)))
+        (call $d9r_wrote (local.get $e)))
+      (else
+        (if (local.get $full)
+          (then
+            (global.set $d9g_cstale (i32.const 0))
+            (global.set $d9g_cpu (i32.const 3))
+            (global.set $d9g_cpu_rgba (local.get $rgba)))
+          (else (global.set $d9g_cpu (i32.const 0))))))
+    (i32.const 1))
+
+  ;; Executor texture for a one-level 2D RENDERTARGET texture (wasm $t): its
+  ;; level's RT, or -reason.
+  (func $d9r_rt_texture (param $t i32) (result i32)
+    (local $e i32)
+    (local.set $e (call $d9r_color (global.get $d9g_dev) (i32.load offset=56 (local.get $t))))
+    (if (i32.eqz (local.get $e)) (then (return (i32.const -10))))
+    (if (i32.eq (local.get $e) (global.get $d9r_tgt)) (then (return (i32.const -5))))
+    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const -13))))
+    (call $d9g_stat (i32.const 86) (i32.const 1))
+    (i32.load offset=8 (local.get $e)))
+
+  ;; Level $level, face $face of the sampled copy $id of a RENDERTARGET
+  ;; texture (wasm $t, record index $idx), COPYed from that level's RT when
+  ;; $seq (the slot's word: generation + 1) is behind. The new word, or
+  ;; -reason.
+  (func $d9r_rt_level (param $id i32) (param $t i32) (param $idx i32) (param $level i32) (param $face i32)
+      (param $seq i32) (param $fresh i32) (result i32)
+    (local $e i32) (local $p i32)
+    (if (i32.eqz (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_COPY))) (then (return (i32.const -5))))
+    (local.set $e (call $d9r_color (global.get $d9g_dev)
+      (i32.add (i32.load offset=56 (local.get $t)) (i32.mul (local.get $idx) (i32.const 80)))))
+    (if (i32.eqz (local.get $e)) (then (return (i32.const -10))))
+    (if (i32.eq (local.get $e) (global.get $d9r_tgt)) (then (return (i32.const -5))))
+    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const -13))))
+    (if (i32.and (i32.eqz (local.get $fresh))
+          (i32.eq (local.get $seq) (i32.add (i32.load offset=28 (local.get $e)) (i32.const 1))))
+      (then (call $d9g_stat (i32.const 9) (i32.const 1)) (return (local.get $seq))))
+    (local.set $p (call $d9g_begin (global.get $GPS_OP_COPY) (size-of GpsCopy)))
+    (store.field GpsCopy src (local.get $p) (i32.load offset=8 (local.get $e)))
+    (store.field GpsCopy dst (local.get $p) (local.get $id))
+    (store.field GpsCopy sx (local.get $p) (i32.const 0))
+    (store.field GpsCopy sy (local.get $p) (i32.const 0))
+    (store.field GpsCopy sw (local.get $p) (i32.load offset=12 (local.get $e)))
+    (store.field GpsCopy sh (local.get $p) (i32.load offset=16 (local.get $e)))
+    (store.field GpsCopy dx (local.get $p) (i32.const 0))
+    (store.field GpsCopy dy (local.get $p) (i32.const 0))
+    (store.field GpsCopy dw (local.get $p) (i32.load offset=12 (local.get $e)))
+    (store.field GpsCopy dh (local.get $p) (i32.load offset=16 (local.get $e)))
+    (store.field GpsCopy filter (local.get $p) (i32.or (i32.const 1)
+      (i32.or (i32.shl (local.get $level) (i32.const 8)) (i32.shl (local.get $face) (i32.const 16)))))
+    (drop (call $d9g_end (local.get $p)))
+    (call $d9g_stat (i32.const 87) (i32.const 1))
+    (i32.add (i32.load offset=28 (local.get $e)) (i32.const 1)))
+  ;; ---- d9rt: surface operations on the ring ------------------------------------
+  ;; Colour surface $rec (guest; 0 = the back buffer) as a current executor
+  ;; RT: sets $d9r_sid / $d9r_sw / $d9r_sh / $d9r_sfmt; the entry, -1 for the
+  ;; back buffer, 0 = not on the ring (or not current there).
+  (global $d9r_sid (mut i32) (i32.const 0))
+  (global $d9r_sw (mut i32) (i32.const 0))
+  (global $d9r_sh (mut i32) (i32.const 0))
+  (global $d9r_sfmt (mut i32) (i32.const 0))
+  (func $d9r_surf (param $device i32) (param $rec i32) (result i32)
+    (local $e i32)
+    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $rec)) (then
+      (if (global.get $d9g_cstale) (then (return (i32.const 0))))
+      (global.set $d9r_sid (global.get $d9g_rt))
+      (global.set $d9r_sw (global.get $d9g_rt_w))
+      (global.set $d9r_sh (global.get $d9g_rt_h))
+      (global.set $d9r_sfmt (global.get $d9g_rt_fmt))
+      (return (i32.const -1))))
+    (local.set $e (call $d9r_color (local.get $device) (local.get $rec)))
+    (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 0))))
+    (global.set $d9r_sid (i32.load offset=8 (local.get $e)))
+    (global.set $d9r_sw (i32.load offset=12 (local.get $e)))
+    (global.set $d9r_sh (i32.load offset=16 (local.get $e)))
+    (global.set $d9r_sfmt (i32.load offset=20 (local.get $e)))
+    (local.get $e))
+
+  ;; The ring wrote surface $e (from $d9r_surf).
+  (func $d9r_surf_wrote (param $e i32)
+    (if (i32.eq (local.get $e) (i32.const -1))
+      (then (global.set $d9g_cpu (i32.const 0)))
+      (else (call $d9r_wrote (local.get $e)))))
+
+  ;; StretchRect on the ring: COPY of src rect (x, y, w, h at $srect, wasm)
+  ;; of $srec into $drect of $drec (guest records, 0 = back buffer), with
+  ;; D3DTEXF $filter. 1 = lowered.
+  (func $d9r_stretch (param $device i32) (param $srec i32) (param $drec i32)
+      (param $srect i32) (param $drect i32) (param $filter i32) (result i32)
+    (local $s i32) (local $d i32) (local $sid i32) (local $sfmt i32) (local $p i32)
+    (if (i32.eqz (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_COPY))) (then (return (i32.const 0))))
+    (if (i32.eq (local.get $srec) (local.get $drec)) (then (return (i32.const 0))))
+    (local.set $s (call $d9r_surf (local.get $device) (local.get $srec)))
+    (if (i32.eqz (local.get $s)) (then (return (i32.const 0))))
+    (local.set $sid (global.get $d9r_sid))
+    (local.set $sfmt (global.get $d9r_sfmt))
+    (local.set $d (call $d9r_surf (local.get $device) (local.get $drec)))
+    (if (i32.eqz (local.get $d)) (then (return (i32.const 0))))
+    (call $d9g_ho_reap)
+    (call $d9g_flush)
+    (local.set $p (call $d9g_begin (global.get $GPS_OP_COPY) (size-of GpsCopy)))
+    (store.field GpsCopy src (local.get $p) (local.get $sid))
+    (store.field GpsCopy dst (local.get $p) (global.get $d9r_sid))
+    (store.field GpsCopy sx (local.get $p) (i32.load (local.get $srect)))
+    (store.field GpsCopy sy (local.get $p) (i32.load offset=4 (local.get $srect)))
+    (store.field GpsCopy sw (local.get $p) (i32.load offset=8 (local.get $srect)))
+    (store.field GpsCopy sh (local.get $p) (i32.load offset=12 (local.get $srect)))
+    (store.field GpsCopy dx (local.get $p) (i32.load (local.get $drect)))
+    (store.field GpsCopy dy (local.get $p) (i32.load offset=4 (local.get $drect)))
+    (store.field GpsCopy dw (local.get $p) (i32.load offset=8 (local.get $drect)))
+    (store.field GpsCopy dh (local.get $p) (i32.load offset=12 (local.get $drect)))
+    (store.field GpsCopy filter (local.get $p) (i32.or
+      (select (i32.const 2) (i32.const 1) (i32.eq (local.get $filter) (i32.const 2)))
+      (select (i32.const 0x1000000) (i32.const 0)
+        (i32.and (i32.eqz (call $d9g_has_alpha (global.get $d9r_sfmt))) (call $d9g_has_alpha (local.get $sfmt))))))
+    (drop (call $d9g_end (local.get $p)))
+    (call $d9g_stat (i32.const 87) (i32.const 1))
+    (call $d9r_surf_wrote (local.get $d))
+    (i32.const 1))
+
+  ;; UpdateSurface / DC upload on the ring: guest pixels ($bits wasm, row
+  ;; pitch, D3DFORMAT) into rect (x, y, w, h) of $drec (0 = back buffer).
+  ;; 1 = lowered.
+  (func $d9r_update (param $device i32) (param $drec i32) (param $bits i32) (param $pitch i32) (param $fmt i32)
+      (param $x i32) (param $y i32) (param $w i32) (param $hgt i32) (result i32)
+    (local $d i32) (local $full i32)
+    (if (i32.eqz (call $d9g_pix (local.get $fmt))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $drec)) (then
+      (local.set $full (i32.and (i32.and (i32.eqz (local.get $x)) (i32.eqz (local.get $y)))
+        (i32.and (i32.eq (local.get $w) (global.get $d9g_rt_w)) (i32.eq (local.get $hgt) (global.get $d9g_rt_h)))))
+      ;; A whole-target upload makes a stale back buffer current.
+      (if (i32.and (i32.ne (global.get $d9g_cstale) (i32.const 0)) (i32.eqz (local.get $full)))
+        (then (return (i32.const 0))))
+      (call $d9g_ho_reap)
+      (call $d9g_flush)
+      (call $d9g_upload_to (global.get $d9g_rt) (i32.sub (local.get $bits)
+          (i32.add (i32.mul (local.get $y) (local.get $pitch)) (i32.mul (local.get $x) (call $d3d9_color_bytes (local.get $fmt)))))
+        (local.get $pitch) (local.get $fmt) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt))
+      (global.set $d9g_cstale (i32.const 0))
+      (global.set $d9g_cpu (i32.const 0))
+      (return (i32.const 1))))
+    (local.set $d (call $d9r_surf (local.get $device) (local.get $drec)))
+    (if (i32.eqz (local.get $d)) (then (return (i32.const 0))))
+    (call $d9g_ho_reap)
+    (call $d9g_flush)
+    (call $d9g_upload_to (global.get $d9r_sid) (i32.sub (local.get $bits)
+        (i32.add (i32.mul (local.get $y) (local.get $pitch)) (i32.mul (local.get $x) (call $d3d9_color_bytes (local.get $fmt)))))
+      (local.get $pitch) (local.get $fmt) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt))
+    (call $d9r_surf_wrote (local.get $d))
+    (i32.const 1))
+
+  ;; Lock / Unlock of colour surface $rec while the ring leads: the ring is
+  ;; its storage. $upload 0: the guest is about to read the CPU bits
+  ;; (READBACK unless $discard); 1: the guest wrote them (UPLOAD). The old
+  ;; copy is left stale (pushed if the old path ever needs it). 1 = done.
+  (func $d9r_cpu_sync (param $rec i32) (param $upload i32) (param $discard i32) (result i32)
+    (local $e i32) (local $wa i32)
+    (local.set $e (call $d9r_find (local.get $rec)))
+    (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+    (if (i32.ne (i32.load offset=8 (call $g2w (local.get $rec))) (global.get $d9g_dev)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9g_lead_on (global.get $d9g_dev))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 0))))
+    (local.set $wa (call $g2w (local.get $rec)))
+    (call $d9g_ho_reap)
+    (call $d9g_flush)
+    (if (local.get $upload)
+      (then
+        (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
+          (i32.load offset=48 (local.get $wa)) (i32.load offset=20 (local.get $e))
+          (i32.const 0) (i32.const 0) (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e)))
+        (call $d9r_wrote (local.get $e)))
+      (else
+        (if (i32.eqz (local.get $discard)) (then
+          (call $d9g_rb (i32.load offset=8 (local.get $e)) (i32.const 0) (i32.const 0)
+            (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e))
+            (call $g2w (i32.load offset=40 (local.get $wa))) (i32.load offset=48 (local.get $wa))
+            (i32.load offset=20 (local.get $e)) (i32.const 2))))))
+    (i32.const 1))
+
+  ;; GetRenderTargetData of colour surface $rec into system-memory surface
+  ;; $dst (wasm record) while the ring leads. 1 = done.
+  (func $d9r_rtdata (param $device i32) (param $rec i32) (param $dst i32) (result i32)
+    (local $e i32)
+    (if (i32.eqz (call $d9g_lead_on (local.get $device))) (then (return (i32.const 0))))
+    (local.set $e (call $d9r_surf (local.get $device) (local.get $rec)))
+    (if (i32.le_s (local.get $e) (i32.const 0)) (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (i32.load offset=20 (local.get $dst)) (global.get $d9r_sw))
+          (i32.ne (i32.load offset=24 (local.get $dst)) (global.get $d9r_sh)))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9g_pix (i32.load offset=28 (local.get $dst)))) (then (return (i32.const 0))))
+    (call $d9g_ho_reap)
+    (call $d9g_flush)
+    (call $d9g_rb (global.get $d9r_sid) (i32.const 0) (i32.const 0) (global.get $d9r_sw) (global.get $d9r_sh)
+      (call $g2w (i32.load offset=40 (local.get $dst))) (i32.load offset=48 (local.get $dst))
+      (i32.load offset=28 (local.get $dst)) (i32.const 2))
+    (i32.const 1))
+  ;; ---- d9rt end -----------------------------------------------------------------

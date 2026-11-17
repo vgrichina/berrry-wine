@@ -1417,6 +1417,7 @@
     (if (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 3))
       (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 5))) (then
       (if (i32.load offset=56 (local.get $wa)) (then
+        (call $d9r_forget_texture (local.get $wa)) ;; d9rt
         ;; The broker copies all IDs into one ordered retirement command.
         ;; Its executor storage is independent of this canonical allocation.
         (drop (call $host_gpu_gl_call (i32.const 0x30013) (local.get $wa) (i32.load offset=8 (local.get $wa))))))))

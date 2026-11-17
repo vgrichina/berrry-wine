@@ -46,10 +46,13 @@ const GREEN = 0xff00ff00;
     const present = ['IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]'];
     await run([['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,137,0]'],
       ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,22,1]']]);
-    // Frames 0 and 1: shadow mode, the old path runs every call.
+    // Frames 0 and 1: the ring leads from its first call (d9rt lead0): only
+    // that first Clear ran on the old path, no draw did.
     await run([...frame(BLUE), present, ...frame(BLUE), present]);
-    assert.strictEqual(await stat(81), 1, 'two ring frames -> lead');
-    assert.strictEqual(await ops(0x30001), 2, 'shadow draws ran on the old path');
+    assert.strictEqual(await stat(81), 1, 'lead from frame 0');
+    assert.strictEqual(await stat(88), 1, 'lead0 entry');
+    assert.strictEqual(await ops(0x30001), 0, 'no draw ran on the old path');
+    assert.strictEqual(await ops(0x30003), 1, 'only the first Clear ran on the old path');
     // Frame 2: leading, the old path is not called for Clear or Draw.
     const draws = await ops(0x30001), clears = await ops(0x30003);
     await run([...frame(BLUE), present]);

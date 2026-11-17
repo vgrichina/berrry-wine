@@ -97,6 +97,7 @@
   (local $wa i32)
   (local.set $wa (call $g2w (local.get $surface)))
   (if (i32.load offset=44 (local.get $wa)) (then (return (i32.const 1))))
+  (call $d9r_forget (local.get $surface)) ;; d9rt: its executor RT / DS goes too
   (if (i32.ne (call $host_gpu_gl_call
     (select (i32.const 0x3000f) (i32.const 0x30008) (call $d3d9_is_color_surface (local.get $surface)))
     (local.get $wa) (i32.load offset=8 (local.get $wa))) (i32.const 1))

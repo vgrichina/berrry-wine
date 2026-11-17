@@ -143,6 +143,8 @@
   (global $GPS_CAP_MIRRORONCE i32 (i32.const 64))
   (global $GPS_CAP_CLIP_PLANES i32 (i32.const 128))
   (global $GPS_CAP_WBUFFER i32 (i32.const 256))
+  ;; COPY records (RT -> RT stretch, RT -> TEX2D/CUBE level): see GpsCopy.
+  (global $GPS_CAP_COPY i32 (i32.const 512))
 
   ;; CLEAR mask bits; RASTER colormask bits (R,G,B,A = 1,2,4,8).
   (global $GPS_CLEAR_COLOR i32 (i32.const 1))
@@ -321,6 +323,11 @@
     (field mask u8) (field colormask u8) (field pad u16)
     (field rgba i32) (field z f32) (field stencil i32)
     (field left i32) (field top i32) (field right i32) (field bottom i32))
+  ;; Needs GPS_CAP_COPY. src is an RT. filter = D3DTEXF (0/1 point, 2
+  ;; linear) | dst level << 8 | dst face << 16 | 1 << 24 (write alpha 255).
+  ;; dst RT: rects may differ in size; each dst pixel samples its center
+  ;; mapped into the src rect, clamped to that rect (D3D9 StretchRect).
+  ;; dst TEX2D/CUBE: same size, point, into that level / face.
   (layout GpsCopy
     (field src i32) (field dst i32)
     (field sx i32) (field sy i32) (field sw i32) (field sh i32)
