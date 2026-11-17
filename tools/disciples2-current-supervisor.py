@@ -9,7 +9,10 @@ def seal(label,body):
     return fd
 OWNED={'tools/disciples2-current-supervisor.py','tools/disciples2-current-native-source-view.cjs',
        'tools/disciples2-current-preflight.cjs','tools/disciples2-current-controller.py',
-       'test/test-disciples2-current-quest.cjs'}
+       'test/test-disciples2-current-quest.cjs',
+       'lib/cli-native-pointer-coordinates.js','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
+       'test/run.js','test/test-cli-native-pointer-coordinates.cjs',
+       'test/test-disciples2-native-paint-binding.cjs','test/test-vb5-native-dialog-identity.cjs'}
 PRELOAD='tools/disciples2-current-native-source-view.cjs'
 def digest(body):return hashlib.sha256(body).hexdigest()
 def indexed_sources(bodies):
@@ -33,7 +36,8 @@ def validate_sources(pool,manifest):
 def git(root,*args):return subprocess.check_output(['git',*args],cwd=root)
 def selected(name):
     return ((name.startswith(('src/','lib/','tools/','fonts/')) or
-             (name.startswith('test/') and name.count('/')==1) or name in ('host.js','test/candidate-corpus/manifest.json'))
+             (name.startswith('test/') and name.count('/')==1) or name.startswith('test/helpers/') or
+             name in ('host.js','test/candidate-corpus/manifest.json'))
             and name.endswith(('.js','.cjs','.json','.wat','.watx','.py')))
 def prepare_holder(out,recipe):
     # Only Git bytes plus enumerated owned patches. Never sample foreign WIP.

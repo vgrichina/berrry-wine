@@ -81,6 +81,7 @@ function contextUnits(){
  const main={hwnd:'0x1',generation:'1',live:true,visible:true,isChild:false,title:'Fixture',owner:'0x0',parent:'0x0',processId:1,threadId:1,x:0,y:0,screenX:0,screenY:0,w:800,h:600,style:0x10000000,controlClass:0};
  const child={...main,hwnd:'0x2',generation:'2',isChild:true,parent:'0x1',title:'Continue',controlClass:1};
  const scene={windows:[main,child],mainHwnd:'0x1',modalHwnd:'0x0',focus:'0x1',focusTopLevel:'0x1',focusWindow:{...main},capture:'0x0',physicalUp:true,nativeProcess:{pid:10,executable:'fixture'},screen:{w:800,h:600},nativeMessageBox:null,eip:'0x400000'};
+ scene.pointerMapping={canvas:{w:800,h:600},transform:null,viewport:null,clip:null};
  const image=Buffer.from('unit complete encoder bytes'),c=registry.capture(()=>scene,()=>image,()=>{});
  const review={contract:REVIEWED_CONTEXT,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:clock,scope:'menu',targetHwnd:'0x1'};
  image.fill(0);assert.doesNotThrow(()=>registry.verify(scene,review));

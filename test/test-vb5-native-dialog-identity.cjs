@@ -67,6 +67,7 @@ function units(){
  let row=[0n,3n,65539n,1000n,1n,65537n,513n,1n];
  const e={get_current_thread_id:()=>1,get_process_id:()=>1000,native_button_receipt:i=>row[i],wnd_lookup_live:()=>1,wnd_lookup_generation:()=>3n,wnd_get_proc_export:()=>-65535};
  const event={action:'mousedown',x:20,y:20},intent={review:{targetHwnd:target.hwnd}},instance={exports:e},snapshot={windows:[target]};
+ snapshot.pointerMapping={canvas:{w:800,h:600},transform:null,viewport:null,clip:null};
  const fence=()=>native.captureNativeButton(event,intent,snapshot,instance);
  let captured=fence();assert(captured);assert.equal(native.confirmNativeButton(captured,event),null,'unchanged historical witness cannot acknowledge a new input');
  row[0]=1n;assert(native.confirmNativeButton(captured,event));

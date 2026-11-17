@@ -7666,6 +7666,7 @@ async function main() {
       nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
+      pointerMapping: renderer ? require('../lib/cli-native-pointer-coordinates').captureMapping(renderer) : null,
       frozen: {
         frozen: controlFrozen,
         tickMs: batchClock.getTickMsPerBatch(),
@@ -7935,7 +7936,11 @@ async function main() {
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
     if (cmd.action === 'native-reviewed-capture') {
       if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
-      return reviewedContexts.capture(controlSnapshot,()=>canvasToPng(renderer.canvas),bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
+      return reviewedContexts.capture(controlSnapshot,()=>{
+        presentForRead();
+        return require('../lib/cli-native-pointer-coordinates').encodeReviewedCanvas(renderer,canvas=>
+          typeof canvas.toBufferSync==='function'?canvas.toBufferSync('png'):canvas.toBuffer('image/png'));
+      },bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
     }
     if (cmd.action === 'guarded-release') return guardedInput.release(cmd.owner);
     if (cmd.action === 'guarded-input') {
