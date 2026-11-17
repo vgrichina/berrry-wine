@@ -120,7 +120,7 @@ def release(name,owner,due):
         time.sleep(min(.003,max(0,due-time.time())))
     try:
         sent=time.time();reply=call(dict(action='guarded-release',owner=owner),timeout=.2,cleanup=True)
-        save(name+'-up.json',dict(at=time.time(),sentAt=sent,reply=reply,physicalUpACK=reply.get('released') is True))
+        save(name+'-up.json',dict(at=time.time(),sentAt=sent,monotonic=time.monotonic(),reply=reply,physicalUpACK=reply.get('released') is True))
     except BaseException as e:save(name+'-up.json',dict(at=time.time(),error=str(e),physicalUpACK=False));raise
 def release_process(name,owner,due,stdout_read,stdout_write,stderr_read,stderr_write):
     os.close(stdout_read);os.close(stderr_read)
@@ -177,11 +177,16 @@ def intent(name,scene,x,y,kind):
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
         assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
         assert all(receipt.get(k)==v for k,v in dict(owner=owner['owner'],epoch=owner['epoch'],nonce=nonce).items())
-        assert 0<receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000),'late consumption'
+        assert start*1000<=receipt['consumedAt']<min((start+.5)*1000,(min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000),'late consumption'
+        if receipt.get('receiptBoundary')=='native-button-dispatch-return':
+            native=receipt['nativeMessage']
+            assert native['hwnd']==int(w['hwnd'],16) and str(native['generation'])==str(w['generation'])
+            assert native['processId']==w['processId'] and native['threadId']==w['threadId']
         save(name+'-up-at.json',dict(at=receipt['consumedAt']/1000+.1))
         out,err=child.communicate(timeout=max(.001,start+1.75-time.time()))
         save(name+'-release-wait.json',dict(pid=child.pid,exit=child.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,stdout=out.decode(),stderr=err.decode()))
         up=read(name+'-up.json');assert child.returncode==0 and up['physicalUpACK'] and up['at']<start+1.75
+        assert up['reply'].get('owner')==owner['owner'] and receipt['consumedAt']/1000<=up['sentAt']<=up['at']
         # Acknowledgement proves input consumption only. Observe a later scene.
         # Observe the actual transition immediately. There is no minimum
         # completion delay: 3000ms bounds the entire intent and its evidence.
@@ -190,15 +195,31 @@ def intent(name,scene,x,y,kind):
             waited=R/'native-wait.json'
             if waited.exists():
                 native=read('native-wait.json');assert kind=='quit' and native['actualWait'] and native['exit']==0
+                info=read('native-pid.json')
+                if info.get('invocationToken'):
+                    guest=read('native-exit.json')
+                    assert not (R/'native-exit.json.cancelled').exists()
+                    assert guest['contract']=='native-process-exit-v1' and guest['exitCode']==0
+                    assert all(guest[k]==info[k]==native[k] for k in ('pid','startToken','invocationToken','bootId'))
+                    assert up['monotonic']<=guest['atExitMono']<=native['atWaitMono']
                 save(name+'-observation.json',dict(at=time.time(),nativeWait=native,noPostExitRequest=True))
                 break
             if kind=='quit':
                 time.sleep(.005);continue # Quit is proved by parent wait, never a request to a retiring endpoint.
             if not pathlib.Path(f"/proc/{read('native-pid.json')['pid']}").exists():
                 time.sleep(.005);continue # Parent still drains pipes/publishes its actual wait.
+            if kind=='game':
+                image=R/(name+'-after.png')
+                cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))
+                assert cap['contract']=='native-reviewed-context-v1' and cap['snapshot']['physicalUp']
+                save(name+'-observation.json',dict(at=time.time(),image=cap,pngSHA256=hashlib.sha256(image.read_bytes()).hexdigest()))
+                break
             after=call(dict(action='snapshot'),timeout=max(.001,start+3-time.time()))
             if kind!='quit' and after['physicalUp'] and context(after)!=context(rr['snapshot']):
-                save(name+'-observation.json',dict(at=time.time(),snapshot=after));break
+                image=R/(name+'-after.png')
+                cap=call(dict(action='native-reviewed-capture',path=str(image)),timeout=max(.001,start+3-time.time()))
+                assert cap['contract']=='native-reviewed-context-v1' and cap['snapshot']['physicalUp']
+                save(name+'-observation.json',dict(at=time.time(),snapshot=after,image=cap,pngSHA256=hashlib.sha256(image.read_bytes()).hexdigest()));break
             time.sleep(.005)
         assert time.time()<start+3
         save(name+'-completion.json',dict(at=time.time(),elapsedMs=(time.time()-start)*1000,limitsMs=dict(confirmation=500,physicalUp=1750,aggregate=3000)))
@@ -224,5 +245,10 @@ if __name__=='__main__':
     elif mode=='review':review(*sys.argv[2:7])
     elif mode=='bind':bind(sys.argv[2])
     elif mode=='intent':intent(sys.argv[2],sys.argv[3],int(sys.argv[4]),int(sys.argv[5]),sys.argv[6])
+    elif mode=='review-intent':
+        scene,description,label,kind,target,name,x,y=sys.argv[2:10]
+        review(scene,description,label,kind,target)
+        if not (R/'input-owner.json').exists():bind(scene)
+        intent(name,scene,int(x),int(y),kind)
     elif mode=='release':release(sys.argv[2],sys.argv[3],float(sys.argv[4]))
 

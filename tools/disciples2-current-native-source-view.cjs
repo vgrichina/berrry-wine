@@ -88,6 +88,23 @@ fs.createReadStream = (file, opts) => {
   if (opts?.start !== undefined || opts?.end !== undefined) throw Error('partial sealed stream unsupported');
   return require('node:stream').Readable.from([Buffer.from(b)]);
 };
+// Resolve relative/absolute source imports from the immutable inventory before
+// Node consults the mutable checkout. A concurrent main integration may remove
+// or rename a path retained by this run's published preparation.
+const resolveFilename = Module._resolveFilename;
+Module._resolveFilename = function(request, parent, ...rest) {
+  if (typeof request === 'string' && (request.startsWith('./') || request.startsWith('../') || path.isAbsolute(request))) {
+    const base = path.resolve(parent?.filename ? path.dirname(parent.filename) : process.cwd(), request);
+    for (const candidate of [base, base+'.js', base+'.json', base+'.cjs',
+      path.join(base,'index.js'), path.join(base,'index.json')]) {
+      if (files.has(candidate)) {
+        select(candidate, true); // Verify the exact inventoried body before resolving.
+        return candidate;
+      }
+    }
+  }
+  return resolveFilename.call(this, request, parent, ...rest);
+};
 for (const extension of ['.js', '.cjs', '.json']) {
   const previous = Module._extensions[extension] || Module._extensions['.js'];
   Module._extensions[extension] = (mod, file) => {
@@ -117,6 +134,21 @@ if (process.env.DISCIPLES2_PHASE === 'runtime') {
     const original = cp[name];
     cp[name] = function(command, args, options, ...rest) {
       childOptions(Array.isArray(args) ? options : args);
+      // Native fixtures also launch Python controllers/watchdogs. When the
+      // caller supplies the pinned bootstrap, preserve that inventory through
+      // the Node -> Python -> Python route as well as through Node children.
+      const bootstrap=process.env.NEVERHOOD_FROZEN_PYTHON;
+      if (bootstrap && Array.isArray(args) && /^python(?:3(?:\.\d+)?)?$/.test(path.basename(command))) {
+        let i=0;while (['-B','-u'].includes(args[i]))i++;
+        if (typeof args[i]==='string' && args[i].endsWith('.py')) {
+          const target=path.resolve(args[i]);
+          if (target.startsWith(root+'/')) {
+            if (!files.has(target)) throw Error('unsealed Python child: '+target);
+            select(target,true);
+            args=[...args.slice(0,i),'-c',bootstrap,...args.slice(i)];
+          }
+        }
+      }
       return original.call(this, command, args, options, ...rest);
     };
   }

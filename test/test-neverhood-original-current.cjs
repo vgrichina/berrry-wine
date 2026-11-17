@@ -54,10 +54,17 @@ with tempfile.TemporaryDirectory() as d:
  assert not (m.R/'requests.jsonl').exists()
 runtime=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');rt=importlib.util.module_from_spec(runtime);runtime.loader.exec_module(rt)
 from unittest.mock import patch
+recipe=dict(seconds=900,watchdogGrace=20,reserveSeconds=90,inputPolicy=rt.POLICY,childInheritance='sealed-node-v1',cwd=str(rt.ROOT),originalPipelineOrdinal=1,args=['node','test/run.js','--iso=existing','--iso-drive=D','--iso-exe=SETUP95.EXE','--max-seconds=900','--real-ticks','--threads','--spawn-processes','--no-build'])
+rt.validate_recipe(recipe)
+for k,v in [('seconds',2400),('reserveSeconds',240),('watchdogGrace',30)]:
+ bad=dict(recipe);bad[k]=v
+ try:rt.validate_recipe(bad)
+ except AssertionError:pass
+ else:raise AssertionError('accepted obsolete clock '+k)
 with patch('importlib.machinery.SourceFileLoader.exec_module',side_effect=AssertionError('mutable path re-read')):
  assert callable(rt.helper().seal)
 original_read=pathlib.Path.read_bytes
-for borrowed in (rt.HELPER,rt.PRELOAD):
+for borrowed in (rt.HELPER,):
  def changed_read(p):
   body=original_read(p)
   return body+b'\\n# unpublished' if p==rt.ROOT/borrowed else body
@@ -65,7 +72,25 @@ for borrowed in (rt.HELPER,rt.PRELOAD):
   try:rt.helper()
   except AssertionError as e:assert 'unpublished borrowed helper' in str(e)
   else:raise AssertionError('executed unpublished helper')
-print('PASS actual BUTTON identity/generation/label/enabled refusals; permanent UNKNOWN zero HTTP; unpublished borrowed helper/preload refused before import')`;
+# No physical fixture modules exist: resolve only inventoried, verified bytes.
+bodies={'lib/neverhood-sealed-fixture.js':b"module.exports=require('./neverhood-sealed-value.json').value",'lib/neverhood-sealed-value.json':b'{"value":73}',
+ 'test/neverhood-sealed-python-child.py':b"print(73)",
+ 'test/neverhood-sealed-python.py':b"import importlib.util,pathlib,subprocess,sys; p=pathlib.Path(__file__).with_name('neverhood-sealed-python-child.py'); s=importlib.util.spec_from_file_location('child',p); m=importlib.util.module_from_spec(s); s.loader.exec_module(m); assert p.read_bytes()==b'print(73)'; r=subprocess.run([sys.executable,'-B',str(p)],capture_output=True); assert r.returncode==0,r.stderr; assert r.stdout.strip()==b'73'; print('PYTHON_INHERITANCE_PASS')"}
+pool,index,rows=rt.H.indexed_sources(bodies);source=rt.H.seal('resolver-test-source',pool)
+preload=rt.H.seal('resolver-test-preload',(rt.ROOT/rt.PRELOAD).read_bytes());module=rt.H.seal('resolver-test-module',b'\\0asm')
+env=dict(os.environ,DISCIPLES2_ROOT=str(rt.ROOT),DISCIPLES2_PHASE='runtime',DISCIPLES2_SOURCE_FD=f'/proc/{os.getpid()}/fd/{source}',DISCIPLES2_SOURCE_SHA256=rt.H.digest(pool),DISCIPLES2_SOURCE_INDEX_SHA256=rt.H.digest(index),DISCIPLES2_MODULE_FD=f'/proc/{os.getpid()}/fd/{module}',DISCIPLES2_MODULE_SHA256=rt.H.digest(b'\\0asm'),DISCIPLES2_MANIFEST_SHA256='a'*64)
+prepath=f'/proc/{os.getpid()}/fd/{preload}';env['NODE_OPTIONS']='--preserve-symlinks --require='+prepath
+env['NEVERHOOD_FROZEN_PYTHON']=rt.FROZEN_PYTHON
+code="""const a=require('node:assert/strict'),cp=require('node:child_process'),{Worker}=require('node:worker_threads');const req=\"require('./lib/neverhood-sealed-fixture')\";a.equal(eval(req),73);a.throws(()=>require('./lib/neverhood-not-in-source-inventory'),{code:'MODULE_NOT_FOUND'});const c=cp.spawnSync(process.execPath,['-e','console.log('+req+')'],{env:process.env});a.equal(c.status,0,c.stderr.toString());a.equal(c.stdout.toString().trim(),'73');new Worker(\"require('node:worker_threads').parentPort.postMessage(\"+req+\")\",{eval:true}).on('message',n=>a.equal(n,73));"""
+code+="const py=cp.spawnSync('python3',['-B','test/neverhood-sealed-python.py'],{env:process.env});a.equal(py.status,0,py.stderr.toString());a.match(py.stdout.toString(),/PYTHON_INHERITANCE_PASS/);a.throws(()=>cp.spawnSync('python3',['-B','test/neverhood-unsealed-python.py']),/unsealed Python child/);"
+p=rt.subprocess.run(['node','-e',code],env=env,capture_output=True)
+assert p.returncode==0,p.stderr
+with tempfile.TemporaryDirectory() as d:
+ out=pathlib.Path(d)
+ result=rt.checked(out,'frozen-python',['python3','-B','test/neverhood-sealed-python.py'],env)
+ assert b'PYTHON_INHERITANCE_PASS' in result
+for fd in (source,preload,module):os.close(fd)
+print('PASS native BUTTON/obsolete clock/UNKNOWN guards; borrowed helper refusal; sealed missing-path main/Worker/OSchild JS+JSON resolution, unknown source refused')`;
  const p=cp.spawnSync('python3',['-B','-c',code],{cwd:path.resolve(__dirname,'..'),encoding:'utf8'});
  process.stdout.write(p.stdout);process.stderr.write(p.stderr);assert.equal(p.status,0);process.exit(0);
 }
@@ -112,7 +137,7 @@ fs.writeFileSync(image,fixture,{flag:'wx'});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function main(){
- const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','repaint-positive','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
+ const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','game-positive','repaint-positive','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
  for(const [index,mode] of modes.entries()){
   const run=path.join(out,mode);fs.mkdirSync(run);
   fs.copyFileSync(path.join(out,'../runtime-inputs.json'),path.join(run,'runtime-inputs.json'));
@@ -137,7 +162,7 @@ async function main(){
     assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')),'permanent UNKNOWN; fixture sends no later requests');
     requests++;fs.appendFileSync(path.join(run,'fixture-requests.jsonl'),JSON.stringify({at:Date.now(),action:command.action})+'\n');return send(command);
   };
-  s.child.once('close',(exit,signal)=>fs.writeFileSync(path.join(run,'native-wait.json'),JSON.stringify({pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded})));
+  s.child.once('close',(exit,signal)=>{const target=path.join(run,'native-wait.json'),pending=target+'.pending';fs.writeFileSync(pending,JSON.stringify({pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}),{flag:'wx'});fs.renameSync(pending,target);});
   watchdog.stdin.write(String(s.child.pid));
   const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
   fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]}));
@@ -160,7 +185,7 @@ async function main(){
   try{
     let scene;const due=Date.now()+15000;
     do{scene=await s.send({action:'snapshot'});if(scene.modalHwnd!=='0x0')break;assert(Date.now()<due);await pause(30);}while(true);
-    if(!['positive','repaint-positive'].includes(mode)){
+    if(!['positive','game-positive','repaint-positive'].includes(mode)){
       await s.send({action:'frozen',mode:'on'});
       await controller(['capture','fault-scene']);
       const rr=JSON.parse(fs.readFileSync(path.join(run,'fault-scene.json')));scene=rr.snapshot;
@@ -215,7 +240,7 @@ async function main(){
           assert.equal(reviewed.pngSHA256,record.pngSHA256);assert(reviewed.at>=record.completedAt&&reviewed.at<=Date.now()/1000);
           description=reviewed.observation;assert(description.length>20);
         }
-        await controller(['review',name,description,'OK',i?'quit':'install',record.snapshot.windows.find(w=>w.isChild&&w.controlClass===1&&w.controlId===1&&w.title==='OK').hwnd]);
+        await controller(['review',name,description,'OK',i?'quit':mode==='game-positive'?'game':'install',record.snapshot.windows.find(w=>w.isChild&&w.controlClass===1&&w.controlId===1&&w.title==='OK').hwnd]);
         if(mode==='repaint-positive'){
           await s.send({action:'eval',code:`renderer.colors.desktop='${i?"#335522":"#552233"}';renderer.repaint();true`});
           const current=await s.send({action:'png',path:path.join(run,name+'-repaint.png')});
@@ -224,7 +249,7 @@ async function main(){
           save(name+'-repaint-proof.json',{original:record.pngSHA256,current:hash,unchangedTarget:true});
         }
         if(!i)await controller(['bind',name]);
-        await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),i?'quit':'install']);
+        await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),i?'quit':mode==='game-positive'?'game':'install']);
       }
       const end=Date.now()+4000;while(s.child.exitCode===null){assert(Date.now()<end,'native ExitProcess not observed');await pause(20);}
       assert.equal(s.child.exitCode,0);save(mode+'-positive.json',{nativeExit:0,ordinaryNativeUser:true,twoGenerations:true});
@@ -239,7 +264,7 @@ async function main(){
     if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(error){if(error.code!=='ESRCH')throw error;}
     await s.exited;
     fs.writeFileSync(path.join(run,'native.log'),s.output());
-    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['positive','repaint-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['positive','repaint-positive'].includes(mode)});
+    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['positive','game-positive','repaint-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['positive','game-positive','repaint-positive'].includes(mode)});
     watchdog.stdin.end();const w=await wclosed;save(mode+'-watchdog-wait.json',{pid:watchdog.pid,...w,actualWait:true,stdoutEOF:watchdog.stdout.readableEnded,stderrEOF:watchdog.stderr.readableEnded,stdout:ws,stderr:we});
     assert.equal(w.exit,0,'independent watchdog must close normally');
   }
