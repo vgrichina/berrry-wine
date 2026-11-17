@@ -39357,5 +39357,110 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2303014306
+  },
+  {
+    "id": 4644,
+    "name": "MapLS",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2894710556
+  },
+  {
+    "id": 4645,
+    "name": "UnMapLS",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2119466065
+  },
+  {
+    "id": 4646,
+    "name": "MapSL",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2705772510
+  },
+  {
+    "id": 4647,
+    "name": "SMapLS",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 1637546889
+  },
+  {
+    "id": 4648,
+    "name": "SUnMapLS",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 1397668144
+  },
+  {
+    "id": 4649,
+    "name": "SMapLS_IP_EBP_8",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 1092349902
+  },
+  {
+    "id": 4650,
+    "name": "SUnMapLS_IP_EBP_8",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2808183329
+  },
+  {
+    "id": 4651,
+    "name": "SMapLS_IP_EBP_12",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 1961457441
+  },
+  {
+    "id": 4652,
+    "name": "SUnMapLS_IP_EBP_12",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 391947660
+  },
+  {
+    "id": 4653,
+    "name": "SMapLS_IP_EBP_16",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2028567917
+  },
+  {
+    "id": 4654,
+    "name": "SUnMapLS_IP_EBP_16",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 324837184
+  },
+  {
+    "id": 4655,
+    "name": "SMapLS_IP_EBP_20",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3772895840
+  },
+  {
+    "id": 4656,
+    "name": "SUnMapLS_IP_EBP_20",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 324690089
+  },
+  {
+    "id": 4657,
+    "name": "SMapLS_IP_EBP_24",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 3840006316
+  },
+  {
+    "id": 4658,
+    "name": "SUnMapLS_IP_EBP_24",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 391800565
   }
 ]

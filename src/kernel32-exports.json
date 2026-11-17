@@ -2326,6 +2326,21 @@
       "name": null,
       "api": "KERNEL32_Ordinal99",
       "ordinal": 99
-    }
+    },
+    {"name": "MapLS", "api": "MapLS", "ordinal": 615},
+    {"name": "UnMapLS", "api": "UnMapLS", "ordinal": 616},
+    {"name": "MapSL", "api": "MapSL", "ordinal": 617},
+    {"name": "SMapLS", "api": "SMapLS", "ordinal": 618},
+    {"name": "SUnMapLS", "api": "SUnMapLS", "ordinal": 619},
+    {"name": "SMapLS_IP_EBP_8", "api": "SMapLS_IP_EBP_8", "ordinal": 620},
+    {"name": "SUnMapLS_IP_EBP_8", "api": "SUnMapLS_IP_EBP_8", "ordinal": 621},
+    {"name": "SMapLS_IP_EBP_12", "api": "SMapLS_IP_EBP_12", "ordinal": 622},
+    {"name": "SUnMapLS_IP_EBP_12", "api": "SUnMapLS_IP_EBP_12", "ordinal": 623},
+    {"name": "SMapLS_IP_EBP_16", "api": "SMapLS_IP_EBP_16", "ordinal": 624},
+    {"name": "SUnMapLS_IP_EBP_16", "api": "SUnMapLS_IP_EBP_16", "ordinal": 625},
+    {"name": "SMapLS_IP_EBP_20", "api": "SMapLS_IP_EBP_20", "ordinal": 626},
+    {"name": "SUnMapLS_IP_EBP_20", "api": "SUnMapLS_IP_EBP_20", "ordinal": 627},
+    {"name": "SMapLS_IP_EBP_24", "api": "SMapLS_IP_EBP_24", "ordinal": 628},
+    {"name": "SUnMapLS_IP_EBP_24", "api": "SUnMapLS_IP_EBP_24", "ordinal": 629}
   ]
 }

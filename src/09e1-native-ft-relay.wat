@@ -1,3 +1,85 @@
+  ;; LS aliases use otherwise non-NE selector rows: flags identify the kind,
+  ;; and ne_seg holds its reference count. DLL_LOAD_LOCK serializes all rows.
+  ;; Bases stay 64K aligned, including aliases used as 16-bit data selectors.
+  (global $WIN16_SEG_MAPLS i32 (i32.const 0x100000))
+  (func $ls_map (param $ptr i32) (result i32)
+    (local $token i64) (local $i i32) (local $free i32) (local $base i32) (local $n i32)
+    (if (i32.lt_u (local.get $ptr) (i32.const 0x10000)) (then (return (local.get $ptr))))
+    ;; Bootstrap through the existing native arena owner, not a second reset.
+    (if (i32.eqz (call $win16_process_arena_ensure)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load (call $win16_task_shared (i32.const 32)))) (then
+      (local.set $token (call $win16_bridge_frame_begin))
+      (if (i64.eqz (local.get $token)) (then (return (i32.const 0))))
+      (if (i32.eqz (call $win16_bridge_frame_end (local.get $token))) (then (unreachable)))))
+    (local.set $base (i32.and (local.get $ptr) (i32.const -65536)))
+    ;; MapLS aliases caller-owned storage; it does not allocate or copy data.
+    ;; A missing guest mapping cannot be exposed as a working far pointer.
+    (if (i32.eq (call $g2w_affine_span (local.get $base) (i32.const 0x10000)) (global.get $NULL_SENTINEL))
+      (then (return (i32.const 0))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (local.set $i (i32.const 2))
+    (block $found (loop $scan
+      (br_if $found (i32.ge_u (local.get $i) (call $win16_next_seg_get)))
+      (if (i32.eq (call $win16_gseg_field (local.get $i) (i32.const 8)) (global.get $WIN16_SEG_MAPLS)) (then
+        (if (i32.eq (call $win16_seg_base (local.get $i)) (local.get $base)) (then (local.set $free (local.get $i)) (br $found)))
+        (if (i32.eqz (call $win16_gseg_field (local.get $i) (i32.const 12))) (then (local.set $free (local.get $i))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (if (i32.eqz (local.get $free)) (then (local.set $free (call $win16_arena_take (i32.const 1)))))
+    (if (i32.eqz (local.get $free)) (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+    (local.set $n (select (call $win16_gseg_field (local.get $free) (i32.const 12)) (i32.const 0)
+      (i32.eq (call $win16_gseg_field (local.get $free) (i32.const 8)) (global.get $WIN16_SEG_MAPLS))))
+    (if (i32.eq (local.get $n) (i32.const -1)) (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 0))))
+    (call $win16_seg_set (local.get $free) (local.get $base) (i32.const 0x10000) (global.get $WIN16_SEG_MAPLS) (i32.add (local.get $n) (i32.const 1)))
+    ;; The arena activity pin also prevents process-arena retirement with a
+    ;; live alias, even when no NE invocation or connection is currently live.
+    (i32.store (call $win16_task_shared (i32.const 36)) (i32.add (i32.load (call $win16_task_shared (i32.const 36))) (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK))
+    (i32.or (i32.shl (call $win16_index_to_sel (local.get $free)) (i32.const 16)) (i32.and (local.get $ptr) (i32.const 65535))))
+
+  (func $ls_unmap (param $ptr i32)
+    (local $i i32) (local $n i32)
+    (if (i32.lt_u (local.get $ptr) (i32.const 0x10000)) (then (return)))
+    (if (i32.ne (i32.and (i32.shr_u (local.get $ptr) (i32.const 16)) (i32.const 7)) (i32.const 7)) (then (return)))
+    (if (i32.eqz (i32.atomic.load (region.addr $WIN16_PROCESS_ARENA 0))) (then (return)))
+    (local.set $i (call $win16_sel_to_index (i32.shr_u (local.get $ptr) (i32.const 16))))
+    (if (i32.or (i32.lt_u (local.get $i) (i32.const 2)) (i32.ge_u (local.get $i) (global.get $WIN16_SEG_MAX))) (then (return)))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (if (i32.eq (call $win16_gseg_field (local.get $i) (i32.const 8)) (global.get $WIN16_SEG_MAPLS)) (then
+      (local.set $n (call $win16_gseg_field (local.get $i) (i32.const 12)))
+      (if (local.get $n) (then
+        (call $win16_gseg_store (local.get $i) (i32.const 12) (i32.sub (local.get $n) (i32.const 1)))
+        (i32.store (call $win16_task_shared (i32.const 36)) (i32.sub (i32.load (call $win16_task_shared (i32.const 36))) (i32.const 1)))))))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)))
+
+  (func $ls_frame_slot (param $offset i32) (result i32)
+    (local $bp i32) (local $p i32)
+    (local.set $bp (i32.load offset=20 (global.get $reg_base)))
+    (local.set $p (i32.add (local.get $bp) (local.get $offset)))
+    (if (i32.or (i32.lt_u (local.get $p) (local.get $bp))
+      (i32.eq (call $g2w_affine_span (local.get $p) (i32.const 4)) (global.get $NULL_SENTINEL)))
+      (then (unreachable)))
+    (local.get $p))
+
+  (func $ls_smap (param $offset i32)
+    (local $p i32) (local $v i32) (local $mapped i32)
+    (local.set $v (i32.load (global.get $reg_base)))
+    (if (local.get $offset) (then
+      (local.set $p (call $ls_frame_slot (local.get $offset)))
+      (local.set $v (call $gl32 (local.get $p)))))
+    (local.set $mapped (call $ls_map (local.get $v)))
+    (i32.store (global.get $reg_base) (local.get $mapped))
+    (i32.store offset=8 (global.get $reg_base) (select (local.get $mapped) (i32.const 0) (i32.ge_u (local.get $v) (i32.const 65536))))
+    (if (local.get $offset) (then (call $gs32 (local.get $p) (i32.load offset=8 (global.get $reg_base))))))
+
+  (func $ls_sunmap (param $offset i32)
+    (local $p i32) (local $v i32)
+    (local.set $v (i32.load (global.get $reg_base)))
+    (if (local.get $offset) (then
+      (local.set $p (call $ls_frame_slot (local.get $offset)))
+      (local.set $v (call $gl32 (local.get $p)))))
+    (call $ls_unmap (local.get $v))
+    (if (local.get $offset) (then (call $gs32 (local.get $p) (i32.const 0)))))
+
   (global $win16_ft_reject (mut i32) (i32.const 0))
   (func (export "win16_ft_reject_reason") (result i32) (global.get $win16_ft_reject))
   ;; Native LS FT: the guest 64-byte compiler buffer is ABI, never authority.
@@ -532,3 +614,63 @@
     (if (i64.eqz (global.get $win16_bridge_frame)) (then (return (i32.const 0))))
     (if (i32.ne (i32.load offset=408 (i32.wrap_i64 (global.get $win16_bridge_frame))) (i32.const 0x46545052)) (then (return (i32.const 0))))
     (call $win16_bridge_frame_end (global.get $win16_bridge_frame)))
+
+  (func $handle_MapLS (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base) (call $ls_map (local.get $arg0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_UnMapLS (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_unmap (local.get $arg0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_MapSL (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base) (call $win16_far_to_guest (i32.shr_u (local.get $arg0) (i32.const 16)) (local.get $arg0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_SMapLS (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_smap (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SUnMapLS (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_sunmap (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SMapLS_IP_EBP_8 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_smap (i32.const 8))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SUnMapLS_IP_EBP_8 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_sunmap (i32.const 8))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SMapLS_IP_EBP_12 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_smap (i32.const 12))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SUnMapLS_IP_EBP_12 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_sunmap (i32.const 12))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SMapLS_IP_EBP_16 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_smap (i32.const 16))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SUnMapLS_IP_EBP_16 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_sunmap (i32.const 16))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SMapLS_IP_EBP_20 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_smap (i32.const 20))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SUnMapLS_IP_EBP_20 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_sunmap (i32.const 20))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SMapLS_IP_EBP_24 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_smap (i32.const 24))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle_SUnMapLS_IP_EBP_24 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $ls_sunmap (i32.const 24))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
