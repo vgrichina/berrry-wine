@@ -2953,6 +2953,8 @@ if(!seen.has('SafeArrayCopy')){existing.push({id:existing.length,name:'SafeArray
 if(!seen.has('SafeArrayPtrOfIndex')){existing.push({id:existing.length,name:'SafeArrayPtrOfIndex',nargs:3,convention:'stdcall'});seen.add('SafeArrayPtrOfIndex');}
 if(!seen.has('SafeArrayGetDim')){existing.push({id:existing.length,name:'SafeArrayGetDim',nargs:1,convention:'stdcall'});seen.add('SafeArrayGetDim');}
 
+for(const name of ['SafeArrayGetLBound','SafeArrayGetUBound'])if(!seen.has(name)){existing.push({id:existing.length,name,nargs:3,convention:'stdcall'});seen.add(name);}
+
 // Reassign IDs and recompute hashes; preserve dispatch/testing metadata that
 // belongs to the API row rather than the name/hash generator.
 const table = existing.map((api, id) => {

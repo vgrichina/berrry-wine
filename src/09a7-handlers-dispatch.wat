@@ -3853,6 +3853,33 @@
     (i32.store offset=0 (global.get $reg_base)
       (if (result i32) (local.get $arg0) (then (call $gl16 (local.get $arg0))) (else (i32.const 0)))))
 
+  ;; Dimension numbers are one-based, opposite the descriptor bounds order.
+  ;; Metadata queries neither acquire a lock nor transfer element ownership.
+  (func $safearray_bound (param $sa i32) (param $dim i32) (param $out i32) (param $upper i32) (result i32)
+    (local $dims i32) (local $bound i32) (local $value i64)
+    (if (i32.or (i32.eqz (local.get $sa)) (i32.eqz (local.get $out))) (then (return (i32.const 0x80070057))))
+    (local.set $dims (call $gl16 (local.get $sa)))
+    (if (i32.or (i32.eqz (local.get $dim)) (i32.gt_u (local.get $dim) (local.get $dims)))
+      (then (return (i32.const 0x8002000B))))
+    (local.set $bound (i32.add (local.get $sa) (i32.add (i32.const 16)
+      (i32.shl (i32.sub (local.get $dims) (local.get $dim)) (i32.const 3)))))
+    (local.set $value (i64.extend_i32_s (call $gl32 (i32.add (local.get $bound) (i32.const 4)))))
+    (if (local.get $upper)
+      (then
+        (local.set $value (i64.sub (i64.add (local.get $value) (i64.extend_i32_u (call $gl32 (local.get $bound)))) (i64.const 1)))
+        (if (i32.or (i64.lt_s (local.get $value) (i64.const -2147483648)) (i64.gt_s (local.get $value) (i64.const 2147483647)))
+          (then (return (i32.const 0x8002000A))))))
+    (call $gs32 (local.get $out) (i32.wrap_i64 (local.get $value)))
+    (i32.const 0))
+
+  (func $handle_SafeArrayGetLBound (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (call $safearray_bound (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0))))
+
+  (func $handle_SafeArrayGetUBound (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
+    (i32.store offset=0 (global.get $reg_base) (call $safearray_bound (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 1))))
+
   ;; Shared by SafeArrayDestroy and VariantClear. A locked array is not freed.
   (func $safearray_destroy (param $sa i32) (result i32)
     (local $data i32) (local $count i32) (local $i i32) (local $bstr i32)

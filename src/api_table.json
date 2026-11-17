@@ -39798,5 +39798,19 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3244762535
+  },
+  {
+    "id": 4707,
+    "name": "SafeArrayGetLBound",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4152757391
+  },
+  {
+    "id": 4708,
+    "name": "SafeArrayGetUBound",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4181942110
   }
 ]

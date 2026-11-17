@@ -168,8 +168,33 @@ async function main(){
  assert.equal(imports.host.resolve_ordinal(address(hostDll),202),-1);m.free(hostDll);
  assert.equal(await call('SafeArrayGetDim',[0]),0);
  for(const dims of [[[1,0]],[[2,-3],[3,7]],[[2,-2],[3,7],[4,-9]]]){const array=await create(dims),before=m.read(array-4,20+dims.length*8);assert.equal(await call('SafeArrayGetDim',[array]),dims.length);const frameBefore=frame();assert.equal(await c.invoke(dimOrdinal,[array]),dims.length);assert.deepEqual(frame(),frameBefore);assert.deepEqual(m.read(array-4,20+dims.length*8),before);assert.equal(await call('SafeArrayDestroy',[array]),0);}
+ // Public native bounds queries use one-based dimensions and reversed
+ // descriptor order, including empty and extreme signed lower bounds.
+ const boundThunks={};
+ for(const [ordinal,name]of [[20,'SafeArrayGetLBound'],[19,'SafeArrayGetUBound']]){
+  const text=a.string(name,false),named=await api('GetProcAddress',[module,text]),ord=await api('GetProcAddress',[module,ordinal]);m.free(text);assert(named&&ord);boundThunks[name]=ord;
+  const dll=a.string('OLEAUT32.DLL',false);assert.equal(imports.host.resolve_ordinal(address(dll),ordinal),table.find(x=>x.name===name).id);m.free(dll);
+ }
+ const bound=async(name,array,dim,out=p+72)=>{const before=frame(),hr=await c.invoke(boundThunks[name],[array,dim,out]);assert.deepEqual(frame(),before);assert.equal(c.frames.length,0);return hr;};
+ for(const dims of [[[2,-3],[3,7],[4,-9]],[[0,-7],[2,5]],[[1,-2147483648]],[[1,2147483647]]]){
+  const array=await create(dims),descriptor=m.read(array-4,20+dims.length*8),data=word(array+12);
+  for(let i=0;i<dims.length;i++){
+   assert.equal(await bound('SafeArrayGetLBound',array,i+1),0);assert.equal(word(p+72),dims[i][1]>>>0);
+   assert.equal(await bound('SafeArrayGetUBound',array,i+1),0);assert.equal(word(p+72),(dims[i][1]+dims[i][0]-1)>>>0);
+  }
+  for(const name of Object.keys(boundThunks)){
+   for(const dim of [0,dims.length+1,0xffffffff]){put(p+72,0x12345678);assert.equal(await bound(name,array,dim),0x8002000b);assert.equal(word(p+72),0x12345678);}
+   assert.equal(await bound(name,array,1,0),0x80070057);put(p+72,0x12345678);assert.equal(await bound(name,0,1),0x80070057);assert.equal(word(p+72),0x12345678);
+  }
+  assert.deepEqual(m.read(array-4,20+dims.length*8),descriptor);assert.equal(word(array+12),data);assert.equal(await call('SafeArrayDestroy',[array]),0);
+ }
+ const boundDescriptor=m.allocate(24);m.write(boundDescriptor,new Uint8Array(24));dv.setUint16(address(boundDescriptor),1,true);put(boundDescriptor+16,2);put(boundDescriptor+20,0x7fffffff);put(p+72,0x11223344);
+ assert.equal(await bound('SafeArrayGetUBound',boundDescriptor,1),0x8002000a);assert.equal(word(p+72),0x11223344);
+ put(boundDescriptor+16,0);put(boundDescriptor+20,0x80000000);assert.equal(await bound('SafeArrayGetUBound',boundDescriptor,1),0x8002000a);assert.equal(word(p+72),0x11223344);
+ // Metadata does not require VARTYPE, element data, or a new array lock.
+ dv.setUint16(address(boundDescriptor),65,true);put(boundDescriptor+20,-42);put(boundDescriptor+8,9);assert.equal(await bound('SafeArrayGetLBound',boundDescriptor,65),0);assert.equal(word(p+72),(-42)>>>0);assert.equal(word(boundDescriptor+8),9);m.free(boundDescriptor);
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
- console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetDimOrdinal17:true,ordinal202Closed:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal27:true,nativePtrOfIndexOrdinal148:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
+ console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeLBoundOrdinal20:true,nativeUBoundOrdinal19:true,boundOverflowAtomic:true,nativeBSTRArray:true,nativeGetDimOrdinal17:true,ordinal202Closed:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal27:true,nativePtrOfIndexOrdinal148:true,borrowedAddress:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};

@@ -1060,6 +1060,8 @@
         (if (i32.eq (local.get $ordinal) (i32.const 26)) (then (return (call $lookup_api_id "SafeArrayPutElement"))))
         (if (i32.eq (local.get $ordinal) (i32.const 17)) (then (return (call $lookup_api_id "SafeArrayGetDim"))))
         (if (i32.eq (local.get $ordinal) (i32.const 27)) (then (return (call $lookup_api_id "SafeArrayCopy"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 19)) (then (return (call $lookup_api_id "SafeArrayGetUBound"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 20)) (then (return (call $lookup_api_id "SafeArrayGetLBound"))))
         (if (i32.eq (local.get $ordinal) (i32.const 148)) (then (return (call $lookup_api_id "SafeArrayPtrOfIndex"))))
         (if (i32.eq (local.get $ordinal) (i32.const 64)) (then (return (call $lookup_api_id "VarI4FromStr"))))
         (if (i32.eq (local.get $ordinal) (i32.const 161)) (then (return (call $lookup_api_id "LoadTypeLib"))))
