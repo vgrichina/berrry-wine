@@ -1057,6 +1057,7 @@
         (if (i32.eq (local.get $ordinal) (i32.const 24)) (then (return (call $lookup_api_id "SafeArrayUnaccessData"))))
         (if (i32.eq (local.get $ordinal) (i32.const 64)) (then (return (call $lookup_api_id "VarI4FromStr"))))
         (if (i32.eq (local.get $ordinal) (i32.const 161)) (then (return (call $lookup_api_id "LoadTypeLib"))))
+        (if (i32.eq (local.get $ordinal) (i32.const 162)) (then (return (call $lookup_api_id "LoadRegTypeLib"))))
         (if (i32.eq (local.get $ordinal) (i32.const 163)) (then (return (call $lookup_api_id "RegisterTypeLib"))))
         ;; InstallShield 11 imports the binary-BSTR helpers by ordinal. Keep
         ;; these in the guest resolver as well as the host fallback so loaded
