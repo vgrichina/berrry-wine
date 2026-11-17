@@ -59,6 +59,9 @@ if (CHILD_READONLY_CONTEXT) {
     throw new Error('readonly media context launch identity mismatch');
   readonlyPreparation=require('../lib/readonly-media-source-pin').prepareRestore(inheritedReadonly.contexts);
 }
+// Bootstrap the existing desktop transport concurrently with child imports.
+// Registration/hello, USER ownership and readiness stay at the constructor.
+const desktopPreparation = SPAWNED_CHILD ? require('../lib/process-desktop').prepareClient() : null;
 
 const { execSync } = require('child_process');
 const { withCliFailureCleanup } = require('../lib/cli-failure-cleanup');
@@ -1733,6 +1736,7 @@ function buildHandlerNameList() {
 async function main() {
   return withCliFailureCleanup(async onFailure => {
   onFailure(()=>readonlyPreparation?.cancel());
+  onFailure(()=>desktopPreparation?.cancel());
   // Fail closed before compilation, PE loading or any VFS mutation.
   const verifiedAssetFiles = ASSET_ENTRY && ASSET_ENTRY.localManifestIntegrity
     ? getAssetFiles(ASSET_ENTRY) : null;
@@ -3035,7 +3039,7 @@ async function main() {
   };
   const h = base.host;
   const { ProcessDesktop } = require('../lib/process-desktop');
-  const processDesktop = new ProcessDesktop();
+  const processDesktop = new ProcessDesktop({ preparation: desktopPreparation });
   ctx.processDesktop = processDesktop;
   ctx.processId = processDesktop.processId;
   // Guest Workers authenticate their own connection and execute their own

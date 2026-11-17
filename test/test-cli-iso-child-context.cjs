@@ -24,6 +24,30 @@ async function host(out){
     await assert.rejects(context.restore(new VirtualFS(),snapshot,ticket),/preparation context mismatch/);
   } finally {for(const m of prepared)require('../lib/media-cli').closeMedia(m);}
   await assert.rejects(context.restore(new VirtualFS(),snapshot,{}),/preparation context mismatch/);
+  // Real cancellation revokes the capability both during work and after a
+  // successful worker exit. A completed hash is not permission to adopt.
+  for (const completed of [false,true]) {
+    const threads=require('node:worker_threads'),Worker=threads.Worker;
+    let exited;
+    const exit=new Promise(resolve=>{exited=resolve;});
+    threads.Worker=class extends Worker {
+      constructor(...args){super(...args);this.once('exit',exited);}
+    };
+    let cancelled;
+    try {cancelled=context.prepareRestore(snapshot);}
+    finally {threads.Worker=Worker;}
+    if(completed)assert.equal(await exit,0,'actual successful digest worker exit');
+    await cancelled.cancel();await cancelled.cancel();
+    const empty=new VirtualFS();
+    await assert.rejects(context.restore(empty,snapshot,cancelled),/preparation context mismatch/);
+    assert.equal(empty.files.size,0);assert.equal(empty.readOnlyDrives.size,0);
+  }
+  // A caller can cancel after consume starts but before its await resumes.
+  const revoking=context.prepareRestore(snapshot),revokedChild=new VirtualFS();
+  const restoring=context.restore(revokedChild,snapshot,revoking);
+  await revoking.cancel();
+  await assert.rejects(restoring,/preparation failed|preparation cancelled/);
+  assert.equal(revokedChild.files.size,0);assert.equal(revokedChild.readOnlyDrives.size,0);
   const changed=structuredClone(snapshot);changed[0].sources[0].sha256='0'.repeat(64);
   const refused=new VirtualFS();
   await assert.rejects(context.restore(refused,changed,context.prepareRestore(changed)),/source pin mismatch/);
