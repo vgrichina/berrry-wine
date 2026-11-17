@@ -57,8 +57,9 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
     return result;
   };
 }
-function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0}={}){
+function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0,afterFirstInputDelay=0}={}){
   assert(Number.isInteger(firstInputDelay)&&firstInputDelay>=0&&firstInputDelay<=5000);
+  assert(Number.isInteger(afterFirstInputDelay)&&afterFirstInputDelay>=0&&afterFirstInputDelay<=5000);
   const b=Buffer.alloc(0x6400),base=0x400000,raw=r=>r-0x1000+0x400;
   const d=(o,n)=>b.writeUInt32LE(n>>>0,o),w=(o,n)=>b.writeUInt16LE(n,o),pe=0x80,opt=pe+24,s=opt+224;
   w(0,0x5a4d);d(0x3c,pe);d(pe,0x4550);w(pe+4,0x14c);w(pe+6,1);w(pe+20,224);w(pe+22,0x10e);
@@ -67,7 +68,7 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0
   b.write('.native',s);d(s+8,0x6000);d(s+12,0x1000);d(s+16,0x6000);d(s+20,1024);d(s+36,0xe0000060);
   const libraries=[['kernel32.dll',['ExitProcess','OutputDebugStringA']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus',messageDriven?'GetMessageA':'PeekMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','GetDC','ChangeDisplaySettingsA']],['gdi32.dll',['SwapBuffers']],['opengl32.dll',['wglCreateContext','wglMakeCurrent','glClearColor','glClear','glBegin','glColor3f','glVertex2f','glEnd']]];
   if(timerMs)libraries[1][1].push('SetTimer');
-  if(firstInputDelay)libraries[0][1].push('Sleep');
+  if(firstInputDelay||afterFirstInputDelay)libraries[0][1].push('Sleep');
   d(opt+104,0x1000);d(opt+108,(libraries.length+1)*20);let str=0x1800;const apis=new Map();
   libraries.forEach(([dll,names],i)=>{const desc=raw(0x1000+i*20),thunk=0x1200+i*256;d(desc,thunk);d(desc+12,str);d(desc+16,thunk);b.write(dll+'\0',raw(str));str+=dll.length+1;
     names.forEach((name,j)=>{d(raw(thunk+j*4),str);b.write(name+'\0',raw(str+2));str+=name.length+3;apis.set(name,base+thunk+j*4);});});assert(str<0x2000);
@@ -83,7 +84,10 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0
     emit(0xff,0x35,...u(base+0x3600));call('GetDC');emit(0xa3,...u(base+0x3604),0x50);call('wglCreateContext');emit(0x50,0xff,0x35,...u(base+0x3604));call('wglMakeCurrent');
     if(timerMs){push(0);push(timerMs);push(1);emit(0xff,0x35,...u(base+0x3600));call('SetTimer');}
     if(messageDriven||drawOnce)jump('draw'); // The authored initial frame precedes the normal message wait.
-    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');emit(0x85,0xc0);jump(drawOnce?'loop':'draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
+    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');
+    if(afterFirstInputDelay){emit(0x50,0x83,0x3d,...u(base+0x3610),0);jump('after-first-input-delay',0x85);
+      emit(0xc7,0x05,...u(base+0x3610),...u(1));push(afterFirstInputDelay);call('Sleep');label('after-first-input-delay');emit(0x58);}
+    emit(0x85,0xc0);jump(drawOnce?'loop':'draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
     if(timerMs){emit(0x81,0x3d,...u(base+0x3644),...u(0x113));jump('loop',0x85);}
     else if(drawOnce)jump('loop');
     label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');

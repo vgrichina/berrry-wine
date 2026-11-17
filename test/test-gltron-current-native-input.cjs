@@ -22,7 +22,7 @@ assert.throws(()=>select('?gl-gps=legacy'));
 console.log('PASS actual import scope capability refusal and current GPS backend selector (legacy query ignored)');
 
 const {createBrowserNativeInput}=require('../host.js');
-function nativeFixture(buffer=new ArrayBuffer(4096)){
+function nativeFixture(buffer=new ArrayBuffer(4096),bindImmediately=true){
   let time=1000,mono=0,trust=true;
   const instance={},endpoint={},worker={link:{}},process={};
   const renderer={canvas:{},inputQueue:[],windows:{},
@@ -35,7 +35,7 @@ function nativeFixture(buffer=new ArrayBuffer(4096)){
   const guard=createBrowserNativeInput(wine,{now:()=>time,monotonic:()=>mono,trusted:()=>trust});
   const scene=[1,7,10,10,0,0,1,0,1,0];
   const call=(name,fn,actor=0)=>guard.withActor(actor,name,fn);
-  call('check_input',()=>guard.observe(scene));const binding=guard.bind();
+  call('check_input',()=>guard.observe(scene));const binding=bindImmediately?guard.bind():null;
   const prepare=(nonce='n')=>guard.prepare({owner:binding.owner,nonce,code:37,reviewed:true,
     reviewedAt:time,imageSHA256:'a'.repeat(64),mode:'game'});
   const down=()=>{renderer.handleKeyDown(37);const event=renderer.inputQueue.shift();
@@ -120,6 +120,18 @@ for(const fault of [null,'actor','focus','modal','generation','late','unknown'])
   assert.equal(f.guard.status('n').consumed,!fault,String(fault));
 }
 console.log('PASS production Worker/broker metadata and MSG translation, native return and actor/focus/modal/generation/late/UNKNOWN refusals');
+{
+  const {observeAndBindNativeOwner}=require('../tools/gltron-current-native-input.cjs');
+  const f=nativeFixture(new ArrayBuffer(4096),false);f.wine._browserNativeInput=f.guard;
+  assert(f.guard.snapshot().ready);f.clock(1300);
+  assert.throws(()=>f.guard.bind(),/unavailable/,'old observe/capture/bind ordering expires the real guard freshness fence');
+  assert.equal(observeAndBindNativeOwner(f.wine).ready,false);assert.equal(f.guard.snapshot().bound,false);
+  f.call('check_input',()=>f.guard.observe(f.scene));
+  const admission=observeAndBindNativeOwner(f.wine);assert(admission.binding.owner);assert(admission.bound);
+  f.clock(1600);assert.equal(f.guard.snapshot().ready,false);assert(f.guard.snapshot().bound,
+    'a later screenshot does not move the already completed bind across the freshness fence');
+  assert(!observeAndBindNativeOwner(f.wine).binding,'never rebind an existing owner');
+}
 
 (async()=>{
   const {waitForNativeOwner}=require('../tools/gltron-current-native-input.cjs');

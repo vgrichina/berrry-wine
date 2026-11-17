@@ -35,6 +35,16 @@ function requireNativeRoute(audit,proof) {
 }
 // Startup can publish a GL clear before the first native USER poll. Observe
 // that poll without calling bind, injecting an event, or entering idle WASM.
+function observeAndBindNativeOwner(wine) {
+  const guard=wine?._browserNativeInput;
+  if(!guard)throw Error('browser native owner bridge missing');
+  const state=guard.snapshot();
+  // Readiness and bind share this synchronous page task. In particular a
+  // screenshot cannot consume the 250ms native-context freshness interval
+  // between these two operations. Bind itself rechecks every owner fence.
+  if(state.ready&&!state.bound)return {...state,bound:true,binding:guard.bind(),boundAt:Date.now()};
+  return state;
+}
 async function waitForNativeOwner({observe,deadline,record=()=>{},close=()=>{},
   now=Date.now,wait=ms=>new Promise(r=>setTimeout(r,ms))}) {
   let timer,count=0,closed=false;
@@ -52,7 +62,7 @@ async function waitForNativeOwner({observe,deadline,record=()=>{},close=()=>{},
     }})(),
   ]);}catch(error){throw fail(error);}finally{clearTimeout(timer);}
 }
-module.exports={installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner};
+module.exports={installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner};
 
 // Dedicated physical-release participant. Arm before DOWN, then send only UP
 // on its immutable deadline, even if the parent stops running. Observe the

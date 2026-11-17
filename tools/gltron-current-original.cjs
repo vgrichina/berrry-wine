@@ -6,7 +6,7 @@ const {gitFiles,compile}=require('./boids-current-runtime.cjs');
 const {installInitializedObserver,fixture}=require('./gltron-current-native-capture.cjs');
 const {connection,GL_OBSERVER}=require('./gltron-browser-controller.cjs');
 const {completeCapture,encodeCapturePNG}=require('./gltron-current-capture.cjs');
-const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner}=require('./gltron-current-native-input.cjs');
+const {installNativeRouteObserver,inspectNativeRoute,requireNativeRoute,waitForNativeOwner,observeAndBindNativeOwner}=require('./gltron-current-native-input.cjs');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex'),sleep=ms=>new Promise(r=>setTimeout(r,ms));
 async function run(out,commit,authored=false,backend='webgl',qualifyNative=false){
  assert(['software','webgl'].includes(backend));
@@ -38,7 +38,9 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
  }else wasm=compile(files);
  files.set('build/wine-assembly.wasm',wasm);
  fs.writeFileSync(path.join(out,'tested-'+sha(wasm)+'.wasm'),wasm,{flag:'wx'});
- if(authored)files.set('authored-native.exe',fixture({drawOnce:true,timerMs:16,firstInputDelay:process.env.GLTRON_AUTHORED_INPUT_DELAY==='1'?1800:0}));
+ if(authored){const options={drawOnce:true,timerMs:16,firstInputDelay:process.env.GLTRON_AUTHORED_INPUT_DELAY==='1'?1800:0,
+   afterFirstInputDelay:process.env.GLTRON_AUTHORED_AFTER_INPUT_DELAY==='1'?1800:0};
+   const pe=fixture(options);files.set('authored-native.exe',pe);save('authored-fixture.json',{options,bytes:pe.length,sha256:sha(pe)});}
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
  while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
  const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+300000);
@@ -106,12 +108,14 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
   save('actual-backend.json',await evaluate(`(()=>{const w=runningApps[0].wine,b=w.hostCtx.getGlGpsBridge?.();return {requested:${JSON.stringify(backend)},api:b?.api,configuredBackend:b?.options.backend,endpointBackend:b?.endpoint?.options?.backend,endpoint:b?.endpoint?.id,epoch:b?.workerEpoch,device:b?.device,receipts:__nativeInitialized.receipts};})()`));
   save('actual-render-workers.json',await Promise.all([...workers.values()].filter(w=>w.url.includes('d3d-render-worker')).map(async w=>({targetId:w.targetId,observation:await evaluate('globalThis.__gltronObserver?.snapshot?.()??null',w.sessionId)}))));
   if(qualifyNative){const audit=await evaluate(`(${inspectNativeRoute.toString()})(globalThis,runningApps[0].wine)`);save('native-route.json',audit);}
-  if(qualifyNative)save('native-ready.json',await waitForNativeOwner({deadline:deadline-4000,
-    observe:()=>evaluate('runningApps[0].wine._browserNativeInput.snapshot()'),
-    record:v=>append('native-ready-phases.jsonl',v),close:()=>{terminal=true;c?.ws.close();}}));
+  let ownership;
+  if(qualifyNative){ownership=await waitForNativeOwner({deadline:deadline-4000,
+    observe:()=>evaluate(`(()=>{const w=runningApps[0].wine,state=(${observeAndBindNativeOwner.toString()})(w);if(state.binding)globalThis.__nativeBridgeOwner=w;return state;})()`),
+    record:v=>append('native-ready-phases.jsonl',v),close:()=>{terminal=true;c?.ws.close();}});
+    assert(ownership.binding,'native owner binding missing');save('native-ready.json',ownership);save('native-binding.json',ownership.binding);}
   await capture('selected-0');save('ready.json',{at:Date.now(),authored,readOnly:true});
   if(qualifyNative){
-    const binding=await evaluate('(globalThis.__nativeBridgeOwner=runningApps[0].wine)._browserNativeInput.bind()');save('native-binding.json',binding);
+    const binding=ownership.binding;
     save('input-ready.json',{at:Date.now(),binding});
     // Each command is written only after personal inspection of its complete
     // image. No next command is accepted after a missing native return.
