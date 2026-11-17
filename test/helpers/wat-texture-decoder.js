@@ -94,16 +94,4 @@ function inPlace({ bytes, scratchAt, bandRows = 16 }) {
   return { memory: e.memory, decoder };
 }
 
-// For producer tests with no guest module: route lib/d3d9-host.js uploads
-// through this standalone build of the same WAT. Returns the shared stats.
-const installedStats = { levels: 0, bands: 0 };
-function installStandalone(Host = require('../../lib/d3d9-host')) {
-  Host.setStandaloneTextureDecoder(options => {
-    const d = producerDecoder({ getMemory: options.getMemory, guestToWasm: options.guestToWasm });
-    return { rows(mip, format, y0) { if (y0 === 0) installedStats.levels++; installedStats.bands++; return d.rows(mip, format, y0); },
-      band: d.band };
-  });
-  return installedStats;
-}
-
-module.exports = { decode, producerDecoder, pitchOf, installStandalone, inPlace };
+module.exports = { decode, producerDecoder, pitchOf, inPlace };

@@ -25,7 +25,8 @@ assert.notEqual(blend(controlSource,controlDest,5,6,false)[0],controlDest[0]);
  const wasm=fs.readFileSync(process.argv[2]||path.join(__dirname,'../build/wine-assembly.wasm'));
  console.log('module sha256',sha(wasm));
  const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
- const ctx={getMemory:()=>memory.buffer,renderer:null,resourceJson:{},d3d9Backend:'software',d3d9Programmable:true};
+ const ctx={getMemory:()=>memory.buffer,renderer:null,resourceJson:{},d3d9GpsBackend:'software',d3d9Programmable:true,
+  createCanvas:(w,h)=>require('../lib/canvas-compat').createCanvas(w,h)};
  const imports=createHostImports(ctx);
  Object.assign(imports.host,{memory,create_thread:()=>0,exit_thread:()=>0,terminate_thread:()=>0,
   create_event:()=>0,set_event:()=>0,reset_event:()=>0,wait_single:()=>0,wait_multiple:()=>0,com_create_instance:()=>0x80004002});

@@ -294,18 +294,6 @@ for (let lifetime = 0; lifetime < 4; lifetime++) {
   assert.strictEqual(hgl.liveContextCount(), 0);
 }
 
-// D3D9 uses this same factory in Node. Its capability probe must not require a
-// browser document, and its short-lived probe context must be released before
-// the real device asks the singleton native GL provider for another drawable.
-const { Bridge } = require('../lib/d3d9-host');
-let d3dCanvasRequests = 0;
-const bridge = new Bridge({
-  backend: 'webgl', enableProgrammable: true,
-  getMemory: () => nativeMemory.buffer, getExports: () => native,
-  guestToWasm: p => native.guest_to_wasm(p),
-  renderer: () => ({ windows: { 1: {} }, getWindowCanvas() {} }),
-  createCanvas: (w, h) => { d3dCanvasRequests++; return createCanvas(w, h); },
-});
 // The three WebGL *_VECTORS limits are GLES enums a desktop context rejects;
 // unmapped they returned garbage AND queued GL_INVALID_ENUM, which failed the
 // probe below after a pixel-exact draw. A native GL context must report them
@@ -323,33 +311,6 @@ const bridge = new Bridge({
   }
   hgl.destroyContext(limitGl);
 }
-// Missing native lowering must still refuse and release its probe context.
-const bareBridge = new Bridge({...bridge.options, getExports: () => null, createCanvas});
-assert.strictEqual(bareBridge.call(0x30005, 0, 0), 0);
-assert.strictEqual(hgl.liveContextCount(), 0, 'refused bare probe leaked its context');
-const programmable = bridge.call(0x30005, 0, 0);
-assert.strictEqual(programmable, 1,
-  'D3D9 programmable-caps probe failed on a real native GL context (VS1.1/PS1.1 would be reported absent)');
-assert.strictEqual(d3dCanvasRequests, 1, 'D3D9 capability probe did not use the headless canvas factory');
-assert.strictEqual(hgl.liveContextCount(), 0, 'D3D9 capability probe leaked its native context');
-
-const storage = native.guest_alloc(0x10000) >>> 0;
-assert(storage, 'native descriptor storage allocation');
-const base = native.guest_to_wasm(storage) >>> 0;
-const desc = base + 0x100, program = storage + 0x1000, outputState = storage + 0x8000;
-const dv = new DataView(nativeMemory.buffer);
-dv.setUint32(desc, 7, true);
-dv.setUint32(desc + 4, program, true);
-dv.setUint32(desc + 12, 16, true);
-dv.setUint32(desc + 16, 16, true);
-dv.setUint32(desc + 20, 1, true);
-dv.setUint32(desc + 40, outputState, true);
-assert.strictEqual(bridge.call(0x30003, desc, 0), 1,
-  `D3D9 device creation failed headless: ${bridge.lastError || 'unknown error'}`);
-assert.strictEqual(hgl.liveContextCount(), 1, 'D3D9 device did not own a native context');
-assert.strictEqual(bridge.call(0x30004, 0, 7), 1, 'D3D9 device release failed');
-assert.strictEqual(hgl.liveContextCount(), 0, 'D3D9 device release leaked its native context');
-native.guest_free(storage);
 
 // Native context allocation alone missed a desktop shader-port regression in
 // the MRT shader used by WGL. Exercise the real bridge through drawable readback.

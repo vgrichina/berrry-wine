@@ -3,10 +3,10 @@
 // (vs_1_1 with DCLs and vs_2_0) is validated and canonicalized to core vertex
 // IR in WAT (09af1), then drawn as one point per pixel on BOTH executors --
 // software (09ag VM) and WebGL (GLSL from lib/d3d9-shader.js compileCoreVS) --
-// and on the old D3D9 transport (guest bytecode: d3d9-software-backend's
-// guest-profile VM and d3d9-backend's JS compileIR translation). Every output
-// (oPos, oD0-1, oT0-7, oFog) is read back through a pixel shader that copies
-// it, and the four pictures must agree within 1 per channel. Also: DRAW from
+// and on d3d9-software-backend's guest-profile VM directly (guest bytecode;
+// the old JS GL arm went with lib/d3d9-backend.js, d3d9-retire S4). Every
+// output (oPos, oD0-1, oT0-7, oFog) is read back through a pixel shader that
+// copies it, and the pictures must agree within 1 per channel. Also: DRAW from
 // VBUF/IBUF (16- and 32-bit indices, byte offsets = base vertex/start index)
 // equals DRAW_UP; sampler-naming PS IR 0xffff0200 reaches s6/s7 on WebGL and
 // is refused (caps: 6) on software; truthful caps; canonicalizer declines.
@@ -480,22 +480,6 @@ const OUT_PS = [[1, 0], [1, 1], [3, 0], [3, 1], [3, 2], [3, 3], [3, 4], [3, 5]];
       // software executor's.
       compare({ quad: swQuad }, { quad: glExtra.quad }, 'VBUF/IBUF triangle quad software vs webgl', 2);
     }
-
-    // ── old transport, GL (JS compileIR translation of the guest bytecode) ──
-    const Backend = require('../lib/d3d9-backend');
-    const oldGL = {};
-    const dev = new Backend.Device(createCanvas(W, H), { webglVersion: 1, getExports: () => e, getMemory });
-    try {
-      for (const [name, tokens] of Object.entries(SHADERS)) for (let k = 0; k < 2 && tokens[0] !== 0xfffe0200; k++) {
-        dev.clear([0, 0, 0, 1], 1); dev.draw(oldSnapshot(tokens, PS_V[k]));
-        const raw = dev.gpu.readPixels(0, 0, W, H, dev.gpu.gl.RGBA, dev.gpu.gl.UNSIGNED_BYTE, new Uint8Array(W * H * 4));
-        const out = new Uint8Array(raw.length);
-        for (let y = 0; y < H; y++) out.set(raw.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4);
-        oldGL[`${name}/${OUT_NAMES[k]}`] = out;
-      }
-    } finally { dev.destroy(); }
-    compare(gl, oldGL, 'v2 webgl vs old GL (JS compileIR)');
-    evidence.oldGL = Object.keys(oldGL).length;
   } else console.log(`SKIP webgl half: ${hgl.unavailableReason()}`);
   console.log(`evidence: ${JSON.stringify({ shaders: Object.keys(SHADERS), outputs: OUT_NAMES, gl: evidence.glAvailable, oldSoftware: Object.keys(oldSW).length, oldGL: evidence.oldGL || 0, maxDiff })}`);
   if (checks.failed.length) { console.log(`FAIL test-gpu-stream-vs: ${checks.failed.length}/${checks.n} checks failed`); process.exit(1); }

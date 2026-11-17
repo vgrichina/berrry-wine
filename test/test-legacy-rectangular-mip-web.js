@@ -211,7 +211,7 @@ async function runtime(){
     publicFixtureSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-legacy-texture-rendered-contract.js'))),
     mipFixtureSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-legacy-public-mip-webgl.js'))),
     calcSha256:sha(fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'))),
-    renderSourceHashes:Object.fromEntries(['gpu-stream','gpu-stream-software','d3d9-software-backend','d3d9-shader','d3d9-backend'].map(n=>[n,sha(fs.readFileSync(path.join(ROOT,'lib',n+'.js')))])),
+    renderSourceHashes:Object.fromEntries(['gpu-stream','gpu-stream-software','d3d9-software-backend','d3d9-shader'].map(n=>[n,sha(fs.readFileSync(path.join(ROOT,'lib',n+'.js')))])),
     inheritedAdapterSha256:sha(fs.readFileSync(path.join(ROOT,'test/test-d3dim-keyed-mip-formats-web.js'))),
     node:process.version,plan:formats.map(plan),modules:[],results:[],failures:[],physicalGPU:false};
   const save=()=>fs.writeFileSync(path.join(dir,'result.json'),JSON.stringify(result,null,2)+'\n');
@@ -221,7 +221,7 @@ async function runtime(){
   deadline=setTimeout(()=>{result.deadlineExceeded=true;if(browser)browser.close().catch(()=>{});},deadlineMs);
   try{
     const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
+      'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear'];
     server=await require(path.join(ROOT,'test/static-server')).startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
       res.setHeader('Cache-Control','no-store');
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');

@@ -16,7 +16,7 @@
 //   V  the same scene through a guest vs_1_1 (m4x4 oPos) == F;
 //   Z  F with D3DZB_TRUE (all black: everything is behind the clear), so
 //      the W frames are not what the Z path draws anyway.
-// A DEPTHBIAS under W-buffering still declines 17.
+// A DEPTHBIAS under W-buffering still declines 17, which traps (fail fast).
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -130,18 +130,16 @@ async function render(gps, extra = []) {
     await rs(7, 1);
     await scene('Z');
     const st = await s.stats();
-    // A depth bias under W-buffering: still 17.
+    // A depth bias under W-buffering: still 17, a trap.
     await rs(7, 2);
     await rs(195, 0x3a83126f); // 0.001f
     await ok('IDirect3DDevice9_SetFVF', '[ctx.d9g.device,0x42]');
     await clear();
-    await draw(flat(6, 4), BLUE);
-    await ok('IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]');
-    const bias = await s.stats();
-    await s.call('IDirect3DShader9_Release', '[ctx.d9g.shader]');
-    await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
-    assert.strictEqual(await s.close(), 0, s.output());
-    return { frames, st, bias };
+    let biasTrapped = false;
+    try { await draw(flat(6, 4), BLUE); } catch (_) { biasTrapped = true; }
+    const code = await s.close();
+    biasTrapped = biasTrapped && code !== 0 && /unreachable/i.test(s.output());
+    return { frames, st, biasTrapped };
   } catch (error) {
     const out = s.output();
     if (process.env.D9WB_LOG) require('fs').writeFileSync(process.env.D9WB_LOG, out);
@@ -166,7 +164,7 @@ async function render(gps, extra = []) {
     same(r.frames.F, want.F, `${name} F (fixed T&L) vs W picture`);
     same(r.frames.V, want.F, `${name} V (guest VS) vs W picture`);
     same(r.frames.Z, want.Z, `${name} Z (D3DZB_TRUE) vs Z picture`);
-    if (JSON.stringify(r.bias.reasons) !== '{"17":1}') bad.push(`${name} DEPTHBIAS under W: ${JSON.stringify(r.bias)}`);
+    if (!r.biasTrapped) bad.push(`${name} DEPTHBIAS under W did not trap`);
   };
   check(await render('software'), 'software');
   // --webgl (needs a display): the same pictures on the WebGL executor.

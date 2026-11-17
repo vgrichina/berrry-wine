@@ -63,6 +63,41 @@
       "baseSHA256": "ba54542269320d2a6bcf82d33445989840a872a62d27448e349afe0f97113a9c",
       "sha256": "bc411b912e4a67c2dcfbdbbb1b402181b89a88cd21754f9c57e8680a9cf3d89b",
       "reason": "Review 20261117 comctl32: COMCTL32.DLL joins the static system-module placeholder files (file presence and RT_VERSION only, never mapped); no host boundary, run loop or guest-control change."
+    },
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
+      "sha256": "41c8e3edfc966895e91056ee50b141dce2aa09b18ddfbc64ad24135482fb9b86",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+    },
+    {
+      "file": "lib/guest-thread-host.js",
+      "name": "host-file",
+      "baseSHA256": "490dadce6dac421df16529b075919ff5effe3c7dc4679e1ad9d1d2d8be3c8253",
+      "sha256": "5c47b9ef5d8e947fcc6dea4a6bf6ccf814c9eff2305647f0800c1f1005a2b2bf",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+    },
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "9fa351560f5e7d865ff366eb8ee8049cd948cedbe10efd8ca1d3cd73aba3088e",
+      "sha256": "4aece0b198e950bb3d82c59d00a2ea0352abc8288e9780f0977641960d3843fa",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+    },
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "178ccbc01d427ef19375472b00eeeb8d6047e0cec376957d38ae82441ea1cc80",
+      "sha256": "f28a2ffdedf53c153dd9130142fb86823f9729bdb532d686e1206cc227276a50",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "a71ff357dbdf0d47c9f7333247a168ebd9a63cf2ba37a97ab8e401d3de8fdbd3",
+      "sha256": "e4a12430ea3109f0ac161185a00746005a9db90b49df0ff82ae5dda355410f74",
+      "reason": "Review 20261117 d3d9-retire S4: removes the old JS D3D8/9 path only -- the D3D9 Bridge (gpu_gl_call 0x30000-0x30019 except the 0x30018 zero answer), yield-16 render wait and its token exports, api-4 snapshot publication, D3D9 render-worker loading and the noteWorldTrace diagnostic. No callback, EIP write, run/sync boundary, continuation or restoration path is added or moved; remaining entry points are unchanged and only lose D3D9 branches."
     }
   ],
   "additions": [

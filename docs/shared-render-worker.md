@@ -30,7 +30,7 @@ retain three slots and their existing 75%-full/idle-consumer batching. Packet
 sizes, command formats, WASM and dispatch thresholds were unchanged by that
 queue refactor. The subsequent default GL dispatch threshold is 512 KiB (below).
 
-D3D8/9's neutral resource/receipt queue remains a separate higher-level layer
+(Historical until d3d9-retire S4, 2026-11-17, which deleted it: D3D8/9 now use GPU stream v2.) D3D8/9's neutral resource/receipt queue remained a separate higher-level layer
 on the common process transport. Its resident texture ownership and generation
 rules are not replaced by transient packet credits. This change unifies packet
 submission machinery; it does not claim a single binary encoding or an FPS gain.
@@ -114,7 +114,7 @@ encoders and execution adapters; share the machinery beneath them.
 | OpenGL | Three optional WASM slots, offset-only publication and completion leases. Queries/borrowed inputs block. | Two pending acknowledgements protect the next producer slot. |
 | Glide | Process-locked WAT stream copied into three shared snapshot slots. | Admission precedes snapshot; direct WAT encoding remains future work. |
 | Legacy D3D/software GL | `d3d-command-stream.js` rotates three 2 MiB shared buffers with atomic replay acknowledgement. | Snapshots still copy into the pool; native replay copies into private WAT scratch. |
-| D3D8/9 neutral commands | The same file also contains `CommandQueue`: copied object payloads, resource leases, generations and receipts. Worker publication structured-clones them again. | This is a separate transport, not the legacy buffer pool. The synchronous trusted-owned shortcut is not a general asynchronous ownership contract. |
+| D3D8/9 | *Removed (d3d9-retire S4, 2026-11-17):* the neutral `CommandQueue`/receipt transport went with the old JS D3D9 path. D3D8/9 now use the GPU stream v2 ring and `gps-kick` endpoint, like Glide. | Sections below that describe D3D9 neutral commands, receipts or `test-d3d9-shared-render-worker.js` are historical. |
 
 `render-worker.js` already owns endpoint lifecycle and global admission limits;
 `d3d-render-worker.js` serializes execution to protect native scratch across

@@ -135,7 +135,9 @@ async function render(gps, ring) {
 }
 
 (async () => {
-  const old = await render('off');
+  // The old JS D3D9 path was deleted (d3d9-retire S4): `old` is its output for
+  // this exact sequence, recorded at 3eea041c5 (test/fixtures/d3d9-old-oracle).
+  const old = require('./fixtures/d3d9-old-oracle/texgen.json');
   const ring = await render('software', true);
   assert.strictEqual(ring.before.declines, 0, `no declines through the guest ps_1_1 ${JSON.stringify(ring.before)}`);
   assert(ring.before.draws >= 12, `texgen draws on the ring ${JSON.stringify(ring.before)}`);

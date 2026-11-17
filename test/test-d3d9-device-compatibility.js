@@ -13,7 +13,6 @@
 
 const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
-const { Bridge } = require('../lib/d3d9-host');
 
 const D3D_OK = 0;
 const D3DERR_NOTAVAILABLE = 0x8876086a;
@@ -21,9 +20,9 @@ const D3DERR_INVALIDCALL = 0x8876086c;
 const STACK = 0x074ff000;
 
 (async () => {
-  let rgb565=false;
+  // D3D9 has a device only with a ring executor (d3d9-retire S4).
   const { exports: e } = await bootRenderHarness({ fonts: 'none',
-    extraHostOverrides:{gpu_gl_call:(op,p,a)=>op===0x30017&&a===23&&rgb565?1:0},extraWat: `
+    beforeInstantiate: hostCtx => { hostCtx.d3d9GpsBackend = 'software'; hostCtx.createCanvas = (w, h) => require('../lib/canvas-compat').createCanvas(w, h); }, extraWat: `
     (func (export "multisample565") (param $kind i32) (param $out i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (i32.const ${STACK}))
       (call $gs32 (i32.const ${STACK+24}) (local.get $kind))
@@ -89,13 +88,6 @@ const STACK = 0x074ff000;
       (i32.load offset=0 (global.get $reg_base)))
   ` });
   e.init_dx_com_thunks();
-  for(const [backend,enabled,expected]of [['software',true,1],['software',false,0],['webgl',true,0]]){
-    const b=new Bridge({backend,enableProgrammable:enabled,getExports:()=>e});
-    assert.strictEqual(b.call(0x30017,0,23),expected,'real bridge gates565 by executor');
-    await b.close();
-  }
-  const missing=new Bridge({backend:'software',enableProgrammable:true,getExports:()=>({...e,d3d_software_bind_color_format:undefined})});
-  assert.strictEqual(missing.call(0x30017,0,23),0,'missing native export withholds565');await missing.close();
 
   const checkAbi = label => {
     assert.strictEqual(e.get_esp() >>> 0, STACK + 28, `${label} pops exactly six arguments`);
@@ -171,7 +163,9 @@ const STACK = 0x074ff000;
   e.guest_write32(out, 0xdeadbeef);
   assert.strictEqual(e.create_target(device, 23, out) >>> 0, D3DERR_INVALIDCALL);
   assert.strictEqual(e.guest_read32(out) >>> 0, 0);
-  rgb565=true;
+  // R5G6B5 back buffers are a programmable software-profile answer
+  // (09akg d3d9_caps_software): switch the launch profile to it.
+  e.d3d9_profile_set(3);
   for(const kind of [1,3,5])assert.strictEqual(e.format565(1,kind)>>>0,D3D_OK);
   assert.strictEqual(e.format565(2,1)>>>0,D3DERR_NOTAVAILABLE,'565 is not a depth format');
   assert.strictEqual(e.format565(0,4)>>>0,D3DERR_NOTAVAILABLE,'volume target unavailable');
@@ -188,7 +182,7 @@ const STACK = 0x074ff000;
   assert.strictEqual(e.guest_read32(surface+28),23);
   assert.strictEqual(e.guest_read32(surface+48),16);
   assert.strictEqual(e.guest_read32(surface+52),128);
-  rgb565=false;
+  e.d3d9_profile_set(2); // the plain software profile: no R5G6B5 target
   assert.strictEqual(e.format565(1,3)>>>0,D3DERR_NOTAVAILABLE);
   assert.strictEqual(e.format565(0,3)>>>0,D3D_OK,'ordinary565 textures retain existing support');
   assert.strictEqual(e.multisample565(0,out)>>>0,D3DERR_NOTAVAILABLE);

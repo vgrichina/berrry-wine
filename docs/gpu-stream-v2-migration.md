@@ -395,6 +395,48 @@ Without this, every new backend would have to reimplement the 846 lines of
     the executors' DZ / DW divide, see above). `test-d3d9-gps-cpu.js`
     compares each reshaped frame to an equivalent plain draw on both
     executors (`--webgl`) and to the old path where it draws the same.
+  - **Status (d3d9-retire S4, 2026-11-17): the old JS path is deleted.**
+    JS half: `lib/d3d9-host.js` (the Bridge, gpu_gl_call 0x30000-0x30019),
+    `lib/d3d9-backend.js` (the WebGL Device), `lib/d3d9-render-worker.js`
+    and `lib/render-wait-attribution.js` are gone, as are the yield-16
+    render wait and its tokens, the api-4 snapshot publication in
+    guest-rpc / guest-worker / thread-manager, the D3D9 half of
+    `d3d-command-stream.js` (now only the D3DIM `Encoder`) and the neutral
+    endpoint in `d3d-render-worker.js`; `d3d9-software-backend.js` keeps
+    only the native `Device` the software executor runs (and
+    `copyPayload`). The host picks the executor through
+    `ctx.d3d9GpsBackend` (`webgl` / `software` / `null` / `none`): on the
+    CLI `--d3d9-gps=...` (`--d3d9-renderer=software` is an alias; the
+    default is webgl with `--headless-gl`, else software for an app with
+    `d3d9WithoutGpu: 'software'`, else none), in the browser `?d3d9-gps=`
+    or the D3D select. `--no-d3d9-gps` / `--d3d9-gps=off` are errors, so
+    the `test-d3d9-gps-*` comparisons against the old path (`render('off')`)
+    need a new oracle. 122 files / 21,142 lines deleted, mostly
+    old-path-only tests and diagnostics.
+    WAT half: `src/09akg-d3d9-gps.wat` is the only renderer. CreateDevice
+    asks `$d3d9_executor_ok` (the ring's open kick) and returns
+    D3DERR_NOTAVAILABLE when no executor answers; caps, the shader-VM gate
+    and the R5G6B5 back buffer come from the launch profile and the ring's
+    capability block alone. Clear, every Draw*, Present (device and swap
+    chain), ColorFill, UpdateSurface, StretchRect, GetRenderTargetData and
+    occlusion queries lower onto the ring; there is no shadow / lead mode,
+    no handover (readback site 4 retired) and no old call behind any of
+    them. Occlusion queries are FENCE brackets on completion slot 1 (one
+    open at a time; an event query completes at Issue). Release / Reset
+    drop the device's ring targets with RELEASE records, synchronously:
+    the render token (`$d3d_render_token`, yield 16, its park / poll and
+    the get/set exports) and the world-matrix trace (host_dx_trace kind 30)
+    are gone, and the only D3D9 host opcode left is the state-guard wait
+    0x30018. Fail fast: a decline (`d3d9_gps_stat` 12 / 16 + reason) and
+    every operation the ring cannot express (ColorFill / UpdateSurface /
+    StretchRect / GetRenderTargetData of an unknown surface, a Present
+    with no window, a full surface table) traps through `$d9g_fail`
+    (log 0x44394750, then the code). Pixels reach guest memory only on
+    LockRect / GetDC of the back buffer, Lock of a colour surface,
+    GetRenderTargetData and the CLI capture, each a READBACK (or a CPU
+    fill when the target is one known Clear colour). The tests that
+    compared the ring to `render('off')` now compare it to the old path's
+    frames recorded at 3eea041c5 (`test/fixtures/d3d9-old-oracle/`).
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
   a performance step.
 

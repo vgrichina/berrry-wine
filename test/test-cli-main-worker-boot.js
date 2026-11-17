@@ -11,8 +11,6 @@ const {ThreadManager}=require('../lib/thread-manager');
 const {serviceMainTimingWait}=require('./main-timing-waits');
 const {serviceMainIoWait}=require('../lib/main-io-wait');
 const {VirtualFS}=require('../lib/filesystem');
-const {Worker}=require('node:worker_threads');
-const {CommandQueue,WorkerConsumer,OPCODES:OP}=require('../lib/d3d-command-stream');
 const sigs=require('../lib/host-import-sigs.generated.json').sigs;
 const root=path.resolve(__dirname,'..');
 
@@ -103,36 +101,6 @@ const root=path.resolve(__dirname,'..');
     assert.deepEqual(await owner.read(['get_eip','get_esp']),beforeDll,'DLL startup restores owner registers');
     if(remote)assert.equal(h.exports.get_image_base(),0,'DLL startup never loads the host shadow');
     await owner.call('guest_free',marker);
-    // The renderer owns another native allocator. Its retired blocks must be
-    // adopted by the guest instance, after termination, not by the host shadow.
-    const shadowFree=h.exports.get_free_list();
-    const renderWorker=new Worker(path.join(root,'lib/d3d-render-worker.js'));
-    let adoptions=0;
-    const consumer=new WorkerConsumer(renderWorker,{module,memory:h.memory,sigs,imageBase:state.get_image_base,
-     reclaimHeap:async head=>{
-      assert.equal(renderWorker.threadId,-1,'renderer terminated before heap handoff');
-      adoptions++;
-      const count=await owner.call('d3d_render_adopt_free_list',head);
-      // get_free_list flushes bins and may prepend blocks freed during DLL startup.
-      assert.equal(await owner.call('d3d_render_free_list_diagnostic',1),head,
-       'retired heap belongs to selected guest instance');
-      return count;
-     }});
-    try{
-     await consumer.ready;
-     const queue=new CommandQueue({deviceId:71,consumer});
-     await queue.submit(OP.RESOURCE_CREATE,{kind:'device',width:8,height:8}).value;
-     queue.submit(OP.CLEAR,{color:[1,0,0,1],flags:3});
-     const frame=await queue.submit(OP.READBACK).value;
-     assert.equal(frame.pixels.length,8*8*4);
-     for(let i=0;i<frame.pixels.length;i+=4)
-      assert.deepEqual([...frame.pixels.slice(i,i+4)],[0,0,255,255],'native BGRA red');
-     await queue.fence();
-    }finally{await consumer.cancel(0);}
-    assert.equal(adoptions,1,'heap adopted exactly once');
-    assert(consumer.shutdownInfo.heapAdopted>0,'actual native renderer allocations reclaimed');
-    if(remote)assert.equal(h.exports.get_free_list(),shadowFree,'host shadow allocator untouched');
-    const retirement={adoptions,blocks:consumer.shutdownInfo.heapAdopted,pixels:64};
     const shadowYield=h.exports.get_yield_reason();
     await owner.call('test_vblank_reset');
     assert((await owner.call('test_vblank_wait_once'))&1,'native DirectDraw call parks');
@@ -182,7 +150,7 @@ const root=path.resolve(__dirname,'..');
     if(remote)assert.equal(h.exports.get_sleep_yielded(),0,'shadow has no guest sleep flag');
     assert.deepEqual(await owner.resumeMessageWait(false),{resumed:false},
       'message resume does not touch a guest outside message wait');
-    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,retirement,timing:timing.vblank,sleepUntil:sleepState._mainSleepUntil});
+    rows.push({module:name,sha256:crypto.createHash('sha256').update(wasm).digest('hex'),owner:owner.kind,entry:actual,...state,settings,postload,dlls,registrations,timing:timing.vblank,sleepUntil:sleepState._mainSleepUntil});
    }finally{await worker?.stop();}
   }
  }

@@ -17,6 +17,9 @@
 | `vfs-host-files.js` | Expands explicit CLI `--vfs-include` globs within their bounded host roots |
 | `vlan-wire.js` | Virtual LAN transport: loopback segment (instances in one process) and process wire (emulators in separate OS processes over child IPC). Carries opaque frames only — all routing lives in WAT |
 | `compile-wat.js` | Browser-side WAT → WASM compiler (wraps wabt.js) |
+| `gpu-stream-host.js` | GPU stream v2 kick host: drains the WAT ring (Glide, D3DIM, D3D8/9) into the `gpu-stream-webgl.js` / `gpu-stream-software.js` executors, or a null executor. D3D8/9 have no other path since d3d9-retire S4 (`d3d9-host.js`, `d3d9-backend.js` and `d3d9-render-worker.js` were deleted); `ctx.d3d9GpsBackend` (`webgl`/`software`/`null`/`none`) picks the executor |
+| `d3d9-shader.js` / `d3d9-software-backend.js` | D3D9 shader-IR → GLSL compiler used by the WebGL executor; native WAT software rasterizer `Device` used by the software executor |
+| `d3d-command-stream.js` | D3DIM (DX5–7) legacy `Encoder` only: RECORD_FLIP / RECORD_GL into the shared render worker; the D3D8/9 neutral command queue was removed |
 
 ### Rendering surfaces
 

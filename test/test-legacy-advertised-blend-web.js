@@ -189,7 +189,7 @@ async function runtime() {
   const dir=process.env.LEGACY_BLEND_EVIDENCE;assert(dir,'LEGACY_BLEND_EVIDENCE required');fs.mkdirSync(dir,{recursive:true});
   const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend',
+    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear',
     'gpu-stream.generated','gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
   const pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const config={...base.plan(),immediate:true,immediateSource:blendFixture.toString(),

@@ -53,7 +53,6 @@ const GREEN = 0xff00ff00;
     assert.strictEqual(after.br >>> 0, BLUE);
     st = await s.stats();
     assert.strictEqual(st.gpuFrames, 2, JSON.stringify(st));
-    assert.strictEqual(await s.evaluate('ctx.d9g.ops[0x30002]|0'), 0, 'no old present');
     await s.call('IDirect3DSurface9_Release', '[ctx.d9g.bb]');
     await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     assert.strictEqual(await s.close(), 0, s.output());

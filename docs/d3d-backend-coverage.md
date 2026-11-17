@@ -17,10 +17,12 @@ dropdown (`webgl`, `webgl-all`, `software`):
 | family | browser knob | CLI, gpu arm | CLI, software arm |
 |---|---|---|---|
 | DX2-7 (D3DIM), `lib/d3dim-gpu.js` | `window.WINE_D3DIM_GPU` | `--headless-gl --d3dim-gpu` | *(no flags)* |
-| D3D8/9, `lib/d3d9-host.js` | `window.WineD3D.renderer` | `--headless-gl` | `--d3d9-renderer=software` |
+| D3D8/9, GPU stream v2 (`src/09akg-d3d9-gps.wat` → `lib/gpu-stream-host.js`) | `window.WineD3D.renderer` / `?d3d9-gps=` → `ctx.d3d9GpsBackend` | `--headless-gl` (or `--d3d9-gps=webgl`) | `--d3d9-gps=software` (`--d3d9-renderer=software` is an alias) |
 
-`--d3d9-renderer=webgl` is rejected by `test/run.js`; `--headless-gl` is how the
-CLI reaches the WebGL D3D9 backend.
+Since d3d9-retire S4 (2026-11-17) the old JS D3D8/9 path (`lib/d3d9-host.js`)
+is deleted; `--d3d9-gps=none` runs with no executor and `--no-d3d9-gps` /
+`--d3d9-gps=off` are errors. `--headless-gl` is how the CLI reaches the WebGL
+executor.
 
 **`--headless-gl` needs a live display.** `caffeinate -u` alone is not enough —
 two runs in this sweep died with `No suitable display found for a new GLFW

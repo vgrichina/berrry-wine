@@ -4,7 +4,7 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 // The JS DXT decoder (lib/d3d9-texture.js) is gone: these unit asserts now run
 // the WAT decoder itself (GPU stream v2 slice 9.1). Length and dimension
-// validation moved to the upload path (lib/d3d9-host.js captureDraw).
+// validation lives in the WAT GPU-stream upload path (09akg-d3d9-gps.wat).
 const {decode:watDecode}=require('./helpers/wat-texture-decoder');
 const Texture={DXT1:0x31545844,DXT3:0x33545844,DXT5:0x35545844,decode:(bytes,w,h,format)=>watDecode(bytes,w,h,format)};
 const {REGIONS}=require('../lib/region-map.generated.js');

@@ -380,10 +380,6 @@
     (local $i i32) (local $state i32) (local $ib i32)
     (local $count i32) (local $desc i32) (local $format i32)
     (local $index_bytes i32) (local $first i64) (local $end i64)
-    (local $result i32)
-    (block $issue
-    (if (global.get $d3d_render_token) (then
-      (local.set $result (call $d3d_render_poll)) (br $issue)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (local.set $state (call $d3d9_program_state (local.get $device)))
     (if (i32.eqz (local.get $state)) (then (return)))
@@ -422,8 +418,8 @@
     (i32.store offset=32 (local.get $desc) (i32.const 0))
     (i32.store offset=36 (local.get $desc) (i32.const 0))
     ;; Publish a byte pointer for every stream the declaration might name. Only
-    ;; an unusable stream records zero and lib/d3d9-host.js raises only if an
-    ;; attribute actually reads it. A stream left bound from
+    ;; an unusable stream records zero and the producer (09akg) declines only
+    ;; if an attribute actually reads it. A stream left bound from
     ;; an earlier draw and unused by this declaration must not cost this draw
     ;; anything, which is why this is not a validation loop.
     (local.set $i (i32.const 0))
@@ -440,19 +436,16 @@
       (i32.store offset=48 (local.get $desc) (local.get $format))
       (i32.store offset=52 (local.get $desc) (local.get $min))
       (i32.store offset=56 (local.get $desc) (local.get $num))))
-    (local.set $result (if (result i32) (call $d9g_lead_draw (local.get $device)
-          (i32.add (i32.const 2) (i32.ne (local.get $indexed) (i32.const 0)))) (then (i32.const 1))
-      (else (call $host_gpu_gl_call (i32.const 0x30001) (local.get $desc) (i32.const 0))))))
-    (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
-    (call $d9g_draw (local.get $device) (i32.add (i32.const 2) (i32.ne (local.get $indexed) (i32.const 0))) (local.get $result))
-    (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x8876086c) (i32.eq (local.get $result) (i32.const 1)))))
+    (drop (call $d9g_draw_call (local.get $device)
+      (i32.add (i32.const 2) (i32.ne (local.get $indexed) (i32.const 0)))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   ;; Why $d3d9_declaration_create refused, counted. The refusal itself is
   ;; invisible: it sets eax to D3DERR_INVALIDCALL, leaves *out at 0 and
   ;; returns, so a guest that does not check HRESULTs carries a NULL
   ;; declaration around and the consequence surfaces thousands of draws later,
   ;; somewhere else, as a draw with neither a declaration nor an FVF that
-  ;; lib/d3d9-host.js drops with a bare "D3D9 FVF 0 is not implemented".
+  ;; the ring producer (09akg) declines.
   ;; Black & White 2's world pass loses about 61% of its draws that way and no
   ;; error count in the system moves. These three globals are what make the
   ;; question answerable at all: how many, on which rule, and which element.
@@ -644,13 +637,24 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; Queries own a device reference. EVENT END drains the backend. Software
-  ;; OCCLUSION BEGIN/END queue ordered brackets; GetData polls without parking.
+  ;; OCCLUSION BEGIN/END are ring FENCE brackets (09akg $d9g_occlusion); END
+  ;; waits for the executor's count, so GetData never polls.
   ;; Header40 uses common resource lifetime; +24 type,+28 EVENT HRESULT,
-  ;; +32 occlusion DWORD,+36 phase(0new,1issued,2building,3release pending).
-  ;; Async broker callbacks never write this allocation: only current GetData
-  ;; copies a ready result, so Release may reclaim it while END is in flight.
+  ;; +32 occlusion DWORD,+36 phase(0new,1issued,2building).
+  ;; The executor holds one bracket at a time: $d3d9_occ_open names the
+  ;; query that has it.
+  (global $d3d9_occ_open (mut i32) (i32.const 0))
+  (func $d3d9_occ_close
+    (local $q i32)
+    (local.set $q (global.get $d3d9_occ_open))
+    (if (i32.eqz (local.get $q)) (then (return)))
+    (global.set $d3d9_occ_open (i32.const 0))
+    (drop (call $d3d9_gpu_descriptor (call $gl32 (i32.add (local.get $q) (i32.const 8)))))
+    (call $gs32 (i32.add (local.get $q) (i32.const 32))
+      (call $d9g_occlusion (call $gl32 (i32.add (local.get $q) (i32.const 8))) (global.get $GPS_FENCEK_OCCLUSION_END)))
+    (call $gs32 (i32.add (local.get $q) (i32.const 36)) (i32.const 1)))
   (func $d3d9_query_create (param $device i32) (param $type i32) (param $out i32)
-    (local $state i32) (local $vtbl i32) (local $obj i32) (local $wa i32) (local $profile i32)
+    (local $state i32) (local $vtbl i32) (local $obj i32) (local $wa i32)
     (if (local.get $out) (then (call $gs32 (local.get $out) (i32.const 0))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (local.set $state (call $d3d9_program_state (local.get $device)))
@@ -658,11 +662,10 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086a)) ;; D3DERR_NOTAVAILABLE
     (if (i32.ne (local.get $type) (i32.const 8)) (then
       (if (i32.ne (local.get $type) (i32.const 9)) (then (return)))
-      (local.set $profile (call $d3d9_caps_profile))
-      (if (i32.eqz (if (result i32) (i32.ge_s (local.get $profile) (i32.const 0))
-            (then (i32.and (call $d3d9_caps_software (local.get $profile))
-              (i32.ne (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_OCCLUSION)) (i32.const 0))))
-            (else (i32.eq (call $host_gpu_gl_call (i32.const 0x3000a) (i32.const 0) (local.get $device)) (i32.const 1)))))
+      ;; As before the retirement: the programmable software profile only,
+      ;; on an executor that answers occlusion fences.
+      (if (i32.eqz (i32.and (call $d3d9_caps_software (call $d3d9_caps_profile))
+            (i32.ne (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_OCCLUSION)) (i32.const 0))))
         (then (return)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (if (i32.eqz (local.get $out)) (then (return))) ;; support probe
@@ -687,11 +690,10 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   (func $handle_IDirect3DQuery9_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (i32.and (i32.eq (call $gl32 (i32.add (local.get $arg0) (i32.const 24))) (i32.const 9))
-      (i32.and (i32.eq (call $gl32 (i32.add (local.get $arg0) (i32.const 4))) (i32.const 1))
-        (i32.ne (call $gl32 (i32.add (local.get $arg0) (i32.const 36))) (i32.const 3)))) (then
-      (drop (call $host_gpu_gl_call (i32.const 0x3000e) (call $g2w (local.get $arg0)) (local.get $arg0)))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 36)) (i32.const 3))))
+    ;; The last reference to a query that holds the bracket closes it.
+    (if (i32.and (i32.eq (global.get $d3d9_occ_open) (local.get $arg0))
+      (i32.eq (call $gl32 (i32.add (local.get $arg0) (i32.const 4))) (i32.const 1)))
+      (then (call $d3d9_occ_close)))
     (call $handle_IDirect3DShader9_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
   (func $handle_IDirect3DQuery9_GetType (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $gl32 (i32.add (local.get $arg0) (i32.const 24))))
@@ -700,7 +702,8 @@
     (i32.store offset=0 (global.get $reg_base) (call $gl32 (i32.add (local.get $arg0) (i32.const 16))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
   (func $handle_IDirect3DQuery9_Issue (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $result i32) (local $desc i32)
+    (local $device i32)
+    (local.set $device (call $gl32 (i32.add (local.get $arg0) (i32.const 8))))
     (if (call $gl32 (i32.add (call $d3d9_program_state
       (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))) (i32.const 21776))) (then
       (i32.store offset=0 (global.get $reg_base) (i32.const 0x88760868))
@@ -710,29 +713,27 @@
       (block $query_done
         (br_if $query_done (i32.eqz (i32.or (i32.eq (local.get $arg1) (i32.const 1))
           (i32.eq (local.get $arg1) (i32.const 2)))))
-        (local.set $desc (call $d3d9_gpu_descriptor (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))))
-        (br_if $query_done (i32.eqz (local.get $desc)))
-        ;; Occlusion counts the old path's draws: it must have the frame.
-        (call $d9g_to_old (call $gl32 (i32.add (local.get $arg0) (i32.const 8))))
-        (local.set $result (call $host_gpu_gl_call
-          (select (i32.const 0x3000b) (i32.const 0x3000c) (i32.eq (local.get $arg1) (i32.const 2)))
-          (local.get $desc) (local.get $arg0)))
-        (br_if $query_done (i32.ne (local.get $result) (i32.const 1)))
+        (br_if $query_done (i32.eqz (call $d3d9_gpu_descriptor (local.get $device))))
+        ;; A BEGIN takes the bracket from whichever query holds it (its count
+        ;; is then final); an END closes this query's bracket if it holds it.
+        (if (i32.or (i32.eq (local.get $arg1) (i32.const 2))
+              (i32.eq (global.get $d3d9_occ_open) (local.get $arg0)))
+          (then (call $d3d9_occ_close)))
+        (if (i32.eq (local.get $arg1) (i32.const 2)) (then
+          (drop (call $d3d9_gpu_descriptor (local.get $device)))
+          (drop (call $d9g_occlusion (local.get $device) (global.get $GPS_FENCEK_OCCLUSION_BEGIN)))
+          (global.set $d3d9_occ_open (local.get $arg0))))
         (call $gs32 (i32.add (local.get $arg0) (i32.const 36)) (local.get $arg1))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)))
+    ;; An EVENT completes at once: every later CPU access to ring-written
+    ;; pixels (Lock, GetDC, GetRenderTargetData) waits for the executor.
     (if (i32.eq (local.get $arg1) (i32.const 1)) (then
-      (local.set $result (if (result i32) (global.get $d3d_render_token)
-        (then (call $d3d_render_poll))
-        (else (call $host_gpu_gl_call (i32.const 0x30006) (i32.const 0)
-          (call $gl32 (i32.add (local.get $arg0) (i32.const 8)))))))
-      (if (call $d3d_render_park (local.get $result) (i32.const 0)) (then (return)))
-      (i32.store offset=0 (global.get $reg_base) (select (i32.const 0) (i32.const 0x88760868)
-        (i32.eq (local.get $result) (i32.const 1))))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 28)) (i32.load offset=0 (global.get $reg_base)))))
+      (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+      (call $gs32 (i32.add (local.get $arg0) (i32.const 28)) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
   (func $handle_IDirect3DQuery9_GetData (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $phase i32) (local $result i32)
+    (local $phase i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c))
     (block $done
       (br_if $done (i32.and (local.get $arg3) (i32.const -2)))
@@ -745,11 +746,6 @@
         (local.set $phase (call $gl32 (i32.add (local.get $arg0) (i32.const 36))))
         (br_if $done (i32.ge_u (local.get $phase) (i32.const 2)))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-        (if (local.get $phase) (then
-          (local.set $result (call $host_gpu_gl_call (i32.const 0x3000d) (call $g2w (local.get $arg0)) (local.get $arg0)))
-          (i32.store offset=0 (global.get $reg_base) (select (i32.const 1) (i32.const 0x88760868) (i32.eqz (local.get $result))))
-          (br_if $done (i32.ne (local.get $result) (i32.const 1)))
-          (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
         (if (local.get $arg2) (then (call $gs32 (local.get $arg1)
           (call $gl32 (i32.add (local.get $arg0) (i32.const 32))))))
         (br $done)))
@@ -1259,79 +1255,6 @@
     (memory.copy (select (local.get $rw) (local.get $slot) (local.get $get))
       (select (local.get $slot) (local.get $rw) (local.get $get)) (i32.const 1536)))
 
-  ;; Opt-in, value-only WORLD provenance. The owning CPU copies every word
-  ;; into scalar trace messages before resuming. No live export or guest write.
-  (global $d3d9_world_trace_enabled (mut i32) (i32.const -1))
-  (global $d3d9_world_trace_serial (mut i32) (i32.const 0))
-  ;; Read-only diagnostic probe: never fault in guest memory or materialize
-  ;; lazy DIB backing merely to observe it. Semantic API reads validate their
-  ;; own spans independently of this optional diagnostic.
-  (func $d3d9_world_probe_matrix (param $ga i32) (result i32)
-    (local $wa i32)
-    (if (i32.gt_u (local.get $ga) (i32.const 0xFFFFFFC0)) (then (return (i32.const 0))))
-    (local.set $wa (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE)))
-    (if (i32.and (i32.lt_u (local.get $wa) (region.end $DIRECT_WINDOW))
-      (i32.le_u (i32.const 64) (i32.sub (region.end $DIRECT_WINDOW) (local.get $wa))))
-      (then (return (local.get $wa))))
-    ;; DIB's backing may need a stateful lazy fill: report it unavailable.
-    (if (i32.lt_u (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE)) (global.get $DIB_GUEST_CAPACITY))
-      (then (return (i32.const 0))))
-    (local.set $wa (call $guest_page_translate (local.get $ga)))
-    (if (i32.eq (local.get $wa) (global.get $NULL_SENTINEL)) (then (return (i32.const 0))))
-    ;; A 64-byte span crosses at most one page boundary, so these endpoints
-    ;; prove its affine mapping; both translations are read-only PTE loads.
-    (if (i32.ne (call $guest_page_translate (i32.add (local.get $ga) (i32.const 63)))
-      (i32.add (local.get $wa) (i32.const 63))) (then (return (i32.const 0))))
-    (local.get $wa))
-
-  (func $d3d9_trace_world (param $device i32) (param $op i32)
-    (param $source i32) (param $dest i32) (param $owner i32) (param $source_guest i32)
-    (local $serial i32) (local $slot i32) (local $index i32) (local $call_esp i32)
-    (if (i32.eq (global.get $d3d9_world_trace_enabled) (i32.const -1)) (then
-      (global.set $d3d9_world_trace_enabled
-        (i32.eq (call $host_gpu_gl_call (i32.const 0x30017) (i32.const 0) (i32.const 24)) (i32.const 1)))))
-    (if (i32.eqz (global.get $d3d9_world_trace_enabled)) (then (return)))
-    ;; CreateDevice retires its stdcall frame before attaching the program.
-    ;; Other traced routes still own the original API frame at this point.
-    (local.set $call_esp (i32.sub (i32.load offset=16 (global.get $reg_base))
-      (select (i32.const 32) (i32.const 0) (i32.eq (local.get $op) (i32.const 12)))))
-    (global.set $d3d9_world_trace_serial (i32.add (global.get $d3d9_world_trace_serial) (i32.const 1)))
-    (local.set $serial (i32.shl (global.get $d3d9_world_trace_serial) (i32.const 5)))
-    (local.set $slot (i32.or (i32.const 0x43570000) (i32.and (global.get $current_thread_id) (i32.const 65535))))
-    ;; A passive diagnostic must not add a trap to a previously ignored input.
-    (if (i32.or (i32.eqz (call $d3d_shader_vm_range (local.get $source) (i32.const 64)))
-      (i32.eqz (call $d3d_shader_vm_range (local.get $dest) (i32.const 64)))) (then
-      (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 31))
-        (local.get $device) (local.get $op)) (return)))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (local.get $serial) (local.get $device) (local.get $op))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 1))
-      (global.get $eip) (call $gl32 (local.get $call_esp)))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 2))
-      (global.get $current_thunk_eip) (local.get $call_esp))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 3))
-      (local.get $owner) (global.get $current_thread_id))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 4))
-      (local.get $source) (local.get $dest))
-    (loop $source_words
-      (call $host_dx_trace (i32.const 30) (local.get $slot)
-        (i32.or (local.get $serial) (i32.add (i32.const 5) (local.get $index)))
-        (i32.load (i32.add (local.get $source) (i32.shl (local.get $index) (i32.const 3))))
-        (i32.load offset=4 (i32.add (local.get $source) (i32.shl (local.get $index) (i32.const 3)))))
-      (local.set $index (i32.add (local.get $index) (i32.const 1)))
-      (br_if $source_words (i32.lt_u (local.get $index) (i32.const 8))))
-    (local.set $index (i32.const 0))
-    (loop $dest_words
-      (call $host_dx_trace (i32.const 30) (local.get $slot)
-        (i32.or (local.get $serial) (i32.add (i32.const 13) (local.get $index)))
-        (i32.load (i32.add (local.get $dest) (i32.shl (local.get $index) (i32.const 3))))
-        (i32.load offset=4 (i32.add (local.get $dest) (i32.shl (local.get $index) (i32.const 3)))))
-      (local.set $index (i32.add (local.get $index) (i32.const 1)))
-      (br_if $dest_words (i32.lt_u (local.get $index) (i32.const 8))))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 21))
-      (local.get $source_guest) (i32.const 0))
-    (call $host_dx_trace (i32.const 30) (local.get $slot) (i32.or (local.get $serial) (i32.const 22))
-      (local.get $device) (local.get $op)))
-
   (func $d3d9_transform_index (param $type i32) (result i32)
     (if (i32.lt_u (i32.sub (local.get $type) (i32.const 2)) (i32.const 2))
       (then (return (i32.sub (local.get $type) (i32.const 2)))))
@@ -1361,15 +1284,8 @@
         (i32.store8 offset=1644 (i32.add (local.get $block) (local.get $index)) (i32.const 1))
         (local.set $slot (i32.add (local.get $block)
           (i32.add (i32.const 1912) (i32.mul (local.get $index) (i32.const 64)))))))
-      (if (i32.eq (local.get $type) (i32.const 256)) (then
-        (call $d3d9_trace_world (local.get $device) (select (i32.const 3) (i32.const 1) (local.get $block))
-          (call $g2w (local.get $matrix)) (local.get $slot) (select (local.get $record) (local.get $state) (local.get $block))
-          (local.get $matrix))))
       (memory.copy (local.get $slot) (call $g2w (local.get $matrix)) (i32.const 64))
-      (if (i32.eq (local.get $type) (i32.const 256)) (then
-        (call $d3d9_trace_world (local.get $device) (select (i32.const 4) (i32.const 2) (local.get $block))
-          (call $g2w (local.get $matrix)) (local.get $slot) (select (local.get $record) (local.get $state) (local.get $block))
-          (local.get $matrix))))))
+      ))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
 
   ;; MultiplyTransform is not recorded by BeginStateBlock. It always changes
@@ -1402,13 +1318,7 @@
     (local.set $copy (i32.add (call $g2w (local.get $state)) (i32.const 25616)))
     (memory.copy (local.get $copy) (local.get $source) (i32.const 64))
     (call $guest_span_release (local.get $source) (i32.const 64))
-    (if (i32.eq (local.get $type) (i32.const 256)) (then
-      (call $d3d9_trace_world (local.get $device) (i32.const 9) (local.get $copy)
-        (local.get $slot) (local.get $state) (local.get $matrix))))
     (call $mat4_mul (local.get $slot) (local.get $copy) (local.get $slot))
-    (if (i32.eq (local.get $type) (i32.const 256)) (then
-      (call $d3d9_trace_world (local.get $device) (i32.const 10) (local.get $copy)
-        (local.get $slot) (local.get $state) (local.get $matrix))))
     (i32.store (global.get $reg_base) (i32.const 0)))
 
   (func $d3d9_resource_free (param $obj i32)
@@ -1417,10 +1327,7 @@
     (if (i32.or (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 3))
       (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 5))) (then
       (if (i32.load offset=56 (local.get $wa)) (then
-        (call $d9r_forget_texture (local.get $wa)) ;; d9rt
-        ;; The broker copies all IDs into one ordered retirement command.
-        ;; Its executor storage is independent of this canonical allocation.
-        (drop (call $host_gpu_gl_call (i32.const 0x30013) (local.get $wa) (i32.load offset=8 (local.get $wa))))))))
+        (call $d9r_forget_texture (local.get $wa))))))
     (if (i32.eq (i32.load offset=12 (local.get $wa)) (i32.const 0xd3d90003)) (then
       (call $d3d9_lights_free (i32.load offset=22312 (local.get $wa)))
       (call $d3d9_shader_unbind (i32.load offset=22052 (local.get $wa)))
@@ -1686,18 +1593,9 @@
           (i32.add (i32.const 2068) (i32.mul (local.get $rs) (i32.const 64)))))
         (local.set $values (i32.add (local.get $wa)
           (i32.add (i32.const 1912) (i32.mul (local.get $rs) (i32.const 64)))))
-        (if (i32.eq (local.get $rs) (i32.const 10)) (then
-          (call $d3d9_trace_world (local.get $device) (select (i32.const 5) (i32.const 7) (local.get $apply))
-            (select (local.get $values) (local.get $live) (local.get $apply))
-            (select (local.get $live) (local.get $values) (local.get $apply)) (local.get $obj)
-            (select (i32.add (local.get $obj) (i32.const 2552)) (i32.add (local.get $state) (i32.const 2708)) (local.get $apply)))))
         (memory.copy (select (local.get $live) (local.get $values) (local.get $apply))
           (select (local.get $values) (local.get $live) (local.get $apply)) (i32.const 64))
-        (if (i32.eq (local.get $rs) (i32.const 10)) (then
-          (call $d3d9_trace_world (local.get $device) (select (i32.const 6) (i32.const 8) (local.get $apply))
-            (select (local.get $values) (local.get $live) (local.get $apply))
-            (select (local.get $live) (local.get $values) (local.get $apply)) (local.get $obj)
-            (select (i32.add (local.get $obj) (i32.const 2552)) (i32.add (local.get $state) (i32.const 2708)) (local.get $apply)))))))
+        ))
       (local.set $rs (i32.add (local.get $rs) (i32.const 1)))
       (br_if $matrices (i32.lt_u (local.get $rs) (i32.const 266))))
     (local.set $rs (i32.const 0))

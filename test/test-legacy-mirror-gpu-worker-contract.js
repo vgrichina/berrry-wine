@@ -15,7 +15,7 @@ const ROOT = path.resolve(__dirname, '..');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const scripts = ['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc',
   'guest-thread-host','render-worker','gpu-backend','d3d9-shader','d3d-shader-ir',
-  'render-clear','d3d9-backend','gpu-stream.generated','gpu-stream','d3d-geometry-batches',
+  'render-clear','gpu-stream.generated','gpu-stream','d3d-geometry-batches',
   'd3d9-software-backend','gpu-stream-software'].map(n=>'lib/'+n+'.js');
 
 function fixtureSource() {
@@ -76,19 +76,12 @@ function apiVersion(value='auto') {
 }
 
 // The D3DIMGpu / D3DIMRenderWorker webglVersion forwarding controls went
-// with the deleted JS executor (lib/d3dim-gpu.js). Remaining: the CLI
-// version parser and d3d9-backend's refusal to switch WebGL APIs.
+// with the deleted JS executor (lib/d3dim-gpu.js), and d3d9-backend's
+// WebGL-API refusal with lib/d3d9-backend.js (d3d9-retire S4). Remaining:
+// the CLI version parser.
 function versionControls() {
   assert.equal(apiVersion('1'),1);assert.equal(apiVersion('2'),2);assert.equal(apiVersion(), 'auto');
   for(const bad of ['0','3','webgl1',''])assert.throws(()=>apiVersion(bad));
-  for(const version of [1,2]) {
-    const requested=[];
-    assert.throws(()=>new (require('../lib/d3d9-backend').Device)({getContext:name=>{
-      requested.push(name);return null;
-    }},{webglVersion:version}),/WebGL is unavailable/);
-    assert.deepEqual(requested,version===1?['webgl','experimental-webgl']:['webgl2'],
-      'unavailable explicit version must not silently switch APIs');
-  }
   fixtureSource();
 }
 

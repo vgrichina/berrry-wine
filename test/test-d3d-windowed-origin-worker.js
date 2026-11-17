@@ -6,7 +6,11 @@ const { createHostImports } = require('../lib/host-imports');
 const { Canvas } = require('../lib/canvas-compat');
 const sigs = require('../lib/host-import-sigs.generated.json').sigs;
 (async () => {
-  const { exports: guest, memory, module } = await bootRenderHarness({ fonts: 'none', extraWat: `
+  // D3D9 has a device only with a ring executor (d3d9-retire S4): the
+  // software one, with a canvas factory.
+  const { exports: guest, memory, module } = await bootRenderHarness({ fonts: 'none',
+    beforeInstantiate: hostCtx => { hostCtx.d3d9GpsBackend = 'software'; hostCtx.createCanvas = (w, h) => new Canvas(w, h); },
+    extraWat: `
     (func (export "origin_create") (param $pp i32) (param $out i32) (result i32)
       (i32.store offset=16 (global.get $reg_base) (i32.const 0x074ff000))
       (call $gs32 (i32.const 0x074ff018) (local.get $pp))

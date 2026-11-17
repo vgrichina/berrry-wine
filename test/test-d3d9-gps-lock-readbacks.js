@@ -10,9 +10,7 @@
 // - an Unlock's upload is held until the executor next uses its RT (draw,
 //   clear, Present, GetRenderTargetData, capture), and a Lock while it is
 //   held needs no readback: the bits are already the newest pixels;
-// - a Lock after a GPU draw still reads the executor back (site 0);
-// - the old path's readback (0x30016) is skipped whenever the stream
-//   supplies the pixels.
+// - a Lock after a GPU draw still reads the executor back (site 0).
 // Checked against zeroed DIBs so only executor pixels satisfy the asserts.
 const assert = require('assert');
 const { openD3d9GpsSession, triangleXyzrhw, RED, BLUE } = require('./helpers/d3d9-gps-session');
@@ -35,7 +33,6 @@ const GREEN = 0xff00ff00, WHITE = 0xffffffff, GREY = 0xff404040;
     const extra = async () => ({
       current: await s.evaluate('exports.d3d9_gps_stat(76)>>>0'),
       fills: await s.evaluate('exports.d3d9_gps_stat(77)>>>0'),
-      oldReadbacks: await s.evaluate('ctx.d9g.ops[0x30016]|0'),
     });
     // Lock the whole buffer; read two pixels, write one.
     const lock = async (write, color) => {
@@ -66,7 +63,6 @@ const GREEN = 0xff00ff00, WHITE = 0xffffffff, GREY = 0xff404040;
     assert.strictEqual(st.readbacks, 0);
     assert.strictEqual(ex.fills, 1, JSON.stringify(ex));
     assert.strictEqual(ex.current, 2, JSON.stringify(ex));
-    assert.strictEqual(ex.oldReadbacks, 0, 'old path never read its RT back');
     assert.strictEqual(st.rtUploads, 0, 'Unlock uploads are held until the executor needs the RT');
     await run([['IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]']]);
     st = await s.stats();
@@ -94,13 +90,11 @@ const GREEN = 0xff00ff00, WHITE = 0xffffffff, GREY = 0xff404040;
     await run([['IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]']]);
     st = await s.stats(); ex = await extra();
     assert.strictEqual(st.rtUploads, 3, JSON.stringify(st));
-    assert.strictEqual(ex.oldReadbacks, 0, 'old path never read its RT back');
     f = await front();
     assert.strictEqual(f.tl >>> 0, RED);
     assert.strictEqual(f.g >>> 0, GREEN);
     assert.strictEqual(f.br >>> 0, BLUE);
     assert.strictEqual(st.gpuFrames, 2, JSON.stringify(st));
-    assert.strictEqual(await s.evaluate('ctx.d9g.ops[0x30002]|0'), 0, 'no old present');
     await s.call('IDirect3DSurface9_Release', '[ctx.d9g.bb]');
     await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     assert.strictEqual(await s.close(), 0, s.output());

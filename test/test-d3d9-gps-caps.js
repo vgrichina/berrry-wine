@@ -4,7 +4,8 @@
 // ring active, WAT decides what the guest is told -- GetDeviceCaps, the
 // shader VM gate, the R5G6B5 back buffer and occlusion-query support --
 // from the launch profile and the ring's capability block, without the old
-// 0x30005 / 0x30017 / 0x3000a calls. The answers are the old path's,
+// 0x30005 / 0x30017 / 0x3000a calls (deleted in S4). The answers are the old path's
+// (recorded at 3eea041c5),
 // byte for byte, for every profile: programmable or not, software renderer
 // or no D3D9 GPU at all (where the ring has no executor by default), except
 // the vertex-blend caps the ring alone implements (see below).
@@ -12,15 +13,11 @@ const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
 const create = '[0,0,1,exports.get_main_hwnd(),0,ctx.d9g.pp,ctx.d9g.out]';
-const CAP_OPS = [0x30005, 0x30017, 0x3000a];
 
-async function probe({ gps, renderer, programmable }) {
-  const s = await openD3d9GpsSession({ gps, renderer, extra: programmable ? ['--d3d9-programmable'] : [] });
+async function probe({ gps, programmable }) {
+  const s = await openD3d9GpsSession({ gps, extra: programmable ? ['--d3d9-programmable'] : [] });
   try {
-    // 0x30017 aux 24 is the old bridge's world-matrix trace switch, a
-    // diagnostic of the old transport itself, not a capability.
-    await s.evaluate(`ctx.d9g.caps=exports.guest_alloc(320)>>>0;ctx.d9g.capOps=[];
-      ctx.d9g.onCall=(op,a,x)=>{if([${CAP_OPS}].includes(op)&&!(op===0x30017&&x===24))ctx.d9g.capOps.push(op.toString(16)+':'+x);};true`);
+    await s.evaluate('ctx.d9g.caps=exports.guest_alloc(320)>>>0;true');
     const r = {};
     r.capsHr = await s.call('IDirect3D9_GetDeviceCaps', '[0,0,1,ctx.d9g.caps]');
     r.caps = await s.evaluate(`Array.from(new Uint8Array(memory.buffer,exports.guest_to_wasm(ctx.d9g.caps),304)).join(',')`);
@@ -38,7 +35,6 @@ async function probe({ gps, renderer, programmable }) {
       await s.evaluate('ctx.d9g.device=exports.guest_read32(ctx.d9g.out)>>>0');
       await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     }
-    r.capOps = await s.evaluate('ctx.d9g.capOps.join()');
     r.stats = await s.stats();
     assert.strictEqual(await s.close(), 0, s.output());
     return r;
@@ -48,9 +44,11 @@ async function probe({ gps, renderer, programmable }) {
 (async () => {
   const lines = [];
   for (const [renderer, programmable] of [['software', true], ['software', false], [null, true]]) {
-    const old = await probe({ gps: 'off', renderer, programmable });
-    // gps undefined: the run.js default executor for this renderer.
-    const ring = await probe({ gps: null, renderer, programmable });
+    // The deleted old path's answers, recorded at 3eea041c5.
+    const old = require('./fixtures/d3d9-old-oracle/caps.json')
+      .find(o => o.renderer === renderer && o.programmable === programmable).old;
+    // renderer 'software' -> the software executor; none -> the CLI default (no executor).
+    const ring = await probe({ gps: renderer === 'software' ? 'software' : null, programmable });
     const label = `renderer=${renderer || 'none'} programmable=${programmable}`;
     // One deliberate difference: fixed-function vertex blending lowers only
     // on the ring (09akg d9ms / d9cpu), so a live ring reports
@@ -61,13 +59,19 @@ async function probe({ gps, renderer, programmable }) {
     assert.deepStrictEqual(blendCaps(old.caps), [0, 0], `${label}: old path blend caps`);
     assert.deepStrictEqual(blendCaps(ring.caps), live ? [4, 21] : [0, 0], `${label}: ring blend caps`);
     const unblend = c => c.split(',').map((x, i) => (i >= 168 && i < 176 ? '0' : x)).join(',');
-    for (const k of ['capsHr', 'caps', 'create', 'occlusion', 'event', 'create565']) {
+    // One deliberate difference without an executor: the old path still made
+    // a device (and drew nothing anywhere); the ring answers NOTAVAILABLE.
+    const keys = live ? ['capsHr', 'caps', 'create', 'occlusion', 'event', 'create565'] : ['capsHr', 'caps'];
+    if (!live) {
+      assert.strictEqual(ring.create, 0x8876086a, `${label}: CreateDevice NOTAVAILABLE without an executor`);
+      assert.strictEqual(ring.create565, 0x8876086a, `${label}: R5G6B5 CreateDevice NOTAVAILABLE`);
+    }
+    for (const k of keys) {
       const [a, b] = k === 'caps' ? [unblend(ring[k]), unblend(old[k])] : [ring[k], old[k]];
       assert.deepStrictEqual(a, b, `${label}: ${k} differs (old ${old[k]} ring ${ring[k]})`);
     }
     if (renderer === 'software') {
       assert.strictEqual(ring.stats.dead, 0, `${label}: the ring has an executor`);
-      assert.strictEqual(ring.capOps, '', `${label}: no old caps call with the ring active`);
     } else {
       assert.strictEqual(ring.stats.gpuFrames + ring.stats.draws, 0, `${label}: nothing on the ring`);
       assert(ring.stats.opens === 0 || ring.stats.dead === 1, `${label}: no executor by default without a D3D9 GPU ${JSON.stringify(ring.stats)}`);

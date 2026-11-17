@@ -187,7 +187,7 @@ async function runtime() {
   assert(dir&&moduleDir,'D3DIM_BACKGROUND_EVIDENCE and D3DIM_BACKGROUND_MODULE_DIR required');fs.mkdirSync(dir,{recursive:true});
   const result={status:'RUNNING',startedAt:new Date().toISOString(),plan:plan(),controls:controls(),modules:[],results:[]};
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend'];
+    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear'];
   let wasm,server,browser,page;
   try{
     server=await require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){

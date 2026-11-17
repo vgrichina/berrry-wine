@@ -244,7 +244,9 @@ async function render(gps, extra = []) {
 
 (async () => {
   const ring = await render('software');
-  const old = await render('off');
+  // The old JS D3D9 path was deleted (d3d9-retire S4): `old` is its output for
+  // this exact sequence, recorded at 3eea041c5 (test/fixtures/d3d9-old-oracle).
+  const old = require('./fixtures/d3d9-old-oracle/cpu.json');
   const bad = [];
   const same = (a, b, label) => {
     const k = a.findIndex((v, i) => v !== b[i]);
