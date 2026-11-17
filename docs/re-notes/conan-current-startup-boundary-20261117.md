@@ -44,6 +44,18 @@ absence is not substituted for them. The preserved old UNKNOWN evidence is
 unchanged. No box was created.
 
 Evidence: `scratch/runs/20261117-conan-current-startup-boundary-visible-progress/`.
-Post-correction visible progress and terminal receipts, if obtained, are
-recorded in its final `result.json`; an internal presenter image alone is
-not a claim of visible player control.
+Correction `da9ac26cc` was tested and published before the authorized extra
+fresh run. That attempt ended at a 20-second CDP `Page.navigate` protocol
+timeout before `launchApp` or any Conan input. It is terminal UNKNOWN; no
+runtime queries or retries followed. Chrome exited 0, driver 1, watchdog 0,
+and supervisor 1, with actual waits and both pipe EOFs. The watchdog did not
+fire; the owned scope and child list were empty. Its detached keeper's own
+parent wait is unavailable and remains UNKNOWN. The exact receipts were
+retrieved, hash-verified, and the own disposable profile removed.
+
+The next missing boundary is a successful bounded page startup with this
+published correction, then a personally reviewed visible menu and ordinary
+input. Post-fix menu visibility, movement, second response and native Quit
+remain unproved. The initial internal presenter menu alone does not establish
+visible player control. No current failing draw was found, so historical
+normal-matrix and collapsed-color hypotheses remain untested hypotheses.
