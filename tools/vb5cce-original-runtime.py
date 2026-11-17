@@ -12,12 +12,11 @@ HEAD=subprocess.check_output(['git','rev-parse',os.environ.get('DELPHI5_GIT','HE
 OWN_FDS=set()
 ORIGINAL_STARTED=False
 MEDIA=ROOT/'test/binaries/candidates/vb5cce-original'
-OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs',
-    'tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
-    'src/00-regions.wat','src/13-exports.wat','src/09a-handlers1-user.wat','src/09c3a-dialog-runtime.wat',
-    'lib/cli-guarded-input.js','lib/region-map.generated.js',
-    'test/test-vb5-native-dialog-identity.cjs','lib/cli-native-progress.js',
-    'test/test-vb5-native-progress.cjs')
+SUPPORT_PACKAGE=ROOT/'test/binaries/win98-games-a-d/Colin-Mcrae-Rally2-demo-D3D/extracted/dx7aeng.exe'
+SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69dad87189'
+CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
+SUPPORT_MOUNTS=[]
+OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5-genuine-setupapi.cjs')
 
 def sha(b):return hashlib.sha256(b).hexdigest()
 def publish(path,value):
@@ -35,6 +34,19 @@ def seal(name,body):
     return fd
 def close_owned(fd):
     os.close(fd);OWN_FDS.discard(fd)
+def genuine_setupapi_support():
+    # The exact NT SetupAPI from this package statically imports CFGMGR32.
+    # Keep both original PE bodies intact. Nothing is installed or copied into
+    # the media directory; the native loader binds and attaches the companion.
+    assert sha(SUPPORT_PACKAGE.read_bytes())==SUPPORT_PACKAGE_SHA256
+    cfg=subprocess.check_output(['7z','e','-so',str(SUPPORT_PACKAGE),'cfgmgr32.dll'],cwd=ROOT)
+    assert len(cfg)==41984 and sha(cfg)==CFGMGR32_SHA256
+    fd=seal('vb5-genuine-cfgmgr32',cfg)
+    SUPPORT_MOUNTS.append('--vfs-mount='+f'/proc/{os.getpid()}/fd/{fd}'+'=c:\\cfgmgr32.dll')
+    save('genuine-support.json',dict(package=str(SUPPORT_PACKAGE.relative_to(ROOT)),
+        packageSHA256=SUPPORT_PACKAGE_SHA256,member='cfgmgr32.dll',sha256=CFGMGR32_SHA256,
+        size=len(cfg),seals=15,guestPath='c:\\cfgmgr32.dll',modified=False))
+    return fd
 def token(pid):
     s=pathlib.Path(f'/proc/{pid}/stat').read_text();return s[s.rindex(')')+2:].split()[19]
 def sources():
@@ -142,6 +154,8 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
     checked('exact-git-compile',['node','-e',compile_code],env,(source,module))
     os.lseek(module,0,0);body=os.read(module,os.fstat(module).st_size)
     fcntl.fcntl(module,fcntl.F_ADD_SEALS,15);assert body[:4]==b'\0asm'
+    (RUN/'module.wasm').write_bytes(body)
+    assert sha((RUN/'module.wasm').read_bytes())==sha(body)
     env['DELPHI5_MODULE_SHA256']=sha(body)
     save('compile-inputs.json',dict(gitSHA=HEAD,sources={n:sha(b) for n,b in files.items()},moduleSHA256=sha(body)))
     manifest=dict(gitSHA=HEAD,sourceSHA256=sha(pool),sourceIndexSHA256=sha(index),moduleSHA256=sha(body),
@@ -156,6 +170,11 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if original or '--setupapi-only' in sys.argv:
+        cfgfd=genuine_setupapi_support()
+        env['VB5_CFGMGR32']=f'/proc/{os.getpid()}/fd/{cfgfd}'
+        checked('genuine-setupapi',['node','test/test-vb5-genuine-setupapi.cjs',str(RUN/'setupapi-native'),'--run'],env,(source,module,cfgfd))
+        if '--setupapi-only' in sys.argv:return
     if '--progress-state-only' in sys.argv:
         checked('native-progress-state',['node','test/test-vb5-native-progress.cjs','--state',str(RUN/'state-qualification')],env,(source,module))
         return
@@ -252,7 +271,7 @@ def original_pipeline(env,source,module,started,deadline,passive):
                 '--control='+str(port),'--max-seconds='+str(max(1,int(deadline-time.time()))),
                 '--max-batches=1000000000','--stuck-after=0','--real-ticks',
                 '--quiet-api','--quiet-blocks','--png-canvas',
-                '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*extra]
+                '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*SUPPORT_MOUNTS,*extra]
             publish(target/'launch.json',dict(args=argv,at=started,deadline=deadline,
                  gameplayCutoff=deadline-(0 if passive else 240),reserveSeconds=0 if passive else 240,
                  rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive))
