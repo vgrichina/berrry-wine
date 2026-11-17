@@ -215,7 +215,13 @@ async function run(out,commit){
           const closing=b.close(),immediate={status:t.status,error:t.error};
           Promise.resolve(closing).then(()=>resolve({at:Date.now(),old,epoch:b.workerEpoch,endpoint:b.endpoint?.id??null,
             immediate,status:t.status,error:t.error,read:t.read(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
-      save('late-capture-after-retirement.json',await evaluate(`(()=>{const p=__gltronCurrentPin;try{const t=p.w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});return {status:t.status,error:t.error};}catch(e){return {status:'refused',error:String(e)};}})()`));
+      try{save('native-owner-after-retirement.json',{status:'accepted',value:await evaluate(binding.PAGE_READ)});}
+      catch(e){save('native-owner-after-retirement.json',{status:'refused',error:String(e)});}
+      // The generic display API may observe a NEW ordinary desktop after
+      // detachment. That is not delivery from the retired native producer.
+      save('late-capture-after-retirement.json',await evaluate(`(()=>{const p=__gltronCurrentPin;try{const t=p.w.requestCurrentDisplayCapture({hwnd:p.win.hwnd}),a=t.read();
+        const result={status:t.status,error:t.error,metadata:a?.metadata,initializedReceipt:a?__nativeInitialized.receipts.some(v=>v.publication===a.metadata.publication):null};
+        if(t.status==='pending'){t.cancel();result.status=t.status;}return result;}catch(e){return {status:'refused',error:String(e)};}})()`));
     }
     if(process.env.GLTRON_NATIVE_LOSS==='1'){
       assert(timerMs>0,'context loss requires a future ordinary authored native timer draw');
@@ -276,6 +282,27 @@ function verifyObserved(out,{published=false}={}){
   assert(module.fixture?.timerMs>0 ? retained.currentPublication>=retained.capturedPublication : module.fixture?.drawOnce ? retained.currentPublication===retained.capturedPublication : retained.currentPublication>retained.capturedPublication);
   const literal=read('literal-oracle.json'),literalOutput=read('literal-output-oracle.json');
   assert(literal.qualified&&literal.checked===480*360);assert(literalOutput.qualified&&literalOutput.checked===m.output.width*m.output.height);
+  assert(host.totalObservationMs<3000);
+  if(fs.existsSync(path.join(out,'producer-retirement.json'))){
+    const retired=read('producer-retirement.json'),late=read('late-capture-after-retirement.json');
+    assert.equal(retired.immediate.status,'failed');assert.equal(retired.status,'failed');assert.equal(retired.read,null);
+    assert.equal(retired.retainedStatus,'complete');assert.equal(retired.endpoint,null);assert(retired.epoch>retired.old.epoch);
+    assert.equal(read('native-owner-after-retirement.json').status,'refused');
+    if(late.status==='complete'){assert(late.metadata.publication>m.publication);assert.equal(late.initializedReceipt,false);}
+    else assert(['failed','refused','cancelled'].includes(late.status));
+  }
+  if(fs.existsSync(path.join(out,'context-loss.json'))){
+    const loss=read('context-loss.json');assert.match(loss.error,/context lost/);assert(loss.elapsedMs<3000);
+    assert.equal(loss.recordPresent,false);assert.equal(loss.retainedStatus,'complete');
+    assert(['failed','refused'].includes(read('late-capture-after-loss.json').status));
+  }
+  if(fs.existsSync(path.join(out,'host-shutdown.json'))){
+    const stop=read('host-shutdown.json'),targets=read('worker-target-close.json');
+    assert.equal(stop.nativeQuit,false);assert.equal(stop.guest.ok,true);assert.equal(stop.renderRetired,true);assert.equal(stop.renderError,'');
+    if(stop.ticket){assert.equal(stop.ticket.status,'failed');assert.match(stop.ticket.error,/owner stopped/);assert.equal(stop.ticket.read,null);}
+    assert(targets.workers.length>=2&&targets.workers.every(w=>w.closed));
+    for(const w of targets.workers)assert(targets.events.some(e=>e.method==='Target.targetDestroyed'&&e.targetId===w.targetId));
+  }
   assert.equal(boundary.originalPermitted,false);assert.equal(boundary.fullInputQualification,false);
   const requests=read('wire.json').filter(v=>v.direction==='request');assert.equal(requests.filter(v=>v.method.startsWith('Input.')).length,0);
   const wait=read('wait.json'),browser=read('browser-wait.json');for(const w of [wait,browser,...wait.watchdogs]){assert.equal(w.actualWait,true);assert.equal(w.stdoutEOF,true);assert.equal(w.stderrEOF,true);}

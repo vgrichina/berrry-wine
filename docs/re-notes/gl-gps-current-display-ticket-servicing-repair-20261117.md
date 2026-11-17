@@ -28,6 +28,12 @@ display receipt. They preserve foreign tickets and completed immutable bytes.
 Late rejected GPU opens/kicks cannot fault a replacement generation; stale frame
 callbacks retain their existing bitmap-close behavior.
 
+Retiring a GPU endpoint can itself schedule an ordinary desktop composition
+after the layer detaches. A later generic display observation of that new
+publication remains legitimate. It does not carry an initialized GPU join and
+the native producer binding must refuse it. Pending native tickets still fail
+immediately on retirement; completed immutable captures retain their old bytes.
+
 ## Authored native proof
 
 The authored x86 PE uses real Win32/OpenGL imports, actual guest and render
