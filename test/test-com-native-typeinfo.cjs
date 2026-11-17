@@ -148,6 +148,48 @@ async function main(){
  // Account for that observed native free, never for caller-owned storage.
  const nativeFreed=read(p+140);assert.notEqual(nativeFreed,oldBs);assert(allocations.delete(nativeFreed-4));
  v.freeBstr=freeBstr;await bsScope.close();put(table+24,originalInvoke);
+ // The next real original boundary returned this collection from CAB slot7.
+ // Its Item(VARIANT by value, ISetupComponent**) occupies six x86 words
+ // including This; treating the value as a single pointer corrupts the ABI.
+ const collectionIID='c54e8191f0b5d21180b900104b1f6cea',itemIID='c34e8191f0b5d21180b900104b1f6cea';
+ const collection=m.allocate(16),collectionTable=m.allocate(40),item=m.allocate(16),itemTable=m.allocate(176);
+ put(collection,collectionTable);put(collection+4,1);put(item,itemTable);put(item+4,1);
+ for(let i=0;i<3;i++){put(collectionTable+i*4,read(table+i*4));put(itemTable+i*4,read(table+i*4));}
+ for(let i=3;i<7;i++)put(collectionTable+i*4,read(table+i*4));
+ put(collectionTable+32,addCode([0x8b,0x44,0x24,8,0xa3,...d32(p+144),0x8b,0x44,0x24,16,0xa3,...d32(p+148),
+  0x83,0x7c,0x24,8,8,0x75,9,0x8b,0x50,0xfc,0x89,0x15,...d32(p+152),
+  0x81,0x7c,0x24,8,3,0x40,0,0,0x75,6,0xc7,0,77,0,0,0,
+  0xff,0x05,...d32(item+4),0x8b,0x4c,0x24,24,0xc7,1,...d32(item),0x31,0xc0,0xc2,24,0]));
+ const collectionProxy=await remote(collection,collectionIID);
+ for(const words of [[3,0,42,0],[8,0,0,0],[0x4003,0,p+156,0]]){
+  let temporary=0;if(words[0]===8){temporary=v.readBstr(Buffer.from('index\u0000tail','utf16le').toString('hex'));words[2]=temporary;}
+  put(p+156,1);assert.equal(await checked(collectionProxy,8,[...words,p+48]),0);const returnedItem=read(p+48);assert(returnedItem&&returnedItem!==item);
+  assert.equal(read(p+144),words[0]);if(words[0]===3)assert.equal(read(p+148),42);
+  if(words[0]===8){assert.notEqual(read(p+148),temporary);assert.equal(read(p+152),20);await v.freeBstr(temporary);}
+  if(words[0]===0x4003)assert.equal(read(p+156),77);
+  await m.release(returnedItem);await m.drain();assert.equal(read(item+4),1);
+ }
+ const variantExchange=a.exchange.bind(a);a.exchange=async(...args)=>{const reply=await variantExchange(...args);if(args[0].meta.iid===collectionIID)reply[4][0]={vt:8,value:'6100'};return reply;};
+ put(p+48,0xdeadbeef);assert.equal(await checked(collectionProxy,8,[3,0,42,0,p+48]),HR.INVALID);assert.equal(read(p+48),0xdeadbeef);a.exchange=variantExchange;await m.drain();assert.equal(read(item+4),1);
+ const itemMethod=read(collectionTable+32),itemFile='c:\\variant-native-io.bin';let itemFills=0;
+ vfs.setProviderFile(itemFile,{attrs:32,provider:{size:4,readRange:async()=>{itemFills++;const request=[...authority.requests.values()].find(x=>x.state==='executing'&&x.method===8);assert(request);transport.cancelCall(request.ticket);return Uint8Array.of(1,2,3,4);}}});
+ const itemHandle=vfs.createFile(itemFile,0x80000000,3);
+ put(collectionTable+32,addCode([0x68,0,0,0,0,0x68,...d32(p+132),0x68,4,0,0,0,0x68,...d32(p+128),0x68,...d32(itemHandle),0xb8,...d32(thunk('ReadFile')),0xff,0xd0,0xb8,...d32(itemMethod),0xff,0xe0]));
+ put(p+48,0xdeadbeef);assert.equal(await checked(collectionProxy,8,[3,0,42,0,p+48]),HR.DISCONNECTED);assert.equal(read(p+48),0xdeadbeef);assert.equal(itemFills,1);
+ put(collectionTable+32,itemMethod);vfs.closeHandle(itemHandle);await m.drain();assert.equal(read(item+4),1);
+ await m.release(collectionProxy);await m.drain();assert.equal(read(collection+4),1);
+ // Codec control for two by-value parameters borrowing the same BYREF slot:
+ // metadata arguments remain distinct while one call-wide alias survives.
+ const aliasSource=v.scope(),aliasNative=v.scope(),aliasRefs=[];
+ const aliasDP=await v.readDispParams({values:[{vt:0x4003,ref:0,value:'01000000'},{vt:0x4003,ref:0}],named:[]},aliasSource);
+ const aliasArgs=read(aliasDP.p),valueSpec={k:'variantValue'};
+ const aliasA=await a.contracts.encodeInput(valueSpec,aliasArgs,[],aliasRefs),aliasB=await a.contracts.encodeInput(valueSpec,aliasArgs+16,[],aliasRefs);
+ assert.equal(aliasA.ref,aliasB.ref);assert(!Object.hasOwn(aliasB,'value'));
+ const nativeA=await a.contracts.decodeInput(valueSpec,aliasA,[],aliasNative),nativeB=await a.contracts.decodeInput(valueSpec,aliasB,[],aliasNative);
+ assert.equal(read(nativeA+8),read(nativeB+8));put(read(nativeA+8),77);
+ const aliasReplyRefs=[],replyA=await a.contracts.encodeOutput(valueSpec,nativeA,[],aliasReplyRefs),replyB=await a.contracts.encodeOutput(valueSpec,nativeB,[],aliasReplyRefs),aliasStages=[];
+ await a.contracts.stageByrefs({values:[replyA,replyB],named:[]},aliasDP.p,aliasSource,aliasStages);for(const publish of aliasStages)publish();
+ assert.equal(read(read(aliasArgs+8)),77);assert.equal(read(aliasArgs+8),read(aliasArgs+24));await aliasNative.close();await aliasSource.close();
  // Cancellation/retirement while the native GetTypeInfo frame is parked
  // in actual ReadFile must retain the executing pin until unwind and retire
  // every newly marshaled type-interface packet without publishing outputs.
@@ -202,15 +244,19 @@ async function main(){
  const derived2=await remote2(server,derivedIID);assert.equal(await c2.call(derived2,4,[0,1033,scratch2+24]),0);const returned2=c2.word(scratch2+24);
  assert.equal(await c2.call(returned2,3,[scratch2+24]),0);const ra2=c2.word(scratch2+24);assert.equal(m2.guid(ra2),derivedIID);await c2.call(returned2,19,[ra2]);await m2.release(returned2);
  assert.equal(await c2.call(derived2,14,[scratch2+24]),0);const bs2=c2.word(scratch2+24);assert.equal(a2.contracts.v.bstr(bs2),Buffer.from('Owned\u0000Tail','utf16le').toString('hex'));await a2.contracts.v.freeBstr(bs2);
+ const collection2=await remote2(collection,collectionIID);c2.putWord(scratch2+48,1);
+ assert.equal(await c2.call(collection2,8,[0x4003,0,scratch2+48,0,scratch2+24]),0);assert.equal(c2.word(scratch2+48),77);assert.notEqual(read(p+148),scratch2+48);
+ const item2=c2.word(scratch2+24);assert(item2&&item2!==item);await m2.release(item2);await m2.release(collection2);
  await m2.release(derived2);await m2.release(ti2);await m2.drain();if(pumping)await pumping;await m.drain();assert.ifError(pumpError);
  assert.equal(a2.objects.size,0);assert.equal(proxy2.objects.size,0);assert.equal(a2.contracts.leases.size,0);assert.equal(c2.frames.length,0);m2.free(scratch2);e2.guest_free(displacement);
  // Metadata leases keep their proxy alive after the external Release.
  assert.equal(await checked(rt,3,[p+48]),0);const held=read(p+48);await m.release(rt);assert(a.contracts.leases.has(held));await checked(rt,19,[held]);
  await m.release(derived);await m.release(rl);await m.drain();assert.equal(read(server+4),1);
  assert.equal(a.contracts.leases.size,0);assert.equal(authority.exports.size,0);assert.equal(authority.requests.size,0);assert.equal(a.objects.size,0);assert.equal(proxy.objects.size,0);assert.equal(runtime.pending.size,0);
- await m.release(ti);await m.release(lib);for(const q of codes)m.free(q);for(const q of [p,original,table,server,text,name,dp,result,media,mediaTable])m.free(q);
+ assert.equal(read(item+4),1);assert.equal(read(collection+4),1);
+ await m.release(ti);await m.release(lib);for(const q of codes)m.free(q);for(const q of [p,original,table,server,text,name,dp,result,media,mediaTable,collection,collectionTable,item,itemTable])m.free(q);
  assert.equal(allocations.size,0,'all owned codec/factory/proxy/graph storage retired');
- console.log(JSON.stringify({status:'PASS',independentNativeOwners:true,cancelExecuting:true,cancelUnpolledReply:true,malformedReference:true,retirement:true,nestedNativeIO:true,finalOwnedAllocations:allocations.size,nativeFactories:true,nativeTypeInfoAndLibRoundtrip:true,ownedDescriptorGraphs:true,inheritedDispatch:true,nativeInvoke:true,customBstrMethod:true,frameRestore:true,resource:resource.metadata,moduleSHA256:sha(wasm),sourcePin:comRuntimeSourcePin()}));
+ console.log(JSON.stringify({status:'PASS',independentNativeOwners:true,nativeByValueVariant:true,nestedCollectionItem:true,cancelExecuting:true,cancelUnpolledReply:true,malformedReference:true,retirement:true,nestedNativeIO:true,finalOwnedAllocations:allocations.size,nativeFactories:true,nativeTypeInfoAndLibRoundtrip:true,ownedDescriptorGraphs:true,inheritedDispatch:true,nativeInvoke:true,customBstrMethod:true,frameRestore:true,resource:resource.metadata,moduleSHA256:sha(wasm),sourcePin:comRuntimeSourcePin()}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};
