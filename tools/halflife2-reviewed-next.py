@@ -102,13 +102,29 @@ def preflight(snapshot,target,x,y,label):
                 threadId=button['threadId'],parent=button['parent'],top=top,chain=chain,
                 x=x,y=y,nativeDispatchFenceRequired=True)
 
+def receipt_clock_body(body):
+    """Charge native confirmation through response arrival, before durable IO.
+
+    The borrowed Git blob stays pinned. This single explicit adaptation leaves
+    consumption, independent UP, aggregate and permanent UNKNOWN checks intact.
+    """
+    before=b"""        save(name+'-down.json',dict(at=time.time(),receipt=receipt))
+        assert time.time()<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
+"""
+    after=b"""        confirmation_at=time.time()
+        save(name+'-down.json',dict(at=confirmation_at,receipt=receipt))
+        assert confirmation_at<start+.5 and receipt['state']=='CONSUMED' and receipt['consumed'],'confirmation UNKNOWN'
+"""
+    assert body.count(before)==1,'pinned receipt clock adaptation no longer matches'
+    return body.replace(before,after)
+
 def controller():
     run=pathlib.Path(os.environ['DELPHI5_RUN']);pins=json.loads((run/'runtime-inputs.json').read_text())
     helper_name='tools/vb5cce-reviewed-control.py'
     body=subprocess.check_output(['git','show',pins['gitSHA']+':'+helper_name],cwd=ROOT)
     assert hashlib.sha256(body).hexdigest()==pins['sources'][helper_name]
     m=types.ModuleType('hl2_pinned_control');m.__file__=str(ROOT/helper_name)
-    exec(compile(body,m.__file__,'exec'),m.__dict__)
+    exec(compile(receipt_clock_body(body),m.__file__,'exec'),m.__dict__)
     def sourcecheck():
         # The borrowed controller above was compiled from this exact Git blob,
         # not imported from its concurrently leased mutable checkout path.
