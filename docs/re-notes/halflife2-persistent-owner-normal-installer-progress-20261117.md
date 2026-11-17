@@ -45,3 +45,43 @@ supplied a native exit receipt without its required invocation token and was
 refused at startup. The corrected authored command includes the original's
 control/event-loop mode and a matching UUID receipt token. These are fixture
 corrections, not evidence of a fault in the original installer.
+
+Published route fix: `9945c2998002040fb5db955cf813258aa120dca9`. Both successful
+authored native route source maps were compared to those published component
+blobs byte for byte. This exact match reuses the completed route tests after
+publication; it does not claim they were rerun under a later unrelated tree.
+
+The one authorized unchanged original invocation then completed two personally
+reviewed normal Next intents: Welcome and Internet Connection Required. Both
+returned `native-button-dispatch-return`, consumed by actual native BUTTONs
+`0x10011` and `0x10017`, with independent physical-UP acknowledgements and
+aggregate completions below 500 ms. The full scene was freshly captured and
+personally reviewed for each intent. Native logs then recorded creation of
+Steam Subscriber Agreement and its normal Agree/Do Not Agree controls.
+
+The next complete-scene capture failed closed with
+`control.unsupportedClass` and `control.textUnavailable`. No agreement image
+was obtained and no agreement input was sent. This is the measured next
+boundary. The refusal reply does not identify its offending HWND or the
+reason native text was unavailable; the exact underlying control/text cause
+remains unproved. The tags alone do not establish an unsupported actual class
+because the supported-control predicate also requires available text. There
+is no original runtime or storage fault claim and no speculative admission
+change. Further diagnosis needs a separately authorized run with native
+refusal identities retained before the gate, followed by an authored faithful
+reproduction. Active shared capture/runtime files were not changed.
+
+The endpoint permanently closed on this refusal. There were ten HTTP requests,
+two native DOWN edges, both followed by confirmed physical UP, and zero requests
+after the UNKNOWN latch. No retry, replay, rebind, second original, successful
+installation, installed game invocation or gameplay occurred. All original
+native, adapter, outer, owner and independent watchdog waits completed with
+both EOFs. The dedicated actual parent remained alive through join and its
+worker pidfd owner remained healthy. The native exit is a SIGTERM host-cleanup
+cancellation, not a native Quit. The installer allowance is spent.
+
+Only the two named original screenshots are retained. Four duplicated normal
+extraction outputs were replaced after closure by exact original-media stream
+recovery recipes, with complete decoded-byte and CRC/SHA roundtrip verification.
+Unique runtime output remains. The original EXE hash was verified again after
+closure. No box was created; ID and expiry are null and stop is not applicable.
