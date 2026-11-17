@@ -2,7 +2,7 @@
 """Reuse the exact completed 63d native graph, without recompiling its suites."""
 import importlib.util,json,os,pathlib,subprocess,sys,types,time
 ROOT=pathlib.Path(__file__).resolve().parent.parent
-TASK=ROOT/'scratch/runs/20261117-halflife2-restored-disk-normal-agreement-install'
+TASK=pathlib.Path(os.environ.get('HL2_TASK_RUN',ROOT/'scratch/runs/20261117-halflife2-restored-disk-normal-agreement-install')).resolve()
 PRIOR=ROOT/'scratch/runs/20261117-halflife2-startup-ready-agreement-install-progress/working-final5'
 BASE='70e85792eefac2489f655a415490f9e0a5c9297d'
 COMPONENT='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692'
@@ -12,10 +12,15 @@ def load(name):
 def read(p):return json.loads(p.read_text())
 def main():
  m=load('tools/halflife2-current-native.py');m.TASK_RUN=TASK
+ assert TASK.parent==ROOT/'scratch/runs','task evidence must stay under scratch/runs'
  m.RUN=pathlib.Path(os.environ['HL2_RUN']);m.RUN.mkdir(parents=True,exist_ok=True);m.disk()
  revision=os.environ['HL2_RESTORED_PIN']
+ working=os.environ.get('HL2_WORKING_AUTHORED')=='1'
+ assert not working or '--original' not in sys.argv,'working adapter is authored-only'
  for name in ('tools/halflife2-current-native.py','tools/halflife2-restored-native.py'):
+  if working and name=='tools/halflife2-restored-native.py':continue
   assert m.git('show',revision+':'+name)==(ROOT/name).read_bytes(),'publish adapter first'
+ if working:(m.RUN/'authored-adapter.patch').write_bytes(m.git('diff','--binary','--','tools/halflife2-restored-native.py'))
  if '--supervised' in sys.argv:
   out=m.RUN/'outer';os.environ['HL2_OUTER']=str(out)
   m.save('outer-source-pins.json',dict(adapterGit=revision,baseGit=BASE,componentGit=COMPONENT,
@@ -76,13 +81,21 @@ def main():
   else:
    import socket,uuid
    exe=m.RUN/'wizard.exe'
-   h.checked('fixture-create',['node','-e',"require('fs').writeFileSync(process.argv[1],require('./test/test-halflife2-native-wizard.cjs').dialogFixture())",str(exe)],env,(source,module))
+   authored=os.environ.get('HL2_AUTHORED_FIXTURE')
+   if authored:
+    body=pathlib.Path(authored).read_bytes()
+    assert m.sha(body)==os.environ['HL2_AUTHORED_FIXTURE_SHA256']
+    exe.write_bytes(body)
+    m.save('authored-input.json',dict(path=authored,sha256=m.sha(body),bytes=len(body),beforeNativeClock=True))
+   else:
+    h.checked('fixture-create',['node','-e',"require('fs').writeFileSync(process.argv[1],require('./test/test-halflife2-native-wizard.cjs').dialogFixture())",str(exe)],env,(source,module))
    m.ready()
    with socket.socket() as sock:sock.bind(('127.0.0.1',0));port=sock.getsockname()[1]
    invocation=str(uuid.uuid4());start=time.time()
-   m.save('launch.json',dict(rootPort=port,deadline=start+8,gameplayCutoff=start+5,reserveSeconds=3))
+   seconds=120 if authored else 8
+   m.save('launch.json',dict(rootPort=port,deadline=start+seconds,gameplayCutoff=start+seconds-3,reserveSeconds=3))
    args=['node','test/run.js','--exe='+str(exe),'--no-build','--threads','--real-ticks','--png-canvas',
-       '--control='+str(port),'--max-seconds=8','--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks',
+       '--control='+str(port),'--max-seconds='+str(seconds),'--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks',
        '--native-exit-receipt='+str(m.RUN/'native-exit.json'),'--native-invocation-token='+invocation]
    m.execute_native(args,env,(source,module),h,invocation)
  finally:
