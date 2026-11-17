@@ -37,8 +37,8 @@ No original allowance was consumed by either generated test.
 Existing lifecycle, participant, actor and input proofs are reused by exact
 component. The only native component differences are the passive command and
 published diagnostic helper. Removing the startup addition reproduces the
-published diagnostic helper exactly; removing the two-line runner command
-reproduces the prior runner exactly. Full unchanged protocol suites were not
+published diagnostic helper exactly; removing the startup command and atomic
+presentation branch reproduces the prior runner exactly. Full unchanged protocol suites were not
 repeated. Fixture controllers retain two required Python pins and a hash of
 the complete inventory instead of duplicating thousands of source records.
 
@@ -76,6 +76,47 @@ the DialogBox button and correctly failed its test assertion; that authored
 lookup was replaced by the public USER snapshot. Neither preparation fault
 consumed an original invocation.
 
-The conditional second ordinary installer is pending publication of this
-faithfully tested transition fix. Installation, authentic installed launch,
-room and visible object action remain unproved. No boxes or workers were added.
+Published `e16a4713b` contains the faithfully tested atomic fix. The conditional
+second ordinary installer used that publication and the identical retained
+module. Complete unchanged inventories of all 257 CD members were verified
+before preparation, immediately before execution, and after actual shutdown.
+The passive startup preflight preceded its first capture. Three personally
+reviewed finite actions followed the normal route: Install, default directory
+OK, and Create Directory OK. Each received genuine native BUTTON consumption
+and independent physical UP within the unchanged deadlines. Their aggregate
+intent times were 546 ms, 776 ms, and 1,598 ms respectively.
+
+The complete retained `second/original/installation-next.png` visibly says
+“Installation of The Neverhood was successful.” The authentic output has 65
+overlay records and 58 files, including NHC.EXE, SMACKW32.DLL, HD.BLB, the
+installed SETUP95.EXE, readme and generated shortcuts. The product registry
+persisted Installed=1, Data Drive, Installed Directory and Run File. The normal
+shortcut targets installed SETUP95.EXE with no arguments or working directory;
+its target bytes equal the unchanged CD launcher. All 58 output files were
+hashed. Fifty-one byte-identical CD copies are recoverable by ISO path, member,
+size and SHA-256; seven unique generated outputs are retained. No guest files,
+registry values, scripts, pending renames or launch paths were synthesized.
+
+Before the success OK intent could check native identity, the independent
+watchdog observed 1,494,151,168 free bytes, below the 1.5 GB floor, and sent
+SIGTERM. Its 920-second deadline had not elapsed. Actual native wait/EOF
+preceded the attempted intent. Missing `/proc/843272/stat` permanently latched
+UNKNOWN before bind or DOWN; no later HTTP occurred. One subsequent local
+capture command was an operator error: the permanent latch refused it before
+identity checking or HTTP, and no capture was created. It is not a replay or
+successful retry. Both original endpoints remain permanently closed.
+
+Native, adapter, outer supervisor, persistent worker owner and all independent
+watchdogs have actual wait and both EOF receipts, with empty remaining scope.
+Native exit zero was host disk-floor cleanup, not ordinary native Quit. Disk
+space was subsequently restored by the separate storage worker; this does not
+revive either endpoint or authorize a third installer.
+
+Both installer allowances are spent. Installation success is visibly proved;
+acknowledging its completion dialog, normal Play handoff, an installed room,
+and a visible object action remain unproved. The separate installed-game
+allowance was not used: no reviewed normal Play handoff was obtained before
+shutdown. The authentic installed files, registry, shortcut and pending WININIT
+renames are preserved for a separately qualified normal launch; no manual boot
+transition was applied. No boxes or workers were added. Box ID and expiry are
+null; stop receipt is not applicable.
