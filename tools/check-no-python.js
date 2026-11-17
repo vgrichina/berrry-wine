@@ -54,6 +54,24 @@ if (process.argv.includes('--seed')) {
   process.exit(0);
 }
 const allow = JSON.parse(fs.readFileSync(listPath, 'utf8'));
+// The allowlist may only ever shrink: every entry must already be in the
+// seeded list of commit 115c56ec7. Adding a line here to admit new Python is
+// refused, so the only way past this gate is writing the script in Node.
+const SEED = '115c56ec7';
+let seed = null;
+try {
+  seed = JSON.parse(execFileSync('git', ['show', `${SEED}:tools/no-python-allowlist.json`],
+    { cwd: root, stdio: ['ignore', 'pipe', 'ignore'] }).toString());
+} catch { /* shallow clone without history: shrink-only check skipped */ }
+if (seed) {
+  const seedPy = new Set(seed.pyFiles), seedCallers = new Set(seed.callers);
+  const grown = [...allow.pyFiles.filter(f => !seedPy.has(f)), ...allow.callers.filter(f => !seedCallers.has(f))];
+  if (grown.length) {
+    console.error('no-python: tools/no-python-allowlist.json GREW. It only shrinks; write these in Node instead:');
+    for (const f of grown) console.error('  ' + f);
+    process.exit(1);
+  }
+}
 const allowPy = new Set(allow.pyFiles), allowCallers = new Set(allow.callers);
 const pyNow = [...present].filter(f => f.endsWith('.py')).sort();
 const callersNow = [...present].filter(f => !f.endsWith('.py') && runsPython(f)).sort();

@@ -7,6 +7,8 @@ node tools/check-claude-size.js
 # Scripts are JavaScript only: no new .py and no new python3 spawn. Legacy
 # ones live in tools/no-python-allowlist.json, which only shrinks.
 node tools/check-no-python.js
+# Tracked tests must not read scratch/runs evidence (per-machine, pruned).
+node tools/check-test-scratch-deps.js
 
 mkdir -p build
 

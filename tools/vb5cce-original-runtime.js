@@ -33,7 +33,7 @@ M.PUBLISHED_HELPERS=new Set(['tools/vb5cce-original-runtime.js','tools/vb5cce-re
   'tools/halflife2-reviewed-next.js','tools/neverhood-original-current-control.js','tools/neverhood-original-current-runtime.js',
   'test/test-caesar3-persistent-owner.cjs','test/test-caesar3-reviewed-modal.cjs','test/test-halflife2-age-input-latency.cjs',
   'test/test-halflife2-controller-supervision.cjs','test/test-halflife2-launch-preconditions.cjs',
-  'test/test-halflife2-local-prebind-expiry.cjs','test/test-halflife2-persistent-owner.cjs','test/test-halflife2-receipt-clock.cjs',
+  'test/test-halflife2-persistent-owner.cjs','test/test-halflife2-receipt-clock.cjs',
   'test/test-halflife2-restored-native.cjs','test/test-neverhood-runtime-lifecycle.cjs']);
 // Python read sys.argv at call time; callers may set M.ARGV (sys.argv shape,
 // script name first) instead of mutating process.argv.
