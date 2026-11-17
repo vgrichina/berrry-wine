@@ -10,7 +10,7 @@ const {createNeLifecycle}=require('../lib/ne-lifecycle');
 const {serviceNeGuestYieldSync,retireNativeFtConnections}=require('../lib/ne-guest-bridge');
 const word=n=>[n&255,n>>>8&255],dword=n=>[...word(n),...word(n>>>16)];
 const counts=[4,3,3,2,1,5,2,8,4,6,6,1];
-function caller(op,{qt=false,alias=false}={}){
+function caller(op,{qt=false,alias=false,trailing=false}={}){
  const code=[0x55,0x89,0xe5];
  // Prove preservation *inside* native execution before frame restoration.
  for(const [reg,value] of [[0xbb,0x12345678],[0xbe,0x23456789],[0xbf,0x3456789a]])code.push(0x66,reg,...dword(value));
@@ -19,7 +19,7 @@ function caller(op,{qt=false,alias=false}={}){
   // Original PE scratch at BP-60 is within this real leased SS descriptor.
   // Copy the authored ANSI subkey onto it and pass its actual SS:offset.
   code.push(0x36,0x66,0xc7,0x46,0xc4,...dword(0x545c574e)); // NW\T
-  code.push(0x36,0x66,0xc7,0x46,0xc8,...dword(0x00747365)); // est
+  code.push(0x36,0x66,0xc7,0x46,0xc8,...dword(trailing?0x5c747365:0x00747365)); // est[\\]
   code.push(0x36,0xc6,0x46,0xcc,0);
   code.push(0x66,0x68,...dword(0x80000001),0x16,0x8d,0x46,0xc4,0x50);
   if(alias)code.push(0x16,0x8d,0x46,0xc0,0x50);else code.push(0x0e,0x68,...word(0x550));
@@ -51,8 +51,8 @@ function registryImage(op,{globalKind}={}){
  b.set(code,0x240);b.writeUInt16LE(relocations.length,0x800);relocations.forEach(([at,ordinal],i)=>b.set([3,1,...word(0x40+at),1,0,...word(ordinal)],0x802+i*8));
  return identity(b,'REGTEST');
 }
-function qtRegistryImage({alias=true,op=217}={}){
- const f=qtImages({index:0}),c=caller(op,{qt:true,alias});
+function qtRegistryImage({alias=true,op=217,trailing=false}={}){
+ const f=qtImages({index:0}),c=caller(op,{qt:true,alias,trailing});
  f.ne.set(c.code,0x380);f.ne.writeUInt16LE(2,0x800);f.ne.set([3,1,...word(0x180+c.reloc),1,0,...word(op)],0x80a);return f;
 }
 const extraWat=String.raw`
@@ -78,7 +78,8 @@ async function main(){
    const row={name,args};if(genuine&&name==='reg_open_key'){
     row.returnOffset=e.guest_read32(e.get_esp())&65535;row.ordinal=e.win16_last_ordinal();
     row.path=require('../lib/mem-utils').readStrA(memory.buffer,args[1],260);
-   }calls.push(row);return original(...args);
+   }if(name==='reg_create_key')row.path=require('../lib/mem-utils').readStrA(memory.buffer,args[1],260);
+   calls.push(row);row.result=original(...args);return row.result;
   };
  }
  e=(await WebAssembly.instantiate(module,imp)).exports;
@@ -107,6 +108,13 @@ async function main(){
  test(225,()=>{write(ptr(0x104),2);write(ptr(0x300),0x1234);return [key,str(0x200,'Number'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,234);assert.equal(read(ptr(0x104)),4);assert.equal(read(ptr(0x300)),0x1234);});
  test(225,()=>{write(ptr(0x104),4);return [key,str(0x200,'Number'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0xdeadbeef);});
  test(226,()=>[key,str(0x200,'Ansi'),0,1,str(0x300,'caf\xe9'),5],r=>assert.equal(r,0));
+ const store=require('../lib/storage');
+ const retainedRecord=()=>Object.entries(store.exportStore()).find(([name])=>name.toLowerCase()==='reg:hkcu\\software\\win16registryproof')[1];
+ const retainedBefore=retainedRecord();
+ test(218,()=>[0x80000001,str(0x200,'Software\\Win16RegistryProof\\'),far(0x100)],r=>{
+  assert.equal(r,0);assert.equal(retainedRecord(),retainedBefore,'native Win16 create preserves values');
+  assert.equal(imp.host.reg_close_key(read(ptr(0x100))),0);
+ });
  test(225,()=>{write(ptr(0x104),5);return [key,str(0x200,'Ansi'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0xe9666163);assert.equal(e.guest_read8(ptr(0x304)),0);});
  test(226,()=>{write(ptr(0x300),0x00ff807f);return [key,str(0x200,'Binary'),0,3,far(0x300),4];},r=>assert.equal(r,0));
  test(225,()=>{write(ptr(0x104),4);return [key,str(0x200,'Binary'),0,far(0x100),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0x00ff807f);});
@@ -152,14 +160,14 @@ async function main(){
  // reads the Win16 DWORD, then overwrites it for the next Win16 native query.
  {
   const {makeFixture,iat}=require('../tools/kernel32-native-fixture'),b=makeFixture(),base=0x400000,raw=r=>r-0x1000+0x200;
-  for(const [r,text] of [[0x2800,'advapi32.dll'],[0x2820,'RegOpenKeyExA'],[0x2840,'RegQueryValueExA'],[0x2860,'RegSetValueExA'],[0x2880,'Software\\Win16RegistryProof'],[0x28c0,'Number']])b.write(text+'\0',raw(r));
+  for(const [r,text] of [[0x2800,'advapi32.dll'],[0x2820,'RegCreateKeyA'],[0x2840,'RegQueryValueExA'],[0x2860,'RegSetValueExA'],[0x2880,'Software\\Win16RegistryProof\\'],[0x28c0,'Number']])b.write(text+'\0',raw(r));
   const code=[],emit=(...a)=>code.push(...a),push=n=>emit(0x68,...dword(n));
   push(base+0x2800);emit(0xff,0x15,...dword(iat('LoadLibraryA')),0x89,0xc3);
   for(const [r,slot] of [[0x2820,0x2600],[0x2840,0x2604],[0x2860,0x2608]]){
    push(base+r);emit(0x53,0xff,0x15,...dword(iat('GetProcAddress')),0xa3,...dword(base+slot));
   }
   const invoke=(slot,args,index)=>{for(const n of [...args].reverse())typeof n==='object'?emit(0xff,0x35,...dword(base+0x2700)):push(n);emit(0xff,0x15,...dword(base+slot),0xa3,...dword(base+0x2710+index*4));};
-  invoke(0x2600,[0x80000001,base+0x2880,0,0x20019,base+0x2700],0);
+  invoke(0x2600,[0x80000001,base+0x2880,base+0x2700],0);
   invoke(0x2604,[{},base+0x28c0,0,base+0x2704,base+0x2708,base+0x270c],1);
   invoke(0x2608,[{},base+0x28c0,0,4,base+0x2720,4],2);emit(0xc3);
   b.set(code,raw(0x2000));b.writeUInt32LE(4,raw(0x270c));b.writeUInt32LE(0x1234abcd,raw(0x2720));
@@ -221,18 +229,28 @@ async function main(){
   retireNativeFtConnections(ctx);assert.equal(e.win16_ft_checkpoint(),0n);records.push({kind:'actual-qt-'+kind,shift,restored:true});
  }
  // The real CPUWorker enters the same far calls through its native QT lease.
+ let workerKey;
+ test(218,()=>[0x80000001,str(0x200,'NW\\Test'),far(0x100)],r=>{assert.equal(r,0);workerKey=read(ptr(0x100));});
+ test(226,()=>[workerKey,str(0x200,'Space Value'),0,1,str(0x300,'caf\xe9'),5],r=>assert.equal(r,0));
+ test(220,()=>[workerKey],r=>assert.equal(r,0));
+ const workerRecord=()=>Object.entries(store.exportStore()).find(([name])=>name.toLowerCase()==='reg:hkcu\\nw\\test')[1];
+ const workerBefore=workerRecord();
  const {GuestThreadHost}=require('../lib/guest-thread-host');
  for(const shift of [0,2])for(const alias of [true,false]){
-  const f=qtRegistryImage({alias,op:218}),host=new GuestThreadHost({memory,module,hostImports:imp.host,sigs:require('../lib/host-import-sigs.generated.json').sigs,
+  const f=qtRegistryImage({alias,op:218,trailing:true}),host=new GuestThreadHost({memory,module,hostImports:imp.host,sigs:require('../lib/host-import-sigs.generated.json').sigs,
    workerUrl:path.resolve(__dirname,'../lib/guest-worker.js'),clockIntervalMs:0,findDll:async()=>f.ne,log:()=>{}});let link;
   const call=(n,...a)=>host.callExport(n,...a);
   const run=async(entry,sp)=>{await call('set_eip',entry);await call('set_esp',sp);await call('guest_write32',sp,0);for(let n=0;n<100;n++){const r=await host.link.slice(256);if(r.trapped||!await call('get_eip'))return r;}throw Error('Worker registry budget');};
   const start=calls.length;
   try{await host.start();link=host.link;await host.loadPe(f.bytes,'registry-qt.exe');assert(!(await run(f.entry,0x7408000)).trapped);
    assert(!(await run(f.invoke,0x74fd494+shift)).trapped);assert.equal(await call('get_eax'),alias?0:87);assert.equal(await call('get_esp'),0x74fd494+shift+40);
-   for(const row of calls.slice(start).filter(x=>x.name==='reg_create_key'))assert.equal(imp.host.reg_close_key(read(row.args[2])),0);
+   for(const row of calls.slice(start).filter(x=>x.name==='reg_create_key')){
+    assert.equal(row.path,'NW\\Test\\','actual Worker caller passes trailing separator');
+    assert.equal(row.result,0);assert.equal(imp.host.reg_close_key(read(row.args[2])),0);
+   }
   }finally{await host.stop();}
-  assert(link._loaderRetirementReceipt?.retired);records.push({kind:'actual-cpu-worker-qt',shift,alias,joined:true});
+  assert.equal(workerRecord(),workerBefore,'Worker trailing CreateKey preserves native-written ANSI value, including error control');
+  assert(link._loaderRetirementReceipt?.retired);records.push({kind:'actual-cpu-worker-qt',shift,alias,joined:true,trailing:true,preserved:true});
  }
  // Native GlobalAlloc also hands out pooled selectors above the arena slots.
  new Uint8Array(memory.buffer).set(f.bytes,e.get_staging());e.load_pe(f.bytes.length);
@@ -247,7 +265,35 @@ async function main(){
   assert.equal(e.get_eip(),stop);assert.equal(e.get_eax(),0);assert.equal(e.get_edx(),0);assert.equal(imp.host.reg_close_key(read(ptr(0x100))),0);
   records.push({kind:'standalone-native-ne-index1',stoppedAtAuthoredLoop:true,realRegistryCall:true});
  }
- if(process.env.NEVERHOOD_REGISTRY_RESULT)fs.writeFileSync(process.env.NEVERHOOD_REGISTRY_RESULT,JSON.stringify({records,calls: calls.map(x=>x.name),originalExecuted:false},null,2)+'\n');
+ // A real OS child executes the same x86 callers, then exports through the
+ // production child completion protocol. Cancellation/tampering never merge.
+ const {VirtualFS}=require('../lib/filesystem');
+ const {saveCompletedChildState,mergeCompletedChildState}=require('../lib/vfs-export');
+ if(process.env.NATIVE_REG_CHILD){
+  const dir=process.env.NATIVE_REG_CHILD;
+  saveCompletedChildState(new VirtualFS(),store,path.join(dir,'tree'),path.join(dir,'registry.json'),path.join(dir,'complete.json'),'registry-proof');
+ }else{
+  const dir=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'native-reg-child-'));
+  const child=require('node:child_process').spawnSync(process.execPath,[__filename],{
+   env:{...process.env,NATIVE_REG_CHILD:dir,NEVERHOOD_REGISTRY_RESULT:''},encoding:'utf8',timeout:30000});
+  try{
+   assert.equal(child.error,undefined);assert.equal(child.signal,null);assert.equal(child.status,0,child.stderr);
+   const args=[new VirtualFS(),store,new Map(),path.join(dir,'tree'),path.join(dir,'registry.json'),path.join(dir,'complete.json')];
+   const before=store.exportStore();
+   assert.equal(mergeCompletedChildState(...args,'wrong-token').merged,false);
+   assert.deepEqual(store.exportStore(),before,'cancelled/stale completion leaves parent unchanged');
+   const registry=fs.readFileSync(args[4]);fs.appendFileSync(args[4],' ');
+   assert.equal(mergeCompletedChildState(...args,'registry-proof').merged,false);
+   assert.deepEqual(store.exportStore(),before,'tampered export leaves parent unchanged');
+   fs.writeFileSync(args[4],registry);
+   const result=mergeCompletedChildState(...args,'registry-proof');assert.equal(result.merged,true);
+   assert.equal(workerRecord(),workerBefore);
+   const saved=JSON.parse(registry),actual=store.exportStore();
+   for(const [key,value] of Object.entries(saved))assert.equal(actual[key],value,'completed child snapshot imported byte-exact');
+   records.push({kind:'actual-os-child-native-calls-export-merge',exit:child.status,signal:child.signal,actualWait:true,stdoutEOF:true,stderrEOF:true,staleAndTamperRefused:true});
+  }finally{fs.rmSync(dir,{recursive:true,force:true});}
+ }
+ if(process.env.NEVERHOOD_REGISTRY_RESULT)fs.writeFileSync(process.env.NEVERHOOD_REGISTRY_RESULT,JSON.stringify({records,calls,originalExecuted:false},null,2)+'\n');
  console.log('PASS native Win16 registry ABI/shared-store/data/sizing/errors/outputs/QT alias',records.length);
 }
 if(require.main===module)main().catch(error=>{console.error(error);process.exitCode=1;});

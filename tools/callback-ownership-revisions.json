@@ -26,8 +26,8 @@
       "file": "lib/storage.js",
       "name": "host-file",
       "baseSHA256": "0c04f8c5886a8d6d0717efc275339e66ead64430d901a4b62371a9fd80d40053",
-      "sha256": "669d7fff971b965ab20c79bb23f88af6a89a8b26a5d736683f58be32ed6201d8",
-      "reason": "Merged HKCR registry lookup and synchronous mutation retain existing disk and registry ownership; aliases and inferred roots introduce no guest callback, asynchronous frame or context restoration. Generic Interface root enables genuine system registrar execution; arbitrary missing keys remain errors. Native qualification is recorded separately."
+      "sha256": "526de3eb74d8efc644493f5b13e3efd66d5a560a37816cc248caefdd97964750",
+      "reason": "Merged HKCR registry lookup and synchronous mutation retain existing disk and registry ownership; aliases and inferred roots introduce no guest callback, asynchronous frame or context restoration. Generic Interface root enables genuine system registrar execution; arbitrary missing keys remain errors. Native qualification is recorded separately. Review 20261117: physical registry paths strip trailing separators before existence/read/write/delete and import lookup, preventing existing-key CreateKey from clearing values. Synchronous shared backend only; no new guest callback, scheduling, actor, context or lifecycle behavior. Authored ordinary/main Win32 and Win16/CPUWorker preservation and persistence controls recorded in run20261117-neverhood-native-registry-persistence-repair; general retained ownership remains pending."
     },
     {
       "file": "src/09b-dispatch.wat",

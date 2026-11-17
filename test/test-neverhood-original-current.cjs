@@ -3,6 +3,34 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
+if(process.argv[2]==='--installed-provenance'){
+ const preflight=require('../tools/neverhood-original-current-preflight.cjs');
+ const originalRead=fs.readFileSync,originalWrite=fs.writeFileSync;
+ // Exercise actual installed provenance while refusing any attempted write.
+ fs.writeFileSync=()=>{throw Error('read-only provenance attempted a write');};
+ try{
+  const report=preflight.verifyInstalled();
+  assert.equal(report.verifiedBlobs,58);assert.equal(report.completeCD.files.length,257);
+  assert.equal(report.shortcut.target.toLowerCase(),'c:\\program files\\dreamworks interactive\\neverhood\\setup95.exe');
+  assert.equal(report.shortcut.args,'');assert.equal(report.shortcut.workingDir,'');
+  assert.equal(report.registryCompleteness.authenticInstalledLaunchReady,false);
+  assert.deepEqual(report.registryCompleteness.missingPersistedValues,['Data Drive','Installed Directory','Run File']);
+  assert.equal(report.registryCompleteness.originalPublicWriteObservations.length,3);
+  for(const artifact of ['original/guest-registry.json','original/guest-overlay/blobs/85ee1e7c-0854-41e0-aab9-2c7456205704.bin']){
+   fs.readFileSync=function(file,...args){
+    const bytes=originalRead.call(this,file,...args);
+    if(String(file).endsWith(artifact)){
+     const bad=Buffer.from(bytes);bad[0]^=1;return bad;
+    }
+    return bytes;
+   };
+   assert.throws(()=>preflight.verifyInstalled(),/AssertionError/,'tampered '+artifact+' must be refused');
+   fs.readFileSync=originalRead;
+  }
+ }finally{fs.readFileSync=originalRead;fs.writeFileSync=originalWrite;}
+ console.log('PASS actual installed 65 records/58 blob hashes/full257 CD/shortcut; missing persisted paths refuse readiness; zero writes; corrupt registry and generated shortcut refused');
+ process.exit(0);
+}
 if(process.argv[2]==='--unit'){
  const code=`import importlib.util,pathlib,tempfile,os,json,time,hashlib
 os.environ.update(NEVERHOOD_CURRENT_RUN='/unused',NEVERHOOD_CURRENT_PORT='1')
