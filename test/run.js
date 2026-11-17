@@ -5219,7 +5219,6 @@ async function main() {
         };
         return adapter;
       },
-      guestToWasm: pointer => instance.exports.guest_to_wasm(pointer >>> 0) >>> 0,
       getImageBase: () => instance.exports.get_image_base() >>> 0,
     });
   }

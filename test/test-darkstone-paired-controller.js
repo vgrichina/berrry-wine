@@ -10,7 +10,7 @@ for(const name of ['name','create','select','slot','accept'])validate(routeComma
 assert.throws(()=>routeCommand('hidden',capture));
 assert.throws(()=>validate({steps:['shot:relative.png']},capture+'/commands'));
 const collector=fs.readFileSync(root+'/tools/capture-legacy-render-evidence.js','utf8');
-const d3d={renderEndpointId:12,completedFenceSequence:3,d3dimSoftwareDrawCallsCompleted:7,d3dimFallbackSoftwareDrawCallsCompleted:0};
+const d3d={renderEndpointId:12,completedFenceSequence:3};
 const observed=vm.runInNewContext(collector,{wine:{guestWorker:{},_workerLastSlice:{seq:4,d3d},threadManager:{threads:new Map([[1,{tid:2,state:'active'}]])}}});
 assert.equal(observed.mainGuestSlice.d3d.renderEndpointId,12);assert.equal(observed.childThreads[0].tid,2);assert(observed.childThreads[0].ownership.includes('no child'));
 assert.equal(vm.runInNewContext(collector,{}).available,false);

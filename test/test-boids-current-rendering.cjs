@@ -1,7 +1,7 @@
 'use strict';
 // Public-output observer controls; this test never launches original Boids.
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
-const {installObserver,selectWindow,installSoftwareObserver}=require('../tools/boids-current-runtime.cjs');
+const {installObserver,selectWindow}=require('../tools/boids-current-runtime.cjs');
 const seen=[];class Executor{execute(r){seen.push(r);if(r.fail)throw Error('native failure');return 731;}stats(){return {draws:seen.length};}}
 const root={Fake:{Executor}};installObserver(root,'Fake');installObserver(root,'Fake');const e=new Executor();
 // Loading another executor must not hide records from the active executor.
@@ -31,11 +31,6 @@ assert.throws(()=>require('../lib/gpu-stream-webgl').Executor.prototype.execute.
 const instance={},win={hwnd:65537,visible:true,w:640,h:480,processId:1000,wasm:instance},owner={processId:1000,instance,renderer:{windows:{65537:win}}};
 assert.equal(selectWindow(owner),win);assert.throws(()=>selectWindow({...owner,instance:{}}),/missing/);
 owner.renderer.windows[65538]={...win,hwnd:65538};assert.throws(()=>selectWindow(owner),/ambiguous/);
-const memory={buffer:new ArrayBuffer(16384)},d=new DataView(memory.buffer);[1,4,1,8192,3,4096].forEach((n,i)=>d.setUint32(i*4,n,true));
-let calls=0;const sw={D3DIMRenderWorker:{create:()=>({execute(m){calls++;if(m.fail)throw Error('raster failure');return 9;}})}};
-installSoftwareObserver(sw);const adapter=sw.D3DIMRenderWorker.create({memory,instance:{exports:{guest_to_wasm:p=>p}}});
-assert.equal(adapter.execute({opcode:0x20000,wa:0}),9);assert.equal(sw.__boidsPublicTrace.records[0].complete,true);assert.equal(sw.__boidsPublicTrace.records[0].state.length,4096);assert.equal(sw.__boidsPublicTrace.records[0].vertices.length,96);
-assert.throws(()=>adapter.execute({opcode:0x20000,wa:0,fail:true}),/raster failure/);assert.equal(sw.__boidsPublicTrace.records[1].complete,false);assert.equal(calls,2);
 console.log('PASS passive public-record preservation, copied inputs, exception propagation, bounded frames; complete registered Boids media manifest');
 async function driverControls(trace=false){
   const {installDriver}=require('../tools/boids-current-driver.cjs');

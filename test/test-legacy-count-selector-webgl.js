@@ -69,7 +69,7 @@ function controls(){
   for(const fault of ['ignored','selector','component','early','lod'])
     assert(source.includes("negative==='"+fault+"'"),'public fault seam '+fault);
   assert(source.includes('liveChangedBeforeDrain=true'),'held Worker mutation retained');
-  assert(source.includes('d3dimSoftwareDrawCallsCompleted'),'owning Worker software exclusion retained');
+  assert(!source.includes('d3dimSoftwareDrawCallsCompleted'),'retired D3DIM software-draw evidence is gone');
   return {status:'PLAN ONLY; no GL pixels',sourceCommit,tolerance:p.tolerance,states:p.states.length,
     capturedMatrixRepair:capturedMatrixControls(),fixtureSHA256:hash(source),oracleSHA256:hash(contract.oracle.toString()),counts,
     faults:['ignored','selector','component','early','lod','captured-matrix'],
