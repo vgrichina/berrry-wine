@@ -56,6 +56,42 @@ visual parity, FPS, audio or full27 result is inferred.
 
 Evidence: `scratch/runs/20261117-dxsdk-globe-viewer-paired-retained-rendering/result.json`.
 
+### Fresh software Viewer and ARCHITEC follow-up
+
+[Non-resizing inspection report](re-notes/dxsdk-viewer-viewport-fix-architec-paired-20261117.md),
+helper `ae10d9c42` and report `9882330c2`, adds a fresh software Viewer pair:
+the supplied Microsoft model rotates from its front toward its edge. A fresh
+ARCHITEC software pair shows textured architecture and a moving green
+mechanism. The coordinator reviewed both complete image pairs; ARCHITEC's
+later frame was delivered as Telegram message3012. The helper's focused
+geometry/generation/refusal tests, actual native GetPixel agreement and locked
+build passed. Both originals use `3ab982f2d` / module `06eaa397…`.
+
+ARCHITEC WebGL failed its pre-capture geometry guard: backing dimensions
+changed from 1280×960 to 640×480 and presentation became 1280×926 while the
+viewport remained 1280×960. The evidence does not establish whether ordinary
+startup or inspection caused that transition. No image or motion pass is
+claimed, and the scope closed without later endpoint queries. All four scopes
+retained native/browser/helper/watchdog/enclosing waits and EOFs. Original
+per-call Device2 traces were not captured; matching authored Device2 controls
+remain separate from original native-D3DRM/GPS evidence. Earlier software
+Viewer's blank captures remain separate from this successful fresh pair.
+
+The following table covers the named November17 moving-scene results only;
+it neither reconstructs nor completes the historical 27-app set. Each cell
+means reviewed natural scene motion on that actual executor, not visual parity,
+FPS, audio, gameplay completion or native Quit.
+
+| Registered app | Software | WebGL | Evidence runs under `scratch/runs/` |
+| --- | --- | --- | --- |
+| `dx_boids` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
+| `dx_flip3dtl` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering`; software completion: `20261117-dxsdk-software-tunnel-flip-rendering-finish` |
+| `dx_tunnel` | Motion observed | Motion observed | Same two runs as Flip3DTL; software uses the fresh follow-up |
+| `dx_twist` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
+| `dx_globe` | Motion observed | Motion observed | `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
+| `dx_viewer` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
+| `scr_architec` | Motion observed | Pre-capture refusal; open | `20261117-dxsdk-viewer-viewport-fix-architec-paired` |
+
 ## November 17 Quake III arena, depth repair and delayed input
 
 The registered original on pinned `e7c13db29` / module `f40fc54c…` reached
