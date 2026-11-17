@@ -415,14 +415,16 @@ async function consumerDiagnostic(out){
    if(s.child.exitCode===null&&s.child.signalCode===null)process.kill(-s.child.pid,'SIGTERM');await s.exited;
    if(release&&release.exitCode===null){release.kill();await rw;}
    save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});
+   // Join the independent watchdog before checking trace assertions too.
+   // An assertion failure must not leave its stdin keeping this process alive.
+   fs.writeFileSync(path.join(dir,'native.log'),s.output());wd.stdin.end();const [exit,signal]=await ww;
+   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
    const observations=fs.readFileSync(path.join(dir,'public-consumers.jsonl'),'utf8').trim().split('\n').map(JSON.parse);
-   assert(observations.length<=8193,'bounded public observer');
+   assert(observations.length<=8192+4096+1,'bounded public observer including passive readiness records');
    assert(observations.some(r=>r.phase==='entry'&&r.name==='CreateWindowExA'&&r.threadId===1),'observe startup before intent');
    assert(observations.filter(r=>r.phase==='handler-exit').every(r=>r.receipt===false&&r.callbackReturn==='unmeasured'),'public observation cannot invent receipt');
    assert.equal(observations.at(-1).phase,'summary');
    save('observer-assertions.json',{pass:true,rows:observations.length,startupObserved:true,neverReceipt:true});
-   fs.writeFileSync(path.join(dir,'native.log'),s.output());wd.stdin.end();const [exit,signal]=await ww;
-   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
   }
  }
  fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify({diagnosticCompleted:true,baseline,contractPassed:!baseline,safeForOriginal:false,originalStarted:false,unitChecks,results},null,2)+'\n');
