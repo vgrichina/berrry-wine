@@ -35,7 +35,24 @@ upper/lower edge corruptions. These changes repair qualification helpers;
 they are not new Jazz renderer fixes. The software fixture's post-capture
 control failure remains recorded with native exit 1 and actual waits/EOF.
 
-Original observation results will be recorded after publication of the helper.
+The one software original observation on `abe9413a9` did not produce a live
+scene window or a complete capture. A passive read before its deadline found
+the shell's fatal overlay reporting `scr_jazz stopped`, with no running app.
+The precise guest/launch exception was lost: the helper buffered console and
+network observations until async cleanup, but the native 300-second supervisor
+deadline terminated Node first. Native signal 15, supervisor exit 124, both
+native pipe EOFs, actual watchdog waits and an empty token scope are retained.
+Browser/Worker retirement acknowledgements are unavailable for this attempt.
+The endpoint is permanently closed and the software original is not retried.
+
+The helper now persists each console/error/network event immediately, and
+observes the shell's existing read-only crash-report textarea during startup.
+This permits early refusal with the exact report instead of waiting until the
+runtime deadline. An actual OS-child test writes through the helper's logger,
+then receives SIGTERM; its single exact record survives, with actual wait and
+both EOFs. This is an evidence-lifecycle repair, not a Jazz renderer repair.
+The unspent WebGL original observation follows publication of this correction.
+
 No keyboard, pointer or native Quit action is part of this task. Explicit host
 shutdown is recorded separately. No boxes, Codex workers or public deployment
 are used. FPS, audio, Windows-reference pixel correctness, physical GPU use,

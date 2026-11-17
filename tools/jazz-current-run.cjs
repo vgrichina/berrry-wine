@@ -4,6 +4,7 @@
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),http=require('node:http'),crypto=require('node:crypto'),vm=require('node:vm'),Module=require('node:module');
 const ROOT=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function appendObservation(out,name,row){fs.appendFileSync(path.join(out,name+'.jsonl'),JSON.stringify(row)+'\n');}
 async function run(out,commit,backend,action='original'){
   if(!['software','webgl'].includes(backend))throw Error('invalid declared backend');
   fs.mkdirSync(out,{recursive:true});
@@ -50,9 +51,13 @@ async function run(out,commit,backend,action='original'){
   const {deadline}=JSON.parse(read(path.join(out,'runtime-start.json')));
   if(!(deadline>Date.now()&&deadline<=Date.now()+300000))throw Error('invalid fixed deadline');
   let browser,server;const requests=[],logs=[],errors=[],modules=[],tasks=[],targets=[],captures=[];
+  // A supervisor deadline can terminate Node before async finally executes.
+  // Persist each unique observation when received rather than buffering the
+  // only crash/network/module evidence until browser cleanup.
+  const append=(name,row)=>appendObservation(out,name,row);
   const terminal={app:'scr_jazz',backend,mode:'worker',commit,clock:'registered default',nativeSeconds:300,watchdogSeconds:320,inputEvents:[],nativeQuit:false,hostShutdown:true,outcome:'unknown'};
   try{
-    server=http.createServer((req,res)=>{const n=decodeURIComponent(new URL(req.url,'http://localhost').pathname).slice(1)||'index.html',b=files.get(n);requests.push({at:Date.now(),path:n,status:b?200:404,sha256:b?sha(b):null});res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Content-Type',n.endsWith('.js')?'text/javascript':n.endsWith('.wasm')?'application/wasm':n.endsWith('.html')?'text/html':'application/octet-stream');res.statusCode=b?200:404;res.end(b||'not found');});
+    server=http.createServer((req,res)=>{const n=decodeURIComponent(new URL(req.url,'http://localhost').pathname).slice(1)||'index.html',b=files.get(n),row={at:Date.now(),path:n,status:b?200:404,sha256:b?sha(b):null};requests.push(row);append('requests',row);res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Content-Type',n.endsWith('.js')?'text/javascript':n.endsWith('.wasm')?'application/wasm':n.endsWith('.html')?'text/html':'application/octet-stream');res.statusCode=b?200:404;res.end(b||'not found');});
     await new Promise(r=>server.listen(0,'127.0.0.1',r));save('server.json',{port:server.address().port});
     browser=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,defaultViewport:{width:1280,height:960},protocolTimeout:Math.max(1,deadline-Date.now()),timeout:Math.max(1,deadline-Date.now()),args:['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader','--window-size=1280,960']});
     const proc=browser.process();const browserWait=new Promise(resolve=>proc.once('close',(code,signal)=>{terminal.browserWait={pid:proc.pid,code,signal,actualWait:true,at:Date.now()};resolve();}));
@@ -65,10 +70,12 @@ async function run(out,commit,backend,action='original'){
     const page=(await browser.pages())[0];await observe(page.target());
     await page.evaluateOnNewDocument('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app:'scr_jazz',mode:'worker',deadline,trace:true})+');');
     await page.evaluateOnNewDocument(()=>{globalThis.__jazzInputs=[];for(const type of ['keydown','keyup','pointerdown','pointerup','mousedown','mouseup'])document.addEventListener(type,e=>__jazzInputs.push({type,trusted:e.isTrusted,at:Date.now()}),true);});
-    page.on('console',m=>logs.push({at:Date.now(),type:m.type(),text:m.text()}));page.on('pageerror',e=>errors.push(String(e)));
+    page.on('console',m=>{const row={at:Date.now(),type:m.type(),text:m.text()};logs.push(row);append('console',row);});page.on('pageerror',e=>{errors.push(String(e));append('errors',{at:Date.now(),error:String(e)});});
     terminal.url=`http://127.0.0.1:${server.address().port}/index.html?app=scr_jazz&threads&d3d-renderer=${backend}`;
     terminal.launchedAt=Date.now();await page.goto(terminal.url,{waitUntil:'domcontentloaded',timeout:Math.max(1,deadline-Date.now())});
-    save('readiness.json',await page.evaluate(()=>__boidsDriver.ready()));
+    const fatal=page.waitForFunction(()=>document.querySelector('#wine-crash-report .wine-crash-text')?.value||false,{polling:100,timeout:Math.max(1,deadline-Date.now())}).then(async h=>{const report=await h.jsonValue();save('startup-fatal.json',{at:Date.now(),report});throw Error('Original Jazz reported a fatal startup error; see startup-fatal.json');});
+    fatal.catch(()=>{});
+    save('readiness.json',await Promise.race([page.evaluate(()=>__boidsDriver.ready()),fatal]));
     for(const delay of [60000,30000,30000]){
       await sleep(delay);const started=Date.now(),index=captures.length;save('capture-start.json',{index,at:started,boundMs:3000});let timer;
       const snapshot=await Promise.race([page.evaluate(()=>__boidsDriver.capture()),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('DISPLAY_UNKNOWN outer 3000ms deadline')),3000);})]).finally(()=>clearTimeout(timer));
@@ -99,5 +106,5 @@ async function run(out,commit,backend,action='original'){
   }
   if(terminal.outcome!=='observed')throw Error(terminal.error);
 }
-module.exports={run};
+module.exports={run,appendObservation};
 if(require.main===module)run(...process.argv.slice(2)).catch(e=>{console.error(e);process.exitCode=1;});
