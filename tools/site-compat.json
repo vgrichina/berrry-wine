@@ -16,7 +16,8 @@
           "status": "ingame",
           "statusDate": "2026-10-15",
           "works": "After a long load the title and Start menu appear, and holding Enter starts the first-person level with weapon and HUD shown.",
-          "issues": "Loading takes several minutes, and moving, fighting and sound have not been confirmed yet."
+          "issues": "Loading takes several minutes.",
+          "notTested": "Moving, fighting and sound have not been confirmed yet."
         }
       ],
       "year": 2004,
@@ -43,7 +44,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "The table loads, the plunger launches the ball, both flippers respond, and the score goes up.",
-          "issues": ""
+          "issues": "",
+          "source": "Windows XP and Microsoft Plus! 95 copies"
         }
       ],
       "year": 1995,
@@ -66,7 +68,24 @@
           "status": "playable",
           "statusDate": "2026-11-15",
           "works": "The 1997 trial plays from the title screen into its campaign: on the first Hittite scenario villagers can be selected, walked, sent to cut wood and set to build a house, and the arrow keys scroll the map. Random Map, Death Match and Scenario are locked by the trial itself. Two-player LAN games can be created and joined.",
-          "issues": ""
+          "issues": "",
+          "source": "Microsoft's 1997 trial package",
+          "testedOn": {
+            "build": "66f12d289 + patch",
+            "browser": "Chrome 157.0.8103.52",
+            "device": "desktop Chrome, M1 MacBook Air",
+            "os": "macOS 14.8.5",
+            "date": "2026-11-15",
+            "evidence": "scratch/runs/20261115-aoe-gameplay"
+          },
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": true,
+            "multiplayer": "lobby",
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1997,
@@ -151,7 +170,8 @@
           "status": "issues",
           "statusDate": "2026-10-06",
           "works": "The beta demo installs, starts the 'First Conflict' scenario, and a party can be selected and moved across the map.",
-          "issues": "Sound has not been confirmed working and the browser route and speed have not been checked."
+          "issues": null,
+          "notTested": "Sound has not been confirmed working and the browser route and speed have not been checked."
         }
       ],
       "year": 1999,
@@ -184,7 +204,8 @@
           "status": "issues",
           "statusDate": "2026-10-10",
           "works": "The beta demo reaches the world map in the browser and armies can be selected and moved; the map no longer draws over the bottom panel.",
-          "issues": "It only reaches the menu in the browser's threaded mode, and sound and frame rate have not been checked."
+          "issues": "It only reaches the menu in the browser's threaded mode.",
+          "notTested": "Sound and frame rate have not been checked."
         }
       ],
       "year": 2002,
@@ -217,7 +238,8 @@
           "status": "playable",
           "statusDate": "2026-10-08",
           "works": "In the browser the game reaches Mission 01, where the soldier moves with the arrow keys and aims with the mouse.",
-          "issues": ""
+          "issues": "",
+          "source": "Reflexive archived Windows build"
         }
       ],
       "year": 2003,
@@ -298,7 +320,8 @@
           "status": "playable",
           "statusDate": "2026-10-18",
           "works": "The original launcher starts the single-player demo, the menus work, and the Marine mission plays in the browser with textured scenery, the HUD and working movement controls; game audio is produced.",
-          "issues": "Frame rate and audio quality have not been checked yet, and it is not on the public desktop."
+          "issues": "It is not on the public desktop.",
+          "notTested": "Frame rate and audio quality have not been checked yet."
         }
       ],
       "year": 2001,
@@ -319,7 +342,8 @@
           "status": "issues",
           "statusDate": "2026-10-09",
           "works": "On a test build the demo started a New Game and Alice could be walked through the first level with the keyboard.",
-          "issues": "That run used an unreleased test build; it has not been rechecked on the current version or in the browser, and the game is not yet on the site."
+          "issues": "The game is not yet on the site.",
+          "notTested": "The run that reached it used an unreleased test build; it has not been rechecked on the current version or in the browser."
         }
       ],
       "year": 2000,
@@ -613,7 +637,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "In the browser you can create a character, watch the opening scene, talk with Imoen and move your character around the first dungeon with the mouse.",
-          "issues": "Sound quality and frame rate have not been checked, and it is not on the public desktop."
+          "issues": "It is not on the public desktop.",
+          "notTested": "Sound quality and frame rate have not been checked."
         }
       ],
       "year": 2000,
@@ -646,7 +671,8 @@
           "status": "ingame",
           "statusDate": "2026-10-18",
           "works": "The game reaches the shooting range, the crosshair follows the mouse, and firing uses ammo and hits the aimed spot.",
-          "issues": "Only the command-line runner was tested: a full round, scoring, sound and the browser are unchecked."
+          "issues": null,
+          "notTested": "Only the command-line runner was tested: a full round, scoring, sound and the browser are unchecked."
         }
       ],
       "year": 2003,
@@ -672,7 +698,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "From the main menu you can launch the first moon mission and drive and steer the tank with the keyboard.",
-          "issues": "Sound, the cutscene videos, multiplayer and the base-building commands have not been checked yet."
+          "issues": null,
+          "notTested": "Sound, the cutscene videos, multiplayer and the base-building commands have not been checked yet."
         }
       ],
       "year": 1998,
@@ -703,7 +730,8 @@
           "status": "menus",
           "statusDate": "2026-08-29",
           "works": "The GOG release's bundled ScummVM starts the game, shows the Virgin splash and reaches the opening scene with Foster and the cursor.",
-          "issues": "Playing with the mouse has not been tested, the GOG installer stalls at its first copy step, and the game is not in the app list."
+          "issues": "The GOG installer stalls at its first copy step, and the game is not in the app list.",
+          "notTested": "Playing with the mouse has not been tested."
         }
       ],
       "year": 1994,
@@ -759,7 +787,8 @@
           "status": "issues",
           "statusDate": "2026-10-10",
           "works": "In the browser, New Game plays the opening cinematics and reaches Jade's first fight, where attacking and running respond to the keyboard.",
-          "issues": "It took several minutes to reach the fight, some movement keys are not confirmed, sound and frame rate are unchecked, and it is not in the app list."
+          "issues": "It took several minutes to reach the fight, and it is not in the app list.",
+          "notTested": "Some movement keys are not confirmed, and sound and frame rate are unchecked."
         }
       ],
       "year": 2003,
@@ -792,7 +821,16 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "The demo boots through its menus into the tutorial island, the scripted intro plays out, and after it the god hand, mouse-wheel zoom and mouse-drag camera respond and villagers move in free play.",
-          "issues": "It is extremely slow (the tutorial intro alone takes over an hour of real time), the in-world intro cannot be skipped, some advanced shader effects are not drawn, and a full browser run has not been requalified since recent fixes."
+          "issues": "It is extremely slow (the tutorial intro alone takes over an hour of real time), the in-world intro cannot be skipped, and some advanced shader effects are not drawn.",
+          "notTested": "A full browser run has not been requalified since recent fixes.",
+          "testedOn": {
+            "build": "aa09d05dc",
+            "browser": null,
+            "device": "CLI, remote 4-vCPU test box",
+            "os": null,
+            "date": "2026-10-23",
+            "evidence": "scratch/runs/20261023T1030Z-black_white_2_demo-claudea7d5-goldscroll"
+          }
         }
       ],
       "year": 2005,
@@ -815,7 +853,35 @@
           "status": "playable",
           "statusDate": "2026-10-08",
           "works": "Solo matches against the computer play with keyboard control, and two-player network matches between two browser tabs work with both players able to move.",
-          "issues": "Finding the other player in the network lobby sometimes fails and needs a retry."
+          "issues": "Finding the other player in the network lobby sometimes fails and needs a retry.",
+          "version": "1.7.4",
+          "source": "freeware release",
+          "testedOn": [
+            {
+              "build": "62918bb02",
+              "browser": "Chrome 154.0.8037.98",
+              "device": "desktop Chrome",
+              "os": null,
+              "date": "2026-10-08",
+              "evidence": "scratch/runs/blobby-decisions-1791500971553"
+            },
+            {
+              "build": "96b300d46 + patch",
+              "browser": "Chrome (headless)",
+              "device": "desktop Chrome (headless), two tabs",
+              "os": null,
+              "date": "2026-10-15",
+              "evidence": "scratch/runs/20261015-blobby-worker-room"
+            }
+          ],
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": "works",
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 2000,
@@ -841,7 +907,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "The main menu works and the first demo level plays: you can walk, turn and shoot, and enemies fight back.",
-          "issues": "Sound, the original launcher and the browser have not been checked."
+          "issues": null,
+          "notTested": "Sound, the original launcher and the browser have not been checked."
         }
       ],
       "year": 1998,
@@ -874,7 +941,8 @@
           "status": "ingame",
           "statusDate": "2026-10-06",
           "works": "The demo installs, plays its intro movies and mission briefing, and the battle runs with units selectable by mouse (software renderer).",
-          "issues": "Battle speed in the browser has not been checked, and it is not on the public desktop."
+          "issues": "It is not on the public desktop.",
+          "notTested": "Battle speed in the browser has not been checked."
         }
       ],
       "year": 1999,
@@ -1016,7 +1084,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "The demo installs, plays its intro, and the race starts; the car responds to accelerate, brake and steer keys until the demo's timer ends it.",
-          "issues": "The original launcher program does not work (the game is started directly), and the browser is unchecked."
+          "issues": "The original launcher program does not work (the game is started directly).",
+          "notTested": "The browser is unchecked."
         }
       ],
       "year": 1998,
@@ -1049,7 +1118,8 @@
           "status": "ingame",
           "statusDate": "2026-10-10",
           "works": "The alpha test demo launches through its launcher into a race in the browser, where accelerating, reversing and braking work.",
-          "issues": "Steering has not been confirmed separately, a full race, sound and frame rate are unchecked, and the loading screen is long."
+          "issues": "The loading screen is long.",
+          "notTested": "Steering has not been confirmed separately, and a full race, sound and frame rate are unchecked."
         }
       ],
       "year": 2000,
@@ -1129,7 +1199,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "Goes from the options screen through the service area into the Corrigin stage, where the stage clock runs and the car accelerates and steers from the keyboard.",
-          "issues": "Sound and the browser version have not been checked."
+          "issues": null,
+          "notTested": "Sound and the browser version have not been checked."
         }
       ],
       "year": 1998,
@@ -1152,7 +1223,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "From the menus you can start a rally stage and drive the car, with correct textures, car lighting and menu text.",
-          "issues": "The menu soon drops into the attract demo if left idle, the game's own installer does not run, and night stages and the browser are unchecked."
+          "issues": "The menu soon drops into the attract demo if left idle, and the game's own installer does not run.",
+          "notTested": "Night stages and the browser are unchecked."
         }
       ],
       "year": 2000,
@@ -1196,7 +1268,8 @@
           "status": "issues",
           "statusDate": "2026-10-01",
           "works": "In the browser the game plays through 180 clicks to level 2 with no crash.",
-          "issues": "The frame rate is low and uneven, and the game needs an 800x600 screen."
+          "issues": "The frame rate is low and uneven, and the game needs an 800x600 screen.",
+          "source": "Reflexive archived Windows build"
         }
       ],
       "kind": "game"
@@ -1214,7 +1287,8 @@
           "status": "issues",
           "statusDate": "2026-10-08",
           "works": "The DOS demo reaches the cockpit through its normal menus and the helicopter flies forward and banks under keyboard control.",
-          "issues": "Getting to the cockpit took about 45 minutes of loading, and sound is turned off; combat and missions were not tested."
+          "issues": "Getting to the cockpit took about 45 minutes of loading, and sound is turned off.",
+          "notTested": "Combat and missions were not tested."
         }
       ],
       "year": 1997,
@@ -1237,7 +1311,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "Goes through the pilot and mission menus to the briefing, launches the mission, and the helicopter lifts off and climbs under keyboard control, both headless and in the browser page.",
-          "issues": "Mission loading takes a long time; combat and finishing a mission were not tested."
+          "issues": "Mission loading takes a long time.",
+          "notTested": "Combat and finishing a mission were not tested."
         }
       ],
       "year": 1998,
@@ -1260,7 +1335,8 @@
           "status": "issues",
           "statusDate": "2026-10-06",
           "works": "The first Allied mission starts from the main menu, and units can be selected and ordered to move.",
-          "issues": "Mouse clicks land offset from where they appear on screen, and sound and the browser have not been checked."
+          "issues": "Mouse clicks land offset from where they appear on screen.",
+          "notTested": "Sound and the browser have not been checked."
         }
       ],
       "year": 1996,
@@ -1316,7 +1392,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "Reaches the main menu and the first mission briefing with voice-over; in the mission a commando can be selected and walked across the map with the mouse, and the music plays at the data level.",
-          "issues": "The browser version, real audio output and frame rate have not been checked."
+          "issues": null,
+          "notTested": "The browser version, real audio output and frame rate have not been checked."
         }
       ],
       "year": 1998,
@@ -1402,7 +1479,8 @@
           "status": "issues",
           "statusDate": "2026-10-07",
           "works": "Shows the attract mode and the Jungle/Mine/Options menu, and in the Jungle level Croc turns and moves along the path from the keyboard in the browser.",
-          "issues": "The ground sometimes shows black holes where triangles are missing; sound and longer play were not checked."
+          "issues": "The ground sometimes shows black holes where triangles are missing.",
+          "notTested": "Sound and longer play were not checked."
         }
       ],
       "year": 1999,
@@ -1458,7 +1536,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "With the software renderer the title and menus draw correctly, New Game loads the first level, and the hero turns and walks from the keyboard.",
-          "issues": "Only the software renderer and the start of the level were tested; sound was not checked."
+          "issues": null,
+          "notTested": "Only the software renderer and the start of the level were tested; sound was not checked."
         }
       ],
       "year": 1999,
@@ -1520,7 +1599,8 @@
           "status": "issues",
           "statusDate": "2026-10-06",
           "works": "The magazine demo goes from the intro through the campaign menus into the first Mars mission, where a unit can be built with Space and the map scrolled with the arrow keys.",
-          "issues": "Clicking the sidebar Build button did nothing (Space works instead) and typing a leader name showed no text; sound and speed are untested."
+          "issues": "Clicking the sidebar Build button did nothing (Space works instead) and typing a leader name showed no text.",
+          "notTested": "Sound and speed are untested."
         }
       ],
       "year": 1997,
@@ -1543,7 +1623,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "Installed from the demo CD, it goes through the settings screens and main menu into a new game, where Arkhan can be walked out of his room into the domed hall.",
-          "issues": "Sound, speed and the browser route have not been checked."
+          "issues": null,
+          "notTested": "Sound, speed and the browser route have not been checked."
         }
       ],
       "year": 1997,
@@ -1566,7 +1647,8 @@
           "status": "starts",
           "statusDate": "2026-10-12",
           "works": "After networking fixes the demo starts, passes its graphics and network checks and loads its menu shell for 30 seconds without crashing.",
-          "issues": "The menu has not been shown working with input and no mission has been played."
+          "issues": null,
+          "notTested": "The menu has not been shown working with input and no mission has been played."
         }
       ],
       "year": 2000,
@@ -1624,7 +1706,8 @@
           "status": "issues",
           "statusDate": "2026-10-17",
           "works": "Character creation leads into Town, where the camera can be turned and the hero walked by clicking; two-player games over the virtual LAN also reach Town together.",
-          "issues": "The WebGL and software renderers draw some scenes differently, with a black wedge in the lower-left of the view, and combat, sound and speed are untested."
+          "issues": "The WebGL and software renderers draw some scenes differently, with a black wedge in the lower-left of the view.",
+          "notTested": "Combat, sound and speed are untested."
         }
       ],
       "year": 1999,
@@ -1657,7 +1740,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "The demo goes from the attract mode through the title menu and car settings into an Arcade race, where holding gas drives the car to 163 mph.",
-          "issues": "Steering, sound, speed and the network modes have not been checked."
+          "issues": null,
+          "notTested": "Steering, sound, speed and the network modes have not been checked."
         }
       ],
       "year": 1997,
@@ -1680,7 +1764,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "With the software renderer, the demo goes through soldier selection and the main menu into mission 1, where the player can look around, walk past the first checkpoint and get shot by enemies.",
-          "issues": "Speed in the browser has not been measured."
+          "issues": null,
+          "notTested": "Speed in the browser has not been measured."
         }
       ],
       "year": 1998,
@@ -1742,7 +1827,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "You can make a pilot, walk from the main hall into the ready room, launch the first training mission and fly it with voice playing, and targeting works.",
-          "issues": "Frame rate and the browser version have not been checked yet."
+          "issues": null,
+          "notTested": "Frame rate and the browser version have not been checked yet."
         }
       ],
       "year": 1998,
@@ -1775,7 +1861,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "With Direct3D picked in the startup dialog, the demo reaches the menus and a full race where the car accelerates and overtakes, on desktop and on an iPhone.",
-          "issues": "The default 3Dfx Glide option in the startup dialog crashes, so Direct3D has to be chosen by hand, and firing has not been confirmed."
+          "issues": "The default 3Dfx Glide option in the startup dialog crashes, so Direct3D has to be chosen by hand.",
+          "notTested": "Firing has not been confirmed."
         }
       ],
       "year": 1998,
@@ -1808,7 +1895,17 @@
           "status": "issues",
           "statusDate": "2026-10-06",
           "works": "The demo goes from the intro and main menu into the Training map, where JC can be walked through the level with the keyboard, with the software and Direct3D renderers.",
-          "issues": "It runs at only about 5 to 10 frames per second, Direct3D is darker than it should be, and the Glide and OpenGL renderers do not work in the browser."
+          "issues": "It runs at only about 5 to 10 frames per second, Direct3D is darker than it should be, and the Glide and OpenGL renderers do not work in the browser.",
+          "version": "1.002f",
+          "source": "Ion Storm/Eidos demo",
+          "testedOn": {
+            "build": "c26252c4a",
+            "browser": null,
+            "device": "CLI, remote test box",
+            "os": null,
+            "date": "2026-10-22",
+            "evidence": "scratch/runs/20261022-deus-ex-native-support-training"
+          }
         }
       ],
       "year": 2000,
@@ -1892,7 +1989,26 @@
           "status": "issues",
           "statusDate": "2026-10-15",
           "works": "The shareware version goes from the menus through hero creation into Tristram, where the warrior walks on click and the character and inventory panels open, at the game's normal 20 frames per second.",
-          "issues": "In the browser the final full-screen picture sometimes loses artwork."
+          "issues": "In the browser the final full-screen picture sometimes loses artwork.",
+          "source": "Blizzard 1997 shareware CD",
+          "testedOn": [
+            {
+              "build": "afbc8ea1c",
+              "browser": "Chrome 155.0.8059.40",
+              "device": "desktop Chrome",
+              "os": null,
+              "date": "2026-10-14",
+              "evidence": "scratch/runs/20261014-diablo-character-init-after"
+            },
+            {
+              "build": "38ed9da0b",
+              "browser": "Chrome",
+              "device": "desktop Chrome, live site",
+              "os": null,
+              "date": "2026-10-14",
+              "evidence": "scratch/runs/20261014-diablo-live-cooperative-retry"
+            }
+          ]
         }
       ],
       "year": 1996,
@@ -1927,7 +2043,25 @@
           "status": "playable",
           "statusDate": "2026-10-13",
           "works": "The demo installs, creates a Barbarian and reaches the Rogue Encampment, where clicking the ground moves the hero, in the browser with both the WebGL and software renderers; the Glide version's menu music plays continuously.",
-          "issues": "Sound in town, combat and longer sessions have not been checked."
+          "issues": null,
+          "notTested": "Sound in town, combat and longer sessions have not been checked.",
+          "source": "Blizzard 2000 Barbarian demo",
+          "testedOn": {
+            "build": "22ab7c6c0 + patch",
+            "browser": null,
+            "device": "CLI headless (M1 Mac)",
+            "os": "macOS",
+            "date": "2026-11-16",
+            "evidence": "scratch/runs/20261116-d2-glide"
+          },
+          "facts": {
+            "installs": true,
+            "audio": true,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 2000,
@@ -1960,7 +2094,8 @@
           "status": "issues",
           "statusDate": "2026-10-06",
           "works": "With software rendering, and with the default 3Dfx option after a fix, the demo reaches the main menu and the first Quest level, where Enric can be walked to the barred gate.",
-          "issues": "The menu mouse misses its targets, so menus are driven with the keyboard; sound and speed are untested."
+          "issues": "The menu mouse misses its targets, so menus are driven with the keyboard.",
+          "notTested": "Sound and speed are untested."
         }
       ],
       "year": 1998,
@@ -1989,7 +2124,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "Starting a new game on Easy goes through loading and the intro into the first level, where you can walk and look around with the full HUD.",
-          "issues": "Only tested from the command line so far, and slowly; the browser version, frame rate and sound have not been checked."
+          "issues": "It runs slowly.",
+          "notTested": "Only tested from the command line so far; the browser version, frame rate and sound have not been checked."
         }
       ],
       "year": 2002,
@@ -2049,7 +2185,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "The intro and main menu work, and a new saga can be started through race and lord choice to the adventure map and city screen.",
-          "issues": "In the browser only the main menu has been checked; sound, frame rate, battles and multiplayer have not been tested."
+          "issues": null,
+          "notTested": "In the browser only the main menu has been checked; sound, frame rate, battles and multiplayer have not been tested."
         }
       ],
       "year": 1999,
@@ -2082,7 +2219,8 @@
           "status": "issues",
           "statusDate": "2026-10-07",
           "works": "New Game reaches the first level, riding the dragon in the rain with enemies and the HUD, both from the command line and in the browser.",
-          "issues": "In one browser run the game dropped back to the menu for an unknown reason, and frame rate and sound have not been checked."
+          "issues": "In one browser run the game dropped back to the menu for an unknown reason.",
+          "notTested": "Frame rate and sound have not been checked."
         }
       ],
       "year": 1999,
@@ -2105,7 +2243,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "The attract mode, front end and the 'Lose the tail!' chase work, and the car can be driven out of the garage using the 3dfx Glide renderer.",
-          "issues": "Needs the game's Config to be run once first and only the Glide option is offered; the browser version and frame rate have not been checked."
+          "issues": "Needs the game's Config to be run once first and only the Glide option is offered.",
+          "notTested": "The browser version and frame rate have not been checked."
         }
       ],
       "year": 1999,
@@ -2128,7 +2267,8 @@
           "status": "ingame",
           "statusDate": "2026-10-10",
           "works": "The logos and main menu work, the cursor can be moved, and Start New Game enters the first dungeon with its tutorial panel.",
-          "issues": "Actually playing the level has not been tested, and quick single mouse jumps can occasionally be missed."
+          "issues": "Quick single mouse jumps can occasionally be missed.",
+          "notTested": "Actually playing the level has not been tested."
         }
       ],
       "year": 1997,
@@ -2242,7 +2382,8 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "In the browser the launcher, main menu and character setup work, and the hero can be walked around the first dungeon level with the arrow keys.",
-          "issues": "Only a short stretch of play has been tested; sound quality and frame rate have not been checked."
+          "issues": null,
+          "notTested": "Only a short stretch of play has been tested; sound quality and frame rate have not been checked."
         }
       ],
       "year": 2011,
@@ -2271,7 +2412,17 @@
           "status": "playable",
           "statusDate": "2026-09-10",
           "works": "The game plays in the browser with touch steering, in both portrait and landscape layouts.",
-          "issues": "A memory fix for a crash seen on iPhone has not yet been re-tested on a real device."
+          "issues": "A memory fix for a crash seen on iPhone has not yet been re-tested on a real device.",
+          "version": "1.09",
+          "source": "freeware release",
+          "testedOn": {
+            "build": null,
+            "browser": null,
+            "device": "iPhone",
+            "os": "iOS 17.6.1",
+            "date": "2026-09-10",
+            "evidence": "docs/re-notes/dxball.md"
+          }
         }
       ],
       "year": 1996,
@@ -2334,7 +2485,16 @@
           "status": "ingame",
           "statusDate": "2026-09-10",
           "works": "The title screen comes up with music, and clicking Next starts a pipe board showing the START and FINISH pipes.",
-          "issues": "Actually laying pipe and finishing a level has not been tested yet."
+          "issues": null,
+          "notTested": "Actually laying pipe and finishing a level has not been tested yet.",
+          "facts": {
+            "installs": null,
+            "audio": true,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1999,
@@ -2360,7 +2520,8 @@
           "status": "ingame",
           "statusDate": "",
           "works": "The main menu, team selection and mission briefing all work, and the first jungle mission loads with the squad views and radar showing.",
-          "issues": "Moving and shooting in the mission has not been tested, the level takes a long time to load, and sound and the video clips have not been checked."
+          "issues": "The level takes a long time to load.",
+          "notTested": "Moving and shooting in the mission has not been tested, and sound and the video clips have not been checked."
         }
       ],
       "year": 2000,
@@ -2426,7 +2587,8 @@
           "status": "playable",
           "statusDate": "2026-09-28",
           "works": "You can start a new game as Max Stone, walk around the first map, open the inventory and equip items, aim and fire a weapon in combat, and this was also tested in the browser.",
-          "issues": "Some spots on the map you click could not be walked to (not yet known whether that is the game or the emulator), and conversations, full combat rounds and sound have not been checked."
+          "issues": "Some spots on the map you click could not be walked to (not yet known whether that is the game or the emulator).",
+          "notTested": "Conversations, full combat rounds and sound have not been checked."
         }
       ],
       "year": 1997,
@@ -2459,7 +2621,8 @@
           "status": "issues",
           "statusDate": "2026-10-18",
           "works": "In the browser you can go through the menus, set up the keyboard as a controller and start a friendly England v Italy match, and the selected player moves when you press the arrow keys.",
-          "issues": "Controls have only been partly checked, there is no touch layout, and sound and frame rate have not been checked."
+          "issues": "There is no touch layout.",
+          "notTested": "Controls have only been partly checked, and sound and frame rate have not been checked."
         }
       ],
       "year": 1997,
@@ -2480,7 +2643,8 @@
           "status": "ingame",
           "statusDate": "2026-08-29",
           "works": "GOG's ScummVM build starts the game and shows the title screen, and a longer scripted run got as far as Joe standing in the first room with the verb and inventory bar.",
-          "issues": "The GOG installer does not finish inside the emulator (the files had to be unpacked separately), and actually playing through puzzles has not been tested."
+          "issues": "The GOG installer does not finish inside the emulator (the files had to be unpacked separately).",
+          "notTested": "Actually playing through puzzles has not been tested."
         },
         {
           "note": "scummvm-fotaq",
@@ -2528,7 +2692,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "You can start a single-player game and fly into the Volcano level with the full HUD, and firing the main weapon works.",
-          "issues": "The intro and menu screens look heavily washed out to white, and most of the movement controls have not been tested."
+          "issues": "The intro and menu screens look heavily washed out to white.",
+          "notTested": "Most of the movement controls have not been tested."
         }
       ],
       "year": 1998,
@@ -2622,7 +2787,8 @@
           "status": "ingame",
           "statusDate": "2026-09-20",
           "works": "The clubhouse screen appears and the game moves on to the first tee.",
-          "issues": "Hitting shots has not been verified."
+          "issues": null,
+          "notTested": "Hitting shots has not been verified."
         }
       ],
       "year": 1991,
@@ -2673,7 +2839,9 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "You can pick a driver and a track, start a time-trial race and drive the car with the arrow keys.",
-          "issues": "The race takes a long time to load, and the game runs slowly enough that a quick key tap can get missed."
+          "issues": "The race takes a long time to load, and the game runs slowly enough that a quick key tap can get missed.",
+          "version": "1.05",
+          "source": "freeware release"
         }
       ],
       "year": 2002,
@@ -2699,7 +2867,9 @@
           "status": "issues",
           "statusDate": "2026-10-12",
           "works": "You can make a player ID, start the single-player story, watch the intro cutscene and get into the first mission.",
-          "issues": "The ground and distant cliffs draw far too dark, and it has not been tried in the browser."
+          "issues": "The ground and distant cliffs draw far too dark.",
+          "notTested": "It has not been tried in the browser.",
+          "source": "Reaper demo, InstallShield 6 media of 2001-02-08"
         }
       ],
       "year": 2000,
@@ -2755,7 +2925,8 @@
           "status": "ingame",
           "statusDate": "2026-09-29",
           "works": "The original installer runs to completion, and the game gets into the Wild Demo level with the player, the HUD and the opening tutorial message on screen, at about 30 fps in a browser benchmark.",
-          "issues": "Driving or walking around the level has not been tested, and the installer has to be run as separate steps because the emulator does not launch its child programs."
+          "issues": "The installer has to be run as separate steps because the emulator does not launch its child programs.",
+          "notTested": "Driving or walking around the level has not been tested."
         }
       ],
       "year": 1999,
@@ -2778,7 +2949,34 @@
           "status": "issues",
           "statusDate": "2026-09-29",
           "works": "The installer and launcher work, New Game on Easy gets into the first corridor with textures and the HUD, and you can walk and look around with the OpenGL, Direct3D and software renderers.",
-          "issues": "Switching the renderer from inside the game freezes it for good, and the software renderer is very slow in the browser."
+          "issues": "Switching the renderer from inside the game freezes it for good, and the software renderer is very slow in the browser.",
+          "source": "1999 standalone Uplink demo",
+          "testedOn": [
+            {
+              "build": "5406777ec + patch",
+              "browser": "Chrome 155",
+              "device": "desktop Chrome",
+              "os": "macOS",
+              "date": "2026-10-25",
+              "evidence": "scratch/runs/20261025-uplink-gameplay"
+            },
+            {
+              "build": "422eba5a4",
+              "browser": "Chrome 157.0.8103.46",
+              "device": "Android phone (A142)",
+              "os": "Android",
+              "date": "2026-11-07",
+              "evidence": "scratch/runs/20261107-uplink-android-showwindow"
+            }
+          ],
+          "facts": {
+            "installs": true,
+            "audio": null,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": 10.2
+          }
         }
       ],
       "year": 1998,
@@ -2807,7 +3005,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "From the setup screen you can start a new game, load the first mission and fly down the canyon with the cockpit HUD and radar, banking with the arrow keys.",
-          "issues": "The setup screen keeps redrawing itself and burns CPU, its buttons show magenta corners, and sound and the Direct3D mode have not been checked."
+          "issues": "The setup screen keeps redrawing itself and burns CPU, and its buttons show magenta corners.",
+          "notTested": "Sound and the Direct3D mode have not been checked."
         }
       ],
       "year": 1996,
@@ -2830,7 +3029,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "A new game starts from the main menu, and you can walk Corvus around the first area and turn him with the arrow keys.",
-          "issues": "Combat, later levels, sound and the browser version have not been tested."
+          "issues": null,
+          "notTested": "Combat, later levels, sound and the browser version have not been tested."
         }
       ],
       "year": 1998,
@@ -2853,7 +3053,8 @@
           "status": "issues",
           "statusDate": "2026-10-04",
           "works": "You can start a standard game, open the hero screen and walk your hero across the adventure map while the camera scrolls.",
-          "issues": "In the browser the hero walks about five times slower than it should, the map can flash a stretched picture for a moment while scrolling, and battles have not been tested."
+          "issues": "In the browser the hero walks about five times slower than it should, and the map can flash a stretched picture for a moment while scrolling.",
+          "notTested": "Battles have not been tested."
         }
       ],
       "year": 1996,
@@ -2912,7 +3113,25 @@
           "status": "issues",
           "statusDate": "2026-11-13",
           "works": "The OpenGL version opens on the title menu, starts a new Paladin mission and plays in first person with WASD and mouse look; sound effects play through DirectSound, and settings are kept between visits.",
-          "issues": "The first level load spends a long time building models before play starts, there is no CD music, and the software version (h2.exe) stops at a SciTech driver error."
+          "issues": "The first level load spends a long time building models before play starts, there is no CD music, and the software version (h2.exe) stops at a SciTech driver error.",
+          "version": "1.11",
+          "source": "Raven/Activision demo installer",
+          "testedOn": {
+            "build": "8a834a3dc + patch",
+            "browser": null,
+            "device": "remote test box, browser driven over CDP",
+            "os": null,
+            "date": "2026-11-12",
+            "evidence": "boat:scratch/runs/20261112-hexen2-api-envelope-paired-progress-1040"
+          },
+          "facts": {
+            "installs": null,
+            "audio": true,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1997,
@@ -2949,7 +3168,15 @@
           "status": "playable",
           "statusDate": "2026-09-30",
           "works": "Through the menus and briefing into the restaurant mission, where Agent 47 walks, turns and runs with the numpad controls and the world keeps rendering for several minutes.",
-          "issues": ""
+          "issues": "",
+          "testedOn": {
+            "build": "3afab3e44 + patch",
+            "browser": null,
+            "device": "desktop browser and CLI headless",
+            "os": null,
+            "date": "2026-11-16",
+            "evidence": "scratch/runs/20261115-hitman-glide"
+          }
         }
       ],
       "year": 2000,
@@ -3016,7 +3243,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "A new game starts from the title menu and the knight walks around the 3D street under keyboard control.",
-          "issues": "Gameplay is CPU-heavy and may run slowly; level completion and sound quality were not checked."
+          "issues": "Gameplay is CPU-heavy and may run slowly.",
+          "notTested": "Level completion and sound quality were not checked."
         }
       ],
       "year": 1999,
@@ -3039,7 +3267,8 @@
           "status": "issues",
           "statusDate": "2026-09-29",
           "works": "From the original install, a character can be created, the first tavern area reached, the character walked around, and a quicksave written and reloaded.",
-          "issues": "The chapter narration text is blank, and play from the original install has not yet been confirmed in the browser."
+          "issues": "The chapter narration text is blank.",
+          "notTested": "Play from the original install has not yet been confirmed in the browser."
         }
       ],
       "year": 2000,
@@ -3186,7 +3415,25 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "The original installer completes, a new single-player game starts from the menu, and Jazz runs and shoots enemies in the first level; a two-player LAN join also connects.",
-          "issues": ""
+          "issues": "",
+          "version": "1.23s",
+          "source": "shareware demo installer",
+          "testedOn": {
+            "build": null,
+            "browser": null,
+            "device": "CLI headless",
+            "os": null,
+            "date": "2026-10-01",
+            "evidence": "scratch/runs/20261001T225744Z-jazz-jackrabbit-2-demo-installer-headless-gameplay"
+          },
+          "facts": {
+            "installs": true,
+            "audio": null,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1998,
@@ -3220,7 +3467,15 @@
           "status": "issues",
           "statusDate": "2026-10-13",
           "works": "Levels can be played with the mouse, a cleared level advances to the next one, and high scores and game over work.",
-          "issues": "Some dialogs look different from Windows (smaller fonts, and the level-complete popup is partly clipped)."
+          "issues": "Some dialogs look different from Windows (smaller fonts, and the level-complete popup is partly clipped).",
+          "testedOn": {
+            "build": "38ed9da0b",
+            "browser": "Chrome",
+            "device": "desktop Chrome, live site",
+            "os": null,
+            "date": "2026-10-14",
+            "evidence": "scratch/runs/20261014-release-deploy"
+          }
         }
       ],
       "year": 1992,
@@ -3243,7 +3498,8 @@
           "status": "issues",
           "statusDate": "2026-10-10",
           "works": "A picture opens and is cut into pieces, and pieces can be dragged around the board.",
-          "issues": "The piece is not drawn while it is being dragged; placing a piece in its correct slot has not been tested."
+          "issues": "The piece is not drawn while it is being dragged.",
+          "notTested": "Placing a piece in its correct slot has not been tested."
         }
       ],
       "year": 1991,
@@ -3311,7 +3567,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "The demo starts a new game from the menu, plays its intro cut-scene and lets you walk and turn in the first level.",
-          "issues": "The first level takes a very long time to load, and combat and sound have not been checked."
+          "issues": "The first level takes a very long time to load.",
+          "notTested": "Combat and sound have not been checked."
         }
       ],
       "year": 1999,
@@ -3367,7 +3624,8 @@
           "status": "playable",
           "statusDate": "2026-10-18",
           "works": "The menu works from the keyboard and on the first level the paddle moves left and right and launches the ball.",
-          "issues": "Only the opening of the first level was tried; longer play and sound are unchecked."
+          "issues": null,
+          "notTested": "Only the opening of the first level was tried; longer play and sound are unchecked."
         }
       ],
       "year": 2001,
@@ -3393,7 +3651,16 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "The menu works and a single-player match runs, with your army following the cursor you steer from the keyboard.",
-          "issues": "Network play reaches the waiting room but starting a networked match has not been shown."
+          "issues": null,
+          "notTested": "Network play reaches the waiting room but starting a networked match has not been shown.",
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": "lobby",
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1998,
@@ -3446,7 +3713,8 @@
           "status": "issues",
           "statusDate": "2026-10-18",
           "works": "The game opens its tutorial board, and you can select a marble with the mouse and move it with the arrow keys.",
-          "issues": "The game window is slightly larger than the screen, so its right and bottom edges are cut off; sound is unchecked."
+          "issues": "The game window is slightly larger than the screen, so its right and bottom edges are cut off.",
+          "notTested": "Sound is unchecked."
         }
       ],
       "year": 2000,
@@ -3505,7 +3773,24 @@
           "status": "playable",
           "statusDate": "2026-09-13",
           "works": "The mode menu works with the mouse and the game reaches play, including on a phone touchscreen using trackpad-style dragging.",
-          "issues": ""
+          "issues": "",
+          "source": "Microsoft Plus! 98",
+          "testedOn": {
+            "build": null,
+            "browser": null,
+            "device": "iPhone",
+            "os": null,
+            "date": "2026-09-13",
+            "evidence": "docs/re-notes/marbles.md"
+          },
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": true,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1998,
@@ -3606,7 +3891,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "The menu, a new game, the intro and the tutorial level render and respond to keyboard and mouse in the browser.",
-          "issues": "Skipping the long intro is unreliable from run to run, and jumping has not been seen working in play."
+          "issues": "Skipping the long intro is unreliable from run to run.",
+          "notTested": "Jumping has not been seen working in play."
         }
       ],
       "year": 2000,
@@ -3662,7 +3948,8 @@
           "status": "starts",
           "statusDate": "",
           "works": "The player starts and opens its main window.",
-          "issues": "Playing media has not been checked."
+          "issues": null,
+          "notTested": "Playing media has not been checked."
         }
       ],
       "year": 1998,
@@ -3685,7 +3972,8 @@
           "status": "issues",
           "statusDate": "2026-10-12",
           "works": "The main menu, new game and difficulty screens work and the first level plays with keyboard and on-screen touch controls in the browser.",
-          "issues": "The game reports it cannot read the audio CD, so music is missing, and speed has not been measured."
+          "issues": "The game reports it cannot read the audio CD, so music is missing.",
+          "notTested": "Speed has not been measured."
         }
       ],
       "year": 2000,
@@ -3747,7 +4035,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "All seven 3D screensavers draw their animated scenes, including lighting, textures and translucent shadows.",
-          "issues": "Organic Art spends most of its time loading the next scene, and the browser's hardware-accelerated mode has not been rechecked since September."
+          "issues": "Organic Art spends most of its time loading the next scene.",
+          "notTested": "The browser's hardware-accelerated mode has not been rechecked since September."
         }
       ],
       "year": 1998,
@@ -3890,7 +4179,9 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "Moorhuhn 1, 2 and Winter Edition reach a shooting round in the browser, and aimed shots score points.",
-          "issues": ""
+          "issues": "",
+          "version": "1.0",
+          "source": "Phenomedia promotional freeware (2000-05-02 files)"
         }
       ],
       "year": 1999,
@@ -3913,7 +4204,8 @@
           "status": "ingame",
           "statusDate": "2026-10-13",
           "works": "Starts, takes a player name (including Backspace), walks through the menus and loads the Stunt Quarry race with rider, terrain and HUD drawn.",
-          "issues": "Riding the bike during a race has not been checked yet, and loading the race takes about a minute."
+          "issues": "Loading the race takes about a minute.",
+          "notTested": "Riding the bike during a race has not been checked yet."
         }
       ],
       "year": 1998,
@@ -3960,7 +4252,16 @@
           "status": "playable",
           "statusDate": "2026-10-06",
           "works": "The Special Edition 3dfx demo races and drives with road, terrain and cars drawn; the original NFS II demo reaches its menu and a race that responds to the throttle.",
-          "issues": ""
+          "issues": "",
+          "source": "EA's Windows demos (classicdosgames.com)",
+          "testedOn": {
+            "build": "3afab3e44 + patch",
+            "browser": "Chrome (headless)",
+            "device": "desktop headless Chrome (M1 Mac)",
+            "os": null,
+            "date": "2026-11-16",
+            "evidence": "scratch/runs/20261115-nfs2se-black"
+          }
         }
       ],
       "year": 1998,
@@ -3984,7 +4285,16 @@
           "status": "playable",
           "statusDate": "2026-10-20",
           "works": "A race can be driven in the browser with the original 3dfx renderer, on both the WebGL and software drawing paths, with cockpit, HUD and road movement.",
-          "issues": ""
+          "issues": "",
+          "source": "EA's September 1998 final demo",
+          "testedOn": {
+            "build": null,
+            "browser": "Chrome 155.0.8059.85",
+            "device": "desktop Chrome, Apple M1",
+            "os": null,
+            "date": "2026-10-20",
+            "evidence": "scratch/runs/20261020-nfs3-pool-webgl-verified"
+          }
         }
       ],
       "kind": "game"
@@ -4028,7 +4338,8 @@
           "status": "issues",
           "statusDate": "2026-10-13",
           "works": "In the browser it reaches the main menu, creates a premade character, loads the Prelude area, and responds to clicks to move and to talk with the first character.",
-          "issues": "Menu clicks sometimes need to be repeated, and combat and sound have not been checked."
+          "issues": "Menu clicks sometimes need to be repeated.",
+          "notTested": "Combat and sound have not been checked."
         }
       ],
       "year": 2002,
@@ -4386,7 +4697,8 @@
           "status": "issues",
           "statusDate": "2026-10-06",
           "works": "From the main menu a new game starts, and after the opening flyby the player controls the level and can rotate the camera.",
-          "issues": "A leftover mouse cursor stays in the corner of the menu, and sound, the browser version and a full level have not been checked."
+          "issues": "A leftover mouse cursor stays in the corner of the menu.",
+          "notTested": "Sound, the browser version and a full level have not been checked."
         }
       ],
       "year": 1998,
@@ -4446,7 +4758,26 @@
           "status": "playable",
           "statusDate": "2026-10-15",
           "works": "The game starts from its own main menu into the first level in the browser, keyboard movement and mouse look work, and two copies can join a LAN deathmatch.",
-          "issues": "Frame rate, combat, finishing a level and sound have not been measured."
+          "issues": null,
+          "notTested": "Frame rate, combat, finishing a level and sound have not been measured.",
+          "version": "3.14",
+          "source": "id Software Win32 demo",
+          "testedOn": {
+            "build": "96b300d46 + patch",
+            "browser": "Chrome (headless)",
+            "device": "desktop Chrome (headless)",
+            "os": null,
+            "date": "2026-10-15",
+            "evidence": "scratch/runs/20261015-quake2-worker-room"
+          },
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": "works",
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1997,
@@ -4479,7 +4810,26 @@
           "status": "playable",
           "statusDate": "2026-10-19",
           "works": "The game reaches Arena Gate in the browser, where moving, turning, firing and touch controls all work, and a second browser can join over the virtual LAN.",
-          "issues": "Safari and real phones have not been tested."
+          "issues": null,
+          "notTested": "Safari and real phones have not been tested.",
+          "version": "1.11",
+          "source": "id Software demo",
+          "testedOn": {
+            "build": "aa53c5c87",
+            "browser": "Chrome (headless)",
+            "device": "desktop Chrome (headless), phone touch emulated",
+            "os": null,
+            "date": "2026-10-15",
+            "evidence": "scratch/runs/20261015-quake3-release"
+          },
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": "works",
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1999,
@@ -4512,7 +4862,8 @@
           "status": "playable",
           "statusDate": "2026-10-12",
           "works": "A new game starts, the opening dialogue can be clicked through, and selecting and moving the wizard works with both mouse and touch in the browser.",
-          "issues": "Sound, speed and combat have not been checked."
+          "issues": null,
+          "notTested": "Sound, speed and combat have not been checked."
         }
       ],
       "year": 1998,
@@ -4541,7 +4892,8 @@
           "status": "playable",
           "statusDate": "2026-10-12",
           "works": "A new game starts, and selecting a character and ordering it to move works with both mouse and touch in the browser.",
-          "issues": "Sound, speed and combat have not been checked."
+          "issues": null,
+          "notTested": "Sound, speed and combat have not been checked."
         }
       ],
       "year": 1999,
@@ -4604,7 +4956,8 @@
           "status": "ingame",
           "statusDate": "2026-10-11",
           "works": "The demo loads into its first 3D level.",
-          "issues": "Controlling Rayman has not been tested, and the game runs heavily."
+          "issues": "The game runs heavily.",
+          "notTested": "Controlling Rayman has not been tested."
         }
       ],
       "year": 1999,
@@ -4666,7 +5019,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "Ordinary taps reach a new game, and the tank turns and fires using the on-screen touch controls in the browser.",
-          "issues": "Sound and real phones have not been checked."
+          "issues": null,
+          "notTested": "Sound and real phones have not been checked."
         }
       ],
       "year": 1999,
@@ -4689,7 +5043,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "A new game reaches the sewer level, where walking, turning and firing work from both keyboard and browser touch controls.",
-          "issues": "Sound, mouse look and the other renderers have not been checked."
+          "issues": null,
+          "notTested": "Sound, mouse look and the other renderers have not been checked."
         }
       ],
       "year": 1999,
@@ -4768,7 +5123,24 @@
           "status": "playable",
           "statusDate": "2026-10-14",
           "works": "A new game starts and the mouse pushes blocks with the arrow keys, including on phones and in the browser.",
-          "issues": ""
+          "issues": "",
+          "source": "Microsoft Entertainment Pack 2 (16-bit)",
+          "testedOn": {
+            "build": null,
+            "browser": null,
+            "device": "iPhone",
+            "os": null,
+            "date": "2026-09-09",
+            "evidence": "docs/re-notes/wep16-rodent.md"
+          },
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": true,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1991,
@@ -4921,7 +5293,8 @@
           "status": "playable",
           "statusDate": "2026-10-12",
           "works": "Main menu, level and difficulty selection and the tutorial level work in the browser, and Cain moves where the mouse sends him.",
-          "issues": "Sound and touch controls not checked."
+          "issues": null,
+          "notTested": "Sound and touch controls not checked."
         }
       ],
       "year": 2000,
@@ -4944,7 +5317,18 @@
           "status": "issues",
           "statusDate": "2026-10-15",
           "works": "Menus, the intro and the first level work; the player walks out of the Karnak temple into combat, and a browser startup crash in the non-threaded mode was fixed.",
-          "issues": "The frame rate is low: about 20-35 frames per second on a fast laptop and lower on slower machines; Safari has not been re-tested."
+          "issues": "The frame rate is low: about 20-35 frames per second on a fast laptop and lower on slower machines.",
+          "notTested": "Safari has not been re-tested.",
+          "version": "1.00c",
+          "source": "Croteam 2001 Windows demo",
+          "testedOn": {
+            "build": "45c3d0bff",
+            "browser": "Chrome 155.0.8059.40",
+            "device": "desktop Chrome, Apple M1",
+            "os": null,
+            "date": "2026-10-15",
+            "evidence": "scratch/runs/20261015-sam-local-gpu"
+          }
         }
       ],
       "year": 2001,
@@ -5004,7 +5388,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "Main menu, new game and the first mission load; the mech walks forward and takes enemy fire.",
-          "issues": "Very slow: reaching and playing the first mission takes many minutes; starting through the demo's own launcher stalls on the splash; firing and mouse look not tested."
+          "issues": "Very slow: reaching and playing the first mission takes many minutes; starting through the demo's own launcher stalls on the splash.",
+          "notTested": "Firing and mouse look have not been tested."
         }
       ],
       "year": 1998,
@@ -5080,7 +5465,16 @@
           "status": "issues",
           "statusDate": "2026-10-10",
           "works": "The game's movies play once the disc's Indeo codec is installed; the 16-bit build plays (founding and naming cities, city screen, Civilopedia); and a second player can join a network game lobby over the virtual LAN.",
-          "issues": "A network game cannot get past the lobby yet, the single-player route is recorded only for the 16-bit build, and the advisor and wonder movies are untested."
+          "issues": "A network game cannot get past the lobby yet, and the single-player route is recorded only for the 16-bit build.",
+          "notTested": "The advisor and wonder movies are untested.",
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": null,
+            "multiplayer": "lobby",
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1998,
@@ -5103,7 +5497,18 @@
           "status": "menus",
           "statusDate": "2026-10-14",
           "works": "The game loads to its 3D main menu.",
-          "issues": "Actual play has not been tested, and loading is slow."
+          "issues": "Loading is slow.",
+          "notTested": "Actual play has not been tested.",
+          "version": "1.0.2 (30927)",
+          "source": "GOG-derived English archive plus Sold Out UK DVD",
+          "testedOn": {
+            "build": null,
+            "browser": null,
+            "device": "desktop browser (macOS)",
+            "os": "macOS",
+            "date": "2026-10-02",
+            "evidence": "scratch/runs/20261001-pirates-worker-sailing-after"
+          }
         }
       ],
       "year": 2004,
@@ -5157,7 +5562,8 @@
           "status": "playable",
           "statusDate": "2026-10-15",
           "works": "Main menu, intro and the first scene work in the browser, and clicking on the ground walks David to the chosen spots.",
-          "issues": "Not yet set up as a ready-to-launch app; combat and saving not tested."
+          "issues": "Not yet set up as a ready-to-launch app.",
+          "notTested": "Combat and saving have not been tested."
         }
       ],
       "year": 1999,
@@ -5190,7 +5596,16 @@
           "status": "playable",
           "statusDate": "2026-10-09",
           "works": "Load Demo City runs a live city in the browser; the view rotates, the budget window works and the old 256-color warning is gone.",
-          "issues": ""
+          "issues": "",
+          "source": "Maxis's 1996 Win95 interactive demo",
+          "facts": {
+            "installs": true,
+            "audio": null,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1993,
@@ -5243,7 +5658,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "The log-on screen, menus and intro maps play, and on the first rooftop the player walks and turns.",
-          "issues": "Browser, combat and sound not checked."
+          "issues": null,
+          "notTested": "Browser, combat and sound have not been checked."
         }
       ],
       "year": 1998,
@@ -5310,7 +5726,8 @@
           "status": "menus",
           "statusDate": "",
           "works": "Reaches the front-end menu.",
-          "issues": "An intermittent 'AudBuffer error in lock' message box can appear; gameplay not verified."
+          "issues": "An intermittent 'AudBuffer error in lock' message box can appear.",
+          "notTested": "Gameplay has not been verified."
         }
       ],
       "year": 1999,
@@ -5377,7 +5794,8 @@
           "status": "issues",
           "statusDate": "",
           "works": "The first demo map loads after its intro, and the player walks forward in first person, also in the browser.",
-          "issues": "Slow to start: about five minutes from launch to first person in the browser; combat not tested."
+          "issues": "Slow to start: about five minutes from launch to first person in the browser.",
+          "notTested": "Combat has not been tested."
         }
       ],
       "year": 2000,
@@ -5417,7 +5835,16 @@
           "status": "issues",
           "statusDate": "2026-10-14",
           "works": "Dealing, dragging cards and redealing work, and card images draw correctly again after an October fix.",
-          "issues": "A debug error box was seen on a real iPhone when starting a new game and is not confirmed fixed; Safari not re-tested."
+          "issues": "A debug error box was seen on a real iPhone when starting a new game and is not confirmed fixed.",
+          "notTested": "Safari has not been re-tested.",
+          "testedOn": {
+            "build": "8cd29260",
+            "browser": "Safari",
+            "device": "iPhone",
+            "os": "iOS 17.6.1",
+            "date": null,
+            "evidence": "docs/re-notes/solitaire.md"
+          }
         }
       ],
       "year": 1990,
@@ -5471,7 +5898,24 @@
           "status": "playable",
           "statusDate": "2026-09-28",
           "works": "The Terran demo mission starts; marines can be selected, moved and fight, and the game can be saved.",
-          "issues": ""
+          "issues": "",
+          "source": "Blizzard 1998 shareware CD",
+          "testedOn": {
+            "build": "f6931d34b + patch",
+            "browser": null,
+            "device": "CLI headless",
+            "os": null,
+            "date": "2026-11-14",
+            "evidence": "boat:scratch/runs/20261114-starcraft-unit-mission-progress"
+          },
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": true,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 1998,
@@ -5504,7 +5948,8 @@
           "status": "menus",
           "statusDate": "2026-10-11",
           "works": "The licence screen, hardware check, main menu, pilot and difficulty selection, mission briefing and loadout screens all work.",
-          "issues": "Flying after launch has not been verified; the menus run slowly."
+          "issues": "The menus run slowly.",
+          "notTested": "Flying after launch has not been verified."
         }
       ],
       "year": 2000,
@@ -5531,7 +5976,8 @@
           "status": "playable",
           "statusDate": "2026-10-18",
           "works": "The main menu, world map and first level work, and Tux runs left and right.",
-          "issues": "Jumping, sound and the browser have not been checked."
+          "issues": null,
+          "notTested": "Jumping, sound and the browser have not been checked."
         }
       ],
       "year": 2005,
@@ -5557,7 +6003,8 @@
           "status": "playable",
           "statusDate": "2026-10-11",
           "works": "The game reaches the training level and the player walks with W, also in the browser.",
-          "issues": "Sound has not been verified."
+          "issues": null,
+          "notTested": "Sound has not been verified."
         }
       ],
       "year": 1999,
@@ -5590,7 +6037,8 @@
           "status": "ingame",
           "statusDate": "2026-10-11",
           "works": "Menus, pilot creation, the intro, the starbase and ship launch work, and the training flight begins.",
-          "issues": "Flying the ship has not been tested; the game's 800x600 menu setting makes clicks miss, so the app uses 640x480."
+          "issues": "The game's 800x600 menu setting makes clicks miss, so the app uses 640x480.",
+          "notTested": "Flying the ship has not been tested."
         }
       ],
       "year": 2000,
@@ -5717,7 +6165,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "The launcher shows its artwork and menu, and in the game Guybrush walks where you click, the inventory chest opens and the verb coin appears.",
-          "issues": "Using verbs and finishing the demo's puzzle have not been verified."
+          "issues": null,
+          "notTested": "Using verbs and finishing the demo's puzzle have not been verified."
         }
       ],
       "year": 1997,
@@ -5750,7 +6199,8 @@
           "status": "ingame",
           "statusDate": "2026-10-07",
           "works": "The free GOG release (run through its bundled DOSBox) goes through character creation and the opening movies into the first dungeon, where the player can walk forward and back.",
-          "issues": "Only a short stretch of dungeon movement has been checked; longer play, sound and speed have not been tested."
+          "issues": null,
+          "notTested": "Only a short stretch of dungeon movement has been checked; longer play, sound and speed have not been tested."
         }
       ],
       "year": 1996,
@@ -5783,7 +6233,8 @@
           "status": "issues",
           "statusDate": "2026-10-05",
           "works": "In the browser it reaches the title, starts a new game, accepts a character name and lets you walk forward and back on the prison ship.",
-          "issues": "It needs your own disc, extra memory and a long load, and play beyond the first moves has not been checked."
+          "issues": "It needs your own disc, extra memory and a long load.",
+          "notTested": "Play beyond the first moves has not been checked."
         }
       ],
       "year": 2002,
@@ -5816,7 +6267,8 @@
           "status": "playable",
           "statusDate": "2026-10-05",
           "works": "Running through the bundled DOSBox in the browser, a new character can be created and walked around the first dungeon.",
-          "issues": "Combat, saving and loading, sound and frame rate have not been tested."
+          "issues": null,
+          "notTested": "Combat, saving and loading, sound and frame rate have not been tested."
         }
       ],
       "year": 1994,
@@ -5849,7 +6301,35 @@
           "status": "issues",
           "statusDate": "2026-10-12",
           "works": "Menus, the briefing, loadout and the first mission work, and the player walks and turns with the keyboard in Chrome.",
-          "issues": "On phones, touch navigation of the menus did not work in testing; sound and frame rate not checked."
+          "issues": "On phones, touch navigation of the menus did not work in testing.",
+          "notTested": "Sound and frame rate have not been checked.",
+          "source": "1999 official demo",
+          "testedOn": [
+            {
+              "build": "522ab4035 + patch",
+              "browser": null,
+              "device": "CLI headless",
+              "os": null,
+              "date": "2026-11-14",
+              "evidence": "scratch/runs/20261114-thief2-sparkle-fix"
+            },
+            {
+              "build": "ca83ddb4f",
+              "browser": null,
+              "device": "remote test box browser",
+              "os": null,
+              "date": "2026-11-11",
+              "evidence": "boat:scratch/runs/20261111-thief2-saved-arrow-world-interaction-0730"
+            }
+          ],
+          "facts": {
+            "installs": null,
+            "audio": null,
+            "saves": true,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 2000,
@@ -5931,7 +6411,16 @@
           "status": "playable",
           "statusDate": "2026-10-05",
           "works": "After the options sheet the Venice level loads; Lara turns and runs, and an enemy dog attacks.",
-          "issues": "Sound and the browser have not been checked."
+          "issues": null,
+          "notTested": "Sound and the browser have not been checked.",
+          "testedOn": {
+            "build": "522ab4035",
+            "browser": null,
+            "device": "CLI headless",
+            "os": null,
+            "date": "2026-11-14",
+            "evidence": "scratch/runs/20261114-tr-perf"
+          }
         }
       ],
       "year": 1997,
@@ -6005,7 +6494,25 @@
           "status": "playable",
           "statusDate": "2026-10-13",
           "works": "The original installer completes; menus, skater and level selection work, and the skater rides and turns in the Marseille level.",
-          "issues": "Sound has not been checked."
+          "issues": null,
+          "notTested": "Sound has not been checked.",
+          "source": "original Windows demo installer",
+          "testedOn": {
+            "build": "001a3ad70 + patch",
+            "browser": "Chrome",
+            "device": "desktop Chrome",
+            "os": null,
+            "date": "2026-10-13",
+            "evidence": "scratch/runs/20261013-thps2-gameplay"
+          },
+          "facts": {
+            "installs": true,
+            "audio": null,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 2000,
@@ -6061,7 +6568,8 @@
           "status": "ingame",
           "statusDate": "2026-09-20",
           "works": "After the player dialog, a new game deals and draws all three card pyramids and the stock.",
-          "issues": "Playing cards has not been verified in the notes."
+          "issues": null,
+          "notTested": "Playing cards has not been verified."
         }
       ],
       "year": 1991,
@@ -6084,7 +6592,8 @@
           "status": "issues",
           "statusDate": "2026-10-11",
           "works": "With Direct3D chosen in the demo's video settings, New Game starts and the player moves, also in the browser.",
-          "issues": "The default Glide video setting does not work; sound and frame rate not checked."
+          "issues": "The default Glide video setting does not work.",
+          "notTested": "Sound and frame rate have not been checked."
         }
       ],
       "year": 1998,
@@ -6140,7 +6649,8 @@
           "status": "playable",
           "statusDate": "2026-10-05",
           "works": "Runs through GOG's bundled DOSBox; character creation completes and the Avatar walks on the overworld in the browser.",
-          "issues": "Sound has not been checked."
+          "issues": null,
+          "notTested": "Sound has not been checked."
         }
       ],
       "year": 1985,
@@ -6173,7 +6683,8 @@
           "status": "issues",
           "statusDate": "2026-10-13",
           "works": "Unreal Tournament (1999) plays a practice match with walking and mouse look, UT2004 reaches a DeathMatch with the player spawned, and Unreal shows its title flyby.",
-          "issues": "UT2003 currently fails to start its renderer, and sound and the browser are largely unchecked."
+          "issues": "UT2003 currently fails to start its renderer.",
+          "notTested": "Sound and the browser are largely unchecked."
         }
       ],
       "year": 1998,
@@ -6200,7 +6711,8 @@
           "status": "playable",
           "statusDate": "2026-10-12",
           "works": "Settings, title, mission map and briefing work, and D'arci runs through the first mission with the keyboard and with touch controls in Chrome.",
-          "issues": "Sound has not been checked."
+          "issues": null,
+          "notTested": "Sound has not been checked."
         }
       ],
       "year": 1999,
@@ -6285,7 +6797,24 @@
           "status": "playable",
           "statusDate": "2026-10-21",
           "works": "Menus, profile creation and the Prologue campaign work in the browser; Thrall can be selected and moved, at roughly 30 frames per second in Chrome.",
-          "issues": "Combat and finishing a mission have not been tested."
+          "issues": null,
+          "notTested": "Combat and finishing a mission have not been tested.",
+          "testedOn": {
+            "build": "fccc344c7 + patch",
+            "browser": "Chrome 155",
+            "device": "desktop Chrome, Apple Silicon Mac",
+            "os": "macOS",
+            "date": "2026-10-21",
+            "evidence": "scratch/runs/20261021-wc3-confirm-1m-a"
+          },
+          "facts": {
+            "installs": null,
+            "audio": true,
+            "saves": null,
+            "multiplayer": null,
+            "touchPlayable": null,
+            "phoneFps": null
+          }
         }
       ],
       "year": 2002,
@@ -6345,7 +6874,8 @@
           "status": "issues",
           "statusDate": "2026-10-10",
           "works": "The puzzle launcher opens, and the Life puzzle draws its board and steps with F5.",
-          "issues": "Menu shortcut labels show garbled characters, and most of the 16 puzzles have not been tested."
+          "issues": "Menu shortcut labels show garbled characters.",
+          "notTested": "Most of the 16 puzzles have not been tested."
         }
       ],
       "developer": "Richard L. Parris",
@@ -6473,7 +7003,8 @@
           "status": "ingame",
           "statusDate": "2026-10-13",
           "works": "Menus and a Quick Game against the computer work, and on the player's turn the worm aims with the arrow keys.",
-          "issues": "Walking, firing and a full match have not been tested yet."
+          "issues": null,
+          "notTested": "Walking, firing and a full match have not been tested yet."
         }
       ],
       "year": 1999,
@@ -6506,7 +7037,8 @@
           "status": "playable",
           "statusDate": "2026-10-10",
           "works": "Adventure level 1-1 starts, aiming follows the mouse, and shots pop matching balls for points.",
-          "issues": ""
+          "issues": "",
+          "source": "Reflexive archived Windows build"
         }
       ],
       "kind": "game"
