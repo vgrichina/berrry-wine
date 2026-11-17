@@ -79,3 +79,39 @@ the last actual native observation. No native focus implementation repair is
 claimed. Fix controller lifecycle with an authored delayed-start regression
 before any separately authorized fresh original attempt. No box was created;
 ID/expiry are null and stop receipt is not applicable.
+
+The separately authorized controller repair is published as `d5259f9e5`.
+`halflife2-restored-native.py --controller RUN OP ...` validates finite call
+schemas and owns the reviewed helper through the existing parent-process
+supervisor. Startup keeps its 15-second inner bound and has a 20-second outer
+bound; capture/intent keep three seconds internally. Independent watchdogs arm
+before the helper. Cancellation first signals the helper alone, allowing its
+existing independent physical release to drain, then performs bounded scoped
+cleanup. TERM/INT unwind through the reviewed controller's exception cleanup.
+Every path records actual helper/watchdog waits and both pipe EOFs. Seven real
+process regressions passed: nine-second startup, permanent unready at fifteen
+seconds, helper error, outer timeout, TERM, release drain, and actual parent
+process death. The earlier missing helper wait remains unreconstructed.
+
+Evidence is in
+`scratch/runs/20261117-halflife2-controller-deadline-join-normal-install/`.
+Canonical flock build and focused ownership/capture/clock guards passed.
+The retained `928f8bd4...` module and 5,004-source graph were reused; only the
+reviewed controller's signal-handler source changed. Existing main replacement,
+focus and diagnostic proofs were reused by hash. Fresh native startup and a
+personally viewed Cancel/UP/native Quit passed in 2,132 ms with actual normal
+native wait and both EOFs; fresh Next sequences were not repeated.
+
+One fresh ordinary original invocation passed readiness, then whole-image
+reviews preceded Welcome Next, Internet Required Next, and I Agree inputs.
+Their aggregate completion times were 314, 589 and 749 ms, with native DOWN
+and independent physical UP within the unchanged 500/1,750 ms bounds. After
+agreement acceptance, the observed snapshot had `quit=true`, main/modal/focus
+all zero, with only hidden old install controls. The next passive readiness
+observation refused `runtime.running` and ordinary USER ownership. No age,
+destination or installation image was obtained. UNKNOWN latched and there
+were zero later HTTP requests or inputs. The native runtime was host-cleaned
+(exit 0, actual wait/both EOF), not proved to Quit through original UI. The
+cause of the terminal native scene is unknown; this task makes no native
+focus/quit implementation attribution and performs no replay. Installation
+and original native Quit remain open. No box was created.
