@@ -31,7 +31,57 @@ function fixture(parent,parentFailure=false){
   }
   push(parentFailure?23:0);call(0x401900);e(0xcc);
   b.fill(0,raw(0x2000),raw(0x2300));b.set(code,raw(0x2000));
-  return parent?b:releaseBeforeExit(b,0x1964);
+  if(!parent)releaseBeforeExit(b,0x1964);
+  visibleDialog(b,parent);
+  return b;
+}
+// This guest owns its initial presentation. The old identity-only DLGPROCs
+// swallowed every message, including WM_PAINT, without drawing anything.
+// Use ordinary synchronous USER painting from WM_INITDIALOG; the controller
+// neither dispatches guest callbacks nor pumps or paints the guest.
+function visibleDialog(b,parent){
+  if(!parent){
+    for(const [old,title]of [['Native DialogBox outer','Child action scene'],['Native DialogBox nested','Child native Quit']]){
+      const text=Buffer.from(old,'utf16le'),at=b.indexOf(text);assert(at>=0);
+      b.write(title.padEnd(old.length),at,'utf16le');
+    }
+  }
+  // Keep the USER32 IAT contiguous even in the parent without an UP gate.
+  if(!b.readUInt32LE(raw(0x1964))){b.writeUInt32LE(0x1c60,raw(0x1964));b.write('GetAsyncKeyState\0',raw(0x1c62));}
+  const names=['ShowWindow','UpdateWindow','GetDlgItem','BeginPaint','EndPaint','FillRect','DrawTextA'];
+  let name=0x1cb0;
+  for(const [i,n]of names.entries()){
+    b.writeUInt32LE(name,raw(0x1968+i*4));b.write(n+'\0',raw(name+2));name+=n.length+3;
+  }
+  b.writeUInt32LE(0,raw(0x1984));
+  b.write((parent?'Launcher initialized':'Child initialized - action / Quit')+'\0',raw(0x2d00));
+  for(const at of [0x2300,0x2400]){
+    // Both resource dialogs enter the same ordinary DLGPROC.
+    b.fill(0,raw(at),raw(at+0x100));b.set([0xe9,...u32(0x2a00-at-5)],raw(at));
+  }
+  const code=[],labels={},fix=[];const e=(...v)=>code.push(...v),push=n=>e(0x68,...u32(n));
+  const call=i=>e(0xff,0x15,...u32(0x401968+i*4)),label=n=>labels[n]=code.length;
+  const j=(op,n)=>{e(...op,0,0,0,0);fix.push([code.length-4,n]);};
+  // Preserve nonvolatile registers and hold the callback HWND in EBX.
+  e(0x53,0x56,0x8b,0x5c,0x24,12);
+  for(const [msg,target]of [[0x110,'init'],[0xf,'paint'],[0x111,'command']]){
+    e(0x81,0x7c,0x24,16,...u32(msg));j([0x0f,0x84],target);
+  }
+  e(0x31,0xc0);j([0xe9],'return');
+  label('init');push(5);e(0x53);call(0);e(0x53);call(1);
+  for(const id of [100,1]){push(id);e(0x53);call(2);e(0x50);call(1);}
+  j([0xe9],'handled');
+  label('paint');push(0x402e00);e(0x53);call(3);e(0x89,0xc6);
+  // A bounded banner leaves native STATIC/BUTTON control areas untouched.
+  for(const [offset,value]of [[0,8],[4,72],[8,320],[12,94]])b.writeInt32LE(value,raw(0x2e80+offset));
+  push(6);push(0x402e80);e(0x56);call(5);
+  push(0x20);push(0x402e80);push(-1);push(0x402d00);e(0x56);call(6);
+  push(0x402e00);e(0x53);call(4);j([0xe9],'handled');
+  label('command');push(1);e(0x53,0xff,0x15,...u32(0x401954));
+  label('handled');e(0xb8,1,0,0,0);
+  label('return');e(0x5e,0x5b,0xc2,16,0);
+  for(const [at,n]of fix){const v=Buffer.alloc(4);v.writeInt32LE(labels[n]-at-4);for(let i=0;i<4;i++)code[at+i]=v[i];}
+  assert(code.length<0x300);b.set(code,raw(0x2a00));
 }
 async function freePort(){const s=net.createServer();await new Promise(r=>s.listen(0,'127.0.0.1',r));const p=s.address().port;await new Promise(r=>s.close(r));return p;}
 function waitPublication(out){
