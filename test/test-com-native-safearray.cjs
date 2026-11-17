@@ -92,8 +92,34 @@ async function main(){
  put(p+80,3);put(p+84,-1);const numbers=await call('SafeArrayCreate',[3,1,p+80]);put(p+160,0x88776655);assert.equal(await assign(numbers,[0],p+160),0);assert.equal(await get(numbers,[0]),0);assert.equal(word(p+72),0x88776655);
  assert.equal(await assign(numbers,[0],0),0x80070057);assert.equal(await get(numbers,[0]),0);assert.equal(word(p+72),0x88776655);assert.equal(await call('SafeArrayDestroy',[numbers]),0);
  assert.equal(await assign(0,[0],0),0x80070057);
+
+ const copyName=a.string('SafeArrayCopy',false),copyNamed=await api('GetProcAddress',[module,copyName]),copyOrdinal=await api('GetProcAddress',[module,17]);assert(copyNamed&&copyOrdinal);m.free(copyName);
+ assert.equal(await call('SafeArrayCopy',[0,0]),0x80070057);put(p+72,0x12345678);assert.equal(await call('SafeArrayCopy',[0,p+72]),0);assert.equal(word(p+72),0);
+ const copyCycle=async()=>{
+  const array=await create([[2,-3],[3,7]]),data=word(array+12);
+  for(const [i,text]of [[0,'first\0tail'],[2,''],[5,'last']])put(data+4*i,await str(text));
+  assert.equal(await call('SafeArrayAccessData',[array,p+64]),0);
+  assert.equal(await call('SafeArrayCopy',[array,p+72]),0);const copied=word(p+72),copiedData=word(copied+12);assert(copied!==array&&copiedData!==data);
+  assert.equal(word(array+8),1);assert.equal(word(copied+8),0);assert.deepEqual(m.read(copied+16,16),m.read(array+16,16));
+  for(let i=0;i<6;i++){const old=word(data+4*i),cloned=word(copiedData+4*i);if(old){assert(cloned&&old!==cloned);assert.equal(readString(cloned),readString(old));}else assert.equal(cloned,0);}
+  // Fail after one BSTR was cloned. The oversized counted prefix is an
+  // authored allocation-refusal fixture; restore it before freeing source.
+  const failing=word(data+8),length=word(failing-4);put(failing-4,0x7ffffff0);put(p+72,0x12345678);
+  try{assert.equal(await call('SafeArrayCopy',[array,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(array+8),1);}finally{put(failing-4,length);}
+  assert.equal(await call('SafeArrayUnaccessData',[array]),0);assert.equal(await call('SafeArrayDestroy',[array]),0);
+  assert.equal(readString(word(copiedData)),'first\0tail');assert.equal(readString(word(copiedData+20)),'last');
+  assert.equal(await call('SafeArrayDestroy',[copied]),0);
+ };
+ for(let i=0;i<4;i++)await copyCycle();const copyHeap=e.get_heap_ptr();for(let i=0;i<128;i++)await copyCycle();assert.equal(e.get_heap_ptr(),copyHeap,'copied owners and partially staged failure owners reclaimed');
+ const emptyCopy=await create([[0,-7],[2,5]]);assert.equal(await c.invoke(copyOrdinal,[emptyCopy,p+72]),0);const emptyClone=word(p+72);assert(emptyClone&&emptyClone!==emptyCopy);assert.equal(word(emptyClone+12),0);assert.equal(await call('SafeArrayDestroy',[emptyCopy]),0);assert.equal(await call('SafeArrayDestroy',[emptyClone]),0);
+ put(p+80,2);put(p+84,-2);const values=await call('SafeArrayCreate',[5,1,p+80]);const valueData=word(values+12);m.write(valueData,Uint8Array.from({length:16},(_,i)=>i*13));assert.equal(await call('SafeArrayCopy',[values,p+72]),0);const scalarClone=word(p+72);assert.deepEqual(m.read(word(scalarClone+12),16),m.read(valueData,16));assert.equal(await call('SafeArrayDestroy',[scalarClone]),0);
+ put(values+8,0xffffffff);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x8000ffff);assert.equal(word(p+72),0);put(values+8,0);
+ put(values+4,4);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x80070057);assert.equal(word(p+72),0);put(values+4,8);
+ // Descriptor/data allocation failure must not publish or free source data.
+ put(values+16,0x10000000);assert.equal(await call('SafeArrayCopy',[values,p+72]),0x8007000e);assert.equal(word(p+72),0);assert.equal(word(values+12),valueData);put(values+16,2);
+ assert.equal(await call('SafeArrayDestroy',[values]),0);
  m.free(p);await m.drain();assert.equal(c.frames.length,0);
- console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
+ console.log(JSON.stringify({ok:true,moduleSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),nativeBSTRArray:true,nativeGetElementOrdinal25:true,nativePutElementOrdinal26:true,nativeCopyOrdinal17:true,partialCopyRollback:true,aliasedReplacement:true,independentCopies:true,boundsErrors:true,dimensions:2,countedStrings:true,lockedClearAtomic:true,borrowedOwner:true,exactFrame:true,ownershipCycles:128,heapStable:true}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};

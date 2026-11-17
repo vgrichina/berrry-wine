@@ -39777,5 +39777,12 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3657684182
+  },
+  {
+    "id": 4704,
+    "name": "SafeArrayCopy",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2987568820
   }
 ]
