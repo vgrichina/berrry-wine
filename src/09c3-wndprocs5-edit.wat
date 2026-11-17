@@ -585,6 +585,7 @@
     (local $ch i32) (local $next_ch i32) (local $max_w i32)
     (local $candidate_len i32) (local $width i32)
     (local $last_space i32) (local $break_len i32) (local $next_start i32)
+    (local $byte_advances i32)
 
     (local.set $buf_g (load.field EditState text_buf_ptr (local.get $state_w)))
     (local.set $text_len (load.field.memarg EditState text_len (local.get $state_w)))
@@ -593,6 +594,13 @@
         (call $edit_layout_store (i32.const 0) (i32.const 0) (i32.const 0))
         (return (i32.const 1))))
     (local.set $buf_w (call $g2w (local.get $buf_g)))
+    ;; The undecoded bitmap measurement path is the sum of independent
+    ;; character advances. Measuring every growing prefix repeats all earlier
+    ;; font/glyph lookups; a long document can block native dialog creation
+    ;; beyond the capture deadline. Accumulate those same advances once per
+    ;; byte. Decoded strings keep their counted-string path: a byte may be
+    ;; part of a multibyte character and cannot be measured independently.
+    (local.set $byte_advances (i32.eqz (call $text_decode_cp_for_dc (local.get $hdc))))
     (local.set $max_w (i32.sub (local.get $text_w) (i32.const 8)))
     (if (i32.lt_s (local.get $max_w) (i32.const 8))
       (then (local.set $max_w (i32.const 8))))
@@ -605,6 +613,7 @@
 
       (local.set $pos (local.get $line_start))
       (local.set $last_space (i32.const -1))
+      (local.set $width (i32.const 0))
       (block $line_done (loop $scan
         (br_if $line_done (i32.ge_u (local.get $pos) (local.get $text_len)))
         (local.set $ch (i32.load8_u (i32.add (local.get $buf_w) (local.get $pos))))
@@ -627,10 +636,17 @@
         (if (i32.eq (local.get $ch) (i32.const 32))
           (then (local.set $last_space (local.get $pos))))
         (local.set $candidate_len (i32.add (i32.sub (local.get $pos) (local.get $line_start)) (i32.const 1)))
-        (local.set $width (call $host_measure_text
-          (local.get $hdc)
-          (i32.add (local.get $buf_w) (local.get $line_start))
-          (local.get $candidate_len) (i32.const 0)))
+        (if (local.get $byte_advances)
+          (then
+            (local.set $width (i32.add (local.get $width)
+              (call $host_measure_text (local.get $hdc)
+                (i32.add (local.get $buf_w) (local.get $pos))
+                (i32.const 1) (i32.const 0)))))
+          (else
+            (local.set $width (call $host_measure_text
+              (local.get $hdc)
+              (i32.add (local.get $buf_w) (local.get $line_start))
+              (local.get $candidate_len) (i32.const 0)))))
         (if (i32.and (i32.gt_s (local.get $width) (local.get $max_w))
                      (i32.gt_u (local.get $candidate_len) (i32.const 1)))
           (then

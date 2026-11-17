@@ -22,6 +22,7 @@ def main():
  m.RUN=pathlib.Path(os.environ['HL2_RUN']);m.RUN.mkdir(parents=True,exist_ok=True);m.disk()
  revision=os.environ['HL2_RESTORED_PIN']
  working=os.environ.get('HL2_WORKING_AUTHORED')=='1'
+ layout_repair=os.environ.get('HL2_EDIT_LAYOUT_REPAIR')=='1'
  assert not working or '--original' not in sys.argv,'working adapter is authored-only'
  for name in ('tools/halflife2-current-native.py','tools/halflife2-restored-native.py'):
   if working and name=='tools/halflife2-restored-native.py':continue
@@ -76,18 +77,37 @@ def main():
  editproof=read(EDIT_PROOF/'fixture/diagnostic-qualification.json')
  assert editproof['passed'] and read(EDIT_PROOF/'fixture/complete-authored-workflow.json')['passed']
  assert read(EDIT_PROOF/'fixture/outer/wait.json')['supervisorExitCode']==0
- # Every WAT/compiler input is identical to the retained tested module. No
- # recompile, new module attribution, or duplicate media/source archive.
+ # Default reuse is byte-identical. The explicit repair variant recompiles
+ # only Edit against this exact graph and records a separate module hash.
  for name,digest in editpins['sources'].items():
   if name.startswith(('src/','tools/watx')) or name in DIAGNOSTICS[:7]:
-   assert m.sha(files[name])==digest,'published Edit/module input differs: '+name
+   if not (layout_repair and name=='src/09c3-wndprocs5-edit.wat'):
+    assert m.sha(files[name])==digest,'published Edit/module input differs: '+name
  retained=EDIT_PROOF/'fixture/module.wasm';retained_body=retained.read_bytes()
  assert m.sha(retained_body)==editpins['moduleSHA256']==editproof['moduleSHA256']
- assert os.write(module,retained_body)==len(retained_body)
+ tested_body=retained_body
+ if layout_repair:
+  # Start from the exact proved Edit graph and replace only its wrapping
+  # measurement body. Every other WAT/compiler input was checked above.
+  assert m.sha(m.git('show','f1aa883e1c4ce63d433050f7d04f15ace9b1ecff:src/09c3-wndprocs5-edit.wat'))==editpins['sources']['src/09c3-wndprocs5-edit.wat']
+  compile_env=dict(os.environ,NODE_OPTIONS='--preserve-symlinks --require='+f'/proc/{os.getpid()}/fd/{preload}',
+      DISCIPLES2_ROOT=str(ROOT),DISCIPLES2_SOURCE_FD=f'/proc/{os.getpid()}/fd/{source}',
+      DISCIPLES2_SOURCE_SHA256=m.sha(pool),DISCIPLES2_SOURCE_INDEX_SHA256=m.sha(index),
+      DISCIPLES2_PHASE='compile',DELPHI5_MODULE_FD=f'/proc/{os.getpid()}/fd/{module}')
+  code="""const fs=require('node:fs'),c=require('./tools/watx-closure'),h=require('./tools/region-layout-hash');
+const r=c.compileClosure(c.watxSourceClosure(),{tailCalls:true});if(!r.success)throw Error(JSON.stringify(r));
+fs.writeFileSync(process.env.DELPHI5_MODULE_FD,h.appendSection(Buffer.from(r.wasmBinary),h.layoutHash(r.regions.regions)));"""
+  h.checked('exact-layout-repair-compile',['node','-e',code],compile_env,(source,module))
+  os.lseek(module,0,0);tested_body=os.read(module,os.fstat(module).st_size)
+  m.save('layout-repair-module.json',dict(baselineModuleSHA256=m.sha(retained_body),moduleSHA256=m.sha(tested_body),
+      onlyChangedWAT='src/09c3-wndprocs5-edit.wat',baselineWATSHA256=editpins['sources']['src/09c3-wndprocs5-edit.wat'],
+      fixedWATSHA256=m.sha(files['src/09c3-wndprocs5-edit.wat']),otherWATAndCompilerInputsExact=True))
+ else:assert os.write(module,tested_body)==len(tested_body)
  os.lseek(module,0,0);body=os.read(module,os.fstat(module).st_size)
  import fcntl
  fcntl.fcntl(module,fcntl.F_ADD_SEALS,15);assert body[:4]==b'\0asm'
- os.link(retained,m.RUN/'module.wasm')
+ if layout_repair:(m.RUN/'module.wasm').write_bytes(body)
+ else:os.link(retained,m.RUN/'module.wasm')
  assert m.sha((m.RUN/'module.wasm').read_bytes())==m.sha(body)
  manifest={**manifest,'moduleSHA256':m.sha(body),'priorModuleSHA256':m.sha(old_body),
            'nativeEditDelta':{n:changed[n] for n in DIAGNOSTICS if n.startswith('src/')}}
@@ -95,7 +115,7 @@ def main():
  # Preserve paths and bytes without duplicate manifest/module writes.
  m.save('compile-inputs.json',dict(gitSHA=revision,sources={n:m.sha(b) for n,b in files.items()},
      moduleSHA256=m.sha(body),priorModuleSHA256=m.sha(old_body),nativeEditDelta=manifest['nativeEditDelta'],
-     retainedModuleReference=str(retained.relative_to(ROOT)),exactPublishedEditProofReuse=True))
+     retainedModuleReference=str(retained.relative_to(ROOT)),exactPublishedEditProofReuse=not layout_repair,editLayoutRepair=layout_repair))
  m.save('immutable-manifest.json',manifest)
  pins={**pins,'sources':{n:m.sha(b) for n,b in files.items()},'diagnosticGit':revision,'diagnosticChanges':changed,'moduleSHA256':m.sha(body)}
  m.save('runtime-inputs.json',pins)
@@ -127,7 +147,8 @@ def main():
     h.checked(name,args,env,(source,module))
    m.save('diagnostic-qualification.json',dict(passed=True,diagnosticChanges=changed,
        moduleSHA256=m.sha(body),nativeEditDelta=manifest['nativeEditDelta'],unchangedOtherNativeGraph=True,noOriginal=True,
-       exactPublishedEditProofReuse=str(EDIT_PROOF.relative_to(ROOT)),desktopDelta=changed['lib/process-desktop.js']))
+       exactPublishedEditProofReuse=not layout_repair,retainedEditBaseline=str(EDIT_PROOF.relative_to(ROOT)),
+       editLayoutRepair=layout_repair,desktopDelta=changed['lib/process-desktop.js']))
   if '--original' in sys.argv:
    f=TASK/'fixture';w=read(f/'outer/wait.json');assert w['supervisorExitCode']==0
    assert read(f/'native-wait.json')['actualWait']
@@ -157,6 +178,9 @@ def main():
    args=['node','test/run.js','--exe='+str(exe),'--no-build','--threads','--real-ticks','--png-canvas',
        '--control='+str(port),'--max-seconds='+str(seconds),'--max-batches=1000000000','--stuck-after=0','--quiet-api','--quiet-blocks',
        '--native-exit-receipt='+str(m.RUN/'native-exit.json'),'--native-invocation-token='+invocation]
+   if os.environ.get('HL2_CAPTURE_WORKLOAD_PROFILE')=='1':
+    assert authored and working,'capture profiling is working authored-only'
+    args.append('--cpu-prof-window=0:1000000000:'+str(m.RUN/'capture-workload.cpuprofile'))
    m.execute_native(args,env,(source,module),h,invocation)
  finally:
   for fd in list(h.OWN_FDS):h.close_owned(fd)
