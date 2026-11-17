@@ -71,3 +71,41 @@ preserves the unrelated eight-line WAT edit without including it in the
 repair. Publication requires the canonical locked build. The newly authorized
 original pipeline follows publication and immutable current-Git qualification;
 the earlier original endpoint remains permanently closed.
+
+## Published repair and fresh original boundary
+
+The canonical locked build passed, and repair `caa970b1177af07209c2bc19fae5214b2c7304ae`
+was published on main. The continuation sealed Git-only main
+`a1fed9f2b` without any worktree overlay; all 4,582 Git source pins matched.
+Its production module is
+`3bc89761cd8a93d99747627545cd829555a4c304bb0f3d45683227b642bea6e5`.
+The diagnostic module was byte-identical to the retained repaired native
+proof. The focused native chain and seven native BUTTON cases passed, with
+actual subprocess waits and both output streams drained. All 257 CD files
+and genuine DLL pins passed the media check. No source archive or media copy
+was created.
+
+The one newly authorized original used the unchanged clocks/defaults and
+prearmed 2400/2420-second native/watchdog deadlines with a 240-second Quit
+reserve. A personally viewed complete launcher supported Install. Its native
+BUTTON receipt was CONSUMED within 500 ms, independent physical UP was
+acknowledged, and the finite intent completed in 591 ms. The original then
+trapped again at KERNEL.95 through QT. Native exit 1, watchdog exit 0 and both
+output streams were actually waited. Permanent UNKNOWN was recorded locally;
+no subsequent HTTP, rebind, replay or second original occurred.
+
+Existing `--trace-win16` retained name argument `0257:00d6` and return address
+`0885131b`. Static reconstruction against the hash-pinned genuine DSETUP6E
+identifies `setupx.dll`: code segment 2 at `1310` pushes the selector relocated
+to data segment 5, then offset `00d6`, and calls KERNEL.95 at `1316`, returning
+at `131b`. Segment 5 contains `setupx.dll` at `00d6`. Both relocation chains
+and the matching actual arguments are retained in `requested-library-static.json`.
+Runtime string bytes were not captured; this identification is explicitly a
+reconstruction, rather than a live-memory observation.
+
+SETUPX is image-backed, outside the repair's fixed-module capability. Native
+fixed-library success does not establish that the original requested a fixed
+library. A subsequent implementation needs invocation-owned nested loader
+requests and safe attachment/reentry; returning a forged fixed handle is not
+a repair. Installation completion, Play, room entry and native Quit remain
+unestablished. The original pipeline is permanently closed.
