@@ -5,6 +5,7 @@ const fs = require('node:fs'), vm = require('node:vm');
 const { Win98Renderer } = require('../lib/renderer');
 const { createCanvas } = require('../lib/raster-canvas');
 const { Bridge } = require('../lib/gpu-stream-host');
+const { verifyNativeProducer } = require('../tools/gltron-current-native-capture.cjs');
 
 function fixture() {
   const r = new Win98Renderer(createCanvas(8, 8));
@@ -158,4 +159,12 @@ test('late rejected GPU open cannot fault a replacement generation or its pendin
   await Promise.resolve(); assert.equal(b.workerAsyncError, null); assert.equal(t.status, 'pending');
   r.endWorkerGuestSlice(); h._presentAtBoundary(); assert.equal(t.status, 'complete');
   await b.close(); assert.equal(t.status, 'complete');
+});
+
+test('passive page inspection with no producer cannot certify a retired native binding', () => {
+  const pinned = { renderEndpoint: 1, renderEndpointObject: 'port-1', renderApi: 'gl-gps',
+    renderBridgeObject: 'bridge-1', renderGeneration: 1 };
+  verifyNativeProducer(pinned, { ...pinned });
+  assert.throws(() => verifyNativeProducer(pinned, { ...pinned, renderEndpoint: 'none' }), /identity changed/);
+  assert.throws(() => verifyNativeProducer(pinned, { ...pinned, renderGeneration: 2 }), /identity changed/);
 });

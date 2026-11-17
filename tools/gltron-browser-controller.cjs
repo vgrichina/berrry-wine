@@ -16,7 +16,7 @@ const GL_OBSERVER = `(() => {
   if(gl&&/^webgl/.test(type)&&!contexts.some(x=>x.gl===gl)){
    const ext=gl.getExtension('WEBGL_debug_renderer_info');
    contexts.push({gl,canvas:this,type,version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(ext?ext.UNMASKED_RENDERER_WEBGL:gl.RENDERER)});
-   this.addEventListener('webglcontextlost',()=>{counts.contextLostEvents++;});
+   this.addEventListener?.('webglcontextlost',()=>{counts.contextLostEvents++;});
    for(const method of ['drawArrays','drawElements','drawArraysInstanced','drawElementsInstanced','readPixels']){
     const old=gl[method];if(typeof old==='function')gl[method]=function(...a){const v=old.apply(this,a);counts[method==='readPixels'?'readbacks':'draws']++;return v;};
    }

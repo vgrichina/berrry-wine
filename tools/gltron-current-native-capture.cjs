@@ -215,8 +215,13 @@ async function run(out,commit){
           const closing=b.close(),immediate={status:t.status,error:t.error};
           Promise.resolve(closing).then(()=>resolve({at:Date.now(),old,epoch:b.workerEpoch,endpoint:b.endpoint?.id??null,
             immediate,status:t.status,error:t.error,read:t.read(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
-      try{save('native-owner-after-retirement.json',{status:'accepted',value:await evaluate(binding.PAGE_READ)});}
-      catch(e){save('native-owner-after-retirement.json',{status:'refused',error:String(e)});}
+      let afterRetirement;
+      try{
+        afterRetirement=await evaluate(binding.PAGE_READ);
+        const pinned=JSON.parse(fs.readFileSync(out+'/owner-before.json')).apps[0];
+        verifyNativeProducer(pinned,afterRetirement.apps[0]);
+        save('native-owner-after-retirement.json',{status:'accepted',value:afterRetirement});
+      }catch(e){save('native-owner-after-retirement.json',{status:'refused',error:String(e),observation:afterRetirement});}
       // The generic display API may observe a NEW ordinary desktop after
       // detachment. That is not delivery from the retired native producer.
       save('late-capture-after-retirement.json',await evaluate(`(()=>{const p=__gltronCurrentPin;try{const t=p.w.requestCurrentDisplayCapture({hwnd:p.win.hwnd}),a=t.read();
@@ -364,4 +369,13 @@ function literalOutputOracle(bytes,metadata){
   }
   return {width,height,checked:width*height,mismatches,qualified:mismatches===0};
 }
-module.exports={fixture,run,verifyPendingNegative,verifyObserved,characterizeSource,literalOracle,literalOutputOracle,installInitializedObserver};
+function verifyNativeProducer(pinned,observed){
+  assert(pinned&&pinned.renderEndpoint!=='none','initialized native producer required');
+  // PAGE_READ is an inspector and can truthfully return renderEndpoint:none.
+  // A native delivery must still match its previously pinned producer.
+  for(const field of ['renderEndpoint','renderEndpointObject','renderApi','renderBridgeObject','renderGeneration']){
+    assert(pinned[field]!==undefined,'missing native producer '+field);
+    assert.equal(observed?.[field],pinned[field],'native producer identity changed: '+field);
+  }
+}
+module.exports={fixture,run,verifyPendingNegative,verifyObserved,characterizeSource,literalOracle,literalOutputOracle,installInitializedObserver,verifyNativeProducer};
