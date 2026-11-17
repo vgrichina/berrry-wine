@@ -39,6 +39,28 @@ normal actual waits and EOFs; browser closure is not game Quit. Earlier
 UNKNOWN runs remain closed. [Depth repair and affected-run limits](re-notes/quake3-arena-indirect-call-trap-repair-20261117.md);
 [timing, ownership and unresolved cause](re-notes/quake3-render-load-down-delivery-gameplay-20261117.md).
 
+## November 17 Forsaken menu follow-up on both executors
+
+Published `9c61a9092` follows the six-title startup matrix on its exact G1
+source `7e3028380` / module `eda12ced…`. Both threaded originals advanced
+naturally beyond the logo to the textured 3D main menu. The coordinator
+reviewed both whole images and delivered the WebGL image as Telegram3001.
+
+| Actual executor | Observed progress | Remaining boundary |
+| --- | --- | --- |
+| Software D3DIM GPS | Rendered main menu;534 draws/30 presents | Enter was refused as stale before effects; subsequent permitted capture hit the unchanged20s deadline. |
+| WebGL D3DIM GPS | Rendered main menu;17,772 draws/1,042 presents | Enter DOWN/UP completed; subsequent capture hit the unchanged20s deadline. No level transition was observed. |
+
+Both terminal UNKNOWN runs stayed closed without replay. Individual browser,
+driver and watchdog waits/EOFs are retained; an advisory outer-tail wait gap
+remains separate. No runtime defect or production fix was established.
+Movement, firing, enemy consequence and native Quit remain unproved. These
+two follow-ups do not replace the accepted24 startup cells, whose four
+Forsaken endpoints were logo-only, or qualify cooperative mode, latest main,
+full-scene parity, FPS/audio or the historical27. Earlier combat runs below
+retain their own generations and scope.
+[Evidence, exact pins and lifecycle limits](re-notes/forsaken-matrix-gap-live-backend-gameplay-20261117.md).
+
 ## November 17 renderer regression results
 
 These component results do not update the historical per-game/backend rows
