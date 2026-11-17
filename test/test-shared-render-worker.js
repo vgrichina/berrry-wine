@@ -137,6 +137,16 @@ encoderScopedFence();
   await another.ready;
   assert.strictEqual(f.importOrder.filter(url=>url==='d3dim-render-worker.js').length,1,'dependencies shared across endpoints');
   await another.terminate();
+  const d3d9=f.manager.createEndpoint({api:'d3d9-gps',name:'native-d3d9'});
+  await d3d9.ready;
+  assert.strictEqual(await d3d9.request({kind:'echo',value:9}),9,
+    'native D3D9 opens the shared GPU stream endpoint used by CreateDevice');
+  assert.strictEqual(f.importOrder.filter(url=>url==='gpu-stream-render-worker.js').length,1,
+    'D3D9 shares the existing GPU stream dependency closure');
+  await assert.rejects(d3d9.request({kind:'fail'}),/injected/);
+  assert.strictEqual(await b.request({kind:'echo',value:5}),5,
+    'a D3D9 endpoint failure remains scoped to its endpoint');
+  await d3d9.terminate();
   await b.terminate();await f.manager.stop();
   assert.deepStrictEqual(f.adopted,[1234]);
   assert.deepStrictEqual(f.counts(),{init:1,retire:1,terminated:1});
