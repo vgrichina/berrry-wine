@@ -195,7 +195,8 @@ def controller():
 def run():
     RUN.mkdir(parents=True, exist_ok=True); free_disk()
     requested = '--original' in sys.argv
-    diagnostic = '--consumer-diagnostic' in sys.argv
+    text_diagnostic = '--text-diagnostic' in sys.argv
+    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
@@ -212,6 +213,12 @@ def run():
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
+            if text_diagnostic:
+                helper.checked('text-diagnostic', ['node','test/test-caesar3-current-native.cjs',
+                    '--text-diagnostic',str(RUN/'text')],env,(source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,
+                    characterReceiptQualified=False,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
             if baseline: env['C3_HOST_BOUNDARY_BASELINE']='1'
             helper.checked('consumer-diagnostic', ['node', 'test/test-caesar3-current-native.cjs',
                            '--consumer-diagnostic', str(RUN/'consumer')], env, (source, module))

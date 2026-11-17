@@ -265,5 +265,63 @@ async function consumerDiagnostic(out){
  }
  fs.writeFileSync(path.join(out,'diagnostic.json'),JSON.stringify({diagnosticCompleted:true,baseline,contractPassed:!baseline,safeForOriginal:false,originalStarted:false,unitChecks,results},null,2)+'\n');
 }
-if(require.main===module)(process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
-module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits};
+function textFixture(){
+ const b=titleConsumerFixture('title'),raw=r=>r-0x1000+0x400,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
+ const a=[],labels=new Map(),fix=[];const emit=(...v)=>a.push(...v),push=n=>emit(0x68,...u32(n));
+ const label=n=>labels.set(n,a.length),jump=(n,c)=>{emit(...(c?[0x0f,c]:[0xe9]));fix.push([a.length,n]);emit(0,0,0,0);};
+ emit(0x55,0x89,0xe5,0x81,0x7d,12,...u32(0x100));jump('char',0x85);
+ emit(0x83,0x7d,16,67);jump('default',0x85);push(0x403200);jump('text');
+ label('char');emit(0x81,0x7d,12,...u32(0x102));jump('default',0x85);
+ emit(0x83,0x7d,16,67);jump('default',0x85);push(0x403240);
+ label('text');emit(0xff,0x75,8,0xff,0x15,...u32(0x40131c),0x31,0xc0,0xc9,0xc2,16,0);
+ label('default');for(const n of [20,16,12,8])emit(0xff,0x75,n);emit(0xff,0x15,...u32(0x401318),0xc9,0xc2,16,0);
+ const code=Buffer.from(a);for(const[o,n]of fix)code.writeInt32LE(labels.get(n)-o-4,o);assert(code.length<0x400);
+ b.fill(0,raw(0x2400),raw(0x2800));code.copy(b,raw(0x2400));
+ b.write('KEYDOWN C only\0',raw(0x3200));b.write('WM_CHAR C observed\0',raw(0x3240));return b;
+}
+async function textBoundary(out){
+ fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
+ const exe=path.join(out,'text.exe'),bytes=textFixture();fs.writeFileSync(exe,bytes);
+ const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{console.log('FIRED');if(p)try{process.kill(-p,'SIGTERM')}catch{}},25000);console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
+ let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=once(wd,'close');
+ while(!wo.includes('ARMED'))await pause(2);save('watchdog-arm.json',{pid:wd.pid,beforeNative:true,seconds:25});
+ const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
+ const s=startControlSession(['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=20','--max-batches=10000000','--stuck-after=0','--quiet-api','--quiet-blocks','--trace-thread','--no-close',
+  '--trace-api=PeekMessageA,GetMessageA,TranslateMessage,DispatchMessageA','--trace-to=10000','--public-consumer-trace='+path.join(out,'public-consumers.jsonl')],{spawnOptions:{detached:true}});
+ wd.stdin.write(String(s.child.pid));let release,rw;
+ try{
+  let snap;const due=Date.now()+10000;
+  do{snap=await s.send({action:'snapshot'});if(snap.focusWindow?.live&&snap.windows.length>=2)break;assert(Date.now()<due);await pause(20);}while(true);
+  const owner=await s.send({action:'guarded-bind'});
+  release=cp.spawn(process.execPath,['-e',`const http=require('node:http');console.log('ARMED');setTimeout(()=>{const sent=Date.now(),r=http.request('http://127.0.0.1:${port}/ctl',{method:'POST'},res=>{let b='';res.on('data',v=>b+=v);res.on('end',()=>console.log(JSON.stringify({sent,at:Date.now(),reply:JSON.parse(b)})))});r.on('error',e=>{console.error(e);process.exitCode=1});r.setTimeout(250,()=>r.destroy(Error('UP timeout')));r.end(JSON.stringify({action:'guarded-release',owner:${JSON.stringify(owner.owner)}}))},1400);`]);
+  let ro='',re='';release.stdout.on('data',b=>ro+=b);release.stderr.on('data',b=>re+=b);rw=once(release,'close');
+  while(!ro.includes('ARMED'))await pause(2);save('release-arm.json',{pid:release.pid,beforeDown:true});
+  const start=Date.now(),nonce=crypto.randomUUID();
+  const down=await s.send({action:'guarded-input',cmd:'keydown:67',guard:{...owner,nonce,reviewed:true,deadline:start+500}});
+  assert(down.consumed&&Date.now()<start+500);assert.equal(down.nativeMessage.msg,0x100);
+  await rw;assert.equal(release.exitCode,0);const up=JSON.parse(ro.trim().split('\n').at(-1));
+  save('release-wait.json',{pid:release.pid,exit:release.exitCode,actualWait:true,stdoutEOF:release.stdout.readableEnded,stderrEOF:release.stderr.readableEnded,stdout:ro,stderr:re});
+  assert(up.reply.ok&&up.reply.value.released&&up.at<start+1750);
+  const caption=async()=>{const v=await s.send({action:'snapshot'});return v.windows.find(w=>w.hwnd===v.mainHwnd).title;};
+  let text;do{text=await caption();if(text==='KEYDOWN C only')break;assert(Date.now()<start+2800);await pause(10);}while(true);
+  save('keydown.json',{start,down,up,at:Date.now(),caption:text,physicalKeyIsNotCharacter:true});
+  await assert.rejects(s.send({action:'guarded-input',cmd:'keypress:67',guard:{...owner,nonce:crypto.randomUUID(),reviewed:true,deadline:Date.now()+500}}),/unsupported guarded input/);
+  assert.equal(await caption(),'KEYDOWN C only');
+  // Unarmed reference on authored code only: proves WM_CHAR and its real
+  // native callback work. This is deliberately NOT a guarded confirmation.
+  await s.send({cmd:'keypress:67'});const charDue=Date.now()+3000;
+  do{text=await caption();if(text==='WM_CHAR C observed')break;assert(Date.now()<charDue);await pause(10);}while(true);
+  assert(s.output().includes('spawned WORKER thread'));
+  save('assertions.json',{pass:true,originalStarted:false,actualCPUWorker:true,fixtureSHA256:crypto.createHash('sha256').update(bytes).digest('hex'),
+   physicalKeydownConfirmed:true,physicalKeydownProducesNoCharacter:true,guardedCharacterRefusedBeforeEffect:true,
+   ordinaryNativeWMCharCallbackPositive:true,characterReceiptQualified:false,referenceCaption:text});
+ }finally{
+  if(s.child.exitCode===null&&s.child.signalCode===null)process.kill(-s.child.pid,'SIGTERM');await s.exited;
+  if(release&&release.exitCode===null){release.kill();await rw;}
+  save('native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,hostCleanup:true,nativeQuit:false});
+  fs.writeFileSync(path.join(out,'native.log'),s.output());wd.stdin.end();const[exit,signal]=await ww;
+  save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
+ }
+}
+if(require.main===module)(process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary};
