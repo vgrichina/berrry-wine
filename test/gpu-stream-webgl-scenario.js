@@ -657,6 +657,27 @@
         f = present();
         expectPx('clip mask 0', f, 16, 48, WHITE, 2);
       }
+
+      // 14. D3D W-buffer (depth_mode 3, GPS_CAP_WBUFFER): depth = w / w_far
+      //     with w = 1 / interpolated rhw; z is ignored. Cleared to 0.5
+      //     (w 5 of w_far 10): w 6 is hidden whatever its z, w 4 shows with
+      //     z 0.99, and w 3 (z 0.01) covers the left half of it.
+      if (cflags & CONST.CAP_WBUFFER) {
+        emit('TARGETS', { color: ID.RT, depth: ID.DS });
+        emit('VIEWPORT', { x: 0, y: 0, w: W, h: H, zmin: 0, zmax: 1 });
+        emit('CLEAR', { mask: 3, colormask: 15, rgba: 0xff000000, z: 0.5, left: 0, top: 0, right: W, bottom: H });
+        raster({ depth_mode: 3, zfunc: 4, zwrite: 1, w_far: 10 });
+        const wq = (x0, x1, z, rhw, argb) => draw(ID.FLAT, CONST.PRIM_TRIANGLELIST,
+          corners(x0, 0, x1, H, z, () => [argb, 0, 0, rhw]), { index_size: 2, indices: QUAD });
+        wq(0, W, 0.01, 1 / 6, 0xffff0000);
+        wq(0, W, 0.99, 0.25, 0xff00ff00);
+        wq(0, W / 2, 0.01, 1 / 3, 0xff0000ff);
+        wq(0, W, 0.5, 0.25 / 1.01, 0xffffffff);
+        f = present();
+        expectPx('W-buffer: nearer w shows', f, W / 2 + 8, 16, [0, 255, 0, 255], 0);
+        expectPx('W-buffer: nearest w wins', f, 8, 16, [0, 0, 255, 255], 0);
+        raster({});
+      }
     } catch (e) {
       failures.push(`scenario threw: ${e && e.stack || e}`);
     }
@@ -695,6 +716,7 @@
     }, /D24S8/);
     refuse('logic_op with blending on', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { logic_op: 7, blend: 1 })); }, /logic_op/);
     refuse('logic_op out of range', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { logic_op: 17 })); }, /logic_op/);
+    refuse('W-buffer without w_far', (q) => { setup(q); q.emit('RASTER', Object.assign({}, BASE, { depth_mode: 3, zfunc: 4 })); }, /w_far/);
     refuse('a non-A8B8G8R8 texture', (q) => q.emit('CREATE', { id: 9, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_L8, levels: 1, width: 4, height: 4 }), /fmt/);
     refuse('a non-A8B8G8R8 readback', (q) => {
       setup(q);

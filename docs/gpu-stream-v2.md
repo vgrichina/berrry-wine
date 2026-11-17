@@ -99,14 +99,14 @@ u32 fields shared with the consumer are accessed with Atomics.
 header before it executes the first record, and sets `CAP_VALID` (1) last.
 WAT reads it to decide what the guest is told; nothing else negotiates
 features. Flags: 2 VS_IR, 4 STENCIL, 8 LOGIC_OP, 16 OCCLUSION, 32
-BORDER_LINEAR, 64 MIRRORONCE, 128 CLIP_PLANES. `formats` is a bit per fmt code (bit 15 =
+BORDER_LINEAR, 64 MIRRORONCE, 128 CLIP_PLANES, 256 WBUFFER. `formats` is a bit per fmt code (bit 15 =
 A8B8G8R8). Each executor's caps:
 
 | executor | flags | max_texture | max_samplers | max_aniso |
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
-| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES | 2048 | 6 (the native VM's stages) | 1 |
-| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
+| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES, WBUFFER | 2048 | 6 (the native VM's stages) | 1 |
+| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
 
 The WebGL executor keeps two texture units past the samplers: the fog
 table and the logic-op destination copy. GL has no border wrap mode: a
@@ -261,7 +261,7 @@ strip); fans are lowered to indexed lists by the producer.
 
 | off | fields |
 |---|---|
-| 0 | u8 depth_mode (0 off, 1 Z, 2 W: depth from interpolated 1/rhw), zfunc, zwrite, cull |
+| 0 | u8 depth_mode (0 off, 1 Z, 2 W: depth from interpolated 1/rhw, 3 D3D W-buffer: w / w_far, needs CAP_WBUFFER), zfunc, zwrite, cull |
 | 4 | u8 blend (0/1), src_rgb, dst_rgb, src_alpha, dst_alpha (D3DBLEND 1–11) |
 | 9 | u8 alpha_func, alpha_ref, colormask (R,G,B,A = 1,2,4,8) |
 | 12 | u8 fog_mode (0 none, 1 vertex alpha, 2 table on W, 3 Z), fog_flags (1 no multiply, 2 no add), fill (D3DFILL; executors take 3 solid), linear (1 = screen-linear varyings) |
@@ -271,7 +271,8 @@ strip); fans are lowered to indexed lists by the producer.
 | 46 | u8 stencil_enable, two_sided, stencil_func, fail, zfail, pass (D3DCMP / D3DSTENCILOP 1–8), ccw_func, ccw_fail, ccw_zfail, ccw_pass, ref, mask, wmask |
 | 59 | u8 logic_op: 0 off, else 1 + (GL logic op − GL_CLEAR 0x1500), so 1..16: 1 CLEAR, 2 AND, 3 AND_REVERSE, 4 COPY, 5 AND_INVERTED, 6 NOOP, 7 XOR, 8 OR, 9 NOR, 10 EQUIV, 11 INVERT, 12 OR_REVERSE, 13 COPY_INVERTED, 14 OR_INVERTED, 15 NAND, 16 SET. n = logic_op − 1 is the truth table: result bit = (n >> ((1−s)·2 + (1−d))) & 1. Needs CAP_LOGIC_OP and blend 0 (a logic op replaces blending, as in GL); see "Logic ops" |
 | 60 | f32 z_bias (fraction of the depth range), f32 slope_bias (depth_mode 1 only) |
-| 68 | 28 reserved bytes, zero |
+| 68 | f32 w_far (depth_mode 3: finite, > 0; otherwise 0) |
+| 72 | 24 reserved bytes, zero |
 
 Enums are D3D's: compare functions are D3DCMP (1 never … 8 always), blend
 factors D3DBLEND, cull is D3DCULL in render-target pixel space (1 none, 2
@@ -304,6 +305,12 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
   rhw in the Voodoo 16-bit floating W form (4-bit exponent, 12-bit
   mantissa), plus `depth_bias`, and compared/stored as a fraction of 65535.
   Table fog indexes the 64-entry fog table by the same value / 1024.
+- **D3D W-buffer (depth_mode 3, CAP_WBUFFER).** Depth is w / w_far clamped
+  to 0..1, w = 1 / the perspective-interpolated rhw (a vertex-shader draw's
+  clip w), tested and stored like Z in the depth target's format. z and the
+  viewport's z range do not enter it; `linear` must be 0 and the biases 0.
+  The WebGL executor writes it as the fragment depth, so only these draws
+  give up early depth rejection.
 - **LAYOUT.** Stream slot 0 only; stride 4–1024 and 4-aligned; elements
   4-aligned inside the stride. A layout without POSITIONT is
   *programmable*: its elements are D3DDECLUSAGE 0..13, index 0..15, each at
@@ -350,7 +357,7 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
   1/255, depth and stencil unwritten), then the real pass; it sums the
   count target at END, and every 255 runs, with one `readPixels` of it.
 - **Optional state (caps).** logic_op, occlusion, mirror-once,
-  linear-filtered border. Without the cap the record fails as unsupported.
+  linear-filtered border, user clip planes, W-buffer (depth_mode 3). Without the cap the record fails as unsupported.
 - **Samplers 6 and 7: the sampler-naming pixel IR.** Core pixel IR
   (header flag 8) with version **0xffff0200** names its sampler: texld (66)
   is `texld dst, coord, s#` with a third operand of bank 10 (D3DSPR_SAMPLER)

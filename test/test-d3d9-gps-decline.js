@@ -2,8 +2,8 @@
 'use strict';
 // Slice 9.5a/9.5b: an untransformed XYZ draw with lighting off lowers as
 // fixed T&L (09aj cascade VS) and is a GPU frame with the old path's
-// pixels. A draw the ring cannot express yet (W-buffering: no W depth
-// mapping) is a counted decline (reason 17) and the frame stays on the old
+// pixels. A draw the ring cannot express yet (a D3DBLEND_BLENDFACTOR
+// blend: no executor blend constant) is a counted decline (reason 14) and the frame stays on the old
 // path, which presents it (0x30002) with the right pixels. The executor target is stale until a
 // full Clear: the next frame clears, draws POSITIONT, and is a GPU frame.
 const assert = require('assert');
@@ -46,16 +46,20 @@ const { openD3d9GpsSession, triangleXyzrhw, triangleXyz, RED, BLUE } = require('
     let px = await lockRead();
     assert.strictEqual(px.tl >>> 0, RED, `frame 0 executor pixel ${px.tl.toString(16)}`);
     assert.strictEqual(px.br >>> 0, BLUE);
-    // Frame 1: the same draw W-buffered -> decline 17, the old path presents it.
+    // Frame 1: the same draw blended by BLENDFACTOR (white: the source
+    // colour, unchanged) -> decline 14, the old path presents it.
     await run([
-      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,7,2]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,27,1]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,19,14]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,20,1]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,193,0xffffffff]'],
       ['IDirect3DDevice9_Clear', `[ctx.d9g.device,0,0,1,${BLUE},0x3f800000,0]`],
       ['IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,1,ctx.d9g.vertices,16]'],
       ['IDirect3DDevice9_Present', '[ctx.d9g.device,0,0,0,0]'],
-      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,7,0]'],
+      ['IDirect3DDevice9_SetRenderState', '[ctx.d9g.device,27,0]'],
     ]);
     st = await s.stats();
-    assert.deepStrictEqual(st.reasons, { 17: 1 }, `one decline, reason 17 ${JSON.stringify(st)}`);
+    assert.deepStrictEqual(st.reasons, { 14: 1 }, `one decline, reason 14 ${JSON.stringify(st)}`);
     assert.strictEqual(st.declines, 1);
     assert.strictEqual(st.oldFrames, 1);
     assert.strictEqual(st.gpuFrames, 1);

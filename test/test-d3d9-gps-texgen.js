@@ -11,8 +11,8 @@
 // rotated view), REFLECTIONVECTOR with NORMALIZENORMALS, and PROJECTED
 // COUNT3 / COUNT4 (q varying across the mesh, so the per-pixel divide
 // shows) for the fixed cascade and a guest ps_1_1 (the core texld DZ / DW
-// modifier, d9cl block). A ps_1_4 under PROJECTED still declines (12): it
-// projects explicitly, and the old path refused it too.
+// modifier, d9cl block). A ps_1_4 under PROJECTED lowers with the flag
+// ignored (d9pj: it projects explicitly; the old path refuses it).
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -117,8 +117,8 @@ async function render(gps, ring) {
     }
     const before = await s.stats();
     if (ring) {
-      // ps_1_4: texld r0, t0 -- declines (12) under PROJECTED. The draw
-      // only: the fallback old path refuses it too, at Present.
+      // ps_1_4: texld r0, t0 -- lowers under PROJECTED (flag ignored,
+      // test-d3d9-gps-projected.js checks its pixels). The draw only.
       await shader([0xffff0104, 0x42, 0x800f0000, 0xb0e40000, 0xffff]);
       await ok('IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,4,ctx.d9g.mesh,36]');
     }
@@ -139,7 +139,7 @@ async function render(gps, ring) {
   const ring = await render('software', true);
   assert.strictEqual(ring.before.declines, 0, `no declines through the guest ps_1_1 ${JSON.stringify(ring.before)}`);
   assert(ring.before.draws >= 12, `texgen draws on the ring ${JSON.stringify(ring.before)}`);
-  assert.deepStrictEqual(ring.st.reasons, { 12: 1 }, `ps_1_4 under PROJECTED declines 12 ${JSON.stringify(ring.st)}`);
+  assert.deepStrictEqual(ring.st.reasons, {}, `ps_1_4 under PROJECTED lowers ${JSON.stringify(ring.st)}`);
   assert.strictEqual(ring.frames.length, old.frames.length + 1);
   {
     const a = old.frames[10], b = ring.frames[11], bad = [];

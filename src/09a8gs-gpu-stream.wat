@@ -142,6 +142,7 @@
   (global $GPS_CAP_BORDER_LINEAR i32 (i32.const 32))
   (global $GPS_CAP_MIRRORONCE i32 (i32.const 64))
   (global $GPS_CAP_CLIP_PLANES i32 (i32.const 128))
+  (global $GPS_CAP_WBUFFER i32 (i32.const 256))
 
   ;; CLEAR mask bits; RASTER colormask bits (R,G,B,A = 1,2,4,8).
   (global $GPS_CLEAR_COLOR i32 (i32.const 1))
@@ -152,6 +153,7 @@
   (global $GPS_DEPTH_OFF i32 (i32.const 0))
   (global $GPS_DEPTH_Z i32 (i32.const 1))
   (global $GPS_DEPTH_W i32 (i32.const 2))
+  (global $GPS_DEPTH_WBUFFER i32 (i32.const 3))
   (global $GPS_FOG_NONE i32 (i32.const 0))
   (global $GPS_FOG_VERTEX_ALPHA i32 (i32.const 1))
   (global $GPS_FOG_TABLE_W i32 (i32.const 2))
@@ -269,7 +271,10 @@
   ;; depth_mode 2 tests interpolated rhw stored as the 16-bit floating W
   ;; encoding (4-bit exponent, 12-bit mantissa of 1/rhw), biased by
   ;; depth_bias in that encoding's units; table fog indexes the same
-  ;; encoding (+ depth_bias). linear 1 = varyings interpolate screen-linear
+  ;; encoding (+ depth_bias). depth_mode 3 (D3D W-buffer, GPS_CAP_WBUFFER,
+  ;; linear 0) tests w / w_far clamped to 0..1 and stored like Z, w being
+  ;; 1 / interpolated rhw (the clip w of a vertex-shader draw).
+  ;; linear 1 = varyings interpolate screen-linear
   ;; and rhw is used only for W depth and table fog (Glide); 0 = varyings
   ;; are perspective-correct by rhw (D3D).
   (layout GpsRaster
@@ -287,7 +292,8 @@
     (field ccw_func u8) (field ccw_fail u8) (field ccw_zfail u8) (field ccw_pass u8)
     (field stencil_ref u8) (field stencil_mask u8) (field stencil_wmask u8) (field logic_op u8)
     (field z_bias f32) (field slope_bias f32)
-    (field reserved i32 7))
+    (field w_far f32)           ;; depth_mode 3 only (else 0): depth = w / w_far
+    (field reserved i32 6))
   ;; Followed by count GpsBindEntry.
   (layout GpsBind (field count i32))
   (layout GpsBindEntry (field slot i32) (field texture i32) (field sampler i32))

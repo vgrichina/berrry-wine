@@ -9,7 +9,8 @@
 //     expanded triangles with the provoking vertex's colours copied;
 //   B flat-shaded indexed fan, fixed T&L with lighting off, DIFFUSE and
 //     SPECULAR (16): the same against its expanded list;
-//   C flat shading with lighting on still declines 16;
+//   C flat shading with lighting on: the VS runs on the CPU (d9fv), no
+//     decline (test-d3d9-gps-flat-vs.js checks its pixels);
 //   D a POSITIONT stage reading texcoord set 1 of a TEX0 FVF (24): equals the
 //     same quad with set 0 = (0, 0) explicitly;
 //   E a 35001-triangle DrawPrimitiveUP (2.1 MB of vertices, 20): split into
@@ -136,7 +137,7 @@ async function render(gps, extra = []) {
     await put('up', xyz([0, 1, 2, 3].flatMap(t => fanTri(t).map(k => [FAN[k], COLORS[t + 1], spec(t + 1)]))));
     await frame('Bref', () => rs(9, 2), [upDraw(4, 4, 20)]);
 
-    // C: lit + flat still declines 16 (the old path draws it).
+    // C: lit + flat runs the fixed VS on the CPU since d9fv: no decline.
     await frame('C', async () => { await rs(137, 1); await rs(9, 1); }, [upDraw(4, 4, 20)]);
     await rs(137, 0); await rs(9, 2); await rs(29, 0);
 
@@ -267,7 +268,7 @@ async function render(gps, extra = []) {
   if (ring.frames.A.every((v, i) => v === old.frames.A[i])) bad.push('A: flat equals Gouraud');
   if (st.E.chunks < 3) bad.push(`E: ${st.E.chunks} chunks`);
   if (st.F.chunks < 2) bad.push(`F: ${st.F.chunks} chunks`);
-  if (JSON.stringify(st.C.reasons) !== '{"16":1}') bad.push(`C reasons ${JSON.stringify(st.C.reasons)}`);
+  if (JSON.stringify(st.C.reasons) !== '{}') bad.push(`C reasons ${JSON.stringify(st.C.reasons)}`);
   clean('G');
   lines.push(`G: ${same(ring.frames.G, old.frames.G, 'G vs old path')} colours, ${JSON.stringify(st.G)}`);
   // Off-path agreement where the old path implements the same thing.

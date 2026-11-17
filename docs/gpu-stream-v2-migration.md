@@ -284,6 +284,39 @@ Without this, every new backend would have to reimplement the 846 lines of
     dependent texture op on a projected stage, and POSITIONT. A generated
     coordinate behind a guest PS no longer drops its VS output
     (`test-d3d9-gps-texgen.js` frames 8..11).
+  - **d9pj (2026-11-16): the rest of PROJECTED.** Also reshaped in WAT
+    into the same DZ / DW divide, with no new record or cap: COUNT2 |
+    PROJECTED divides by the second coordinate and leaves (x/y, 0) --
+    under fixed T&L the texture matrix's y column goes out as its w
+    column with y zeroed (c16.. constants) and the stage runs as COUNT4;
+    on POSITIONT (no matrix, still projected) the CPU expansion appends
+    one FLOAT4 (x, 0, 0, y) of that set to each vertex (layout nibble 13)
+    and the stage reads it with DW. POSITIONT COUNT3 / COUNT4 | PROJECTED
+    read the set in place with DZ / DW; the fixed PS is emitted through
+    the projected canonicalization, with the stages in its cache key. A
+    guest ps1.4+ ignores PROJECTED (it projects explicitly), as D3D does.
+    Still 12: PROJECTED | COUNT1 (nothing is left after the divide), a
+    second POSITIONT COUNT2 stage in one draw, a projected set the vertex
+    lacks or that is too short to hold the divisor, PROJECTED under a
+    ps_1_0 or a non-ps shader, plain transform flags on POSITIONT
+    (`test-d3d9-gps-projected.js`, against an equivalent COUNT4 draw and
+    the old path; `--webgl` for the WebGL executor).
+  - **d9wb (2026-11-16): W-buffering (17) as an executor feature.**
+    D3DZB_USEW cannot be reshaped on the CPU (depth is 1 / interpolated
+    rhw per pixel, not linear in screen space), so it is RASTER
+    depth_mode 3 behind GPS_CAP_WBUFFER (256): depth = w / w_far, w_far
+    from the PROJECTION transform as the D3D9 runtime takes it, (m44 -
+    m43) / (m33 - m34) * m34 + m44, for every vertex stage (POSITIONT,
+    fixed T&L, guest VS). The software executor computes it in the native
+    rasterizer (glide descriptor depthMode 3, w_far at +28); the WebGL
+    executor writes gl_FragDepth / gl_FragDepthEXT in those draws'
+    programs only, and advertises the cap with WebGL2, desktop GL or
+    EXT_frag_depth. Still 17: no cap, m33 == m34 or a w_far that is not
+    finite and positive, DEPTHBIAS / SLOPESCALEDEPTHBIAS under W
+    (`test-d3d9-gps-wbuffer.js`, against the picture W-buffering defines
+    worked out on the CPU, and the scenario's step 14). The decline and
+    lead tests now decline through 14 (BLENDFACTOR), which the old path
+    draws exactly.
   - **d9ms (2026-11-16): gathered vertex input.** Input the executor
     cannot read in place is gathered per draw in WAT (`09akg` "d9ms") into
     one interleaved arena vertex, drawn as DRAW_UP: declaration elements on
@@ -321,6 +354,26 @@ Without this, every new backend would have to reimplement the 846 lines of
     SetSoftwareVertexProcessing, which is now stateful), while the ring
     is live; the old path does not blend. Stat 82 counts CPU-blended
     draws.
+  - **d9fv (2026-11-16): flat shading under a vertex stage (16) on the
+    CPU.** Under a guest VS or fixed-function lighting the flat colours are
+    VS outputs, so 09akg runs the VS itself in the 09ag shader VM (the
+    software executor's own VM; constants from the ring's VS shadow) over
+    the d9cpu-expanded list, and draws POSITIONT FLOAT4 vertices (oD0,
+    oD1 clamped, oT0..5) with the provoking vertex's colours through the
+    draw's own pixel shader. Clip space maps through the viewport as 09ah
+    `$d3d_software_project` does. The program comes from re-emitting the
+    SHADER once with `$d9fv_force` (the core IR is compiled before it is
+    freed); programmable LAYOUT payloads are copied as published to map
+    DCLs to elements. A primitive wholly outside z 0..w / w > 0 / an
+    enabled user plane, or with a non-finite vertex, is dropped; points
+    ignore SHADEMODE and draw on the GPU. Still 16, each with a stat:
+    vertex fog (121; POSITIONT fog reads COLOR0 alpha), no program or a VM
+    failure (122), an input missing from the layout or an oT6/7 write
+    (123), a primitive that needs clipping (124; earlier chunks of the
+    same draw stay drawn on a target the decline marks stale)
+    (`test-d3d9-gps-flat-vs.js`: list, strip, fan, lit, near-plane drop,
+    each against a Gouraud reference with the provoking colour or normal
+    in every vertex, software and `--webgl`).
   - **d9cpu fallbacks (2026-11-16): reshaping declines into plain draws.**
     09akg's "CPU expansion into list DRAW_UPs" rewrites a draw the ring
     could not express into non-indexed list DRAW_UPs the executors already
@@ -337,8 +390,9 @@ Without this, every new backend would have to reimplement the 846 lines of
     expanded draws and the chunks they emitted. Still declining: 16 under
     a guest VS or fixed lighting (needs a flat varying in the executor),
     17 W-buffer (needs depth from w in the executor; not exact on the
-    CPU), 12 PROJECTED with COUNT1/2 or under POSITIONT (the per-pixel
-    divide cannot be done per vertex exactly). `test-d3d9-gps-cpu.js`
+    CPU; lowers since d9wb, see above), 12 PROJECTED with COUNT1/2 or under POSITIONT (the per-pixel
+    divide cannot be done per vertex exactly; reshaped since d9pj into
+    the executors' DZ / DW divide, see above). `test-d3d9-gps-cpu.js`
     compares each reshaped frame to an equivalent plain draw on both
     executors (`--webgl`) and to the old path where it draws the same.
 - **9.6. Keep static vertex and index buffers resident on the GPU.** This is
