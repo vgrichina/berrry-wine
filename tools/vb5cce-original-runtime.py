@@ -16,7 +16,8 @@ OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-curre
     'tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
     'src/00-regions.wat','src/13-exports.wat','src/09a-handlers1-user.wat','src/09c3a-dialog-runtime.wat',
     'lib/cli-guarded-input.js','lib/region-map.generated.js',
-    'test/test-vb5-native-dialog-identity.cjs')
+    'test/test-vb5-native-dialog-identity.cjs','lib/cli-native-progress.js',
+    'test/test-vb5-native-progress.cjs')
 
 def sha(b):return hashlib.sha256(b).hexdigest()
 def publish(path,value):
@@ -155,6 +156,19 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if '--progress-state-only' in sys.argv:
+        checked('native-progress-state',['node','test/test-vb5-native-progress.cjs','--state',str(RUN/'state-qualification')],env,(source,module))
+        return
+    if '--progress-observe-only' in sys.argv:
+        checked('native-progress-observe',['node','test/test-vb5-native-progress.cjs','--observe',str(RUN/'observe-qualification')],env,(source,module))
+        return
+    if '--progress-only' in sys.argv:
+        progress_qualify(env,source,module)
+        return
+    if '--regressions-only' in sys.argv:
+        checked('first-dialog',['node','test/test-vb5cce-original-current.cjs','--first-dialog',str(RUN/'first-dialog')],env,(source,module))
+        qualify(env,files,source,module,include_progress=False)
+        return
     if '--dialogbox-only' in sys.argv:
         checked('native-dialogbox',['node','test/test-vb5-native-dialog-identity.cjs',str(RUN/'dialogbox-qualification')],env,(source,module))
         return
@@ -186,7 +200,7 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
         a,b=w.communicate(timeout=10)
         save('watchdog-wait.json',dict(pid=w.pid,exit=w.returncode,actualWait=True,stdoutEOF=True,stderrEOF=True,
             stdout=a.decode(),stderr=b.decode()))
-def qualify(env,files,source,module):
+def qualify(env,files,source,module,include_progress=True):
     # The legacy source-view test intentionally replaces NODE_OPTIONS with its
     # own unsealed loader. The indexed inheritance probe above qualifies this
     # runtime's loader; retain both actual desktop transport tests here.
@@ -194,12 +208,19 @@ def qualify(env,files,source,module):
     checked('native-context-guards',['node','test/test-cli-native-scene-context.cjs','--unit'],env,(source,module))
     checked('vb-context-guards',['node','test/test-vb5cce-original-current.cjs','--unit'],env,(source,module))
     checked('native-button-guards',['node','test/test-vb5-native-dialog-identity.cjs','--unit'],env,(source,module))
+    if include_progress:progress_qualify(env,source,module)
+    checked('native-pointer-mapping',['node','test/test-cli-native-pointer-coordinates.cjs','--native',str(RUN/'mapping-qualification')],env,(source,module))
     checked('native-dialogbox',['node','test/test-vb5-native-dialog-identity.cjs',str(RUN/'dialogbox-qualification')],env,(source,module))
     checked('native-controller',['node','test/test-vb5cce-original-current.cjs',str(RUN/'native-qualification')],env,(source,module))
     admission=json.loads((RUN/'native-qualification/vb-original-admission.json').read_text())
     save('qualification.json',dict(passed=admission['safeForVBOriginal'],generatedTestsPassed=True,
          admission=admission,at=time.time(),originalStarted=False))
     assert admission['safeForVBOriginal'],admission['blocker']
+def progress_qualify(env,source,module):
+    checked('native-progress-guards',['node','test/test-vb5-native-progress.cjs','--review-unit'],env,(source,module))
+    checked('native-progress-state',['node','test/test-vb5-native-progress.cjs','--state',str(RUN/'state-qualification')],env,(source,module))
+    checked('native-progress-dialogs',['node','test/test-vb5-native-progress.cjs','--native',str(RUN/'progress-qualification')],env,(source,module))
+    checked('native-progress-refusals',['node','test/test-vb5-native-progress.cjs','--refusals',str(RUN/'progress-refusals')],env,(source,module))
 def original_pipeline(env,source,module,started,deadline,passive):
     global ORIGINAL_STARTED
     for stage in range(1 if passive else 3):

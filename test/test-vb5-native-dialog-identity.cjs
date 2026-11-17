@@ -88,12 +88,12 @@ function units(){
  console.log('PASS typed native BUTTON historical/foreign/generation/actor/disabled/deadline/UNKNOWN controls; no host-handler fallback');
 }
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-async function run(out){
+async function run(out,{fixtureFactory=fixture,onCapture=null}={}){
  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>publishJSON(path.join(out,n),v);
  const modes=process.env.VB5_DIALOG_MODES?.split(',')||['positive','positive-indirect','focus','caption','child-caption','disabled','foreign-thread','foreign-process','retired','generation','callback','stale','fake-window','modeless'];
  for(const mode of modes){
   const dir=path.join(out,mode);fs.mkdirSync(dir);fs.copyFileSync(path.join(out,'../runtime-inputs.json'),path.join(dir,'runtime-inputs.json'));
-  const exe=path.join(dir,'fixture.exe');fs.writeFileSync(exe,fixture({fake:mode==='fake-window',modeless:mode==='modeless',indirect:mode==='positive-indirect'}));
+  const exe=path.join(dir,'fixture.exe');fs.writeFileSync(exe,fixtureFactory({fake:mode==='fake-window',modeless:mode==='modeless',indirect:mode==='positive-indirect'}));
   const server=net.createServer();await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;await new Promise(r=>server.close(r));
   const started=Date.now()/1000;fs.writeFileSync(path.join(dir,'launch.json'),JSON.stringify({deadline:started+240,gameplayCutoff:started+60,reserveSeconds:180,rootPort:port}));
   const w=cp.spawn(process.execPath,['-e',"let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},65000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));"],{stdio:['pipe','pipe','pipe']});
@@ -123,6 +123,7 @@ async function run(out){
      assert(d&&modal&&button);assert.equal(d.hwnd,modal.hwnd);assert.equal(d.generation,modal.generation);assert.equal(d.owner,modal.owner);assert.equal(ss.nativeMessageBox,null);
      if(i===0){assert.equal(ss.mainHwnd,'0x0');outer=d;}if(i===1){assert.equal(d.owner,outer.hwnd);assert.notEqual(d.generation,outer.generation);}if(i===2)assert.deepEqual(d,outer,'outer invocation restored after real nested return');
      if(i>=3){assert.notEqual(ss.mainHwnd,'0x0');assert.equal(d.owner,i===3?ss.mainHwnd:'0x0');}
+     if(onCapture)await onCapture({ss,send,save,name:mode+'-'+name});
      await controller(['review',name,'Automated authored native DialogBox complete image protocol test','OK',i===4?'quit':'install',button.hwnd]);if(!i)await controller(['bind',name]);
      await controller(['intent','press'+i,name,String(button.screenX+button.w/2|0),String(button.screenY+button.h/2|0),i===4?'quit':'install']);
     }
@@ -158,3 +159,4 @@ async function run(out){
  save('qualification.json',{passed:true,modes,originalStarted:false});console.log('PASS native DialogBox invocation identity, real BUTTON transitions and permanent refusal faults');
 }
 if(require.main===module){if(process.argv[2]==='--unit')units();else run(path.resolve(process.argv[2])).catch(e=>{console.error(e);process.exitCode=1;});}
+module.exports.run=run;

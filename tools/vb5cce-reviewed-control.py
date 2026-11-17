@@ -66,8 +66,22 @@ def capture(name):
         print(p)
     except BaseException as e:fail(name,e);raise
 def context(s):
-    return {k:s[k] for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow',
+    result={k:s[k] for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow',
                             'capture','physicalUp','nativeProcess','nativeMessageBox','nativeDialogBox','screen')}
+    # Repainting observational progress alone cannot prove completion of a
+    # finite BUTTON intent. Keep every identity/caption/style/hierarchy field.
+    def metadata(w):
+        p=w.get('progress')
+        values=[p.get(k) for k in ('min','max','pos','step')] if isinstance(p,dict) else []
+        integer=lambda n:type(n) is int and -2147483648<=n<=2147483647
+        if (w.get('controlClass')==17 and w.get('live') and w.get('generation') not in (None,'0','')
+                and w.get('processId') and w.get('threadId') and isinstance(p,dict)
+                and p.get('contract')=='native-progress-v1' and p.get('available') is True
+                and len(values)==4 and all(map(integer,values)) and values[0]<=values[2]<=values[1]):
+            return dict(w,progress={k:v for k,v in p.items() if k not in ('min','max','pos','step')})
+        return w
+    result['windows']=[metadata(w) for w in result['windows']]
+    return result
 def review(scene,description,label,kind,target):
     rr=read(scene+'.json')
     assert hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()==rr['pngSHA256']

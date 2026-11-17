@@ -5785,6 +5785,30 @@
   (func (export "ctrl_get_class") (param $hwnd i32) (result i32)
     (call $ctrl_table_get_class (local.get $hwnd)))
 
+  ;; Read-only native ProgressBar state. Selector 0 is availability, never a
+  ;; fabricated range/position default. Callers must retain HWND generation,
+  ;; actor, parent and style from USER alongside these public control values.
+  ;; No message dispatch, lazy allocation, guest callback or state mutation.
+  (func (export "native_progress_get") (param $hwnd i32) (param $field i32) (result i32)
+    (local $state i32) (local $sw i32) (local $proc i32)
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd)))
+      (then (return (i32.const 0))))
+    (if (i32.ne (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 17))
+      (then (return (i32.const 0))))
+    (local.set $proc (call $wnd_table_get (local.get $hwnd)))
+    (if (i32.and (i32.ne (local.get $proc) (global.get $WNDPROC_BUILTIN))
+                 (i32.ne (local.get $proc) (global.get $WNDPROC_CTRL_NATIVE)))
+      (then (return (i32.const 0))))
+    (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (local.set $sw (call $g2w (local.get $state)))
+    (if (i32.eqz (local.get $field)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $prog_min (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (call $prog_max (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (call $prog_pos (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (call $prog_step (local.get $sw)))))
+    (i32.const 0))
+
   ;; --- Dialog record readers ---
   ;; The JS renderer reads dialog header fields from WND_DLG_RECORDS
   ;; after WAT populates them in $dlg_load. Everything is keyed by the
