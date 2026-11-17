@@ -7758,13 +7758,23 @@ async function main() {
       return true;
     },
     snapshot: () => {
-      const current = cliInputSnapshot();
+      let current = cliInputSnapshot();
       if (nativeSceneLease) {
         const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
-        current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+        const mainlessReview=nativeSceneContract===nativeScene.REVIEWED_CONTEXT &&
+          nativeSceneLease.mainHwnd==='0x0' && nativeSceneLease.main===null;
+        if(mainlessReview)current=nativeScene.reviewedProcessOwner(current,nativeSceneLease,instance,threadManager);
+        // A retained no-main MessageBox review binds the real process/thread.
+        // Its HWNDs and any subsequently created main still undergo the full
+        // per-intent capture/consume check; no modal is substituted as main.
+        const ownerWindow=mainlessReview
+          ? s.focusWindow.processId===nativeSceneLease.focusWindow.processId &&
+            s.focusWindow.threadId===nativeSceneLease.focusWindow.threadId
+          : sameReviewedWindow(main,nativeSceneLease.main);
+        current.healthy=current.healthy && ownerWindow &&
           JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
           JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
-        current.refs.nativeSceneMainGeneration=main?.generation;
+        current.refs.nativeSceneMainGeneration=mainlessReview?null:main?.generation;
       }
       if (reviewedSceneLease) {
         const s = controlSnapshot(), lease = reviewedSceneLease;

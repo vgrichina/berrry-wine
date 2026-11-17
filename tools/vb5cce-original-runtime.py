@@ -40,7 +40,7 @@ def sources():
     p.stdin.close();assert p.wait()==0
     # All tracked code is supplied from one Git tree, including compiler and tests.
     # Only these owned helpers overlay Git; published process-desktop is untouched.
-    for name in ('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js'):
+    for name in ('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','test/run.js'):
         files[name]=(ROOT/name).read_bytes()
     return files
 def checked(name,args,env,fds,expected=0):
@@ -94,7 +94,7 @@ def run():
     source=seal('vb5-source',pool)
     preload=seal('vb5-preload',files['tools/disciples2-current-native-source-view.cjs'])
     patches=[]
-    for name in ['tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js']:
+    for name in ['tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','test/run.js']:
         tracked=subprocess.run(['git','cat-file','-e',HEAD+':'+name],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
         diff=subprocess.run(['git','diff','--binary',HEAD,'--',name] if tracked else
              ['git','diff','--no-index','--binary','--','/dev/null',name],cwd=ROOT,capture_output=True)
@@ -133,9 +133,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
-    if '--first-dialog-only' in sys.argv or passive:
+    if '--first-dialog-only' in sys.argv or original:
         checked('first-dialog',['node','test/test-vb5cce-original-current.cjs','--first-dialog',str(RUN/'first-dialog')],env,(source,module))
-        if not passive:return
+        if '--first-dialog-only' in sys.argv:return
     if '--baseline-paint' in sys.argv:
         env['DELPHI5_NATIVE_MODES']='paint-queued-fault'
         checked('native-paint-baseline',['node','test/test-delphi5-after-desktop.cjs',str(RUN/'native-qualification')],env,(source,module),expected=1)

@@ -37,8 +37,11 @@ async function firstDialogTests(out){
       assert.equal(scene.focusTopLevel,modal.hwnd);assert.notEqual(button.hwnd,modal.hwnd);
       let capture,error;try{capture=await s.send({action:'native-reviewed-capture',path:path.join(out,shape+'.png')});}catch(e){error=e.message;}
       save(shape+'-capture.json',{capture,error});
-      if(shape==='no-main'&&!process.env.VB5_EXPECT_NO_MAIN_REPAIR){assert(error?.includes('main.liveIdentity'));assert(error.includes('"controls":[]'));}
-      else assert(capture,error);
+      assert(capture,error);
+      const review={contract:capture.contract,captureId:capture.captureId,pngSHA256:capture.pngSHA256,
+        reviewed:true,reviewedAt:Date.now(),scope:'menu',targetHwnd:button.hwnd};
+      const binding=await s.send({action:'guarded-bind',reviewedScene:review});
+      assert.equal(binding.contract,'native-reviewed-context-v1');save(shape+'-binding.json',binding);
     }finally{
       if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(e){if(e.code!=='ESRCH')throw e;}
       await s.exited;fs.writeFileSync(path.join(out,shape+'.log'),s.output());
@@ -67,6 +70,25 @@ if(process.argv[2]==='--unit'){
   const unsupported=structuredClone(s);unsupported.windows.push({...w,controlClass:999,title:'SECRET',textBytes:'SECRET',nativeTextAvailable:false});
   assert.deepEqual(captureFailures(unsupported),{context:[],controls:['control.unsupportedClass','control.textUnavailable']});
   assert(!JSON.stringify(captureFailures(unsupported)).includes('SECRET'));
+  const native=require('../lib/cli-native-scene');
+  const box={...w,hwnd:'0x2',controlClass:16},button={...w,hwnd:'0x3',isChild:true,parent:box.hwnd,controlClass:1,title:'Yes',style:0};
+  const noMain={...s,mainHwnd:'0x0',windows:[box,button],modalHwnd:box.hwnd,focus:button.hwnd,focusTopLevel:box.hwnd,
+    focusWindow:button,nativeMessageBox:{hwnd:box.hwnd,generation:box.generation,processId:1000,threadId:1,controlClass:16}};
+  assert(native.matches(noMain,noMain));
+  for(const mutate of [v=>v.nativeMessageBox=null,v=>v.nativeMessageBox.generation='2',v=>v.nativeMessageBox.processId++,
+    v=>v.nativeMessageBox.threadId++,v=>v.windows[0].owner='0x9',v=>v.windows[0].live=false,
+    v=>v.windows[0].generation='0',v=>v.windows[0].isChild=true,v=>v.windows[0].visible=false,
+    v=>v.focusWindow={...button,threadId:2},v=>v.mainHwnd='0x9',v=>v.modalHwnd='0x0']){
+    const v=structuredClone(noMain);mutate(v);assert(!native.matches(v,v));
+  }
+  const registry=native.createReviewedContexts();
+  const c=registry.capture(()=>noMain,()=>Buffer.from('fixture complete bytes'),()=>{});
+  const review={contract:c.contract,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,reviewedAt:Date.now(),scope:'menu',targetHwnd:button.hwnd};
+  registry.verify(noMain,review);
+  for(const mutate of [v=>v.windows[1].style|=1<<27,v=>v.windows[1].title='No',v=>v.windows[1].processId++,
+    v=>v.windows[1].threadId++,v=>v.windows[1].generation='2',v=>v.windows[1].live=false,v=>v.focusTopLevel='0x9']){
+    const v=structuredClone(noMain);mutate(v);assert.throws(()=>registry.verify(v,review));
+  }
   const code=`import importlib.util, pathlib, tempfile, time
 s=importlib.util.spec_from_file_location('control','tools/vb5cce-reviewed-control.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 with tempfile.TemporaryDirectory() as d:
@@ -103,12 +125,26 @@ fixture.write('Native controller: first\0',raw(0x2540));
 fixture.writeUInt32LE(0x402700,second+6);fixture.writeUInt32LE(0x402780,second+11);
 fixture.write('Native controller: second\0',raw(0x2700));
 fixture.write('Second native modal. OK exits the generated fixture.\0',raw(0x2780));
+// Author an ordinary guest Sleep before ExitProcess so an immediately closing
+// MessageBox cannot retire the endpoint before the independent physical UP.
+// This affects generated fixtures only; original clocks and EXEs are untouched.
+fixture.writeUInt32LE(0x1a20,raw(0x1904));fixture.write('Sleep\0',raw(0x1a22));
+const exit=fixture.indexOf(Buffer.from([0x50,0xff,0x15,0,0x19,0x40,0,0xcc]),raw(0x2000));assert(exit>0);
+fixture.copy(fixture,exit+12,exit+1,raw(0x2500)-11);
+Buffer.from([0x68,0xe8,3,0,0,0xff,0x15,4,0x19,0x40,0]).copy(fixture,exit+1);
 fs.writeFileSync(image,fixture,{flag:'wx'});
+const premain=Buffer.from(fixture),prefix=Buffer.from([0x68,0x10,0,0,0,0x68,0x40,0x25,0x40,0,0x68,0x80,0x25,0x40,0,0x6a,0,0xff,0x15,0x4c,0x19,0x40,0,0xe9,0,0,0,0]);
+prefix.writeUInt32LE(0x402d00,6);premain.write('Native controller: pre-main\0',raw(0x2d00));
+prefix.writeInt32LE(0x2000-(0x2c00+prefix.length),prefix.length-4);prefix.copy(premain,raw(0x2c00));
+premain.writeUInt32LE(0x2c00,0x80+24+16);
+const premainImage=path.join(out,'generated-premain-context.exe');fs.writeFileSync(premainImage,premain,{flag:'wx'});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function main(){
- const modes=process.env.DELPHI5_NATIVE_MODES?.split(',')||['positive','repaint-positive','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
+ const modes=process.env.DELPHI5_NATIVE_MODES?.split(',')||['positive','repaint-positive','no-main-positive','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault','no-main-focus-fault','no-main-owner-fault','no-main-semantic-fault','no-main-stale-fault','no-main-child-caption-fault'];
  for(const [index,mode] of modes.entries()){
+  const faultMode=mode.replace(/^no-main-/,'');
+  const positiveMode=['positive','repaint-positive','no-main-positive'].includes(mode);
   const run=path.join(out,mode);fs.mkdirSync(run);
   fs.copyFileSync(path.join(out,'../runtime-inputs.json'),path.join(run,'runtime-inputs.json'));
   // Ask the OS for a fresh local port rather than sharing a fixed fixture
@@ -126,7 +162,7 @@ async function main(){
   const wclosed=new Promise(resolve=>watchdog.on('close',(exit,signal)=>resolve({exit,signal})));
   while(!ws.includes('ARMED'))await pause(5);
   fs.writeFileSync(path.join(run,'watchdog-armed.json'),JSON.stringify({pid:watchdog.pid,at:Date.now(),prearmed:true,deadlineMs:65000,stdout:ws}));
-  const s=startControlSession(['test/run.js','--exe='+image,'--winver=nt4','--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
+  const s=startControlSession(['test/run.js','--exe='+(mode.startsWith('no-main-')?premainImage:image),'--winver=nt4','--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
   const send=s.send;let requests=0;
   s.send=command=>{
     assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')),'permanent UNKNOWN; fixture sends no later requests');
@@ -155,12 +191,12 @@ async function main(){
   try{
     let scene;const due=Date.now()+15000;
     do{scene=await s.send({action:'snapshot'});if(scene.modalHwnd!=='0x0')break;assert(Date.now()<due);await pause(30);}while(true);
-    if(!['positive','repaint-positive'].includes(mode)){
+    if(!positiveMode){
       await s.send({action:'frozen',mode:'on'});
       await controller(['capture','fault-scene']);
       const rr=JSON.parse(fs.readFileSync(path.join(run,'fault-scene.json')));scene=rr.snapshot;
       await controller(['review','fault-scene','Generated NT4 native fixture fault; complete raw image retained','OK','install',scene.focus]);
-      if(mode==='stale-fault'){
+      if(faultMode==='stale-fault'){
         await pause(Math.max(0,(rr.at+30.05)*1000-Date.now()));
         await controller(['bind','fault-scene'],1);
       }else{
@@ -169,15 +205,15 @@ async function main(){
         const review=JSON.parse(fs.readFileSync(path.join(run,'fault-scene-review.json')));
         const q=await s.send({action:'guarded-input',cmd:'mousedown:215:139',guard:{...owner,nonce,reviewed:true,deadline:Date.now()+500,intent:{review:{contract:'native-reviewed-context-v1',captureId:rr.captureId,pngSHA256:rr.pngSHA256,reviewed:true,reviewedAt:review.at*1000,scope:'menu',targetHwnd:review.targetHwnd}}}});
         assert(!q.consumed);
-        const code=mode==='child-caption-fault'?`(()=>{const h=instance.exports.get_focus_hwnd(),p=instance.exports.native_user_text_ptr(h);new Uint8Array(memory.buffer)[p]=88;return true})()`:mode==='focus-fault'?'instance.exports.set_focus(instance.exports.get_main_hwnd());true':mode==='owner-fault'?'renderer.handleMouseDown=renderer.handleMouseDown.bind(renderer);true':"(()=>{const h=instance.exports.modal_dialog_hwnd(),p=instance.exports.wnd_lookup_title(h);new Uint8Array(memory.buffer)[p]=88;renderer.setWindowText(h,'Changed semantic caption');return true})()";
+        const code=faultMode==='child-caption-fault'?`(()=>{const h=instance.exports.get_focus_hwnd(),p=instance.exports.native_user_text_ptr(h);new Uint8Array(memory.buffer)[p]=88;return true})()`:faultMode==='focus-fault'?'instance.exports.set_focus(instance.exports.get_main_hwnd());true':faultMode==='owner-fault'?'renderer.handleMouseDown=renderer.handleMouseDown.bind(renderer);true':"(()=>{const h=instance.exports.modal_dialog_hwnd(),p=instance.exports.wnd_lookup_title(h);new Uint8Array(memory.buffer)[p]=88;renderer.setWindowText(h,'Changed semantic caption');return true})()";
         await s.send({action:'eval',code});
         await s.send({action:'step',n:1});
         const r=await s.send({action:'guarded-status',nonce});
         assert.equal(r.state,'CANCELLED');assert(!r.consumed);
         const after=await s.send({action:'snapshot'});assert(after.physicalUp);assert.equal(after.modalHwnd,scene.modalHwnd);
-        if(mode==='child-caption-fault')assert.notEqual(after.windows.find(w=>w.hwnd===after.focus).title,scene.windows.find(w=>w.hwnd===scene.focus).title);
-        if(mode==='semantic-fault')assert.notEqual(after.windows.find(w=>w.hwnd===after.modalHwnd).title,scene.windows.find(w=>w.hwnd===scene.modalHwnd).title);
-        save(mode+'.json',{receipt:r,physicalUp:after.physicalUp,modalUnchanged:true,semanticChange:mode==='semantic-fault'});
+        if(faultMode==='child-caption-fault')assert.notEqual(after.windows.find(w=>w.hwnd===after.focus).title,scene.windows.find(w=>w.hwnd===scene.focus).title);
+        if(faultMode==='semantic-fault')assert.notEqual(after.windows.find(w=>w.hwnd===after.modalHwnd).title,scene.windows.find(w=>w.hwnd===scene.modalHwnd).title);
+        save(mode+'.json',{receipt:r,physicalUp:after.physicalUp,modalUnchanged:true,semanticChange:faultMode==='semantic-fault'});
         // Caller closes locally after the consume-time refusal, without any
         // second bind or further native request.
         fs.writeFileSync(path.join(run,'PERMANENT-UNKNOWN.json'),JSON.stringify({name:mode,at:Date.now()/1000,noLaterRequests:true,receipt:r}),{flag:'wx'});
@@ -189,13 +225,16 @@ async function main(){
       save(mode+'-terminal.json',{permanentUNKNOWN:true,laterRequests:0,rebindReplayRetry:false,hostTeardownOnly:true});
     }else{
       let generation;
-      for(let i=0;i<2;i++){
+      const count=mode==='no-main-positive'?3:2;
+      for(let i=0;i<count;i++){
+        const last=i===count-1;
         const controls=await s.send({action:'eval',code:'(()=>{const e=instance.exports,h=e.modal_dialog_hwnd(),out=[];for(let s=0;(s=e.wnd_next_child_slot(h,s))!==-1;s++){const c=e.wnd_slot_hwnd(s);out.push({id:e.ctrl_get_id(c),x:e.wnd_window_screen_x(c),y:e.wnd_window_screen_y(c),w:e.wnd_screen_w(c),h:e.wnd_screen_h(c)})}return out})()'});
         const b=controls.find(x=>x.id===1);assert(b);
         const name='scene'+i;await controller(['capture',name]);
         const record=JSON.parse(fs.readFileSync(path.join(run,name+'.json')));
         const modal=record.snapshot.windows.find(w=>w.hwnd===record.snapshot.modalHwnd);
-        assert.equal(modal.title,'Native controller: '+(i?'second':'first'));
+        assert.equal(modal.title,'Native controller: '+(mode==='no-main-positive'&&!i?'pre-main':last?'second':'first'));
+        if(mode==='no-main-positive')assert.equal(record.snapshot.mainHwnd==='0x0',i===0,'real main is created after pre-main question');
         const png=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(run,name+'.png')));
         assert.equal(png.width,800);assert.equal(png.height,600);
         const colors=new Set();for(let y=modal.y;y<modal.y+modal.h;y++)for(let x=modal.x;x<modal.x+modal.w;x++)colors.add(png.data.readUInt32LE((y*png.width+x)*4));
@@ -210,7 +249,7 @@ async function main(){
           assert.equal(reviewed.pngSHA256,record.pngSHA256);assert(reviewed.at>=record.completedAt&&reviewed.at<=Date.now()/1000);
           description=reviewed.observation;assert(description.length>20);
         }
-        await controller(['review',name,description,'OK',i?'quit':'install',record.snapshot.windows.find(w=>w.isChild&&w.controlClass===1&&w.controlId===1&&w.title==='OK').hwnd]);
+        await controller(['review',name,description,'OK',last?'quit':'install',record.snapshot.windows.find(w=>w.isChild&&w.controlClass===1&&w.controlId===1&&w.title==='OK').hwnd]);
         if(mode==='repaint-positive'){
           await s.send({action:'eval',code:`renderer.colors.desktop='${i?"#335522":"#552233"}';renderer.repaint();true`});
           const current=await s.send({action:'png',path:path.join(run,name+'-repaint.png')});
@@ -219,10 +258,10 @@ async function main(){
           save(name+'-repaint-proof.json',{original:record.pngSHA256,current:hash,unchangedTarget:true});
         }
         if(!i)await controller(['bind',name]);
-        await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),i?'quit':'install']);
+        await controller(['intent','press'+i,name,String(b.x+Math.floor(b.w/2)),String(b.y+Math.floor(b.h/2)),last?'quit':'install']);
       }
       const end=Date.now()+4000;while(s.child.exitCode===null){assert(Date.now()<end,'native ExitProcess not observed');await pause(20);}
-      assert.equal(s.child.exitCode,0);save(mode+'-positive.json',{nativeExit:0,ordinaryNativeUser:true,twoGenerations:true});
+      assert.equal(s.child.exitCode,0);save(mode+'-positive.json',{nativeExit:0,ordinaryNativeUser:true,twoGenerations:true,generations:count,mainCreatedAfterFirstReview:mode==='no-main-positive'});
     }
   }catch(error){
     const terminal=path.join(run,'PERMANENT-UNKNOWN.json');
@@ -234,12 +273,12 @@ async function main(){
     if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(error){if(error.code!=='ESRCH')throw error;}
     await s.exited;
     fs.writeFileSync(path.join(run,'native.log'),s.output());
-    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['positive','repaint-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['positive','repaint-positive'].includes(mode)});
+    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:positiveMode&&s.child.exitCode===0,hostTeardown:!positiveMode});
     watchdog.stdin.end();const w=await wclosed;save(mode+'-watchdog-wait.json',{pid:watchdog.pid,...w,actualWait:true,stdoutEOF:watchdog.stdout.readableEnded,stderrEOF:watchdog.stderr.readableEnded,stdout:ws,stderr:we});
     assert.equal(w.exit,0,'independent watchdog must close normally');
   }
  }
- save('vb-original-admission.json',{generatedTestsPassed:true,safeForVBOriginal:true,actualNativeButtonTargets:true,childCaptionChangeRefused:true,originalStarted:false});
+ save('vb-original-admission.json',{generatedTestsPassed:true,safeForVBOriginal:true,actualNativeButtonTargets:true,childCaptionChangeRefused:true,preMainBindingAndMainCreation:true,preMainFaults:['focus','owner','modal-caption','stale','child-caption'],originalStarted:false});
  console.log('PASS actual native two-dialog transition/independent UP/ExitProcess, focus/owner/semantic/stale faults, repaint admitted and permanent UNKNOWN zero later requests');
 }
 main().catch(e=>{console.error(e);process.exitCode=1;});
