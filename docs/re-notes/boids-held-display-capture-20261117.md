@@ -68,6 +68,64 @@ driver and census tests pass 22/22. The canonical build covers the shared tree;
 native fixtures and originals use only recorded Git plus the owned capture
 overlay, excluding foreign shared WIP.
 
-Publication and the two authorized fresh originals will be recorded below. No original has been launched at this report checkpoint. The
-unchanged successful software/cooperative route and the different complete
-paused/black WebGL/cooperative boundary are not rerun or claimed repaired.
+Material repair 53ddc288272a34a73fec775c4b419167f2c28e34 was strictly
+pulled and pushed before either fresh original. The unchanged successful
+software/cooperative route and the different complete paused/black
+WebGL/cooperative boundary were not rerun or claimed repaired.
+
+
+Software/actual-Worker original completed once on published
+53ddc288272a34a73fec775c4b419167f2c28e34, with three complete 640x480 sources
+and 1280x926 outputs at publications 160, 354 and 695. All six frames were
+personally viewed. The first and third visibly contain colored birds above
+cyan wireframe terrain; the views differ substantially without any input.
+The middle view has terrain and no clearly visible birds. This establishes
+visible original flock content and changing original scene views, without
+claiming all thirteen birds, reference parity, FPS or gameplay/input acceptance.
+Native parent, watchdog and Chrome all returned 0; native/watchdog both EOFs
+are recorded. Browser closure is not native guest Quit.
+
+
+WebGL/actual-Worker original also completed once on that published source,
+returning three complete 640x480 sources and 1280x926 outputs at publications
+310, 487 and 619. All six source/output images were personally viewed: each
+shows the same captioned Paused window, without visible flock or motion.
+At the third request writerHeld=true, gdiPaint=false, repainting=false and
+all three host pending flags were false. The next ordinary publication and
+complete readback returned in 120 ms. The other two took 586 and 259 ms.
+This demonstrates the repaired passive capture path on the actual original
+WebGL Worker, while exposing the separate paused-content boundary. No input,
+unpause, camera, media/config/EXE edit or further original attempt was made.
+The reason for the paused content remains unproved; the cooperative black/paused
+boundary is unchanged and unsolved. Requested WebGL, executor counters and the
+advertised renderer string do not establish physical GPU or reference parity.
+
+Across the two final native fixtures and two originals, all 152 media entries
+(38 paths per runtime) match before/after hashes. Every immutable source pin
+was checked against its exact Git commit, with only the native host/renderer
+owned overlay. Observer suffix hashes and actual page, guest Worker and render
+Worker module bytecode match the independently compiled module SHA-256
+5c9f7126daff2e586685c0dd2ad46b79c5e43e8dbf569aea2919b733b075614a.
+Foreign shared WIP and canonical build binaries were excluded from originals.
+The native-to-original Git delta and shared build WIP remain binary patches,
+without source/media/WASM archives.
+
+Both originals have actual native/watchdog waits 0 and both EOFs; Chrome parents
+returned 0. All nine new bounded fixture/original executions have native and
+watchdog waits 0 and no deadline firing, although earlier fixture qualification
+failures remain failures. Forty-five recorded parent PID observations are absent
+and nine ports are not listening, checked through procfs without another endpoint
+request. This is not a census of every transient browser child or Worker thread.
+The inherited launcher/Codex joins remain UNKNOWN. No native guest Quit is claimed.
+
+Only four named selected PNGs remain, after SHA-256 verification of all 24
+candidate images: the native literal display, two software original flock views,
+and the WebGL original Paused display. No frame series or capture bundle remains.
+Box ID null, state NOT_CREATED, expiry null, stop receipt N/A. No boxes, additional
+Codex workers or public deployment were created; /home remained above 1.5 GB free.
+
+The bounded task stops with the passive capture repair published, visible
+software/actual-Worker original flock and scene changes established, and the
+WebGL/actual-Worker paused-content blocker recorded. Further WebGL diagnosis or
+input requires a separate task. No full27, all-bird/reference parity, physical-GPU,
+FPS, audio, input-admission or gameplay qualification is claimed.
