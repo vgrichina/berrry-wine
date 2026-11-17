@@ -57,7 +57,11 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
     return result;
   };
 }
-function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0,afterFirstInputDelay=0}={}){
+function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0,afterFirstInputDelay=0,
+  triangles=1,width=480,height=360}={}){
+  assert(Number.isInteger(triangles)&&triangles>=1&&triangles<=16384);
+  assert(Number.isInteger(width)&&width>=480&&width<=1920);
+  assert(Number.isInteger(height)&&height>=360&&height<=1440);
   assert(Number.isInteger(firstInputDelay)&&firstInputDelay>=0&&firstInputDelay<=5000);
   assert(Number.isInteger(afterFirstInputDelay)&&afterFirstInputDelay>=0&&afterFirstInputDelay<=5000);
   const b=Buffer.alloc(0x6400),base=0x400000,raw=r=>r-0x1000+0x400;
@@ -74,12 +78,12 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0
     names.forEach((name,j)=>{d(raw(thunk+j*4),str);b.write(name+'\0',raw(str+2));str+=name.length+3;apis.set(name,base+thunk+j*4);});});assert(str<0x2000);
   for(const [r,text]of [[0x3000,'ContinuousNativeGL'],[0x3060,'Native continuous GL input qualification'],[0x3100,'NATIVE_DOWN'],[0x3140,'NATIVE_UP'],[0x3180,'NATIVE_QUIT']])b.write(text+'\0',raw(r));
   d(raw(0x3504),base+0x2800);d(raw(0x3510),base);d(raw(0x3524),base+0x3000);
-  w(raw(0x3800+36),156);d(raw(0x3800+40),0x1c0000);d(raw(0x3800+104),32);d(raw(0x3800+108),480);d(raw(0x3800+112),360);
+  w(raw(0x3800+36),156);d(raw(0x3800+40),0x1c0000);d(raw(0x3800+104),32);d(raw(0x3800+108),width);d(raw(0x3800+112),height);
   const u=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
   const asm=(r,work)=>{const code=[],labels=new Map(),fix=[];const emit=(...a)=>code.push(...a),push=n=>emit(0x68,...u(n)),call=n=>{assert(apis.has(n));emit(0xff,0x15,...u(apis.get(n)));},label=n=>labels.set(n,code.length),jump=(n,c)=>{emit(...(c?[0x0f,c]:[0xe9]));fix.push([code.length,n]);emit(0,0,0,0);};
     work({emit,push,call,label,jump});const a=Buffer.from(code);for(const [o,n]of fix){assert(labels.has(n));a.writeInt32LE(labels.get(n)-o-4,o);}assert(a.length<0x800);a.copy(b,raw(r));};
   asm(0x2000,({emit,push,call,label,jump})=>{
-    push(base+0x3500);call('RegisterClassA');for(const n of [0,base,0,0,360,480,40,40,0x90000000,base+0x3060,base+0x3000,0])push(n);call('CreateWindowExA');emit(0xa3,...u(base+0x3600),0x50);call('SetFocus');
+    push(base+0x3500);call('RegisterClassA');for(const n of [0,base,0,0,height,width,40,40,0x90000000,base+0x3060,base+0x3000,0])push(n);call('CreateWindowExA');emit(0xa3,...u(base+0x3600),0x50);call('SetFocus');
     push(4);push(base+0x3800);call('ChangeDisplaySettingsA');
     emit(0xff,0x35,...u(base+0x3600));call('GetDC');emit(0xa3,...u(base+0x3604),0x50);call('wglCreateContext');emit(0x50,0xff,0x35,...u(base+0x3604));call('wglMakeCurrent');
     if(timerMs){push(0);push(timerMs);push(1);emit(0xff,0x35,...u(base+0x3600));call('SetTimer');}
@@ -91,8 +95,11 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0
     if(timerMs){emit(0x81,0x3d,...u(base+0x3644),...u(0x113));jump('loop',0x85);}
     else if(drawOnce)jump('loop');
     label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
-    push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
-    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');
+    if(triangles>1)emit(0xc7,0x05,...u(base+0x3614),...u(triangles));
+    label('triangle');push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
+    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');
+    if(triangles>1){emit(0xff,0x0d,...u(base+0x3614));jump('triangle',0x85);}
+    emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');
     if(firstInputDelay){emit(0x83,0x3d,...u(base+0x360c),0);jump('after-initial-delay',0x85);
       emit(0xc7,0x05,...u(base+0x360c),...u(1));push(firstInputDelay);call('Sleep');label('after-initial-delay');}
     jump('loop');
