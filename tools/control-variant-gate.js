@@ -172,6 +172,7 @@ add('ListViewState', [
 add('EditState', [
   '$edit_copy_range', '$edit_delete_range', '$edit_doc_width', '$edit_ensure_cap',
   '$edit_hscroll_to', '$edit_insert_bytes', '$edit_insert_char', '$edit_layout_build',
+  '$edit_layout_build_page', '$edit_layout_matches',
   '$edit_layout_xy_to_offset', '$edit_line_from_char', '$edit_line_index',
   '$edit_line_len', '$edit_line_start', '$edit_line_text_len', '$edit_reset_caret_timer',
   '$edit_scroll_caret_into_view', '$edit_scroll_to', '$edit_sel_hi', '$edit_sel_lo',
@@ -255,6 +256,8 @@ add('EditState', [
 add('EditState', ['$native_user_text_ptr', 'export:native_user_text_length'],
   '13-exports public USER text readers access EditState only inside the ctrl_class == 2 branch; ' +
   'BUTTON/STATIC branches call their existing typed accessor layers instead');
+add('EditState', ['export:native_edit_viewport'],
+  'public viewport validates ctrl_class 2 and an exact live 40-byte EditState allocation before accessing fields');
 add('ButtonState', ['$dialog_first_default_button'],
   '10-helpers filters children to ctrl_class 1 before following state_ptr');
 add('ColorGridState', ['export:colorgrid_get_sel'],

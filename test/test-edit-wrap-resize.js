@@ -34,7 +34,11 @@ const SB_CTL = 2;
 const SB_BOTH = 3;
 
 async function main() {
-  const wasmBytes = compileSrcWasm();
+  const baseline=process.argv.indexOf('--baseline-module');
+  const wasmBytes = baseline>=0?fs.readFileSync(process.argv[baseline+1]):compileSrcWasm((name,source)=>name==='13-exports.wat'?source+`
+    (func (export "test_edit_state") (param $h i32) (result i32)
+      (call $wnd_get_state_ptr (local.get $h)))
+  `:source);
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = {
     getMemory: () => memory.buffer,
@@ -135,6 +139,70 @@ async function main() {
   check('ShowScrollBar rejects invalid handles and bar selectors',
     e.test_show_scroll_bar(0x7FFFFFFF, SB_VERT, 1) === 0 &&
       e.test_show_scroll_bar(bars, 99, 1) === 0);
+
+  // A readonly native document must remain navigable past the scratch table.
+  // Its final uniquely named line is reached by ordinary EM_SETSEL and
+  // EM_SCROLLCARET, then observed through the same native viewport contract.
+  const assert=require('node:assert/strict');
+  const largeText=Array.from({length:3000},(_,i)=>`Row ${String(i).padStart(4,'0')} native document.\r\n`).join('')+'FINAL DOCUMENT LINE';
+  const large=e.test_create_edit(0,0,300,96,style|0x800,writeStr(largeText));
+  const total=e.test_edit_visual_line_count(large);
+  assert.equal(total,3001,'wrapped document is not limited to the 384 scratch entries');
+  e.send_message(large,0xb1,largeText.length,largeText.length);
+  e.send_message(large,0xb7,0,0);
+  assert(e.send_message(large,EM_GETFIRSTVISIBLELINE,0,0)>384,'native caret scroll reaches the tail');
+  assert.equal(e.native_edit_viewport(large,0,0),1,'live native allocations validate');
+  assert.equal(e.native_edit_viewport(large,5,0),total);
+  const top=e.native_edit_viewport(large,3,0);
+  const offset=e.native_edit_viewport(large,9,total-1-top);
+  const length=e.native_edit_viewport(large,10,total-1-top);
+  const pointer=e.native_user_text_ptr(large);
+  assert.equal(Buffer.from(u8.subarray(pointer+offset,pointer+offset+length)).toString('latin1'),'FINAL DOCUMENT LINE');
+  // The public adapter exposes the viewport explicitly and hashes ALL bytes,
+  // including offscreen replacements. No prefix pretends to be a full title.
+  const {withNativeUserChildren,qualifiedEditViewport}=require('../lib/cli-native-user-windows');
+  const observe=()=>withNativeUserChildren([{hwnd:'0x'+large.toString(16),live:true,visible:true,
+    isChild:false,style:(style|0x800)>>>0,generation:String(e.wnd_lookup_generation(large)),
+    processId:e.get_process_id(),threadId:e.get_window_thread(large)}],
+    {windows:{[large]:{wasm:instance}}},memory)[0];
+  const observed=observe();assert(qualifiedEditViewport({...observed,controlClass:2}));
+  assert.equal(observed.nativeTextComplete,false);assert.equal(observed.title,null);
+  assert(observed.nativeEditViewport.lines.some(line=>line.text==='FINAL DOCUMENT LINE'));
+  const oldHash=observed.nativeEditViewport.documentSHA256;
+  e.send_message(large,0xb1,10,20);
+  const selection=observe();assert.equal(selection.nativeEditViewport.cursor,20);
+  assert.equal(selection.nativeEditViewport.selectionAnchor,10);
+  e.send_message(large,0xc,0,writeStr('X'+largeText.slice(1)));
+  assert.equal(observe().nativeTextAvailable,false,'stale canonical layout refuses');
+  e.test_edit_visual_line_count(large);
+  assert.notEqual(observe().nativeEditViewport.documentSHA256,oldHash,'offscreen replacement changes the context');
+  const setTextHash=observe().nativeEditViewport.documentSHA256;
+  e.send_message(large,0xb1,0,1);
+  e.send_message(large,0xc2,0,writeStr('Z'));
+  assert.equal(observe().nativeTextAvailable,false,'EM_REPLACESEL invalidates the old layout');
+  e.test_edit_visual_line_count(large);
+  const replaced=observe();
+  assert.equal(replaced.nativeTextAvailable,true,JSON.stringify(replaced.nativeEditViewportDiagnostic));
+  assert.notEqual(replaced.nativeEditViewport.documentSHA256,setTextHash,'programmatic readonly replacement changes the document');
+  assert.equal(e.get_edit_cursor(large),1);
+  const state=e.test_edit_state(large),original=[0,4,8].map(offset=>e.guest_read32(state+offset));
+  for(const [field,value] of [[4,-1],[4,original[2]+1],[8,0x7fffffff],[0,0],
+      [0,original[0]+8],[0,0x7ffffffc]]){
+    e.guest_write32(state+field,value);
+    assert(e.native_edit_viewport(large,0,0)<0,`malformed native field ${field}=${value} refuses`);
+    [0,4,8].forEach((offset,i)=>e.guest_write32(state+offset,original[i]));
+  }
+  const freed=e.guest_alloc(original[1]+1);e.guest_free(freed);
+  e.guest_write32(state,freed);
+  assert(e.native_edit_viewport(large,0,0)<0,'a freed exact allocation is not a live document');
+  e.guest_write32(state,original[0]);
+  e.guest_write8(original[0]+original[1],65);
+  assert.equal(e.native_edit_viewport(large,0,0),-6,'missing NUL refuses before layout');
+  e.guest_write8(original[0]+original[1],0);
+  const secret=e.test_create_edit(0,0,300,96,style|0x820,writeStr(largeText));
+  assert.equal(e.native_edit_viewport(secret,0,0),-1,'password refuses before buffer access');
+  check('native malformed lengths, capacities, interior/stale/unmapped pointers and password refuse',true);
+  check('large native readonly Edit layout, tail navigation, viewport, selection and replacement',true);
 
   console.log(`${checks.filter(c => c.pass).length}/${checks.length} checks passed`);
   if (checks.some(c => !c.pass)) process.exit(1);

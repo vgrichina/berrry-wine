@@ -479,26 +479,107 @@
       (br $scan)))
     (i32.add (local.get $line_start) (local.get $line_len)))
 
+  ;; Small documents use the existing scratch table. Larger documents spill
+  ;; into one reusable native allocation; table capacity never limits scrolling.
+  ;; Keep an exact text copy so a public observation can verify the painted
+  ;; layout without re-measuring a whole document under the capture deadline.
+  (global $edit_layout_spill (mut i32) (i32.const 0))
+  (global $edit_layout_capacity (mut i32) (i32.const 0))
+  (global $edit_layout_copy (mut i32) (i32.const 0))
+  (global $edit_layout_copy_cap (mut i32) (i32.const 0))
+  (global $edit_layout_state (mut i32) (i32.const 0))
+  (global $edit_layout_dc (mut i32) (i32.const 0))
+  (global $edit_layout_width (mut i32) (i32.const 0))
+  (global $edit_layout_font (mut i32) (i32.const 0))
+  (global $edit_layout_text_len (mut i32) (i32.const 0))
+  (global $edit_layout_count (mut i32) (i32.const 0))
+  (global $edit_layout_valid (mut i32) (i32.const 0))
+
+  (func $edit_layout_address (param $idx i32) (result i32)
+    (if (i32.lt_u (local.get $idx) (global.get $EDIT_LAYOUT_MAX))
+      (then (return (i32.add (global.get $EDIT_LAYOUT_SCRATCH) (i32.mul (local.get $idx) (i32.const 8))))))
+    (i32.add (call $g2w (global.get $edit_layout_spill))
+      (i32.mul (i32.sub (local.get $idx) (global.get $EDIT_LAYOUT_MAX)) (i32.const 8))))
+
   (func $edit_layout_store (param $idx i32) (param $start i32) (param $len i32)
-    (local $p i32)
-    (if (i32.ge_u (local.get $idx) (global.get $EDIT_LAYOUT_MAX)) (then (return)))
-    (local.set $p (i32.add (global.get $EDIT_LAYOUT_SCRATCH)
-                    (i32.mul (local.get $idx) (i32.const 8))))
+    (local $p i32) (local $cap i32) (local $buf i32)
+    (if (i32.ge_u (local.get $idx) (global.get $EDIT_LAYOUT_MAX))
+      (then
+        (local.set $cap (i32.add (i32.sub (local.get $idx) (global.get $EDIT_LAYOUT_MAX)) (i32.const 1)))
+        (if (i32.gt_u (local.get $cap) (global.get $edit_layout_capacity))
+          (then
+            (local.set $cap (i32.mul (local.get $cap) (i32.const 2)))
+            (if (i32.gt_u (local.get $cap) (i32.const 268435455)) (then (unreachable)))
+            (local.set $buf (call $heap_alloc (i32.mul (local.get $cap) (i32.const 8))))
+            (if (i32.eqz (local.get $buf)) (then (unreachable)))
+            (if (global.get $edit_layout_spill)
+              (then
+                (call $memcpy (call $g2w (local.get $buf)) (call $g2w (global.get $edit_layout_spill))
+                  (i32.mul (global.get $edit_layout_capacity) (i32.const 8)))
+                (call $heap_free (global.get $edit_layout_spill))))
+            (global.set $edit_layout_spill (local.get $buf))
+            (global.set $edit_layout_capacity (local.get $cap))))))
+    (local.set $p (call $edit_layout_address (local.get $idx)))
     (i32.store (local.get $p) (local.get $start))
     (i32.store offset=4 (local.get $p) (local.get $len)))
 
   (func $edit_layout_start (param $idx i32) (result i32)
-    (i32.load (i32.add (global.get $EDIT_LAYOUT_SCRATCH)
-              (i32.mul (local.get $idx) (i32.const 8)))))
-
+    (i32.load (call $edit_layout_address (local.get $idx))))
   (func $edit_layout_len (param $idx i32) (result i32)
-    (i32.load offset=4 (i32.add (global.get $EDIT_LAYOUT_SCRATCH)
-                       (i32.mul (local.get $idx) (i32.const 8)))))
+    (if (i32.lt_u (local.get $idx) (global.get $EDIT_LAYOUT_MAX))
+      (then (return (i32.load offset=4 (i32.add (global.get $EDIT_LAYOUT_SCRATCH)
+        (i32.mul (local.get $idx) (i32.const 8)))))))
+    (i32.load offset=4 (call $edit_layout_address (local.get $idx))))
 
-  ;; Build the visual-line table used by wrapped multiline edits. This is the
-  ;; WAT-side equivalent of USER32 EDIT's internal line layout: explicit CR/LF
-  ;; breaks plus simple word wrapping against the edit client width.
+  (func $edit_layout_matches (param $state_w ptr<EditState>) (param $hdc i32) (param $text_w i32) (result i32)
+    (local $i i32) (local $src i32) (local $copy i32) (local $len i32)
+    (if (i32.or (i32.eqz (global.get $edit_layout_valid))
+          (i32.or (i32.ne (local.get $state_w) (global.get $edit_layout_state))
+            (i32.or (i32.ne (local.get $hdc) (global.get $edit_layout_dc))
+              (i32.or (i32.ne (local.get $text_w) (global.get $edit_layout_width))
+                (i32.ne (load.field EditState font (local.get $state_w)) (global.get $edit_layout_font))))))
+      (then (return (i32.const 0))))
+    (local.set $len (load.field EditState text_len (local.get $state_w)))
+    (if (i32.ne (local.get $len) (global.get $edit_layout_text_len)) (then (return (i32.const 0))))
+    (local.set $src (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
+    (local.set $copy (call $g2w (global.get $edit_layout_copy)))
+    (block $equal (loop $bytes
+      (br_if $equal (i32.ge_u (local.get $i) (local.get $len)))
+      (if (i32.ne (i32.load8_u (i32.add (local.get $src) (local.get $i)))
+            (i32.load8_u (i32.add (local.get $copy) (local.get $i))))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $bytes)))
+    (i32.const 1))
+
+  ;; Canonical CR/LF and word-wrap builder shared by paint, scroll, caret and
+  ;; hit testing. Reuse only an exact byte-for-byte document/layout match.
   (func $edit_layout_build (param $state_w ptr<EditState>) (param $hdc i32) (param $text_w i32) (result i32)
+    (local $len i32) (local $buf i32)
+    (if (call $edit_layout_matches (local.get $state_w) (local.get $hdc) (local.get $text_w))
+      (then (return (global.get $edit_layout_count))))
+    (global.set $edit_layout_valid (i32.const 0))
+    (global.set $edit_layout_count (call $edit_layout_build_page (local.get $state_w) (local.get $hdc) (local.get $text_w)))
+    (local.set $len (load.field EditState text_len (local.get $state_w)))
+    (if (i32.gt_u (i32.add (local.get $len) (i32.const 1)) (global.get $edit_layout_copy_cap))
+      (then
+        (local.set $buf (call $heap_alloc (i32.add (local.get $len) (i32.const 1))))
+        (if (i32.eqz (local.get $buf)) (then (unreachable)))
+        (if (global.get $edit_layout_copy) (then (call $heap_free (global.get $edit_layout_copy))))
+        (global.set $edit_layout_copy (local.get $buf))
+        (global.set $edit_layout_copy_cap (i32.add (local.get $len) (i32.const 1)))))
+    (if (local.get $len)
+      (then (call $memcpy (call $g2w (global.get $edit_layout_copy))
+        (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))) (local.get $len))))
+    (global.set $edit_layout_state (local.get $state_w))
+    (global.set $edit_layout_dc (local.get $hdc))
+    (global.set $edit_layout_width (local.get $text_w))
+    (global.set $edit_layout_font (load.field EditState font (local.get $state_w)))
+    (global.set $edit_layout_text_len (local.get $len))
+    (global.set $edit_layout_valid (i32.const 1))
+    (global.get $edit_layout_count))
+
+  (func $edit_layout_build_page (param $state_w ptr<EditState>) (param $hdc i32) (param $text_w i32) (result i32)
     (local $buf_g i32) (local $buf_w i32) (local $text_len i32)
     (local $count i32) (local $line_start i32) (local $pos i32)
     (local $ch i32) (local $next_ch i32) (local $max_w i32)
@@ -519,7 +600,6 @@
     (local.set $count (i32.const 0))
 
     (block $done (loop $outer
-      (br_if $done (i32.ge_u (local.get $count) (global.get $EDIT_LAYOUT_MAX)))
       (if (i32.gt_u (local.get $line_start) (local.get $text_len))
         (then (br $done)))
 
@@ -1055,6 +1135,11 @@
     (local $full_h i32) (local $tx i32) (local $max_hscroll i32)
     (local $cx i32) (local $cy i32)
 
+    ;; Every paint reselects the native font/DC and refreshes layout. Text,
+    ;; width and font changes also fail the exact cache key independently.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 15))
+          (i32.or (i32.eq (local.get $msg) (i32.const 48)) (i32.eq (local.get $msg) (i32.const 2))))
+      (then (global.set $edit_layout_valid (i32.const 0))))
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
     ;; ---------- WM_CREATE (0x0001) ----------
@@ -1885,6 +1970,13 @@
         ;; fill and before TextOut; keep those pixels private until this whole
         ;; control paint is complete.
         (call $host_paint_begin (local.get $hwnd))
+        ;; Template-created native children may not have received NCCALCSIZE.
+        ;; Initialize their real client rectangle before clipping and before
+        ;; the final non-client scrollbar refresh. An empty client rectangle
+        ;; makes that refresh repaint the ENTIRE Edit as non-client chrome,
+        ;; covering the white fill and every text glyph just drawn below.
+        (if (i32.eqz (call $client_rect_wh_packed (local.get $hwnd)))
+          (then (call $defwndproc_do_nccalcsize (local.get $hwnd))))
         ;; Paint commits a text object by asking its EDIT to render into the
         ;; picture memory DC via SendMessage(WM_PAINT, hdc, 0). Honor that
         ;; Win9x control convention; ordinary paints still use the window DC.
