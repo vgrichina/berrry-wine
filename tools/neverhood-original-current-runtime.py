@@ -140,6 +140,14 @@ def prepare(out,revision,patches,hold=True):
         bodies[n]=(ROOT/n).read_bytes()
         d=subprocess.run(['git','diff','--binary',revision,'--',n] if n in names else ['git','diff','--no-index','--binary','--','/dev/null',n],cwd=ROOT,capture_output=True)
         assert d.returncode in (0,1) and not d.stderr;diffs.append(d.stdout)
+    components=json.loads(os.environ.get('NEVERHOOD_PUBLISHED_COMPONENTS','{}'))
+    assert set(components)<= {'lib/cli-native-scene.js','test/run.js'},'only passive startup components may be composed'
+    for n,rev in components.items():
+        assert subprocess.run(['git','merge-base','--is-ancestor',rev,'origin/main'],cwd=ROOT).returncode==0
+        bodies[n]=H.git(ROOT,'show',rev+':'+n)
+        assert bodies[n]==(ROOT/n).read_bytes(),'borrowed whole component differs from published pin: '+n
+        diffs.append(H.git(ROOT,'diff','--binary',revision,rev,'--',n))
+    save(out,'published-component-pins.json',dict(components=components,sha256={n:H.digest(bodies[n]) for n in components}))
     (out/'runtime-source.patch').write_bytes(b''.join(diffs))
     inputs=json.loads((RUN/'media-preflight.json').read_text())['inputs']
     for k,row in inputs.items():
@@ -320,12 +328,57 @@ def material_native_pins(inputs):
         if row['path'].startswith(('src/','lib/','tools/vb5')) or row['path'] in ('host.js',PRELOAD)
         or (row['path'].startswith('test/') and row['path'] not in OWN)}
 
+def startup_proof(out,module):
+    """Reuse only an actual focused run with the identical composed inventory."""
+    prior=pathlib.Path(os.environ['NEVERHOOD_STARTUP_PROOF'])
+    old=json.loads((prior/'runtime-inputs.json').read_text())
+    current=json.loads((out/'runtime-inputs.json').read_text())
+    pins=lambda m:{r['path']:r['sha256'] for r in m['sources']}
+    assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']==H.digest(module)
+    for label in ('unit','participants','startup-native'):
+        wait=json.loads((prior/(label+'-wait.json')).read_text())
+        assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+    native=prior/'native-controller'
+    q=json.loads((native/'initial-presentation-qualification.json').read_text())
+    assert q['passed'] and set(q['modes'])=={'startup-delayed-visible','startup-never-visible','positive'}
+    controller=(ROOT/'tools/neverhood-original-current-control.py').read_bytes()
+    prior_controller=H.git(ROOT,'show','97670c226:tools/neverhood-original-current-control.py')
+    policy=lambda b:b[b.index(b'def context(s):'):b.index(b"if __name__=='__main__':")]
+    assert policy(controller)==policy(prior_controller),'review/bind/receipt/UP/intent policy changed'
+    for mode in q['modes']:
+        for suffix in ('native-wait','watchdog-wait'):
+            w=json.loads((native/(mode+'-'+suffix+'.json')).read_text())
+            assert w['exit']==0 and all(w[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
+    save(out,'reused-startup-proof.json',dict(passed=True,prior=str(prior),
+        exactInventorySHA256=H.digest(json.dumps(pins(current),sort_keys=True).encode()),
+        moduleSHA256=H.digest(module),unchangedControllerPolicySHA256=H.digest(policy(controller)),
+        priorControllerRevision='97670c226',qualificationSHA256=H.digest((native/'initial-presentation-qualification.json').read_bytes())))
+    return prior
+
 def reuse_native_proof(out,revision,module):
     prior=pathlib.Path(os.environ.get('NEVERHOOD_NATIVE_PROOF',ROOT/'scratch/runs/20261117-vb5-native-modal-continuation-fence-repair/published-final'))
     proof=json.loads((prior/'complete-native-qualification.json').read_text())
     assert proof['passed'] and proof['nativeProtocolAndFullRegression']
     if 'materialSourcePins' in proof:
         current=material_native_pins(json.loads((out/'runtime-inputs.json').read_text()))
+        changed=sorted(n for n in set(current)|set(proof['materialSourcePins']) if current.get(n)!=proof['materialSourcePins'].get(n))
+        if changed==['lib/cli-native-scene.js','test/run.js'] and os.environ.get('NEVERHOOD_STARTUP_PROOF'):
+            startup_proof(out,module)
+            # Exact unchanged input/receipt/lease components, with only a new
+            # passive command and the already tested public refusal diagnostics.
+            base=H.git(ROOT,'show','9c6eb037f:lib/cli-native-scene.js').decode()
+            scene=(ROOT/'lib/cli-native-scene.js').read_text()
+            begin=scene.index('// Passive startup only:');end=scene.index('// An actual reviewed pre-main',begin)
+            assert (scene[:begin]+scene[end:]).replace('captureFailures,startupReadiness,','captureFailures,')==base
+            runner=(ROOT/'test/run.js').read_text()
+            addition="    if (cmd.action === 'native-startup-readiness')\n      return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);\n"
+            assert runner.count(addition)==1 and runner.replace(addition,'')==H.git(ROOT,'show',proof['gitSHA']+':test/run.js').decode()
+            save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
+                proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),proofGitSHA=proof['gitSHA'],
+                preparedGitSHA=revision,moduleSHA256=H.digest(module),unchangedPaths=len(current)-2,
+                changedComponents=changed,passiveStartupFocusedProof=True,diagnosticsPublishedRevision='9c6eb037f',
+                scope='unchanged native lifecycle/participants/receipt/context/lease components; passive startup tested separately'))
+            return True
         if current==proof['materialSourcePins'] and H.digest(module)==proof['moduleSHA256']:
             save(out,'matching-native-proof.json',dict(passed=True,proof=str(prior/'complete-native-qualification.json'),
                 proofSHA256=H.digest((prior/'complete-native-qualification.json').read_bytes()),
@@ -406,8 +459,13 @@ def pipeline(out,revision,fixture=False,working=False):
         H.inheritance_probe(qualified,r,env)
         module=H.holder_bytes(json.loads((out/'prepared/holder.json').read_text()),'fdPath')
         qualify_native(qualified,revision,module,env,fds)
-        reused=os.environ.get('NEVERHOOD_REUSE_QUALIFICATION')
-        if reused:
+        reused=os.environ.get('NEVERHOOD_STARTUP_PROOF') or os.environ.get('NEVERHOOD_REUSE_QUALIFICATION')
+        if os.environ.get('NEVERHOOD_STARTUP_PROOF'):
+            # qualify_native verified the focused inventory and actual waits.
+            assert (qualified/'reused-startup-proof.json').exists()
+            save(qualified,'reused-controller-proof.json',dict(passed=True,prior=reused,
+                scope='exact composed inventory; focused startup/units/participants plus unchanged historical controller policy'))
+        elif reused:
             prior=pathlib.Path(reused);old=json.loads((prior/'runtime-inputs.json').read_text());current=json.loads((qualified/'runtime-inputs.json').read_text())
             # Runtime lifecycle/watchdog diagnostics do not change the controller,
             # native transport, source loader, or actor/freshness/modal policy.

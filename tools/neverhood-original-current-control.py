@@ -54,25 +54,36 @@ def call(command,timeout=1,cleanup=False):
     with urllib.request.urlopen(req,timeout=timeout) as f:r=json.load(f)
     assert r.get('ok'),r
     return r['value']
+def startup():
+    """Passive public USER/ordinary actor readiness, before any capture clock."""
+    try:
+        launch=reserve();target=identity()
+        assert not (R/'input-owner.json').exists(),'startup cannot rebind an input owner'
+        if (R/'startup-ready.json').exists():
+            assert read('startup-ready.json')['target']==target
+            return
+        started=time.time();deadline=min(started+30,launch['gameplayCutoff'])
+        polls=0
+        while True:
+            remaining=deadline-time.time();assert remaining>0,'startup readiness UNKNOWN'
+            reply=call(dict(action='native-startup-readiness'),timeout=min(1,remaining));polls+=1
+            assert reply['contract']=='native-startup-readiness-v1'
+            with (R/'startup-polls.jsonl').open('a') as log:
+                log.write(json.dumps(dict(at=time.time(),ready=reply['ready'],failures=reply['failures']))+'\n')
+            if reply['ready']:
+                assert not reply['failures'] and reply['ordinaryOwner']['healthy'] and reply['ordinaryOwner']['actorContext']
+                assert time.time()<deadline
+                save('startup-ready.json',dict(startedAt=started,completedAt=time.time(),deadline=deadline,
+                    target=target,port=PORT,polls=polls,native=reply,separateFromCapture=True))
+                return
+            time.sleep(min(.01,max(0,deadline-time.time())))
+    except BaseException as e:fail('startup',e);raise
 def capture(name):
     try:
-        reserve();target=identity();at=time.time()
+        reserve()
+        if not (R/'input-owner.json').exists():startup()
+        target=identity();at=time.time()
         p=R/(name+'.png');assert not p.exists()
-        # A listening control socket can precede the guest's first ShowWindow.
-        # Observe public USER visibility before the first capture; never retry
-        # a refused capture or extend its original three-second deadline.
-        if not (R/'input-owner.json').exists():
-            polls=0;first=None
-            while True:
-                remaining=at+3-time.time();assert remaining>0,'initial presentation UNKNOWN'
-                scene=call(dict(action='snapshot'),timeout=remaining);polls+=1
-                main=next((w for w in scene['windows'] if w['hwnd']==scene['mainHwnd']),None)
-                ready=(bool(main and main['live'] and main['visible'] and not main['isChild'])
-                    or (scene['mainHwnd']=='0x0' and scene['modalHwnd']!='0x0')) and presented(scene)
-                if first is None:first=dict(mainHwnd=scene['mainHwnd'],mainVisible=bool(main and main['visible']),ready=ready)
-                if ready:break
-                time.sleep(min(.005,max(0,at+3-time.time())))
-            save(name+'-presentation.json',dict(at=time.time(),startedAt=at,polls=polls,first=first,ready=True,deadline=at+3))
         remaining=at+3-time.time();assert remaining>0,'initial presentation UNKNOWN'
         reply=call(dict(action='native-reviewed-capture',path=str(p)),timeout=remaining)
         assert time.time()-at<3
@@ -266,7 +277,8 @@ def intent(name,scene,x,y,kind):
         raise
 if __name__=='__main__':
     mode=sys.argv[1]
-    if mode=='capture':capture(sys.argv[2])
+    if mode=='startup':startup()
+    elif mode=='capture':capture(sys.argv[2])
     elif mode=='review':review(*sys.argv[2:7])
     elif mode=='bind':bind(sys.argv[2])
     elif mode=='intent':intent(sys.argv[2],sys.argv[3],int(sys.argv[4]),int(sys.argv[5]),sys.argv[6])

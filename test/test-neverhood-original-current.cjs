@@ -139,6 +139,14 @@ with tempfile.TemporaryDirectory() as d:
   except AssertionError as e:assert 'permanent UNKNOWN' in str(e)
   else:raise AssertionError('postUNKNOWN')
  assert not (m.R/'requests.jsonl').exists()
+with tempfile.TemporaryDirectory() as d:
+ m.R=pathlib.Path(d);m.reserve=lambda:dict(gameplayCutoff=time.time()+30)
+ m.identity=lambda:dict(pid=1,startToken='fixture')
+ m.call=lambda *a,**k:dict(contract='native-startup-readiness-v1',ready=True,failures=[],ordinaryOwner=dict(healthy=True,actorContext=False))
+ try:m.startup()
+ except AssertionError:pass
+ else:raise AssertionError('startup accepted wrong native actor')
+ assert (m.R/'PERMANENT-UNKNOWN.json').exists() and not (m.R/'startup-ready.json').exists()
 runtime=importlib.util.spec_from_file_location('runtime','tools/neverhood-original-current-runtime.py');rt=importlib.util.module_from_spec(runtime);runtime.loader.exec_module(rt)
 assert rt.POLICY==dict(confirmationMs=500,physicalUpMs=1750,observationMs=3000,gameFreshnessSeconds=15,menuFreshnessSeconds=30)
 from unittest.mock import patch
@@ -223,13 +231,37 @@ fixture.writeUInt32LE(0x402700,second+6);fixture.writeUInt32LE(0x402780,second+1
 fixture.write('Native controller: second\0',raw(0x2700));
 fixture.write('Second native modal. OK exits the generated fixture.\0',raw(0x2780));
 fs.writeFileSync(image,fixture,{flag:'wx'});
+function delayedStartupFixture(delayMs){
+ const b=Buffer.from(fixture),u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
+ // Authored real GetTickCount loop then ShowWindow. Uncapped CLI Sleep
+ // intentionally uses batch time; do not alter the production clock policy.
+ b.writeUInt32LE(0x1c00,raw(0x1904));b.write('GetTickCount\0',raw(0x1c02));
+ b.writeUInt32LE(0x1c20,raw(0x1950));b.write('ShowWindow\0',raw(0x1c22));
+ const style=b.indexOf(Buffer.from([0x68,0,0,0,0x90]),raw(0x2000));assert(style>=0);
+ b.writeUInt32LE(0x80000000,style+1);
+ const create=b.indexOf(Buffer.from([0xff,0x15,0x48,0x19,0x40,0,0x89,0xc6]),style);assert(create>style);
+ const at=create+8,extra=Buffer.from([0xff,0x15,...u32(0x401904),0x50,
+   0xff,0x15,...u32(0x401904),0x2b,0x04,0x24,0x3d,...u32(delayMs),0x72,0xf0,0x83,0xc4,4,
+   0x6a,1,0x56,0xff,0x15,...u32(0x401950)]);
+ b.copy(b,at+extra.length,at,raw(0x2500)-extra.length);extra.copy(b,at);return b;
+}
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
 async function main(){
  const modes=process.env.NEVERHOOD_NATIVE_MODES?.split(',')||['positive','game-positive','game-aged-positive','game-stale-fault','repaint-positive','transition-hidden-positive','transition-hidden-timeout','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault'];
  for(const [index,mode] of modes.entries()){
   const run=path.join(out,mode);fs.mkdirSync(run);
-  fs.copyFileSync(path.join(out,'../runtime-inputs.json'),path.join(run,'runtime-inputs.json'));
+  const startupMode=mode.startsWith('startup-');
+  const nativeImage=startupMode?path.join(run,'delayed-show.exe'):image;
+  if(startupMode)fs.writeFileSync(nativeImage,delayedStartupFixture(mode==='startup-never-visible'?60000:3800),{flag:'wx'});
+  const inventoryBytes=fs.readFileSync(path.join(out,'../runtime-inputs.json'));
+  const inventory=JSON.parse(inventoryBytes),crypto=require('node:crypto');
+  // One complete sealed inventory per run; each generated controller needs
+  // only its two executed Python pins, not thousands of duplicate source rows.
+  fs.writeFileSync(path.join(run,'runtime-inputs.json'),JSON.stringify({gitSHA:inventory.gitSHA,moduleSHA256:inventory.moduleSHA256,
+    completeInventorySHA256:crypto.createHash('sha256').update(inventoryBytes).digest('hex'),
+    completeInventory:'../../runtime-inputs.json',sources:inventory.sources.filter(r=>[
+      'tools/neverhood-original-current-control.py','tools/neverhood-original-current-runtime.py'].includes(r.path))}));
   // Ask the OS for a fresh local port rather than sharing a fixed fixture
   // range with other workers. The PID/socket identity check still refuses
   // any intervening bind; it never contacts or retries a foreign listener.
@@ -245,7 +277,7 @@ async function main(){
   const wclosed=new Promise(resolve=>watchdog.on('close',(exit,signal)=>resolve({exit,signal})));
   while(!ws.includes('ARMED'))await pause(5);
   fs.writeFileSync(path.join(run,'watchdog-armed.json'),JSON.stringify({pid:watchdog.pid,at:Date.now(),prearmed:true,deadlineMs:65000,stdout:ws}));
-  const s=startControlSession(['test/run.js','--exe='+image,'--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
+  const s=startControlSession(['test/run.js','--exe='+nativeImage,'--no-build','--spawn-processes','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=60','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{cwd:root,spawnOptions:{detached:true}});
   const send=s.send;let requests=0;
   s.send=command=>{
     assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')),'permanent UNKNOWN; fixture sends no later requests');
@@ -272,42 +304,34 @@ async function main(){
     return p;
   };
   try{
+    if(startupMode){
+      const first=await s.send({action:'native-startup-readiness'});assert.equal(first.ready,false);
+      if(mode==='startup-never-visible'){
+        const launch=JSON.parse(fs.readFileSync(path.join(run,'launch.json')));launch.gameplayCutoff=Date.now()/1000+4;launch.deadline=launch.gameplayCutoff+launch.reserveSeconds;
+        fs.writeFileSync(path.join(run,'launch.json'),JSON.stringify(launch));
+        await controller(['startup'],1);
+        const ledger=fs.readFileSync(path.join(run,'requests.jsonl'),'utf8');
+        assert(ledger.trim().split('\n').every(l=>JSON.parse(l).action==='native-startup-readiness'));
+        for(const args of [['startup'],['capture','later'],['bind','later']])await controller(args,1);
+        assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger);
+        save(mode+'-proof.json',{passed:true,zeroCaptureBindInput:true,permanentUNKNOWN:true,laterHTTP:0});continue;
+      }
+      await controller(['startup']);
+      const ready=JSON.parse(fs.readFileSync(path.join(run,'startup-ready.json')));
+      assert(ready.completedAt-ready.startedAt>3);assert(ready.native.ordinaryOwner.actorContext);
+      const ledger=fs.readFileSync(path.join(run,'requests.jsonl'),'utf8');
+      assert(ledger.trim().split('\n').every(l=>JSON.parse(l).action==='native-startup-readiness'));
+      save(mode+'-proof.json',{passed:true,guestGetTickCountDelayMs:3800,actualShowWindow:true,zeroCaptureBindInputBeforeReady:true,separateStartupSeconds:ready.completedAt-ready.startedAt,captureDeadlineMs:3000});
+    }
     let scene;const due=Date.now()+15000;
     do{scene=await s.send({action:'snapshot'});if(scene.modalHwnd!=='0x0')break;assert(Date.now()<due);await pause(30);}while(true);
-    if(mode.startsWith('initial-hidden-')){
-      // Reproduce the observed public main.visible refusal on an authored
-      // native window, without touching original media or relaxing capture.
-      await s.send({action:'eval',code:`(()=>{const e=instance.exports,h=e.get_main_hwnd(),style=e.wnd_get_style_export(h);e.wnd_set_style_export(h,style&~0x10000000);renderer.showWindow(h,0);${mode==='initial-hidden-positive'?`setTimeout(()=>{e.wnd_set_style_export(h,style);renderer.showWindow(h,1);},650);`:''}return h})()`});
-      if(mode==='initial-hidden-repro'){
-        const before=await s.send({action:'snapshot'});assert.equal(before.windows.find(w=>w.hwnd===before.mainHwnd).visible,false);
-        await assert.rejects(s.send({action:'native-reviewed-capture',path:path.join(run,'refused.png')}),/main.visible/);
-      }else await controller(['capture','initial'],mode==='initial-hidden-timeout'?1:0);
-      if(mode==='initial-hidden-positive'){
-        const proof=JSON.parse(fs.readFileSync(path.join(run,'initial-presentation.json')));
-        assert.equal(proof.first.mainVisible,false);assert.equal(proof.ready,true);assert(proof.polls>1);
-        const record=JSON.parse(fs.readFileSync(path.join(run,'initial.json')));
-        assert(record.completedAt-proof.startedAt<3);
-        const png=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(run,'initial.png')));assert.equal(png.width,800);assert.equal(png.height,600);
-      }else{
-        if(mode==='initial-hidden-repro')fs.writeFileSync(path.join(run,'PERMANENT-UNKNOWN.json'),JSON.stringify({name:mode,noLaterRequests:true}),{flag:'wx'});
-        assert(fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')));
-        const ledger=fs.existsSync(path.join(run,'requests.jsonl'))?fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'):'';
-        if(mode==='initial-hidden-timeout'){
-          assert(!ledger.includes('native-reviewed-capture'),'hidden window must not reach capture');
-          await controller(['capture','after-unknown'],1);
-          assert.equal(fs.readFileSync(path.join(run,'requests.jsonl'),'utf8'),ledger);
-        }
-      }
-      save(mode+'-proof.json',{authoredOnly:true,initialMainHidden:true,inputRequests:0,boundedThreeSeconds:true,noCaptureRetry:true});
-      continue;
-    }
     if(mode.startsWith('transition-hidden-')){
       // Authored lifecycle injection only: use the actual next native modal's
       // visibility bit. The original application is never modified or resumed.
       const proof=path.join(run,'native-visibility-transition.json');
       await s.send({action:'eval',code:`(()=>{const e=instance.exports,first=e.modal_dialog_hwnd();const timer=setInterval(()=>{const h=e.modal_dialog_hwnd();if(!h||h===first)return;clearInterval(timer);const style=e.wnd_get_style_export(h);e.wnd_set_style_export(h,style&~0x10000000);renderer.showWindow(h,0);const p={authoredOnly:true,hwnd:h,hiddenAt:Date.now(),restored:false};console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));${mode==='transition-hidden-positive'?`setTimeout(()=>{e.wnd_set_style_export(h,style);renderer.showWindow(h,1);renderer.repaint();p.restored=true;p.shownAt=Date.now();console.log('NV_NATIVE_VISIBILITY '+JSON.stringify(p));},650);`:''}},1);return true})()`});
     }
-    if(!['positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
+    if(!['startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive','transition-hidden-timeout'].includes(mode)){
       await s.send({action:'frozen',mode:'on'});
       await controller(['capture','fault-scene']);
       const rr=JSON.parse(fs.readFileSync(path.join(run,'fault-scene.json')));scene=rr.snapshot;
@@ -346,6 +370,10 @@ async function main(){
         const b=controls.find(x=>x.id===1);assert(b);
         const name='scene'+i;await controller(['capture',name]);
         const record=JSON.parse(fs.readFileSync(path.join(run,name+'.json')));
+        if(startupMode&&!i){
+          const ready=JSON.parse(fs.readFileSync(path.join(run,'startup-ready.json')));
+          assert(record.at>=ready.completedAt);assert(record.completedAt-record.at<3);
+        }
         const modal=record.snapshot.windows.find(w=>w.hwnd===record.snapshot.modalHwnd);
         assert.equal(modal.title,'Native controller: '+(i?'second':'first'));
         const png=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(run,name+'.png')));
@@ -414,14 +442,14 @@ async function main(){
     if(s.child.exitCode===null)try{process.kill(-s.child.pid,'SIGTERM');}catch(error){if(error.code!=='ESRCH')throw error;}
     await s.exited;
     fs.writeFileSync(path.join(run,'native.log'),s.output());
-    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'].includes(mode)});
+    save(mode+'-native-wait.json',{pid:s.child.pid,exit:s.child.exitCode,signal:s.child.signalCode,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded,nativeQuit:['startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'].includes(mode)&&s.child.exitCode===0,hostTeardown:!['startup-delayed-visible','positive','game-positive','game-aged-positive','repaint-positive','transition-hidden-positive'].includes(mode)});
     watchdog.stdin.end();const w=await wclosed;save(mode+'-watchdog-wait.json',{pid:watchdog.pid,...w,actualWait:true,stdoutEOF:watchdog.stdout.readableEnded,stderrEOF:watchdog.stderr.readableEnded,stdout:ws,stderr:we});
     assert.equal(w.exit,0,'independent watchdog must close normally');
   }
  }
- if(modes.some(mode=>mode.startsWith('initial-hidden-'))){
+ if(modes.some(mode=>mode.startsWith('startup-'))){
   save('initial-presentation-qualification.json',{passed:true,modes,authoredOnly:true,originalStarted:false,
-    scope:'public initial USER visibility; unchanged native capture refusal; bounded wait; permanent UNKNOWN'});
+    scope:'separate passive public USER/ordinary actor startup; actual guest delayed ShowWindow; unchanged capture3000 and input guards; permanent UNKNOWN'});
   console.log('PASS focused authored native modes: '+modes.join(', '));
  }else{
   save('neverhood-native-admission.json',{generatedTestsPassed:true,safeForNeverhoodOriginal:true,actualNativeButtonTargets:true,childCaptionChangeRefused:true,originalStarted:false});
