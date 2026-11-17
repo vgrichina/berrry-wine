@@ -130,7 +130,7 @@ async function main(){
  for(const kind of ['wrong-id','missing','delayed','success']){
   const dir=fs.mkdtempSync(run+'/custody-'+kind+'-');fs.mkdirSync(dir+'/commands');
   fs.writeFileSync(dir+'/lifecycle.json',JSON.stringify({browserDeadline:Date.now()+8000}));
-  // The executed shim preserves the actual kernel-custodian parent across exec.
+  // The executed shim preserves the actual supervising parent across exec.
   const shim=dir+'/consumer-shim.cjs';fs.writeFileSync(shim,`process.env.SIMGOLF_OWNER_IDENTITY=JSON.stringify(require(${JSON.stringify(root+'/tools/native-clock-process-proof.cjs')}).identity(process.ppid));process.argv=${JSON.stringify([process.execPath,__filename,run,'consumer',dir,kind])};require(${JSON.stringify(__filename)});`);
   // Block on one exact stdin line, then exec in this same PID (the owning parent).
   const gate='IFS= read -r line && [ "$line" = go ] || exit 1; exec "$@"';
@@ -147,10 +147,10 @@ async function main(){
    assert(fs.existsSync(dir+'/consumer-ready'));
    if(kind==='success')await transport.request(dir,'current',{action:'capture'},1000);else await assert.rejects(transport.request(dir,'current',{action:'capture'},70));
    const code=await done;assert.equal(code,kind==='success'?0:1,stderr);assert(stdoutEOF&&stderrEOF);
-   const drain=JSON.parse(fs.readFileSync(dir+'/kernel-drain.json'));assert(drain.complete);assert.deepEqual(drain.remaining,[]);assert.deepEqual(drain.unreaped,[]);assert(drain.commandLog.eof&&drain.commandLog.closed);
-   for(const pin of [drain.journal,drain.commandLog]){const b=require('node:zlib').gunzipSync(fs.readFileSync(dir+'/'+pin.path));assert.equal(b.length,pin.originalBytes);assert.equal(h.sha(b),pin.originalSha256);}
+   const drain=JSON.parse(fs.readFileSync(dir+'/receipt.json'));assert.equal(drain.leaked,false);assert.equal(drain.spawnError,null);
+   assert.equal(drain.terminated===null||drain.terminated==='sweep after exit',kind==='success','only failures cancel the supervised tree');
    if(kind!=='success'){assert(fs.existsSync(dir+'/terminal-error.json'));assert(!fs.existsSync(dir+'/reply-1.json'));}
-   custodyCases.push({kind,actualOwningParent:child.pid,parentWait:code,stdoutEOF,stderrEOF,complete:drain.complete,commandEOF:drain.commandLog.eof,owned:drain.owned.length,reaped:drain.reaped.length});checks++;
+   custodyCases.push({kind,actualOwningParent:child.pid,parentWait:code,stdoutEOF,stderrEOF,level:drain.level,terminated:drain.terminated,exit:drain.exit,signal:drain.signal,tracked:drain.tracked.length});checks++;
   }finally{
    watchdog.kill('SIGTERM');const watcherCode=await new Promise(r=>watchdog.once('close',(code,signal)=>r({code,signal})));
    assert(watchStdoutEOF&&watchStderrEOF);
