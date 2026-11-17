@@ -77,3 +77,12 @@ records, foreign identities, retired generations, disabled/changed targets,
 missing nonzero main and unavailable text/classes. The final canonical flock
 build passed. Interactive original admission remains a separate finite launch
 after publication, using exactly the qualified source hashes.
+
+Causal publication `f6682173b` preceded interactive preparation. The first
+preflight passed the three exact question capture/binding shapes but refused
+before any original launch: a fixture native-wait JSON was visible while being
+written, and the controller correctly latched UNKNOWN on its incomplete body.
+The writer now fsyncs a complete pending receipt and links it into place without
+overwriting. Original supervisor completion/launch receipts use the same atomic
+publication rule. The failed preflight's `originalStarted:false` is retained;
+it consumed no interactive original attempt and supplies no success claim.

@@ -3,6 +3,11 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
+function publishJSON(file,value){
+  const pending=file+'.'+process.pid+'.pending',fd=fs.openSync(pending,'wx');
+  try{fs.writeFileSync(fd,JSON.stringify(value,null,2)+'\n');fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
+  fs.linkSync(pending,file);fs.unlinkSync(pending);
+}
 function installQuestion({noMain=false,owned=false}={}){
   const b=require('./test-sims-child-mount-native.cjs').untitledModal(),raw=r=>r-0x1000+0x200;
   const at=b.indexOf(Buffer.from([0x68,1,0,0,0,0x68,0x40,0x25,0x40,0,0x68,0x80,0x25,0x40,0]));assert(at>0);
@@ -17,7 +22,7 @@ function installQuestion({noMain=false,owned=false}={}){
   return b;
 }
 async function firstDialogTests(out){
-  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
+  fs.mkdirSync(out,{recursive:true});const save=(n,v)=>publishJSON(path.join(out,n),v);
   for(const shape of ['no-main','main-owned','main-ownerless']){
     const image=path.join(out,shape+'.exe');fs.writeFileSync(image,installQuestion({noMain:shape==='no-main',owned:shape==='main-owned'}),{flag:'wx'});
     const watchdog=cp.spawn(process.execPath,['-e',`let pid;const t=setTimeout(()=>{if(pid)try{process.kill(-pid,'SIGKILL')}catch{};process.exit(2)},25000);console.log('ARMED');process.stdin.on('data',b=>pid=Number(b));process.stdin.on('end',()=>clearTimeout(t));`],{stdio:['pipe','pipe','pipe']});
@@ -139,7 +144,7 @@ prefix.writeInt32LE(0x2000-(0x2c00+prefix.length),prefix.length-4);prefix.copy(p
 premain.writeUInt32LE(0x2c00,0x80+24+16);
 const premainImage=path.join(out,'generated-premain-context.exe');fs.writeFileSync(premainImage,premain,{flag:'wx'});
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
-const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
+const save=(n,v)=>publishJSON(path.join(out,n),v);
 async function main(){
  const modes=process.env.DELPHI5_NATIVE_MODES?.split(',')||['positive','repaint-positive','no-main-positive','focus-fault','owner-fault','semantic-fault','stale-fault','child-caption-fault','no-main-focus-fault','no-main-owner-fault','no-main-semantic-fault','no-main-stale-fault','no-main-child-caption-fault'];
  for(const [index,mode] of modes.entries()){
@@ -168,7 +173,7 @@ async function main(){
     assert(!fs.existsSync(path.join(run,'PERMANENT-UNKNOWN.json')),'permanent UNKNOWN; fixture sends no later requests');
     requests++;fs.appendFileSync(path.join(run,'fixture-requests.jsonl'),JSON.stringify({at:Date.now(),action:command.action})+'\n');return send(command);
   };
-  s.child.once('close',(exit,signal)=>fs.writeFileSync(path.join(run,'native-wait.json'),JSON.stringify({pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded})));
+  s.child.once('close',(exit,signal)=>publishJSON(path.join(run,'native-wait.json'),{pid:s.child.pid,exit,signal,actualWait:true,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
   watchdog.stdin.write(String(s.child.pid));
   const stat=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8');
   fs.writeFileSync(path.join(run,'native-pid.json'),JSON.stringify({pid:s.child.pid,startToken:stat.slice(stat.lastIndexOf(')')+2).split(' ')[19]}));

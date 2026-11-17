@@ -14,8 +14,12 @@ ORIGINAL_STARTED=False
 MEDIA=ROOT/'test/binaries/candidates/vb5cce-original'
 
 def sha(b):return hashlib.sha256(b).hexdigest()
-def save(name,value):
-    with (RUN/name).open('x') as f:json.dump(value,f,indent=2);f.write('\n')
+def publish(path,value):
+    pending=path.with_name(path.name+'.'+str(os.getpid())+'.pending')
+    with pending.open('x') as f:
+        json.dump(value,f,indent=2);f.write('\n');f.flush();os.fsync(f.fileno())
+    os.link(pending,path);pending.unlink()
+def save(name,value):publish(RUN/name,value)
 def seal(name,body):
     fd=os.memfd_create(name,os.MFD_ALLOW_SEALING)
     with os.fdopen(os.dup(fd),'wb') as f:f.write(body)
@@ -204,15 +208,17 @@ def original_pipeline(env,source,module,started,deadline,passive):
                 '--max-batches=1000000000','--stuck-after=0','--real-ticks',
                 '--quiet-api','--quiet-blocks','--png-canvas',
                 '--pipe-child-args=--control='+str(childport)+' --winver=nt4 --threads --real-ticks --png-canvas',*extra]
-            (target/'launch.json').write_text(json.dumps(dict(args=argv,at=started,deadline=deadline,
+            publish(target/'launch.json',dict(args=argv,at=started,deadline=deadline,
                  gameplayCutoff=deadline-(0 if passive else 240),reserveSeconds=0 if passive else 240,
-                 rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive)))
+                 rootPort=port,childPort=childport,winver='nt4',passiveDiagnostic=passive))
             with (target/'native.stdout.log').open('xb') as out,(target/'native.stderr.log').open('xb') as err:
                 p=subprocess.Popen(argv,cwd=ROOT,env=env,pass_fds=(source,module),stdout=out,stderr=err,start_new_session=True)
                 ORIGINAL_STARTED=True
                 info=dict(pid=p.pid,startToken=token(p.pid),at=time.time())
-                (target/'native-pid.json').write_text(json.dumps(info))
-                (RUN/'current-native-pid.json').write_text(json.dumps(info))
+                publish(target/'native-pid.json',info)
+                # Stage replacement is one complete atomic watchdog identity.
+                pending=RUN/'current-native-pid.pending'
+                pending.write_text(json.dumps(info));os.replace(pending,RUN/'current-native-pid.json')
                 if passive:
                     # First complete result/refusal closes this endpoint. No later
                     # observation, identity query or input is performed.
@@ -221,8 +227,8 @@ def original_pipeline(env,source,module,started,deadline,passive):
                             os.killpg(p.pid,signal.SIGTERM);break
                         time.sleep(.01)
                 rc=p.wait()
-            (target/'native-wait.json').write_text(json.dumps(dict(**info,exit=rc,actualWait=True,
-                stdoutClosed=True,stderrClosed=True,outputMode='regular files; no pipe EOF claim',atWait=time.time())))
+            publish(target/'native-wait.json',dict(**info,exit=rc,actualWait=True,
+                stdoutClosed=True,stderrClosed=True,outputMode='regular files; no pipe EOF claim',atWait=time.time()))
             if (target/'PERMANENT-UNKNOWN.json').exists() or rc!=0:return
 
 if __name__=='__main__':
