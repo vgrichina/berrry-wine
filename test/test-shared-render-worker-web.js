@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 // Actual browser, production WAT and worker backends. No guest fixture or build.
+// This ring fixture uses RGBA8; native Glide converts its LFB to RGB565.
 const assert=require('assert');
 const path=require('path');
 const puppeteer=require('puppeteer');
@@ -70,11 +71,16 @@ const {startStaticServer,closeServer}=require('./static-server');
           onPresent(layer){presented.push([...layer.canvas.getContext('2d').getImageData(2,2,1,1).data]);}});
         const clear=rgba=>p.emit('CLEAR',{mask:C.CLEAR_COLOR,colormask:15,rgba,z:1,left:0,top:0,right:16,bottom:16});
         const read=async expected=>{
-          const dst=p.arenaAlloc(16*16*2);
-          p.emit('READBACK',{rt:1,x:0,y:0,w:16,h:16,fmt:C.FMT_RGB565,dst,pitch:32,slot:0});
+          const pitch=16*4+8,bytes=pitch*16+16,dst=p.arenaAlloc(bytes);
+          p.arenaView(dst,bytes).fill(0xa7);
+          p.emit('READBACK',{rt:1,x:0,y:0,w:16,h:16,fmt:C.FMT_A8B8G8R8,dst,pitch,slot:0});
           same(await bridge.kick(base,C.KICK_SYNC),1,backend+' Glide sync kick');
-          const v=p.arenaView(dst,16*16*2);readbacks++;
-          same(v[(2*16+2)*2]|v[(2*16+2)*2+1]<<8,expected,backend+' Glide RGB565 readback');
+          const v=p.arenaView(dst,bytes);readbacks++;
+          for(let y=0;y<16;y++){
+            for(let x=0;x<16;x++)same([...v.subarray(y*pitch+x*4,y*pitch+x*4+4)],expected,backend+' RGBA8 readback '+x+','+y);
+            same([...v.subarray(y*pitch+64,(y+1)*pitch)],Array(8).fill(0xa7),backend+' readback row padding');
+          }
+          same([...v.subarray(pitch*16)],Array(16).fill(0xa7),backend+' readback end canary');
         };
         const present=()=>{p.emit('PRESENT',{rt:1,gamma:0,x:0,y:0,w:16,h:16,surface:7});return bridge.kick(base,C.KICK_SYNC);};
         try{
@@ -84,7 +90,7 @@ const {startStaticServer,closeServer}=require('./static-server');
           // Worker handles kicks in order, so the SYNC read sees all three.
           for(const rgba of [0xff0000ff,0xff00ff00,0xffff0000]){clear(rgba);same(bridge.kick(base,C.KICK_ASYNC),1,'Glide async kick early ACK');}
           clear(0xffffffff);
-          await read(0xffff);
+          await read([255,255,255,255]);
           if(backend==='webgl'&&!bridge.device.glRenderer)throw new Error('Glide GPU unexpectedly fell back to software');
           await present();
           same(presented.at(-1),[255,255,255,255],backend+' Glide white presentation');
@@ -93,7 +99,7 @@ const {startStaticServer,closeServer}=require('./static-server');
           const src=p.arenaAlloc(rows.length);p.arenaView(src,rows.length).set(rows);
           p.emit('UPLOAD',{id:1,level:0,face:0,x:0,y:0,w:16,h:16,pitch:64,src,bytes:rows.length});
           same(bridge.kick(base,C.KICK_ASYNC),1,'Glide LFB upload early ACK');
-          await read(0x07e0);
+          await read([0,255,0,255]);
           await present();
           same(presented.at(-1),[0,255,0,255],backend+' Glide LFB green presentation');
           if(kicks.some(k=>k.t!=='gps-kick'||k.ring!==base))throw new Error('Glide kicks must name the one shared ring');
