@@ -27,7 +27,7 @@ async function withEnv(vars,f){
 async function component_tests(out){
   fs.mkdirSync(out);
   const name='lib/cli-native-scene.js',revision='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692';
-  const expected=m.H.git(ROOT,'show',revision+':'+name);
+  const expected=m.git('show',revision+':'+name);
   const original=fs.readFileSync;
   await withEnv({NEVERHOOD_PUBLISHED_COMPONENTS:JSON.stringify({[name]:revision})},async()=>{
     // A concurrent shared-tree edit of the selected component.
@@ -36,9 +36,9 @@ async function component_tests(out){
       assert(!fs.readFileSync(path.join(ROOT,name)).equals(expected));
       const actual=m.component_bytes(name);assert(actual.equals(expected));
       assert(m.component_bytes('tools/neverhood-original-current-control.js').equals(original.call(fs,path.join(ROOT,'tools/neverhood-original-current-control.js'))));
-      const [pool,index,rows]=m.H.indexed_sources({[name]:actual});
+      const [pool,index,rows]=m.H.indexedSources({[name]:actual});
       const manifest={sourceIndexSHA256:m.H.digest(index),sources:rows};
-      assert.deepStrictEqual(m.H.validate_sources(pool,manifest),rows);
+      assert.deepStrictEqual(m.H.validateSources(pool,manifest),rows);
       const fd=m.H.seal('published-component-test',pool);
       try{const b=Buffer.alloc(pool.length);fs.readSync(fd,b,0,pool.length,0);assert(b.equals(pool));}
       finally{fs.closeSync(fd);}
@@ -157,7 +157,7 @@ async function main(){
     assert(wait.exit===(name==='owner-deadline'?-os.constants.signals.SIGTERM:0),JSON.stringify(wait));
     if(name==='outer-route'){
       const w=await until(path.join(run,'outer/wait.json'));
-      assert(w.supervisorExitCode===0&&w.actualWait&&w.stdoutEOF&&w.stderrEOF&&!w.remainingAfterRuntime);
+      assert(w.supervisorExitCode===0&&w.actualWait&&w.stdoutEOF&&w.stderrEOF&&!(w.remainingAfterRuntime&&w.remainingAfterRuntime.length));
       assert(w.watchdogs.every(r=>r.actualWait&&r.stdoutEOF&&r.stderrEOF&&r.returncode===0));
       assert((await until(path.join(run,'outer/parent-process-owner.json'))).parentProcessAliveAtJoin);
     }

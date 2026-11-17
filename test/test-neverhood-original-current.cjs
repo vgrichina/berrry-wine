@@ -242,7 +242,7 @@ if(process.argv[2]==='--unit'){
     "a.throws(()=>require('./tools/native-proc.cjs'),/unsealed runtime input/);"+
     "console.log('NODE_INHERITANCE_PASS');"),
    'test/test-vb5cce-original-current.cjs':Buffer.from('SEALED_CJS_HASH')};
-  const [pool,index]=rt.H.indexed_sources(bodies);const source=rt.H.seal('resolver-test-source',pool);
+  const [pool,index]=rt.H.indexedSources(bodies);const source=rt.H.seal('resolver-test-source',pool);
   const preload=rt.H.seal('resolver-test-preload',fs.readFileSync(path.join(rt.ROOT,rt.PRELOAD))),module=rt.H.seal('resolver-test-module',Buffer.from('\0asm'));
   const env={...process.env,DISCIPLES2_ROOT:rt.ROOT,DISCIPLES2_PHASE:'runtime',DISCIPLES2_SOURCE_FD:rt.fdPath(source),DISCIPLES2_SOURCE_SHA256:rt.H.digest(pool),DISCIPLES2_SOURCE_INDEX_SHA256:rt.H.digest(index),DISCIPLES2_MODULE_FD:rt.fdPath(module),DISCIPLES2_MODULE_SHA256:rt.H.digest(Buffer.from('\0asm')),DISCIPLES2_MANIFEST_SHA256:'a'.repeat(64)};
   env.NODE_OPTIONS='--preserve-symlinks --require='+rt.fdPath(preload);
