@@ -5,6 +5,8 @@ Evidence: `scratch/runs/20261117-aow2-audio-wait-continuation-gameplay/`.
 The two Mss32 audio EIP0 exits are caused by duplicate completion of an
 ordinary parked WaitForSingleObject frame. This is not a ThreadProc return.
 No audio disable, guessed return fix or crash suppression is used.
+The fix is published on main as `81ad6c8022229f25aa35b2baf0f0ee8bbeac9df7`.
+Two ordinary army moves and menu Quit/native exit remain **unproved**.
 
 Offline examination of the previous first-fault stacks found valid DLL wait
 return addresses 24 bytes below terminal ESP, with the original event and
@@ -46,6 +48,13 @@ unsatisfied waits and completion transport failure. Original HEAD fails with
 two slices instead of one; the corrected scheduler passes all 59 checks.
 Three older VM fixtures now provide the browser-input, RenderWorker and RPC
 dependencies their production imports require; their assertions are unchanged.
+The canonical `flock /tmp/wine-build.lock bash tools/build.sh` passed.
+Wait reservation, bootstrap, wave-callback and wait-identity tests passed.
+The broader cross-thread test has the same two failures (24/26) with the
+original and corrected manager; the separate scoped render-yield test also
+fails identically on both. These existing limitations are retained, not
+reported as passes. Initial shared-build failures during concurrent Sims WAT
+editing are retained; the final locked build succeeded after those corrections.
 
 The first original reached the personally reviewed default Julia opening
 dialog. The independent disk watchdog stopped it before a world afterimage,
@@ -54,6 +63,7 @@ consumption claim is inferred from the interrupted screenshot. Actual Chrome0,
 driver1, watchdog0 and supervisor143 waits with both EOFs are retained; owned
 scopes and children are empty. Custody was retrieved and hash-verified before
 removing its disposable `/dev/shm` profile. No terminal was reopened.
+Its final offline response assessment passes all 793 required bodies.
 
 The published `44115957` supervisor and existing direct188/package191,
 source/module/media proof are reused. The original standard module is
@@ -61,5 +71,29 @@ source/module/media proof are reused. The original standard module is
 Git plus relevant patches is the source archive. There are no source archives,
 media copies, repeated lifecycle suites, boxes or deployments.
 
-Post-fix native validation and the two-move/menu-Quit outcome are recorded in
-the final run result; this note is updated when that bounded attempt ends.
+After publishing the distinct proved fix, the one conditionally authorized
+original served the same known source/module/media, replacing only the
+thread-manager body with the published hash. The required `vclx50.bpl` request
+was canceled with `net::ERR_ABORTED` during DLL loading. The sticky collector
+fault is retained, including subsequent failures after collector closure.
+Its cause is UNKNOWN; this does not prove a new audio/emulator defect. Only
+registered Launch was delivered, with no game input or replay. The unchanged
+driver captured two loading images before the fault was recognized; no menu,
+Mss32 thread progress or post-fix native audio validation is claimed.
+
+Local custody cancellation ended that run promptly after recognition. Actual
+Chrome0, driver124, watchdog0 and supervisor1 waits with both EOFs and empty
+owned scopes/children are retained. The watchdog's independent deadline and
+actual disk floor were armed and did not fire. Its unique custody was retrieved
+and hash-verified before removing the disposable profile. The keeper's actual
+wait on each supervisor is recorded; an external wait on the detached keeper
+itself was not captured and remains UNKNOWN. Process absence is not substituted
+for that missing wait. No box was created: ID null, state NOT_CREATED, expiry
+null, stop receipt NOT_APPLICABLE.
+
+No further original is authorized by this task. Next work must first explain
+the required DLL-body cancellation offline, then obtain a newly authorized
+native run for live audio progress, two distinct Party destinations with
+remaining-point changes, and ordinary menu Quit/native exit. Both terminals
+remain closed. The final result indexes the exact pins, relevant patches,
+selected result-named whole images, tests and missing proof.
