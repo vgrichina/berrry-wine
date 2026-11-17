@@ -43,7 +43,8 @@ def main():
  m=load('tools/halflife2-current-native.py');m.TASK_RUN=TASK
  assert TASK.parent==ROOT/'scratch/runs','task evidence must stay under scratch/runs'
  m.RUN=pathlib.Path(os.environ['HL2_RUN']);m.RUN.mkdir(parents=True,exist_ok=True);m.disk()
- revision=os.environ['HL2_RESTORED_PIN']
+ revision=m.git('rev-parse','--verify',os.environ['HL2_RESTORED_PIN']+'^{commit}').decode().strip()
+ assert len(revision)==40,'exact Git commit required'
  working=os.environ.get('HL2_WORKING_AUTHORED')=='1'
  layout_repair=os.environ.get('HL2_EDIT_LAYOUT_REPAIR')=='1'
  assert not working or '--original' not in sys.argv,'working adapter is authored-only'
