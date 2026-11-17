@@ -90,7 +90,8 @@ function contextUnits(){
  }
  for(const change of [{reviewed:false},{captureId:'unretained'},{pngSHA256:'0'.repeat(64)},{reviewedAt:1001},{targetHwnd:'0x9'}])assert.throws(()=>registry.verify(scene,{...review,...change}));
  const gameCapture=registry.capture(()=>scene,()=>Buffer.from('game unit frame'),()=>{}),gameReview={...review,scope:'game',captureId:gameCapture.captureId,pngSHA256:gameCapture.pngSHA256};
- clock=5999;assert.doesNotThrow(()=>registry.verify(scene,gameReview));clock=6000;assert.throws(()=>registry.verify(scene,gameReview),/stale/);
+ clock=11000;assert.doesNotThrow(()=>registry.verify(scene,gameReview));
+ clock=15999;assert.doesNotThrow(()=>registry.verify(scene,gameReview));clock=16000;assert.throws(()=>registry.verify(scene,gameReview),/stale/);
  assert.throws(()=>registry.verify(scene,{...review,scope:'game'}),/stale/);
  clock=30999;assert.doesNotThrow(()=>registry.verify(scene,review));clock=31000;assert.throws(()=>registry.verify(scene,review),/stale/);
  clock=1001;assert.throws(()=>registry.verify(scene,{...review,reviewedAt:1001}),/attestation changed/);registry.verify(scene,review,{action:'keydown',code:40},'one');registry.verify(scene,review,{action:'keydown',code:40},'one');
@@ -100,7 +101,7 @@ function contextUnits(){
  const g=createGuardedInput({snapshot:()=>({healthy:true,refs}),cleanup:()=>{},validateIntent:intent=>{try{registry.verify(current,intent.review,intent.event,intent.nonce);return true;}catch{return false;}}});
  const owner=g.bind(),event={action:'keydown',code:40};const t=g.prepare({...owner,nonce:'one',reviewed:true,deadline:Date.now()+1000,intent:{review,event,nonce:'one'}},event);
  current=structuredClone(scene);current.windows[1].title='Changed after prepare';assert.equal(g.consume(t,()=>effects++).state,'CANCELLED');assert.equal(effects,0);g.close();
- console.log('PASS retained complete bytes/original times, 5s/30s boundaries, public target/control/focus/modal/owner negatives and queued zero-input cancellation');
+ console.log('PASS retained complete bytes/original times, 15s/30s boundaries, public target/control/focus/modal/owner negatives and queued zero-input cancellation');
 }
 module.exports={fixture,contextUnits};
 const pause=ms=>new Promise(r=>setTimeout(r,ms));

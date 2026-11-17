@@ -44,7 +44,7 @@ function controllerFixture(){
  const code=Buffer.from([0x68,...u32(50),0xff,0x15,...u32(0x401204),...quit,0xe9,...u32(guestAt+quit.length-(stub+11+quit.length+5))]);
  code.copy(b,raw(0x2d00));b.fill(0x90,at,at+quit.length);b[at]=0xe9;b.writeInt32LE(stub-guestAt-5,at+1);return b;
 }
-async function reviewedController(out,late=false,printable=false,personal=false,stale=false){
+async function reviewedController(out,late=false,printable=false,personal=false,stale=false,fault=null){
  fs.mkdirSync(out);const save=(n,v)=>{
   const target=path.join(out,n),pending=target+'.'+process.pid+'.pending';
   fs.writeFileSync(pending,JSON.stringify(v,null,2)+'\n',{flag:'wx',flush:true});
@@ -77,11 +77,35 @@ async function reviewedController(out,late=false,printable=false,personal=false,
    while(!fs.existsSync(path.join(out,'stop-personal.json')) && s.child.exitCode===null && !fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json'))){assert(Date.now()<due);await pause(10);}
    save('personal-finished.json',{at:Date.now(),originalStarted:false});return;
   }
-  if(stale){
+  if(fault){
+   await control(['capture','before']);
+   await control(['review','before','Authored deadline negative only, complete native scene.','Fixture','game',snap.mainHwnd]);
+   await control(['bind','before']);
+   let monitor,monitorWait;
+   if(fault==='physical-up'){
+    // Stop only the authored fixture's independently armed release process.
+    // Resume it after the fixed 1750ms bound, allowing cleanup and actual join.
+    monitor=cp.spawn(process.execPath,['-e',`const fs=require('node:fs');const d=${JSON.stringify(out)};let stopped=false;const timer=setInterval(()=>{try{const a=JSON.parse(fs.readFileSync(d+'/refused-release-arm.json')),i=JSON.parse(fs.readFileSync(d+'/refused-intent.json'));if(stopped)return;stopped=true;process.kill(a.pid,'SIGSTOP');console.log(JSON.stringify({stoppedAt:Date.now(),pid:a.pid}));clearInterval(timer);setTimeout(()=>{process.kill(a.pid,'SIGCONT');console.log(JSON.stringify({resumedAt:Date.now(),deadline:i.physicalUpDeadline*1000}))},Math.max(0,i.at*1000+1850-Date.now()))}catch{}},1);setTimeout(()=>{clearInterval(timer)},6000);`]);
+    let mo='',me='';monitor.stdout.on('data',b=>mo+=b);monitor.stderr.on('data',b=>me+=b);
+    monitorWait=once(monitor,'close').then(([exit,signal])=>{save('fault-monitor-wait.json',{exit,signal,actualWait:true,stdoutEOF:monitor.stdout.readableEnded,stderrEOF:monitor.stderr.readableEnded,stdout:mo,stderr:me});assert.equal(exit,0);assert(mo.includes('resumedAt'));});
+   }else{
+    const code=fault==='confirmation'
+     ? "(()=>{const p=process.mainModule.require('node:http').ServerResponse.prototype,raw=p.end;p.end=function(b,...a){let v;try{v=JSON.parse(String(b))}catch{};if(v?.value?.consumed===true){setTimeout(()=>raw.call(this,b,...a),600);return this}return raw.call(this,b,...a)};return true})()"
+     : "(()=>{const raw=renderer.canvas.toBufferSync.bind(renderer.canvas);renderer.canvas.toBufferSync=(...a)=>{const end=performance.now()+2900;while(performance.now()<end){}return raw(...a)};return true})()";
+    await s.send({action:'eval',code});
+   }
+   await control(['intent','refused','before','500','220','game'],1);
+   if(monitorWait)await monitorWait;
+   assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));assert(!fs.existsSync(path.join(out,'refused-completion.json')));
+   const before=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');
+   await control(['capture','forbidden'],1);await control(['bind','before'],1);
+   assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),before);
+   save('assertions.json',{pass:true,deadlineFault:fault,limitMs:{confirmation:500,'physical-up':1750,aggregate:3000}[fault],permanentUNKNOWN:true,zeroLaterRequests:true,syntheticAuthoredAttestation:true});
+  }else if(stale){
    await control(['capture','before']);
    await control(['review','before','Authored binding only; complete native scene.','Fixture','install',snap.mainHwnd]);
    await control(['bind','before']);await control(['capture','stale']);
-   await pause(5050);
+   await pause(15050);
    const before=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');
    await control(['review-intent','refused','stale','500','220','game','Authored stale scene; must refuse before any effect.','Fixture',snap.mainHwnd],1);
    assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
@@ -104,9 +128,11 @@ async function reviewedController(out,late=false,printable=false,personal=false,
    if(printable)await control(['intent','click','before','-2','67','install','67']);
    else{
     await control(['capture','fresh']);
+    // Real elapsed native transport tolerance, never a rewritten timestamp.
+    await pause(10000);
     await control(['review-intent','click','fresh','500','220','game','Authored test only: complete USER window, one finite left press.','Fixture',snap.mainHwnd]);
     const timing=JSON.parse(fs.readFileSync(path.join(out,'click-intent.json'))).latency;
-    assert(timing.captureAgeAtIntentMs<5000);assert(timing.personalReviewAt>=timing.captureCompletedAt);
+    assert(timing.captureAgeAtIntentMs>=10000&&timing.captureAgeAtIntentMs<15000);assert(timing.personalReviewAt>=timing.captureCompletedAt);
    }
    const rr=JSON.parse(fs.readFileSync(path.join(out,'click-observed.json')));
    assert.equal(rr.snapshot.windows.find(w=>w.hwnd===snap.mainHwnd).title,printable?'DCU':'UP after DOWN');
@@ -152,6 +178,7 @@ async function controllerFixtures(out){
  await reviewedController(path.join(out,'printable-controller'),false,true);
  await reviewedController(path.join(out,'late-controller'),true);
  await reviewedController(path.join(out,'stale-controller'),false,false,false,true);
+ for(const fault of ['confirmation','physical-up','aggregate'])await reviewedController(path.join(out,fault+'-negative'),false,false,false,false,fault);
  fs.writeFileSync(path.join(out,'controllers-passed.json'),JSON.stringify({pass:true,originalStarted:false}));
 }
 // Authored consumer diagnostic also runs in full qualification. Running it alone

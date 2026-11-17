@@ -9,6 +9,7 @@ import fcntl, hashlib, json, os, pathlib, select, signal, socket, subprocess, sy
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 RUN = pathlib.Path(os.environ.get('CAESAR3_RUN', ROOT/'scratch/runs/20261117-caesar3-current-native-assignment2-food'))
 NATIVE_SECONDS, WATCHDOG_SECONDS, QUIT_RESERVE = 2400, 2420, 240
+GAME_FRESHNESS_SECONDS, MENU_FRESHNESS_SECONDS = 15, 30
 
 def sha(body): return hashlib.sha256(body).hexdigest()
 def save(name, value):
@@ -112,7 +113,7 @@ def original(env, source, module):
          reserveSeconds=QUIT_RESERVE, rootPort=port, args=args, nativeSeconds=NATIVE_SECONDS,
          watchdogSeconds=WATCHDOG_SECONDS, nativeScene=True, bindingContract='native-reviewed-context-v1',
          inputPolicy=dict(confirmationMs=500, physicalUpMs=1750, observationMs=3000,
-                          gameFreshnessSeconds=5, menuFreshnessSeconds=30)))
+                          gameFreshnessSeconds=GAME_FRESHNESS_SECONDS, menuFreshnessSeconds=MENU_FRESHNESS_SECONDS)))
     w = subprocess.Popen([sys.executable, '-B', __file__, 'watchdog', str(start+WATCHDOG_SECONDS)],
                          stdout=subprocess.PIPE, stderr=subprocess.PIPE, start_new_session=True)
     p = None; cleanup = False
@@ -171,6 +172,16 @@ def controller():
     def sourcecheck():
         assert sha(pathlib.Path(__file__).read_bytes())==inputs['sources']['tools/caesar3-current-native.py']
     m.sourcecheck=sourcecheck
+    def reviewed(scene):
+        # Caesar's explicit owner policy; preserve every inherited review and
+        # invocation check without modifying the shared VB/NV controller.
+        rr=m.read(scene+'.json');r=m.read(scene+'-review.json')
+        freshness=GAME_FRESHNESS_SECONDS if r['kind']=='game' else MENU_FRESHNESS_SECONDS
+        assert 0<=time.time()-rr['at']<freshness and 0<=time.time()-r['at']<freshness
+        assert rr['target']==m.identity() and rr['port']==m.PORT and r['rawCompleteScene'] and r['observation'] and r['visibleLabel']
+        assert r['pngSHA256']==rr['pngSHA256']==sha((RUN/(scene+'.png')).read_bytes())
+        return rr,r
+    m.reviewed=reviewed
     mode=sys.argv[2]
     if mode=='capture': return m.capture(sys.argv[3])
     if mode=='review': return m.review(*sys.argv[3:8])
@@ -209,7 +220,7 @@ def controller():
         arm=json.loads(child.stdout.readline());save(name+'-release-arm.json',arm);assert arm['armed']
         command=f'keytext:{y}:{char_code}' if x==-2 else f'keydown:{y}' if x==-1 else f'mousedown:{x}:{y}'
         guard={**owner,'nonce':nonce,'reviewed':True,'intent':dict(review=m.native_review(rr,r)),
-               'deadline':int(min(start+.5,min(rr['at'],r['at'])+(5 if kind=='game' else 30))*1000)}
+               'deadline':int(min(start+.5,min(rr['at'],r['at'])+(GAME_FRESHNESS_SECONDS if kind=='game' else MENU_FRESHNESS_SECONDS))*1000)}
         m.reserve(kind=='quit');assert time.time()<start+.5
         receipt=m.call(dict(action='guarded-input',cmd=command,guard=guard),timeout=max(.001,start+.5-time.time()))
         save(name+'-down.json',dict(at=time.time(),receipt=receipt))
@@ -282,7 +293,7 @@ def run():
     if working:
         # Only our leased files may overlay the sealed published graph.
         helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
-            'tools/native-printable-fixture.cjs', 'test/test-native-printable-input.cjs')
+            'lib/cli-native-scene.js', 'test/test-disciples2-native-paint-binding.cjs')
     if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
     if not working:
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
