@@ -30,12 +30,25 @@ function caller(op,{qt=false,alias=false}={}){
  if(!qt)for(const [modrm,off] of [[0xd9,0x120],[0xc1,0x122],[0xd1,0x124]])code.push(0x8c,modrm,0x3b,0x0e,...word(off),0x74,2,0x0f,0x0b);
  code.push(0x5d,...(qt?[0xca,34,0]:[0xcb]));return {code,reloc};
 }
-function registryImage(op){
+function registryImage(op,{globalKind}={}){
  const old=neLifecycleImage({importEntry:{module:'KERNEL',symbol:op},importInValue:true});
  const b=Buffer.alloc(0x1a00);b.set(old.subarray(0,0x200));b.set([0xb8,1,0,0xcb],0x200);b.set([0xb8,1,0,0xca,2,0],0x220);
  b.writeUInt16LE(0x600,0xc2);b.writeUInt16LE(0x600,0xc6);b.writeUInt16LE(0xa0,0xc8);b.writeUInt16LE(0x1000,0xca);b.writeUInt16LE(0x1000,0xce);
  b.writeUInt16LE(0x40,0xe6); // ordinal 2 VALUE offset
- const c=caller(op);b.set(c.code,0x240);b.writeUInt16LE(1,0x800);b.set([3,1,...word(0x40+c.reloc),1,0,...word(op)],0x802);
+ const c=caller(op);let code=c.code,relocations=[[c.reloc,op]];
+ if(globalKind){
+  const prefix=[],rel=[];const farCall=ordinal=>{rel.push([prefix.length+1,ordinal]);prefix.push(0x9a,0xff,0xff,0,0);};
+  prefix.push(0x6a,0,0x66,0x68,...dword(1024));farCall(15); // actual GlobalAlloc
+  prefix.push(0xa3,0x30,1,0xa3,10,0,0xc7,6,8,0,...word(globalKind==='bounds'?0x3fe:0x12d));
+  if(globalKind==='unterminated')prefix.push(0xa3,6,0,0xc7,6,4,0,0xff,3,0x06,0x8e,0xc0,0x26,0xc6,6,0xff,3,65,0x07);
+  if(globalKind==='freed'){prefix.push(0xff,0x36,0x30,1);farCall(17);}
+  relocations=[...rel,[prefix.length+c.reloc,op]];code=[...prefix,...c.code.slice(0,-1)];
+  if(globalKind!=='freed'){
+   code.push(0x50,0x52,0xff,0x36,0x30,1);relocations.push([code.length+1,17]);code.push(0x9a,0xff,0xff,0,0,0x5a,0x58);
+  }
+  code.push(0xcb);
+ }
+ b.set(code,0x240);b.writeUInt16LE(relocations.length,0x800);relocations.forEach(([at,ordinal],i)=>b.set([3,1,...word(0x40+at),1,0,...word(ordinal)],0x802+i*8));
  return identity(b,'REGTEST');
 }
 function qtRegistryImage({alias=true,op=217}={}){
@@ -45,6 +58,10 @@ function qtRegistryImage({alias=true,op=217}={}){
 const extraWat=String.raw`
  (func (export "reg_test_descriptor") (param $sel i32) (result i32)
   (i32.add (global.get $WIN16_SEG_TABLE) (i32.shl (call $win16_sel_to_index (local.get $sel)) (i32.const 4))))
+ (func (export "reg_test_pool") (result i32)
+  (local $old i32) (local.set $old (call $win16_next_seg_get))
+  (call $win16_next_seg_set (i32.shr_u (global.get $WIN16_SEG_MAX) (i32.const 1))) (local.get $old))
+ (func (export "reg_test_pool_restore") (param $old i32) (call $win16_next_seg_set (local.get $old)))
  (func (export "reg_test_frame") (result i32) (i32.wrap_i64 (global.get $win16_bridge_frame)))
  (func (export "reg_test_stack") (param $n i32) (result i32) (call $win16_reg_stack (local.get $n)))
  (func (export "reg_test_span") (param $far i32) (param $n i32) (param $w i32) (result i32)
@@ -73,10 +90,10 @@ async function main(){
  const str=(off,s)=>{for(let i=0;i<=s.length;i++)e.guest_write8(ptr(off+i),i===s.length?0:s.charCodeAt(i));return far(off);};
  let mutation=null;
  const owner={...e,win16_bridge_invoke_begin(...a){ds=a[2];return e.win16_bridge_invoke_begin(...a);},run(n){mutation?.();mutation=null;return e.run(n);}};
- function test(op,args,check){
-  const life=createNeLifecycle(owner,memory,[['REGTEST',registryImage(op)]],{maxBlocks:4096,sliceBlocks:1});const id=life.load('REGTEST');
+ function test(op,args,check,options={}){
+  const life=createNeLifecycle(owner,memory,[['REGTEST',registryImage(op,options)]],{maxBlocks:4096,sliceBlocks:1});const id=life.load('REGTEST');
   const before=snap();for(const [i,arg] of args().entries())write(ptr(i*4),arg);
-  const result=life.call(id,'VALUE');assert.deepEqual(snap(),before);check(result);life.release(id);assert.equal(e.win16_ft_checkpoint(),0n);records.push({op,result,restored:true});return result;
+  const oldNext=options.pooled?e.reg_test_pool():null;let result;try{result=life.call(id,'VALUE');}finally{if(oldNext!==null)e.reg_test_pool_restore(oldNext);}assert.deepEqual(snap(),before);check(result);life.release(id);assert.equal(e.win16_ft_checkpoint(),0n);records.push({op,result,restored:true,...options});return result;
  }
  let key;
  test(218,()=>[0x80000001,str(0x200,'Software\\Win16RegistryProof'),far(0x100)],r=>{assert.equal(r,0);key=read(ptr(0x100));assert(key);});
@@ -100,6 +117,21 @@ async function main(){
  test(221,()=>[key,str(0x200,'Child'),1,str(0x300,'default'),8],r=>assert.equal(r,0));
  test(224,()=>{write(ptr(0x104),32);return [key,str(0x200,'Child'),far(0x300),far(0x104)];},r=>{assert.equal(r,0);assert.equal(read(ptr(0x104)),8);assert.equal(read(ptr(0x300)),0x61666564);});
  test(216,()=>[key,0,far(0x300),32],r=>{assert.equal(r,0);assert.equal(read(ptr(0x300)),0x6c696843);});
+ function globalCases(pooled){
+  for(const op of [216,217])for(const globalKind of ['valid','bounds','freed',...(op===217?['unterminated']:[])]){
+   let started;
+   test(op,()=>{started=calls.length;return op===216?[0x80000001,0,far(0),251]:[0x80000001,str(0x200,'Software\\Win16RegistryProof'),far(0)];},r=>{
+    assert.equal(r,globalKind==='valid'?0:87,globalKind);
+    const sel=e.guest_read32(ptr(0x130))&65535,descriptor=e.reg_test_descriptor(sel),flags=v.getUint32(descriptor+8,true);
+    assert(flags&0x20000,'actual GlobalFree retired output allocation');assert.equal(Boolean(flags&0x40000),pooled);
+    const address=e.win16_seg_base(sel>>>3)+0x12d;
+    if(globalKind==='valid'){assert(calls.length>started);if(op===217)assert.equal(imp.host.reg_close_key(read(address)),0);else assert(e.guest_read8(address));}
+    else assert.equal(calls.length,started,'invalid global output/input never reaches backend');
+    assert.equal(e.reg_test_span((sel<<16|0x12d)>>>0,4,1),0,'freed global span rejected');
+   },{globalKind,pooled});
+  }
+ }
+ globalCases(false);
  test(223,()=>{write(ptr(0x104),32);write(ptr(0x108),32);return [key,0,far(0x200),far(0x104),0,far(0x100),far(0x300),far(0x108)];},r=>assert.equal(r,0));
  test(227,()=>[key],r=>assert.equal(r,0));
  test(222,()=>[key,str(0x200,'Binary')],r=>assert.equal(r,0));
@@ -202,6 +234,9 @@ async function main(){
   }finally{await host.stop();}
   assert(link._loaderRetirementReceipt?.retired);records.push({kind:'actual-cpu-worker-qt',shift,alias,joined:true});
  }
+ // Native GlobalAlloc also hands out pooled selectors above the arena slots.
+ new Uint8Array(memory.buffer).set(f.bytes,e.get_staging());e.load_pe(f.bytes.length);
+ globalCases(true);
  // Ordinary NE executable: index-1 code selector, no PE invocation context.
  {
   const b=registryImage(217),n=0x80,c=caller(217);b.writeUInt16LE(1,n+12);b.writeUInt16LE(0x40,n+0x14);b.writeUInt16LE(1,n+0x16);b.writeUInt16LE(0xff0,n+0x18);b.writeUInt16LE(2,n+0x1a);

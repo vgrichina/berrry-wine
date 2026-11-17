@@ -3999,14 +3999,43 @@
           (i32.and (i32.eqz (i32.and (local.get $flags) (global.get $WIN16_SEG_BIG)))
             (i32.eq (i32.and (local.get $flags) (i32.const 1)) (local.get $data)))))))
 
+  ;; GlobalAlloc descriptors use allocator flags, not NE code/data flags.
+  ;; Accept only a live owned head (including pooled small blocks), bounded
+  ;; by both its descriptor and actual rounded allocation, never a freed slot.
+  (func $win16_reg_global_limit (param $sel i32) (result i32)
+    (local $i i32) (local $flags i32) (local $base i32) (local $limit i32) (local $size i32)
+    (local.set $i (call $win16_sel_to_index (local.get $sel)))
+    (if (i32.or (i32.eqz (local.get $i)) (i32.or
+      (i32.ge_u (local.get $i) (global.get $WIN16_SEL_MAX))
+      (i32.ne (local.get $sel) (call $win16_index_to_sel (local.get $i))))) (then (return (i32.const 0))))
+    (if (i32.lt_u (local.get $i) (global.get $WIN16_SEG_MAX))
+      (then (if (i32.ge_u (local.get $i) (call $win16_next_seg_get)) (then (return (i32.const 0)))))
+      (else (if (i32.or (i32.lt_u (local.get $i) (global.get $WIN16_SUB_FIRST))
+        (i32.ge_u (local.get $i) (call $win16_sub_next_get))) (then (return (i32.const 0))))))
+    (local.set $flags (call $win16_gseg_field (local.get $i) (i32.const 8)))
+    (if (i32.and (i32.ne (local.get $flags) (global.get $WIN16_SEG_GLOBAL))
+      (i32.ne (local.get $flags) (i32.or (global.get $WIN16_SEG_GLOBAL) (global.get $WIN16_SEG_POOLED))))
+      (then (return (i32.const 0))))
+    (local.set $base (call $win16_seg_base (local.get $i)))
+    (if (i32.ne (call $win16_gblock_at (local.get $base)) (local.get $i)) (then (return (i32.const 0))))
+    (local.set $limit (call $win16_seg_limit (local.get $i)))
+    (local.set $size (call $win16_gseg_field (local.get $i) (i32.const 12)))
+    (if (i32.or (i32.eqz (local.get $limit)) (i32.gt_u (local.get $limit) (i32.const 65536))) (then (return (i32.const 0))))
+    (if (i32.or (i32.lt_u (local.get $base) (call $win16_arena_base))
+      (i32.gt_u (local.get $base) (i32.sub (i32.add (call $win16_arena_base)
+        (i32.mul (global.get $WIN16_SEG_MAX) (i32.const 65536))) (local.get $limit)))) (then (return (i32.const 0))))
+    (select (local.get $size) (local.get $limit) (i32.lt_u (local.get $size) (local.get $limit))))
+
   (func $win16_reg_span (param $far i32) (param $bytes i32) (param $write i32) (result i32)
     (local $sel i32) (local $off i32) (local $limit i32) (local $flags i32)
-    (local $alias i32) (local $token i64) (local $f i32) (local $n i32) (local $p i32)
+    (local $global_limit i32) (local $alias i32) (local $token i64) (local $f i32) (local $n i32) (local $p i32)
     (local.set $sel (i32.shr_u (local.get $far) (i32.const 16)))
     (local.set $off (i32.and (local.get $far) (i32.const 65535)))
     (if (i32.eqz (local.get $sel)) (then (return (i32.const 0))))
-    (if (i32.eqz (i32.or (call $win16_reg_selector (local.get $sel) (i32.const 1))
-      (call $win16_reg_selector (local.get $sel) (i32.const 0)))) (then
+    (local.set $global_limit (call $win16_reg_global_limit (local.get $sel)))
+    (if (i32.eqz (i32.or (local.get $global_limit)
+      (i32.or (call $win16_reg_selector (local.get $sel) (i32.const 1))
+        (call $win16_reg_selector (local.get $sel) (i32.const 0))))) (then
       ;; Only the running QT ancestor's exact leased stack may name memory
       ;; outside the arena. nested_owner checks actor, request, connection,
       ;; generation, process, retirement and native return ownership.
@@ -4023,14 +4052,21 @@
       (if (i32.eqz (local.get $alias)) (then (return (i32.const 0))))))
     (local.set $flags (i32.load offset=8 (i32.add (global.get $WIN16_SEG_TABLE)
       (i32.shl (call $win16_sel_to_index (local.get $sel)) (i32.const 4)))))
-    ;; NE bit 7 is read-only data / execute-only code. A read-only data
-    ;; descriptor is readable, while neither code nor read-only data is output.
-    (if (local.get $write) (then
-      (if (i32.or (i32.eqz (i32.and (local.get $flags) (i32.const 1)))
-        (i32.ne (i32.and (local.get $flags) (i32.const 0x80)) (i32.const 0))) (then (return (i32.const 0)))))
-      (else (if (i32.eq (i32.and (local.get $flags) (i32.const 0x81)) (i32.const 0x80))
-        (then (return (i32.const 0))))))
-    (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (local.get $sel))))
+    (if (local.get $global_limit)
+      (then (local.set $limit (local.get $global_limit)))
+      (else
+        ;; Reject freed/malformed allocator descriptors rather than interpreting
+        ;; their zero NE data bit as a readable code descriptor.
+        (if (i32.and (local.get $flags) (global.get $WIN16_SEG_GLOBAL)) (then (return (i32.const 0))))
+        ;; NE bit 7 is read-only data / execute-only code. A read-only data
+        ;; descriptor is readable, while neither code nor read-only data is output.
+        (if (local.get $write) (then
+          (if (i32.or (i32.eqz (i32.and (local.get $flags) (i32.const 1)))
+            (i32.ne (i32.and (local.get $flags) (i32.const 0x80)) (i32.const 0))) (then (return (i32.const 0)))))
+          (else (if (i32.eq (i32.and (local.get $flags) (i32.const 0x81)) (i32.const 0x80))
+            (then (return (i32.const 0))))))
+        (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (local.get $sel))))
+      ))
     (if (i32.or (i32.gt_u (local.get $bytes) (local.get $limit))
       (i32.gt_u (local.get $off) (i32.sub (local.get $limit) (local.get $bytes)))) (then (return (i32.const 0))))
     (local.set $p (call $win16_far_to_guest (local.get $sel) (local.get $off)))
@@ -4043,7 +4079,9 @@
     (local.set $p (call $win16_reg_span (local.get $far) (i32.const 1) (i32.const 0)))
     (if (i32.eqz (local.get $p)) (then (return (i32.const 0))))
     (local.set $off (i32.and (local.get $far) (i32.const 65535)))
-    (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (i32.shr_u (local.get $far) (i32.const 16)))))
+    (local.set $limit (call $win16_reg_global_limit (i32.shr_u (local.get $far) (i32.const 16))))
+    (if (i32.eqz (local.get $limit)) (then
+      (local.set $limit (call $win16_seg_limit (call $win16_sel_to_index (i32.shr_u (local.get $far) (i32.const 16)))))))
     (loop $scan
       (if (i32.eqz (call $gl8 (i32.add (local.get $p) (local.get $n)))) (then (return (local.get $p))))
       (local.set $n (i32.add (local.get $n) (i32.const 1)))
