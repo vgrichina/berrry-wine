@@ -44,20 +44,25 @@ function controllerFixture(){
  const code=Buffer.from([0x68,...u32(50),0xff,0x15,...u32(0x401204),...quit,0xe9,...u32(guestAt+quit.length-(stub+11+quit.length+5))]);
  code.copy(b,raw(0x2d00));b.fill(0x90,at,at+quit.length);b[at]=0xe9;b.writeInt32LE(stub-guestAt-5,at+1);return b;
 }
-async function reviewedController(out,late=false,printable=false){
- fs.mkdirSync(out);const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n',{flag:'wx'});
- fs.copyFileSync(path.join(out,'../../runtime-inputs.json'),path.join(out,'runtime-inputs.json'));
+async function reviewedController(out,late=false,printable=false,personal=false,stale=false){
+ fs.mkdirSync(out);const save=(n,v)=>{
+  const target=path.join(out,n),pending=target+'.'+process.pid+'.pending';
+  fs.writeFileSync(pending,JSON.stringify(v,null,2)+'\n',{flag:'wx',flush:true});
+  fs.linkSync(pending,target);fs.unlinkSync(pending);
+ };
+ fs.copyFileSync(path.join(out,personal?'../runtime-inputs.json':'../../runtime-inputs.json'),path.join(out,'runtime-inputs.json'));
  const image=path.join(out,'reviewed.exe');fs.writeFileSync(image,printable?require('../tools/native-printable-fixture.cjs').fixture():controllerFixture());
  const reservation=net.createServer();await new Promise(r=>reservation.listen(0,'127.0.0.1',r));const port=reservation.address().port;await new Promise(r=>reservation.close(r));
  const invocationToken=crypto.randomUUID(),start=Date.now()/1000;
  save('launch.json',{at:start,deadline:start+240,gameplayCutoff:start+60,reserveSeconds:180,rootPort:port});
- const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{if(p)try{process.kill(-p,'SIGTERM')}catch{};process.exit(2)},35000);console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
+ const wd=cp.spawn(process.execPath,['-e',`let p;const t=setTimeout(()=>{if(p)try{process.kill(-p,'SIGTERM')}catch{};process.exit(2)},${personal?120000:35000});console.log('ARMED');process.stdin.on('data',b=>p=+b);process.stdin.on('end',()=>clearTimeout(t));`]);
  let wo='',we='';wd.stdout.on('data',b=>wo+=b);wd.stderr.on('data',b=>we+=b);const ww=once(wd,'close');
- while(!wo.includes('ARMED'))await pause(2);save('watchdog-arm.json',{pid:wd.pid,beforeNative:true,seconds:35});
- const s=startControlSession(['test/run.js','--exe='+image,'--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+invocationToken,'--no-build','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds=30','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
+ while(!wo.includes('ARMED'))await pause(2);save('watchdog-arm.json',{pid:wd.pid,beforeNative:true,seconds:personal?120:35});
+ const s=startControlSession(['test/run.js','--exe='+image,'--native-exit-receipt='+path.join(out,'native-exit.json'),'--native-invocation-token='+invocationToken,'--no-build','--threads','--real-ticks','--screen=800x600','--control-stdin','--control='+port,'--max-seconds='+ (personal?115:30),'--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],{spawnOptions:{detached:true}});
  wd.stdin.write(String(s.child.pid));
  const st=fs.readFileSync('/proc/'+s.child.pid+'/stat','utf8'),info={pid:s.child.pid,startToken:st.slice(st.lastIndexOf(')')+2).split(' ')[19],invocationToken,bootId:fs.readFileSync('/proc/sys/kernel/random/boot_id','utf8').trim()};save('native-pid.json',info);
- s.child.once('close',(exit,signal)=>save('native-wait.json',{...info,exit,signal,actualWait:true,disposition:'normal',atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
+ let hostCleanup=false;
+ s.child.once('close',(exit,signal)=>save('native-wait.json',{...info,exit,signal,actualWait:true,hostCleanup,disposition:hostCleanup?'cleanup':'normal',atWait:Date.now()/1000,atWaitMono:Number(process.hrtime.bigint())/1e9,stdoutEOF:s.child.stdout.readableEnded,stderrEOF:s.child.stderr.readableEnded}));
  let seq=0;
  async function control(args,expected=0){
   const c=cp.spawn('python3',['-B','tools/caesar3-current-native.py','control',...args],{env:{...process.env,CAESAR3_RUN:out},timeout:7000});let a='',b='';c.stdout.on('data',v=>a+=v);c.stderr.on('data',v=>b+=v);const [exit,signal]=await once(c,'close');
@@ -66,7 +71,25 @@ async function reviewedController(out,late=false,printable=false){
  }
  try{
   let snap;const end=Date.now()+15000;do{snap=await s.send({action:'snapshot'});if(snap.focusWindow?.live&&snap.windows.length>=2)break;assert(Date.now()<end);await pause(20);}while(true);
-  if(late){
+  if(personal){
+   save('personal-ready.json',{at:Date.now(),hwnd:snap.mainHwnd,originalStarted:false});
+   const due=Date.now()+100000;
+   while(!fs.existsSync(path.join(out,'stop-personal.json')) && s.child.exitCode===null && !fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json'))){assert(Date.now()<due);await pause(10);}
+   save('personal-finished.json',{at:Date.now(),originalStarted:false});return;
+  }
+  if(stale){
+   await control(['capture','before']);
+   await control(['review','before','Authored binding only; complete native scene.','Fixture','install',snap.mainHwnd]);
+   await control(['bind','before']);await control(['capture','stale']);
+   await pause(5050);
+   const before=fs.readFileSync(path.join(out,'requests.jsonl'),'utf8');
+   await control(['review-intent','refused','stale','500','220','game','Authored stale scene; must refuse before any effect.','Fixture',snap.mainHwnd],1);
+   assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));
+   assert(!fs.existsSync(path.join(out,'refused-intent.json')));assert(!fs.existsSync(path.join(out,'refused-down.json')));
+   await control(['capture','forbidden'],1);await control(['bind','stale'],1);
+   assert.equal(fs.readFileSync(path.join(out,'requests.jsonl'),'utf8'),before);
+   save('assertions.json',{pass:true,actualElapsedFreshnessRefused:true,permanentUNKNOWN:true,zeroDown:true,zeroLaterRequests:true});
+  }else if(late){
    // Only this authored fixture delays its encoder. Guest clock and code stay ordinary.
    await s.send({action:'eval',code:"(()=>{const raw=renderer.canvas.toBufferSync.bind(renderer.canvas);renderer.canvas.toBufferSync=(...a)=>{const end=performance.now()+3010;while(performance.now()<end){}return raw(...a)};return true})()"});
    await control(['capture','late'],1);assert(fs.existsSync(path.join(out,'PERMANENT-UNKNOWN.json')));assert(!fs.existsSync(path.join(out,'late.png')));
@@ -77,7 +100,14 @@ async function reviewedController(out,late=false,printable=false){
   }else{
    await control(['capture','before']);
    await control(['review','before','Authored test only: complete ordinary USER window, finite left press.','Fixture','install',snap.mainHwnd]);
-   await control(['bind','before']);await control(printable?['intent','click','before','-2','67','install','67']:['intent','click','before','500','220','install']);
+   await control(['bind','before']);
+   if(printable)await control(['intent','click','before','-2','67','install','67']);
+   else{
+    await control(['capture','fresh']);
+    await control(['review-intent','click','fresh','500','220','game','Authored test only: complete USER window, one finite left press.','Fixture',snap.mainHwnd]);
+    const timing=JSON.parse(fs.readFileSync(path.join(out,'click-intent.json'))).latency;
+    assert(timing.captureAgeAtIntentMs<5000);assert(timing.personalReviewAt>=timing.captureCompletedAt);
+   }
    const rr=JSON.parse(fs.readFileSync(path.join(out,'click-observed.json')));
    assert.equal(rr.snapshot.windows.find(w=>w.hwnd===snap.mainHwnd).title,printable?'DCU':'UP after DOWN');
    if(printable){
@@ -92,7 +122,7 @@ async function reviewedController(out,late=false,printable=false){
    save('assertions.json',{pass:true,exactController:true,nativePointer:true,nativeKeyboard:true,nativeQuit:true,syntheticAuthoredAttestation:true});
   }
  }finally{
-  if(s.child.exitCode===null&&s.child.signalCode===null)process.kill(-s.child.pid,'SIGTERM');await s.exited;
+  if(s.child.exitCode===null&&s.child.signalCode===null){hostCleanup=true;process.kill(-s.child.pid,'SIGTERM');}await s.exited;
   fs.writeFileSync(path.join(out,'native.log'),s.output());wd.stdin.end();const [exit,signal]=await ww;save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
@@ -113,10 +143,16 @@ async function main(out){
  for(const worker of [false,true])await require('./test-native-printable-input.cjs').native(path.join(out,worker?'printable-CPUWorker':'printable-cooperative'),{worker});
  await require('./test-native-printable-input.cjs').ownerNative(out);
  await consumerDiagnostic(path.join(out,'consumer'));
+ await controllerFixtures(out);
+ fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,sealedManifest:globalThis.__disciples2Manifest}));
+}
+async function controllerFixtures(out){
+ fs.mkdirSync(out,{recursive:true});
  await reviewedController(path.join(out,'controller'));
  await reviewedController(path.join(out,'printable-controller'),false,true);
  await reviewedController(path.join(out,'late-controller'),true);
- fs.writeFileSync(path.join(out,'assertions.json'),JSON.stringify({pass:true,originalStarted:false,sealedManifest:globalThis.__disciples2Manifest}));
+ await reviewedController(path.join(out,'stale-controller'),false,false,false,true);
+ fs.writeFileSync(path.join(out,'controllers-passed.json'),JSON.stringify({pass:true,originalStarted:false}));
 }
 // Authored consumer diagnostic also runs in full qualification. Running it alone
 // never qualifies or authorizes an original-game launch.
@@ -333,5 +369,5 @@ async function textBoundary(out){
   save('watchdog-wait.json',{exit,signal,actualWait:true,stdoutEOF:wd.stdout.readableEnded,stderrEOF:wd.stderr.readableEnded,stdout:wo,stderr:we});assert.equal(exit,0);
  }
 }
-if(require.main===module)(process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
+if(require.main===module)(process.argv[2]==='--controller-fixtures'?controllerFixtures(path.resolve(process.argv[3])):process.argv[2]==='--personal-fixture'?reviewedController(path.resolve(process.argv[3]),false,false,true):process.argv[2]==='--text-diagnostic'?textBoundary(path.resolve(process.argv[3])):process.argv[2]==='--consumer-diagnostic'?consumerDiagnostic(path.resolve(process.argv[3])):main(path.resolve(process.argv[2]))).catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={keyboard,main,titleConsumerFixture,consumerDiagnostic,consumerUnits,textFixture,textBoundary};

@@ -164,6 +164,7 @@ def controller():
     A completed frame is an observation for the next personal review, never
     automatic proof of a game objective or permission for another input.
     """
+    invoked_at=time.time()
     inputs=json.loads((RUN/'runtime-inputs.json').read_text())
     m=published_module('tools/vb5cce-reviewed-control.py', inputs['gitSHA'])
     m.R=RUN; m.PORT=json.loads((RUN/'launch.json').read_text())['rootPort']
@@ -174,13 +175,22 @@ def controller():
     if mode=='capture': return m.capture(sys.argv[3])
     if mode=='review': return m.review(*sys.argv[3:8])
     if mode=='bind': return m.bind(sys.argv[3])
-    assert mode=='intent'
+    assert mode in ('intent','review-intent')
     name,scene,x,y,kind=sys.argv[3:8];x=int(x);y=int(y)
-    char_code=int(sys.argv[8]) if x==-2 else None
+    offset=11 if mode=='review-intent' else 8
+    char_code=int(sys.argv[offset]) if x==-2 else None
     if x==-2: assert kind!='quit' and 32<=char_code<=126 and 1<=y<=255
     child=None
     try:
-        launch=m.reserve(kind=='quit'); rr,r=m.reviewed(scene)
+        if mode=='review-intent':
+            # A single explicitly supplied personal review and finite intent.
+            # Retain the original capture clock; never recapture or replay.
+            m.reserve(kind=='quit')
+            m.review(scene,sys.argv[8],sys.argv[9],kind,sys.argv[10])
+        launch=m.reserve(kind=='quit')
+        try: rr,r=m.reviewed(scene)
+        except AssertionError as e:
+            raise AssertionError('personal review preflight refused before intent/DOWN; immutable scene/review clocks and identity retained') from e
         assert kind in ('install','game','quit') and r['kind']==kind
         snap=rr['snapshot']
         target=next(w for w in snap['windows'] if w['hwnd']==snap['mainHwnd'])
@@ -190,7 +200,10 @@ def controller():
         owner=m.read('input-owner.json'); start=time.time(); nonce=str(uuid.uuid4())
         invocation=dict(rr['target']); assert invocation==m.identity() and m.same_live_invocation(invocation)
         save(name+'-intent.json',dict(scene=scene,x=x,y=y,charCode=char_code,kind=kind,nonce=nonce,at=start,
-             confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3))
+             confirmationDeadline=start+.5,physicalUpDeadline=start+1.75,observationDeadline=start+3,
+             latency=dict(controllerInvokedAt=invoked_at,captureStartedAt=rr['at'],
+                          captureCompletedAt=rr['completedAt'],personalReviewAt=r['at'],
+                          preflightMs=(start-invoked_at)*1000,captureAgeAtIntentMs=(start-rr['at'])*1000)))
         child=m.ArmedRelease(name,owner['owner'],start+1.4)
         ready,_,_=select.select([child.stdout],[],[],.15); assert ready,'independent release not prearmed'
         arm=json.loads(child.stdout.readline());save(name+'-release-arm.json',arm);assert arm['armed']
@@ -249,8 +262,10 @@ def run():
     RUN.mkdir(parents=True, exist_ok=True); free_disk()
     requested = '--original' in sys.argv
     text_diagnostic = '--text-diagnostic' in sys.argv
+    personal_fixture = '--personal-fixture' in sys.argv
+    controller_fixtures = '--controller-fixtures' in sys.argv
     outer_fixture = '--outer-fixture' in sys.argv
-    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic
+    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
@@ -264,11 +279,27 @@ def run():
     helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
         'test/run.js', 'lib/cli-guarded-input.js', 'lib/cli-input-owner.js', 'lib/cli-native-printable.js',
         'tools/native-printable-fixture.cjs', 'test/test-native-printable-input.cjs')
+    if working:
+        # Only our leased files may overlay the sealed published graph.
+        helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
+            'tools/native-printable-fixture.cjs', 'test/test-native-printable-input.cjs')
     if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
     if not working:
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
+            if controller_fixtures:
+                helper.checked('controller-fixtures', ['node','test/test-caesar3-current-native.cjs',
+                    '--controller-fixtures',str(RUN/'authored')],env,(source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,
+                    safeForOriginal=False,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
+            if personal_fixture:
+                helper.checked('personal-fixture', ['node','test/test-caesar3-current-native.cjs',
+                    '--personal-fixture',str(RUN/'personal')],env,(source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,
+                    safeForOriginal=False,gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
             if text_diagnostic:
                 helper.checked('text-diagnostic', ['node','test/test-caesar3-current-native.cjs',
                     '--text-diagnostic',str(RUN/'text')],env,(source,module))
