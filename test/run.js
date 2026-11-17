@@ -7662,6 +7662,7 @@ async function main() {
           threadId: we.get_window_thread(h) >>> 0, controlClass: 16 };
       })(),
       physicalUp: !(renderer?._mouseButtonsMask || Object.values(renderer?._physicalKeys || {}).some(Boolean)),
+      nativeDialogBox: require('../lib/cli-native-user-windows').nativeDialogBoxIdentity(instance,threadManager),
       nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },
       screen: renderer && renderer.canvas
         ? { w: renderer.canvas.width | 0, h: renderer.canvas.height | 0 } : null,
@@ -7749,6 +7750,8 @@ async function main() {
       .every(k => a[k] === b[k]);
   guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
     nativeDelivery: true,
+    captureNativeControl: (event,intent) => require('../lib/cli-native-user-windows').captureNativeButton(event,intent,controlSnapshot(),instance,threadManager),
+    confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),
     captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
     validateDelivery: expected => JSON.stringify(nativeScene.reviewedContext(controlSnapshot())) === JSON.stringify(expected),
     validateIntent: intent => {

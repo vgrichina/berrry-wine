@@ -67,7 +67,7 @@ def capture(name):
     except BaseException as e:fail(name,e);raise
 def context(s):
     return {k:s[k] for k in ('mainHwnd','windows','modalHwnd','focus','focusTopLevel','focusWindow',
-                            'capture','physicalUp','nativeProcess','nativeMessageBox','screen')}
+                            'capture','physicalUp','nativeProcess','nativeMessageBox','nativeDialogBox','screen')}
 def review(scene,description,label,kind,target):
     rr=read(scene+'.json')
     assert hashlib.sha256((R/(scene+'.png')).read_bytes()).hexdigest()==rr['pngSHA256']

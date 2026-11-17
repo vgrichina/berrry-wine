@@ -12,6 +12,11 @@ HEAD=subprocess.check_output(['git','rev-parse',os.environ.get('DELPHI5_GIT','HE
 OWN_FDS=set()
 ORIGINAL_STARTED=False
 MEDIA=ROOT/'test/binaries/candidates/vb5cce-original'
+OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs',
+    'tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','lib/cli-native-user-windows.js',
+    'src/00-regions.wat','src/13-exports.wat','src/09a-handlers1-user.wat','src/09c3a-dialog-runtime.wat',
+    'lib/cli-guarded-input.js','lib/region-map.generated.js',
+    'test/test-vb5-native-dialog-identity.cjs')
 
 def sha(b):return hashlib.sha256(b).hexdigest()
 def publish(path,value):
@@ -44,8 +49,20 @@ def sources():
     p.stdin.close();assert p.wait()==0
     # All tracked code is supplied from one Git tree, including compiler and tests.
     # Only these owned helpers overlay Git; published process-desktop is untouched.
-    for name in ('tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','test/run.js'):
+    for name in OWN_SOURCES:
         files[name]=(ROOT/name).read_bytes()
+    # The shared runner contains another worker's delivery WIP. Overlay only
+    # this task's single snapshot field onto the selected published Git body.
+    field=b"      nativeDialogBox: require('../lib/cli-native-user-windows').nativeDialogBoxIdentity(instance,threadManager),\n"
+    if field not in files['test/run.js']:
+        anchor=b'      nativeProcess: { pid: process.pid, executable: EXE_PROCESS_GUEST_PATH || EXE_PATH },\n'
+        assert files['test/run.js'].count(anchor)==1
+        files['test/run.js']=files['test/run.js'].replace(anchor,field+anchor)
+    hooks=b"    captureNativeControl: (event,intent) => require('../lib/cli-native-user-windows').captureNativeButton(event,intent,controlSnapshot(),instance,threadManager),\n    confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),\n"
+    if hooks not in files['test/run.js']:
+        anchor=b'    nativeDelivery: true,\n'
+        assert files['test/run.js'].count(anchor)==1
+        files['test/run.js']=files['test/run.js'].replace(anchor,anchor+hooks)
     return files
 def checked(name,args,env,fds,expected=0):
     p=subprocess.Popen(args,cwd=ROOT,env=env,pass_fds=fds,stdout=subprocess.PIPE,stderr=subprocess.PIPE,start_new_session=True)
@@ -79,6 +96,7 @@ def run():
     original='--original' in sys.argv or passive
     assert not (original and '--baseline-paint' in sys.argv)
     if original:
+        assert not os.environ.get('VB5_DIALOG_MODES') and not os.environ.get('DELPHI5_NATIVE_MODES'), 'original requires full default qualification'
         body=(MEDIA/'vb5ccein.exe').read_bytes()
         assert len(body)==7479944 and sha(body)=='022af94b651cd9d31e0676a6819dd5085940893f1ecc4abaa85b48c30de6f318'
         assert sha((MEDIA/'setupapi.dll').read_bytes())=='51f2682279e28386aa9c0eb8ba4f8ac3000c9ff75cf7e2456e8cdd9f0c544159'
@@ -98,7 +116,7 @@ def run():
     source=seal('vb5-source',pool)
     preload=seal('vb5-preload',files['tools/disciples2-current-native-source-view.cjs'])
     patches=[]
-    for name in ['tools/vb5cce-original-runtime.py','test/test-vb5cce-original-current.cjs','tools/vb5cce-reviewed-control.py','lib/cli-native-scene.js','test/run.js']:
+    for name in (*OWN_SOURCES,'test/run.js'):
         tracked=subprocess.run(['git','cat-file','-e',HEAD+':'+name],cwd=ROOT,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
         diff=subprocess.run(['git','diff','--binary',HEAD,'--',name] if tracked else
              ['git','diff','--no-index','--binary','--','/dev/null',name],cwd=ROOT,capture_output=True)
@@ -137,6 +155,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if '--dialogbox-only' in sys.argv:
+        checked('native-dialogbox',['node','test/test-vb5-native-dialog-identity.cjs',str(RUN/'dialogbox-qualification')],env,(source,module))
+        return
     if '--first-dialog-only' in sys.argv or original:
         checked('first-dialog',['node','test/test-vb5cce-original-current.cjs','--first-dialog',str(RUN/'first-dialog')],env,(source,module))
         if '--first-dialog-only' in sys.argv:return
@@ -171,6 +192,9 @@ def qualify(env,files,source,module):
     # runtime's loader; retain both actual desktop transport tests here.
     checked('transport-after',['node','--test','--test-name-pattern=desktop','test/test-delphi5-original-install.cjs'],env,(source,module))
     checked('native-context-guards',['node','test/test-cli-native-scene-context.cjs','--unit'],env,(source,module))
+    checked('vb-context-guards',['node','test/test-vb5cce-original-current.cjs','--unit'],env,(source,module))
+    checked('native-button-guards',['node','test/test-vb5-native-dialog-identity.cjs','--unit'],env,(source,module))
+    checked('native-dialogbox',['node','test/test-vb5-native-dialog-identity.cjs',str(RUN/'dialogbox-qualification')],env,(source,module))
     checked('native-controller',['node','test/test-vb5cce-original-current.cjs',str(RUN/'native-qualification')],env,(source,module))
     admission=json.loads((RUN/'native-qualification/vb-original-admission.json').read_text())
     save('qualification.json',dict(passed=admission['safeForVBOriginal'],generatedTestsPassed=True,

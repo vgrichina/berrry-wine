@@ -77,6 +77,13 @@
       "baseSHA256": "42cfc02c59fb2b7178a2becec3b34f781050122c23293a12045f6b5027be38b9",
       "sha256": "f19189191c7d106999a70c134d0d7dbe08c703c8dc38ab680ec25103061d3ed5",
       "reason": "20261117 passive current-display observation: renderer-only executing writer or in-flight paint now retains the existing one owner-bound cancellable ticket until ordinary unheld complete composition/display/readback, even without queued host flags. Request records immutable boolean predicates only, schedules no work, reads no in-flight source, releases no hold and adds no guest callback, timer, invocation, clock or input admission. Existing complete/partial validation, replacement refusal and detached ticket copies remain authoritative. General invocation ownership remains pending. Run 20261117-boids-held-display-capture."
+    },
+    {
+      "file": "src/09a-handlers1-user.wat",
+      "name": "$handle_DialogBoxParamA",
+      "baseSHA256": "6ab4c8eb1ba74c919323924e51e6e3091868946ddeea36905feff099644125c6",
+      "sha256": "c08da8f4c33135fea46a3ff44ad4edaa4310b5bd16099bc7e52dae12522726ba",
+      "reason": "Capture an immutable native USER generation, process/thread, owner, callback and return site after template creation and before guest WM_INITDIALOG. Read-only observation requires the executing actor active pump, unchanged callback/return site, live generation and no EndDialog. Existing guest stack nesting, callback frames, return cleanup and general invocation ownership remain unchanged/pending. Native x86 DialogBox tests qualify this observation separately."
     }
   ],
   "additions": [

@@ -584,6 +584,8 @@
     (local $cx i32) (local $cy i32) (local $cw i32) (local $chh i32)
     (local $px i32) (local $py i32) (local $style i32) (local $ch_lp i32)
     (local $hit i32) (local $dispatchable i32)
+    (local $native_button i32) (local $native_generation i64)
+    (local $native_pid i32) (local $native_tid i32)
     (local.set $px (i32.shr_s (i32.shl (local.get $lParam) (i32.const 16)) (i32.const 16)))
     (local.set $py (i32.shr_s (local.get $lParam) (i32.const 16)))
     (if (i32.and
@@ -691,8 +693,22 @@
                 (then
                   (global.set $dialog_button_capture_parent (local.get $parent))
                   (global.set $dialog_button_capture_hwnd (local.get $ch))))
+              ;; Capture the actual WAT BUTTON's identity before callbacks can
+              ;; destroy it. Only this precise dispatch-return path publishes
+              ;; a receipt; a host handler, queued edge or class tag cannot.
+              (local.set $native_button (i32.and
+                (i32.and (i32.eq (local.get $cls) (i32.const 1))
+                  (i32.eq (local.get $msg) (i32.const 0x0201)))
+                (i32.ge_u (call $wnd_table_get (local.get $ch)) (i32.const 0xFFFF0000))))
+              (local.set $native_generation (call $wnd_lookup_generation (local.get $ch)))
+              (local.set $native_pid (call $current_process_id))
+              (local.set $native_tid (call $wnd_get_thread (local.get $ch)))
               (drop (call $wnd_send_message (local.get $ch)
                       (local.get $msg) (local.get $wParam) (local.get $ch_lp)))
+              (if (local.get $native_button)
+                (then (call $native_button_returned (local.get $ch) (local.get $native_generation)
+                  (local.get $native_pid) (local.get $native_tid) (local.get $parent)
+                  (local.get $msg) (local.get $wParam))))
               (return (i32.const 1))))))
       (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
       (br $walk)))

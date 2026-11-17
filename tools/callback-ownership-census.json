@@ -6172,16 +6172,21 @@
         "$combobox_hit_h",
         "$dialog_route_mouse",
         "$combobox_close_dropdown",
+        "$wnd_table_get",
+        "$wnd_lookup_generation",
+        "$current_process_id",
+        "$wnd_get_thread",
         "$wnd_send_message",
+        "$native_button_returned",
         "$combobox_close_dropdown"
       ],
       "exports": [
         "dialog_route_mouse"
       ],
       "targets": [],
-      "sha256": "2554cc42c531268f6cf81f9a0d75f582865d5b383eef6430e21283128a7f4c91",
+      "sha256": "b139f6ac05494f56062b387490356cdb41a5343fb8d330ea9a616bd1be9a4c7b",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Existing synchronous native control dispatch retains its callback/frame/continuation lifetime. After an actual native WAT BUTTON WM_LBUTTONDOWN dispatch returns, publish one actor-local sequenced historical USER identity captured before callbacks. Read-only identity helpers and native_button_returned add no guest callback, EIP write or restoration. Host must match exact reviewed actor/HWND/generation/parent/message and one new sequence. General invocation ownership remains pending; authored nested modal and queued-input regressions qualify the two distinct input boundaries.",
       "ownership": "pending"
     },
     {

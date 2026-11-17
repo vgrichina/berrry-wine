@@ -80,6 +80,18 @@ if(process.argv[2]==='--unit'){
   const noMain={...s,mainHwnd:'0x0',windows:[box,button],modalHwnd:box.hwnd,focus:button.hwnd,focusTopLevel:box.hwnd,
     focusWindow:button,nativeMessageBox:{hwnd:box.hwnd,generation:box.generation,processId:1000,threadId:1,controlClass:16}};
   assert(native.matches(noMain,noMain));
+  const dialog=structuredClone(noMain);dialog.windows[0].controlClass=0;dialog.nativeMessageBox=null;
+  dialog.nativeDialogBox={hwnd:box.hwnd,generation:box.generation,processId:1000,threadId:1,owner:'0x0',callback:'0x402300',returnSite:'0x40201f'};
+  assert(native.matches(dialog,dialog));
+  const ownedDialog=structuredClone(dialog);ownedDialog.mainHwnd=w.hwnd;ownedDialog.windows.unshift({...w});
+  ownedDialog.windows[1].owner=w.hwnd;ownedDialog.nativeDialogBox.owner=w.hwnd;
+  assert(native.matches(ownedDialog,ownedDialog));ownedDialog.nativeDialogBox=null;
+  assert(!native.matches(ownedDialog,ownedDialog),'ordinary class0 window cannot impersonate a main-owned DialogBox');
+  for(const mutate of [v=>v.nativeDialogBox=null,v=>v.nativeDialogBox.generation='2',v=>v.nativeDialogBox.hwnd='0x99',
+    v=>v.nativeDialogBox.processId++,v=>v.nativeDialogBox.threadId++,v=>v.nativeDialogBox.owner='0x99',
+    v=>v.nativeDialogBox.callback='0x0',v=>v.nativeDialogBox.returnSite='0x0']){
+    const v=structuredClone(dialog);mutate(v);assert(!native.matches(v,v),'no class0/owner0 impersonation');
+  }
   for(const mutate of [v=>v.nativeMessageBox=null,v=>v.nativeMessageBox.generation='2',v=>v.nativeMessageBox.processId++,
     v=>v.nativeMessageBox.threadId++,v=>v.windows[0].owner='0x9',v=>v.windows[0].live=false,
     v=>v.windows[0].generation='0',v=>v.windows[0].isChild=true,v=>v.windows[0].visible=false,
