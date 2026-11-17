@@ -1,84 +1,89 @@
 # Original Half-Life 2 demo: normal storage and startup
 
-Run: `scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup/`.
-Original installer identity remains 787701212 bytes, SHA-256
+Evidence: `scratch/runs/20261117-halflife2-normal-virtual-storage-installer-startup/result.json`.
+Published implementation: ed5e9bd5707875354357c13e9aa2fdf0120768ff and
+ efc9261258c0c6b3c0c476c25cd73b962e9d842f.
+
+The genuine original installer reached its ordinary **Welcome to Steam!** window,
+including Valve/Steam artwork and Next/Cancel buttons. The personally reviewed,
+complete 640×480 image is `pinned/native/original-startup.png`, SHA-256
+`5aa25ee09d05e69ba2debd865fc62ea16e15d1e093be7837b4c3633a42c5b360`.
+This is actual installer startup, beyond the predecessor's DLL-only proof.
+Installation and gameplay were not completed. Original installer invocations: 1;
+installed game invocations: 0. No installed physical footprint was measured.
+
+The first finite Next intent returned UNKNOWN within 86 ms: its handler produced
+no native input edge eligible for acknowledgement. My reviewed target was the
+Welcome frame `0x1000f`, rather than the actual Next BUTTON `0x10011`.
+`captureNativeButton` requires a live native BUTTON target to retain and verify
+its dispatch-return receipt. This operator targeting mistake does not prove a
+runtime input defect. The complete reviewed image was 12.199 seconds old at DOWN,
+within the 30-second menu limit. The independently prearmed physical release
+acknowledged UP after 1420.297 ms. The endpoint then permanently closed; no later
+HTTP/query/rebind/replay/retry occurred. Its four requests were capture, bind,
+input, and that original prearmed release. A future separately authorized attempt
+must review the actual native control identity. The used invocation stays closed.
+
+The normal entry point used the unchanged 787701212-byte EXE at
+`scratch/media/half-life-2-demo-original.exe`, SHA-256
 `24205fa8cb6bfab70a82dd713f0addc7cfb0b3c4df40441ebea0320dcb3b441c`.
+There was no script modification, installer bypass, direct guest invocation,
+Steam/authentication substitute, browser port or installed-game launch.
 
-The predecessor's 3995000 script units are a declared installation requirement,
-not a measured physical installed footprint. A bounded-buffer, read-only scan
-CRC-verifies all 26 raw DEFLATE streams through the exact package EOF. Total
-decoded payload is 3531518277 bytes. Six streams have the common 1/1/6 header,
-IDs 221/219/200/206/207/208, and a file-length field exactly equal to each decoded
-length. Together those six streams contain 3529662856 decoded bytes in
-786980466 compressed bytes. No decoded content was written to the host and no
-installed tree was constructed. The measured installed footprint is unknown.
-The scanner and per-stream CRCs, lengths and header prefixes are retained in
-`stream-scan.json` and `content-streams.json`; this inspection never runs WiseMain.
+The predecessor's 3995000 script units declare a requirement; they are not a
+physical footprint. A bounded-buffer, read-only scan CRC-verified all 26 raw
+DEFLATE streams through exact package EOF. Total decoded payload is 3531518277
+bytes. Six streams with common 1/1/6 headers, IDs 221/219/200/206/207/208, have a
+file-length field equal to decoded size. Together they contain 3529662856 decoded
+bytes in 786980466 compressed bytes. No decoded content was written to the host
+and no installed tree was constructed by inspection. Details are retained in
+`stream-scan.json` and `content-streams.json`.
 
-Normal writable VirtualFS files live in JavaScript Uint8Arrays, with provider
-and sparse-provider paths and optional asynchronous overlay persistence. Host
-`/home` free space is therefore not the ordinary in-memory volume's capacity.
-`public-api-before.json` proves that a successful real 4096-byte write/read
-leaves GetDiskFreeSpaceEx's 1073737728 free bytes unchanged. Its 2147479552 total
-comes from legacy geometry, not an enforced writable-volume quota. Neither a
-larger constant nor a host statfs value was substituted for memory capacity.
-Legacy signed-32-bit and CD geometry are unchanged; no volume-capacity repair
-is claimed here.
+Normal writable VirtualFS files use resident JavaScript Uint8Arrays, provider or
+sparse-provider paths, and optional asynchronous overlay persistence. Host `/home`
+free space is not that resident volume's capacity. The actual public API probe
+wrote/read 4096 bytes while GetDiskFreeSpaceEx remained 1073737728 bytes free and
+2147479552 total, derived from legacy geometry. There is no enforced volume quota
+behind those values. No arbitrary larger constant or host statfs substitution was
+introduced; legacy 32-bit and mounted CD geometry remain unchanged. This work
+makes no honest-volume-capacity repair claim and no declared-space blocker claim.
 
-The same public probe establishes a real storage fault: after a representable
-seek to Number.MAX_SAFE_INTEGER, SetEndOfFile propagates a host RangeError.
-`lib/filesystem.js` now converts failed resident backing allocations to
-ERROR_NOT_ENOUGH_MEMORY (8). Write extent arithmetic outside the exact numeric
-range returns ERROR_INVALID_PARAMETER (87). Failed writes preserve their
-cursor and existing bytes; failed resizes preserve the file size and contents.
-The focused test exercises actual WAT SetEndOfFile BOOL/GetLastError/stack
-behavior, normal writes, exact reads, truncation, zero-filled extension and
-unallocatable write/resize refusals. VFS and overlay regression suites pass.
-This is an allocation-error fix, not evidence that the original installer has
-encountered that error.
+The same public probe reproduced a real storage fault: a representable seek to
+Number.MAX_SAFE_INTEGER followed by SetEndOfFile threw host RangeError.
+`lib/filesystem.js` now returns ERROR_NOT_ENOUGH_MEMORY (8) for failed resident
+backing allocations. Write extent arithmetic outside exact numeric range returns
+ERROR_INVALID_PARAMETER (87). Refused writes preserve cursor and bytes; refused
+resizes preserve size and contents. The focused test covers real writes/reads,
+truncation, zero-filled extension, allocation and arithmetic refusal, and compiled
+WAT SetEndOfFile BOOL/GetLastError/stack behavior. VFS and overlay regressions and
+`flock /tmp/wine-build.lock bash tools/build.sh` passed. The original installer
+was not observed encountering this allocation fault.
 
-`tools/halflife2-current-native.py` prepares a sealed complete published source
-graph, exact module, main/CPU Worker/OS child inheritance proof, ordinary genuine
-Wise DLL load/free on a joined guest worker, native ownership/modal/dialog/input
-controls, and a process-parent supervisor adapter. Qualification does not call
-WiseMain. An early authored adapter run reached its separate 240-second
-preparation limit; actual child/watchdog waits, both EOFs and an empty remaining
-scope were retained. The adapter now permits a bounded 900-second qualification
-phase with a 920-second independent preparation watchdog. The original's
-runtime limits remain fixed at 600/620 seconds, starting after preparation.
+The startup adapter qualified complete published source/module/helper identities,
+main/CPU Worker/OS child inheritance, genuine Wise DLL load/free on a joined
+worker, native ownership/modal/dialog/control/refusal/pointer cases and actual
+ParentProcessSupervisor lifecycle. WiseMain was not invoked in qualification.
+The final published fixture used efc9261258c0c6b3c0c476c25cd73b962e9d842f and module
+SHA-256 `5a4178950559d4f677d86aa75403908abee343493805f01a0b8aae8f1df2429a`.
+Fresh sealed original preparation matched the entire source map/pool and module
+bytes to that completed fixture before its runtime clock. Positive graph reuse
+and four mismatched Git/source/module/map refusals passed. Foreign shared WIP was
+excluded and retained as patches, never adopted into the runtime or commits.
 
-At this note's initial preparation, shared integration still holds index writes.
-Own changes remain uncommitted until that critical section is released. No
-original installer or installed game has been invoked by this worker. No boxes,
-Codex workers, authentication substitutes, script edits or public deployments.
+The original had fixed 600-second native / 620-second independent limits armed
+before launch. Native PID 625732 was actually waited with exit 0 after host
+cleanup on UNKNOWN; this is not a native Quit or successful installer exit claim.
+Outer child PID 625020 and both watchdogs actually joined with both EOFs, exit 0
+and an empty remaining owned scope. The compactor thread joined without errors
+and descriptors closed. Closed writer traces have individually verified gzip
+round-trip recovery; byte-identical immutable receipts share storage. Selected
+result image only is retained; authored fixture frame series were pruned with
+hashes and reproduction references. Git plus relevant binary diffs is the source
+archive; no source tree or repeated media bundle was made. Unique generated
+original state and recovery instructions remain in the run directory.
 
-The second authored outer run passed its full sealed graph at published
-7ad95ad6029e5307db06fe1b489f7bb30eabd76d plus only this worker's material source
-patch. Module SHA-256 is
-`5a4178950559d4f677d86aa75403908abee343493805f01a0b8aae8f1df2429a`.
-`outer-working2/full-native-qualification.json` and `outer-working2/outer/wait.json`
-record full controls and actual normal native/outer/watchdog completion, both
-EOFs and an empty owned process scope. Later code compacts only traces whose
-writer PID is absent and shares storage for byte-identical immutable runtime
-receipts. Individual trace gzip files have verified round-trip hashes and exact
-recovery commands; no source or media archives are created. This matters because
-concurrent proof output briefly crossed the host disk floor; it says nothing
-about the normal install's unknown physical footprint.
-
-Shared Git integration was released after ae70a5473 was published. The restored
-foreign callback review mismatch was reported to its coordinator owner; a fresh
-focused census now passes all 465 boundaries. Final canonical validation and
-explicit-path publication follow before any original startup. A published exact
-outer fixture and another complete sealed original preparation remain required.
-The compaction helper also runs during long qualification tests, using a lock,
-checking that each trace writer has exited before reading it, and joining its
-thread before releasing the runtime. This preserves the host floor without
-adding an admission threshold, changing guest clocks or discarding trace bytes.
-
-The startup handoff retains the fixture's exact published Git revision through
-later unrelated publication. A fresh sealed source pool, compiled module and
-inheritance probe must match the fixture's entire source hash map, source-pool
-hash, retained module bytes and full native/outer wait proof. The completed
-identical native controls are reused rather than repeated on a refreshed graph.
-No failed or interrupted qualification can pass this handoff. The own periodic
-compactor and a subsequently published shared helper compactor use one lock.
+No RAM gate, boxes, extra agents, Codex workers or public deployments were used.
+Box ID/expiry are null, state NOT_CREATED, stop receipt N/A. `/home` remained above
+1.5 GB during this final original run. Further installation requires a fresh
+explicit invocation allowance and correct native BUTTON targeting; genuine Steam
+or authentication requirements, if reached, remain real boundaries.
