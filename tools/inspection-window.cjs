@@ -48,4 +48,69 @@ async function inspectWholePage(page, expected) {
   return {png,before,after,width:decoded.width,height:decoded.height};
 }
 
-module.exports={connectInspector,readInspectionState,inspectWholePage};
+// Completed native presentation plus its ordinary desktop composition. Merely
+// creating a device (or receiving LAYOUT) does not mean startup has settled.
+function readInspectionReadiness() {
+  const apps=typeof runningApps==='undefined'?[]:runningApps;
+  return apps.length===1 && apps.every(a=>{
+    const w=a.wine,r=w?.renderer,b=w?.hostCtx?.d3dimBridge;
+    const wins=Object.values(r?.windows||{}).filter(v=>v.visible&&!v.isChild);
+    if(w?._stopped||w?.running===false||b?.workerAsyncError||b?.workerClosing)
+      throw Error('failed native inspection owner');
+    return wins.length===1 && b?.presenter?.presents>0 &&
+      r?._currentDisplayRecord?.windows?.some(p=>p.window.deref()===wins[0]);
+  });
+}
+
+class InspectionScope {
+  constructor(page) { this.page=page;this.phase='new';this.baseline=null; }
+  async bind({timeoutMs=15000,stableMs=300,pollMs=100}={}) {
+    assert.equal(this.phase,'new','inspection scope already used; cannot rebaseline');
+    assert(Number.isFinite(timeoutMs)&&timeoutMs>0&&timeoutMs<=30000);
+    assert(Number.isFinite(stableMs)&&stableMs>0&&stableMs<timeoutMs);
+    assert(Number.isFinite(pollMs)&&pollMs>=10&&pollMs<=stableMs);
+    this.phase='preparing';
+    const end=performance.now()+timeoutMs,observations=[];
+    const read=async fn=>{
+      let timer;
+      try { return await Promise.race([this.page.evaluate(fn),new Promise((_,reject)=>{
+        timer=setTimeout(()=>reject(Error('pre-binding stabilization timeout')),Math.max(1,end-performance.now()));
+      })]); } finally { clearTimeout(timer); }
+    };
+    let candidate=null,since=0,lastObservation=null;
+    try {
+      while(performance.now()<end) {
+        const ready=await read(readInspectionReadiness);
+        const state=await read(readInspectionState),now=performance.now();
+        if(now>=end)throw Error('pre-binding stabilization timeout');
+        const observation=JSON.stringify({ready,state});
+        if(observation!==lastObservation&&observations.length<64) {
+          observations.push({ready,state});lastObservation=observation;
+        }
+        // Only this unbound candidate may change. A bound baseline never does.
+        if(!ready||JSON.stringify(state)!==JSON.stringify(candidate)) {
+          candidate=ready?state:null;since=now;
+        }
+        if(ready&&now-since>=stableMs) {
+          this.baseline=state;this.phase='bound';
+          return {baseline:state,observations,stableMs,timeoutMs};
+        }
+        await new Promise(r=>setTimeout(r,Math.min(pollMs,end-performance.now())));
+      }
+      throw Error('pre-binding stabilization timeout');
+    } catch(e) { this.phase='closed';e.observations=observations;throw e; }
+  }
+  async check(page=this.page) {
+    assert.equal(this.phase,'bound','inspection scope is not bound');
+    try { assert.deepEqual(await page.evaluate(readInspectionState),this.baseline,
+      'bound inspection changed geometry or owner'); }
+    catch(e) { this.phase='closed';throw e; }
+  }
+  async capture() {
+    assert.equal(this.phase,'bound','inspection scope is not bound');
+    try { return await inspectWholePage(this.page,this.baseline); }
+    catch(e) { this.phase='closed';throw e; }
+  }
+}
+
+module.exports={connectInspector,readInspectionState,readInspectionReadiness,inspectWholePage,InspectionScope};
