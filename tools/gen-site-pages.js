@@ -85,6 +85,11 @@ const STYLE = `
     .app-launch { display: inline-block; background: #008080; color: #fff !important; text-decoration: none; padding: 9px 16px; border-radius: 4px; font-weight: 600; margin: 0.4em 0 1em; }
     .app-launch:hover { background: #006666; }
     .app-shot { border: 1px solid #d8d2c4; }
+    .ed-facts { margin: 0.6em 0 1.2em; font-size: 0.9em; }
+    .ed-facts dt { font-weight: 600; margin-top: 0.7em; }
+    .ed-facts dd { margin: 0.15em 0 0 0; color: #333; }
+    .ed-facts dd span { white-space: nowrap; margin-right: 0.9em; }
+    .ed-legend { color: #666; }
 `;
 
 const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -568,10 +573,85 @@ const EDITION_LABEL = {
   wep: 'Entertainment Pack (16-bit)', bundled: 'Came with Windows',
 };
 
+// Per-edition fields, in the style of a WineHQ AppDB test report. Every one is
+// optional and null means "not measured": the page prints "—" for it, never a
+// default. A key this table does not name, or a value of the wrong type, stops
+// the build, because a typo ("audo": true) would otherwise vanish silently.
+//   testedOn  {build, browser, device, os, date, evidence} or an array of them;
+//             `evidence` (a scratch/runs id or a docs path) is kept for review
+//             and not printed.
+//   notTested what has not been tried, kept apart from `issues` (real defects).
+//   facts     {installs, audio, saves, touchPlayable: bool; multiplayer:
+//             none|lobby|works|untested; phoneFps: number}
+//   version, source  which build of the game was tested and where it came from.
+const COMPAT_MULTIPLAYER = ['none', 'lobby', 'works', 'untested'];
+const COMPAT_FACT_TYPES = {
+  installs: 'boolean', audio: 'boolean', saves: 'boolean', touchPlayable: 'boolean',
+  multiplayer: 'multiplayer', phoneFps: 'number',
+};
+const COMPAT_TESTED_ON_KEYS = ['build', 'browser', 'device', 'os', 'date', 'evidence'];
+const COMPAT_EDITION_TYPES = {
+  note: 'string', edition: 'string', appIds: 'strings', status: 'status', statusDate: 'date',
+  works: 'string', issues: 'string', notTested: 'string', version: 'string', source: 'string',
+  testedOn: 'testedOn', facts: 'facts',
+};
+const isDate = v => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
+
+function validateCompatEdition(e, where) {
+  const fail = msg => { throw new Error(`${COMPAT_REL}: ${where}: ${msg}`); };
+  if (!e || typeof e !== 'object' || Array.isArray(e)) fail('edition is not an object');
+  for (const [k, v] of Object.entries(e)) {
+    const type = COMPAT_EDITION_TYPES[k];
+    if (!type) fail(`unknown key "${k}"`);
+    if (v === null) continue;
+    switch (type) {
+      case 'string': if (typeof v !== 'string') fail(`"${k}" must be a string or null`); break;
+      case 'strings': if (!Array.isArray(v) || v.some(x => typeof x !== 'string')) fail(`"${k}" must be an array of strings`); break;
+      case 'status': if (!COMPAT_STATUS[v]) fail(`"status" "${v}" is not one of ${Object.keys(COMPAT_STATUS).join('/')}`); break;
+      case 'date': if (v !== '' && !isDate(v)) fail(`"${k}" must be YYYY-MM-DD or "" (unknown)`); break;
+      case 'testedOn': {
+        const list = Array.isArray(v) ? v : [v];
+        if (!list.length) fail('"testedOn" is an empty array; use null');
+        list.forEach((t, i) => {
+          const at = Array.isArray(v) ? `testedOn[${i}]` : 'testedOn';
+          if (!t || typeof t !== 'object' || Array.isArray(t)) fail(`"${at}" must be an object`);
+          for (const [tk, tv] of Object.entries(t)) {
+            if (!COMPAT_TESTED_ON_KEYS.includes(tk)) fail(`unknown key "${at}.${tk}"`);
+            if (tv !== null && typeof tv !== 'string') fail(`"${at}.${tk}" must be a string or null`);
+            if (tk === 'date' && tv !== null && !isDate(tv)) fail(`"${at}.date" must be YYYY-MM-DD`);
+          }
+        });
+        break;
+      }
+      case 'facts': {
+        if (typeof v !== 'object' || Array.isArray(v)) fail('"facts" must be an object');
+        for (const [fk, fv] of Object.entries(v)) {
+          const ft = COMPAT_FACT_TYPES[fk];
+          if (!ft) fail(`unknown key "facts.${fk}"`);
+          if (fv === null) continue;
+          if (ft === 'boolean' && typeof fv !== 'boolean') fail(`"facts.${fk}" must be true, false or null`);
+          if (ft === 'number' && !(typeof fv === 'number' && Number.isFinite(fv) && fv > 0)) fail(`"facts.${fk}" must be a positive number or null`);
+          if (ft === 'multiplayer' && !COMPAT_MULTIPLAYER.includes(fv)) fail(`"facts.${fk}" must be one of ${COMPAT_MULTIPLAYER.join('/')} or null`);
+        }
+        break;
+      }
+    }
+  }
+  if (typeof e.edition !== 'string') fail('"edition" is required');
+}
+
+function validateCompat(data) {
+  if (!data || !Array.isArray(data.titles)) throw new Error(`${COMPAT_REL}: "titles" must be an array`);
+  data.titles.forEach((t, ti) => {
+    (t.editions || []).forEach((e, ei) => validateCompatEdition(e, `${t.slug || `titles[${ti}]`}.editions[${ei}]`));
+  });
+  return data;
+}
+
 function loadCompat(desktopIds) {
   const file = path.join(ROOT, COMPAT_REL);
   if (!fs.existsSync(file)) return null;
-  const data = JSON.parse(fs.readFileSync(file, 'utf-8'));
+  const data = validateCompat(JSON.parse(fs.readFileSync(file, 'utf-8')));
   const titles = (data.titles || []).map(t => {
     const editions = (t.editions || []).map(e => ({
       ...e,
@@ -605,8 +685,52 @@ function compatTableMd(t) {
   const cell = s => esc(s || '').replace(/\|/g, '\\|');
   for (const e of t.editions) {
     const es = COMPAT_STATUS[e.status] || COMPAT_STATUS.unknown;
-    L.push(`| ${cell(EDITION_LABEL[e.edition] || e.edition)} | ${es.mark} ${es.label} | ${e.statusDate || '—'} | ${cell(e.works)} | ${cell(e.issues)} |`);
+    const env = testedOnList(e)[0];
+    const on = env ? envShort(env) : '';
+    const tested = `${e.statusDate || '—'}${on ? `<br><small>on ${cell(on)}</small>` : ''}`;
+    L.push(`| ${cell(EDITION_LABEL[e.edition] || e.edition)} | ${es.mark} ${es.label} | ${tested} | ${cell(e.works)} | ${cell(e.issues)} |`);
   }
+  L.push('');
+  L.push(...compatFactsMd(t));
+  return L;
+}
+
+const testedOnList = e => (e.testedOn == null ? [] : [].concat(e.testedOn));
+// "iPhone, Safari" or "desktop Chrome 155": the device, plus the browser when
+// the device string does not already name it.
+function envShort(env) {
+  const parts = [];
+  if (env.device) parts.push(env.device);
+  if (env.browser && !(env.device || '').includes(env.browser)) parts.push(env.browser);
+  if (env.os && !parts.some(p => p.includes(env.os))) parts.push(env.os);
+  return parts.join(', ');
+}
+const yesNo = v => v === true ? 'yes' : v === false ? 'no' : '—';
+const MULTIPLAYER_LABEL = { none: 'none', lobby: 'lobby only', works: 'works', untested: '—' };
+
+// The AppDB-style facts under the table: one entry per edition, with the
+// yes/no facts, what has not been tried, and every environment it was tested
+// in. Null is printed as "—" and the legend says that means untested.
+function compatFactsMd(t) {
+  const L = ['<dl class="ed-facts">'];
+  for (const e of t.editions) {
+    const f = e.facts || {};
+    const name = EDITION_LABEL[e.edition] || e.edition;
+    const ver = [e.version ? `version ${e.version}` : null, e.source].filter(Boolean).join(', ');
+    L.push(`<dt>${esc(name)}${ver ? ` <small>(${esc(ver)})</small>` : ''}</dt>`);
+    const facts = [
+      ['Installs', yesNo(f.installs)], ['Sound', yesNo(f.audio)], ['Saves', yesNo(f.saves)],
+      ['Multiplayer', f.multiplayer == null ? '—' : MULTIPLAYER_LABEL[f.multiplayer]],
+      ['Touch', yesNo(f.touchPlayable)], ['Phone FPS', f.phoneFps == null ? '—' : `about ${f.phoneFps}`],
+    ];
+    L.push(`<dd>${facts.map(([k, v]) => `<span>${k}: ${esc(v)}</span>`).join(' ')}</dd>`);
+    if (e.notTested) L.push(`<dd>Not tested: ${esc(e.notTested)}</dd>`);
+    const envs = testedOnList(e).map(env => [env.date, envShort(env), env.build ? `build ${env.build}` : null].filter(Boolean).join(' · '));
+    if (envs.length) L.push(`<dd>Tested on: ${envs.map(esc).join('; ')}</dd>`);
+  }
+  L.push('</dl>');
+  L.push('');
+  L.push('<p class="ed-legend"><small>“—” means not tested yet: a fact is filled in only from a recorded test run, never guessed.</small></p>');
   L.push('');
   return L;
 }
@@ -1058,7 +1182,7 @@ function writePages(pages) {
   }
 }
 
-module.exports = { generatePages, writePages, extractMeta, SITE };
+module.exports = { generatePages, writePages, extractMeta, SITE, validateCompat, validateCompatEdition, compatTableMd };
 
 if (require.main === module) {
   const pages = generatePages();
