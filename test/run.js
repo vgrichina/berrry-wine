@@ -7729,23 +7729,15 @@ async function main() {
     snapshot: () => {
       let current = cliInputSnapshot();
       if (nativeSceneLease) {
-        const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
-        const mainlessReview=nativeSceneContract===nativeScene.REVIEWED_CONTEXT &&
-          nativeSceneLease.mainHwnd==='0x0' && nativeSceneLease.main===null;
-        if(mainlessReview)current=nativeScene.reviewedProcessOwner(current,nativeSceneLease,instance,threadManager);
-        // A retained no-main MessageBox review binds the real process/thread.
-        // Its HWNDs and any subsequently created main still undergo the full
-        // per-intent capture/consume check; no modal is substituted as main.
-        const ownerWindow=mainlessReview
-          ? s.focusWindow.processId===nativeSceneLease.focusWindow.processId &&
-            s.focusWindow.threadId===nativeSceneLease.focusWindow.threadId
-          : (nativeSceneContract===nativeScene.REVIEWED_CONTEXT
-            ? sameReviewedOwner(main,nativeSceneLease.main)
-            : sameReviewedWindow(main,nativeSceneLease.main));
-        current.healthy=current.healthy && ownerWindow &&
-          JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
-          JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
-        current.refs.nativeSceneMainGeneration=mainlessReview?null:main?.generation;
+        if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
+          current=nativeScene.reviewedOwnerSnapshot(current,controlSnapshot(),nativeSceneLease,instance,threadManager);
+        } else {
+          const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
+          current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+            JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
+            JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
+          current.refs.nativeSceneMainGeneration=main?.generation;
+        }
       }
       if (reviewedSceneLease) {
         const s = controlSnapshot(), lease = reviewedSceneLease;

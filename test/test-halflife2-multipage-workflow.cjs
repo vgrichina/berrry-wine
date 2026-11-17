@@ -15,55 +15,61 @@ function fixture(){
  b.write('Wizard: SubscriberAgreement\0',raw(0x2700));
  b.write('BUTTON\0',raw(0x2740));b.write('Next >\0',raw(0x2760));
  b.write('Authored wizard owner\0',raw(0x2780));
- // Wise has a normal top-level main before opening its native modal pages.
- // Match that topology rather than the borrowed pre-main dialog fixture.
- const entry=[],ep=n=>entry.push(0x68,...u32(n)),ec=slot=>entry.push(0xff,0x15,...u32(0x400000+slot));
- entry.push(0xa1,...u32(0x401944),0xa3,...u32(0x402604));ep(0x402600);ec(0x1940);
- for(const n of [0,0x400000,0,0,360,640,40,40,0x10cf0000,0x402780,0x402500,0])ep(n);
- ec(0x1948);entry.push(0x89,0xc6);
- ep(0);ep(0x402300);entry.push(0x56);ep(1);ep(0x400000);ec(0x1950);
- ep(0);ec(0x1900);
- b.fill(0,raw(0x2000),raw(0x2300));Buffer.from(entry).copy(b,raw(0x2000));
- const a=[],labels={},fix=[],e=(...v)=>a.push(...v),push=n=>e(0x68,...u32(n));
- const call=slot=>e(0xff,0x15,...u32(0x400000+slot));
- const label=n=>labels[n]=a.length,j=(n,op)=>{e(...op);fix.push([a.length,n]);e(0,0,0,0);};
- e(0x55,0x89,0xe5);
- e(0x81,0x7d,12,...u32(0x10));j('cancel',[0x0f,0x84]); // WM_CLOSE
- e(0x81,0x7d,12,...u32(0x113));j('timer',[0x0f,0x84]);
- e(0x81,0x7d,12,...u32(0x111));j('done',[0x0f,0x85]);
- e(0x83,0x7d,16,2);j('cancel',[0x0f,0x84]);
- e(0x83,0x7d,16,1);j('done',[0x0f,0x85]);
- e(0xff,0x05,...u32(0x4026a0));
- e(0x83,0x3d,...u32(0x4026a0),1);j('third',[0x0f,0x85]);
- push(0x402580);j('title',[0xe9]);label('third');push(0x402700);
- label('title');e(0xff,0x75,8);call(0x195c);
- push(1);e(0xff,0x75,8);call(0x1960);e(0x50);call(0x1964);
- // A fresh native BUTTON with the same ordinary dialog id, caption and rect.
- for(const n of [0,0x400000,1])push(n);e(0xff,0x75,8);
- for(const n of [30,120,130,140,0x50010000,0x402760,0x402740,0])push(n);
- call(0x1968);e(0x50);call(0x196c);
- j('done',[0xe9]);
- // Return from the real Cancel BUTTON callback before waiting for UP, so
- // its native dispatch fence can acknowledge DOWN. A real guest timer then
- // observes physical release through USER32, as in the proven 9acca gate.
- label('cancel');e(0xc7,0x05,...u32(0x4026a4),...u32(1));
- push(0);push(10);push(1);e(0xff,0x75,8);call(0x1974);j('done',[0xe9]);
- label('timer');e(0x83,0x3d,...u32(0x4026a4),0);j('done',[0x0f,0x84]);
- for(const key of [1,13]){push(key);call(0x1970);e(0xa9,...u32(0x8000));j('done',[0x0f,0x85]);}
- push(1);e(0xff,0x75,8);call(0x1978);
- push(0);e(0xff,0x75,8);call(0x1954); // EndDialog -> ordinary entry ExitProcess
- label('done');e(0xb8,1,0,0,0,0xc9,0xc2,16,0);
- assert(a.length<0x200);const out=Buffer.from(a);
- for(const [o,n]of fix)out.writeInt32LE(labels[n]-o-4,o);
- b.fill(0,raw(0x2300),raw(0x2500));out.copy(b,raw(0x2300));return b;
+ // Each real DialogBox returns after physical UP. The guest destroys its
+ // owner main and creates a new main before opening the next modal page.
+ // No host mutation of HWNDs, generations or globals participates.
+ function assemble(r,limit,body){
+  const a=[],labels={},fix=[],e=(...v)=>a.push(...v),push=n=>e(0x68,...u32(n));
+  const call=slot=>e(0xff,0x15,...u32(0x400000+slot));
+  const label=n=>labels[n]=a.length,j=(n,op)=>{e(...op);fix.push([a.length,n]);e(0,0,0,0);};
+  body({e,push,call,label,j});assert(a.length<limit);
+  const out=Buffer.from(a);for(const[o,n]of fix)out.writeInt32LE(labels[n]-o-4,o);
+  b.fill(0,raw(r),raw(r+limit));out.copy(b,raw(r));
+ }
+ assemble(0x2000,0x300,({e,push,call,label,j})=>{
+  e(0xa1,...u32(0x401944),0xa3,...u32(0x402604));push(0x402600);call(0x1940);
+  label('page');
+  for(const n of [0,0x400000,0,0,360,640,40,40,0x10cf0000,0x402780,0x402500,0])push(n);
+  call(0x1948);e(0xa3,...u32(0x4026a8));
+  push(0);push(0x402300);e(0x50);push(1);push(0x400000);call(0x1950);
+  e(0x89,0xc6);e(0xff,0x35,...u32(0x4026a8));call(0x1964);
+  e(0x85,0xf6);j('exit',[0x0f,0x84]);
+  e(0xff,0x05,...u32(0x4026a0));j('page',[0xe9]);
+  label('exit');push(0);call(0x1900);
+ });
+ assemble(0x2300,0x200,({e,push,call,label,j})=>{
+  e(0x55,0x89,0xe5);
+  e(0x81,0x7d,12,...u32(0x110));j('init',[0x0f,0x84]);
+  e(0x81,0x7d,12,...u32(0x10));j('cancel',[0x0f,0x84]);
+  e(0x81,0x7d,12,...u32(0x113));j('timer',[0x0f,0x84]);
+  e(0x81,0x7d,12,...u32(0x111));j('done',[0x0f,0x85]);
+  e(0x83,0x7d,16,2);j('cancel',[0x0f,0x84]);
+  e(0x83,0x7d,16,1);j('done',[0x0f,0x85]);
+  e(0xc7,0x05,...u32(0x4026a4),...u32(1));j('arm',[0xe9]);
+  label('cancel');e(0xc7,0x05,...u32(0x4026a4),...u32(2));
+  label('arm');push(0);push(10);push(1);e(0xff,0x75,8);call(0x1974);j('done',[0xe9]);
+  label('init');e(0xc7,0x05,...u32(0x4026a4),...u32(0));
+  e(0x83,0x3d,...u32(0x4026a0),0);j('done',[0x0f,0x84]);
+  e(0x83,0x3d,...u32(0x4026a0),1);j('third',[0x0f,0x85]);
+  push(0x402580);j('title',[0xe9]);label('third');push(0x402700);
+  label('title');e(0xff,0x75,8);call(0x195c);j('done',[0xe9]);
+  label('timer');e(0x83,0x3d,...u32(0x4026a4),0);j('done',[0x0f,0x84]);
+  for(const key of [1,13]){push(key);call(0x1970);e(0xa9,...u32(0x8000));j('done',[0x0f,0x85]);}
+  push(1);e(0xff,0x75,8);call(0x1978);
+  e(0x31,0xc0,0x83,0x3d,...u32(0x4026a4),1,0x0f,0x94,0xc0,0x50);
+  e(0xff,0x75,8);call(0x1954);
+  label('done');e(0xb8,1,0,0,0,0xc9,0xc2,16,0);
+ });return b;
 }
+
 function verify(dir){
  const path=require('node:path'),read=n=>JSON.parse(fs.readFileSync(path.join(dir,n+'.json')));
- const targets=[];
+ const targets=[],mains=[];
  assert(read('startup-ready').ready&&read('startup-ready').passive);
  for(const [scene,intent,title]of [['welcome','welcome-next','Wizard: Welcome'],['internet-required','internet-next','Wizard: Internet Required']]){
   const capture=read(scene),review=read(scene+'-review'),down=read(intent+'-down'),up=read(intent+'-up'),start=read(intent+'-intent');
   assert(capture.snapshot.windows.some(w=>w.title===title));
+  mains.push(capture.snapshot.windows.find(w=>w.hwnd===capture.snapshot.mainHwnd));
   const button=capture.snapshot.windows.find(w=>w.hwnd===review.targetHwnd);
   assert(button&&button.title==='Next >'&&button.controlClass===1);
   assert(capture.at<=review.at&&review.at<=start.at&&start.at-capture.at<30);
@@ -74,6 +80,11 @@ function verify(dir){
   assert(read(intent+'-completion').elapsedMs<3000);targets.push(button.hwnd);
  }
  const last=read('subscriber-agreement');assert(last.snapshot.windows.some(w=>w.title==='Wizard: SubscriberAgreement'));
+ mains.push(last.snapshot.windows.find(w=>w.hwnd===last.snapshot.mainHwnd));
+ for(let i=1;i<mains.length;i++){assert.notEqual(mains[i].hwnd,mains[i-1].hwnd);assert.notEqual(mains[i].generation,mains[i-1].generation);}
+ const later=[read('internet-required'),last];
+ for(let i=0;i<later.length;i++)assert(!later[i].snapshot.windows.some(w=>w.hwnd===mains[i].hwnd),'old main must actually be destroyed');
+ assert.equal(new Set(mains.map(w=>w.processId+':'+w.threadId)).size,1);
  targets.push(last.snapshot.windows.find(w=>w.title==='Next >').hwnd);
  assert.equal(new Set(targets).size,3,'every page must create a different Next HWND');
  assert(!fs.existsSync(path.join(dir,'PERMANENT-UNKNOWN.json')));
@@ -88,7 +99,65 @@ function verify(dir){
  const observation=read('cancel-observation');assert(observation.outcome==='process-exited'&&observation.noPostExitRequest);
  const wait=read('native-wait');assert(wait.actualWait&&wait.stdoutEOF&&wait.stderrEOF&&!wait.hostCleanup&&wait.exit===0&&wait.disposition==='normal');
  assert(read('native-exit').exitCode===0);
- console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,changingNextHWNDs:targets,oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,nativeQuit:true,hostCleanup:false,noOriginal:true}));
+ console.log(JSON.stringify({passed:true,actualCompleteCLIWorkflow:true,changingNextHWNDs:targets,changingMainWindows:mains.map(w=>({hwnd:w.hwnd,generation:w.generation})),oneBinding:true,nativeACK500:true,independentUP1750:true,capture3000:true,reviewAge30:true,nativeQuit:true,hostCleanup:false,noOriginal:true}));
 }
-module.exports={fixture,verify};
-if(require.main===module){if(process.argv[2]==='--verify')verify(process.argv[3]);else fs.writeFileSync(process.argv[2],fixture(),{flag:'wx'});}
+function unit(){
+ const native=require('../lib/cli-native-scene'),{createGuardedInput}=require('../lib/cli-guarded-input');
+ const main={hwnd:'0x10001',generation:'1',processId:1000,threadId:1,owner:'0x0',parent:'0x0',
+  live:true,visible:true,isChild:false,title:'Main',style:0x10cf0000,controlClass:0,nativeTextAvailable:true,textBytes:'4d61696e',nativeClientRect:{screenX:0,screenY:0,w:800,h:600}};
+ const button={...main,hwnd:'0x10002',generation:'2',parent:main.hwnd,isChild:true,title:'Next >',
+  style:0x50010000,controlClass:1,screenX:10,screenY:10,w:60,h:24,textBytes:'4e657874203e'};
+ let scene={mainHwnd:main.hwnd,modalHwnd:'0x0',windows:[main,button],focus:button.hwnd,focusTopLevel:main.hwnd,
+  focusWindow:{...button},capture:'0x0',physicalUp:true,nativeProcess:{pid:123,executable:'wizard.exe'},
+  nativeMessageBox:null,nativeDialogBox:null,screen:{w:800,h:600},quit:false,eip:'0x402000',
+  pointerMapping:{canvas:{w:800,h:600},transform:null,viewport:null,clip:null}};
+ const instance={exports:{get_current_thread_id:()=>1,get_process_id:()=>1000,get_quit_flag:()=>0,get_eip:()=>0x402000}};
+ const lease=native.context(structuredClone(scene)),queue=[],refs={instance,exports:instance.exports,memory:{},buffer:{},
+  renderer:{},actor:null,actorInstance:instance,actorExports:instance.exports,tid:1,mainHwnd:1,hwnd:1,window:{},
+  queue,canvas:{},device:{snapshot:()=>({ready:true})},module:{},adapter:{},mouseDown:()=>{},mouseUp:()=>{}};
+ const registry=native.createReviewedContexts();
+ const capture=()=>registry.capture(()=>structuredClone(scene),()=>Buffer.from('whole authored image'),()=>{});
+ const review=c=>({contract:c.contract,captureId:c.captureId,pngSHA256:c.pngSHA256,reviewed:true,
+  reviewedAt:Date.now(),scope:'menu',targetHwnd:scene.focus});
+ const snap=()=>native.reviewedOwnerSnapshot({healthy:true,refs:{...refs,mainHwnd:scene.mainHwnd,hwnd:scene.mainHwnd,window:scene.windows[0]}},scene,lease,instance);
+ let effects=0;
+ const guard=createGuardedInput({snapshot:snap,cleanup:()=>{},validateIntent:(i,e)=>{try{registry.verify(scene,i.review,e,i.nonce);return true;}catch{return false;}}});
+ const binding=guard.bind();let sequence=0;
+ const consume=r=>{const nonce='unit-'+(++sequence),t=guard.prepare({...binding,nonce,reviewed:true,deadline:Date.now()+500,
+  intent:{review:r,nonce}},{action:'mousedown',x:20,y:20});return guard.consume(t,()=>effects++);};
+ const old=review(capture());assert(consume(old).consumed);guard.release(binding.owner);
+ const before=structuredClone(scene);
+ // The guest main and child are replaced. The old retained whole image refuses.
+ scene.windows[0]={...main,hwnd:'0x10003',generation:'3'};
+ scene.windows[1]={...button,hwnd:'0x10004',generation:'4',parent:'0x10003'};
+ scene.mainHwnd=scene.focusTopLevel='0x10003';scene.focus='0x10004';scene.focusWindow={...scene.windows[1]};
+ assert.throws(()=>registry.verify(scene,old));assert(!consume(old).consumed);
+ const fresh=review(capture());assert(consume(fresh).consumed);guard.release(binding.owner);
+ for(const mutate of [v=>v.mainHwnd=before.mainHwnd,v=>v.windows[0].generation='99',
+  v=>{v.windows[1].generation='99';v.focusWindow.generation='99';},
+  v=>v.windows[1].parent=before.mainHwnd,v=>v.nativeProcess.pid++,v=>v.focusWindow.processId++,v=>v.focusWindow.threadId++]){
+  const saved=structuredClone(scene);mutate(scene);assert(!consume(fresh).consumed);scene=saved;
+ }
+ for(const name of ['instance','exports','memory','buffer','renderer','queue','canvas','device','module','adapter','mouseDown','mouseUp']){
+  const saved=refs[name];refs[name]=name==='queue'?[]:{};
+  assert(!consume(fresh).consumed,name+' replacement must refuse');refs[name]=saved;
+ }
+ assert.equal(effects,2);guard.close();
+ const check=require('node:child_process').spawnSync('python3',['-B','-c',`
+import importlib.util,subprocess
+s=importlib.util.spec_from_file_location('r','tools/halflife2-restored-native.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
+b=subprocess.check_output(['git','show',m.COMPONENT+':test/run.js']);r=m.reviewed_owner_runner(b)
+a=b.index(m.OWNER_START);z=b.index(m.OWNER_END,a)
+assert r==b[:a]+m.OWNER_BLOCK+b[z:]
+current=open('test/run.js','rb').read();assert current[current.index(m.OWNER_START):current.index(m.OWNER_END)]==m.OWNER_BLOCK
+for bad in (r,b.replace(m.OWNER_START,b'changed',1),b.replace(b'sameReviewedOwner(main,nativeSceneLease.main)',b'other')):
+ try:m.reviewed_owner_runner(bad)
+ except (AssertionError,ValueError):pass
+ else:raise AssertionError('changed/duplicate transformation accepted')
+print('PASS sealed runner adoption changes only exact owned owner block')
+`],{encoding:'utf8'});
+ assert.equal(check.status,0,check.stderr);process.stdout.write(check.stdout);
+ console.log('PASS main replacement requires fresh whole image/current native metadata; stale main/generation/recycled handle/process/thread/module/device/queue/runtime refusals; one binding');
+}
+module.exports={fixture,verify,unit};
+if(require.main===module){if(process.argv[2]==='--unit')unit();else if(process.argv[2]==='--verify')verify(process.argv[3]);else fs.writeFileSync(process.argv[2],fixture(),{flag:'wx'});}

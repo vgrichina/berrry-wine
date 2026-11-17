@@ -16,6 +16,28 @@ def load(name):
  s=importlib.util.spec_from_file_location(name.replace('/','_'),ROOT/name)
  m=importlib.util.module_from_spec(s);s.loader.exec_module(m);return m
 def read(p):return json.loads(p.read_text())
+OWNER_START=b"      if (nativeSceneLease) {\n"
+OWNER_END=b"      if (reviewedSceneLease) {\n"
+OWNER_BLOCK=b"""      if (nativeSceneLease) {
+        if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
+          current=nativeScene.reviewedOwnerSnapshot(current,controlSnapshot(),nativeSceneLease,instance,threadManager);
+        } else {
+          const s=controlSnapshot(), main=reviewedWindow(s,s.mainHwnd);
+          current.healthy=current.healthy && sameReviewedWindow(main,nativeSceneLease.main) &&
+            JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
+            JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
+          current.refs.nativeSceneMainGeneration=main?.generation;
+        }
+      }
+"""
+def reviewed_owner_runner(body):
+ """Adopt only the reviewed owner block, not unrelated shared-runner changes."""
+ def block(b):
+  assert b.count(OWNER_START)==1 and b.count(OWNER_END)==1
+  a=b.index(OWNER_START);z=b.index(OWNER_END,a);return a,z,b[a:z]
+ a,z,old=block(body)
+ assert b'sameReviewedOwner(main,nativeSceneLease.main)' in old
+ return body[:a]+OWNER_BLOCK+body[z:]
 def main():
  m=load('tools/halflife2-current-native.py');m.TASK_RUN=TASK
  assert TASK.parent==ROOT/'scratch/runs','task evidence must stay under scratch/runs'
@@ -62,9 +84,17 @@ def main():
  # transport and focused tests in addition to those already proved bodies.
  changed={}
  for name in DIAGNOSTICS:
-  b=(ROOT/name).read_bytes()
-  if not working:assert m.git('show',revision+':'+name)==b,'publish diagnostic first'
+  b=(ROOT/name).read_bytes() if working and name=='lib/cli-native-scene.js' else m.git('show',revision+':'+name)
+  if name=='lib/cli-native-scene.js':assert b==(ROOT/name).read_bytes(),'publish scene first'
   changed[name]=dict(before=m.sha(files[name]) if name in files else None,after=m.sha(b));files[name]=b
+ current_runner=(ROOT/'test/run.js').read_bytes() if working else m.git('show',revision+':test/run.js')
+ assert current_runner[current_runner.index(OWNER_START):current_runner.index(OWNER_END)]==OWNER_BLOCK
+ assert files['test/run.js']==m.git('show',COMPONENT+':test/run.js'),'reviewed owner delta requires exact proved runner'
+ before=m.sha(files['test/run.js']);files['test/run.js']=reviewed_owner_runner(files['test/run.js'])
+ changed['test/run.js']=dict(before=before,after=m.sha(files['test/run.js']),onlyReviewedOwnerBlock=True)
+ import difflib
+ (m.RUN/'reviewed-owner-runner.patch').write_text(''.join(difflib.unified_diff(m.git('show',COMPONENT+':test/run.js').decode().splitlines(True),files['test/run.js'].decode().splitlines(True),fromfile='a/test/run.js',tofile='b/test/run.js')))
+ m.save('reviewed-owner-runner.json',dict(**changed['test/run.js'],publishedGit=revision,unrelatedRunnerChangesExcluded=True,patchSHA256=m.sha((m.RUN/'reviewed-owner-runner.patch').read_bytes())))
  pool,index,rows=sealhelper.indexed_sources(files)
  manifest={**manifest,'sourceSHA256':m.sha(pool),'sourceIndexSHA256':m.sha(index),'sources':rows,
            'diagnosticGit':revision,'diagnosticChanges':changed,'unchangedNativeSourceSHA256':original_source_sha}
@@ -81,6 +111,7 @@ def main():
  # only Edit against this exact graph and records a separate module hash.
  for name,digest in editpins['sources'].items():
   if name.startswith(('src/','tools/watx')) or name in DIAGNOSTICS[:7]:
+   if name=='lib/cli-native-scene.js':continue # explicit reviewed ownership JS delta above
    if not (layout_repair and name=='src/09c3-wndprocs5-edit.wat'):
     assert m.sha(files[name])==digest,'published Edit/module input differs: '+name
  retained=EDIT_PROOF/'fixture/module.wasm';retained_body=retained.read_bytes()
