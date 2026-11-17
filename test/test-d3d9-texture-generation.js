@@ -2,10 +2,10 @@
 // Every texture a D3D9 device creates bumps that device's texture generation
 // at program state +25596.
 //
-// lib/d3d9-host.js keys its converted texture snapshots on a mip record's
-// address, and trusts a hit on the dirty sequence alone while this word has
-// not moved since it last verified the snapshot (test-d3d9-texture-snapshot-
-// cache.js covers that half). The address can only name a different texture
+// The old JS host (lib/d3d9-host.js, deleted d3d9-retire S4) keyed converted
+// texture snapshots on a mip record's address and trusted a hit on the dirty
+// sequence alone while this word had not moved; any producer cache keyed the
+// same way relies on this bump. The address can only name a different texture
 // after a new one is allocated there, so the bump in $d3d9_texture_create_kind
 // is the whole guarantee. If a creation path ever stops bumping it, a released
 // texture's snapshot is served for its replacement with nothing to notice.

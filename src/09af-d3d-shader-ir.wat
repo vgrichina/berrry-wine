@@ -137,7 +137,8 @@
     (i32.const -1))
   ;; PS1.4 validator, called by the public compile ($d3d_shader_ir_compile_mode)
   ;; since six-stage execution and software/WebGL1/WebGL2 parity were proven
-  ;; (test-d3d9-ps14-web.js, test-d3d9-shader-web.js). It emits the SAME IR
+  ;; (by the old-path test-d3d9-ps14-web.js / test-d3d9-shader-web.js,
+  ;; deleted with that path in d3d9-retire S4). It emits the SAME IR
   ;; ABI; PHASE is a zero-operand instruction, retaining its source offset.
   ;; No marker means phase2. PHASE kills alpha initialization, not RGB.
   ;; Coissue reads pre-pair values; partial RGB + alpha masks share a slot.

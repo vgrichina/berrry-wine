@@ -227,7 +227,7 @@ async function render(gps, extra = []) {
     st.rtCopies = await s.evaluate('exports.d3d9_gps_stat(87)>>>0');
     st.rtPulls = await s.evaluate('exports.d3d9_gps_stat(85)>>>0');
     st.reads = reads.n;
-    for (const [k, i] of [['site2', 50], ['site4', 52], ['site5', 53], ['handovers', 80], ['leads', 81], ['lead0', 88]])
+    for (const [k, i] of [['site2', 50], ['site5', 53]])
       st[k] = await s.evaluate(`exports.d3d9_gps_stat(${i})>>>0`);
     await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     assert.strictEqual(await s.close(), 0, s.output());
@@ -236,7 +236,9 @@ async function render(gps, extra = []) {
 }
 
 (async () => {
-  const old = await render('off');
+  // The old JS D3D9 path was deleted (d3d9-retire S4): `old` is its output for
+  // this exact sequence, recorded at 3eea041c5 (test/fixtures/d3d9-old-oracle).
+  const old = require('./fixtures/d3d9-old-oracle/rt.json');
   const runs = [['software', []]];
   if (process.argv.includes('--webgl')) runs.push(['webgl', ['--headless-gl']]);
   const lines = [];
@@ -252,8 +254,6 @@ async function render(gps, extra = []) {
     assert(new Set(old.frames[0].px).size >= 2, 'frame 0 shows the RT');
     assert.strictEqual(ring.st.declines, 0, `${gps}: no declines ${JSON.stringify(ring.st)}`);
     assert(!ring.st.reasons[4] && !ring.st.reasons[5], `${gps}: no reason 4/5 ${JSON.stringify(ring.st)}`);
-    assert.strictEqual(ring.st.lead0, 1, `${gps}: the ring leads from frame 0 ${JSON.stringify(ring.st)}`);
-    assert.strictEqual(ring.st.handovers, 0, `${gps}: no handover to the old path ${JSON.stringify(ring.st)}`);
     assert(ring.st.rtBinds > 0 && ring.st.rtCopies > 0, `${gps}: RT sampling on the ring ${JSON.stringify(ring.st)}`);
     assert.strictEqual(ring.st.idleReadbacks, 0, `${gps}: no READBACK unless the guest reads ${JSON.stringify(ring.st)}`);
     assert(ring.st.readbacks <= ring.st.reads, `${gps}: READBACKs (${ring.st.readbacks}) only for guest reads (${ring.st.reads})`);

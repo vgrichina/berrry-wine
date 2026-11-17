@@ -12,7 +12,8 @@
 //   L  fixed T&L lighting, N.L = 1, 0.75, 0.25 per vertex;
 //   C  a triangle wholly in front of the near plane is dropped (stat 125).
 // V also differs from its Gouraud picture, so the flat path is not moot.
-// Still 16: vertex fog (stat 121) and a triangle that needs clipping (124).
+// Still 16: vertex fog (stat 121) and a triangle that needs clipping (124);
+// each traps (fail fast), so each gets its own session.
 const assert = require('assert');
 const { openD3d9GpsSession } = require('./helpers/d3d9-gps-session');
 
@@ -27,7 +28,7 @@ const TRI_B = [at(16, 0, 4), at(16, 16, 4), at(0, 16, 4)];
 const QUAD = [at(0, 0, 2), at(16, 0, 2), at(0, 16, 2), at(16, 16, 2)];
 const FAN = [at(0, 0, 2), at(16, 0, 2), at(16, 16, 2), at(0, 16, 2)];
 
-async function render(gps, extra = []) {
+async function render(gps, extra = [], last = 'fog') {
   const s = await openD3d9GpsSession({ gps, size: SIZE, extra });
   try {
     assert.strictEqual(await s.call('IDirect3D9_CreateDevice', '[0,0,1,exports.get_main_hwnd(),0,ctx.d9g.pp,ctx.d9g.out]'), 0);
@@ -115,18 +116,19 @@ async function render(gps, extra = []) {
     await s.evaluate('ctx.d9g.shader2=exports.guest_read32(ctx.d9g.out)>>>0;true');
     await ok('IDirect3DDevice9_SetVertexShader', '[ctx.d9g.device,ctx.d9g.shader2]');
     await ok('IDirect3DDevice9_SetVertexShaderConstantF', '[ctx.d9g.device,4,ctx.d9g.matrix,1]');
-    await rs(28, 1);
-    await frame('D1', 1, () => draw(4, 1, col(TRI_A, [R, G, B])));
-    await rs(28, 0);
-    await ok('IDirect3DDevice9_SetVertexShader', '[ctx.d9g.device,ctx.d9g.shader]');
-    await frame('D2', 1, () => draw(4, 1, col([TRI_A[0], TRI_A[1], near[2]], [R, G, B])));
-    const end = await s.stats();
-    const subs = { fog: await stat(121), clip: await stat(124) };
-    await s.call('IDirect3DShader9_Release', '[ctx.d9g.shader]');
-    await s.call('IDirect3DShader9_Release', '[ctx.d9g.shader2]');
-    await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
-    assert.strictEqual(await s.close(), 0, s.output());
-    return { frames, st, cpu, dropped, end, subs };
+    let trapped = false;
+    try {
+      if (last === 'fog') {
+        await rs(28, 1);
+        await frame('D1', 1, () => draw(4, 1, col(TRI_A, [R, G, B])));
+      } else {
+        await ok('IDirect3DDevice9_SetVertexShader', '[ctx.d9g.device,ctx.d9g.shader]');
+        await frame('D2', 1, () => draw(4, 1, col([TRI_A[0], TRI_A[1], near[2]], [R, G, B])));
+      }
+    } catch (_) { trapped = true; }
+    const code = await s.close();
+    trapped = trapped && code !== 0 && /unreachable/i.test(s.output());
+    return { frames, st, cpu, dropped, trapped };
   } catch (error) {
     const out = s.output();
     if (process.env.D9FV_LOG) require('fs').writeFileSync(process.env.D9FV_LOG, out);
@@ -156,10 +158,10 @@ async function render(gps, extra = []) {
     same(f.C, f.Cref, `${name} C (near-plane triangle dropped) vs reference`);
     same(f.L, f.Lref, `${name} L (flat, fixed lighting) vs provoking normals`);
     if (new Set(f.L).size !== 2) bad.push(`${name} L has ${new Set(f.L).size} colours`);
-    if (JSON.stringify(r.end.reasons) !== '{"16":2}' || r.subs.fog !== 1 || r.subs.clip !== 1)
-      bad.push(`${name} fog / clipping declines: ${JSON.stringify(r.end.reasons)} ${JSON.stringify(r.subs)}`);
+    if (!r.trapped) bad.push(`${name} vertex fog under flat shading did not trap`);
   };
   check(await render('software'), 'software');
+  if (!(await render('software', [], 'clip')).trapped) bad.push('software clipped flat triangle did not trap');
   if (process.argv.includes('--webgl')) check(await render('webgl', ['--headless-gl']), 'webgl');
   assert.deepStrictEqual(bad, [], `\n  ${bad.join('\n  ')}\n  ${lines.join('\n  ')}`);
   console.log(`PASS flat shading with a vertex stage on the CPU\n  ${lines.join('\n  ')}`);

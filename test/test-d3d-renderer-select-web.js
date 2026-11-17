@@ -76,17 +76,17 @@ const root = path.join(__dirname, '..');
       await launchApp();
     });
     await plain.page.waitForFunction(() => typeof runningApps !== 'undefined' &&
-      runningApps[0] && runningApps[0].wine.running && runningApps[0].wine.hostCtx &&
-      runningApps[0].wine.hostCtx.d3d9Bridge, { timeout: 120000 });
-    const bridge = await plain.page.evaluate(() => {
-      const b = runningApps[0].wine.hostCtx.d3d9Bridge;
+      runningApps[0] && runningApps[0].wine.running && runningApps[0].wine.hostCtx, { timeout: 120000 });
+    // D3D8/9 run only on GPU stream v2 since d3d9-retire S4: the select names
+    // the executor (ctx.d3d9GpsBackend), not an old JS bridge backend.
+    const d3d9Gps = await plain.page.evaluate(() => {
       const ctx = runningApps[0].wine.hostCtx;
       if (ctx.glideBackend !== 'software') throw new Error('Glide ignored shared GPU choice');
       if (ctx.glideBridge && ctx.glideBridge.options.backend !== 'software') throw new Error('Glide bridge ignored shared GPU choice');
-      return { backend: b.backend, asyncSoftware: b.asyncSoftware };
+      return ctx.d3d9GpsBackend;
     });
-    assert.deepStrictEqual(bridge, { backend: 'software', asyncSoftware: true },
-      'Software selects the CPU bridge on the shared render worker');
+    assert.strictEqual(d3d9Gps, 'software',
+      'Software selects the D3D9 GPU stream software executor');
     assert.strictEqual(await plain.page.evaluate(() => runningApps[0].wine.guestWorker.callExport('test_lazy_enabled')), 0,
       'software worker remains eager');
     await plain.page.evaluate(() => setLazySync(true));

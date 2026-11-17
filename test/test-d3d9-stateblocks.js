@@ -2,7 +2,6 @@
 'use strict';
 const assert=require('assert');
 const {bootRenderHarness}=require('./render-helper');
-const {Bridge}=require('../lib/d3d9-host');
 (async()=>{
   const methods=['BeginStateBlock','EndStateBlock','SetRenderState','GetRenderState','SetFVF','GetFVF','SetSamplerState','GetSamplerState','SetTexture','GetTexture','SetTransform','GetTransform','GetGammaRamp','SetGammaRamp','CreateVertexDeclaration','SetVertexDeclaration','GetVertexDeclaration'];
   const blockMethods=['Capture','Apply','Release','QueryInterface','GetDevice'];
@@ -11,15 +10,11 @@ const {Bridge}=require('../lib/d3d9-host');
   methods.push('SetIndices','GetIndices','SetStreamSource','GetStreamSource');
   for(const stage of ['Vertex','Pixel'])for(const op of ['Create','Set','Get'])methods.push(op+stage+'Shader');
   for(const stage of ['Vertex','Pixel'])for(const op of ['Set','Get'])methods.push(op+stage+'ShaderConstantF');
-  let traceEnabled=true;
-  const provenance=new Bridge({backend:'software',worldProvenance:true});
-  const {exports:e}=await bootRenderHarness({fonts:'none',extraHostOverrides:{
-    gpu_gl_call:(op,p,aux)=>op===0x30017&&aux===24&&traceEnabled?1:0,
-    dx_trace:(...args)=>provenance.noteWorldTrace(...args)},extraWat:`
+  // The WORLD-provenance diagnostic (lib/d3d9-host.js noteWorldTrace) went
+  // with the old JS D3D9 path (d3d9-retire S4); the state semantics remain.
+  const {exports:e}=await bootRenderHarness({fonts:'none',extraWat:`
     (func (export "programState") (param $d i32) (result i32) (call $d3d9_program_state (local.get $d)))
-    (func (export "traceProbe") (param $p i32) (result i32) (call $d3d9_world_probe_matrix (local.get $p)))
     (func (export "traceMissingSetup")
-      (global.set $d3d9_world_trace_enabled (i32.const -1))
       (global.set $api_handler_depth (i32.const 1))
       (i32.store (global.get $NULL_SENTINEL) (i32.const 0x12345678)))
     (func (export "traceMissingFinish") (result i32)
@@ -288,47 +283,24 @@ const {Bridge}=require('../lib/d3d9-host');
   assert.strictEqual(e.Apply(fb),0);
   assert.strictEqual(e.GetFVF(d,out),0);assert.strictEqual(read(out),0x4002,'Apply restores the recorded FVF');
   assert.strictEqual(e.Release(fb),0);
-  // Actual handlers emit copied scalar bits. Later source writes and Apply
-  // cannot alter previous provenance, and recording never masquerades as live.
+  // Later source writes and Apply cannot alter applied state, and recording
+  // never masquerades as live.
   identity.forEach((v,i)=>e.guest_write32(mat+4*i,v));
   e.guest_write32(mat,0x40000000);assert.strictEqual(e.SetTransform(d,256,mat),0);
-  const retained=provenance.worldTraceHistory.get(d).at(-1),serialized=JSON.stringify(retained);
   e.guest_write32(mat,0x40400000);assert.strictEqual(e.MultiplyTransform(d,256,mat),0);
   assert.strictEqual(e.GetTransform(d,256,copy),0);const multipliedWord=read(copy);
   assert.strictEqual(multipliedWord,0x40c00000,'MultiplyTransform stores actual 3 * 2 product');
-  assert.strictEqual(provenance.worldLiveWriters.get(d).operation,10,'MultiplyTransform is the live writer');
-  assert.strictEqual(provenance.worldTraceHistory.get(d).at(-1).sourceBits[0],0x40400000);
-  assert.strictEqual(provenance.worldTraceHistory.get(d).at(-1).destinationBits[0],multipliedWord,'trace matches actual API state');
   assert.strictEqual(e.BeginStateBlock(d),0);assert.strictEqual(e.SetTransform(d,256,mat),0);
   assert.strictEqual(e.GetTransform(d,256,copy),0);assert.strictEqual(read(copy),multipliedWord);
   assert.strictEqual(e.EndStateBlock(d,out),0);const worldBlock=read(out);
   e.guest_write32(mat,0x40800000);assert.strictEqual(e.Apply(worldBlock),0);
   assert.strictEqual(e.GetTransform(d,256,copy),0);assert.strictEqual(read(copy),0x40400000);
   assert.strictEqual(e.Capture(worldBlock),0);assert.strictEqual(e.Release(worldBlock),0);
-  assert.strictEqual(JSON.stringify(retained),serialized,'later guest and stateblock writes preserve copied provenance');
-  assert.strictEqual(retained.sourceBits[0],0x40000000);assert.strictEqual(retained.destinationBits[0],0x40000000);
-  assert(Object.isFrozen(retained)&&Object.isFrozen(retained.sourceBits));
-  for(const op of[1,2,3,4,5,6,7,8,9,10])assert(provenance.worldTraceHistory.get(d).some(r=>r.operation===op),'WORLD route '+op);
-  for(let i=0;i<24;i++)assert.strictEqual(e.SetTransform(d,256,mat),0);
-  assert.strictEqual(provenance.worldTraceHistory.get(d).length,32,'history bounded');
-  const liveWriter=provenance.worldLiveWriters.get(d);
-  assert.strictEqual(e.BeginStateBlock(d),0);
-  for(let i=0;i<40;i++)assert.strictEqual(e.SetTransform(d,256,mat),0);
-  assert.strictEqual(provenance.worldLiveWriters.get(d),liveWriter,'recorded writes cannot evict the last live writer');
-  assert.strictEqual(e.EndStateBlock(d,out),0);assert.strictEqual(e.Release(read(out)),0);
-  assert.strictEqual(provenance.worldTracePackets.size,0);assert.strictEqual(provenance.worldTraceErrors,0);
-  // Semantic invalid-input rejection is identical with diagnostics off/on.
-  // An unreadable source never becomes a successful no-op or a trace probe.
-  const reserved=0xf0000000;assert.strictEqual(e.traceProbe(reserved),0);
-  for(const enabled of [false,true]){
-    traceEnabled=enabled;e.traceMissingSetup();
-    const errors=provenance.worldTraceErrors||0,writer=provenance.worldLiveWriters.get(d);
-    assert.strictEqual(e.MultiplyTransform(d,256,reserved)>>>0,invalid);
-    assert.strictEqual(e.traceMissingFinish()>>>0,0x12345678,'invalid span validation leaves sentinel unchanged, enabled='+enabled);
-    assert.strictEqual(provenance.worldTraceErrors,errors,'invalid calls produce no successful writer packets');
-    assert.strictEqual(provenance.worldLiveWriters.get(d),writer,'rejected input cannot claim a live write');
-  }
-  traceEnabled=true;e.traceMissingSetup();e.traceMissingFinish();
+  // An unreadable source never becomes a successful no-op.
+  const reserved=0xf0000000;
+  e.traceMissingSetup();
+  assert.strictEqual(e.MultiplyTransform(d,256,reserved)>>>0,invalid);
+  assert.strictEqual(e.traceMissingFinish()>>>0,0x12345678,'invalid span validation leaves sentinel unchanged');
   const floatBits=n=>{const b=new DataView(new ArrayBuffer(4));b.setFloat32(0,n,true);return b.getUint32(0,true);};
   const writeMatrix=(p,m)=>m.forEach((n,i)=>e.guest_write32(p+4*i,floatBits(n)));
   const readMatrix=(type,device=d)=>{assert.strictEqual(e.GetTransform(device,type,copy),0);return matrix();};
@@ -358,9 +330,6 @@ const {Bridge}=require('../lib/d3d9-host');
     const expectedAlias=multiply(source,A).map(floatBits);
     assert.strictEqual(e.MultiplyTransform(d,256,live+offset),0);
     assert.deepStrictEqual(readMatrix(256),expectedAlias,'aliased input offset '+offset);
-    const row=provenance.worldLiveWriters.get(d);
-    assert.strictEqual(row.operation,10);assert.deepStrictEqual(row.sourceBits,source.map(floatBits),'trace preserves aliased source bits');
-    assert.deepStrictEqual(row.destinationBits,expectedAlias,'trace preserves aliased product');
   }
-  console.log('PASS D3D9 state recording/Capture/Apply, 266 MultiplyTransform selectors, device isolation, aliases and passive invalid-input provenance');
+  console.log('PASS D3D9 state recording/Capture/Apply, 266 MultiplyTransform selectors, device isolation, aliases and invalid input');
 })().catch(error=>{console.error(error);process.exitCode=1;});

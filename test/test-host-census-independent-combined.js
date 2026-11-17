@@ -44,20 +44,10 @@ function checkRendererRestore(source){
   const fn=new Function('layers','topPos','ctx',block);assert.throws(()=>fn.call(host,[{_backCanvas:{}}],{x:0,y:0},ctx),e=>e===boom);assert.equal(depth,0,'exception must restore canvas clip');cases++;
  }
 }
-function checkWorkerImports(){
- const worker=fs.readFileSync(root+'/lib/guest-worker.js','utf8');
- const block=slice(worker,'  self.loadD3D9BackendScripts = () => {','\n} else {');
- const self={},calls=[],boom=Error('import failure');let reject=false;
- new Function('self','importScripts','versionedWorkerUrl',block)(self,(...urls)=>{calls.push(urls);if(reject)throw boom;self.D3D9Backend={};},name=>name+'?v=exact');
- assert.equal(self.loadD3D9BackendScripts(),true);assert(calls[0].indexOf('render-clear.js?v=exact')<calls[0].indexOf('d3d9-backend.js?v=exact'));assert(calls[0].includes('render-clear.js?v=exact'));cases++;
- self.loadD3D9BackendScripts();assert.equal(calls.length,1,'already-loaded fast path');cases++;
- delete self.D3D9Backend;reject=true;assert.throws(()=>self.loadD3D9BackendScripts(),e=>e===boom);assert.equal(self.D3D9Backend,undefined);cases++;
-}
 (async()=>{
  for(const stage of ['fetch','json','validate','invalid','success'])await checkManifest(manifest,stage);
  for(const mode of ['success','partial','load-fail','callback','cancel'])await checkMount(mounts,mode);
  checkRendererRestore(rendererSource);
- checkWorkerImports();
  const primaryCases=cases;
  await assert.rejects(()=>checkManifest(manifest.replaceAll('throwIfCancelled(ctx);',''),'validate'),e=>e.code==='ERR_ASSERTION');mutations++;
  await assert.rejects(()=>checkMount(mounts.replace('URL.revokeObjectURL(url);','void url;'),'success'),e=>e.code==='ERR_ASSERTION');mutations++;

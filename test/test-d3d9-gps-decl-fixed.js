@@ -81,7 +81,9 @@ async function render(gps) {
 }
 
 (async () => {
-  const old = await render('off');
+  // The old JS D3D9 path was deleted (d3d9-retire S4): `old` is its output for
+  // this exact sequence, recorded at 3eea041c5 (test/fixtures/d3d9-old-oracle).
+  const old = require('./fixtures/d3d9-old-oracle/decl-fixed.json');
   const ring = await render('software');
   assert.strictEqual(ring.before.declines, 0, `FVF-layout declaration lowered ${JSON.stringify(ring.before)}`);
   assert.strictEqual(ring.before.draws, 2, `both draws on the ring ${JSON.stringify(ring.before)}`);

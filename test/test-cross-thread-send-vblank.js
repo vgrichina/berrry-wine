@@ -18,7 +18,6 @@ function machine(yieldReason = 0) {
   const state = { yieldReason, eip: 0x401000, esp: 0x1000, runs: 0, clears: 0 };
   const ex = {
     get_sync_table: () => 0, get_yield_reason: () => state.yieldReason,
-    get_d3d_render_token: () => 0, set_d3d_render_token: () => {},
     get_eip: () => state.eip, set_eip: n => { state.eip = n; }, get_esp: () => state.esp,
     set_esp: n => { state.esp = n; }, run: () => { state.runs++; }, get_bp_addr: () => 0,
     get_sleep_yielded: () => 0,

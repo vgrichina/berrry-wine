@@ -98,10 +98,6 @@
   (local.set $wa (call $g2w (local.get $surface)))
   (if (i32.load offset=44 (local.get $wa)) (then (return (i32.const 1))))
   (call $d9r_forget (local.get $surface)) ;; d9rt: its executor RT / DS goes too
-  (if (i32.ne (call $host_gpu_gl_call
-    (select (i32.const 0x3000f) (i32.const 0x30008) (call $d3d9_is_color_surface (local.get $surface)))
-    (local.get $wa) (i32.load offset=8 (local.get $wa))) (i32.const 1))
-    (then (return (i32.const 0))))
   (i32.store offset=44 (local.get $wa) (i32.const 1)) (i32.const 1))
 (func $d3d9_depth_collect (param $surface i32)
   (local $wa i32)
@@ -126,13 +122,11 @@
   (if (i32.and (i32.eq (local.get $refs) (i32.const 1)) (i32.eqz (i32.load offset=16 (local.get $wa)))) (then
     (if (i32.eqz (call $d3d9_depth_retire (local.get $surface))) (then (return (local.get $refs))))))
   (local.set $device (i32.load offset=8 (local.get $wa)))
-  ;; Keep the last external child reference intact across a parked final
-  ;; device release. On re-entry the same object drives the broker poll.
+  ;; The last external child reference releases the device it keeps alive.
   (if (i32.and (i32.eq (local.get $refs) (i32.const 1))
     (i32.eq (load.field DxObject refcount (call $dx_from_this (local.get $device))) (i32.const 1))) (then
     (local.set $stack (i32.load offset=16 (global.get $reg_base)))
     (call $handle_IDirect3DDevice9_Release (local.get $device) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
-    (if (global.get $d3d_render_token) (then (return (i32.const -1))))
     (i32.store offset=16 (global.get $reg_base) (local.get $stack))
     (if (i32.load offset=0 (global.get $reg_base)) (then (return (local.get $refs))))
     (local.set $last (i32.const 1))))

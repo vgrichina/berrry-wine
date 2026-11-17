@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 const assert=require('assert');
-const {Device}=require('../lib/d3d9-software-backend');
-const {copyPayload}=require('../lib/d3d-command-stream');
+const {Device,copyPayload}=require('../lib/d3d9-software-backend');
 
 // A scheduling oracle, not a replacement for actual WAT pixel tests.
 function fixture(results=[1,0,1,0]){

@@ -1,24 +1,23 @@
-  ;; ---- D3D9 / D3D8 on GPU stream v2 (slices 9.5a/9.5b, on by default) -------
+  ;; ---- D3D9 / D3D8 on GPU stream v2 (the only D3D9 renderer) ---------------
   ;; The D3D9 device -- and D3D8, which 09ac routes onto the same device code
-  ;; -- also lowers its frames into GPS records on ring api 4. On unless a
-  ;; host calls d3d9_gps_enable(0) (run.js --d3d9-gps=off); a host with no
-  ;; executor answers the first kick with 0 and the arm turns itself off.
-  ;; The old host path (opcodes 0x3000x, lib/d3d9-host.js) still answers
-  ;; caps, the programmable gate, CreateDevice's failure without a GPU,
-  ;; Reset and device loss. Draws and clears start SHADOWED: the old call
-  ;; runs and the ring is fed only after it reported success (1), from the
-  ;; same descriptor. After two ring-presented frames the ring LEADS and
-  ;; the old draw/clear calls are skipped until something needs the old
-  ;; path again (see "Lead mode" at $d9g_lead).
+  ;; -- renders by lowering every draw, clear, surface operation and present
+  ;; into GPS records on ring api 4, executed by the host's webgl, software
+  ;; or null executor. There is no other path (d3d9-retire S4 deleted the
+  ;; old JS host, lib/d3d9-host.js and its 0x3000x opcodes): a host with no
+  ;; executor answers the first kick with 0, and CreateDevice then fails
+  ;; with D3DERR_NOTAVAILABLE ($d3d9_executor_ok).
   ;;
-  ;; Frames. A frame is GPU until something cannot be lowered: that is a
-  ;; counted decline (d3d9_gps_stat 16 + reason) and the rest of the frame
-  ;; is left to the old path, which presents it. A GPU frame is PRESENTed
-  ;; from the ring and the old present (0x30002, which in software copies
-  ;; the whole RT into the DIB) is skipped. After a decline the executor's
-  ;; colour/depth/stencil are stale; the next frame is GPU again only once a
-  ;; full-target Clear of each buffer the draws use has gone through
-  ;; (reason 13 counts draws refused for that).
+  ;; Fail fast. Anything the ring cannot express yet is a DECLINE: counted
+  ;; (d3d9_gps_stat 12 and 16 + reason), logged (0x44394750, 0x100 + reason)
+  ;; and a trap. Nothing renders it some other way and nothing is skipped.
+  ;;
+  ;; Pixels live in the executor; the guest's CPU copies are written only
+  ;; when the guest touches them: LockRect / GetDC of the back buffer
+  ;; ($d9g_bb_sync), Lock of a colour surface ($d9r_cpu_sync),
+  ;; GetRenderTargetData, and the CLI capture -- each a READBACK (or a fill
+  ;; when the RT is one known Clear colour). The back buffer RT is made on
+  ;; first use and starts from the back buffer DIB as a held upload
+  ;; ($d9r_lead0); a colour surface's RT starts from its CPU bits.
   ;;
   ;; Lowered: device targets (backbuffer RT, the bound depth surface as DS,
   ;; recreated on device change / Reset), Clear (viewport and scissor
@@ -66,7 +65,7 @@
   ;;  12 texture transform / texgen (or a  09aj rows +64 matrices as CONSTS
   ;;     non-default TEXCOORDINDEX behind a programmable VS with fixed PS);
   ;;     PROJECTED lowers but for COUNT1 and the cases the d9pj block lists
-  ;;  13 executor target stale after a decline (waits for a full Clear)
+  ;;  13 (retired in S4: no decline leaves an executor target stale)
   ;;  14 blend factor BLENDFACTOR/SRCCOLOR2  executor blend-constant state
   ;;  15 point / wireframe fill           executor fill modes
   ;;  16 flat shading the CPU cannot make exact: under a guest VS or fixed
@@ -98,19 +97,30 @@
   ;;     S3: compiled once per SHAPE (light types, spot falloff class,
   ;;     sources, flags), values sent as c40..c95 per draw.
   ;; Readback sites (stat 48 + s): 0 LockRect of the back buffer, 1 GetDC
-  ;; on the back buffer, 2 GetRenderTargetData, 3 CLI capture
-  ;; (d3d9_gps_sync_front). Nothing else reads the executor back.
-  ;; Stats: 0 DRAW_UPs, 1 primitives, 2 clears, 3 ring presents, 4 GPU
-  ;; frames, 5 old-path frames, 6 readbacks, 7 RT uploads (CPU wrote the
+  ;; on the back buffer, 2 GetRenderTargetData / colour surface Lock, 3 CLI
+  ;; capture (d3d9_gps_sync_front), 4 the ring's back buffer passes to
+  ;; another device (the first one's picture lands in its DIB), 5 (retired:
+  ;; only a released surface or a Reset drops a colour RT, and neither
+  ;; keeps its pixels). Nothing else reads the executor back.
+  ;; Traps ($d9g_fail, logged 0x44394750 then the code): 1 / 40 / 41 no
+  ;; scratch memory, 2 ring open failed, 4 PRESENT sync kick failed, 10 no
+  ;; executor for a call CreateDevice should have refused, 11 device without
+  ;; program state, 12 Present with no window, 13 / 14 back buffer RT not
+  ;; makeable (Present / GetRenderTargetData), 15 surface table full, 16
+  ;; ColorFill, 17 UpdateSurface, 18 StretchRect, 19 GetRenderTargetData of
+  ;; a colour surface -- each one the ring cannot express; 0x100 + r a
+  ;; draw / clear decline.
+  ;; Stats: 0 DRAW_UPs, 1 primitives, 2 clears, 3 ring presents, 4 frames,
+  ;; 5 (retired), 6 readbacks, 7 RT uploads (CPU wrote the
   ;; back buffer), 8 texture level uploads, 9 texture hits, 10 shaders,
-  ;; 11 syncs, 12 declines, 13 old path did not report success (not
-  ;; lowered), 14 ring opens, 15 no executor (arm dead), 16.. reasons,
+  ;; 11 syncs, 12 declines, 13 (retired), 14 ring opens, 15 no executor,
+  ;; 16.. reasons,
   ;; 72 buffer uploads, 73 buffer hits, 74 DRAWs from buffers, 75 CLIP
   ;; records sent, 76 back
   ;; buffer locks that needed no readback (the DIB was current), 77 locks
   ;; filled with the last full Clear's colour, 78 unlock uploads folded into
-  ;; a later one, 79 old-path lock readbacks skipped ($d9g_lock_supplies),
-  ;; 80 lead -> shadow handovers, 81 shadow -> lead entries, 82 draws
+  ;; a later one, 79 colour surface locks that needed no readback, 80
+  ;; (retired), 81 back buffer RTs seeded from the DIB, 82 draws
   ;; blended on the CPU (d9cpu), 83 draws expanded on the CPU into list
   ;; DRAW_UPs, 84 DRAW_UP chunks those emitted (d9cpu), 120..125 d9fv (its block).
   ;;
@@ -137,7 +147,6 @@
   ;; d9rt surface table 128 x 32 (see "d9rt").
 
   (global $D9G_MEM_SIZE i32 (i32.const 195968))
-  (global $d9g_on (mut i32) (i32.const 1))
   (global $d9g_dead (mut i32) (i32.const 0))
   (global $d9g_h (mut i32) (i32.const 0))
   (global $d9g_mem (mut i32) (i32.const 0))
@@ -154,10 +163,6 @@
   (global $d9g_ds_ptr (mut i32) (i32.const 0))
   (global $d9g_ds_d24 (mut i32) (i32.const 0))
   (global $d9g_ds_bad (mut i32) (i32.const 0))
-  (global $d9g_cstale (mut i32) (i32.const 1))
-  (global $d9g_zstale (mut i32) (i32.const 6))
-  ;; Frame: 0 nothing lowered yet, 1 GPU, 2 declined (old path finishes it).
-  (global $d9g_mode (mut i32) (i32.const 0))
   (global $d9g_frame (mut i32) (i32.const 0))
   (global $d9g_pseq0 (mut i32) (i32.const 0))
   (global $d9g_pseq1 (mut i32) (i32.const 0))
@@ -195,28 +200,6 @@
   (global $d9g_py0 (mut i32) (i32.const 0))
   (global $d9g_px1 (mut i32) (i32.const 0))
   (global $d9g_py1 (mut i32) (i32.const 0))
-  ;; Lead mode (slice S1 of the old-transport retirement). While $d9g_lead
-  ;; is 1 the ring is the only renderer of the device's back buffer: draws
-  ;; and clears are lowered *instead of* the old host call (0x30001/0x30003),
-  ;; an Unlock / ReleaseDC upload skips the old path, and the old path's RT is
-  ;; stale. Invariant: lead => the executor RT is coherent ($d9g_cstale 0).
-  ;; Anything the old path must do on the back buffer while leading -- a
-  ;; decline, StretchRect / ColorFill / UpdateSurface on the back buffer, an
-  ;; occlusion query, an old present -- first hands the executor picture to
-  ;; it ($d9g_to_old: readback into the DIB, then the old 0x30015 upload)
-  ;; and drops back to shadow mode, where the old path runs every call as in
-  ;; 9.5b. The old path's depth is not handed over, so depth-tested draws of
-  ;; that one declined frame test against the old path's last depth.
-  ;; Shadow -> lead after $d9g_need consecutive ring-presented frames;
-  ;; $d9g_need doubles on every handover (2 .. 1024) so a frame that keeps
-  ;; declining settles in shadow mode instead of paying a readback per frame.
-  ;; $d9g_took: the lead path did the call, the post-call shadow hook skips.
-  ;; $d9g_ho_token: the old upload's pending render token, reaped later.
-  (global $d9g_lead (mut i32) (i32.const 0))
-  (global $d9g_good (mut i32) (i32.const 0))
-  (global $d9g_need (mut i32) (i32.const 2))
-  (global $d9g_took (mut i32) (i32.const 0))
-  (global $d9g_ho_token (mut i32) (i32.const 0))
 
   (func $d9g_fail (param $code i32)
     (call $host_log_i32 (i32.const 0x44394750))
@@ -237,32 +220,27 @@
     (local.set $a (i32.add (call $d9g_m) (i32.shl (local.get $i) (i32.const 2))))
     (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (local.get $n))))
 
-  (func (export "d3d9_gps_enable") (param $on i32)
-    (global.set $d9g_on (i32.ne (local.get $on) (i32.const 0))))
-
   ;; ---- capabilities (retirement slice S2) ------------------------------------
   ;; What the guest is told about the device is decided here, from two
   ;; things known without asking the host per call: the launch profile the
   ;; host states once (d3d9_profile_set: bit 0 the app opted in to the
   ;; programmable profile -- lib/apps.js d3d9Programmable, --d3d9-programmable
   ;; -- bit 1 the executor is the software one, whose shaders run on the WAT
-  ;; VM), and the ring's capability block, read at $d9g_open. The profile
-  ;; replaces the old 0x30005 probe (an executor exists once the ring's
-  ;; first SYNC ran), 0x30017 (BLENDOP and the R5G6B5 back buffer: software
-  ;; executor) and 0x3000a (occlusion: software executor stating
-  ;; GPS_CAP_OCCLUSION). The software-only answers stay software-only while
-  ;; a declined frame can still land on the old path, which is where those
-  ;; limits came from. -1: the arm is off or dead, ask the old path.
+  ;; VM), and the ring's capability block, read at $d9g_open. BLENDOP and
+  ;; the R5G6B5 back buffer stay software-executor answers. 0: no executor
+  ;; (CreateDevice fails then, so nothing else is asked).
   (global $d3d9_profile (mut i32) (i32.const 0))
   (global $d9g_caps (mut i32) (i32.const 0))
   (func (export "d3d9_profile_set") (param $bits i32)
     (global.set $d3d9_profile (i32.and (local.get $bits) (i32.const 3))))
   (func $d3d9_caps_profile (result i32)
-    (if (i32.or (i32.eqz (global.get $d9g_on)) (global.get $d9g_dead)) (then (return (i32.const -1))))
-    (if (i32.eqz (call $d9g_open)) (then (return (i32.const -1))))
+    (if (i32.eqz (call $d9g_open)) (then (return (i32.const 0))))
     ;; No executor stated its caps: nothing is advertised.
     (if (i32.eqz (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_VALID))) (then (return (i32.const 0))))
     (global.get $d3d9_profile))
+  ;; CreateDevice: 1 when an executor drains the ring.
+  (func $d3d9_executor_ok (result i32)
+    (call $d9g_open))
   ;; 1 when the programmable profile is on and the executor is software.
   (func $d3d9_caps_software (param $profile i32) (result i32)
     (i32.eq (local.get $profile) (i32.const 3)))
@@ -271,7 +249,7 @@
       (then (return (i32.const 0))))
     (i32.load (i32.add (global.get $d9g_mem) (i32.shl (local.get $i) (i32.const 2)))))
   (func (export "d3d9_gps_active") (result i32)
-    (i32.and (i32.ne (global.get $d9g_on) (i32.const 0)) (i32.eqz (global.get $d9g_dead))))
+    (i32.ne (global.get $d9g_h) (i32.const 0)))
 
   ;; ---- ring plumbing ---------------------------------------------------------
   (func $d9g_kick (param $mode i32) (result i32)
@@ -308,8 +286,8 @@
     (i32.store offset=768 (call $d9g_m) (i32.const -1))
     (call $gps_release (global.get $d9g_h) (local.get $id)))
 
-  ;; The ring, opened on first use. 0 = no executor: the arm is off for the
-  ;; run and the old path keeps every frame.
+  ;; The ring, opened on first use. 0 = no executor for the run (D3D9 has
+  ;; no device then).
   (func $d9g_open (result i32)
     (local $h i32)
     (if (global.get $d9g_h) (then (return (i32.const 1))))
@@ -373,33 +351,55 @@
     (i32.or (i32.eq (local.get $f) (i32.const 21))
       (i32.or (i32.eq (local.get $f) (i32.const 25)) (i32.eq (local.get $f) (i32.const 26)))))
 
+  ;; Fail fast: a decline is counted, logged (0x100 + reason) and traps.
   (func $d9g_decline (param $why i32)
-    (call $d9g_to_old (global.get $d9g_dev))
     (call $d9g_stat (i32.const 12) (i32.const 1))
     (call $d9g_stat (i32.add (i32.const 16) (local.get $why)) (i32.const 1))
-    (global.set $d9g_mode (i32.const 2))
-    (global.set $d9g_cstale (i32.const 1))
-    (global.set $d9g_zstale (i32.const 6))
-    (call $d9r_old_drew (global.get $d9g_dev))) ;; d9rt
+    (call $d9g_fail (i32.add (i32.const 0x100) (local.get $why))))
 
   ;; ---- targets ---------------------------------------------------------------
-  (func $d9g_drop_targets
+  ;; The back buffer RT goes (another device takes the ring, a resize).
+  (func $d9g_drop_bb
     (call $d9g_release (global.get $d9g_rt))
-    (call $d9r_drop_all)
     (global.set $d9g_rt (i32.const 0))
-    (global.set $d9g_ds (i32.const 0))
-    (global.set $d9g_ds_ptr (i32.const 0))
     (global.set $d9g_dev (i32.const 0))
     (global.set $d9g_cpu (i32.const 0))
-    (global.set $d9g_lead (i32.const 0))
-    (global.set $d9g_good (i32.const 0))
-    (global.set $d9g_cstale (i32.const 1))
-    (global.set $d9g_zstale (i32.const 6))
+    (global.set $d9r_tgt (i32.const 0))
+    (global.set $d9r_dse (i32.const 0))
+    (global.set $d9g_ds (i32.const 0))
+    (global.set $d9g_ds_ptr (i32.const 0))
     (global.set $d9g_c_color (i32.const -1))
     (global.set $d9g_c_depth (i32.const -1)))
 
+  ;; Reset / device release: every executor target goes.
+  (func $d9g_drop_targets
+    (call $d9g_drop_bb)
+    (call $d9r_drop_all))
+
+  ;; The ring's back buffer is about to stop being $d9g_dev's: land that
+  ;; device's picture in its back buffer DIB (readback site 4), which its
+  ;; next RT starts from ($d9r_lead0).
+  (func $d9g_park
+    (local $rt i32) (local $bits i32) (local $pitch i32)
+    (if (i32.or (i32.eqz (global.get $d9g_rt)) (i32.eqz (global.get $d9g_dev))) (then (return)))
+    (call $d9g_flush)
+    (local.set $rt (call $d3ddev_rt_entry (global.get $d9g_dev)))
+    (if (i32.eqz (local.get $rt)) (then (return)))
+    (local.set $bits (load.field DxObject misc1 (local.get $rt)))
+    (local.set $pitch (load.field DxObject pitch (local.get $rt)))
+    (if (i32.or (i32.eqz (local.get $bits))
+          (i32.or (i32.ne (load.field DxObject width (local.get $rt)) (global.get $d9g_rt_w))
+            (i32.ne (load.field DxObject height (local.get $rt)) (global.get $d9g_rt_h))))
+      (then (return)))
+    (block $have
+      (br_if $have (i32.and (i32.eq (global.get $d9g_cpu) (i32.const 1))
+        (i32.and (i32.eq (global.get $d9g_cpu_bits) (local.get $bits)) (i32.eq (global.get $d9g_cpu_pitch) (local.get $pitch)))))
+      (if (i32.eq (global.get $d9g_cpu) (i32.const 3)) (then
+        (br_if $have (call $d9g_fill (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (global.get $d9g_cpu_rgba)))))
+      (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (i32.const 4))))
+
   ;; The device's back buffer as executor RT $d9g_rt ($w x $hgt, from the
-  ;; old call's descriptor or the swap chain entry). 0, or a decline reason.
+  ;; call's descriptor or the swap chain entry). 0, or a decline reason.
   (func $d9g_bb (param $device i32) (param $w i32) (param $hgt i32) (result i32)
     (local $fmt i32)
     (local.set $fmt (call $d3d9_backbuffer_format (local.get $device)))
@@ -411,10 +411,9 @@
           (i32.or (i32.or (i32.ne (global.get $d9g_rt_w) (local.get $w)) (i32.ne (global.get $d9g_rt_h) (local.get $hgt)))
             (i32.or (i32.ne (global.get $d9g_rt_fmt) (local.get $fmt)) (i32.eqz (global.get $d9g_rt)))))
       (then
-        ;; Another device (or a resized target) takes the executor: a led
-        ;; device's picture goes to its old path first.
-        (call $d9g_to_old (global.get $d9g_dev))
-        (call $d9g_drop_targets)
+        ;; Another device takes the executor: its picture goes to its DIB.
+        (if (i32.ne (global.get $d9g_dev) (local.get $device)) (then (call $d9g_park)))
+        (call $d9g_drop_bb)
         (global.set $d9g_dev (local.get $device))
         (global.set $d9g_rt_w (local.get $w))
         (global.set $d9g_rt_h (local.get $hgt))
@@ -422,26 +421,37 @@
         (global.set $d9g_rt (call $d9g_id))
         (call $gps_create (global.get $d9g_h) (global.get $d9g_rt) (global.get $GPS_KIND_RT)
           (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
-        (call $d9r_lead0 (local.get $device) (local.get $w) (local.get $hgt) (local.get $fmt))))
+        (call $d9r_lead0 (local.get $device) (local.get $w) (local.get $hgt))))
     (i32.const 0))
 
-  ;; d9rt lead0: the first back buffer the ring makes for $device starts
-  ;; from the back buffer DIB (what the old path's lazy create and every old
-  ;; upload start from) and leads from this frame on: no shadow frames.
-  (global $d9r_led_dev (mut i32) (i32.const 0))
-  (func $d9r_lead0 (param $device i32) (param $w i32) (param $hgt i32) (param $fmt i32)
+  ;; 1 when the ring holds $device's back buffer, made now if needed (a
+  ;; surface operation or Present before any draw). A back buffer format
+  ;; the ring cannot hold declines (23).
+  (func $d9g_bb_ensure (param $device i32) (result i32)
+    (local $rt i32) (local $r i32)
+    (if (i32.eqz (local.get $device)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9g_open)) (then (call $d9g_fail (i32.const 10))))
+    (if (i32.and (i32.eq (global.get $d9g_dev) (local.get $device)) (i32.ne (global.get $d9g_rt) (i32.const 0)))
+      (then (return (i32.const 1))))
+    (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
+    (if (i32.eqz (local.get $rt)) (then (return (i32.const 0))))
+    (local.set $r (call $d9g_bb (local.get $device)
+      (load.field DxObject width (local.get $rt)) (load.field DxObject height (local.get $rt))))
+    (if (local.get $r) (then (call $d9g_decline (local.get $r))))
+    (i32.const 1))
+
+  ;; d9rt lead0: a back buffer RT the ring makes for $device starts from
+  ;; the back buffer DIB (where the guest's CPU writes and a parked picture
+  ;; are), held like an Unlock's upload ($d9g_flush): a full Clear first
+  ;; drops it. Without a DIB of the RT's size it starts as created.
+  (func $d9r_lead0 (param $device i32) (param $w i32) (param $hgt i32)
     (local $rt i32)
-    (if (i32.eq (global.get $d9r_led_dev) (local.get $device)) (then (return)))
-    (global.set $d9r_led_dev (local.get $device))
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
     (if (i32.eqz (local.get $rt)) (then (return)))
     (if (i32.or (i32.eqz (load.field DxObject misc1 (local.get $rt)))
           (i32.or (i32.ne (load.field DxObject width (local.get $rt)) (local.get $w))
             (i32.ne (load.field DxObject height (local.get $rt)) (local.get $hgt))))
       (then (return)))
-    ;; Held like an Unlock's upload ($d9g_flush): a full Clear first drops it.
-    (global.set $d9g_cstale (i32.const 0))
     (global.set $d9g_cpu_bits (load.field DxObject misc1 (local.get $rt)))
     (global.set $d9g_cpu_pitch (load.field DxObject pitch (local.get $rt)))
     (global.set $d9g_px0 (i32.const 0))
@@ -449,10 +459,7 @@
     (global.set $d9g_px1 (local.get $w))
     (global.set $d9g_py1 (local.get $hgt))
     (global.set $d9g_cpu (i32.const 2))
-    (global.set $d9g_lead (i32.const 1))
-    (global.set $d9g_good (i32.const 0))
-    (call $d9g_stat (i32.const 81) (i32.const 1))
-    (call $d9g_stat (i32.const 88) (i32.const 1)))
+    (call $d9g_stat (i32.const 81) (i32.const 1)))
 
   ;; Make the device's bound RT0 (the back buffer, or a colour surface's ring
   ;; RT -- d9rt) and its bound depth surface the executor targets. 0, or a
@@ -467,7 +474,6 @@
       (then
         (local.set $e (call $d9r_color (local.get $device) (local.get $p)))
         (if (i32.eqz (local.get $e)) (then (return (i32.const 4))))
-        (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 13))))
         (global.set $d9r_tgt (local.get $e))
         (local.set $color (i32.load offset=8 (local.get $e)))
         (global.set $d9g_tw (i32.load offset=12 (local.get $e)))
@@ -480,19 +486,13 @@
         (global.set $d9g_tw (global.get $d9g_rt_w))
         (global.set $d9g_th (global.get $d9g_rt_h))
         (global.set $d9g_tfmt (global.get $d9g_rt_fmt))))
-    ;; Depth surface: its own ring DS (d9rt), its staleness in $d9g_zstale
-    ;; while bound. +20 w, +24 h, +28 format.
+    ;; Depth surface: its own ring DS (d9rt). +20 w, +24 h, +28 format.
     (local.set $p (i32.load offset=21752 (global.get $d9g_pw)))
     (if (i32.ne (local.get $p) (global.get $d9g_ds_ptr)) (then
-      (if (global.get $d9r_dse) (then (i32.store offset=28 (global.get $d9r_dse) (global.get $d9g_zstale))))
       (global.set $d9r_dse (i32.const 0))
       (global.set $d9g_ds_ptr (local.get $p))
-      (global.set $d9g_zstale (i32.const 6))
       (if (local.get $p) (then
-        (local.set $e (call $d9r_depth (local.get $device) (local.get $p)))
-        (if (local.get $e) (then
-          (global.set $d9r_dse (local.get $e))
-          (global.set $d9g_zstale (i32.load offset=28 (local.get $e)))))))))
+        (global.set $d9r_dse (call $d9r_depth (local.get $device) (local.get $p)))))))
     (global.set $d9g_ds (i32.const 0))
     (global.set $d9g_ds_bad (i32.const 0))
     (if (global.get $d9g_ds_ptr) (then
@@ -4112,7 +4112,6 @@
     ;; d9rt lead0: the bind may have just taken the DIB as a held upload.
     (call $d9g_flush)
     (if (i32.eqz (global.get $d9r_tgt)) (then (global.set $d9g_cpu (i32.const 0))))
-    (if (i32.and (i32.ne (global.get $d9g_cstale) (i32.const 0)) (i32.eqz (global.get $d9r_tgt))) (then (return (i32.const 13))))
     (if (i32.ne (call $d9g_rs (i32.const 8)) (i32.const 3)) (then (return (i32.const 15))))
     ;; d9cpu: flat shading expands when the colours are vertex data.
     ;; d9fv: colours a vertex stage computes: that stage runs on the CPU.
@@ -4138,12 +4137,8 @@
     (local.set $depth (i32.and (i32.lt_u (i32.sub (call $d9g_rs (i32.const 7)) (i32.const 1)) (i32.const 2))
       (i32.ne (global.get $d9g_ds_ptr) (i32.const 0))))
     (if (i32.and (local.get $depth) (i32.ne (global.get $d9g_ds_bad) (i32.const 0))) (then (return (i32.const 19))))
-    (if (i32.and (local.get $depth) (i32.ne (i32.and (global.get $d9g_zstale) (i32.const 2)) (i32.const 0)))
-      (then (return (i32.const 13))))
     (local.set $stencil (i32.and (i32.ne (call $d9g_rs (i32.const 52)) (i32.const 0)) (i32.ne (global.get $d9g_ds) (i32.const 0))))
     (if (i32.and (local.get $stencil) (i32.eqz (global.get $d9g_ds_d24))) (then (return (i32.const 18))))
-    (if (i32.and (local.get $stencil) (i32.ne (i32.and (global.get $d9g_zstale) (i32.const 4)) (i32.const 0)))
-      (then (return (i32.const 13))))
     (local.set $fog (i32.ne (call $d9g_rs (i32.const 28)) (i32.const 0)))
     (if (i32.and (local.get $fog) (i32.ne (call $d9g_rs (i32.const 35)) (i32.const 0))) (then (return (i32.const 11))))
     ;; Pixel stage: the guest's shader, or the fixed cascade.
@@ -4454,152 +4449,35 @@
     (call $d9g_stat (i32.const 1) (local.get $count))
     (i32.const 0))
 
-  ;; Shared entry: the arm is on, the ring is up and this frame is not
-  ;; already declined. Sets the state pointers. 0 = skip the call.
-  (func $d9g_ready (param $desc i32) (result i32)
-    (if (i32.or (i32.eqz (global.get $d9g_on)) (global.get $d9g_dead)) (then (return (i32.const 0))))
-    (if (i32.eqz (local.get $desc)) (then (return (i32.const 0))))
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d9g_open)) (then (return (i32.const 0))))
-    (call $d9g_enter (local.get $desc))
-    (global.set $d9g_mode (i32.const 1))
-    (i32.const 1))
+  ;; Shared entry: the ring is up and the call's state is readable. Sets the
+  ;; state pointers. A device with no ring or no program state cannot have
+  ;; been created (CreateDevice checks $d3d9_executor_ok): trap.
+  (func $d9g_ready (param $desc i32)
+    (if (i32.eqz (local.get $desc)) (then (call $d9g_fail (i32.const 11))))
+    (if (i32.eqz (call $d9g_open)) (then (call $d9g_fail (i32.const 10))))
+    (call $d9g_enter (local.get $desc)))
 
-  ;; ---- lead mode (S1) --------------------------------------------------------
-  ;; The ring leads for $device: its draws and clears skip the old path.
-  (func $d9g_lead_on (param $device i32) (result i32)
-    (if (i32.eqz (global.get $d9g_lead)) (then (return (i32.const 0))))
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
-    (call $d9g_coherent (local.get $device)))
-
-  ;; The old upload of a handover returned a pending render token: collect
-  ;; it once the old queue has run it (it is ordered before every later old
-  ;; call, so by the next old result it has normally completed).
-  (func $d9g_ho_reap
-    (local $r i32)
-    (if (i32.eqz (global.get $d9g_ho_token)) (then (return)))
-    (local.set $r (call $host_gpu_gl_call (i32.const 0x30007) (i32.const 0) (global.get $d9g_ho_token)))
-    (if (i32.eq (local.get $r) (global.get $d9g_ho_token)) (then (return)))
-    (global.set $d9g_ho_token (i32.const 0))
-    (if (i32.ne (local.get $r) (i32.const 1)) (then (call $d9g_fail (i32.const 5)))))
-
-  ;; The old path is about to read or write $device's back buffer, or to
-  ;; take over its frame: while leading, give it the executor's picture
-  ;; (through the back buffer DIB, which then holds the RT) and leave lead
-  ;; mode. Readback site 4 (stat 52); stat 80 counts handovers.
-  (func $d9g_to_old (param $device i32)
-    (local $rt i32) (local $bits i32) (local $pitch i32) (local $d i32) (local $state i32) (local $r i32)
-    (if (i32.eqz (global.get $d9g_lead)) (then (return)))
-    (if (i32.ne (local.get $device) (global.get $d9g_dev)) (then (return)))
-    (global.set $d9g_lead (i32.const 0))
-    (global.set $d9g_good (i32.const 0))
-    (if (i32.lt_u (global.get $d9g_need) (i32.const 1024))
-      (then (global.set $d9g_need (i32.shl (global.get $d9g_need) (i32.const 1)))))
-    (call $d9g_stat (i32.const 80) (i32.const 1))
-    (call $d9g_flush)
-    (call $d9r_push_all) ;; d9rt
-    (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (call $d9g_fail (i32.const 6))))
-    (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
-    (if (i32.eqz (local.get $rt)) (then (call $d9g_fail (i32.const 7))))
-    (local.set $bits (load.field DxObject misc1 (local.get $rt)))
-    (local.set $pitch (load.field DxObject pitch (local.get $rt)))
-    (block $have
-      (br_if $have (i32.and (i32.eq (global.get $d9g_cpu) (i32.const 1))
-        (i32.and (i32.eq (global.get $d9g_cpu_bits) (local.get $bits)) (i32.eq (global.get $d9g_cpu_pitch) (local.get $pitch)))))
-      (if (i32.eq (global.get $d9g_cpu) (i32.const 3)) (then
-        (br_if $have (call $d9g_fill (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (global.get $d9g_cpu_rgba)))))
-      (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (i32.const 4)))
-    (global.set $d9g_cpu_bits (local.get $bits))
-    (global.set $d9g_cpu_pitch (local.get $pitch))
-    (global.set $d9g_cpu (i32.const 1))
-    ;; Whole-target old upload (0x30015 with no surface: the back buffer),
-    ;; from a private descriptor so the caller's draw descriptor survives.
-    (local.set $state (call $d3d9_program_state (local.get $device)))
-    (local.set $d (i32.add (call $d9g_m) (i32.const 3072)))
-    (memory.fill (local.get $d) (i32.const 0) (i32.const 64))
-    (i32.store (local.get $d) (local.get $device))
-    (i32.store offset=4 (local.get $d) (local.get $state))
-    (i32.store offset=8 (local.get $d) (local.get $bits))
-    (i32.store offset=12 (local.get $d) (load.field DxObject width (local.get $rt)))
-    (i32.store offset=16 (local.get $d) (load.field DxObject height (local.get $rt)))
-    (i32.store offset=20 (local.get $d) (call $gl32 (i32.add (local.get $state) (i32.const 1684))))
-    (i32.store offset=28 (local.get $d) (local.get $bits))
-    (i32.store offset=32 (local.get $d) (local.get $pitch))
-    (i32.store offset=40 (local.get $d) (call $d3ddev_state (local.get $device)))
-    (i32.store offset=48 (local.get $d) (load.field DxObject width (local.get $rt)))
-    (i32.store offset=52 (local.get $d) (load.field DxObject height (local.get $rt)))
-    (i32.store offset=56 (local.get $d) (call $d3d9_backbuffer_format (local.get $device)))
-    (call $d9g_ho_reap)
-    (local.set $r (call $host_gpu_gl_call (i32.const 0x30015) (local.get $d) (i32.const 0)))
-    (if (i32.lt_s (local.get $r) (i32.const -1))
-      (then (global.set $d9g_ho_token (local.get $r)) (return)))
-    (if (i32.ne (local.get $r) (i32.const 1)) (then (call $d9g_fail (i32.const 8)))))
-
-  ;; Draw call site, instead of the old 0x30001 when leading. 1 = lowered
-  ;; (the call succeeded); 0 = the old path must run it (not leading, or a
-  ;; decline that has just handed the frame over).
-  (func $d9g_lead_draw (param $device i32) (param $kind i32) (result i32)
+  ;; Draw call site (every Draw* entry point; $kind as $d9g_draw_try).
+  ;; 1 = drawn; anything not lowerable traps ($d9g_decline).
+  (func $d9g_draw_call (param $device i32) (param $kind i32) (result i32)
     (local $desc i32) (local $r i32)
-    (if (i32.eqz (call $d9g_lead_on (local.get $device))) (then (return (i32.const 0))))
     (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
-    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return (i32.const 0))))
+    (call $d9g_ready (local.get $desc))
     (if (i32.eqz (i32.load offset=22020 (global.get $d9g_pw))) (then (global.set $d9g_cpu (i32.const 0))))
     (local.set $r (call $d9g_draw_try (local.get $device) (local.get $desc) (local.get $kind)))
-    (if (local.get $r) (then (call $d9g_decline (local.get $r)) (return (i32.const 0))))
-    (global.set $d9g_took (i32.const 1))
+    (if (local.get $r) (then (call $d9g_decline (local.get $r))))
     (i32.const 1))
 
-  ;; Clear call site, instead of the old 0x30003 when leading.
-  (func $d9g_lead_clear (param $device i32) (result i32)
+  ;; Clear call site. Viewport (and scissor) clip every rect.
+  (func $d9g_clear_call (param $device i32) (result i32)
     (local $desc i32) (local $r i32)
-    (if (i32.eqz (call $d9g_lead_on (local.get $device))) (then (return (i32.const 0))))
     (call $d9g_flush)
     (local.set $desc (call $d9g_desc (local.get $device)))
-    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then (return (i32.const 0))))
+    (call $d9g_ready (local.get $desc))
     (local.set $r (call $d9g_clear_lower (local.get $device) (local.get $desc)))
-    (if (local.get $r) (then (call $d9g_decline (local.get $r)) (return (i32.const 0))))
-    (global.set $d9g_took (i32.const 1))
+    (if (local.get $r) (then (call $d9g_decline (local.get $r))))
     (i32.const 1))
-
-  ;; Unlock / ReleaseDC of the back buffer: while leading the old path's RT
-  ;; is not kept, so its upload (0x30015) is skipped.
-  (func $d9g_lead_upload (param $device i32) (result i32)
-    (call $d9g_lead_on (local.get $device)))
-
-  ;; After the old path drew ($result 1). See $d9g_draw_try for $kind.
-  (func $d9g_draw (param $device i32) (param $kind i32) (param $result i32)
-    (local $desc i32) (local $r i32)
-    (if (global.get $d9g_took) (then (global.set $d9g_took (i32.const 0)) (return)))
-    (if (i32.eqz (global.get $d9g_on)) (then (return)))
-    (call $d9g_ho_reap)
-    (if (i32.ne (local.get $result) (i32.const 1)) (then
-      (call $d9g_stat (i32.const 13) (i32.const 1)) (return)))
-    (call $d9g_flush)
-    (local.set $desc (call $d9g_desc (local.get $device)))
-    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then
-      (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (call $d9r_old_drew (local.get $device)))) ;; d9rt
-      (return)))
-    (if (i32.eqz (i32.load offset=22020 (global.get $d9g_pw))) (then (global.set $d9g_cpu (i32.const 0))))
-    (local.set $r (call $d9g_draw_try (local.get $device) (local.get $desc) (local.get $kind)))
-    (if (local.get $r) (then (call $d9g_decline (local.get $r)))))
-
-  ;; After the old path cleared ($result 1). Viewport (and scissor) clip
-  ;; every rect; a clear of the whole target makes that buffer coherent.
-  (func $d9g_clear (param $device i32) (param $result i32)
-    (local $desc i32) (local $r i32)
-    (if (global.get $d9g_took) (then (global.set $d9g_took (i32.const 0)) (return)))
-    (if (i32.eqz (global.get $d9g_on)) (then (return)))
-    (call $d9g_ho_reap)
-    (if (i32.ne (local.get $result) (i32.const 1)) (then
-      (call $d9g_stat (i32.const 13) (i32.const 1)) (return)))
-    (call $d9g_flush)
-    (local.set $desc (call $d9g_desc (local.get $device)))
-    (if (i32.eqz (call $d9g_ready (local.get $desc))) (then
-      (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (call $d9r_old_drew (local.get $device)))) ;; d9rt
-      (return)))
-    (local.set $r (call $d9g_clear_lower (local.get $device) (local.get $desc)))
-    (if (local.get $r) (then (call $d9g_decline (local.get $r)))))
 
   ;; Clear records for the call in $desc. 0 = lowered, else decline reason.
   (func $d9g_clear_lower (param $device i32) (param $desc i32) (result i32)
@@ -4678,53 +4556,21 @@
       ;; d9rt: the back buffer's coherence globals; a colour surface's ring
       ;; RT was made fresh when it was bound.
       (if (i32.and (i32.and (local.get $flags) (i32.const 1)) (i32.eqz (global.get $d9r_tgt))) (then
-        (global.set $d9g_cstale (i32.const 0))
         (global.set $d9g_cpu (i32.const 3))
-        (global.set $d9g_cpu_rgba (local.get $rgba))))
-      (global.set $d9g_zstale (i32.and (global.get $d9g_zstale)
-        (i32.xor (i32.and (local.get $flags) (i32.const 6)) (i32.const -1))))
-      ;; D16 has no stencil to go stale.
-      (if (i32.eqz (global.get $d9g_ds_d24))
-        (then (global.set $d9g_zstale (i32.and (global.get $d9g_zstale) (i32.const 2)))))))
+        (global.set $d9g_cpu_rgba (local.get $rgba))))))
     (i32.const 0))
 
-  (func $d9g_frame_end (param $gpu i32)
-    (if (i32.eqz (local.get $gpu)) (then
-      (global.set $d9g_cpu (i32.const 0))
-      (global.set $d9g_good (i32.const 0))))
-    ;; A whole frame on the ring in shadow mode counts toward leading.
-    (if (i32.and (local.get $gpu) (i32.eqz (global.get $d9g_lead))) (then
-      (global.set $d9g_good (i32.add (global.get $d9g_good) (i32.const 1)))
-      (if (i32.ge_u (global.get $d9g_good) (global.get $d9g_need)) (then
-        (global.set $d9g_lead (i32.const 1))
-        (global.set $d9g_good (i32.const 0))
-        (call $d9g_stat (i32.const 81) (i32.const 1))))))
-    (call $d9g_stat (select (i32.const 4) (i32.const 5) (local.get $gpu)) (i32.const 1))
-    (global.set $d9g_mode (i32.const 0))
-    (global.set $d9g_frame (i32.add (global.get $d9g_frame) (i32.const 1))))
-
-  ;; Device / swap-chain Present, before the old present. 1 = PRESENTed from
-  ;; the ring (the caller skips 0x30002 and its RT -> DIB copy).
+  ;; Device / swap-chain Present: a PRESENT of the back buffer RT, made from
+  ;; the DIB first if nothing drew yet. 1 = presented.
   (func $d9g_present (param $device i32) (result i32)
     (local $h i32) (local $p i32) (local $seq i32) (local $hwnd i32) (local $state i32)
-    (if (i32.or (i32.eqz (global.get $d9g_on)) (global.get $d9g_dead)) (then (return (i32.const 0))))
-    (if (i32.eqz (global.get $d9g_h)) (then (return (i32.const 0))))
-    (call $d9g_ho_reap)
-    (call $d9g_flush)
-    ;; Old-path presents by cause (stat 64 + k): 0 another device / no
-    ;; target, 1 declined frame, 2 executor target stale, 3 no window.
-    (if (i32.or (i32.ne (local.get $device) (global.get $d9g_dev)) (i32.eqz (global.get $d9g_rt)))
-      (then (call $d9g_stat (i32.const 64) (i32.const 1)) (call $d9g_frame_end (i32.const 0)) (return (i32.const 0))))
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2))
-      (then (call $d9g_stat (i32.const 65) (i32.const 1)) (call $d9g_frame_end (i32.const 0)) (return (i32.const 0))))
-    (if (global.get $d9g_cstale)
-      (then (call $d9g_stat (i32.const 66) (i32.const 1)) (call $d9g_frame_end (i32.const 0)) (return (i32.const 0))))
     (local.set $state (call $d3d9_program_state (local.get $device)))
     (local.set $hwnd (if (result i32) (local.get $state)
       (then (call $gl32 (i32.add (local.get $state) (i32.const 1684)))) (else (i32.const 0))))
-    (if (i32.eqz (local.get $hwnd))
-      (then (call $d9g_to_old (local.get $device))
-        (call $d9g_stat (i32.const 67) (i32.const 1)) (call $d9g_frame_end (i32.const 0)) (return (i32.const 0))))
+    ;; No window to present to (the old path's own refusal): stat 67.
+    (if (i32.eqz (local.get $hwnd)) (then (call $d9g_stat (i32.const 67) (i32.const 1)) (call $d9g_fail (i32.const 12))))
+    (if (i32.eqz (call $d9g_bb_ensure (local.get $device))) (then (call $d9g_fail (i32.const 13))))
+    (call $d9g_flush)
     (local.set $h (global.get $d9g_h))
     ;; At most two PRESENTs in flight.
     (if (i32.and (i32.ne (global.get $d9g_pseq0) (i32.const 0))
@@ -4752,7 +4598,8 @@
     (if (local.get $state) (then (i32.atomic.store offset=28 (local.get $state) (i32.const 1))))
     (call $d9g_stat (i32.const 3) (i32.const 1))
     (drop (call $d9g_kick (global.get $GPS_KICK_ASYNC)))
-    (call $d9g_frame_end (i32.const 1))
+    (call $d9g_stat (i32.const 4) (i32.const 1))
+    (global.set $d9g_frame (i32.add (global.get $d9g_frame) (i32.const 1)))
     (i32.const 1))
 
   ;; ---- readbacks and CPU writes ---------------------------------------------
@@ -4854,13 +4701,10 @@
       (br $bands)))
     (call $d9g_stat (i32.const 7) (i32.const 1)))
 
-  ;; The executor RT holds this device's back buffer and is coherent.
+  ;; The executor RT holds this device's back buffer.
   (func $d9g_coherent (param $device i32) (result i32)
-    (i32.and
-      (i32.and (i32.ne (global.get $d9g_on) (i32.const 0)) (i32.eqz (global.get $d9g_dead)))
-      (i32.and
-        (i32.and (i32.ne (global.get $d9g_h) (i32.const 0)) (i32.ne (global.get $d9g_rt) (i32.const 0)))
-        (i32.and (i32.eq (global.get $d9g_dev) (local.get $device)) (i32.eqz (global.get $d9g_cstale))))))
+    (i32.and (i32.ne (global.get $d9g_rt) (i32.const 0))
+      (i32.and (i32.ne (local.get $device) (i32.const 0)) (i32.eq (global.get $d9g_dev) (local.get $device)))))
 
   ;; Send the Unlock upload $d9g_cpu 2 has been holding back: the
   ;; executor is about to read or write its RT.
@@ -4901,37 +4745,23 @@
     (call $d9g_stat (i32.const 77) (i32.const 1))
     (i32.const 1))
 
-  ;; 09am, before the old path reads its RT back for a Lock / GetDC of the
-  ;; back buffer: 1 when $d9g_bb_sync will supply every pixel itself, so
-  ;; that readback (a readPixels in the browser) is skipped.
-  (func $d9g_lock_supplies (param $device i32) (result i32)
-    (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d9g_pix (global.get $d9g_rt_fmt))) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d3ddev_rt_entry (local.get $device))) (then (return (i32.const 0))))
-    (call $d9g_stat (i32.const 79) (i32.const 1))
-    (i32.const 1))
-
-  ;; 09am $d3d9_backbuffer_dc_sync, after the old call: a coherent executor
-  ;; back buffer is what LockRect / GetDC see (readback, sites 0/1) unless
-  ;; the DIB already holds it ($d9g_cpu); what the CPU wrote on unlock /
-  ;; ReleaseDC goes back up before the executor next uses its RT.
-  (func $d9g_bb_sync (param $device i32) (param $upload i32) (param $result i32) (result i32)
+  ;; 09am LockRect / GetDC ($upload 0) and UnlockRect / ReleaseDC ($upload
+  ;; 1) of the back buffer. Before the ring holds this device's back buffer
+  ;; the DIB is the back buffer (the RT, once made, starts from it) and
+  ;; nothing moves. After: a Lock lands the RT in the DIB (readback, sites
+  ;; 0/1) unless the DIB already holds it ($d9g_cpu); what the CPU wrote goes
+  ;; back up before the executor next uses its RT.
+  (func $d9g_bb_sync (param $device i32) (param $upload i32)
     (local $rt i32) (local $state i32) (local $flags i32) (local $bits i32) (local $pitch i32)
     (local $x i32) (local $y i32) (local $w i32) (local $hgt i32)
-    (if (i32.ne (local.get $result) (i32.const 1)) (then (return (local.get $result))))
-    (if (i32.or (i32.eqz (global.get $d9g_on)) (global.get $d9g_dead)) (then (return (local.get $result))))
-    (if (i32.or (i32.eqz (global.get $d9g_h)) (i32.ne (global.get $d9g_dev) (local.get $device)))
-      (then (return (local.get $result))))
-    (if (i32.eqz (global.get $d9g_rt)) (then (return (local.get $result))))
+    (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (return)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
     (local.set $flags (load.field DxObject flags (local.get $rt)))
     (local.set $bits (load.field DxObject misc1 (local.get $rt)))
     (local.set $pitch (load.field DxObject pitch (local.get $rt)))
-    ;; The copy is of another DIB, or the render worker's old readback has
-    ;; just rewritten this one: start over.
-    (if (i32.or (global.get $d3d_render_token)
-          (i32.and (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
-            (i32.or (i32.ne (global.get $d9g_cpu_bits) (local.get $bits)) (i32.ne (global.get $d9g_cpu_pitch) (local.get $pitch)))))
+    ;; The copy is of another DIB: start over.
+    (if (i32.and (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
+          (i32.or (i32.ne (global.get $d9g_cpu_bits) (local.get $bits)) (i32.ne (global.get $d9g_cpu_pitch) (local.get $pitch))))
       (then
         (call $d9g_flush)
         (global.set $d9g_cpu (i32.const 0))))
@@ -4946,8 +4776,7 @@
             (local.set $y (i32.load offset=22032 (local.get $state)))
             (local.set $w (i32.load offset=22036 (local.get $state)))
             (local.set $hgt (i32.load offset=22040 (local.get $state)))))
-        (if (i32.and (call $d9g_coherent (local.get $device))
-              (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2))))
+        (if (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
           (then
             ;; Hold the upload back; widen one already held.
             (if (i32.eq (global.get $d9g_cpu) (i32.const 2))
@@ -4969,48 +4798,55 @@
             (call $d9g_upload_rect (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt)
               (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)))))
       (else
-        (if (call $d9g_coherent (local.get $device)) (then
-          (global.set $d9g_cpu_bits (local.get $bits))
-          (global.set $d9g_cpu_pitch (local.get $pitch))
-          (block $have
-            (if (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
-              (then (call $d9g_stat (i32.const 76) (i32.const 1)) (br $have)))
-            (if (i32.eq (global.get $d9g_cpu) (i32.const 3)) (then
-              (br_if $have (call $d9g_fill (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (global.get $d9g_cpu_rgba)))))
-            (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt)
-              (select (i32.const 0) (i32.const 1) (i32.ne (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 29))) (i32.const 0)))))
-          (if (i32.ne (global.get $d9g_cpu) (i32.const 2)) (then (global.set $d9g_cpu (i32.const 1))))))))
-    (local.get $result))
+        (global.set $d9g_cpu_bits (local.get $bits))
+        (global.set $d9g_cpu_pitch (local.get $pitch))
+        (block $have
+          (if (i32.or (i32.eq (global.get $d9g_cpu) (i32.const 1)) (i32.eq (global.get $d9g_cpu) (i32.const 2)))
+            (then (call $d9g_stat (i32.const 76) (i32.const 1)) (br $have)))
+          (if (i32.eq (global.get $d9g_cpu) (i32.const 3)) (then
+            (br_if $have (call $d9g_fill (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (global.get $d9g_cpu_rgba)))))
+          (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt)
+            (select (i32.const 0) (i32.const 1) (i32.ne (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 29))) (i32.const 0)))))
+        (if (i32.ne (global.get $d9g_cpu) (i32.const 2)) (then (global.set $d9g_cpu (i32.const 1)))))))
 
-  ;; GetRenderTargetData of the back buffer into the surface $dst (wasm),
-  ;; after the old call succeeded.
-  (func $d9g_rtdata (param $device i32) (param $dst i32) (param $result i32)
-    (if (i32.ne (local.get $result) (i32.const 1)) (then (return)))
+  ;; Occlusion bracket (09ae IDirect3DQuery9::Issue). $kind
+  ;; $GPS_FENCEK_OCCLUSION_BEGIN opens the executor's sample count and
+  ;; returns 0; $GPS_FENCEK_OCCLUSION_END closes it and returns the count,
+  ;; waiting for it (completion slot 1, apart from READBACK's slot 0). The
+  ;; caller has built the device's descriptor.
+  (func $d9g_occlusion (param $device i32) (param $kind i32) (result i32)
+    (local $p i32) (local $pos i32) (local $seq i32) (local $h i32)
+    (call $d9g_ready (call $d9g_desc (local.get $device)))
+    (local.set $h (global.get $d9g_h))
+    (call $gps_slot_arm (local.get $h) (i32.const 1))
+    (if (i32.eq (local.get $kind) (global.get $GPS_FENCEK_OCCLUSION_END))
+      (then (local.set $pos (call $d9g_arena (i32.const 4)))))
+    (local.set $p (call $d9g_begin (global.get $GPS_OP_FENCE) (size-of GpsFence)))
+    (store.field GpsFence slot (local.get $p) (i32.const 1))
+    (store.field GpsFence kind (local.get $p) (local.get $kind))
+    (store.field GpsFence pad (local.get $p) (i32.const 0))
+    (store.field GpsFence pad2 (local.get $p) (i32.const 0))
+    (store.field GpsFence dst (local.get $p) (local.get $pos))
+    (local.set $seq (call $d9g_end (local.get $p)))
+    (if (i32.ne (local.get $kind) (global.get $GPS_FENCEK_OCCLUSION_END)) (then (return (i32.const 0))))
+    (call $gps_slot_wait (local.get $h) (i32.const 1) (local.get $seq))
+    (i32.load (call $d9g_aptr (local.get $pos))))
+
+  ;; GetRenderTargetData of the back buffer into the surface $dst (wasm).
+  (func $d9g_rtdata (param $device i32) (param $dst i32)
+    (if (i32.eqz (call $d9g_bb_ensure (local.get $device))) (then (call $d9g_fail (i32.const 14))))
     (call $d9g_flush)
-    (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (return)))
     (call $d9g_readback (call $g2w (i32.load offset=40 (local.get $dst))) (i32.load offset=48 (local.get $dst))
       (i32.load offset=28 (local.get $dst)) (i32.const 2)))
 
-  ;; 09am: StretchRect / ColorFill / UpdateSurface wrote the device's back
-  ;; buffer on the old path only. The executor copy is stale until a full
-  ;; Clear: this frame presents from the old path, readbacks leave the old
-  ;; pixels alone, and draws until that Clear decline (13).
-  (func $d9g_rt_written (param $device i32)
-    (call $d9g_to_old (local.get $device))
-    (if (i32.and (i32.ne (global.get $d9g_dev) (i32.const 0)) (i32.eq (global.get $d9g_dev) (local.get $device)))
-      (then (global.set $d9g_cstale (i32.const 1)))))
-
   ;; Reset succeeded / device released: the executor targets are gone.
   (func $d9g_reset (param $device i32)
-    (if (i32.or (i32.eqz (global.get $d9g_on)) (i32.eqz (global.get $d9g_h))) (then (return)))
+    (if (i32.eqz (global.get $d9g_h)) (then (return)))
     (if (i32.ne (global.get $d9g_dev) (local.get $device)) (then (return)))
-    ;; Both paths' targets are gone: nothing to hand over.
-    (call $d9g_drop_targets)
-    (global.set $d9g_mode (i32.const 0)))
+    (call $d9g_drop_targets))
 
-  ;; CLI capture: land the executor's picture in the back buffer DIB.
-  ;; The last frame was ring-presented, so the old present's RT -> DIB copy
-  ;; and $dx_present never ran for it: do both from the executor here.
+  ;; CLI capture: land the executor's picture in the back buffer DIB (the
+  ;; ring presented it; the DIB is only the CPU's copy) and present that.
   ;; Skipped (stat 68 + k): 0 executor not coherent, 1 no target entry.
   (func (export "d3d9_gps_sync_front")
     (local $rt i32)
@@ -5030,33 +4866,31 @@
   ;; Colour surfaces (0xd3d90006 records: CreateRenderTarget, offscreen plain
   ;; surfaces, the levels of RENDERTARGET textures and cubes) and depth
   ;; surfaces (0xd3d90005) get their own executor RT / DS, created on first
-  ;; use. A colour RT starts from the record's CPU bits (+40), as the old
-  ;; path's lazy colour create does; a DS starts stale (zstale 6, waits for a
-  ;; full Clear) as the device's always did.
+  ;; use. A colour RT starts from the record's CPU bits (+40); a DS starts
+  ;; at depth 1.0, stencil 0, as every executor creates one.
+  ;;
+  ;; Until a surface has an entry its CPU bits are the surface. After, the
+  ;; executor is: a Lock reads it back into the CPU bits only when the ring
+  ;; wrote it since the CPU bits last matched (flag 2), and an Unlock
+  ;; uploads them ($d9r_cpu_sync).
   ;;
   ;; Table at $d9g_mem+191872, 128 entries x 32: +0 record (guest), +4 its
   ;; serial (+36: identity across heap reuse), +8 executor id, +12 w, +16 h,
-  ;; +20 D3DFORMAT, +24 flags, +28 colour: write generation ($d9r_gen, so a
-  ;; sampled copy knows it is current) / depth: zstale bits while unbound.
-  ;; Flags: 1 depth, 2 ring stale (the old path wrote it last: pulled back
-  ;; with an old readback + UPLOAD before the ring uses it), 4 old stale (the
-  ;; ring wrote it while leading: pushed to the old path, READBACK + old
-  ;; upload, before the old path uses it), 8 D24S8.
+  ;; +20 D3DFORMAT, +24 flags, +28 colour write generation ($d9r_gen, so a
+  ;; sampled copy knows it is current). Flags: 1 depth, 2 the ring wrote it
+  ;; since its CPU bits matched, 8 D24S8.
   ;;
   ;; Sampling: a one-level 2D RENDERTARGET texture BINDs its level's RT
   ;; directly (RT row 0 is the top row, as for TEX2D); a mipmapped or cube
   ;; one keeps a TEX2D / CUBE in the texture cache, each level / face COPYed
   ;; in (GPS_CAP_COPY) when its RT's generation moved. Sampling the bound
-  ;; colour target stays reason 5 (the old path refuses it too).
+  ;; colour target stays reason 5.
   (global $d9r_tgt (mut i32) (i32.const 0))
   (global $d9r_dse (mut i32) (i32.const 0))
   (global $d9g_tw (mut i32) (i32.const 0))
   (global $d9g_th (mut i32) (i32.const 0))
   (global $d9g_tfmt (mut i32) (i32.const 0))
   (global $d9r_gen (mut i32) (i32.const 0))
-  ;; Entries were dropped while the old path may hold newer pixels than the
-  ;; CPU bits: later ones start ring stale (pulled from the old path).
-  (global $d9r_lost (mut i32) (i32.const 0))
 
   (func $d9r_tab (result i32) (i32.add (call $d9g_m) (i32.const 191872)))
 
@@ -5083,7 +4917,8 @@
       (br_if $found (i32.eqz (i32.load (local.get $e))))
       (local.set $e (i32.add (local.get $e) (i32.const 32)))
       (br_if $scan (i32.lt_u (local.get $e) (local.get $end)))
-      (return (i32.const 0))))
+      ;; 128 live executor surfaces: a fixed table, not a silent miss.
+      (call $d9g_fail (i32.const 15))))
     (local.set $wa (call $g2w (local.get $rec)))
     (i32.store (local.get $e) (local.get $rec))
     (i32.store offset=4 (local.get $e) (i32.load offset=36 (local.get $wa)))
@@ -5095,21 +4930,13 @@
     (i32.store offset=28 (local.get $e) (i32.const 0))
     (local.get $e))
 
-  ;; The ring is up and holds $device's back buffer (created by a draw or
-  ;; Clear, so it is the first RT the executor saw).
-  (func $d9r_live (param $device i32) (result i32)
-    (i32.and
-      (i32.and (i32.ne (global.get $d9g_on) (i32.const 0)) (i32.eqz (global.get $d9g_dead)))
-      (i32.and (i32.and (i32.ne (global.get $d9g_h) (i32.const 0)) (i32.ne (global.get $d9g_rt) (i32.const 0)))
-        (i32.and (i32.ne (local.get $device) (i32.const 0)) (i32.eq (global.get $d9g_dev) (local.get $device))))))
-
-  ;; Executor RT entry of colour record $rec (guest) of $device, created on
-  ;; first use. 0 = not lowerable (no ring yet, format, size, table full).
+  ;; Executor RT entry of colour record $rec (guest), created on first use.
+  ;; 0 = not lowerable (format, size).
   (func $d9r_color (param $device i32) (param $rec i32) (result i32)
     (local $e i32) (local $wa i32) (local $w i32) (local $hgt i32) (local $fmt i32)
     (local.set $e (call $d9r_find (local.get $rec)))
     (if (local.get $e) (then (return (local.get $e))))
-    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9g_open)) (then (call $d9g_fail (i32.const 10))))
     (local.set $wa (call $g2w (local.get $rec)))
     (if (i32.ne (i32.load offset=12 (local.get $wa)) (i32.const 0xd3d90006)) (then (return (i32.const 0))))
     (local.set $w (i32.load offset=20 (local.get $wa)))
@@ -5119,8 +4946,7 @@
     (if (i32.or (i32.or (i32.eqz (local.get $w)) (i32.eqz (local.get $hgt)))
           (i32.or (i32.gt_u (local.get $w) (i32.const 2048)) (i32.gt_u (local.get $hgt) (i32.const 2048))))
       (then (return (i32.const 0))))
-    (local.set $e (call $d9r_new (local.get $rec) (select (i32.const 2) (i32.const 0) (global.get $d9r_lost))))
-    (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+    (local.set $e (call $d9r_new (local.get $rec) (i32.const 0)))
     (call $gps_create (global.get $d9g_h) (i32.load offset=8 (local.get $e)) (global.get $GPS_KIND_RT)
       (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
     (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
@@ -5134,7 +4960,7 @@
     (local $e i32) (local $wa i32) (local $w i32) (local $hgt i32) (local $fmt i32) (local $d24 i32)
     (local.set $e (call $d9r_find (local.get $rec)))
     (if (local.get $e) (then (return (local.get $e))))
-    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d9g_open)) (then (call $d9g_fail (i32.const 10))))
     (local.set $wa (call $g2w (local.get $rec)))
     (local.set $w (i32.load offset=20 (local.get $wa)))
     (local.set $hgt (i32.load offset=24 (local.get $wa)))
@@ -5144,82 +4970,19 @@
       (then (return (i32.const 0))))
     (local.set $d24 (i32.eqz (i32.or (i32.eq (local.get $fmt) (i32.const 70)) (i32.eq (local.get $fmt) (i32.const 80)))))
     (local.set $e (call $d9r_new (local.get $rec) (i32.or (i32.const 1) (i32.shl (local.get $d24) (i32.const 3)))))
-    (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
-    (i32.store offset=28 (local.get $e) (i32.const 6))
     (call $gps_create (global.get $d9g_h) (i32.load offset=8 (local.get $e)) (global.get $GPS_KIND_DS)
       (select (global.get $GPS_FMT_D24S8) (global.get $GPS_FMT_D16) (local.get $d24))
       (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
     (local.get $e))
 
-  ;; The ring wrote colour entry $e.
+  ;; The ring wrote colour entry $e: its CPU bits are behind.
   (func $d9r_wrote (param $e i32)
     (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
     (i32.store offset=28 (local.get $e) (global.get $d9r_gen))
-    (i32.store offset=24 (local.get $e) (i32.or
-      (i32.and (i32.load offset=24 (local.get $e)) (i32.const -7))
-      (select (i32.const 4) (i32.const 0) (global.get $d9g_lead)))))
+    (i32.store offset=24 (local.get $e) (i32.or (i32.load offset=24 (local.get $e)) (i32.const 2))))
 
-  ;; The old path wrote colour entry $e last.
-  (func $d9r_stale (param $e i32)
-    (i32.store offset=24 (local.get $e) (i32.or
-      (i32.and (i32.load offset=24 (local.get $e)) (i32.const -7)) (i32.const 2))))
-
-  ;; Make $e's ring RT current (pull what the old path wrote). 0 = could not.
-  ;; An old readback a pull is waiting on (render token), and its entry.
-  (global $d9r_pull_tok (mut i32) (i32.const 0))
-  (global $d9r_pull_e (mut i32) (i32.const 0))
-  (func $d9r_fresh (param $e i32) (result i32)
-    (local $wa i32) (local $r i32)
-    (if (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 2))) (then (return (i32.const 1))))
-    (local.set $wa (call $g2w (i32.load (local.get $e))))
-    (call $d9g_ho_reap)
-    (if (global.get $d9r_pull_tok)
-      (then
-        (local.set $r (call $host_gpu_gl_call (i32.const 0x30007) (i32.const 0) (global.get $d9r_pull_tok)))
-        (if (i32.eq (local.get $r) (global.get $d9r_pull_tok)) (then (return (i32.const 0))))
-        (global.set $d9r_pull_tok (i32.const 0))
-        (if (i32.ne (global.get $d9r_pull_e) (local.get $e))
-          (then (local.set $r (call $host_gpu_gl_call (i32.const 0x30010) (local.get $wa) (i32.load offset=8 (local.get $wa)))))))
-      (else (local.set $r (call $host_gpu_gl_call (i32.const 0x30010) (local.get $wa) (i32.load offset=8 (local.get $wa))))))
-    (if (i32.lt_s (local.get $r) (i32.const -1)) (then
-      (global.set $d9r_pull_tok (local.get $r)) (global.set $d9r_pull_e (local.get $e)) (return (i32.const 0))))
-    (if (i32.ne (local.get $r) (i32.const 1)) (then (return (i32.const 0))))
-    (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
-      (i32.load offset=48 (local.get $wa)) (i32.load offset=20 (local.get $e))
-      (i32.const 0) (i32.const 0) (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e)))
-    (call $d9g_stat (i32.const 85) (i32.const 1))
-    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -3)))
-    (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
-    (i32.store offset=28 (local.get $e) (global.get $d9r_gen))
-    (i32.const 1))
-
-  ;; Give the old path $e's ring pixels (CPU bits + old upload). Readback
-  ;; site 5.
-  (func $d9r_push (param $e i32)
-    (local $wa i32) (local $r i32)
-    (if (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 4))) (then (return)))
-    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -5)))
-    (local.set $wa (call $g2w (i32.load (local.get $e))))
-    (call $d9g_rb (i32.load offset=8 (local.get $e)) (i32.const 0) (i32.const 0)
-      (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e))
-      (call $g2w (i32.load offset=40 (local.get $wa))) (i32.load offset=48 (local.get $wa))
-      (i32.load offset=20 (local.get $e)) (i32.const 5))
-    (call $d9g_ho_reap)
-    (local.set $r (call $host_gpu_gl_call (i32.const 0x30011) (local.get $wa) (i32.load offset=8 (local.get $wa))))
-    (if (i32.lt_s (local.get $r) (i32.const -1)) (then (global.set $d9g_ho_token (local.get $r)) (return)))
-    (if (i32.ne (local.get $r) (i32.const 1)) (then (call $d9g_fail (i32.const 9)))))
-
-  (func $d9r_push_all
-    (local $e i32) (local $end i32)
-    (if (i32.eqz (global.get $d9g_mem)) (then (return)))
-    (local.set $e (call $d9r_tab))
-    (local.set $end (i32.add (local.get $e) (i32.const 4096)))
-    (loop $scan
-      (if (i32.load (local.get $e)) (then (call $d9r_push (local.get $e))))
-      (local.set $e (i32.add (local.get $e) (i32.const 32)))
-      (br_if $scan (i32.lt_u (local.get $e) (local.get $end)))))
-
-  ;; Release every entry (device change, Reset, device release).
+  ;; Release every entry (Reset, device release). Default-pool surfaces are
+  ;; what the ring writes, and those do not outlive either.
   (func $d9r_drop_all
     (local $e i32) (local $end i32)
     (if (i32.eqz (global.get $d9g_mem)) (then (return)))
@@ -5227,8 +4990,6 @@
     (local.set $end (i32.add (local.get $e) (i32.const 4096)))
     (loop $scan
       (if (i32.load (local.get $e)) (then
-        (if (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 1)))
-          (then (global.set $d9r_lost (i32.const 1))))
         (call $d9g_release (i32.load offset=8 (local.get $e)))
         (memory.fill (local.get $e) (i32.const 0) (i32.const 32))))
       (local.set $e (i32.add (local.get $e) (i32.const 32)))
@@ -5272,85 +5033,35 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $slots (i32.lt_u (local.get $i) (i32.const 256)))))
 
-  ;; The old path drew / cleared for $device without the ring (a declined
-  ;; frame): its RT0 surface and depth surface are newer there.
-  (func $d9r_old_drew (param $device i32)
-    (local $state i32) (local $e i32) (local $p i32)
-    (local.set $state (call $d3d9_program_state (local.get $device)))
-    (if (i32.eqz (local.get $state)) (then (return)))
-    (local.set $state (call $g2w (local.get $state)))
-    (local.set $p (i32.load offset=22020 (local.get $state)))
-    (if (local.get $p) (then (call $d9r_old_wrote (local.get $device) (local.get $p))))
-    (local.set $e (call $d9r_find (i32.load offset=21752 (local.get $state))))
-    (if (local.get $e) (then
-      (i32.store offset=28 (local.get $e) (i32.const 6))
-      (if (i32.eq (local.get $e) (global.get $d9r_dse)) (then (global.set $d9g_zstale (i32.const 6)))))))
-
-  ;; The old path is about to write colour record $rec (guest; never the
-  ;; back buffer): keep the ring's pixels it does not overwrite, then mark
-  ;; the ring copy stale.
-  (func $d9r_old_wrote (param $device i32) (param $rec i32)
-    (local $e i32)
-    (local.set $e (call $d9r_find (local.get $rec)))
-    (if (i32.eqz (local.get $e)) (then
-      ;; Never seen by the ring: a later create must pull, not trust the CPU bits.
-      (local.set $e (call $d9r_color (local.get $device) (local.get $rec)))
-      (if (i32.eqz (local.get $e)) (then (global.set $d9r_lost (i32.const 1)) (return)))))
-    (call $d9r_push (local.get $e))
-    (call $d9r_stale (local.get $e)))
-
-  ;; The old path is about to read colour record $rec (guest).
-  (func $d9r_old_read (param $rec i32)
-    (local $e i32)
-    (local.set $e (call $d9r_find (local.get $rec)))
-    (if (local.get $e) (then (call $d9r_push (local.get $e)))))
-
-  ;; The old path uploaded $rec's CPU bits whole (Unlock): the ring takes the
-  ;; same bits, so both hold them.
-  (func $d9r_old_uploaded (param $rec i32)
-    (local $e i32) (local $wa i32)
-    (local.set $e (call $d9r_find (local.get $rec)))
-    (if (i32.eqz (local.get $e)) (then (return)))
-    (if (i32.eqz (call $d9r_live (global.get $d9g_dev))) (then (call $d9r_stale (local.get $e)) (return)))
-    (local.set $wa (call $g2w (local.get $rec)))
-    (call $d9g_upload_to (i32.load offset=8 (local.get $e)) (call $g2w (i32.load offset=40 (local.get $wa)))
-      (i32.load offset=48 (local.get $wa)) (i32.load offset=20 (local.get $e))
-      (i32.const 0) (i32.const 0) (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e)))
-    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -7)))
-    (global.set $d9r_gen (i32.add (global.get $d9r_gen) (i32.const 1)))
-    (i32.store offset=28 (local.get $e) (global.get $d9r_gen)))
-
   ;; ColorFill of colour record $rec (guest; 0 = the back buffer) on the
-  ;; ring: TARGETS (no depth) + CLEAR of the rect. 1 = lowered.
+  ;; ring: TARGETS (no depth) + CLEAR of the rect. 1 = lowered, 0 = the
+  ;; surface cannot be an executor RT.
   (func $d9r_fill (param $device i32) (param $rec i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32)
       (param $argb i32) (result i32)
     (local $e i32) (local $id i32) (local $fmt i32) (local $w i32) (local $hgt i32) (local $full i32) (local $p i32)
     (local $rgba i32)
-    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
-    ;; A declined frame keeps the old path authoritative until its end.
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
-    (call $d9g_ho_reap)
-    (call $d9g_flush)
     (if (local.get $rec)
       (then
         (local.set $e (call $d9r_color (local.get $device) (local.get $rec)))
         (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
+        (call $d9g_flush)
         (local.set $id (i32.load offset=8 (local.get $e)))
         (local.set $w (i32.load offset=12 (local.get $e)))
         (local.set $hgt (i32.load offset=16 (local.get $e)))
         (local.set $fmt (i32.load offset=20 (local.get $e))))
       (else
+        (if (i32.eqz (call $d9g_bb_ensure (local.get $device))) (then (return (i32.const 0))))
         (local.set $id (global.get $d9g_rt))
         (local.set $w (global.get $d9g_rt_w))
         (local.set $hgt (global.get $d9g_rt_h))
         (local.set $fmt (global.get $d9g_rt_fmt))))
     (local.set $full (i32.and (i32.and (i32.eqz (local.get $l)) (i32.eqz (local.get $t)))
       (i32.and (i32.eq (local.get $r) (local.get $w)) (i32.eq (local.get $b) (local.get $hgt)))))
-    ;; A partial fill keeps the rest: that must be current.
-    (if (i32.eqz (local.get $full)) (then
-      (if (local.get $e)
-        (then (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 0)))))
-        (else (if (global.get $d9g_cstale) (then (return (i32.const 0))))))))
+    ;; A held back buffer upload survives only a fill that does not cover it.
+    (if (i32.eqz (local.get $rec)) (then
+      (if (local.get $full)
+        (then (if (i32.eq (global.get $d9g_cpu) (i32.const 2)) (then (global.set $d9g_cpu (i32.const 0)))))
+        (else (call $d9g_flush)))))
     (local.set $rgba (call $d9g_rgba (local.get $argb)))
     (if (i32.eqz (call $d9g_has_alpha (local.get $fmt)))
       (then (local.set $rgba (i32.or (local.get $rgba) (i32.const 0xff000000)))))
@@ -5369,13 +5080,10 @@
     (drop (call $d9g_end (local.get $p)))
     (call $d9g_stat (i32.const 2) (i32.const 1))
     (if (local.get $e)
-      (then
-        (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -3)))
-        (call $d9r_wrote (local.get $e)))
+      (then (call $d9r_wrote (local.get $e)))
       (else
         (if (local.get $full)
           (then
-            (global.set $d9g_cstale (i32.const 0))
             (global.set $d9g_cpu (i32.const 3))
             (global.set $d9g_cpu_rgba (local.get $rgba)))
           (else (global.set $d9g_cpu (i32.const 0))))))
@@ -5388,7 +5096,6 @@
     (local.set $e (call $d9r_color (global.get $d9g_dev) (i32.load offset=56 (local.get $t))))
     (if (i32.eqz (local.get $e)) (then (return (i32.const -10))))
     (if (i32.eq (local.get $e) (global.get $d9r_tgt)) (then (return (i32.const -5))))
-    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const -13))))
     (call $d9g_stat (i32.const 86) (i32.const 1))
     (i32.load offset=8 (local.get $e)))
 
@@ -5404,7 +5111,6 @@
       (i32.add (i32.load offset=56 (local.get $t)) (i32.mul (local.get $idx) (i32.const 80)))))
     (if (i32.eqz (local.get $e)) (then (return (i32.const -10))))
     (if (i32.eq (local.get $e) (global.get $d9r_tgt)) (then (return (i32.const -5))))
-    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const -13))))
     (if (i32.and (i32.eqz (local.get $fresh))
           (i32.eq (local.get $seq) (i32.add (i32.load offset=28 (local.get $e)) (i32.const 1))))
       (then (call $d9g_stat (i32.const 9) (i32.const 1)) (return (local.get $seq))))
@@ -5425,19 +5131,17 @@
     (call $d9g_stat (i32.const 87) (i32.const 1))
     (i32.add (i32.load offset=28 (local.get $e)) (i32.const 1)))
   ;; ---- d9rt: surface operations on the ring ------------------------------------
-  ;; Colour surface $rec (guest; 0 = the back buffer) as a current executor
-  ;; RT: sets $d9r_sid / $d9r_sw / $d9r_sh / $d9r_sfmt; the entry, -1 for the
-  ;; back buffer, 0 = not on the ring (or not current there).
+  ;; Colour surface $rec (guest; 0 = the back buffer) as an executor RT:
+  ;; sets $d9r_sid / $d9r_sw / $d9r_sh / $d9r_sfmt; the entry, -1 for the
+  ;; back buffer, 0 = it cannot be an executor RT.
   (global $d9r_sid (mut i32) (i32.const 0))
   (global $d9r_sw (mut i32) (i32.const 0))
   (global $d9r_sh (mut i32) (i32.const 0))
   (global $d9r_sfmt (mut i32) (i32.const 0))
   (func $d9r_surf (param $device i32) (param $rec i32) (result i32)
     (local $e i32)
-    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
     (if (i32.eqz (local.get $rec)) (then
-      (if (global.get $d9g_cstale) (then (return (i32.const 0))))
+      (if (i32.eqz (call $d9g_bb_ensure (local.get $device))) (then (return (i32.const 0))))
       (global.set $d9r_sid (global.get $d9g_rt))
       (global.set $d9r_sw (global.get $d9g_rt_w))
       (global.set $d9r_sh (global.get $d9g_rt_h))
@@ -5445,7 +5149,6 @@
       (return (i32.const -1))))
     (local.set $e (call $d9r_color (local.get $device) (local.get $rec)))
     (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 0))))
     (global.set $d9r_sid (i32.load offset=8 (local.get $e)))
     (global.set $d9r_sw (i32.load offset=12 (local.get $e)))
     (global.set $d9r_sh (i32.load offset=16 (local.get $e)))
@@ -5460,7 +5163,7 @@
 
   ;; StretchRect on the ring: COPY of src rect (x, y, w, h at $srect, wasm)
   ;; of $srec into $drect of $drec (guest records, 0 = back buffer), with
-  ;; D3DTEXF $filter. 1 = lowered.
+  ;; D3DTEXF $filter. 1 = lowered, 0 = the ring cannot express it.
   (func $d9r_stretch (param $device i32) (param $srec i32) (param $drec i32)
       (param $srect i32) (param $drect i32) (param $filter i32) (result i32)
     (local $s i32) (local $d i32) (local $sid i32) (local $sfmt i32) (local $p i32)
@@ -5472,7 +5175,6 @@
     (local.set $sfmt (global.get $d9r_sfmt))
     (local.set $d (call $d9r_surf (local.get $device) (local.get $drec)))
     (if (i32.eqz (local.get $d)) (then (return (i32.const 0))))
-    (call $d9g_ho_reap)
     (call $d9g_flush)
     (local.set $p (call $d9g_begin (global.get $GPS_OP_COPY) (size-of GpsCopy)))
     (store.field GpsCopy src (local.get $p) (local.get $sid))
@@ -5496,30 +5198,13 @@
 
   ;; UpdateSurface / DC upload on the ring: guest pixels ($bits wasm, row
   ;; pitch, D3DFORMAT) into rect (x, y, w, h) of $drec (0 = back buffer).
-  ;; 1 = lowered.
+  ;; 1 = lowered, 0 = the ring cannot express it.
   (func $d9r_update (param $device i32) (param $drec i32) (param $bits i32) (param $pitch i32) (param $fmt i32)
       (param $x i32) (param $y i32) (param $w i32) (param $hgt i32) (result i32)
-    (local $d i32) (local $full i32)
+    (local $d i32)
     (if (i32.eqz (call $d9g_pix (local.get $fmt))) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d9r_live (local.get $device))) (then (return (i32.const 0))))
-    (if (i32.eq (global.get $d9g_mode) (i32.const 2)) (then (return (i32.const 0))))
-    (if (i32.eqz (local.get $drec)) (then
-      (local.set $full (i32.and (i32.and (i32.eqz (local.get $x)) (i32.eqz (local.get $y)))
-        (i32.and (i32.eq (local.get $w) (global.get $d9g_rt_w)) (i32.eq (local.get $hgt) (global.get $d9g_rt_h)))))
-      ;; A whole-target upload makes a stale back buffer current.
-      (if (i32.and (i32.ne (global.get $d9g_cstale) (i32.const 0)) (i32.eqz (local.get $full)))
-        (then (return (i32.const 0))))
-      (call $d9g_ho_reap)
-      (call $d9g_flush)
-      (call $d9g_upload_to (global.get $d9g_rt) (i32.sub (local.get $bits)
-          (i32.add (i32.mul (local.get $y) (local.get $pitch)) (i32.mul (local.get $x) (call $d3d9_color_bytes (local.get $fmt)))))
-        (local.get $pitch) (local.get $fmt) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt))
-      (global.set $d9g_cstale (i32.const 0))
-      (global.set $d9g_cpu (i32.const 0))
-      (return (i32.const 1))))
     (local.set $d (call $d9r_surf (local.get $device) (local.get $drec)))
     (if (i32.eqz (local.get $d)) (then (return (i32.const 0))))
-    (call $d9g_ho_reap)
     (call $d9g_flush)
     (call $d9g_upload_to (global.get $d9r_sid) (i32.sub (local.get $bits)
         (i32.add (i32.mul (local.get $y) (local.get $pitch)) (i32.mul (local.get $x) (call $d3d9_color_bytes (local.get $fmt)))))
@@ -5527,19 +5212,16 @@
     (call $d9r_surf_wrote (local.get $d))
     (i32.const 1))
 
-  ;; Lock / Unlock of colour surface $rec while the ring leads: the ring is
-  ;; its storage. $upload 0: the guest is about to read the CPU bits
-  ;; (READBACK unless $discard); 1: the guest wrote them (UPLOAD). The old
-  ;; copy is left stale (pushed if the old path ever needs it). 1 = done.
+  ;; Lock / Unlock of colour surface $rec: once it has an executor RT the
+  ;; ring is its storage. $upload 0: the guest is about to read the CPU bits
+  ;; (READBACK, site 2, unless $discard or they already match: stat 79); 1:
+  ;; the guest wrote them (UPLOAD). 0 = no entry: the CPU bits are the
+  ;; surface.
   (func $d9r_cpu_sync (param $rec i32) (param $upload i32) (param $discard i32) (result i32)
     (local $e i32) (local $wa i32)
     (local.set $e (call $d9r_find (local.get $rec)))
     (if (i32.eqz (local.get $e)) (then (return (i32.const 0))))
-    (if (i32.ne (i32.load offset=8 (call $g2w (local.get $rec))) (global.get $d9g_dev)) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d9g_lead_on (global.get $d9g_dev))) (then (return (i32.const 0))))
-    (if (i32.eqz (call $d9r_fresh (local.get $e))) (then (return (i32.const 0))))
     (local.set $wa (call $g2w (local.get $rec)))
-    (call $d9g_ho_reap)
     (call $d9g_flush)
     (if (local.get $upload)
       (then
@@ -5548,25 +5230,28 @@
           (i32.const 0) (i32.const 0) (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e)))
         (call $d9r_wrote (local.get $e)))
       (else
-        (if (i32.eqz (local.get $discard)) (then
-          (call $d9g_rb (i32.load offset=8 (local.get $e)) (i32.const 0) (i32.const 0)
-            (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e))
-            (call $g2w (i32.load offset=40 (local.get $wa))) (i32.load offset=48 (local.get $wa))
-            (i32.load offset=20 (local.get $e)) (i32.const 2))))))
+        (if (i32.or (local.get $discard) (i32.eqz (i32.and (i32.load offset=24 (local.get $e)) (i32.const 2))))
+          (then (call $d9g_stat (i32.const 79) (i32.const 1)))
+          (else
+            (call $d9g_rb (i32.load offset=8 (local.get $e)) (i32.const 0) (i32.const 0)
+              (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $e))
+              (call $g2w (i32.load offset=40 (local.get $wa))) (i32.load offset=48 (local.get $wa))
+              (i32.load offset=20 (local.get $e)) (i32.const 2))))))
+    ;; Either way the CPU bits and the RT match now (a discard's are about
+    ;; to be replaced, and its Unlock uploads them).
+    (i32.store offset=24 (local.get $e) (i32.and (i32.load offset=24 (local.get $e)) (i32.const -3)))
     (i32.const 1))
 
   ;; GetRenderTargetData of colour surface $rec into system-memory surface
-  ;; $dst (wasm record) while the ring leads. 1 = done.
+  ;; $dst (wasm record). 1 = done, 0 = the ring cannot express it.
   (func $d9r_rtdata (param $device i32) (param $rec i32) (param $dst i32) (result i32)
     (local $e i32)
-    (if (i32.eqz (call $d9g_lead_on (local.get $device))) (then (return (i32.const 0))))
     (local.set $e (call $d9r_surf (local.get $device) (local.get $rec)))
     (if (i32.le_s (local.get $e) (i32.const 0)) (then (return (i32.const 0))))
     (if (i32.or (i32.ne (i32.load offset=20 (local.get $dst)) (global.get $d9r_sw))
           (i32.ne (i32.load offset=24 (local.get $dst)) (global.get $d9r_sh)))
       (then (return (i32.const 0))))
     (if (i32.eqz (call $d9g_pix (i32.load offset=28 (local.get $dst)))) (then (return (i32.const 0))))
-    (call $d9g_ho_reap)
     (call $d9g_flush)
     (call $d9g_rb (global.get $d9r_sid) (i32.const 0) (i32.const 0) (global.get $d9r_sw) (global.get $d9r_sh)
       (call $g2w (i32.load offset=40 (local.get $dst))) (i32.load offset=48 (local.get $dst))

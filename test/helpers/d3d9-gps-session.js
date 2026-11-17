@@ -1,16 +1,18 @@
 'use strict';
 // Shared driver for test/test-d3d9-gps-*.js: the shipped CLI (calc.exe as a
 // host process) under --control-stdin, with real x86 CALLs into the D3D9 COM
-// thunks (the pattern of test-d3d9-software-cli.js). The old D3D9 path runs
-// as the software renderer; --d3d9-gps=<backend> adds the v2 ring.
+// thunks. D3D8/9 run only on the GPU stream v2 ring (the old JS D3D9 path
+// was deleted, d3d9-retire S4); --d3d9-gps=<software|webgl|null|none> picks
+// the executor. `renderer` is accepted for older callers and ignored: the
+// old --d3d9-renderer=software is now only an alias for --d3d9-gps=software.
+// p.ops stays {}: there is no old bridge whose calls it could count.
 const path = require('path');
 const { startControlSession } = require('../control-session');
 
 const root = path.join(__dirname, '..', '..');
 
-async function openD3d9GpsSession({ gps = 'software', renderer = 'software', size = 8, extra = [] } = {}) {
+async function openD3d9GpsSession({ gps = 'software', size = 8, extra = [] } = {}) {
   const args = ['test/run.js', '--exe=test/binaries/calc.exe', '--no-build'];
-  if (renderer) args.push(`--d3d9-renderer=${renderer}`);
   if (gps) args.push(`--d3d9-gps=${gps}`);
   args.push(...extra);
   args.push('--control-stdin', '--frozen', '--quiet-api', '--max-seconds=60',
@@ -35,12 +37,6 @@ async function openD3d9GpsSession({ gps = 'software', renderer = 'software', siz
     p.view=()=>new DataView(memory.buffer);
     p.f32=(ga,values)=>{const v=p.view(),wa=e.guest_to_wasm(ga);values.forEach((n,i)=>v.setFloat32(wa+i*4,n,true));};
     p.u32=(ga,values)=>{const v=p.view(),wa=e.guest_to_wasm(ga);values.forEach((n,i)=>v.setUint32(wa+i*4,n>>>0,true));};
-    const bridge=ctx.d3d9Bridge;
-    if(bridge){const call=bridge.call;
-      bridge.call=function(op,a,x){p.ops[op]=(p.ops[op]||0)+1;
-        const r=call.call(this,op,a,x);
-        if(p.onCall)p.onCall(op,a,x);
-        return r;};}
     p.call=(name,args)=>{
       const id=ctx.apiTable.find(a=>a.name===name).id,base=e.get_thunk_base()>>>0;
       let thunk=0;for(let i=0;i<e.get_num_thunks();i++){
@@ -67,15 +63,14 @@ async function openD3d9GpsSession({ gps = 'software', renderer = 'software', siz
   };
   const stat = i => evaluate(`exports.d3d9_gps_stat(${i})>>>0`);
   const stats = async () => {
-    const names = ['draws', 'prims', 'clears', 'presents', 'gpuFrames', 'oldFrames', 'readbacks',
-      'rtUploads', 'texUploads', 'texHits', 'shaders', 'syncs', 'declines', 'oldFail', 'opens', 'dead'];
+    // Slots 5 and 13 counted old-path frames / failures; retired in S4.
+    const names = { draws: 0, prims: 1, clears: 2, presents: 3, gpuFrames: 4, readbacks: 6,
+      rtUploads: 7, texUploads: 8, texHits: 9, shaders: 10, syncs: 11, declines: 12, opens: 14, dead: 15 };
     const s = {};
-    for (let i = 0; i < names.length; i++) s[names[i]] = await stat(i);
+    for (const [name, i] of Object.entries(names)) s[name] = await stat(i);
     s.reasons = {}; s.sites = {};
     for (let r = 1; r < 32; r++) { const n = await stat(16 + r); if (n) s.reasons[r] = n; }
     for (let k = 0; k < 4; k++) { const n = await stat(48 + k); if (n) s.sites[k] = n; }
-    s.oldPresent = {};
-    for (let k = 0; k < 4; k++) { const n = await stat(64 + k); if (n) s.oldPresent[k] = n; }
     return s;
   };
   const close = async () => {

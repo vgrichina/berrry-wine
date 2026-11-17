@@ -83,7 +83,7 @@ const draw = ({ type, bytes, write }, corners = CORNERS) => {
     }
 
     // A byte quadruple as a position stays refused. D3DCOLOR's components are
-    // permuted by lib/d3d9-host.js before the backend sees them and UBYTE4 is
+    // permuted by the producer before the backend sees them and UBYTE4 is
     // an index set, so either one here is a bug, not a coordinate encoding.
     for (const type of [4, 5, 8]) {
       assert.throws(() => device.draw(draw({ type, bytes: 4,
@@ -102,32 +102,6 @@ const draw = ({ type, bytes, write }, corners = CORNERS) => {
     assert.throws(() => device.draw(transformed), /invalid fixed position format/,
       'POSITIONT needs a real float w');
   } finally { device.destroy(); assert.strictEqual(device.bytes, 0); }
-
-  // The WebGL executor lowers through the same 09aj builder (slice 9.2, the
-  // retained JS compiler is gone), so the decode contract holds there too.
-  const hgl = require('../lib/headless-gl');
-  if (hgl.available()) {
-    const { createCanvas } = require('../lib/canvas-compat'), Backend = require('../lib/d3d9-backend');
-    const gl = new Backend.Device(createCanvas(W, H), { webglVersion: 1, getExports: () => e, getMemory: () => memory.buffer });
-    try {
-      const render = snapshot => { gl.clear([0,0,0,1], 1); gl.draw(snapshot);
-        return [...gl.gpu.readPixels(0, 0, W, H, gl.gpu.gl.RGBA, gl.gpu.gl.UNSIGNED_BYTE, new Uint8Array(W * H * 4))]; };
-      const want = render(draw(CASES.FLOAT3));
-      assert.ok(want.some((v,i) => i % 4 !== 3 && v !== 0), 'WebGL control triangle covers pixels');
-      // The GL attribute fetch has its own (narrower) declaration-type table;
-      // a type it refuses is an executor input limit, not a fixed-lowering one.
-      for (const [name, encoding] of Object.entries(CASES)) {
-        let got;
-        try { got = render(draw(encoding)); } catch (error) {
-          if (/unsupported vertex declaration element/.test(error.message)) { console.log(`WebGL ${name}: GL attribute fetch refuses the type`); continue; }
-          throw error;
-        }
-        assert.deepStrictEqual(got, want, `WebGL ${name} POSITION0 matches FLOAT3`);
-      }
-      const transformed = draw(CASES.SHORT4); transformed.attributes[0].usage = 9;
-      assert.throws(() => gl.draw(transformed), /invalid fixed position format/, 'WebGL POSITIONT needs a float w');
-    } finally { gl.destroy(); }
-  } else console.log(`SKIP WebGL leg: ${hgl.unavailableReason()}`);
 
   console.log('PASS test-d3d9-fixed-position-types');
 })().catch(error => { console.error(error); process.exit(1); });

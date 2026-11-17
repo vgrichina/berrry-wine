@@ -6,7 +6,6 @@ const { createHostImports } = require('../lib/host-imports');
 const frameIntervals = require('../lib/frame-intervals');
 const {serviceMainTimingWait} = require('./main-timing-waits');
 const {serviceMainIoWait} = require('../lib/main-io-wait');
-const { createRenderWaitAttribution } = require('../lib/render-wait-attribution');
 const { callDllMain, detectRequiredDlls, shouldReportNtForDlls, loadWin16Dlls } = require('../lib/dll-loader');
 const { inputEventHwnd } = require('../lib/host-window');
 const { SYSTEM_DATA_FILES, resolveDllGraph, mountLoadedDllFiles, mountSystemDataFiles,
@@ -220,23 +219,26 @@ if (GL_GPS_ARG !== null && !['off', 'software', 'webgl', 'null'].includes(GL_GPS
 const GL_GPS = GL_GPS_ARG !== 'off';
 const GL_GPS_BACKEND = GL_GPS_ARG !== null && GL_GPS_ARG !== 'off' ? GL_GPS_ARG
   : hasFlag('gl-gps') || !hasFlag('headless-gl') ? 'software' : 'webgl';
-// --d3d9-gps[=software|webgl|none|off]: D3D9 / D3D8 frames are also lowered
-// onto GPU stream v2 (src/09akg-d3d9-gps.wat), which leads once its frames
-// hold (d3d9-retire S1). On by default (slice 9.5b); --d3d9-gps=off or
-// --no-d3d9-gps turns the arm off. The executor follows the D3D9 renderer
-// unless one is named: webgl with --headless-gl, software for the software
-// renderer, and none when the D3D9 renderer has no GPU either (WebGL
-// without --headless-gl), since WAT now decides caps from the executor
-// (d3d9-retire S2). 'none' is a host without an executor (the arm turns
-// itself off).
+// --d3d9-gps=software|webgl|null|none: D3D9 / D3D8 run only on GPU stream v2
+// (src/09akg-d3d9-gps.wat, ring api 4); this names its executor. Default:
+// webgl with --headless-gl, else software when the app sets
+// `d3d9WithoutGpu: 'software'` in lib/apps.js, else none -- a host without
+// an executor, where CreateDevice fails with D3DERR_NOTAVAILABLE and most
+// games take their own no-3D path. --d3d9-renderer=software is an alias for
+// --d3d9-gps=software. The old JS D3D9 path is deleted, so --no-d3d9-gps
+// and --d3d9-gps=off are errors.
 const D3D9_GPS_ARG = getArg('d3d9-gps', null);
-const D3D9_GPS = !hasFlag('no-d3d9-gps') && D3D9_GPS_ARG !== 'off';
-const D3D9_GPS_EXPLICIT = D3D9_GPS_ARG !== null && D3D9_GPS_ARG !== 'off' && D3D9_GPS_ARG !== '';
+if (hasFlag('no-d3d9-gps') || D3D9_GPS_ARG === 'off') {
+  throw new Error('--no-d3d9-gps / --d3d9-gps=off were removed: D3D9/D3D8 run only on GPU stream v2 ' +
+    '(the old JS D3D9 path is deleted); use --d3d9-gps=none for a host without an executor');
+}
+if (D3D9_GPS_ARG !== null && !['software', 'webgl', 'null', 'none'].includes(D3D9_GPS_ARG))
+  throw new Error('--d3d9-gps must be software, webgl, null or none');
 if (args.some(arg => arg === '--gl-encoder' || arg.startsWith('--gl-encoder='))) {
   throw new Error('--gl-encoder was removed; OpenGL encoding always runs in WAT');
 }
 if (D3D9_RENDERER !== null && D3D9_RENDERER !== 'software') {
-  throw new Error('CLI --d3d9-renderer currently supports software only; WebGL requires a browser/provider');
+  throw new Error('CLI --d3d9-renderer supports software only (an alias for --d3d9-gps=software)');
 }
 const NO_MMX = hasFlag('no-mmx');          // --no-mmx: report a 486DX from CPUID so guests take scalar paths
 const DUMP_GDI = getArg('dump-gdi', null); // --dump-gdi=DIR: dump GDI bitmaps as PNGs
@@ -2752,41 +2754,23 @@ async function main() {
 
   const apiTable = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'api_table.json'), 'utf8'));
   const apiByName = new Map(apiTable.map(e => [e.name, e]));
-  // Process image base is fixed after load_pe. Capture it from the owning
-  // instance before DLL initializers can create a renderer; a host shadow has
-  // its own (unloaded) image-base global and is not a metadata fallback.
-  let renderImageBase = null;
   const ctx = {
     getMemory: () => ctx._memory ? ctx._memory.buffer : null,
-    // Without --headless-gl the WebGL backend has no context, CreateDevice fails
-    // with "D3D9 requires a GPU window", and most D3D8/9 games take their own
-    // no-3D path -- GeneRally's CLI gate depends on exactly that. An app with no
-    // such path (UT2003's listen server retries, spawning a 1 MB-allocating
-    // thread each time, until "Unable to allocate thread TLS vector") sets
-    // `d3d9WithoutGpu: 'software'` in lib/apps.js to get the software backend
-    // when no GPU is available. An explicit --d3d9-renderer always wins.
-    d3d9Backend: D3D9_RENDERER
-      || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl'),
     glideBackend: GLIDE_RENDERER,
     glGpsBackend: GL_GPS_BACKEND,
-    d3d9GpsBackend: D3D9_GPS_EXPLICIT ? D3D9_GPS_ARG
-      : (HEADLESS_GL && (D3D9_RENDERER || 'webgl') === 'webgl' ? 'webgl'
-        : (D3D9_RENDERER || (!HEADLESS_GL && APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'webgl')) === 'software'
-          ? 'software' : 'none'),
+    // The D3D8/9 GPU stream executor. Without --headless-gl there is no WebGL
+    // context, so the host has no executor ('none'): CreateDevice fails and
+    // most D3D8/9 games take their own no-3D path -- GeneRally's CLI gate
+    // depends on exactly that. An app with no such path (UT2003's listen
+    // server retries, spawning a 1 MB-allocating thread each time, until
+    // "Unable to allocate thread TLS vector") sets `d3d9WithoutGpu:
+    // 'software'` in lib/apps.js to get the software executor instead. An
+    // explicit --d3d9-gps (or --d3d9-renderer=software) always wins.
+    d3d9GpsBackend: D3D9_GPS_ARG || D3D9_RENDERER
+      || (HEADLESS_GL ? 'webgl' : APP_ENTRY?.d3d9WithoutGpu === 'software' ? 'software' : 'none'),
     glGps: GL_GPS,
     gpuStreamDump: GPU_STREAM_DUMP,
     d3d9Programmable: D3D9_PROGRAMMABLE || APP_ENTRY?.d3d9Programmable === true,
-    createD3DRenderWorker: () => {
-      if (renderImageBase === null) throw new Error('render worker requested before guest image metadata is ready');
-      const {Worker} = require('worker_threads');
-      const {WorkerConsumer} = require('../lib/d3d-command-stream');
-      const sigs = JSON.parse(fs.readFileSync(path.join(ROOT,'lib','host-import-sigs.generated.json'),'utf8')).sigs;
-      return new WorkerConsumer(new Worker(path.join(ROOT,'lib','d3d-render-worker.js')),
-        {module:wasmModule,memory,sigs,imageBase:renderImageBase,
-          // Retirement awaits adoption after the renderer has terminated.
-          // The free list belongs to the guest owner, never its host shadow.
-          reclaimHeap:head=>mainOwner.call('d3d_render_adopt_free_list',head)});
-    },
     renderer,
     // --headless-gl: give the OpenGL bridge a drawable factory so wglCreateContext
     // can succeed without a browser. Opt-in, because without it these guests take
@@ -2903,10 +2887,7 @@ async function main() {
   });
   ctx.offerWaveCallback = waveCallbackRouting.offer;
   const base = createHostImports(ctx);
-  closeD3DRender = () => {
-    ctx.closeGlide();
-    return ctx.closeD3DRender();
-  };
+  closeD3DRender = () => ctx.closeGlide();
   if (ctx.vfs) {
     ctx.vfs.dirs.add('c:\\windows');
     ctx.vfs.dirs.add('c:\\windows\\system');
@@ -5220,10 +5201,9 @@ async function main() {
   // ring that lib/d3dim-host.js drains (host-imports gpu_stream_kick).
   if (D3DIM_GPU) instance.exports.d3dim_gpu_enable(1);
   if (GL_GPS) instance.exports.gl_gps_enable(1);
-  instance.exports.d3d9_gps_enable?.(D3D9_GPS ? 1 : 0);
-  // D3D9/D3D8 presents so far (09akg stat 4 GPU + 5 old-path frames), for --cpu-window.
+  // D3D9/D3D8 presents so far (09akg stat 4), for --cpu-window.
   const d3d9Frames = () => instance.exports.d3d9_gps_stat
-    ? (instance.exports.d3d9_gps_stat(4) >>> 0) + (instance.exports.d3d9_gps_stat(5) >>> 0) : 0;
+    ? instance.exports.d3d9_gps_stat(4) >>> 0 : 0;
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (D3DIM_GPU && hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -5429,7 +5409,6 @@ async function main() {
     // audio device, the GDI handles — comes from one shared list, so the two
     // hosts cannot quietly disagree about what a thread inherits.
     const workerCtx = Object.assign(processSharedCtx(ctx), {
-      d3d9Bridge: ctx.d3d9Bridge,
       getMemory: () => memory.buffer,
       renderer,
       onExit: () => {},
@@ -5829,7 +5808,6 @@ async function main() {
     // read synchronously, so this mostly matters to tests that mount an
     // async provider to mimic the browser's File-backed ISO reads.
     getVfs: () => ctx.vfs || null,
-    onRenderWait: token => ctx.waitD3DRender(token),
     hasMessage: () => !!(
       inputEvent ||
       (crossThreadMsgs && crossThreadMsgs.length) ||
@@ -5862,10 +5840,6 @@ async function main() {
   const startupShow = startupShowCommand(getArg('startup-show', undefined));
   if (startupShow !== undefined) await mainOwner.call('set_startup_show', startupShow);
   const { entry } = await stageAndLoadPeOwned(mainOwner, memory.buffer, exeBytes, console.log);
-  const imageMetadata = await mainOwner.read(['get_image_base']);
-  if (!Number.isInteger(imageMetadata.get_image_base) || imageMetadata.get_image_base < 0 ||
-      imageMetadata.get_image_base > 0xffffffff) throw new Error('invalid guest image metadata for render worker');
-  renderImageBase = imageMetadata.get_image_base;
   // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
   if (hasFlag('observe-morrowind-name')) {
     morrowindNameObserver = require('../lib/morrowind-name-observer').install({
@@ -7161,11 +7135,6 @@ async function main() {
   // callback: Heroes II hung ten batches after its main menu this way. host.js
   // has always made this exemption (_isMainExecutionSuspended); the CLI has to
   // agree or the browser and the harness run different schedulers.
-  // --trace-render-wait: opt in to bounded software-D3D wait attribution.
-  // Legacy render-park waits/counters remain active without this diagnostic.
-  const renderWaitAttribution = hasFlag('trace-render-wait') ? createRenderWaitAttribution() : null;
-  if (renderWaitAttribution) ctx.renderWaitAttribution = renderWaitAttribution.stats;
-  let mainRenderWait = null;
   const mainExecutionSuspended = async (path = 'probe') => {
     const observation = mainSchedulerObserver?.begin(path, tickState.batch);
     const finish = (value, reason) => observation ? observation.finish(value, reason) : value;
@@ -7178,28 +7147,6 @@ async function main() {
       if (batchClock.batchTicks() <= (deadline >>> 0)) return finish(true, 'clock-deadline');
       ex.clear_yield();
       yieldReason = 0;
-    }
-    if (yieldReason === 16) {
-      const token = (await mainOwner.call('get_d3d_render_token')) | 0;
-      if (!mainRenderWait || mainRenderWait.token !== token) {
-        const wait = {token,done:false,polls:0,since:tickState.batch|0}; mainRenderWait = wait;
-        renderWaitAttribution?.begin(wait, ctx.d3d9Bridge?.requests.get(token));
-        wait.promise = Promise.resolve().then(() => ctx.waitD3DRender(token))
-          .catch(error => { renderWaitAttribution?.reject(wait); console.error('[render]',error); })
-          .then(() => { wait.done = true; renderWaitAttribution?.settle(wait); });
-      }
-      if (!mainRenderWait.done) {
-        // A request the bridge already calls done should release main within
-        // a few event-loop turns. Morrowind once sat on one for 150k+ batches
-        // until its yield was cleared by hand; say so the first time it
-        // happens rather than letting it read as a slow scene.
-        const record = ctx.d3d9Bridge && ctx.d3d9Bridge.requests.get(token);
-        if (++mainRenderWait.polls === 1000 && record && record.done)
-          console.log(`[render] main parked on completed request ${token} for 1000 checks ` +
-            `(since batch ${mainRenderWait.since}); the wait never observed it`);
-        return finish(true, 'render');
-      }
-      await mainOwner.call('clear_yield'); mainRenderWait = null;
     }
     if (threadManager._renderSendTargets.has(ex)) return finish(true, 'render-send');
     yieldReason = await mainOwner.call('get_yield_reason');
@@ -7230,41 +7177,6 @@ async function main() {
     if (!threadManager.isMainThreadSuspended()) return finish(false, 'runnable');
     return finish(!(await mainOwner.optionalCall('is_mm_timer_callback_active') | 0),
       'suspend-count-or-mm-timer');
-  };
-
-  // A main thread parked on a software D3D request (yield 16) used to cost a
-  // whole batch per check: mainExecutionSuspended() said "parked", run() was
-  // skipped, and the loop counted the batch -- tickState.batch advances the
-  // guest clock by TICK_MS_PER_BATCH while the render worker is still
-  // rasterizing. UT2003/UT2004 read as "stuck forever in the first
-  // DrawIndexedPrimitive" this way: 1500 batches spent ~1490 of them parked,
-  // one per event-loop turn, and a --max-batches budget ran out with the
-  // guest 30 draws in. The browser has no such unit (host.js just yields to
-  // the event loop), so wait here, in wall time, for the one request the
-  // guest is actually blocked on. --no-render-park-wait restores the old
-  // batch-per-check behaviour for an A/B.
-  const RENDER_PARK_WAIT = !hasFlag('no-render-park-wait');
-  // skippedBatches: batches whose run() was skipped because main was still
-  // parked on a render request -- the number the fix drives to zero, and
-  // what test/test-d3d-render-park-batches.js reads through ctx.
-  const renderParkStats = ctx.renderParkStats = { waits: 0, wallMs: 0, skippedBatches: 0 };
-  const awaitMainRenderPark = async () => {
-    if (!RENDER_PARK_WAIT) return;
-    if (await mainOwner.call('get_yield_reason') !== 16) return;
-    await mainExecutionSuspended();
-    const wait = mainRenderWait;
-    if (!wait || wait.done) return;
-    const started = Date.now();
-    renderWaitAttribution?.parkStart(wait, started);
-    let renderParkDeadline = false;
-    while (!wait.done && !stopped) {
-      await Promise.race([wait.promise, new Promise(r => setTimeout(r, 100))]);
-      if (deadlineMs && Date.now() > deadlineMs) { renderParkDeadline = true; break; }
-    }
-    const renderParkEnded = Date.now();
-    renderParkStats.waits++; renderParkStats.wallMs += renderParkEnded - started;
-    renderWaitAttribution?.parkEnd(wait, renderParkEnded,
-      stopped ? 'stopped' : (renderParkDeadline ? 'deadline' : 'pending'));
   };
 
   let lastSchedSig = null;
@@ -11089,7 +11001,6 @@ async function main() {
         const ms = Math.max(0, Math.ceil(threadManager.mainSleepRemaining()));
         if (ms > 0) await new Promise(r => setTimeout(r, ms));
       }
-      await awaitMainRenderPark();
       // An external event can change only while real time passes. Park the
       // host asynchronously between probes; runnable guest siblings still
       // receive their ordinary slices below, and main's guest frame stays put.
@@ -11126,7 +11037,6 @@ async function main() {
         await nativeFault.wait();
         if (stopped) break;
       }
-      else if (await mainOwner.call('get_yield_reason') === 16) renderParkStats.skippedBatches++;
     } catch (e) {
       flushLogs();
       console.log(`\n*** CRASH at batch ${batch}: ${e.message}`);
@@ -11379,7 +11289,6 @@ async function main() {
     // frame restored and EIP on the thunk, so filling the chunk and clearing
     // the yield re-enters the same call, which then takes the cache hit.
     await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
-    if (await mainOwner.call('get_yield_reason') === 16) await mainExecutionSuspended();
 
     await serviceMainTimingWait(mainOwner, {batchClock, tickState, serviceClock,
       vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
@@ -11653,10 +11562,6 @@ async function main() {
         await new Promise(resolve => setImmediate(resolve));
       }
     }
-    // Render worker replies also require a real event-loop turn; Promise-only
-    // CLI batches starve message delivery even though their guest is parked.
-    if (ctx.d3d9Bridge && ctx.d3d9Bridge.requests.size)
-      await new Promise(resolve => setImmediate(resolve));
     // A parked socket call is not the only way to be waiting on the wire. An
     // app using WSAAsyncSelect never blocks in winsock at all: it sits in its
     // message pump expecting to be told, so nothing above would ever yield and
@@ -11823,12 +11728,6 @@ if (VERBOSE) {
         stuckCount = 0;
       } else if (threadManager.isMainNamedEventWaiting()) {
         // An owned finite authority continuation is intentional inactivity.
-        stuckCount = 0;
-      } else if (ex.get_yield_reason() === 16 && ctx.d3d9Bridge &&
-          ctx.d3d9Bridge.requests.has(ex.get_d3d_render_token() | 0)) {
-        // The render worker owns a live continuation. An unchanged guest CPU
-        // while it runs is intentional; normal wall deadlines still apply.
-        // Do not exempt an orphaned yield with no corresponding request.
         stuckCount = 0;
       } else if (ex.win16_pump_parked && ex.win16_pump_parked()) {
         // A 16-bit modal dialog or message box with no message to handle waits
@@ -12250,11 +12149,6 @@ if (VERBOSE) {
 
   console.log(`\nStats: ${apiTotal()} API calls, ${batchesRun} batches`
     + ` in ${executionElapsedSeconds.toFixed(3)}s (${(batchesRun / Math.max(executionElapsedSeconds,0.001)).toFixed(0)} batches/s)`);
-  if (renderParkStats.waits || renderParkStats.skippedBatches)
-    console.log(`render park: main waited on ${renderParkStats.waits} software D3D requests `
-      + `(${renderParkStats.wallMs}ms wall), ${renderParkStats.skippedBatches} batches skipped while parked`);
-  renderWaitAttribution?.close(deadlineMs && Date.now() > deadlineMs ? 'deadline' : 'stopped');
-  if (renderWaitAttribution?.stats.requests) console.log(renderWaitAttribution.summary());
   if (PRESENT_CAP && instance.exports.get_present_paced_count) {
     console.log(`present pacing (main instance): cap ${PRESENT_CAP}/s ${PRESENT_PACE_MODE ? 'smooth' : 'deadline'}, `
       + `${instance.exports.get_present_paced_count()} frames slept `
@@ -13114,25 +13008,22 @@ if (VERBOSE) {
       ` front-presents=${st(64)} cpu-stencil-pixels=${st(65)} canon-declines=${st(66)}` +
       ` active=${instance.exports.gl_gps_active()}`);
   }
-  if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
+  if (instance.exports.d3d9_gps_stat && instance.exports.d3d9_gps_stat(14)) {
     // src/09akg-d3d9-gps.wat d3d9_gps_stat: counters, decline reasons 16+r,
-    // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture, 4 handover
-    // to the old path), 80 handovers, 81 lead-mode entries (S1).
+    // readback sites 48+s (0 lock, 1 getdc, 2 rtdata, 3 capture). The old JS
+    // path's counters (5 old-frames, 13 old-fail, 64+ old-present, 79-81
+    // handovers) went with it; '' keeps the numbering and is not printed.
     const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
-    const names = ['draws', 'prims', 'clears', 'presents', 'gpu-frames', 'old-frames', 'readbacks',
-      'rt-uploads', 'tex-uploads', 'tex-hits', 'shaders', 'syncs', 'declines', 'old-fail', 'opens', 'dead'];
+    const names = ['draws', 'prims', 'clears', 'presents', 'gpu-frames', '', 'readbacks',
+      'rt-uploads', 'tex-uploads', 'tex-hits', 'shaders', 'syncs', 'declines', '', 'opens', 'dead'];
     const reasons = [];
     for (let r = 1; r < 32; r++) if (st(16 + r)) reasons.push(`${r}:${st(16 + r)}`);
     const sites = [];
     for (let s = 0; s < 16; s++) if (st(48 + s)) sites.push(`${s}:${st(48 + s)}`);
-    const old = [];
-    for (let k = 0; k < 6; k++) if (st(64 + k)) old.push(`${['other-device', 'declined', 'stale', 'no-hwnd', 'capture-stale', 'capture-no-rt'][k]}:${st(64 + k)}`);
-    console.log(`[d3d9-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
+    console.log(`[d3d9-gps] ${names.map((n, i) => n && `${n}=${st(i)}`).filter(Boolean).join(' ')}` +
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
-      ` old-present=${old.join(',') || 'none'}` +
       ` buffer-draws=${st(74)} buffer-uploads=${st(72)} buffer-hits=${st(73)}` +
-      ` lock-current=${st(76)} lock-fills=${st(77)} uploads-folded=${st(78)} old-readbacks-skipped=${st(79)}` +
-      ` handovers=${st(80)} lead-entries=${st(81)}` +
+      ` lock-current=${st(76)} lock-fills=${st(77)} uploads-folded=${st(78)}` +
       ` active=${instance.exports.d3d9_gps_active()}`);
   }
 
@@ -13141,10 +13032,10 @@ if (VERBOSE) {
     // in its DIB before reading surfaces out of memory.
     if (D3DIM_GPU && instance.exports.d3dim_gps_sync_all) instance.exports.d3dim_gps_sync_all();
     if (GL_GPS) instance.exports.gl_gps_sync_front();
-    if (D3D9_GPS && instance.exports.d3d9_gps_stat(14)) {
+    if (instance.exports.d3d9_gps_stat && instance.exports.d3d9_gps_stat(14)) {
       instance.exports.d3d9_gps_sync_front();
       const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
-      console.log(`[d3d9-gps] capture: executor-readback=${st(51)} stale=${st(68)} no-rt=${st(69)}`);
+      console.log(`[d3d9-gps] capture: executor-readback=${st(51)}`);
     }
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);

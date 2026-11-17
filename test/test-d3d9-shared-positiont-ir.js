@@ -7,8 +7,6 @@ const assert=require('assert'),fs=require('fs'),path=require('path');
 const {compile}=require('../tools/watx');
 const IR=require('../lib/d3d-shader-ir'),Shader=require('../lib/d3d9-shader');
 const {Device:Software}=require('../lib/d3d9-software-backend');
-const {Device:WebGL}=require('../lib/d3d9-backend');
-const {CommandQueue,OPCODES}=require('../lib/d3d-command-stream');
 const allocator=`(memory 128 128)(export "memory" (memory 0))
  (global $cursor (mut i32) (i32.const 65536))
  (func $heap_alloc (export "guest_alloc") (param $n i32) (result i32)
@@ -42,19 +40,6 @@ function snapshot(color=[1,.5,.25,.5],z=.5,rhw=1){
 function native(draw,e,memory){return IR.fixedPositionT(()=>e,()=>memory.buffer,draw);}
 function pixel(d,x=1,y=1){const p=d.present().pixels;return Array.from(p.slice((y*4+x)*4,(y*4+x)*4+4));}
 function near(actual,expected,label){assert(actual.every((v,i)=>Math.abs(v-expected[i])<=1),`${label}: ${actual} != ${expected}`);}
-// Recording GPU exercises the production consumer, including program selection,
-// raster state and ordering. It does NOT produce or claim WebGL pixels.
-function recordingGPU(){
- const events=[],programs=[],uniforms=[];
- const gl=new Proxy({getExtension:()=>true,colorMask(){},blendEquation(){},blendEquationSeparate(){},
-  blendFuncSeparate(){},blendColor(){}},{get(o,k){return k in o?o[k]:String(k);}});
- const gpu=new Proxy({gl,version:2,canvas:{width:4,height:4},renderHeight:4,
-  createBuffer:()=>({}),createProgram(v,p){programs.push([v,p]);return{};},
-  setUniform(p,n,k,v){uniforms.push([n,k,ArrayBuffer.isView(v)?Array.from(v):v]);},
-  createTexture:()=>({}),draw(p){events.push(['draw',p.count]);},readPixels(){throw Error('unexpected readback');}
- },{get(o,k){if(k in o)return o[k];return (...args)=>events.push([k,...args]);}});
- return {gpu,events,programs,uniforms};
-}
 module.exports={boot};
 if(require.main===module)(async()=>{
  const {e,memory}=await boot();
@@ -118,23 +103,6 @@ if(require.main===module)(async()=>{
  draw(solid([1,0,0,1],.25));draw(solid([0,1,0,1],.75));near(pixel(d),[0,0,255,255],'depth preserves earlier near draw');
  const alpha=solid([0,0,1,.5],.75);Object.assign(alpha.state,{zenable:false,blend:true,srcblend:5,dstblend:6,blendop:1});
  draw(alpha);near(pixel(d),[128,0,128,191],'ordinary blend in submission order');
- // Feed the unchanged neutral queue, and check producer mutation cannot change
- // pending payloads or their order. Completion remains the queue's boundary.
- const order=[],pending=[];let releaseFirst;
- const firstCompletion=new Promise(resolve=>{releaseFirst=resolve;});
- const queue=new CommandQueue({deviceId:1,capacityBytes:65536,consumer:{execute(command){
-  order.push(command.payload.tag);pending.push(command.payload);
-  return command.payload.tag==='first'?{value:1,completion:firstCompletion}:{value:1,complete:true};
- }}});
- const ticket=queue.submit(OPCODES.DRAW,{...s,nativeFixed:n,tag:'first'});
- const packet={...s,nativeFixed:n,tag:'second'};
- const second=queue.submit(OPCODES.DRAW,packet);
- packet.nativeFixed.vertex.nativeBytes[0]^=1; // second is waiting behind first
- assert.deepStrictEqual(order,['first']);assert.strictEqual(ticket.status,'consumed');
- releaseFirst();await queue.fence(second.sequence);
- assert.strictEqual(pending[1].nativeFixed.vertex.nativeBytes[0],original[0]);
- packet.nativeFixed.vertex.nativeBytes[0]^=1;
- assert.deepStrictEqual(order,['first','second']);assert.strictEqual(ticket.status,'completed');
  // Perspective/viewport DEF rebind and immutability; a compile after moving
  // viewport must alter native constants, leaving the first packet unchanged.
  const moved=snapshot();moved.viewport={x:1,y:1,width:2,height:2,minZ:0,maxZ:1};
@@ -185,19 +153,6 @@ if(require.main===module)(async()=>{
  assert.strictEqual(depthCompiles,1);
  assert.strictEqual(depthAllocations,1);
  legacy.destroy();
- // A separate production WebGL consumer sees those exact serialized programs.
- const rec=recordingGPU(),GPU=require('../lib/gpu-backend'),originalGPU=GPU.WebGLBackend;
- let g;
- try{GPU.WebGLBackend=function(){return rec.gpu;};g=new WebGL({width:4,height:4});}
- finally{GPU.WebGLBackend=originalGPU;}
- g.fixedPlans.compile=()=>{throw Error('duplicate GPU fixed interpretation');};
- g.bindDepth=()=>{};g.touchColor=()=>{};g.uploadTexture=()=>{};
- g.draw({...s,nativeFixed:n,vertexConstants:new Float32Array(1024).fill(NaN),pixelConstants:new Float32Array(32).fill(NaN)});
- assert.strictEqual(rec.programs.length,1);assert(rec.programs[0][0].includes(vs.source.replace('void main()', 'void d3d_guest_vertex()')));
- assert.strictEqual(rec.programs[0][1],ps.source);
- assert(rec.programs[0][0].includes('vec2(0.875,-0.875)'),'retain established top-left raster adaptation');
- assert(rec.events.some(e=>e[0]==='draw'&&e[1]===3));
- assert(!rec.events.some(e=>/readPixels|finish/.test(e[0])),'no new readback or completion');
  d.destroy();
  console.log('PASS shared POSITIONT native IR: differential bytes/DEF, immutable snapshots, 11 existing fallback profiles, 10 existing + 4 depth native rejects, five corrected depth pixel controls, out-of-range depth fallback, native pixels/depth/blend and rejecting ADD control; production GPU recording only (no GPU pixels)');
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});

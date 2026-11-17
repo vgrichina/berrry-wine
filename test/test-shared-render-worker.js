@@ -28,7 +28,7 @@ function fixture(legacy=false,nativeMemory=false){
     },destroy(){events.push(['destroy',options.name]);}};
   }};
   Object.assign(self,{GpuStreamRenderWorker:factory,D3DIMRenderWorker:factory,
-    D3D9RenderWorker:factory,D3DCommandStream:Stream});
+    D3DCommandStream:Stream});
   const sharedMemory=nativeMemory ? new WebAssembly.Memory({initial:96,maximum:96,shared:true})
     : {buffer:new SharedArrayBuffer(legacy?6*1024*1024:1024)};
   let allocation=4096;
@@ -147,22 +147,6 @@ encoderScopedFence();
   await another.ready;
   assert.strictEqual(f.importOrder.filter(url=>url==='d3dim-render-worker.js').length,1,'dependencies shared across endpoints');
   await another.terminate();
-  // First dependency only the neutral endpoint imports (render-clear is
-  // already shared with the gpu-stream endpoints opened above).
-  f.failedImports.add('d3d9-backend.js');
-  const failedLoad=f.manager.createEndpoint({api:'neutral',name:'failed-load'});
-  await assert.rejects(failedLoad.ready,/injected import failure/);
-  await failedLoad.terminate();
-
-  // Existing neutral command receipts use a separate per-port namespace.
-  const c=f.manager.createEndpoint({api:'neutral',name:'c'});await c.ready;
-  assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-backend.js').length,2,'failed dependency retried');
-  assert.strictEqual(f.importOrder.filter(url=>url==='d3d9-shader.js').length,1,'successful predecessor retained across retry');
-  const consumer=new Stream.WorkerConsumer(c);
-  const command={version:Stream.VERSION,opcode:Stream.OPCODES.FENCE,deviceId:1,generation:1,sequence:1,payload:{kind:'echo',value:9}};
-  const receipt=consumer.execute(command);await receipt.consumed;await receipt.completion;
-  assert.strictEqual(await receipt.value,9);
-  await consumer.cancel(1);assert.strictEqual(f.counts().retire,0);
   await b.terminate();await f.manager.stop();
   assert.deepStrictEqual(f.adopted,[1234]);
   assert.deepStrictEqual(f.counts(),{init:1,retire:1,terminated:1});
@@ -267,5 +251,5 @@ encoderScopedFence();
     terminate(){orphanTerminated++;}}),module:{},memory:{},imageBase:0x400000}),/clone failed/);
   assert.strictEqual(orphanTerminated,1,'failed constructor terminates unowned worker');
   }
-  console.log('PASS shared render worker: global completion order, ownership/bounds, frames, scoped errors, neutral receipts and single heap retirement');
+  console.log('PASS shared render worker: global completion order, ownership/bounds, frames, scoped errors and single heap retirement');
 })().catch(error=>{console.error(error);process.exit(1);});

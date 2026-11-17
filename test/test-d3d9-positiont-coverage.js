@@ -1,12 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 const assert=require('assert');
-const path=require('path');
-const {Worker}=require('worker_threads');
 const {bootRenderHarness}=require('./render-helper');
 const {Device}=require('../lib/d3d9-software-backend');
-const {CommandQueue,WorkerConsumer,OPCODES:OP}=require('../lib/d3d-command-stream');
-const sigs=require('../lib/host-import-sigs.generated.json').sigs;
 // Screen-space vertices must retain pixel-edge ownership when the target grows.
 // https://learn.microsoft.com/en-us/windows/win32/direct3d9/viewports-and-clipping
 (async()=>{
@@ -68,19 +64,5 @@ const sigs=require('../lib/host-import-sigs.generated.json').sigs;
       assert.strictEqual(device.sampleCount(),expected,'offscreen screen-space vertices retain geometry and bounded coverage');
     }finally{device.destroy();}
   }
-  const worker=new Worker(path.join(__dirname,'../lib/d3d-render-worker.js'));
-  const consumer=new WorkerConsumer(worker,{module,memory,sigs,imageBase:0x400000,
-    reclaimHeap:head=>e.d3d_render_adopt_free_list(head)});
-  const queue=new CommandQueue({deviceId:91,consumer});
-  try{
-    await consumer.ready;
-    queue.submit(OP.RESOURCE_CREATE,{kind:'device',width:640,height:480,quadBudget:1});
-    queue.submit(OP.QUERY_BEGIN,{queryId:1});
-    queue.submit(OP.DRAW,snapshot);
-    const result=await queue.submit(OP.QUERY_END,{queryId:1}).value;
-    await queue.fence();
-    assert.deepStrictEqual(result,{samplesLow:36,samplesHigh:0},'production worker preserves POSITIONT coordinates');
-    queue.submit(OP.RESOURCE_RELEASE,{kind:'device'});await queue.fence();
-  }finally{await consumer.cancel();}
-  console.log('PASS POSITIONT coverage: dimensions, viewport/depth/RHW, offscreen bounds and production worker');
+  console.log('PASS POSITIONT coverage: dimensions, viewport/depth/RHW, offscreen bounds');
 })().catch(error=>{console.error(error);process.exitCode=1;});

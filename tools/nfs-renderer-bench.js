@@ -439,7 +439,7 @@ async function runCase(server, name) {
     wasmSha256: hash(wasmFile), wasmFile, softwareGpu, headful:true, seed, seconds, samples, profileEnabled, readbackCensus,
     machine: { platform:os.platform(), arch:os.arch(), cpus:os.cpus().length, model:os.cpus()[0].model },
     fixtureSha256, guestProfile,
-    sourceSha256: Object.fromEntries(['src/09abg-d3dim-gps.wat','lib/d3d9-backend.js','lib/guest-worker.js','tools/page-probes/nfs-guest-profile.js'].map(file => [file,hash(path.join(ROOT,file))])),
+    sourceSha256: Object.fromEntries(['src/09abg-d3dim-gps.wat','lib/guest-worker.js','tools/page-probes/nfs-guest-profile.js'].map(file => [file,hash(path.join(ROOT,file))])),
     results: [] };
   try {
     for (const name of cases) {

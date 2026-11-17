@@ -465,7 +465,7 @@ function uncorrectedCenterControl(){
 
 async function createServer(getWasm,getNegative=()=>null,onInjection=()=>{},onServe=()=>{}){
   const scripts=['region-map.generated','gl-command-stream','d3d-command-stream','guest-rpc','guest-thread-host',
-    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear','d3d9-backend',
+    'render-worker','gpu-backend','d3d9-shader','d3d-shader-ir','render-clear',
     'gpu-stream.generated','gpu-stream','d3d-geometry-batches','d3d9-software-backend','gpu-stream-software'];
   return require('./static-server').startStaticServer({root:ROOT,crossOriginIsolated:true,handleRequest(req,res){
     // The custom handler runs before static-server's ordinary header path.

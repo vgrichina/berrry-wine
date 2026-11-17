@@ -18,7 +18,8 @@
 //     blended on the CPU in WAT (09akg "d9cpu");
 //   O lit indexed 2WEIGHTS + NORMAL, UBYTE4 entries 40 / 128 / 255, VB DIP
 //     (CPU path, normals through the inverse transposes).
-// P: a FLOAT1 index of 300 (not a D3D palette entry) still declines 27.
+// P: a FLOAT1 index of 300 (not a D3D palette entry) still declines 27, which
+// traps (fail fast: there is no other path to finish the frame on).
 // Caps: MaxVertexBlendMatrices 4, MaxVertexBlendMatrixIndex 21 for hardware
 // vertex processing and 255 for software (a MIXED device switched).
 const assert = require('assert');
@@ -330,7 +331,10 @@ async function render(gps, extra = []) {
         POS.map((_, k) => blend(pairs(k), M => nxform(NORMALS[k], M))));
       await rs(137, 0);
     }
-    // P: a FLOAT1 index of 300 (past D3D's 255) still declines 27.
+    // P: a FLOAT1 index of 300 (past D3D's 255) still declines 27: a trap.
+    const st = await s.stats();
+    st.cpuBlends = await s.evaluate('exports.d3d9_gps_stat(82)>>>0');
+    let pTrapped = false;
     {
       const v = bytes(12 * 20);
       TRIS.forEach((k, i) => {
@@ -340,21 +344,23 @@ async function render(gps, extra = []) {
       });
       const d = await decl([...el(0, 0, 2, 0), ...el(0, 12, 0, 2), ...el(0, 16, 4, 10), ...END]);
       await up(v);
-      await frame(async () => {
-        await rs(151, 256); await rs(167, 1);
-        await ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${d}]`);
-      }, ['IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,4,ctx.d9g.up,20]'], true);
+      try {
+        await frame(async () => {
+          await rs(151, 256); await rs(167, 1);
+          await ok('IDirect3DDevice9_SetVertexDeclaration', `[ctx.d9g.device,${d}]`);
+        }, ['IDirect3DDevice9_DrawPrimitiveUP', '[ctx.d9g.device,4,4,ctx.d9g.up,20]'], true);
+      } catch (_) { pTrapped = true; }
     }
-    const st = await s.stats();
-    st.cpuBlends = await s.evaluate('exports.d3d9_gps_stat(82)>>>0');
-    await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
-    assert.strictEqual(await s.close(), 0, s.output());
-    return { frames, stats, st, plain, caps };
+    const code = await s.close();
+    pTrapped = pTrapped && code !== 0 && /unreachable/i.test(s.output());
+    return { frames, stats, st, plain, caps, pTrapped };
   } catch (error) { console.error(s.output().slice(-4000)); await s.close(); throw error; }
 }
 
 (async () => {
-  const old = await render('off');
+  // The old JS D3D9 path was deleted (d3d9-retire S4): `old` is its output for
+  // this exact sequence, recorded at 3eea041c5 (test/fixtures/d3d9-old-oracle).
+  const old = require('./fixtures/d3d9-old-oracle/blend.json');
   const ring = await render('software');
   const names = 'HIJKLMNO';
   const bad = [];
@@ -374,9 +380,8 @@ async function render(gps, extra = []) {
   });
   // N and O blend on the CPU (palette entries past 21); J and K do not.
   const cpu = ring.stats.map(f => f.cpu).join('');
-  if (cpu !== '00000000000010100') bad.push(`CPU-blended draws per frame ${cpu}, want N and O blended only`);
-  const last = ring.stats[ring.stats.length - 1];
-  if (last.declines !== 1 || last.reasons[27] !== 1) bad.push(`P (FLOAT1 index 300) ${JSON.stringify(last)}`);
+  if (cpu !== '0000000000001010') bad.push(`CPU-blended draws per frame ${cpu}, want N and O blended only`);
+  if (!ring.pTrapped) bad.push('P (FLOAT1 index 300) did not trap');
   assert.deepStrictEqual(ring.caps, { d3d9: [4, 21], hw: [4, 21], swGet: 1, sw: [4, 255] }, 'vertex blend caps');
   // --webgl (needs a display): on the WebGL executor every blended frame
   // must equal its own reference frame there (rasterization differs from
@@ -389,7 +394,7 @@ async function render(gps, extra = []) {
       const diff = want.findIndex((v, k) => v !== got[k]);
       if (diff >= 0) bad.push(`webgl ${name} pixel ${diff}: reference ${(want[diff] >>> 0).toString(16)} blended ${(got[diff] >>> 0).toString(16)}`);
     });
-    if (gl.stats.map(f => f.cpu).join('') !== '00000000000010100') bad.push('webgl CPU-blended draws per frame');
+    if (gl.stats.map(f => f.cpu).join('') !== '0000000000001010') bad.push('webgl CPU-blended draws per frame');
   }
   assert.deepStrictEqual(bad, [], `frames that declined or differ:\n  ${bad.join('\n  ')}`);
   console.log(`PASS fixed-function vertex blending / tweening on the ring, ${names.length} blends pixel-exact against CPU-blended references (N, O on the WAT CPU path), caps ${JSON.stringify(ring.caps)}\n  ring ${JSON.stringify(ring.st)}`);

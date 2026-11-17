@@ -86,18 +86,7 @@ const W = 8, H = 8;
   assert.strictEqual(e.d3d_shader_ir_canon_declines() >>> 0, before + 1, 'decline is counted');
   assert.strictEqual(e.d3d_shader_ir_canonicalize(0xfffffff0) >>> 0, 0, 'out-of-range IR pointer declines');
 
-  if (require('../lib/headless-gl').available()) {
-    const { createCanvas } = require('../lib/canvas-compat'), Backend = require('../lib/d3d9-backend');
-    const gl = new Backend.Device(createCanvas(W, H), { webglVersion: 1, getExports: () => e, getMemory });
-    const glPixels = shader => {
-      gl.clear([0, 0, 0, 1], 1); gl.draw(draw(shader));
-      const raw = gl.gpu.readPixels(0, 0, W, H, gl.gpu.gl.RGBA, gl.gpu.gl.UNSIGNED_BYTE, new Uint8Array(W * H * 4));
-      const out = new Uint8Array(raw.length);
-      for (let y = 0; y < H; y++) out.set(raw.subarray((H - 1 - y) * W * 4, (H - y) * W * 4), y * W * 4);
-      return out;
-    };
-    try { expectKill(glPixels(killTemp), 'GL'); expectClamp(glPixels(clampShader), 'GL'); }
-    finally { gl.destroy(); }
-    console.log('PASS test-d3d9-shader-canon (software + GL)');
-  } else console.log('PASS test-d3d9-shader-canon (software; headless GL unavailable)');
+  // The old JS WebGL Device leg went with lib/d3d9-backend.js (d3d9-retire S4);
+  // the GPU stream executors are covered by test-gpu-stream-vs.js.
+  console.log('PASS test-d3d9-shader-canon (software)');
 })().catch(error => { console.error(error); process.exit(1); });

@@ -12,7 +12,9 @@ const path = require('node:path');
 // its shader-source checks below need a port to the 09aj IR path. The
 // analytic coverage helpers exported at the bottom stay importable.
 const Fixed = new Proxy({}, { get() { throw new Error('lib/d3d9-fixed.js was removed (slice 9.2); port to 09aj IR'); } });
-const {Device} = require('../lib/d3d9-backend');
+// lib/d3d9-backend.js (the JS WebGL Device) went with the old D3D9 path
+// (d3d9-retire S4); its backend-boundary checks need the same port.
+const Device = { get prototype() { throw new Error('lib/d3d9-backend.js was removed (d3d9-retire S4); port to the GPU stream executors'); } };
 const near = (a,b,why) => assert(Math.abs(a-b)<1e-10, `${why}: ${a} != ${b}`);
 const vectorNear = (a,b,why) => a.forEach((v,i)=>near(v,b[i],why));
 const edge = (a,b,p) => (b[0]-a[0])*(p[1]-a[1])-(b[1]-a[1])*(p[0]-a[0]);
