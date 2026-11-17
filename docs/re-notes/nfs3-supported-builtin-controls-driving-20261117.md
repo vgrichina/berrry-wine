@@ -46,7 +46,8 @@ returned CONSUMED at the native-input-return boundary and independently released
 Warning OK returned UNKNOWN, handlerApplied true, nativeMessage null, reason
 `handler produced no native input edge`. The independently prearmed release
 completed and observed left/up/Escape all zero. No subsequent endpoint request,
-rebind, replay, game launch or original retry followed.
+rebind, replay, game launch or original retry followed the independent release
+and physical-UP observation. Those two cleanup requests are retained explicitly.
 
 The reused run-local pointer helper sent no `guard.intent.review.targetHwnd`.
 `captureNativeButton` requires that identity to fence synchronous native WAT
