@@ -58,3 +58,9 @@ launches original media.
 Publication, original installer outcome and actual process waits are recorded
 in `result.json`. A successful local native test does not override the task's
 requirement to publish before the single authorized original pipeline.
+
+Post-merge fixture correction: the first published-source preflight stopped
+before original execution because one shared guest timer counter could alias
+when outer and nested dialogs ticked together. Each dialog now has its own
+counter. The range-change assertion remains required; no production getter,
+review policy, timeout or refusal was relaxed. The failed preflight is retained.
