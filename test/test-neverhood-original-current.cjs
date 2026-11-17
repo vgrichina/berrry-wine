@@ -3,6 +3,45 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 const cp=require('node:child_process'),net=require('node:net');
 const {startControlSession}=require('./control-session');
+if(process.argv[2]==='--desktop-participants'){
+ const {ProcessDesktop,readProcessDesktopObservations:read}=require('../lib/process-desktop');
+ const directory=process.env.WINE_PROCESS_DESKTOP_OBSERVE;
+ assert(directory&&fs.statSync(directory).isDirectory(),'observations prearmed');
+ (async()=>{
+  const desktop=new ProcessDesktop({endpoint:null});
+  try{
+   assert.equal(desktop.observeDirectory,directory);
+   const child=cp.spawnSync(process.execPath,['-e',`
+    const {ProcessDesktop}=require('./lib/process-desktop');
+    (async()=>{const d=new ProcessDesktop();try{
+     if(d.observeDirectory!==process.env.WINE_PROCESS_DESKTOP_OBSERVE)throw Error('child observations absent');
+     d.call({op:'poll',limit:7});
+     console.log(JSON.stringify({pid:process.pid,client:d.observationClient,seq:d.observationSequence,
+      manifest:globalThis.__disciples2Manifest}));
+    }finally{await d.close()}})().catch(e=>{console.error(e);process.exitCode=1});
+   `],{cwd:path.resolve(__dirname,'..'),env:desktop.environment(process.env),encoding:'utf8',timeout:15000});
+   assert.equal(child.status,0,child.stderr);assert(!child.signal);
+   const identity=JSON.parse(child.stdout.trim());assert.notEqual(identity.pid,process.pid);
+   assert.equal(identity.manifest,globalThis.__disciples2Manifest);
+   await new Promise(r=>setTimeout(r,20));
+   const records=read(directory),phases=records.filter(r=>r.client===identity.client&&r.seq===identity.seq);
+   for(const phase of ['main-submission','bridge-receipt','socket-write','authority-receipt','handler-completion',
+    'reply-write','bridge-frame-receipt','shared-notification','main-return'])assert(phases.some(r=>r.phase===phase),phase);
+   assert(phases.filter(r=>['main-submission','bridge-receipt','main-return'].includes(r.phase)).every(r=>r.pid===identity.pid));
+   assert(phases.filter(r=>['authority-receipt','handler-completion','reply-write'].includes(r.phase)).every(r=>r.pid===process.pid));
+   for(const [pid,roles] of [[process.pid,['desktop-main','desktop-client','desktop-authority']],
+    [identity.pid,['desktop-main','desktop-client']]])for(const role of roles){
+     const row=records.find(r=>r.phase==='identity'&&r.pid===pid&&r.role===role);
+     assert(row&&row.osTid>0&&row.preloads.some(p=>p.sha256?.length===64),`${pid} ${role}`);
+   }
+   fs.writeFileSync(path.join(directory,'inherited-route.json'),JSON.stringify({passed:true,parentPid:process.pid,
+    child:identity,childWait:{exit:child.status,signal:child.signal,actualWait:true,stdoutEOF:true,stderrEOF:true},
+    phases:phases.map(r=>({phase:r.phase,pid:r.pid,threadId:r.threadId,role:r.role})),timeoutMs:3000},null,2)+'\n',{flag:'wx'});
+   console.log('PASS prearmed actual main/client/authority and inherited OS child, nine correlated poll phases, same sealed manifest');
+  }finally{await desktop.close()}
+ })().catch(e=>{console.error(e);process.exitCode=1});
+ return;
+}
 if(process.argv[2]==='--installed-provenance'){
  const preflight=require('../tools/neverhood-original-current-preflight.cjs');
  const originalRead=fs.readFileSync,originalWrite=fs.writeFileSync;

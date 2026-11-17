@@ -74,6 +74,14 @@ namespace=dict(__name__='__main__',__file__=file,__package__=None)
 exec(compile(body(file),file,'exec'),namespace)
 '''
 def save(out,name,value):H.save(out,name,value)
+def arm_desktop_observations(out,env):
+    directory=(out/'desktop-participants').resolve()
+    directory.mkdir()
+    env['WINE_PROCESS_DESKTOP_OBSERVE']=str(directory)
+    save(out,'desktop-observation-armed.json',dict(at=time.time(),directory=str(directory),
+        beforeNativeSpawn=True,environment='WINE_PROCESS_DESKTOP_OBSERVE',timeoutMs=3000,
+        boundedWorkerLocalRecords=True,diagnosticsOnly=True))
+    return directory
 def checked(out,name,args,env=None,timeout=240,pass_fds=()):
     if env and env.get('DISCIPLES2_PHASE')=='runtime' and pathlib.Path(args[0]).name.startswith('python') and args[2].endswith('.py'):
         env=dict(env,NEVERHOOD_FROZEN_PYTHON=FROZEN_PYTHON)
@@ -185,6 +193,7 @@ def admit(out,recipe):
         guardfd=H.seal('neverhood-guard',guard);fds+=(guardfd,)
         env['NEVERHOOD_EVIDENCE_DIR']=str(out)
         env['WINE_COM_PROTOCOL_DIR']=str(out/'children')
+        arm_desktop_observations(out,env)
         env['NODE_OPTIONS']+=' --require='+f'/proc/{os.getpid()}/fd/{guardfd}'
         H.inheritance_probe(out,recipe,env)
         args=[('--iso='+f'/proc/{os.getpid()}/fd/{mediafd}') if a.startswith('--iso=') else a for a in recipe['args']]
@@ -354,6 +363,8 @@ def pipeline(out,revision,fixture=False,working=False):
         H.inheritance_probe(qualified,r,env)
         module=H.holder_bytes(json.loads((out/'prepared/holder.json').read_text()),'fdPath')
         qualify_native(qualified,revision,module,env,fds)
+        arm_desktop_observations(qualified,env)
+        checked(qualified,'desktop-participants',['node','test/test-neverhood-original-current.cjs','--desktop-participants'],env,timeout=40,pass_fds=fds)
         for label,args in [('controller-unit',['node','test/test-neverhood-original-current.cjs','--unit']),
                            ('provenance',['node','test/test-neverhood-original-current.cjs','--installed-provenance']),
                            ('native-controller',['node','test/test-neverhood-original-current.cjs',str(qualified/'native-controller')])]:
