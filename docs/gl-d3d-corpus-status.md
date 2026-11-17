@@ -1,5 +1,28 @@
 # OpenGL / Direct3D corpus status, updated 2026-11-17
 
+## November 17 Quake III arena and unresolved trap
+
+The registered original on pinned `e7c13db29` / module `f40fc54c…` reached
+Q3DM1 with an actual guest Worker and owning software GPS executor. The
+coordinator reviewed the complete before/after images and verified a turn;
+the arena image was delivered on Telegram as message2995.
+
+Mouse1 was followed by a guest `unreachable` at `0x4629e8`, whose retained
+instruction is `call *0x7bde6c`. The actual callee and trap cause remain
+unknown; temporal proximity does not establish a firing or GL defect. Forward
+movement, visible firing/enemy consequence and native Quit remain unproved.
+Health125→124→123 is excess-health decay, not evidence of enemy damage.
+All21 gestures completed independent physical release; host dequeue is separate
+from the uninstrumented native USER return boundary. The terminal UNKNOWN run
+stayed closed without further guest queries or input.
+
+Findings `f44b5577c` and run
+`20261117-quake3-known-menu-focus-arena-gameplay` retain the accepted images,
+240 focused evidence checks and lifecycle limits, including the missing outer
+helper wait. [Detailed result and next investigation](re-notes/quake3-known-menu-focus-arena-gameplay-20261117.md).
+This updates that software original only; earlier backend results below and
+the full27, parity, FPS and audio requirements remain separate and open.
+
 ## November 17 renderer regression results
 
 These component results do not update the historical per-game/backend rows
