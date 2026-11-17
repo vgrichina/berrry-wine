@@ -58,10 +58,13 @@ def policy(keys, scene, mode, route=None, before_arm=False):
             c.save('quit-phase.json', dict(at=time.time(), cutoff=end, reserveSeconds=180, irreversible=True))
     rr, r = reviewed(scene, 5 if mode in GAMEPLAY else 30)
     assert r['mode'] == mode
-    assert len(keys) == 1 and re.fullmatch(r'mousedown:[0-9]{1,4}:[0-9]{1,4}', keys[0]), 'one left click; no action lists/right clicks'
+    group = mode == 'select' and len(keys) == 2 and keys[0] == 'keydown:17'
+    assert (len(keys) == 1 or group) and re.fullmatch(r'mousedown:[0-9]{1,4}:[0-9]{1,4}', keys[-1]), 'one left click; only selection permits Ctrl modifier'
+    if group:
+        assert r.get('nativeGroupSelectionSemantics', '').strip(), 'review ordinary Ctrl-click group selection'
     geometry = r['pixelGeometry']
     assert geometry['source'] == 'current-full-scene' and geometry['target'] == c.read('native-pid.json')
-    assert [int(v) for v in keys[0].split(':')[1:]] == geometry['chosenCenter']
+    assert [int(v) for v in keys[-1].split(':')[1:]] == geometry['chosenCenter']
     assert r.get('visibleTarget', '').strip(), 'describe visible native target'
     if mode == 'quit':
         assert route in ('open-menu', 'abort-mission', 'confirm-abort', 'quit-game', 'confirm-quit') and r['quitRoute'] == route
