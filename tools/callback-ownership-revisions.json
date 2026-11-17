@@ -75,8 +75,8 @@
       "file": "lib/renderer.js",
       "name": "host-file",
       "baseSHA256": "06e2d182efe7d6859bc318e731c3f8c0f0e48d2a674d61aa99e55994d1faf4ec",
-      "sha256": "082395af9f85b7837ed35690355d107063fefe89601fe6c4c05652b5bab3f878",
-      "reason": "Review 20261117 Boids repair: native per-window primary allocation and actual PRESENT rt/record identity validate delayed frames. Actual native window GDI uploads retain disjoint dirty rectangles ordered by their preceding native PRESENT. GPU-only or read-only materialized primary DIBs do not become signature-polled CPU publications; later watched CPU Lock writes remain eligible. No guest callback, continuation, host clock, stepping, pause or extra publication is introduced. Existing process/endpoint retirement and CPU-present guards remain active; general invocation ownership remains pending. Qualification: run 20261117-boids-primary-gdi-ownership-repair."
+      "sha256": "f1c9066184dccda40130e2f3bef0f0d9add8aa5c50d4a8513ef0d172b4e51a52",
+      "reason": "Review 20261117 current-display ticket servicing: existing ordinary completed host boundary services only clean live host/shared DirectDraw queues and unheld renderer/paint/damage. A ticket armed with pending host damage still requires later ordinary publication. Readback uses retained published canvases, preserves exact publication/timestamp and schedules no frame, guest entry, flush, timer or callback. Host stop explicitly fails only its own pending current-display ticket and invalidates its retained display receipt. Scoped producer loss/retirement invalidation preserves foreign tickets and completed immutable bytes. Actual x86 GL guest/render Worker clean-slice before timeout versus same-publication serviced after, literal source/output, cancellation/identity/writer/fault regressions in run20261117-gl-gps-current-display-ticket-servicing-repair. Broader retained callback ownership remains pending."
     },
     {
       "file": "lib/ne-guest-bridge.js",
@@ -91,6 +91,13 @@
       "baseSHA256": "7ba05ed04385218cd0da7fdb9639531bdfcf3c973729aab7304daf5c5be5da88",
       "sha256": "d0c0c80910e34c4adc7a07dad8f78cdd94bf7ff518e422a911d8494e4306dfb0",
       "reason": "Review 20261117 QT nested native image loading: a distinct per-frame request serial plus full frame-generation token parks only KERNEL.95/96 below the exact active QT/LS connection. Settlement validates actor, caller EIP/ESP/CS/SS/far return, original alias descriptor and backing lease, module lifetime and PE generation; the PE request is untouched. Source bytes use the process resolver and canonical resident identity. Actual LibMain, Win4 semantic usage notifications, native handles/exports/pins/refcounts, rollback, WEP and final unload remain owned by the native lifecycle. Worker source I/O parks the same command/callback owner and checks it after each await; synchronous initializer reentry cannot fetch unavailable async sources. Native success, reference reuse, reentry, cancellation/fault/missing/wrong source, generation/actor/selector/lease/retired refusal and actual CPUWorker proofs are in run20261117-neverhood-native-nested-image-load. No FT, general callback or unrelated direction admission; general ownership remains pending."
+    },
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "2f0b9ae34726c27c662f5c3df4451689c51bfc4cefe459cedc45c25aab2ebc6a",
+      "sha256": "0b2b8e47e215112c95dad3444d21afecab630711725ed668127d44666589e084",
+      "reason": "Review 20261117 current-display ticket servicing: existing ordinary completed host boundary services only clean live host/shared DirectDraw queues and unheld renderer/paint/damage. A ticket armed with pending host damage still requires later ordinary publication. Readback uses retained published canvases, preserves exact publication/timestamp and schedules no frame, guest entry, flush, timer or callback. Host stop explicitly fails only its own pending current-display ticket and invalidates its retained display receipt. Scoped producer loss/retirement invalidation preserves foreign tickets and completed immutable bytes. Actual x86 GL guest/render Worker clean-slice before timeout versus same-publication serviced after, literal source/output, cancellation/identity/writer/fault regressions in run20261117-gl-gps-current-display-ticket-servicing-repair. Broader retained callback ownership remains pending."
     }
   ],
   "additions": [

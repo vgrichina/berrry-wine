@@ -9,13 +9,14 @@ const KEYS={ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:2
 
 const GL_OBSERVER = `(() => {
  if(globalThis.__gltronObserver)throw Error('observer already installed');
- const bridges=[],contexts=[],counts={draws:0,readbacks:0,transfers:0,creates:0,bindings:0,presents:0};
+ const bridges=[],contexts=[],counts={draws:0,readbacks:0,transfers:0,creates:0,bindings:0,presents:0,contextLostEvents:0};
  const get=OffscreenCanvas.prototype.getContext,transfer=OffscreenCanvas.prototype.transferToImageBitmap;
  OffscreenCanvas.prototype.getContext=function(type,...args){
   const gl=get.call(this,type,...args);
   if(gl&&/^webgl/.test(type)&&!contexts.some(x=>x.gl===gl)){
    const ext=gl.getExtension('WEBGL_debug_renderer_info');
    contexts.push({gl,canvas:this,type,version:gl.getParameter(gl.VERSION),renderer:gl.getParameter(ext?ext.UNMASKED_RENDERER_WEBGL:gl.RENDERER)});
+   this.addEventListener('webglcontextlost',()=>{counts.contextLostEvents++;});
    for(const method of ['drawArrays','drawElements','drawArraysInstanced','drawElementsInstanced','readPixels']){
     const old=gl[method];if(typeof old==='function')gl[method]=function(...a){const v=old.apply(this,a);counts[method==='readPixels'?'readbacks':'draws']++;return v;};
    }
@@ -29,7 +30,7 @@ const GL_OBSERVER = `(() => {
    const old=p[method];p[method]=function(...a){const result=old.apply(this,a);if(!bridges.includes(this))bridges.push(this);counts[count]++;return result;};
   }
  }});
- globalThis.__gltronObserver={snapshot:()=>({...counts,frontendDraws:compat?.stats?.draws??null,frontendPresents:compat?.stats?.presents??null,devices:contexts.map(x=>({type:x.type,version:x.version,renderer:x.renderer,width:x.canvas.width,height:x.canvas.height})),
+ globalThis.__gltronObserver={loseContexts:()=>contexts.map(x=>{const ext=x.gl.getExtension('WEBGL_lose_context');if(!ext)throw Error('actual context loss extension unavailable');ext.loseContext();return {type:x.type,requested:true};}),snapshot:()=>({...counts,frontendDraws:compat?.stats?.draws??null,frontendPresents:compat?.stats?.presents??null,devices:contexts.map(x=>({type:x.type,version:x.version,renderer:x.renderer,width:x.canvas.width,height:x.canvas.height})),
   contexts:bridges.flatMap(b=>[...b.contexts].map(([id,x])=>({id,hwnd:x.hwnd,software:x.software===true,current:[...b.currentByOwner].some(([o,h])=>h===id),owners:[...b.currentByOwner],backend:x.backend?.constructor?.name,deviceObserved:contexts.some(y=>y.gl===x.backend?.gl||y.gl===b._webglBackend?.gl)})))})};
  return true;
 })()`;

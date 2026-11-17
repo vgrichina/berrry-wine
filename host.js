@@ -5596,6 +5596,8 @@ class WineAssembly {
   }
 
   stop(options = {}) {
+    this.renderer?.failCurrentDisplayCapture?.({ instance: this.instance, processId: this.processId },
+      new Error('Current display capture owner stopped'));
     this._d3dimPublicationJoin?.retire('process-retired');
     // Drop this incarnation's queued input in place: publishers retain the
     // queue array. A reused HWND/PID must never replay its keys or pointer edges.
@@ -7181,6 +7183,14 @@ class WineAssembly {
 
   // Where every run loop used to present: the end of a completed slice.
   _presentAtBoundary(perf) {
+    // A current-display ticket armed while an otherwise clean Worker slice
+    // was executing needs no new frame. Service it at this ordinary unheld
+    // boundary, using live host queues (including shared DirectDraw damage).
+    // Do not let a closing host certify its retained display.
+    if (!this._stopped && this.running !== false && !this._presentFrameDue &&
+        !this._presentWanted() && this.renderer?.serviceCurrentDisplayCapture) {
+      this.renderer.serviceCurrentDisplayCapture();
+    }
     if (typeof requestAnimationFrame !== 'function') {
       const r = this.renderer;
       if (r && r._workerPublicationHeld && r._workerPublicationHeld()) {

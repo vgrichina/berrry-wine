@@ -15,7 +15,22 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
   const transfer=p.observePresentationTransfer,publish=p.observePresentationPublication;
   const ids=new WeakMap();let next=0;
   const token=o=>{if(!o)return null;if(!ids.has(o))ids.set(o,++next);return ids.get(o);};
-  const state=root.__nativeInitialized={receipts:[],initialPublications:0,transfers:[]};
+  const state=root.__nativeInitialized={receipts:[],initialPublications:0,transfers:[],ticketEvents:[]};
+  for(const name of ['requestCurrentDisplayCapture','endWorkerGuestSlice','serviceCurrentDisplayCapture']){
+    const original=p[name];if(typeof original!=='function')continue;
+    p[name]=function(){
+      const relevant=name==='requestCurrentDisplayCapture'||this._immutableCaptureRequest?.currentDisplay;
+      try{return original.apply(this,arguments);}finally{if(relevant){
+        const w=getApps().find(a=>a.wine?.renderer===this)?.wine;
+        state.ticketEvents.push({event:name,at:Date.now(),publication:this._immutablePublicationSequence,
+          pending:!!this._immutableCaptureRequest,held:this._workerPublicationHeld(),gdi:this._workerGdiPaintDepth,
+          scheduled:this._repaintScheduled,repaintPending:this._repaintPending,deferred:this._workerRepaintDeferred,
+          host:w?{dirty:!!w._dxDirty,lockDeferred:!!w._dxLockDeferred,presentDue:!!w._presentFrameDue,
+            running:w.running,stopped:!!w._stopped}:null});
+        if(state.ticketEvents.length>64)state.ticketEvents.shift();
+      }}
+    };
+  }
   p.observePresentationTransfer=function(source,destination,geometry){
     const result=transfer.apply(this,arguments);
     const w=getApps().find(a=>a.wine?.renderer===this)?.wine,b=w?.hostCtx.getGlGpsBridge?.();
@@ -42,7 +57,7 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
     return result;
   };
 }
-function fixture({messageDriven=false}={}){
+function fixture({messageDriven=false,drawOnce=false,timerMs=0}={}){
   const b=Buffer.alloc(0x6400),base=0x400000,raw=r=>r-0x1000+0x400;
   const d=(o,n)=>b.writeUInt32LE(n>>>0,o),w=(o,n)=>b.writeUInt16LE(n,o),pe=0x80,opt=pe+24,s=opt+224;
   w(0,0x5a4d);d(0x3c,pe);d(pe,0x4550);w(pe+4,0x14c);w(pe+6,1);w(pe+20,224);w(pe+22,0x10e);
@@ -50,6 +65,7 @@ function fixture({messageDriven=false}={}){
   d(opt+56,0x7000);d(opt+60,1024);w(opt+68,2);d(opt+72,0x100000);d(opt+76,4096);d(opt+80,0x100000);d(opt+84,4096);d(opt+92,16);
   b.write('.native',s);d(s+8,0x6000);d(s+12,0x1000);d(s+16,0x6000);d(s+20,1024);d(s+36,0xe0000060);
   const libraries=[['kernel32.dll',['ExitProcess','OutputDebugStringA']],['user32.dll',['RegisterClassA','CreateWindowExA','SetFocus',messageDriven?'GetMessageA':'PeekMessageA','TranslateMessage','DispatchMessageA','DefWindowProcA','GetDC','ChangeDisplaySettingsA']],['gdi32.dll',['SwapBuffers']],['opengl32.dll',['wglCreateContext','wglMakeCurrent','glClearColor','glClear','glBegin','glColor3f','glVertex2f','glEnd']]];
+  if(timerMs)libraries[1][1].push('SetTimer');
   d(opt+104,0x1000);d(opt+108,(libraries.length+1)*20);let str=0x1800;const apis=new Map();
   libraries.forEach(([dll,names],i)=>{const desc=raw(0x1000+i*20),thunk=0x1200+i*256;d(desc,thunk);d(desc+12,str);d(desc+16,thunk);b.write(dll+'\0',raw(str));str+=dll.length+1;
     names.forEach((name,j)=>{d(raw(thunk+j*4),str);b.write(name+'\0',raw(str+2));str+=name.length+3;apis.set(name,base+thunk+j*4);});});assert(str<0x2000);
@@ -63,8 +79,11 @@ function fixture({messageDriven=false}={}){
     push(base+0x3500);call('RegisterClassA');for(const n of [0,base,0,0,360,480,40,40,0x90000000,base+0x3060,base+0x3000,0])push(n);call('CreateWindowExA');emit(0xa3,...u(base+0x3600),0x50);call('SetFocus');
     push(4);push(base+0x3800);call('ChangeDisplaySettingsA');
     emit(0xff,0x35,...u(base+0x3600));call('GetDC');emit(0xa3,...u(base+0x3604),0x50);call('wglCreateContext');emit(0x50,0xff,0x35,...u(base+0x3604));call('wglMakeCurrent');
-    if(messageDriven)jump('draw'); // The authored initial frame precedes the normal message wait.
-    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');emit(0x85,0xc0);jump('draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
+    if(timerMs){push(0);push(timerMs);push(1);emit(0xff,0x35,...u(base+0x3600));call('SetTimer');}
+    if(messageDriven||drawOnce)jump('draw'); // The authored initial frame precedes the normal message wait.
+    label('loop');for(const n of (messageDriven?[0,0,0,base+0x3640]:[1,0,0,0,base+0x3640]))push(n);call(messageDriven?'GetMessageA':'PeekMessageA');emit(0x85,0xc0);jump(drawOnce?'loop':'draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
+    if(timerMs){emit(0x81,0x3d,...u(base+0x3644),...u(0x113));jump('loop',0x85);}
+    else if(drawOnce)jump('loop');
     label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
     push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
     for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');jump('loop');
@@ -82,11 +101,15 @@ function fixture({messageDriven=false}={}){
 async function run(out,commit){
   const save=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value,null,2)+'\n',{flag:'wx'});
   assert(fs.existsSync(out),'observable independent supervisor must create output directory');
-  const files=gitFiles(commit),messageDriven=process.env.GLTRON_FIXTURE_MESSAGE_DRIVEN==='1',exe=fixture({messageDriven});
+  const timerMs=Number(process.env.GLTRON_FIXTURE_TIMER_MS||0);
+  assert(Number.isInteger(timerMs)&&(timerMs===0||(timerMs>=16&&timerMs<=2000)));
+  const files=gitFiles(commit),messageDriven=process.env.GLTRON_FIXTURE_MESSAGE_DRIVEN==='1',drawOnce=process.env.GLTRON_FIXTURE_DRAW_ONCE==='1'||timerMs>0,exe=fixture({messageDriven,drawOnce,timerMs});
+  const [viewportWidth,viewportHeight]=(process.env.GLTRON_NATIVE_VIEWPORT||'1280x960').split('x').map(Number);
+  assert(Number.isInteger(viewportWidth)&&viewportWidth>=800&&viewportWidth<=1920&&Number.isInteger(viewportHeight)&&viewportHeight>=600&&viewportHeight<=1440);
   const helpers=['tools/gltron-current-native-capture.cjs','tools/gltron-browser-controller.cjs','tools/gltron-browser-binding.cjs','tools/boids-current-runtime.cjs','tools/boids-current-supervise.py'];
   save('source.json',{commit,foreignWIPAdopted:false,helpers:helpers.map(n=>{const r=cp.spawnSync('git',['show',commit+':'+n],{cwd:ROOT});return {path:n,sha256:sha(fs.readFileSync(path.join(ROOT,n))),published:r.status===0&&r.stdout.equals(fs.readFileSync(path.join(ROOT,n)))};}),runtime:[...files].map(([path,b])=>({path,sha256:sha(b),bytes:b.length})),fixture:{sha256:sha(exe),bytes:exe.length,clock:'real',slice:1000}});
   const wasm=compile(files);files.set('build/wine-assembly.wasm',wasm);files.set('authored-native.exe',exe);
-  save('module.json',{sha256:sha(wasm),bytes:wasm.length,commit,persisted:false});
+  save('module.json',{sha256:sha(wasm),bytes:wasm.length,commit,persisted:false,fixture:{messageDriven,drawOnce,timerMs,viewport:{width:viewportWidth,height:viewportHeight}}});
   save('prepared.json',{at:Date.now(),commit,module:sha(wasm)});
   while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
   const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));
@@ -99,7 +122,7 @@ async function run(out,commit){
       requests.push({at:Date.now(),path:n,status:b?200:404,sha256:b?sha(b):null});
       res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Content-Type',n.endsWith('.js')?'text/javascript':n.endsWith('.wasm')?'application/wasm':n.endsWith('.html')?'text/html':n.endsWith('.json')?'application/json':'application/octet-stream');res.statusCode=b?200:404;res.end(b||'not found');});
     await new Promise(r=>server.listen(0,'127.0.0.1',r));save('server.json',{port:server.address().port,owned:true});
-    const launched=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,userDataDir:out+'/profile',defaultViewport:{width:1280,height:960},timeout:Math.max(1,Math.min(30000,deadline-Date.now())),args:['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader','--window-size=1280,960']});
+    const launched=await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',headless:true,userDataDir:out+'/profile',defaultViewport:{width:viewportWidth,height:viewportHeight},timeout:Math.max(1,Math.min(30000,deadline-Date.now())),args:['--no-sandbox','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--use-gl=angle','--use-angle=swiftshader',`--window-size=${viewportWidth},${viewportHeight}`]});
     browser=launched.process();const endpoint=launched.wsEndpoint();await launched.disconnect();
     let stdout='',stderr='';browser.stdout.on('data',b=>stdout+=b);browser.stderr.on('data',b=>stderr+=b);
     joined=new Promise(r=>browser.once('close',(code,signal)=>{save('browser-wait.json',{pid:browser.pid,code,signal,actualWait:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded});fs.writeFileSync(out+'/browser.stdout.log',stdout);fs.writeFileSync(out+'/browser.stderr.log',stderr);r();}));
@@ -111,7 +134,7 @@ async function run(out,commit){
       const {sessionId,targetInfo}=v.params,w={sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false};workers.set(sessionId,w);
       const task=(async()=>{await c.send('Runtime.enable',{},sessionId);await c.send('Runtime.evaluate',{expression:controller.GL_OBSERVER},sessionId);await c.send('Debugger.enable',{},sessionId);await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},sessionId);await c.send('Runtime.runIfWaitingForDebugger',{},sessionId);})();tasks.push(task);task.catch(()=>{});
     }else if(v.method==='Target.detachedFromTarget'){const w=workers.get(v.params.sessionId);if(w)w.closed=true;closedTargets.push({at:Date.now(),method:v.method,...v.params});}
-    else if(v.method==='Target.targetDestroyed')closedTargets.push({at:Date.now(),method:v.method,...v.params});
+    else if(v.method==='Target.targetDestroyed'){for(const w of workers.values())if(w.targetId===v.params.targetId)w.closed=true;closedTargets.push({at:Date.now(),method:v.method,...v.params});}
     else if(v.method==='Debugger.scriptParsed'&&workers.has(v.sessionId)&&v.params.scriptLanguage==='WebAssembly'){
       const row={scriptId:v.params.scriptId,url:v.params.url};workers.get(v.sessionId).scripts.push(row);const task=c.send('Debugger.getScriptSource',{scriptId:row.scriptId},v.sessionId).then(s=>{row.bytecodeAvailable=!!s.bytecode;const bytes=Buffer.from(s.bytecode||s.scriptSource||'',s.bytecode?'base64':'utf8');row.sha256=sha(bytes);if(s.bytecode){assert.equal(row.sha256,sha(wasm),'actual Worker module differs');const name='tested-'+row.sha256+'.wasm',dest=path.join(path.dirname(out),name);if(!fs.existsSync(dest))fs.writeFileSync(dest,bytes,{flag:'wx'});}});tasks.push(task);task.catch(e=>row.error=String(e));}};
     await c.send('Target.setDiscoverTargets',{discover:true});
@@ -135,7 +158,7 @@ async function run(out,commit){
     const captureStart=Date.now();save('capture-start.json',{at:captureStart,boundMs:3000,route:'public requestCurrentDisplayCapture',noForcedPublication:true});
     const nonce=crypto.randomUUID(),observations=[];
     const snapshot=await Promise.race([(async()=>{
-    const arm=await evaluate(`(()=>{
+    const armExpression=`(()=>{
       const w=runningApps[0].wine,r=w.renderer;
       const windows=Object.values(r.windows).filter(v=>v.visible&&!v.isChild&&v.processId===w.processId&&v.wasm===w.instance);if(windows.length!==1)throw Error('ambiguous native owner');const win=windows[0],manager=w._renderWorkerManager,ports=[...manager.ports.values()];
       const verify=()=>{if(r.windows[win.hwnd]!==win||win.wasm!==w.instance||manager!==w._renderWorkerManager||manager._failure||w._stopped||!w.running||ports.some(p=>p.closed))throw Error('native owner retired');};
@@ -143,12 +166,17 @@ async function run(out,commit){
       const t=w.requestCurrentDisplayCapture({hwnd:win.hwnd});globalThis.__gltronCurrentTicket=t;
       globalThis.__gltronCurrentPin={w,r,win,verify,nonce:${JSON.stringify(nonce)}};
       return {at:Date.now(),status:t.status,error:t.error,publication:r._immutablePublicationSequence,held:r._workerPublicationHeld(),slice:w._workerLastSlice?.seq};
-    })()`);
+    })()`;
+    const arm=await evaluate(process.env.GLTRON_CAPTURE_AT_SLICE_START==='1'
+      ? `new Promise(resolve=>{const r=runningApps[0].wine.renderer,prior=r.beginWorkerGuestSlice;
+          r.beginWorkerGuestSlice=function(){r.beginWorkerGuestSlice=prior;prior.apply(this,arguments);resolve(${armExpression});};})`
+      : armExpression);
     observations.push({stage:'arm',...arm});save('capture-arm.json',{nonce,...arm});
     let snapshot;
     while(Date.now()-captureStart<3000){
       const row=await evaluate(`(()=>{const p=__gltronCurrentPin,t=__gltronCurrentTicket;if(p.nonce!==${JSON.stringify(nonce)})throw Error('ticket nonce replaced');p.verify();
         const state={at:Date.now(),status:t.status,error:t.error,publication:p.r._immutablePublicationSequence,held:p.r._workerPublicationHeld(),slice:p.w._workerLastSlice?.seq,pending:{dirty:!!p.w._dxDirty,lockDeferred:!!p.w._dxLockDeferred,presentDue:!!p.w._presentFrameDue},gdi:p.r._workerGdiPaintDepth};
+        state.ticketEvents=__nativeInitialized.ticketEvents;
         if(t.status!=='complete')return {state};const first=t.read();globalThis.__gltronRetainedFirst=first;
         const encode=b=>{let s='';for(let i=0;i<b.length;i+=8192)s+=String.fromCharCode(...b.subarray(i,i+8192));return btoa(s);};
         const receipt=__nativeInitialized.receipts.find(r=>r.publication===first.metadata.publication);
@@ -167,15 +195,56 @@ async function run(out,commit){
     save('capture.json',{startedAt:captureStart,completedAt:Date.now(),elapsedMs:Date.now()-captureStart,...snapshot,source:undefined,output:undefined});
     for(const kind of ['source','output']){const dim=snapshot.metadata[kind],bytes=Buffer.from(snapshot[kind],'base64');assert.equal(bytes.length,dim.width*dim.height*4);const png=new PNG(dim);png.data=bytes;fs.writeFileSync(out+'/authored-'+kind+'.png',PNG.sync.write(png),{flag:'wx'});}
     save('scene-characterization.json',characterizeSource(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source));
-    save('literal-oracle.json',literalOracle(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source));
+    const oracle=literalOracle(Buffer.from(snapshot.source,'base64'),snapshot.metadata.source);
+    save('literal-oracle.json',oracle);
+    save('literal-output-oracle.json',literalOutputOracle(Buffer.from(snapshot.output,'base64'),snapshot.metadata));
     await sleep(250);
     save('retained.json',await evaluate(`(()=>{const t=__gltronCurrentTicket,a=__gltronRetainedFirst,b=t.read();let mismatch=0;for(const k of ['sourceRGBA','outputRGBA']){if(a[k].length!==b[k].length)throw Error('retained length changed');for(let i=0;i<a[k].length;i++)if(a[k][i]!==b[k][i])mismatch++;}return {at:Date.now(),status:t.status,mismatch,metadataSame:JSON.stringify(a.metadata)===JSON.stringify(b.metadata),capturedPublication:a.metadata.publication,currentPublication:runningApps[0].wine.renderer._immutablePublicationSequence,cancelComplete:t.cancel()};})()`));
     // Canvas bytes do not depict host HTML consent/occlusion. The required
     // full host review remains an independent unchanged 3000ms observation.
     save('host-capture-start.json',{at:Date.now(),boundMs:3000,params:{format:'png',captureBeyondViewport:false}});
     const hostStart=Date.now(),host=await c.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},session);
-    assert(Date.now()-hostStart<3000,'late host screenshot');const png=Buffer.from(host.data,'base64');fs.writeFileSync(out+'/authored-host.png',png,{flag:'wx'});save('host-capture.json',{at:hostStart,elapsedMs:Date.now()-hostStart,sha256:sha(png),reviewed:false});
-    save('boundary.json',{at:Date.now(),nativeContinuousProducer:true,currentDisplayObserved:true,hostPixelsObserved:true,initializedLiteralSceneQualified:false,fullInputQualification:false,originalPermitted:false,next:'Bind an initialized native GL scene to an ordinary current-display receipt with independent literal pixels, then qualify current native owner/input and negatives before original.'});
+    assert(Date.now()-hostStart<3000&&Date.now()-captureStart<3000,'late complete native pixels/host observation');const png=Buffer.from(host.data,'base64');fs.writeFileSync(out+'/authored-host.png',png,{flag:'wx'});save('host-capture.json',{at:hostStart,elapsedMs:Date.now()-hostStart,totalObservationMs:Date.now()-captureStart,sha256:sha(png),reviewed:false});
+    save('boundary.json',{at:Date.now(),nativeContinuousProducer:timerMs>0||!drawOnce,currentDisplayObserved:true,hostPixelsObserved:true,
+      initializedLiteralSceneQualified:oracle.qualified,fullInputQualification:false,originalPermitted:false,
+      next:'Current-display pixels are display observations; shared USER input qualification and full native fault/lifecycle scope remain separate prerequisites for any original.'});
+    if(process.env.GLTRON_NATIVE_RETIRE==='1'){
+      save('producer-retirement.json',await evaluate(`new Promise(resolve=>{const p=__gltronCurrentPin,w=p.w,r=p.r,b=w.hostCtx.getGlGpsBridge(),prior=r.beginWorkerGuestSlice;
+        r.beginWorkerGuestSlice=function(){r.beginWorkerGuestSlice=prior;prior.apply(this,arguments);
+          const old={epoch:b.workerEpoch,endpoint:b.endpoint.id},t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});
+          const closing=b.close(),immediate={status:t.status,error:t.error};
+          Promise.resolve(closing).then(()=>resolve({at:Date.now(),old,epoch:b.workerEpoch,endpoint:b.endpoint?.id??null,
+            immediate,status:t.status,error:t.error,read:t.read(),retainedStatus:__gltronCurrentTicket.status}),e=>resolve({error:String(e)}));};})`));
+      save('late-capture-after-retirement.json',await evaluate(`(()=>{const p=__gltronCurrentPin;try{const t=p.w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});return {status:t.status,error:t.error};}catch(e){return {status:'refused',error:String(e)};}})()`));
+    }
+    if(process.env.GLTRON_NATIVE_LOSS==='1'){
+      assert(timerMs>0,'context loss requires a future ordinary authored native timer draw');
+      await evaluate(`(()=>{const p=__gltronCurrentPin;globalThis.__gltronLifecycle={w:p.w,r:p.r,win:p.win,b:p.w.hostCtx.getGlGpsBridge()};return true;})()`);
+      const render=[...workers.values()].filter(w=>!w.closed&&w.url.includes('d3d-render-worker'));assert.equal(render.length,1);
+      const at=Date.now(),request=await evaluate('__gltronObserver.loseContexts()',render[0].sessionId);
+      save('context-loss-request.json',{at,request,actualExtension:true});
+      let loss;
+      while(Date.now()-at<3000){
+        loss=await evaluate(`(()=>{const {w,r,b}=__gltronLifecycle;return {at:Date.now(),error:String(b.workerAsyncError||''),stopped:!!w._stopped,running:w.running,recordPresent:!!r._currentDisplayRecord,retainedStatus:__gltronCurrentTicket.status};})()`);
+        if(loss.error)break;await sleep(20);
+      }
+      assert(loss.error,'actual native producer did not report context loss within 3000ms');
+      save('context-loss.json',{...loss,elapsedMs:Date.now()-at});
+      save('late-capture-after-loss.json',await evaluate(`(()=>{const {w,win}=__gltronLifecycle;try{const t=w.requestCurrentDisplayCapture({hwnd:win.hwnd});return {status:t.status,error:t.error};}catch(e){return {status:'refused',error:String(e)};}})()`));
+    }
+    if(process.env.GLTRON_NATIVE_SHUTDOWN==='1'){
+      const shutdown=await evaluate(`(async()=>{const p=__gltronCurrentPin,w=p.w;let ticket=null;
+        if(!w._stopped){await new Promise(resolve=>{const r=p.r,prior=r.beginWorkerGuestSlice;
+          r.beginWorkerGuestSlice=function(){r.beginWorkerGuestSlice=prior;prior.apply(this,arguments);
+            const t=w.requestCurrentDisplayCapture({hwnd:p.win.hwnd});w.stop({repaint:false});ticket={status:t.status,error:t.error,read:t.read()};resolve();};});}
+        const guest=await w._guestRuntimeStopPromise;
+        const end=Date.now()+2000;while(!w._renderWorkerRetired&&!w._renderWorkerRetirementError&&Date.now()<end)await new Promise(r=>setTimeout(r,10));
+        return {at:Date.now(),kind:'explicit-host-stop',nativeQuit:false,ticket,guest:guest?{ok:guest.ok,error:String(guest.error||'')}:null,
+          stopped:!!w._stopped,running:w.running,renderRetired:!!w._renderWorkerRetired,renderError:String(w._renderWorkerRetirementError||'')};})()`);
+      save('host-shutdown.json',shutdown);
+      const end=Date.now()+2000;while([...workers.values()].some(w=>!w.closed)&&Date.now()<end)await sleep(10);
+      save('worker-target-close.json',{at:Date.now(),workers:[...workers.values()].map(w=>({targetId:w.targetId,url:w.url,closed:w.closed})),events:closedTargets});
+    }
   }catch(e){failure=e;save('failure.json',{at:Date.now(),error:e.stack,transportClosed:c?.closed??null,originalLaunched:false,noReplay:true});c?.ws.close();}
   finally{
     clearTimeout(captureTimer);
@@ -203,7 +272,10 @@ function verifyObserved(out,{published=false}={}){
   assert(m.requestedAt<=m.readbackStartedAt&&m.displayedAt<=m.readbackStartedAt&&m.readbackStartedAt<=m.readbackCompletedAt&&m.readbackCompletedAt<=capture.completedAt);
   for(const k of ['source','output']){const p=PNG.sync.read(fs.readFileSync(path.join(out,'authored-'+k+'.png')));assert.equal(p.width,m[k].width);assert.equal(p.height,m[k].height);assert.equal(p.data.length,p.width*p.height*4);}
   const p=PNG.sync.read(fs.readFileSync(path.join(out,'authored-source.png'))),scene=characterizeSource(p.data,p);
-  assert.equal(retained.mismatch,0);assert.equal(retained.metadataSame,true);assert.equal(retained.status,'complete');assert.equal(retained.cancelComplete,false);assert(retained.currentPublication>retained.capturedPublication);
+  assert.equal(retained.mismatch,0);assert.equal(retained.metadataSame,true);assert.equal(retained.status,'complete');assert.equal(retained.cancelComplete,false);
+  assert(module.fixture?.timerMs>0 ? retained.currentPublication>=retained.capturedPublication : module.fixture?.drawOnce ? retained.currentPublication===retained.capturedPublication : retained.currentPublication>retained.capturedPublication);
+  const literal=read('literal-oracle.json'),literalOutput=read('literal-output-oracle.json');
+  assert(literal.qualified&&literal.checked===480*360);assert(literalOutput.qualified&&literalOutput.checked===m.output.width*m.output.height);
   assert.equal(boundary.originalPermitted,false);assert.equal(boundary.fullInputQualification,false);
   const requests=read('wire.json').filter(v=>v.direction==='request');assert.equal(requests.filter(v=>v.method.startsWith('Input.')).length,0);
   const wait=read('wait.json'),browser=read('browser-wait.json');for(const w of [wait,browser,...wait.watchdogs]){assert.equal(w.actualWait,true);assert.equal(w.stdoutEOF,true);assert.equal(w.stderrEOF,true);}
@@ -242,14 +314,27 @@ function literalOracle(bytes,{width,height}) {
   for(let y=0;y<height;y++)for(let x=0;x<width;x++){
     const i=(y*width+x)*4,p=[...bytes.subarray(i,i+4)],key=p.join(',');colors[key]=(colors[key]||0)+1;
     // Independent authored coordinates: (120,270), (360,270), (240,90).
-    // Exclude a two-pixel raster edge; all other bytes have literal colors.
+    // Pixel centers never land on these sloping edges at this resolution.
     const half=(y+.5-90)*2/3,left=240-half,right=240+half;
-    const edge=Math.min(Math.abs(y+.5-270),Math.abs(x+.5-left),Math.abs(x+.5-right));
-    if(edge<2)continue;
     const inside=y+.5>90&&y+.5<270&&x+.5>left&&x+.5<right;
     const want=inside?[255,255,128,255]:[0,32,64,255];
     checked++;if(p.some((v,j)=>v!==want[j]))mismatches++;
   }
   return {width,height,checked,mismatches,colors,qualified:mismatches===0};
 }
-module.exports={fixture,run,verifyPendingNegative,verifyObserved,characterizeSource,literalOracle,installInitializedObserver};
+function literalOutputOracle(bytes,metadata){
+  const {width,height}=metadata.output,v=metadata.presentationViewport;
+  assert.equal(bytes.length,width*height*4);assert(v&&metadata.backend==='canvas-nearest');
+  let mismatches=0;
+  for(let y=0;y<height;y++)for(let x=0;x<width;x++){
+    let want=[0,0,0,255];
+    if(x>=v.dstX&&x<v.dstX+v.dstW&&y>=v.dstY&&y<v.dstY+v.dstH){
+      const sx=Math.floor((x+.5-v.dstX)*480/v.dstW),sy=Math.floor((y+.5-v.dstY)*360/v.dstH);
+      const half=(sy+.5-90)*2/3;
+      want=sy+.5>90&&sy+.5<270&&sx+.5>240-half&&sx+.5<240+half?[255,255,128,255]:[0,32,64,255];
+    }
+    const i=(y*width+x)*4;if(want.some((n,j)=>bytes[i+j]!==n))mismatches++;
+  }
+  return {width,height,checked:width*height,mismatches,qualified:mismatches===0};
+}
+module.exports={fixture,run,verifyPendingNegative,verifyObserved,characterizeSource,literalOracle,literalOutputOracle,installInitializedObserver};
