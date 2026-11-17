@@ -64,3 +64,36 @@ from publication and immutable runtime inputs. Only the renderer review row
 is owned in the shared review file. Evidence records Git and binary patches;
 media are referenced by existing path and SHA-256. No source archive, frame
 archive, media copy, worker, box or public deployment is created.
+
+
+The repairs were strictly published as `b29ef843aee74fe366aac3698704e3238797ed9e`.
+All 35 focused tests and the locked build passed. Complete native/browser
+software and WebGL recipes reached native Quit(0), including actual trusted
+physical UP, a 1900 ms parent stall, cancellation before DOWN, and continuous
+ordinary presentation. The final software recipe exercised the exact final
+capture identity checks and the earlier fallback send. Native paused-writer
+retirement and timer-driven WebGL context loss passed literal source/output,
+retained bytes, invalidation and actual worker shutdown checks.
+
+Each backend then used its one authorized fresh original from that published
+Git graph, with every helper exactly published, unchanged media, module bytes
+retained before execution, and prearmed independent owner/runtime watchdogs.
+Software reached the real paused arena. Its captures completed in 255–1263 ms,
+including the paused arena with an executing native writer and exact retained
+publication pixels. Release arms took 6–7 ms. Space then applied 10 ms after a
+fresh native owner observation, but dequeue saw that observation at age 293 ms
+and cancelled against the unchanged 250 ms context fence. Physical UP arrived.
+WebGL reached the real title menu. Its first Enter armed in 4 ms and applied
+86 ms after the fresh observation, but dequeue saw age 259 ms and cancelled
+against the same fence. Its independent physical UP also arrived.
+
+Both endpoints were permanently closed with zero subsequent controller
+requests. There was no retry, timeout increase, forced frame or fence change.
+Both original invocations ended through scoped browser cleanup with actual
+process waits and EOF; neither is native Quit. Neither backend demonstrated
+two live turns or a round consequence. The concrete remaining blocker is
+native USER context aging between fresh observation, physical DOWN and
+native dequeue under the original workload. Its scheduling cause is not
+established; the authored routes do not reproduce that original delay.
+Further work needs a faithful native latency reproducer under the unchanged
+250/500 ms fences before any separately authorized new original attempt.
