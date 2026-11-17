@@ -47,8 +47,8 @@ def supervised():
     native deadline and independent release are unchanged.
     """
     RUN.mkdir(parents=True,exist_ok=True);free_disk()
-    revision=git('rev-parse','HEAD').decode().strip()
-    assert git('rev-parse','origin/main').decode().strip()==revision
+    revision=git('rev-parse',os.environ.get('CAESAR3_PINNED_REVISION','HEAD')).decode().strip()
+    assert git('merge-base','--is-ancestor',revision,'origin/main')==b'', 'choose a published main graph'
     working='--working-qualification' in sys.argv
     assert not working or '--outer-fixture' in sys.argv
     names=('tools/gltron-current-supervise.py','tools/boids-current-supervise.py',
@@ -140,6 +140,7 @@ def original(env, source, module):
             '--trace-api=GetMessageA,PeekMessageA,WaitMessage,DispatchMessageA,GetAsyncKeyState,GetKeyState,GetCursorPos,DirectInputCreateA,IDirectInputDevice_GetDeviceState,IDirectInputDevice_GetDeviceData',
             '--trace-input-dispatch']
     save('launch.json', dict(at=start, deadline=deadline, gameplayCutoff=deadline-QUIT_RESERVE,
+         inputReadinessRequired=True,
          reserveSeconds=QUIT_RESERVE, rootPort=port, args=args, nativeSeconds=NATIVE_SECONDS,
          watchdogSeconds=WATCHDOG_SECONDS, nativeScene=True, bindingContract='native-reviewed-context-v1',
          inputPolicy=dict(confirmationMs=500, physicalUpMs=1750, observationMs=3000,
@@ -187,6 +188,27 @@ def original(env, source, module):
                                       stdoutEOF=True, stderrEOF=True, stdout=a.decode(), stderr=b.decode()))
     assert media_inventory() == pins, 'recursive media paths, sizes or hashes changed'
     save('media-after.json', dict(unchanged=True, files=len(pins)))
+def public_input_ready(run, snapshot):
+    """First unfiltered USER poll of this native focus actor, not a receipt.
+
+    A painted loading screen can precede the application's first message pump.
+    Observe public API returns only; never call a guest API or infer pixels.
+    """
+    run=pathlib.Path(run);launch=json.loads((run/'launch.json').read_text())
+    focus=snapshot['focusWindow'];target=int(snapshot['focus'],16)
+    p=run/'public-consumers.jsonl'
+    if not p.exists():return None
+    for line in p.read_text().splitlines():
+        try:r=json.loads(line)
+        except json.JSONDecodeError:continue # an active writer's incomplete last row
+        a=r.get('args',[])
+        if (r.get('phase')=='input-poll-return' and r.get('name') in ('GetMessageA','GetMessageW','PeekMessageA','PeekMessageW')
+            and r.get('threadId')==focus['threadId'] and len(a) in (4,5) and a[0] and a[1] in (0,target)
+            and a[2:4]==[0,0] and not r.get('yieldFlag') and not r.get('yieldReason')
+            and r.get('doneSp')==r.get('sp',0)+4*(len(a)+1) and (r['name'].startswith('Peek') or r.get('eax'))
+            and launch['at']*1000<=r.get('at',0)<=time.time()*1000):return r
+    return None
+
 def controller():
     """One personally reviewed intent, with an independently forked UP.
 
@@ -213,6 +235,15 @@ def controller():
         return rr,r
     m.reviewed=reviewed
     mode=sys.argv[2]
+    if mode in ('ready','capture') and m.read('launch.json').get('inputReadinessRequired'):
+        m.reserve();snap=m.call(dict(action='snapshot'),timeout=.5)
+        poll=public_input_ready(RUN,snap)
+        if not poll:
+            print(json.dumps(dict(ready=False,reason='owner has not returned an unfiltered public USER poll',
+                                 captured=False,intents=0,downs=0)))
+            raise SystemExit(3)
+        if mode=='ready':
+            print(json.dumps(dict(ready=True,publicPoll=poll,deliveryReceipt=False)));return
     if mode=='capture': return m.capture(sys.argv[3])
     if mode=='review': return m.review(*sys.argv[3:8])
     if mode=='bind': return m.bind(sys.argv[3])
@@ -305,8 +336,9 @@ def run():
     text_diagnostic = '--text-diagnostic' in sys.argv
     personal_fixture = '--personal-fixture' in sys.argv
     controller_fixtures = '--controller-fixtures' in sys.argv
+    readiness_fixture = '--input-readiness-fixture' in sys.argv
     outer_fixture = '--outer-fixture' in sys.argv
-    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures
+    diagnostic = '--consumer-diagnostic' in sys.argv or text_diagnostic or personal_fixture or controller_fixtures or readiness_fixture
     working = '--working-qualification' in sys.argv
     baseline = '--consumer-baseline' in sys.argv
     assert not baseline or (working and diagnostic), 'baseline is authored working diagnosis only'
@@ -323,12 +355,18 @@ def run():
     if working:
         # Only our leased files may overlay the sealed published graph.
         helper.OWN_SOURCES = ('tools/caesar3-current-native.py', 'test/test-caesar3-current-native.cjs',
-            'lib/cli-native-scene.js', 'test/test-disciples2-native-paint-binding.cjs')
+            'lib/cli-native-scene.js', 'test/test-disciples2-native-paint-binding.cjs','test/public-consumer-observer.js')
     if baseline: helper.OWN_SOURCES = ('test/test-caesar3-current-native.cjs',)
     if not working:
         assert git('show', revision+':tools/caesar3-current-native.py') == pathlib.Path(__file__).read_bytes()
     def qualify(env, files, source, module, **unused):
         if diagnostic:
+            if readiness_fixture:
+                helper.checked('input-readiness-fixture',['node','test/test-caesar3-current-native.cjs',
+                    '--input-readiness-fixture',str(RUN/'readiness')],env,(source,module))
+                save('diagnostic-completion.json',dict(completed=True,originalStarted=False,safeForOriginal=False,
+                    gitSHA=revision,moduleSHA256=env['DISCIPLES2_MODULE_SHA256']))
+                return
             if controller_fixtures:
                 helper.checked('controller-fixtures', ['node','test/test-caesar3-current-native.cjs',
                     '--controller-fixtures',str(RUN/'authored')],env,(source,module))
