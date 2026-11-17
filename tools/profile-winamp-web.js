@@ -6,6 +6,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
+const { startStaticServer } = require('../test/static-server');
 
 const ROOT = process.cwd();
 const PORT = 8765;
@@ -336,9 +337,8 @@ async function main() {
     (process.argv.includes('--audio') ? 'audio' :
      process.argv.includes('--about-menu') ? 'about-menu' :
      POST_CMD ? 'post-cmd' : 'credits');
-  const server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], {
-    cwd: ROOT, stdio: ['ignore', 'ignore', 'pipe'],
-  });
+  const server = await startStaticServer({ root: ROOT, port: PORT });
+  server.unref();
   progress('started local HTTP server');
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'wine-assembly-chrome-profile-'));
   const chromeArgs = [
@@ -360,14 +360,13 @@ async function main() {
   let chromeExit = null;
   let serverExit = null;
   chrome.stderr.on('data', d => { chromeErr += d.toString(); });
-  server.stderr.on('data', d => { serverErr += d.toString(); });
   chrome.on('error', e => { chromeErr += `\n[spawn error] ${e.message}`; });
-  server.on('error', e => { serverErr += `\n[spawn error] ${e.message}`; });
+  server.on('error', e => { serverErr += `\n[server error] ${e.message}`; });
   chrome.on('exit', (code, signal) => { chromeExit = { code, signal }; });
-  server.on('exit', (code, signal) => { serverExit = { code, signal }; });
+  server.on('close', () => { serverExit = { closed: true }; });
   const cleanup = () => {
     try { chrome.kill('SIGKILL'); } catch (_) {}
-    try { server.kill('SIGKILL'); } catch (_) {}
+    try { server.closeAllConnections(); server.close(); } catch (_) {}
     try { fs.rmSync(userData, { recursive: true, force: true }); } catch (_) {}
   };
   process.on('exit', cleanup);

@@ -19,22 +19,25 @@ test('trusted post-producer receipts through serialized ordinary movement contro
   const saveEvidence = (name, value) => {
     if (evidence) fs.writeFileSync(path.join(evidence, name), JSON.stringify(value, null, 2) + '\n');
   };
-  cp.execFileSync('python3', ['-B', root+'/tools/mw3-retention-repair.py', retained, dir]);
+  cp.execFileSync(process.execPath, [root+'/tools/mw3-retention-repair.js', retained, dir]);
   const source = fs.readFileSync(dir+'/browser.cjs', 'utf8');
   // Independent fixed watchdog is observable BEFORE Chrome is created. Normal
   // completion joins its actual wait and EOF, just as it joins Chrome's.
   const deadline = Date.now()+75000;
-  const watchdog = cp.spawn('python3', ['-B', '-c', `
-import os,sys,time,json,signal
-from pathlib import Path
-r=Path(sys.argv[1]);due=int(sys.argv[2])/1000
-(r/'armed').write_text(json.dumps(dict(pid=os.getpid(),deadline=due,independent=True)))
-while time.time()<due and not (r/'done').exists():time.sleep(.05)
-expired=not (r/'done').exists()
-if expired and (r/'chrome-pid').exists():
- try:os.killpg(int((r/'chrome-pid').read_text()),signal.SIGTERM)
- except ProcessLookupError:pass
-print(json.dumps(dict(expired=expired,deadline=due)))
+  const watchdog = cp.spawn(process.execPath, ['-e', `
+const fs=require('node:fs'),path=require('node:path');
+const r=process.argv[1],due=Number(process.argv[2])/1000,done=()=>fs.existsSync(path.join(r,'done'));
+fs.writeFileSync(path.join(r,'armed'),JSON.stringify({pid:process.pid,deadline:due,independent:true}));
+const tick=()=>{
+ if(Date.now()/1000<due&&!done())return setTimeout(tick,50);
+ const expired=!done();
+ if(expired&&fs.existsSync(path.join(r,'chrome-pid'))){
+  try{process.kill(-Number(fs.readFileSync(path.join(r,'chrome-pid'),'utf8')),'SIGTERM');}
+  catch(e){if(e.code!=='ESRCH')throw e;}
+ }
+ console.log(JSON.stringify({expired,deadline:due}));
+};
+tick();
 `, dir, String(deadline)], {stdio:['ignore','pipe','pipe']});
   const join = child => {
     const streams = {}, eof = {};

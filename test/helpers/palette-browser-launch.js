@@ -1,8 +1,7 @@
 'use strict';
 const fs = require('fs');
-const path = require('path');
 const crypto = require('crypto');
-const {execFileSync, spawnSync} = require('child_process');
+const {execFileSync} = require('child_process');
 
 function checkedExecutable(requested) {
   const executablePath = fs.realpathSync(requested);
@@ -36,18 +35,7 @@ function gitIdentity(dir) {
   return {head:git(['rev-parse','HEAD']), diff:git(['diff','--stat'])};
 }
 
-function ensureSupervised() {
-  if (!process.env.PALETTE_BROWSER_RESOURCE_CONFIG)
-    throw new Error('PALETTE_BROWSER_RESOURCE_CONFIG required: explicit task accounting roots and WAL baseline');
-  // Verify the marker against the actual subreaper parent, rather than allow
-  // a stale/injected boolean to silently disable process ownership.
-  const parent = Number(process.env.PALETTE_BROWSER_SUPERVISED);
-  if (parent === process.ppid && fs.readFileSync(`/proc/${parent}/cmdline`, 'utf8')
-      .split('\0').includes(path.join(__dirname,'palette-browser-supervisor.py'))) return;
-  const result = spawnSync('/usr/bin/python3', [path.join(__dirname,'palette-browser-supervisor.py'),
-    process.execPath, ...process.execArgv, ...process.argv.slice(1)],
-    {stdio:'inherit', env:{...process.env, PALETTE_BROWSER_BOOTSTRAP:String(process.pid)}});
-  if (result.error) throw result.error;
-  process.exit(result.status === null ? 1 : result.status);
-}
-module.exports = {checkedExecutable, launchConfiguration, gitIdentity, ensureSupervised};
+// The Linux subreaper/pidfd resource supervisor (ensureSupervised) served only
+// the browser fixture deleted with the JS D3DIM executor; it had no remaining
+// caller and went with the Python port.
+module.exports = {checkedExecutable, launchConfiguration, gitIdentity};

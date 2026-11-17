@@ -48,7 +48,9 @@ function run(directory,mode,{nodeOnly=false,prepared=false}={}){
    let delay=mode.includes('late')?11:mode==='cancel'?3:0;
    if(mode==='noendpoint')args=args.filter(s=>!s.startsWith('--remote-debugging-port='));
    if(mode==='early')args=['--version'];
-   browser=spawn('python3',['-c','import os,sys,time;time.sleep(float(sys.argv[1]));os.execv(sys.argv[2],sys.argv[2:])',String(delay),command,...args],options);
+   // Delay, then exec the literal browser path in this same PID. The sleep
+   // holds no fixture pipe, so a signalled shell reports EOF immediately.
+   browser=spawn('/bin/sh',['-c','sleep "$1" </dev/null >/dev/null 2>&1 && shift && exec "$@"','sh',String(delay),command,...args],options);
   }
   const kill=browser.kill.bind(browser);browser.kill=signal=>{const sent=kill(signal);fs.appendFileSync(directory+'/fixture-signals.jsonl',JSON.stringify({at:Date.now(),pid:browser.pid,signal,sent})+'\n');return sent};
   fs.writeFileSync(directory+'/fixture-chrome-pid',String(browser.pid));return browser;
