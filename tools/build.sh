@@ -4,6 +4,9 @@ set -e
 cd "$(dirname "$0")/.."
 
 node tools/check-claude-size.js
+# Scripts are JavaScript only: no new .py and no new python3 spawn. Legacy
+# ones live in tools/no-python-allowlist.json, which only shrinks.
+node tools/check-no-python.js
 
 mkdir -p build
 
