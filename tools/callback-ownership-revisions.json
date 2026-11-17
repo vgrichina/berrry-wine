@@ -75,8 +75,8 @@
       "file": "lib/renderer.js",
       "name": "host-file",
       "baseSHA256": "42cfc02c59fb2b7178a2becec3b34f781050122c23293a12045f6b5027be38b9",
-      "sha256": "54fa1df25f915962dc8459184f9c00ca1f0689390e239b9daed36689ce20eb72",
-      "reason": "20261116 passive current-display observation: a real pending host surface arms the existing owner-bound request until an ordinary unheld successful composition/display. No upload, guest invocation, new callback/timer, clock change, hold release or input admission change. Immediate held/partial reads still refuse; existing request cancellation and immutable readback lifetime remain authoritative. General invocation ownership remains pending. Run 20261116-boids-pending-publication-display-capture."
+      "sha256": "f19189191c7d106999a70c134d0d7dbe08c703c8dc38ab680ec25103061d3ed5",
+      "reason": "20261117 passive current-display observation: renderer-only executing writer or in-flight paint now retains the existing one owner-bound cancellable ticket until ordinary unheld complete composition/display/readback, even without queued host flags. Request records immutable boolean predicates only, schedules no work, reads no in-flight source, releases no hold and adds no guest callback, timer, invocation, clock or input admission. Existing complete/partial validation, replacement refusal and detached ticket copies remain authoritative. General invocation ownership remains pending. Run 20261117-boids-held-display-capture."
     }
   ],
   "additions": [

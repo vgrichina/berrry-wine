@@ -297,11 +297,8 @@ test('current display preserves pending damage and cancellation without scheduli
   assert.equal(cancelled.status, 'cancelled'); assert.equal(cancelled.read(), null);
 });
 
-test('current display refuses held or in-flight paint, replacement, hidden/clipped owner and unreceipted display', () => {
+test('current display refuses replacement, hidden/clipped owner and unreceipted display', () => {
   for (const [name, change] of Object.entries({
-    held: ({ r }) => r.beginWorkerGuestSlice(),
-    paint: ({ r }) => r.beginWorkerGdiPaint(123),
-    nested: ({ r }) => { r._repainting = true; },
     replacement: ({ r, win }) => { r.windows[123] = { ...win }; },
     hidden: ({ win }) => { win.visible = false; },
     clipped: ({ win }) => { win.x = -1; },
@@ -319,6 +316,65 @@ test('current display refuses held or in-flight paint, replacement, hidden/clipp
     catch (e) { assert.match(e.message, /owner/, name); continue; }
     assert.equal(t.status, 'failed', name); assert.equal(t.read(), null, name);
     assert.equal(f.r._immutableCaptureRequest, null, name);
+  }
+});
+
+test('renderer-only writer queues without host flags, reads or scheduling until natural complete publication', () => {
+  for (const kind of ['slice', 'render-writer', 'paint', 'nested']) {
+    const { r, h, win } = ownedFixture(); r.repaint();
+    const old = h.requestCurrentDisplayCapture({ hwnd: 123 }).read();
+    const words = new Int32Array(new SharedArrayBuffer(16));
+    if (kind === 'slice') r.beginWorkerGuestSlice();
+    if (kind === 'render-writer') {
+      Atomics.store(words, 0, 1);
+      r._d3dimPublicationJoins = [{ live: true, epoch: { words }, startComposition() {}, publication() {}, transfer() {} }];
+    }
+    if (kind === 'paint') r.beginWorkerGdiPaint(123);
+    if (kind === 'nested') r._repainting = true;
+    const scheduled = r._repaintScheduled;
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    assert.equal(t.status, 'pending', kind); assert.equal(t.read(), null);
+    assert.equal(r._repaintScheduled, scheduled, 'request must not schedule');
+    assert.equal(r._immutablePublicationSequence, old.metadata.publication);
+    win._backCanvas.getContext('2d').fillStyle = '#0000ff';
+    win._backCanvas.getContext('2d').fillRect(0, 0, 8, 8);
+    if (kind === 'slice' || kind === 'render-writer') {
+      r.repaint(); assert.equal(t.status, 'pending');
+    }
+    if (kind === 'slice') r.endWorkerGuestSlice();
+    if (kind === 'render-writer') Atomics.store(words, 0, 0);
+    if (kind === 'paint') r.endWorkerGdiPaint(123);
+    if (kind === 'nested') r._repainting = false;
+    assert.equal(t.status, 'pending', 'hold release alone cannot complete');
+    r.repaint(); assert.equal(t.status, 'complete', t.error);
+    const now = t.read();
+    assert.equal(now.metadata.content, 'ordinary-publication-after-request');
+    assert(Object.values(now.metadata.rendererWorkAtRequest).some(Boolean));
+    assert(Object.values(now.metadata.pendingHostPublicationAtRequest).every(v => !v));
+    assert.deepEqual(Array.from(now.outputRGBA), pixels(r.presentationCanvas));
+    assert.notDeepEqual(now.outputRGBA, old.outputRGBA);
+    const retained = now.outputRGBA.slice(); now.outputRGBA.fill(99); r.repaint();
+    assert.deepEqual(t.read().outputRGBA, retained);
+  }
+});
+
+test('renderer-only pending capture preserves cancellation, owner identity, display/read failure and partial paint refusal', () => {
+  for (const fault of ['cancel', 'owner', 'process', 'instance', 'display', 'readback', 'paint']) {
+    const { r, h, win } = ownedFixture(); r.repaint(); r.beginWorkerGuestSlice();
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    assert.equal(t.status, 'pending');
+    if (fault === 'cancel') t.cancel();
+    if (fault === 'owner') r.windows[123] = { ...win };
+    if (fault === 'process') win.processId++;
+    if (fault === 'instance') win.wasm = {};
+    if (fault === 'display') r._presentDisplayCanvas = () => { throw Error('lost display'); };
+    if (fault === 'readback') r.presentationCanvas.getContext('2d').getImageData = () => { throw Error('failed readback'); };
+    if (fault === 'paint') r.beginWorkerGdiPaint(123);
+    r.endWorkerGuestSlice();
+    if (fault === 'display') assert.throws(() => r.repaint(), /lost display/);
+    else r.repaint();
+    assert.equal(t.status, fault === 'cancel' ? 'cancelled' : 'failed', fault);
+    assert.equal(t.read(), null); assert.equal(r._immutableCaptureRequest, null);
   }
 });
 

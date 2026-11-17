@@ -52,7 +52,7 @@ function installDriver(root, {app, mode, deadline}) {
       throw Error('live app/window readiness deadline');
     }catch(e){closed=String(e);throw e;}},
     identity(){try{return describe(verify());}catch(e){closed=String(e);throw e;}},
-    async capture(){let t;const started=Date.now(),end=Math.min(deadline,started+5000);try{
+    async capture(){let t;const started=Date.now(),end=Math.min(deadline,started+3000);try{
       const p=verify();t=p.w.requestCurrentDisplayCapture({hwnd:pin.hwnd});
       while(t.status==='pending'&&Date.now()<end){verify();await new Promise(r=>setTimeout(r,20));}
       check(Date.now()<end,'late capture data');check(t.status==='complete','DISPLAY_UNKNOWN '+t.status+' '+t.error);

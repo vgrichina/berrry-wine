@@ -27,6 +27,7 @@ async function driverControls(){
     const instance={},win={hwnd:71,visible:true,w:32,h:32,processId:1000,wasm:instance},renderer={windows:{},_currentDisplayRecord:{windows:[{window:new WeakRef(win)}]}};
     let requests=0,cancelled=0;
     const w={instance,processId:1000,renderer,running:true,requestCurrentDisplayCapture(){requests++;return {status,error:'authored control',cancel(){cancelled++;},read(){return {metadata:{observation:'current-display',captureOwner:{hwnd:71,processId:1000},readbackCompletedAt:Date.now(),source:{width:1,height:1},output:{width:1,height:1}},sourceRGBA:new Uint8Array(4),outputRGBA:new Uint8Array(4)};}};}};
+    w._renderWorkerManager={ports:new Map([[1,{id:1,closed:false}]]),_failure:null};w.hostCtx={d3dimBridge:{device:{},stats:{records:1}}};
     const context=vm.createContext({runningApps:[{name:'selected',wine:w}],Date,setTimeout,innerWidth:32,innerHeight:32,btoa:s=>Buffer.from(s,'binary').toString('base64')});
     const install=(app='selected',ms=500)=>vm.runInContext('('+installDriver.toString()+')(globalThis,'+JSON.stringify({app,mode:'coop',deadline:Date.now()+ms})+')',context);
     install();return {context,w,win,renderer,install,get requests(){return requests;},get cancelled(){return cancelled;}};
@@ -34,7 +35,7 @@ async function driverControls(){
   const delayed=setup();setTimeout(()=>{delayed.renderer.windows[71]=delayed.win;},35);
   const before=Date.now();await delayed.context.__boidsDriver.ready();assert(Date.now()-before>=30);
   assert.equal((await delayed.context.__boidsDriver.capture()).metadata.captureOwner.hwnd,71);
-  for(const fault of ['absent','wrong-process','wrong-instance','replaced-window','replaced-renderer','stopped']){
+  for(const fault of ['absent','wrong-process','wrong-instance','replaced-window','replaced-renderer','stopped','failed','closed','retired','lost']){
     const f=setup();f.renderer.windows[71]=f.win;await f.context.__boidsDriver.ready();
     if(fault==='absent')delete f.renderer.windows[71];
     if(fault==='wrong-process')f.win.processId++;
@@ -42,6 +43,10 @@ async function driverControls(){
     if(fault==='replaced-window')f.renderer.windows[71]={...f.win};
     if(fault==='replaced-renderer')f.w.renderer={...f.renderer};
     if(fault==='stopped')f.w._stopped=true;
+    if(fault==='failed')f.w._renderWorkerManager._failure=Error('failed native manager');
+    if(fault==='closed')f.w._renderWorkerManager.ports.get(1).closed=true;
+    if(fault==='retired')f.w._renderWorkerRetired=true;
+    if(fault==='lost')f.w.hostCtx.d3dimBridge.workerAsyncError=Error('lost native stream');
     await assert.rejects(f.context.__boidsDriver.capture());assert.equal(f.requests,0,fault);
   }
   for(const status of ['failed','UNKNOWN','cancelled']){
