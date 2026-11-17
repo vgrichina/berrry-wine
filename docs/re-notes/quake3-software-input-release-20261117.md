@@ -51,7 +51,9 @@ click used a fresh matching review and a 200 ms gesture. Its release child
 reported INITIALIZED, but the subsequent independent owner/prearm check failed
 the fixed 500 ms gate. UNKNOWN was recorded 2,523 ms after INITIALIZED; there is
 no detailed protocol trace attributing that entire interval to a particular
-Chrome operation. No ARM, DOWN submission or game-input consequence exists.
+Chrome operation. The preparatory ordinary mouseMoved call completed, but its
+individual protocol reply was not logged. No ARM or DOWN submission exists,
+and no subsequent scene or game-input consequence was observed.
 This real-load refusal prevents a reliable ordinary-input/arena qualification.
 
 Chrome closed normally (exit 0), with actual stdout/stderr EOFs. The release
