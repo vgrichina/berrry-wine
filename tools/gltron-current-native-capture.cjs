@@ -253,7 +253,8 @@ async function run(out,commit){
         return {at:Date.now(),kind:'explicit-host-stop',nativeQuit:false,ticket,guest:guest?{ok:guest.ok,error:String(guest.error||'')}:null,
           stopped:!!w._stopped,running:w.running,renderRetired:!!w._renderWorkerRetired,renderError:String(w._renderWorkerRetirementError||'')};})()`);
       save('host-shutdown.json',shutdown);
-      const end=Date.now()+2000;while([...workers.values()].some(w=>!w.closed)&&Date.now()<end)await sleep(10);
+      const destroyed=w=>closedTargets.some(e=>e.method==='Target.targetDestroyed'&&e.targetId===w.targetId);
+      const end=Date.now()+2000;while([...workers.values()].some(w=>!w.closed||!destroyed(w))&&Date.now()<end)await sleep(10);
       save('worker-target-close.json',{at:Date.now(),workers:[...workers.values()].map(w=>({targetId:w.targetId,url:w.url,closed:w.closed})),events:closedTargets});
     }
   }catch(e){failure=e;save('failure.json',{at:Date.now(),error:e.stack,transportClosed:c?.closed??null,originalLaunched:false,noReplay:true});c?.ws.close();}
