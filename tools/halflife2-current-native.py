@@ -203,7 +203,12 @@ def execute_native(argv,env,fds,helper,invocation,original=False):
  try:
   while p.poll() is None:
    s=os.statvfs('/home')
-   if (RUN/'PERMANENT-UNKNOWN.json').exists() or (RUN/'stop-native.json').exists() or s.f_bavail*s.f_frsize<=1500000000:
+   unknown=(RUN/'PERMANENT-UNKNOWN.json').exists();stop=(RUN/'stop-native.json').exists()
+   free=s.f_bavail*s.f_frsize
+   if unknown or stop or free<=1500000000:
+    save('native-cleanup-trigger.json',dict(at=time.time(),freeBytes=free,floorBytes=1500000000,
+        permanentUnknown=unknown,stopRequested=stop,diskFloor=free<=1500000000,
+        reason='permanent-unknown' if unknown else 'stop-requested' if stop else 'disk-floor'))
     cleanup=True;os.killpg(p.pid,signal.SIGTERM);break
    time.sleep(.02)
  except BaseException:
