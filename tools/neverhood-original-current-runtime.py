@@ -25,7 +25,7 @@ def iso_proof(out,module):
     prior=pathlib.Path(os.environ['NEVERHOOD_ISO_PROOF'])
     proof=json.loads((prior/'iso-child-proof.json').read_text())
     assert proof['passed'] and proof['moduleSHA256']==H.digest(module)
-    for n,digest in proof['components'].items():assert H.digest((ROOT/n).read_bytes())==digest
+    for n,digest in proof['components'].items():assert H.digest(component_bytes(n))==digest
     for label in ('iso-host','iso-native'):
         wait=json.loads((prior/(label+'-wait.json')).read_text())
         assert wait['exit']==0 and all(wait[k] for k in ('actualWait','stdoutEOF','stderrEOF'))
@@ -91,6 +91,19 @@ namespace=dict(__name__='__main__',__file__=file,__package__=None)
 exec(compile(body(file),file,'exec'),namespace)
 '''
 def save(out,name,value):H.save(out,name,value)
+def component_bytes(name):
+    """Read an explicitly published component, independent of shared-tree drift.
+
+    The same selection feeds preparation and compatibility comparisons. The
+    sealed source inventory, rather than another agent's current file, is the
+    runtime input. No other path may be substituted by this mechanism.
+    """
+    components=json.loads(os.environ.get('NEVERHOOD_PUBLISHED_COMPONENTS','{}'))
+    assert set(components)<= {'lib/cli-native-scene.js','test/run.js'}
+    if name not in components:return (ROOT/name).read_bytes()
+    revision=components[name]
+    assert subprocess.run(['git','merge-base','--is-ancestor',revision,'origin/main'],cwd=ROOT).returncode==0
+    return H.git(ROOT,'show',revision+':'+name)
 def arm_desktop_observations(out,env):
     directory=(out/'desktop-participants').resolve()
     directory.mkdir()
@@ -161,8 +174,7 @@ def prepare(out,revision,patches,hold=True):
     assert set(components)<= {'lib/cli-native-scene.js','test/run.js'},'only passive startup components may be composed'
     for n,rev in components.items():
         assert subprocess.run(['git','merge-base','--is-ancestor',rev,'origin/main'],cwd=ROOT).returncode==0
-        bodies[n]=H.git(ROOT,'show',rev+':'+n)
-        assert bodies[n]==(ROOT/n).read_bytes(),'borrowed whole component differs from published pin: '+n
+        bodies[n]=component_bytes(n)
         diffs.append(H.git(ROOT,'diff','--binary',revision,rev,'--',n))
     save(out,'published-component-pins.json',dict(components=components,sha256={n:H.digest(bodies[n]) for n in components}))
     (out/'runtime-source.patch').write_bytes(b''.join(diffs))
@@ -275,7 +287,7 @@ def admit(out,recipe):
         media=H.holder_bytes(holder,'mediaPath');assert H.digest(media)==holder['mediaSHA256']=='94de724bb47eb2aa588ac4eff28ddc6fd10edebcf2be4dd131ef76875ef5ffd3'
         mediafd=H.seal('neverhood-admitted-cd',media);fds+= (mediafd,);del media
         manifest=json.loads((out/'runtime-inputs.json').read_text());pins={r['path']:r['sha256'] for r in manifest['sources']}
-        for n in (HELPER,*OWN):assert H.digest((ROOT/n).read_bytes())==pins[n],'executed helper/source mismatch: '+n
+        for n in (HELPER,*OWN):assert H.digest(component_bytes(n))==pins[n],'executed helper/source mismatch: '+n
         # The exact published guard is part of the sealed source inventory.
         guard=(ROOT/'tools/neverhood-setupx-stop.cjs').read_bytes();assert H.digest(guard)==pins['tools/neverhood-setupx-stop.cjs']
         guardfd=H.seal('neverhood-guard',guard);fds+=(guardfd,)
@@ -383,7 +395,7 @@ def startup_proof(out,module):
     excluded={'tools/neverhood-original-current-runtime.py','tools/neverhood-installed-shortcut.cjs','test/test-neverhood-installed-shortcut.cjs','test/test-cli-iso-child-context.cjs'} if installed() else set()
     if os.environ.get('NEVERHOOD_ISO_PROOF'):
         iso_proof(out,module);excluded|={'lib/readonly-media-context.js','test/run.js'}
-        assert prior_iso_mount((ROOT/'test/run.js').read_text())==H.git(ROOT,'show','e16a4713b:test/run.js').decode()
+        assert prior_iso_mount(component_bytes('test/run.js').decode())==H.git(ROOT,'show','e16a4713b:test/run.js').decode()
     if installed():excluded.add(str(pathlib.Path(json.loads((RUN/'installed-state.json').read_text())['exePath']).relative_to(ROOT)))
     pins=lambda m:{r['path']:r['sha256'] for r in m['sources'] if r['path'] not in excluded}
     assert pins(old)==pins(current) and old['moduleSHA256']==current['moduleSHA256']==H.digest(module)
@@ -428,10 +440,10 @@ def reuse_native_proof(out,revision,module):
             # Exact unchanged input/receipt/lease components, with only a new
             # passive command and the already tested public refusal diagnostics.
             base=H.git(ROOT,'show','9c6eb037f:lib/cli-native-scene.js').decode()
-            scene=(ROOT/'lib/cli-native-scene.js').read_text()
+            scene=component_bytes('lib/cli-native-scene.js').decode()
             begin=scene.index('// Passive startup only:');end=scene.index('// An actual reviewed pre-main',begin)
             assert (scene[:begin]+scene[end:]).replace('captureFailures,startupReadiness,','captureFailures,')==base
-            runner=(ROOT/'test/run.js').read_text()
+            runner=component_bytes('test/run.js').decode()
             if os.environ.get('NEVERHOOD_ISO_PROOF'):runner=prior_iso_mount(runner)
             runner=runner.replace("if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture')", "if (cmd.action === 'native-reviewed-capture')")
             begin=runner.index("      if (cmd.action === 'native-presentation-capture') {")

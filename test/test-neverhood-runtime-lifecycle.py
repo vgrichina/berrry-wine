@@ -10,6 +10,35 @@ def until(path):
         assert time.monotonic()<end,str(path)
         time.sleep(.01)
     return json.loads(path.read_text())
+def component_tests(out):
+    from unittest.mock import patch
+    out.mkdir()
+    name='lib/cli-native-scene.js';revision='63d7b0d0e8d979772a4e527a4d3561b4bdeb3692'
+    expected=m.H.git(ROOT,'show',revision+':'+name)
+    original=pathlib.Path.read_bytes
+    def drift(p):return b'concurrent shared-tree edit' if p==ROOT/name else original(p)
+    with patch.dict(os.environ,{'NEVERHOOD_PUBLISHED_COMPONENTS':json.dumps({name:revision})}),patch.object(pathlib.Path,'read_bytes',drift):
+        assert (ROOT/name).read_bytes()!=expected
+        actual=m.component_bytes(name);assert actual==expected
+        assert m.component_bytes('tools/neverhood-original-current-control.py')==original(ROOT/'tools/neverhood-original-current-control.py')
+        pool,index,rows=m.H.indexed_sources({name:actual})
+        manifest=dict(sourceIndexSHA256=m.H.digest(index),sources=rows)
+        assert m.H.validate_sources(pool,manifest)==rows
+        fd=m.H.seal('published-component-test',pool)
+        try:assert os.pread(fd,len(pool),0)==pool
+        finally:os.close(fd)
+    with patch.dict(os.environ,{'NEVERHOOD_PUBLISHED_COMPONENTS':json.dumps({'host.js':revision})}):
+        try:m.component_bytes('host.js')
+        except AssertionError:pass
+        else:raise AssertionError('unapproved component path selected')
+    with patch.dict(os.environ,{'NEVERHOOD_PUBLISHED_COMPONENTS':json.dumps({name:'0'*40})}):
+        try:m.component_bytes(name)
+        except AssertionError:pass
+        else:raise AssertionError('unpublished component selected')
+    m.save(out,'component-proof.json',dict(passed=True,publishedRevision=revision,path=name,
+        sha256=m.H.digest(expected),sharedDriftExcluded=True,unselectedPathUnchanged=True,
+        forbiddenPathRefused=True,unpublishedRevisionRefused=True,sealedInventoryVerified=True))
+    print('PASS explicit published component under shared-tree drift; sealed inventory, path/ancestry refusals')
 def listener_tests(out):
     import socket,tempfile
     from unittest.mock import patch
@@ -66,6 +95,7 @@ def listener_tests(out):
 
 def main():
     mode=sys.argv[1];out=pathlib.Path(sys.argv[2]).resolve()
+    if mode=='components':return component_tests(out)
     if mode=='listener':return listener_tests(out)
     if mode=='native':
         m.RUN=out
