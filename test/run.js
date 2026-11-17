@@ -7719,6 +7719,12 @@ async function main() {
   const sameReviewedWindow = (a, b) => a && b &&
     ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'title', 'visible', 'isChild', 'live']
       .every(k => a[k] === b[k]);
+  // A permanent reviewed-context binding pins the native owner, while each
+  // fresh intent below still verifies every caption/control/focus field. An
+  // ordinary SetWindowText after a completed intent does not replace an HWND.
+  const sameReviewedOwner = (a, b) => a && b &&
+    ['hwnd', 'generation', 'processId', 'threadId', 'owner', 'parent', 'visible', 'isChild', 'live']
+      .every(k => a[k] === b[k]);
   guardedInput = require('../lib/cli-guarded-input').createGuardedInput({
     nativeDelivery: true,
     captureNativeControl: (event,intent) => require('../lib/cli-native-user-windows').captureNativeButton(event,intent,controlSnapshot(),instance,threadManager),
@@ -7755,7 +7761,9 @@ async function main() {
         const ownerWindow=mainlessReview
           ? s.focusWindow.processId===nativeSceneLease.focusWindow.processId &&
             s.focusWindow.threadId===nativeSceneLease.focusWindow.threadId
-          : sameReviewedWindow(main,nativeSceneLease.main);
+          : (nativeSceneContract===nativeScene.REVIEWED_CONTEXT
+            ? sameReviewedOwner(main,nativeSceneLease.main)
+            : sameReviewedWindow(main,nativeSceneLease.main));
         current.healthy=current.healthy && ownerWindow &&
           JSON.stringify(s.nativeProcess)===JSON.stringify(nativeSceneLease.nativeProcess) &&
           JSON.stringify(s.screen)===JSON.stringify(nativeSceneLease.screen);
