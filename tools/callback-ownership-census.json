@@ -8019,6 +8019,7 @@
         "$win16_bridge_frame_valid",
         "$win16_bridge_scope_begin",
         "$win16_bridge_invoke_target",
+        "$win16_ls_qt_bind",
         "$win16_bridge_stack_lease",
         "$g2w",
         "$win16_bridge_invoke_begin",
@@ -8036,9 +8037,9 @@
         "win16_bridge_qt_begin"
       ],
       "targets": [],
-      "sha256": "e34f0a40815f8a1dd982fad6e85548fc5f5a712abb558d2eca822e885c47206d",
+      "sha256": "9e4a470dc9002287ed14a188b0040bbe1f255bd97127fe8bd7d7fc3096b8b835",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "QT entry binds the caller to the exact LS32 connection, source CALL, byte index and retained PE/NE generations before stack alias execution. The native frame owns active-pair and executable pins through actual RETF, cancellation and faults. Direct unpaired QT uses existing target pinning. Native packed x86 caller and CPUWorker qualification retained in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending.",
       "ownership": "pending"
     },
     {
@@ -8055,9 +8056,9 @@
           "$win16_guest_return"
         ]
       ],
-      "sha256": "9da0f33a1f7f4438b1e946d03176adf0e42dd47b3bea9c452d6d9928bb9b03c2",
+      "sha256": "8d9ffaa44c01700788e527ae38f4bb0cdbaf7d9d58b180c3b6e56f6b9a45d058",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Before merging successful QT outputs, revalidate the retained LS32 connection and source CALL. Scratch remains caller-owned; no native result is supplied by the host. Faults retain the existing frame teardown and pin release. Native mutation-during-call controls in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending.",
       "ownership": "pending"
     },
     {

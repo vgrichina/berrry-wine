@@ -84,6 +84,13 @@
       "baseSHA256": "6ab4c8eb1ba74c919323924e51e6e3091868946ddeea36905feff099644125c6",
       "sha256": "c08da8f4c33135fea46a3ff44ad4edaa4310b5bd16099bc7e52dae12522726ba",
       "reason": "Capture an immutable native USER generation, process/thread, owner, callback and return site after template creation and before guest WM_INITDIALOG. Read-only observation requires the executing actor active pump, unchanged callback/return site, live generation and no EndDialog. Existing guest stack nesting, callback frames, return cleanup and general invocation ownership remain unchanged/pending. Native x86 DialogBox tests qualify this observation separately."
+    },
+    {
+      "file": "src/09e1-native-ft-relay.wat",
+      "name": "$win16_ft_prolog",
+      "baseSHA256": "38b7b4a34b859a10d1be548cffcaec7b91f0ed802dd4fdd1190ffdf487bcb303",
+      "sha256": "ddbb708bd495f1b89629aef8a1e65574f3028f5ac298fdc8ac2c0c19c557029c",
+      "reason": "Reject actual QT call continuations as FT parents at either alignment, preserving FT compiler frames, alignment and restoration. Native FT and invalidQT-asFT controls retained in run20261117-neverhood-ls32-qt-implementation; general invocation ownership remains pending."
     }
   ],
   "additions": [

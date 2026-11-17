@@ -109,6 +109,28 @@
     (if (i32.eq (local.get $i) (i32.const 15)) (then (return (i32.const 0xc3))))
     (i32.load8_u (i32.add (local.get $p) (i32.add (i32.const 132) (local.get $i)))))
 
+  ;; Wine _write_qtthunk's 19-byte LS relay. The local UD2 after its JMP
+  ;; closes accidental fall-through without changing INT3 anywhere else.
+  ;; Pair +244 is the compiled QT API address (never a host callback).
+  (func $win16_qt_relay_byte (param $p i32) (param $i i32) (result i32)
+    (if (i32.lt_u (local.get $i) (i32.const 8)) (then
+      (return (i32.and (i32.shr_u (select (i32.const 0x4d8ac933) (i32.const 0x8d148bfc)
+        (i32.lt_u (local.get $i) (i32.const 4)))
+        (i32.shl (i32.and (local.get $i) (i32.const 3)) (i32.const 3))) (i32.const 255)))))
+    (if (i32.lt_u (local.get $i) (i32.const 12)) (then
+      (return (i32.and (i32.shr_u (i32.load offset=232 (local.get $p))
+        (i32.shl (i32.sub (local.get $i) (i32.const 8)) (i32.const 3))) (i32.const 255)))))
+    (if (i32.eq (local.get $i) (i32.const 12)) (then (return (i32.const 0xb8))))
+    (if (i32.lt_u (local.get $i) (i32.const 17)) (then
+      (return (i32.and (i32.shr_u (i32.load offset=244 (local.get $p))
+        (i32.shl (i32.sub (local.get $i) (i32.const 13)) (i32.const 3))) (i32.const 255)))))
+    ;; JMP EAX follows the complete DWORD immediate.
+    (if (i32.eq (local.get $i) (i32.const 17)) (then (return (i32.const 0xff))))
+    (if (i32.eq (local.get $i) (i32.const 18)) (then (return (i32.const 0xe0))))
+    (if (i32.eq (local.get $i) (i32.const 19)) (then (return (i32.const 0x0f))))
+    (if (i32.eq (local.get $i) (i32.const 20)) (then (return (i32.const 0x0b))))
+    (i32.load8_u (i32.add (local.get $p) (i32.add (i32.const 100) (local.get $i)))))
+
   (func $win16_ft_connection (param $p i32) (result i32)
     (local $h i32) (local $r i32) (local $table i32) (local $i i32) (local $v i32)
     (local $j i32) (local $k i32) (local $at i32) (local $name i32) (local $f i32)
@@ -146,9 +168,9 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $header (i32.lt_u (local.get $i) (i32.const 36))))
     (local.set $i (i32.const 0))
     (loop $relays
-      ;; Unsupported QT remains the original guarded code. FT is exact primary.
+      ;; Both relays and their local guards are immutable while connected.
       (if (i32.ne (call $gl8 (i32.add (i32.add (local.get $h) (i32.load offset=92 (local.get $p))) (local.get $i)))
-        (i32.load8_u (i32.add (local.get $p) (i32.add (i32.const 100) (local.get $i))))) (then (global.set $win16_ft_reject (i32.const 10)) (return (i32.const 0))))
+        (call $win16_qt_relay_byte (local.get $p) (local.get $i))) (then (global.set $win16_ft_reject (i32.const 10)) (return (i32.const 0))))
       (if (i32.ne (call $gl8 (i32.add (i32.add (local.get $h) (i32.load offset=96 (local.get $p))) (local.get $i)))
         (call $win16_ft_relay_byte (local.get $p) (local.get $i))) (then (global.set $win16_ft_reject (i32.const 11)) (return (i32.const 0))))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $relays (i32.lt_u (local.get $i) (i32.const 32))))
@@ -183,21 +205,103 @@
     (if (i32.eqz (call $win16_image_span (i32.load offset=4 (local.get $p)) (local.get $v) (i32.const 1) (i32.const 0))) (then (return (i32.const 0))))
     (local.get $v))
 
+  ;; Resolve only the actual near CALL immediately preceding a retained PE
+  ;; continuation. Neither a host address nor a packed argument is a caller.
+  (func $win16_ls_call_target (param $p i32) (param $ret i32) (result i32)
+    (local $at i32) (local $ptr i32)
+    (if (i32.ge_u (local.get $ret) (i32.const 5)) (then
+      (local.set $at (i32.sub (local.get $ret) (i32.const 5)))
+      (if (call $win16_ls32_span (i32.load offset=16 (local.get $p)) (local.get $at) (i32.const 5) (i32.const 2)) (then
+        (if (i32.eq (call $gl8 (local.get $at)) (i32.const 0xe8))
+          (then (return (i32.add (local.get $ret) (call $gl32 (i32.add (local.get $at) (i32.const 1)))))))))))
+    (if (i32.ge_u (local.get $ret) (i32.const 6)) (then
+      (local.set $at (i32.sub (local.get $ret) (i32.const 6)))
+      (if (call $win16_ls32_span (i32.load offset=16 (local.get $p)) (local.get $at) (i32.const 6) (i32.const 2)) (then
+        (if (i32.eq (call $gl16 (local.get $at)) (i32.const 0x15ff)) (then
+          (local.set $ptr (call $gl32 (i32.add (local.get $at) (i32.const 2))))
+          (if (call $win16_ls32_range (i32.load offset=16 (local.get $p)) (local.get $ptr) (i32.const 4))
+            (then (return (call $gl32 (local.get $ptr)))))))))))
+    (i32.const 0))
+
+  ;; A direct QT export remains usable without an LS connection. A call into
+  ;; a connected target, or from its PE image, must match that exact pair,
+  ;; current table, byte index, relay call and generation. The frame owns the
+  ;; active pair and PE pin through return, cancellation and faults.
+  (func $win16_ls_qt_bind (param $token i64) (param $target i32) (result i32)
+    (local $f i32) (local $p i32) (local $i i32) (local $ret i32)
+    (local $b i32) (local $index i32) (local $found i32) (local $required i32) (local $r i32)
+    (local.set $f (i32.wrap_i64 (local.get $token)))
+    (local.set $b (i32.load offset=52 (local.get $f)))
+    (local.set $ret (call $gl32 (i32.load offset=48 (local.get $f))))
+    (if (i32.eq (call $g2w_affine_span (i32.sub (local.get $b) (i32.const 4)) (i32.const 4)) (global.get $NULL_SENTINEL))
+      (then (return (i32.const 0))))
+    (local.set $index (call $gl8 (i32.sub (local.get $b) (i32.const 4))))
+    (call $lock_acquire (global.get $DLL_LOAD_LOCK))
+    (block $reject
+      (loop $pairs
+        (local.set $p (call $win16_ls32_row (local.get $i)))
+        (if (i32.load offset=224 (local.get $p)) (then
+          (if (i32.or
+            (call $win16_ls32_span (i32.load offset=16 (local.get $p)) (local.get $ret) (i32.const 1) (i32.const 2))
+            (i32.eq (call $win16_ft_target (local.get $p) (local.get $index)) (local.get $target))) (then
+            (local.set $required (i32.const 1))
+            (br_if $reject (i32.eqz (call $win16_ft_connection (local.get $p))))
+            (br_if $reject (i32.ne (call $win16_ft_target (local.get $p) (local.get $index)) (local.get $target)))
+            (br_if $reject (i32.ne (call $win16_ls_call_target (local.get $p) (local.get $ret))
+              (i32.add (i32.load offset=28 (local.get $p)) (i32.load offset=92 (local.get $p)))))
+            (br_if $reject (local.get $found))
+            (local.set $found (local.get $p))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br_if $pairs (i32.lt_u (local.get $i) (i32.const 128))))
+      (if (local.get $required) (then
+        (local.set $p (local.get $found))
+        (br_if $reject (i32.eqz (local.get $p)))
+        (if (i64.ne (i64.load offset=216 (local.get $p)) (i64.const 0)) (then
+          (br_if $reject (i32.ne (i32.load offset=8 (i32.wrap_i64 (i64.load offset=216 (local.get $p)))) (call $lock_owner_id)))))
+        (if (i32.load offset=20 (local.get $p)) (then
+          (local.set $r (call $dll_lifecycle_row (i32.sub (i32.load offset=20 (local.get $p)) (i32.const 1))))
+          (br_if $reject (i32.eq (i32.load offset=12 (local.get $r)) (i32.const -1)))
+          (i32.store offset=12 (local.get $r) (i32.add (i32.load offset=12 (local.get $r)) (i32.const 1)))
+          (i32.store offset=456 (local.get $f) (i32.load offset=20 (local.get $p)))
+          (i32.store offset=460 (local.get $f) (i32.load offset=24 (local.get $p)))))
+        (i32.store offset=408 (local.get $f) (i32.const 0x51545052))
+        (i32.store offset=400 (local.get $f) (local.get $p))
+        (i32.store offset=416 (local.get $f) (local.get $ret))
+        (i32.store offset=424 (local.get $f) (local.get $target))
+        (i32.store offset=428 (local.get $f) (local.get $index))
+        (i64.store offset=432 (local.get $f) (i64.load offset=216 (local.get $p)))
+        (i64.store offset=216 (local.get $p) (local.get $token))))
+      (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
+    (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
+
+  (func $win16_ls_qt_return_valid (param $f i32) (result i32)
+    (local $p i32)
+    (if (i32.ne (i32.load offset=408 (local.get $f)) (i32.const 0x51545052)) (then (return (i32.const 1))))
+    (local.set $p (i32.load offset=400 (local.get $f)))
+    (if (i32.eqz (call $win16_ft_connection (local.get $p))) (then (return (i32.const 0))))
+    (if (i32.ne (call $win16_ft_target (local.get $p) (i32.load offset=428 (local.get $f)))
+      (i32.load offset=424 (local.get $f))) (then (return (i32.const 0))))
+    (i32.eq (call $win16_ls_call_target (local.get $p) (i32.load offset=416 (local.get $f)))
+      (i32.add (i32.load offset=28 (local.get $p)) (i32.load offset=92 (local.get $p)))))
+
   (func $win16_ft_unpublish (param $p i32)
-    (local $i i32) (local $h i32) (local $ft i32)
+    (local $i i32) (local $h i32) (local $ft i32) (local $qt i32)
     (if (i32.eqz (i32.load offset=224 (local.get $p))) (then (return)))
     ;; Generation authority, not mutated guest bytes, owns restoration.
     (if (call $win16_ft_generation (local.get $p)) (then
       (local.set $h (i32.load offset=28 (local.get $p)))
       (local.set $ft (i32.add (local.get $h) (i32.load offset=96 (local.get $p))))
+      (local.set $qt (i32.add (local.get $h) (i32.load offset=92 (local.get $p))))
       (call $gs32 (i32.add (local.get $h) (i32.const 8)) (i32.load offset=72 (local.get $p)))
       (loop $restore
+        (call $gs8 (i32.add (local.get $qt) (local.get $i)) (i32.load8_u (i32.add (local.get $p) (i32.add (i32.const 100) (local.get $i)))))
         (call $gs8 (i32.add (local.get $ft) (local.get $i)) (i32.load8_u (i32.add (local.get $p) (i32.add (i32.const 132) (local.get $i)))))
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $restore (i32.lt_u (local.get $i) (i32.const 32))))
+      (call $invalidate_code_range (local.get $qt) (i32.const 32))
       (call $invalidate_code_range (local.get $ft) (i32.const 32)))))
 
   (func (export "win16_bridge_ft_publish") (param $frame i64) (param $pair i32) (param $handle i32) (result i32)
-    (local $p i32) (local $i i32) (local $v i32) (local $ft i32) (local $r i32)
+    (local $p i32) (local $i i32) (local $v i32) (local $ft i32) (local $r i32) (local $qt i32)
     (if (i32.eqz (call $win16_bridge_frame_valid (local.get $frame))) (then (return (i32.const 0))))
     (if (i32.eqz (i32.load offset=268 (i32.wrap_i64 (local.get $frame)))) (then (return (i32.const 0))))
     (call $lock_acquire (global.get $DLL_LOAD_LOCK))
@@ -219,12 +323,21 @@
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $apis)))
         (i32.store offset=236 (local.get $p) (i32.add (global.get $image_base)
           (i32.sub (i32.add (global.get $THUNK_BASE) (i32.shl (local.get $i) (i32.const 3))) (global.get $GUEST_BASE))))
+        (local.set $i (i32.const 0))
+        (block $qt_found (loop $qt_apis
+          (br_if $reject (i32.ge_u (local.get $i) (global.get $num_thunks)))
+          (br_if $qt_found (i32.eq (i32.load offset=4 (i32.add (global.get $THUNK_BASE) (i32.shl (local.get $i) (i32.const 3)))) (global.get $API_ID_QT_Thunk)))
+          (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $qt_apis)))
+        (i32.store offset=244 (local.get $p) (i32.add (global.get $image_base)
+          (i32.sub (i32.add (global.get $THUNK_BASE) (i32.shl (local.get $i) (i32.const 3))) (global.get $GUEST_BASE))))
         (i32.store offset=228 (local.get $p) (local.get $handle))
         (local.set $ft (i32.add (i32.load offset=28 (local.get $p)) (i32.load offset=96 (local.get $p))))
+        (local.set $qt (i32.add (i32.load offset=28 (local.get $p)) (i32.load offset=92 (local.get $p))))
         (local.set $i (i32.const 0))
         (loop $write
+          (call $gs8 (i32.add (local.get $qt) (local.get $i)) (call $win16_qt_relay_byte (local.get $p) (local.get $i)))
           (call $gs8 (i32.add (local.get $ft) (local.get $i)) (call $win16_ft_relay_byte (local.get $p) (local.get $i)))
-          (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $write (i32.lt_u (local.get $i) (i32.const 16))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $write (i32.lt_u (local.get $i) (i32.const 32))))
         (call $gs32 (i32.add (i32.load offset=28 (local.get $p)) (i32.const 8)) (local.get $v))
         (i32.store offset=224 (local.get $p) (i32.const 1))
         ;; End the temporary PE callback pin. FT activations pin independently.
@@ -232,6 +345,7 @@
           (local.set $r (call $dll_lifecycle_row (i32.sub (i32.load offset=20 (local.get $p)) (i32.const 1))))
           (i32.store offset=12 (local.get $r) (i32.sub (i32.load offset=12 (local.get $r)) (i32.const 1)))
           (i32.store offset=240 (local.get $p) (i32.const 1))))
+        (call $invalidate_code_range (local.get $qt) (i32.const 32))
         (call $invalidate_code_range (local.get $ft) (i32.const 32))
         (call $lock_release (global.get $DLL_LOAD_LOCK)) (return (i32.const 1)))
     (call $lock_release (global.get $DLL_LOAD_LOCK)) (i32.const 0))
@@ -299,6 +413,11 @@
         (if (call $win16_ft_connection (local.get $p)) (then
           (if (i32.and (i32.eq (call $win16_ft_target (local.get $p) (local.get $index)) (local.get $target))
             (call $win16_ls32_span (i32.load offset=16 (local.get $p)) (local.get $ret) (i32.const 1) (i32.const 2))) (then
+            ;; A QT continuation cannot acquire an FT compiler parent, even
+            ;; when its packed packet happens to be DWORD aligned.
+            (if (i32.eq (call $win16_ls_call_target (local.get $p) (local.get $ret))
+              (i32.add (i32.load offset=28 (local.get $p)) (i32.load offset=92 (local.get $p))))
+              (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (br $reject)))
             (if (local.get $found) (then (call $lock_release (global.get $DLL_LOAD_LOCK)) (br $reject)))
             (local.set $found (local.get $p))))))
         (local.set $i (i32.add (local.get $i) (i32.const 1))) (br_if $connections (i32.lt_u (local.get $i) (i32.const 128))))
@@ -343,11 +462,13 @@
   (func $win16_ft_frame_end (param $token i64) (param $restore i32)
     (local $f i32) (local $p i32) (local $r i32)
     (local.set $f (i32.wrap_i64 (local.get $token)))
-    (if (i32.ne (i32.load offset=408 (local.get $f)) (i32.const 0x46545052)) (then (return)))
+    (if (i32.and (i32.ne (i32.load offset=408 (local.get $f)) (i32.const 0x46545052))
+      (i32.ne (i32.load offset=408 (local.get $f)) (i32.const 0x51545052))) (then (return)))
     (local.set $p (i32.load offset=400 (local.get $f)))
     (if (local.get $p) (then
       (if (i64.ne (i64.load offset=216 (local.get $p)) (local.get $token)) (then (unreachable)))
-      (if (i32.and (i32.ne (local.get $restore) (i32.const 0)) (call $win16_ft_generation (local.get $p)))
+      (if (i32.and (i32.eq (i32.load offset=408 (local.get $f)) (i32.const 0x46545052))
+        (i32.and (i32.ne (local.get $restore) (i32.const 0)) (call $win16_ft_generation (local.get $p))))
         (then (call $gs32 (i32.load offset=412 (local.get $f)) (i32.load offset=416 (local.get $f)))))
       (i64.store offset=216 (local.get $p) (i64.load offset=432 (local.get $f)))))
     (if (i32.load offset=456 (local.get $f)) (then

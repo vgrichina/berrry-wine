@@ -1,5 +1,6 @@
   ;; Named API ids consumed by hand-written dispatch fast paths.
   ;; Generated from api_table.json; never replace these with array indexes.
+  (global $API_ID_QT_Thunk i32 (i32.const 4573))
   (global $API_ID_FT_Prolog i32 (i32.const 4605))
   (global $API_ID_FT_Exit0 i32 (i32.const 4607))
   (global $API_ID_FT_Exit56 i32 (i32.const 4621))
