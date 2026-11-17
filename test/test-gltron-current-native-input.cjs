@@ -80,6 +80,18 @@ for(const mode of ['late','monotonic','unknown','focus','modal','generation','ta
 }
 console.log('PASS browser receipt native return, actor/context/target/deadline/UNKNOWN fences and nonce tombstones');
 {
+  // A context can cross its existing 250ms fence after preparation but
+  // before any next native USER poll. Preserve the exact first refusal;
+  // later observations must not rewrite that diagnostic or revive its edge.
+  const f=nativeFixture();f.clock(1240);f.prepare();f.down();f.clock(1270);
+  const refused=f.guard.status('n');assert.equal(refused.state,'CANCELLED');
+  assert.equal(refused.fence.sceneAge,270);assert.equal(refused.fence.wallExpired,false);
+  assert.equal(refused.fence.monotonicExpired,false);assert.deepEqual(refused.fence.changedRefs,[]);
+  assert.equal(refused.fence.sceneMatches,true);assert.equal(refused.fence.slotMatches,true);
+  f.call('check_input',()=>f.guard.observe(f.scene));
+  assert.deepEqual(f.guard.status('n'),refused);assert.equal(f.renderer.inputQueue.length,0);
+}
+{
   const f=nativeFixture();f.prepare();f.renderer.failDown=true;
   assert.throws(()=>f.renderer.handleKeyDown(37),/authored handler fault/);
   assert.equal(f.renderer.inputQueue.length,0,'throwing handler cannot leave an unowned DOWN');

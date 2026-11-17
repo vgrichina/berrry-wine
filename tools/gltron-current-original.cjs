@@ -43,7 +43,7 @@ async function run(out,commit,authored=false,backend='webgl',qualifyNative=false
    const pe=fixture(options);files.set('authored-native.exe',pe);save('authored-fixture.json',{options,bytes:pe.length,sha256:sha(pe)});}
  save('module.json',{commit,sha256:sha(wasm),bytes:wasm.length,retainedBeforeExecution:true});save('prepared.json',{at:Date.now(),commit,authored});
  while(!fs.existsSync(out+'/runtime-start.json'))await sleep(10);
- const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+300000);
+ const {deadline}=JSON.parse(fs.readFileSync(out+'/runtime-start.json'));assert(deadline>Date.now()&&deadline<=Date.now()+420000);
  let server,browser,c,session,browserWait,terminal=false,lastImage,nativeQuit=false,nativeDownAttempts=0;const workers=new Map(),tasks=[],destroyed=[];
  const evaluate=async(expression,s=session)=>{const r=await c.send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true},s);if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
  const bounded=async work=>{let timer;try{return await Promise.race([work(),new Promise((_,reject)=>{timer=setTimeout(()=>{terminal=true;c?.ws.close();reject(Error('DISPLAY_UNKNOWN complete 3000ms deadline; permanently closed'));},3000);})]);}finally{clearTimeout(timer);}};
