@@ -1772,6 +1772,11 @@ async function main() {
   // plugin sitting in the VFS was "not found" for CoCreateInstance and present
   // for LoadLibrary.
   const findRuntimeDllBytes = (fileName, fullName) => {
+    const installed = require('../lib/installed-dll-closure').findInstalledDll(
+      ctx.vfs, fullName || fileName, EXE_PROCESS_GUEST_PATH);
+    if (installed) return installed.bytes;
+    // Explicit guest paths cannot resolve to unrelated same-basename files.
+    if (/[\\/:]/.test(fullName || '')) return null;
     const fromVfs = findVfsDllBytes(ctx.vfs, fileName, fullName);
     if (fromVfs) return fromVfs;
     for (const dir of [
@@ -5949,77 +5954,6 @@ async function main() {
     console.log('Windows version: ' + hex(v) + ' (auto NT for MFC42U)');
   }
 
-  // Load DLLs: explicit --dlls=path1,path2,... or auto-detect from EXE imports
-  const dllArg = getArg('dlls', null);
-  const dllDir = path.join(path.dirname(EXE_PATH), 'dlls');
-  let dlls;
-  if (dllArg) {
-    dlls = dllArg.split(',').map(p => ({
-      name: path.basename(p.trim()),
-      bytes: readAssetBytes(p.trim()),
-    }));
-  } else {
-    // Auto-detect: scan EXE imports, load any DLLs found in test/binaries/dlls/
-    // Only load DLLs that work as real PE DLLs; others are handled by WAT stub
-    // handlers — the one list, shared with the browser (lib/dll-registry.js),
-    // as is the graph walk itself (lib/process-boot.js).
-    const exeDir = path.dirname(EXE_PATH);
-    const dllSearchDirs = [
-      dllDir,
-      exeDir,
-      path.join(exeDir, '..', 'Shared_DLLs'),  // MW3-style extracted layout
-      path.join(exeDir, '..', 'shared_dlls'),
-      path.join(__dirname, 'binaries', 'dlls'),
-    ];
-    const findDllFile = name => {
-      for (const dir of dllSearchDirs) {
-        const p = findHostFileCi(dir, name);
-        if (p) return p;
-      }
-      return null;
-    };
-    // App-local DLLs ship beside their exe, so a dependency named by another
-    // DLL is looked up in this app's own `files` list too — same rule the page
-    // applies (index.html appFileByName).
-    const appFileByName = new Map();
-    for (const f of ((ASSET_ENTRY && ASSET_ENTRY.files) || [])) {
-      const url = typeof f === 'string' ? f : (f && f.url);
-      if (url) appFileByName.set(url.split('/').pop().toLowerCase(), url);
-    }
-    dlls = await resolveDllGraph({
-      exeBytes,
-      seeds: [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED],
-      detectRequiredDlls,
-      onMissing: (name, spec, { seed } = {}) => {
-        // One the app declares (`dlls`, --dll-seed) is not optional: running
-        // on without it only moves the failure into a built-in stub.
-        // A setup failure, so a nonzero exit (no guest thread exists yet).
-        if (seed) {
-          console.error(`run.js: declared DLL not found: ${spec} (test/binaries is ` +
-            `gitignored: link it into a fresh worktree)`);
-          process.exit(1);
-        }
-        console.warn(`[dll] ${name} is loaded as a real PE ` +
-          `but is not on disk (${spec}); its imports fall to WAT stubs and an ordinal ` +
-          `import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it ` +
-          `into a fresh worktree.`);
-      },
-      loadSpec: (spec) => {
-        // Registry seeds arrive as repo-relative paths; the graph walk's own
-        // discoveries arrive as bare DLL names.
-        const name = spec.split('/').pop();
-        const p = spec.includes('/')
-          ? appAsset(spec)
-          : (findDllFile(name) || (appFileByName.has(name.toLowerCase())
-              ? appAsset(appFileByName.get(name.toLowerCase())) : null));
-        return (p && fs.existsSync(p)) ? {
-          name,
-          bytes: readAssetBytes(p),
-          path: capturedGuestPath(p) || besideExeGuestPath(p, name) || undefined,
-        } : null;
-      },
-    });
-  }
   // Register exe in moduleBases so `exe+0xVA` and basename-relative specs work.
   {
     const peOff = exeBytes[0x3C] | (exeBytes[0x3D] << 8) | (exeBytes[0x3E] << 16) | (exeBytes[0x3F] << 24);
@@ -6102,42 +6036,6 @@ async function main() {
   });
   ctx.serviceLoadLibrary = () => onLoadLibraryYield(instance.exports);
   threadManager._serviceDllYield = onLoadLibraryYield;
-  if (dlls.length > 0) {
-    mountLoadedDllFiles(ctx.vfs, dlls);
-    const dllResults = await mainOwner.loadDlls(exeBytes, dlls, console.log, {
-      onLoadLibraryYield,
-      exeName: path.basename(EXE_PATH),
-      extraArgs: EXTRA_ARGS || '',
-      registerDllResources: (dllConfigs, results) => {
-        const { extractBitmapBytes } = require('../lib/dib');
-        ctx.dllResources = ctx.dllResources || {};
-        for (let i = 0; i < dllConfigs.length && i < results.length; i++) {
-          try {
-            const bitmapBytes = extractBitmapBytes(dllConfigs[i].bytes);
-            const count = Object.keys(bitmapBytes).length;
-            if (count > 0) {
-              ctx.dllResources[results[i].loadAddr] = { bitmapBytes };
-              console.log(`DLL resources: ${dllConfigs[i].name} has ${count} bitmaps`);
-            }
-          } catch (_) {}
-        }
-      },
-    });
-    if (dllResults) {
-      threadManager.setLoadedDlls(dllResults, (ex, base, entry, log, options) =>
-        callDllMain(ex, base, entry, log, { ...options, onLoadLibraryYield }));
-      for (const r of dllResults) {
-        const key = r.name.toLowerCase().replace(/\.[^.]+$/, '');
-        moduleBases[key] = { loadAddr: r.loadAddr, origBase: r.origBase };
-      }
-    }
-    stopped = false;
-    hostExitRequested = false;
-  }
-
-  // Resolve any module-relative address specs now that all module bases are known.
-  deferredResolveAddrs();
-
   // Put the exe where a running image expects to find itself; see lib/vfs-seed.js.
   if (ctx.vfs) {
     const exeName = seedExeImage(ctx.vfs, exeBytes, path.basename(EXE_PATH), EXE_GUEST_PATH).base;
@@ -6482,6 +6380,7 @@ async function main() {
         `${hydrated.dirs} dir(s), ${hydrated.whiteouts} whiteout(s)` +
         (vfsOverlay.errors.length ? `, ${vfsOverlay.errors.length} error(s)` : ''));
       for (const error of vfsOverlay.errors) console.log(`[overlay] ${error.message}`);
+      if (vfsOverlay.errors.length) throw new Error('overlay hydration failed before DLL discovery');
       nextOverlayFlushAt = Date.now() + OVERLAY_FLUSH_MS;
     }
 
@@ -6642,6 +6541,127 @@ async function main() {
     }
 
   }
+
+  // Discover and initialize DLLs only after all mounts, overlay and registry.
+  // Load DLLs: explicit --dlls=path1,path2,... or auto-detect from EXE imports
+  const dllArg = getArg('dlls', null);
+  const dllDir = path.join(path.dirname(EXE_PATH), 'dlls');
+  let dlls;
+  if (dllArg) {
+    dlls = dllArg.split(',').map(p => ({
+      name: path.basename(p.trim()),
+      bytes: readAssetBytes(p.trim()),
+    }));
+  } else {
+    // Auto-detect: scan EXE imports, load any DLLs found in test/binaries/dlls/
+    // Only load DLLs that work as real PE DLLs; others are handled by WAT stub
+    // handlers — the one list, shared with the browser (lib/dll-registry.js),
+    // as is the graph walk itself (lib/process-boot.js).
+    const exeDir = path.dirname(EXE_PATH);
+    const dllSearchDirs = [
+      dllDir,
+      exeDir,
+      path.join(exeDir, '..', 'Shared_DLLs'),  // MW3-style extracted layout
+      path.join(exeDir, '..', 'shared_dlls'),
+      path.join(__dirname, 'binaries', 'dlls'),
+    ];
+    const findDllFile = name => {
+      for (const dir of dllSearchDirs) {
+        const p = findHostFileCi(dir, name);
+        if (p) return p;
+      }
+      return null;
+    };
+    // App-local DLLs ship beside their exe, so a dependency named by another
+    // DLL is looked up in this app's own `files` list too — same rule the page
+    // applies (index.html appFileByName).
+    const appFileByName = new Map();
+    for (const f of ((ASSET_ENTRY && ASSET_ENTRY.files) || [])) {
+      const url = typeof f === 'string' ? f : (f && f.url);
+      if (url) appFileByName.set(url.split('/').pop().toLowerCase(), url);
+    }
+    dlls = await resolveDllGraph({
+      exeBytes,
+      seeds: [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED],
+      detectRequiredDlls,
+      onMissing: (name, spec, { seed } = {}) => {
+        // One the app declares (`dlls`, --dll-seed) is not optional: running
+        // on without it only moves the failure into a built-in stub.
+        // A setup failure, so a nonzero exit (no guest thread exists yet).
+        if (seed) {
+          console.error(`run.js: declared DLL not found: ${spec} (test/binaries is ` +
+            `gitignored: link it into a fresh worktree)`);
+          process.exit(1);
+        }
+        console.warn(`[dll] ${name} is loaded as a real PE ` +
+          `but is not on disk (${spec}); its imports fall to WAT stubs and an ordinal ` +
+          `import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it ` +
+          `into a fresh worktree.`);
+      },
+      loadSpec: (spec) => {
+        // Registry seeds arrive as repo-relative paths; the graph walk's own
+        // discoveries arrive as bare DLL names.
+        const name = spec.split('/').pop();
+        const installed = require('../lib/installed-dll-closure').findInstalledDll(
+          ctx.vfs, name, EXE_PROCESS_GUEST_PATH);
+        if (installed) return installed;
+        const p = spec.includes('/')
+          ? appAsset(spec)
+          : (findDllFile(name) || (appFileByName.has(name.toLowerCase())
+              ? appAsset(appFileByName.get(name.toLowerCase())) : null));
+        return (p && fs.existsSync(p)) ? {
+          name,
+          bytes: readAssetBytes(p),
+          path: capturedGuestPath(p) || besideExeGuestPath(p, name) || undefined,
+        } : null;
+      },
+    });
+  }
+  if (dlls.length > 0) {
+    // Installed modules retain their real guest identity. The legacy mount
+    // supplies root/system aliases only for host inputs with no guest path.
+    mountLoadedDllFiles(ctx.vfs, dlls.filter(dll => !dll.path));
+    if (ctx.vfs) for (const dll of dlls.filter(dll => dll.path)) {
+      const guest = ctx.vfs._resolvePath(dll.path);
+      if (!ctx.vfs.files.has(guest)) {
+        ctx.vfs.ensureParentDirs(guest);
+        ctx.vfs.files.set(guest, { data: dll.bytes, attrs: 0x20 });
+      }
+    }
+    const dllResults = await mainOwner.loadDlls(exeBytes, dlls, console.log, {
+      onLoadLibraryYield,
+      exeName: path.basename(EXE_PATH),
+      extraArgs: EXTRA_ARGS || '',
+      registerDllResources: (dllConfigs, results) => {
+        const { extractBitmapBytes } = require('../lib/dib');
+        ctx.dllResources = ctx.dllResources || {};
+        for (let i = 0; i < dllConfigs.length && i < results.length; i++) {
+          try {
+            const bitmapBytes = extractBitmapBytes(dllConfigs[i].bytes);
+            const count = Object.keys(bitmapBytes).length;
+            if (count > 0) {
+              ctx.dllResources[results[i].loadAddr] = { bitmapBytes };
+              console.log(`DLL resources: ${dllConfigs[i].name} has ${count} bitmaps`);
+            }
+          } catch (_) {}
+        }
+      },
+    });
+    if (dllResults) {
+      threadManager.setLoadedDlls(dllResults, (ex, base, entry, log, options) =>
+        callDllMain(ex, base, entry, log, { ...options, onLoadLibraryYield }));
+      for (const r of dllResults) {
+        const key = r.name.toLowerCase().replace(/\.[^.]+$/, '');
+        moduleBases[key] = { loadAddr: r.loadAddr, origBase: r.origBase };
+      }
+    }
+    stopped = false;
+    hostExitRequested = false;
+  }
+
+  // Resolve any module-relative address specs now that all module bases are known.
+  deferredResolveAddrs();
+
 
   // Return addresses up the EBP chain, as a one-line list. The existing walker
   // in the SEH dump caps EBP at 0x01A00000, which excludes any app whose stack

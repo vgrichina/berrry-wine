@@ -16,12 +16,8 @@ SUPPORT_PACKAGE=ROOT/'test/binaries/win98-games-a-d/Colin-Mcrae-Rally2-demo-D3D/
 SUPPORT_PACKAGE_SHA256='564de93dcc50691480332e2ccb5565908760b295faa70f8c68854f69dad87189'
 CFGMGR32_SHA256='572387372791a7bc8d336fbbb6af6a9651a627124599f862ac2bd235145b7b80'
 SUPPORT_MOUNTS=[]
-OWN_SOURCES=('tools/vb5cce-original-runtime.py',
-    'src/09c3-controls2-open-save-dialog.wat','src/09c3a-dialog-runtime.wat','lib/cli-native-common-controls.js','lib/renderer-input.js',
-    'test/test-vb5cce-original-current.cjs','test/test-vb5-normal-exit-native.cjs','test/test-vb5-modal-invocation-fence.cjs','test/test-vb5-installed-native.cjs','test/test-vb5-native-progress.cjs','test/test-vb5-native-dialog-identity.cjs','test/test-vb5-nested-owned-modal.cjs',
-    'src/09a-handlers1-user.wat','src/13-exports.wat','lib/host-window.js','lib/cli-guarded-input.js',
-    'tools/callback-ownership-census.json','tools/callback-ownership-revisions.json','tools/layout-offsets.json',
-    'lib/cli-native-scene.js','lib/cli-native-user-windows.js')
+OWN_SOURCES=('tools/vb5cce-original-runtime.py','test/run.js',
+    'lib/installed-dll-closure.js','test/test-installed-dll-closure.cjs')
 
 class ShutdownRequested(SystemExit):pass
 def shutdown_signal(signum,frame):
@@ -224,6 +220,9 @@ fs.writeFileSync(process.env.DELPHI5_MODULE_FD,appendSection(Buffer.from(r.wasmB
          sources={n:sha(b) for n,b in files.items()},foreignWIPAdopted=False,
          recovery='Git plus owned-helpers.patch; exact compileClosure tailCalls and layout stamp',ownModuleDescriptor=module))
     helper.inheritance_probe(RUN,dict(childInheritance='sealed-node-v1',args=['node'],cwd=str(ROOT)),env)
+    if installed or '--closure-only' in sys.argv or '--complete-qualification' in sys.argv:
+        checked('authentic-dll-closure',['node','test/test-installed-dll-closure.cjs',str(RUN/'authentic-dll-closure')],env,(source,module))
+        if '--closure-only' in sys.argv:return
     if '--installed-qualification' in sys.argv or '--modal-fence-only' in sys.argv or '--complete-qualification' in sys.argv or installed:
         checked('modal-invocation-fence',['node','test/test-vb5-modal-invocation-fence.cjs',str(RUN/'modal-invocation-fence')],env,(source,module))
         if '--modal-fence-only' in sys.argv:return
