@@ -11,7 +11,7 @@ const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 test('prepared ordinary owning Worker retains causal keyboard failure and preserves mouse admission', async t => {
   const out = fs.mkdtempSync('/dev/shm/mw3-readiness-');
   t.after(() => { if (!process.env.MW3_KEEP_FIXTURES) fs.rmSync(out, {recursive:true, force:true}); });
-  require('node:child_process').execFileSync('python3',['-B',root+'/tools/mw3-retention-repair.py',retained,out]);
+  require('node:child_process').execFileSync(process.execPath,[root+'/tools/mw3-retention-repair.js',retained,out]);
   assert.match(fs.readFileSync(out+'/owner-start.py','utf8'), /child_deadline/);
   assert.match(fs.readFileSync(out+'/collect.py','utf8'), /recoverablePreChrome/);
   assert.match(fs.readFileSync(out+'/recover-watch.py','utf8'), /recoverable-prechrome/);

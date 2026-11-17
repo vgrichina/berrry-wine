@@ -6,6 +6,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
+const { startStaticServer } = require('../test/static-server');
 
 const ROOT = path.join(__dirname, '..');
 const PORT = Math.max(1, parseInt(process.env.PORT || '8765', 10) || 8765);
@@ -318,13 +319,10 @@ async function main() {
     await getText(`http://127.0.0.1:${PORT}/index.html`);
     progress(`using existing server on ${PORT}`);
   } catch (_) {
-    server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], {
-      cwd: ROOT,
-      stdio: ['ignore', 'ignore', 'pipe'],
-    });
-    server.stderr.on('data', d => { serverErr += d.toString(); });
+    server = await startStaticServer({ root: ROOT, port: PORT });
+    server.on('error', e => { serverErr += `\n[server error] ${e.message}`; });
+    server.unref();
     progress(`started server on ${PORT}`);
-    await wait(500);
   }
 
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'wine-assembly-aoe-profile-'));
@@ -346,7 +344,7 @@ async function main() {
 
   const cleanup = () => {
     try { chrome.kill('SIGKILL'); } catch (_) {}
-    try { if (server) server.kill('SIGKILL'); } catch (_) {}
+    try { if (server) { server.closeAllConnections(); server.close(); } } catch (_) {}
     try { fs.rmSync(userData, { recursive: true, force: true }); } catch (_) {}
   };
   process.on('exit', cleanup);

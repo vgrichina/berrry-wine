@@ -139,7 +139,7 @@ function compile(mode, out, compat = false, mapOnly = false) {
     if (after !== before) changes.push({file: 'src/' + file, before, after});
     for (const alias of [file, 'src/' + file, './' + file]) closure.vfs.set(alias, after);
   }
-  const sourcePatch = cp.execFileSync('python3', ['-c', 'import sys,json,difflib\nfor r in json.load(sys.stdin):\n sys.stdout.writelines(difflib.unified_diff(r["before"].splitlines(True),r["after"].splitlines(True),fromfile="a/"+r["file"],tofile="b/"+r["file"]))'], {input: JSON.stringify(changes), maxBuffer: 16*1024*1024});
+  const sourcePatch = Buffer.from(require('./unified-diff.js').patchOf(changes));
   fs.writeFileSync(path.join(out, 'observer.patch'), sourcePatch);
   let vfs = closure.vfs;
   if (compat) vfs = require('../lib/dispatch-trampoline').applyToVfs(new Map(vfs));

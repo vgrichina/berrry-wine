@@ -132,8 +132,9 @@ async function main(){
   fs.writeFileSync(dir+'/lifecycle.json',JSON.stringify({browserDeadline:Date.now()+8000}));
   // The executed shim preserves the actual kernel-custodian parent across exec.
   const shim=dir+'/consumer-shim.cjs';fs.writeFileSync(shim,`process.env.SIMGOLF_OWNER_IDENTITY=JSON.stringify(require(${JSON.stringify(root+'/tools/native-clock-process-proof.cjs')}).identity(process.ppid));process.argv=${JSON.stringify([process.execPath,__filename,run,'consumer',dir,kind])};require(${JSON.stringify(__filename)});`);
-  const gate="import os,sys;assert sys.stdin.readline()=='go\\n';os.execvp(sys.argv[1],sys.argv[1:])";
-  const child=cp.spawn('python3',['-c',gate,'python3',root+'/tools/simgolf-native-hole-launch.py',dir,process.execPath,shim],{stdio:['pipe','pipe','pipe']});
+  // Block on one exact stdin line, then exec in this same PID (the owning parent).
+  const gate='IFS= read -r line && [ "$line" = go ] || exit 1; exec "$@"';
+  const child=cp.spawn('/bin/sh',['-c',gate,'sh',process.execPath,root+'/tools/simgolf-native-hole-launch.js',dir,process.execPath,shim],{stdio:['pipe','pipe','pipe']});
   let stdout='',stderr='',stdoutEOF=false,stderrEOF=false;child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);child.stdout.on('end',()=>stdoutEOF=true);child.stderr.on('end',()=>stderrEOF=true);
   const done=new Promise(r=>child.once('close',r));
   // Independent of the consumer/custodian event loops; never relax the launch cap.

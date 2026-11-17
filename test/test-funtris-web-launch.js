@@ -13,6 +13,7 @@ const net = require('net');
 const os = require('os');
 const path = require('path');
 const { spawn } = require('child_process');
+const { startStaticServer } = require('./static-server');
 
 const ROOT = path.join(__dirname, '..');
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -158,12 +159,10 @@ function consoleEventSummary(events) {
 }
 
 async function main() {
-  const server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1'], {
-    cwd: ROOT,
-    stdio: ['ignore', 'ignore', 'pipe'],
-  });
   let serverErr = '';
-  server.stderr.on('data', d => { serverErr += d.toString(); });
+  const server = await startStaticServer({ root: ROOT, port: PORT });
+  server.on('error', e => { serverErr += `\n[server error] ${e.message}`; });
+  server.unref();
 
   const userData = fs.mkdtempSync(path.join(os.tmpdir(), 'wine-assembly-funtris-profile-'));
   const chrome = spawn(CHROME, [
@@ -182,7 +181,7 @@ async function main() {
 
   const cleanup = () => {
     try { chrome.kill('SIGKILL'); } catch (_) {}
-    try { server.kill('SIGKILL'); } catch (_) {}
+    try { server.closeAllConnections(); server.close(); } catch (_) {}
     try { fs.rmSync(userData, { recursive: true, force: true }); } catch (_) {}
   };
   process.on('exit', cleanup);

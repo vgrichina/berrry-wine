@@ -228,6 +228,19 @@ async function browserControl(mode, guardSource) {
     actualGLRequests:0,laterRequests,refusedRequestAttempts,urls:[guardURL,producerURL]};
 }
 
+// PID generation (start time) that survives exec; throws for an absent PID.
+// Linux: /proc stat starttime. macOS has no /proc: ps lstart, as in
+// lib/cli-child-observation.js identity(). Self-contained: also serialized
+// into the independent supervisor Worker.
+function pidGeneration(pid) {
+  if(process.platform==='darwin'){
+    const row=require('node:child_process').execFileSync('ps',['-o','stat=,lstart=','-p',String(pid)],{encoding:'utf8',stdio:['ignore','pipe','ignore']}).trim();
+    if(!row||/^Z/.test(row))throw Error('absent process '+pid);
+    return row.replace(/^\S+\s+/,'');
+  }
+  return require('node:fs').readFileSync('/proc/'+pid+'/stat','utf8').split(') ')[1].split(' ')[19];
+}
+
 async function runBrowser(mode) {
   const profile=fs.mkdtempSync(path.join(os.tmpdir(),'gl-watchdog-startup-'));
   const httpReceipts=[],html=Buffer.from('<!doctype html><title>Fresh watchdog startup fixture</title>');
@@ -245,18 +258,18 @@ async function runBrowser(mode) {
   ];
   // Start a unique PID blocked on stdin, arm its independent supervisor, then
   // exec Chrome in that same PID/group. Chrome cannot run before the receipt.
-  const chrome=spawn('python3',['-u','-c',
-    'import os,sys; assert sys.stdin.buffer.readline()==b"GO\\n"; os.execvp(sys.argv[1],sys.argv[1:])',
+  const chrome=spawn('/bin/sh',['-c','IFS= read -r line && [ "$line" = GO ] || exit 1; exec "$@"','sh',
     ...chromeArgs],{stdio:['pipe','pipe','pipe'],detached:true});
   let stdout='',stderr='',stdoutEOF=false,stderrEOF=false;
   chrome.stdout.on('data',b=>stdout+=b);chrome.stderr.on('data',b=>stderr+=b);
   chrome.stdout.on('end',()=>{stdoutEOF=true;});chrome.stderr.on('end',()=>{stderrEOF=true;});
   const closed=new Promise(resolve=>chrome.once('close',(code,signal)=>resolve({code,signal})));
-  const generation=fs.readFileSync('/proc/'+chrome.pid+'/stat','utf8').split(') ')[1].split(' ')[19];
+  const generation=pidGeneration(chrome.pid);
   // Independent physical watchdog armed before any CDP/page request. It owns
   // only this new Chrome process group, and checks its PID generation.
   const supervisor=new Worker(`const {workerData:d,parentPort:p}=require('node:worker_threads'),fs=require('node:fs');
-    const t=setTimeout(()=>{try{const g=fs.readFileSync('/proc/'+d.pid+'/stat','utf8').split(') ')[1].split(' ')[19];
+    const pidGeneration=${pidGeneration};
+    const t=setTimeout(()=>{try{const g=pidGeneration(d.pid);
       if(g===d.generation)process.kill(-d.pid,'SIGKILL');p.postMessage({expired:true});}catch(e){p.postMessage({absent:true});}},20000);
     p.on('message',()=>{clearTimeout(t);p.close();});p.postMessage({armed:true,pid:d.pid,generation:d.generation,at:Date.now()});`,
     {eval:true,workerData:{pid:chrome.pid,generation},stdout:true,stderr:true});
