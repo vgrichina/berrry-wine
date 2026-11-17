@@ -116,6 +116,11 @@ function directControl(wasm, pooled, primitiveContract = false) {
   }
   imports.host.gpu_gl_call = (op, at, bytes) => {
     assert.strictEqual(op, Stream.WAT_STREAM_FLUSH_OPCODE);
+    // The lone 0x10008 WGL-mode query is not GL work (see the Worker side).
+    if (bytes >= 8) {
+      const head = new DataView(memory.buffer, at, 8);
+      if (head.getUint32(0, true) === bytes && head.getUint32(4, true) === 0x10008) return 0x57470000;
+    }
     built.stats.sync++; built.stats.local++;
     packets.push(Buffer.from(new Uint8Array(memory.buffer, at, bytes)));
     return Stream.replay(Stream.memoryBatch(memory, at, bytes), (opcode,_mode,capture) => {
@@ -156,6 +161,13 @@ if (!isMainThread) {
     const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
     const rpcView = RPC.views(memory, 0).i32;
     const batches = [];
+    // An instance's first GL record is the lone 0x10008 WGL-mode query
+    // (src/09a8cw-gl-wgl.wat, answered in lib/host-imports.js). It is not GL
+    // work: answer it like a host where WAT does not own WGL (0x57470000) and
+    // count it, since its publication rotates a pooled stream once.
+    let modeQueries = 0;
+    const publications = []; // every published offset, mode query included
+    const queryPublications = []; // publication indices that were mode queries
     const bootstraps = [];
     let epoch;
     const broker = RPC.createMainBroker(memory, {
@@ -169,22 +181,32 @@ if (!isMainThread) {
       },
       gpu_gl_batch(batch, owner) {
         assert.strictEqual(owner, 0);
+        publications.push(batch.memoryOffset);
+        if (batch.bytes >= 8) {
+          const head = new DataView(memory.buffer, batch.memoryOffset, 8);
+          if (head.getUint32(0, true) === batch.bytes && head.getUint32(4, true) === 0x10008) {
+            modeQueries++;
+            queryPublications.push(publications.length - 1);
+            return 0x57470000;
+          }
+        }
         assert.deepStrictEqual(Object.keys(batch).sort(),
-          pooled ? ['bytes', 'memoryOffset', 'pool', 'softwareFront'] : ['bytes', 'memoryOffset', 'softwareFront'],
-          'native worker hands off shared stream and software presentation descriptors');
+          ['bytes', 'memoryOffset'],
+          'native worker hands off the shared stream descriptor only (gl-retire S3 removed the software front surface; software GL presents through the GPU stream)');
         if (pooled) {
-          assert.strictEqual(batch.pool.version, 1);
-          assert.strictEqual(batch.pool.capacity, Stream.DEFAULT_BYTES);
-          assert.strictEqual(new Set(batch.pool.offsets).size, 3);
-          assert(batch.pool.offsets.every(base => base > 0 && base + batch.pool.capacity <= memory.buffer.byteLength));
-          assert.strictEqual(batch.memoryOffset, batch.pool.offsets[batches.length % 3]);
-          if (batches.length) assert.deepStrictEqual(batch.pool, batches[0].pool);
+          // No pool descriptor crosses the RPC any more (gl-retire S3); the
+          // rotation itself is the contract: three distinct ranges, then each
+          // publication reuses the range published three before it.
+          const n = publications.length - 1;
+          assert(batch.memoryOffset > 0 && batch.memoryOffset + Stream.DEFAULT_BYTES <= memory.buffer.byteLength);
+          if (n < 3) assert(!publications.slice(0, n).includes(batch.memoryOffset), 'first three publications use distinct ranges');
+          else assert.strictEqual(batch.memoryOffset, publications[n - 3], 'triple pool rotates with period three');
           if (batches.length === 2) for (const earlier of batches) assert.deepStrictEqual(
             Buffer.from(new Uint8Array(memory.buffer, earlier.memoryOffset, earlier.bytes)), earlier.snapshot,
             'first two published ranges survive third-buffer encoding');
         }
-        assert.strictEqual(batch.softwareFront, 0,
-          'a GL stream without a software drawable has no software front surface');
+        assert.ok(!('softwareFront' in batch),
+          'no software front surface descriptor: presentation is the GPU stream executor\'s');
         const snapshot = Buffer.from(new Uint8Array(
           memory.buffer, batch.memoryOffset, batch.bytes));
         const opcodes = [];
@@ -253,6 +275,12 @@ if (!isMainThread) {
       assert.deepStrictEqual(batches.map(batch => batch.snapshot), control.packets,
         'real Worker and direct main-thread native WAT emit identical complete packets');
       if (primitiveContract) {
+        // Worker spans count every flush crossing, the mode query included;
+        // batches (and the direct control, which answers the query without
+        // counting it) do not. Translate before comparing.
+        const toBatch = p => p - queryPublications.filter(q => q < p).length;
+        result.cases = result.cases.map(c => ({ ...c,
+          firstPacket: toBatch(c.firstPacket), afterPacket: toBatch(c.afterPacket) }));
         assert.deepStrictEqual(result.cases, control.result.cases);
         assert.strictEqual(result.cases.length, 60);
         for (const c of result.cases) {
@@ -274,8 +302,9 @@ if (!isMainThread) {
         }
         assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
         assert.deepStrictEqual(bootstraps, ['process','thread']);
-        assert.strictEqual(result.stats.sync, 280);
-        assert.strictEqual(result.stats.local, 280);
+        assert.strictEqual(modeQueries, 1, 'exactly one WGL-mode query per GL instance');
+        assert.strictEqual(result.stats.sync, 280 + modeQueries);
+        assert.strictEqual(result.stats.local, 280 + modeQueries);
         console.log(`PASS real delayed Worker/main full primitive literal and byte parity ${pooled ? 'triple-pool' : 'single-buffer'}`);
         continue;
       }
@@ -309,8 +338,9 @@ if (!isMainThread) {
       'second submission overwrites the released range without changing its snapshot');
       assert.strictEqual(Atomics.load(rpcView, RPC.SLOT.STATUS), RPC.STATUS_IDLE);
       assert.deepStrictEqual(bootstraps, ['process', 'thread']);
-      assert.strictEqual(result.stats.sync, pooled ? 7 : 5);
-      assert.strictEqual(result.stats.local, pooled ? 7 : 5,
+      assert.strictEqual(modeQueries, 1, 'exactly one WGL-mode query per GL instance');
+      assert.strictEqual(result.stats.sync, (pooled ? 7 : 5) + modeQueries);
+      assert.strictEqual(result.stats.local, (pooled ? 7 : 5) + modeQueries,
         'only native flush imports cross out of WAT after bootstrap');
       console.log(`PASS real Worker WAT GL ${pooled ? 'triple-pool' : 'single-buffer'} offset transport, Atomics barriers, ordering, and reuse`);
     } finally {
