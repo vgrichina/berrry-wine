@@ -1,11 +1,13 @@
 {
-  "name": "Wine-Assembly Windows 98 Emulator",
-  "short_name": "Wine98",
-  "description": "Resource-aware Windows 98 emulator in the browser.",
+  "name": "Berrry Wine",
+  "short_name": "Berrry Wine",
+  "description": "Run Windows 98 apps and games in your browser.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone"],
+  "display_override": [
+    "standalone"
+  ],
   "background_color": "#008080",
   "theme_color": "#008080",
   "orientation": "any",

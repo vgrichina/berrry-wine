@@ -1,4 +1,4 @@
-// Wine-Assembly: JS host for the WASM x86 interpreter
+// Berrry Wine: JS host for the WASM x86 interpreter
 // Win98Renderer is loaded from lib/renderer.js (included via <script> in index.html)
 
 // The boot steps this host shares with the CLI harness: staging the EXE,

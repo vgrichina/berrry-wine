@@ -1,4 +1,4 @@
-# Wine-Assembly — The Whole Story
+# Berrry Wine — The Whole Story
 
 *A retrospective from the initial commit (2026-03-26) through 2026-11-04: 10,740 commits across 224 calendar days and 167 active commit days. The two months since Sep 4 added 6,927 of them, most written by a Codex coordinator and its workers on a remote ops box. About 100 billion agent tokens are on record for the period the logs survive ([Tokens and commits](#tokens-and-commits)).*
 

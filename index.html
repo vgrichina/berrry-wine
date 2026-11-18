@@ -22,15 +22,17 @@
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#008080">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Wine-Assembly">
+  <meta name="apple-mobile-web-app-title" content="Berrry Wine">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <title>Wine-Assembly — Run Windows 98 apps and games in your browser</title>
-  <meta name="description" content="Play Space Cadet Pinball, SkiFree, Solitaire, Minesweeper, Winamp and dozens of real Windows 98 programs in your browser. Wine-Assembly runs the original .exe files on an x86 emulator written in WebAssembly — no OS image, no source ports.">
+  <title>Berrry Wine — Run Windows 98 apps and games in your browser</title>
+  <meta name="description" content="Play Space Cadet Pinball, SkiFree, Solitaire, Minesweeper, Winamp and dozens of real Windows 98 programs in your browser. Berrry Wine runs the original .exe files on an x86 emulator written in WebAssembly — no OS image, no source ports.">
   <link rel="canonical" href="https://berrry.wine/">
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Wine-Assembly">
-  <meta property="og:title" content="Wine-Assembly — Run Windows 98 apps and games in your browser">
+  <meta property="og:site_name" content="Berrry Wine">
+  <meta property="og:title" content="Berrry Wine — Run Windows 98 apps and games in your browser">
   <meta property="og:description" content="Real Windows 98 .exe files running on an x86 emulator written in WebAssembly. Pinball, SkiFree, Solitaire, Winamp, DirectX games and more, no install.">
   <meta property="og:url" content="https://berrry.wine/">
   <meta property="og:image" content="https://berrry.wine/icons/og-image.png">
@@ -38,7 +40,7 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Space Cadet Pinball running on a Windows 98 desktop inside a browser tab">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Wine-Assembly — Run Windows 98 apps and games in your browser">
+  <meta name="twitter:title" content="Berrry Wine — Run Windows 98 apps and games in your browser">
   <meta name="twitter:description" content="Real Windows 98 .exe files running on an x86 emulator written in WebAssembly. Pinball, SkiFree, Solitaire, Winamp, DirectX games and more, no install.">
   <meta name="twitter:image" content="https://berrry.wine/icons/og-image.png">
   <script type="application/ld+json">
@@ -49,12 +51,12 @@
         "@type": "WebSite",
         "@id": "https://berrry.wine/#website",
         "url": "https://berrry.wine/",
-        "name": "Wine-Assembly",
+        "name": "Berrry Wine",
         "description": "Run real Windows 98 apps and games in your browser."
       },
       {
         "@type": "SoftwareApplication",
-        "name": "Wine-Assembly",
+        "name": "Berrry Wine",
         "url": "https://berrry.wine/",
         "applicationCategory": "GameApplication",
         "applicationSubCategory": "Emulator",
@@ -1401,7 +1403,7 @@
   <div id="compile-status">Compiling WAT source...</div>
   <button id="debug-peek" onclick="toggleDebugPanels()">Debug</button>
   <div id="shell">
-    <div id="titlebar">Wine-Assembly — Windows 98 Emulator</div>
+    <div id="titlebar">Berrry Wine — Windows 98 Emulator</div>
     <div id="toolbar">
       <label for="app-picker-button">Program:</label>
       <div id="app-picker" class="app-picker">
@@ -1866,12 +1868,12 @@
         <section id="readme-window" role="dialog" aria-labelledby="readme-title" hidden>
           <div class="readme-titlebar">
             <span class="readme-titleico" aria-hidden="true">&#128196;</span>
-            <span id="readme-title">Read Me - Wine-Assembly</span>
+            <span id="readme-title">Read Me - Berrry Wine</span>
             <button type="button" class="readme-close" aria-label="Close" onclick="closeReadme()">&#x2715;</button>
           </div>
           <div class="readme-body">
-            <h1>Wine-Assembly: run real Windows 98 apps and games in your browser</h1>
-            <p>Wine-Assembly is a Windows 98 emulator that runs the original, unmodified .exe files in a browser tab:
+            <h1>Berrry Wine: run real Windows 98 apps and games in your browser</h1>
+            <p>Berrry Wine is a Windows 98 emulator that runs the original, unmodified .exe files in a browser tab:
               3D Pinball Space Cadet, SkiFree, Solitaire, FreeCell, Minesweeper, Notepad, Paint, Calculator, Winamp,
               the Windows Entertainment Pack, DirectDraw and Direct3D games, and 16-bit Windows 3.1 programs.</p>
             <p>There is no operating-system image and no source port. An x86 interpreter and a reimplementation of the
@@ -1883,7 +1885,7 @@
             <ul>
               <li><a href="apps/">Every program on the desktop, with a page each: Pinball, Solitaire, Winamp, Paint, SkiFree and more</a></li>
               <li><a href="design/">How it works: articles on the x86 interpreter, lazy flags, real DLLs, software GDI, DirectX and Win16, plus the design docs and reverse-engineering notes</a></li>
-              <li><a href="story.html">How Wine-Assembly was built</a></li>
+              <li><a href="story.html">How Berrry Wine was built</a></li>
               <li><a href="https://github.com/vgrichina/berrry-wine">Source code on GitHub (MIT)</a></li>
             </ul>
             <div class="readme-buttons">
@@ -1905,7 +1907,7 @@
                 aria-label="Leave full screen" onclick="closeFullscreenChip(event)">&#x2715;</button>
         <textarea id="mobile-keyboard-proxy" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-hidden="true"></textarea>
       </div>
-      <div id="log">Wine-Assembly v0.2
+      <div id="log">Berrry Wine v0.2
 Resource-aware Win98 emulator
 ================================
 </div>
@@ -2628,7 +2630,7 @@ Resource-aware Win98 emulator
           appendDebugLog(`?app=${wanted}: no such program`);
           if (intent) {
             intent.fail({
-              title: 'Wine-Assembly',
+              title: 'Berrry Wine',
               heading: `There is no program called “${wanted}”.`,
               message: 'The link may be mistyped or out of date.',
               retry: false,
@@ -3190,7 +3192,7 @@ Resource-aware Win98 emulator
     function showBuildStamp() {
       const el = document.getElementById('build-stamp');
       if (!el) return;
-      el.textContent = 'Wine-Assembly';
+      el.textContent = 'Berrry Wine';
       const build = document.createElement('div');
       build.textContent = 'build ' + (window.WINE_BUILD || 'dev');
       el.appendChild(build);

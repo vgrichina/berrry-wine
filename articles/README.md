@@ -1,7 +1,7 @@
-# Wine-Assembly articles: how a Windows 98 emulator in WebAssembly works
+# Berrry Wine articles: how a Windows 98 emulator in WebAssembly works
 <!-- description: Short articles on how a Windows 98 emulator in WebAssembly Text works: the x86 interpreter, lazy flags, real DLLs, the Win32 API, GDI, DirectX, Win16 and more. -->
 
-Wine-Assembly runs real Windows 98 programs in the browser: an x86 interpreter, a Win32 API layer, a software GDI, DirectX and a 16-bit loader, all written directly in WebAssembly Text. These articles each answer one question about how it is built. They are drawn from [the full project story](/story.html) and the [design docs](/docs/), and are shorter than either.
+Berrry Wine runs real Windows 98 programs in the browser: an x86 interpreter, a Win32 API layer, a software GDI, DirectX and a 16-bit loader, all written directly in WebAssembly Text. These articles each answer one question about how it is built. They are drawn from [the full project story](/story.html) and the [design docs](/docs/), and are shorter than either.
 
 ## The machine
 
@@ -38,9 +38,9 @@ Wine-Assembly runs real Windows 98 programs in the browser: an x86 interpreter, 
 
 ## Compared with other emulators
 
-- [Wine-Assembly vs v86](/articles/wine-assembly-vs-v86.md)  
+- [Berrry Wine vs v86](/articles/wine-assembly-vs-v86.md)  
   <small>A whole PC that boots a Windows 98 image, against a Win32 layer that runs the program directly.</small>
-- [Wine-Assembly vs Boxedwine](/articles/wine-assembly-vs-boxedwine.md)  
+- [Berrry Wine vs Boxedwine](/articles/wine-assembly-vs-boxedwine.md)  
   <small>Wine compiled to WebAssembly, against a Windows layer written in WebAssembly Text from scratch.</small>
-- [Wine-Assembly vs DOSBox and js-dos](/articles/wine-assembly-vs-dosbox.md)  
+- [Berrry Wine vs DOSBox and js-dos](/articles/wine-assembly-vs-dosbox.md)  
   <small>DOS programs on an emulated PC, against Windows programs with no operating system; where the toy VM fits.</small>

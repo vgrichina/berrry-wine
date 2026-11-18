@@ -27,7 +27,7 @@ const { marked } = require('marked');
 
 const ROOT = path.join(__dirname, '..');
 const SITE = 'https://berrry.wine';
-const SITE_NAME = 'Wine-Assembly';
+const SITE_NAME = 'Berrry Wine';
 const AUTHOR = 'Vladimir Grichina';
 const REPO = 'https://github.com/vgrichina/berrry-wine';
 const OG_IMAGE = `${SITE}/icons/og-image.png`;
@@ -401,7 +401,7 @@ function loadDesktopApps() {
     const group = groups.get(id) || NO_GROUP;
     return {
       id, name, emoji,
-      blurb: blurbs[id] || `${name}, one of the programs on the Wine-Assembly desktop.`,
+      blurb: blurbs[id] || `${name}, one of the programs on the Berrry Wine desktop.`,
       group,
       game: group !== 'Win98 Accessories' && !notGames.has(id),
       persist: app.persistFiles || [],
@@ -453,12 +453,12 @@ function appPageMd(app, siblings, qa, compat = null) {
   const L = [];
   L.push(`# ${appHeading(app)}`);
   L.push('');
-  L.push(`${app.blurb} ${app.name} runs in Wine-Assembly, a Windows 98 emulator written in WebAssembly Text, so it starts in the browser with nothing to install.`);
+  L.push(`${app.blurb} ${app.name} runs in Berrry Wine, a Windows 98 emulator written in WebAssembly Text, so it starts in the browser with nothing to install.`);
   L.push('');
   L.push(`<a class="app-launch" href="/?app=${app.id}">Launch ${app.name} &rarr;</a>`);
   L.push('');
   if (app.shot) {
-    L.push(`<img class="app-shot" src="/${app.shot}" alt="${esc(app.name)} running in Wine-Assembly" ${sizeAttrs(app.shotSize)}>`);
+    L.push(`<img class="app-shot" src="/${app.shot}" alt="${esc(app.name)} running in Berrry Wine" ${sizeAttrs(app.shotSize)}>`);
     L.push('');
   }
   // `_about` in site-app-blurbs.json: a few paragraphs on what the program
@@ -514,7 +514,7 @@ function appPageMd(app, siblings, qa, compat = null) {
     L.push(siblings.map(s => `[${s.name}](/apps/${s.id}.html)`).join(' · '));
     L.push('');
   }
-  L.push(`[All programs on the desktop](/apps/) · [How Wine-Assembly was built](/story.html)`);
+  L.push(`[All programs on the desktop](/apps/) · [How Berrry Wine was built](/story.html)`);
   L.push('');
   return L.join('\n');
 }
@@ -528,7 +528,7 @@ function appsIndexMd(apps) {
   const L = [];
   L.push('# Windows 98 programs you can run in your browser');
   L.push('');
-  L.push(`Every icon on the Wine-Assembly desktop, with a page each: what the program is, a picture of it running here, and a link that starts it. ` +
+  L.push(`Every icon on the Berrry Wine desktop, with a page each: what the program is, a picture of it running here, and a link that starts it. ` +
     `They are real Windows 98 executables, not ports; the emulator underneath is an x86 interpreter and Win32 layer written in WebAssembly Text. ` +
     `Programs the site cannot redistribute (game demos, shareware installers, the DirectX SDK samples) are in the debug dropdown on the [main page](/?debug) instead. ` +
     `For everything else the emulator has been tried on, and how to run your own copy, see the [compatibility list](/compat/).`);
@@ -774,7 +774,7 @@ function compatPageMd(t, affiliate) {
   L.push(`# Does ${t.title} run in the browser?`);
   L.push('');
   const who = [t.developer, t.year].filter(Boolean).join(', ');
-  L.push(`**${st.mark} ${st.label}.** ${esc(t.title)}${who ? ` (${esc(who)})` : ''} has been tried on Wine-Assembly, a Windows 98 emulator that runs the original program in a browser tab. This is what was measured, edition by edition.`);
+  L.push(`**${st.mark} ${st.label}.** ${esc(t.title)}${who ? ` (${esc(who)})` : ''} has been tried on Berrry Wine, a Windows 98 emulator that runs the original program in a browser tab. This is what was measured, edition by edition.`);
   L.push('');
   const play = t.editions.find(e => e.playId);
   if (play) L.push(`<a class="app-launch" href="/apps/${play.playId}.html">Play the ${esc((EDITION_LABEL[play.edition] || 'hosted').toLowerCase())} here &rarr;</a>`);
@@ -795,7 +795,7 @@ function compatPageMd(t, affiliate) {
 
 function compatDescription(t) {
   const st = COMPAT_STATUS[t.status] || COMPAT_STATUS.unknown;
-  const lead = `${t.title}${t.year ? ` (${t.year})` : ''} in the browser: ${st.label.toLowerCase()} on Wine-Assembly, the Windows 98 emulator.`;
+  const lead = `${t.title}${t.year ? ` (${t.year})` : ''} in the browser: ${st.label.toLowerCase()} on Berrry Wine, the Windows 98 emulator.`;
   const best = t.editions.find(e => e.status === t.status);
   const more = best && best.works ? ` ${best.works}` : '';
   const full = lead + more;
@@ -806,9 +806,9 @@ function compatDescription(t) {
 function compatIndexMd(titles) {
   const L = [];
   L.push('# Windows games in the browser: compatibility list');
-  L.push('<!-- description: Which Windows 95 and 98 games run in a browser tab on Wine-Assembly, edition by edition, from measured runs: plays, reaches the menu or not yet. -->');
+  L.push('<!-- description: Which Windows 95 and 98 games run in a browser tab on Berrry Wine, edition by edition, from measured runs: plays, reaches the menu or not yet. -->');
   L.push('');
-  L.push(`Every program Wine-Assembly has been tried on, with what was measured, not hoped. ` +
+  L.push(`Every program Berrry Wine has been tried on, with what was measured, not hoped. ` +
     `Titles with a ▶ are hosted and start with one click; for the rest, [add your own copy](/?add-game) (an ISO, a zip or an installer), which stays in your browser.`);
   L.push('');
   const legend = Object.values(COMPAT_STATUS).map(s => `${s.mark} ${s.label}`).join(' · ');
@@ -866,7 +866,7 @@ function articleDateline(dates) {
   const parts = [];
   if (dates.published) parts.push(`Published ${dates.published}`);
   if (dates.modified && dates.modified !== dates.published) parts.push(`updated ${dates.modified}`);
-  parts.push(`<a href="/design/">How Wine-Assembly works</a>`);
+  parts.push(`<a href="/design/">How Berrry Wine works</a>`);
   return `<p class="dateline">${parts.join(' · ')}</p>`;
 }
 function articlePager(prev, next) {
@@ -912,8 +912,8 @@ function generatePages({ progress = () => {} } = {}) {
     name: 'story.html',
     content: pageHtml({
       md: storyMd,
-      title: 'How Wine-Assembly was built: a Windows 98 emulator in raw WebAssembly',
-      description: 'The history of Wine-Assembly, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.',
+      title: 'How Berrry Wine was built: a Windows 98 emulator in raw WebAssembly',
+      description: 'The history of Berrry Wine, a Windows 98 emulator in WebAssembly: from the first x86 decoder to a browser running Pinball, Winamp, DirectX and Win16 apps.',
       urlPath: 'story.html', sourceRel: 'PROJECT_STORY.md',
       dates: storyDates,
     }),
@@ -1121,8 +1121,8 @@ function generatePages({ progress = () => {} } = {}) {
   const articlesBody = fs.existsSync(path.join(ROOT, articlesIndexRel))
     ? fs.readFileSync(path.join(ROOT, articlesIndexRel), 'utf-8').replace(/^[\s\S]*?(?=^## )/m, '').replace(/^## /gm, '### ')
     : '';
-  const designMd = `# How Wine-Assembly works: articles, design docs and reverse-engineering notes\n\n` +
-    `Wine-Assembly runs real Windows 98 programs in the browser: an x86 interpreter, a Win32 API layer, ` +
+  const designMd = `# How Berrry Wine works: articles, design docs and reverse-engineering notes\n\n` +
+    `Berrry Wine runs real Windows 98 programs in the browser: an x86 interpreter, a Win32 API layer, ` +
     `a software GDI, DirectX and a 16-bit loader, all written directly in WebAssembly Text. ` +
     `The articles below each answer one question about how that is built and are the place to start; ` +
     `the design docs and per-application reverse-engineering notes after them are the working record ` +
@@ -1132,7 +1132,7 @@ function generatePages({ progress = () => {} } = {}) {
     `1. [How to write an x86 interpreter in raw WebAssembly Text](/articles/x86-interpreter-in-webassembly-text.html), the machine everything else runs on.\n` +
     `2. [Implementing the Win32 API in WebAssembly](/articles/win32-api-in-webassembly.html), the operating system the program thinks it is talking to.\n` +
     `3. [A software GDI in WebAssembly](/articles/software-gdi-in-webassembly.html), how pixels get from the program to the canvas.\n` +
-    `4. [Wine-Assembly vs v86](/articles/wine-assembly-vs-v86.html), what this approach gives up and gains against booting a real Windows 98.\n` +
+    `4. [Berrry Wine vs v86](/articles/wine-assembly-vs-v86.html), what this approach gives up and gains against booting a real Windows 98.\n` +
     `5. [Building an emulator with AI coding agents](/articles/building-an-emulator-with-ai-coding-agents.html), how it was actually written.\n\n` +
     `## Articles\n\n` + articlesBody.trim() + `\n\n` +
     `## Design docs and reverse-engineering notes\n\n` + docsIntro + `\n\n` + docsSections.replace(/^## /gm, '### ');
@@ -1140,7 +1140,7 @@ function generatePages({ progress = () => {} } = {}) {
     name: 'design/index.html',
     content: pageHtml({
       md: designMd,
-      title: 'How Wine-Assembly works: articles, design docs and reverse-engineering notes',
+      title: 'How Berrry Wine works: articles, design docs and reverse-engineering notes',
       description: 'How a Windows 98 emulator in WebAssembly Text works: articles on the x86 interpreter, lazy flags, DLLs, GDI, DirectX and Win16, plus design docs and RE notes.',
       urlPath: 'design/', sourceRel: 'articles/README.md',
       dates: { modified: today },
@@ -1148,14 +1148,14 @@ function generatePages({ progress = () => {} } = {}) {
   });
   urls.push({ loc: `${SITE}/design/`, priority: '0.8', changefreq: 'weekly' });
 
-  const indexMd = `# Wine-Assembly design docs and reverse-engineering notes\n\n` +
-    `Wine-Assembly runs real Windows 98 executables in the browser: an x86 interpreter and a Win32 API layer ` +
+  const indexMd = `# Berrry Wine design docs and reverse-engineering notes\n\n` +
+    `Berrry Wine runs real Windows 98 executables in the browser: an x86 interpreter and a Win32 API layer ` +
     `written directly in WebAssembly Text. ` + docsIntro + `\n\n` + docsSections;
   pages.push({
     name: 'docs/index.html',
     content: pageHtml({
       md: indexMd,
-      title: 'Wine-Assembly design docs and reverse-engineering notes',
+      title: 'Berrry Wine design docs and reverse-engineering notes',
       description: 'Design docs and reverse-engineering notes for a Windows 98 emulator in WebAssembly Text: memory map, x86 dispatch, lazy flags, software GDI, DirectX, Win16.',
       urlPath: 'docs/', sourceRel: 'docs',
       canonical: 'design/',

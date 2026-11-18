@@ -99,7 +99,7 @@ async function main() {
     assert(/ERROR launching/.test(state.status),
       `the failure should be reported to the visitor, status was "${state.status}"`);
     assert(state.crashVisible, 'a fatal launch failure must open a visible crash-report dialog');
-    assert(state.crashText.includes('Wine-Assembly crash report'));
+    assert(state.crashText.includes('Berrry Wine crash report'));
     assert(state.crashText.includes('kind: launch'));
     assert(state.crashText.includes('app: notepad'));
     assert(state.crashText.includes('RangeError: WebAssembly.Memory(): could not allocate memory'));
