@@ -110,4 +110,74 @@ function verifyReadback(m, owner, now = Date.now(), maxAge = 30000) {
   if (m.content === 'ordinary-publication-after-request') assert(m.displayedAt >= m.requestedAt, 'ordinary completion follows request');
   assert(now - m.displayedAt < maxAge && now - m.requestedAt < maxAge, 'display/request freshness');
 }
-module.exports = {PAGE_READ, DISPLAY_READ, createGate, connection, childWorkers, verifyReadback};
+// A display publication can precede completion of boot/first-device work.
+// Observe the existing scheduler, without waking a Worker or changing its work.
+const CLASSIFICATION_READY_READ = `(() => {
+  const page=(${PAGE_READ});
+  if(page.apps.length!==1) return {ready:false,pending:['app startup'],page};
+  const w=runningApps[0].wine,g=w?.guestWorker,m=w?._renderWorkerManager;
+  const links=[...new Set([g?.link,...(g?.threadLinks?.values()||[]),...(g?._startingLinks||[])].filter(Boolean))];
+  const pending=[];
+  for(const l of links){
+    if(l._stopped||l._stopping||l._writerAmbiguous)throw Error('guest endpoint retired or ambiguous');
+    if(l._readyPromise)pending.push({endpoint:l.endpointIdentity,slot:l.slot,stage:'init'});
+    for(const [seq,p] of l._pending)pending.push({endpoint:l.endpointIdentity,slot:l.slot,seq,stage:p.command});
+  }
+  if(m?.stopped)throw Error('render manager retired');
+  if(m?.pending.size)pending.push({stage:'render',requests:m.pending.size,bytes:m.queuedBytes});
+  if(!g?.link||!m)pending.push({stage:'owner startup'});
+  return {ready:pending.length===0,pending,page,at:Date.now()};
+})()`;
+
+// Context readiness is independent of target attachment and scheduler readiness.
+// Pin Chrome's unique context ID, never a recycled numeric executionContextId.
+// A NOT_READY result issues no Worker request. Once issued, uncertainty seals
+// the shared gate; a later context or late reply cannot retry that scope.
+function workerContexts(gate, onBoundary = () => {}) {
+  const sessions = new Map();
+  function attach(target, parent, sessionId) {
+    assert.equal(target.type, 'worker'); assert.equal(target.parentId, parent.targetId);
+    assert(!sessions.has(sessionId), 'duplicate Worker session');
+    assert(![...sessions.values()].some(s => s.targetId === target.targetId), 'duplicate Worker target');
+    sessions.set(sessionId, {targetId:target.targetId,parentId:parent.targetId,sessionId,context:null,issued:false});
+  }
+  function event(v) {
+    if(v.method==='Target.detachedFromTarget'&&sessions.has(v.params.sessionId)){
+      const s=sessions.get(v.params.sessionId);
+      onBoundary({boundary:'target-retired',at:Date.now(),...s});
+      gate.seal('Worker target retired');return;
+    }
+    const s=sessions.get(v.sessionId); if(!s)return;
+    const emit=(boundary,extra={})=>onBoundary({boundary,at:Date.now(),...s,...extra});
+    if(v.method==='Runtime.executionContextCreated'){
+      const context=v.params.context;
+      if(context.auxData?.isDefault===false)return;
+      if(!context.uniqueId){gate.seal('Worker unique context missing');return;}
+      if(s.context&&s.context.uniqueId!==context.uniqueId){gate.seal('Worker context replaced');return;}
+      s.context=context;emit('context-ready');
+    }else if(v.method==='Runtime.executionContextsCleared'||
+      v.method==='Runtime.executionContextDestroyed'&&
+      (v.params.executionContextUniqueId===s.context?.uniqueId||v.params.executionContextId===s.context?.id)){
+      emit('context-retired');gate.seal('Worker context retired');
+    }else if(v.method==='Runtime.consoleAPICalled'){
+      const args=v.params.args?.map(a=>a.value);
+      if(args?.[0]==='REVOLT_WORKER_BOUNDARY')emit(args[2],{nonce:args[1]});
+    }
+  }
+  async function read(sessionId, send, expression, readiness) {
+    gate.check();const s=sessions.get(sessionId);assert(s,'unowned Worker session');
+    if(!s.context||!readiness?.ready)return {ready:false,pending:!s.context?'context startup':readiness.pending};
+    const nonce=require('node:crypto').randomUUID(),context=s.context.uniqueId;
+    const emit=(boundary,extra={})=>onBoundary({boundary,at:Date.now(),targetId:s.targetId,sessionId,context,nonce,...extra});
+    const body=`(()=>{console.debug('REVOLT_WORKER_BOUNDARY',${JSON.stringify(nonce)},'body-entry');try{return (${expression});}finally{console.debug('REVOLT_WORKER_BOUNDARY',${JSON.stringify(nonce)},'body-end');}})()`;
+    s.issued=true;emit('request-start');
+    try{
+      const reply=await send('Runtime.evaluate',{expression:body,uniqueContextId:context,returnByValue:true},sessionId);
+      gate.check();assert.equal(s.context.uniqueId,context,'Worker context replaced during read');
+      if(reply.exceptionDetails)throw Error('Worker exception '+JSON.stringify(reply.exceptionDetails));
+      emit('reply');return {ready:true,value:reply.result.value,context,targetId:s.targetId};
+    }catch(e){emit('request-failed',{error:String(e)});throw gate.seal('Worker read '+s.targetId+': '+e);}
+  }
+  return {attach,event,read};
+}
+module.exports = {PAGE_READ, DISPLAY_READ, CLASSIFICATION_READY_READ, workerContexts, createGate, connection, childWorkers, verifyReadback};

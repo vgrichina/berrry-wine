@@ -1,6 +1,6 @@
 'use strict';
 const assert = require('node:assert/strict');
-const {createGate, connection, childWorkers, verifyReadback} = require('../tools/revolt-display-admission.cjs');
+const {createGate, connection, childWorkers, verifyReadback, workerContexts} = require('../tools/revolt-display-admission.cjs');
 class Socket {
   constructor() { this.requests = []; queueMicrotask(() => this.onopen()); }
   close() { this.onclose?.(); }
@@ -19,6 +19,32 @@ class Socket {
   assert.throws(()=>childWorkers([empty],page,{...page,targetId:'new-page'}));
   assert.throws(()=>childWorkers([empty],page,{...page,url:page.url+'?new'}));
   assert.equal([empty].filter(t=>t.url.startsWith('http://localhost/lib/')).length,0,'old URL admission excludes actual child');
+  {
+    const gate=createGate(),trace=[],contexts=workerContexts(gate,v=>trace.push(v)),wire=[];
+    contexts.attach(empty,page,'session');
+    const send=async(method,params,sessionId)=>{wire.push({method,params,sessionId});return {result:{value:{endpoint:7,slot:0}}};};
+    assert.equal((await contexts.read('session',send,'1',{ready:true})).ready,false);
+    assert.equal(wire.length,0,'attachment is not execution-context readiness');
+    contexts.event({sessionId:'foreign',method:'Runtime.executionContextCreated',params:{context:{id:1,uniqueId:'foreign'}}});
+    assert.equal((await contexts.read('session',send,'1',{ready:true})).ready,false);
+    contexts.event({sessionId:'session',method:'Runtime.executionContextCreated',params:{context:{id:1,uniqueId:'actual-context'}}});
+    assert.equal((await contexts.read('session',send,'1',{ready:false,pending:['boot']})).ready,false);
+    assert.equal(wire.length,0,'known busy/startup sends no execution request');
+    assert.deepEqual((await contexts.read('session',send,'({endpoint:7,slot:0})',{ready:true})).value,{endpoint:7,slot:0});
+    assert.equal(wire[0].params.uniqueContextId,'actual-context');
+    assert.equal(wire[0].sessionId,'session');
+    assert.deepEqual(trace.map(v=>v.boundary),['context-ready','request-start','reply']);
+    contexts.event({sessionId:'session',method:'Runtime.executionContextCreated',params:{context:{id:1,uniqueId:'replacement'}}});
+    await assert.rejects(contexts.read('session',send,'1',{ready:true}),/context replaced/);
+    assert.equal(wire.length,1,'recycled numeric context cannot issue');
+    assert.throws(()=>workerContexts(createGate()).attach({...empty,parentId:'foreign'},page,'s'));
+  }
+  for(const kind of ['exception','transport']){
+    const gate=createGate(),contexts=workerContexts(gate);
+    contexts.attach(empty,page,'s');contexts.event({sessionId:'s',method:'Runtime.executionContextCreated',params:{context:{id:1,uniqueId:'u'}}});
+    await assert.rejects(contexts.read('s',async()=>{if(kind==='transport')throw Error('transport lost');return {exceptionDetails:{text:'actual exception'}};},'1',{ready:true}),/UNKNOWN/);
+    assert(gate.closed);
+  }
   for (const kind of ['error','timeout','exception','session']) {
     const closed=[], gate=createGate(v=>closed.push(v));
     const startup=connection('fixture',gate,{WebSocketClass:Socket,timeoutMs:25});
