@@ -5516,7 +5516,7 @@
     (local $ckey i32) (local $col i32)
     (local $drblt_flags i32) (local $src_keyed i32)
     (local $clipper i32) (local $clip_entry i32) (local $clip_data i32)
-    (local $scroll_viewport i32)
+    (local $scroll_viewport i32) (local $gps_fill i32)
     (local.set $dst_entry (call $dx_from_this (local.get $arg0)))
     (call $host_dx_trace (i32.const 12) (call $dx_slot_of (local.get $dst_entry))
       (if (result i32) (local.get $arg2)
@@ -5540,7 +5540,13 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
         (return)))
-    (call $d3dim_site_fence (local.get $dst_entry) (i32.const 3))
+    ;; A sourceless colour fill of a GPU target is replayed on the GPU
+    ;; ($d3dim_gps_fill_end below) instead of reading the target back.
+    (if (i32.and (i32.eqz (local.get $arg2))
+          (i32.eq (i32.and (local.get $arg4) (i32.const 0x02000400)) (i32.const 0x400)))
+      (then (local.set $gps_fill (call $d3dim_gps_fill_begin (local.get $dst_entry)))))
+    (if (i32.eqz (local.get $gps_fill))
+      (then (call $d3dim_site_fence (local.get $dst_entry) (i32.const 3))))
     (if (local.get $arg2) (then
       (call $d3dim_site_fence (call $dx_from_this (local.get $arg2)) (i32.const 2))))
     (local.set $dst_dib (load.field DxObject misc1 (local.get $dst_entry)))
@@ -5645,6 +5651,9 @@
               (i32.eqz (local.get $clip_entry)))
           (then (drop (call $d3dim_gpu_depth_fill (local.get $dst_entry) (local.get $row)
             (local.get $dx) (local.get $dy) (local.get $dw) (local.get $dh)))))
+        (if (local.get $gps_fill)
+          (then (call $d3dim_gps_fill_end (local.get $dst_entry) (local.get $row)
+            (local.get $dx) (local.get $dy) (local.get $dw) (local.get $dh))))
         ;; If dest is primary, present
         (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
           (then (call $dx_present (local.get $dst_entry))))
@@ -7088,7 +7097,10 @@
     (local $entry i32) (local $slot i32) (local $hdc i32)
     ;; GDI reads and writes the surface bits directly.
     (local.set $entry (call $dx_from_this (local.get $arg0)))
-    (call $d3dim_site_fence (local.get $entry) (i32.const 1))
+    ;; A GPU target is opened deferred when it can be: GDI's own accesses
+    ;; then decide whether its GPU-only pixels are read back at all.
+    (if (i32.eqz (call $d3dim_gps_getdc_defer (local.get $entry)))
+      (then (call $d3dim_site_fence (local.get $entry) (i32.const 1))))
     (call $d3dim_gpu_unpark (local.get $entry))
     (local.set $slot (i32.div_u
       (i32.sub (local.get $entry) (global.get $DX_OBJECTS))
@@ -7361,6 +7373,10 @@
     (call $d3dim_gpu_barrier)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $slot (call $dx_slot_of (local.get $entry)))
+    ;; A deferred DC uploads what GDI wrote; the frame stays GPU-owned, so a
+    ;; following Flip can still be a GPU Flip.
+    (if (call $d3dim_gps_releasedc (local.get $entry))
+      (then (global.set $d3dim_worker_pending (i32.const 1))))
     (call $gdi_dx_dc_release (local.get $arg1))
     ;; If primary, present on ReleaseDC (mirrors Unlock). Apps like ddex2
     ;; draw via GetDC/StretchBlt/ReleaseDC without ever calling Lock/Unlock,

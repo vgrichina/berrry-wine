@@ -2257,6 +2257,10 @@
     (if (i32.eqz (call $gdi_raster_clip_visible_row
           (local.get $hdc) (local.get $desc) (local.get $x) (local.get $y)))
       (then (return (i32.const 0))))
+    ;; A deferred DirectDraw DC (09abg $d3dim_gps_getdc_defer) learns the
+    ;; pixel before it is written.
+    (if (global.get $d3g_gdi_text_t)
+      (then (call $d3dim_gps_gdi_pixel (local.get $x) (local.get $y))))
     (if (i32.and
           (i32.le_u (i32.load offset=16 (local.get $desc)) (i32.const 8))
           (i32.eq (i32.and (local.get $color) (i32.const 0xFFFF0000))
@@ -2949,8 +2953,16 @@
               (i32.eqz (local.get $text)))))
       (then (return (i32.const 0))))
     (local.set $desc (global.get $GDI_BITMAP_FONT_DESC))
+    ;; Text reads no destination pixels: a DirectDraw DC whose GPU target was
+    ;; opened deferred stays deferred, and each pixel written below is
+    ;; reported to $d3dim_gps_gdi_pixel instead.
+    (global.set $d3g_gdi_text_t (i32.const 0))
+    (global.set $gdi_dx_bounded (i32.const 1))
     (if (i32.eqz (call $gdi_surface_descriptor (local.get $hdc) (local.get $desc)))
-      (then (return (i32.const 0))))
+      (then
+        (global.set $gdi_dx_bounded (i32.const 0))
+        (return (i32.const 0))))
+    (global.set $gdi_dx_bounded (i32.const 0))
     ;; Native Win98 accepts ETO_OPAQUE/ETO_CLIPPED with no rectangle: there is
     ;; no extra rectangle operation, but text and TA_UPDATECP execute. D3DX fonts
     ;; depend on that advance when deciding whether a glyph is empty.

@@ -53,7 +53,44 @@ for (let y = 70; y < Math.min(410, png.height); y++) {
   }
 }
 
+// The captions TextOut'd through GetDC at y=0 and y=432 every frame.
+let captionPixels = 0;
+for (const [y0, y1] of [[0, 16], [432, 448]]) {
+  for (let y = y0; y < Math.min(y1, png.height); y++) {
+    for (let x = 0; x < png.width; x++) {
+      const off = (y * png.width + x) * 4;
+      if (png.data[off] || png.data[off + 1] || png.data[off + 2]) captionPixels++;
+    }
+  }
+}
+
 fs.rmSync(outDir, { recursive: true, force: true });
 assert.ok(centerPixels > 1000,
   `Flip3DTL HUD advanced but animated cube was absent (${centerPixels} center pixels)`);
-console.log(`PASS  Flip3DTL rasterizes its animated cube (${centerPixels} center pixels)`);
+assert.ok(captionPixels > 100,
+  `Flip3DTL's GetDC captions did not reach the GPU frame (${captionPixels} caption pixels)`);
+
+// Per frame Flip3DTL colour-fills its back buffer, draws the cube, then
+// GetDC/TextOut/ReleaseDC and Flips. Neither the fill nor the text reads a
+// GPU-owned pixel, so no frame may be read back: the fill is a GPU CLEAR,
+// the DC stays deferred and only the text rects are uploaded, and the Flip
+// stays a GPU Flip (src/09abg-d3dim-gps.wat $d3dim_gps_getdc_defer).
+const stat = (line, name) => {
+  const m = new RegExp(`(?:^| )${name}=(\\d+)`).exec(line || '');
+  assert.ok(m, `missing ${name} in d3dim-gps stats\n${output.slice(-4000)}`);
+  return Number(m[1]);
+};
+const lines = output.split('\n');
+const main = lines.find(s => s.startsWith('[d3dim-gps] draws='));
+const sites = lines.find(s => s.startsWith('[d3dim-gps] readback sites'));
+const flips = stat(main, 'flips');
+const uploads = stat(main, 'uploads');
+assert.ok(flips >= 3, `Flip3DTL Flips took the CPU path (flips=${flips})\n${main}`);
+assert.strictEqual(stat(sites, 'getDC'), 0, `GetDC read the GPU frame back\n${sites}`);
+assert.strictEqual(stat(sites, 'bltDst'), 0, `the colour fill read the GPU frame back\n${sites}`);
+assert.strictEqual(stat(main, 'readbacks'), stat(sites, 'capture'),
+  `a readback other than the harness capture\n${main}\n${sites}`);
+assert.ok(stat(sites, 'getDCDeferred') >= flips, `GetDC was not deferred\n${sites}`);
+assert.ok(uploads <= 2 * flips + 4, `more than the two caption uploads per frame (${uploads} for ${flips} flips)`);
+console.log(`PASS  Flip3DTL rasterizes its animated cube (${centerPixels} center pixels, `
+  + `${captionPixels} caption pixels); ${flips} GPU flips, 0 frame readbacks, ${uploads} uploads`);
