@@ -10,6 +10,8 @@
     (local $mapped_size i32) (local $copy_size i32) (local $initialized_size i32)
 
     (if (global.get $native_store_on) (then (call $native_store_invalidate)))
+    (if (i32.and (global.get $selective_watch_on) (global.get $selective_watch_running))
+      (then (i32.atomic.store offset=20 (global.get $SELECTIVE_WATCH) (i32.const 4))))
     (if (global.get $pending_seen) (then (call $pending_gap)))
     (if (i32.ne (i32.load16_u (global.get $PE_STAGING)) (i32.const 0x5A4D)) (then (return (i32.const -1))))
     (local.set $pe_off (i32.add (global.get $PE_STAGING)

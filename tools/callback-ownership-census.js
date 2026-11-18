@@ -197,14 +197,25 @@ function checkNonlocalAPIs(sources, api = []) {
 // Separate feature reviews avoid committing unrelated shared-worktree registry
 // edits. Each step must anchor the preceding reviewed hash; check() still
 // validates the resulting review against the base inventory and producer shape.
-function chainReviews(base, steps) {
+function chainReviews(base, steps, census = {entries: []}) {
   const result = JSON.parse(JSON.stringify(base));
   if (result.version !== 1 || !Array.isArray(result.revisions)) throw Error('invalid base reviews');
   for (const step of steps) {
     if (step.version !== 1 || !Array.isArray(step.revisions) || Object.keys(step).some(k => !['version', 'revisions'].includes(k))) throw Error('invalid feature reviews');
     const seen = new Set();
     for (const review of step.revisions) {
-      const id = key(review), prior = result.revisions.find(r => key(r) === id);
+      const id = key(review);
+      let prior = result.revisions.find(r => key(r) === id);
+      // A producer's first feature review anchors the immutable census itself.
+      // Later feature reviews must still anchor the preceding reviewed hash.
+      if (!prior) {
+        const original = census.entries.find(r => key(r) === id);
+        if (original && original.sha256 === review.baseSHA256) {
+          prior = {file: original.file, name: original.name,
+            baseSHA256: original.sha256, sha256: original.sha256, reason: ''};
+          result.revisions.push(prior);
+        }
+      }
       if (seen.has(id) || !prior || review.baseSHA256 !== prior.sha256 ||
           !/^[a-f0-9]{64}$/.test(review.sha256 || '') || !review.reason?.trim() ||
           Object.keys(review).some(k => !['file', 'name', 'baseSHA256', 'sha256', 'reason'].includes(k))) throw Error(`invalid feature review anchor ${id}`);
@@ -218,7 +229,8 @@ function chainReviews(base, steps) {
 function loadReviews() {
   const directory = path.join(__dirname, 'callback-ownership-reviews');
   const steps = fs.existsSync(directory) ? fs.readdirSync(directory).filter(n => n.endsWith('.json')).sort().map(n => JSON.parse(fs.readFileSync(path.join(directory, n), 'utf8'))) : [];
-  const reviews = chainReviews(JSON.parse(fs.readFileSync(path.join(__dirname, 'callback-ownership-revisions.json'), 'utf8')), steps);
+  const reviews = chainReviews(JSON.parse(fs.readFileSync(path.join(__dirname, 'callback-ownership-revisions.json'), 'utf8')), steps,
+    JSON.parse(fs.readFileSync(CENSUS, 'utf8')));
   return reviews;
 }
 function main() {

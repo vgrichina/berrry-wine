@@ -1,3 +1,119 @@
+  ;; Bounded, process-shared, constructor-derived observation. No instruction
+  ;; stepping, guest stores, yields, or new import. Negative log_eip tags
+  ;; -16..-23 belong to this protocol only while explicitly configured.
+  ;; One allocation per scope. Numeric-pointer reuse is loss, never a new lease.
+  (global $selective_watch_on (mut i32) (i32.const 0))
+  (global $selective_watch_used (mut i32) (i32.const 0))
+  (global $selective_watch_running (mut i32) (i32.const 0))
+  (global $selective_watch_ctor (mut i32) (i32.const 0))
+  (global $selective_watch_zero (mut i32) (i32.const 0))
+  (global $selective_watch_dtor (mut i32) (i32.const 0))
+  (global $selective_watch_free (mut i32) (i32.const 0))
+  (global $selective_watch_source (mut i32) (i32.const 0))
+  (global $selective_watch_primary (mut i32) (i32.const 0))
+  (global $selective_watch_ref (mut i32) (i32.const 0))
+  (global $selective_watch_wa (mut i32) (i32.const 0))
+  (global $selective_watch_len (mut i32) (i32.const 0))
+  (global $SELECTIVE_WATCH i32 (region.addr $SELECTIVE_WATCH 0))
+  (global $SELECTIVE_WATCH_SIZE i32 (i32.const 128))
+  (func (export "selective_watch_base") (result i32) (global.get $SELECTIVE_WATCH))
+  (func (export "selective_watch_field") (param $field i32) (result i32)
+    (if (i32.eq (local.get $field) (i32.const 0)) (then (return (global.get $selective_watch_on))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (global.get $selective_watch_source))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (global.get $selective_watch_primary))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (global.get $selective_watch_ref))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (global.get $selective_watch_wa))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (global.get $selective_watch_len))))
+    (i32.const -1))
+  (func $selective_watch_emit (param $tag i32)
+    (if (i32.ge_u (i32.atomic.rmw.add offset=24 (global.get $SELECTIVE_WATCH) (i32.const 1)) (i32.const 64))
+      (then
+        (i32.atomic.store offset=20 (global.get $SELECTIVE_WATCH) (i32.const 1))
+        (call $host_log_eip (i32.const -22)))
+      (else (call $host_log_eip (local.get $tag)))))
+  (func $selective_watch_check (param $wa i32) (param $len i32) (param $source i32)
+    (local $p i32) (local $pw i32) (local $primary i32) (local $refs i32)
+    (local.set $p (i32.atomic.load (global.get $SELECTIVE_WATCH)))
+    (if (i32.eqz (local.get $p)) (then (return)))
+    ;; Accept only a single directly mapped, contiguous object. A mapping loss
+    ;; emits UNKNOWN instead of reading the unmapped sentinel as a valid zero.
+    (local.set $pw (call $g2w_affine_span (local.get $p) (i32.const 16)))
+    (if (i32.eq (local.get $pw) (i32.const 0xF0)) (then
+      (i32.atomic.store offset=20 (global.get $SELECTIVE_WATCH) (i32.const 2))
+      (call $selective_watch_emit (i32.const -22)) (return)))
+    (if (local.get $source) (then
+      ;; write_one's extent is the containing page, not [wa,wa+4096).
+      (if (i32.eq (local.get $source) (i32.const 1))
+        (then
+          (if (i32.ne (i32.shr_u (local.get $wa) (i32.const 12))
+                      (i32.shr_u (local.get $pw) (i32.const 12))) (then (return))))
+        (else (if (i32.eq (local.get $source) (i32.const 2)) (then
+          (if (i32.eqz (call $native_store_overlap (local.get $wa) (local.get $len)
+                (local.get $pw) (i32.add (local.get $pw) (i32.const 16)))) (then (return)))))))))
+    (local.set $primary (i32.load (local.get $pw)))
+    (local.set $refs (i32.load offset=12 (local.get $pw)))
+    (global.set $selective_watch_source (local.get $source))
+    (global.set $selective_watch_primary (local.get $primary))
+    (global.set $selective_watch_ref (local.get $refs))
+    (global.set $selective_watch_wa (local.get $wa))
+    (global.set $selective_watch_len (local.get $len))
+    (if (i32.eqz (i32.atomic.load offset=8 (global.get $SELECTIVE_WATCH))) (then
+      (if (i32.and (i32.eq (local.get $primary) (i32.atomic.load offset=4 (global.get $SELECTIVE_WATCH)))
+                    (i32.ne (local.get $refs) (i32.const 0))) (then
+        (if (i32.eqz (i32.atomic.rmw.cmpxchg offset=8 (global.get $SELECTIVE_WATCH) (i32.const 0) (i32.const 1)))
+          (then (call $selective_watch_emit (i32.const -23))))))
+      (return)))
+    (if (i32.ne (local.get $primary) (i32.atomic.load offset=4 (global.get $SELECTIVE_WATCH))) (then
+      (if (i32.eqz (i32.and (i32.atomic.rmw.or offset=12 (global.get $SELECTIVE_WATCH) (i32.const 1)) (i32.const 1)))
+        (then (call $selective_watch_emit (i32.const -17))))))
+    (if (i32.eqz (local.get $refs)) (then
+      (if (i32.eqz (i32.and (i32.atomic.rmw.or offset=12 (global.get $SELECTIVE_WATCH) (i32.const 2)) (i32.const 2)))
+        (then (call $selective_watch_emit (i32.const -18)))))))
+  (func $selective_watch_block
+    (local $p i32) (local $arg i32)
+    (global.set $selective_watch_running (i32.const 1))
+    (if (i32.atomic.load offset=20 (global.get $SELECTIVE_WATCH))
+      (then (call $selective_watch_emit (i32.const -22)) (return)))
+    (if (i32.eq (global.get $eip) (global.get $selective_watch_ctor)) (then
+      (local.set $p (i32.load offset=4 (global.get $reg_base)))
+      (if (i32.or (i32.eqz (local.get $p))
+            (i32.ne (i32.atomic.rmw.cmpxchg (global.get $SELECTIVE_WATCH) (i32.const 0) (local.get $p)) (i32.const 0)))
+        (then
+          (i32.atomic.store offset=20 (global.get $SELECTIVE_WATCH) (i32.const 3))
+          (call $selective_watch_emit (i32.const -22)))
+        (else (call $selective_watch_emit (i32.const -16))))))
+    (call $selective_watch_check (i32.const 0) (i32.const 0) (i32.const 0))
+    (local.set $p (i32.atomic.load (global.get $SELECTIVE_WATCH)))
+    (if (i32.eqz (local.get $p)) (then (return)))
+    (if (i32.and (i32.eq (global.get $eip) (global.get $selective_watch_zero))
+                 (i32.eq (i32.load offset=28 (global.get $reg_base)) (local.get $p)))
+      (then (call $selective_watch_emit (i32.const -19))))
+    (if (i32.and (i32.eq (global.get $eip) (global.get $selective_watch_dtor))
+                 (i32.eq (i32.load offset=4 (global.get $reg_base)) (local.get $p)))
+      (then (call $selective_watch_emit (i32.const -20))))
+    (if (i32.eq (global.get $eip) (global.get $selective_watch_free)) (then
+      (local.set $arg (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+      (if (i32.eq (local.get $arg) (local.get $p))
+        (then (call $selective_watch_emit (i32.const -21)))))))
+  (func (export "set_selective_watch") (param $ctor i32) (param $zero i32)
+      (param $dtor i32) (param $free i32) (param $vtable i32)
+    ;; Shared terminal state is never reset; fresh memory owns a fresh scope.
+    (if (local.get $ctor) (then
+      (if (global.get $selective_watch_used) (then (unreachable)))
+      (if (i32.or (i32.eqz (local.get $vtable))
+            (i32.and (i32.ne (i32.atomic.rmw.cmpxchg offset=4 (global.get $SELECTIVE_WATCH)
+                               (i32.const 0) (local.get $vtable)) (i32.const 0))
+                     (i32.ne (i32.atomic.load offset=4 (global.get $SELECTIVE_WATCH)) (local.get $vtable))))
+        (then (unreachable)))
+      (global.set $selective_watch_used (i32.const 1))))
+    (global.set $selective_watch_on (i32.ne (local.get $ctor) (i32.const 0)))
+    (global.set $selective_watch_ctor (local.get $ctor))
+    (global.set $selective_watch_zero (local.get $zero))
+    (global.set $selective_watch_dtor (local.get $dtor))
+    (global.set $selective_watch_free (local.get $free))
+    (call $dbg_recompute)
+    (call $clear_cache))
+
   ;; Opt-in NULL boundary diagnostics. Existing log_eip import only; no arena.
   ;; Negative tags -1..-6 belong to this protocol only while explicitly armed.
   (global $null_diag_on (mut i32) (i32.const 0))
@@ -749,6 +865,7 @@
                 (i32.or (i32.eqz (global.get $trace_eip_hi))
                         (i32.le_u (global.get $eip) (global.get $trace_eip_hi))))
             (then (call $host_log_eip (global.get $eip))))))
+      (if (global.get $selective_watch_on) (then (call $selective_watch_block)))
       (if (global.get $handler_hist_enabled)
         (then (call $hot_block_hist_record (global.get $eip))))
       ))
@@ -2158,6 +2275,8 @@
     (local $pe_off i32)
     (if (global.get $pending_seen) (then (call $pending_gap)))
     (if (global.get $native_store_on) (then (call $native_store_invalidate)))
+    (if (i32.and (global.get $selective_watch_on) (global.get $selective_watch_running))
+      (then (i32.atomic.store offset=20 (global.get $SELECTIVE_WATCH) (i32.const 4))))
     (call $gdi_thread_scratch_init (local.get $tid))
     ;; A reused Worker instance must not retain heap-backed queue overflow from
     ;; its previous guest thread. Do this before replacing allocator cursors.
@@ -2975,6 +3094,7 @@
               (i32.or (i32.ne (global.get $trace_eip_flag) (i32.const 0))
                       (i32.ne (global.get $handler_hist_enabled) (i32.const 0))))))))
     (global.set $dbg_any (i32.or (global.get $dbg_any) (global.get $native_store_on)))
+    (global.set $dbg_any (i32.or (global.get $dbg_any) (global.get $selective_watch_on)))
     (global.set $dbg_chain_guard (global.get $dbg_any))
     (if (global.get $benchmark_chain_bp)
       (then (global.set $dbg_chain_guard
@@ -2986,7 +3106,7 @@
     ;; Not a debug facility: a depth-0 frame owes the spill's full flush, which
     ;; only $run's desk takes (04-cache.wat $sync_depth_leave).
     (global.set $dbg_chain_guard
-      (i32.or (global.get $native_store_on)
+      (i32.or (i32.or (global.get $native_store_on) (global.get $selective_watch_on))
         (i32.or (global.get $dbg_chain_guard) (global.get $spill_desk_forced))))
     ;; The same set minus the histogram. Benchmark mode exempts the breakpoint
     ;; here exactly as it does above, so the tier's behaviour under
@@ -3001,7 +3121,8 @@
             (i32.or (i32.ne (global.get $trace_esp_flag) (i32.const 0))
                     (i32.ne (global.get $trace_eip_flag) (i32.const 0)))))))
     ;; Store receipts require original instruction boundaries and gsN helpers.
-    (global.set $dbg_tier_guard (i32.or (global.get $dbg_tier_guard) (global.get $native_store_on))))
+    (global.set $dbg_tier_guard (i32.or (global.get $dbg_tier_guard)
+      (i32.or (global.get $native_store_on) (global.get $selective_watch_on)))))
   (func (export "get_dbg_tier_guard") (result i32) (global.get $dbg_tier_guard))
   (func (export "set_benchmark_chain_bp") (param $on i32)
     (global.set $benchmark_chain_bp (local.get $on)) (call $dbg_recompute))

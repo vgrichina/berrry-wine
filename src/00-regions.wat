@@ -1145,3 +1145,7 @@
     (owner "09ae-d3d9-resources.wat:$d3d9_texture_touch"))
   (region.declare $D3D9_TEXTURE_DECODE (size 0x00008000) (align 0x00001000)
     (owner "09ae-d3d9-resources.wat:$d3d9_texture_decode_scratch"))
+
+  ;; Optional constructor-derived diagnostic; appended to preserve old bases.
+  (region.declare $SELECTIVE_WATCH (size 0x00000080) (align 128)
+    (owner "13-exports.wat:$selective_watch_check"))

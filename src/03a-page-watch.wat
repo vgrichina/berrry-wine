@@ -104,12 +104,17 @@
 
   (func $page_watch_write_one (param $wa i32)
     (local $cell i32)
+    ;; A page notification is an observation boundary, NOT an exact writer PC.
+    (if (global.get $selective_watch_on)
+      (then (call $selective_watch_check (local.get $wa) (i32.const 4096) (i32.const 1))))
     (local.set $cell (call $page_watch_cell (local.get $wa)))
     (if (i32.eqz (local.get $cell)) (then (return)))
     (if (i32.atomic.load (local.get $cell)) (then (call $page_watch_bump (local.get $cell)))))
 
   (func $page_watch_write (export "page_watch_write") (param $wa i32) (param $len i32)
     (local $page i32) (local $end i32)
+    (if (global.get $selective_watch_on)
+      (then (call $selective_watch_check (local.get $wa) (local.get $len) (i32.const 2))))
     (if (i32.eqz (call $page_watch_valid (local.get $wa) (local.get $len))) (then (return)))
     (local.set $page (i32.and (local.get $wa) (i32.const -4096)))
     (local.set $end (i32.add (local.get $wa) (i32.sub (local.get $len) (i32.const 1))))

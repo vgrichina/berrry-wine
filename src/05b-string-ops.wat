@@ -19,6 +19,10 @@
   ;; backing, so validate the complete spans before using memory.copy/fill.
   ;; The byte fallback also preserves memmove overlap semantics.
   (func $guest_memmove (param $dst i32) (param $src i32) (param $size i32)
+    (call $guest_memmove_body (local.get $dst) (local.get $src) (local.get $size))
+    (if (global.get $selective_watch_on)
+      (then (call $selective_watch_check (i32.const 0) (i32.const 0) (i32.const 3)))))
+  (func $guest_memmove_body (param $dst i32) (param $src i32) (param $size i32)
     (local $i i32) (local $chunk i32) (local $remaining i32)
     ;; This bulk API has no architectural REP continuation. Refuse it before
     ;; any notification/store in the opt-in REP debugger mode.
@@ -92,6 +96,10 @@
           (br $forward))))))
 
   (func $guest_memset (param $dst i32) (param $value i32) (param $size i32)
+    (call $guest_memset_body (local.get $dst) (local.get $value) (local.get $size))
+    (if (global.get $selective_watch_on)
+      (then (call $selective_watch_check (i32.const 0) (i32.const 0) (i32.const 3)))))
+  (func $guest_memset_body (param $dst i32) (param $value i32) (param $size i32)
     (local $i i32) (local $chunk i32)
     (if (global.get $rep_store_step) (then (unreachable)))
     (if (i32.eqz (local.get $size)) (then (return)))
@@ -182,6 +190,10 @@
   ;; element count and must be nonzero; n*w wraps exactly as the old
   ;; per-width bodies' `n << 2` did.
   (func $rep_movs_mem (param $edi i32) (param $esi i32) (param $n i32) (param $w i32)
+    (call $rep_movs_mem_body (local.get $edi) (local.get $esi) (local.get $n) (local.get $w))
+    (if (global.get $selective_watch_on)
+      (then (call $selective_watch_check (i32.const 0) (i32.const 0) (i32.const 3)))))
+  (func $rep_movs_mem_body (param $edi i32) (param $esi i32) (param $n i32) (param $w i32)
     (local $bytes i32) (local $dst i32) (local $src i32) (local $step i32)
     (local $i i32) (local $d i32) (local $s i32)
     ;; Direct optimized-tier callers have no per-element continuation here.
@@ -256,6 +268,10 @@
   ;; one repeated byte, else one element and then doubling copies of what is
   ;; already written. Non-linear spans keep the element loop.
   (func $rep_stos_mem (param $edi i32) (param $n i32) (param $w i32) (param $v i64)
+    (call $rep_stos_mem_body (local.get $edi) (local.get $n) (local.get $w) (local.get $v))
+    (if (global.get $selective_watch_on)
+      (then (call $selective_watch_check (i32.const 0) (i32.const 0) (i32.const 3)))))
+  (func $rep_stos_mem_body (param $edi i32) (param $n i32) (param $w i32) (param $v i64)
     (local $bytes i32) (local $dst i32) (local $step i32) (local $i i32) (local $d i32)
     (local $b i32) (local $wa i32) (local $k i32) (local $c i32) (local $mask i64)
     (if (global.get $rep_store_step) (then (unreachable)))

@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/08-pe-loader.wat",
+      "name": "$load_pe",
+      "baseSHA256": "9f3547626c8598daf65356e18ce615221af62cf43acfb144ce4f74facb9d0df5",
+      "sha256": "eedc4acaf2bd9dd3d3950e7c6edfeecaea7592ba5c09161ff44694a954f42b05",
+      "reason": "Review 20261118 Blood II selective diagnostic: default-off constructor-derived pointer and first-state observations through existing log_eip only. run adds a native block filter; init_thread/load_pe mark an armed observation lost on reset. No guest callback, stack/register restoration, callback admission, input, clock or lifetime ownership change. Page/bulk/block observations do not identify an exact writing instruction or concurrent writer. Native transient/REP/shared/reset/bound/disposal plus authentic IMRT/normal Worker software-render on-off controls are required before an original. Broader callback ownership remains pending. Run 20261118-blood2-selective-native-lifetime-watch."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "8d90b943316f8842b1ee2313fd7346fea8e01ae86ebcb808d5385aa3c4870590",
+      "sha256": "3b7a3da6a0b32c81a5654b1acb755552c8f35f52ac5e6382b44216566f009e56",
+      "reason": "Review 20261118 Blood II selective diagnostic: default-off constructor-derived pointer and first-state observations through existing log_eip only. run adds a native block filter; init_thread/load_pe mark an armed observation lost on reset. No guest callback, stack/register restoration, callback admission, input, clock or lifetime ownership change. Page/bulk/block observations do not identify an exact writing instruction or concurrent writer. Native transient/REP/shared/reset/bound/disposal plus authentic IMRT/normal Worker software-render on-off controls are required before an original. Broader callback ownership remains pending. Run 20261118-blood2-selective-native-lifetime-watch."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:init_thread",
+      "baseSHA256": "b3ad400557c4b13c68af1986b3800966e1ba0909948260efbc8b05cc88efeb46",
+      "sha256": "07769bec1698f98632ebab504b9288d1566a1be31cdfba62a41f20468a4a3e13",
+      "reason": "Review 20261118 Blood II selective diagnostic: default-off constructor-derived pointer and first-state observations through existing log_eip only. run adds a native block filter; init_thread/load_pe mark an armed observation lost on reset. No guest callback, stack/register restoration, callback admission, input, clock or lifetime ownership change. Page/bulk/block observations do not identify an exact writing instruction or concurrent writer. Native transient/REP/shared/reset/bound/disposal plus authentic IMRT/normal Worker software-render on-off controls are required before an original. Broader callback ownership remains pending. Run 20261118-blood2-selective-native-lifetime-watch."
+    }
+  ]
+}
