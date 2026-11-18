@@ -57,8 +57,69 @@ UP proofs are reused only for their unchanged claims.
 
 The corrected native controls and focused checks, plus the locked full build,
 precede publication and the authorized fresh registered original. Its frozen
-c9/7d347/135-media/genuine-chooser preparation will add only the tested native
+c9/7d347/135-media/genuine-chooser preparation added only the tested native
 wait source correction and the bounded attribution diagnostic; dynamic actual
 owner inventory, binder and sampled reader remain in use. The original 500ms
 confirmation, 15-second gameplay review, independent UP, operation/identity
 checks and 250ms native producer fence stay binding.
+
+The correction is published as `5aa5dabdf`; strict pull/push both returned 0.
+The first locked build encountered another owner's silent-handler inventory
+WIP; the final locked build passed after that owner corrected it. Native
+source/guard and legacy input checks passed before publication. The existing
+GL native guard regression also passed. One invocation of the separate GL
+browser test omitted its required arguments and failed at argument validation;
+it is not an executed GL native case or a claimed pass.
+
+The one fresh original registered and closed normally under independent finite
+and disk watchdogs. Dynamic inventory recovered the actual seven guest modules
+and one render module with 7d347 bytes. Retired slot 2 / endpoint 3 retained its
+normal-return and thread-ID reuse provenance with unknown byte identity null.
+The actual UI owner, thread 2 / slot 1, made 57,812 native has_pending_message
+calls but only 20 startup check_input calls; the final input poll preceded the
+last wait probe by over five minutes. Its native scene remained at GetMessage
+yield 7 / PC 0x4cba8e, window/focus 98305, process 1000, generation 1. Native
+producer samples now refresh the guard. This confirms the repaired source in
+the game, without claiming that idle wait probes consume physical input.
+
+The main actor made 1,346 GPU stream kicks taking 293,837.61ms in aggregate,
+maximum 2,439.08ms. These durations include synchronous waits and are not CPU
+time. Entry/exit records distinguish synchronous mode 1 from mode 0. The UI's
+largest sampled between-run interval was 2,472.42ms, but an idle native wait
+does not establish starvation of runnable work. Neither a wrong guest clock,
+an interpreter defect nor a runnable starvation branch was proved. Attribution
+and readbacks add observer work; no neutrality claim follows from the controls.
+
+Whole-page reviews found an actual cockpit, road, green opponent and rain,
+with 0 MPH, race time 0:01.67 and 1/1 laps in `original/cockpit-review.png`.
+Its native scene was already 1,229ms old at capture, so the unchanged fence
+correctly denied readiness. Other reviewed checkpoints were white below the
+host strip, including one with a 15ms-old ready native scene. None supplied
+both a fresh reviewed driving frame and admissible native scene. No bind,
+DOWN or UP was sent; throttle, steering, Pause and ordinary game Quit remain
+unproved. Process cleanup is not ordinary Quit. The unused admission helper
+was never invoked. Closed scopes were not replayed.
+
+Read-only witnesses on that same original isolated a concrete remaining
+composition condition. At 272 presents, the retained 640x480 GPU layer had
+nonwhite sampled pixels, but native d3dim_gps_window_present returned zero
+for both the window lookup and render-target 3 lookup. The presenter's stamp
+and CPU present sequence both equaled 1; window and instance identities
+matched, and merged was false. Nevertheless layer.stale() was true and
+_overlayFrameLayer selected no layer. The visible connected presentation
+canvas sampled white, agreeing with the white whole-page captures. In frozen
+lib/host-imports.js the zero native window-present association is itself a
+stale-layer predicate. Its producer/retirement cause is not yet isolated:
+these measurements do not justify removing the fence or changing composition
+ordering, pixels or memory semantics. No speculative rendering fix or extra
+original was attempted.
+
+All seven supervised scopes have actual native and independent watchdog
+waits with both stdout/stderr EOF and no leaked descendants. The authored
+review-timeout scope is the sole expected nonzero native exit. Evidence retains
+Git recovery and owned patches, unique authored inputs, module/media recovery
+identities, measurements and three selected whole-page PNGs; exact duplicate
+captures are recoverable by hash mapping. No box was created: ID, expiry and
+stop receipt are null, state NOT_CREATED. The result closes with the freshness
+repair tested and published, and the native window-present association as the
+remaining concrete blocker.
