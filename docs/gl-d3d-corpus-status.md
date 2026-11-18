@@ -4304,3 +4304,26 @@ native/watch waits with both EOFs and no recorded leaks. These rendering results
 do not establish backend parity or the complete historical27-app goal.
 
 Evidence: `scratch/runs/20261118-nfs3-deferred-publication-visible-frame/result.json`.
+
+## Drakan heading, flame attack and ordinary Quit — 18 November 2026
+
+[Prepared New Game report](re-notes/drakan-menu-input-level-gameplay-20261118.md),
+published through `94a08881d`, records a fresh native original on the retained
+`a51912dd…` module with genuine COMCTL32/COMMCTRL and unchanged media/settings.
+Ordinary reviewed New Game and Normal clicks reach Wartok Canyons. The coordinator
+reviewed whole mounted-level frames: a left pointer action changes mountain/tree
+landmarks, and a subsequent primary click produces orange flame at the dragon's
+mouth. Native consumption and independent releases are recorded. Heading control
+and attack effect are verified; forward travel and enemy damage remain unverified.
+
+Ordinary Escape, highlighted Quit and the genuine in-progress YES confirmation
+lead to guest/native exit0 without cancellation. Final input consumption and
+independent UP succeed; native/watch actual waits retain both EOFs and no leaks.
+Exit occurs at664.838 seconds, before the720-second gameplay cutoff. Earlier
+UNKNOWN scopes remain closed. The preparation repair uses measured native return
+latency and an authored old2500ms-fail/new4000ms-pass control, with its policy fixed
+before the successful original. Focused native/browser controls and locked builds
+passed. This establishes the named native gameplay route; authentic-browser
+gameplay, backend parity and complete27-app coverage are not claimed.
+
+Evidence: `scratch/runs/20261118-drakan-prepared-new-game-mouse-route/result.json`.
