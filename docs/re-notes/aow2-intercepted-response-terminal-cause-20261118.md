@@ -66,5 +66,68 @@ It is not current main. Text recovery checks the immutable expected hash; media
 uses the existing files without substitution or copies. Qualified passive
 Device7/native raster controls and independent UP remain unchanged.
 
-The single original is conditional on publication after the final locked build.
-Its actual rendering or concrete blocker will be recorded here.
+## Single original and concrete remaining blocker
+
+Correction `46f8ea1d5` was committed and immediately published with strict
+pull/push after focused tests and a passing locked build. Intermediate builds
+failed on another owner's changing callback census and region declaration;
+those files were left with their owner. The final build passed. Four additional
+production-collector synthetic races cover completion before/after failure,
+wrong hash and owner loss. An actual reader cancellation was repeated after
+the no-restoration teardown correction. The fresh independent UP control passed.
+
+One registered original then launched through the personally reviewed whole
+launcher image. The actual main Worker ownership read binds slot0, endpoint1
+and the exact older `87ef39648` module. The new original's required package is
+Network ID `2394660.272`, not historical `2346097.272`; its complete owning chain,
+server UUID and actual consumer hash are retained. The last and final transport
+snapshots have 759 required bodies, 465 independently authenticated binary
+consumers, no required failed terminals, no missing receipts and no first fault.
+The independent audit passes all 759. Normal Network completion also passes
+for these requests; no original canceled transfer is silently cleared.
+
+The main menu and default Inioch's Legacy setup were personally reviewed.
+Ordinary Scenario, Single and Start clicks each retain trusted DOWN/UP evidence,
+prearmed independent release, normal acknowledgement and actual release-process
+wait/EOF. No game settings, media, registry, clock or guest state were substituted.
+There is no recorded application fault before termination. The control fixture's
+VariantInit result is not substituted for original execution.
+
+At 03:38:48 UTC, the native supervisor received SIGTERM about 179.5 seconds
+after starting, **before** its configured 900-second deadline. The independent
+watchdog recorded no deadline/disk trigger and minimum /home free space
+1,933,516,800 bytes. Its cancellation followed the supervisor's exit. The driver
+labels every incoming SIGTERM `independent watchdog SIGTERM`; that literal label
+does not identify the sender. The sender and reason remain UNKNOWN. The run
+ended during the natural 15-second wait after the acknowledged Start click,
+before `world-first.png` or its command completion. A command-tool lifetime
+limit is a hypothesis, not a demonstrated initiating cause.
+
+No endpoint request, observation, input, replay or second original followed
+recognition of closure. Actual completed Device7 ground draws, effective raster
+coverage/last writer, terrain, army consequence and ordinary Quit are **not
+reached**. The qualified observer's retained native fixture and historical
+terrain images remain controls/reference only. No rendering defect or rendering
+repair follows from this attempt. The remaining concrete blocker is the
+premature native-supervisor termination; the transport prerequisite passed.
+
+## Custody and retained evidence
+
+Every browser control and the original used native-supervise plus a prearmed
+independent finite disk/deadline watchdog, without a RAM gate. Actual original
+waits are driver124/null, Chrome null/SIGTERM and watchdog0/null, all with both
+pipe EOFs. Native-supervise records exit124/null, `supervisor SIGTERM`, no poll
+error and `leaked:false`. The external invoking command actually waited124.
+Profiles were removed only after retaining/hashing unique wait/EOF records.
+The no-interception control and native callback trace are preserved separately.
+Earlier reusable-adapter controls performed restoration during cleanup; the
+published whole-browser teardown avoids those in-page commands after UNKNOWN.
+
+Evidence retains exact Git, owned new-file/helper patches, immutable source and
+media identities, one unique module, selected named whole PNGs and recovery
+recipes. No command-stream capture, frame series, media copy or source archive
+was written. There is no candidate-corpus entry for AoWII, so candidateId stays
+null rather than using another application's card; global historical evidence
+checker failures are reported separately. Final `result.json` is written last.
+No boxes: ID null, state NOT_CREATED, expiry null, stop receipt null. No workers,
+Python, Wine, foreign edits or deployment. Ownership is released when finalized.
