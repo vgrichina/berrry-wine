@@ -28,6 +28,20 @@ async function exercise(host, link) {
   const n = host._sendTraceCount;
   assert.equal(await host._dispatchThreadSendToLink(link, args(0), 0, null, {}), 0);
   assert.equal(host._sendTraceCount, n, 'unarmed path retains nothing');
+  // Use the actual Worker/local nested callback, past the ordinary allowance.
+  host.threadSendFrameTraceFailureReserve = true;
+  host._sendTraceCount = 255;
+  host.threadSendFrameTrace = r => receipts.push(r);
+  receipts.length = 0;
+  assert.equal(await host._dispatchThreadSendToLink(link, args(0), 0, null, {}), 0);
+  assert.equal(receipts.length, 0, 'late success cannot consume failure reserve');
+  host.processSendResolver = async () => { throw error; };
+  await assert.rejects(host._dispatchThreadSendToLink(link, args(0), 0, null, {}), e => e === error);
+  assert.equal(receipts.length, 1);
+  assert.equal(receipts[0].failureReserved, true);
+  assert.equal(receipts[0].sequence, 256);
+  assert.equal(receipts[0].first.at(-1).error, error.message);
+  assert.equal(host._beginThreadSendFrameTrace(link, {}, 0, {}), null, 'cap stays 256');
 }
 
 (async () => {
