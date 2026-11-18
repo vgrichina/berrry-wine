@@ -70,7 +70,9 @@ async function bind(review = null) {
     const rr = read(review + '.json'), personal = read(review + '-review.json');
     ok(now() - rr.at >= 0 && now() - rr.at < 30 && now() - personal.at >= 0 && now() - personal.at < 30, 'binding review expired');
     ok(personal.pngSHA256 === rr.pngSHA256 && rr.pngSHA256 === sha(P(review + '.png')));
-    command.reviewedScene = { route: 'native-scene-v1', snapshot: rr.snapshot, pngSHA256: rr.pngSHA256 };
+    ok(rr.receipt?.contract === 'native-whole-capture-v1' && rr.receipt.pngSHA256 === rr.pngSHA256,
+      'binding requires the issued whole-capture receipt');
+    command.reviewedScene = { route: 'native-scene-v1', snapshot: rr.snapshot, pngSHA256: rr.pngSHA256, receipt: rr.receipt };
   }
   save('bind-intent.json', { at: now(), permanent: true, review });
   save('input-owner.json', await call(command)); const s = await call({ action: 'snapshot' });
@@ -135,7 +137,17 @@ async function capture(name, operationDeadline = null) {
       if (operationDeadline !== null) ok(now() < operationDeadline, '3000ms operation completion exceeded');
       return value;
     };
-    const start = now(); const s = await observe({ action: 'snapshot' }); capturePhase();
+    const start = now();
+    if (read('launch.json').nativeScene) {
+      const image = await observe({ action: 'native-scene-capture', path: p });
+      const end = now();
+      ok(end - start <= 3, '3000ms observation exceeded');
+      ok(image.receipt?.contract === 'native-whole-capture-v1' && image.receipt.pngSHA256 === sha(p), 'issued capture/image mismatch');
+      save(name + '.json', { at: start, completedAt: end, snapshot: image.snapshot,
+        image, receipt: image.receipt, pngSHA256: image.receipt.pngSHA256 });
+      return p;
+    }
+    const s = await observe({ action: 'snapshot' }); capturePhase();
     const im = await observe({ cmd: 'png:' + p }); const end = now();
     if (read('launch.json').inputPolicy) ok(end - start <= 3, '3000ms observation exceeded');
     save(name + '.json', { at: start, completedAt: end, snapshot: s, image: im, pngSHA256: sha(p) });

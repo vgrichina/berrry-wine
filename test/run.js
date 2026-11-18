@@ -7816,6 +7816,7 @@ async function main() {
   let reviewedSceneBindAttempted = false, reviewedSceneLease = null, nativeSceneLease = null;
   const nativeScene = require('../lib/cli-native-scene');
   const reviewedContexts = nativeScene.createReviewedContexts();
+  const nativeCaptureReceipts = require('../lib/cli-native-capture-receipt').createCaptureReceipts({authority:()=>cliInputSnapshot()});
   let nativeSceneContract = null;
   const cliInputSnapshot = require('../lib/cli-input-owner').createCliInputSnapshot({
       instance, memory, renderer, getDevice: () => ctx.d3dCommands,
@@ -7978,9 +7979,12 @@ async function main() {
       if (cmd.reviewedScene?.route === 'native-scene-v1') {
         reviewedSceneBindAttempted=true;
         const expected=cmd.reviewedScene, s=controlSnapshot();
-        if (!nativeScene.matches(s,expected.snapshot)) throw new Error('reviewed native scene changed before binding');
-        const paint=require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
-        if (paint!==expected.pngSHA256) throw new Error('reviewed native paint changed');
+        if (expected.receipt) nativeCaptureReceipts.verify(s,expected);
+        else {
+          if (!nativeScene.matches(s,expected.snapshot)) throw new Error('reviewed native scene changed before binding');
+          const paint=require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+          if (paint!==expected.pngSHA256) throw new Error('reviewed native paint changed');
+        }
         nativeSceneLease=nativeScene.context(s);
         return guardedInput.bind();
       }
@@ -8028,6 +8032,13 @@ async function main() {
     if (cmd.action === 'native-startup-readiness')
       return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
+    if (cmd.action === 'native-scene-capture') {
+      if (!cmd.path) throw new Error('native capture needs a complete PNG path');
+      return nativeCaptureReceipts.capture(controlSnapshot,()=>{
+        presentForRead();
+        return canvasToPng(renderer.canvas);
+      },bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
+    }
     if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture') {
       if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
       if (cmd.action === 'native-presentation-capture') {
