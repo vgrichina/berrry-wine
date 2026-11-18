@@ -110,7 +110,21 @@ browser, helper, watchdog and durable enclosing waits/EOFs completed; the final
 caller shell's143 is distinguished from the durable owner's actual command0.
 Evidence: `scratch/runs/20261117-rm-startup-geometry-architec-geometry-paired/result.json`.
 
-The following table covers the named November17 moving-scene results only;
+The [JAZZ/ROCKROLL report](re-notes/rm-jazz-rockroll-paired-rendering-20261118.md),
+published `501b739688`, adds JAZZ software and WebGL pairs with naturally
+rotating musical shapes on the same `3ab982f2d` / `06eaa397…` runtime graph.
+The coordinator reviewed all four whole images. Actual software/WebGL GPS
+draw/present execution and native RM/DirectDraw loading were recorded, with
+matching source/module/media hashes. No audio quality or parity was assessed.
+ROCKROLL on both backends reached the unchanged15-second prebinding timeout
+without a baseline or frame. Those cases closed UNKNOWN without later queries
+or replay; this does not establish a renderer/API fault. All four scopes have
+actual native/browser/watchdog/enclosing waits and separate EOFs. No production
+repair was made in that task. The author adopted JavaScript-only policy after
+the four launches; the follow-up investigation uses JavaScript supervision.
+Evidence: `scratch/runs/20261118-rm-jazz-rockroll-paired-rendering/result.json`.
+
+The following table covers the named November17–18 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
 FPS, audio, gameplay completion or native Quit.
@@ -125,6 +139,8 @@ FPS, audio, gameplay completion or native Quit.
 | `dx_viewer` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
 | `scr_architec` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
+| `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
+| `scr_rockroll` | Prebinding UNKNOWN; open | Prebinding UNKNOWN; open | `20261118-rm-jazz-rockroll-paired-rendering` |
 
 ## November 17 Quake III arena, depth repair and delayed input
 
