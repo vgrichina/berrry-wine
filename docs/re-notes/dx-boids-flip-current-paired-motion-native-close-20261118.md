@@ -78,8 +78,11 @@ capture/close helpers are reused; dd9 dual-executor regression files remain
 byte-identical. Run-local readiness/route corrections, verification, exact
 Git/diffs, owned input patches and recovery recipes are retained. Growing
 transients use owned tmpfs; unique evidence is retrieved and round-trip hashed
-before removal. Sampled /home free space stays above 1,500,000,000 bytes;
-sampling does not prove continuous free space.
+before removal. Successful runtime /home samples exceed 1,500,000,000 bytes,
+but a later finalization sample falls to 1,498,841,088 bytes after all originals
+are closed and retrieved. The task's continuous disk-floor requirement is not
+met; no further original is launched. Shared capacity recovery is separate
+from the runtime results.
 
 Foreign WIP and security holds are preserved. No workers, boxes, Wine,
 hardware/FPS/Windows-parity or deployment claim. Box ID/state/expiry/stop receipt:
