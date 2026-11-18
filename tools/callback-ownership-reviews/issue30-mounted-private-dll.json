@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "baseSHA256": "7f74c0fe7b48d9b6e048bf200e858e6028f1947777d495d1500414bc7b18fdd8",
+      "sha256": "d212bc2dbe7ca360d773fbabe3553e62cb10bd3a89d7de21536b5a5a0981c496",
+      "reason": "Review 20261118 issue30 mounted private static imports: extend only the existing startup dependency graph admission predicate to genuine application-directory siblings already in the mounted VFS. Reject qualified names, builtin-only DLLs and staticModule placeholders; retain existing registry/inherited admission and ordinary fetch/materialization/loader initialization. No callback producer, boundary call, export, restoration, EIP/stack/clock write, guest input or invocation ownership change. Same authored imported EXE and transitive private DLL graph oldfail/newpass in compiled native and production normal guestWorker; actual UT348 uploaded ZIP first-trap evidence in run20261118-issue30-worker-traps-ut-gears. General callback ownership remains pending."
+    }
+  ]
+}
