@@ -71,15 +71,35 @@ long __stdcall proc(P h,U m,U w,long l){P i=GetModuleHandleA(0);
  return 0;}
 void start(void){DialogBoxIndirectParamA(GetModuleHandleA(0),&root,0,proc,0);ExitProcess(0);}
 `;
-function prepare(out,{transition=false,destroyTarget=false}={}){
- fs.mkdirSync(out,{recursive:true});fs.writeFileSync(out+'/wizard.c',transition?transitionSource.replace('SetFocus(edit);',destroyTarget?'DestroyWindow(next);SetFocus(edit);':'SetFocus(edit);'):source);
- for(const [dll,names] of Object.entries({kernel32:['ExitProcess@4','GetModuleHandleA@4'],user32:['DialogBoxIndirectParamA@20','EndDialog@8','RegisterClassA@4','DefWindowProcA@16','SetWindowLongA@12','CallWindowProcA@20','SetWindowTextA@8','CreateWindowExA@48','ShowWindow@8','SetFocus@4','DestroyWindow@4','GetMessageA@16','TranslateMessage@4','DispatchMessageA@4','PostQuitMessage@4','SendMessageA@16']})){
+// Same demonstrated shape as the component page: a guest-subclassed
+// LBS_OWNERDRAWVARIABLE list with no HASSTRINGS, and a guest owner. The DWORDs
+// include null and non-address values; only the owner may interpret them.
+const componentSource=source.replace('static P label,oldList;static U painted,added;',String.raw`
+int API TextOutA(P,int,int,const char*,int);
+static P label,oldList;static U painted,added,drawn;
+struct Measure {U type,id,item,width,height,data;};
+struct Draw {U type,id,item,action,state;P hwnd,dc;int left,top,right,bottom;U data;};
+`).replace('if(m==0x111&&(w&65535)==1)',String.raw`
+ if(m==0x2c){((struct Measure*)l)->height=16;return 1;}
+ if(m==0x2b){struct Draw* d=(struct Draw*)l;
+  if(d->item<4&&d->data==(d->item==0?0:d->item==1?0xffffffff:d->item==2?0x12345678:7)){
+   drawn|=1<<d->item;SetWindowLongA(h,-21,drawn);}
+  const char* t=d->data==0?"Zero data":d->data==0xffffffff?"All bits":d->data==0x12345678?"Opaque value":"Fourth row";
+  TextOutA(d->dc,d->left+2,d->top+1,t,d->data==0?9:d->data==0xffffffff?8:d->data==0x12345678?12:10);
+  return 1;}
+ if(m==0x111&&(w&65535)==1)`)
+ .replace('0x50810003','0x52a00121')
+ .replace('SendMessageA(list,0x180,0,(long)"English (International)");',
+ 'SendMessageA(list,0x180,0,0);SendMessageA(list,0x180,0,-1);SendMessageA(list,0x180,0,0x12345678);SendMessageA(list,0x180,0,7);');
+function prepare(out,{transition=false,destroyTarget=false,components=false}={}){
+ fs.mkdirSync(out,{recursive:true});fs.writeFileSync(out+'/wizard.c',components?componentSource:transition?transitionSource.replace('SetFocus(edit);',destroyTarget?'DestroyWindow(next);SetFocus(edit);':'SetFocus(edit);'):source);
+ for(const [dll,names] of Object.entries({gdi32:['TextOutA@20'],kernel32:['ExitProcess@4','GetModuleHandleA@4'],user32:['DialogBoxIndirectParamA@20','EndDialog@8','RegisterClassA@4','DefWindowProcA@16','SetWindowLongA@12','CallWindowProcA@20','SetWindowTextA@8','CreateWindowExA@48','ShowWindow@8','SetFocus@4','DestroyWindow@4','GetMessageA@16','TranslateMessage@4','DispatchMessageA@4','PostQuitMessage@4','SendMessageA@16']})){
   fs.writeFileSync(out+'/'+dll+'.def','LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n');
   cp.execFileSync('llvm-dlltool',['-m','i386','-k','-d',out+'/'+dll+'.def','-l',out+'/'+dll+'.lib']);
  }
  cp.execFileSync('clang',['--target=i686-pc-windows-msvc','-ffreestanding','-fno-stack-protector','-fno-builtin','-O1','-c',out+'/wizard.c','-o',out+'/wizard.obj']);
- cp.execFileSync('ld',['-mi386pe','--entry','_start','--subsystem','windows','--disable-dynamicbase','--no-insert-timestamp','-o',out+'/wizard.exe',out+'/wizard.obj',out+'/kernel32.lib',out+'/user32.lib']);
+ cp.execFileSync('ld',['-mi386pe','--entry','_start','--subsystem','windows','--disable-dynamicbase','--no-insert-timestamp','-o',out+'/wizard.exe',out+'/wizard.obj',out+'/kernel32.lib',out+'/user32.lib',out+'/gdi32.lib']);
  return out+'/wizard.exe';
 }
-module.exports={prepare,source,transitionSource};
+module.exports={prepare,source,transitionSource,componentSource};
 if(require.main===module)console.log(prepare(path.resolve(process.argv[2])));

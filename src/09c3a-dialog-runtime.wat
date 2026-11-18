@@ -886,6 +886,41 @@
       (then (return (i32.const -1))))
     (i32.load8_u (i32.add (call $g2w (call $lb_sel_ptr (local.get $s))) (local.get $index))))
 
+  ;; A no-string owner-draw list stores DWORD item data, never text pointers.
+  ;; Keep this contract separate from native_listbox_get's string contract.
+  ;; WM_MEASUREITEM/WM_DRAWITEM and any subclass remain the paint authority.
+  (func (export "native_listbox_opaque_get") (param $h i32) (param $field i32) (result i32)
+    (local $g i32) (local $style i32) (local $s ptr<ListBoxState>)
+    (local.set $g (call $native_listbox_storage (local.get $h)))
+    (if (i32.eqz (local.get $g)) (then (return (i32.const -1))))
+    (local.set $style (call $wnd_get_style (local.get $h)))
+    (if (i32.or (i32.eqz (i32.and (local.get $style) (i32.const 0x30)))
+          (i32.ne (i32.and (local.get $style) (i32.const 0x40)) (i32.const 0)))
+      (then (return (i32.const -1))))
+    (local.set $s (cast ptr<ListBoxState> (call $g2w (local.get $g))))
+    (if (i32.or (i32.gt_u (call $lb_count (local.get $s)) (call $lb_data_cap (local.get $s)))
+          (i32.and (i32.ne (call $lb_count (local.get $s)) (i32.const 0))
+            (i32.eqz (call $lb_data_ptr (local.get $s)))))
+      (then (return (i32.const -1))))
+    (if (i32.eqz (local.get $field)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $lb_count (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (call $lb_cur_sel (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (call $lb_top_index (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 6)) (then (return (call $wnd_table_get (local.get $h)))))
+    (i32.const -1))
+
+  (func (export "native_listbox_item_data") (param $h i32) (param $index i32) (result i64)
+    (local $g i32) (local $s ptr<ListBoxState>)
+    (local.set $g (call $native_listbox_storage (local.get $h)))
+    (if (i32.eqz (local.get $g)) (then (return (i64.const -1))))
+    (local.set $s (cast ptr<ListBoxState> (call $g2w (local.get $g))))
+    (if (i32.or (i32.ge_u (local.get $index) (call $lb_count (local.get $s)))
+          (i32.or (i32.ge_u (local.get $index) (call $lb_data_cap (local.get $s)))
+            (i32.eqz (call $lb_data_ptr (local.get $s)))))
+      (then (return (i64.const -1))))
+    (i64.extend_i32_u (i32.load (i32.add (call $g2w (call $lb_data_ptr (local.get $s)))
+      (i32.mul (local.get $index) (i32.const 4))))))
+
   ;; ComboBox: selection, dropped flag, variant, list/edit/popup identities,
   ;; and actual selected/typed public text (ANSI bytes).
   (func (export "native_combobox_get") (param $h i32) (param $field i32) (result i32)
