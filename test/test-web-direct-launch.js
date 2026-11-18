@@ -673,6 +673,9 @@ async function manifestCancelStage(browser, base) {
     await page.waitForSelector('#wine-launch-window [data-action="retry"]', { visible: true, timeout: STAGE_MS });
     await page.click('#wine-launch-window [data-action="retry"]');
     await request;
+    // Same repaint rule: "Retrying..." with its Cancel button reaches the DOM
+    // on the next animation frame after the model changes.
+    await page.waitForSelector('#wine-launch-window [data-action="cancel"]', { visible: true, timeout: 10000 });
     await page.click('#wine-launch-window [data-action="cancel"]');
     await sleep(2000);
     const cancelled = await page.evaluate(() => ({
