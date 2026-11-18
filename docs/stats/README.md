@@ -1,6 +1,7 @@
 # Agent usage statistics
 
-Two files, produced by `tools/agent-usage-stats.js` on 2026-11-04 and committed
+Two files, produced by `tools/agent-usage-stats.js` on 2026-11-04 (refreshed
+incrementally on 2026-11-18, below) and committed
 because the session logs they summarise were deleted afterwards to free disk:
 
 - `agent-usage-daily.json` — one row per UTC day from 2026-03-26: commits on
@@ -25,6 +26,43 @@ node tools/agent-usage-stats.js merge --in=codex-boat.json --in=codex-laptop.jso
   --out=docs/stats/agent-usage-daily.json --sessions-out=docs/stats/agent-sessions.json
 node tools/agent-usage-stats.js report --in=docs/stats/agent-usage-daily.json --weekly
 ```
+
+### Refresh of 2026-11-18 (Nov 5 – Nov 18)
+
+The Nov 4 logs were gone by then, so the refresh is incremental: days before
+`--since` keep their token fields from the previous summary, commits are
+recounted from git for every day, and the session index is the union of the
+old and new ones.
+
+```sh
+# ops box: live rollouts (the tool is piped in over ssh, nothing is written on the box)
+node - codex --root=$HOME/.codex/sessions/2026/11 --host=boat --out=/dev/stdout < tools/agent-usage-stats.js > codex-boat-live.json
+# laptop: the Nov 8 archive of the box's Nov 3-6 rollouts and the retired coordinator 01a19022
+node tools/agent-usage-stats.js codex --root=arch/sessions --root=arch/archived_sessions --host=boat --out=codex-boat-arch.json
+# box: Codex's own per-thread totals, for rollouts that were moved off the box
+sqlite3 -json ~/.codex/state_5.sqlite "select id, created_at, updated_at, tokens_used, source, cwd, model from threads where created_at >= strftime('%s','2026-10-30')" > state5-threads.json
+node tools/agent-usage-stats.js codex-state --state=state5-threads.json --known=codex-boat-arch.json --known=codex-boat-live.json --host=boat --out=codex-boat-state.json
+# laptop logs as before, then
+node tools/agent-usage-stats.js merge --in=codex-boat-arch.json --in=codex-boat-live.json --in=codex-boat-state.json \
+  --in=codex-laptop.json --in=claude-laptop.json --base=docs/stats/agent-usage-daily.json \
+  --base-sessions=docs/stats/agent-sessions.json --since=2026-11-05 \
+  --out=docs/stats/agent-usage-daily.json --sessions-out=docs/stats/agent-sessions.json
+```
+
+Two things are new in this refresh:
+
+- **Rollouts compressed with xz.** The box now archives rollouts as
+  `.jsonl.xz`, which the scanner reads through `xz -dc`.
+- **Offloaded transcripts.** Between Nov 11 and 13, 1,324 closed worker
+  transcripts from Nov 7–13 were moved to a second box; only an
+  `.offloaded.json` stub stays behind. For those threads the summary uses
+  `tokens_used` from `state_5.sqlite`, put on the thread's start day, with no
+  input/output split. Codex output and cached-input figures for Nov 7–13 are
+  therefore undercounts. Their totals are not.
+
+For the rollouts that were still on disk, the scanned per-thread totals match
+`state_5.sqlite`, except for four threads that were still running when the
+two were read. Nov 18 is a partial day (to about 05:30 UTC).
 
 Only sessions whose working directory (Codex) or project directory (Claude)
 names `wine-assembly` are counted. The counting rules — cumulative Codex

@@ -1,6 +1,6 @@
 # Berrry Wine — The Whole Story
 
-*A retrospective from the initial commit (2026-03-26) through 2026-11-04: 10,740 commits across 224 calendar days and 167 active commit days. The two months since Sep 4 added 6,927 of them, most written by a Codex coordinator and its workers on a remote ops box. About 100 billion agent tokens are on record for the period the logs survive ([Tokens and commits](#tokens-and-commits)).*
+*A retrospective from the initial commit (2026-03-26) through 2026-11-18: 14,444 commits across 238 calendar days and 183 active commit days. The ten weeks since Sep 4 added 10,717 of them, most written by a Codex coordinator and its workers on a remote ops box; the last two weeks alone added 3,646. About 133 billion agent tokens are on record for the period the logs survive ([Tokens and commits](#tokens-and-commits)).*
 
 *Short on time? The [articles](articles/README.md) take one question each — the x86 interpreter, lazy flags, real DLLs, the Win32 layer, software GDI, DirectX, Win16, the virtual LAN, the DOS toy VM, the WATX memory map, scripting the emulator, and working with coding agents — in a few minutes apiece.*
 
@@ -10,13 +10,13 @@
 
 > Run real Windows 98 `.exe` files in the browser. No source, no recompilation, no porting layer. Just raw WebAssembly Text interpreting x86 machine code, with the Win32 API reimplemented inside the WASM module itself.
 
-This is the kind of project that "shouldn't" be a sprint at all. It started as a single WAT file. It is now about 360k lines of WAT across 134 files (32k of them generated tables) plus several hundred thousand lines of browser, test, and tooling JavaScript, compiled by its own vendored compiler for a WAT dialect that allocates the emulator's memory map and type-checks its structs. The app registry holds 363 entries (199 at Sep 4, counted the same way): Win98/XP accessories, MFC applications, games, installers, screensavers, DirectDraw, Direct3D Immediate/Retained Mode, OpenGL, audio, RichEdit, and OLE — and since Aug 15 it is no longer only a 32-bit story: 16-bit NE images load, link and run, so the original Windows Entertainment Pack plays in the browser next to its 32-bit remake. Since late August there is a third machine beside them: a toy 8086 VM that runs a corpus of 199 DOS demoscene programs and exists to answer interpreter-design questions the big emulator is too expensive to ask.
+This is the kind of project that "shouldn't" be a sprint at all. It started as a single WAT file. It is now about 390k lines of WAT across 146 files (34k of them generated tables) plus several hundred thousand lines of browser, test, and tooling JavaScript, compiled by its own vendored compiler for a WAT dialect that allocates the emulator's memory map and type-checks its structs. The app registry holds 363 entries (199 at Sep 4, counted the same way): Win98/XP accessories, MFC applications, games, installers, screensavers, DirectDraw, Direct3D Immediate/Retained Mode, OpenGL, audio, RichEdit, and OLE — and since Aug 15 it is no longer only a 32-bit story: 16-bit NE images load, link and run, so the original Windows Entertainment Pack plays in the browser next to its 32-bit remake. Since late August there is a third machine beside them: a toy 8086 VM that runs a corpus of 199 DOS demoscene programs and exists to answer interpreter-design questions the big emulator is too expensive to ask.
 
-The history is also a record of AI-assisted systems work. The implementation is **coded directly in WAT**—there is no C/Rust-to-WASM emulator build—but it should not be described as solely "hand-written." Large parts of the reverse engineering, code, tests, and design were produced through sustained collaboration with Claude Code and Codex. This retrospective was refreshed from all three available records: Git, the repository's Claude session history/memories, and Codex rollout transcripts. The final week is visibly a *multi-agent* record: up to six sessions worked the same tree at once, coordinating through an append-only `messageboard.txt` and building every commit in a throwaway `GIT_INDEX_FILE` so nobody swept up a neighbour's in-flight edits. From October the record changes shape again: a long-running Codex coordinator on a remote ops box dispatches bounded workers, reviews their evidence and commits straight to main, and the maintainer steers it from a phone over Telegram. Token counts from the surviving Codex and Claude logs are summarised per day in [`docs/stats/`](docs/stats/README.md).
+The history is also a record of AI-assisted systems work. The implementation is **coded directly in WAT**—there is no C/Rust-to-WASM emulator build—but it should not be described as solely "hand-written." Large parts of the reverse engineering, code, tests, and design were produced through sustained collaboration with Claude Code and Codex. This retrospective was refreshed from all three available records: Git, the repository's Claude session history/memories, and Codex rollout transcripts. The final week is visibly a *multi-agent* record: up to six sessions worked the same tree at once, coordinating through an append-only `messageboard.txt` and building every commit in a throwaway `GIT_INDEX_FILE` so nobody swept up a neighbour's in-flight edits. From October the record changes shape again: a long-running Codex coordinator on a remote ops box dispatches bounded workers, reviews their evidence and commits straight to main, and the maintainer steers it from a phone over Telegram. In mid-November the project took its public name, **Berrry Wine** ([berrry.wine](https://berrry.wine), [github.com/vgrichina/berrry-wine](https://github.com/vgrichina/berrry-wine)); the older name survives in the repository directory, article slugs and storage keys. Token counts from the surviving Codex and Claude logs are summarised per day in [`docs/stats/`](docs/stats/README.md).
 
 ---
 
-## 1. The arc, in twenty acts
+## 1. The arc, in twenty-one acts
 
 ```
 Act I     Mar 26-28   Decoder, lazy flags, FPU, SEH        →  Notepad runs
@@ -45,8 +45,10 @@ Act XVIII Sep 21-Oct 4 uop tier, render Worker, releases   →  Heroes III gamep
                                                               on by default; ops dashboard
 Act XIX   Oct 5-30    A Codex coordinator on the ops box,  →  1,546 commits in one week; GL/D3D
                       subagents, then exec workers            corpus goal; evidence-gated lanes
-Act XX    Oct 31-Nov 4 Fresh coordinator, CP950, MDK2      →  Traditional Chinese renders; 441
-                                                              commits on Nov 4, all Codex
+Act XX    Oct 31-Nov 4 Fresh coordinator, CP950, MDK2      →  Traditional Chinese renders; 486
+                                                              commits on Nov 4, almost all Codex
+Act XXI   Nov 5-18    Third coordinator, harness creep,    →  One GPU command ring for every 3D
+                      GPU stream v2, Berrry Wine              API; real COMCTL32 gone; new name
 ```
 
 ### Commit cadence
@@ -149,12 +151,19 @@ overstates engineering volume; release-branch merges also repeat a few subjects.
 10-12..18  980 commits  Original-demo lanes: Outlaws, CMR3, FIFA 98, kkrieger, BG II; NE lifecycle
 10-19..25  446 commits  Review/acceptance workflow; codex exec workers from Oct 20; Wine Ops
 10-26..30  240 commits  Pirates!, Deus Ex, UT2004, Battlezone lanes; disk pressure on the box
-10-31      333 commits  Fresh coordinator 01a19022; Big5/CP950 from PR #27; Ming fonts
-11-01..04 1,151 commits  MDK2 GL API completion; Stronghold, Alice, Jedi, GLTron; all Codex
+10-31      339 commits  Fresh coordinator 01a19022; Big5/CP950 from PR #27; Ming fonts
+11-01..04 1,201 commits  MDK2 GL API completion; Stronghold, Alice, Jedi, GLTron; almost all Codex
+11-05..06  495 commits  Compatibility pages; uop retry ladder kept on; Stronghold, Conan, KKnD lanes
+11-07..09 1,355 commits  Coordinator 01a1ba23 takes over Nov 8; Lords II armies; Q3, Redline, TR2
+11-10..13  724 commits  CLI runs through the guest owner; Heretic II, Darkstone, Diablo II saves
+11-14..16  509 commits  GPU stream v2 for Glide, D3DIM, D3D9/8 and GL; disk-full stop; Hexen II, AoE
+11-17..18  563 commits  Old renderers and real COMCTL32 deleted; no new Python; Berrry Wine (partial)
 ```
 
-Nov 4 (441 commits, UTC, counted while the day was still running) displaced
-Aug 31 as the peak; Oct 15 (386) and Oct 18 (354) also beat it.
+The Nov 1–4 and Oct 31 rows were recounted when the day was complete (the
+first count stopped mid-afternoon on Nov 4). Nov 9 (489 commits, UTC) is now
+the peak day, ahead of Nov 4 (486) and Nov 7 (453); Oct 15 (386) and Oct 18
+(354) also beat Aug 31.
 
 ---
 
@@ -1242,8 +1251,231 @@ Then the lanes moved fast:
 - Stronghold Crusader, Alice, Jedi, GTA1, GLTron and Oni had live
   lanes.
 
-Nov 1–4 has 1,151 commits, every one authored by Codex. Nov 4 alone has 441,
-the most of any day, counted while the day was still running.
+Nov 1–4 has 1,201 commits, all but nine authored by Codex. Nov 4 alone has
+486, the most of any day until Nov 9. (When this act was first written the
+day was still running and the count stood at 1,151 and 441.)
+
+---
+
+## Act XXI — "The harness, the ring and a new name" (Nov 5–18)
+
+The fortnight has 3,646 commits (UTC, with Nov 18 still running). Codex
+wrote 3,385 of them, and Nov 9 (489) displaced Nov 4 as the busiest day in
+the history. Two tracks ran side by side and barely touched. On the boat
+the coordinator kept working through original games one lane at a time. On
+the laptop the maintainer, with Claude Code, cut the platform down: one
+renderer for every 3D API, no real `COMCTL32.DLL`, no new Python. Then the
+project got its public name.
+
+**The second handover.** On Nov 8 at 07:50 UTC the maintainer retired
+coordinator `01a19022`. Its session log had reached 1.76 GB after 1,397
+compactions. It was stopped mid-work, not because a lane had gone wrong. It
+wrote no handover, so the brief for its successor, `01a1ba23`, was put
+together from `TODOS.md`, the board, the live process table and the old
+thread's last messages. The brief also carried a warning: the workers
+already running would report completion to the *old* thread, so the new one
+had to poll their output directories. The retired thread used 4.4 B tokens
+in eight days. Its successor used 5.6 B in its first ten days, 10.6 M of them
+output. Underneath, about 2,200 `codex exec` worker threads ran in the two
+weeks.
+
+The maintainer's side of the conversation was 60 Telegram messages. Twenty-
+seven ask for screenshots or pictures ("always send screenshots with your
+findings"), and six ask for an ASCII summary of what is being worked on. The
+rest point the coordinator at targets:
+
+- games seen in posts on social media, to be found on archive.org;
+- The Sims Complete Collection;
+- "fun apps which are not games", meaning Visual Basic and Delphi trials;
+- the Half-Life 2 demo;
+- a public Windows 9x compatibility list to check the corpus against (the
+  answer is [a gap table](docs/win9x-compatibility-corpus-gaps-20261118.md):
+  103 of 150 listed titles have no match at all);
+- an issue on the public repository.
+
+On Nov 16 the maintainer asked how many workers were running and said "let's
+do more parallel tasks". `ops/COORDINATOR.md` changed the same day
+(`a98a4817b`): the RAM launch gate went, three workers are to be kept
+running with a fourth slot authorised, and only a 1.5 GB disk floor remains.
+
+**Disk, again.** Disk was the box's binding constraint, as it was at the end
+of October:
+
+- Nov 7: disk-recovery runs.
+- Nov 11–12: closed Codex transcripts were moved to a second box, where they
+  are retained until Nov 26. That move is why the token table below has only
+  per-thread totals for Nov 7–12.
+- Nov 14: `scratch/runs` reached 19 GB, mostly PNG frame series and
+  compressed capture bundles, and the root filesystem fell to 179 MB free.
+  The coordinator blocked itself and the tmux server died. The Telegram
+  bridge kept writing the maintainer's messages into its inbox with nobody
+  reading them. A pruning pass kept each run's `result.json`, the files it
+  references, save games and small text, and freed 15 GB. The coordinator
+  was then resumed in a new tmux session.
+
+**The lanes.** Some lanes ended in recorded play:
+
+- Lords of the Realm II installed through its own setup program. Its
+  shortcuts needed Win16 Program Manager DDE conversations, now implemented
+  in WAT. The installed game recruited an army, moved it on command and
+  fought (Nov 7).
+- KKnD completed mission orders and built a Berserker (Nov 10).
+- Heretic II walked its courtyard route with native save and load (Nov 11).
+- MechWarrior 3 moved its cockpit and fired its machine gun (Nov 11).
+- Darkstone won fights and saved and loaded (Nov 12).
+- Diablo II healed and kept a whole save (Nov 12).
+- The Incredible Machine completed a puzzle (Nov 15).
+- Age of Wonders II made its first moves, and Caesar III laid roads and
+  housing (Nov 17).
+
+More of them stopped at a well-described blocker:
+
+- Quake III Arena appears in 301 commit subjects. Arena movement and a turn
+  were recorded, and its D16 depth now survives the GL software fallback
+  (`337b6205c`), but most runs ended at a capture deadline or an `UNKNOWN`
+  verdict rather than a frag.
+- Redline appears in 123 subjects, and Dungeon Siege: Legends of Aranna in
+  118.
+- The Neverhood installs.
+- The Sims got as far as its installer, which needed native type libraries,
+  SAFEARRAYs and OLE Automation `Invoke`.
+- The Half-Life 2 demo installer reached its license agreement, and a
+  Visual Basic 5 IDE sample started.
+
+**Harness creep.** The subjects show what that cost. Of 3,356 non-merge
+Codex subjects, 2,388 (71%) record, document, retain, qualify or reconcile
+something rather than change the emulator, and 2,571 cite a run id. "Locked
+build" appears in 891 of them, and "custody", "admission" or "prearm" in
+about 160. The lanes had grown their own machinery: Python supervisors
+built on a Linux `ptrace` and `seccomp` "kernel custody" layer that journaled
+every fork and exit of the emulator's own runs, and tests that read evidence
+out of `scratch/runs/`.
+
+On Nov 17 the maintainer cut it back and wrote the cut into the workers'
+standing instructions as a dated policy:
+
+- Scripts are JavaScript only. `tools/check-no-python.js` (`115c56ec7`)
+  fails the build on any new `.py` file or new caller of `python3`. The 918
+  Python files that existed went into an allowlist that may only shrink.
+  Several groups of controllers and supervisors were ported to Node the same
+  day, and 791 Python files remain tracked.
+- The ptrace layer was replaced by `tools/native-supervise.cjs`
+  (`2ae5ede7f`): a process group, `pdeathsig` and, where permitted,
+  `unshare`, plus a receipt.
+- Tracked tests may not read `scratch/runs/`.
+- Wine is never used as ground truth. When reference behaviour is needed,
+  the agent stops and asks for a real Windows run.
+
+**One ring for every 3D API.** The laptop track's big change took four days.
+On Nov 14 a draft spec (`37308dde4`, [GPU stream v2](docs/gpu-stream-v2.md))
+proposed that WAT write every graphics API's work as finished command
+records into one compiler-allocated byte ring. Thin executors would consume
+the ring: WebGL, software or null. Glide went first, the same day
+(`e412a3780`). Its JavaScript lowering was deleted, Hype rendered
+pixel-identical, and UT's worst pixel moved by 2. The
+[migration plan](docs/gpu-stream-v2-migration.md) followed on Nov 15, and
+then the rest moved in numbered slices:
+
+- **Direct3D Immediate Mode** (DirectDraw and D3D 2–7). It reads pixels
+  back only where the guest touches them. Twist's readbacks fell from 3.7 to
+  one per frame.
+- **Direct3D 9 and 8.** Texture decode, dirty tracking and the whole
+  fixed-function pipeline are built in WAT. Pixel shader 1.x is
+  canonicalised into a core shader IR in WAT. Vertex blending past 21 bones
+  runs on the CPU in WAT with `v128` SIMD rather than falling back to
+  JavaScript.
+- **OpenGL.** Queries, error state, texture uploads and pixel transfer
+  moved into WAT, then software GL was lowered onto the ring and made the
+  default.
+
+On Nov 16–17 the old paths were deleted rather than kept as fallbacks. The
+WAT software rasterizer for D3DIM went: 29 functions, about 105 KB of source
+(`36cfef40c`). The old D3D9/D3D8 JavaScript stack went with 123 files
+(`a6ee42aed`), and so did the 198 KB JavaScript GL front end
+(`9192def5a`). A draw the ring cannot express now traps with a count instead
+of quietly taking another road. Around it:
+
+- Worker threads no longer read slow GPU work as a dead guest, which had
+  looked like a Quake II / Hexen II startup "hang".
+- Diablo II's Glide menu stopped drawing in a 512×384 corner.
+- The optional CRT effect was rewritten as a beam model in linear light,
+  with the mask drawn in device pixels.
+
+**The rest of the platform track**, in date order:
+
+- **Nov 5:** a [compatibility list](https://berrry.wine/compat/): one page per title the
+  emulator was tried on, 228 of them. Status is strict: "playable" only when
+  gameplay was driven by input. 125 of 237 editions qualify. On Nov 17 the
+  pages gained WineHQ-style per-edition fields (tested on, not tested,
+  version, source).
+- **Nov 5:** the uop tier's retry ladder was measured and kept on
+  (`221d8419e`).
+  - Under `--uop-icall` it brought back Heroes III's call heads, and that
+    gameplay route fell from 17.9 s to 7.4 s.
+  - Without it the ladder was neutral: 0.0% on Rodent's Revenge, +0.6% on
+    StarCraft.
+  - `--uop-icall` stays off.
+- **Nov 6–7:** Half-Life: Uplink release work.
+  - Gameplay defaults to 1024×768.
+  - Hidden-dialog startup was fixed.
+  - Redundant `ShowWindow` host round trips were removed, measured on an
+    Android phone.
+  - On Nov 16 a run against the live site measured 14.5 fps on that phone
+    (Chrome 157, first corridor, three 20-second windows), up from 10.2.
+- **Nov 9–10:** the CLI was rebuilt so that slices, DLL startup, lazy reads,
+  timing waits and render admission all go through one explicit guest owner,
+  the shape the browser's Worker path already had.
+- **Nov 13:** closing an app frees its 512 MB guest memory. Before, Quake III
+  followed by Heroes ran out of memory.
+- **Nov 13–16:** the screen savers, the Hexen II demo (the maintainer had
+  noted that "hexen 2 used to work") and the Age of Empires Trial went onto
+  the public desktop. AoE saved games now survive a page reload.
+- **Nov 17:** the real `COMCTL32.DLL` was dropped (`a6e88fb7d`). Win98's
+  copy thunk-connects to 16-bit `COMMCTRL` in its `DllMain`, a file the site
+  does not publish, and that had blocked 16 desktop apps on the web page. The
+  WAT common controls closed their last gaps against it:
+  - TreeView image lists built from icons;
+  - a status bar that re-lays itself out on `WM_SIZE`;
+  - the unsuffixed `PropertySheet` exports, which WinHelp's Help Topics
+    dialog needs.
+
+  The result is pixel-identical to the real-DLL baselines on fourteen apps.
+- **Nov 18:** Age of Empires' soundtrack plays past track one (`c43232518`).
+  AoE counts one outstanding `MM_MCINOTIFY` per `MCI_PLAY` and opens the
+  next MIDI only when the count returns to zero. Only `cdaudio` ever posted
+  the notify. Now the sequencer and waveaudio devices post SUCCESSFUL,
+  ABORTED and SUPERSEDED as Windows does.
+
+**Berrry Wine.** The site moved to its canonical domain, berrry.wine,
+first (`717f62dd2`). On the evening of Nov 17, Pacific time (Nov 18 UTC),
+the project was renamed (`83a965368`):
+
+- a strawberry-desktop pixel-art icon (the site had never had a favicon);
+- "Berrry Wine" in public copy, crash dialogs and the Win98 shutdown screen;
+- article slugs, storage keys and the guest-visible display device name
+  deliberately left unchanged.
+
+Two small tools from the same evening make the marketing clips:
+
+- `ctl record --scale=N` upscales frozen CLI recordings by nearest neighbour.
+  At 2× each guest pixel is exactly one 4:2:0 chroma sample, so pixel art
+  stays sharp through x264.
+- `tools/highlight-clip.js` cuts a recording into a highlight from a JSON cut
+  list. Speed-ups play over a real-time audio bed rather than pitch-shifted
+  game audio.
+
+On Nov 18 the release gates passed on `50e9ca7b2`:
+
+- build, and deploy dry-run parity with nothing missing;
+- 52/52 direct-launch and 35/35 shutdown browser checks;
+- 47 of 48 sweep apps clean (the screen-saver miss is a measurement step that
+  also failed on Nov 17);
+- a contact sheet matching the previous release tile for tile.
+
+The fortnight consumed 32.9 B tokens: 29.4 B Codex and 3.6 B Claude, about
+9 M per commit. The coordinator threads took 8.0 B and the workers 21.3 B.
+Claude's two biggest days were the ring and the deletions: Nov 16 (1.59 B,
+almost all of it subagents) and Nov 17 (0.85 B).
 
 ---
 
@@ -1255,22 +1487,28 @@ The agents' own logs record how much model work went into each day.
 per-session index before the raw logs were deleted to free disk. The sources
 were:
 
-- 3,515 Codex threads: the ops box from Oct 3, the laptop from Apr 27.
-- 734 Claude Code threads: the laptop from Aug 14.
+- 5,761 Codex threads: the ops box from Oct 3, the laptop from Apr 27.
+- 877 Claude Code threads: the laptop from Aug 14.
 
 Each thread's cumulative counters are counted once. The box's per-thread
-totals match Codex's own database exactly.
+totals match Codex's own database exactly. The Nov 18 refresh added Nov 5–18
+on top of the Nov 4 summary (`--base … --since=2026-11-05`). It scanned the
+box's live rollouts, the archive of the Nov 3–6 rollouts and the retired
+coordinator, and the laptop's logs. For 1,324 worker threads of Nov 7–13,
+whose transcripts had already been moved off the box, it took the per-thread
+total from Codex's `state_5.sqlite` and put it on the thread's start day.
+Those threads have no input/output split.
 
 ```
                         Codex          Claude
-Tokens on record        62.7 B         37.6 B
+Tokens on record        92.0 B         41.2 B
   of which cache reads  ~97%           ~98%
-Output tokens           163 M          84 M
-Threads                 3,515          734
-Coordinator threads     2  (8.8 B: 6.9 B over 28 days + 2.0 B over 5 days)
-Exec workers            9.8 B since Oct 20     Subagents  8.9 B
-Peak concurrency        27 threads in one 10-minute bucket (week of Aug 24)
-Tokens per commit       ~10 M overall (100 B / 9,981 commits since Apr 27)
+Output tokens           213 M          98 M    (Codex output undercounted Nov 7–13)
+Threads                 5,761          877
+Coordinator threads     3  (16.9 B: 6.9 B over 28 days, 4.4 B over 8, 5.6 B over 10)
+Exec workers            31.2 B since Oct 20    Subagents  9.0 B
+Peak concurrency        30 threads in one 10-minute bucket (Nov 5, a Claude subagent burst)
+Tokens per commit       ~10 M overall (133 B / 13,685 commits since Apr 27)
 ```
 
 What it cannot see:
@@ -1318,12 +1556,17 @@ Weekly, Monday-based, UTC:
 | 10-05 | 1546 | 3.6B | 406M | 4.0B | 9M | 3M | 8 |
 | 10-12 | 980 | 3.6B | – | 3.6B | 9M | 4M | 11 |
 | 10-19 | 446 | 3.5B | – | 3.5B | 14M | 8M | 13 |
-| 10-26 | 895 | 6.6B | 174M | 6.8B | 30M | 8M | 15 |
-| 11-02 | 829 | 5.7B | 8M | 5.7B | 18M | 7M | 10 |
+| 10-26 | 904 | 6.6B | 174M | 6.8B | 30M | 8M | 15 |
+| 11-02 | 2238 | 14.9B | 273M | 15.2B | 34M | 7M | 30 |
+| 11-09 | 1595 | 15.6B | 755M | 16.4B | 23M* | 10M | 10 |
+| 11-16 | 690 | 4.5B | 2.6B | 7.0B | 26M | 10M | 16 |
 
-Weeks with no commits (late June, Jul 20) are omitted.
+Weeks with no commits (late June, Jul 20) are omitted. The 11-02 row was
+partial (829 commits) when first published. The 11-16 week runs to the
+morning of Nov 18 UTC. \*Output for Nov 7–13 is low because 1,324 worker
+threads there have totals only.
 
-Daily, Sep 5 to Nov 4. The left bar is total tokens and the right bar is
+Daily, Sep 5 to Nov 18. The left bar is total tokens and the right bar is
 commits:
 
 ```
@@ -1353,7 +1596,7 @@ commits:
 09-27 █                          137M |                    3
 09-28 ████████                  1.07B | ▒                 44
 09-29 ██████████████████████    3.06B | ▒▒▒▒▒▒           167
-09-30 ██████████████            2.05B | ▒▒▒               75
+09-30 ██████████████            2.05B | ▒▒▒               76
 10-01 █████████                 1.32B | ▒▒                62
 10-02 ████                       586M |                   14
 10-03 ███████                    991M |                    7   ◄ coordinator 01a0ff91 starts
@@ -1383,12 +1626,26 @@ commits:
 10-27 ███████                    955M | ▒                 21
 10-28 ██                         269M |                    9
 10-29 ███                        488M | ▒                 16
-10-30 █████████                 1.34B | ▒▒▒▒             129
-10-31 █████████████             1.85B | ▒▒▒▒▒▒▒▒▒▒▒      333   ◄ coordinator 01a19022; CP950
-11-01 ████████                  1.15B | ▒▒▒▒▒▒▒▒▒▒▒      322
+10-30 █████████                 1.34B | ▒▒▒▒             130
+10-31 █████████████             1.85B | ▒▒▒▒▒▒▒▒▒▒▒▒     339   ◄ coordinator 01a19022; CP950
+11-01 ████████                  1.15B | ▒▒▒▒▒▒▒▒▒▒▒      324
 11-02 █████████████             1.83B | ▒▒▒▒▒▒           174
-11-03 ████████████              1.76B | ▒▒▒▒▒▒▒          214
-11-04 ███████████████           2.07B | ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒  441   ◄ peak commit day (partial)
+11-03 ████████████              1.76B | ▒▒▒▒▒▒▒          217
+11-04 ███████████████           2.07B | ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ 486
+11-05 ███████████████           2.15B | ▒▒▒▒▒▒▒▒▒        256   ◄ compatibility pages; 30 threads at once
+11-06 █████████████████         2.43B | ▒▒▒▒▒▒▒▒         239
+11-07 ██████████████████        2.53B | ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒  453   ◄ Nov 7-13: worker totals from state db
+11-08 █████████████████         2.44B | ▒▒▒▒▒▒▒▒▒▒▒▒▒▒   413   ◄ coordinator 01a1ba23
+11-09 ██████████████            1.93B | ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ 489   ◄ peak commit day
+11-10 ████████████████          2.30B | ▒▒▒▒▒▒▒          215
+11-11 ██████████████████████    3.13B | ▒▒▒               81
+11-12 ███████████████████████   3.26B | ▒▒▒▒▒▒▒          194
+11-13 █████████                 1.28B | ▒▒▒▒▒▒▒▒         234
+11-14 ████████████████          2.22B | ▒▒▒▒▒▒▒          211   ◄ disk full on the box; GPU stream v2 spec
+11-15 ████████████████          2.23B | ▒▒▒▒▒▒           171
+11-16 ███████████████████       2.63B | ▒▒▒▒             127   ◄ Claude 1.59 B: the ring
+11-17 █████████████████████████ 3.53B | ▒▒▒▒▒▒▒▒▒▒▒▒▒▒   402   ◄ old renderers and COMCTL32 deleted
+11-18 ██████                     872M | ▒▒▒▒▒            161   ◄ partial day (to 05:30 UTC)
 ```
 
 Highlights from the table:
@@ -1400,6 +1657,11 @@ Highlights from the table:
 - **The dearest days per commit** were the quiet ones. Oct 3 cost 142 M
   tokens per commit while the coordinator set itself up, and Oct 27 cost
   45 M for 21 commits.
+- **The second fortnight of November** kept the pattern. Nov 17 (3.53 B
+  tokens for 402 commits) is the second most expensive day on record, just
+  behind Aug 19. Nov 11 cost 39 M per commit: the workers used 2.4 B tokens and
+  the day produced 81 commits. Nov 9, the peak
+  commit day, cost 4 M per commit.
 
 The coordinator era is cheaper per commit and produces more commits, but its
 commits are smaller and more of them are evidence.
@@ -1659,50 +1921,57 @@ The `--trace-*` family in particular pays compounding interest. Every time someo
 ## 6. The numbers
 
 ```
-Lines of WAT           358,912     (134 files in src/, 32,343 of them in 4 generated tables)
-Lines of JS            ~743,000    (every *.js in lib/ + test/ + tools/, fixtures and
-                                    generated files included; not comparable to Sep 4's 270,840)
-WASM build            ~2.1 MB      (2,148,150 bytes at this commit; plus a compatibility build)
-Commits                10,740
-Calendar span           224 days   (Mar 26 through Nov 4, inclusive)
-Active commit days      167
-Avg / active day        ~64 commits
-Peak day                441 commits (Nov 4, UTC, partial day)
-Sep 5 – Nov 4         6,927 commits (64% of all history)
-Win32 APIs in the table 4,602
-Apps in the registry    363 entries (199 at Sep 4 by the same count)
-Top-level test scripts  2,419 in test/
-Build gates             39 distinct node scripts in tools/build.sh (31 at Sep 4)
+Lines of WAT           391,353     (146 files in src/, 33,763 of them in 4 generated tables)
+Lines of JS            ~772,000    (every *.js in lib/ + test/ + tools/, fixtures and
+                                    generated files included)
+WASM build            ~2.4 MB      (2,409,674 bytes at this commit; plus a compatibility build)
+Commits                14,444
+Calendar span           238 days   (Mar 26 through Nov 18, inclusive)
+Active commit days      183        (UTC)
+Avg / active day        ~79 commits
+Peak day                489 commits (Nov 9, UTC)
+Sep 5 – Nov 18       10,717 commits (74% of all history; 3,646 since Nov 5)
+Win32 APIs in the table 4,710
+Apps in the registry    346 APPS entries in lib/apps.js (341 at Nov 4 by the same count;
+                                    the Nov 4 table's 363 was counted differently)
+Compatibility pages     228 titles; 125 of 237 editions "playable" (input-driven gameplay)
+Top-level test scripts  2,476 in test/
+Build gates             41 node scripts invoked by tools/build.sh (37 at Nov 4 by the same count)
 DOS corpus              199 programs, 199 captured
-Per-app RE notes        133 top-level notes in docs/re-notes/ (3,693 files with evidence)
-Agent tokens on record  62.7 B Codex + 37.6 B Claude (see Tokens and commits)
-Agent threads on record 3,515 Codex + 734 Claude
-Message board           ~39,000 lines on the ops box, Aug 13 – Nov 4
+RE notes                5,369 files in docs/re-notes/ (3,698 at Nov 4)
+Python                  791 tracked .py files, behind a gate that only lets the count fall
+                                    (918 when the gate landed on Nov 17)
+Agent tokens on record  92.0 B Codex + 41.2 B Claude (see Tokens and commits)
+Agent threads on record 5,761 Codex + 877 Claude
+Message board           ~58,000 lines on the ops box, Aug 13 – Nov 18
 ```
 
-At Sep 4 the same table read 211,125 lines of WAT in 61 files, 3,758 commits,
-a 288-commit peak day, 3,295 APIs and 38 RE notes. At Aug 19 it read 149,989
-lines of WAT in 54 files and 2,131 commits.
+At Nov 4 the same table read 358,912 lines of WAT in 134 files, 10,740
+commits, a 441-commit (partial) peak day and 4,602 APIs. At Sep 4 it read
+211,125 lines of WAT in 61 files, 3,758 commits, a 288-commit peak day,
+3,295 APIs and 38 RE notes. At Aug 19 it read 149,989 lines of WAT in 54
+files and 2,131 commits.
 
 ---
 
 ## 7. What's in flight right now
 
-*Refreshed 2026-11-04; the Sep 4 list is in this file's history.*
+*Refreshed 2026-11-18; the Nov 4 and Sep 4 lists are in this file's history.*
 
-1. **The GL/D3D corpus** — every OpenGL and Direct3D app on both the software and WebGL paths. MDK2, Stronghold Crusader, Alice and Deus Ex have live lanes. The original 27-app membership, backend coverage and crash scope are still being reconciled ([status](docs/gl-d3d-corpus-status.md)).
-2. **The coordinator itself** — at most four production workers, with memory and disk floors checked before each launch, builds behind one lock, and heavy runtimes on short-lived leased boxes. The box's disk is the binding constraint, and evidence retention is now planned around Git ([rules](ops/COORDINATOR.md)).
-3. **A compiled tier for the 32-bit machine** — the uop tier is on by default and pays on Heroes III and MCM. The main-emulator region JIT is studied but not landed; its own measurement recommended "a narrower thing" than the toy VM's result ([uop tier](docs/uop-tier-design.md), [transfer study](docs/region-jit-transfer-study.md)).
-4. **The remaining commercial-demo blockers** — each has a note naming what was ruled out ([RE notes](docs/re-notes/README.md)).
-5. **CJK beyond Big5** — CP950 is opt-in per app with optional Ming fonts; other code pages have not been started.
-6. **Phones and Safari** — single-app mode, touch controls and bring-your-own media have their Safari fixes. Per-game control adaptations remain mostly unbuilt.
-7. **Explicit platform boundaries** — VB6 without its runtime, full DirectAnimation, and embedded browser engines are still unsupported; DX9 left the list when `pawn` drew its chessboard. The project records these as limits rather than hiding them behind silent stubs, and the silent-stub inventory is a ratchet that only goes down.
+1. **Living on one ring** — GPU stream v2 is now the only renderer for Glide, Direct3D 2–9 and OpenGL, with WebGL, software and null executors and no older path to fall back to. A draw the WAT producer cannot express traps with a count, so the open work is the list of declines the corpus still hits and browser-only differences such as palettes ([spec](docs/gpu-stream-v2.md), [migration](docs/gpu-stream-v2-migration.md)).
+2. **Original games, not only demos** — Quake III, Conan, GLTron, NFS III, Drakan, Blood II, The Sims, The Neverhood and the Half-Life 2 demo have live lanes. The maintainer's latest ask is to try full versions from archive.org where only demos and shareware were tested. The corpus has also been checked against a public Win9x compatibility list ([gaps](docs/win9x-compatibility-corpus-gaps-20261118.md), [GL/D3D status](docs/gl-d3d-corpus-status.md)).
+3. **A smaller harness** — no new Python, a plain Node supervisor instead of ptrace custody, and no tracked test that reads `scratch/runs/`. The coordinator keeps three workers busy, with a fourth slot authorised and a 1.5 GB disk floor. Run evidence and closed transcripts are pruned or moved off the box before the disk fills again ([rules](ops/COORDINATOR.md)).
+4. **A compiled tier for the 32-bit machine** — the uop tier and its retry ladder are on by default and pay on Heroes III and MCM; `--uop-icall` stays off. The main-emulator region JIT is studied but not landed; its own measurement recommended "a narrower thing" than the toy VM's result ([uop tier](docs/uop-tier-design.md), [transfer study](docs/region-jit-transfer-study.md)).
+5. **The site under its new name** — berrry.wine, compatibility pages with per-edition fields, and short gameplay clips cut from frozen CLI recordings. The remaining commercial-demo blockers each have a note naming what was ruled out ([RE notes](docs/re-notes/README.md)).
+6. **CJK beyond Big5** — CP950 is opt-in per app with optional Ming fonts; other code pages have not been started.
+7. **Phones and Safari** — Half-Life: Uplink measures 14.5 fps on an Android phone from the live site. Single-app mode, touch controls and bring-your-own media have their Safari fixes. Per-game control adaptations remain mostly unbuilt.
+8. **Explicit platform boundaries** — VB6 without its runtime, full DirectAnimation, and embedded browser engines are still unsupported; DX9 left the list when `pawn` drew its chessboard. The project records these as limits rather than hiding them behind silent stubs, and the silent-stub inventory is a ratchet that only goes down.
 
 ---
 
 ## 8. The narrative arc
 
-This is what 224 calendar days of disciplined “fail-fast, fix the real bug,
+This is what 238 calendar days of disciplined “fail-fast, fix the real bug,
 prove the bounded claim” looks like. Every act made the next one cheaper:
 
 - Act I built the foundation that made everything else *possible*.
@@ -1725,6 +1994,7 @@ prove the bounded claim” looks like. Every act made the next one cheaper:
 - Act XVIII added tiers and Workers. A uop compiler written in WAT halved Heroes III's gameplay CPU, rendering moved to a Worker by default, and an `ops/` directory appeared.
 - Act XIX handed the tree to a coordinator. A Codex session on a remote box dispatched lanes, reviewed evidence and committed to main, and the GL/D3D corpus became its standing goal.
 - Act XX replaced that coordinator when its context outgrew it. On the same day the emulator learned to render Traditional Chinese, and in the following days MDK2 completed the OpenGL surface.
+- Act XXI replaced the coordinator again and then trimmed what the lanes had grown: no new Python, no ptrace custody, no tests that read run evidence. On the laptop every 3D API moved onto one WAT-written command ring in four days and the paths it replaced were deleted, along with the real `COMCTL32.DLL`. The project shipped under a new name, Berrry Wine.
 
 The progression matters more than the raw commit count. Early sessions asked
 whether Notepad could decode. Current sessions argue about `glyf` composite
@@ -1751,7 +2021,7 @@ normally, coordinate over messageboard", "you are not responsible person" when
 an agent hesitated over a thirty-year-old shareware notice. The agents did the
 reading; the maintainer chose what counted as done.
 
-Acts XIX–XX changed the protocol's owner. The board now has about 39,000
+Acts XIX–XX changed the protocol's owner. The board now has about 58,000
 lines, and most of the October and November ones come from coordinator and
 worker identities rather than sessions the maintainer opened. The maintainer
 sets a standing goal, answers on Telegram, and decides when a lane is done.
@@ -1763,6 +2033,16 @@ observation rather than a code change. The new failure modes are operational:
 a coordinator whose context grew until it compacted every few minutes, a
 box that ran out of memory with two browsers open, and a disk that evidence
 keeps filling. Each produced a rule in `ops/COORDINATOR.md`.
+
+Act XXI adds a third failure mode. It is not operational: the harness
+outgrew the work. When most commits are records, a lane can spend its budget
+proving that its own observer is trustworthy. Ptrace journals, admission
+fences and prearm windows piled up around the emulator's own runs faster
+than the games moved. The maintainer's correction was the same kind as
+in August: short, and written down as a rule that the build enforces. The
+fortnight's largest engineering change came from the other track, where one
+person and Claude Code replaced the per-API renderers with one ring and
+deleted the old ones.
 
 When this paragraph was first written, the next inflection point was a compiled tier for the 32-bit machine. The uop tier is that tier's first step, and it is on by default. The
 region JIT exists and pays on the toy; the main emulator has the ledger of what
