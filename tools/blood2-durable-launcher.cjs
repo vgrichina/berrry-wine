@@ -30,6 +30,7 @@ function launch({ run, command, env = process.env, fds = [], deadline, cleanupDe
 }
 // Write each observed chunk immediately. close, not exit, proves pipe EOF.
 function retain(child, run, name) {
+  const startToken = c.token(child.pid);
   const out = fs.openSync(path.join(run, name + '.stdout.log'), 'wx');
   const err = fs.openSync(path.join(run, name + '.stderr.log'), 'wx');
   const drainErrors = [];
@@ -40,7 +41,7 @@ function retain(child, run, name) {
     child.once('error', reject);
     child.once('close', (exit, signal) => {
       fs.fsyncSync(out); fs.fsyncSync(err); fs.closeSync(out); fs.closeSync(err);
-      const receipt = { pid: child.pid, at: c.now(), exit: c.returncode(exit, signal), signal,
+      const receipt = { pid: child.pid, startToken, at: c.now(), exit: c.returncode(exit, signal), signal,
         actualWait: true, stdoutEOF: child.stdout.readableEnded, stderrEOF: child.stderr.readableEnded, drainErrors };
       c.save(run, name + '-wait.json', receipt); resolve(receipt);
     });

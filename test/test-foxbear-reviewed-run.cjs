@@ -6,25 +6,56 @@ const common=require('../tools/native-supervisor-common.cjs');
 const out=path.resolve(process.argv[3]||fs.mkdtempSync(path.join(os.tmpdir(),'foxbear-input-')));
 async function body(){
  const a=require('../tools/foxbear-reviewed-run.cjs');fs.mkdirSync(out,{recursive:true});a.R=out;
- const exe=path.join(out,'authored.exe');fs.writeFileSync(exe,require('./test-cli-native-button-delivery.cjs').fixture(process.env.FOXBEAR_BOUNDARY_CASE==='queued-expiry'?10000:0));
+ const boundaryCase=process.env.FOXBEAR_BOUNDARY_CASE;
+ const exe=path.join(out,'authored.exe');
+ const animated=!boundaryCase || ['old-paint','new-paint'].includes(boundaryCase);
+ fs.writeFileSync(exe,animated ? require('./test-disciples2-native-paint-binding.cjs').fixture('repaint') :
+   require('./test-cli-native-button-delivery.cjs').fixture(boundaryCase==='queued-expiry'?10000:0));
  const port=await new Promise(r=>{const s=net.createServer().listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});
  a.URL='http://127.0.0.1:'+port+'/ctl';Object.assign(process.env,{FOXBEAR_CONTROL_OUT:out,FOXBEAR_CONTROL_URL:a.URL});
  const now=common.now();a.save('launch.json',{at:now,deadline:now+240,gameplayCutoff:now+60,reserveSeconds:180,nativeScene:true,
+ bindingContract:boundaryCase==='old-paint'?'native-scene-v1':'native-reviewed-context-v1',
  inputPolicy:{confirmationMs:500,physicalUpMs:1750,observationMs:3000,gameFreshnessSeconds:5,menuFreshnessSeconds:30}});
  assert(common.freeBytes()>1500000000,'actual home disk floor');
+ const frozen=process.env.FOXBEAR_NATIVE_MODULE ? require('../tools/blood2-immutable-preparation.cjs').freeze(
+   require('../tools/blood2-immutable-preparation.cjs').collect([],{revision:process.env.FOXBEAR_NATIVE_REVISION}),
+   fs.readFileSync(process.env.FOXBEAR_NATIVE_MODULE)) : null;
+ if(frozen)a.save('frozen-native.json',{revision:process.env.FOXBEAR_NATIVE_REVISION,moduleSHA256:common.sha256(fs.readFileSync(process.env.FOXBEAR_NATIVE_MODULE)),sourceSHA256:frozen.sourceSHA256,indexSHA256:frozen.indexSHA256});
  const watcher=cp.spawn(process.execPath,[__filename,'--watch',out],{stdio:['ignore','pipe','pipe']}),watchWait=common.communicate(watcher);
  while(!fs.existsSync(path.join(out,'disk-watch-armed.json')))await common.sleep(5);
- const p=cp.spawn(process.execPath,['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=1024x712','--max-seconds=35','--max-batches=10000000','--control='+port,'--quiet-api','--quiet-blocks','--no-close'],{cwd:path.resolve(__dirname,'..'),env:{...process.env,WINE_PUBLIC_INPUT_TRACE:path.join(out,'native-input-trace.jsonl')},stdio:['ignore','pipe','pipe']});
+ const p=cp.spawn(process.execPath,['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=1024x712','--max-seconds=35','--max-batches=10000000','--control='+port,'--quiet-api','--quiet-blocks','--no-close'],{cwd:path.resolve(__dirname,'..'),env:{...(frozen?frozen.env:process.env),WINE_PUBLIC_INPUT_TRACE:path.join(out,'native-input-trace.jsonl')},stdio:frozen?common.stdioWithFds(frozen.fds):['ignore','pipe','pipe']});
  const waited=common.communicate(p);a.save('native-pid.json',{pid:p.pid,startToken:common.token(p.pid),at:common.now()});
- async function review(name){await a.capture(name);const rr=a.read(name+'.json');a.save(name+'-review.json',{at:common.now(),pngSHA256:rr.pngSHA256,scene:'game',observation:'Automated authored test fixture only'});}
+ async function review(name){await a.capture(name);const rr=a.read(name+'.json');a.save(name+'-review.json',{at:common.now(),pngSHA256:rr.pngSHA256,scene:'game',targetHwnd:rr.snapshot.focus,wholeFrame:true,observation:'Automated authored test fixture only'});}
  try{
   const end=Date.now()+15000;for(;;){try{const s=await a.call({action:'snapshot'},.5);if(s.mainHwnd!=='0x0'&&s.focusWindow.live&&s.physicalUp)break;}catch{}assert(Date.now()<end,'authored startup');await common.sleep(25);}
-  await review('binding');await a.bind('binding');
+  await review('binding');
+  if(animated){
+   await common.sleep(650);await a.call({cmd:'png:'+path.join(out,'advanced.png')});
+   const before=a.read('binding.json').pngSHA256,after=common.sha256(fs.readFileSync(path.join(out,'advanced.png')));
+   assert.notEqual(before,after,'actual native GDI animation must change complete encoded paint');
+   a.save('animated-paint.json',{before,after,realNativeRepaint:true});
+  }
+  if(boundaryCase==='old-paint'){
+   await assert.rejects(a.bind('binding'),/reviewed native paint changed/);
+   assert(a.read('terminal-input-failure.json').noReplay);
+   a.save('assertions.json',{pass:true,oldPaintFailed:true,zeroInputs:true});return;
+  }
+  await a.bind('binding');
   const boundary=process.env.FOXBEAR_BOUNDARY_CASE;
-  if(boundary){
+  if(boundary && boundary!=='new-paint'){
    await review('boundarybefore');const rr=a.read('boundarybefore.json'),expiry=rr.at+5;
+   if(boundary==='replay'){
+    const original=common.postJSON;let sent;
+    common.postJSON=async(...args)=>{if(args[1].action==='guarded-input')sent=structuredClone(args[1]);return original(...args);};
+    try{await a.pulse('once',['keydown:102'],100,'boundarybefore','Authored one-use reviewed native frame');}finally{common.postJSON=original;}
+    assert(a.read('once-down.json')[0].consumed);await assert.rejects(a.call(sent),/nonce/);
+    a.fail('duplicate native nonce refused; authored terminal control','replay');
+    let calls=0;common.postJSON=async()=>{calls++;throw Error('closed endpoint');};
+    try{await assert.rejects(a.capture('afterreplay'),/sticky UNKNOWN/);}finally{common.postJSON=original;}
+    assert.equal(calls,0);a.save('boundary-assertions.json',{pass:true,boundary,originalConsumed:true,replayRefused:true,laterEndpointCalls:0});return;
+   }
    const post=common.postJSON;let receipt,returnedAt,dispatchAt,calls=0,afterDown=false;
-   if(['crossing','expired-delivery','queued-expiry'].includes(boundary)){
+   if(['crossing','expired-delivery'].includes(boundary)){
     // Real elapsed capture age, never an edited capture/review timestamp.
     while(common.now()<expiry-.350)await common.sleep(2);
    }
@@ -36,6 +67,11 @@ async function body(){
     const cmd=args[1];calls++;
     if(cmd.action==='guarded-input'){
      dispatchAt=common.now();
+     if(boundary==='queued-expiry')cmd.guard.deadline=Math.trunc(Date.now()+150);
+     if(boundary==='wrong-epoch')cmd.guard.epoch++;
+     if(boundary==='wrong-frame')cmd.guard.intent.review.captureId='unretained-native-frame';
+     if(boundary==='wrong-hash')cmd.guard.intent.review.pngSHA256='0'.repeat(64);
+     if(boundary==='wrong-window')cmd.guard.intent.review.targetHwnd='0x7777';
      if(boundary==='expired-delivery')while(common.now()<expiry+.030)await common.sleep(2);
      const value=await post(...args);receipt=value.value;afterDown=true;
      if(boundary==='crossing')while(common.now()<expiry+.030)await common.sleep(2);
@@ -48,7 +84,7 @@ async function body(){
     return v;
    };
    let result,error;
-   try{result=await a.pulse('boundary',['keydown:102'],1000,'boundarybefore','Automated compiled-native boundary control');}catch(e){error=e.message;}
+   try{result=await a.pulse('boundary',['keydown:102'],['crossing','late-up'].includes(boundary)?1000:100,'boundarybefore','Automated compiled-native boundary control');}catch(e){error=e.message;}
    finally{common.postJSON=post;}
    if(boundary==='crossing'){
     if(process.env.FOXBEAR_EXPECT_OLD){assert.match(result,/NOT_SENT/);assert.equal(receipt,undefined);}
@@ -100,6 +136,7 @@ async function body(){
  }finally{
   p.kill('SIGTERM');const wait=await waited;a.save('native-wait.json',{exit:wait.returncode,actualWait:true,stdoutEOF:p.stdout.readableEnded,stderrEOF:p.stderr.readableEnded,stdout:wait.stdout.toString(),stderr:wait.stderr.toString()});
   const w=await watchWait;a.save('disk-watch-wait.json',{pid:watcher.pid,exit:w.returncode,actualWait:true,stdoutEOF:watcher.stdout.readableEnded,stderrEOF:watcher.stderr.readableEnded});
+  if(frozen)frozen.close();
   assert(p.stdout.readableEnded&&p.stderr.readableEnded);assert.equal(wait.returncode,0);assert.equal(w.returncode,0);
  }
 }

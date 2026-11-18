@@ -28,6 +28,13 @@ async function call(command, timeout = 10) {
 }
 class ReserveRejected extends Error { constructor(m) { super(m); this.name = 'ReserveRejected'; } }
 const QUIT_ROUTES = { 'ordinary-f12': ['keydown:123'] };
+const CONTEXT_CONTRACT = 'native-reviewed-context-v1';
+const contextContract = () => read('launch.json').bindingContract === CONTEXT_CONTRACT;
+function nativeReview(rr, personal) {
+  ok(personal.wholeFrame === true && personal.pngSHA256 === rr.pngSHA256, 'complete reviewed image required');
+  return { contract: CONTEXT_CONTRACT, captureId: rr.captureId, pngSHA256: rr.pngSHA256,
+    reviewed: true, reviewedAt: personal.at * 1000, scope: personal.scene, targetHwnd: personal.targetHwnd };
+}
 
 function reserve() {
   const launch = read('launch.json');
@@ -48,18 +55,21 @@ function freshness(review) {
   if (!p) return 30;
   const scene = read(review + '-review.json').scene;
   ok(['game', 'menu'].includes(scene), 'explicit personally reviewed game/menu scene required');
-  return scene === 'game' ? p.gameFreshnessSeconds : p.menuFreshnessSeconds;
+  const seconds = scene === 'game' ? p.gameFreshnessSeconds : p.menuFreshnessSeconds;
+  ok(seconds > 0 && seconds <= (scene === 'game' ? (contextContract() ? 15 : 5) : 30), 'finite native review policy');
+  return seconds;
 }
 async function bind(review = null) {
   try {
-  opened(); reserve(); ok(!c.exists(P('input-owner.json')), 'permanent owner; no rebind');
+  opened(); reserve(); ok(!c.exists(P('bind-intent.json')) && !c.exists(P('input-owner.json')), 'permanent attempt/owner; no rebind');
   const command = { action: 'guarded-bind' };
   if (read('launch.json').nativeScene) {
     ok(review, 'original binding requires a personally reviewed complete scene');
     const rr = read(review + '.json'), personal = read(review + '-review.json');
-    ok(now() - rr.at >= 0 && now() - rr.at < 30 && now() - personal.at >= 0 && now() - personal.at < 30, 'binding review expired');
+    const limit = contextContract() ? freshness(review) : 30;
+    ok(now() - rr.at >= 0 && now() - rr.at < limit && now() - personal.at >= 0 && now() - personal.at < limit, 'binding review expired');
     ok(personal.pngSHA256 === rr.pngSHA256 && rr.pngSHA256 === sha(P(review + '.png')));
-    command.reviewedScene = { route: 'native-scene-v1', snapshot: rr.snapshot, pngSHA256: rr.pngSHA256 };
+    command.reviewedScene = contextContract() ? nativeReview(rr, personal) : { route: 'native-scene-v1', snapshot: rr.snapshot, pngSHA256: rr.pngSHA256 };
   }
   save('bind-intent.json', { at: now(), permanent: true, review });
   save('input-owner.json', await call(command)); const s = await call({ action: 'snapshot' });
@@ -125,10 +135,14 @@ async function capture(name, operationDeadline = null) {
       if (operationDeadline !== null) ok(now() < operationDeadline, '3000ms operation completion exceeded');
       return value;
     };
-    const start = now(); const s = await observe({ action: 'snapshot' }); capturePhase();
-    const im = await observe({ cmd: 'png:' + p }); const end = now();
+    const start = now(); let s, im;
+    if (contextContract()) { im = await observe({ action: 'native-reviewed-capture', path: p }); s = im.snapshot; }
+    else { s = await observe({ action: 'snapshot' }); capturePhase(); im = await observe({ cmd: 'png:' + p }); }
+    const end = now();
     if (read('launch.json').inputPolicy) ok(end - start <= 3, '3000ms observation exceeded');
-    save(name + '.json', { at: start, completedAt: end, snapshot: s, image: im, pngSHA256: sha(p) });
+    if (contextContract()) ok(im.contract === CONTEXT_CONTRACT && im.pngSHA256 === sha(p), 'native encoder provenance mismatch');
+    save(name + '.json', { at: start, completedAt: end, snapshot: s, image: im, pngSHA256: sha(p),
+      ...(contextContract() ? { captureId: im.captureId, contract: im.contract, nativeStartedAt: im.startedAt, nativeCompletedAt: im.completedAt } : {}) });
     return p;
   } catch (e) { fail(e, name); throw e; }
 }
@@ -285,7 +299,7 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         // actual native consumption, independently of completion/UP.
         const guard = { ...owner, nonce, reviewed: true,
           deadline: Math.trunc(Math.min(targetingDeadline, deadline, releaseCap, intent === 'gameplay' ? cutoff : deadline) * 1000) };
-        if (native) guard.intent = rr.snapshot;
+        if (native) guard.intent = contextContract() ? { review: nativeReview(rr, reviewed) } : rr.snapshot;
         deliveryAt = now();
         if (!freshnessFits(deliveryAt, targetingDeadline, strict, native)) {
           save(name + '-disarm.json', { at: deliveryAt, beforeDown: true });
@@ -380,7 +394,7 @@ async function submit(request) {
   ok(request && typeof request.observation === 'string' && request.observation.trim(), 'personal whole-frame observation required');
   ok(['game','menu'].includes(request.scene), 'explicit game/menu review required');
   const rr=read(request.review+'.json');
-  save(request.review+'-review.json',{at:now(),pngSHA256:rr.pngSHA256,scene:request.scene,observation:request.observation,quitRoute:request.route||null,wholeFrame:true});
+  save(request.review+'-review.json',{at:now(),pngSHA256:rr.pngSHA256,scene:request.scene,observation:request.observation,quitRoute:request.route||null,wholeFrame:true,targetHwnd:rr.snapshot.focus});
   if(request.bind) await bind(request.review);
   if(request.key!==undefined) return pulse(request.name,['keydown:'+request.key],request.ms,request.review,request.observation,!!request.final,request.route?'quit':'gameplay',request.route||null);
 }

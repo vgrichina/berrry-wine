@@ -26,7 +26,13 @@ function indexedSource(rows) {
     const body = Buffer.from(row.body, 'base64');
     assert(!seen.has(name) && !path.posix.isAbsolute(name) && !name.split('/').includes('..'));
     assert.equal(c.sha256(body), row.sha256, name);
-    seen.add(name); index.push({ path: name, sha256: row.sha256, offset, size: body.length });
+    const identity = row.canonicalPath;
+    if (identity !== undefined) assert(typeof identity === 'string' && identity &&
+      path.posix.normalize(identity) === identity && !path.isAbsolute(identity) && !identity.split('/').includes('..'));
+    if (identity !== undefined) assert(Array.isArray(row.aliases) && row.aliases.every(a => typeof a === 'string' && a &&
+      path.posix.normalize(a) === a && !path.isAbsolute(a) && !a.split('/').includes('..')));
+    seen.add(name); index.push({ path: name, sha256: row.sha256, offset, size: body.length,
+      ...(identity === undefined ? {} : { canonicalPath: identity, aliases: row.aliases }) });
     bodies.push(body); offset += body.length;
   }
   const header = Buffer.from(JSON.stringify({ version: 1, files: index }));

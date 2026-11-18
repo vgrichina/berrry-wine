@@ -70,7 +70,15 @@ function collect(extra = [], { codec = true, revision = null, media = [] } = {})
     assert(!rows.has(pin.path), 'duplicate media input: ' + pin.path);
     const b = fs.readFileSync(path.join(root, pin.path));
     assert.equal(b.length, pin.size, pin.path); assert.equal(c.sha256(b), pin.sha256, pin.path);
-    rows.set(pin.path, { path: pin.path, sha256: pin.sha256, body: b.toString('base64') });
+    const canonicalPath = path.relative(root, fs.realpathSync(path.join(root, pin.path)));
+    assert(canonicalPath && !canonicalPath.startsWith('../') && !path.isAbsolute(canonicalPath), 'media outside repository');
+    const aliases = [...new Set([...(pin.aliases || []),
+      ...(pin.path.startsWith('test/binaries/') ? [pin.path.slice(5)] : [])])];
+    for (const alias of aliases) {
+      assert(!path.isAbsolute(alias) && !alias.split('/').includes('..'));
+      assert.equal(fs.realpathSync(path.join(root, alias)), path.join(root, canonicalPath), 'media alias identity changed');
+    }
+    rows.set(pin.path, { path: pin.path, sha256: pin.sha256, body: b.toString('base64'), canonicalPath, aliases });
   }
   return [...rows.values()].sort((a, b) => a.path.localeCompare(b.path));
 }
@@ -81,7 +89,8 @@ function freeze(rows, module) {
     LMARBLES_SOURCE_FD: '/proc/self/fd/' + source, LMARBLES_MODULE_FD: '/proc/self/fd/' + wasm,
     LMARBLES_SOURCE_INDEX_SHA256: indexSHA256, LMARBLES_MODULE_SHA256: c.sha256(module) };
   return Object.freeze({ env: Object.freeze(env), fds: Object.freeze([source, wasm]), sourceSHA256: c.sha256(packed), indexSHA256,
-    inventory: Object.freeze(rows.map(r => Object.freeze({ path: r.path, sha256: r.sha256, size: Buffer.from(r.body, 'base64').length }))),
+    inventory: Object.freeze(rows.map(r => Object.freeze({ path: r.path, sha256: r.sha256, size: Buffer.from(r.body, 'base64').length,
+      ...(r.canonicalPath === undefined ? {} : { canonicalPath: r.canonicalPath, aliases: r.aliases }) }))),
     close() { fs.closeSync(source); fs.closeSync(wasm); } });
 }
 // Read-only mount audit. No PE loader, Wasm instantiation or guest instruction
