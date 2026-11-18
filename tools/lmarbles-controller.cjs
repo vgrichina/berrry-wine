@@ -19,9 +19,21 @@ const alnumName = name => /^[A-Za-z0-9]+$/.test(name.replaceAll('-', ''));
 
 function save(n, v) { c.save(S.R, n, v); }
 function read(n) { return c.readJSON(P(n)); }
-async function call(command, timeout = 10, beforeSend = null) {
+async function call(command, timeout = 10, beforeSend = null, diagnosticRecord = null) {
   if (c.exists(P('launch.json')) && read('launch.json').inputPolicy) timeout = Math.min(timeout, 3);
-  const r = await c.postJSON(S.URL, command, timeout, beforeSend);
+  const diagnostic = diagnosticRecord ? { kind: 'diagnostic-only', acceptedReceipt: false, command, ...diagnosticRecord.context } : null;
+  let r;
+  try { r = await c.postJSON(S.URL, command, timeout, beforeSend, diagnostic); }
+  catch (e) { if (diagnostic) diagnostic.error = { name: e.name, message: e.message }; throw e; }
+  finally {
+    if (diagnostic) {
+      diagnostic.returnedAt = now();
+      diagnosticRecord.returnedAt = diagnostic.returnedAt;
+      diagnostic.returnedMonotonicMs = performance.now();
+      // Exclusive creation preserves the first raw reply even on rejection.
+      fs.writeFileSync(P(diagnosticRecord.file), JSON.stringify(diagnostic, null, 2) + '\n', { flag: 'wx' });
+    }
+  }
   if (!r.ok) throw Error(JSON.stringify(r));
   return r.value;
 }
@@ -176,8 +188,9 @@ async function release(name, owner, deadline, final = false) {
   save(name + '-release-fired.json', { at: now(), due, source, fallback: deadline });
   try {
     const strict = read('launch.json').inputPolicy, start = now();
-    const reply = await call({ action: 'guarded-release', owner }, strict ? .5 : 10);
-    if (strict) ok(now() - start <= .5, '500ms release confirmation exceeded');
+    const diagnostic = { file: name + '-release-diagnostic.json', context: { deliveryAt: start, releaseDue: due, source } };
+    const reply = await call({ action: 'guarded-release', owner }, strict ? .5 : 10, null, diagnostic);
+    if (strict) ok(diagnostic.returnedAt - start <= .5, '500ms release confirmation exceeded');
     save(name + '-up.json', { state: 'ACK', reply, at: now() });
   } catch (e) {
     // A reviewed final choice can retire the native before the finite UP.
@@ -300,6 +313,7 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
           return reject('before-dispatch');
         }
         save(name + '-dispatch.json', { at: deliveryAt, nonce, mayHaveEffects: true });
+        const diagnostic = { file: name + '-' + nonce + '-diagnostic.json', context: { deliveryAt, releaseCap, operationDeadline: deadline } };
         const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10, () => {
           unchanged();
           policy(intent, keys, review, route, deadline);
@@ -307,17 +321,18 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
           if (!freshnessFits(sentAt, targetingDeadline, strict)) throw new ConnectedBudgetRefused('connected send targeting freshness expired');
           if (!(admissionFits(sentAt, deadline, allowance, strict ? releaseCap : null, ms)
             && sentAt * 1000 < guard.deadline)) throw new ConnectedBudgetRefused('connected send admission expired');
-        });
-        returnedAt = now();
+        }, diagnostic);
+        returnedAt = diagnostic.returnedAt;
         if (strict) ok(returnedAt - deliveryAt <= .5, '500ms confirmation exceeded');
-        receipts.push(receipt);
-        if (receipt.consumedAt) save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
-        save(name + '-receipt.json', receipt);
         ok(receipt.state === 'CONSUMED' && receipt.consumed, receipt);
         // The native pre-effect check can pass just before expiry and
         // publish consumption after it. Do not accept that receipt or
         // reopen the context; the prearmed release remains mandatory.
         ok(Math.trunc(deliveryAt * 1000) <= receipt.consumedAt && receipt.consumedAt < guard.deadline, 'consumption exceeded targeting/admission deadline');
+        ok(returnedAt < receipt.consumedAt / 1000 + ms / 1000, 'late ACK; independent UP retained; no replay');
+        receipts.push(receipt);
+        save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
+        save(name + '-receipt.json', receipt);
       }
       save(name + '-down.json', receipts);
       const releaseAt = Math.max(...receipts.map(x => x.consumedAt)) / 1000 + ms / 1000;

@@ -154,16 +154,34 @@ function listenerOwnedBy(pid, port) {
 const beforeBodyRefusals = new WeakMap();
 const beforeBodyRefusalCause = error => beforeBodyRefusals.get(error);
 // urllib.request.urlopen(POST json, timeout) -> parsed reply.
-function postJSON(url, body, timeoutSec, beforeSend = null) {
+function postJSON(url, body, timeoutSec, beforeSend = null, diagnostic = null) {
+  const mark = phase => { if (diagnostic) diagnostic[phase] = { at: Date.now(), monotonicMs: performance.now() }; };
+  mark('created');
   return new Promise((resolve, reject) => {
     const data = Buffer.from(JSON.stringify(body));
     const req = http.request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': data.length } }, res => {
+      mark('response');
+      if (diagnostic) diagnostic.statusCode = res.statusCode;
       const chunks = []; res.on('data', c => chunks.push(c));
-      res.on('end', () => { clearTimeout(timer); try { resolve(JSON.parse(Buffer.concat(chunks).toString())); } catch (e) { reject(e); } });
+      res.on('end', () => { clearTimeout(timer); mark('responseEnd'); try {
+        const raw = Buffer.concat(chunks);
+        if (diagnostic) diagnostic.rawResponseBase64 = raw.toString('base64');
+        const reply = JSON.parse(raw.toString());
+        if (diagnostic) diagnostic.rawReply = reply;
+        mark('parsed'); resolve(reply);
+      } catch (e) { reject(e); } });
       res.on('error', e => { clearTimeout(timer); reject(e); });
     });
     const timer = setTimeout(() => req.destroy(Object.assign(Error('timed out'), { code: 'ETIMEDOUT' })), Math.max(1, timeoutSec * 1000));
     req.on('error', e => { clearTimeout(timer); reject(e); });
+    if (diagnostic) {
+      req.once('socket', socket => {
+        mark('socketAssigned');
+        if (socket.connecting) socket.once('connect', () => mark('connected'));
+        else mark('connected');
+      });
+      req.once('finish', () => mark('requestFinished'));
+    }
     // Do not queue a guarded body while an Agent is still obtaining or
     // connecting a socket. The caller's synchronous check is the final action
     // before handing the complete, already serialized body to the transport.
@@ -184,12 +202,12 @@ function postJSON(url, body, timeoutSec, beforeSend = null) {
             beforeBodyRefusals.set(error, cause);
           req.destroy(error); return;
         }
-        try { req.end(data); } catch (e) { req.destroy(e); }
+        try { mark('bodyAttempt'); req.end(data); } catch (e) { req.destroy(e); }
       };
       if (socket.connecting) socket.once('connect', send);
       else send();
     });
-    else req.end(data);
+    else { mark('bodyAttempt'); req.end(data); }
   });
 }
 

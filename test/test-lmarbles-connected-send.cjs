@@ -7,7 +7,7 @@ const http = require('node:http'), net = require('node:net');
 const ctl = require('../tools/lmarbles-controller.cjs');
 const common = require('../tools/native-supervisor-common.cjs');
 const { createGuardedInput } = require('../lib/cli-guarded-input');
-for (const mode of ['fresh', 'fresh-strict', 'expired-socket', 'expired-connect', 'expired-strict', 'replaced', 'review-replaced', 'unknown', 'partial-effect', 'lost-ack', 'partial-write', 'end-throw', 'remote-forgery', 'release-failed', 'release-mismatch', 'physical-held', 'owner-after-refusal', 'snapshot-replaced']) test(mode, { timeout: 15000 }, async () => {
+for (const mode of ['fresh', 'fresh-strict', 'late-consumed', 'expired-socket', 'expired-connect', 'expired-strict', 'replaced', 'review-replaced', 'unknown', 'partial-effect', 'lost-ack', 'partial-write', 'end-throw', 'remote-forgery', 'release-failed', 'release-mismatch', 'physical-held', 'owner-after-refusal', 'snapshot-replaced']) test(mode, { timeout: 15000 }, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'connected-send-'));
   const rows = [], refs = { queue: [] }; let physicalUp = true, batch = 0;
   const guard = createGuardedInput({ snapshot: () => ({ healthy: true, refs }), cleanup: () => { physicalUp = true; rows.push({ action: 'physical-UP', at: Date.now() }); } });
@@ -50,7 +50,7 @@ for (const mode of ['fresh', 'fresh-strict', 'expired-socket', 'expired-connect'
   ctl.R = dir; ctl.URL = `http://127.0.0.1:${server.address().port}/ctl`;
   const at = common.now();
   ctl.save('launch.json', { at, deadline: at + 400, reserveSeconds: 180, gameplayCutoff: at + 220,
-    ...(['fresh-strict', 'expired-strict'].includes(mode) ? { inputPolicy: { gameFreshnessSeconds: 5, menuFreshnessSeconds: 30 } } : {}) });
+    ...(['fresh-strict', 'expired-strict', 'late-consumed'].includes(mode) ? { inputPolicy: { gameFreshnessSeconds: 5, menuFreshnessSeconds: 30 } } : {}) });
   ctl.save('native-pid.json', { pid: process.pid, startToken: common.token(process.pid) });
   ctl.save('input-owner.json', owner); ctl.save('lease-snapshot.json', { mainHwnd: '0x1', screen: { w: 1, h: 1 } });
   fs.writeFileSync(path.join(dir, 'review.png'), 'complete-reviewed-fixture');
@@ -78,6 +78,12 @@ for (const mode of ['fresh', 'fresh-strict', 'expired-socket', 'expired-connect'
   http.request = function(url, options, ...rest) {
     const down = ++requestNumber === 2;
     const req = original.call(this, url, { ...options, agent: down ? agent : undefined }, ...rest);
+    if (down && mode === 'late-consumed') req.on('response', res => res.prependOnceListener('end', () => {
+      // The body has arrived, but the event loop cannot deliver it to the
+      // caller within 500ms. This exercises returned-late, not a lost ACK.
+      const until = performance.now() + 520;
+      while (performance.now() < until) { /* authored client stall */ }
+    }));
     if (down && ['partial-write', 'end-throw'].includes(mode)) {
       const end = req.end;
       req.end = function(data) {
@@ -100,6 +106,25 @@ for (const mode of ['fresh', 'fresh-strict', 'expired-socket', 'expired-connect'
       assert.equal(input.guard.epoch, owner.epoch); assert.equal(input.guard.nonce, ctl.read('press-intent.json').nonces[0]);
       assert(ctl.read('press-armed.json').at * 1000 <= rows.find(r => r.action === 'guest-DOWN').at);
       assert(receipt.consumedAt < input.guard.deadline);
+    } else if (mode === 'late-consumed') {
+      await assert.rejects(ctl.pulse('press', ['keydown:13'], 100, 'review', 'late consumed fixture'), /500ms confirmation exceeded/);
+      const nonce = ctl.read('press-intent.json').nonces[0];
+      const file = 'press-' + nonce + '-diagnostic.json', diagnostic = ctl.read(file);
+      assert.equal(diagnostic.acceptedReceipt, false);
+      assert.equal(diagnostic.rawReply.value.state, 'CONSUMED');
+      assert.equal(diagnostic.rawReply.value.consumed, true);
+      assert.deepEqual(JSON.parse(Buffer.from(diagnostic.rawResponseBase64, 'base64')), diagnostic.rawReply);
+      assert(diagnostic.returnedAt - diagnostic.deliveryAt > .5);
+      assert(diagnostic.bodyAttempt.at <= diagnostic.rawReply.value.consumedAt);
+      assert(diagnostic.rawReply.value.consumedAt <= diagnostic.responseEnd.at);
+      assert(!fs.existsSync(path.join(dir, 'press-receipt.json')));
+      assert(!fs.existsSync(path.join(dir, 'press-down.json')));
+      const bytes = fs.readFileSync(path.join(dir, file)), count = rows.length;
+      await assert.rejects(ctl.pulse('later', ['keydown:13'], 100, 'review', 'closed'), /sticky UNKNOWN/);
+      assert.equal(rows.length, count);
+      assert.deepEqual(fs.readFileSync(path.join(dir, file)), bytes);
+      assert.equal(ctl.read('press-up.json').state, 'ACK');
+      assert(ctl.read('terminal-input-failure.json').noReplay);
     } else if (mode.startsWith('expired-')) {
       assert.match(await ctl.pulse('press', ['keydown:13'], 100, 'review', 'fixture expiry'), /^NOT_SENT/);
       assert.equal(rows.filter(r => r.action === 'guarded-input' || r.action === 'guest-DOWN').length, 0);
