@@ -41,6 +41,17 @@ served `f6962ba5b`/`a6002d5d…` graph; independent executing-bytecode provenanc
 remains unknown. Software-backend gameplay is still a separate open outcome.
 Evidence: `scratch/runs/20261118-gltron-normal-pause-manual-turn-effects/result.json`.
 
+The later actual software run (`66b475a05`) reached a textured arena with
+`gl-gps=software`, `glRenderer=null` and 4,430 native draws recorded for the
+original itself. The coordinator reviewed the intact rider and GAME IS PAUSED
+frame; the worker also records ordinary Enter resume. This initial launch
+pause does not establish normal Space pause or either manual turn. Disk
+closure preceded those actions and Quit, and later sampled free space fell
+below 1.5 GB. The earlier changed/cropped display refusal did not recur;
+the uncommitted readiness candidate remains unproved. No game exit or
+full-duration disk compliance is claimed.
+Evidence: `scratch/runs/20261118-gltron-headroom-restored-software-gameplay/result.json`.
+
 Quake II report `d0ed22840` records Game -> Easy and four manual world moves
 on unchanged 67 media/control rows and `f6962ba5b`/`a6002d5d…`. The coordinator
 reviewed the initial room and a later doorway view beside an existing corpse.
@@ -54,6 +65,18 @@ The later audit confirmed five-second world-input freshness; the misleading
 is inferred from these movement frames.
 Evidence: `scratch/runs/20261118-quake2-current-reviewed-browser-enemy-progress/result.json`
 and `scratch/runs/20261118-quake2-tmpfs-world-enemy-consequence/result.json`.
+
+A further original (`c5d5bbc33`) used the published `06f27181f` renderer and
+admission changes with the unchanged `a6002d5d…` module and 67 media pins.
+Nine guest gestures, including seven world gestures, reached the damaged
+lower doorway; the coordinator reviewed the doorway frame with health 100.
+There was no fire, identified living enemy, combat consequence or ordinary
+Quit. Native readbacks validated, but the new completion-admission branch
+was not exercised, so this is not causal qualification of that branch.
+Disk UNKNOWN permanently closed the run with no later requests; the sampled
+minimum was 974,835,712 bytes. The original invoking tool's exit143 and missing
+enclosing wait remain explicit limits despite 23 retained runtime waits.
+Evidence: `scratch/runs/20261118-quake2-headroom-restored-enemy-gameplay/result.json`.
 
 LTris startup helper `6fe4afd9e` distinguishes an initial empty desktop
 publication from the first completed SDL window publication. Authored browser
