@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "fbd2f47cc40149904c404a10c191181c4fd38ab2b187ee7aa95158447ff5f78f",
+      "sha256": "f55058f5e6adb0e0f0cb7e28d2356e8c82db2df50d19d4fb58e68cd7265ae793",
+      "reason": "Review 20261118 Alice local original demo registration: add one experimental candidate label and one APPS data entry pointing at unchanged existing executable and fourteen-companion manifest. requiredFiles and relativeMouse use ordinary launcher behavior. No launch arguments, config overlays, registry seeds, callback producer, boundary, export, owner, continuation, EIP/stack/clock write, rendering or input fence change. No retail or gameplay compatibility assertion. General callback ownership remains pending."
+    }
+  ]
+}

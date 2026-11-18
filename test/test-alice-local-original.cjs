@@ -1,0 +1,17 @@
+'use strict';
+const assert=require('node:assert/strict');
+const apps=require('../lib/apps');
+const a=apps.APPS.alice_demo;
+assert.equal(a.exe,'binaries/candidates/alice-demo/alice.exe');
+assert.equal(a.localFileManifest,'binaries/candidates/alice-demo/.wine-assembly-browser.json');
+assert.equal(a.requiredFiles,true);
+assert.equal(a.relativeMouse,true);
+assert.equal(a.threads,undefined,'normal Worker selection remains user controlled');
+for(const key of ['args','files','startupRegistry','bigMemory'])assert.equal(a[key],undefined,key);
+const rows=apps.LOCAL_CANDIDATE_APPS.filter(r=>r[0]==='alice_demo');
+assert.equal(rows.length,1);assert.match(rows[0][1],/Demo.*experimental/);
+const helper=require('../tools/alice-local-original.cjs');
+assert.equal(helper.admissionFits(10,12,2),false);
+assert.equal(helper.admissionFits(10,12.001,2),true);
+assert.equal(helper.freshnessFits(10,10,true,true),false);
+console.log('PASS Alice original demo registration and finite input deadline boundaries');
