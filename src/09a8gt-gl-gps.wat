@@ -19,11 +19,20 @@
   ;; primitives too, without emitting). A SW frame's front is uploaded and
   ;; PRESENTed, so the picture always comes from the executor.
   ;;
-  ;; Depth. The executor's DS can be neither uploaded nor read back, so the
-  ;; two depth buffers are kept equal instead: every glClear(DEPTH) is done
-  ;; on both, and a SW->GPU switch waits for one when software has written
-  ;; depth since (reason 16). After a GPU->SW switch the CPU depth is stale;
-  ;; a software draw that then depth-tests fails loudly ($glg_fail 20).
+  ;; Depth. The executor's DS cannot be uploaded, so the two depth buffers
+  ;; are kept equal instead: every glClear(DEPTH) is done on both, and a
+  ;; SW->GPU switch waits for one when software has written depth since
+  ;; (reason 16). After a GPU->SW switch the CPU depth (and, after a GPU
+  ;; stencil write, the CPU stencil) is stale. A software draw or CPU read
+  ;; that then needs it reads the executor's back ($glg_ds_readback): a D16
+  ;; target with GPS_CAP_DEPTH_READBACK, a D24S8 one (depth and stencil)
+  ;; with GPS_CAP_DS_READBACK. Without the capability it fails loudly
+  ;; ($glg_fail 20).
+  ;;
+  ;; Diagnostics. Every fallback ($glg_decline, and $glg_kill) records its
+  ;; reason, the guest EIP and a sequence number (gl_gps_last_decline,
+  ;; gl_gps_last_decline_eip, gl_gps_decline_seq). gl_gps_strict(1) makes
+  ;; each one trap instead: $glg_fail(100 + reason) (log 0x474c4750, code).
   ;;
   ;; Decline reasons (gl_gps_stat 16 + r) and the executor growth each needs:
   ;;   1 logic op               only without GPS_CAP_LOGIC_OP (RASTER logic_op)
@@ -43,11 +52,13 @@
   ;;                            filter is chosen per fragment (per-pixel LOD
   ;;                            in the IR); others are Wx1 TEX2D
   ;;  10 border texels          border texel ring around the image; also
-  ;;                            GL_CLAMP + linear without GPS_CAP_BORDER_LINEAR,
-  ;;                            or with a coordinate outside [0, 1] on the
-  ;;                            primitive (GL clamps first: half edge, half
-  ;;                            border; D3D border is all border). Executor
-  ;;                            growth: a CLAMP_THEN_BORDER address mode.
+  ;;                            GL_CLAMP + linear without GPS_CAP_BORDER_LINEAR.
+  ;;                            With it, coordinates outside [0, 1] are drawn:
+  ;;                            GL clamps first (half edge, half border at any
+  ;;                            distance), D3D's border is all border, so the
+  ;;                            shader saturates each such axis before texld
+  ;;                            on the border sampler (key bits 16-19,
+  ;;                            $glg_clamp_mask).
   ;;  11 unit 1 on a line/point none (WAT: per-span S1/T1 from the line planes)
   ;;  12 projective line/point  none (WAT: Q from the line plane per span end);
   ;;                            projective triangles use texld t#_dz
@@ -59,7 +70,8 @@
   ;;  17 bottom-up target       none (WAT: flip y)
   ;;  18 texture over 2048      none
   ;;  19 no executor            -
-  ;;  20 depth lost (fatal)     DS READBACK
+  ;;  20 depth lost (fatal)     DS READBACK (GPS_CAP_DEPTH_READBACK for D16,
+  ;;                            GPS_CAP_DS_READBACK for D24S8)
   ;;  21 1D texture unit 1      as 9
   ;;  22 non-32bpp texture      none
   ;;  23 blend factor > 13      none
@@ -73,7 +85,8 @@
   ;; 5 readbacks, 6 readback rows, 7 RT uploads, 8 RT upload rows, 9 texture
   ;; uploads, 10 GPU frames, 11 SW frames, 12 syncs, 13 texture hits,
   ;; 14 declines, 15 frames with a decline; 64 front-buffer PRESENTs, 65
-  ;; CPU-only stencil DrawPixels, 66 canonicalizer declines.
+  ;; CPU-only stencil DrawPixels, 66 canonicalizer declines, 67 depth/stencil
+  ;; readbacks.
   ;;
   ;; Block $glg_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +1024 shader cache 64 x {key, id}, +1536 sampler cache
@@ -165,8 +178,6 @@
   (global $glg_sw_back (mut i32) (i32.const 0))
   ;; This frame had a full stencil clear on both sides ($glg_stencil_why).
   (global $glg_s_clean (mut i32) (i32.const 0))
-  ;; This primitive samples a GL_CLAMP + linear axis outside [0, 1].
-  (global $glg_clamp_bad (mut i32) (i32.const 0))
   (global $glg_front_cpu (mut i32) (i32.const 0))
   (global $glg_front_dirty (mut i32) (i32.const 0))
   ;; Stencil: the DS is D24S8; a stencil draw asked for one; CPU / GPU wrote
@@ -178,6 +189,12 @@
   (global $glg_s_gpu (mut i32) (i32.const 0))
   (global $glg_slost (mut i32) (i32.const 0))
   (global $glg_stencil_val (mut i32) (i32.const 0))
+  ;; Diagnostics ($glg_note_decline): trap at every fallback; the last
+  ;; fallback's reason and guest EIP; fallbacks so far.
+  (global $glg_strict (mut i32) (i32.const 0))
+  (global $glg_last_why (mut i32) (i32.const 0))
+  (global $glg_last_eip (mut i32) (i32.const 0))
+  (global $glg_decline_seq (mut i32) (i32.const 0))
 
   (func $glg_fail (param $code i32)
     (call $host_log_i32 (i32.const 0x474c4750))
@@ -206,6 +223,25 @@
     (i32.load (i32.add (global.get $glg_mem) (i32.shl (local.get $i) (i32.const 2)))))
   (func (export "gl_gps_active") (result i32)
     (i32.and (i32.ne (global.get $glg_on) (i32.const 0)) (i32.eqz (global.get $glg_dead))))
+  ;; Diagnostics for hosts and the page HUD; all zero-argument reads are
+  ;; plain globals, safe to poll at any cadence. The reason names are
+  ;; lib/gl-gps-declines.generated.{js,json} (tools/gen-gl-gps-declines.js
+  ;; reads them from the table at the top of this file).
+  (func (export "gl_gps_strict") (param $on i32)
+    (global.set $glg_strict (i32.ne (local.get $on) (i32.const 0))))
+  ;; The last fallback's reason (0 = none yet).
+  (func (export "gl_gps_last_decline") (result i32) (global.get $glg_last_why))
+  ;; The guest return address of the Win32 call the last fallback happened
+  ;; in (the instruction after the guest's call to the GL entry point), or
+  ;; the guest EIP when it happened outside a Win32 call.
+  (func (export "gl_gps_last_decline_eip") (result i32) (global.get $glg_last_eip))
+  ;; Fallbacks so far: every decline (SW-frame classifications included)
+  ;; and the arm going off; never reset.
+  (func (export "gl_gps_decline_seq") (result i32) (global.get $glg_decline_seq))
+  ;; Executor readbacks so far: colour (stat 5) + depth/stencil (stat 67).
+  (func (export "gl_gps_readback_count") (result i32)
+    (if (i32.eqz (global.get $glg_mem)) (then (return (i32.const 0))))
+    (i32.add (i32.load offset=20 (global.get $glg_mem)) (i32.load offset=268 (global.get $glg_mem))))
 
   ;; ---- ring plumbing ---------------------------------------------------------
   (func $glg_kick (param $mode i32) (result i32)
@@ -565,6 +601,7 @@
   ;; Turn the arm off for the rest of the run: the DIBs become the picture.
   (func $glg_kill (param $why i32)
     (if (global.get $glg_dead) (then (return)))
+    (call $glg_note_decline (local.get $why))
     (if (global.get $glg_back_e) (then
       (call $glg_detach)))
     (global.set $glg_dead (local.get $why))
@@ -673,7 +710,22 @@
       (global.set $glg_s_gpu (i32.const 0))))
     (global.set $glg_gpu (i32.const 0)))
 
+  ;; Bookkeeping for every software fallback (a decline or the arm going
+  ;; off): the reason, the guest return address of the Win32 call it
+  ;; happened in ($api_return_eip, 09b; the current EIP outside one) and a
+  ;; sequence number, read back through gl_gps_last_decline* /
+  ;; gl_gps_decline_seq. With gl_gps_strict(1) it traps right here with
+  ;; $glg_fail(100 + why), before any state moves, so a host debugger
+  ;; stops at the declining draw with its backtrace.
+  (func $glg_note_decline (param $why i32)
+    (global.set $glg_last_why (local.get $why))
+    (global.set $glg_last_eip (select (global.get $api_return_eip) (global.get $eip)
+      (i32.ne (global.get $api_handler_depth) (i32.const 0))))
+    (global.set $glg_decline_seq (i32.add (global.get $glg_decline_seq) (i32.const 1)))
+    (if (global.get $glg_strict) (then (call $glg_fail (i32.add (i32.const 100) (local.get $why))))))
+
   (func $glg_decline (param $why i32)
+    (call $glg_note_decline (local.get $why))
     (call $glg_stat (i32.const 14) (i32.const 1))
     (call $glg_stat (i32.add (i32.const 16) (local.get $why)) (i32.const 1))
     (global.set $glg_declined (i32.const 1))
@@ -687,27 +739,56 @@
       (call $glg_readback (global.get $glg_back_id) (global.get $glg_back_e) (local.get $site))
       (global.set $glg_back_gpu (i32.const 0)))))
 
-  ;; Recover the exact D16 depth before a CPU fallback tests it.
-  (func $glg_depth_readback
+  ;; Land the executor's depth ($want bit 1) and/or stencil (bit 2) in the
+  ;; CPU surfaces before a software fallback uses them. A D16 target needs
+  ;; GPS_CAP_DEPTH_READBACK and gives depth only (READBACK fmt D16, u16
+  ;; rows). A D24S8 target needs GPS_CAP_DS_READBACK: READBACK fmt D24S8
+  ;; returns little-endian u32 words (depth24 << 8) | stencil8; depth24 is
+  ;; rounded to the CPU's 16-bit units (d16 = round(d24 * 65535 / 0xffffff))
+  ;; and stencil8 lands in the 8-bit CPU stencil plane (09a8cc). Only what
+  ;; was asked for is written: a CPU copy that is current or ahead stays.
+  ;; Without the capability nothing changes and the caller's lost-depth /
+  ;; lost-stencil guard ($glg_fail 20) still fires. Ownership flags change
+  ;; only after every acknowledged band is copied: bit 1 clears $glg_zlost
+  ;; and $glg_z_gpu, bit 2 clears $glg_slost.
+  (func $glg_ds_readback (param $want i32)
     (local $w i32) (local $hgt i32) (local $pitch i32) (local $dib i32) (local $h i32)
     (local $y i32) (local $n i32) (local $k i32) (local $pos i32) (local $src i32) (local $p i32)
-    (local $band i32) (local $seq i32)
-    (local $entry i32)
-    ;; Other executors and D24S8 keep the original lost-depth guard.
-    (if (i32.or (i32.eqz (call $glg_cap (global.get $GPS_CAP_DEPTH_READBACK)))
-          (global.get $glg_ds_s)) (then (return)))
+    (local $band i32) (local $seq i32) (local $entry i32) (local $bpp i32) (local $s i32)
+    (local $row i32) (local $x i32) (local $word i32) (local $sp i32) (local $spitch i32) (local $sh i32)
+    (if (i32.or (i32.eqz (global.get $glg_back_e)) (i32.eqz (global.get $glg_ds_id))) (then (return)))
+    (local.set $s (global.get $glg_ds_s))
+    (if (local.get $s)
+      (then (if (i32.eqz (call $glg_cap (global.get $GPS_CAP_DS_READBACK))) (then (return))))
+      (else
+        (if (i32.eqz (call $glg_cap (global.get $GPS_CAP_DEPTH_READBACK))) (then (return)))
+        (local.set $want (i32.and (local.get $want) (i32.const 1)))))
     (local.set $entry (global.get $gl_sw_zbuf))
+    (if (i32.eqz (local.get $entry)) (then (local.set $want (i32.and (local.get $want) (i32.const 2)))))
+    (if (i32.and (local.get $want) (i32.const 2)) (then
+      (if (call $gl_stencil_ensure)
+        (then
+          (local.set $sp (global.get $gl_stencil_pixels))
+          (local.set $spitch (global.get $gl_stencil_pitch))
+          (local.set $sh (global.get $gl_stencil_height)))
+        (else (local.set $want (i32.and (local.get $want) (i32.const 1)))))))
+    (if (i32.eqz (local.get $want)) (then (return)))
+    (call $glg_flush)
     (local.set $h (global.get $glg_h))
-    (local.set $w (load.field DxObject width (local.get $entry)))
-    (local.set $hgt (load.field DxObject height (local.get $entry)))
-    (local.set $pitch (load.field DxObject pitch (local.get $entry)))
-    (local.set $dib (load.field DxObject misc1 (local.get $entry)))
+    (local.set $w (global.get $glg_w))
+    (local.set $hgt (global.get $glg_hh))
+    (if (local.get $entry) (then
+      (local.set $w (load.field DxObject width (local.get $entry)))
+      (local.set $hgt (load.field DxObject height (local.get $entry)))
+      (local.set $pitch (load.field DxObject pitch (local.get $entry)))
+      (local.set $dib (load.field DxObject misc1 (local.get $entry)))))
+    (local.set $bpp (select (i32.const 4) (i32.const 2) (local.get $s)))
     (local.set $band (call $glg_band (local.get $w)))
     (block $done (loop $bands
       (br_if $done (i32.ge_u (local.get $y) (local.get $hgt)))
       (local.set $n (i32.sub (local.get $hgt) (local.get $y)))
       (if (i32.gt_u (local.get $n) (local.get $band)) (then (local.set $n (local.get $band))))
-      (local.set $pos (call $glg_arena (i32.mul (i32.shl (local.get $w) (i32.const 1)) (local.get $n))))
+      (local.set $pos (call $glg_arena (i32.mul (i32.mul (local.get $w) (local.get $bpp)) (local.get $n))))
       (call $gps_slot_arm (local.get $h) (i32.const 0))
       (local.set $p (call $glg_begin (global.get $GPS_OP_READBACK) (size-of GpsReadback)))
       (store.field GpsReadback rt (local.get $p) (global.get $glg_ds_id))
@@ -715,9 +796,10 @@
       (store.field GpsReadback y (local.get $p) (local.get $y))
       (store.field GpsReadback w (local.get $p) (local.get $w))
       (store.field GpsReadback h (local.get $p) (local.get $n))
-      (store.field GpsReadback fmt (local.get $p) (global.get $GPS_FMT_D16))
+      (store.field GpsReadback fmt (local.get $p)
+        (select (global.get $GPS_FMT_D24S8) (global.get $GPS_FMT_D16) (local.get $s)))
       (store.field GpsReadback dst (local.get $p) (local.get $pos))
-      (store.field GpsReadback pitch (local.get $p) (i32.shl (local.get $w) (i32.const 1)))
+      (store.field GpsReadback pitch (local.get $p) (i32.mul (local.get $w) (local.get $bpp)))
       (store.field GpsReadback slot (local.get $p) (i32.const 0))
       (local.set $seq (call $glg_end (local.get $p)))
       (call $glg_stat (i32.const 12) (i32.const 1))
@@ -726,18 +808,46 @@
       (local.set $k (i32.const 0))
       (block $rd (loop $rows
         (br_if $rd (i32.ge_u (local.get $k) (local.get $n)))
-        (memory.copy
-          (i32.add (local.get $dib) (i32.mul (i32.add (local.get $y) (local.get $k)) (local.get $pitch)))
-          (i32.add (local.get $src) (i32.mul (local.get $k) (i32.shl (local.get $w) (i32.const 1))))
-          (i32.shl (local.get $w) (i32.const 1)))
+        (local.set $row (i32.add (local.get $y) (local.get $k)))
+        (if (i32.eqz (local.get $s))
+          (then
+            (memory.copy
+              (i32.add (local.get $dib) (i32.mul (local.get $row) (local.get $pitch)))
+              (i32.add (local.get $src) (i32.mul (local.get $k) (i32.shl (local.get $w) (i32.const 1))))
+              (i32.shl (local.get $w) (i32.const 1))))
+          (else
+            (local.set $x (i32.const 0))
+            (block $cd (loop $cols
+              (br_if $cd (i32.ge_u (local.get $x) (local.get $w)))
+              (local.set $word (i32.load (i32.add (local.get $src)
+                (i32.shl (i32.add (i32.mul (local.get $k) (local.get $w)) (local.get $x)) (i32.const 2)))))
+              (if (i32.and (local.get $want) (i32.const 1)) (then
+                (i32.store16 (i32.add (i32.add (local.get $dib) (i32.mul (local.get $row) (local.get $pitch)))
+                    (i32.shl (local.get $x) (i32.const 1)))
+                  (i32.wrap_i64 (i64.div_u
+                    (i64.add (i64.mul (i64.extend_i32_u (i32.shr_u (local.get $word) (i32.const 8))) (i64.const 65535))
+                      (i64.const 8388607))
+                    (i64.const 16777215))))))
+              (if (i32.and (i32.ne (i32.and (local.get $want) (i32.const 2)) (i32.const 0))
+                    (i32.and (i32.lt_u (local.get $x) (local.get $spitch)) (i32.lt_u (local.get $row) (local.get $sh))))
+                (then (i32.store8 (i32.add (local.get $sp)
+                    (i32.add (i32.mul (local.get $row) (local.get $spitch)) (local.get $x)))
+                  (local.get $word))))
+              (local.set $x (i32.add (local.get $x) (i32.const 1)))
+              (br $cols)))))
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br $rows)))
       (local.set $y (i32.add (local.get $y) (local.get $n)))
       (br $bands)))
-    (call $page_watch_write (local.get $dib)
-      (i32.add (i32.mul (i32.sub (local.get $hgt) (i32.const 1)) (local.get $pitch)) (i32.shl (local.get $w) (i32.const 1))))
-    ;; Ownership changes only after every acknowledged band is copied.
-    (global.set $glg_zlost (i32.const 0)))
+    (if (i32.and (local.get $want) (i32.const 1)) (then
+      (call $page_watch_write (local.get $dib)
+        (i32.add (i32.mul (i32.sub (local.get $hgt) (i32.const 1)) (local.get $pitch)) (i32.shl (local.get $w) (i32.const 1))))
+      (global.set $glg_zlost (i32.const 0))
+      (global.set $glg_z_gpu (i32.const 0))))
+    (if (i32.and (local.get $want) (i32.const 2)) (then
+      (global.set $glg_slost (i32.const 0))
+      (global.set $glg_s_gpu (i32.const 0))))
+    (call $glg_stat (i32.const 67) (i32.const 1)))
 
   ;; A primitive the software rasterizer is about to draw.
   (func $glg_cpu_prim
@@ -757,10 +867,14 @@
     (local.set $s (global.get $gl_sw_st))
     (if (i32.and (i32.ne (i32.and (i32.load (local.get $s)) (i32.const 8)) (i32.const 0))
           (i32.ne (global.get $gl_sw_zbuf) (i32.const 0))) (then
-      (if (global.get $glg_zlost) (then (call $glg_depth_readback)))
+      ;; The stencil comes back with the same D24S8 words when it is lost too.
+      (if (global.get $glg_zlost) (then (call $glg_ds_readback
+        (i32.or (i32.const 1) (select (i32.const 2) (i32.const 0)
+          (i32.and (i32.ne (global.get $glg_slost) (i32.const 0)) (i32.ne (global.get $rast_stencil_state) (i32.const 0))))))))
       (if (global.get $glg_zlost) (then (call $glg_fail (i32.const 20))))
       (if (i32.load offset=24 (local.get $s)) (then (global.set $glg_z_cpu (i32.const 1))))))
     (if (global.get $rast_stencil_state) (then
+      (if (global.get $glg_slost) (then (call $glg_ds_readback (i32.const 2))))
       (if (global.get $glg_slost) (then (call $glg_fail (i32.const 20))))
       (if (call $glg_stencil_writes (global.get $rast_stencil_state)) (then (global.set $glg_s_cpu (i32.const 1)))))))
 
@@ -771,6 +885,7 @@
     ;; Stencil DrawPixels writes only the CPU stencil: no colour decline; the
     ;; executor's stencil is behind until the next full stencil clear.
     (if (i32.eq (local.get $why) (i32.const 14)) (then
+      (if (global.get $glg_slost) (then (call $glg_ds_readback (i32.const 2))))
       (if (global.get $glg_slost) (then (call $glg_fail (i32.const 20))))
       (global.set $glg_s_cpu (i32.const 1))
       (call $glg_stat (i32.const 65) (i32.const 1))
@@ -793,10 +908,19 @@
     (if (i32.eq (local.get $rt) (global.get $glg_front_e))
       (then (call $glg_front_sync (global.get $glg_read_site)))))
 
-  ;; A CPU read of the depth surface (glReadPixels/CopyPixels DEPTH).
+  ;; A CPU read of the depth surface (glReadPixels/CopyPixels DEPTH): the
+  ;; executor's depth is newer (mid GPU frame) or the CPU's is lost. Read it
+  ;; back when the executor can; otherwise the read fails loudly.
   (func $glg_cpu_zread
     (if (i32.or (i32.eqz (global.get $glg_on)) (global.get $glg_dead)) (then (return)))
+    (if (i32.or (global.get $glg_z_gpu) (global.get $glg_zlost)) (then (call $glg_ds_readback (i32.const 1))))
     (if (i32.or (global.get $glg_z_gpu) (global.get $glg_zlost)) (then (call $glg_fail (i32.const 20)))))
+
+  ;; The same for a CPU read of the stencil (glReadPixels STENCIL_INDEX).
+  (func $glg_cpu_sread
+    (if (i32.or (i32.eqz (global.get $glg_on)) (global.get $glg_dead)) (then (return)))
+    (if (i32.or (global.get $glg_s_gpu) (global.get $glg_slost)) (then (call $glg_ds_readback (i32.const 2))))
+    (if (i32.or (global.get $glg_s_gpu) (global.get $glg_slost)) (then (call $glg_fail (i32.const 20)))))
 
   (func $glg_set_read_site (param $site i32) (result i32)
     (local $old i32)
@@ -1235,8 +1359,50 @@
               (local.get $t) (local.get $d) (i32.const 0)))))))))))
     (local.get $n))
 
+  ;; texld r$unit from t$unit (_dz when $proj). $clamp (bit0 S, bit1 T):
+  ;; GL_CLAMP + linear axes, which GL clamps to [0, 1] before filtering, so
+  ;; the border sampler's linear filter then mixes half edge, half border at
+  ;; any distance past the edge. The coordinate (divided by Q first when
+  ;; projective) goes through r(4 + $unit): texcrd, mov_sat on the clamped
+  ;; axes, texld from the temp.
+  (func $glg_texld (param $buf i32) (param $n i32) (param $unit i32) (param $proj i32) (param $clamp i32) (result i32)
+    (local $src i32) (local $tmp i32)
+    (local.set $src (i32.or (select (i32.const 0xB9E40000) (i32.const 0xB0E40000) (local.get $proj)) (local.get $unit)))
+    (if (local.get $clamp) (then
+      (local.set $tmp (i32.add (i32.const 4) (local.get $unit)))
+      (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (i32.const 64) (i32.const 2)
+        (i32.and (call $d3g_dst (local.get $tmp) (i32.const 15)) (i32.const -1048577)) (local.get $src) (i32.const 0) (i32.const 0)))
+      (local.set $n (call $glg_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_MOV)
+        (call $d3g_dst (local.get $tmp) (local.get $clamp)) (i32.or (i32.const 0x80E40000) (local.get $tmp)) (i32.const 0) (i32.const 0)))
+      (local.set $src (i32.or (i32.const 0x80E40000) (local.get $tmp)))))
+    (call $glg_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_TEX)
+      (call $d3g_dst (local.get $unit) (i32.const 15)) (local.get $src) (i32.const 0) (i32.const 0)))
+
+  ;; GL_CLAMP + linear axes of unit $unit as drawn by its sampler ($glg_addr
+  ;; makes them BORDER): bit0 S, bit1 T. 0 for an untextured unit.
+  (func $glg_clamp_mask (param $unit i32) (result i32)
+    (local $d i32) (local $lin i32) (local $u i32) (local $v i32)
+    (if (call $gl_1d_selected (local.get $unit))
+      (then
+        (local.set $d (i32.add (global.get $gl_1d_draw) (i32.mul (local.get $unit) (i32.const 56))))
+        (local.set $lin (i32.eq (i32.load offset=8 (local.get $d)) (i32.const 0x2601)))
+        (local.set $u (i32.load offset=12 (local.get $d))))
+      (else (if (local.get $unit)
+        (then
+          (local.set $lin (i32.ne (global.get $rast_t1_linear) (i32.const 0)))
+          (local.set $u (global.get $rast_t1_addr_u))
+          (local.set $v (global.get $rast_t1_addr_v)))
+        (else
+          (local.set $lin (i32.and (global.get $gl_sw_r_flags) (i32.const 1)))
+          (local.set $u (call $gl_sw_flags_address (global.get $gl_sw_r_flags) (i32.const 2)))
+          (local.set $v (call $gl_sw_flags_address (global.get $gl_sw_r_flags) (i32.const 4)))))))
+    (if (i32.eqz (local.get $lin)) (then (return (i32.const 0))))
+    (i32.or (i32.eq (local.get $u) (i32.const 0x2900))
+      (i32.shl (i32.eq (local.get $v) (i32.const 0x2900)) (i32.const 1))))
+
   ;; Key: bit0 unit 0 textured, 1-2 its mode, 3-5 its base, bit6 unit 1,
-  ;; 7-8 its mode, 9-11 its base, bit12 fog.
+  ;; 7-8 its mode, 9-11 its base, bit12 fog, bit13/14 unit 0/1 projective,
+  ;; 16-17 / 18-19 unit 0/1 clamped axes ($glg_clamp_mask).
   (func $glg_shader (param $key i32) (result i32)
     (local $i i32) (local $e i32) (local $id i32) (local $p i32) (local $buf i32) (local $n i32)
     (local $bytes i32) (local $cur i32) (local $core i32)
@@ -1253,15 +1419,13 @@
     (local.set $buf (i32.add (global.get $glg_mem) (i32.const 2048)))
     ;; texld r0, t0 (t0_dz when projective: S/Q, T/Q with Q in .z).
     (if (i32.and (local.get $key) (i32.const 1))
-      (then (local.set $n (call $glg_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_TEX)
-        (call $d3g_dst (i32.const 0) (i32.const 15))
-        (select (i32.const 0xB9E40000) (i32.const 0xB0E40000) (i32.ne (i32.and (local.get $key) (i32.const 0x2000)) (i32.const 0)))
-        (i32.const 0) (i32.const 0)))))
+      (then (local.set $n (call $glg_texld (local.get $buf) (local.get $n) (i32.const 0)
+        (i32.ne (i32.and (local.get $key) (i32.const 0x2000)) (i32.const 0))
+        (i32.and (i32.shr_u (local.get $key) (i32.const 16)) (i32.const 3))))))
     (if (i32.and (local.get $key) (i32.const 64))
-      (then (local.set $n (call $glg_ins (local.get $buf) (local.get $n) (global.get $GPS_IR_TEX)
-        (call $d3g_dst (i32.const 1) (i32.const 15))
-        (select (i32.const 0xB9E40001) (i32.const 0xB0E40001) (i32.ne (i32.and (local.get $key) (i32.const 0x4000)) (i32.const 0)))
-        (i32.const 0) (i32.const 0)))))
+      (then (local.set $n (call $glg_texld (local.get $buf) (local.get $n) (i32.const 1)
+        (i32.ne (i32.and (local.get $key) (i32.const 0x4000)) (i32.const 0))
+        (i32.and (i32.shr_u (local.get $key) (i32.const 18)) (i32.const 3))))))
     (local.set $cur (i32.const 0x90E40000))
     (if (i32.and (local.get $key) (i32.const 1)) (then
       (local.set $n (call $glg_stage (local.get $buf) (local.get $n) (i32.const 2)
@@ -1398,8 +1562,6 @@
             (local.set $why (i32.const 10)) (br_if $ok (call $glg_border_bad
               (call $gl_sw_flags_address (local.get $flags) (i32.const 2))
               (call $gl_sw_flags_address (local.get $flags) (i32.const 4)) (i32.and (local.get $flags) (i32.const 1))))))))
-      (local.set $why (i32.const 10)) (br_if $ok (i32.and (i32.ne (global.get $glg_clamp_bad) (i32.const 0))
-        (i32.or (local.get $tex) (local.get $t1))))
       (local.set $why (i32.const 0)))
     (if (local.get $why) (then (call $glg_decline (local.get $why)) (return (i32.const 0))))
     (if (i32.eqz (global.get $glg_gpu)) (then
@@ -1423,6 +1585,7 @@
       ;; Projective coordinates (Q != 1 or a texture matrix): texld t0_dz,
       ;; Q is TEXCOORD0.z.
       (if (global.get $rast_t0_q_on) (then (local.set $key (i32.or (local.get $key) (i32.const 0x2000)))))
+      (local.set $key (i32.or (local.get $key) (i32.shl (call $glg_clamp_mask (i32.const 0)) (i32.const 16))))
       (local.set $env0 (call $glg_env (i32.const 0)))))
     (if (local.get $t1) (then
       (local.set $lin (i32.ne (global.get $rast_t1_linear) (i32.const 0)))
@@ -1436,6 +1599,7 @@
       (local.set $key (i32.or (local.get $key) (i32.or (i32.const 64) (i32.or (i32.shl (call $glg_mode (i32.const 1)) (i32.const 7))
         (i32.shl (call $glg_base (i32.const 1)) (i32.const 9))))))
       (if (global.get $glg_q1_bad) (then (local.set $key (i32.or (local.get $key) (i32.const 0x4000)))))
+      (local.set $key (i32.or (local.get $key) (i32.shl (call $glg_clamp_mask (i32.const 1)) (i32.const 18))))
       (local.set $env1 (call $glg_env (i32.const 1)))))
     (if (i32.and (local.get $caps) (i32.const 64)) (then
       (local.set $key (i32.or (local.get $key) (i32.const 0x1000)))
@@ -1549,57 +1713,6 @@
       (f32.add (f32.mul (f32.load offset=32 (local.get $d)) (local.get $fx)) (f32.mul (f32.load offset=36 (local.get $d)) (local.get $fy))))
       (local.get $q)))
 
-  ;; GL_CLAMP with a linear filter is the executor's BORDER mode only inside
-  ;; [0, 1]: GL clamps the coordinate first (half edge texel, half border at
-  ;; any distance), D3D's border is all border past the edge. 1 when an axis
-  ;; of a unit so addressed has a coordinate outside [0, 1] on this
-  ;; primitive (interpolation stays inside the vertices' hull).
-  (func $glg_out01 (param $v f32) (result i32)
-    (i32.or (f32.lt (local.get $v) (f32.const 0)) (f32.gt (local.get $v) (f32.const 1))))
-  (func $glg_clamp_axis (param $code i32) (param $lin i32) (param $a f32) (param $b f32) (param $c f32) (result i32)
-    (i32.and (i32.and (i32.eq (local.get $code) (i32.const 0x2900)) (i32.ne (local.get $lin) (i32.const 0)))
-      (i32.or (call $glg_out01 (local.get $a)) (i32.or (call $glg_out01 (local.get $b)) (call $glg_out01 (local.get $c))))))
-  (func $glg_clamp_out (param $o i32) (param $n i32) (result i32)
-    (local $flags i32) (local $lin i32) (local $i i32) (local $k i32) (local $code i32)
-    (local $a f32) (local $b f32) (local $c f32) (local $out i32)
-    (local.set $flags (global.get $gl_sw_r_flags))
-    ;; Per coordinate lane (+24 S0, +28 T0, +36 S1, +40 T1), divided by its Q
-    ;; (+32 / +44) when that unit is projective.
-    (loop $lanes
-      (local.set $k (i32.add (select (i32.const 36) (i32.const 24) (i32.ge_u (local.get $i) (i32.const 2)))
-        (i32.shl (i32.and (local.get $i) (i32.const 1)) (i32.const 2))))
-      (if (i32.lt_u (local.get $i) (i32.const 2))
-        (then
-          (local.set $lin (i32.and (local.get $flags) (i32.const 1)))
-          (local.set $code (if (result i32) (call $gl_1d_selected (i32.const 0))
-            (then (select (i32.load offset=12 (global.get $gl_1d_draw)) (i32.const 0) (i32.eqz (local.get $i))))
-            (else (call $gl_sw_flags_address (local.get $flags) (select (i32.const 2) (i32.const 4) (i32.eqz (local.get $i)))))))
-          (if (i32.eq (global.get $gl_sw_r_tex) (global.get $gl_sw_white)) (then (local.set $code (i32.const 0)))))
-        (else
-          (local.set $lin (global.get $rast_t1_linear))
-          (local.set $code (if (result i32) (call $gl_1d_selected (i32.const 1))
-            (then (select (i32.load offset=68 (global.get $gl_1d_draw)) (i32.const 0) (i32.eq (local.get $i) (i32.const 2))))
-            (else (select (global.get $rast_t1_addr_u) (global.get $rast_t1_addr_v) (i32.eq (local.get $i) (i32.const 2))))))
-          (if (i32.eqz (global.get $rast_t1_on)) (then (local.set $code (i32.const 0))))))
-      (if (i32.eq (local.get $code) (i32.const 0x2900)) (then
-        (local.set $a (call $glg_lane (local.get $o) (local.get $k)))
-        (local.set $b (call $glg_lane (i32.add (local.get $o) (i32.const 48)) (local.get $k)))
-        (local.set $c (if (result f32) (i32.eq (local.get $n) (i32.const 3))
-          (then (call $glg_lane (i32.add (local.get $o) (i32.const 96)) (local.get $k))) (else (local.get $b))))
-        (local.set $out (i32.or (local.get $out)
-          (call $glg_clamp_axis (local.get $code) (local.get $lin) (local.get $a) (local.get $b) (local.get $c))))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $lanes (i32.lt_u (local.get $i) (i32.const 4))))
-    (local.get $out))
-  ;; Vertex $v's coordinate at byte $k, over that unit's Q when projective.
-  (func $glg_lane (param $v i32) (param $k i32) (result f32)
-    (local $q f32)
-    (local.set $q (f32.load (i32.add (local.get $v) (select (i32.const 32) (i32.const 44) (i32.lt_u (local.get $k) (i32.const 36))))))
-    (if (result f32) (if (result i32) (i32.lt_u (local.get $k) (i32.const 36))
-          (then (i32.ne (global.get $rast_t0_q_on) (i32.const 0))) (else (i32.ne (global.get $glg_q1_bad) (i32.const 0))))
-      (then (f32.div (f32.load (i32.add (local.get $v) (local.get $k))) (local.get $q)))
-      (else (f32.load (i32.add (local.get $v) (local.get $k))))))
-
   ;; 09a8g's triangle, screen records 0..2 (in the scissor view's
   ;; coordinates), clip records $c0..$c2. 1: drawn here, skip the rasterizer.
   (func $glg_tri (param $c0 i32) (param $c1 i32) (param $c2 i32) (result i32)
@@ -1608,13 +1721,12 @@
     (global.set $glg_q1_bad (i32.or (f32.ne (f32.load offset=52 (local.get $c0)) (f32.const 1))
       (i32.or (f32.ne (f32.load offset=52 (local.get $c1)) (f32.const 1))
               (f32.ne (f32.load offset=52 (local.get $c2)) (f32.const 1)))))
-    ;; The three vertices go to scratch (glg_mem +704..+848) first: the
-    ;; GL_CLAMP check reads them before $glg_prim decides.
+    ;; The three vertices go to scratch (glg_mem +704..+848) first, before
+    ;; $glg_prim decides (and may flush the batch they would land in).
     (local.set $s (i32.add (call $glg_m) (i32.const 704)))
     (call $glg_tri_v (local.get $s) (i32.const 0) (local.get $c0))
     (call $glg_tri_v (i32.add (local.get $s) (i32.const 48)) (i32.const 1) (local.get $c1))
     (call $glg_tri_v (i32.add (local.get $s) (i32.const 96)) (i32.const 2) (local.get $c2))
-    (global.set $glg_clamp_bad (call $glg_clamp_out (local.get $s) (i32.const 3)))
     (if (i32.eqz (call $glg_prim (i32.const 0))) (then (call $glg_cpu_prim) (return (i32.const 0))))
     (local.set $o (call $glg_vtx (i32.const 3)))
     (memory.copy (local.get $o) (local.get $s) (i32.const 144))
@@ -1633,10 +1745,6 @@
     (local $o i32) (local $x0 f32) (local $x1 f32) (local $y0 f32) (local $y1 f32) (local $fa i32) (local $fb i32)
     (if (i32.eqz (global.get $glg_on)) (then (return (i32.const 0))))
     (if (i32.le_s (local.get $xb) (local.get $xa)) (then (return (i32.const 0))))
-    (local.set $o (i32.add (call $glg_m) (i32.const 704)))
-    (call $glg_v (local.get $o) (f32.const 0) (f32.const 0) (local.get $pa) (f32.const 1) (i32.const 0) (i32.const 0))
-    (call $glg_v (i32.add (local.get $o) (i32.const 48)) (f32.const 0) (f32.const 0) (local.get $pb) (f32.const 1) (i32.const 0) (i32.const 0))
-    (global.set $glg_clamp_bad (call $glg_clamp_out (local.get $o) (i32.const 2)))
     (if (i32.eqz (call $glg_prim (i32.const 1))) (then (call $glg_cpu_prim) (return (i32.const 0))))
     (local.set $fa (call $glg_span_fog (local.get $xa) (local.get $y)))
     (local.set $fb (call $glg_span_fog (local.get $xb) (local.get $y)))

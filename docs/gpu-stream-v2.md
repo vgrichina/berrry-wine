@@ -100,13 +100,15 @@ u32 fields shared with the consumer are accessed with Atomics.
 header before it executes the first record, and sets `CAP_VALID` (1) last.
 WAT reads it to decide what the guest is told; nothing else negotiates
 features. Flags: 2 VS_IR, 4 STENCIL, 8 LOGIC_OP, 16 OCCLUSION, 32
-BORDER_LINEAR, 64 MIRRORONCE, 128 CLIP_PLANES, 256 WBUFFER. `formats` is a bit per fmt code (bit 15 =
+BORDER_LINEAR, 64 MIRRORONCE, 128 CLIP_PLANES, 256 WBUFFER, 512 COPY,
+1024 DEPTH_READBACK (READBACK fmt D16 of a D16 DS), 2048 DS_READBACK
+(READBACK fmt D24S8 of a D24S8 DS; independent of 1024). `formats` is a bit per fmt code (bit 15 =
 A8B8G8R8). Each executor's caps:
 
 | executor | flags | max_texture | max_samplers | max_aniso |
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
-| software | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES, WBUFFER | 2048 | 6 (the native VM's stages) | 1 |
+| software | VS_IR, STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES, WBUFFER, COPY, DEPTH_READBACK, DS_READBACK | 2048 | 6 (the native VM's stages) | 1 |
 | webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
 
 The WebGL executor keeps two texture units past the samplers: the fog
@@ -248,7 +250,7 @@ bit is not in its caps (all three in-tree executors refuse the rest).
 | 22 | CLEAR | u8 mask (1 color, 2 z, 4 stencil), u8 colormask, u32 rgba (R \| G<<8 \| B<<16 \| A<<24), f32 z, u32 stencil, rect |
 | 23 | COPY | u32 src, u32 dst, src rect, dst rect, u32 filter |
 | 30 | FENCE | u32 slot, u8 kind (0 fence, 1 occlusion begin, 2 occlusion end), u32 dst: kind 0 writes the seq into the slot; kind 2 also writes the u32 count of samples that passed since the begin to arena dst. Occlusion needs CAP_OCCLUSION; begins do not nest |
-| 31 | READBACK | u32 rt, rect, u32 fmt (A8B8G8R8 only; WAT converts), u32 arena dst, u32 pitch (≥ 4w), u32 slot: only for Lock, GetDC or an LFB read, never once per frame |
+| 31 | READBACK | u32 rt, rect, u32 fmt (A8B8G8R8 for an RT; WAT converts. A DS reads as D16 with CAP_DEPTH_READBACK — LE u16 round(depth·65535), pitch ≥ 2w — or as D24S8 with CAP_DS_READBACK — LE u32 round(depth·0xffffff) << 8 \| stencil, pitch ≥ 4w; the fmt must match the DS), u32 arena dst, u32 pitch (≥ 4w), u32 slot: only for Lock, GetDC or an LFB read, never once per frame |
 | 32 | PRESENT | u32 rt, u32 gamma (256×1 lookup texture id, 0 = none), rect, u32 surface (window handle), i32 dst_x, i32 dst_y (window-relative destination), u32 stamp (CPU-present sequence; the page drops a frame older than one already shown): gamma runs on the GPU and nothing is read back |
 | 33 | MARK | u32 frame, u32 tag |
 
@@ -371,7 +373,10 @@ and the generated layouts alone (`lib/gpu-stream.js` `validateLayout`,
   ps_1_x core IR (0xffff0101..0104) keeps implying the stage by the
   destination (s0..s5).
 - **Readback and present.** READBACK writes A8B8G8R8 rows top-down at the
-  given pitch. PRESENT hands the page a frame with `dstX`, `dstY` and
+  given pitch (a depth target: D16 or D24S8 words, also top-down). GL GPS
+  uses the depth forms only when a frame moves to the CPU rasterizer
+  mid-frame (`$glg_ds_readback`, 09a8gt), so occlusion and stencil carry
+  over; an executor without the cap gets `$glg_fail(20)` instead. PRESENT hands the page a frame with `dstX`, `dstY` and
   `stamp`; the page shows a frame only if its stamp is not older (serial
   arithmetic) than the last one shown. `dstX`/`dstY` are relative to the
   window's client origin: a non-zero one (a windowed or child-window Blt

@@ -97,8 +97,13 @@
   ;; guest code run from inside a handler (a COM callback's nested run()) is
   ;; guest code again.
   (global $api_handler_depth (mut i32) (i32.const 0))
+  ;; The guest return address of the innermost Win32 call being handled
+  ;; (meaningful while $api_handler_depth > 0). Diagnostics only: the GL GPS
+  ;; fallback reports it (09a8gt gl_gps_last_decline_eip).
+  (global $api_return_eip (mut i32) (i32.const 0))
   (func $win32_dispatch (param $thunk_idx i32)
     (local $resource_pins i64) (local $return_eip i32) (local $entry_eip i32)
+    (local $saved_return_eip i32)
     (local $parent_esp i32)
     (local $entry_esp i32) (local $saved_io_retry i32)
     (local $resource_pin i32) (local $resource_base i32) (local $resource_rva i32)
@@ -145,6 +150,8 @@
     (global.set $rsrc_api_pins (i64.const 0))
     (global.set $rsrc_api_scope (i32.add (global.get $rsrc_api_scope) (i32.const 1)))
     (global.set $api_handler_depth (i32.add (global.get $api_handler_depth) (i32.const 1)))
+    (local.set $saved_return_eip (global.get $api_return_eip))
+    (global.set $api_return_eip (local.get $return_eip))
     (local.set $saved_io_retry (global.get $api_io_retry))
     (global.set $api_io_retry (i32.const 0))
     (call $win32_dispatch_inner (local.get $thunk_idx))
@@ -179,6 +186,7 @@
               (else (i32.ne (global.get $steps) (i32.const 0))))
           (then (global.set $eip (local.get $return_eip))))
         (call $dll_unload_yield (i32.const 0) (i32.const 3) (i32.const 0))))
+    (global.set $api_return_eip (local.get $saved_return_eip))
     (global.set $api_handler_depth (i32.sub (global.get $api_handler_depth) (i32.const 1))))
 
   (func $win32_dispatch_inner (param $thunk_idx i32)

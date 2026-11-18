@@ -279,13 +279,48 @@ function raster(over = {}) {
     for (let i = 0; i <= 65535; i++)
       assert.strictEqual(Math.round(e.d3d_software_quantize_depth(80, i / 65535) * 65535), i, 'all D16 values round-trip through native f32 storage');
     x.close();
-    for (const [over, pattern] of [[{rt:1}, /kind/], [{pitch:3}, /pitch/], [{x:4}, /rect/], [{fmt:FMT.D24S8}, /kind/]])
+    for (const [over, pattern] of [[{rt:1}, /kind/], [{pitch:3}, /pitch/], [{x:4}, /rect/], [{fmt:FMT.D24S8}, /requires a D24S8/]])
       expectFail(() => lone(q => {
         q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 4, height: 4 });
         q.emit('CREATE', { id: 2, kind: KIND.DS, fmt: FMT.D16, levels: 1, width: 4, height: 4 });
         q.emit('READBACK', { rt:2, x:0, y:0, w:2, h:2, fmt:FMT.D16, dst:q.arenaAlloc(24), pitch:4, slot:0, ...over });
       }), pattern, 'invalid depth readback');
     console.log('PASS native D16 readback and fail-fast controls');
+  }
+
+  // D24S8 readback (CAP_DS_READBACK): packed (depth24 << 8 | stencil8)
+  // words, top-down subrect, padded rows, and fail-fast controls.
+  {
+    const q = makeProducer({ ringBytes: 4096, arenaBytes: 4096, memBytes: 1 << 16 });
+    const x = new Executor({ getExports: () => e, getMemory: () => memory.buffer });
+    q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 4, height: 4 });
+    q.emit('CREATE', { id: 2, kind: KIND.DS, fmt: FMT.D24S8, levels: 1, width: 4, height: 4 });
+    q.emit('TARGETS', { color: 1, depth: 2 });
+    q.emit('CLEAR', { mask: 6, z: 0.25, stencil: 0x5a, left: 0, top: 0, right: 4, bottom: 2 });
+    q.emit('CLEAR', { mask: 4, z: 0, stencil: 0xc3, left: 2, top: 2, right: 4, bottom: 4 });
+    const pos = q.arenaAlloc(40); q.arenaView(pos, 40).fill(0xa5);
+    q.emit('READBACK', { rt: 2, x: 1, y: 1, w: 2, h: 2, fmt: FMT.D24S8, dst: pos, pitch: 12, slot: 3 });
+    const ring = q.ring(); GS.drain([ring], x);
+    const d = new DataView(q.buffer, q.arenaData + pos, 40);
+    const q24 = Math.round(0.25 * 0xffffff);
+    assert.strictEqual(d.getUint32(0, true) >>> 0, ((q24 << 8) | 0x5a) >>> 0, 'cleared depth + stencil');
+    assert.strictEqual(d.getUint32(4, true) >>> 0, ((q24 << 8) | 0x5a) >>> 0);
+    assert.strictEqual(d.getUint32(12, true) >>> 0, 0xffffff00, 'untouched: depth 1.0, stencil 0');
+    assert.strictEqual(d.getUint32(16, true) >>> 0, 0xffffffc3, 'stencil-only clear keeps depth');
+    assert.strictEqual(d.getUint32(8, true) >>> 0, 0xa5a5a5a5, 'row padding untouched');
+    assert.ok(x.caps().flags & CONST.CAP_DS_READBACK);
+    for (let i = 0; i <= 0xffffff; i += 4093)
+      assert.strictEqual(Math.round(e.d3d_software_quantize_depth(75, i / 0xffffff) * 0xffffff), i, 'D24 values round-trip through native f32 storage');
+    assert.strictEqual(Math.round(e.d3d_software_quantize_depth(75, 1) * 0xffffff), 0xffffff);
+    x.close();
+    for (const [ds, over, pattern] of [[FMT.D24S8, {rt:1}, /kind/], [FMT.D24S8, {pitch:7}, /pitch/],
+        [FMT.D24S8, {y:3}, /rect/], [FMT.D16, {}, /requires a D24S8/], [FMT.D24S8, {fmt:FMT.D16}, /requires a D16/]])
+      expectFail(() => lone(q => {
+        q.emit('CREATE', { id: 1, kind: KIND.RT, fmt: FMT.A8B8G8R8, levels: 1, width: 4, height: 4 });
+        q.emit('CREATE', { id: 2, kind: KIND.DS, fmt: ds, levels: 1, width: 4, height: 4 });
+        q.emit('READBACK', { rt:2, x:0, y:0, w:2, h:2, fmt:FMT.D24S8, dst:q.arenaAlloc(32), pitch:8, slot:0, ...over });
+      }), pattern, 'invalid D24S8 readback');
+    console.log('PASS native D24S8 depth+stencil readback and fail-fast controls');
   }
 
   // ── occlusion: a FENCE pair counts the samples that passed between them ──

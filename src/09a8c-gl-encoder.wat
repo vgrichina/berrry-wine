@@ -1333,6 +1333,7 @@
     (if (i32.and (global.get $gl_sw_enabled) (i32.eq (local.get $op) (i32.const 17)))
       (then
         (if (i32.eq (i32.load offset=20 (local.get $stack)) (i32.const 0x1902)) (then (call $glg_cpu_zread)))
+        (if (i32.eq (i32.load offset=20 (local.get $stack)) (i32.const 0x1901)) (then (call $glg_cpu_sread)))
         (local.set $aux (call $gl_sw_read_surface))))
     ;; 09a8t: uploads leave as finished RGBA8, glReadPixels comes back as
     ;; tight RGBA8 that WAT transfers and packs after the flush.
