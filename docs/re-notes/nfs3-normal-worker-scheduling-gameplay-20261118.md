@@ -12,8 +12,11 @@ The same pressure fixture changed from native bind refusal to successful
 binding with only this JS correction. Its first input preparation then
 cancelled at a 332ms-old scene, before DOWN; the prearmed UP completed. A fresh
 light authored control subsequently produced a genuine owning-Worker native
-USER receipt and independent UP. The original remains unspent pending
-publication of this preparation; this task continues through that original.
+USER receipt and independent UP. Preparation was published as `994aa3a20`
+before one fresh registered NFS3
+original. That original closed UNKNOWN during actual Worker module inventory,
+before a whole-frame review or any physical input. The concrete remaining
+blocker is the harness handling of retired Worker sessions.
 
 Evidence is in `scratch/runs/20261118-nfs3-normal-worker-scheduling-gameplay/`;
 `result.json` is written last. This task does not reopen any predecessor's
@@ -126,6 +129,40 @@ The genuine chooser and all 135 original media pins were rehashed unchanged.
 The additive binder JS file is the only runtime overlay on frozen c9 and
 module 7d347. The sampled observer remains unchanged.
 
+## Fresh original: closed Worker-inventory failure
+
+After strict pull/push of `994aa3a20`, the fresh original imported the unchanged
+genuine chooser and launched `nfs3_chosen_renderer` through the public browser
+launcher, normal guest Workers and software rendering. Its served graph used
+frozen c9, module 7d347 and all 135 media pins, with only the published binder
+JS overlay and the qualified observer prefix. The watchdog was armed before
+launch. This was a new registered original, not the predecessor runtime.
+
+The code passed its boot fence of more than one completed present (this
+checkpoint was not separately persisted),
+then attempted actual module recovery before accepting input. The harness had
+retained every created CDP session and applied the authored control inventory
+loop to them. Unlike the two-guest-Worker authored fixture, the game created
+Worker slots 0 through 7; its console records slot 2 returning normally before
+its native thread ID was reused in slot 5. Module inventory encountered a
+closed session and its `finally` request to `Debugger.disable` raised
+`TargetCloseError: Session closed`. The `finally` failure can mask the earlier
+inventory error, so the exact first failed request and target are not known.
+The later, unreached assertion also incorrectly expected the authored
+fixture’s three modules instead of a dynamic game Worker inventory. Neither
+assumption was repaired or used to authorize another original.
+
+This is a failed harness lifecycle assumption, not evidence of an emulator
+Worker defect. The original did not produce a completed module inventory,
+reviewed whole frame, retained game-field report or physical input. Neither
+exact original executor identity nor producer/consumer/gate operands were
+qualified. No visible driving, steering or Pause was obtained. Native
+supervision exited 1 with both EOFs; Chrome exited 0 with both EOFs; the
+independent watchdog exited 0, with no leaked tracked process. The scope
+closed UNKNOWN and no later runtime endpoint request or replay followed.
+The conditional extra original was not eligible: no actual emulator defect
+was proved and repaired. It remains unspent, and no runtime is held.
+
 ## Validation and closure
 
 The new compiled field-reader test, existing scheduling-observer regression,
@@ -135,13 +172,17 @@ stopped on another owner's active `$run` lifetime-census WIP. That owner
 subsequently posted build-ready; the final locked build and publication
 receipts are recorded in the run.
 
-Every browser control had a disk/time watchdog armed before native launch,
-finite native supervision, actual native/watchdog/Chrome waits with both
-EOFs, zero exit statuses and `leaked:false`. The final cleanup independently
-checks all known owned PIDs and local listeners, and absence of temporary
+Every browser scope had a disk/time watchdog armed before native launch,
+finite native supervision and actual native/watchdog/Chrome waits with both
+EOFs and `leaked:false`. The cancelled pressure-input fixture and the closed
+original each returned native status 1; the passing controls returned 0.
+Final cleanup independently
+checks all 158 known owned PIDs and local listeners, and absence of temporary
 Chrome profiles. Free disk stayed above 1.5GB; no RAM gate was used.
-Only two selected named whole PNGs are retained; Git plus own patches and
+Only selected named control whole PNGs are retained; Git plus own patches and
 input/module recovery recipes replace source archives and media copies.
 Box ID, expiry and stop receipt are null; state is `NOT_CREATED`.
-The tested correction must be published before the unspent original. Final
-original findings and cleanup will be appended in this same task.
+The public-binder correction and tests are published in `994aa3a20`; this
+report records the same-task original failure and final cleanup. Ownership is
+released after evidence sealing. No scheduling-cause or gameplay success is
+claimed.
