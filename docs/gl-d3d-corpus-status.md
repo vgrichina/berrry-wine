@@ -4463,3 +4463,28 @@ EOF remain explicit gaps. No complete cleanup, backend parity, full 27-app, FPS 
 audio claim is inferred.
 
 Evidence: `scratch/runs/20261118-blood2-current-browser-world-combat/result.json`.
+
+## Forsaken normal browser movement and firing — 18 November 2026
+
+[Browser world/control report](re-notes/forsaken-current-browser-world-combat-20261118.md),
+published as `6efb02c76`, records the unchanged registered demo's 873 media pins
+on source `5af3bae93` and module `3616571e…`. The normal production browser
+reaches the Volcano world. The coordinator reviewed whole neutral, firing and
+movement captures: ammo decreases 2000→1994, and the ship advances toward the
+doorway. A later paired firing interval reaches 1980. Actual RenderWorker WebGL1
+draw/readback and Blt presentation records accompany the world, with zero
+observed producer fallback/decline events. This supplies browser WebGL evidence
+separate from the older native software observations.
+
+Player damage and subsequent white imagery do not establish enemy damage or
+defeat. Pause and return to the main menu still work. Ordinary EXIT GAME and
+promotion dismissal terminate the guest with code 13 and the original
+`D3DAppShowBackBuffer`/`bRenderingIsOK` error, so clean exit 0 is not claimed.
+No causal rendering or teardown repair was established in this run.
+
+Original enclosing-tool exit 143 leaves browser/display/driver waits and EOFs
+missing. Separate bounded cleanup verifies the recorded processes absent but
+does not supply those missing waits. No complete original cleanup, backend
+parity, full 27-app coverage, FPS or audio claim follows from this evidence.
+
+Evidence: `scratch/runs/20261118-forsaken-current-browser-world-combat/result.json`.
