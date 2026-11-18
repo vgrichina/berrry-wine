@@ -16,9 +16,19 @@
 //
 //   node tools/agent-usage-stats.js codex  --root=DIR [--root=DIR] --host=NAME --out=FILE [--match=wine-assembly]
 //   node tools/agent-usage-stats.js claude --root=DIR --host=NAME --out=FILE [--match=wine-assembly]
+//   node tools/agent-usage-stats.js codex-state --state=state5-threads.json --known=SCAN.json [--known=...] --host=NAME --out=FILE
 //   node tools/agent-usage-stats.js merge  --in=FILE [--in=FILE...] [--ref=origin/main] --out=docs/stats/agent-usage-daily.json
 //                                          [--sessions-out=docs/stats/agent-sessions.json]
-//   node tools/agent-usage-stats.js report --in=docs/stats/agent-usage-daily.json [--from=YYYY-MM-DD] [--weekly]
+//                                          [--base=OLD-daily.json --base-sessions=OLD-sessions.json --since=YYYY-MM-DD]
+//   node tools/agent-usage-stats.js report
+//
+// INCREMENTAL MERGE. The raw logs are deleted after each summary, so a later run
+// cannot rescan the old days. --base keeps the token and concurrency fields of
+// every day before --since from the previous summary (commits are always
+// recounted from git), and takes days from --since on from the new scans; new
+// scan tokens dated before --since are dropped. --base-sessions unions the old
+// session index with the new one, keeping the larger copy of a repeated thread.
+// Rollouts compressed with xz (as the ops box archives them) are read via `xz -dc`. --in=docs/stats/agent-usage-daily.json [--from=YYYY-MM-DD] [--weekly]
 //
 // COUNTING RULES (the part that is easy to get wrong)
 // - Codex token_count events carry the thread's CUMULATIVE total_token_usage.
@@ -76,8 +86,13 @@ function walk(dir, re, acc = []) {
 }
 
 function lines(file) {
-  let s = fs.createReadStream(file, { highWaterMark: 1 << 20 });
-  if (file.endsWith('.gz')) s = s.pipe(zlib.createGunzip());
+  let s;
+  if (file.endsWith('.xz')) {
+    s = require('child_process').spawn('xz', ['-dc', file], { stdio: ['ignore', 'pipe', 'inherit'] }).stdout;
+  } else {
+    s = fs.createReadStream(file, { highWaterMark: 1 << 20 });
+    if (file.endsWith('.gz')) s = s.pipe(zlib.createGunzip());
+  }
   return readline.createInterface({ input: s, crlfDelay: Infinity });
 }
 
@@ -88,7 +103,7 @@ function add(a, b) { for (const k of Object.keys(b)) a[k] = (a[k] || 0) + b[k]; 
 async function scanCodex(args) {
   const roots = list(args.root);
   const match = args.match === undefined ? /wine-assembly/i : new RegExp(args.match, 'i');
-  const files = roots.flatMap(r => walk(r, /^rollout-.*\.jsonl(\.gz)?$/)).sort();
+  const files = roots.flatMap(r => walk(r, /^rollout-.*\.jsonl(\.gz|\.xz)?$/)).sort();
   const threads = new Map(); // id -> { meta, samples: [[ts, in, cached, out, reas, total, lastIn, lastCached, lastOut, lastReas, lastTotal, modelIdx]] }
   const models = [];
   const modelIdx = m => { let i = models.indexOf(m); if (i < 0) { models.push(m); i = models.length - 1; } return i; };
@@ -318,6 +333,24 @@ function merge(args) {
   for (const [map, field] of [[bucketAll, 'peakConcurrent'], [bucketCx, 'peakConcurrentCodex'], [bucketCl, 'peakConcurrentClaude']]) {
     for (const [b, n] of map) { const x = D(day(b * BUCKET_MS)); if (n > x[field]) x[field] = n; }
   }
+  let base = null;
+  if (args.base) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(args.since || '')) throw new Error('--base needs --since=YYYY-MM-DD');
+    base = JSON.parse(fs.readFileSync(args.base, 'utf8'));
+    const tokenFields = ['codex', 'claude', 'peakConcurrent', 'peakConcurrentCodex', 'peakConcurrentClaude'];
+    for (const k of Object.keys(days)) if (k < args.since) for (const f of tokenFields) delete days[k][f];
+    for (const old of base.days) {
+      if (old.date >= args.since) continue;
+      const x = D(old.date);
+      for (const f of tokenFields) x[f] = old[f];
+    }
+    for (const k of Object.keys(days)) {
+      const x = days[k];
+      if (!x.codex) Object.assign(x, { codex: { threads: 0, ...zero(), byRole: {} }, claude: { threads: 0, input: 0, cacheCreate: 0, cacheRead: 0, output: 0, total: 0, messages: 0, byRole: {} },
+        peakConcurrent: 0, peakConcurrentCodex: 0, peakConcurrentClaude: 0 });
+    }
+    sources.unshift({ kind: 'base', file: path.basename(args.base), generated: base.generated, usedBefore: args.since, sources: base.sources });
+  }
   const sorted = Object.keys(days).sort();
   const all = [];
   for (const k of sorted) {
@@ -331,6 +364,16 @@ function merge(args) {
   const firstOf = v => (all.find(x => x[v].total > 0) || {}).date || null;
   const gaps = all.filter(x => x.commits.total > 0 && x.totalTokens === 0).map(x => `${x.date} (${x.commits.total})`);
   const sum = (f) => all.reduce((a, x) => a + f(x), 0);
+  for (const s of sessions) s.files = s.files.map(p => path.basename(p));
+  if (args['base-sessions']) {
+    const byKey = new Map(sessions.map(s => [`${s.vendor}:${s.id}`, s]));
+    for (const s of JSON.parse(fs.readFileSync(args['base-sessions'], 'utf8'))) {
+      const k = `${s.vendor}:${s.id}`, cur = byKey.get(k);
+      if (!cur || s.totalTokens > cur.totalTokens) byKey.set(k, s);
+    }
+    sessions.length = 0;
+    sessions.push(...byKey.values());
+  }
   sessions.sort((a, b) => (a.start || '').localeCompare(b.start || ''));
   const result = {
     generated: new Date().toISOString(), tool: 'tools/agent-usage-stats.js', ref: args.ref || 'origin/main',
@@ -353,9 +396,8 @@ function merge(args) {
   fs.mkdirSync(path.dirname(args.out), { recursive: true });
   fs.writeFileSync(args.out, JSON.stringify(result, null, 1) + '\n');
   if (args['sessions-out']) {
-    // Paths are reduced to file names: the directories are machine-specific.
-    const lean = sessions.map(s => ({ ...s, files: s.files.map(p => path.basename(p)) }));
-    fs.writeFileSync(args['sessions-out'], '[\n' + lean.map(s => JSON.stringify(s)).join(',\n') + '\n]\n');
+    // Paths are reduced to file names (above): the directories are machine-specific.
+    fs.writeFileSync(args['sessions-out'], '[\n' + sessions.map(s => JSON.stringify(s)).join(',\n') + '\n]\n');
   }
   process.stderr.write(`merge: ${all.length} days, ${sessions.length} sessions -> ${args.out}\n`);
 }
@@ -390,11 +432,41 @@ function report(args) {
   }
 }
 
+// ------------------------------------------------------------ codex state db
+// Fallback for threads whose rollout is no longer on disk (offloaded or
+// deleted): Codex's own state_5.sqlite keeps tokens_used per thread. Export it
+// with `sqlite3 -json state_5.sqlite "select id, created_at, updated_at,
+// tokens_used, source, cwd, model from threads"`. Threads already present in a
+// --known scan are skipped. The thread's whole total is put on the UTC day it
+// was created (no input/output split exists), and its 10-minute buckets span
+// created..updated, so peak concurrency still sees it.
+function scanState(args) {
+  const rows = JSON.parse(fs.readFileSync(args.state, 'utf8'));
+  const match = args.match === undefined ? /wine-assembly/i : new RegExp(args.match, 'i');
+  const known = new Set(list(args.known).flatMap(f => Object.keys(JSON.parse(fs.readFileSync(f, 'utf8')).threads)));
+  const out = { kind: 'codex', host: args.host || 'unknown', scannedAt: new Date().toISOString(), roots: [path.basename(args.state)],
+    skipped: { known: 0, cwd: 0, empty: 0 }, files: [], threads: {} };
+  for (const r of rows) {
+    if (!match.test(r.cwd || '')) { out.skipped.cwd++; continue; }
+    if (known.has(r.id)) { out.skipped.known++; continue; }
+    if (!(r.tokens_used > 0)) { out.skipped.empty++; continue; }
+    const c = r.created_at * 1000, u = Math.max(c, r.updated_at * 1000);
+    const buckets = [];
+    for (let b = Math.floor(c / BUCKET_MS); b <= Math.floor(u / BUCKET_MS); b++) buckets.push(b);
+    const role = r.source === 'exec' ? 'exec' : r.source === 'subagent' ? 'subagent' : 'interactive';
+    out.threads[r.id] = { id: r.id, vendor: 'codex', host: out.host, role, source: r.source, origin: 'state_5', start: new Date(c).toISOString(),
+      firstUse: new Date(c).toISOString(), lastUse: new Date(u).toISOString(), models: { [r.model || 'unknown']: r.tokens_used },
+      totals: { total: r.tokens_used }, days: { [day(c)]: { total: r.tokens_used } }, buckets, files: [] };
+  }
+  fs.writeFileSync(args.out, JSON.stringify(out));
+  process.stderr.write(`state: ${Object.keys(out.threads).length} threads not in known scans, skipped ${JSON.stringify(out.skipped)} -> ${args.out}\n`);
+}
+
 const args = parseArgs(process.argv.slice(2));
 const cmd = args._[0];
-const run = { codex: scanCodex, claude: scanClaude, merge, report }[cmd];
+const run = { codex: scanCodex, 'codex-state': scanState, claude: scanClaude, merge, report }[cmd];
 if (!run || (cmd !== 'report' && !args.out) || (cmd === 'report' && !args.in)) {
-  console.error('usage: agent-usage-stats.js codex|claude|merge|report ... (see header)');
+  console.error('usage: agent-usage-stats.js codex|codex-state|claude|merge|report ... (see header)');
   process.exit(2);
 }
 Promise.resolve(run(args)).catch(e => { console.error(e); process.exit(1); });

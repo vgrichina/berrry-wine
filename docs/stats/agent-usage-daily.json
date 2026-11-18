@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-04T22:43:29.548Z",
+ "generated": "2026-11-18T05:36:01.244Z",
  "tool": "tools/agent-usage-stats.js",
  "ref": "origin/main",
  "definitions": {
@@ -51,90 +51,199 @@
  },
  "sources": [
   {
+   "kind": "base",
+   "file": "agent-usage-daily.json",
+   "generated": "2026-11-04T22:43:29.548Z",
+   "usedBefore": "2026-11-05",
+   "sources": [
+    {
+     "kind": "codex",
+     "host": "boat",
+     "scannedAt": "2026-11-04T22:42:35.809Z",
+     "roots": [
+      "/home/user/.codex/sessions",
+      "/home/user/.codex/transcript-archives"
+     ],
+     "threads": 3174,
+     "files": 3176,
+     "skipped": {
+      "cwd": 2,
+      "cwds": {
+       "/home/user": 1,
+       "/tmp": 1
+      },
+      "noMeta": 0,
+      "badLines": 1,
+      "errors": 0
+     },
+     "diagnostics": {
+      "threads": 3174,
+      "forkCopiedSamplesSkipped": 0,
+      "counterResets": 2
+     }
+    },
+    {
+     "kind": "codex",
+     "host": "laptop",
+     "scannedAt": "2026-11-04T22:40:38.473Z",
+     "roots": [
+      "/Users/vg/.codex/sessions"
+     ],
+     "threads": 341,
+     "files": 430,
+     "skipped": {
+      "cwd": 89,
+      "cwds": {
+       "/Users/vg/Documents/projects/phone/minimal-phone": 30,
+       "/Users/vg/Documents/projects/phone/berrry-server": 32,
+       "/Users/vg/Documents/projects/phone/reddit/over9000games": 3,
+       "/Users/vg/Documents/projects/phone/android-emu": 4,
+       "/Users/vg": 2,
+       "/Users/vg/Documents/projects/phone/marketing": 3,
+       "/Users/vg/Documents/projects/phone/berrry-server/.claude/worktrees/screenshot-degrade": 11,
+       "/private/tmp/claude-502/-Users-vg-Documents-projects-phone-berrry-server/146ec028-4842-48c1-8a7e-3af70141a7ba/scratchpad/pr210-review": 2,
+       "/Users/vg/Documents/projects/phone/marketing/joint-analytics": 1,
+       "/Users/vg/Documents/projects/phone/reverse-games/scorched-earth": 1
+      },
+      "noMeta": 0,
+      "errors": 0
+     },
+     "diagnostics": {
+      "threads": 341,
+      "forkCopiedSamplesSkipped": 0,
+      "counterResets": 38
+     }
+    },
+    {
+     "kind": "claude",
+     "host": "laptop",
+     "scannedAt": "2026-11-04T22:39:19.991Z",
+     "roots": [
+      "/Users/vg/.claude/projects"
+     ],
+     "threads": 734,
+     "files": 737,
+     "skipped": {
+      "errors": 0
+     },
+     "diagnostics": {
+      "files": 737,
+      "duplicateMessageLines": 168762,
+      "messages": 207027
+     }
+    }
+   ]
+  },
+  {
    "kind": "codex",
    "host": "boat",
-   "scannedAt": "2026-11-04T22:42:35.809Z",
+   "scannedAt": "2026-11-18T05:32:29.818Z",
    "roots": [
-    "/home/user/.codex/sessions",
-    "/home/user/.codex/transcript-archives"
+    "/private/tmp/story-stats/arch1108/sessions",
+    "/private/tmp/story-stats/arch1108/archived_sessions"
    ],
-   "threads": 3174,
-   "files": 3176,
+   "threads": 602,
+   "files": 602,
    "skipped": {
-    "cwd": 2,
-    "cwds": {
-     "/home/user": 1,
-     "/tmp": 1
-    },
+    "cwd": 0,
+    "cwds": {},
     "noMeta": 0,
     "badLines": 1,
     "errors": 0
    },
    "diagnostics": {
-    "threads": 3174,
+    "threads": 602,
     "forkCopiedSamplesSkipped": 0,
-    "counterResets": 2
+    "counterResets": 1
+   }
+  },
+  {
+   "kind": "codex",
+   "host": "boat",
+   "scannedAt": "2026-11-18T05:31:04.555Z",
+   "roots": [
+    "/home/user/.codex/sessions/2026/11"
+   ],
+   "threads": 692,
+   "files": 692,
+   "skipped": {
+    "cwd": 0,
+    "cwds": {},
+    "noMeta": 0,
+    "badLines": 0,
+    "errors": 0
+   },
+   "diagnostics": {
+    "threads": 692,
+    "forkCopiedSamplesSkipped": 0,
+    "counterResets": 1
+   }
+  },
+  {
+   "kind": "codex",
+   "host": "boat",
+   "scannedAt": "2026-11-18T05:35:54.292Z",
+   "roots": [
+    "state5-threads.json"
+   ],
+   "threads": 2112,
+   "files": 0,
+   "skipped": {
+    "known": 1294,
+    "cwd": 0,
+    "empty": 0,
+    "errors": 0
    }
   },
   {
    "kind": "codex",
    "host": "laptop",
-   "scannedAt": "2026-11-04T22:40:38.473Z",
+   "scannedAt": "2026-11-18T05:32:30.114Z",
    "roots": [
-    "/Users/vg/.codex/sessions"
+    "/Users/vg/.codex/sessions/2026/11"
    ],
-   "threads": 341,
-   "files": 430,
+   "threads": 3,
+   "files": 3,
    "skipped": {
-    "cwd": 89,
-    "cwds": {
-     "/Users/vg/Documents/projects/phone/minimal-phone": 30,
-     "/Users/vg/Documents/projects/phone/berrry-server": 32,
-     "/Users/vg/Documents/projects/phone/reddit/over9000games": 3,
-     "/Users/vg/Documents/projects/phone/android-emu": 4,
-     "/Users/vg": 2,
-     "/Users/vg/Documents/projects/phone/marketing": 3,
-     "/Users/vg/Documents/projects/phone/berrry-server/.claude/worktrees/screenshot-degrade": 11,
-     "/private/tmp/claude-502/-Users-vg-Documents-projects-phone-berrry-server/146ec028-4842-48c1-8a7e-3af70141a7ba/scratchpad/pr210-review": 2,
-     "/Users/vg/Documents/projects/phone/marketing/joint-analytics": 1,
-     "/Users/vg/Documents/projects/phone/reverse-games/scorched-earth": 1
-    },
+    "cwd": 0,
+    "cwds": {},
     "noMeta": 0,
+    "badLines": 0,
     "errors": 0
    },
    "diagnostics": {
-    "threads": 341,
+    "threads": 3,
     "forkCopiedSamplesSkipped": 0,
-    "counterResets": 38
+    "counterResets": 0
    }
   },
   {
    "kind": "claude",
    "host": "laptop",
-   "scannedAt": "2026-11-04T22:39:19.991Z",
+   "scannedAt": "2026-11-18T05:33:22.120Z",
    "roots": [
     "/Users/vg/.claude/projects"
    ],
-   "threads": 734,
-   "files": 737,
+   "threads": 877,
+   "files": 879,
    "skipped": {
     "errors": 0
    },
    "diagnostics": {
-    "files": 737,
-    "duplicateMessageLines": 168762,
-    "messages": 207027
+    "files": 879,
+    "duplicateMessageLines": 188985,
+    "messages": 228912
    }
   }
  ],
  "totals": {
-  "commits": 10740,
-  "codexTokens": 62675306354,
-  "claudeTokens": 37572009667,
-  "codexOutput": 163341330,
-  "claudeOutput": 84053340,
-  "codexThreads": 3515,
-  "claudeThreads": 734
+  "commits": 14444,
+  "codexTokens": 92033632014,
+  "claudeTokens": 41151648409,
+  "codexOutput": 213126426,
+  "claudeOutput": 98091058,
+  "codexThreads": 5761,
+  "claudeThreads": 877
  },
  "days": [
   {
@@ -146,6 +255,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -166,8 +277,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -185,6 +294,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -205,8 +316,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -224,6 +333,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -244,8 +355,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -263,6 +372,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -283,8 +394,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -302,6 +411,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -322,8 +433,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -341,6 +450,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -361,8 +472,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -380,6 +489,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -400,8 +511,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -419,6 +528,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -439,8 +550,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -458,6 +567,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -478,8 +589,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -497,6 +606,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -517,8 +628,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -536,6 +645,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -556,8 +667,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -575,6 +684,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -595,8 +706,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -614,6 +723,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -634,8 +745,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -653,6 +762,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -673,8 +784,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -692,6 +801,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -712,8 +823,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -731,6 +840,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -751,8 +862,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -770,6 +879,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -790,8 +901,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -809,6 +918,8 @@
     "ops": 0,
     "human": 6
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -829,8 +940,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -848,6 +957,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -868,8 +979,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -887,6 +996,8 @@
     "ops": 0,
     "human": 8
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -907,8 +1018,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -926,6 +1035,8 @@
     "ops": 0,
     "human": 3
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -946,8 +1057,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -965,6 +1074,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -985,8 +1096,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1004,6 +1113,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1024,8 +1135,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1043,6 +1152,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1063,8 +1174,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1082,6 +1191,8 @@
     "ops": 0,
     "human": 10
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1102,8 +1213,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1121,6 +1230,8 @@
     "ops": 0,
     "human": 9
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1141,8 +1252,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1160,6 +1269,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1180,8 +1291,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1199,6 +1308,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1219,8 +1330,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1238,6 +1347,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1258,8 +1369,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1277,6 +1386,8 @@
     "ops": 0,
     "human": 10
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1297,8 +1408,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1316,6 +1425,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1336,8 +1447,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1355,6 +1464,8 @@
     "ops": 0,
     "human": 3
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1375,8 +1486,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1394,6 +1503,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 2596830,
+   "tokensPerCommit": 112906,
    "codex": {
     "threads": 1,
     "input": 2589284,
@@ -1416,8 +1527,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 2596830,
-   "tokensPerCommit": 112906,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -1435,6 +1544,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 2536810,
+   "tokensPerCommit": 57655,
    "codex": {
     "threads": 1,
     "input": 2528469,
@@ -1457,8 +1568,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 2536810,
-   "tokensPerCommit": 57655,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -1476,6 +1585,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1496,8 +1607,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1515,6 +1624,8 @@
     "ops": 0,
     "human": 14
    },
+   "totalTokens": 0,
+   "tokensPerCommit": 0,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -1535,8 +1646,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 0,
-   "tokensPerCommit": 0,
    "peakConcurrent": 0,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 0,
@@ -1554,6 +1663,8 @@
     "ops": 0,
     "human": 25
    },
+   "totalTokens": 139062881,
+   "tokensPerCommit": 3565715,
    "codex": {
     "threads": 4,
     "input": 138771212,
@@ -1576,8 +1687,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 139062881,
-   "tokensPerCommit": 3565715,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -1595,6 +1704,8 @@
     "ops": 0,
     "human": 28
    },
+   "totalTokens": 263221735,
+   "tokensPerCommit": 9400776,
    "codex": {
     "threads": 2,
     "input": 262761614,
@@ -1617,8 +1728,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 263221735,
-   "tokensPerCommit": 9400776,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -1636,6 +1745,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 38376500,
+   "tokensPerCommit": 9594125,
    "codex": {
     "threads": 1,
     "input": 38314450,
@@ -1658,8 +1769,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 38376500,
-   "tokensPerCommit": 9594125,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -1677,6 +1786,8 @@
     "ops": 0,
     "human": 15
    },
+   "totalTokens": 258850330,
+   "tokensPerCommit": 17256689,
    "codex": {
     "threads": 1,
     "input": 258479090,
@@ -1699,8 +1810,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 258850330,
-   "tokensPerCommit": 17256689,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -1718,6 +1827,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 258979063,
+   "tokensPerCommit": 51795813,
    "codex": {
     "threads": 1,
     "input": 258599228,
@@ -1740,8 +1851,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 258979063,
-   "tokensPerCommit": 51795813,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -1759,6 +1868,8 @@
     "ops": 0,
     "human": 9
    },
+   "totalTokens": 148959519,
+   "tokensPerCommit": 16551058,
    "codex": {
     "threads": 1,
     "input": 148794107,
@@ -1781,8 +1892,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 148959519,
-   "tokensPerCommit": 16551058,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -1800,6 +1909,8 @@
     "ops": 0,
     "human": 14
    },
+   "totalTokens": 267494811,
+   "tokensPerCommit": 19106772,
    "codex": {
     "threads": 2,
     "input": 267052318,
@@ -1822,8 +1933,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 267494811,
-   "tokensPerCommit": 19106772,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -1841,6 +1950,8 @@
     "ops": 0,
     "human": 17
    },
+   "totalTokens": 126337889,
+   "tokensPerCommit": 7431641,
    "codex": {
     "threads": 2,
     "input": 126150628,
@@ -1863,8 +1974,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 126337889,
-   "tokensPerCommit": 7431641,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -1882,6 +1991,8 @@
     "ops": 0,
     "human": 11
    },
+   "totalTokens": 150247630,
+   "tokensPerCommit": 12520636,
    "codex": {
     "threads": 3,
     "input": 150025703,
@@ -1904,8 +2015,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 150247630,
-   "tokensPerCommit": 12520636,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -1923,6 +2032,8 @@
     "ops": 0,
     "human": 27
    },
+   "totalTokens": 463494565,
+   "tokensPerCommit": 17166465,
    "codex": {
     "threads": 10,
     "input": 462564457,
@@ -1945,8 +2056,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 463494565,
-   "tokensPerCommit": 17166465,
    "peakConcurrent": 4,
    "peakConcurrentCodex": 4,
    "peakConcurrentClaude": 0,
@@ -2005,6 +2114,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 177845798,
+   "tokensPerCommit": 44461450,
    "codex": {
     "threads": 2,
     "input": 177477452,
@@ -2027,8 +2138,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 177845798,
-   "tokensPerCommit": 44461450,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -2046,6 +2155,8 @@
     "ops": 0,
     "human": 9
    },
+   "totalTokens": 146602749,
+   "tokensPerCommit": 16289194,
    "codex": {
     "threads": 5,
     "input": 146271854,
@@ -2068,8 +2179,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 146602749,
-   "tokensPerCommit": 16289194,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -2087,6 +2196,8 @@
     "ops": 0,
     "human": 13
    },
+   "totalTokens": 218080550,
+   "tokensPerCommit": 16775427,
    "codex": {
     "threads": 4,
     "input": 217517724,
@@ -2109,8 +2220,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 218080550,
-   "tokensPerCommit": 16775427,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -2128,6 +2237,8 @@
     "ops": 0,
     "human": 8
    },
+   "totalTokens": 210916480,
+   "tokensPerCommit": 26364560,
    "codex": {
     "threads": 4,
     "input": 210438436,
@@ -2150,8 +2261,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 210916480,
-   "tokensPerCommit": 26364560,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -2169,6 +2278,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 52307899,
+   "tokensPerCommit": 52307899,
    "codex": {
     "threads": 2,
     "input": 52208518,
@@ -2191,8 +2302,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 52307899,
-   "tokensPerCommit": 52307899,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -2251,6 +2360,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 38486193,
+   "tokensPerCommit": 19243097,
    "codex": {
     "threads": 1,
     "input": 38395592,
@@ -2273,8 +2384,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 38486193,
-   "tokensPerCommit": 19243097,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2374,6 +2483,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 78647848,
+   "tokensPerCommit": 78647848,
    "codex": {
     "threads": 1,
     "input": 78485557,
@@ -2396,8 +2507,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 78647848,
-   "tokensPerCommit": 78647848,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2456,6 +2565,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 70399486,
+   "tokensPerCommit": 17599872,
    "codex": {
     "threads": 2,
     "input": 70246792,
@@ -2478,8 +2589,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 70399486,
-   "tokensPerCommit": 17599872,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -2497,6 +2606,8 @@
     "ops": 0,
     "human": 6
    },
+   "totalTokens": 52744026,
+   "tokensPerCommit": 8790671,
    "codex": {
     "threads": 1,
     "input": 52605465,
@@ -2519,8 +2630,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 52744026,
-   "tokensPerCommit": 8790671,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2538,6 +2647,8 @@
     "ops": 0,
     "human": 5
    },
+   "totalTokens": 41661177,
+   "tokensPerCommit": 8332235,
    "codex": {
     "threads": 1,
     "input": 41548531,
@@ -2560,8 +2671,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 41661177,
-   "tokensPerCommit": 8332235,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2579,6 +2688,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 167206103,
+   "tokensPerCommit": 83603052,
    "codex": {
     "threads": 1,
     "input": 166810821,
@@ -2601,8 +2712,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 167206103,
-   "tokensPerCommit": 83603052,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2661,6 +2770,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 8577900,
+   "tokensPerCommit": 2144475,
    "codex": {
     "threads": 1,
     "input": 8562354,
@@ -2683,8 +2794,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 8577900,
-   "tokensPerCommit": 2144475,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2743,6 +2852,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 14156949,
+   "tokensPerCommit": 3539237,
    "codex": {
     "threads": 1,
     "input": 14127920,
@@ -2765,8 +2876,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 14156949,
-   "tokensPerCommit": 3539237,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2784,6 +2893,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 45695452,
+   "tokensPerCommit": 11423863,
    "codex": {
     "threads": 1,
     "input": 45542063,
@@ -2806,8 +2917,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 45695452,
-   "tokensPerCommit": 11423863,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2825,6 +2934,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 58876340,
+   "tokensPerCommit": 14719085,
    "codex": {
     "threads": 1,
     "input": 58668743,
@@ -2847,8 +2958,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 58876340,
-   "tokensPerCommit": 14719085,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2866,6 +2975,8 @@
     "ops": 0,
     "human": 13
    },
+   "totalTokens": 101842428,
+   "tokensPerCommit": 7834033,
    "codex": {
     "threads": 1,
     "input": 101470873,
@@ -2888,8 +2999,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 101842428,
-   "tokensPerCommit": 7834033,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -2907,6 +3016,8 @@
     "ops": 0,
     "human": 5
    },
+   "totalTokens": 80585553,
+   "tokensPerCommit": 16117111,
    "codex": {
     "threads": 2,
     "input": 80275172,
@@ -2930,8 +3041,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 80585553,
-   "tokensPerCommit": 16117111,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -2990,6 +3099,8 @@
     "ops": 0,
     "human": 5
    },
+   "totalTokens": 109695143,
+   "tokensPerCommit": 21939029,
    "codex": {
     "threads": 3,
     "input": 109319572,
@@ -3012,8 +3123,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 109695143,
-   "tokensPerCommit": 21939029,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -3031,6 +3140,8 @@
     "ops": 0,
     "human": 5
    },
+   "totalTokens": 55112446,
+   "tokensPerCommit": 11022489,
    "codex": {
     "threads": 1,
     "input": 54930362,
@@ -3053,8 +3164,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 55112446,
-   "tokensPerCommit": 11022489,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3072,6 +3181,8 @@
     "ops": 0,
     "human": 5
    },
+   "totalTokens": 31508775,
+   "tokensPerCommit": 6301755,
    "codex": {
     "threads": 1,
     "input": 31430124,
@@ -3094,8 +3205,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 31508775,
-   "tokensPerCommit": 6301755,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3113,6 +3222,8 @@
     "ops": 0,
     "human": 18
    },
+   "totalTokens": 93516818,
+   "tokensPerCommit": 5195379,
    "codex": {
     "threads": 1,
     "input": 93275244,
@@ -3135,8 +3246,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 93516818,
-   "tokensPerCommit": 5195379,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3154,6 +3263,8 @@
     "ops": 0,
     "human": 17
    },
+   "totalTokens": 165996119,
+   "tokensPerCommit": 9764478,
    "codex": {
     "threads": 1,
     "input": 165530073,
@@ -3176,8 +3287,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 165996119,
-   "tokensPerCommit": 9764478,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3195,6 +3304,8 @@
     "ops": 0,
     "human": 30
    },
+   "totalTokens": 123916021,
+   "tokensPerCommit": 4130534,
    "codex": {
     "threads": 1,
     "input": 123554983,
@@ -3217,8 +3328,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 123916021,
-   "tokensPerCommit": 4130534,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3236,6 +3345,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 5046959,
+   "tokensPerCommit": 5046959,
    "codex": {
     "threads": 2,
     "input": 5025760,
@@ -3258,8 +3369,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 5046959,
-   "tokensPerCommit": 5046959,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3277,6 +3386,8 @@
     "ops": 0,
     "human": 3
    },
+   "totalTokens": 31755956,
+   "tokensPerCommit": 10585319,
    "codex": {
     "threads": 1,
     "input": 31652155,
@@ -3299,8 +3410,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 31755956,
-   "tokensPerCommit": 10585319,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3318,6 +3427,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 6243464,
+   "tokensPerCommit": 3121732,
    "codex": {
     "threads": 1,
     "input": 6218946,
@@ -3340,8 +3451,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 6243464,
-   "tokensPerCommit": 3121732,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3359,6 +3468,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 3772120,
+   "tokensPerCommit": 3772120,
    "codex": {
     "threads": 1,
     "input": 3761692,
@@ -3381,8 +3492,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 3772120,
-   "tokensPerCommit": 3772120,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3441,6 +3550,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 67210840,
+   "tokensPerCommit": 67210840,
    "codex": {
     "threads": 6,
     "input": 67064712,
@@ -3464,8 +3575,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 67210840,
-   "tokensPerCommit": 67210840,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 0,
@@ -3483,6 +3592,8 @@
     "ops": 0,
     "human": 8
    },
+   "totalTokens": 184530938,
+   "tokensPerCommit": 23066367,
    "codex": {
     "threads": 6,
     "input": 184089899,
@@ -3506,8 +3617,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 184530938,
-   "tokensPerCommit": 23066367,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 0,
@@ -3525,6 +3634,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 43421863,
+   "tokensPerCommit": 21710932,
    "codex": {
     "threads": 5,
     "input": 43342776,
@@ -3548,8 +3659,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 43421863,
-   "tokensPerCommit": 21710932,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 0,
@@ -3567,6 +3676,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 915794,
+   "tokensPerCommit": 915794,
    "codex": {
     "threads": 1,
     "input": 909690,
@@ -3589,8 +3700,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 915794,
-   "tokensPerCommit": 915794,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -3608,6 +3717,8 @@
     "ops": 0,
     "human": 3
    },
+   "totalTokens": 25100721,
+   "tokensPerCommit": 8366907,
    "codex": {
     "threads": 4,
     "input": 24988314,
@@ -3630,8 +3741,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 25100721,
-   "tokensPerCommit": 8366907,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -3649,6 +3758,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 3951194,
+   "tokensPerCommit": 3951194,
    "codex": {
     "threads": 2,
     "input": 3939658,
@@ -3671,8 +3782,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 3951194,
-   "tokensPerCommit": 3951194,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -3690,6 +3799,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 87636594,
+   "tokensPerCommit": 43818297,
    "codex": {
     "threads": 3,
     "input": 87349979,
@@ -3712,8 +3823,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 87636594,
-   "tokensPerCommit": 43818297,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -3731,6 +3840,8 @@
     "ops": 0,
     "human": 30
    },
+   "totalTokens": 325285677,
+   "tokensPerCommit": 10842856,
    "codex": {
     "threads": 3,
     "input": 324295454,
@@ -3753,8 +3864,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 325285677,
-   "tokensPerCommit": 10842856,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 0,
@@ -3772,6 +3881,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 28614636,
+   "tokensPerCommit": 14307318,
    "codex": {
     "threads": 2,
     "input": 28520519,
@@ -3794,8 +3905,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 28614636,
-   "tokensPerCommit": 14307318,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -3813,6 +3922,8 @@
     "ops": 0,
     "human": 3
    },
+   "totalTokens": 32777018,
+   "tokensPerCommit": 10925673,
    "codex": {
     "threads": 2,
     "input": 32691744,
@@ -3835,8 +3946,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 32777018,
-   "tokensPerCommit": 10925673,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -3895,6 +4004,8 @@
     "ops": 0,
     "human": 46
    },
+   "totalTokens": 468688190,
+   "tokensPerCommit": 10188874,
    "codex": {
     "threads": 4,
     "input": 467442680,
@@ -3917,8 +4028,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 468688190,
-   "tokensPerCommit": 10188874,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -3936,6 +4045,8 @@
     "ops": 0,
     "human": 41
    },
+   "totalTokens": 685935212,
+   "tokensPerCommit": 16730127,
    "codex": {
     "threads": 4,
     "input": 684097762,
@@ -3958,8 +4069,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 685935212,
-   "tokensPerCommit": 16730127,
    "peakConcurrent": 4,
    "peakConcurrentCodex": 4,
    "peakConcurrentClaude": 0,
@@ -3977,6 +4086,8 @@
     "ops": 0,
     "human": 91
    },
+   "totalTokens": 742935248,
+   "tokensPerCommit": 8164124,
    "codex": {
     "threads": 8,
     "input": 740613582,
@@ -4000,8 +4111,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 742935248,
-   "tokensPerCommit": 8164124,
    "peakConcurrent": 6,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 0,
@@ -4019,6 +4128,8 @@
     "ops": 0,
     "human": 187
    },
+   "totalTokens": 2272876342,
+   "tokensPerCommit": 12154419,
    "codex": {
     "threads": 12,
     "input": 2266013699,
@@ -4043,8 +4154,6 @@
      "main": 1311813
     }
    },
-   "totalTokens": 2272876342,
-   "tokensPerCommit": 12154419,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 1,
@@ -4062,6 +4171,8 @@
     "ops": 0,
     "human": 30
    },
+   "totalTokens": 1822904770,
+   "tokensPerCommit": 15714696,
    "codex": {
     "threads": 4,
     "input": 339326086,
@@ -4087,8 +4198,6 @@
      "subagent": 789774
     }
    },
-   "totalTokens": 1822904770,
-   "tokensPerCommit": 15714696,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 4,
    "peakConcurrentClaude": 5,
@@ -4106,6 +4215,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 960526369,
+   "tokensPerCommit": 13920672,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -4128,8 +4239,6 @@
      "main": 960526369
     }
    },
-   "totalTokens": 960526369,
-   "tokensPerCommit": 13920672,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 5,
@@ -4147,6 +4256,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 1631282712,
+   "tokensPerCommit": 18537304,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -4169,8 +4280,6 @@
      "main": 1631282712
     }
    },
-   "totalTokens": 1631282712,
-   "tokensPerCommit": 18537304,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 3,
@@ -4188,6 +4297,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 1263220286,
+   "tokensPerCommit": 15595312,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -4211,8 +4322,6 @@
      "subagent": 15939967
     }
    },
-   "totalTokens": 1263220286,
-   "tokensPerCommit": 15595312,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 11,
@@ -4230,6 +4339,8 @@
     "ops": 0,
     "human": 26
    },
+   "totalTokens": 3592479149,
+   "tokensPerCommit": 24606022,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -4252,8 +4363,6 @@
      "main": 3592479149
     }
    },
-   "totalTokens": 3592479149,
-   "tokensPerCommit": 24606022,
    "peakConcurrent": 6,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 6,
@@ -4271,6 +4380,8 @@
     "ops": 0,
     "human": 32
    },
+   "totalTokens": 690548200,
+   "tokensPerCommit": 14692515,
    "codex": {
     "threads": 9,
     "input": 519637176,
@@ -4295,8 +4406,6 @@
      "main": 169519633
     }
    },
-   "totalTokens": 690548200,
-   "tokensPerCommit": 14692515,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 4,
@@ -4314,6 +4423,8 @@
     "ops": 0,
     "human": 26
    },
+   "totalTokens": 829129045,
+   "tokensPerCommit": 31889579,
    "codex": {
     "threads": 11,
     "input": 827209104,
@@ -4336,8 +4447,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 829129045,
-   "tokensPerCommit": 31889579,
    "peakConcurrent": 6,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 0,
@@ -4355,6 +4464,8 @@
     "ops": 0,
     "human": 29
    },
+   "totalTokens": 902959288,
+   "tokensPerCommit": 31136527,
    "codex": {
     "threads": 6,
     "input": 901146682,
@@ -4377,8 +4488,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 902959288,
-   "tokensPerCommit": 31136527,
    "peakConcurrent": 6,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 0,
@@ -4396,6 +4505,8 @@
     "ops": 0,
     "human": 38
    },
+   "totalTokens": 2085886039,
+   "tokensPerCommit": 26742129,
    "codex": {
     "threads": 8,
     "input": 1288287018,
@@ -4421,8 +4532,6 @@
      "subagent": 139701634
     }
    },
-   "totalTokens": 2085886039,
-   "tokensPerCommit": 26742129,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 11,
@@ -4440,6 +4549,8 @@
     "ops": 0,
     "human": 17
    },
+   "totalTokens": 1750093325,
+   "tokensPerCommit": 12324601,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -4463,8 +4574,6 @@
      "subagent": 278321359
     }
    },
-   "totalTokens": 1750093325,
-   "tokensPerCommit": 12324601,
    "peakConcurrent": 13,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 13,
@@ -4482,6 +4591,8 @@
     "ops": 0,
     "human": 27
    },
+   "totalTokens": 1907644834,
+   "tokensPerCommit": 13247534,
    "codex": {
     "threads": 13,
     "input": 710632242,
@@ -4509,8 +4620,6 @@
      "subagent": 105109660
     }
    },
-   "totalTokens": 1907644834,
-   "tokensPerCommit": 13247534,
    "peakConcurrent": 14,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 14,
@@ -4528,6 +4637,8 @@
     "ops": 0,
     "human": 16
    },
+   "totalTokens": 1754736276,
+   "tokensPerCommit": 20889718,
    "codex": {
     "threads": 30,
     "input": 1142319790,
@@ -4553,8 +4664,6 @@
      "main": 609847075
     }
    },
-   "totalTokens": 1754736276,
-   "tokensPerCommit": 20889718,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 2,
@@ -4572,6 +4681,8 @@
     "ops": 0,
     "human": 39
    },
+   "totalTokens": 1309157317,
+   "tokensPerCommit": 18438835,
    "codex": {
     "threads": 16,
     "input": 958065398,
@@ -4598,8 +4709,6 @@
      "subagent": 43194195
     }
    },
-   "totalTokens": 1309157317,
-   "tokensPerCommit": 18438835,
    "peakConcurrent": 27,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 18,
@@ -4617,6 +4726,8 @@
     "ops": 0,
     "human": 13
    },
+   "totalTokens": 797653439,
+   "tokensPerCommit": 21558201,
    "codex": {
     "threads": 10,
     "input": 605933360,
@@ -4642,8 +4753,6 @@
      "subagent": 8443560
     }
    },
-   "totalTokens": 797653439,
-   "tokensPerCommit": 21558201,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 4,
@@ -4661,6 +4770,8 @@
     "ops": 0,
     "human": 63
    },
+   "totalTokens": 1643467566,
+   "tokensPerCommit": 20543345,
    "codex": {
     "threads": 8,
     "input": 1281326824,
@@ -4685,8 +4796,6 @@
      "main": 360066131
     }
    },
-   "totalTokens": 1643467566,
-   "tokensPerCommit": 20543345,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 2,
@@ -4704,6 +4813,8 @@
     "ops": 0,
     "human": 116
    },
+   "totalTokens": 1439844840,
+   "tokensPerCommit": 11075730,
    "codex": {
     "threads": 11,
     "input": 1051564781,
@@ -4729,8 +4840,6 @@
      "subagent": 15361087
     }
    },
-   "totalTokens": 1439844840,
-   "tokensPerCommit": 11075730,
    "peakConcurrent": 14,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 11,
@@ -4748,6 +4857,8 @@
     "ops": 0,
     "human": 88
    },
+   "totalTokens": 2486909767,
+   "tokensPerCommit": 8818829,
    "codex": {
     "threads": 16,
     "input": 1111558507,
@@ -4774,8 +4885,6 @@
      "subagent": 621234661
     }
    },
-   "totalTokens": 2486909767,
-   "tokensPerCommit": 8818829,
    "peakConcurrent": 13,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 11,
@@ -4793,6 +4902,8 @@
     "ops": 0,
     "human": 21
    },
+   "totalTokens": 2113512057,
+   "tokensPerCommit": 15772478,
    "codex": {
     "threads": 5,
     "input": 283843615,
@@ -4818,8 +4929,6 @@
      "subagent": 1545785343
     }
    },
-   "totalTokens": 2113512057,
-   "tokensPerCommit": 15772478,
    "peakConcurrent": 26,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 25,
@@ -4837,6 +4946,8 @@
     "ops": 0,
     "human": 106
    },
+   "totalTokens": 1176196264,
+   "tokensPerCommit": 8843581,
    "codex": {
     "threads": 11,
     "input": 896185362,
@@ -4863,8 +4974,6 @@
      "subagent": 67418010
     }
    },
-   "totalTokens": 1176196264,
-   "tokensPerCommit": 8843581,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 3,
@@ -4882,6 +4991,8 @@
     "ops": 0,
     "human": 87
    },
+   "totalTokens": 972366879,
+   "tokensPerCommit": 10024401,
    "codex": {
     "threads": 10,
     "input": 867332670,
@@ -4907,8 +5018,6 @@
      "main": 103225842
     }
    },
-   "totalTokens": 972366879,
-   "tokensPerCommit": 10024401,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 1,
@@ -4926,6 +5035,8 @@
     "ops": 0,
     "human": 55
    },
+   "totalTokens": 1211050816,
+   "tokensPerCommit": 20526285,
    "codex": {
     "threads": 8,
     "input": 1164010274,
@@ -4950,8 +5061,6 @@
      "main": 45078372
     }
    },
-   "totalTokens": 1211050816,
-   "tokensPerCommit": 20526285,
    "peakConcurrent": 7,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 1,
@@ -4969,6 +5078,8 @@
     "ops": 0,
     "human": 75
    },
+   "totalTokens": 1651295668,
+   "tokensPerCommit": 17200997,
    "codex": {
     "threads": 11,
     "input": 1263810538,
@@ -4994,8 +5105,6 @@
      "subagent": 322389034
     }
    },
-   "totalTokens": 1651295668,
-   "tokensPerCommit": 17200997,
    "peakConcurrent": 12,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 6,
@@ -5013,6 +5122,8 @@
     "ops": 0,
     "human": 19
    },
+   "totalTokens": 522416475,
+   "tokensPerCommit": 23746203,
    "codex": {
     "threads": 5,
     "input": 502944233,
@@ -5038,8 +5149,6 @@
      "subagent": 13045304
     }
    },
-   "totalTokens": 522416475,
-   "tokensPerCommit": 23746203,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 6,
@@ -5057,6 +5166,8 @@
     "ops": 0,
     "human": 19
    },
+   "totalTokens": 486252703,
+   "tokensPerCommit": 25592248,
    "codex": {
     "threads": 6,
     "input": 485390045,
@@ -5080,8 +5191,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 486252703,
-   "tokensPerCommit": 25592248,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 0,
@@ -5099,6 +5208,8 @@
     "ops": 0,
     "human": 26
    },
+   "totalTokens": 516505221,
+   "tokensPerCommit": 19865585,
    "codex": {
     "threads": 8,
     "input": 515650265,
@@ -5122,8 +5233,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 516505221,
-   "tokensPerCommit": 19865585,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 0,
@@ -5141,6 +5250,8 @@
     "ops": 0,
     "human": 40
    },
+   "totalTokens": 1288353407,
+   "tokensPerCommit": 26840696,
    "codex": {
     "threads": 11,
     "input": 842940056,
@@ -5167,8 +5278,6 @@
      "subagent": 414812906
     }
    },
-   "totalTokens": 1288353407,
-   "tokensPerCommit": 26840696,
    "peakConcurrent": 12,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 6,
@@ -5186,6 +5295,8 @@
     "ops": 0,
     "human": 180
    },
+   "totalTokens": 3400379363,
+   "tokensPerCommit": 16347978,
    "codex": {
     "threads": 21,
     "input": 2859356267,
@@ -5212,8 +5323,6 @@
      "subagent": 482686596
     }
    },
-   "totalTokens": 3400379363,
-   "tokensPerCommit": 16347978,
    "peakConcurrent": 19,
    "peakConcurrentCodex": 15,
    "peakConcurrentClaude": 9,
@@ -5231,6 +5340,8 @@
     "ops": 0,
     "human": 102
    },
+   "totalTokens": 1900479153,
+   "tokensPerCommit": 15203833,
    "codex": {
     "threads": 12,
     "input": 1369263437,
@@ -5257,8 +5368,6 @@
      "subagent": 369785304
     }
    },
-   "totalTokens": 1900479153,
-   "tokensPerCommit": 15203833,
    "peakConcurrent": 15,
    "peakConcurrentCodex": 11,
    "peakConcurrentClaude": 4,
@@ -5276,6 +5385,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 1649499445,
+   "tokensPerCommit": 31122631,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -5299,8 +5410,6 @@
      "subagent": 339761002
     }
    },
-   "totalTokens": 1649499445,
-   "tokensPerCommit": 31122631,
    "peakConcurrent": 12,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 12,
@@ -5318,6 +5427,8 @@
     "ops": 0,
     "human": 99
    },
+   "totalTokens": 1342496581,
+   "tokensPerCommit": 7028778,
    "codex": {
     "threads": 11,
     "input": 574582460,
@@ -5345,8 +5456,6 @@
      "subagent": 182801333
     }
    },
-   "totalTokens": 1342496581,
-   "tokensPerCommit": 7028778,
    "peakConcurrent": 14,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 9,
@@ -5364,6 +5473,8 @@
     "ops": 0,
     "human": 15
    },
+   "totalTokens": 1241882147,
+   "tokensPerCommit": 12175315,
    "codex": {
     "threads": 14,
     "input": 207896968,
@@ -5390,8 +5501,6 @@
      "subagent": 309693795
     }
    },
-   "totalTokens": 1241882147,
-   "tokensPerCommit": 12175315,
    "peakConcurrent": 16,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 11,
@@ -5409,6 +5518,8 @@
     "ops": 0,
     "human": 116
    },
+   "totalTokens": 2621504434,
+   "tokensPerCommit": 13512909,
    "codex": {
     "threads": 56,
     "input": 1449521712,
@@ -5435,8 +5546,6 @@
      "subagent": 477496529
     }
    },
-   "totalTokens": 2621504434,
-   "tokensPerCommit": 13512909,
    "peakConcurrent": 15,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 10,
@@ -5454,6 +5563,8 @@
     "ops": 0,
     "human": 36
    },
+   "totalTokens": 968669565,
+   "tokensPerCommit": 19768767,
    "codex": {
     "threads": 20,
     "input": 621871053,
@@ -5480,8 +5591,6 @@
      "subagent": 255252175
     }
    },
-   "totalTokens": 968669565,
-   "tokensPerCommit": 19768767,
    "peakConcurrent": 13,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 5,
@@ -5499,6 +5608,8 @@
     "ops": 0,
     "human": 16
    },
+   "totalTokens": 336465630,
+   "tokensPerCommit": 21029102,
    "codex": {
     "threads": 10,
     "input": 322672192,
@@ -5524,8 +5635,6 @@
      "main": 13342473
     }
    },
-   "totalTokens": 336465630,
-   "tokensPerCommit": 21029102,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 1,
@@ -5543,6 +5652,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 137319275,
+   "tokensPerCommit": 22886546,
    "codex": {
     "threads": 2,
     "input": 114800301,
@@ -5568,8 +5679,6 @@
      "main": 22364067
     }
    },
-   "totalTokens": 137319275,
-   "tokensPerCommit": 22886546,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 1,
@@ -5587,6 +5696,8 @@
     "ops": 0,
     "human": 25
    },
+   "totalTokens": 1372138076,
+   "tokensPerCommit": 12588423,
    "codex": {
     "threads": 7,
     "input": 167191434,
@@ -5613,8 +5724,6 @@
      "subagent": 10552704
     }
    },
-   "totalTokens": 1372138076,
-   "tokensPerCommit": 12588423,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 6,
@@ -5632,6 +5741,8 @@
     "ops": 0,
     "human": 72
    },
+   "totalTokens": 1076072629,
+   "tokensPerCommit": 9782478,
    "codex": {
     "threads": 6,
     "input": 327472482,
@@ -5658,8 +5769,6 @@
      "subagent": 517882
     }
    },
-   "totalTokens": 1076072629,
-   "tokensPerCommit": 9782478,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 4,
@@ -5677,6 +5786,8 @@
     "ops": 0,
     "human": 95
    },
+   "totalTokens": 1791132947,
+   "tokensPerCommit": 9527303,
    "codex": {
     "threads": 4,
     "input": 310828252,
@@ -5703,8 +5814,6 @@
      "subagent": 105394334
     }
    },
-   "totalTokens": 1791132947,
-   "tokensPerCommit": 9527303,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 3,
    "peakConcurrentClaude": 7,
@@ -5722,6 +5831,8 @@
     "ops": 0,
     "human": 125
    },
+   "totalTokens": 1520290817,
+   "tokensPerCommit": 6910413,
    "codex": {
     "threads": 1,
     "input": 270993463,
@@ -5747,8 +5858,6 @@
      "subagent": 201332240
     }
    },
-   "totalTokens": 1520290817,
-   "tokensPerCommit": 6910413,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 7,
@@ -5766,6 +5875,8 @@
     "ops": 0,
     "human": 58
    },
+   "totalTokens": 1103769310,
+   "tokensPerCommit": 9275372,
    "codex": {
     "threads": 2,
     "input": 164508391,
@@ -5791,8 +5902,6 @@
      "subagent": 40702000
     }
    },
-   "totalTokens": 1103769310,
-   "tokensPerCommit": 9275372,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 8,
@@ -5810,6 +5919,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 170662177,
+   "tokensPerCommit": 21332772,
    "codex": {
     "threads": 1,
     "input": 274767,
@@ -5834,8 +5945,6 @@
      "main": 170386841
     }
    },
-   "totalTokens": 170662177,
-   "tokensPerCommit": 21332772,
    "peakConcurrent": 4,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 4,
@@ -5853,6 +5962,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 162540237,
+   "tokensPerCommit": 27090040,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -5875,8 +5986,6 @@
      "main": 162540237
     }
    },
-   "totalTokens": 162540237,
-   "tokensPerCommit": 27090040,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 3,
@@ -5894,6 +6003,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 136161988,
+   "tokensPerCommit": 17020249,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -5916,8 +6027,6 @@
      "main": 136161988
     }
    },
-   "totalTokens": 136161988,
-   "tokensPerCommit": 17020249,
    "peakConcurrent": 4,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 4,
@@ -5935,6 +6044,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 137342905,
+   "tokensPerCommit": 45780968,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -5958,8 +6069,6 @@
      "subagent": 3377652
     }
    },
-   "totalTokens": 137342905,
-   "tokensPerCommit": 45780968,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 2,
@@ -5977,6 +6086,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 1065979173,
+   "tokensPerCommit": 24226799,
    "codex": {
     "threads": 1,
     "input": 382053,
@@ -6002,8 +6113,6 @@
      "subagent": 698036810
     }
    },
-   "totalTokens": 1065979173,
-   "tokensPerCommit": 24226799,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 11,
@@ -6021,6 +6130,8 @@
     "ops": 0,
     "human": 32
    },
+   "totalTokens": 3061247230,
+   "tokensPerCommit": 18330822,
    "codex": {
     "threads": 9,
     "input": 674537095,
@@ -6047,8 +6158,6 @@
      "subagent": 1469125393
     }
    },
-   "totalTokens": 3061247230,
-   "tokensPerCommit": 18330822,
    "peakConcurrent": 17,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 14,
@@ -6060,12 +6169,14 @@
   {
    "date": "2026-09-30",
    "commits": {
-    "total": 75,
+    "total": 76,
     "codex": 0,
-    "claude": 56,
+    "claude": 57,
     "ops": 0,
     "human": 19
    },
+   "totalTokens": 2050620688,
+   "tokensPerCommit": 26981851,
    "codex": {
     "threads": 11,
     "input": 489035068,
@@ -6092,8 +6203,6 @@
      "subagent": 1088430006
     }
    },
-   "totalTokens": 2050620688,
-   "tokensPerCommit": 27341609,
    "peakConcurrent": 13,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 7,
@@ -6111,6 +6220,8 @@
     "ops": 0,
     "human": 7
    },
+   "totalTokens": 1315708841,
+   "tokensPerCommit": 21221110,
    "codex": {
     "threads": 19,
     "input": 901361231,
@@ -6137,8 +6248,6 @@
      "subagent": 49314040
     }
    },
-   "totalTokens": 1315708841,
-   "tokensPerCommit": 21221110,
    "peakConcurrent": 14,
    "peakConcurrentCodex": 12,
    "peakConcurrentClaude": 3,
@@ -6156,6 +6265,8 @@
     "ops": 0,
     "human": 7
    },
+   "totalTokens": 586427459,
+   "tokensPerCommit": 41887676,
    "codex": {
     "threads": 9,
     "input": 554275153,
@@ -6181,8 +6292,6 @@
      "main": 30617956
     }
    },
-   "totalTokens": 586427459,
-   "tokensPerCommit": 41887676,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 1,
@@ -6200,6 +6309,8 @@
     "ops": 0,
     "human": 7
    },
+   "totalTokens": 990767609,
+   "tokensPerCommit": 141538230,
    "codex": {
     "threads": 5,
     "input": 981875315,
@@ -6226,8 +6337,6 @@
      "main": 6826473
     }
    },
-   "totalTokens": 990767609,
-   "tokensPerCommit": 141538230,
    "peakConcurrent": 7,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 6,
@@ -6245,6 +6354,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 290012843,
+   "tokensPerCommit": 13182402,
    "codex": {
     "threads": 5,
     "input": 268890183,
@@ -6271,8 +6382,6 @@
      "main": 20608574
     }
    },
-   "totalTokens": 290012843,
-   "tokensPerCommit": 13182402,
    "peakConcurrent": 6,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 1,
@@ -6290,6 +6399,8 @@
     "ops": 0,
     "human": 14
    },
+   "totalTokens": 1479561917,
+   "tokensPerCommit": 5918248,
    "codex": {
     "threads": 8,
     "input": 1281284681,
@@ -6317,8 +6428,6 @@
      "subagent": 35016225
     }
    },
-   "totalTokens": 1479561917,
-   "tokensPerCommit": 5918248,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 3,
@@ -6336,6 +6445,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 39979165,
+   "tokensPerCommit": 140278,
    "codex": {
     "threads": 0,
     "input": 0,
@@ -6358,8 +6469,6 @@
      "main": 39979165
     }
    },
-   "totalTokens": 39979165,
-   "tokensPerCommit": 140278,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 0,
    "peakConcurrentClaude": 2,
@@ -6377,6 +6486,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 742725062,
+   "tokensPerCommit": 4014730,
    "codex": {
     "threads": 4,
     "input": 726299366,
@@ -6402,8 +6513,6 @@
      "main": 15044187
     }
    },
-   "totalTokens": 742725062,
-   "tokensPerCommit": 4014730,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 4,
    "peakConcurrentClaude": 1,
@@ -6421,6 +6530,8 @@
     "ops": 0,
     "human": 4
    },
+   "totalTokens": 333302540,
+   "tokensPerCommit": 2415236,
    "codex": {
     "threads": 4,
     "input": 227591530,
@@ -6446,8 +6557,6 @@
      "main": 105306185
     }
    },
-   "totalTokens": 333302540,
-   "tokensPerCommit": 2415236,
    "peakConcurrent": 4,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 3,
@@ -6465,6 +6574,8 @@
     "ops": 0,
     "human": 14
    },
+   "totalTokens": 364485735,
+   "tokensPerCommit": 3919201,
    "codex": {
     "threads": 2,
     "input": 360622118,
@@ -6490,8 +6601,6 @@
      "main": 2814966
     }
    },
-   "totalTokens": 364485735,
-   "tokensPerCommit": 3919201,
    "peakConcurrent": 3,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 1,
@@ -6509,6 +6618,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 671909275,
+   "tokensPerCommit": 2073794,
    "codex": {
     "threads": 1,
     "input": 647010271,
@@ -6534,8 +6645,6 @@
      "subagent": 8605893
     }
    },
-   "totalTokens": 671909275,
-   "tokensPerCommit": 2073794,
    "peakConcurrent": 4,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 4,
@@ -6553,6 +6662,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 373631393,
+   "tokensPerCommit": 1378714,
    "codex": {
     "threads": 1,
     "input": 349214903,
@@ -6577,8 +6688,6 @@
      "main": 23477193
     }
    },
-   "totalTokens": 373631393,
-   "tokensPerCommit": 1378714,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 1,
@@ -6596,6 +6705,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 255328013,
+   "tokensPerCommit": 7979000,
    "codex": {
     "threads": 1,
     "input": 254765474,
@@ -6618,8 +6729,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 255328013,
-   "tokensPerCommit": 7979000,
    "peakConcurrent": 1,
    "peakConcurrentCodex": 1,
    "peakConcurrentClaude": 0,
@@ -6637,6 +6746,8 @@
     "ops": 0,
     "human": 15
    },
+   "totalTokens": 765479363,
+   "tokensPerCommit": 9112850,
    "codex": {
     "threads": 55,
     "input": 763466118,
@@ -6661,8 +6772,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 765479363,
-   "tokensPerCommit": 9112850,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 0,
@@ -6680,6 +6789,8 @@
     "ops": 0,
     "human": 14
    },
+   "totalTokens": 689262212,
+   "tokensPerCommit": 6962245,
    "codex": {
     "threads": 55,
     "input": 687533425,
@@ -6704,8 +6815,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 689262212,
-   "tokensPerCommit": 6962245,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 0,
@@ -6723,6 +6832,8 @@
     "ops": 0,
     "human": 26
    },
+   "totalTokens": 1097735746,
+   "tokensPerCommit": 2843875,
    "codex": {
     "threads": 80,
     "input": 1095082275,
@@ -6747,8 +6858,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 1097735746,
-   "tokensPerCommit": 2843875,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 0,
@@ -6766,6 +6875,8 @@
     "ops": 0,
     "human": 5
    },
+   "totalTokens": 36365619,
+   "tokensPerCommit": 7273124,
    "codex": {
     "threads": 2,
     "input": 36316003,
@@ -6788,8 +6899,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 36365619,
-   "tokensPerCommit": 7273124,
    "peakConcurrent": 2,
    "peakConcurrentCodex": 2,
    "peakConcurrentClaude": 0,
@@ -6807,6 +6916,8 @@
     "ops": 0,
     "human": 1
    },
+   "totalTokens": 35300105,
+   "tokensPerCommit": 1765005,
    "codex": {
     "threads": 8,
     "input": 35207654,
@@ -6831,8 +6942,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 35300105,
-   "tokensPerCommit": 1765005,
    "peakConcurrent": 6,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 0,
@@ -6850,6 +6959,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 740527271,
+   "tokensPerCommit": 2091885,
    "codex": {
     "threads": 79,
     "input": 738715511,
@@ -6874,8 +6985,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 740527271,
-   "tokensPerCommit": 2091885,
    "peakConcurrent": 11,
    "peakConcurrentCodex": 11,
    "peakConcurrentClaude": 0,
@@ -6893,6 +7002,8 @@
     "ops": 0,
     "human": 8
    },
+   "totalTokens": 532553564,
+   "tokensPerCommit": 3750377,
    "codex": {
     "threads": 25,
     "input": 531342508,
@@ -6917,8 +7028,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 532553564,
-   "tokensPerCommit": 3750377,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 0,
@@ -6936,6 +7045,8 @@
     "ops": 4,
     "human": 9
    },
+   "totalTokens": 844676332,
+   "tokensPerCommit": 8121888,
    "codex": {
     "threads": 245,
     "input": 841615399,
@@ -6961,8 +7072,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 844676332,
-   "tokensPerCommit": 8121888,
    "peakConcurrent": 13,
    "peakConcurrentCodex": 13,
    "peakConcurrentClaude": 0,
@@ -6980,6 +7089,8 @@
     "ops": 1,
     "human": 10
    },
+   "totalTokens": 455544851,
+   "tokensPerCommit": 9903149,
    "codex": {
     "threads": 125,
     "input": 454129181,
@@ -7005,8 +7116,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 455544851,
-   "tokensPerCommit": 9903149,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 0,
@@ -7024,6 +7133,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 436356450,
+   "tokensPerCommit": 27272278,
    "codex": {
     "threads": 108,
     "input": 434501329,
@@ -7048,8 +7159,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 436356450,
-   "tokensPerCommit": 27272278,
    "peakConcurrent": 5,
    "peakConcurrentCodex": 5,
    "peakConcurrentClaude": 0,
@@ -7067,6 +7176,8 @@
     "ops": 0,
     "human": 2
    },
+   "totalTokens": 357125920,
+   "tokensPerCommit": 11904197,
    "codex": {
     "threads": 137,
     "input": 354974126,
@@ -7091,8 +7202,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 357125920,
-   "tokensPerCommit": 11904197,
    "peakConcurrent": 7,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 0,
@@ -7110,6 +7219,8 @@
     "ops": 36,
     "human": 0
    },
+   "totalTokens": 578048056,
+   "tokensPerCommit": 8141522,
    "codex": {
     "threads": 199,
     "input": 574613003,
@@ -7134,8 +7245,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 578048056,
-   "tokensPerCommit": 8141522,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 0,
@@ -7153,6 +7262,8 @@
     "ops": 17,
     "human": 10
    },
+   "totalTokens": 260316076,
+   "tokensPerCommit": 7035570,
    "codex": {
     "threads": 111,
     "input": 259035598,
@@ -7177,8 +7288,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 260316076,
-   "tokensPerCommit": 7035570,
    "peakConcurrent": 9,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 0,
@@ -7196,6 +7305,8 @@
     "ops": 48,
     "human": 12
    },
+   "totalTokens": 728899526,
+   "tokensPerCommit": 11213839,
    "codex": {
     "threads": 273,
     "input": 723996627,
@@ -7220,8 +7331,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 728899526,
-   "tokensPerCommit": 11213839,
    "peakConcurrent": 13,
    "peakConcurrentCodex": 13,
    "peakConcurrentClaude": 0,
@@ -7239,6 +7348,8 @@
     "ops": 21,
     "human": 0
    },
+   "totalTokens": 954559307,
+   "tokensPerCommit": 45455205,
    "codex": {
     "threads": 232,
     "input": 949522586,
@@ -7263,8 +7374,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 954559307,
-   "tokensPerCommit": 45455205,
    "peakConcurrent": 12,
    "peakConcurrentCodex": 12,
    "peakConcurrentClaude": 0,
@@ -7282,6 +7391,8 @@
     "ops": 5,
     "human": 3
    },
+   "totalTokens": 268786184,
+   "tokensPerCommit": 29865132,
    "codex": {
     "threads": 107,
     "input": 267428899,
@@ -7306,8 +7417,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 268786184,
-   "tokensPerCommit": 29865132,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 10,
    "peakConcurrentClaude": 0,
@@ -7325,6 +7434,8 @@
     "ops": 13,
     "human": 3
    },
+   "totalTokens": 487980578,
+   "tokensPerCommit": 30498786,
    "codex": {
     "threads": 249,
     "input": 484914674,
@@ -7349,8 +7460,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 487980578,
-   "tokensPerCommit": 30498786,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 10,
    "peakConcurrentClaude": 0,
@@ -7362,12 +7471,14 @@
   {
    "date": "2026-10-30",
    "commits": {
-    "total": 129,
+    "total": 130,
     "codex": 117,
     "claude": 4,
     "ops": 4,
-    "human": 4
+    "human": 5
    },
+   "totalTokens": 1340814784,
+   "tokensPerCommit": 10313960,
    "codex": {
     "threads": 295,
     "input": 1299267298,
@@ -7394,8 +7505,6 @@
      "main": 35983308
     }
    },
-   "totalTokens": 1340814784,
-   "tokensPerCommit": 10393913,
    "peakConcurrent": 15,
    "peakConcurrentCodex": 14,
    "peakConcurrentClaude": 2,
@@ -7407,12 +7516,14 @@
   {
    "date": "2026-10-31",
    "commits": {
-    "total": 333,
+    "total": 339,
     "codex": 330,
-    "claude": 2,
+    "claude": 6,
     "ops": 0,
-    "human": 1
+    "human": 3
    },
+   "totalTokens": 1851700245,
+   "tokensPerCommit": 5462243,
    "codex": {
     "threads": 185,
     "input": 1765951922,
@@ -7440,8 +7551,6 @@
      "subagent": 52685169
     }
    },
-   "totalTokens": 1851700245,
-   "tokensPerCommit": 5560661,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 9,
    "peakConcurrentClaude": 3,
@@ -7453,12 +7562,14 @@
   {
    "date": "2026-11-01",
    "commits": {
-    "total": 322,
+    "total": 324,
     "codex": 321,
-    "claude": 1,
+    "claude": 3,
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 1147692763,
+   "tokensPerCommit": 3542262,
    "codex": {
     "threads": 179,
     "input": 1086145054,
@@ -7486,8 +7597,6 @@
      "subagent": 53423434
     }
    },
-   "totalTokens": 1147692763,
-   "tokensPerCommit": 3564263,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 6,
    "peakConcurrentClaude": 3,
@@ -7505,6 +7614,8 @@
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 1832545400,
+   "tokensPerCommit": 10531870,
    "codex": {
     "threads": 116,
     "input": 1827019785,
@@ -7529,8 +7640,6 @@
     "messages": 0,
     "byRole": {}
    },
-   "totalTokens": 1832545400,
-   "tokensPerCommit": 10531870,
    "peakConcurrent": 7,
    "peakConcurrentCodex": 7,
    "peakConcurrentClaude": 0,
@@ -7542,12 +7651,14 @@
   {
    "date": "2026-11-03",
    "commits": {
-    "total": 214,
+    "total": 217,
     "codex": 214,
     "claude": 0,
     "ops": 0,
-    "human": 0
+    "human": 3
    },
+   "totalTokens": 1756799229,
+   "tokensPerCommit": 8095849,
    "codex": {
     "threads": 119,
     "input": 1748999632,
@@ -7574,8 +7685,6 @@
      "main": 2584636
     }
    },
-   "totalTokens": 1756799229,
-   "tokensPerCommit": 8209342,
    "peakConcurrent": 8,
    "peakConcurrentCodex": 8,
    "peakConcurrentClaude": 1,
@@ -7587,12 +7696,14 @@
   {
    "date": "2026-11-04",
    "commits": {
-    "total": 441,
-    "codex": 441,
-    "claude": 0,
+    "total": 486,
+    "codex": 483,
+    "claude": 3,
     "ops": 0,
     "human": 0
    },
+   "totalTokens": 2073754452,
+   "tokensPerCommit": 4266984,
    "codex": {
     "threads": 297,
     "input": 2061023523,
@@ -7620,11 +7731,633 @@
      "subagent": 1382999
     }
    },
-   "totalTokens": 2073754452,
-   "tokensPerCommit": 4702391,
    "peakConcurrent": 10,
    "peakConcurrentCodex": 10,
    "peakConcurrentClaude": 2,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-05",
+   "commits": {
+    "total": 256,
+    "codex": 245,
+    "claude": 6,
+    "ops": 0,
+    "human": 5
+   },
+   "codex": {
+    "threads": 122,
+    "input": 2012586326,
+    "cached": 1977698304,
+    "output": 5818643,
+    "reasoning": 2145802,
+    "total": 2018535066,
+    "byRole": {
+     "coordinator": 519585264,
+     "worker": 1498949802
+    },
+    "uncachedInput": 34888022
+   },
+   "claude": {
+    "threads": 29,
+    "input": 2176,
+    "cacheCreate": 3823382,
+    "cacheRead": 122892665,
+    "output": 707873,
+    "total": 127426096,
+    "messages": 1014,
+    "byRole": {
+     "main": 18254644,
+     "subagent": 109171452
+    }
+   },
+   "totalTokens": 2145961162,
+   "tokensPerCommit": 8382661,
+   "peakConcurrent": 30,
+   "peakConcurrentCodex": 8,
+   "peakConcurrentClaude": 25,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-06",
+   "commits": {
+    "total": 239,
+    "codex": 217,
+    "claude": 11,
+    "ops": 0,
+    "human": 11
+   },
+   "codex": {
+    "threads": 105,
+    "input": 2311766120,
+    "cached": 2268995840,
+    "output": 6026227,
+    "reasoning": 2175214,
+    "total": 2317792347,
+    "byRole": {
+     "coordinator": 660902308,
+     "worker": 1597800317,
+     "subagent": 59089722
+    },
+    "uncachedInput": 42770280
+   },
+   "claude": {
+    "threads": 14,
+    "input": 1790,
+    "cacheCreate": 2609043,
+    "cacheRead": 113597327,
+    "output": 466640,
+    "total": 116674800,
+    "messages": 861,
+    "byRole": {
+     "main": 12161720,
+     "subagent": 104513080
+    }
+   },
+   "totalTokens": 2434467147,
+   "tokensPerCommit": 10186055,
+   "peakConcurrent": 13,
+   "peakConcurrentCodex": 9,
+   "peakConcurrentClaude": 9,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-07",
+   "commits": {
+    "total": 453,
+    "codex": 447,
+    "claude": 0,
+    "ops": 0,
+    "human": 6
+   },
+   "codex": {
+    "threads": 247,
+    "input": 795536195,
+    "cached": 773657856,
+    "output": 1377009,
+    "reasoning": 231073,
+    "total": 2517725180,
+    "byRole": {
+     "coordinator": 710846624,
+     "worker": 1806878556
+    },
+    "uncachedInput": 21878339
+   },
+   "claude": {
+    "threads": 1,
+    "input": 194,
+    "cacheCreate": 644803,
+    "cacheRead": 14123922,
+    "output": 39323,
+    "total": 14808242,
+    "messages": 84,
+    "byRole": {
+     "main": 14808242
+    }
+   },
+   "totalTokens": 2532533422,
+   "tokensPerCommit": 5590582,
+   "peakConcurrent": 9,
+   "peakConcurrentCodex": 9,
+   "peakConcurrentClaude": 1,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-08",
+   "commits": {
+    "total": 413,
+    "codex": 392,
+    "claude": 1,
+    "ops": 0,
+    "human": 20
+   },
+   "codex": {
+    "threads": 252,
+    "input": 630122975,
+    "cached": 622312192,
+    "output": 1237649,
+    "reasoning": 316941,
+    "total": 2434901798,
+    "byRole": {
+     "coordinator": 591302053,
+     "worker": 1843599745
+    },
+    "uncachedInput": 7810783
+   },
+   "claude": {
+    "threads": 3,
+    "input": 146,
+    "cacheCreate": 248301,
+    "cacheRead": 6587782,
+    "output": 51785,
+    "total": 6888014,
+    "messages": 66,
+    "byRole": {
+     "main": 6888014
+    }
+   },
+   "totalTokens": 2441789812,
+   "tokensPerCommit": 5912324,
+   "peakConcurrent": 8,
+   "peakConcurrentCodex": 8,
+   "peakConcurrentClaude": 1,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-09",
+   "commits": {
+    "total": 489,
+    "codex": 471,
+    "claude": 0,
+    "ops": 0,
+    "human": 18
+   },
+   "codex": {
+    "threads": 262,
+    "input": 339223125,
+    "cached": 332341632,
+    "output": 1165700,
+    "reasoning": 198685,
+    "total": 1931166730,
+    "byRole": {
+     "coordinator": 282852486,
+     "worker": 1648314244
+    },
+    "uncachedInput": 6881493
+   },
+   "claude": {
+    "threads": 0,
+    "input": 0,
+    "cacheCreate": 0,
+    "cacheRead": 0,
+    "output": 0,
+    "total": 0,
+    "messages": 0,
+    "byRole": {}
+   },
+   "totalTokens": 1931166730,
+   "tokensPerCommit": 3949216,
+   "peakConcurrent": 8,
+   "peakConcurrentCodex": 8,
+   "peakConcurrentClaude": 0,
+   "logged": {
+    "codex": true,
+    "claude": false
+   }
+  },
+  {
+   "date": "2026-11-10",
+   "commits": {
+    "total": 215,
+    "codex": 204,
+    "claude": 0,
+    "ops": 0,
+    "human": 11
+   },
+   "codex": {
+    "threads": 280,
+    "input": 479963241,
+    "cached": 471047808,
+    "output": 822249,
+    "reasoning": 102007,
+    "total": 2263078062,
+    "byRole": {
+     "coordinator": 472890982,
+     "worker": 1790187080
+    },
+    "uncachedInput": 8915433
+   },
+   "claude": {
+    "threads": 1,
+    "input": 420,
+    "cacheCreate": 463046,
+    "cacheRead": 31540166,
+    "output": 136258,
+    "total": 32139890,
+    "messages": 202,
+    "byRole": {
+     "main": 32139890
+    }
+   },
+   "totalTokens": 2295217952,
+   "tokensPerCommit": 10675432,
+   "peakConcurrent": 9,
+   "peakConcurrentCodex": 8,
+   "peakConcurrentClaude": 1,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-11",
+   "commits": {
+    "total": 81,
+    "codex": 76,
+    "claude": 5,
+    "ops": 0,
+    "human": 0
+   },
+   "codex": {
+    "threads": 137,
+    "input": 641545731,
+    "cached": 637449216,
+    "output": 1103644,
+    "reasoning": 594626,
+    "total": 3085261993,
+    "byRole": {
+     "coordinator": 642601832,
+     "worker": 2442660161
+    },
+    "uncachedInput": 4096515
+   },
+   "claude": {
+    "threads": 1,
+    "input": 538,
+    "cacheCreate": 687738,
+    "cacheRead": 43576325,
+    "output": 167854,
+    "total": 44432455,
+    "messages": 259,
+    "byRole": {
+     "main": 44432455
+    }
+   },
+   "totalTokens": 3129694448,
+   "tokensPerCommit": 38638203,
+   "peakConcurrent": 8,
+   "peakConcurrentCodex": 7,
+   "peakConcurrentClaude": 1,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-12",
+   "commits": {
+    "total": 194,
+    "codex": 186,
+    "claude": 7,
+    "ops": 0,
+    "human": 1
+   },
+   "codex": {
+    "threads": 163,
+    "input": 962983430,
+    "cached": 953557632,
+    "output": 1792503,
+    "reasoning": 833608,
+    "total": 3189418120,
+    "byRole": {
+     "coordinator": 943940650,
+     "worker": 2245477470
+    },
+    "uncachedInput": 9425798
+   },
+   "claude": {
+    "threads": 2,
+    "input": 942,
+    "cacheCreate": 1068010,
+    "cacheRead": 71694792,
+    "output": 229475,
+    "total": 72993219,
+    "messages": 447,
+    "byRole": {
+     "main": 49003720,
+     "subagent": 23989499
+    }
+   },
+   "totalTokens": 3262411339,
+   "tokensPerCommit": 16816553,
+   "peakConcurrent": 9,
+   "peakConcurrentCodex": 8,
+   "peakConcurrentClaude": 2,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-13",
+   "commits": {
+    "total": 234,
+    "codex": 212,
+    "claude": 18,
+    "ops": 0,
+    "human": 4
+   },
+   "codex": {
+    "threads": 190,
+    "input": 1031938190,
+    "cached": 1012457472,
+    "output": 3406540,
+    "reasoning": 1119458,
+    "total": 1129482664,
+    "byRole": {
+     "coordinator": 586879367,
+     "worker": 542603297
+    },
+    "uncachedInput": 19480718
+   },
+   "claude": {
+    "threads": 3,
+    "input": 1984,
+    "cacheCreate": 1532459,
+    "cacheRead": 151849212,
+    "output": 475243,
+    "total": 153858898,
+    "messages": 940,
+    "byRole": {
+     "main": 116810471,
+     "subagent": 37048427
+    }
+   },
+   "totalTokens": 1283341562,
+   "tokensPerCommit": 5484366,
+   "peakConcurrent": 10,
+   "peakConcurrentCodex": 9,
+   "peakConcurrentClaude": 2,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-14",
+   "commits": {
+    "total": 211,
+    "codex": 195,
+    "claude": 15,
+    "ops": 0,
+    "human": 1
+   },
+   "codex": {
+    "threads": 104,
+    "input": 1882647711,
+    "cached": 1859460224,
+    "output": 4855129,
+    "reasoning": 1781427,
+    "total": 1887502840,
+    "byRole": {
+     "coordinator": 697644480,
+     "worker": 1189858360
+    },
+    "uncachedInput": 23187487
+   },
+   "claude": {
+    "threads": 13,
+    "input": 4240,
+    "cacheCreate": 6205648,
+    "cacheRead": 324317787,
+    "output": 1509849,
+    "total": 332037524,
+    "messages": 2070,
+    "byRole": {
+     "main": 85135714,
+     "subagent": 246901810
+    }
+   },
+   "totalTokens": 2219540364,
+   "tokensPerCommit": 10519149,
+   "peakConcurrent": 10,
+   "peakConcurrentCodex": 7,
+   "peakConcurrentClaude": 5,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-15",
+   "commits": {
+    "total": 171,
+    "codex": 167,
+    "claude": 4,
+    "ops": 0,
+    "human": 0
+   },
+   "codex": {
+    "threads": 71,
+    "input": 2108802517,
+    "cached": 2083019776,
+    "output": 6266131,
+    "reasoning": 2744317,
+    "total": 2115068648,
+    "byRole": {
+     "coordinator": 716967938,
+     "worker": 1398100710
+    },
+    "uncachedInput": 25782741
+   },
+   "claude": {
+    "threads": 10,
+    "input": 1591,
+    "cacheCreate": 4983469,
+    "cacheRead": 113570192,
+    "output": 707910,
+    "total": 119263162,
+    "messages": 760,
+    "byRole": {
+     "main": 12226113,
+     "subagent": 107037049
+    }
+   },
+   "totalTokens": 2234331810,
+   "tokensPerCommit": 13066268,
+   "peakConcurrent": 9,
+   "peakConcurrentCodex": 6,
+   "peakConcurrentClaude": 4,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-16",
+   "commits": {
+    "total": 127,
+    "codex": 85,
+    "claude": 39,
+    "ops": 0,
+    "human": 3
+   },
+   "codex": {
+    "threads": 45,
+    "input": 1038532471,
+    "cached": 1024401280,
+    "output": 3736267,
+    "reasoning": 1812015,
+    "total": 1042268738,
+    "byRole": {
+     "coordinator": 237570951,
+     "worker": 804697787
+    },
+    "uncachedInput": 14131191
+   },
+   "claude": {
+    "threads": 41,
+    "input": 18862,
+    "cacheCreate": 25611274,
+    "cacheRead": 1555775492,
+    "output": 5904641,
+    "total": 1587310269,
+    "messages": 9219,
+    "byRole": {
+     "main": 98883548,
+     "subagent": 1488426721
+    }
+   },
+   "totalTokens": 2629579007,
+   "tokensPerCommit": 20705347,
+   "peakConcurrent": 14,
+   "peakConcurrentCodex": 7,
+   "peakConcurrentClaude": 9,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-17",
+   "commits": {
+    "total": 402,
+    "codex": 345,
+    "claude": 37,
+    "ops": 0,
+    "human": 20
+   },
+   "codex": {
+    "threads": 212,
+    "input": 2669822790,
+    "cached": 2624844544,
+    "output": 9596438,
+    "reasoning": 3741116,
+    "total": 2679419228,
+    "byRole": {
+     "coordinator": 724402636,
+     "worker": 1955016592
+    },
+    "uncachedInput": 44978246
+   },
+   "claude": {
+    "threads": 38,
+    "input": 10258,
+    "cacheCreate": 14844490,
+    "cacheRead": 828048256,
+    "output": 3312951,
+    "total": 846215955,
+    "messages": 5024,
+    "byRole": {
+     "main": 210380673,
+     "subagent": 635835282
+    }
+   },
+   "totalTokens": 3525635183,
+   "tokensPerCommit": 8770237,
+   "peakConcurrent": 16,
+   "peakConcurrentCodex": 9,
+   "peakConcurrentClaude": 11,
+   "logged": {
+    "codex": true,
+    "claude": true
+   }
+  },
+  {
+   "date": "2026-11-18",
+   "commits": {
+    "total": 161,
+    "codex": 143,
+    "claude": 11,
+    "ops": 0,
+    "human": 7
+   },
+   "codex": {
+    "threads": 67,
+    "input": 744123279,
+    "cached": 730665088,
+    "output": 2580967,
+    "reasoning": 908707,
+    "total": 746704246,
+    "byRole": {
+     "coordinator": 194294253,
+     "worker": 552409993
+    },
+    "uncachedInput": 13458191
+   },
+   "claude": {
+    "threads": 6,
+    "input": 1711,
+    "cacheCreate": 2215881,
+    "cacheRead": 123044710,
+    "output": 327916,
+    "total": 125590218,
+    "messages": 787,
+    "byRole": {
+     "main": 87495009,
+     "subagent": 38095209
+    }
+   },
+   "totalTokens": 872294464,
+   "tokensPerCommit": 5417978,
+   "peakConcurrent": 10,
+   "peakConcurrentCodex": 8,
+   "peakConcurrentClaude": 3,
    "logged": {
     "codex": true,
     "claude": true
