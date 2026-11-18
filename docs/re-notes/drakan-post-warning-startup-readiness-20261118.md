@@ -82,8 +82,17 @@ refused ENOENT and closed the helper before sending any endpoint request.
 This is a launch-ordering preparation error, not a native/game finding. The
 native process was subsequently stopped by identity-checked SIGTERM; both actual
 waits and EOFs are retained, exit 0 and no leaks. No capture or input reached
-this extra original. The allowance has been consumed; no third original or
-reopening is claimed. A future authorized run must wait for the native identity
-receipt before invoking any capture. Menu/gameplay and ordinary Quit remain
-unresolved. This error does not invalidate the first original's measured
-input/startup separation or the authored oldfail/newpass evidence.
+this extra original. The coordinator's later 04:54:07 same-task clarification
+explicitly authorized one fresh replacement after a tested correction, without
+reopening either closed scope.
+
+`tools/drakan-launch-readiness.cjs` now bounds filesystem-only launch admission:
+the detached owner, live native identity and armed watchdog receipts must exist
+before capture can be invoked. Early terminal receipts or expiration refuse
+admission without endpoints. The authored compiled native PE test demonstrates
+the old immediate read failing before delayed receipt publication, followed by
+new verified admission and actual warning execution. Real supervised early
+exit and timeout controls refuse admission; every scope retains both actual
+waits and EOFs. This does not change any input/capture/runtime deadline. The
+replacement's outcome will follow tested publication. The earlier error does
+not invalidate the first original's measured input/startup separation.
