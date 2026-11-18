@@ -201,7 +201,15 @@ function chainReviews(base, steps, census = {entries: []}) {
   const result = JSON.parse(JSON.stringify(base));
   if (result.version !== 1 || !Array.isArray(result.revisions)) throw Error('invalid base reviews');
   for (const step of steps) {
-    if (step.version !== 1 || !Array.isArray(step.revisions) || Object.keys(step).some(k => !['version', 'revisions'].includes(k))) throw Error('invalid feature reviews');
+    if (step.version !== 1 || !Array.isArray(step.revisions) ||
+        (step.additions !== undefined && !Array.isArray(step.additions)) ||
+        Object.keys(step).some(k => !['version', 'revisions', 'additions'].includes(k))) throw Error('invalid feature reviews');
+    for (const addition of step.additions || []) {
+      if ([...census.entries, ...(result.additions || [])].some(e => key(e) === key(addition)) ||
+          !kinds.has(addition.kind) || !addition.reason?.trim() || addition.ownership !== 'pending' ||
+          !/^[a-f0-9]{64}$/.test(addition.sha256 || '')) throw Error(`invalid feature addition ${key(addition)}`);
+      (result.additions ||= []).push(JSON.parse(JSON.stringify(addition)));
+    }
     const seen = new Set();
     for (const review of step.revisions) {
       const id = key(review);
@@ -209,7 +217,7 @@ function chainReviews(base, steps, census = {entries: []}) {
       // A producer's first feature review anchors the immutable census itself.
       // Later feature reviews must still anchor the preceding reviewed hash.
       if (!prior) {
-        const original = census.entries.find(r => key(r) === id);
+        const original = [...census.entries, ...(result.additions || [])].find(r => key(r) === id);
         if (original && original.sha256 === review.baseSHA256) {
           prior = {file: original.file, name: original.name,
             baseSHA256: original.sha256, sha256: original.sha256, reason: ''};

@@ -159,8 +159,7 @@
           (return)))
       (global.set $delphi_seh_rec (call $gl32 (global.get $delphi_seh_rec)))
       (br $walk)))
-    (call $seh_terminate_unhandled (i32.or (i32.const 0xDE00)
-      (call $gl32 (global.get $delphi_exception_record)))))
+    (call $top_filter_software (global.get $delphi_exception_record)))
 
   (func $raise_delphi_exception (param $code i32) (param $flags i32) (param $nargs i32) (param $args_ptr i32)
     (local $seh_rec i32) (local $rec i32) (local $i i32) (local $n i32)
@@ -173,13 +172,11 @@
           (i32.ge_u (local.get $nargs) (i32.const 3)))
       (then (call $host_cxx_throw (local.get $args_ptr))))
     (local.set $seh_rec (call $gl32 (global.get $fs_base)))
-    (if (i32.or
-          (i32.eq (local.get $seh_rec) (i32.const 0xFFFFFFFF))
-          (i32.eqz (local.get $seh_rec)))
-      (then
-        (call $seh_terminate_unhandled (i32.or (i32.const 0xDE00) (local.get $code)))
-        (return)))
-    (local.set $rec (call $heap_alloc (i32.const 80)))
+    (local.set $rec (call $heap_alloc (i32.const 0x320)))
+    (call $zero_memory (call $g2w (local.get $rec)) (i32.const 0x320))
+    (call $seh_capture_context (i32.add (local.get $rec) (i32.const 80))
+      (global.get $delphi_resume_esp))
+    (call $gs32 (i32.add (local.get $rec) (i32.const 0x108)) (global.get $delphi_resume_eip))
     ;; EXCEPTION_RECORD:
     ;; +0 code, +4 flags, +8 nested record, +C address, +10 arg count,
     ;; +14 ExceptionInformation[] copied from RaiseException lpArguments.
@@ -264,23 +261,12 @@
         (call $gs32 (i32.add (local.get $rec) (i32.const 16)) (i32.const 2))
         (call $gs32 (i32.add (local.get $rec) (i32.const 20)) (global.get $rep_fault_write))
         (call $gs32 (i32.add (local.get $rec) (i32.const 24)) (global.get $fault_address))))
-    ;; CONTEXT (x86): CONTEXT_FULL, segments, integer registers, control.
-    (call $gs32 (local.get $ctx) (i32.const 0x10007))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x90)) (i32.const 0x3b))   ;; SegFs
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x94)) (i32.const 0x23))   ;; SegEs
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x98)) (i32.const 0x23))   ;; SegDs
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x9c)) (i32.load offset=28 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa0)) (i32.load offset=24 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa4)) (i32.load offset=12 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa8)) (i32.load offset=8 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xac)) (i32.load offset=4 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb0)) (i32.load offset=0 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb4)) (i32.load offset=20 (global.get $reg_base)))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb8)) (global.get $eip))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xbc)) (i32.const 0x1b))   ;; SegCs
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc0)) (call $build_eflags))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc4)) (local.get $esp))
-    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc8)) (i32.const 0x23))   ;; SegSs
+    (call $seh_capture_context (local.get $ctx) (local.get $esp))
+    (if (i32.eqz (local.get $seh_rec))
+      (then
+        (i32.store offset=16 (global.get $reg_base) (local.get $rec))
+        (call $top_filter_record (local.get $rec) (local.get $ctx))
+        (return)))
     ;; Dispatcher node in the 12 bytes above the argument frame.
     (call $seh_push_dispatch_node (i32.sub (local.get $rec) (i32.const 12)) (local.get $seh_rec))
     (local.set $sp (i32.sub (local.get $rec) (i32.const 32)))
@@ -939,5 +925,164 @@
       ;; No matching scope in this frame → try next SEH record
       (local.set $seh_rec (call $gl32 (local.get $seh_rec)))
       (br $walk)))
-    ;; Unhandled exception: the process ends here.
-    (call $seh_terminate_unhandled (i32.or (i32.const 0xDE00) (local.get $code))))
+    ;; Only real guest exceptions enter here; unsupported API traps do not.
+    (call $seh_call_raw_handler (local.get $code) (i32.const 0) (i32.const 0)))
+
+  (func $seh_capture_context (param $ctx i32) (param $esp i32)
+    ;; CONTEXT (x86): CONTEXT_FULL, segments, integer registers, control.
+    (call $gs32 (local.get $ctx) (i32.const 0x10007))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x90)) (i32.const 0x3b))   ;; SegFs
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x94)) (i32.const 0x23))   ;; SegEs
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x98)) (i32.const 0x23))   ;; SegDs
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0x9c)) (i32.load offset=28 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa0)) (i32.load offset=24 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa4)) (i32.load offset=12 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xa8)) (i32.load offset=8 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xac)) (i32.load offset=4 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb0)) (i32.load offset=0 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb4)) (i32.load offset=20 (global.get $reg_base)))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xb8)) (global.get $eip))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xbc)) (i32.const 0x1b))   ;; SegCs
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc0)) (call $build_eflags))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc4)) (local.get $esp))
+    (call $gs32 (i32.add (local.get $ctx) (i32.const 0xc8)) (i32.const 0x23))   ;; SegSs
+  )
+
+  ;; Shared slot has the lifetime of process memory, never an instance/PID.
+  ;; Atomic exchange in both setters linearizes replacement across Workers.
+  (func $top_exception_filter (result i32)
+    (i32.atomic.load (global.get $TOP_EXCEPTION_FILTER)))
+
+  (func $top_filter_default (param $p i32)
+    (local $rec i32)
+    (if (local.get $p) (then (local.set $rec (call $gl32 (local.get $p)))))
+    (if (local.get $rec)
+      (then (call $host_unhandled_exception (call $gl32 (local.get $rec))
+        (call $gl32 (i32.add (local.get $rec) (i32.const 4)))
+        (call $gl32 (i32.add (local.get $rec) (i32.const 12)))
+        (call $top_exception_filter)))
+      (else (call $host_unhandled_exception (i32.const 0) (i32.const 0)
+        (i32.const 0) (call $top_exception_filter)))))
+
+  (global $TOP_FILTER_CONTEXTS i32 (region.addr $TOP_FILTER_CONTEXTS 0))
+  (global $TOP_FILTER_CONTEXTS_SIZE i32 (region.size $TOP_FILTER_CONTEXTS))
+  (global $top_filter_owner (mut i64) (i64.const 0))
+  (global $top_filter_depth (mut i32) (i32.const 0))
+  (global $top_filter_thunk (mut i32) (i32.const 0))
+
+  (func $top_filter_frame (param $depth i32) (result i32)
+    (i32.add (region.addr $TOP_FILTER_CONTEXTS 0)
+      (i32.add (i32.shl (i32.sub (global.get $invocation_tid) (i32.const 1)) (i32.const 10))
+        (i32.shl (local.get $depth) (i32.const 7)))))
+
+  ;; Mode 0 is the public API: return a disposition to its caller, preserving
+  ;; its CPU. Mode 1 is exhausted SEH: -1 loads the supplied exception CONTEXT;
+  ;; default/execute terminates. Retained private frames authenticate exact
+  ;; parent/child/root and stdcall return ESP before any restoration.
+  (func $top_filter_begin (param $p i32) (param $mode i32) (result i32)
+    (local $fn i32) (local $f i32) (local $depth i32) (local $sp i32)
+    (local $i i32) (local $parent i64) (local $child i64)
+    (local.set $fn (call $top_exception_filter))
+    (if (i32.eqz (local.get $fn)) (then (return (i32.const 0))))
+    (call $pending_gap)
+    (call $invocation_ensure)
+    (local.set $depth (select (global.get $top_filter_depth) (i32.const 0)
+      (i64.eq (global.get $top_filter_owner) (global.get $invocation_root))))
+    (if (i32.ge_u (local.get $depth) (i32.const 8)) (then (unreachable)))
+    (local.set $parent (call $invocation_current))
+    (local.set $child (call $invocation_enter))
+    (local.set $f (call $top_filter_frame (local.get $depth)))
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (i32.store (local.get $f) (call $gl32 (local.get $sp)))
+    (i32.store offset=4 (local.get $f) (local.get $sp))
+    (i32.store offset=8 (local.get $f) (local.get $sp))
+    (i32.store offset=12 (local.get $f) (local.get $p))
+    (i32.store offset=16 (local.get $f) (local.get $mode))
+    (i64.store offset=24 (local.get $f) (local.get $parent))
+    (i64.store offset=32 (local.get $f) (local.get $child))
+    (i64.store offset=40 (local.get $f) (global.get $invocation_root))
+    (i32.store offset=48 (local.get $f) (call $build_eflags))
+    (loop $save
+      (i32.store (i32.add (local.get $f) (i32.add (i32.const 64) (local.get $i)))
+        (i32.load (i32.add (global.get $reg_base) (local.get $i))))
+      (local.set $i (i32.add (local.get $i) (i32.const 4)))
+      (br_if $save (i32.lt_u (local.get $i) (i32.const 32))))
+    (global.set $top_filter_owner (global.get $invocation_root))
+    (global.set $top_filter_depth (i32.add (local.get $depth) (i32.const 1)))
+    (if (i32.eqz (global.get $top_filter_thunk))
+      (then (global.set $top_filter_thunk (call $com_cont_thunk (i32.const 0xCACA0043)))))
+    (call $gs32 (i32.sub (local.get $sp) (i32.const 8)) (global.get $top_filter_thunk))
+    (call $gs32 (i32.sub (local.get $sp) (i32.const 4)) (local.get $p))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (local.get $sp) (i32.const 8)))
+    (global.set $handler_set_eip (i32.const 1))
+    (global.set $eip_redirected (i32.const 1))
+    (global.set $eip (local.get $fn))
+    (global.set $steps (i32.const 0))
+    (i32.const 1))
+
+  (func $top_filter_continue
+    (local $f i32) (local $p i32) (local $mode i32) (local $disp i32)
+    (local $rec i32) (local $i i32)
+    (call $invocation_validate)
+    (if (i64.ne (global.get $top_filter_owner) (global.get $invocation_root)) (then (unreachable)))
+    (if (i32.or (i32.eqz (global.get $top_filter_depth))
+      (i32.gt_u (global.get $top_filter_depth) (i32.const 8))) (then (unreachable)))
+    (local.set $f (call $top_filter_frame (i32.sub (global.get $top_filter_depth) (i32.const 1))))
+    (if (i64.ne (i64.load offset=40 (local.get $f)) (global.get $invocation_root)) (then (unreachable)))
+    (if (i64.ne (i64.load offset=32 (local.get $f)) (call $invocation_current)) (then (unreachable)))
+    (if (i32.ne (i32.load offset=16 (global.get $reg_base)) (i32.load offset=8 (local.get $f))) (then (unreachable)))
+    (local.set $mode (i32.load offset=16 (local.get $f)))
+    (if (i32.gt_u (local.get $mode) (i32.const 1)) (then (unreachable)))
+    (if (i32.eqz (global.get $invocation_depth)) (then (unreachable)))
+    (if (i64.ne (i64.load offset=24 (local.get $f))
+      (i64.load (i32.add (global.get $invocation_slot)
+        (i32.add (i32.const 16) (i32.shl (i32.sub (global.get $invocation_depth) (i32.const 1)) (i32.const 3))))))
+      (then (unreachable)))
+    (call $invocation_leave (i64.load offset=32 (local.get $f)))
+    (if (i64.ne (call $invocation_current) (i64.load offset=24 (local.get $f))) (then (unreachable)))
+    (i64.store offset=32 (local.get $f) (i64.const 0))
+    (global.set $top_filter_depth (i32.sub (global.get $top_filter_depth) (i32.const 1)))
+    (local.set $disp (i32.load (global.get $reg_base)))
+    (local.set $p (i32.load offset=12 (local.get $f)))
+    (if (i32.eqz (local.get $disp))
+      (then (call $top_filter_default (local.get $p)) (local.set $disp (i32.const 1))))
+    (if (i32.and (i32.ne (local.get $disp) (i32.const 1))
+      (i32.ne (local.get $disp) (i32.const -1)))
+      (then (call $seh_terminate_unhandled (i32.const 0xC0000026)) (return)))
+    (if (local.get $mode)
+      (then
+        (local.set $rec (call $gl32 (local.get $p)))
+        (if (i32.eq (local.get $disp) (i32.const -1))
+          (then
+            (if (i32.and (call $gl32 (i32.add (local.get $rec) (i32.const 4))) (i32.const 1))
+              (then (call $seh_terminate_unhandled (i32.const 0xC0000025)) (return)))
+            (call $seh_load_context (call $gl32 (i32.add (local.get $p) (i32.const 4)))))
+          (else (call $seh_terminate_unhandled (call $gl32 (local.get $rec)))))
+        (return)))
+    (loop $restore
+      (i32.store (i32.add (global.get $reg_base) (local.get $i))
+        (i32.load (i32.add (local.get $f) (i32.add (i32.const 64) (local.get $i)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 4)))
+      (br_if $restore (i32.lt_u (local.get $i) (i32.const 32))))
+    (call $load_eflags (i32.load offset=48 (local.get $f)))
+    (i32.store (global.get $reg_base) (local.get $disp))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=4 (local.get $f)) (i32.const 8)))
+    (global.set $eip (i32.load (local.get $f)))
+    (global.set $steps (i32.const 0)))
+
+  (func $top_filter_record (param $rec i32) (param $ctx i32)
+    (local $p i32)
+    (local.set $p (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+    ;; CPU dispatch has already moved ESP below its stack-resident record.
+    ;; Software dispatch retains its heap record and uses the current stack.
+    (call $gs32 (local.get $p) (local.get $rec))
+    (call $gs32 (i32.add (local.get $p) (i32.const 4)) (local.get $ctx))
+    (i32.store offset=16 (global.get $reg_base) (local.get $p))
+    (if (i32.eqz (call $top_filter_begin (local.get $p) (i32.const 1)))
+      (then
+        (call $top_filter_default (local.get $p))
+        ;; Preserve legacy no-filter exit encoding for existing callers.
+        (call $seh_terminate_unhandled (i32.or (i32.const 0xDE00) (call $gl32 (local.get $rec)))))))
+
+  (func $top_filter_software (param $rec i32)
+    (call $top_filter_record (local.get $rec) (i32.add (local.get $rec) (i32.const 80))))

@@ -26,7 +26,7 @@ const extraWat = String.raw`
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
     (i32.load offset=0 (global.get $reg_base)))
   (func (export "test_stored_filter") (result i32)
-    (global.get $unhandled_exception_filter))
+    (i32.atomic.load (global.get $TOP_EXCEPTION_FILTER)))
   (func (export "test_add_vectored_filter") (param $first i32) (param $filter i32) (result i64)
     (global.set $image_base (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.const 0x00300000))

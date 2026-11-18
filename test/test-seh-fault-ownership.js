@@ -23,7 +23,7 @@ const savedGlobals = ['$eip', '$handler_set_eip', '$steps', '$yield_reason', '$y
 function fixture({ depth = 0, handlers = [0], dispatch = [], spill = false } = {}) {
   const g = Object.fromEntries(savedGlobals.map((k, i) => [k, 101 + i]));
   Object.assign(g, { $reg_base: 0, $fs_base: 8192, $sync_msg_ret_thunk: 0x1234,
-    $fault_sync_active: 0, $fault_sync_epoch: 8, $fault_raising: 0,
+    $fault_sync_active: 0, $fault_sync_epoch: 8, $fault_raising: 0, $rep_fault_write: 0,
     $invocation_root: 0x100000001n, $invocation_depth: depth, $sync_msg_depth: depth,
     $current_thread_id: 1, $invocation_tid: 1, $invocation_epoch: 9n,
     $guest_can_block: 1, $spill_active: Number(spill), $spill_base: 100, $spill_end: 200,
@@ -92,6 +92,8 @@ function fixture({ depth = 0, handlers = [0], dispatch = [], spill = false } = {
           const args = a.slice(1).map(ev);
           trace.push(['call', a[0]]);
           switch (a[0]) {
+            // This model has no deferred CPU pipeline to settle.
+            case '$pending_gap': return;
             case '$invocation_ensure': validate(); return;
             case '$sync_depth_enter':
               validate();

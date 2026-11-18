@@ -127,8 +127,8 @@
   ;; it displaced, so returning a fabricated 0 tells every caller it is the
   ;; first one and loses the filter the previous caller had installed.
   (func $handle_SetUnhandledExceptionFilter (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (global.get $unhandled_exception_filter))
-    (global.set $unhandled_exception_filter (local.get $arg0))
+    (i32.store offset=0 (global.get $reg_base)
+      (i32.atomic.rmw.xchg (global.get $TOP_EXCEPTION_FILTER) (local.get $arg0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 

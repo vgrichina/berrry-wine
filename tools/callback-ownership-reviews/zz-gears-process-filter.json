@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "5cc4aa1f0097c9ffd37d190388161dcb8c8cd247983fe2b4df3c01f6395b2e21",
+      "sha256": "ab33d9ba9be1a7f4fc9cc7121753f496234624cacb5989eb88a09c4ddb10c1f6",
+      "reason": "Gears process-filter lifecycle review: atomic process registration; bounded private per-thread parent/child/root/expected stdcall ESP records; nested direct API callbacks restore caller CPU, exhausted SEH uses actual record/context and disposition. Guest exceptions only; unsupported API traps remain explicit. General ownership remains pending."
+    },
+    {
+      "file": "src/11-seh.wat",
+      "name": "$dispatch_delphi_exception_handler",
+      "baseSHA256": "8e62cf50b6d490ebe4526252b77f716597f5fbd3a869129b9b592f3fbc3c1955",
+      "sha256": "ef5d7df9df8f10064b63c0c111cb966b1ef48c92bf1cbcfcb1a99d2cf55592f7",
+      "reason": "Gears process-filter lifecycle review: atomic process registration; bounded private per-thread parent/child/root/expected stdcall ESP records; nested direct API callbacks restore caller CPU, exhausted SEH uses actual record/context and disposition. Guest exceptions only; unsupported API traps remain explicit. General ownership remains pending."
+    },
+    {
+      "file": "src/11-seh.wat",
+      "name": "$seh_call_raw_handler",
+      "baseSHA256": "0b89ebb1a19eeb8d8f8ab4987530d6171637d0f86c022a927335e6e2dab40954",
+      "sha256": "f61ed169f21005f8d48bc73c4f901c47b6be466ab92e73a41d5563baf4e83067",
+      "reason": "Gears process-filter lifecycle review: atomic process registration; bounded private per-thread parent/child/root/expected stdcall ESP records; nested direct API callbacks restore caller CPU, exhausted SEH uses actual record/context and disposition. Guest exceptions only; unsupported API traps remain explicit. General ownership remains pending."
+    },
+    {
+      "file": "src/11-seh.wat",
+      "name": "$seh_walk_from",
+      "baseSHA256": "b7a06300ea64e14d8d3a66e6823acadea777c5cbedcac49b21305c37d0420e62",
+      "sha256": "b2a285ca866528969d3b5f94697171e8cd1cff2f520df5706901e4df1a1210d9",
+      "reason": "Gears process-filter lifecycle review: atomic process registration; bounded private per-thread parent/child/root/expected stdcall ESP records; nested direct API callbacks restore caller CPU, exhausted SEH uses actual record/context and disposition. Guest exceptions only; unsupported API traps remain explicit. General ownership remains pending."
+    }
+  ],
+  "additions": [
+    {
+      "file": "src/11-seh.wat",
+      "name": "$top_filter_begin",
+      "writes": 1,
+      "boundaryCalls": [
+        "$invocation_ensure",
+        "$invocation_current",
+        "$invocation_enter"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "local.get",
+          "$fn"
+        ]
+      ],
+      "sha256": "d5dd883bd670e6ac0539d4701691bd9beb6a994e180bc3a2748bb56b7e53533f",
+      "kind": "callback",
+      "reason": "Gears process-filter lifecycle review: atomic process registration; bounded private per-thread parent/child/root/expected stdcall ESP records; nested direct API callbacks restore caller CPU, exhausted SEH uses actual record/context and disposition. Guest exceptions only; unsupported API traps remain explicit. General ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/11-seh.wat",
+      "name": "$top_filter_continue",
+      "writes": 1,
+      "boundaryCalls": [
+        "$invocation_validate",
+        "$invocation_current",
+        "$invocation_leave",
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [
+        [
+          "i32.load",
+          [
+            "local.get",
+            "$f"
+          ]
+        ]
+      ],
+      "sha256": "433ecaaf126dbf9d9559b628fc75b612da13acefe433f7671dc1e5935309f776",
+      "kind": "callback",
+      "reason": "Gears process-filter lifecycle review: atomic process registration; bounded private per-thread parent/child/root/expected stdcall ESP records; nested direct API callbacks restore caller CPU, exhausted SEH uses actual record/context and disposition. Guest exceptions only; unsupported API traps remain explicit. General ownership remains pending.",
+      "ownership": "pending"
+    }
+  ]
+}
