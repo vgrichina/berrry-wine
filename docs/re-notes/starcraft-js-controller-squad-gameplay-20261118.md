@@ -50,3 +50,23 @@ shrink-only allowlist; it added none and executed no Python. Subsequent build
 failures named foreign async-render callback producers, which remain with
 their owner. Original gameplay results and final publication are recorded in
 this run's result.json after all artifacts.
+
+The first original box gesture consumed its DOWN and held motion, but generic
+cleanup sent mouse UP at the DOWN point; the settled scene had no selection.
+Ctrl-click selected one Marine (40/40 HP, zero kills), not a squad. This is a
+transport-versus-gameplay distinction, not combat success.
+
+The follow-up controller correction sends only a guarded mouse UP at the
+already reviewed endpoint for a two-edge selection, before its independently
+prearmed all-UP cleanup. It adds no DOWN, target, gesture, hold time or freshness
+allowance. The endpoint UP has its own nonce and actual native consumption
+receipt; the final independent release still establishes physical UP. Its
+nonce is included in subsequent lease validation. Authored native controls
+compare the actual UP coordinate with the actual second edge coordinate.
+
+An initial test additionally required Ctrl in the native mouse-UP wParam. It
+failed: the current renderer emits zero modifier flags on mouse UP, despite
+Ctrl being present on DOWN. That existing runtime limitation remains explicit;
+this controller does not change the foreign-owned renderer or claim that
+transport receipts alone establish same-type selection. The corrected box
+route is the available path to personally inspect multiple-unit selection.

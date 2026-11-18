@@ -172,7 +172,22 @@ a.release = async (name, owner, deadline, final) => {
     await c.sleep(Math.min(5, Math.max(0, (due - a.now()) * 1000)));
   }
   const fired = { at: a.now(), due, source, fallback: deadline };
-  let up;
+  let up, pointerUp = null, pointerError = null;
+  // Complete a two-edge selection at its reviewed endpoint before generic
+  // cleanup. Generic cleanup uses each original DOWN's point and visits Ctrl
+  // before the pointer: that is safe physical release but cancels a box and
+  // loses a modifier-sensitive mouse-UP selection. This adds only UP, never a
+  // new DOWN or target. The independently armed cleanup still runs on failure.
+  const intent = a.read(name + '-intent.json');
+  if (intent.releaseEvent && down.length === intent.keys.length && down.every(r => r.state === 'CONSUMED' && r.consumed)) {
+    try {
+      const cap = a.read(name + '-release-cap.json').at;
+      ok(a.now() < cap, 'selection UP cap expired');
+      pointerUp = await a.call({ action: 'guarded-input', cmd: intent.releaseEvent,
+        guard: { ...a.read('input-owner.json'), nonce: intent.releaseNonce, reviewed: true, deadline: Math.trunc(Math.min(cap, deadline) * 1000) } }, Math.min(1, cap - a.now()));
+      ok(pointerUp.state === 'CONSUMED' && pointerUp.consumed && pointerUp.owner === owner, 'selection UP unresolved');
+    } catch (e) { pointerError = e; }
+  }
   try { up = { state: 'ACK', reply: await a.call({ action: 'guarded-release', owner }), at: a.now() }; }
   catch (e) {
     if (final && down.length && down.every(r => r.state === 'CONSUMED' && r.consumed && r.owner === owner)) {
@@ -186,6 +201,8 @@ a.release = async (name, owner, deadline, final) => {
     if (!up) up = { state: 'UNKNOWN', error: String(e.message), at: a.now() };
   }
   process.stdin.destroy();
+  if (pointerUp) a.save(name + '-pointer-up.json', pointerUp);
+  if (pointerError) { up.state = 'UNKNOWN'; up.error = String(pointerError.message); }
   a.save(name + '-release-fired.json', fired); a.save(name + '-up.json', up);
   ok(up.state !== 'UNKNOWN', 'independent UP UNKNOWN');
 };
@@ -222,7 +239,9 @@ a.pulse = async (name, keys, ms, scene, mode, route = null, admit = false) => {
     }
     ok(before.physicalUp && before.capture === '0x0' && rr.snapshot.physicalUp && rr.snapshot.capture === '0x0', 'physical UP before intention required');
     const nonces = keys.map(() => randomUUID());
-    a.save(name + '-intent.json', { name, keys, ms, scene, nonces, review, at: a.now() });
+    const releaseEvent = keys.length === 2 ? 'mouseup:' + keys.at(-1).split(':').slice(1).join(':') : null;
+    a.save(name + '-intent.json', { name, keys, ms, scene, nonces, review, releaseEvent,
+      releaseNonce: releaseEvent ? randomUUID() : null, at: a.now() });
     a.save(scene + '-used-by-' + name, { name });
     const startedAt = a.now(), deadline = Math.min(startedAt + 6, rr.at + 30);
     const required = .5 + keys.length + ms / 1000 + .25;
@@ -290,7 +309,11 @@ a.pulse = async (name, keys, ms, scene, mode, route = null, admit = false) => {
       a.save(name + '-rejection.json', { state: 'NOT_SENT', positivelyUnsent: true, at: a.now() }); return 'NOT_SENT: positive cancellation';
     }
     ok(receipts.every(r => up.at - r.consumedAt / 1000 <= 2), 'physical release exceeded two seconds');
-    a.save(name + '-resolved.json', { nonces, at: a.now() });
+    if (releaseEvent) {
+      const pointerUp = a.read(name + '-pointer-up.json');
+      ok(pointerUp.state === 'CONSUMED' && pointerUp.consumed && pointerUp.owner === owner.owner && pointerUp.nonce === a.read(name + '-intent.json').releaseNonce, 'reviewed selection endpoint UP required');
+    }
+    a.save(name + '-resolved.json', { nonces: releaseEvent ? [...nonces, a.read(name + '-intent.json').releaseNonce] : nonces, at: a.now() });
     if (['command', 'target'].includes(mode)) a.save(name + '-combat-order.json', { mode, commandKind: review.commandKind, scene, review, target: rr.target, at: Math.max(...receipts.map(r => r.consumedAt)) / 1000 });
     a.save(name + '-workflow.json', { captureAt: rr.at, captureCompletedAt: rr.completedAt, reviewedAt: review.at, dispatchCompletedAt: timings.at(-1).returnedAt, releasedAt: up.at, captureToDispatchSeconds: timings.at(-1).returnedAt - rr.at });
     if (final) return 'Final reviewed choice submitted; await actual native wait';

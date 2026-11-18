@@ -105,6 +105,7 @@ async function nativeBody(out) {
       assert(down.length===keys.length&&down.every(r=>r.state==='CONSUMED'&&r.consumed));
       if(name==='ctrl'){assert.equal(down[0].nativeMessage.msg,0x100);assert.equal(down[0].nativeMessage.wParam,17);assert.equal(down[1].nativeMessage.wParam&8,8);}
       if(name==='box'){assert.equal(down[0].nativeMessage.msg,0x201);assert.equal(down[1].nativeMessage.msg,0x200);assert.equal(down[1].nativeMessage.wParam&1,1);}
+      if(keys.length===2){const pointerUp=a.read(name+'-pointer-up.json');assert(pointerUp.state==='CONSUMED'&&pointerUp.consumed);assert.equal(pointerUp.nativeMessage.msg,0x202);assert.equal(pointerUp.nativeMessage.lParam,down[1].nativeMessage.lParam);if(name==='ctrl')a.save('ctrl-up-modifier-observation.json',{actualWParam:pointerUp.nativeMessage.wParam,ctrlBit:!!(pointerUp.nativeMessage.wParam&8),limitation:'Current renderer mouse-UP omits modifier flags; no native group-selection claim from transport alone'});}
       assert(up.state==='ACK'&&down.every(r=>up.at-r.consumedAt/1000<=2));
       assert(a.read(name+'-release-wait.json').actualWait);
       const state=await a.call({action:'snapshot'});assert(state.physicalUp&&state.capture==='0x0');
