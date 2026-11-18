@@ -2264,6 +2264,9 @@
     (local.set $bmp (call $gdi_dc_bitmap_record (local.get $hdc)))
     (if (local.get $dx)
       (then
+        ;; A GPU target whose GetDC was deferred lands here, before GDI
+        ;; touches its bits (bounded text output excepted).
+        (call $d3dim_gps_gdi_access (local.get $dx))
         (local.set $bits (i32.load offset=20 (local.get $dx)))
         (local.set $width (i32.load16_u offset=12 (local.get $dx)))
         (local.set $height (i32.load16_u offset=14 (local.get $dx)))

@@ -11982,7 +11982,7 @@ if (VERBOSE) {
       + ` lazyLocks armed=${instance.exports.get_d3dim_lazy_armed?.() ?? 0}`
       + ` touched=${instance.exports.get_d3dim_lazy_touched?.() ?? 0}`
       + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`
-      + ` overwritten=${st(43)}`);
+      + ` overwritten=${st(43)} texEdgeVerified=${st(44)} getDCDeferred=${st(45)}`);
     // Software declines by reason ($d3g_decline).
     const why = ['stageArg', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground'];
     console.log('[d3dim-gps] decline reasons ' + why.map((n, i) => `${n}=${st(35 + i)}`).join(' '));
