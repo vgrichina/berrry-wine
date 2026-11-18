@@ -3544,7 +3544,8 @@
   ;; gets back as "the previous filter" -- CRTs save that return value and put
   ;; it back on the way out, so it has to be a real stored slot rather than a
   ;; constant.
-  (global $unhandled_exception_filter (mut i32) (i32.const 0))
+  (global $TOP_EXCEPTION_FILTER i32 (region.addr $TOP_EXCEPTION_FILTER 0))
+  (global $TOP_EXCEPTION_FILTER_SIZE i32 (region.size $TOP_EXCEPTION_FILTER))
   ;; One process-global vectored exception registration. The handler address
   ;; doubles as the opaque removal handle in this bounded single-registration
   ;; model; ordinary SEH and top-level filters retain their existing paths.

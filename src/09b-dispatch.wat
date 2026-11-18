@@ -1561,6 +1561,8 @@
         (return)))
 
     ;; Validate retained CRT callback identity, mode and return ESP.
+    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0043))
+      (then (call $top_filter_continue) (return)))
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0003))
       (then (call $crt_callback_continue (i32.const 0)) (return)))
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA002C))

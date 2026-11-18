@@ -6506,52 +6506,13 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
 
-  ;; 55: UnhandledExceptionFilter(ExceptionInfo) -> LONG
-  ;;
-  ;; The last stop for an exception nobody claimed. A CRT reaches here from its
-  ;; own __except filter -- msvcrt's _XcptFilter tail is literally
-  ;; `push [ebp+0xc]; call [UnhandledExceptionFilter]` -- so arriving here means
-  ;; a fault already happened somewhere else and every registered handler
-  ;; declined it. Trapping here used to report this function as the
-  ;; unimplemented API, which named the messenger instead of the fault; the
-  ;; exception code and faulting address are the only useful facts and they are
-  ;; in the record the caller just passed, so report those.
-  ;;
-  ;;   EXCEPTION_POINTERS { EXCEPTION_RECORD* ExceptionRecord; CONTEXT* Context; }
-  ;;   EXCEPTION_RECORD   { DWORD Code; DWORD Flags; EXCEPTION_RECORD* Nested;
-  ;;                        PVOID Address; DWORD NumberParameters; ... }
-  ;;
-  ;; Returns EXCEPTION_EXECUTE_HANDLER, which is what the real API returns on a
-  ;; machine with no debugger attached once its fault dialog is dismissed: the
-  ;; caller's __except block runs and the process terminates through its own
-  ;; shutdown path rather than dying mid-instruction.
-  ;;
-  ;; Not yet done: re-entering a filter installed by SetUnhandledExceptionFilter.
-  ;; Windows calls that filter from here and returns what it returns. Doing so
-  ;; needs a continuation thunk to resume this handler after guest code runs
-  ;; (the CACA000x mechanism), and every filter we have actually seen installed
-  ;; is a CRT's own terminate path, which reaches the same place this does. The
-  ;; filter is still stored and still round-trips through the setter, so nothing
-  ;; here has to be undone when that trampoline exists.
+  ;; Invoke the process filter on this thread. CONTINUE_SEARCH selects the
+  ;; existing host diagnostic/default EXECUTE_HANDLER policy (no debugger).
   (func $handle_UnhandledExceptionFilter (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $rec i32) (local $rec_wa i32)
-    ;; arg0 is EXCEPTION_POINTERS*. A null pointer, or a null ExceptionRecord
-    ;; inside it, is legal input -- report what is known and skip the rest
-    ;; rather than dereferencing it.
-    (if (local.get $arg0)
-      (then (local.set $rec (i32.load (call $g2w (local.get $arg0))))))
-    (if (local.get $rec)
-      (then (local.set $rec_wa (call $g2w (local.get $rec))) (call $host_unhandled_exception
-              (i32.load (local.get $rec_wa))                  ;; ExceptionCode
-              (i32.load offset=4 (local.get $rec_wa))         ;; ExceptionFlags
-              (i32.load offset=12 (local.get $rec_wa))        ;; ExceptionAddress
-              (global.get $unhandled_exception_filter)))
-      (else (call $host_unhandled_exception
-              (i32.const 0) (i32.const 0) (i32.const 0)
-              (global.get $unhandled_exception_filter))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))  ;; EXCEPTION_EXECUTE_HANDLER
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; stdcall, 1 arg
-  )
+    (if (call $top_filter_begin (local.get $arg0) (i32.const 0)) (then (return)))
+    (call $top_filter_default (local.get $arg0))
+    (i32.store (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; 56: GetCurrentProcess — return pseudo-handle -1 (0xFFFFFFFF)
   (func $handle_GetCurrentProcess (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

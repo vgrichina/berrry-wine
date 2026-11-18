@@ -3,13 +3,25 @@
 // Source-only mutation tests. No wasm compilation, guest execution or model
 // token simulation: these establish inventory enforcement, not jump safety.
 const assert = require('assert');
-const { sourceFiles, scanWat, scanSources, check, checkNonlocalAPIs, loadReviews } = require('../tools/callback-ownership-census');
+const { sourceFiles, scanWat, scanSources, check, checkNonlocalAPIs, loadReviews, chainReviews } = require('../tools/callback-ownership-census');
 const source = `(func $entry (export "inject") (global.set $eip (local.get $callback)))`;
 const sources = [{ file: 'src/fixture.wat', src: source }];
 const entries = scanSources(sources);
 const baseline = { version: 1, entries: entries.map(e => ({ ...e, kind: 'callback',
   reason: 'Fixture callback; retained-context ownership pending.', ownership: 'pending' })) };
 assert.deepStrictEqual(check(entries, baseline), []);
+// A feature can retain new producers in its own review without absorbing
+// another owner's base census. Every shape/hash check still applies.
+const additionStep = { version: 1, revisions: [], additions: baseline.entries };
+const additionReview = chainReviews({ version: 1, revisions: [] }, [additionStep]);
+assert.deepStrictEqual(check(entries, { version: 1, entries: [] }, additionReview), []);
+assert(check([{ ...entries[0], writes: 2 }], { version: 1, entries: [] }, additionReview)
+  .some(e => e.includes('changed producer')));
+assert.throws(() => chainReviews({ version: 1, revisions: [] }, [additionStep, additionStep]), /invalid feature addition/);
+assert.throws(() => chainReviews({ version: 1, revisions: [] },
+  [{ ...additionStep, additions: [{ ...baseline.entries[0], ownership: 'covered' }] }]), /invalid feature addition/);
+assert.throws(() => chainReviews({ version: 1, revisions: [] },
+  [{ ...additionStep, additions: [{ ...baseline.entries[0], sha256: 'bad' }] }]), /invalid feature addition/);
 assert(check(scanSources([{ file: 'src/fixture.wat', src: source.replace('$callback', '$other') }]), baseline)
   .some(e => e.includes('changed producer')), 'target replacement with unchanged count fails');
 assert(check(scanSources([...sources, { file: 'src/new.wat', src: '(func $new (global.set $eip (i32.const 1)))' }]), baseline)

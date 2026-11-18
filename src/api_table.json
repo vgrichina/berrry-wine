@@ -39847,5 +39847,12 @@
     "nargs": 3,
     "convention": "cdecl",
     "hash": 1836489775
+  },
+  {
+    "id": 4714,
+    "name": "__crtSetUnhandledExceptionFilter",
+    "nargs": 1,
+    "convention": "cdecl",
+    "hash": 1795382296
   }
 ]

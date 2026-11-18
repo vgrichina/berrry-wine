@@ -1154,3 +1154,9 @@
   ;; Kept outside instance globals so every guest thread uses the same secret.
   (region.declare $POINTER_SECRET (size 4) (align 4)
     (owner "09a0b-handlers-base-late.wat:$pointer_secret"))
+
+  ;; Process lifetime registration plus private, per-thread callback custody.
+  (region.declare $TOP_EXCEPTION_FILTER (size 4) (align 4)
+    (owner "11-seh.wat:$top_exception_filter"))
+  (region.declare $TOP_FILTER_CONTEXTS (size 0x4000) (align 128)
+    (owner "11-seh.wat:$top_filter_frame"))

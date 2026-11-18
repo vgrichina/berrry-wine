@@ -1595,3 +1595,9 @@
     ;; owns all three arguments.
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
+
+  ;; The unchanged VS2012 caller pops its own filter argument at 402ba2.
+  (func $handle___crtSetUnhandledExceptionFilter (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store (global.get $reg_base)
+      (i32.atomic.rmw.xchg (global.get $TOP_EXCEPTION_FILTER) (local.get $arg0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
