@@ -1,5 +1,14 @@
 # Alice Demo: selected live game window and guest mouse capture
 
+Result: the topology/capture repair is tested and published. The exact original
+now accepts ordinary menu input and renders Pandemonium loading and an in-engine
+3D fly-through. Player-controlled gameplay is **not verified**: no original W or
+jump was sent. The final 15-second skip operation was refused before DOWN with
+4.7 seconds left before the immutable gameplay cutoff. The evidence controller
+made this known ReserveRejected terminal, so it also prevented an ordinary Quit
+attempt through that helper. The owned run was cancelled and fully collected;
+this is a controller/review-time limitation, not proof that Alice cannot play.
+
 The first-created top-level is not a permanent input/presentation target.
 Alice creates a console and a separate game window on the same process/thread,
 naturally focuses the game, hides the console and calls SetCapture on the game.
@@ -146,3 +155,53 @@ independent physical UP and exits through the fixture's normal key-UP handler.
 No post-exit capture is requested. The controller records completion separately
 from actual native/watchdog/EOF collection. All these preparation errors and
 closed scopes remain explicit; the next original uses the tested sequence.
+The PM_NOREMOVE distinction is also explicit in Microsoft's
+[PeekMessage contract](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-peekmessagea):
+retrieval can leave the message queued. The runtime's confirmed owner-return
+receipt therefore does not by itself claim later dispatch or a visual effect;
+those claims require the retained post-input frame.
+
+Final affected original `original-sequence` uses the same exact 16 media pins,
+46c9b8e4 module and recorded immutable source closure. Its launch records the
+2000ms ACK / 3000ms fallback / 5500ms physical-UP / 8000ms operation policy before
+startup, alongside native900/watch920 and the 180-second Quit reserve. Two
+ordinary reviewed Enter gestures consume on hwnd65543/tid1 with independent UP;
+whole frames verify New Game -> difficulty -> Pandemonium loading. A later
+reviewed Alice title-logo frame receives one ordinary Escape, also consumed
+and physically released. Subsequent whole frames show a letterboxed 3D corridor
+and a later corridor camera position without any movement input: autonomous
+fly-through, not evidence of user-controlled gameplay.
+
+Before any proposed gameplay gesture, a separate finite slower policy is
+validated and recorded (5000ms confirmation, 6500ms independent fallback,
+12000ms physical-UP, 15000ms total). No in-flight deadline is changed. The next
+reviewed cinematic skip is refused at 1794981899.335 because its full operation
+would cross the fixed 1794981904.023 gameplay cutoff; there is no dispatch file.
+The controller's catch-all closes the scope even for this known pre-DOWN
+ReserveRejected. No endpoint is called afterwards, no guard is erased and no
+ordinary original Quit is claimed. Owned cancellation completes at
+1794981949.287, with native/watchdog actual waits, both EOFs and no leaks.
+No player W/jump or scene consequence is inferred from the moving cinematic.
+This bounded task therefore stops at a concrete admission/controller-time
+blocker rather than retrying the same original unchanged.
+
+The loading observation plan's first selected capture completed inside its
+recorded allowance. The subsequent independently bounded captures are fresh
+observations with no input pending; they do not extend that old plan or retime
+any input operation. Manual review/controller preparation time materially
+contributes to the final cutoff and must not be attributed solely to native
+performance.
+
+Final collection verifies 12 owned native scopes with actual native and
+watchdog waits plus both EOFs, and all five browser processes with actual wait
+and both EOFs. Every containment receipt reports leaked=false. Four early
+files named browser `*-supervision-wait.json` contain containment receipts,
+not explicit outer EOF fields; only the final browser outer wait records those
+fields. Their direct browser EOF receipts are retained separately. The early
+passive observer also received an external SIGTERM; its last read completed,
+no endpoint failed, and a detached observer continued under the same original
+startup deadline. No missing timeline or unrecorded wait is invented.
+All 16 media pins and every observed native source/module read pass exact-byte
+verification. Selected PNGs and the recovered module remain declared in active
+retention metadata. No box was created: ID/state/expiry/stop receipt are
+null/NOT_CREATED/null/null.
