@@ -44,3 +44,20 @@ test('finite queued-work deadline, transport UNKNOWN and permanent closure',asyn
   gate.seal('actual UNKNOWN');const before=reads;
   await assert.rejects(awaitDisplayPreflight({...options,now:()=>0}),/UNKNOWN/);assert.equal(reads,before);
 });
+test('release imports prepare before config, without arm or body entry; original body runs only after config',async()=>{
+  const {adaptRelease}=require('../tools/revolt-capture-integration.cjs');
+  const files=new Map(),events=[],config={keys:['ArrowUp']};let time=0;
+  const fs={readFileSync:p=>{events.push('read '+p);return files.get(p);},existsSync:p=>files.has(p),
+    writeFileSync:(p,v)=>{files.set(p,v);events.push('marker');}};
+  const source="const [out,file]=process.argv.slice(2),cfg=JSON.parse(fs.readFileSync(file));\n(async()=>{events.push('original arm');events.push(cfg.keys[0]);})()";
+  await vm.runInNewContext(adaptRelease(source),{fs,assert,process:{argv:['node','release','out','config'],pid:12},
+    Date:{now:()=>time},events,sleep:async()=>{assert.deepEqual(events,['marker']);assert.equal(JSON.parse(files.get('config.prepared')).armed,false);time++;files.set('config',JSON.stringify(config));}});
+  assert.deepEqual(events,['marker','read config','original arm','ArrowUp']);
+});
+test('unused prepared release expires finitely without body/arm or config read',async()=>{
+  const {adaptRelease}=require('../tools/revolt-capture-integration.cjs');let time=0,body=false,reads=0;
+  const source="const [out,file]=process.argv.slice(2),cfg=JSON.parse(fs.readFileSync(file));\n(async()=>{body=true;})()";
+  await assert.rejects(vm.runInNewContext(adaptRelease(source),{fs:{readFileSync(){reads++;},existsSync:()=>false,writeFileSync(){}},
+    assert,process:{argv:['node','release','out','config'],pid:12},Date:{now:()=>time},sleep:async()=>{time=120001;},body}),/finite release preparation/);
+  assert.equal(body,false);assert.equal(reads,0);
+});

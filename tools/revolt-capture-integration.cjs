@@ -50,6 +50,18 @@ async function awaitDisplayPreflight({evaluate, identity, deadline, check,
     await sleep(Math.min(25,deadline-now()));
   }
 }
+// Imports finish before the preparation marker. No connection, arm, DOWN or
+// release timer exists until the personally chosen operation publishes cfg.
+function adaptRelease(source) {
+  const from="const [out,file]=process.argv.slice(2),cfg=JSON.parse(fs.readFileSync(file));\n(async()=>{";
+  assert.equal(source.split(from).length,2,'unique independent release preparation site');
+  return source.replace(from,`const [out,file]=process.argv.slice(2);
+(async()=>{
+const preparationDeadline=Date.now()+120000;
+fs.writeFileSync(file+'.prepared',JSON.stringify({at:Date.now(),pid:process.pid,importsReady:true,armed:false}),{flag:'wx'});
+while(!fs.existsSync(file)){assert(Date.now()<preparationDeadline,'finite release preparation deadline');await sleep(5);}
+const cfg=JSON.parse(fs.readFileSync(file));`);
+}
 function createObserver({evaluate, sameOwner, owner, expectedName, check, onObservation}) {
   async function observe() {
     check();
@@ -102,6 +114,25 @@ function adaptBrowser(source) {
   replace("save(name+'-scene.json',latest);return latest;", "save(name+'-scene.json',candidate);return candidate;");
   replace('const diagnosticsAt=Date.now();ordering.diagnostics(diagnosticsAt);',
     "await integration.awaitDisplayPreflight({evaluate,identity:(await observer.identity(true)).apps[0],deadline:Math.min(Date.now()+90000,launch.deadline-prep.policy.quitReserveMs),check:()=>gate.check(),onObservation:v=>log('passive-display-preflight.jsonl',v)});const diagnosticsAt=Date.now();ordering.diagnostics(diagnosticsAt);");
+  replace('async function gesture(cmd){', `let pendingRelease=null;
+async function prepareRelease(name){
+ assert(!pendingRelease,'one prepared release at a time');assert(/^[a-z0-9-]+$/.test(name));
+ const file=out+'/'+name+'-release-config.json';assert(!fs.existsSync(file)&&!fs.existsSync(file+'.prepared'),'new release preparation required');
+ const child=cp.spawn(process.execPath,[__dirname+'/release.cjs',out,file],{stdio:['pipe','pipe','pipe']});
+ let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);
+ const joined=new Promise(r=>child.once('close',(code,signal)=>r({pid:child.pid,code,signal,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr})));
+ pendingRelease={name,child,joined};const end=Date.now()+20000;
+ while(!fs.existsSync(file+'.prepared')){gate.check();assert(child.exitCode===null&&child.signalCode===null,'prepared release exited');assert(Date.now()<end,'finite import preparation');await sleep(10);}
+ save(name+'-release-imports.json',JSON.parse(fs.readFileSync(file+'.prepared')));
+}
+async function gesture(cmd){`);
+  replace('let child,joined,failure=null,downAt=null,armed=null;', 'let child,joined,preparedRelease,failure=null,downAt=null,armed=null;');
+  replace("const cfg={url:browser.wsEndpoint", "if(pendingRelease){assert.equal(pendingRelease.name,cmd.name,'prepared operation name');assert(pendingRelease.child.exitCode===null&&pendingRelease.child.signalCode===null,'prepared release still live');}const cfg={url:browser.wsEndpoint");
+  replace("child=cp.spawn(process.execPath,[__dirname+'/release.cjs',out,out+'/'+cmd.name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});", "preparedRelease=pendingRelease;pendingRelease=null;child=preparedRelease?.child||cp.spawn(process.execPath,[__dirname+'/release.cjs',out,out+'/'+cmd.name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});");
+  replace("\n joined=new Promise(r=>child.once('close'", "\n joined=preparedRelease?.joined||new Promise(r=>child.once('close'");
+  replace("if(cmd.action==='capture')await capture(cmd.name);", "if(cmd.action==='prepare-release')await prepareRelease(cmd.name);else if(cmd.action==='capture')await capture(cmd.name);");
+  replace('if(child){child.stdin.end();', "if(pendingRelease?.name===cmd.name){pendingRelease.child.kill('SIGTERM');save(cmd.name+'-unused-release-wait.json',await pendingRelease.joined);pendingRelease=null;}if(child){child.stdin.end();");
+  replace("save('wire.json',wire);", "if(pendingRelease){pendingRelease.child.kill('SIGTERM');save(pendingRelease.name+'-unused-release-wait.json',await pendingRelease.joined);pendingRelease=null;}save('wire.json',wire);");
   replace('const v=await evaluate(admission.DISPLAY_READ);',
     'await observer.identity(true);const v=await evaluate(`(()=>{const s=(${readiness.READ});if(!s.page.apps[0]?.outputVisible)return {loadingSnapshot:s};return (${admission.DISPLAY_READ});})()`);if(v.loadingSnapshot){readiness.classify(v.loadingSnapshot);if(owner)same(owner,v.loadingSnapshot.page.apps[0]);throw new integration.CandidateWait("loading during display proof");}');
   replace("const order=require('./guard.cjs');", `const integration=require(root+'/tools/revolt-capture-integration.cjs'),readiness=require(root+'/tools/revolt-startup-readiness.cjs');
@@ -127,4 +158,4 @@ const order=require('./guard.cjs');`);
     "if(!downAt&&failure.code==='LOCAL_NOT_SENT'&&!gate.closed){if(!child){assert.equal(op.down,0);assert(!op.armed);op.done=true;log('ordering.jsonl',{stage:'local-before-arm-NOT_SENT',name:op.name,at:Date.now()});}");
   return source;
 }
-module.exports = {createObserver, CandidateWait, adaptBrowser, displayPreflightExpression, awaitDisplayPreflight};
+module.exports = {createObserver, CandidateWait, adaptBrowser, adaptRelease, displayPreflightExpression, awaitDisplayPreflight};
