@@ -72,3 +72,35 @@ selected game with either no capture or valid self capture; it keeps the same
 finite 60-second passive deadline. Tracked predicate tests and the retained
 original observations demonstrate old-fail/new-pass without reopening a scope.
 An affected fresh original follows publication of that preparation correction.
+
+Preparation correction published as `4af0d4ba5`. Its affected original captures
+the genuine game top-level while the console is still visible, then after the
+console hides and the game owns SetCapture. Both captures pass the reviewed
+runtime contract; the first whole frame is gray and the second black, not a
+gameplay claim. Console text reports client/common/sound initialization.
+A read-only diagnostic mistakenly referenced `threadManager`, which is absent
+from controlEval's explicit parameters. The known ReferenceError was recorded
+and the helper closed; that scope was cancelled with zero binding/input and
+actual native/watchdog/EOF collection, without later endpoint calls.
+The corrected diagnostic uses only documented evaluator parameters and passes
+both an exact-parameter regression and a real authored native endpoint. Its
+authored observation records six genuine GL presentations. A subsequent
+authored bind independently rejects an expired reviewed image; zero extra W
+edges were sent in that scope.
+
+The input helper also separates the fixed ACK deadline from pulse duration:
+a 400ms ACK for an 80ms requested pulse is permitted by a 500ms confirmation
+policy, while a 501ms ACK and the operation deadline remain rejected. Independent
+physical UP keeps its original prearmed deadline. The earlier authored W
+actually acknowledged in about six milliseconds, with whole-frame capture
+about 119ms; no original input latency has yet been measured.
+
+The owner's 05:31 timing clarification permits calibrated finite personal
+review allowances before fresh captures. Actual authored operations expired
+the old 15s game/30s browser review allowances before input. New native captures
+therefore pin game60s/menu90s review limits at original capture time, with
+strict expiry, unchanged original timestamps, exact retained bytes and full
+live process/thread/window/control verification immediately before consumption.
+Tests accept a 20s review and reject the exact 60s boundary. The original
+3000ms observation/operation, 500ms confirmation and independent physical-UP
+deadlines remain separate. No expired scope or image is reused.

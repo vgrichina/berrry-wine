@@ -34,6 +34,9 @@ function nativeReview(rr, personal) {
   return { contract: CONTEXT_CONTRACT, captureId: rr.captureId, pngSHA256: rr.pngSHA256,
     reviewed: true, reviewedAt: personal.at * 1000, scope: personal.scene, targetHwnd: personal.targetHwnd };
 }
+function confirmationFits(sentAt,receivedAt,deadline,confirmationMs=500){
+  return receivedAt>=sentAt&&receivedAt<deadline&&receivedAt-sentAt<=confirmationMs/1000;
+}
 
 function reserve() {
   const launch = read('launch.json');
@@ -55,7 +58,7 @@ function freshness(review) {
   const scene = read(review + '-review.json').scene;
   ok(['game', 'menu'].includes(scene), 'explicit personally reviewed game/menu scene required');
   const seconds = scene === 'game' ? p.gameFreshnessSeconds : p.menuFreshnessSeconds;
-  ok(seconds > 0 && seconds <= (scene === 'game' ? (contextContract() ? 15 : 5) : 30), 'finite native review policy');
+  ok(seconds > 0 && seconds <= (scene === 'game' ? (contextContract() ? 60 : 5) : (contextContract()?90:30)), 'finite native review policy');
   return seconds;
 }
 async function bind(review = null) {
@@ -337,7 +340,7 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         save(name + '-dispatch.json', { at: deliveryAt, nonce, mayHaveEffects: true });
         const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10);
         returnedAt = now();
-        if (strict) ok(returnedAt - deliveryAt <= .5, '500ms confirmation exceeded');
+        if (strict) ok(confirmationFits(deliveryAt,returnedAt,deadline,strict.confirmationMs), 'fixed confirmation deadline exceeded');
         receipts.push(receipt);
         if (receipt.consumedAt) save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
         save(name + '-receipt.json', receipt);
@@ -355,7 +358,9 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
       save(name + '-down.json', receipts);
       const releaseAt = Math.max(...receipts.map(x => x.consumedAt)) / 1000 + ms / 1000;
       ok(releaseAt < deadline, 'finite pulse cannot fit original operation deadline');
-      ok(returnedAt < releaseAt, 'late ACK; independent UP retained; no replay');
+      // ACK has its own fixed confirmation deadline above. A transport reply
+      // may arrive after the requested pulse ends; the already armed release
+      // still runs independently and its original physical-UP bound applies.
     } catch (e) { failure = e; }
     finally {
       if (!armed) child.stdout.on('data', b => childOut.push(b));
@@ -484,6 +489,6 @@ async function main(argv) {
 }
 if (require.main === module) main(process.argv.slice(2)).catch(e => { console.error(e); process.exitCode = 1; });
 
-module.exports = { save, read, call, reserve, capturePhase, freshness, bind, policy, endpointIdentity, opened, fail, lease, capture, waitReady,
+module.exports = { confirmationFits, save, read, call, reserve, capturePhase, freshness, bind, policy, endpointIdentity, opened, fail, lease, capture, waitReady,
   exitedOwner, admissionAllowance, admissionFits, freshnessFits, release, pulse, submit, ReserveRejected, QUIT_ROUTES, main };
 for (const k of ['R', 'URL']) Object.defineProperty(module.exports, k, { get: () => S[k], set: v => { S[k] = k === 'R' ? path.resolve(String(v)) : v; }, enumerable: true });

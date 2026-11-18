@@ -8,6 +8,10 @@ function snapshot(){const console=row('0x10001','1'),game=row('0x10007','7');con
     focusWindow:{...game},modalHwnd:'0x0',capture:game.hwnd,physicalUp:true,nativeProcess:{pid:123,executable:'authored.exe'},
     eip:'0x402000',quit:false,screen:{w:480,h:360},pointerMapping:{canvas:{w:480,h:360},sourceHwnd:null}};}
 const s=snapshot();assert.deepEqual(scene.contextFailures(s,s),[]);
+const input=require('../tools/alice-local-original.cjs');
+assert(input.confirmationFits(10,10.4,13,500),'400ms ACK is valid even for an 80ms pulse');
+assert(!input.confirmationFits(10,10.501,13,500));
+assert(!input.confirmationFits(10,10.4,10.4,500),'operation deadline remains strict');
 const actorExports={get_process_id:()=>1,get_current_thread_id:()=>1,get_quit_flag:()=>0,get_eip:()=>0x402000,
   get_window_thread:()=>1,wnd_lookup_live:()=>1,wnd_lookup_generation:()=>7};
 const instance={exports:actorExports},win={visible:true,wasm:instance};
@@ -25,6 +29,10 @@ const manager={threads:new Map([[1,{state:'active',instance:{exports:actorExport
 assert(!scene.reviewedRuntimeOwner(base,lease,instance,manager).healthy,'duplicate actor must fail');
 const visible=snapshot();visible.windows[0].visible=true;assert(scene.matches(visible,visible));
 const topology=require('../tools/alice-native-game-window.cjs');
+const controlEval=new Function('instance','exports','renderer','memory','g2w','tickState','ctx','va','mods',
+  'return eval('+JSON.stringify(topology.renderObservation)+')');
+assert.deepEqual(controlEval(null,null,null,null,null,{batch:123},{},null,null).bridge,null);
+assert.equal(controlEval(null,null,null,null,null,{batch:123},{},null,null).batch,123);
 for(const capture of ['0x0',s.focus]){
   const v=snapshot();v.capture=capture;
   assert(topology.gameWindowReady({contract:'native-startup-readiness-v1',ready:true,failures:[],snapshot:v}),
@@ -55,5 +63,10 @@ const registry2=scene.createReviewedContexts({now:()=>clock,monotonic:()=>clock}
 const record2=registry2.capture(snapshot,()=>Buffer.from('mouse retained image'),()=>{});
 assert(registry2.verify(s,{...record2,reviewed:true,reviewedAt:clock,scope:'game',targetHwnd:s.focus},
   {action:'mousemove',x:120,y:120},'mouse'));
+clock=record2.completedAt+20000;
+assert(registry2.verify(s,{...record2,reviewed:true,reviewedAt:record2.completedAt,scope:'game',targetHwnd:s.focus},
+  {action:'mousemove',x:120,y:120},'mouse'),'measured image transport may exceed former 15s allowance');
+clock=record2.startedAt+60000;
+assert.throws(()=>registry2.verify(s,{...record2,reviewed:true,reviewedAt:record2.completedAt,scope:'game',targetHwnd:s.focus}),/stale/);
 const exe=require('../tools/alice-native-game-window.cjs').fixture();assert(exe.includes(Buffer.from('SetCapture\0')));
 console.log('PASS selected live top-level, retained review, keyboard versus mouse capture, actor/modal/generation/presentation negatives');

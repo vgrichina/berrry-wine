@@ -37,6 +37,14 @@ function gameWindowReady(reply){
     reply.failures.length===0&&s&&s.focusTopLevel!==s.mainHwnd&&
     require('../lib/cli-native-scene').contextFailures(s,s).length===0);
 }
+// Only the documented controlEval parameters are in scope. In particular,
+// threadManager is not a parameter and must never appear in this expression.
+const renderObservation=`(()=>{const b=ctx.getGlGpsBridge?.();return {
+  at:Date.now(),batch:tickState.batch,bridge:b?{api:b.api,stats:b.stats,
+  epoch:b.workerEpoch,error:String(b.workerAsyncError||''),
+  presents:b.presenter?.presents,stamp:b.presenter?.stamp,
+  layer:b.presenter?.layer?{writeSeq:b.presenter.layer.writeSeq,
+    width:b.presenter.layer.canvas.width,height:b.presenter.layer.canvas.height}:null}:null};})()`;
 async function waitGameWindow(a,seconds=60){
   assert(Number.isInteger(seconds)&&seconds>0&&seconds<=60);
   const c=require('./native-supervisor-common.cjs'),fs=require('node:fs'),path=require('node:path');
@@ -52,5 +60,5 @@ async function waitGameWindow(a,seconds=60){
     await c.sleep(Math.min(100,Math.max(0,(deadline-c.now())*1000)));
   }
 }
-module.exports={fixture,gameWindowReady,waitGameWindow};
+module.exports={fixture,gameWindowReady,waitGameWindow,renderObservation};
 if(require.main===module)require('node:fs').writeFileSync(process.argv[2],fixture(),{flag:'wx'});
