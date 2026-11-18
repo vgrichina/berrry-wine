@@ -26,7 +26,7 @@ CADE5000 00564AE4 00000005 00000002 00010001 00000000 00000000
 ```
 
 This is native EIP `0x564ae4`, yield 5, `WM_DESTROY`, hwnd `0x10001` at sync depth
-1. The loaded `d3drm.dll` base is `0x514000`, original base `0x647a0000`;
+1. The loaded `d3drm.dll` base is `0x514000`, original base `0x64780000`;
 the EIP maps to original `0x647d0ae4`. Selected disassembly is retained as
 `d3drm-final-release.txt`: the immediately preceding instruction at `0x647d0ade`
 calls imported `FreeLibrary`, followed by `ret` at `0x647d0ae4`.
