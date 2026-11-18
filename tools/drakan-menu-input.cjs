@@ -59,6 +59,15 @@ function policy(p){
  assert(p.fallbackMs>p.confirmationMs+500);assert(p.physicalUpMs>p.fallbackMs+p.confirmationMs);
  assert(p.operationMs>p.physicalUpMs+1000);return Object.freeze({...p});
 }
+function reviewSeconds(p,scene){
+ const seconds=p[scene+'FreshnessSeconds']??(scene==='game'?15:30);
+ assert(['game','menu'].includes(scene));
+ assert(Number.isInteger(seconds)&&seconds>0&&seconds<=(scene==='game'?60:90));
+ return seconds;
+}
+function reviewAdmission(now,targeting,p){
+ return Number.isFinite(now)&&Number.isFinite(targeting)&&now+p.confirmationMs/1000<targeting;
+}
 function proof(r,{owner,nonce,deadline,key,sentAt,hwnd,threadId,pointer}){
  assert.equal(r.state,'CONSUMED');assert.equal(r.consumed,true);
  for(const k of ['owner','epoch'])assert.equal(r[k],owner[k]);assert.equal(r.nonce,nonce);assert.equal(r.deadline,deadline);
@@ -103,13 +112,15 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
   const personal=fs.existsSync(reviewFile)?a.read(review+'-review.json'):{at:c.now(),pngSHA256:rr.pngSHA256,scene,wholeFrame:true,targetHwnd:rr.snapshot.focus,observation,quitRoute:route};
   if(!fs.existsSync(reviewFile))a.save(review+'-review.json',personal);
   assert(personal.wholeFrame&&personal.pngSHA256===rr.pngSHA256&&personal.scene===scene);
-  const fresh=scene==='game'?15:30;
+  const fresh=reviewSeconds(p,scene);
   assert(c.now()>=personal.at&&c.now()-personal.at<fresh);assert.equal(personal.targetHwnd,rr.snapshot.focus);
   if(route)assert.equal(personal.quitRoute,route);
   assert.equal(c.sha256(fs.readFileSync(path.join(a.R,review+'.png'))),rr.pngSHA256);
   assert(!fs.readdirSync(a.R).some(n=>n.startsWith(review+'-used-by-')));
   if(pointer)require('../lib/cli-native-pointer-coordinates').nativePoint(rr.snapshot.pointerMapping,pointer.x,pointer.y);
   const targeting=Math.min(rr.at+fresh,personal.at+fresh,end),due=c.now()+p.fallbackMs/1000;
+  const refuse=stage=>{a.save(name+'-rejection.json',{at:c.now(),stage,state:'NOT_SENT',effects:false,targeting,confirmationMs:p.confirmationMs,reason:'insufficient remaining reviewed-image confirmation budget'});return 'NOT_SENT: fresh capture and review required';};
+  if(!reviewAdmission(c.now(),targeting,p))return refuse('before-prearm');
   assert(c.now()+p.confirmationMs/1000+ms/1000<due);assert(due+p.confirmationMs/1000<end);
   const nonce=crypto.randomUUID(),deadline=Math.trunc(Math.min(targeting,due,route?end:a.reserve())*1000);
   a.save(name+'-operation.json',{start,end,policy:p,deadline,targeting,due,nonce,immutable:true,ms,key,pointer,scene,review});
@@ -122,6 +133,7 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
    const armed=await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error('UP prearm timeout')),1000);child.stdout.once('data',()=>{clearTimeout(t);resolve(JSON.parse(stdout.split('\n')[0]));});});a.save(name+'-armed.json',armed);
    assert.equal(armed.armed,true);assert(c.now()+p.confirmationMs/1000+ms/1000<due);
    a.opened();enforce();
+   if(!reviewAdmission(c.now(),targeting,p)){a.save(name+'-disarm.json',{at:c.now()});return refuse('after-prearm');}
    const sentAt=c.now();assert(sentAt<targeting);a.save(name+'-dispatch.json',{at:sentAt,nonce,mayHaveEffects:true});
    const cmd=pointer?pointer.action+':'+pointer.x+':'+pointer.y:'keydown:'+key;
    const result=await c.postJSON(a.URL,{action:'guarded-input',cmd,guard:{...owner,nonce,reviewed:true,deadline,intent:{review:{contract:'native-reviewed-context-v1',captureId:rr.captureId,pngSHA256:rr.pngSHA256,reviewed:true,reviewedAt:personal.at*1000,scope:scene,targetHwnd:rr.snapshot.focus}}}},p.confirmationMs/1000);
@@ -139,5 +151,5 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
   const image=await a.capture(name,end);assert.equal(a.read(name+'.json').snapshot.physicalUp,true);return image;
  }catch(e){a.fail(e,name);throw e;}
 }
-module.exports={fixture,policy,proof,pulse,release};
+module.exports={fixture,policy,reviewSeconds,reviewAdmission,proof,pulse,release};
 if(require.main===module&&process.argv[2]==='release')release(process.argv[3],process.argv[4],process.argv[5],process.argv[6],Number(process.argv[7]),Number(process.argv[8])).catch(e=>{console.error(e);process.exitCode=1;});

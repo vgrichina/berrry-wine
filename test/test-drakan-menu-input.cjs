@@ -7,9 +7,13 @@ async function main(out,frameMs=800,confirmationMs=5000){
  const prep=require('../tools/blood2-immutable-preparation.cjs'),base='6308e7a3be6c98ab150d07c2f178d8cd09f4b2e6';
  const rows=prep.collect([],{revision:base,media:[{path:path.relative(path.resolve(__dirname,'..'),exe),size:fs.statSync(exe).size,sha256:c.sha256(fs.readFileSync(exe))}]});
  for(const file of ['lib/renderer-input.js','lib/cli-native-scene.js','lib/dll-registry.js']){const b=require('node:child_process').execFileSync('git',['show','5aa5dabdfaf017f945037eefcffead29ccb87bf1:'+file]);Object.assign(rows.find(r=>r.path===file),{sha256:c.sha256(b),body:b.toString('base64')});}
+ if(process.env.DRAKAN_REVIEW_CALIBRATED==='1'){
+  const b=require('node:child_process').execFileSync('git',['show','98e56ec00390a46fa73dcb7f10ec424c54f0f1d1:lib/cli-native-scene.js']);
+  Object.assign(rows.find(r=>r.path==='lib/cli-native-scene.js'),{sha256:c.sha256(b),body:b.toString('base64')});
+ }
  const frozen=prep.freeze(rows,fs.readFileSync(process.env.DRAKAN_TEST_MODULE));
  const port=await new Promise(r=>{const s=net.createServer().listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});a.URL='http://127.0.0.1:'+port+'/ctl';
- const at=c.now();a.save('launch.json',{at,deadline:at+240,gameplayCutoff:at+60,reserveSeconds:180,nativeScene:true,bindingContract:'native-reviewed-context-v1',menuInputPolicy:{confirmationMs:2500,fallbackMs:3500,physicalUpMs:6500,operationMs:10000}});
+ const at=c.now();a.save('launch.json',{at,deadline:at+240,gameplayCutoff:at+60,reserveSeconds:180,nativeScene:true,bindingContract:'native-reviewed-context-v1',menuInputPolicy:{confirmationMs:2500,fallbackMs:3500,physicalUpMs:6500,operationMs:10000,...(process.env.DRAKAN_REVIEW_CALIBRATED==='1'?{gameFreshnessSeconds:60,menuFreshnessSeconds:90}:{})}});
  a.save('identity.json',{base,moduleSHA256:c.sha256(fs.readFileSync(process.env.DRAKAN_TEST_MODULE)),sourceSHA256:frozen.sourceSHA256,inventory:frozen.inventory,frameMs,confirmationMs,calibrationOnly:true});
  require('../tools/blood2-durable-launcher.cjs').launch({run:out,command:[process.execPath,'test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=1024x712','--control='+port,'--max-seconds=35','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],env:{...frozen.env,WINE_PUBLIC_INPUT_TRACE:out+'/input-trace.jsonl'},fds:frozen.fds,deadline:at+40,cleanupDeadline:at+55});frozen.close();
  let error;
@@ -20,10 +24,17 @@ async function main(out,frameMs=800,confirmationMs=5000){
   await a.capture('main');const rr=a.read('main.json');a.save('main-review.json',{at:c.now(),pngSHA256:rr.pngSHA256,scene:'menu',wholeFrame:true,targetHwnd:rr.snapshot.focus,observation:'Authored diagnostic fixture; no original game review claimed'});await a.bind('main');
   if(process.env.DRAKAN_MENU_FIXED==='1'){
    const pointer=process.env.DRAKAN_MENU_POINTER==='1';
-   await require('../tools/drakan-menu-input.cjs').pulse({name:'enter',...(pointer?{pointer:{action:'mousedown',x:300,y:300}}:{key:13}),review:'main',observation:'Authored diagnostic native USER/DirectInput control; no original claim'});
+   const delay=Number(process.env.DRAKAN_REVIEW_DELAY_MS||0);assert(Number.isInteger(delay)&&delay>=0&&delay<=21000);
+   if(delay){await a.capture('aged');await c.sleep(delay);}
+   const outcome=await require('../tools/drakan-menu-input.cjs').pulse({name:'enter',...(pointer?{pointer:{action:'mousedown',x:300,y:300}}:{key:13}),review:delay?'aged':'main',scene:delay?'game':'menu',observation:'Authored diagnostic native USER/DirectInput control; no original claim'});
+   if(process.env.DRAKAN_EXPECT_REVIEW_REFUSAL==='1'){
+    assert.match(outcome,/NOT_SENT/);assert.equal(a.read('enter-rejection.json').effects,false);
+    assert(!fs.existsSync(path.join(out,'enter-dispatch.json')));assert(!fs.existsSync(path.join(out,'terminal-input-failure.json')));
+    a.save('assertions.json',{pass:true,refusedBeforeDown:true,reviewDelayMs:delay});return;
+   }
    assert(a.read('enter-complete.json').consumed);assert(a.read('enter-complete.json').physicalUpACK);
    if(pointer){const result=await a.call({action:'eval',code:`(()=>{const e=instance.exports,dv=new DataView(memory.buffer);return {everDown:dv.getUint32(e.guest_to_wasm(0x402824),true),hresult:dv.getUint32(e.guest_to_wasm(0x40281c),true)};})()`},2);a.save('directinput-mouse.json',result);assert.equal(result.everDown,128);assert.equal(result.hresult,0);}
-   a.save('assertions.json',{pass:true,nativeConsumption:true,physicalUpACK:true,policyFixedBeforeDispatch:true});return;
+   a.save('assertions.json',{pass:true,nativeConsumption:true,physicalUpACK:true,policyFixedBeforeDispatch:true,reviewDelayMs:delay});return;
   }
   const [owner]=await a.lease(),nonce=crypto.randomUUID(),begin=c.now(),deadline=Math.trunc((begin+6)*1000);
   // Independently prearmed physical UP is a separate process before DOWN.
@@ -93,6 +104,18 @@ async function browser(out){
 async function unit(){
  const h=require('../tools/drakan-menu-input.cjs');
  const p={confirmationMs:2500,fallbackMs:3500,physicalUpMs:6500,operationMs:10000};assert(Object.isFrozen(h.policy(p)));
+ // Original capture had only 873ms left: old admission checked now<expiry,
+ // then sent DOWN. Reserve the unchanged 2500ms confirmation before effects.
+ assert(14.127<15);assert.equal(h.reviewAdmission(14.127,15,p),false);
+ assert.equal(h.reviewAdmission(12.5,15,p),false);
+ assert.equal(h.reviewAdmission(12.499,15,p),true);
+ assert.equal(h.reviewAdmission(NaN,15,p),false);
+ assert.equal(h.reviewSeconds(p,'game'),15);
+ const calibrated={...p,gameFreshnessSeconds:60,menuFreshnessSeconds:90};
+ assert.equal(h.reviewSeconds(calibrated,'game'),60);assert.equal(h.reviewSeconds(calibrated,'menu'),90);
+ assert.equal(h.reviewAdmission(20,60,p),true);
+ for(const seconds of [Infinity,0,-1,61,1.5])assert.throws(()=>h.reviewSeconds({...p,gameFreshnessSeconds:seconds},'game'));
+ assert.throws(()=>h.reviewSeconds({...p,menuFreshnessSeconds:91},'menu'));
  for(const edit of [p=>p.confirmationMs=Infinity,p=>p.fallbackMs=2500,p=>p.physicalUpMs=6000,p=>p.operationMs=7000]){const q={...p};edit(q);assert.throws(()=>h.policy(q));}
  const expected={owner:{owner:'owner',epoch:1},nonce:'nonce',deadline:2000,key:13,sentAt:1,hwnd:65537,threadId:1};
  const r={state:'CONSUMED',consumed:true,owner:'owner',epoch:1,nonce:'nonce',deadline:2000,consumedAt:1500,receiptBoundary:'native-input-return',nativeMessage:{consumption:'owner-user-return',nonce:'nonce',token:1,msg:256,wParam:13,hwnd:65537,threadId:1,apiKind:2,remove:true}};

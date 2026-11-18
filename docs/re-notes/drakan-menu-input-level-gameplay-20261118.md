@@ -102,3 +102,38 @@ repair does not resolve the original input UNKNOWN, so it does not authorize
 another unchanged original input retry. The concrete remaining blocker is an
 unresolved original native return/ACK after genuine Quit confirmation, and the
 gameplay goal remains unverified.
+
+## Prepared New Game route
+
+Evidence: `scratch/runs/20261118-drakan-prepared-new-game-mouse-route/`.
+All preparation and custody qualification finished before the fresh original's
+900/920/180 lifetime. Exact retained source/module/media reached the main menu.
+The first absolute move established DirectInput's reference; the next ordinary
+relative movement visibly placed the software cursor on New Game, then the
+jewel turned red. A stationary click opened the genuine difficulty dialog.
+Normal was hovered, visibly red, and clicked. Loading advanced through Wartok
+Canyons assets and reached a rendered close-up intro cinematic. This proves
+New Game and the difficulty consequence, not playable movement or attack.
+
+The subsequent reviewed Escape had only873ms remaining on its original
+15-second capture lifetime when DOWN was sent. Its native result was CANCELLED
+for immutable deadline expiry, with no native consumption and independent UP
+ACK. This is a known cancellation, not a measured late ACK or HTTP UNKNOWN.
+The helper nevertheless closed the scope; no later endpoint request followed.
+Filesystem cancellation retained both actual native/watch waits and EOFs.
+
+The targeted helper now reserves the unchanged2500ms confirmation budget
+before arming and immediately before DOWN. Insufficient remaining image time
+returns NOT_SENT without effects. Its regression reproduces the873ms admission
+error, tests the strict equality boundary, and a fresh real native control with
+a13-second-old capture refuses before DOWN without closing the scope.
+For a separately prepared fresh retry, the helper also accepts predeclared
+finite review limits up to60 seconds for game/90 for menu. This uses Alice's
+already published98e56ec00 cli-native-scene review calibration, pinned before
+launch; the original capture clocks, current actor/window/generation/context
+checks and immutable in-flight deadlines remain authoritative. A20-second-old
+authored native capture succeeds with the declared60-second policy, exact USER
+receipt and independent UP. Normal browser USER/DirectInput controls, receipt
+negatives and scene identity/staleness negatives pass. No ACK deadline was
+increased based on the original cancellation. Locked build passed before
+publication and affected original retry.
