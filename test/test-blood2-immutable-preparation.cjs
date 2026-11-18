@@ -3,9 +3,44 @@
 const fs=require('node:fs'),os=require('node:os'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict'),net=require('node:net');
 const prep=require('../tools/blood2-immutable-preparation.cjs'),c=require('../tools/native-supervisor-common.cjs');
 const root=path.resolve(__dirname,'..');
+function manifestRegression(module, out) {
+ const dir=fs.mkdtempSync(path.join(root,'test/binaries/.blood2-prep-'));
+ try {
+  const rel=path.relative(root,dir),exe=rel+'/fixture.exe',manifest=rel+'/.wine-assembly-browser.json',asset=rel+'/data.rez';
+  const inputs=[[exe,Buffer.from('authored inert input; never executed')],[asset,Buffer.from('authored media')],
+   [manifest,Buffer.from(JSON.stringify({schemaVersion:1,files:[{url:'data.rez',vfsPath:'c:\\data.rez',size:14}]}))]];
+  for(const [file,b] of inputs)fs.writeFileSync(path.join(root,file),b);
+  const pins=inputs.map(([file,b])=>({path:file,size:b.length,sha256:c.sha256(b)}));
+  const revision=cp.execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+  const rows=prep.collect([],{revision,media:pins});
+  for(const pin of pins)assert.equal(rows.find(r=>r.path===pin.path)?.sha256,pin.sha256);
+  // Self-contained registered-app fixture, through the production loader and
+  // registry API; no retained run, original binary or game execution.
+  const registry=Buffer.from('module.exports={APPS:{fixture:'+JSON.stringify({exe,files:[],localFileManifest:manifest,args:'authored'})+'}};');
+  const fixtureRows=rows.map(r=>r.path==='lib/apps.js'?{path:r.path,sha256:c.sha256(registry),body:registry.toString('base64')}:r);
+  const old=prep.freeze(fixtureRows.filter(r=>r.path!==manifest),module);
+  try { assert.throws(()=>prep.gameInputPreflight(old,{appId:'fixture',pins}),/missing pinned sealed media/); }
+  finally { old.close(); }
+  const missing=prep.freeze(fixtureRows.filter(r=>r.path!==asset),module);
+  try { assert.throws(()=>prep.gameInputPreflight(missing,{appId:'fixture',pins}),/missing pinned sealed media/); }
+  finally { missing.close(); }
+  const frozen=prep.freeze(fixtureRows,module);
+  try {
+   // Live file replacement and caller row mutation cannot affect either main
+   // or Worker. Both must read the frozen manifest and every pinned file.
+   fs.writeFileSync(path.join(root,manifest),'invalid live manifest');
+   fs.writeFileSync(path.join(root,asset),'changed live media');
+   fixtureRows.splice(0,fixtureRows.length);
+   c.save(out,'manifest-regression.json',{...prep.gameInputPreflight(frozen,{appId:'fixture',pins}),
+    oldMissingManifestFailed:true,missingBinaryFailed:true,liveMutationIgnored:true,callerMutationIgnored:true});
+  } finally { frozen.close(); }
+  assert.throws(()=>prep.collect([],{revision,media:pins}),/AssertionError|\.rez/);
+ } finally { fs.rmSync(dir,{recursive:true,force:true}); }
+}
 async function body(out){
  fs.mkdirSync(out,{recursive:true});
  const module=fs.readFileSync(root+'/build/wine-assembly.wasm'),rows=prep.collect();
+ manifestRegression(module,out);
  const old=prep.freeze(rows.filter(r=>!r.path.startsWith('node_modules/pngjs/')),module);
  try{assert.throws(()=>prep.renderingPreflight(old),e=>{assert.match(e.message,/unsealed runtime input: pngjs/);c.save(out,'old-failure.json',{error:e.message,originalLaunched:false});return true;});}finally{old.close();}
  const missing=prep.freeze(rows.filter(r=>r.path!=='node_modules/pngjs/lib/png.js'),module);
