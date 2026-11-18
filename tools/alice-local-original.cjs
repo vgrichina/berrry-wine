@@ -240,11 +240,7 @@ async function release(name, owner, deadline, final = false) {
 
 // First stdout line from the release child, within a deadline (select()).
 function firstLine(child, ms) {
-  return new Promise((resolve, reject) => {
-    let text = '';
-    const timer = setTimeout(() => reject(Error('independent release child arm deadline')), ms);
-    child.stdout.on('data', b => { text += b; const i = text.indexOf('\n'); if (i >= 0) { clearTimeout(timer); resolve(text.slice(0, i)); } });
-  });
+  return c.jsonLines(child)(ms).then(row => JSON.stringify(row));
 }
 
 async function pulse(name, keys, ms, review, description, final = false, intent = 'gameplay', route = null, startup = false) {
