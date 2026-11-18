@@ -58,6 +58,20 @@ establish continuous disk compliance. Full-27 and arbitrary crash freedom
 remain open.
 Evidence: `scratch/runs/20261118-dx-globe-native-close-cause-repair/result.json`.
 
+Viewer report `ee3cf7db8` records the original supplied Microsoft model moving
+on actual GpuStreamSoftware and GpuStreamWebGL executors at stable 800×600.
+The coordinator reviewed the software whole-frame pair showing rotation;
+the author reviewed both pairs. Completed draw/present records and a live
+WebGL context support the backend observations. Ordinary title close reaches
+native ExitProcess 0 before cleanup on both routes, with guest/render retirement
+and individual driver, Chrome, Xvfb and openbox waits 0 with both EOFs.
+The first WebGL observer scope remains UNKNOWN and closed; a corrected active
+executor observer supplied the passing scope. This reuses the recorded
+`a6002d5d…` module and `1ad9afd92` RPC graph without a product or media change.
+Sampled original disk minima do not prove continuous compliance. Hardware,
+performance, Windows parity, full-27 and arbitrary crash freedom remain open.
+Evidence: `scratch/runs/20261118-dx-viewer-current-browser-paired-motion-close/result.json`.
+
 ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
 Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
 lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
