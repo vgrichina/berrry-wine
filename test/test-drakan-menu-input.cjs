@@ -13,7 +13,7 @@ async function main(out,frameMs=800,confirmationMs=5000){
  }
  const frozen=prep.freeze(rows,fs.readFileSync(process.env.DRAKAN_TEST_MODULE));
  const port=await new Promise(r=>{const s=net.createServer().listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>r(p));});});a.URL='http://127.0.0.1:'+port+'/ctl';
- const at=c.now();a.save('launch.json',{at,deadline:at+240,gameplayCutoff:at+60,reserveSeconds:180,nativeScene:true,bindingContract:'native-reviewed-context-v1',menuInputPolicy:{confirmationMs:2500,fallbackMs:3500,physicalUpMs:6500,operationMs:10000,...(process.env.DRAKAN_REVIEW_CALIBRATED==='1'?{gameFreshnessSeconds:60,menuFreshnessSeconds:90}:{})}});
+ const at=c.now();a.save('launch.json',{at,deadline:at+240,gameplayCutoff:at+60,reserveSeconds:180,nativeScene:true,bindingContract:'native-reviewed-context-v1',menuInputPolicy:{...(process.env.DRAKAN_MEASURED_LATENCY==='1'?{confirmationMs:4000,fallbackMs:5500,physicalUpMs:10000,operationMs:13000}:{confirmationMs:2500,fallbackMs:3500,physicalUpMs:6500,operationMs:10000}),...(process.env.DRAKAN_REVIEW_CALIBRATED==='1'?{gameFreshnessSeconds:60,menuFreshnessSeconds:90}:{})}});
  a.save('identity.json',{base,moduleSHA256:c.sha256(fs.readFileSync(process.env.DRAKAN_TEST_MODULE)),sourceSHA256:frozen.sourceSHA256,inventory:frozen.inventory,frameMs,confirmationMs,calibrationOnly:true});
  require('../tools/blood2-durable-launcher.cjs').launch({run:out,command:[process.execPath,'test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=1024x712','--control='+port,'--max-seconds=35','--max-batches=100000000','--stuck-after=0','--quiet-api','--quiet-blocks','--no-close'],env:{...frozen.env,WINE_PUBLIC_INPUT_TRACE:out+'/input-trace.jsonl'},fds:frozen.fds,deadline:at+40,cleanupDeadline:at+55});frozen.close();
  let error;
@@ -117,6 +117,8 @@ async function unit(){
  assert.equal(h.reviewAdmission(NaN,15,p),false);
  assert.equal(h.durationAdmission(p,1000),false);assert.equal(h.durationAdmission(p,700),true);
  for(const ms of [Infinity,NaN,79,1001,300.5])assert.equal(h.durationAdmission(p,ms),false);
+ const measured=h.policy({confirmationMs:4000,fallbackMs:5500,physicalUpMs:10000,operationMs:13000});
+ assert(h.durationAdmission(measured,1000));assert.equal(h.reviewAdmission(56,60,measured),false);assert(h.reviewAdmission(55.9,60,measured));
  assert.equal(h.reviewSeconds(p,'game'),15);
  const calibrated={...p,gameFreshnessSeconds:60,menuFreshnessSeconds:90};
  assert.equal(h.reviewSeconds(calibrated,'game'),60);assert.equal(h.reviewSeconds(calibrated,'menu'),90);

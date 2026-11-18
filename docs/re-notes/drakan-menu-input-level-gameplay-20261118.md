@@ -155,3 +155,29 @@ returns NOT_SENT before arming for an incompatible pulse. Unit strict-boundary
 negatives and a fresh authored native1000ms refusal followed by a700ms
 consumed/independently released pulse qualify the correction before another
 affected original. The confirmation/fallback deadlines are unchanged.
+
+The third original reaches the mounted outdoor level directly with reviewed
+Enter. A700ms ArrowUp pulse returns native consumption and independent UP;
+whole frames do not establish forward travel. The next reviewed leftward
+pointer movement hits the sealed2500ms HTTP timeout, with independent UP ACK.
+The lifetime closes immediately; a subsequent capture command is rejected
+locally by the sticky failure before any endpoint request. Both native/watch
+actual waits and EOFs are retained following filesystem cancellation.
+
+Offline inspection of the already-streamed trace now supplies genuinely new
+latency evidence: nonce e224a202-01d2-4cf3-b82e-5ba20680d65d settles as consumed
+3034.772ms after dispatch, before its sealed native target deadline. This does
+not revise the HTTP UNKNOWN, reopen that lifetime, or establish visual motion.
+Unlike the predecessor's unmeasured timeout, it supports independently
+qualifying a fresh policy:4000ms confirmation,5500ms fallback,10000ms UP and
+13000ms total operation, all fixed before a new lifetime. Existing native
+identity/review/receipt checks and actual900/920/180 custody remain unchanged.
+
+Qualification reproduces old2500ms HTTP failure with a3500ms authored guest
+frame; a fresh4000ms control consumes at approximately3340ms and independently
+releases. Receipt, duration, review-boundary and scene negatives pass. A normal
+production-browser USER/DirectInput keyboard+mouse control passes after the
+locked build. Its earlier concurrent-build mouse USER-dispatch assertion
+failure is retained, with releases and actual browser/watch EOFs; no cause or
+authentic browser failure is inferred from that authored control. No original
+starts until these preparations, build and strict publication finish.
