@@ -27,9 +27,12 @@ const lsFiles = (...a) => execFileSync('git', ['ls-files', '-z', ...a],
 // tracked scratch/ files once made --prune drop 54 committed .py entries
 // (8212da1f6). Untracked files count too, so new Python is caught before it is
 // committed, except untracked scratch/ evidence (per-machine, never built).
+// Only regular files: a worktree's node_modules symlink is reported as an
+// untracked file (".gitignore"'s "node_modules/" matches only a directory).
+const isFile = f => { try { return fs.statSync(path.join(root, f)).isFile(); } catch (_) { return false; } };
 const tracked = new Set(lsFiles('--cached'));
 const present = new Set([...tracked,
-  ...lsFiles('--others', '--exclude-standard').filter(f => !f.startsWith('scratch/') && fs.existsSync(path.join(root, f)))]);
+  ...lsFiles('--others', '--exclude-standard').filter(f => !f.startsWith('scratch/') && isFile(f))]);
 
 const SPAWN = /\b(?:spawn|spawnSync|execFile|execFileSync|exec|execSync|fork)\s*\(\s*['"`](?:[^'"`]*\/)?python[0-9.]*['"`]/;
 const ARGV = /\[\s*['"`](?:[^'"`]*\/)?python[0-9.]*['"`]\s*,/;

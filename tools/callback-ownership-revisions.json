@@ -175,6 +175,13 @@
       "baseSHA256": "10fb71d7574aed4e9ffea326770f061505c89591434c99143fb9444cd873780e",
       "sha256": "400a7687b2037f349b0050ed471f9fea6ceadd2a88766e535e0a962a07bb3bfc",
       "reason": "Review 20261117 Sims native COM yield12: actual owner-thread pending ReadFile fills asynchronously; retry preserves real VFS fault and native HRESULT. Exact native child token, original exports/memory and native epoch/root fence success and exceptional restoration of registers, stack, private IP/thunk, FS/SEH, flags and suspended yield. Host retirement fences new work while validated local cleanup retires output allocations, RPC buffers, packets and real interface refs before native retirement. Replacement never receives a saved frame. Authenticated exporter failure settles the executing pin without claiming a native result; caller cancellation retains executing pins until actual stub unwind. Focused actual-native same-path nesting/error/cancel/retirement and lifetime proof in run20261117-sims-native-com-yield12-continuation-repair. General ownership remains pending. Review 20261117 owned native type-description transport: SYSTEM PS lookup is synchronous and adds no callback; source pin includes the actual contract and value codecs. Returned interface attachments use authenticated exporter packets and exact caller leases, release on cancelled/unpolled replies, and retain existing real guest continuation/epoch/flags/stack fences. No new owner-restoration authority; general ownership remains pending. Focused native qualification in 20261117-sims-owned-native-typeinfo-factory-dispatch-integration."
+    },
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "78756704277e20f2d8b1be3bd7c7bb37fbd56c82582dea95d3fcb875c162d014",
+      "sha256": "71888ea52749325cf13e70051aab2aa13c7b6bfde06cf9143905abda4ba48618",
+      "reason": "Review 20261118 AoE MCI notify: sequencer/waveaudio MCI_PLAY records MCI_NOTIFY hwnd; end of play posts MM_MCINOTIFY SUCCESSFUL from the existing per-batch guest-time pump; STOP/CLOSE post ABORTED, a new notify play posts SUPERSEDED; CLI sequencer keeps playing on the MCI clock without an AudioContext. Same _cdNotify -> post_window_message path cdaudio already used; no new callback, export or guest EIP write. Run 20261118-aoe-mci-notify."
     }
   ],
   "additions": [
