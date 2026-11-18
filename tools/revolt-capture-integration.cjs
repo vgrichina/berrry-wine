@@ -5,6 +5,22 @@ const readiness = require('./revolt-startup-readiness.cjs');
 // These local refusals contain no transport uncertainty. Only the observation
 // that proved a normal wait can create one; callers never catch arbitrary errors.
 class CandidateWait extends Error {}
+// All structural/owner checks still run. Only the validator's exact local age
+// refusal can be NOT_SENT, and only while no DOWN has reached the transport.
+function verifyReviewedReadback(metadata, owner, now, maxAge, down) {
+  try {
+    require('./revolt-display-admission.cjs').verifyReadback(metadata, owner, now, maxAge);
+  } catch (error) {
+    if (down === 0 && error instanceof assert.AssertionError &&
+        error.message === 'request freshness') {
+      const refusal = Error('NOT_SENT native capture request expired before DOWN');
+      refusal.code = 'LOCAL_NOT_SENT';
+      refusal.cause = error;
+      throw refusal;
+    }
+    throw error;
+  }
+}
 // Passive pre-ticket check. Only already queued ordinary work may be waited
 // for. A validator failure is retained and closes the caller; it is not a
 // reason to retry a ticket. Use ReVolt's reader (its d3dim endpoint selection
@@ -127,6 +143,15 @@ async function prepareRelease(name){
 }
 async function gesture(cmd){`);
   replace('let child,joined,failure=null,downAt=null,armed=null;', 'let child,joined,preparedRelease,failure=null,downAt=null,armed=null;');
+  for (const ownerExpression of ['owner', 'current.page.apps[0]']) {
+    const from = `admission.verifyReadback(latest.metadata,${ownerExpression},Date.now(),age);`;
+    const occurrences = source.split(from).length - 1;
+    assert.equal(occurrences, ownerExpression === 'owner' ? 2 : 1, 'gesture freshness sites');
+    source = source.replaceAll(from,
+      `integration.verifyReviewedReadback(latest.metadata,${ownerExpression},Date.now(),age,op.down);`);
+  }
+  replace('ordering.arm(op,armed);',
+    'integration.verifyReviewedReadback(latest.metadata,owner,Date.now(),age,op.down);ordering.arm(op,armed);');
   replace("const cfg={url:browser.wsEndpoint", "if(pendingRelease){assert.equal(pendingRelease.name,cmd.name,'prepared operation name');assert(pendingRelease.child.exitCode===null&&pendingRelease.child.signalCode===null,'prepared release still live');}const cfg={url:browser.wsEndpoint");
   replace("child=cp.spawn(process.execPath,[__dirname+'/release.cjs',out,out+'/'+cmd.name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});", "preparedRelease=pendingRelease;pendingRelease=null;child=preparedRelease?.child||cp.spawn(process.execPath,[__dirname+'/release.cjs',out,out+'/'+cmd.name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});");
   replace("\n joined=new Promise(r=>child.once('close'", "\n joined=preparedRelease?.joined||new Promise(r=>child.once('close'");
@@ -158,4 +183,4 @@ const order=require('./guard.cjs');`);
     "if(!downAt&&failure.code==='LOCAL_NOT_SENT'&&!gate.closed){if(!child){assert.equal(op.down,0);assert(!op.armed);op.done=true;log('ordering.jsonl',{stage:'local-before-arm-NOT_SENT',name:op.name,at:Date.now()});}");
   return source;
 }
-module.exports = {createObserver, CandidateWait, adaptBrowser, adaptRelease, displayPreflightExpression, awaitDisplayPreflight};
+module.exports = {createObserver, CandidateWait, adaptBrowser, adaptRelease, displayPreflightExpression, awaitDisplayPreflight, verifyReviewedReadback};

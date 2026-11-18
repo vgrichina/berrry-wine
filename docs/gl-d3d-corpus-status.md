@@ -44,6 +44,69 @@ module and authored regression module have separate source/hash records.
 Full-27 coverage and arbitrary crash freedom remain open.
 Evidence: `scratch/runs/20261118-d3dim-webgl-browser-crash-close-tunnel/result.json`.
 
+Globe ordinary close is repaired by `1ad9afd92` (report `fa13214c8`). The
+fifth COM release yielded through FreeLibrary to the idle page CPU, abandoning
+the native WM_DESTROY callback. Servicing that unload on the owning Worker
+completes all six releases and permits native exit. The native old-fail/new-pass
+fixture, browser unload controls, API batching and locked build passed. For
+both software and WebGL originals, the coordinator inspected ExitProcess 0
+before host stop, exited process state, guest/render retirement and individual
+Chrome/Xvfb/openbox waits with both EOFs. The repaired scopes do not erase the
+earlier UNKNOWN closes. They use the retained `a6002d5d…` module with the
+recorded RPC/source graph; sampled original minima above the floor do not
+establish continuous disk compliance. Full-27 and arbitrary crash freedom
+remain open.
+Evidence: `scratch/runs/20261118-dx-globe-native-close-cause-repair/result.json`.
+
+Viewer report `ee3cf7db8` records the original supplied Microsoft model moving
+on actual GpuStreamSoftware and GpuStreamWebGL executors at stable 800×600.
+The coordinator reviewed the software whole-frame pair showing rotation;
+the author reviewed both pairs. Completed draw/present records and a live
+WebGL context support the backend observations. Ordinary title close reaches
+native ExitProcess 0 before cleanup on both routes, with guest/render retirement
+and individual driver, Chrome, Xvfb and openbox waits 0 with both EOFs.
+The first WebGL observer scope remains UNKNOWN and closed; a corrected active
+executor observer supplied the passing scope. This reuses the recorded
+`a6002d5d…` module and `1ad9afd92` RPC graph without a product or media change.
+Sampled original disk minima do not prove continuous compliance. Hardware,
+performance, Windows parity, full-27 and arbitrary crash freedom remain open.
+Evidence: `scratch/runs/20261118-dx-viewer-current-browser-paired-motion-close/result.json`.
+
+Twist report `671bb401e` adds author-reviewed moving textured frame pairs on
+actual software and WebGL executors with stable geometry. Software's initial
+black frame is excluded: its visible pair is later/settled, while retained
+executor counters cover the earlier observation interval. Both ordinary title
+closes reach native PostQuitMessage and ExitProcess 0 before host stop,
+followed by guest/render retirement and individual driver/Chrome/Xvfb/openbox
+waits 0 with both EOFs. No product or media change was needed. This is named-app
+motion and shutdown evidence; full-27, parity and performance remain open.
+Evidence: `scratch/runs/20261118-dx-twist-current-browser-motion-native-close/result.json`.
+
+Boids/Flip3DTL reports `dcec6ff5e` and `685d5f5a6` add four author-reviewed
+settled moving scene pairs: each registered original on actual software and
+WebGL executors. Completed draw/present records identify the active endpoints;
+ordinary title close reaches native ExitProcess 0 before host cleanup in all
+four scopes. Guest/render retirement and all sixteen individual driver/browser/
+display-manager waits complete 0 with both EOFs. Two earlier preparation scopes
+remain UNKNOWN and closed; failed readback-count assumptions are observer
+defects, not demonstrated product failures. No product/media change or recompile
+was needed. The disk floor was breached during finalization after the originals
+closed, so whole-task disk compliance failed. Full-27, Windows/backend parity,
+hardware, performance and arbitrary crash freedom remain open.
+Evidence: `scratch/runs/20261118-dx-boids-flip-current-paired-motion-native-close/result.json`.
+
+ReVolt report `3026b89f9` advances beyond menu navigation: personally chosen
+Up and Up+Left holds produce road-to-curb movement and changed heading at 8 mph,
+which the coordinator reviewed in the retained whole frame. Review ages are
+3904/4438 ms within the unchanged five-second limit, with independent neutral
+releases. A separate promotion-aware Quit run observes the guest exited with
+code 4097. Driving and exit are separate scopes, and that nonzero code is not
+classified as Windows-normal. Executing-module/Worker-role attestation and
+outer invoker/EOF receipts remain missing; earlier UNKNOWNs and disk breaches
+remain recorded. No checkpoint or lap completion is proved. Published helper
+fixes `93ee0d25c`/`cce80c7c4` passed focused tests and locked builds.
+Evidence: `scratch/runs/20261118-revolt-capture-review-handoff-driving/result.json`.
+
 ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
 Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
 lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
@@ -402,12 +465,12 @@ FPS, audio, gameplay completion or native Quit.
 
 | Registered app | Software | WebGL | Evidence runs under `scratch/runs/` |
 | --- | --- | --- | --- |
-| `dx_boids` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
-| `dx_flip3dtl` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering`; software completion: `20261117-dxsdk-software-tunnel-flip-rendering-finish` |
+| `dx_boids` | Motion and native close observed | Motion and native close observed | `20261118-dx-boids-flip-current-paired-motion-native-close`; preparation UNKNOWNs and finalization disk breach retained |
+| `dx_flip3dtl` | Motion and native close observed | Motion and native close observed | `20261118-dx-boids-flip-current-paired-motion-native-close`; preparation UNKNOWNs and finalization disk breach retained |
 | `dx_tunnel` | Motion observed | Motion observed | Same two runs as Flip3DTL; software uses the fresh follow-up |
-| `dx_twist` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
-| `dx_globe` | Motion observed | Motion observed | `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
-| `dx_viewer` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
+| `dx_twist` | Motion and native close observed | Motion and native close observed | `20261118-dx-twist-current-browser-motion-native-close`; software startup black excluded from motion pair |
+| `dx_globe` | Motion observed; native close repaired | Motion observed; native close repaired | Motion: `20261118-dx-globe-current-browser-paired-rendering-close`; repaired exit: `20261118-dx-globe-native-close-cause-repair` |
+| `dx_viewer` | Motion and native close observed | Motion and native close observed | `20261118-dx-viewer-current-browser-paired-motion-close`; first WebGL observer UNKNOWN retained |
 | `scr_architec` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |

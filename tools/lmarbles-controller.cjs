@@ -237,7 +237,8 @@ function firstLine(child, ms) {
 async function pulse(name, keys, ms, review, description, final = false, intent = 'gameplay', route = null) {
   const startedAt = now(), startedMono = mono();
   ok(alnumName(name) && ms >= 40 && ms <= 1000);
-  ok(keys.length === 1 && /^(?:keydown:(?:13|27|32|37|38|39|40|78|89)|(?:mousedown|mousemove):[0-9]{1,4}:[0-9]{1,4})$/.test(keys[0]));
+  ok((keys.length === 1 && /^(?:keydown:(?:13|27|32|37|38|39|40|78|89)|(?:mousedown|mousemove):[0-9]{1,4}:[0-9]{1,4})$/.test(keys[0])) ||
+    (read('launch.json').nativeScene && ['keydown:37','keydown:39'].includes(keys[0]) && keys.length===2 && keys[1]==='keydown:32'));
   if (keys[0].startsWith('mousedown:') || keys[0].startsWith('mousemove:')) {
     const [, x, y] = keys[0].split(':'); ok(Number(x) >= 0 && Number(x) < 1024 && Number(y) >= 0 && Number(y) < 712);
   }
@@ -261,7 +262,8 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     ok(reviewed.pngSHA256 === rr.pngSHA256, 'review binding changed');
     ok(sha(P(review + '.png')) === rr.pngSHA256, 'review image changed');
     ok(!fs.readdirSync(S.R).some(f => f.startsWith(review + '-used-by-')), 'capture already reserved; fresh review required');
-    const nonces = keys.map(() => crypto.randomUUID());
+    const compound = native && keys.length > 1;
+    const nonces = (compound ? [keys] : keys).map(() => crypto.randomUUID());
     const record = { name, keys, ms, review, reviewSHA256: rr.pngSHA256, description, nonces, createdAt: now(), intent, quitRoute: route };
     save(name + '-intent.json', record); save(review + '-used-by-' + name, { intent: name });
     const age = now() - rr.at;
@@ -285,8 +287,13 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     if (!admissionFits(now(), deadline, allowance)) return reject('before-prearm');
     ok(deadline + 2 < read('launch.json').deadline, 'operation exceeds fixed runtime');
     policy(intent, keys, review, route, deadline);
-    const releaseCap = now() + (strict ? 1.65 : 2.0);
-    save(name + '-release-cap.json', { at: releaseCap, beforeFirstDown: true });
+    // The fallback also owes a complete release confirmation. Arming at
+    // 1650ms left only 100ms of the 1750ms UP window before child startup,
+    // despite allowing that request 500ms. Reserve all 500ms before DOWN;
+    // child startup can only shorten this cap relative to actual dispatch.
+    const releaseCap = now() + (strict ? 1.25 : 2.0);
+    save(name + '-release-cap.json', { at: releaseCap, beforeFirstDown: true,
+      confirmationReserveMilliseconds: strict ? 500 : null });
     const child = cp.spawn(process.execPath, [SELF, 'release', name, owner.owner, String(releaseCap), ...(final ? ['final'] : [])],
       { stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, LMARBLES_CONTROL_OUT: S.R, LMARBLES_CONTROL_URL: S.URL } });
     const childOut = [], childErr = [];
@@ -308,6 +315,7 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         return reject('after-prearm');
       }
       for (let i = 0; i < keys.length; i++) {
+        if (compound && i > 0) break;
         const key = keys[i], nonce = nonces[i];
         const cutoff = policy(intent, keys, review, route);
         // Only DOWN targets the reviewed scene. Expiry still fences
@@ -326,7 +334,7 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         }
         save(name + '-dispatch.json', { at: deliveryAt, nonce, mayHaveEffects: true });
         const diagnostic = { file: name + '-' + nonce + '-diagnostic.json', context: { deliveryAt, releaseCap, operationDeadline: deadline } };
-        const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10, () => {
+        const receipt = await call(compound ? {action:'guarded-key-chord',keys,guard} : { action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10, () => {
           unchanged();
           policy(intent, keys, review, route, deadline);
           const sentAt = now();
@@ -342,12 +350,17 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         // reopen the context; the prearmed release remains mandatory.
         ok(Math.trunc(deliveryAt * 1000) <= receipt.consumedAt && receipt.consumedAt < guard.deadline, 'consumption exceeded targeting/admission deadline');
         ok(returnedAt < receipt.consumedAt / 1000 + ms / 1000, 'late ACK; independent UP retained; no replay');
-        receipts.push(receipt);
-        save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
+        const edges=compound ? receipt.edges : [receipt];
+        ok(Array.isArray(edges) && edges.length === (compound ? keys.length : 1) && edges.every((edge,j)=>
+          edge.state==='CONSUMED' && edge.consumed && edge.nativeMessage?.wParam===(compound ? Number(keys[j].split(':')[1]) : edge.nativeMessage?.wParam) &&
+          edge.consumedAt>=Math.trunc(deliveryAt*1000) && edge.consumedAt<guard.deadline), 'complete finite compound receipt required');
+        ok(returnedAt < edges[0].consumedAt/1000 + ms/1000, 'late first edge ACK; independent UP retained; no replay');
+        receipts.push(...edges);
+        save(name + '-release-at.json', { at: edges[0].consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
         save(name + '-receipt.json', receipt);
       }
       save(name + '-down.json', receipts);
-      const releaseAt = Math.max(...receipts.map(x => x.consumedAt)) / 1000 + ms / 1000;
+      const releaseAt = (compound ? Math.min : Math.max)(...receipts.map(x => x.consumedAt)) / 1000 + ms / 1000;
       ok(releaseAt < deadline, 'finite pulse cannot fit original operation deadline');
       ok(returnedAt < releaseAt, 'late ACK; independent UP retained; no replay');
     } catch (e) { failure = e; }
