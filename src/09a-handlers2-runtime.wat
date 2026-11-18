@@ -134,22 +134,44 @@
       (i32.shr_u (i32.and (local.get $control) (i32.const 0x00040000)) (i32.const 6))))
     (global.set $fpu_cw (local.get $cw)))
 
-  ;; 211: _controlfp(new, mask) — cdecl; query/update the current x87 word.
-  (func $handle__controlfp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $msvcrt_control_update (param $new i32) (param $requested_mask i32) (result i32)
     (local $control i32) (local $mask i32)
     (local.set $control (call $msvcrt_control_from_x87))
     ;; _controlfp does not modify the x86 DENORMAL OPERAND exception mask;
     ;; _control87 is the API which may change that bit.
-    (local.set $mask (i32.and (local.get $arg1) (i32.const 0x0007031F)))
+    (local.set $mask (i32.and (local.get $requested_mask) (i32.const 0x0007031F)))
     (local.set $control
       (i32.or
         (i32.and (local.get $control) (i32.xor (local.get $mask) (i32.const -1)))
-        (i32.and (local.get $arg0) (local.get $mask))))
+        (i32.and (local.get $new) (local.get $mask))))
     (call $msvcrt_control_to_x87 (local.get $control))
-    (i32.store offset=0 (global.get $reg_base) (call $msvcrt_control_from_x87))
+    (call $msvcrt_control_from_x87))
+
+  ;; 211: _controlfp(new, mask) — cdecl; query/update the current x87 word.
+  (func $handle__controlfp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $msvcrt_control_update (local.get $arg0) (local.get $arg1)))
     ;; The caller owns the two arguments. Pop only our return address.
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
+
+  ;; _controlfp_s(currentControl?, new, mask): optional output, errno_t result.
+  ;; This x86 CPU exposes x87, not SSE2/MXCSR; DN is a documented x86 no-op.
+  ;; Invalid selected bits invoke the default nonreturning invalid-parameter
+  ;; policy. Custom invalid-parameter-handler registration remains fail-fast
+  ;; unimplemented, so there is no registered guest handler to bypass here.
+  (func $handle__controlfp_s (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $control i32)
+    (if (i32.and (i32.and (local.get $arg1) (local.get $arg2)) (i32.const 0xFCF0FCE0))
+      (then
+        ;; STATUS_INVALID_CRUNTIME_PARAMETER: default _invoke_watson termination.
+        (call $handle__exit (i32.const 0xC0000417) (i32.const 0) (i32.const 0)
+          (i32.const 0) (i32.const 0) (local.get $name_ptr))
+        (return)))
+    (local.set $control (call $msvcrt_control_update (local.get $arg1) (local.get $arg2)))
+    (if (local.get $arg0) (then (call $gs32 (local.get $arg0) (local.get $control))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
 
   ;; 212: _strrev
   (func $handle__strrev (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

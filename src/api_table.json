@@ -39840,5 +39840,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2433900188
+  },
+  {
+    "id": 4713,
+    "name": "_controlfp_s",
+    "nargs": 3,
+    "convention": "cdecl",
+    "hash": 1836489775
   }
 ]
