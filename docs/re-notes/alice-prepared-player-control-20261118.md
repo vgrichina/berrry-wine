@@ -29,5 +29,36 @@ chain was exercised by the changed authored control before original startup.
 No controller edit/build or lifetime extension is allowed during the original.
 The original retains the accepted module/source closure and all16 media pins.
 
-Evidence: `scratch/runs/20261118-alice-prepared-player-control/`. Final original
-outcome and selected screenshots are recorded there after actual collection.
+Preparation published as `314ec0f5f`, following the focused controls and a locked
+full build. A second changed-input control exercises the predeclared gameplay
+policy (5000ms confirmation / 6500ms fallback / 12000ms physical UP / 15000ms
+operation) with W800ms and ordinary Escape. Both independently release; the
+whole authored PNG changes blue to red and ordinary ExitProcess exits cleanly.
+
+The authorized fresh original uses the exact 46c9 module and all16 unchanged
+media pins, with actual source/module readbacks against the frozen inventory.
+It creates the selected live Alice game window and renders a letterboxed Rogue
+startup emblem with bronze gears. The startup observer's arbitrary 100-presentation
+threshold remains unmet at 65 presentations, so a separate named capture is
+personally reviewed before a prompt ordinary Escape. No menu/HUD/player is visible.
+
+That Escape is dispatched with its immutable 5000ms confirmation deadline but
+the HTTP wait times out without a retained consumption receipt. Independent
+physical UP succeeds through the prearmed 6500ms fallback. This is actual UNKNOWN,
+not a known local refusal: the scope closes permanently. The passive observer's
+next local opened check detects that closure before another endpoint call and
+requests owned cancellation through the filesystem. Actual native, watchdog and
+Xvfb waits complete with both EOFs, and containment reports leaked=false. The
+native wait's exit0 reflects harness cancellation, not an ordinary original Quit.
+
+The concrete blocker is unconfirmed ordinary Escape consumption at the startup
+cinematic under the tested finite input policy. No later endpoint/status/replay,
+deadline extension, controller edit/build during the original or unchanged retry
+occurs. This run does not reach the menu or level; original W/jump remain zero,
+player control and ordinary Quit remain unverified. The earlier task's menu and
+autonomous corridor evidence is not promoted into player-control evidence.
+
+Evidence: `scratch/runs/20261118-alice-prepared-player-control/`. The result records
+three collected scopes (two authored controls and one original), six selected
+named PNGs, Git/owned patch plus exact module/media recovery references. No box
+was created: ID/expiry/stop receipt are null and state is NOT_CREATED.
