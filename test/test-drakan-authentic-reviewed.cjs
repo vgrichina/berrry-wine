@@ -7,7 +7,14 @@ function fixture(){
  const b=require('./test-sims-child-mount-native.cjs').untitledModal(),raw=r=>r-0x1000+0x200;
  const u=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24],code=[];
  const push=n=>code.push(0x68,...u(n)),call=n=>code.push(0xff,0x15,...u(n));
- for(const text of [0x402580,0x402680]){for(const n of [0x30,0x402540,text,0])push(n);call(0x40194c);}
+ b.writeUInt32LE(0x1c00,raw(0x1904));b.write('GetTickCount\0',raw(0x1c02));
+ for(const text of [0x402580,0x402680]){
+  for(const n of [0x30,0x402540,text,0])push(n);call(0x40194c);
+  if(text===0x402580){
+   call(0x401904);code.push(0x89,0xc6);const loop=code.length;
+   call(0x401904);code.push(0x29,0xf0,0x3d,...u(350),0x72,0);code[code.length-1]=(loop-code.length)&255;
+  }
+ }
  push(0);call(0x401900);code.push(0xcc);b.fill(0,raw(0x2000),raw(0x2500));b.set(code,raw(0x2000));
  b.fill(0,raw(0x2540),raw(0x2600));b.write('Authored Drakan warning route\0',raw(0x2540));
  b.write('First NULL-owner warning before main.\0',raw(0x2580));b.write('SECOND visible modal transition.\0',raw(0x2680));return b;
@@ -26,6 +33,12 @@ async function main(out){
  try{
   const end=c.now()+15;for(;;){try{const s=await a.call({action:'snapshot'},.5);if(s.nativeMessageBox&&s.physicalUp)break;}catch{}assert(c.now()<end);await c.sleep(25);}
   await a.capture('first');const first=a.read('first.json');assert.equal(first.snapshot.mainHwnd,'0x0');assert.equal(first.snapshot.nativeMessageBox.controlClass,16);
+  if(process.env.DRAKAN_CAPTURE_BASELINE){
+   const original=c.postJSON;c.postJSON=(url,command,...rest)=>original(url,command.action==='native-presentation-capture'?{...command,action:'native-reviewed-capture'}:command,...rest);
+   await assert.rejects(a.submit({review:'first',bind:true,name:'enter',key:13,ms:100,scene:'menu',observation:'Authored delayed transition baseline'}));
+   assert.equal(a.read('enter-up.json').state,'ACK');assert(a.read('enter-down.json')[0].consumed);assert(fs.existsSync(path.join(out,'terminal-input-failure.json')));
+   a.save('assertions.json',{pass:true,expectedOldFailure:true,consumed:true,independentUP:true,closedWithoutLaterEndpoint:true});return;
+  }
   await a.submit({review:'first',bind:true,name:'enter',key:13,ms:100,scene:'menu',observation:'Automated authored NULL-owner warning only'});
   const next=a.read('enter.json');assert.notEqual(next.pngSHA256,first.pngSHA256);assert.notEqual(next.snapshot.modalHwnd,first.snapshot.modalHwnd);
   assert(next.snapshot.windows.some(w=>w.title.includes('SECOND visible')));assert.equal(a.read('enter-up.json').state,'ACK');assert(a.read('enter-down.json')[0].consumed);

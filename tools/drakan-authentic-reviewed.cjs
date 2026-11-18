@@ -135,7 +135,20 @@ async function capture(name, operationDeadline = null) {
       return value;
     };
     const start = now(); let s, im;
-    if (contextContract()) { im = await observe({ action: 'native-reviewed-capture', path: p }); s = im.snapshot; }
+    if (contextContract()) {
+      // Pending readiness allocates no capture or input. A native warning may
+      // retire before the caller creates/focuses its next window. Keep the
+      // ORIGINAL observation clock; never retry a refused capture or UNKNOWN.
+      const boundedEnd = operationDeadline ?? start + 3;
+      do {
+        ok(now() < boundedEnd, '3000ms presentation readiness exceeded');
+        im = await observe({ action: 'native-presentation-capture', path: p });
+        if (!im.pending) break;
+        ok(im.contract === 'native-presentation-pending-v1', 'invalid pending presentation');
+        await c.sleep(10);
+      } while (true);
+      s = im.snapshot;
+    }
     else { s = await observe({ action: 'snapshot' }); capturePhase(); im = await observe({ cmd: 'png:' + p }); }
     const end = now();
     if (read('launch.json').inputPolicy) ok(end - start <= 3, '3000ms observation exceeded');
