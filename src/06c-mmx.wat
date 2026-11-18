@@ -51,6 +51,23 @@
   (func $xmm_set (param $i i32) (param $v v128)
     (v128.store (call $xmm_addr (local.get $i)) (local.get $v)))
 
+  ;; Preserve the x86 NaN sign/payload, quieting SNaN under the supported
+  ;; reset (masked) environment. Wasm may otherwise canonicalize an FP NaN.
+  (func $sse_promote_bits (param $bits i32) (result i64)
+    (if (i32.and
+          (i32.eq (i32.and (local.get $bits) (i32.const 0x7f800000)) (i32.const 0x7f800000))
+          (i32.ne (i32.and (local.get $bits) (i32.const 0x7fffff)) (i32.const 0)))
+      (then (return (i64.or (i64.const 0x7ff8000000000000)
+        (i64.or (i64.shl (i64.extend_i32_u (i32.and (local.get $bits) (i32.const 0x80000000))) (i64.const 32))
+                (i64.shl (i64.extend_i32_u (i32.and (local.get $bits) (i32.const 0x7fffff))) (i64.const 29)))))))
+    (i64.reinterpret_f64 (f64.promote_f32 (f32.reinterpret_i32 (local.get $bits)))))
+
+  (func $sse_promote_pair (param $v v128) (result v128)
+    (i64x2.replace_lane 1
+      (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+        (call $sse_promote_bits (i32x4.extract_lane 0 (local.get $v))))
+      (call $sse_promote_bits (i32x4.extract_lane 1 (local.get $v)))))
+
   (func $xmm_lane_get (param $v v128) (param $lane i32) (result i32)
     (if (i32.eq (local.get $lane) (i32.const 0))
       (then (return (i32x4.extract_lane 0 (local.get $v)))))
@@ -181,6 +198,31 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    ;; Legacy SSE2 reshape operations. The emulator supports the reset MXCSR
+    ;; rounding mode (nearest, ties even); LDMXCSR remains unsupported, so no
+    ;; guest can silently select an unimplemented rounding/environment mode.
+    ;; MOVD's register source/destination is a GPR, never an MMX register.
+    (if (i32.eq (local.get $sub) (i32.const 34)) (then
+      (call $xmm_set (local.get $dst) (i32x4.replace_lane 0
+        (v128.const i32x4 0 0 0 0) (call $get_reg (local.get $src))))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 35)) (then
+      (call $set_reg (local.get $dst) (i32x4.extract_lane 0 (local.get $s)))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 36)) (then
+      (call $xmm_set (local.get $dst) (f32x4.convert_i32x4_s (local.get $s)))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 37)) (then
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
+        (i64x2.extract_lane 0 (local.get $s))))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 38)) (then
+      (call $xmm_set (local.get $dst) (call $sse_promote_pair (local.get $s)))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 39)) (then
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
+        (call $sse_promote_bits (i32x4.extract_lane 0 (local.get $s)))))
+      (dispatch-next)))
     (block $wr
       (block $movmsk
       (block $cmpps
@@ -338,6 +380,33 @@
     (local.set $addr (call $read_addr))
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
+    ;; Read exactly the architectural operand width before writing XMM state.
+    (if (i32.eq (local.get $sub) (i32.const 34)) (then
+      (call $xmm_set (local.get $dst) (i32x4.replace_lane 0
+        (v128.const i32x4 0 0 0 0) (call $gl32 (local.get $addr))))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 36)) (then
+      ;; Legacy packed conversion requires m128 alignment (#GP on x86).
+      (if (i32.ne (i32.and (local.get $addr) (i32.const 15)) (i32.const 0)) (then
+        (global.set $fault_address (local.get $addr))
+        (global.set $eip (i32.add (global.get $eip) (i32.shr_u (local.get $op) (i32.const 16))))
+        (call $raise_exception (i32.const 0xC0000005))
+        (return)))
+      (call $xmm_set (local.get $dst) (f32x4.convert_i32x4_s (call $gl128 (local.get $addr))))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 37)) (then
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0
+        (v128.const i32x4 0 0 0 0) (call $gl64 (local.get $addr))))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 38)) (then
+      (local.set $s (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+        (call $gl64 (local.get $addr))))
+      (call $xmm_set (local.get $dst) (call $sse_promote_pair (local.get $s)))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 39)) (then
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
+        (call $sse_promote_bits (call $gl32 (local.get $addr)))))
+      (dispatch-next)))
     (block $wr
       (block $cmpps
       (block $movlps
@@ -508,6 +577,12 @@
     (local.set $sub (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 255)))
     (local.set $v (call $xmm_get (i32.shr_u (local.get $op) (i32.const 4))))
     (local.set $addr (call $read_addr))
+    (if (i32.eq (local.get $sub) (i32.const 35)) (then
+      (call $gs32 (local.get $addr) (i32x4.extract_lane 0 (local.get $v)))
+      (dispatch-next)))
+    (if (i32.eq (local.get $sub) (i32.const 37)) (then
+      (call $gs64 (local.get $addr) (i64x2.extract_lane 0 (local.get $v)))
+      (dispatch-next)))
     (if (i32.and (i32.eq (local.get $sub) (i32.const 33))
       (i32.ne (i32.and (local.get $addr) (i32.const 15)) (i32.const 0))) (then
       ;; MOVNTPS requires alignment even when ordinary unaligned guest stores

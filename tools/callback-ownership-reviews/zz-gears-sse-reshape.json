@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_mr",
+      "baseSHA256": "f395a494c5a3a64fa859d9dfd4984c483df150bf678d7a930e6e8669aa31be5c",
+      "sha256": "21d53176652dcca57c3c5a32007486513460bfd113904e1527fe5c7ed9832fec",
+      "reason": "Legacy SSE reshape review: MOVD/MOVSD use existing per-thread XMM slices and width-specific guest access. CVTDQ2PS rejects misaligned m128 before reading/writing XMM, records fault address and actual instruction EIP (block start + decoded offset), then delegates to existing guest SEH and returns without dispatch. No new callback continuation/frame or state lifetime. Existing MOVNTPS fault path unchanged; general invocation ownership remains pending."
+    }
+  ],
+  "additions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "i32.add",
+          [
+            "global.get",
+            "$eip"
+          ],
+          [
+            "i32.shr_u",
+            [
+              "local.get",
+              "$op"
+            ],
+            [
+              "i32.const",
+              "16"
+            ]
+          ]
+        ]
+      ],
+      "sha256": "dba28b01584613c9e29852796fe5333528515f87397c2e5b5d6cc5bf8fb44225",
+      "kind": "guest-control",
+      "reason": "Legacy SSE reshape review: MOVD/MOVSD use existing per-thread XMM slices and width-specific guest access. CVTDQ2PS rejects misaligned m128 before reading/writing XMM, records fault address and actual instruction EIP (block start + decoded offset), then delegates to existing guest SEH and returns without dispatch. No new callback continuation/frame or state lifetime. Existing MOVNTPS fault path unchanged; general invocation ownership remains pending.",
+      "ownership": "pending"
+    }
+  ]
+}

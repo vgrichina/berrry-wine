@@ -5202,6 +5202,55 @@
               (br $decode)))
 
           ;; ---- SSE base ----
+          ;; Reached legacy SSE2 reshape forms. Match mandatory prefixes
+          ;; exactly: 66 6E/7E are MOVD XMM (unprefixed is still MMX), NP 5B
+          ;; is CVTDQ2PS, F2 10/11 MOVSD, NP 5A CVTPS2PD, F3 5A CVTSS2SD.
+          ;; Other conversion families, mixed mandatory prefixes and LOCK
+          ;; deliberately reach the unsupported decoder below.
+          (local.set $mmxsub (i32.const -1))
+          (if (i32.and (i32.eqz (global.get $code16)) (i32.eqz (local.get $prefix_lock))) (then
+            (if (i32.and (local.get $prefix_66) (i32.eqz (local.get $prefix_rep))) (then
+              (if (i32.eq (local.get $op) (i32.const 0x6e)) (then (local.set $mmxsub (i32.const 34))))
+              (if (i32.eq (local.get $op) (i32.const 0x7e)) (then (local.set $mmxsub (i32.const 35))))))
+            (if (i32.eqz (local.get $prefix_66)) (then
+              (if (i32.eqz (local.get $prefix_rep)) (then
+                (if (i32.eq (local.get $op) (i32.const 0x5b)) (then (local.set $mmxsub (i32.const 36))))
+                (if (i32.eq (local.get $op) (i32.const 0x5a)) (then (local.set $mmxsub (i32.const 38))))))
+              (if (i32.and (i32.eq (local.get $prefix_rep) (i32.const 2))
+                    (i32.or (i32.eq (local.get $op) (i32.const 0x10))
+                            (i32.eq (local.get $op) (i32.const 0x11))))
+                (then (local.set $mmxsub (i32.const 37))))
+              (if (i32.and (i32.eq (local.get $prefix_rep) (i32.const 1))
+                    (i32.eq (local.get $op) (i32.const 0x5a)))
+                (then (local.set $mmxsub (i32.const 39))))))))
+          (if (i32.ne (local.get $mmxsub) (i32.const -1)) (then
+            (call $decode_modrm)
+            (local.set $imm (i32.shl (local.get $mmxsub) (i32.const 8)))
+            (if (i32.and (i32.eq (local.get $mmxsub) (i32.const 36))
+                  (i32.ne (global.get $mr_mod) (i32.const 3)))
+              (then (local.set $imm (i32.or (local.get $imm)
+                (i32.shl (i32.sub (local.get $insn_start) (local.get $start_eip)) (i32.const 16))))))
+            (if (i32.or (i32.eq (local.get $mmxsub) (i32.const 35))
+                  (i32.and (i32.eq (local.get $mmxsub) (i32.const 37))
+                           (i32.eq (local.get $op) (i32.const 0x11))))
+              (then
+                (if (i32.eq (global.get $mr_mod) (i32.const 3))
+                  (then (call $te_sse (i32.const 432)
+                    (i32.or (local.get $imm)
+                      (i32.or (i32.shl (global.get $mr_val) (i32.const 4)) (global.get $mr_reg)))))
+                  (else (call $emit_sse_mem (i32.const 434)
+                    (i32.or (local.get $imm)
+                      (i32.shl (global.get $mr_reg) (i32.const 4)))))))
+              (else
+                (if (i32.eq (global.get $mr_mod) (i32.const 3))
+                  (then (call $te_sse (i32.const 432)
+                    (i32.or (local.get $imm)
+                      (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))
+                  (else (call $emit_sse_mem (i32.const 433)
+                    (i32.or (local.get $imm)
+                      (i32.shl (global.get $mr_reg) (i32.const 4))))))))
+            (br $decode)))
+
           ;; MOVMSKPS r32,xmm extracts the four lane sign bits. It has only a
           ;; register source form.
           (if (i32.and
