@@ -60,6 +60,11 @@ scope was queried again. A subsequent control visibly changed its white
 window to a yellow triangle on maroon after independently released Space,
 but the independent disk-floor guard canceled it before Quit; its later Quit
 submission was refused locally before an endpoint request.
+That canceled control lost its driver's wait and two EOF receipts when the
+native custodian was killed after its cleanup grace. Its native-supervisor
+and enclosing waits survive; the missing driver receipts remain explicit.
+After verifying every recorded descendant absent and the retained screenshots'
+hashes, the leftover owned `/dev/shm` profile was removed separately.
 
 The final fresh authored control completed the same reviewed Space transition
 and ordinary Escape reached retained `ExitProcess(0)`. Its process, Chrome,
