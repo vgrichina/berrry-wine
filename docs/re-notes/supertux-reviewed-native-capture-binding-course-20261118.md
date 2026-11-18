@@ -30,17 +30,18 @@ LMarbles released controller ownership before these edits; common and
 supervisor files were read-only. The `786dae2f8` SuperTux manifest regression
 continues to pass.
 
-Inspection during the first affected original found an additional mistake in
-the new action: it omitted the ordinary queued PNG path's `renderer.repaint()` composite.
-Its complete black PNG was not bound or treated as a usable game review.
-A diagnostic legacy whole capture showed the animated title. Black alone does
-not prove causation: the second original also had black startup/draw-phase
-captures before later visible frames. The missing composite is independently
-proved by the lazy-compositor native fixture and the ordinary PNG code path.
-That scope closed permanently with zero owner/DOWN. Native, watchdog,
-supervisor-child, outer and enclosing supervision waits all returned 0 with
-both EOFs; cancellation is not ordinary Quit. The correction composites inside
-the same before/after context and authority checks before encoding.
+The first original returned a black whole PNG, while a later diagnostic queued
+whole capture showed the title. It closed with zero owner/DOWN and all recorded
+waits 0/both EOFs; cancellation is not ordinary Quit. Commit f86743427 made the
+compositor call explicit inside capture, following the queued PNG path. Final
+inspection found that the earlier action already called presentForRead(), whose
+hook also composites. Therefore an omitted composite is not a proved cause
+of that black image, and the lazy-compositor test does not distinguish the two
+versions. This commit is explicit compositor alignment, not an independently
+proved second defect. The second original also produced black startup/draw-
+phase captures before visible frames; those images never authorized input.
+The proved protocol defect is the separate snapshot/image and later-repaint
+SHA comparison repaired by the server-issued exact-image receipt.
 
 Actual native SDL/HTTP tests use an independently authored animated PE, real
 SDL fills/flips, the production capture/bind/controller path and identical
@@ -87,7 +88,7 @@ A final run-local two-key intention was invalid: Right was consumed, then Space
 was CANCELLED with “reviewed native scene changed”, because the first held key
 changed the reviewed physical context. This is a real refusal, not harmless
 repainting or a receipt failure. The run-local helper marked sticky terminal
-failure and requested cancellation; no endpoint was contacted afterwards. Its
+failure and requested cancellation; no new endpoint request followed the already-prearmed release. Its
 prearmed independent release acknowledged UP and exited 0 with both EOFs.
 The definite CANCELLED reply is not an actual UNKNOWN, but the conservative
 terminal closure was honored. No unchanged retry followed. No platform landing,
