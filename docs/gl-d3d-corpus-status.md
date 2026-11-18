@@ -26,9 +26,23 @@ waits with both EOFs; the original driver and enclosing command completed 0
 without leaks. This does not repair the predecessor's missing receipts.
 The new original had early black output before a later textured client, so
 no new motion or isolated rendering-fix claim follows. The global disk floor
-crossed after driver cleanup; whole-task disk compliance failed. WebGL
-shutdown equivalence and arbitrary browser/OS crash freedom remain unproved.
+crossed after driver cleanup; whole-task disk compliance failed. The WebGL
+counterpart was still open in that run; arbitrary browser/OS crash freedom
+is not established.
 Evidence: `scratch/runs/20261118-d3dim-browser-crash-regression-original-close/result.json`.
+
+The WebGL follow-up (`dd9b09da5`, report `72cd36556`) passes the tracked
+production-browser regression on both executors. The original's actual
+GpuStreamWebGL endpoint records WebGL 1 context activity, 810 draws and
+228 presents in the retained later observation. The coordinator reviewed
+the changed textured Tunnel geometry and inspected native exit 0 before
+host stop, exited process state, retirement and individual Chrome/Xvfb/openbox
+waits with both EOFs. These are backend and shutdown observations, not a
+physical-GPU or performance claim. Original-run samples stayed above the floor;
+whole-task disk compliance failed before/after that run. The retained original
+module and authored regression module have separate source/hash records.
+Full-27 coverage and arbitrary crash freedom remain open.
+Evidence: `scratch/runs/20261118-d3dim-webgl-browser-crash-close-tunnel/result.json`.
 
 ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
 Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
