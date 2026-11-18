@@ -64,8 +64,9 @@ SIGTERM performed orderly shutdown (exit 0); native and watchdog actual waits
 both retain stdout/stderr EOF, and containment reports no leaks. Native final
 statistics show 62,922 batches and 123 presents; rendering activity alone does
 not establish visible gameplay. This resource stop is the concrete unresolved
-blocker. No fixable preparation defect was demonstrated by that stop, so the
-conditional extra original was not used. All predecessor scopes remain closed.
+blocker. The coordinator then explicitly authorized the one extra original
+after its lossless disk recovery restored headroom. All predecessor scopes
+remained closed.
 
 A subsequent passive helper attempt was refused locally by `opened()` because
 the native wait already existed; no endpoint was sent. No closed runtime was
@@ -73,3 +74,16 @@ queried or replayed. The source/module actual-read audit, unchanged media and
 Settings checks, selected whole PNGs, waits and recovery records are retained
 in the run directory. `result.json` is written last. No test box was created
 (ID null, state NOT_CREATED, expiry and stop receipt null).
+
+The affected extra original verified over 2.3 GB free and used the unchanged
+published preparation/module. Its first capture was mistakenly invoked before
+the detached owner had published `native-pid.json`. The local identity guard
+refused ENOENT and closed the helper before sending any endpoint request.
+This is a launch-ordering preparation error, not a native/game finding. The
+native process was subsequently stopped by identity-checked SIGTERM; both actual
+waits and EOFs are retained, exit 0 and no leaks. No capture or input reached
+this extra original. The allowance has been consumed; no third original or
+reopening is claimed. A future authorized run must wait for the native identity
+receipt before invoking any capture. Menu/gameplay and ordinary Quit remain
+unresolved. This error does not invalidate the first original's measured
+input/startup separation or the authored oldfail/newpass evidence.
