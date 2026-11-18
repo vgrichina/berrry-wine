@@ -71,6 +71,37 @@ queues/MSG memory, without instantiating the guest VM.
   needed.
 - **Real threads (CLI):** guest threads use the cooperative scheduler by default; `--no-threads` selects that mode explicitly for reproducible A/B commands. `--threads` instead gives every guest thread its own node `worker_thread` over the one shared memory — the headless twin of the browser's Worker backend. The guest's *main* thread stays in-process, so this is not identical to the browser, but it is the only automated coverage of the shared-memory locks, the per-thread RPC blocks and the wait-completion path. The two mode flags are mutually exclusive. Add `--threads-serial` to run one guest thread at a time (splits "race" from "wrong per-thread state" in one run) and `--thread-batch-size=N` to set the steps per worker slice (default `--batch-size`, min 1000 — the browser's own rule: host.js hands its main step count to every worker, so main and workers retire work at parity. The old default, `--batch-size` × `--thread-slices` with a 20000 floor, let workers outrun main ~27× and manufactured a startup race in Hype that no real machine and no page run has). `--trace-thread` also reports why a thread got no slice this batch. Runs print a `critical sections:` line, a `held critical sections at exit` list (each section's owner, `LockCount` and `RecursionCount`) and a per-thread `csPark/steal`, `csBadLeave`, `waitingOnCS=… heldBy=…` column whenever a guest thread blocked on a `CRITICAL_SECTION`. **Read the held list first on any threads hang:** a climbing `csPark` says somebody is waiting, but only the owner/counter state says why — a section whose counters sit below the values `InitializeCriticalSection` writes (`lock=-1 recursion=0`) can never be released by the guest again, and a nonzero `csBadLeave` names the thread that put it there. A section owned by a thread that has already exited is released automatically at exit. Sections are never taken by force by default, because doing so rewrites `LockCount`/`RecursionCount` under the owner and the guest CRT reads those — `--cs-steal-after=N` turns it back on for the one measurement it is good for, telling "waiting forever" apart from "took it". See `docs/design-real-threads.md` for what worker mode does and does not get right yet.
 - **Child processes (CLI):** a guest CreateProcess with redirected std handles always runs as a real child emulator (pipes over the vlan wire, `docs/design-anonymous-pipes.md`). Any other CreateProcess only does with `--spawn-processes` (or `spawnProcesses: true` on the app in `lib/apps.js`); without it the call reports success and no child runs, which installer-extraction tests rely on. A spawned child gets a snapshot of the guest's C:\ and registry, finds its exe on that C:\ (current dir, exe dir, SYSTEM, WINDOWS), and what it leaves is merged back before the parent's wait on it returns — so `instmsi -> msiinst -> msiexec` installs Windows Installer in one run. `--pipe-child-args="..."` passes flags to every child down the tree (`--input=B:dlg-cmd:ID` answers a grandchild's dialog). Each child is another 512 MB guest: a three-level chain is boat-sized. The browser does the same with visible in-page instances (host.js `process_spawn`, `VirtualFS.mergeChildFrom`).
+- **Memory child handoff:** `--spawn-processes --child-transport=memory`
+  forks real CLI hosts for ordinary CreateProcess/ShellExecute/WinExec children
+  and grandchildren. The default `--child-transport=disk` retains the host-tree
+  transport. Memory mode sends PE bytes, the private writable C: namespace,
+  empty directories, file names, attributes, FILETIMEs, C: volume metadata and
+  registry/INI state over token-bound, sequenced, hashed Node IPC chunks. It
+  retains the existing executable/argument parsing and explicit/inherited cwd.
+  Readonly drives carry source-owned mount recipes and pins; children reopen
+  and verify the original sources without exporting media bytes. Writable lazy
+  entries must support synchronous materialization. Other writable drives and
+  redirected-pipe children are currently refused in memory mode. Launch faults
+  fail closed instead of falling back to a trace-only process ACK.
+
+  Each child sees a fork-time snapshot, not live parent/sibling edits. After a
+  normal guest ExitProcess (including nonzero exit), a complete validated delta
+  merges changed files, directories and whiteouts before its wait is signaled.
+  Untouched parent files and registry keys survive. Conflicting parent writes,
+  open parent file handles, changed registry keys, altered volume/source
+  ownership, malformed/incomplete IPC, host failure and cancellation reject the
+  delta. Refused writes restore the original namespace, bytes, metadata and
+  registry before returning failure; watcher notifications are deferred until
+  commit. A hook with irreversible external side effects is outside that
+  transaction; an exceptional rollback failure is explicitly `partialApplied`.
+  A guest-exit message alone never permits merging: the native host must
+  exit and both output pipes must close. Guest process handles keep virtual IDs;
+  optional `WINE_COM_PROTOCOL_DIR` receipts correlate them with actual OS PIDs,
+  exits, EOFs and merge results. A normally exiting parent keeps its host and
+  desktop authority until its children drain. Cancellation terminates children
+  and discards their deltas. Volatile installation lasts only for that process
+  tree; this provides no durable installation or concurrent shared filesystem.
+
 - **Prefer the CLI's own `--max-seconds=N` guard.** Controlled test harnesses
   should launch `run.js` directly and ask it to stop or quit over stdio; do not
   wrap normal runs in `timeout -s KILL`. The internal guard is checked between
