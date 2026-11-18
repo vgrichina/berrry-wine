@@ -37,3 +37,39 @@ is inferred from renderer/native visibility disagreement alone. This change is
 a tested preparation correction, not a claim that Drakan's remaining runtime
 cause has already been established. Authentic outcome follows after publication
 and the one authorized fresh registered original.
+
+Published preparation correction: `2b8ba1b67`. Focused native controls, the
+full-shell Chromium Worker control, identity negatives, existing native focus,
+guarded input and authored activation controls pass. The locked full build
+passes. No shared runtime or foreign-owned input/shell file was edited.
+
+The fresh registered original confirms the causal preparation defect. Native
+Enter consumption and independent UP completed in 459 ms, within the original
+3000 ms operation. Main focus became ready 12.356 seconds after input completion,
+after 114 passive replies. Every pending reply had exactly the six previously
+observed focus failures, with the correct process/thread actor. Ordinary native
+ShowWindow(1) then produced live Riot Engine `0x10004`, thread 1, generation 4,
+style `0x10ca0000` (WS_VISIBLE), and real main focus. The observed delay is
+legitimate initialization; renderer visibility did not mean activation had
+completed. Read-only actual Worker stacks/EIPs show initialization progress.
+The authored delayed WM_SHOWWINDOW control separately records the SWND callback
+continuation before ordinary activation. There is no evidence requiring another
+runtime activation fix.
+
+Whole-frame review found a black first post-warning frame, then the blue dragon
+loading medallion. No menu, level, movement, attack or ordinary Quit was proved.
+At 04:49:47 UTC the independent watchdog stopped the original because actual
+free disk fell to 1,484,599,296 bytes, below the required 1.5 GB floor. Native
+SIGTERM performed orderly shutdown (exit 0); native and watchdog actual waits
+both retain stdout/stderr EOF, and containment reports no leaks. Native final
+statistics show 62,922 batches and 123 presents; rendering activity alone does
+not establish visible gameplay. This resource stop is the concrete unresolved
+blocker. No fixable preparation defect was demonstrated by that stop, so the
+conditional extra original was not used. All predecessor scopes remain closed.
+
+A subsequent passive helper attempt was refused locally by `opened()` because
+the native wait already existed; no endpoint was sent. No closed runtime was
+queried or replayed. The source/module actual-read audit, unchanged media and
+Settings checks, selected whole PNGs, waits and recovery records are retained
+in the run directory. `result.json` is written last. No test box was created
+(ID null, state NOT_CREATED, expiry and stop receipt null).
