@@ -49,6 +49,13 @@ through drains and the overlapping seal sample. The burst writer is UNKNOWN.
 This native-only task created no browser profile or raw browser captures; the
 tmpfs worker was notified on the board. No UT engine defect is demonstrated.
 
+The guard's retrieved minimum was **1,081,348,096 bytes**. Its child wrote the
+summary and was absent at audit, but the enclosing tool exited 143 without a
+retained actual-parent wait or EOF receipt. The first seal attempt refused to
+publish because that receipt was missing. Board-watcher wait and both EOFs are
+retained. A fresh finite sampler covers final sealing after a short offline
+monitoring gap; no parent wait or EOF is fabricated.
+
 Two routine local issues were handled offline. An owner wrapper started before
 immutable preparation finished and failed for missing `module.json`, before
 any native process or runtime clock existed; that error and actual wait are
