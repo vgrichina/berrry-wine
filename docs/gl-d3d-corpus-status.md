@@ -30,6 +30,22 @@ measured render-starvation cause. Native/inner lifecycle waits completed;
 the final advisory watcher wait remains unverified.
 Evidence: `scratch/runs/20261117-nfs3-supervision-signal-source-driving/result.json`.
 
+The [asynchronous Node execution repair](re-notes/d3dim-async-execution-boundary-nfs3-20261118.md),
+code `9191d4afb` and report `9b6594d8c`, adds an opt-in render owner with
+separate native memory and a single consumer per shared ring. A real native
+64-draw test reduces independent event-turn delay2642.46→0.876 ms while
+preserving pixels, order, sequence and arena retirement. Twelve focused suites,
+shared-consumer/producer controls and the locked build passed. The later native
+fixture still missed800-ms consumption because USER polling occurs once per
+32-draw frame; that UNKNOWN remains closed despite prompt host application.
+The single affected NFS3 original exited during ProcessDesktop hello with
+ETIMEDOUT, before game execution or GPU kicks. Driving/Pause/Continue/native
+Quit remain unverified on this change. Native/supervisor/watchdog waits and
+separate EOFs completed with no leaks. A fresh worker investigates the actual
+startup cause; neither the event-turn control nor the earlier authored PAUSED
+caption proves original-game Pause.
+Evidence: `scratch/runs/20261118-d3dim-async-execution-boundary-nfs3/result.json`.
+
 [Four SDK examples](re-notes/dxsdk-four-examples-paired-rendering-20261117.md)
 (`112c6ef43`) and the
 [software Tunnel/Flip follow-up](re-notes/dxsdk-software-tunnel-flip-rendering-finish-20261117.md)
