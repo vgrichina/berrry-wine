@@ -41,6 +41,15 @@ async function provenance(){
    }
   };
   for(const field of ['moduleHolder','immutableManifest','childInheritance']){const recipe={...base};delete recipe[field];run('omitted-'+field,recipe);}
+  {
+   const d=path.join(out,'durable-prelaunch-refusal');fs.mkdirSync(d);
+   fs.writeFileSync(path.join(d,'recipe.json'),JSON.stringify({cwd:root,args:['node','-e','0'],seconds:220}));
+   const p=cp.spawnSync(process.execPath,[TOOL,'durablewait',d],{timeout:10000});
+   assert.equal(p.status,1,'wait layers hid prelaunch failure');
+   for(const f of ['outer-child-wait.json','outer-wait.json']){
+    const r=common.readJSON(path.join(d,f));assert.equal(r.exit,1);assert(r.actualWait&&r.stdoutEOF&&r.stderrEOF);
+   }
+  }
   if(holderpath){
    for(const [name,change] of [['missing-holder',{moduleHolder:path.join(out,'absent')}],['manifest-mismatch',{immutableManifest:{...base.immutableManifest,moduleSHA256:'0'.repeat(64)}}]])run(name,{...base,...change});
    for(const [name,change] of [['stale-holder',{startToken:'0'}],['unsealed-holder',{sealed:0}],['descriptor-mismatch',{fdPath:h.sourcePath}]]){
@@ -56,9 +65,51 @@ async function provenance(){
     }finally{for(const fd of fds)fs.closeSync(fd);}
    }
    run('valid-production-supervisor',base,true);
+   await cancellationLifetime(out,base);
   }
   console.log('PASS mandatory sealed admission before native/watchdog spawn'+(holderpath?'; exact live Git holder, manifest and actual Worker/process inheritance':' (holder-positive not requested)'));
  }finally{if(temporary)fs.rmSync(temporary,{recursive:true,force:true});}
+}
+
+// Exercise real cancellation and pipe closure, with a separately owned sibling
+// outside custody. PID disappearance alone cannot satisfy any wait assertion.
+async function cancellationLifetime(out,base){
+ for(const mode of ['parent-signal','tree-deadline']){
+  const d=path.join(out,mode);fs.mkdirSync(d);
+  const marker=path.join(d,'native-ready.json');
+  const code=`const fs=require('fs');const t=setInterval(()=>{},100);process.on('SIGTERM',()=>setTimeout(()=>{console.log('final-stdout');console.error('final-stderr');clearInterval(t)},150));fs.writeFileSync(${JSON.stringify(marker)},JSON.stringify({pid:process.pid}));`;
+  fs.writeFileSync(path.join(d,'recipe.json'),JSON.stringify({...base,args:['node','-e',code]}));
+  const sibling=cp.spawn(process.execPath,['-e',"setTimeout(()=>{console.log('sibling-final');console.error('sibling-final-err')},11000)"],{detached:true,stdio:['ignore','pipe','pipe']});
+  const siblingWait=common.communicate(sibling);
+  const now=Date.now()/1000;
+  const owner=cp.spawn(process.execPath,[path.join(root,'tools/native-supervise.cjs'),path.join(d,'custody'),String(now+8),String(now+20),'--grace=8','--',process.execPath,TOOL,'durablewait',d],{stdio:['ignore','pipe','pipe']});
+  const ownerWait=common.communicate(owner);
+  const save=(name,value)=>common.save(d,name,value);
+  const end=Date.now()+6500;
+  while(!fs.existsSync(marker)){assert(Date.now()<end,'native control did not start');await common.sleep(20);}
+  const outer=common.readJSON(path.join(d,'outer-pid.json')),inner=common.readJSON(path.join(d,'detached-parent.json'));
+  save('identities.json',{testParent:process.pid,custody:owner.pid,durable:outer.waitOwner,outer:outer.pid,supervisor:inner.pid,native:common.readJSON(marker).pid,sibling:sibling.pid});
+  if(mode==='parent-signal'){
+   const token=common.token(outer.waitOwner);
+   save('owned-signal-intent.json',{sender:process.pid,target:outer.waitOwner,startToken:token,signal:'SIGTERM'});
+   assert.equal(common.token(outer.waitOwner),token);process.kill(outer.waitOwner,'SIGTERM');
+  }
+  const w=await ownerWait;
+  save('custody-wait.json',{pid:owner.pid,exit:w.returncode,actualWait:true,stdoutEOF:owner.stdout.readableEnded,stderrEOF:owner.stderr.readableEnded,stdout:String(w.stdout),stderr:String(w.stderr)});
+  const sw=await siblingWait;
+  save('sibling-wait.json',{pid:sibling.pid,exit:sw.returncode,actualWait:true,stdoutEOF:sibling.stdout.readableEnded,stderrEOF:sibling.stderr.readableEnded,stdout:String(sw.stdout),stderr:String(sw.stderr)});
+  assert.equal(sw.returncode,0);assert.equal(String(sw.stdout).trim(),'sibling-final');assert(sibling.stdout.readableEnded&&sibling.stderr.readableEnded);
+  const receipt=common.readJSON(path.join(d,'custody/receipt.json'));
+  assert.equal(receipt.leaked,false);assert(!receipt.tracked.includes(sibling.pid),'independent sibling entered custody');
+  for(const name of ['native-wait.json','watchdog-wait.json','outer-child-wait.json','outer-wait.json']){
+   const r=common.readJSON(path.join(d,name));assert(r.actualWait&&r.stdoutEOF&&r.stderrEOF,JSON.stringify(r));
+  }
+  assert.equal(common.readJSON(path.join(d,'cancellation.json')).nativeQuit,false);
+  assert(fs.readFileSync(path.join(d,'native.stdout.log'),'utf8').includes('final-stdout'));
+  assert(fs.readFileSync(path.join(d,'native.stderr.log'),'utf8').includes('final-stderr'));
+  assert(common.readJSON(path.join(d,'outer-child-wait.json')).receivedSignals.some(s=>s.signal==='SIGTERM'&&s.forwarded));
+ }
+ console.log('PASS direct-parent and full-tree cancellation: all individual waits/EOF; independent sibling survives');
 }
 
 // The historical (pre-repair, 68543c27) Python controller cannot be executed

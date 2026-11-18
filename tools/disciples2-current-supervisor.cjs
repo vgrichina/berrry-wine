@@ -244,11 +244,28 @@ async function run(out, recipe) {
   save(out, 'supervisor-complete.json', { pid: process.pid, nativeWait: rc, watchdogWait: wr.returncode, heavyReleased: !!lock, actualChildWaits: true, bothEOF: eof.stdout === true && eof.stderr === true, at: c.now() });
 }
 
-async function spawnWait(out, mode) {
-  const p = cp.spawn(process.execPath, [SELF, mode, out], { stdio: ['ignore', 'pipe', 'pipe'], detached: true });
-  const waited = c.communicate(p);
-  await new Promise((resolve, reject) => { p.once('spawn', resolve); p.once('error', reject); });
-  return [p, waited];
+async function spawnWait(out, mode, protectWait = false) {
+  // A wait owner must survive cooperative cancellation until close (including
+  // both pipe EOFs). Forward only to its direct ChildProcess; no PID search,
+  // ancestor/group signal, or assumption about the incoming signal's sender.
+  let p;
+  const signals = [], handlers = new Map();
+  if (protectWait) for (const signal of ['SIGTERM', 'SIGINT', 'SIGHUP']) {
+    const handler = () => {
+      const forwarded = p ? p.kill(signal) : false;
+      if (signals.length < 32) signals.push({ signal, at: c.now(), sender: 'UNKNOWN',
+        forwardedBy: process.pid, child: p?.pid ?? null, forwarded });
+    };
+    handlers.set(signal, handler); process.on(signal, handler);
+  }
+  const release = () => { for (const [signal, handler] of handlers) process.removeListener(signal, handler); };
+  try {
+    p = cp.spawn(process.execPath, [SELF, mode, out], { stdio: ['ignore', 'pipe', 'pipe'], detached: true });
+    const waited = c.communicate(p).then(r => ({ ...r, receivedSignals: signals,
+      stdoutEOF: p.stdout.readableEnded, stderrEOF: p.stderr.readableEnded })).finally(release);
+    await new Promise((resolve, reject) => { p.once('spawn', resolve); p.once('error', reject); });
+    return [p, waited];
+  } catch (e) { release(); throw e; }
 }
 function detached(out, mode, logs) {
   const a = fs.openSync(path.join(out, logs[0]), 'wx'), b = fs.openSync(path.join(out, logs[1]), 'wx');
@@ -280,20 +297,21 @@ async function main() {
     console.log(JSON.stringify({ detachedHolderWaitOwner: p.pid }));
   } else if (mode === 'run') await run(out, c.readJSON(path.join(out, 'recipe.json')));
   else if (mode === 'outerwait') {
-    const [p, waited] = await spawnWait(out, 'run');
+    const [p, waited] = await spawnWait(out, 'run', true);
     save(out, 'detached-parent.json', { pid: p.pid, startToken: c.token(p.pid), outerPid: process.pid, at: c.now() });
     const r = await waited;
     fs.writeFileSync(path.join(out, 'supervisor.stdout.log'), r.stdout); fs.writeFileSync(path.join(out, 'supervisor.stderr.log'), r.stderr);
-    save(out, 'outer-child-wait.json', { pid: p.pid, exit: r.returncode, actualWait: true, stdoutEOF: true, stderrEOF: true, at: c.now() });
+    save(out, 'outer-child-wait.json', { pid: p.pid, exit: r.returncode, actualWait: true, stdoutEOF: r.stdoutEOF, stderrEOF: r.stderrEOF, receivedSignals: r.receivedSignals, at: c.now() });
+    process.exitCode = r.returncode < 0 ? 128 - r.returncode : r.returncode;
   } else if (mode === 'durablewait') {
     // This actual wait owner has no invoking-tool pipes. TERM/HUP are
     // recorded while it finishes reaping the detached outerwait child.
-    const received = c.recordSignals([]);
-    const [p, waited] = await spawnWait(out, 'outerwait');
+    const [p, waited] = await spawnWait(out, 'outerwait', true);
     save(out, 'outer-pid.json', { pid: p.pid, startToken: c.token(p.pid), waitOwner: process.pid, at: c.now() });
     const r = await waited;
     fs.writeFileSync(path.join(out, 'outer.stdout.log'), r.stdout); fs.writeFileSync(path.join(out, 'outer.stderr.log'), r.stderr);
-    save(out, 'outer-wait.json', { pid: p.pid, exit: r.returncode, actualWait: true, stdoutEOF: true, stderrEOF: true, receivedSignals: received, at: c.now() });
+    save(out, 'outer-wait.json', { pid: p.pid, exit: r.returncode, actualWait: true, stdoutEOF: r.stdoutEOF, stderrEOF: r.stderrEOF, receivedSignals: r.receivedSignals, at: c.now() });
+    process.exitCode = r.returncode < 0 ? 128 - r.returncode : r.returncode;
   } else if (mode === 'detach') {
     const p = await detached(out, 'run', ['supervisor.stdout.log', 'supervisor.stderr.log']);
     save(out, 'detached-parent.json', { pid: p.pid, startToken: c.token(p.pid), launcherPid: process.pid, at: c.now(), stdio: 'devnull/files; no outer tool pipe' });
