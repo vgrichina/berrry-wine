@@ -491,8 +491,15 @@ try {
   assert.strictEqual(tinySynth.soundOff.length, 16, 'MCI close should silence all TinySynth channels');
 
   const tinyOutHandle = tinyImports.host.midi_out_open(0, 0, 0, 0);
+  const mciSentBefore = tinySynth.sent.length;
   assert.strictEqual(tinyImports.host.midi_out_short_msg(tinyOutHandle, 0x00643C90), 0);
-  assert.deepStrictEqual(tinySynth.sent[tinySynth.sent.length - 1].raw, [0x90, 0x3c, 0x64]);
+  // A midiOut handle gets its own synth (its own channel/voice namespace,
+  // f0f203b18); the MCI sequence synth sees none of its notes.
+  const outSynth = FakeTinySynth.instances[FakeTinySynth.instances.length - 1];
+  assert.notStrictEqual(outSynth, tinySynth, 'midiOut uses a synth separate from the MCI sequence');
+  assert.strictEqual(tinySynth.sent.length, mciSentBefore, 'MCI synth gets no midiOut notes');
+  assert.deepStrictEqual(outSynth.sent[outSynth.sent.length - 1].raw, [0x90, 0x3c, 0x64]);
+  assert.strictEqual(outSynth.ac, tinyCtx._audioCtx, 'midiOut synth shares the host AudioContext');
   assert.strictEqual(tinyImports.host.midi_out_close(tinyOutHandle), 0);
   delete globalThis.WebAudioTinySynth;
 
