@@ -152,11 +152,13 @@ function admissionFits(t, deadline, allowance, releaseCap = null, ms = 0) {
   // Equality is refused: the successful ACK must be strictly before deadline.
   return t + allowance < deadline && (releaseCap === null || t + .500 + ms / 1000 < releaseCap);
 }
-function freshnessFits(t, deadline, strict) {
-  // A successful confirmation must fit before targeting expiry. This uses
-  // the existing 500ms bound, independently of release/completion allowance.
+function freshnessFits(t, deadline, strict, nativeConsumptionFenced = false) {
+  // Native-scene delivery carries this same immutable expiry to the server's
+  // pre-effect and owner USER-return fences. Only consumption targets the
+  // reviewed scene; its reply has a separate 500ms delivery-relative bound.
+  // Unproved/legacy routes retain the conservative confirmation reserve.
   const nativeDeadline = strict ? Math.trunc(deadline * 1000) / 1000 : deadline;
-  return t + (strict ? .500 : 0) < nativeDeadline;
+  return t + (strict && !nativeConsumptionFenced ? .500 : 0) < nativeDeadline;
 }
 
 async function release(name, owner, deadline, final = false) {
@@ -242,13 +244,14 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     const targetingDeadline = Math.min(rr.at + fresh, reviewed.at + fresh);
     const allowance = admissionAllowance(ms, strict);
     save(name + '-operation.json', { startedAt, deadline, targetingDeadline, pulseMilliseconds: ms, operationWindowSeconds: window,
-      admissionAllowanceSeconds: allowance, targetingConfirmationSeconds: strict ? .500 : 0 });
+      admissionAllowanceSeconds: allowance, confirmationSeconds: strict ? .500 : null,
+      targetingConfirmationReserveSeconds: strict && !native ? .500 : 0, nativeConsumptionFenced: native });
     const reject = (stage, reason = 'insufficient remaining finite-intent budget', targeting = false) => {
       save(name + '-rejection.json', { state: 'NOT_SENT', lease: 'VALID', reason, stage, domain: targeting ? 'targeting' : 'completion',
-        deadline: targeting ? targetingDeadline : deadline, requiredSeconds: targeting ? (strict ? .500 : 0) : allowance, nonces, at: now(), effects: false });
+        deadline: targeting ? targetingDeadline : deadline, requiredSeconds: targeting ? (strict && !native ? .500 : 0) : allowance, nonces, at: now(), effects: false });
       return 'NOT_SENT: insufficient remaining budget; fresh capture + review + NEW intent required';
     };
-    if (!freshnessFits(now(), targetingDeadline, strict)) return reject('before-prearm', 'insufficient targeting confirmation budget', true);
+    if (!freshnessFits(now(), targetingDeadline, strict, native)) return reject('before-prearm', 'targeting admission expired', true);
     if (!admissionFits(now(), deadline, allowance)) return reject('before-prearm');
     ok(deadline + 2 < read('launch.json').deadline, 'operation exceeds fixed runtime');
     policy(intent, keys, review, route, deadline);
@@ -266,9 +269,9 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
       childOut.push(Buffer.from(line + '\n'));
       armed = JSON.parse(line); ok(armed.armed); save(name + '-armed.json', armed);
       child.stdout.on('data', b => childOut.push(b));
-      if (!freshnessFits(now(), targetingDeadline, strict)) {
+      if (!freshnessFits(now(), targetingDeadline, strict, native)) {
         save(name + '-disarm.json', { at: now(), beforeDown: true });
-        return reject('after-prearm', 'insufficient targeting confirmation budget', true);
+        return reject('after-prearm', 'targeting admission expired', true);
       }
       if (!admissionFits(now(), deadline, allowance, strict ? releaseCap : null, ms)) {
         save(name + '-disarm.json', { at: now(), beforeDown: true });
@@ -283,9 +286,9 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
           deadline: Math.trunc(Math.min(targetingDeadline, deadline, releaseCap, intent === 'gameplay' ? cutoff : deadline) * 1000) };
         if (native) guard.intent = rr.snapshot;
         deliveryAt = now();
-        if (!freshnessFits(deliveryAt, targetingDeadline, strict)) {
+        if (!freshnessFits(deliveryAt, targetingDeadline, strict, native)) {
           save(name + '-disarm.json', { at: deliveryAt, beforeDown: true });
-          return reject('before-dispatch', 'insufficient targeting confirmation budget', true);
+          return reject('before-dispatch', 'targeting admission expired', true);
         }
         if (!admissionFits(deliveryAt, deadline, allowance, strict ? releaseCap : null, ms)) {
           save(name + '-disarm.json', { at: deliveryAt, beforeDown: true });
@@ -299,6 +302,8 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         if (receipt.consumedAt) save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
         save(name + '-receipt.json', receipt);
         ok(receipt.state === 'CONSUMED' && receipt.consumed, receipt);
+        ok(receipt.owner === owner.owner && receipt.epoch === owner.epoch && receipt.nonce === nonce && receipt.deadline === guard.deadline, 'native receipt identity changed');
+        if (native) ok(receipt.receiptBoundary === 'native-input-return' && receipt.nativeMessage?.consumption === 'owner-user-return', 'native consumption proof required');
         // The native pre-effect check can pass just before expiry and
         // publish consumption after it. Do not accept that receipt or
         // reopen the context; the prearmed release remains mandatory.
