@@ -4,6 +4,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { APPS, appFileUrl } = require('../lib/apps');
 const { isLoadableDll, dllPath } = require('../lib/dll-registry');
 
@@ -29,22 +30,27 @@ assert(fs.existsSync(path.join(root, dllPath('d3dxof.dll'))),
   'the registered d3dxof DLL must be present');
 
 const viewerFiles = APPS.dx_viewer.files;
-const expectedAliases = new Map([
-  ['c:\\camera.x', 'test/fixtures/d3drm/tetra.x'],
-  ['c:\\mslogo.x', 'test/fixtures/d3drm/cube.x'],
-  ['c:\\sphere2.x', 'test/fixtures/d3drm/cube.x'],
+// Original DX5 Viewer inputs, pinned by the recovery recipe in
+// docs/re-notes/dx-sdk-d3drm-samples.md. Renamed ProgressiveMesh copies and
+// synthetic fixture overrides must not satisfy the original-scene manifest.
+const expectedMeshes = new Map([
+  ['camera.x', [2820, '1c56daf9d94fa31c3a721d69d07d223c44ebe1972914af497da40dd251295383']],
+  ['mslogo.x', [146596, 'bbe967bbe686d5b3bc25979b70abf2d8ce6aea4b821f4ced9ca59d7902a6727d']],
+  ['sphere2.x', [21092, '804a4b79b7de03ed529bc7af7e9a904278956d6c052c9b81cc617ce703d633be']],
 ]);
-for (const [vfsPath, url] of expectedAliases) {
-  assert(viewerFiles.some(file => file && typeof file === 'object' &&
-    file.vfsPath === vfsPath && file.url === url),
-  `Viewer must mount a plain Mesh fixture at ${vfsPath}`);
+for (const [name, [bytes, sha256]] of expectedMeshes) {
+  const url = `binaries/dx-sdk/bin/${name}`;
+  const vfsPath = `c:\\${name}`;
+  assert(viewerFiles.some(file => appFileUrl(file).toLowerCase() === url),
+    `Viewer must mount the recovered original ${name}`);
+  assert(!viewerFiles.some(file => file && typeof file === 'object' &&
+    file.vfsPath?.toLowerCase() === vfsPath && appFileUrl(file).toLowerCase() !== url),
+    `Viewer must not replace ${name} with a synthetic fixture alias`);
   assert(fs.existsSync(path.join(root, url)), `${url} must exist`);
-}
-
-for (const invalid of ['camera.x', 'mslogo.x', 'sphere2.x']) {
-  assert(!viewerFiles.some(file => appFileUrl(file).toLowerCase() ===
-    `binaries/dx-sdk/bin/${invalid}`),
-  `Viewer must not mount the fabricated ProgressiveMesh ${invalid}`);
+  const mesh = fs.readFileSync(path.join(root, url));
+  assert.strictEqual(mesh.length, bytes, `${name} must retain its original SDK size`);
+  assert.strictEqual(crypto.createHash('sha256').update(mesh).digest('hex'), sha256,
+    `${name} must be the recovered original SDK mesh`);
 }
 
 console.log('PASS D3DIM browser manifests load retained-mode DLL and valid Viewer meshes');
