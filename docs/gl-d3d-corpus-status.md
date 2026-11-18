@@ -72,6 +72,28 @@ Sampled original disk minima do not prove continuous compliance. Hardware,
 performance, Windows parity, full-27 and arbitrary crash freedom remain open.
 Evidence: `scratch/runs/20261118-dx-viewer-current-browser-paired-motion-close/result.json`.
 
+Twist report `671bb401e` adds author-reviewed moving textured frame pairs on
+actual software and WebGL executors with stable geometry. Software's initial
+black frame is excluded: its visible pair is later/settled, while retained
+executor counters cover the earlier observation interval. Both ordinary title
+closes reach native PostQuitMessage and ExitProcess 0 before host stop,
+followed by guest/render retirement and individual driver/Chrome/Xvfb/openbox
+waits 0 with both EOFs. No product or media change was needed. This is named-app
+motion and shutdown evidence; full-27, parity and performance remain open.
+Evidence: `scratch/runs/20261118-dx-twist-current-browser-motion-native-close/result.json`.
+
+ReVolt report `3026b89f9` advances beyond menu navigation: personally chosen
+Up and Up+Left holds produce road-to-curb movement and changed heading at 8 mph,
+which the coordinator reviewed in the retained whole frame. Review ages are
+3904/4438 ms within the unchanged five-second limit, with independent neutral
+releases. A separate promotion-aware Quit run observes the guest exited with
+code 4097. Driving and exit are separate scopes, and that nonzero code is not
+classified as Windows-normal. Executing-module/Worker-role attestation and
+outer invoker/EOF receipts remain missing; earlier UNKNOWNs and disk breaches
+remain recorded. No checkpoint or lap completion is proved. Published helper
+fixes `93ee0d25c`/`cce80c7c4` passed focused tests and locked builds.
+Evidence: `scratch/runs/20261118-revolt-capture-review-handoff-driving/result.json`.
+
 ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
 Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
 lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
