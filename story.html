@@ -1484,14 +1484,16 @@ were:</p>
 totals match Codex&#39;s own database exactly. The Nov 18 refresh added Nov 5–18
 on top of the Nov 4 summary (<code>--base … --since=2026-11-05</code>). It scanned the
 box&#39;s live rollouts, the archive of the Nov 3–6 rollouts and the retired
-coordinator, and the laptop&#39;s logs. For 1,324 worker threads of Nov 7–13,
-whose transcripts had already been moved off the box, it took the per-thread
-total from Codex&#39;s <code>state_5.sqlite</code> and put it on the thread&#39;s start day.
-Those threads have no input/output split.</p>
+coordinator, and the laptop&#39;s logs. The 1,283 worker transcripts of Nov 7–13
+that had been offloaded to expiring snapshots were pulled back before the
+snapshots lapsed and scanned like the rest; only their counter lines were
+kept. For the 829 threads whose transcripts no longer exist anywhere, it took
+the per-thread total from Codex&#39;s <code>state_5.sqlite</code> and put it on the thread&#39;s
+start day. Those threads have no input/output split.</p>
 <pre><code>                        Codex          Claude
 Tokens on record        92.0 B         41.2 B
   of which cache reads  ~97%           ~98%
-Output tokens           213 M          98 M    (Codex output undercounted Nov 7–13)
+Output tokens           248 M          98 M    (829 Codex threads have totals only)
 Threads                 5,761          877
 Coordinator threads     3  (16.9 B: 6.9 B over 28 days, 4.4 B over 8, 5.6 B over 10)
 Exec workers            31.2 B since Oct 20    Subagents  9.0 B
@@ -1821,7 +1823,7 @@ in), so the output row is the fairer comparison.</li>
 <td align="right">14.9B</td>
 <td align="right">273M</td>
 <td align="right">15.2B</td>
-<td align="right">34M</td>
+<td align="right">46M</td>
 <td align="right">7M</td>
 <td align="right">30</td>
 </tr>
@@ -1831,7 +1833,7 @@ in), so the output row is the fairer comparison.</li>
 <td align="right">15.6B</td>
 <td align="right">755M</td>
 <td align="right">16.4B</td>
-<td align="right">23M*</td>
+<td align="right">45M</td>
 <td align="right">10M</td>
 <td align="right">10</td>
 </tr>
@@ -1848,8 +1850,8 @@ in), so the output row is the fairer comparison.</li>
 </tbody></table>
 <p>Weeks with no commits (late June, Jul 20) are omitted. The 11-02 row was
 partial (829 commits) when first published. The 11-16 week runs to the
-morning of Nov 18 UTC. *Output for Nov 7–13 is low because 1,324 worker
-threads there have totals only.</p>
+morning of Nov 18 UTC. Output for 11-02 and 11-09 was first published as
+34M and 23M, before the offloaded Nov 7–13 transcripts were pulled back.</p>
 <p>Daily, Sep 5 to Nov 18. The left bar is total tokens and the right bar is
 commits:</p>
 <pre><code>      tokens (█ ≈ 140 M)                | commits (▒ ≈ 29)
