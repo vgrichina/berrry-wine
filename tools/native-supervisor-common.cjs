@@ -151,7 +151,7 @@ function listenerOwnedBy(pid, port) {
 }
 
 // urllib.request.urlopen(POST json, timeout) -> parsed reply.
-function postJSON(url, body, timeoutSec) {
+function postJSON(url, body, timeoutSec, beforeSend = null) {
   return new Promise((resolve, reject) => {
     const data = Buffer.from(JSON.stringify(body));
     const req = http.request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': data.length } }, res => {
@@ -161,7 +161,23 @@ function postJSON(url, body, timeoutSec) {
     });
     const timer = setTimeout(() => req.destroy(Object.assign(Error('timed out'), { code: 'ETIMEDOUT' })), Math.max(1, timeoutSec * 1000));
     req.on('error', e => { clearTimeout(timer); reject(e); });
-    req.end(data);
+    // Do not queue a guarded body while an Agent is still obtaining or
+    // connecting a socket. The caller's synchronous check is the final action
+    // before handing the complete, already serialized body to the transport.
+    if (beforeSend) req.once('socket', socket => {
+      const send = () => {
+        if (req.destroyed) return;
+        try {
+          assert(!socket.destroyed && socket.writable && !socket.connecting && socket.remoteAddress && socket.remotePort,
+            'connected writable socket required');
+          beforeSend();
+          req.end(data);
+        } catch (e) { req.destroy(e); }
+      };
+      if (socket.connecting) socket.once('connect', send);
+      else send();
+    });
+    else req.end(data);
   });
 }
 

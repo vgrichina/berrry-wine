@@ -19,9 +19,9 @@ const alnumName = name => /^[A-Za-z0-9]+$/.test(name.replaceAll('-', ''));
 
 function save(n, v) { c.save(S.R, n, v); }
 function read(n) { return c.readJSON(P(n)); }
-async function call(command, timeout = 10) {
+async function call(command, timeout = 10, beforeSend = null) {
   if (c.exists(P('launch.json')) && read('launch.json').inputPolicy) timeout = Math.min(timeout, 3);
-  const r = await c.postJSON(S.URL, command, timeout);
+  const r = await c.postJSON(S.URL, command, timeout, beforeSend);
   if (!r.ok) throw Error(JSON.stringify(r));
   return r.value;
 }
@@ -293,7 +293,17 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
           return reject('before-dispatch');
         }
         save(name + '-dispatch.json', { at: deliveryAt, nonce, mayHaveEffects: true });
-        const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10);
+        const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10, () => {
+          opened();
+          ok(isDeepStrictEqual(read('input-owner.json'), owner), 'input owner replaced before connected send');
+          ok(isDeepStrictEqual(read(review + '.json'), rr) && isDeepStrictEqual(read(review + '-review.json'), reviewed)
+            && sha(P(review + '.png')) === rr.pngSHA256, 'review replaced before connected send');
+          policy(intent, keys, review, route, deadline);
+          const sentAt = now();
+          ok(freshnessFits(sentAt, targetingDeadline, strict), 'connected send targeting freshness expired');
+          ok(admissionFits(sentAt, deadline, allowance, strict ? releaseCap : null, ms)
+            && sentAt * 1000 < guard.deadline, 'connected send admission expired');
+        });
         returnedAt = now();
         if (strict) ok(returnedAt - deliveryAt <= .5, '500ms confirmation exceeded');
         receipts.push(receipt);
