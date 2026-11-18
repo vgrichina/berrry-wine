@@ -53,25 +53,31 @@ const sha = b => crypto.createHash('sha256').update(b).digest('hex');
       res.end(b || 'missing');
     });
     await new Promise(r => server.listen(0, '127.0.0.1', r));
-    timer = setTimeout(() => { for (const {child} of waits) child.kill('SIGKILL'); }, 35000);
+    timer = setTimeout(() => { for (const {child} of waits) child.kill('SIGKILL'); }, 60000);
     browser = await require('puppeteer').launch({executablePath:'/opt/google/chrome/chrome',
       headless:true, timeout:15000, protocolTimeout:15000, env:workspace.env(),
-      args:['--no-sandbox', ...require('../tools/browser-component-update-args.cjs'), ...workspace.args]});
+      args:['--no-sandbox', '--enable-unsafe-swiftshader', '--use-gl=angle', '--use-angle=swiftshader',
+        ...require('../tools/browser-component-update-args.cjs'), ...workspace.args]});
     browser.on('targetdestroyed', t => destroyed.push(t.url()));
     const page = (await browser.pages())[0];
     await page.goto('http://127.0.0.1:' + server.address().port + '/fixture.html');
     const mirror = {module:{exports:{}}};
     vm.runInNewContext(files.get('lib/region-map.generated.js').toString(), mirror);
-    const result = await page.evaluate(require('./fixtures/d3dim-crash-close-case.cjs'),
-      mirror.module.exports.BASE.GUEST_HEAP_BASE);
-    assert(result.pass);
-    const end = Date.now() + 3000;
-    while (!destroyed.some(u => u.includes('/lib/d3d-render-worker.js')) && Date.now() < end)
-      await new Promise(r => setTimeout(r, 10));
-    assert(destroyed.some(u => u.includes('/lib/d3d-render-worker.js')), 'actual Worker target destroyed');
+    const results = [];
+    for (const backend of ['software', 'webgl']) {
+      const deaths = destroyed.filter(u => u.includes('/lib/d3d-render-worker.js')).length;
+      const result = await page.evaluate(require('./fixtures/d3dim-crash-close-case.cjs'),
+        {region:mirror.module.exports.BASE.GUEST_HEAP_BASE,backend});
+      assert(result.pass);
+      const end = Date.now() + 3000;
+      while (destroyed.filter(u => u.includes('/lib/d3d-render-worker.js')).length === deaths && Date.now() < end)
+        await new Promise(r => setTimeout(r, 10));
+      assert(destroyed.filter(u => u.includes('/lib/d3d-render-worker.js')).length > deaths, backend + ': actual Worker target destroyed');
+      results.push(result);
+    }
     assert(requests.some(r => r.path === 'lib/d3d-render-worker.js' && r.status === 200));
     assert(requests.some(r => r.path === 'fixture.wasm' && r.sha256 === sha(wasm)));
-    console.log(JSON.stringify({browser:await browser.version(), moduleSHA256:sha(wasm), result, requests}));
+    console.log(JSON.stringify({browser:await browser.version(), moduleSHA256:sha(wasm), results, requests}));
   } finally {
     cp.spawn = spawn;
     if (browser) await browser.close().catch(() => {});
@@ -84,5 +90,5 @@ const sha = b => crypto.createHash('sha256').update(b).digest('hex');
     console.log('Browser cleanup', JSON.stringify(await workspace.cleanup()));
     for (const w of joined) { assert(w.actualWait && w.stdoutEOF && w.stderrEOF); assert.equal(w.code, 0); }
   }
-  console.log('PASS actual-browser malformed stream, CLOSE, replacement, STOP, pixels, canaries and refused endpoints');
+  console.log('PASS actual-browser software and WebGL malformed stream, CLOSE, replacement, STOP, pixels, canaries and refused endpoints');
 })().catch(e => { console.error(e); process.exitCode = 1; });
