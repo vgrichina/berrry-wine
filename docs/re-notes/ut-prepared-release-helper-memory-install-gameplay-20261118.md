@@ -76,3 +76,18 @@ persistent guard covered the original and offline drains; final sealing records
 its actual minimum and wait. No agent, worker, box, Python, Wine, deployment or
 held-title action was used. Box ID/expiry/stop receipt are null; state is
 NOT_CREATED. The original scope is permanently closed; no retry or extension.
+
+Final guard retrieval records a **1,496,264,704-byte minimum**, below the
+1.5 GB floor despite preempting the owned scope at the higher threshold. The
+global floor therefore **did not hold** during the monitored original/drains
+window; the exact minimum's timing within that window is unavailable. This
+task did not remove foreign files or attribute the writer.
+
+The board-watcher enclosing tool exited 143 without retaining its child wait
+or pipe EOF receipt; its recorded tail PID is absent. The first offline seal
+attempt timed out on that missing receipt and published no result. The guard
+had retired, so there is a short additional offline seal-monitoring gap before
+the final finite seal sampler. Original native/supervisor/owner and the five
+armed release-helper waits retain their actual EOF evidence. These limitations
+are recorded explicitly rather than manufacturing a board wait or reopening
+the original.
