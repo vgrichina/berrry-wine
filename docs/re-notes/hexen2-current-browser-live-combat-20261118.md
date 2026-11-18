@@ -94,3 +94,16 @@ used. Held BloodII work and foreign UT/AoW2/render overlays were preserved.
 Next prerequisite: qualify visible real-dialog Enter through actual GL-owner
 transition, independent matching release and ordinary Quit in a fresh authored
 scope. The original gameplay attempt remains unopened.
+
+## Raw-pixel correction from the release follow-up
+
+The later run `20261118-hexen2-dialog-release-browser-gameplay` decoded the
+saved PNGs without contacting any closed endpoint. The two calibration3 whole
+PNG hashes differ, but their dialog rectangle (x=65, y=345, w=299, h=125) is
+byte-identical to calibration1's visible notice: decoded RGBA SHA-256
+`00dd825eb41e2087b9ac81374142ac7f021b34a6356567e8e5f67ff815de9e19`.
+The gray body and black OK glyph pixels are present. The earlier whole-image
+transport review omitted those pixels; the claimed absence of the native
+notice is withdrawn. This does not establish an invisible runtime or justify
+a compositor repair. The missing calibration1 exceptionDetails remain unknown.
+See the follow-up note for the independent release repair and fresh original.
