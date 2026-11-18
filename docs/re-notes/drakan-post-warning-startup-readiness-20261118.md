@@ -127,3 +127,21 @@ at the authentic menu; its cause is not established by those local delivery
 logs. No claim is made that the menu Enter selected New Game, or that the
 renderer/native activation contract needs another fix. All three original
 lifetimes and every predecessor scope remain closed.
+
+During final verification all seven selected PNGs disappeared from disk, also
+reported independently by other active workers. The deletion's actor is unknown.
+Each image was recovered byte-for-byte from this task's persisted image-tool
+response in its own Codex session log, matching every previously recorded SHA256
+and size. `recover-reviewed-images.cjs` and `image-recovery.json` retain exact
+record-line/hash recovery provenance. No runtime, endpoint or capture was used
+for recovery. The existing unique runtime module remained available and matched
+its pinned hash. Selected PNGs are retained again; recovery does not invent or
+re-render evidence.
+
+The two large original native stdout logs also disappeared during finalization.
+They are explicitly missing; complete logs cannot be reconstructed. Exact
+previously returned tool-output excerpts preserve ordinary ShowWindow, menu
+DOWN/UP delivery and final statistics (`native-log-excerpts-final.json`), with
+source record hashes. Full passive readiness/actor JSONL, actual readbacks,
+guard receipts and native/watchdog wait/EOF receipts remain. No full-log
+retention claim or runtime replay is made.

@@ -90,12 +90,16 @@ module hash above. The retained preparation scripts, module source hash list,
 source-read receipts, media pins and own Git patches document those inputs.
 The original local media must pass those pins; no media copy is retained.
 
-Evidence retention limitation: final verification found all run PNGs and
-module/authored binary files absent, although they existed and the named
-frames above were personally reviewed during the task. The cause of their
-disappearance is UNKNOWN. Captures were not recreated and closed originals
-were not reopened. Surviving capture JSON records contain their hashes and
-snapshots; logs and source/module/media identity receipts remain. The result
-records this loss and lists no available screenshots. Git and the retained
-preparation scripts permit binary recovery, but cannot recover original
-screenshot pixels. This limits independent visual review of this run.
+Evidence retention incident: the run PNGs, binary files and the full
+510-sample readiness JSONL disappeared before finalization; cause UNKNOWN.
+The exact module and authored fixture were reconstructed from Git and the
+retained recipe without executing a guest, with hashes matching pre-run pins.
+Three selected personally reviewed PNGs (console, authored input consequence,
+authored delayed readiness) were recovered byte-for-byte from this session’s
+persisted image tool responses, each matching its original capture hash.
+The final two readiness snapshots and sample count were recovered as exact
+prior tool output; the full 510-sample JSONL remains missing. Recovery receipts
+record source line and record/output hashes. No guest, endpoint, capture or
+image transformation was used for recovery. This limits independent review
+of the complete passive timeline, but preserves the selected original pixels
+and final observed failure details.
