@@ -1,8 +1,8 @@
 # NFS III native scene latency, 2026-11-18
 
 Evidence: `scratch/runs/20261118-nfs3-reviewed-frame-native-scene-latency/`.
-Earlier original/UNKNOWN scopes remain closed. No original has yet been
-launched in this investigation.
+Earlier original/UNKNOWN scopes remain closed. One fresh original was
+launched after the tested runtime correction was published as `32e695ea4`.
 
 The authored Device2 control creates its native UI on a separate thread and
 uses normal guest Workers and a real software render Worker. The frozen c9
@@ -75,3 +75,42 @@ Focused scene-latency, host-step lifetime, 59 scheduler cases, native source
 attribution, legacy input and independent physical release checks passed.
 The locked full build passed. Evidence logs and exact source patches are
 retained in the run directory.
+
+The fresh registered original used the recovered b8c8 module, frozen c9
+browser graph plus recorded published patches, genuine chooser and all 135
+verified media files. All eight live owner modules (seven guest Workers and
+one render Worker) were read back as b8c8. One earlier nonowner Worker had
+already retired; its bytes were not invented or inferred from the live ones.
+The whole initial Corvette loading artwork was personally reviewed and had
+a fresh native scene. No input was sent.
+
+At 122 seconds after registration, passive preparation returned ready after
+one observation. The whole-page screenshot then took 527 ms. The subsequent
+native guard returned ready=false, closing the scope UNKNOWN immediately.
+No later endpoint requests or physical inputs occurred. This screenshot was
+personally reviewed: the game area is white, beneath the blue host strip.
+Offline PNG decode counts 1,143,910 white pixels of 1,228,800, and a lossless
+whole-image re-encode shows the same white area. This is a captured blank
+page, not evidence of a driving cockpit or a claim about the guest DIB.
+The selected render layer still had nonwhite pixels and exact positive
+window/RT association 78211, matching DIB and creator, and CPU sequence 1.
+
+The retained final 512 native receipts had maximum queue/transport delays
+0.35/34.17 ms and no receipt over 250 ms old. Samples continued at roughly
+100 ms intervals through screenshot completion. The postcapture evaluation
+header was 89 ms after its recorded producer, but precedes its synchronous
+canvas getImageData and guard calculation. The following association header
+was 253 ms after that producer; the exact guard calculation time was not
+recorded. Consequently the final refusal must not be described as proof that
+the native sample was already stale when the screenshot returned. Capture
+presentation and diagnostic ordering remain unresolved, and the refusal is
+retained unchanged. There was no admissible reviewed driving frame, throttle,
+steering, Pause, Continue or ordinary Quit proof. No unchanged original retry
+was made.
+
+Detached custody retained the same 900 s native deadline, 920 s independent
+cleanup and 180 s Quit reserve. The driver exited 1 after its guard refusal;
+the watchdog exited 0. Both actual waits and both EOF streams completed,
+the supervisor reported leaked=false and pollError=null, and the browser
+actual wait completed. No box was created: box ID/state/expiry/stop receipt
+are null/NOT_CREATED/null/null.
