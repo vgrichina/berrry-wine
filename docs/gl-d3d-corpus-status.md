@@ -137,6 +137,20 @@ is unknown, the scope is closed, and WebGL motion remains unproved. No native
 Quit or complete separate original pipe EOFs are claimed.
 Evidence: `scratch/runs/20261118-rockroll-js-startup-rendering-repair/result.json`.
 
+The [named-scene follow-up](re-notes/dx-wormhole-scifi-paired-motion-20261118.md),
+report `d998c75f5`, reused four historical Wormhole/Sci-Fi motion pairs and
+used its authorized fallback for one fresh ROCKROLL WebGL run. ROCKROLL
+bound in2786 ms and produced a changing guitar/pick pair on actual WebGL;
+completed DRAW counts rose4194→8309 and PRESENT counts188→295. The
+coordinator reviewed both whole1280×960 frames. All three loaded modules match
+`06eaa397…`; native/browser/watchdog waits and separate EOFs completed with
+no survivors. This supplies ROCKROLL's missing WebGL motion pair without
+changing the earlier interrupted result. Historical Wormhole used
+DirectDraw/Canvas2D under both selectors, with zero active WebGL draws;
+Sci-Fi's historical pair exercised actual software/WebGL. Those older pins
+do not prove current-main behavior or complete27 membership.
+Evidence: `scratch/runs/20261118-dx-wormhole-scifi-paired-motion/result.json`.
+
 The following table covers the named November17–18 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
@@ -153,7 +167,7 @@ FPS, audio, gameplay completion or native Quit.
 | `scr_architec` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
-| `scr_rockroll` | Motion observed | Startup passed; external signal before capture; motion open | `20261118-rockroll-js-startup-rendering-repair`; earlier prebinding UNKNOWNs retained |
+| `scr_rockroll` | Motion observed | Motion observed | Software: `20261118-rockroll-js-startup-rendering-repair`; WebGL: `20261118-dx-wormhole-scifi-paired-motion`; earlier UNKNOWNs retained |
 
 ## November 17 Quake III arena, depth repair and delayed input
 
