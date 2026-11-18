@@ -48,3 +48,60 @@ qualified passive Device7 observer, native covering-red/narrow-strip and
 whole-memory controls remain reusable; their first original kick was target
 upload, not proof of completed draw output. The fresh original's result will
 be recorded below after its single authorized observation.
+
+## Single causal original: concrete startup blocker
+
+The fresh registered original was launched once after publication `0dfe680b9`.
+The complete launcher image was personally reviewed before ordinary Launch.
+The exact source/module/media preflight passed; no game controls were sent.
+
+At 03:10:05 UTC, required package
+`test/binaries/win98-games-a-d/Age%20of%20Wonders2%20demo-SW/extracted/Ml42ND50.bpl`
+failed with owning Network ID `2346097.272`, canceled `net::ERR_ABORTED`.
+The controller immediately closed `REQUIRED_BODY_UNKNOWN`, before game startup.
+There were no subsequent endpoint requests, replay or additional original.
+
+Offline assessment binds its request, server UUID, captured body, continuation
+and caller. Fetch captured and verified 468,992 bytes, SHA256
+`c503b230760bfc9f3c315f91911c3b90471368115fabf227e4e95d0e34a30993`,
+then continued the original response. The actual application reader delivered
+468,992 bytes and EOF. The server independently finished with the same hash.
+The owning Network session nevertheless reported loadingFailed, with no
+loadingFinished. No explicit signal abort/cancel or earlier stopLoading,
+target-close or detach command appears in those records. The failure precedes
+local closure; cleanup is not its initiating event. These observations do not
+identify a cancellation cause or authorize accepting the request.
+
+The historical oleaut32 failure itself was not reproduced: the fresh failure
+is a different required package. The native prerequisite passed this packaged
+graph, whereas this registered original did not. Actual game Worker/module,
+completed Device7 ground draw vertices/texture/state/viewport/coverage,
+effective raster acceptance and last writer were **not reached**. There is no
+fresh terrain, army consequence or ordinary Quit evidence. The observer's
+qualified native fixture is not relabeled as game output. No production
+defect or rendering repair is proved; the conditional affected additional
+original was not used.
+
+## Lifecycle and retained evidence
+
+Each of the five controls and the single original had a finite independent
+disk/deadline watchdog and native-supervise containment, with no RAM gate.
+All driver, Chrome and watchdog waits and both pipe EOFs are retained. The
+original exits driver1, Chrome0, watchdog0; native-supervise reports exit1,
+no survivors and no poll error. The original's watchdog minimum /home free
+space is 2,128,592,896 bytes, above the 1.5 GB floor; its deadline did not fire.
+Owned tmpfs profiles were removed only after retaining waits/EOF and hashing
+the custody records. External tool waits were observed too.
+
+An actual browser control separately qualified the prearmed independent UP:
+after a trusted DOWN without its normal acknowledgement, the independent
+process delivered a trusted UP. No original game input used that capability.
+The original's prearmed source observer was never instantiated by the guest.
+No boxes were created: ID null, state NOT_CREATED, expiry null, stop receipt
+null. No workers, Wine, Python, foreign edits, deployment, media copies or
+source archives were used. Exact Git, owned patches, source/media pins,
+selected named PNGs, module recovery and final metadata live in the run.
+
+Work stops at the concrete required-body blocker. Investigating why a fully
+consumed intercepted response gets a canceled Network terminal needs new
+causal evidence; neither its cause nor the terrain defect is inferred here.
