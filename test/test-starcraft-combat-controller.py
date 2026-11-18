@@ -49,6 +49,28 @@ class Policy(unittest.TestCase):
         self.scene()
         with self.assertRaisesRegex(AssertionError, 'actual mission'): self.click()
 
+    def test_reviewed_ctrl_selection_only(self):
+        self.scene(nativeGroupSelectionSemantics='Ctrl-click selects visible units of this type'); self.mission()
+        keys = ['keydown:17', 'mousedown:200:200']
+        a.policy(keys, 'fresh', 'select')
+        for mode in ('command', 'target', 'navigate', 'quit', 'bootstrap'):
+            with self.assertRaises(AssertionError): a.policy(keys, 'fresh', mode)
+        for bad in (['keydown:18', 'mousedown:200:200'], ['mousedown:200:200', 'keydown:17'], ['keydown:17', 'mousedown:201:200']):
+            with self.assertRaises(AssertionError): a.policy(bad, 'fresh', 'select')
+
+    def test_ctrl_selection_requires_semantics(self):
+        self.scene(); self.mission()
+        with self.assertRaisesRegex(AssertionError, 'group selection'):
+            a.policy(['keydown:17', 'mousedown:200:200'], 'fresh', 'select')
+
+    def test_box_selection_same_scene_geometry_only(self):
+        self.scene(nativeGroupSelectionSemantics='Native tip box drag', pixelGeometry=dict(source='current-full-scene',target=a.c.read('native-pid.json'),chosenCenter=[200,200],dragStart=[100,100]));self.mission()
+        keys=['mousedown:100:100','mousemove:200:200']
+        a.policy(keys,'fresh','select')
+        for bad in (['mousedown:101:100','mousemove:200:200'],['mousedown:100:100','mousemove:201:200'],['mousemove:100:100','mousedown:200:200']):
+            with self.assertRaises(AssertionError):a.policy(bad,'fresh','select')
+        with self.assertRaises(AssertionError):a.policy(keys,'fresh','command')
+
     def test_bootstrap_cannot_be_mission(self):
         self.scene(sceneType='bootstrap'); self.mission()
         with self.assertRaises(AssertionError): self.click()

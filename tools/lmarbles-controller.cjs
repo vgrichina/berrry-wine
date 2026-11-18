@@ -354,7 +354,10 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     }
     if (!progressed) throw Error('no postrelease progress');
     save(name + '-progress.json', { before, afterRelease: b, postProgress: a, at: now() });
-    await c.sleep(1200);
+    // UP has been acknowledged and a later native batch has completed.
+    // The ordinary queued PNG action forces dirty presentation, composites,
+    // encodes and writes before its HTTP completion. A fixed delay adds no
+    // completion evidence; keep the original operation deadline for capture.
     if (strict) ok(mono() < end, '3000ms operation completion exceeded');
     const result = strict ? await capture(name, deadline) : await capture(name);
     if (strict) ok(mono() < end, '3000ms operation completion exceeded');
