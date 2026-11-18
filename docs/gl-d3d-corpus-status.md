@@ -4211,3 +4211,28 @@ that census.
 2026-11-07 10:23 UTC: [Worker configuration report](re-notes/graphics-remaining-worker-configs-20261107.md), commit46c5d37a7, records a harness failure before the first software Tunnel Worker capture: CDP tried to serialize the guestWorker controller returned by readiness. All four missing configurations remain open; no emulator defect established.25 unique artifacts including both modules were verified before normal nonforced shutdown of bx_8ptdehqn. Fresh graphics-worker-readiness-1023 must exercise a scalar readiness result and the exact capture branch with a live production Worker locally before another allocation.
 
 2026-11-07 15:45 UTC: [Expanded startup report](re-notes/graphics-expanded-crash-20261107.md), commit ecf85c4d9, records six serial 20-second cooperative/threaded runs. None escaped with a trap, exit, setup error or external timeout. Hexen II remained at its opening notice and did not reach GL or MIDI startup. Heretic II reached native GL book menus in both modes; Forsaken reached software Direct3D menus, with three auxiliary Workers executing in threaded mode. The worker inspected six PNGs, verified 54 retrieved artifact references and normally stopped bx_kku6pzkp. Native GL/WGL preflight and 20 sweep regressions passed; no production repair was justified. Fresh graphics-post-notice-1544 targets ordinary Hexen II notice dismissal and the uncovered startup path. These observations do not establish gameplay, visual parity, FPS, audio quality or the historical 27-app census.
+
+
+## Original game progress — 18 November 2026
+
+[Age of Wonders II durable lifetime report](re-notes/aow2-durable-native-lifetime-terrain-20261118.md)
+records run `20261118-aow2-durable-native-lifetime-terrain` on the retained
+`87ef39648` module graph, rather than current main. Reviewed before/after
+frames show five selected units moving and movement points decreasing from
+20/20 to 14/20. Mountains, trees and a tower render, while much ground stays
+black. The sampled Device7 strip and 1,355 completed draws exclude the chosen
+black ground point; the last captured upload there is black. This does not
+identify the producer responsible or establish a rendering repair. The durable
+launcher survived about 805 seconds. Ordinary Quit remains unproved after a
+native send-callback drive-limit failure; owned cancellation completed cleanup.
+
+[Blood II armed native watch report](re-notes/blood2-armed-native-watch-music-cause-20261118.md)
+records run `20261118-blood2-armed-native-watch-music-cause`. Reviewed frames
+show BUILD109 menus, level loading and a first-person world with weapon/HUD.
+The native watch disables chaining/uops and changes dispatch timing; this is
+diagnostic-route evidence, not a music repair or default-runtime stability
+claim. Four of five discovered instances were armed, with no observed watched
+music-object invalidation. World arrival followed the gameplay cutoff, so
+movement, firing and enemy consequences remain unproved. Quit input expired
+before native consumption; owned cancellation completed cleanup. Neither run
+establishes backend parity, audio quality or ordinary Quit.
