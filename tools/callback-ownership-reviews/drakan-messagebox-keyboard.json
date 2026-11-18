@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "be58e49e07260151e6c1e1137036183f42b60ec778f2e1fd74aa81eed8de01cd",
+      "sha256": "5d35de9f5289e8e27e029e8584df3afd02b5eff5e65df5ed3ad80754ddad8f26",
+      "reason": "20261118 Drakan measured native NULL-owner pre-main MessageBox Enter had no queued edge. Queue real native MessageBox keys and extend the existing modal pump native invocation-return consumer to class16. Actor/process/thread/modal/focus/generation/invocation/nonce/deadline and independent release guards remain exact. No shadow callback or synthetic consumption. Native authored oldfail/newpass visible second modal and ordinary exit required; run 20261118-drakan-authentic-warning-visible-gameplay."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_pump_step",
+      "baseSHA256": "cb79df54b8234f396eb6e64daa885b74fd3ef0950eac7821093782f9d050ec0b",
+      "sha256": "ba6e03afc40cb01a1940f520fd68b884bda81f8f4654ed9a21005fb9b777d15a",
+      "reason": "20261118 Drakan measured native NULL-owner pre-main MessageBox Enter had no queued edge. Queue real native MessageBox keys and extend the existing modal pump native invocation-return consumer to class16. Actor/process/thread/modal/focus/generation/invocation/nonce/deadline and independent release guards remain exact. No shadow callback or synthetic consumption. Native authored oldfail/newpass visible second modal and ordinary exit required; run 20261118-drakan-authentic-warning-visible-gameplay."
+    }
+  ]
+}

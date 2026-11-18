@@ -60,3 +60,15 @@ for (const vk of [13, 27]) {
 }
 
 console.log('PASS  Enter/Esc answer a Worker-parked common modal through the page shadow');
+
+// Real native MessageBox frames now have an owning modal keyboard pump.
+// Physical input must remain queued for its exact native return proof.
+for (const vk of [13, 27, 9]) {
+  const { r, handled } = renderer(0x10001);
+  r.wasm.exports.ctrl_get_class = () => 16;
+  r.handleKeyDown(vk);
+  assert.deepStrictEqual(handled, [], 'native MessageBox never executes on a shadow');
+  assert.strictEqual(r.inputQueue.length, 1);
+  assert.strictEqual(r.inputQueue[0].wParam, vk);
+}
+console.log('PASS native MessageBox keys enqueue for the owning CPU pump');
