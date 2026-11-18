@@ -82,6 +82,19 @@ waits 0 with both EOFs. No product or media change was needed. This is named-app
 motion and shutdown evidence; full-27, parity and performance remain open.
 Evidence: `scratch/runs/20261118-dx-twist-current-browser-motion-native-close/result.json`.
 
+Boids/Flip3DTL reports `dcec6ff5e` and `685d5f5a6` add four author-reviewed
+settled moving scene pairs: each registered original on actual software and
+WebGL executors. Completed draw/present records identify the active endpoints;
+ordinary title close reaches native ExitProcess 0 before host cleanup in all
+four scopes. Guest/render retirement and all sixteen individual driver/browser/
+display-manager waits complete 0 with both EOFs. Two earlier preparation scopes
+remain UNKNOWN and closed; failed readback-count assumptions are observer
+defects, not demonstrated product failures. No product/media change or recompile
+was needed. The disk floor was breached during finalization after the originals
+closed, so whole-task disk compliance failed. Full-27, Windows/backend parity,
+hardware, performance and arbitrary crash freedom remain open.
+Evidence: `scratch/runs/20261118-dx-boids-flip-current-paired-motion-native-close/result.json`.
+
 ReVolt report `3026b89f9` advances beyond menu navigation: personally chosen
 Up and Up+Left holds produce road-to-curb movement and changed heading at 8 mph,
 which the coordinator reviewed in the retained whole frame. Review ages are
@@ -452,12 +465,12 @@ FPS, audio, gameplay completion or native Quit.
 
 | Registered app | Software | WebGL | Evidence runs under `scratch/runs/` |
 | --- | --- | --- | --- |
-| `dx_boids` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
-| `dx_flip3dtl` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering`; software completion: `20261117-dxsdk-software-tunnel-flip-rendering-finish` |
+| `dx_boids` | Motion and native close observed | Motion and native close observed | `20261118-dx-boids-flip-current-paired-motion-native-close`; preparation UNKNOWNs and finalization disk breach retained |
+| `dx_flip3dtl` | Motion and native close observed | Motion and native close observed | `20261118-dx-boids-flip-current-paired-motion-native-close`; preparation UNKNOWNs and finalization disk breach retained |
 | `dx_tunnel` | Motion observed | Motion observed | Same two runs as Flip3DTL; software uses the fresh follow-up |
-| `dx_twist` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
-| `dx_globe` | Motion observed | Motion observed | `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
-| `dx_viewer` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
+| `dx_twist` | Motion and native close observed | Motion and native close observed | `20261118-dx-twist-current-browser-motion-native-close`; software startup black excluded from motion pair |
+| `dx_globe` | Motion observed; native close repaired | Motion observed; native close repaired | Motion: `20261118-dx-globe-current-browser-paired-rendering-close`; repaired exit: `20261118-dx-globe-native-close-cause-repair` |
+| `dx_viewer` | Motion and native close observed | Motion and native close observed | `20261118-dx-viewer-current-browser-paired-motion-close`; first WebGL observer UNKNOWN retained |
 | `scr_architec` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
