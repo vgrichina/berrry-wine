@@ -30,6 +30,12 @@ try {
  assert(!isMountedPrivateDll(vfs,'D:\\private.dll','D:\\setup.exe'));
  vfs.files.set('d:\\kernel32.dll',{data:bytes});assert(!isMountedPrivateDll(vfs,'kernel32.dll','D:\\setup.exe'));
  vfs.files.set('d:\\placeholder.dll',{staticModule:true});assert(!isMountedPrivateDll(vfs,'placeholder.dll','D:\\setup.exe'));
+ const {chooseCandidate}=require('../lib/media-cli');
+ const rootImage={path:'D:\\Setup.exe'},systemImage={path:'D:\\System\\Setup.exe'};
+ const plan={exeCandidates:[rootImage,systemImage]};
+ assert.equal(chooseCandidate(plan,'D:/System/Setup.exe'),systemImage);
+ assert.equal(chooseCandidate(plan,'SETUP.EXE'),rootImage);
+ assert.throws(()=>chooseCandidate(plan,'D:/absent/Setup.exe'),/not an executable candidate/);
  const resident={guestPath:'c:\\setup.exe',outputPath:'existing'};
  assert.equal(childExecutable(vfs,'c:\\setup.exe',[resident],tmp),resident);
  assert.equal(childExecutable(vfs,'c:\\missing.exe',[],tmp),null);

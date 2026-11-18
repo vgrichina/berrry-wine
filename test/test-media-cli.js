@@ -61,7 +61,7 @@ const { resolveRunSlice } = require('../lib/apps');
       'dialog automation should prefer the newest wizard page when z-order values tie');
     assert.match(runSource, /action: 'set-win16-trace'/,
       'long CLI installer runs should be able to enable Win16 tracing only near a failure');
-    assert.match(runSource, /setExeDrive\(instance\.exports, EXE_GUEST_PATH \|\| MEDIA_EXE\)/,
+    assert.match(runSource, /drive: exeDriveForPath\(EXE_GUEST_PATH \|\| MEDIA_EXE\)/,
       'mounted-media processes should prefer an explicit executable path, then the selected media drive');
     assert.match(runSource, /ctx\.vfs\.materialize\(guestExe\)[\s\S]*?await capturedLaunch\.materialize/,
       'a provider-backed ShellExecute child must be resident before CLI capture exports it');

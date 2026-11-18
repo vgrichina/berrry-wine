@@ -142,3 +142,20 @@ The browser private-DLL control also personally shows the child-authored dialog;
 its host log proves PRIVATE.DLL discovery, real PE mapping and DllMain return.
 Both actual Workers' bytecode matches the pinned module. No browser input was
 sent. Focused checks and the subsequent locked full build passed.
+
+For direct review of the same genuine System\Setup.exe selected by the autorun
+bootstrap, ordinary importer selection exposed a separate same-basename bug:
+asking for its complete path returned the earlier D:\Setup.exe by basename.
+`chooseCandidate` now permits basename fallback only for bare names. Complete
+paths remain exact, including absent-path rejection; ordinary bare-name default
+selection is preserved. This was detected before any guest launch. The focused
+media CLI test also had a stale source assertion predating configureExeOwned;
+its executable-drive precedence check now names the current owned boot API.
+Both that suite and the same-basename regression checks pass. No manual
+registry, INI, FirstRun, renderer setting or game patch is involved.
+
+Retention uses selected named whole PNGs only. Byte-identical investigation
+captures and derived lossless/BMP previews were removed after recording their
+hashes and recovery aliases; `selected-image-retention.json` maps them to the
+retained original whole capture. No source tree snapshot, frame series, capture
+bundle or second original disc was made.
