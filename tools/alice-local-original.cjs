@@ -26,7 +26,8 @@ async function call(command, timeout = 10) {
   return r.value;
 }
 class ReserveRejected extends Error { constructor(m) { super(m); this.name = 'ReserveRejected'; } }
-const QUIT_ROUTES = { 'ordinary-escape': ['keydown:27'], 'ordinary-enter': ['keydown:13'] };
+const QUIT_ROUTES = { 'ordinary-escape': ['keydown:27'], 'ordinary-enter': ['keydown:13'],
+  'ordinary-down': ['keydown:40'], 'ordinary-left': ['keydown:37'], 'ordinary-right': ['keydown:39'] };
 const CONTEXT_CONTRACT = 'native-reviewed-context-v1';
 const contextContract = () => read('launch.json').bindingContract === CONTEXT_CONTRACT;
 function nativeReview(rr, personal) {
