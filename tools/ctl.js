@@ -261,6 +261,9 @@ async function main() {
     if (positional[2]) commands.name = positional[2];
     const every = process.argv.find(a => a.startsWith('--every='));
     if (every) commands.everyNSteps = parseInt(every.slice(8), 10);
+    // --scale=2: nearest-neighbour upscale so pixel art survives the encoder.
+    const scale = process.argv.find(a => a.startsWith('--scale='));
+    if (scale) commands.scale = parseInt(scale.slice(8), 10);
   } else if (VERB === 'eval') {
     commands = { action: 'eval', code: positional.slice(1).join(' ') };
   } else if (VERB === 'cmd') {
