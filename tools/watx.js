@@ -47,7 +47,15 @@ module.exports = {
   // matters: tools/watx-closure.js, lib/watx-compile-worker.js) must decode
   // through this rather than TextDecoder, or it pays two bytes of heap per
   // source character. See the comment on the function itself.
-  sourceTextFromBytes: ctx.watxSourceTextFromBytes,
+  sourceTextFromBytes(bytes) {
+    // Buffer.slice() aliases its input; the compiler uses Uint8Array.slice()
+    // to copy comments before normalization. Give it a plain view so the lazy
+    // copy preserves the caller's source bytes, including subarray boundaries.
+    const input = Buffer.isBuffer(bytes)
+      ? new Uint8Array(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+      : bytes;
+    return ctx.watxSourceTextFromBytes(input);
+  },
   // Reading a node's position back out. The location is one packed integer, so
   // these are the only supported way to ask which file and line a form came
   // from — a caller that decodes the integer itself is depending on the

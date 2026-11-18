@@ -12,7 +12,10 @@ const { compile, compileAsync, parseSource, sourceTextFromBytes, watxNodeFile, w
 // for 21 KB of banner decoration.
 const bannerBytes = Buffer.from(
   ';; ══ banner ══\n(func $f (export "f") (result i32) (effects) (i32.const 7))\n', 'utf8');
+const originalBannerBytes = Buffer.from(bannerBytes);
 const bannerText = sourceTextFromBytes(bannerBytes);
+assert.deepStrictEqual(bannerBytes, originalBannerBytes,
+  'comment normalization must preserve caller-owned Buffer bytes');
 assert.strictEqual(bannerText.length, bannerBytes.length,
   'a comment-only non-ASCII source must decode one character per byte');
 assert.strictEqual(/[^\x00-\x7f]/.test(bannerText), false,
@@ -33,6 +36,20 @@ assert.deepStrictEqual(Buffer.from(bannerBuilt.wasmBinary), Buffer.from(bannerUt
 const literalBytes = Buffer.from('(data (i32.const 0) "café")\n;; ══\n', 'utf8');
 assert.strictEqual(sourceTextFromBytes(literalBytes), literalBytes.toString('utf8'),
   'a high byte outside a comment must fall back to UTF-8 decoding, untouched');
+// Normalize a comment first, then discover real UTF-8 content. Falling back
+// must still decode the original bytes, including when the Buffer is a view.
+const sourceWithPrefix = Buffer.from('prefix;; ══\n(data (i32.const 0) "café")\nsuffix');
+const originalWithPrefix = Buffer.from(sourceWithPrefix);
+const sourceView = sourceWithPrefix.subarray(6, sourceWithPrefix.length - 6);
+assert.strictEqual(sourceTextFromBytes(sourceView),
+  originalWithPrefix.subarray(6, originalWithPrefix.length - 6).toString('utf8'),
+  'UTF-8 fallback after a comment must use the original bounded source view');
+assert.deepStrictEqual(sourceWithPrefix, originalWithPrefix,
+  'decoding a Buffer view must not mutate its source or surrounding bytes');
+const typedSource = new Uint8Array(originalBannerBytes);
+assert.strictEqual(sourceTextFromBytes(typedSource), bannerText);
+assert.deepStrictEqual(Buffer.from(typedSource), originalBannerBytes,
+  'plain Uint8Array sources must also remain unchanged');
 // A string is not a comment even when it contains one, and vice versa: the `;;`
 // here opens nothing, so the `é` after it is still string content and must
 // survive. Reading it as a comment would asciify a live data byte.

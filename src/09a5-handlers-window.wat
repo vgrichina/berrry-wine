@@ -314,7 +314,9 @@
     (local.set $i (i32.add (local.get $i) (i32.const 1)))
     (br $scan2)))))))
     ;; Allocate HWND; first top-level window becomes main_hwnd
-    (if (i32.eqz (global.get $main_hwnd))
+    (if (i32.and
+          (i32.eqz (global.get $main_hwnd))
+          (i32.eqz (i32.and (local.get $arg3) (i32.const 0x40000000))))
     (then (call $main_hwnd_adopt (local.get $hwnd))))
     ;; Resolve menu: explicit hMenu arg wins; if 0, fall back to the class's
     ;; lpszMenuName (WNDCLASSA+32) when it's a MAKEINTRESOURCE integer
@@ -1143,12 +1145,17 @@
     ;; fine with that because messages are hwnd-targeted. Our emulator has a
     ;; convenience main_hwnd used by tests/default input routing, so promote
     ;; the first real dialog when main_hwnd currently points at a WAT-native
-    ;; helper window.
-    (if (i32.or
-          (i32.eqz (global.get $main_hwnd))
-          (i32.eq (call $wnd_table_get (global.get $main_hwnd))
-                  (global.get $WNDPROC_CTRL_NATIVE)))
-      (then (global.set $main_hwnd (local.get $hwnd))))
+    ;; helper window. A modeless WS_CHILD page created by a modal dialog's
+    ;; WM_INITDIALOG is never an application main, even before the outer
+    ;; dialog has shown or assigned a main HWND. Retain the real top-level
+    ;; selection on its ordinary ShowWindow path.
+    (if (i32.and
+          (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x40000000)))
+          (i32.or
+            (i32.eqz (global.get $main_hwnd))
+            (i32.eq (call $wnd_table_get (global.get $main_hwnd))
+                    (global.get $WNDPROC_CTRL_NATIVE))))
+      (then (call $main_hwnd_adopt (local.get $hwnd))))
     ;; Tell the renderer the dialog has been loaded; it builds its JS
     ;; window object by reading header + control state via the dlg_* /
     ;; ctrl_* exports. No template parsing on the JS side.
@@ -1569,7 +1576,11 @@
                 (i32.and (i32.ne (local.get $arg1) (i32.const 0))
                          (i32.ne (local.get $arg0) (global.get $main_hwnd)))
                 (i32.or (i32.eqz (global.get $show_window_activated)) (call $show_window_replaces_utility_main (local.get $arg0))))
-              (i32.or (i32.eqz (call $wnd_is_effectively_visible (global.get $main_hwnd))) (call $show_window_replaces_utility_main (local.get $arg0))))
+              ;; HWND 0 terminates a visible ancestor walk; it is not an
+              ;; existing visible main window. Modal initialization may
+              ;; create only children before the root's first ShowWindow.
+              (i32.or (i32.eqz (global.get $main_hwnd))
+                (i32.or (i32.eqz (call $wnd_is_effectively_visible (global.get $main_hwnd))) (call $show_window_replaces_utility_main (local.get $arg0)))))
             (i32.eqz (call $wnd_get_parent (local.get $arg0))))
           (i32.or (i32.eqz (call $wnd_get_owner (local.get $arg0))) (call $show_window_replaces_utility_main (local.get $arg0))))
       (then
