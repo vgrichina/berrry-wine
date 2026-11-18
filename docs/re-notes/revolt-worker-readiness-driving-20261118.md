@@ -1,0 +1,45 @@
+# ReVolt Worker readiness and bounded manual-input outcome — 2026-11-18
+
+Harness change `30e35805fb7d263c91fb12ee80bd5ae628c6a24b` is tested and published. The fresh registered original passed the previously blocked Worker classification: all three initial exact-parent targets identified themselves and supplied actual executing wasm `a6002d5dbcfeb534a0eadd223da616e525aa1542dad2bde381fe54e00ee862f8`. It reached the normal menu and rendered an attract race. Manual driving, speed/steering, checkpoints/laps and ordinary original Quit remain unverified. The scope closed on a later input-admission refusal before DOWN. No production runtime defect is proved.
+
+Evidence: `scratch/runs/20261118-revolt-worker-readiness-driving/`, with `result.json` written last. The [preceding investigation](revolt-d3dim-display-admission-driving-20261118.md) remains terminal: its exact target AB2F192752C5214BD015FC9F17ABFF7D still has unknown lexical role/module and unknown query-body entry. This fresh run does not retrospectively classify it.
+
+## Tested harness change
+
+`tools/revolt-display-admission.cjs` adds passive scheduler readiness and an exact Worker execution-context binding. Attachment and a completed display publication do not imply JavaScript readiness. Existing page-owned guest links expose initialization and pending commands; the render manager exposes pending transport work. Known work returns NOT_READY without issuing a Worker evaluation. Natural readiness is bounded by the declared startup deadline; no guest poll, wake, clock, focus, debugger pause or synthetic presentation is introduced.
+
+Worker reads require the exact parent target/session and Chrome's unique execution-context ID. Numeric context-ID reuse, context/target retirement, exceptions and transport failure close admission. Request start, body entry, body end, reply and context-ready records retain target/session/context/nonce. Host receipt order can differ from execution order because console events and command replies are separate protocol deliveries; the nonce binds them. No timeout was increased. The earlier connection, shared gate, readback and independent release bodies are unchanged. Disk helper `cf132e191` was coordinated, hash matched and left untouched.
+
+Focused tests cover foreign contexts/parents, absent contexts, startup/busy no-request behavior, unique-context pinning, replacement, exceptions and transport failure. A real native Worker thread and a normal headful Chrome Worker each demonstrate old immediate-read timeout versus new no-request-while-busy/natural-return success. The Chrome Worker performs a finite 900 ms Atomics.wait and is never diagnostically awakened. Actual Worker termination closes the binding with zero later ordinary requests; synthetic numeric-ID-reuse coverage is separately identified in the tracked tests. The first plain-page Chrome control lacked isolation and closed on SharedArrayBuffer absence; it was not reopened. Its failed evidence remains retained.
+
+`node test/test-revolt-display-admission.cjs` and the locked build pass. A new native Device7 draw/fence/readback fixture over the published source graph produces RGB565 red (`native-fixture.json`). The normal-browser production control recovers actual guest and render wasm, shows blue/green/blue selected whole images around paired arrows, and independently releases to neutral. Some other selected captures are black; the run's review-correction records retract stale boilerplate color descriptions. They are not substituted for the selected blue/green frames.
+
+The first production control closed on expected final-Quit Worker retirement before its terminal page observer could run. No later ordinary request was sent. A distinct predeclared fresh control corrected the run-local irreversible-final-Quit routing: Worker admission ends, only the bounded page exit observer and host cleanup remain. That control verifies trusted Escape DOWN/UP, physical neutral, `processExited=true`, `processExitCode=0`, and stopped guest state. Original Quit is not inferred from authored Quit.
+
+## One fresh unchanged original
+
+The original served immutable published Git `30e35805f…`; `original-graph-freeze.json` verifies equality with the then-current published runtime graph. The compiled module is `a600…`, excluding foreign shared-tree WIP. All 463 media pins, including real Mss32.dll, matched before launch and after cleanup. No media, guest, registry or configuration changes were made. The source manifest, relevant binary diffs and publication receipts pin recovery; no source-tree archive was retained.
+
+Limits fixed before launch: startup 900 s, total 1800 s, Quit reserve 180 s, terminal observation 60 s, cleanup 20 s, transport/capture 3 s, matching release fallback 5 s, maximum gesture 1.4 s, menu freshness 30 s and driving freshness 5 s. Shared disk admission checks every ordinary issue; an independent finite watchdog observes the same closure before signaling. Its sampled original minimum was 1,656,737,792 bytes, above both the 1.6 GB early reserve and 1.5 GB required floor. No limit was extended and the original was not retried.
+
+Startup acquired ordinary native readback-backed publication, initially black. Natural scheduler observations then distinguished pending callExport, slice, completeWait, init and initGuestThread work: 623 of 657 observations were NOT_READY across the complete scope. Classification completed with these actual bindings:
+
+| Target | Actual classification | Actual module |
+| --- | --- | --- |
+| 981876E460250B1D2685F2C73860037E | D3DIM render endpoint 1, WebGL backend | a600… |
+| 545D1422B416E71F542136EFED706984 | guest endpoint 1, slot 0 | a600… |
+| B3918F3A2658E53ADF10AABA357C19EA | guest endpoint 2, slot 1 | a600… |
+
+All 30 Worker reads have nonce-matched request/body-entry/body-end/reply records. There was no fresh classification timeout. Five later transient exact-parent targets were observed during ordinary title activity; their lexical roles/modules were not recovered and are explicitly unknown. The initial main/render/auxiliary proof does not classify future targets or establish complete later-module coverage. No role is assigned by elimination.
+
+Personally reviewed whole frames show Start Race selected in the normal menu, a loading screen, and rendered street/car scenes labeled **Demo Mode**. These are attract-mode evidence, not manual racing. The first Enter and Escape were delivered with paired trusted releases and physical neutral; guest consumption is not acknowledged by CDP. The later normal-menu frame is an observation after Escape, not independent proof of its causal consumption.
+
+At 10:21:48.149 UTC the controller closed UNKNOWN with `NOT_SENT: identity left insufficient release window`. The attempted 1200 ms Enter had **no DOWN**. Its release was armed at 10:21:43.113 with fixed fallback 10:21:48.113. The final native-context sequence waited naturally, then read exact main target 545D… at 10:21:47.894 and auxiliary target B391… at 10:21:48.021; both bodies completed. Insufficient fallback time remained. The selected menu image was also 32,268 ms old by refusal, beyond its separate 30 s freshness limit. Neither limit was relaxed. The exact independent fallback UP acknowledged physical Enter neutral before UNKNOWN.
+
+There were 776 ordinary requests total, two ordinary DOWNs in earlier menu/demo navigation, and **zero ordinary requests after UNKNOWN**. A subsequent command-file request was rejected locally by the closed-scope guard without endpoint access. No manual race, paired speed/steering, checkpoint, lap or ordinary original Quit follows this closure. Host teardown completed; no fresh original scope was admitted.
+
+## Cleanup and recovery limits
+
+The original and successful authored Quit control retain actual browser, private display, window manager, native driver/supervisor, watchdog, enclosing launcher and invoker waits. All named original waits include both EOFs; native supervision reports no leak. Final audit verifies recorded owned PIDs absent and owned profiles removed. The first authored production control has a separate intermediate supervisor parent-wait/EOF receipt gap: its old watchdog SIGTERM raced that receipt write. Native driver and actual enclosing waits survive. This gap is explicitly retained, not reconstructed. The initial tail tool also ended with tool exit 143 without separate EOF fields; a final finite board watcher has its own actual child close/EOF receipt.
+
+Git is the source archive. `RECOVERY.md` records offline source/module/native-fixture reconstruction and unchanged media recovery. Closed logs compressed losslessly have size/hash/roundtrip receipts and adjacent recovery notices. Selected whole screenshots and unique authored inputs/modules remain in the run. No agents, Codex workers, boxes, Python, Wine, public deployment or held-title actions were started. Box ID/expiry/stop receipt are null, state NOT_CREATED. Foreign overlay/UT, LTris, guard/Caesar and held BloodII work was preserved. Ownership is released after evidence sealing.
