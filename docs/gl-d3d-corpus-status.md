@@ -398,6 +398,28 @@ used the same immutable source37118/module`eb2395e1…`, original EXE+37 files
 and unchanged input guards. All44 known owned PIDs were nonlive after cleanup.
 Evidence: `scratch/runs/20261118-donuts-confirmed-level-progression/result.json`.
 
+## November 18 FoxBear visible controls and ordinary Quit
+
+The [corrected-boot original](re-notes/foxbear-corrected-boot-visible-controls-20261118.md),
+report `c712f0790`, establishes visible right/left movement with forest
+scrolling, an airborne jump and a red apple appearing at the fox's mouth/hand.
+The coordinator reviewed the complete initial, right, jump, apple and left
+frames. Projectile travel/impact and separate crouch/stop consequences remain
+unproved. Six finite gameplay DOWNs were consumed and their independent UPs
+acknowledged. Ordinary F12 was then consumed; the native owner actually exited0,
+signal null, with both EOFs and no forced cancellation. Final UP was
+OWNER_EXITED/unacknowledged, not a physical release ACK.
+
+Published preparation `084802a67`/`6308e7a3b` supplies retained-frame native
+context binding, actual main/Worker media aliases and mandatory boot data.
+The corrected recipe uses source`6308e7a3b`, module`eb2395e1…` and unchanged
+original EXE/ART pins. Native oldfail/newpass, refusal, queued-expiry, independent
+UP, durable TERM/KILL and locked-build proofs were reused; no runtime repair
+or additional original was needed. All11 known owned PIDs were nonlive after
+cleanup, with no reported leak. Earlier failed scopes retain their limitations.
+This game-control result does not add a GL backend or measured FPS claim.
+Evidence: `scratch/runs/20261118-foxbear-corrected-boot-visible-controls/result.json`.
+
 ## November 18 Blood II preparation and level-entry limit
 
 The [frozen preparation repair](re-notes/blood2-frozen-renderer-dependency-repair-combat-20261118.md),
