@@ -435,6 +435,12 @@
           ;; publication never queried by FindWindow; absence is not evidence
           ;; that it was renderer-only. No WND lock is held across this import.
           (i32.store8 (i32.add (region.addr $WND_LOOKUP_RETIRED 0) (local.get $i)) (i32.const 1))
+          ;; Every retirement path, including WAT-native modal tree teardown,
+          ;; must release this instance's focus. Do this before host callbacks
+          ;; can observe the retired HWND. Preserve any unrelated live focus;
+          ;; restoration/activation remains the caller's normal USER policy.
+          (if (i32.eq (global.get $focus_hwnd) (local.get $hwnd))
+            (then (drop (call $focus_publish (i32.const 0)))))
           (call $host_set_window_class (local.get $hwnd) (i32.const -2))
           ;; A top-level window owns its canonical software-GDI presentation.
           ;; Child removal is a no-op because child DCs resolve to that owner.

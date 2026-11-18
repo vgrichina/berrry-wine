@@ -145,6 +145,10 @@ async function capture(name, operationDeadline = null) {
         im = await observe({ action: 'native-presentation-capture', path: p });
         if (!im.pending) break;
         ok(im.contract === 'native-presentation-pending-v1', 'invalid pending presentation');
+        // Retain every returned reason before the next request or deadline
+        // check. UNKNOWN closes this scope; evidence needs no later endpoint.
+        fs.appendFileSync(P(name + '-presentation-pending.jsonl'),
+          JSON.stringify({start,boundedEnd,at:now(),reply:im}) + '\n');
         await c.sleep(10);
       } while (true);
       s = im.snapshot;
