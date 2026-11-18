@@ -17,6 +17,19 @@ ordinary focus gesture, so no isolated renderer fix is established. The run
 also records disk-floor breaches. Neither full-27 nor crash freedom follows.
 Evidence: `scratch/runs/20261118-d3dim-browser-startup-cause-shutdown-original/result.json`.
 
+Follow-up `c7ac59e41` adds the actual-browser regression to tracked tests;
+report `0a55fecd6` also closes the software Tunnel's native-exit and host-wait
+gaps in a new scope. The coordinator inspected the native `ExitProcess(0)`
+record before host stop, the exited process state, guest/render retirement
+and STOP acknowledgement. Chrome, Xvfb and openbox have individual actual
+waits with both EOFs; the original driver and enclosing command completed 0
+without leaks. This does not repair the predecessor's missing receipts.
+The new original had early black output before a later textured client, so
+no new motion or isolated rendering-fix claim follows. The global disk floor
+crossed after driver cleanup; whole-task disk compliance failed. WebGL
+shutdown equivalence and arbitrary browser/OS crash freedom remain unproved.
+Evidence: `scratch/runs/20261118-d3dim-browser-crash-regression-original-close/result.json`.
+
 ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
 Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
 lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
