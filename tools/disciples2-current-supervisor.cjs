@@ -15,6 +15,8 @@ const SELF = __filename;
 const LINUX = process.platform === 'linux';
 
 const OWNED = new Set(['tools/disciples2-current-supervisor.cjs', 'tools/disciples2-current-native-source-view.cjs',
+  'tools/disciples2-public-consumer-observer.cjs',
+  'tools/disciples2-public-pump-fixture.cjs', 'test/test-disciples2-native-callback-readiness.cjs',
   'tools/disciples2-current-preflight.cjs', 'tools/disciples2-current-controller.cjs', 'tools/native-supervisor-common.cjs',
   'tools/forsaken-supervisor.cjs',
   'test/test-disciples2-current-quest.cjs',

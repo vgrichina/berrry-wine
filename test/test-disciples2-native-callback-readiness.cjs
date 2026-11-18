@@ -3,7 +3,7 @@
 // DispatchMessage call; wndproc entry or a later Peek cannot increment them.
 const assert=require('node:assert/strict');
 const RECORD=0x404100;
-function fixture({remove=1,nonempty=true,nested=false}={}) {
+function fixture({remove=1,nonempty=true,nested=false,cursorInCallback=false,afterDispatchSample=false}={}) {
  const b=require('./test-disciples2-native-hover-pump.cjs').fixture({filter:'none',remove});
  const raw=r=>r-0x1000+0x400,u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
  b.writeUInt32LE(0x1e00,raw(0x1338));b.writeUInt32LE(0,raw(0x133c));
@@ -36,7 +36,9 @@ function fixture({remove=1,nonempty=true,nested=false}={}) {
   emit(0xff,0x35,...u32(0x403644),0x54);push(0x403640);call(0x401314);
   // Actual x86 caller continuation: balanced ESP, returned message counters.
   emit(0x58,0x39,0xe0);jump('badstack',0x85);emit(0x58,0x89,0xc1,0x81,0xe1,...u32(0x3ff));
-  emit(0xff,0x04,0x8d,...u32(RECORD+0x100));jump('pump');
+  emit(0xff,0x04,0x8d,...u32(RECORD+0x100));
+  if(afterDispatchSample){push(RECORD+24);call(0x401338);emit(0xff,0x05,...u32(RECORD+20));}
+  jump('pump');
   label('badstack');emit(0xff,0x05,...u32(RECORD+12));jump('pump');
   label('empty');emit(0xff,0x05,...u32(RECORD+8));
   // An ordinary drain-then-sample consumer: its hover state advances only
@@ -51,6 +53,7 @@ function fixture({remove=1,nonempty=true,nested=false}={}) {
   emit(0xc7,0x05,...u32(0x403630),...u32(1));jump('zero');
   label('old');
   if(nested){for(const n of [1,0x400,0x400,0,0x4036c0])push(n);call(0x401334);}
+  if(cursorInCallback){push(RECORD+36);call(0x401338);emit(0xff,0x05,...u32(RECORD+32));}
   // Call the original authored wndproc and preserve its result across leave.
   for(const n of [20,16,12,8])emit(0xff,0x75,n);
   emit(0xb8,...u32(0x403a00),0xff,0xd0);jump('done');
@@ -66,7 +69,7 @@ function fixture({remove=1,nonempty=true,nested=false}={}) {
 // This reads only the authored fixture's own post-return telemetry. It never
 // mutates runtime state or supplies an input acknowledgement.
 function observationCode() {
- return `(()=>{const e=instance.exports,h=e.get_main_hwnd(),w=renderer.windows[h],p=e.guest_to_wasm(${RECORD})>>>0,d=new DataView(memory.buffer);return {owner:e.get_window_thread(h),generation:String(e.wnd_lookup_generation(h)),hwnd:h,sameMemory:w.wasmMemory===memory,visible:w.visible,retired:!!w._lookupProcess?.exited,depth:d.getUint32(p,true),timerArmed:d.getUint32(p+4,true),empty:d.getUint32(p+8,true),badStack:d.getUint32(p+12,true),siblingPeeks:d.getUint32(p+16,true),consumerSamples:d.getUint32(p+20,true),samplePoint:[d.getInt32(p+24,true),d.getInt32(p+28,true)],returns:Object.fromEntries([0x200,0x84,0x20,0x113].map(m=>[m,d.getUint32(p+0x100+4*m,true)])),hover:renderer._pointerMoves?.[h]?{pending:renderer._pointerMoves[h].pending,polled:renderer._pointerMoves[h].polled,nativePump:renderer._pointerMoves[h].nativePump}:null}})()`;
+ return `(()=>{const e=instance.exports,h=e.get_main_hwnd(),w=renderer.windows[h],p=e.guest_to_wasm(${RECORD})>>>0,d=new DataView(memory.buffer);return {owner:e.get_window_thread(h),generation:String(e.wnd_lookup_generation(h)),hwnd:h,sameMemory:w.wasmMemory===memory,visible:w.visible,retired:!!w._lookupProcess?.exited,depth:d.getUint32(p,true),timerArmed:d.getUint32(p+4,true),empty:d.getUint32(p+8,true),badStack:d.getUint32(p+12,true),siblingPeeks:d.getUint32(p+16,true),consumerSamples:d.getUint32(p+20,true),nestedCursorSamples:d.getUint32(p+32,true),samplePoint:[d.getInt32(p+24,true),d.getInt32(p+28,true)],returns:Object.fromEntries([0x200,0x84,0x20,0x113].map(m=>[m,d.getUint32(p+0x100+4*m,true)])),hover:renderer._pointerMoves?.[h]?{pending:renderer._pointerMoves[h].pending,polled:renderer._pointerMoves[h].polled,nativePump:renderer._pointerMoves[h].nativePump}:null}})()`;
 }
 async function units() {
  const fs=require('node:fs'),{createHostImports}=require('../lib/host-imports');
@@ -155,12 +158,59 @@ async function units() {
  return {pass:true,moduleSHA256:require('node:crypto').createHash('sha256').update(bytes).digest('hex'),checks};
 }
 module.exports={fixture,observationCode,units};
+function observerUnits(){
+ const {decorate}=require('../tools/disciples2-public-consumer-observer.cjs');
+ const outcomes=[];
+ for(const enabled of [false,true]){
+  const event={hwnd:1,msg:0x200},down={hwnd:1,msg:0x201},buffer=new ArrayBuffer(4);
+  const e={get_current_thread_id:()=>7,get_eip:()=>10,get_esp:()=>20,
+   get_window_thread:()=>7,wnd_lookup_generation:()=>2n,get_user_pump_observation:i=>i};
+  const w={visible:true,wasm:{exports:e},wasmMemory:{buffer}};
+  const move={event,pending:true,polled:false,x:30,y:40,generation:2n,window:w};
+  const r={windows:{1:w},inputQueue:[down],_pointerMoves:{1:move}};
+  let effects=0,result;
+  const base={host:{get_mouse_position(){effects++;return 40<<16|30;},dx_trace(){effects++;},
+   check_input(){effects++;return 0;},input_pump_idle(){effects++;},set_cursor(){effects++;throw Error('native failure');}}};
+  const observer=enabled?decorate(base,{renderer:r,exports:e,getMemory:()=>buffer},v=>result=v,{now:()=>1000}):null;
+  // The CLI replaces imports and wraps older ones. Observe exactly once at
+  // the outer invocation and preserve the receiver, result, and exception.
+  const previous=base.host.get_mouse_position;
+  base.host.get_mouse_position=function(){return previous.call(this);};
+  assert.equal(base.host.get_mouse_position(),40<<16|30);
+  for(let i=0;i<700;i++)base.host.check_input();
+  base.host.dx_trace(5,1,2,3,4);
+  assert.throws(()=>base.host.set_cursor(17),/native failure/);
+  observer?.flush();
+  assert.equal(r.inputQueue[0],down);assert.equal(move.polled,false);assert(move.pending);
+  if(enabled){assert.equal(result.seen,703);assert.equal(result.rows.length,512);assert.equal(result.missing,191);
+   assert.equal(result.counts.get_mouse_position,1);assert.equal(result.failed,null);
+   const row=result.rows[0];assert.equal(row.result,40<<16|30);
+   assert(row.moves[0].sameWindow&&row.moves[0].sameMemory);assert.equal(row.moves[0].owner,7);
+   assert.equal(row.callbackReturn,'unmeasured');}
+  outcomes.push({effects,pending:move.pending,polled:move.polled,exactDown:r.inputQueue[0]===down});
+ }
+ assert.deepEqual(outcomes[0],outcomes[1]);
+ const spans=[],buffer=new ArrayBuffer(8);new DataView(buffer).setUint32(4,0x402c00,true);
+ const move={pending:true,event:{}},r={_pointerMoves:{1:move},inputQueue:[]};let clock=1000;
+ const base={host:{get_mouse_position:()=>123}},e={get_esp:()=>4};
+ const observer=decorate(base,{renderer:r,exports:e,getMemory:()=>buffer,g2w:p=>p},v=>spans.push(v),{now:()=>clock});
+ for(let n=0;n<70;n++){move.event={};clock+=3000;assert.equal(base.host.get_mouse_position(),123);}
+ observer.flush();assert.equal(spans.length,64);assert(spans.every(v=>v.seen===1&&v.rows.length===1));
+ assert(spans.every(v=>v.rows[0].positionCaller===0x402c00));
+ // Diagnostic export faults cannot change even the first public result.
+ let fault;const broken={host:{get_mouse_position:()=>456}};
+ const bad=decorate(broken,{renderer:r,exports:{get_esp(){throw Error('retired');}}},v=>fault=v);
+ assert.equal(broken.host.get_mouse_position(),456);bad.flush();assert.match(fault.failed,/retired/);
+ return {pass:true,parity:outcomes,spans:spans.length,spanLimit:64,publicReturnWord:true,faultPreservesResult:true};
+}
+module.exports.observerUnits=observerUnits;
 if(require.main===module) {
  const fail=e=>{console.error(e.stack);process.exitCode=1;};
- if(process.argv[2]==='--unit')units().then(v=>console.log(JSON.stringify(v,null,2))).catch(fail);
+ if(process.argv[2]==='--observer-unit')console.log(JSON.stringify(observerUnits(),null,2));
+ else if(process.argv[2]==='--unit')units().then(v=>console.log(JSON.stringify(v,null,2))).catch(fail);
  else {
-  const options=JSON.parse(process.argv[3]||'{}'),{trace=true,...callbackFixture}=options;
+  const options=JSON.parse(process.argv[3]||'{}'),{trace=true,callstack=false,...callbackFixture}=options;
   require('../tools/disciples2-public-pump-fixture.cjs').native(require('node:path').resolve(process.argv[2]),
-   {trace,cancel:callbackFixture.nonempty!==false,callbackFixture}).catch(fail);
+   {trace,callstack,cancel:callbackFixture.nonempty!==false,callbackFixture}).catch(fail);
  }
 }

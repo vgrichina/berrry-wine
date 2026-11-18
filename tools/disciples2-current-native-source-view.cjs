@@ -135,6 +135,7 @@ for (const extension of ['.js', '.cjs', '.json']) {
 // The supported child routes must retain the same preloaded manifest. Refuse
 // an explicit environment or execArgv that would silently drop it.
 if (process.env.DISCIPLES2_PHASE === 'runtime') {
+  require(path.join(root,'tools/disciples2-public-consumer-observer.cjs'));
   const keys = Object.keys(process.env).filter(k => k.startsWith('DISCIPLES2_'));
   function childOptions(options = {}) {
     if (options.env && options.env !== require('node:worker_threads').SHARE_ENV) {

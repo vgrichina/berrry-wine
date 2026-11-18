@@ -6,7 +6,7 @@ const {once}=require('node:events'),{startControlSession}=require('../test/contr
 const http=require('node:http');
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
-async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null,callbackFixture=null}={}) {
+async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null,callbackFixture=null,callstack=false}={}) {
  fs.mkdirSync(out,{recursive:true});
  const save=(name,value)=>fs.writeFileSync(path.join(out,name),JSON.stringify(value,null,2)+'\n',{flag:'wx'});
  const callback=callbackFixture?require('../test/test-disciples2-native-callback-readiness.cjs'):null;
@@ -24,7 +24,7 @@ async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null,ca
  const env={...process.env};delete env.WINE_PUBLIC_INPUT_TRACE;
  if(trace)env.WINE_PUBLIC_INPUT_TRACE=path.join(out,'public-input.jsonl');
  const s=startControlSession(['test/run.js','--exe='+image,'--no-build','--threads','--real-ticks','--screen=1024x712',
-  '--control-stdin','--control='+port,'--max-seconds=30','--max-batches=10000000','--stuck-after=0','--trace-thread','--quiet-api','--quiet-blocks','--no-close'],
+  '--control-stdin','--control='+port,'--max-seconds=30','--max-batches=10000000','--stuck-after=0','--trace-thread','--quiet-api','--quiet-blocks','--no-close',...(callstack?['--trace-callstack']:[])],
   {spawnOptions:{detached:true,env}});
  wd.stdin.write(String(s.child.pid));let release,releaseWait;
  try {
@@ -37,7 +37,15 @@ async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null,ca
     assert(Date.now()<due,'owner must establish an actual unfiltered idle before filtered transition');await pause(10);
    }
    assert.equal(await s.send({action:'eval',code:'instance.exports.post_message_q(instance.exports.get_main_hwnd(),0x8000,0,0)'}),1);
-   await pause(100);
+   if(callbackFixture){
+    // Public window creation can precede the authored caller loop/CPUWorker.
+    // Establish the fixture's explicit precondition before the timed intent;
+    // this telemetry is never an original-game readiness acknowledgement.
+    const readyBy=Date.now()+5000;
+    while(true){const state=await s.send({action:'eval',code:callback.observationCode()});
+     if(state.siblingPeeks>0&&(callbackFixture.nonempty===false||state.timerArmed))break;
+     assert(Date.now()<readyBy,'authored caller and independent CPUWorker must be running before DOWN');await pause(20);}
+   }else await pause(100);
   }
   const callbackBefore=callbackFixture?await s.send({action:'eval',code:callback.observationCode()}):null;
   const owner=await s.send({action:'guarded-bind'}),nonce=crypto.randomUUID();
@@ -81,11 +89,14 @@ async function native(out,{delay=0,trace=false,cancel=false,hoverFixture=null,ca
     'actual x86 caller continuation after callback '+msg.toString(16));
    if(callbackFixture.nonempty!==false){
     assert(callbackSamples.some(({at,value:v})=>at<=sent+500&&[0x200,0x84,0x20].every(m=>v.returns[m]>callbackBefore.returns[m])&&
-     v.hover?.pending&&!v.hover.polled&&v.empty===callbackBefore.empty&&v.consumerSamples===callbackBefore.consumerSamples),
+     v.hover?.pending&&!v.hover.polled&&v.empty===callbackBefore.empty&&
+     (callbackFixture.afterDispatchSample?v.consumerSamples>callbackBefore.consumerSamples:v.consumerSamples===callbackBefore.consumerSamples)),
      'actual callback returns observed before confirmation deadline while exact hover remains pending');
     assert(callbackAfter.returns[0x113]>callbackBefore.returns[0x113],'real timer callbacks returned');
     assert.equal(callbackAfter.empty,callbackBefore.empty,'owner queries remained nonempty');
-    assert.equal(callbackAfter.consumerSamples,callbackBefore.consumerSamples,'actual consumer has not sampled hover');
+    if(callbackFixture.afterDispatchSample)assert(callbackAfter.consumerSamples>callbackBefore.consumerSamples,'actual caller consumer sampled without exhaustion');
+    else assert.equal(callbackAfter.consumerSamples,callbackBefore.consumerSamples,'actual consumer has not sampled hover');
+    if(callbackFixture.cursorInCallback)assert(callbackAfter.nestedCursorSamples>callbackBefore.nestedCursorSamples,'actual nested cursor sample');
     assert(!callbackAfter.hover.polled,'callback completion alone does not complete owner pump');
    }else assert(callbackAfter.consumerSamples>callbackBefore.consumerSamples,'actual drained consumer sampled cursor');
   }
