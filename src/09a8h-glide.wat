@@ -6,13 +6,35 @@
   ;; +24 width,+28 height; +32 callback;
   ;; +36 triangle count; +40 LFB guest pointer; +44 producer block (guest);
   ;; +48 LFB lock kind; +52 locked buffer; +112 ABI mode; +116 Glide3 heap;
-  ;; +120 opt-in LFB metrics flag;
-  ;; +256 pipeline state; +512 scratch. Glide3 extension is affine heap storage.
+  ;; +120 opt-in LFB metrics flag; +124 LFB stage second copy (guest);
+  ;; +256 pipeline state; +512 scratch; +544 GPS stats (32 words, below).
+  ;; Glide3 extension is affine heap storage.
   ;; All handlers take the shared lock, including state setters. No setter
   ;; performs host RPC. Command records contain immutable copied arguments.
 
   (global $GLIDE_STATE i32 (region.addr $GLIDE_STATE 0))
   (global $GLIDE_STATE_SIZE i32 (region.size $GLIDE_STATE))
+
+  ;; GPS accounting, glide_gps_stat(i) (printed by test/run.js as
+  ;; [glide-gps]). Kept across grSstWinOpen/Close: the producer block is
+  ;; reset by every open, these words are not. Written under the shared lock.
+  ;;   0 PRESENTs (frames)       1 DRAW_UPs             2 CLEARs
+  ;;   3 READBACK records        4 readback rows        5 RT UPLOADs (LFB writes)
+  ;;   6 RT upload rows          7 texture/LUT UPLOADs  8 SYNC kicks
+  ;;   9 LFB requests refused (FXFALSE; Glide has no decline: it lowers
+  ;;     everything or traps in $glide_fail)
+  ;;  10 LFB requests served by the stage with no READBACK ($glide_lfb_stage)
+  ;;  11 ... of those, served by swapping in the stage's second copy
+  ;;  16 + s LFB requests by site, 24 + s of them that read back:
+  ;;     s = 0 grLfbLock read-only, 1 grLfbLock write-only, 2 grLfbReadRegion,
+  ;;     3 grLfbWriteRegion (Glide 2), 4 grLfbWriteRegion (Glide 3).
+  (func $glide_stat (param $i i32) (param $n i32)
+    (local $a i32)
+    (local.set $a (i32.add (region.addr $GLIDE_STATE 544) (i32.shl (local.get $i) (i32.const 2))))
+    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (local.get $n))))
+  (func (export "glide_gps_stat") (param $i i32) (result i32)
+    (if (i32.ge_u (local.get $i) (i32.const 32)) (then (return (i32.const 0))))
+    (i32.load (i32.add (region.addr $GLIDE_STATE 544) (i32.shl (local.get $i) (i32.const 2)))))
 
   (func $glide_fail
     (call $host_log_i32 (i32.const 0x474c4944))
@@ -93,7 +115,12 @@
     (field last_raster i32 24)
     (field last_consts i32 22)
     (field last_bind i32 7)
-    (field stage i32 24))
+    (field stage i32 24)
+    ;; What the LFB stage (+40) and its second copy hold: (color id << 1) |
+    ;; origin of a buffer whose executor pixels are exactly the stage's
+    ;; RGB565 expanded, 0 = nothing. A DRAW_UP/CLEAR on that id, or an
+    ;; UPLOAD/RELEASE of it, forgets it ($glide_lfb_forget).
+    (field lfb_tag i32 2))
 
   (func $glide_pb (result i32)
     (local $pb i32)
@@ -123,14 +150,105 @@
     (call $glide_close_draw (local.get $pb))
     (store.field GlideGps kick_pos (local.get $pb) (load.field.memarg GpsRing write_pos (local.get $h)))
     (store.field GlideGps kick_arena (local.get $pb) (load.field.memarg GpsRing arena_head (local.get $h)))
+    (if (i32.eq (local.get $mode) (global.get $GPS_KICK_SYNC)) (then (call $glide_stat (i32.const 8) (i32.const 1))))
     (call $gps_kick (local.get $h) (local.get $mode)))
+
+  ;; The executor's pixels of color id $id are about to change: the LFB
+  ;; stage no longer mirrors them. Id 0 (no TARGETS yet) forgets both.
+  (func $glide_lfb_forget (param $pb i32) (param $id i32)
+    (local $a i32) (local $i i32)
+    (loop $slots
+      (local.set $a (elem-addr GlideGps lfb_tag (local.get $pb) (local.get $i)))
+      (if (i32.or (i32.eqz (local.get $id))
+            (i32.eq (i32.shr_u (i32.load (local.get $a)) (i32.const 1)) (local.get $id)))
+        (then (i32.store (local.get $a) (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $slots (i32.lt_u (local.get $i) (i32.const 2)))))
+
+  ;; CLEAR record $p (every field stored) on the current target: apply it to
+  ;; the stage copies that mirror the target instead of forgetting them. The
+  ;; executor writes CLEAR's rgba bytes exactly inside the half-open top-down
+  ;; rect (docs/gpu-stream-v2.md), so a READBACK would give that colour
+  ;; truncated to RGB565 there and leave the rest: fill exactly that. Glide's
+  ;; colour mask is all of RGB or none (alpha is not in the stage); anything
+  ;; else, or a clear under an open LFB lock (the stage then holds unpublished
+  ;; guest writes), forgets.
+  (func $glide_lfb_cleared (param $pb i32) (param $p i32)
+    (local $cm i32) (local $id i32) (local $w i32) (local $hgt i32)
+    (local $l i32) (local $t i32) (local $r i32) (local $b i32) (local $c i32) (local $px i32)
+    (local $i i32) (local $tag i32) (local $guest i32) (local $first i32) (local $row i32)
+    (local $x i32) (local $y i32)
+    (local.set $id (load.field GlideGps target (local.get $pb)))
+    (local.set $cm (i32.and (load.field GpsClear colormask (local.get $p)) (i32.const 7)))
+    (if (i32.or (i32.eqz (i32.and (load.field GpsClear mask (local.get $p)) (i32.const 1)))
+          (i32.eqz (local.get $cm))) (then (return)))
+    (if (i32.or (i32.or (i32.ne (local.get $cm) (i32.const 7)) (i32.eqz (local.get $id)))
+          (i32.ne (i32.load offset=48 (global.get $GLIDE_STATE)) (i32.const 0))) (then
+      (call $glide_lfb_forget (local.get $pb) (local.get $id))
+      (return)))
+    (local.set $w (i32.load offset=24 (global.get $GLIDE_STATE)))
+    (local.set $hgt (i32.load offset=28 (global.get $GLIDE_STATE)))
+    (local.set $l (load.field GpsClear left (local.get $p)))
+    (local.set $t (load.field GpsClear top (local.get $p)))
+    (local.set $r (load.field GpsClear right (local.get $p)))
+    (local.set $b (load.field GpsClear bottom (local.get $p)))
+    (if (i32.lt_s (local.get $l) (i32.const 0)) (then (local.set $l (i32.const 0))))
+    (if (i32.lt_s (local.get $t) (i32.const 0)) (then (local.set $t (i32.const 0))))
+    (if (i32.gt_s (local.get $r) (local.get $w)) (then (local.set $r (local.get $w))))
+    (if (i32.gt_s (local.get $b) (local.get $hgt)) (then (local.set $b (local.get $hgt))))
+    (if (i32.or (i32.ge_s (local.get $l) (local.get $r)) (i32.ge_s (local.get $t) (local.get $b)))
+      (then (return)))
+    ;; R,G,B,A bytes -> RGB565, as $glide_lfb_read converts a READBACK.
+    (local.set $c (load.field GpsClear rgba (local.get $p)))
+    (local.set $px (i32.or (i32.or
+      (i32.shl (i32.and (local.get $c) (i32.const 0xF8)) (i32.const 8))
+      (i32.and (i32.shr_u (local.get $c) (i32.const 5)) (i32.const 0x7E0)))
+      (i32.and (i32.shr_u (local.get $c) (i32.const 19)) (i32.const 0x1F))))
+    (loop $slots
+      (local.set $tag (i32.load (elem-addr GlideGps lfb_tag (local.get $pb) (local.get $i))))
+      (if (i32.and (i32.ne (local.get $tag) (i32.const 0))
+            (i32.eq (i32.shr_u (local.get $tag) (i32.const 1)) (local.get $id))) (then
+        (local.set $guest (if (result i32) (local.get $i)
+          (then (i32.load offset=124 (global.get $GLIDE_STATE)))
+          (else (i32.load offset=40 (global.get $GLIDE_STATE)))))
+        (local.set $y (local.get $t))
+        (local.set $first (i32.const 0))
+        (loop $rows
+          ;; Stage row of target row $y: the stage's origin orders its rows.
+          (local.set $row (i32.add (i32.add (call $g2w (local.get $guest)) (i32.const 20))
+            (i32.shl (i32.add (local.get $l) (i32.mul (local.get $w)
+              (if (result i32) (i32.and (local.get $tag) (i32.const 1))
+                (then (i32.sub (i32.sub (local.get $hgt) (i32.const 1)) (local.get $y)))
+                (else (local.get $y))))) (i32.const 1))))
+          (if (local.get $first)
+            (then (memory.copy (local.get $row) (local.get $first)
+              (i32.shl (i32.sub (local.get $r) (local.get $l)) (i32.const 1))))
+            (else
+              (local.set $x (i32.const 0))
+              (loop $pixels
+                (i32.store16 (i32.add (local.get $row) (i32.shl (local.get $x) (i32.const 1))) (local.get $px))
+                (local.set $x (i32.add (local.get $x) (i32.const 1)))
+                (br_if $pixels (i32.lt_s (local.get $x) (i32.sub (local.get $r) (local.get $l)))))
+              (local.set $first (local.get $row))))
+          (local.set $y (i32.add (local.get $y) (i32.const 1)))
+          (br_if $rows (i32.lt_s (local.get $y) (local.get $b))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $slots (i32.lt_u (local.get $i) (i32.const 2)))))
 
   ;; Begin a record (closing the open draw). Hands the consumer a quarter of
   ;; the ring or arena at a time so it runs while the guest keeps writing.
+  ;; A DRAW_UP writes the current target (an extended DRAW_UP was begun
+  ;; here, after the last stage tag: tagging closes the draw). A CLEAR's
+  ;; effect on the stage is $glide_lfb_cleared's.
   (func $glide_begin (param $pb i32) (param $op i32) (param $n i32) (result i32)
     (local $h i32)
     (local.set $h (call $glide_ring))
     (call $glide_close_draw (local.get $pb))
+    (if (i32.eq (local.get $op) (global.get $GPS_OP_DRAW_UP)) (then
+      (call $glide_stat (i32.const 1) (i32.const 1))
+      (call $glide_lfb_forget (local.get $pb) (load.field GlideGps target (local.get $pb)))))
+    (if (i32.eq (local.get $op) (global.get $GPS_OP_CLEAR))
+      (then (call $glide_stat (i32.const 2) (i32.const 1))))
     (if (i32.or
           (i32.ge_u (i32.sub (load.field.memarg GpsRing write_pos (local.get $h))
             (load.field GlideGps kick_pos (local.get $pb))) (i32.shr_u (global.get $GLIDE_RING_BYTES) (i32.const 2)))
@@ -150,6 +268,7 @@
 
   (func $glide_release (param $pb i32) (param $id i32)
     (local $p i32)
+    (call $glide_lfb_forget (local.get $pb) (local.get $id))
     (local.set $p (call $glide_begin (local.get $pb) (global.get $GPS_OP_RELEASE) (size-of GpsRelease)))
     (store.field GpsRelease id (local.get $p) (local.get $id))
     (drop (call $glide_end (local.get $p)))
@@ -165,6 +284,13 @@
   (func $glide_upload (param $pb i32) (param $id i32) (param $level i32)
       (param $y i32) (param $w i32) (param $hgt i32) (param $pitch i32) (param $src i32)
     (local $p i32)
+    (if (i32.or (i32.eq (local.get $id) (i32.load (elem-addr GlideGps color (local.get $pb) (i32.const 0))))
+          (i32.eq (local.get $id) (i32.load (elem-addr GlideGps color (local.get $pb) (i32.const 1)))))
+      (then
+        (call $glide_stat (i32.const 5) (i32.const 1))
+        (call $glide_stat (i32.const 6) (local.get $hgt)))
+      (else (call $glide_stat (i32.const 7) (i32.const 1))))
+    (call $glide_lfb_forget (local.get $pb) (local.get $id))
     (local.set $p (call $glide_begin (local.get $pb) (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
     (store.field GpsUpload id (local.get $p) (local.get $id))
     (store.field GpsUpload level (local.get $p) (local.get $level))
@@ -237,6 +363,7 @@
   (func $glide_present (param $pb i32)
     (local $h i32) (local $p i32) (local $old i32) (local $seq i32)
     (local.set $h (call $glide_ring))
+    (call $glide_stat (i32.const 0) (i32.const 1))
     (call $glide_gamma_sync (local.get $pb))
     (local.set $old (i32.load (elem-addr GlideGps present_seq (local.get $pb) (i32.const 0))))
     (if (i32.and (i32.ne (local.get $old) (i32.const 0))
@@ -1523,30 +1650,83 @@
       (i32.const 0) (i32.const 0)))
   ;; LFB staging is affine guest memory kept stable until unlock. The host
   ;; reads/writes the packet synchronously; it never retains a guest pointer.
+  ;;
+  ;; A request for a buffer whose pixels the stage, or its second copy
+  ;; (+124), already holds -- nothing drew to, cleared, uploaded or released
+  ;; it since the READBACK or LFB write that tagged it ($glide_lfb_forget) --
+  ;; skips the READBACK. The executor's A8B8G8R8 pixels are then exactly the
+  ;; stage's RGB565 expanded, and a READBACK would truncate them back to the
+  ;; same bytes, so the guest sees what it saw before. A 2D loop that writes
+  ;; the back buffer through the LFB and swaps alternates two buffers, hence
+  ;; the second copy; the stage pointer the guest gets never changes.
   (func $glide_lfb_stage (param $buffer i32) (param $origin i32)
     (param $reason i32) (param $width i32) (param $height i32) (result i32)
-    (local $guest i32) (local $p i32) (local $n i32)
+    (local $guest i32) (local $p i32) (local $n i32) (local $pb i32) (local $key i32)
+    (local $c i32) (local $i i32) (local $words i32) (local $t i64) (local $hit i32)
+    (local $tag i32)
     (if (i32.or (i32.eqz (i32.load offset=12 (global.get $GLIDE_STATE)))
       (i32.or (i32.gt_u (local.get $buffer) (i32.const 1))
         (i32.gt_u (local.get $origin) (i32.const 1)))) (then (return (i32.const 0))))
     (call $glide_flush)
     (local.set $guest (i32.load offset=40 (global.get $GLIDE_STATE)))
     (if (i32.eqz (local.get $guest)) (then
-      (local.set $guest (call $gl_alloc_affine (i32.const 1572884)))
+      ;; 20-byte header + 1024 x 768 RGB565, rounded up to whole i64s.
+      (local.set $guest (call $gl_alloc_affine (i32.const 1572888)))
       (if (i32.eqz (local.get $guest)) (then (return (i32.const 0))))
       (i32.store offset=40 (global.get $GLIDE_STATE) (local.get $guest))))
     (local.set $p (call $g2w (local.get $guest)))
-    (i32.store (local.get $p) (local.get $buffer))
-    (i32.store offset=4 (local.get $p) (local.get $origin))
-    (i32.store offset=8 (local.get $p) (i32.const 0))
-    (i32.store offset=12 (local.get $p) (i32.load offset=24 (global.get $GLIDE_STATE)))
-    (i32.store offset=16 (local.get $p) (i32.load offset=28 (global.get $GLIDE_STATE)))
     (local.set $n (i32.add (i32.const 20) (i32.mul
       (i32.mul (i32.load offset=24 (global.get $GLIDE_STATE))
         (i32.load offset=28 (global.get $GLIDE_STATE))) (i32.const 2))))
     (if (i32.gt_u (local.get $n) (i32.const 1572884)) (then (call $glide_fail)))
     (call $glide_lfb_record_metrics (local.get $reason) (local.get $width) (local.get $height))
-    (call $glide_lfb_read (local.get $p))
+    (local.set $pb (call $glide_pb))
+    (call $glide_close_draw (local.get $pb))
+    (call $glide_stat (i32.add (i32.const 16) (local.get $reason)) (i32.const 1))
+    (local.set $key (i32.or (local.get $origin) (i32.shl
+      (i32.load (i32.add (elem-addr GlideGps color (local.get $pb) (i32.const 0))
+        (i32.shl (local.get $buffer) (i32.const 2)))) (i32.const 1))))
+    (local.set $tag (i32.load (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 0))))
+    (local.set $c (i32.load offset=124 (global.get $GLIDE_STATE)))
+    (local.set $hit (i32.eq (local.get $tag) (local.get $key)))
+    (if (i32.and (i32.eqz (local.get $hit)) (i32.ne (local.get $c) (i32.const 0))) (then
+      (if (i32.eq (i32.load (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 1))) (local.get $key))
+        (then
+          ;; The second copy holds it: swap the two, tags included.
+          (local.set $c (call $g2w (local.get $c)))
+          (local.set $words (i32.shr_u (i32.add (local.get $n) (i32.const 7)) (i32.const 3)))
+          (loop $swap
+            (local.set $t (i64.load (local.get $p)))
+            (i64.store (local.get $p) (i64.load (local.get $c)))
+            (i64.store (local.get $c) (local.get $t))
+            (local.set $p (i32.add (local.get $p) (i32.const 8)))
+            (local.set $c (i32.add (local.get $c) (i32.const 8)))
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br_if $swap (i32.lt_u (local.get $i) (local.get $words))))
+          (local.set $p (call $g2w (local.get $guest)))
+          (i32.store (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 1)) (local.get $tag))
+          (i32.store (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 0)) (local.get $key))
+          (call $glide_stat (i32.const 11) (i32.const 1))
+          (local.set $hit (i32.const 1))))))
+    (if (i32.and (i32.eqz (local.get $hit)) (i32.ne (local.get $tag) (i32.const 0))) (then
+      ;; A miss over a tagged stage: keep those pixels as the second copy.
+      (if (i32.eqz (local.get $c)) (then
+        (local.set $c (call $gl_alloc_affine (i32.const 1572888)))
+        (i32.store offset=124 (global.get $GLIDE_STATE) (local.get $c))))
+      (if (local.get $c) (then
+        (memory.copy (call $g2w (local.get $c)) (local.get $p) (local.get $n))
+        (i32.store (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 1)) (local.get $tag))))))
+    (i32.store (local.get $p) (local.get $buffer))
+    (i32.store offset=4 (local.get $p) (local.get $origin))
+    (i32.store offset=8 (local.get $p) (i32.const 0))
+    (i32.store offset=12 (local.get $p) (i32.load offset=24 (global.get $GLIDE_STATE)))
+    (i32.store offset=16 (local.get $p) (i32.load offset=28 (global.get $GLIDE_STATE)))
+    (if (local.get $hit)
+      (then (call $glide_stat (i32.const 10) (i32.const 1)))
+      (else
+        (call $glide_lfb_read (local.get $p))
+        (call $glide_stat (i32.add (i32.const 24) (local.get $reason)) (i32.const 1))
+        (i32.store (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 0)) (local.get $key))))
     (local.get $p))
 
   ;; READBACK the whole buffer as A8B8G8R8 (the only readback format the
@@ -1583,6 +1763,8 @@
       (store.field GpsReadback pitch (local.get $r) (local.get $row))
       (store.field GpsReadback slot (local.get $r) (i32.const 0))
       (local.set $seq (call $glide_end (local.get $r)))
+      (call $glide_stat (i32.const 3) (i32.const 1))
+      (call $glide_stat (i32.const 4) (local.get $n))
       (call $glide_kick_wait_slot (local.get $pb) (local.get $seq))
       (local.set $src (call $glide_arena_ptr (local.get $pos)))
       (local.set $y (i32.const 0))
@@ -1655,6 +1837,10 @@
         (local.get $w) (local.get $n) (i32.shl (local.get $w) (i32.const 2)) (local.get $pos))
       (local.set $y (i32.add (local.get $y) (local.get $n)))
       (br $bands)))
+    ;; The executor now holds exactly this stage ($glide_upload forgot the
+    ;; id in both tags first).
+    (i32.store (elem-addr GlideGps lfb_tag (local.get $pb) (i32.const 0))
+      (i32.or (i32.shl (local.get $id) (i32.const 1)) (i32.load offset=4 (local.get $p))))
     (if (i32.eqz (i32.load (local.get $p)))
       (then (store.field GlideGps front_dirty (local.get $pb) (i32.const 1))))
     (i32.const 1))
@@ -1741,6 +1927,8 @@
     (call $glide_display_restore)
     (call $glide_release_storage)
     (local.set $p (i32.load offset=40 (global.get $GLIDE_STATE)))
+    (if (local.get $p) (then (call $heap_free (local.get $p))))
+    (local.set $p (i32.load offset=124 (global.get $GLIDE_STATE)))
     (if (local.get $p) (then (call $heap_free (local.get $p))))
     (local.set $p (i32.load offset=116 (global.get $GLIDE_STATE)))
     (if (local.get $p) (then (call $heap_free (local.get $p))))
@@ -2702,6 +2890,7 @@
     (store.field GpsClear top (local.get $p) (local.get $top))
     (store.field GpsClear right (local.get $p) (local.get $right))
     (store.field GpsClear bottom (local.get $p) (local.get $bottom))
+    (call $glide_lfb_cleared (local.get $pb) (local.get $p))
     (drop (call $glide_end (local.get $p)))
     (if (i32.eqz (i32.load offset=180 (local.get $s)))
       (then (store.field GlideGps front_dirty (local.get $pb) (i32.const 1)))))
@@ -2736,6 +2925,7 @@
       (i32.store offset=48 (global.get $GLIDE_STATE) (i32.add (i32.and (local.get $arg0) (i32.const 1)) (i32.const 1)))
       (i32.store offset=52 (global.get $GLIDE_STATE) (local.get $arg1))
       (local.set $r (i32.const 1)))
+    (if (i32.eqz (local.get $r)) (then (call $glide_stat (i32.const 9) (i32.const 1))))
     (i32.store offset=0 (global.get $reg_base) (local.get $r))
     (call $lock_release (global.get $GLIDE_STATE))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
@@ -2788,6 +2978,7 @@
         (br_if $rows (i32.lt_u (local.get $i) (local.get $h))))
       (local.set $r (i32.const 1))
       )
+    (if (i32.eqz (local.get $r)) (then (call $glide_stat (i32.const 9) (i32.const 1))))
     (i32.store offset=0 (global.get $reg_base) (local.get $r))
     (call $lock_release (global.get $GLIDE_STATE))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
@@ -2826,6 +3017,7 @@
       (local.set $r (i32.const 1))
       (local.set $r (call $glide_lfb_publish (call $g2w (i32.load offset=40 (global.get $GLIDE_STATE)))))
       )
+    (if (i32.eqz (local.get $r)) (then (call $glide_stat (i32.const 9) (i32.const 1))))
     (i32.store offset=0 (global.get $reg_base) (local.get $r))
     (call $lock_release (global.get $GLIDE_STATE))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
@@ -3636,6 +3828,7 @@
       (local.set $r (i32.const 1))
       (local.set $r (call $glide_lfb_publish (call $g2w (i32.load offset=40 (global.get $GLIDE_STATE)))))
       )
+    (if (i32.eqz (local.get $r)) (then (call $glide_stat (i32.const 9) (i32.const 1))))
     (i32.store offset=0 (global.get $reg_base) (local.get $r))
     (call $lock_release (global.get $GLIDE_STATE))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40))))

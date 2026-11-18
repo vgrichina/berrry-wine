@@ -494,6 +494,16 @@ enum reaches an executor.
 - LFB reads are READBACK (A8B8G8R8, rows top-down, at most 2 MB — half the
   arena — per band) plus a SYNC kick per band; WAT converts each band to
   RGB565 in the lock's stage. LFB writes are RT UPLOADs.
+- The stage and a second copy are tagged with the buffer (and row order)
+  they mirror; a READBACK or LFB write tags, a DRAW_UP on the buffer or an
+  UPLOAD/RELEASE of it forgets, and a CLEAR is applied to the tagged copy
+  in RGB565 (what its READBACK would return). An LFB request for a tagged
+  buffer reads nothing back: a 2D loop that clears, LFB-writes and swaps
+  (Die by the Sword's logos) reads back once per buffer, not per frame.
+- `glide_gps_stat(i)` counts presents, draws, clears, READBACKs and rows,
+  RT and texture UPLOADs, SYNC kicks, refused LFB requests and LFB requests
+  by site; test/run.js prints them as `[glide-gps]` with a hash of the last
+  presented Glide frame.
 - grBufferSwap is PRESENT with a 256×1 gamma texture when a gamma ramp is
   set.
 

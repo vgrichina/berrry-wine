@@ -220,3 +220,15 @@ archive/member-hash verified before the task-delegated shutdown. STOPPED was con
 remote and local scoped helpers were absent. Minimum observed local free disk
 was 2,293,895,168 bytes. Final lifecycle details are in `cleanup.json`. No
 unchanged replay is needed to establish the demonstrated movement.
+
+## Glide LFB readbacks (2026-11-18)
+
+Logos and menus are `grBufferClear` + `grLfbLock(WRITE_ONLY, BACKBUFFER)` +
+unlock + `grBufferSwap`, no triangles. Headless route `--glide-renderer=software
+--screen=1280x900 --input=700:click:854:329 --stuck-after=0 --max-batches=6000`:
+17 presents, 15 write locks. Each lock used to READBACK the whole 640x480 buffer
+(0.88/frame); the Glide stage now mirrors each buffer and applies the clear,
+so only the first lock of each buffer reads back (2 total, 0 steady state).
+Last-frame sha256 identical before/after at 3000, 6000 and 20000 batches.
+After batch ~6000 the CLI run stops presenting (1.8M API calls by 20000).
+Run `scratch/runs/20261118-glide-stats-early-exit`.

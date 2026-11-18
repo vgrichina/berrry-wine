@@ -509,16 +509,19 @@ assert.deepStrictEqual(metrics(3),[1,6,fullPixels,0,3,2,returnAddress]);
 assert.deepStrictEqual(metrics(4),[1,8,fullPixels,0,4,2,returnAddress]);
 {
   const rb=readbacks(readsBefore);
-  assert.strictEqual(rb.length,5,'same full staging submissions');
-  assert.ok(rb.every(x=>x.fields.w===640&&x.fields.h===480),'each stages the whole 640x480 buffer');
+  // Five stagings, one READBACK: nothing touches the back buffer in between,
+  // so the stage (re-tagged by each LFB write's publish) serves the other four.
+  assert.strictEqual(rb.length,1,'one full staging READBACK');
+  assert.ok(rb.every(x=>x.fields.w===640&&x.fields.h===480),'it stages the whole 640x480 buffer');
 }
 let beforeInvalid=rec.mark();
 assert.strictEqual(call('grLfbReadRegion',[1,0,0,0,3,4,data]),0);
 assert.strictEqual(metrics(2)[0],1,'invalid API call never reached staging');
 assert.strictEqual(readbacks(beforeInvalid).length,0,'and issued no READBACK');
 // A READBACK has no graceful failure in the stream (a failed drain traps),
-// so the second staging is an ordinary successful 1x1 read.
-assert.strictEqual(call('grLfbReadRegion',[1,0,0,1,1,2,data]),1);
+// so the second staging is an ordinary successful 1x1 read -- of the front
+// buffer, which the stage does not hold, so it does read back.
+assert.strictEqual(call('grLfbReadRegion',[0,0,0,1,1,2,data]),1);
 assert.strictEqual(get(data,2).readUInt16LE(),0x5acb,'the drained readback (0x5a A8B8G8R8 fill, WAT-converted to RGB565) is what the guest reads');
 assert.deepStrictEqual(metrics(2),[2,7,fullPixels*2,0,1,1,returnAddress],'every staging is an attempted full readback');
 a.glide_lfb_metrics_enable(0);

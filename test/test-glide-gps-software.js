@@ -499,12 +499,47 @@ function ok(label, fn) { fn(); check.push(label); }
     const region = Array.from({ length: 9 }, (_, i) => S.r16(G.src + i * 2));
     assert.deepStrictEqual(region, [0x07E0, 0, 0, 0, 0, 0, 0, 0, 0xF800], 'read region');
     const s1 = S.stats();
-    // Five whole-buffer READBACKs (write region, three locks, read region).
-    assert.strictEqual(s1.readbacks - s0.readbacks, 5, 'readbacks');
+    // Five whole-buffer requests, two READBACKs: the write region (the stage
+    // held the front buffer) and the lower-left lock (other row order). The
+    // upper-left read lock follows the region's publish, the write lock finds
+    // its upper-left copy in the stage's second copy, the read region follows
+    // the write lock's publish ($glide_lfb_stage).
+    assert.strictEqual(s1.readbacks - s0.readbacks, 2, 'readbacks');
     // A8B8G8R8 readbacks (RGB565 conversion is in the WAT).
-    assert.strictEqual(s1.readbackBytes - s0.readbackBytes, 5 * 320 * 240 * 4, 'readback bytes');
-    assert.strictEqual(s1.readbackCpuMs - s0.readbackCpuMs, 5 * 10, 'readback cpu ms');
-    assert.strictEqual(s1.counts.READBACK - (s0.counts.READBACK || 0), 5, 'READBACK records');
+    assert.strictEqual(s1.readbackBytes - s0.readbackBytes, 2 * 320 * 240 * 4, 'readback bytes');
+    assert.strictEqual(s1.readbackCpuMs - s0.readbackCpuMs, 2 * 10, 'readback cpu ms');
+    assert.strictEqual(s1.counts.READBACK - (s0.counts.READBACK || 0), 2, 'READBACK records');
+  });
+
+  ok('LFB stage: CLEAR applied, draws forget, glide_gps_stat counts', () => {
+    const st = i => S.e.glide_gps_stat(i) >>> 0;
+    const before = Array.from({ length: 32 }, (_, i) => st(i));
+    const s0 = S.stats();
+    // The stage mirrors the back buffer: a CLEAR is applied to it, so a lock
+    // reads the cleared colour truncated to RGB565 without a READBACK.
+    clear(0x00336699);
+    let lock = lfbLock(S, 0, 1, 0);
+    assert.strictEqual(S.r16(lock.ptr + 7 * 640 + 20), 0x3333, 'cleared colour, RGB565');
+    call('_grLfbUnlock@8', [0, 1]);
+    assert.strictEqual(S.stats().readbacks - s0.readbacks, 0, 'a cleared stage is not read back');
+    // A draw on it forgets the stage: the next lock reads back what was drawn.
+    tri(S, ...RT(8, RED));
+    S.idle();
+    const [r, g, b] = S.rgb(1, 1);
+    lock = lfbLock(S, 0, 1, 0);
+    assert.strictEqual(S.r16(lock.ptr + 1 * 640 + 2), ((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3),
+      'the drawn pixel, read back');
+    call('_grLfbUnlock@8', [0, 1]);
+    assert.strictEqual(S.stats().readbacks - s0.readbacks, 1, 'a drawn buffer is read back');
+    const d = i => st(i) - before[i];
+    assert.strictEqual(d(2), 1, 'stat 2 counts the CLEAR');
+    assert.ok(d(1) >= 1, 'stat 1 counts the DRAW_UP');
+    assert.strictEqual(d(3), 1, 'stat 3 counts READBACK records');
+    assert.strictEqual(d(4), 240, 'stat 4 counts readback rows');
+    assert.strictEqual(d(10), 1, 'stat 10 counts the request the stage served');
+    assert.strictEqual(d(16), 2, 'stat 16 counts read-only locks');
+    assert.strictEqual(d(24), 1, 'stat 24 counts read-only locks that read back');
+    assert.strictEqual(S.e.glide_gps_stat(32), 0, 'out of range reads 0');
   });
 
   ok('front buffer rendering, activation and gamma', () => {

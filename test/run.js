@@ -13279,6 +13279,32 @@ if (VERBOSE) {
         (sw.gl_sw_bitmap && sw.gl_sw_bitmap() ? ` bitmap=0x${(sw.gl_sw_bitmap() >>> 0).toString(16)}` : ''));
     }
   }
+  // Glide on GPU stream v2 (src/09a8h-glide.wat glide_gps_stat): counters,
+  // then LFB requests by site as requests/readbacks. Only once a ring drew,
+  // presented or served an LFB request.
+  if (instance.exports.glide_gps_stat
+      && [0, 1, 2, 16, 17, 18, 19, 20].some(i => instance.exports.glide_gps_stat(i))) {
+    const st = i => instance.exports.glide_gps_stat(i) >>> 0;
+    const names = ['presents', 'draws', 'clears', 'readbacks', 'readback-rows', 'rt-uploads',
+      'rt-upload-rows', 'tex-uploads', 'syncs', 'lfb-refused', 'lfb-no-readback', 'lfb-swapped'];
+    const sites = ['lockRead', 'lockWrite', 'readRegion', 'writeRegion', 'writeRegion3'];
+    const perFrame = n => st(0) ? (n / st(0)).toFixed(2) : 'n/a';
+    console.log(`[glide-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
+      ` readbacks/frame=${perFrame(st(3))} rt-uploads/frame=${perFrame(st(5))}` +
+      ` tex-uploads/frame=${perFrame(st(7))}`);
+    console.log('[glide-gps] lfb requests/readbacks by site ' +
+      sites.map((n, i) => `${n}=${st(16 + i)}/${st(24 + i)}`).join(' '));
+  }
+  // The last Glide frame the executor presented (a CLI --png does not
+  // composite the Glide layer): its hash compares runs across builds.
+  const glideCanvas = ctx.glideBridge && ctx.glideBridge.layer && ctx.glideBridge.layer.canvas;
+  const glideFrame = glideCanvas && glideCanvas.getContext && glideCanvas.getContext('2d');
+  if (glideFrame && glideCanvas.width && glideCanvas.height) {
+    const px = glideFrame.getImageData(0, 0, glideCanvas.width, glideCanvas.height).data;
+    console.log(`[glide-gps] last-frame ${glideCanvas.width}x${glideCanvas.height} presents=` +
+      `${ctx.glideBridge.stats.presents} sha256=` +
+      require('node:crypto').createHash('sha256').update(px).digest('hex'));
+  }
   // Only a run that opened the GL ring (glg_mem: gl_gps_stat answers 0
   // before it) has anything to report.
   if (GL_GPS && (instance.exports.gl_gps_stat(4) || instance.exports.gl_gps_stat(0)
