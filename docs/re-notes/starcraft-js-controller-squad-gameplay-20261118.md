@@ -70,3 +70,38 @@ Ctrl being present on DOWN. That existing runtime limitation remains explicit;
 this controller does not change the foreign-owned renderer or claim that
 transport receipts alone establish same-type selection. The corrected box
 route is the available path to personally inspect multiple-unit selection.
+
+The ONE authorized original used registered `starcraft_shareware`, unchanged
+`ophelia terran1` arguments/media and retained module SHA256
+`0414c10712d244ffc215fa30165dde4785f71d7b0a95425b91678b74744ef70d`.
+Controller commits `8212da1f6` and `9b7b8592c` were each tested, locked-built and
+immediately strict-pulled/pushed before their respective original actions.
+
+The corrected box produced three selected Marine HUD icons and three green
+selection circles in `original/squadverified.png`. Capture-to-dispatch was
+2.899 seconds (`boxendpoint-workflow.json`). A separate Attack command was
+consumed and `original/armed.png` visibly showed Select Target. No enemy was
+visible, so the pending command was cancelled through its native Cancel icon;
+no enemy target or squad combat result is claimed. A preceding single Marine
+already showed 34/40 HP and Kills 1 in `original/boxcorrect.png`; these ambient
+changes predate our Attack and cannot count as commanded enemy consequence.
+
+After a subsequent Move command and separate visible road target, DOWN was
+consumed and the independent release returned UP ACK. The subsequent snapshot
+failed the conjunction `physicalUp && capture === '0x0'` at 1794963282.828.
+The failed snapshot itself was not retained, so which conjunct failed is
+unknown. `terminal-input-failure.json` closed the scope permanently; there
+were **no later endpoint requests, replay or second original**. Only a local
+supervisor cancellation request followed. Native exit 0 is an actual host-stop
+wait, **not ordinary Quit or combat success**. Independent watchdog exited for
+actual-native-wait; containment reported no leak. The sampled original free
+/home minimum was 1,755,918,336 bytes (50 ms sampling; instantaneous minimum
+unknown), above the 1.5 GB floor.
+
+Outcome: the JavaScript controller and visible squad selection/Attack arming
+are established. Separate enemy targeting, enemy HP/destruction, persistent
+enemy consequence, objective progress, and ordinary ExitProgram remain open.
+The current original is closed and cannot be resumed; another original would
+require fresh owner authorization. No box was created (ID/expiry null; stop
+not applicable). Final selected whole screenshots, source/diff/module/media
+pins, release/wait receipts and recovery instructions are in the run result.
