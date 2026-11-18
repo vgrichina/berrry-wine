@@ -46,6 +46,26 @@ startup cause; neither the event-turn control nor the earlier authored PAUSED
 caption proves original-game Pause.
 Evidence: `scratch/runs/20261118-d3dim-async-execution-boundary-nfs3/result.json`.
 
+The [rendered NFS3 follow-up](re-notes/nfs3-rendered-continue-quit-driving-20261118.md),
+code `70062e2eb` and report `ddb0c62d9`, fixes a CLI window-creation override
+that omitted process/lifetime metadata. Frame admission correctly rejected605
+fixture presents despite matching native target/sequence/stamp. Publishing the
+same ownership metadata as the shared host-window path admits479/479 fixture
+presents without relaxing checks. Native rendered Pause/Continue/ordinary Quit,
+focused async/Flip tests and the locked build passed.
+
+One original on the software/cooperative async-owner route rendered the race
+with572 accepted presents and44696 draws. The coordinator reviewed whole
+cockpit/race frames. Up/Left/Right/Escape received native USER-return receipts
+in87–258 ms, within the unchanged800-ms confirmation bound, and independent
+UPs were acknowledged. Acceleration/steering effects and Pause were not
+demonstrated; later1 MPH remains unattributed. Actual game control/DirectInput
+polls were not measured, so USER receipts do not prove game actions. Original
+Continue/Quit remain open. Owned cancellation and native/supervisor/watchdog
+waits with both EOFs completed without leaks. A fresh worker investigates the
+actual game-consumer route; earlier driving evidence remains separate.
+Evidence: `scratch/runs/20261118-nfs3-rendered-continue-quit-driving/result.json`.
+
 [Four SDK examples](re-notes/dxsdk-four-examples-paired-rendering-20261117.md)
 (`112c6ef43`) and the
 [software Tunnel/Flip follow-up](re-notes/dxsdk-software-tunnel-flip-rendering-finish-20261117.md)
