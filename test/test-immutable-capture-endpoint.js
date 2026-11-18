@@ -381,6 +381,61 @@ test('renderer-only pending capture preserves cancellation, owner identity, disp
   }
 });
 
+test('clean slice completion reports readback state without changing request history or publication', () => {
+  const { verifyReadback } = require('../tools/revolt-display-admission.cjs');
+  for (const kind of ['slice', 'render-writer', 'paint']) {
+    const { r, h } = ownedFixture(); r.repaint();
+    const publication = r._immutablePublicationSequence, displayedAt = r._currentDisplayRecord.displayedAt;
+    const words = new Int32Array(new SharedArrayBuffer(16));
+    if (kind === 'slice') r.beginWorkerGuestSlice();
+    if (kind === 'render-writer') {
+      Atomics.store(words, 0, 1);
+      r._d3dimPublicationJoins = [{ live: true, epoch: { words } }];
+    }
+    if (kind === 'paint') r.beginWorkerGdiPaint(123);
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 });
+    r.serviceCurrentDisplayCapture(); assert.equal(t.status, 'pending');
+    if (kind === 'slice') r.endWorkerGuestSlice();
+    if (kind === 'render-writer') Atomics.store(words, 0, 0);
+    if (kind === 'paint') r.endWorkerGdiPaint(123);
+    r.serviceCurrentDisplayCapture(); assert.equal(t.status, 'complete', t.error);
+    const v = t.read(), m = v.metadata;
+    assert(Object.values(m.rendererWorkAtRequest).some(Boolean));
+    assert.equal(m.retainedPublicationPixels, false);
+    assert.equal(m.content, 'already-displayed');
+    assert.equal(m.publication, publication); assert.equal(m.displayedAt, displayedAt);
+    for (const state of Object.values(m.rendererWorkAtReadback)) {
+      assert(Object.isFrozen(state)); assert(Object.values(state).every(v => v === false));
+    }
+    verifyReadback(m, { windowHwnd: 123, processId: m.captureOwner.processId });
+    const bytes = v.outputRGBA.slice(); v.outputRGBA.fill(99);
+    assert.deepEqual(t.read().outputRGBA, bytes);
+    assert.equal(r._repaintScheduled, false);
+  }
+});
+
+test('clean-service completion never admits held mutable pixels or identity/readback faults', () => {
+  for (const fault of ['held', 'paint', 'owner', 'output', 'readback', 'held-during-read', 'replacement-during-read']) {
+    const { r, h, win } = ownedFixture(); r.repaint(); r.beginWorkerGuestSlice();
+    const t = h.requestCurrentDisplayCapture({ hwnd: 123 }); r.endWorkerGuestSlice();
+    if (fault === 'held') r.beginWorkerGuestSlice();
+    if (fault === 'paint') r.beginWorkerGdiPaint(123);
+    if (fault === 'owner') r.windows[123] = { ...win };
+    if (fault === 'output') r.presentationCanvas = createCanvas(16, 16);
+    const ctx = r.presentationCanvas.getContext('2d'), read = ctx.getImageData;
+    ctx.getImageData = function (...args) {
+      if (fault === 'readback') throw Error('readback failed');
+      const data = read.apply(this, args);
+      if (fault === 'held-during-read') r.beginWorkerGuestSlice();
+      if (fault === 'replacement-during-read') r._currentDisplayRecord = { ...r._currentDisplayRecord };
+      return data;
+    };
+    r.serviceCurrentDisplayCapture();
+    assert.equal(t.status, ['held','paint'].includes(fault) ? 'pending' : 'failed', fault);
+    assert.equal(t.read(), null); t.cancel();
+  }
+});
+
 test('pending current display cannot cross owner replacement', () => {
   const { r, h, win } = ownedFixture(); r.repaint(); r.scheduleRepaint();
   const t = h.requestCurrentDisplayCapture({ hwnd: 123 });

@@ -96,9 +96,13 @@ function verifyReadback(m, owner, now = Date.now(), maxAge = 30000) {
   assert.equal(m.observation, 'current-display');
   assert.equal(m.completion, 'canvas2d-readback');
   assert(['already-displayed','ordinary-publication-after-request'].includes(m.content), 'ordinary display content');
+  const unheld = state => state &&
+    ['writerHeld','gdiPaint','repainting'].every(k => state[k] === false);
+  const completedUnheld = unheld(m.rendererWorkAtReadback?.before) &&
+    unheld(m.rendererWorkAtReadback?.after);
   assert(m.content === 'ordinary-publication-after-request' || m.retainedPublicationPixels ||
-    (m.rendererWorkAtRequest && Object.values(m.rendererWorkAtRequest).every(v => v === false)),
-  'ordinary publication completion, retained pixels or unheld display readback');
+    unheld(m.rendererWorkAtRequest) || completedUnheld,
+  'ordinary publication completion, retained pixels or validated unheld display readback');
   assert.equal(m.captureOwner.hwnd, owner.windowHwnd);
   assert.equal(m.captureOwner.processId, owner.processId);
   assert(m.composition.windows.some(w => w.hwnd === owner.windowHwnd && w.processId === owner.processId));

@@ -74,6 +74,16 @@ class Socket {
   verifyReadback({...m,displayedAt:now-86400000},owner,now);
   verifyReadback({...m,retainedPublicationPixels:false,rendererWorkAtRequest:{writerHeld:false,gdiPaint:false,repainting:false}},owner,now);
   verifyReadback({...m,content:'ordinary-publication-after-request',displayedAt:now-4,retainedPublicationPixels:false,rendererWorkAtRequest:{writerHeld:true,gdiPaint:false,repainting:false}},owner,now);
+  const clean = {writerHeld:false,gdiPaint:false,repainting:false};
+  const serviced = {...m,retainedPublicationPixels:false,rendererWorkAtRequest:{...clean,writerHeld:true},
+    rendererWorkAtReadback:{before:clean,after:clean}};
+  verifyReadback(serviced,owner,now);
+  for (const side of ['before','after']) for (const k of Object.keys(clean)) {
+    for (const bad of [true,undefined]) assert.throws(()=>verifyReadback({...serviced,
+      rendererWorkAtReadback:{...serviced.rendererWorkAtReadback,[side]:{...clean,[k]:bad}}},owner,now));
+  }
+  for (const state of [undefined,{}, {before:clean}, {after:clean}])
+    assert.throws(()=>verifyReadback({...serviced,rendererWorkAtReadback:state},owner,now));
   for(const patch of [{retainedPublicationPixels:false},{displayedAt:now-60000,requestedAt:now-30000},{displayedAt:now-60000,requestedAt:now-30001},{displayedAt:now+1},{requestedAt:now+1},{completion:'synthetic'},{captureOwner:{hwnd:2,processId:1000}},{captureOwner:{hwnd:65537,processId:1001}},{source:{kind:'unknown'}},{readbackCompletedAt:now+1}])assert.throws(()=>verifyReadback({...m,...patch},owner,now));
   assert.throws(()=>verifyReadback({...m,content:'ordinary-publication-after-request',displayedAt:now-30001},owner,now),'new-publication claim must follow its request');
   console.log('PASS exact-parent empty/delayed URL, replacement negatives; shared sticky query error/exception/timeout/session closure and independent UP; readback identity/freshness');
