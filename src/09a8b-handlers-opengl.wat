@@ -3786,7 +3786,7 @@
      (then
        (call $d3dim_worker_fence) (drop (call $gl_sw_target))
        (if (i32.eq (local.get $kind) (i32.const 1)) (then (call $glg_cpu_zread)))
-       (if (i32.eq (local.get $kind) (i32.const 2)) (then (drop (call $gl_stencil_ensure))))
+       (if (i32.eq (local.get $kind) (i32.const 2)) (then (drop (call $gl_stencil_ensure)) (call $glg_cpu_sread)))
        (local.set $source (global.get $gl_sw_zbuf))
        (loop $rows
          (local.set $col (i32.const 0)) (local.set $sy (i32.add (local.get $y) (local.get $row)))

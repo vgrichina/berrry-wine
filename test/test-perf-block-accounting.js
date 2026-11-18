@@ -23,7 +23,63 @@ function cooperativeThread(blocks) {
     } } };
 }
 
+async function glGpsHud() {
+  // GL GPS software-fallback readout: polled from the five zero-argument
+  // exports at the HUD cadence (never per draw), names from the generated
+// decline table, drawn only after a fallback, always in snapshot().
+  let clock = 0;
+  const box = { performance: { now: () => clock } };
+  vm.createContext(box);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../lib/gl-gps-declines.generated.js'), 'utf8'), box);
+  vm.runInContext(fs.readFileSync(path.join(__dirname, '../lib/perf-hud.js'), 'utf8'), box);
+  const gps = box.WinePerf;
+  const values = { gl_gps_active: 1, gl_gps_decline_seq: 0, gl_gps_last_decline: 0,
+    gl_gps_last_decline_eip: 0, gl_gps_readback_count: 0 };
+  let reads = 0;
+  const exports = Object.fromEntries(Object.keys(values).map(k => [k, () => { reads++; return values[k]; }]));
+  box.wineShell = { runningApps: [{ name: 'q3', wine: { instance: { exports } } }] };
+  const texts = [];
+  const ctx = new Proxy({}, { get: (o, k) => k === 'fillText' ? (s => texts.push(s))
+    : k === 'measureText' ? (s => ({ width: String(s).length * 6 })) : (k in o ? o[k] : () => {}),
+    set: (o, k, v) => { o[k] = v; return true; } });
+  gps._dom = { canvas: { width: 300, height: 168 }, ctx, root: { style: {} } };
+  const settle = () => new Promise(r => setImmediate(r));
+  assert.strictEqual(gps.snapshot().glGps, null, 'detailed stats carry glGps (null before a read)');
+  gps._sampleGlGps(clock += 1000); await settle();
+  assert.strictEqual(reads, 5, 'one read of each export per poll');
+  gps._sampleGlGps(clock += 100); await settle();
+  assert.strictEqual(reads, 5, 'polls are rate-limited to the HUD cadence');
+  gps._draw();
+  assert.ok(!texts.some(s => /GL /.test(s)), 'no badge without a fallback');
+  assert.deepStrictEqual({ ...gps.snapshot().glGps, lastFallbackAt: null },
+    { active: true, declines: 0, reason: 0, reasonName: null, eip: 0, readbacks: 0, fallingBack: false, lastFallbackAt: null });
+  Object.assign(values, { gl_gps_decline_seq: 3, gl_gps_last_decline: 3, gl_gps_last_decline_eip: 0x4012ab, gl_gps_readback_count: 7 });
+  gps._sampleGlGps(clock += 600); await settle();
+  texts.length = 0; gps._draw();
+  assert.ok(texts.includes('GL SW: polygon stipple x3 rb 7 @0x004012ab'), JSON.stringify(texts));
+  gps._sampleGlGps(clock += 600); await settle();
+  texts.length = 0; gps._draw();
+  assert.ok(texts.includes('GL was SW: polygon stipple x3 rb 7 @0x004012ab'), 'amber once the count stops moving');
+  assert.strictEqual(gps.snapshot().glGps.fallingBack, false);
+  Object.assign(values, { gl_gps_active: 0, gl_gps_decline_seq: 4, gl_gps_last_decline: 24 });
+  gps._sampleGlGps(clock += 600); await settle();
+  texts.length = 0; gps._draw();
+  assert.ok(texts.includes("GL SW, arm off: target grew past the executor's device size x4 rb 7 @0x004012ab"), JSON.stringify(texts));
+  // A Worker guest is read through its readExports RPC, one at a time.
+  let pending = null, rpc = 0;
+  box.wineShell.runningApps[0].wine = { guestWorker: { readExports: names => {
+    rpc++; assert.deepStrictEqual([...names], Object.keys(values));
+    return new Promise(r => { pending = () => r({ ...values, gl_gps_decline_seq: 9 }); }); } } };
+  gps._sampleGlGps(clock += 600);
+  gps._sampleGlGps(clock += 600);
+  assert.strictEqual(rpc, 1, 'never two RPCs in flight');
+  pending(); await settle();
+  assert.strictEqual(gps.snapshot().glGps.declines, 9);
+  console.log('PASS GL GPS HUD readout: rate-limited poll, badge only after a fallback, names, worker RPC');
+}
+
 async function main() {
+  await glGpsHud();
   const tm = manager();
   const thread = cooperativeThread(3);
   tm.threads.set(0xe1000, thread);

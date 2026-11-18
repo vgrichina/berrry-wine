@@ -58,9 +58,12 @@ const STAT_NAMES = ['draws', 'tris', 'spanQuads', 'clears', 'presents', 'readbac
 async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
   let memory, executor = null, ring = null, ringAddr = 0;
   const kicks = { n: 0, records: {} };
+  // host log_i32 words ($glg_fail logs 0x474c4750 then its code).
+  const logs = [];
   const h = await bootRenderHarness({ fonts: 'none', width: size, height: size, extraWat: WAT,
     extraHostOverrides: {
       gpu_gl_call: ownedGlCall(() => memory, { gps }),
+      log_i32(v) { logs.push(v >>> 0); if (logs.length > 64) logs.shift(); },
       gpu_stream_kick(addr, mode) {
         addr >>>= 0; kicks.n++;
         if (!executor) {
@@ -118,7 +121,7 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
     const s = Object.fromEntries(STAT_NAMES.map((n, i) => [n, stat(i)]));
     s.reasons = {}; for (let r = 1; r < 32; r++) if (stat(16 + r)) s.reasons[r] = stat(16 + r);
     s.sites = {}; for (let r = 0; r < 16; r++) if (stat(48 + r)) s.sites[r] = stat(48 + r);
-    s.frontPresents = stat(64); s.cpuStencil = stat(65); s.canonDeclines = stat(66);
+    s.frontPresents = stat(64); s.cpuStencil = stat(65); s.canonDeclines = stat(66); s.dsReadbacks = stat(67);
     return s;
   };
   // The presented picture: the front DIB, after the producer has landed its
@@ -148,7 +151,9 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
     { x: x0, y: y0, t: extra.t && extra.t[0] }, { x: x1, y: y0, t: extra.t && extra.t[1] },
     { x: x1, y: y1, t: extra.t && extra.t[2] }, { x: x0, y: y1, t: extra.t && extra.t[3] }], color);
   const clear = (rgba, mask = 0x4000) => { call('glClearColor', rgba.map(f)); call('glClear', [mask]); };
-  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context };
+  // The code of the last $glg_fail (the word after its 'GLGP' tag), or null.
+  const failCode = () => { const i = logs.lastIndexOf(0x474c4750); return i >= 0 && i + 1 < logs.length ? logs[i + 1] : null; };
+  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context, logs, failCode };
 }
 
 // The two arms' presented pictures: equal within $tol per channel.

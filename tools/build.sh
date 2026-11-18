@@ -122,6 +122,9 @@ node tools/gen_dispatch.js --check
 # globals and Gps* layouts of src/09a8gs-gpu-stream.wat, and op ids are
 # append-only against tools/gpu-stream-ops.json (docs/gpu-stream-v2.md).
 node tools/gen-gpu-stream.js --check
+# GL GPS fallback reason names + diagnostics contract for hosts and the HUD:
+# lib/gl-gps-declines.generated.{json,js} from the table in 09a8gt-gl-gps.wat.
+node tools/gen-gl-gps-declines.js --check
 node tools/gen-kernel32-image.js --check
 node tools/check-hash-table.js > /dev/null || { node tools/check-hash-table.js; exit 1; }
 # lib/app-file-sizes.generated.js declares the size of every large inline app
