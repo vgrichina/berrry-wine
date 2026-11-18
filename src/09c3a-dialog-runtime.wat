@@ -1357,10 +1357,12 @@
               (global.get $user_queue_probe_hwnd) (global.get $user_queue_probe_msg)
               (global.get $user_queue_probe_wparam) (global.get $user_queue_probe_lparam)))
             (if (i32.eqz (global.get $modal_dlg_hwnd)) (then (return (call $modal_resume_completed))))))))
-    ;; File dialogs pump ordinary native keyboard messages in their owning
+    ;; File dialogs and MessageBox pump native keyboard messages in their owning
     ;; instance, including real CPU Workers. Renderer shadows only enqueue.
     ;; Never enter a guest callback on the shadow or manufacture consumption.
-    (if (i32.eq (call $ctrl_table_get_class (global.get $modal_dlg_hwnd)) (i32.const 12))
+    (if (i32.or
+          (i32.eq (call $ctrl_table_get_class (global.get $modal_dlg_hwnd)) (i32.const 12))
+          (i32.eq (call $ctrl_table_get_class (global.get $modal_dlg_hwnd)) (i32.const 16)))
       (then
         (local.set $hwnd (global.get $focus_hwnd))
         (if (call $shared_post_queue_peek (i32.const 0) (local.get $hwnd)
