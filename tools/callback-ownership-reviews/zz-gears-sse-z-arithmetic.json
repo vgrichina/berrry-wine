@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "dba28b01584613c9e29852796fe5333528515f87397c2e5b5d6cc5bf8fb44225",
+      "sha256": "0a79bd3c457637f587802d4330a744e678868b60f85de6de6d61fc2ee5c1a0f3",
+      "reason": "Reached SSE2 gear-builder arithmetic/conversions use existing per-thread XMM and width-specific memory paths. CVTPD2PS m128 extends existing CVTDQ2PS alignment rejection before destination write; same decoded block-offset fault EIP and existing SEH return. No new callback/frame/state lifetime; general invocation ownership stays pending."
+    }
+  ]
+}

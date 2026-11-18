@@ -68,6 +68,59 @@
         (call $sse_promote_bits (i32x4.extract_lane 0 (local.get $v))))
       (call $sse_promote_bits (i32x4.extract_lane 1 (local.get $v)))))
 
+  ;; Intel SDM vol.1 table 4-7: the first NaN operand wins (destination
+  ;; first for legacy scalar arithmetic); masked SNaNs are quieted. Invalid
+  ;; non-NaN operations return the negative QNaN indefinite. Do not depend
+  ;; on Wasm's permitted NaN canonicalization or host operand selection.
+  (func $sse_is_nan64 (param $b i64) (result i32)
+    (i64.gt_u (i64.and (local.get $b) (i64.const 0x7fffffffffffffff))
+      (i64.const 0x7ff0000000000000)))
+
+  (func $sse_demote_bits (param $b i64) (result i32)
+    (if (call $sse_is_nan64 (local.get $b)) (then
+      (return (i32.or (i32.const 0x7fc00000)
+        (i32.or (i32.wrap_i64 (i64.shr_u (i64.and (local.get $b)
+          (i64.const 0x8000000000000000)) (i64.const 32)))
+          (i32.wrap_i64 (i64.shr_u (i64.and (local.get $b)
+            (i64.const 0x000fffffffffffff)) (i64.const 29))))))))
+    (i32.reinterpret_f32 (f32.demote_f64 (f64.reinterpret_i64 (local.get $b)))))
+
+  ;; Only the reset masked nearest/ties-even environment is supported.
+  ;; ADDSD/MULSD/SUBSD/DIVSD preserve the destination's upper qword;
+  ;; CVTPD2PS zeros it, while CVTDQ2PD writes both doubles exactly.
+  (func $sse_double_result (param $sub i32) (param $d v128) (param $s v128) (result v128)
+    (local $a i64) (local $b i64) (local $r f64)
+    (if (i32.eq (local.get $sub) (i32.const 44)) (then
+      (return (i32x4.replace_lane 1
+        (i32x4.replace_lane 0 (v128.const i32x4 0 0 0 0)
+          (call $sse_demote_bits (i64x2.extract_lane 0 (local.get $s))))
+        (call $sse_demote_bits (i64x2.extract_lane 1 (local.get $s)))))))
+    (if (i32.eq (local.get $sub) (i32.const 45)) (then
+      (return (f64x2.replace_lane 1
+        (f64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+          (f64.convert_i32_s (i32x4.extract_lane 0 (local.get $s))))
+        (f64.convert_i32_s (i32x4.extract_lane 1 (local.get $s)))))))
+    (local.set $a (i64x2.extract_lane 0 (local.get $d)))
+    (local.set $b (i64x2.extract_lane 0 (local.get $s)))
+    (if (call $sse_is_nan64 (local.get $a)) (then
+      (return (i64x2.replace_lane 0 (local.get $d)
+        (i64.or (local.get $a) (i64.const 0x0008000000000000))))))
+    (if (call $sse_is_nan64 (local.get $b)) (then
+      (return (i64x2.replace_lane 0 (local.get $d)
+        (i64.or (local.get $b) (i64.const 0x0008000000000000))))))
+    (if (i32.eq (local.get $sub) (i32.const 40)) (then
+      (local.set $r (f64.add (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))))
+    (if (i32.eq (local.get $sub) (i32.const 41)) (then
+      (local.set $r (f64.mul (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))))
+    (if (i32.eq (local.get $sub) (i32.const 42)) (then
+      (local.set $r (f64.sub (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))))
+    (if (i32.eq (local.get $sub) (i32.const 43)) (then
+      (local.set $r (f64.div (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))))
+    (i64x2.replace_lane 0 (local.get $d)
+      (if (result i64) (f64.ne (local.get $r) (local.get $r))
+        (then (i64.const 0xfff8000000000000))
+        (else (i64.reinterpret_f64 (local.get $r))))))
+
   (func $xmm_lane_get (param $v v128) (param $lane i32) (result i32)
     (if (i32.eq (local.get $lane) (i32.const 0))
       (then (return (i32x4.extract_lane 0 (local.get $v)))))
@@ -198,6 +251,11 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 40))
+                 (i32.le_u (local.get $sub) (i32.const 45))) (then
+      (call $xmm_set (local.get $dst)
+        (call $sse_double_result (local.get $sub) (local.get $d) (local.get $s)))
+      (dispatch-next)))
     ;; Legacy SSE2 reshape operations. The emulator supports the reset MXCSR
     ;; rounding mode (nearest, ties even); LDMXCSR remains unsupported, so no
     ;; guest can silently select an unimplemented rounding/environment mode.
@@ -385,14 +443,27 @@
       (call $xmm_set (local.get $dst) (i32x4.replace_lane 0
         (v128.const i32x4 0 0 0 0) (call $gl32 (local.get $addr))))
       (dispatch-next)))
-    (if (i32.eq (local.get $sub) (i32.const 36)) (then
-      ;; Legacy packed conversion requires m128 alignment (#GP on x86).
+    (if (i32.or (i32.eq (local.get $sub) (i32.const 36))
+                (i32.eq (local.get $sub) (i32.const 44))) (then
+      ;; Legacy packed conversions require m128 alignment (#GP on x86).
       (if (i32.ne (i32.and (local.get $addr) (i32.const 15)) (i32.const 0)) (then
         (global.set $fault_address (local.get $addr))
         (global.set $eip (i32.add (global.get $eip) (i32.shr_u (local.get $op) (i32.const 16))))
         (call $raise_exception (i32.const 0xC0000005))
         (return)))
-      (call $xmm_set (local.get $dst) (f32x4.convert_i32x4_s (call $gl128 (local.get $addr))))
+      (local.set $s (call $gl128 (local.get $addr)))
+      (call $xmm_set (local.get $dst)
+        (if (result v128) (i32.eq (local.get $sub) (i32.const 36))
+          (then (f32x4.convert_i32x4_s (local.get $s)))
+          (else (call $sse_double_result (local.get $sub) (local.get $d) (local.get $s)))))
+      (dispatch-next)))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 40))
+                 (i32.le_u (local.get $sub) (i32.const 45))) (then
+      ;; Scalar arithmetic and CVTDQ2PD read exactly m64, unaligned allowed.
+      (local.set $s (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+        (call $gl64 (local.get $addr))))
+      (call $xmm_set (local.get $dst)
+        (call $sse_double_result (local.get $sub) (local.get $d) (local.get $s)))
       (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 37)) (then
       (call $xmm_set (local.get $dst) (i64x2.replace_lane 0

@@ -5205,13 +5205,15 @@
           ;; Reached legacy SSE2 reshape forms. Match mandatory prefixes
           ;; exactly: 66 6E/7E are MOVD XMM (unprefixed is still MMX), NP 5B
           ;; is CVTDQ2PS, F2 10/11 MOVSD, NP 5A CVTPS2PD, F3 5A CVTSS2SD.
-          ;; Other conversion families, mixed mandatory prefixes and LOCK
-          ;; deliberately reach the unsupported decoder below.
+          ;; Gear building also reaches F2 58/59/5C/5E scalar doubles,
+          ;; 66 5A CVTPD2PS and F3 E6 CVTDQ2PD. Mixed mandatory prefixes,
+          ;; LOCK and other conversion families remain unsupported below.
           (local.set $mmxsub (i32.const -1))
           (if (i32.and (i32.eqz (global.get $code16)) (i32.eqz (local.get $prefix_lock))) (then
             (if (i32.and (local.get $prefix_66) (i32.eqz (local.get $prefix_rep))) (then
               (if (i32.eq (local.get $op) (i32.const 0x6e)) (then (local.set $mmxsub (i32.const 34))))
-              (if (i32.eq (local.get $op) (i32.const 0x7e)) (then (local.set $mmxsub (i32.const 35))))))
+              (if (i32.eq (local.get $op) (i32.const 0x7e)) (then (local.set $mmxsub (i32.const 35))))
+              (if (i32.eq (local.get $op) (i32.const 0x5a)) (then (local.set $mmxsub (i32.const 44))))))
             (if (i32.eqz (local.get $prefix_66)) (then
               (if (i32.eqz (local.get $prefix_rep)) (then
                 (if (i32.eq (local.get $op) (i32.const 0x5b)) (then (local.set $mmxsub (i32.const 36))))
@@ -5222,11 +5224,20 @@
                 (then (local.set $mmxsub (i32.const 37))))
               (if (i32.and (i32.eq (local.get $prefix_rep) (i32.const 1))
                     (i32.eq (local.get $op) (i32.const 0x5a)))
-                (then (local.set $mmxsub (i32.const 39))))))))
+                (then (local.set $mmxsub (i32.const 39))))
+              (if (i32.eq (local.get $prefix_rep) (i32.const 2)) (then
+                (if (i32.eq (local.get $op) (i32.const 0x58)) (then (local.set $mmxsub (i32.const 40))))
+                (if (i32.eq (local.get $op) (i32.const 0x59)) (then (local.set $mmxsub (i32.const 41))))
+                (if (i32.eq (local.get $op) (i32.const 0x5c)) (then (local.set $mmxsub (i32.const 42))))
+                (if (i32.eq (local.get $op) (i32.const 0x5e)) (then (local.set $mmxsub (i32.const 43))))))
+              (if (i32.and (i32.eq (local.get $prefix_rep) (i32.const 1))
+                    (i32.eq (local.get $op) (i32.const 0xe6)))
+                (then (local.set $mmxsub (i32.const 45))))))))
           (if (i32.ne (local.get $mmxsub) (i32.const -1)) (then
             (call $decode_modrm)
             (local.set $imm (i32.shl (local.get $mmxsub) (i32.const 8)))
-            (if (i32.and (i32.eq (local.get $mmxsub) (i32.const 36))
+            (if (i32.and (i32.or (i32.eq (local.get $mmxsub) (i32.const 36))
+                                (i32.eq (local.get $mmxsub) (i32.const 44)))
                   (i32.ne (global.get $mr_mod) (i32.const 3)))
               (then (local.set $imm (i32.or (local.get $imm)
                 (i32.shl (i32.sub (local.get $insn_start) (local.get $start_eip)) (i32.const 16))))))
