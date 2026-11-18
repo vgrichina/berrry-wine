@@ -47,6 +47,12 @@ made. Initial/final relevant foreign binary diffs are identical. No runtime
 repair, focused product test pass or locked build is claimed; this is a
 documentation-only bounded preparation result.
 
+The browser control harness also imported the other owner’s live
+`tools/revolt-display-admission.cjs`, which is absent from the selected
+production Git pin. Its exact body is retained as an added-file patch with a
+closure-time hash. This was a harness input, not a production graph edit; its
+published provenance and full control qualification are not claimed.
+
 The concrete blockers are shared disk headroom and the run-local watchdog's
 launcher-to-child closure gap. A future attempt needs sufficient actual disk
 margin plus a fail-closed disk boundary proven on authored controls before
