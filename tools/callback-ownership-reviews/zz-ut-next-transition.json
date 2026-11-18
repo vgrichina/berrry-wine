@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "ab33d9ba9be1a7f4fc9cc7121753f496234624cacb5989eb88a09c4ddb10c1f6",
+      "sha256": "46dacc04629058d9ce2d92e251e6146037ad5a3a41d5faabb9c88604be16d508",
+      "reason": "Retained DialogBox input callback receipt only; actual entry and CACA0004 sentinel unwind matched by token, actor, target/enclosing generations and invocation/root/depth/epoch. Guest dispatch/paint order and existing guest register restoration retained. General callback ownership remains pending."
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$modal_native_key",
+      "baseSHA256": "67f5716e10539643fa0b24472bedd625d499a5f99f9875fb8dc3143fdb70c4ba",
+      "sha256": "2755c628b9cc138f55c88758d940a0e47d14876b980071c2012d53fbb4e54174",
+      "reason": "Nested native modal key restores the prior shared invocation publication pointer independently of its private modal-key chain, preserving an enclosing retained DialogBox input frame. Same callbacks, stack unwind, actor, epoch and input semantics. General callback ownership remains pending."
+    }
+  ],
+  "additions": [
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$dialog_input_begin",
+      "writes": 0,
+      "boundaryCalls": [
+        "$sync_depth_enter",
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "ae2dce5ce21d67fbdad9412710010d14898a60294853529e4617111c3f58d3c0",
+      "kind": "continuation",
+      "reason": "Retained DialogBox input frame: exact token and pre-entry generation/process/thread; active invocation/root/depth/epoch and enclosing dialog lifetime; matching callback sentinel/ESP unwind publishes return before frame release. No generic callback ownership claim.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$dialog_input_dispose",
+      "writes": 0,
+      "boundaryCalls": [
+        "$sync_depth_leave"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "e4dda92cb55d8e6b1e8add6629e3d1ab2b4e8b916d1cb0c1bc81ae996f8f3e5f",
+      "kind": "continuation",
+      "reason": "Retained DialogBox input frame: exact token and pre-entry generation/process/thread; active invocation/root/depth/epoch and enclosing dialog lifetime; matching callback sentinel/ESP unwind publishes return before frame release. No generic callback ownership claim.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$dialog_input_reject",
+      "writes": 1,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "global.get",
+          "$dlg_loop_thunk"
+        ]
+      ],
+      "sha256": "957b29b372b0f6f340ad789fcd8ee8630cee2324b4ba893a30819100476396fe",
+      "kind": "continuation",
+      "reason": "Retained DialogBox input frame: exact token and pre-entry generation/process/thread; active invocation/root/depth/epoch and enclosing dialog lifetime; matching callback sentinel/ESP unwind publishes return before frame release. No generic callback ownership claim.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$dialog_input_return",
+      "writes": 0,
+      "boundaryCalls": [
+        "$invocation_current"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "76bfc1420e1a9adb3c2a354fd008fda67002a86dd39e75492ef3cc2d9f634e9e",
+      "kind": "continuation",
+      "reason": "Retained DialogBox input frame: exact token and pre-entry generation/process/thread; active invocation/root/depth/epoch and enclosing dialog lifetime; matching callback sentinel/ESP unwind publishes return before frame release. No generic callback ownership claim.",
+      "ownership": "pending"
+    }
+  ]
+}
