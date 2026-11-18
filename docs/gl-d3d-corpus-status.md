@@ -13,6 +13,20 @@ Neither run demonstrates original turns, a round outcome or Quit.
 Evidence: `scratch/runs/20261118-static-display-fresh-capture-gltron-gameplay/result.json`
 and `scratch/runs/20261118-gltron-unique-capture-output-live-turns/result.json`.
 
+The later matching-fixture operator qualified actual native GL capture, trusted
+input, independent release and Quit before one unchanged GLTron original.
+That original reached the arena and reported WINNER 3, PLAYER 4 WINS and
+WINNER 2. The coordinator reviewed a whole arena frame showing PLAYER 4 WINS.
+Ordinary QUIT selection, credits and Escape produced guest exit code 0 before
+host cleanup; the coordinator inspected the retained process-exit state.
+Two visible input-caused turn effects and successful pause remain unproved,
+despite trusted A/S events and physical-UP receipts. A player-selection menu
+alone is not key-binding evidence. This run used `f6962ba5b`, module `a6002d5d…`,
+with all 92 media pins unchanged; independently executing module/roles remain
+unknown. Its 59 retained waits completed with both EOFs and 219 recorded PIDs
+were absent, but the outer tool143/enclosing-wait gap remains unknown.
+Evidence: `scratch/runs/20261118-gltron-matching-fixture-operator-live-round/result.json`.
+
 LTris startup helper `6fe4afd9e` distinguishes an initial empty desktop
 publication from the first completed SDL window publication. Authored browser
 controls and native Quit passed; the original reached only its menu before
