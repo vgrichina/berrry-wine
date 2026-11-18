@@ -6451,6 +6451,10 @@ class WineAssembly {
         // When the slices came back — the reference a GetMessage park's
         // timer deadline is measured from (see the yield 7 branch).
         let perfSliceDoneAt = 0;
+        const endWorkerHostStep = !serial && self.threadManager?.backend === 'worker'
+          ? self.threadManager.beginWorkerHostStep(() => self.running && !self._stopped &&
+              !self._hiddenPaused && !self._paused && !self._frozen)
+          : null;
         try {
           if (typeof window !== 'undefined' && window.WINE_THREADS_SERIAL) {
             // Diagnostic only: the same slices, one at a time. A bug that appears
@@ -6462,6 +6466,7 @@ class WineAssembly {
             [r, threadsRun] = await Promise.all([runMainThenEnd(), runThreads()]);
           }
         } finally {
+          endWorkerHostStep?.();
           perfSliceDoneAt = WineAssembly._wallNow();
           endStep();
           if (self.threadManager) self.threadManager.workerLocalSleep = null;

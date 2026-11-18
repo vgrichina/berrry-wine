@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "74e4ca794ee0f39a1319376a63785a13108c5cc90b9a284260bd8f30756b3750",
+      "sha256": "8c97865ffa92a67b6d6318d9c26b291ffe0980c2e543fc43ee46f623bea520c9",
+      "reason": "Review 20261118 NFS3 host-step lifetime: the existing parallel main/sibling Worker rendezvous owns one ThreadManager activity token from immediately before its try through its finally. The liveness closure checks this running host and pause/stop/frozen state. The token does not survive settlement, rejection or backend replacement and does not invoke guest exports, callbacks, polling, wake, focus or clocks. Actual native separate-UI/Device2 normal-Worker pressure control keeps native UI samples fresh while the main Worker synchronously waits on the real render Worker; callback admission and broader ownership remain pending. Run 20261118-nfs3-reviewed-frame-native-scene-latency."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "0b5bfc9a4e7b5c09c48382756ffb543ee5fb66bdb20f72925ec32d8e6c7b7bf1",
+      "sha256": "192295a5459bf9972b16f7d223bf703ff2f7303dd02edd18af14aed95781f25f",
+      "reason": "Review 20261118 explicit Worker host-step lifetime: retain the existing normal free-run dispatch and satisfied-wait paths while their exact backend owns a live awaited host rendezvous, even when its main native slice exceeds the 250ms no-new-step cutoff. The token captures backend identity and the host liveness predicate; stopped, stopping, replaced, paused and completed owners cannot inherit activity. Finally release is identity checked and idempotent; nested acquisition refuses. Outside a token the existing stale-step cutoff remains unchanged. No clock timestamp renewal, guest export, callback target, context restoration, timer, forced message probe, input, render or native scene freshness change. Focused scheduler/lifetime negatives and actual native old/new software-Device2 pressure controls are retained in run 20261118-nfs3-reviewed-frame-native-scene-latency. General callback ownership remains pending."
+    }
+  ]
+}
