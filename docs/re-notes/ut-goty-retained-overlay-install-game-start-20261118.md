@@ -1,4 +1,57 @@
-# UT GOTY retained overlay: disk admission blocker
+# UT GOTY retained overlay: identical-payload reuse and disk admission blocker
+
+## Storage improvement (later task, 2026-11-18)
+
+Evidence: `scratch/runs/20261118-overlay-identical-write-reuse-ut-install/`.
+`nodeDirStore` now reuses an immutable blob only after an exact byte comparison.
+Candidates are grouped by stored payload length, with the current path checked
+first; cross-file and same-batch aliases work without changing the version-1
+index format. Comparisons use bounded reads. Metadata remains per record,
+including attributes, timestamps, sparse layout, directories and whiteouts.
+Publication still writes new blobs before atomically replacing the index;
+collection and rollback retain all referenced aliases. Historical SHA-1 and
+UUID blob names need no migration. This improves storage capacity; it is not
+evidence of a guest or API defect.
+
+A real 4 MiB filesystem control measured the old equal-overwrite-plus-alias
+publication peak at 12,582,912 allocated payload bytes (three blobs), settling
+at 8,388,608. The new store's peak and final allocation both stayed at
+4,194,304 bytes (one blob). These are `stat.blocks * 512` measurements, not
+logical file lengths or a deduplication estimate.
+
+An authentic recovery fork copied the genuine 415-record index and hardlinked
+its immutable blobs. Two rounds of normal store re-persistence, in batches of
+32 records with fresh store instances between rounds, preserved every payload
+and all metadata without allocating new payload blocks. The retained payload
+total is 448,673,130 bytes. Every resulting file still referenced its original
+base inode. The disposable fork was removed after verification. Both genuine
+partial overlays were SHA-256 verified before and after; neither index nor
+payload bytes changed. The unique CD1 ISO also remains unchanged and uncopied.
+This is filesystem recovery/storage evidence, not an installer execution or
+an invented installed tree.
+
+All 33 overlay tests, the persistence-restore test, 12 publication tests and
+the locked build passed. The OPFS browser test skipped because Chrome was not
+found. The genuine Winamp installer regression passed installation, restart
+hydration and SIGTERM final flush using published Git sources in memory plus
+the owned store change and the clean `a6002d5d…` module. An earlier invocation
+refused before guest launch because the shared-tree region mirror differed
+from that module; its failed receipt is retained separately. Shared foreign
+runtime changes were not adopted into the successful regression graph.
+
+UT was not launched. Admission measured 2,040,721,408 bytes free. Reserving
+the genuine default component page's 702,545,920 bytes leaves 1,338,175,488,
+which is 161,824,512 below the 1,500,000,000-byte floor before transient
+flushes, logs and drains. Equal-byte re-persistence proves reuse but does not
+bound Setup's different or intermediate writes; crediting all retained bytes
+as guaranteed installer savings would be unsupported. Safe capacity therefore
+remains unproved. Install 1200 / total 2400 / final 300 seconds were declared
+before admission; no UT clock started, old scope replay, endpoint request or
+extension occurred. Installation completion, game startup and ordinary Quit
+remain unverified. No new installer images exist. Box ID, expiry and stop
+receipt are null; state is NOT_CREATED.
+
+## Earlier read-only investigation (before payload reuse)
 
 Evidence: `scratch/runs/20261118-ut-goty-retained-overlay-install-game-start/`.
 No new installer or original game process was launched. Installation completion,
