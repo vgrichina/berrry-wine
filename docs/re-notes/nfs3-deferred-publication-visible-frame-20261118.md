@@ -111,3 +111,33 @@ the original screenshot timestamp, unchanged 15s lifetime, 3s native preparation
 and its filesystem handoff are retrieved together to avoid spending the review
 window between requests. Focused tests reproduce the exact negative-budget
 failure and check known refusal, boundary, clock and admitted reserve cases.
+
+Published admission preparation `c2256a77a` was exercised on another fresh
+registered exact original, with the same b91 native module, recovered c9 graph,
+135 verified media pins and all eight actual live owner module readbacks.
+Its whole cockpit was reviewed during countdown and again after race start.
+The race-ready capture is valid and visibly shows timer 0:05.81 / 1 MPH creep
+before any input. That autonomous creep is not evidence of user driving.
+
+The first throttle intent was correctly NOT_SENT: only 37ms of its original
+review lifetime remained. A fresh combined capture/review retrieval then
+exceeded its fixed three-second screenshot deadline. The scope closed UNKNOWN
+before `guardedKey`, native input preparation or physical DOWN. A precomposed
+filesystem key intent was written after that capture closed; the driver never
+read it (no command-5, input admission, operation, release child or physical
+edge). No later browser/owner endpoint request was made, and no scope replayed.
+
+The concrete next blocker is bounded browser capture/review admission under
+actual load. Its timing needs authored qualification before another changed
+original run; this task does not extend or bypass the in-flight deadlines.
+Original input-controlled speed/road consequence, steering, Pause, Continue
+and ordinary Quit remain UNVERIFIED. The rendering repair itself is causally
+proved by authored native/browser oldfail-newpass and by the fresh original's
+actual DIB table, matching compositor/GPU pixels and visible full cockpit.
+
+All thirteen supervised scopes have actual native and independent watchdog
+pipe-close waits (26 total), both stdout/stderr EOF, no leaked containment and
+no poll error. All original scopes are closed. No boxes were created: box ID,
+expiry and stop receipt are null; state NOT_CREATED. Evidence, recovery patches,
+actual module/media identity and selected named PNGs are retained in the run;
+`result.json` is written last. No foreign render Worker hunk was edited.
