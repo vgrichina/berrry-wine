@@ -56,6 +56,15 @@ async function units() {
   a.call=async()=>{endpointCalls++;throw Error('must not call closed endpoint');};
   await assert.rejects(a.capture('closed'),/sticky UNKNOWN/);assert.equal(endpointCalls,0);checks++;
   a.call=originalCall;
+  for (const [name, snapshot, failed] of [
+    ['held', {physicalUp:false,capture:'0x0',batch:7}, ['physicalUp']],
+    ['captured', {physicalUp:true,capture:'0x1',batch:8}, ['captureReleased']],
+    ['both', {physicalUp:false,capture:'0x1',batch:9}, ['physicalUp','captureReleased']]]) {
+    assert.throws(()=>a.requireReleased(name,'after',snapshot),/physical UP state required/);
+    const diagnostic=a.read(name+'-after-release-refusal.json');
+    assert.deepEqual(diagnostic.snapshot,snapshot);assert.deepEqual(diagnostic.failed,failed);
+    assert.equal(diagnostic.extraRequests,0);checks++;
+  }
   fs.unlinkSync(path.join(dir,'terminal-input-failure.json'));
   const originalOpened=a.opened;a.opened=()=>{};
   a.save('input-owner.json',owner);a.call=async()=>{endpointCalls++;throw Error('authored snapshot transport UNKNOWN');};
@@ -79,10 +88,28 @@ async function units() {
   a.lease=originalLease;
   a.now = c.now; fs.rmSync(dir, {recursive:true}); console.log(JSON.stringify({unitChecks:checks,pass:true}));
 }
-async function nativeBody(out) {
+function captureFixture(retain = false) {
+  const b=require('./test-cli-native-button-delivery.cjs').fixture(0),raw=r=>r-0x1000+0x400;
+  const u32=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24];
+  for(const [slot,rva,name] of [[0x1334,0x1c40,'SetCapture'],[0x1338,0x1c60,'ReleaseCapture']]) {
+    b.writeUInt32LE(rva,raw(slot));b.write(name+'\0',raw(rva+2));
+  }
+  const code=[],labels=new Map(),fix=[];const emit=(...v)=>code.push(...v),push=n=>emit(0x68,...u32(n));
+  const call=slot=>emit(0xff,0x15,...u32(0x400000+slot)),label=n=>labels.set(n,code.length);
+  const jump=(n,c)=>{emit(...(c?[0x0f,c]:[0xe9]));fix.push([code.length,n]);emit(0,0,0,0);};
+  emit(0x55,0x89,0xe5,0x81,0x7d,12,...u32(0x201));jump('up',0x85);
+  emit(0xff,0x75,8);call(0x1334);push(0x403200);jump('text');
+  label('up');emit(0x81,0x7d,12,...u32(0x202));jump('default',0x85);
+  if(!retain)call(0x1338);
+  push(0x403240);label('text');emit(0xff,0x75,8);call(0x131c);emit(0x31,0xc0,0xc9,0xc2,16,0);
+  label('default');for(const n of [20,16,12,8])emit(0xff,0x75,n);call(0x1318);emit(0xc9,0xc2,16,0);
+  const result=Buffer.from(code);for(const [o,n]of fix)result.writeInt32LE(labels.get(n)-o-4,o);
+  b.fill(0,raw(0x2400),raw(0x2800));result.copy(b,raw(0x2400));return b;
+}
+async function nativeBody(out, captureMode = '') {
   const net = require('node:net'); a.R = out;
   fs.mkdirSync(out,{recursive:true});
-  const exe = path.join(out,'authored.exe'); fs.writeFileSync(exe,require('./test-cli-native-button-delivery.cjs').fixture(0));
+  const exe = path.join(out,'authored.exe'); fs.writeFileSync(exe,captureMode ? captureFixture(captureMode === 'retain') : require('./test-cli-native-button-delivery.cjs').fixture(0));
   const server = net.createServer(); await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;await new Promise(r=>server.close(r));
   a.URL = `http://127.0.0.1:${port}/ctl`;
   const recipe = {cwd:path.resolve(__dirname,'..'),seconds:240,watchdogGrace:2,args:[process.execPath,'test/run.js','--exe='+exe,'--no-build',
@@ -97,9 +124,36 @@ async function nativeBody(out) {
       assert(Date.now()<end,'native startup');await c.sleep(20);
     }
     await a.capture('bootstrap');a.review('bootstrap',fields('bootstrap',{sceneType:'bootstrap',nativeTitleOrMenu:true}));await a.bind('bootstrap');
-    const operations = [['ctrl',['keydown:17','mousedown:240:240'],'select'],['box',['mousedown:180:180','mousemove:240:240'],'select'],['attack',['mousedown:240:240'],'command'],['enemy',['mousedown:240:240'],'target']];
+    const operations = [['ctrl',['keydown:17','mousedown:240:240'],'select'],['box',['mousedown:180:180','mousemove:240:240'],'select'],['attack',['mousedown:240:240'],'command'],['enemy',['mousedown:240:240'],'target'],['move',['mousedown:240:240'],'command'],['road',['mousedown:240:240'],'target']];
+    if(captureMode === 'retain') {
+      await a.capture('retainscene');a.review('retainscene',fields('select'));
+      const call=a.call;
+      a.call=async(command,...args)=>{
+        const reply=await call(command,...args);
+        if(command.action==='guarded-input' && command.cmd.startsWith('mousedown:')) {
+          const held=await call({action:'snapshot'});
+          a.save('actual-held-snapshot.json',held);assert.equal(held.physicalUp,false);
+        }
+        return reply;
+      };
+      await assert.rejects(a.pulse('retain',['mousedown:240:240'],400,'retainscene','select',null,true),/captureReleased/);
+      const refusal=a.read('retain-after-release-refusal.json');
+      assert.equal(refusal.snapshot.physicalUp,true);assert.notEqual(refusal.snapshot.capture,'0x0');
+      assert.deepEqual(refusal.failed,['captureReleased']);assert.equal(a.read('retain-up.json').state,'ACK');
+      const captureOwner=refusal.snapshot.windows.find(w=>w.hwnd===refusal.snapshot.capture);
+      assert(captureOwner?.live);assert.equal(captureOwner.threadId,refusal.snapshot.focusWindow.threadId);
+      a.save('capture-owner.json',{hwnd:captureOwner.hwnd,threadId:captureOwner.threadId,
+        generation:captureOwner.generation,live:captureOwner.live,fixtureRetainsCapture:true,
+        interpretation:'Real guest retains live capture after physical release; not evidence of original cause'});
+      assert(a.read('terminal-input-failure.json').noReplay);
+      a.call=async()=>{throw Error('unexpected endpoint request after capture refusal');};
+      await assert.rejects(a.capture('aftercapturefailure'),/sticky UNKNOWN/);
+      await assert.rejects(a.lease(),/sticky UNKNOWN/);
+      return;
+    }
     for (const [name,keys,mode] of operations) {
-      const scene=name+'scene';await a.capture(scene);a.review(scene,fields(mode));
+      const scene=name+'scene';await a.capture(scene);a.review(scene,fields(mode,
+        ['move','road'].includes(name) ? {commandKind:'move'} : {}));
       await a.pulse(name,keys,400,scene,mode,null,name==='ctrl');
       const down=a.read(name+'-down.json'),up=a.read(name+'-up.json');
       assert(down.length===keys.length&&down.every(r=>r.state==='CONSUMED'&&r.consumed));
@@ -132,10 +186,10 @@ async function nativeBody(out) {
   }
 }
 async function main() {
-  if(process.argv[2]==='--native-body')return nativeBody(path.resolve(process.argv[3]));
+  if(process.argv[2]==='--native-body')return nativeBody(path.resolve(process.argv[3]),process.argv[4]);
   if(process.argv[2]==='--native') {
     const out=path.resolve(process.argv[3]||tmp());fs.mkdirSync(out,{recursive:true});
-    const receipt=await require('../tools/native-supervise.cjs').supervise(path.join(out,'containment'),[process.execPath,__filename,'--native-body',path.join(out,'native')],
+    const receipt=await require('../tools/native-supervise.cjs').supervise(path.join(out,'containment'),[process.execPath,__filename,'--native-body',path.join(out,'native'),process.argv[4]||''],
       {deadline:c.now()+65,cleanup_deadline:c.now()+75,grace:2});
     assert.equal(receipt.exit,0);assert.equal(receipt.leaked,false);console.log(JSON.stringify({nativeControls:true,containment:receipt}));return;
   }

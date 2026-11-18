@@ -32,6 +32,19 @@ a.fail = (e, name) => {
   if (!exists('terminal-owner-exited.json') && !exists('terminal-input-failure.json'))
     a.save('terminal-input-failure.json', { at: a.now(), name, error: String(e.message || e), noReplay: true });
 };
+// Inspect only the snapshot already received. A refusal must retain the exact
+// evidence without asking a now-closed endpoint for a second observation.
+a.requireReleased = (name, phase, snapshot) => {
+  const physicalUp = snapshot.physicalUp === true, captureReleased = snapshot.capture === '0x0';
+  if (!physicalUp || !captureReleased) {
+    a.save(name + '-' + phase + '-release-refusal.json', {
+      at: a.now(), phase, snapshot, predicates: { physicalUp, captureReleased },
+      failed: [!physicalUp && 'physicalUp', !captureReleased && 'captureReleased'].filter(Boolean),
+      extraRequests: 0
+    });
+    throw Error('physical UP state required: ' + (!physicalUp ? 'physicalUp ' : '') + (!captureReleased ? 'captureReleased' : ''));
+  }
+};
 a.cutoff = () => {
   const l = a.read('launch.json'); ok(l.deadline - l.at > 180, 'fixed Quit reserve required');
   return l.deadline - 180;
@@ -237,7 +250,8 @@ a.pulse = async (name, keys, ms, scene, mode, route = null, admit = false) => {
       a.save(name + '-rejection.json', { state: 'NOT_SENT', effects: false, reason: e.message, at: a.now() });
       return 'NOT_SENT: local expiry before arm';
     }
-    ok(before.physicalUp && before.capture === '0x0' && rr.snapshot.physicalUp && rr.snapshot.capture === '0x0', 'physical UP before intention required');
+    a.requireReleased(name, 'before', before);
+    a.requireReleased(name, 'reviewed', rr.snapshot);
     const nonces = keys.map(() => randomUUID());
     const releaseEvent = keys.length === 2 ? 'mouseup:' + keys.at(-1).split(':').slice(1).join(':') : null;
     a.save(name + '-intent.json', { name, keys, ms, scene, nonces, review, releaseEvent,
@@ -317,7 +331,7 @@ a.pulse = async (name, keys, ms, scene, mode, route = null, admit = false) => {
     if (['command', 'target'].includes(mode)) a.save(name + '-combat-order.json', { mode, commandKind: review.commandKind, scene, review, target: rr.target, at: Math.max(...receipts.map(r => r.consumedAt)) / 1000 });
     a.save(name + '-workflow.json', { captureAt: rr.at, captureCompletedAt: rr.completedAt, reviewedAt: review.at, dispatchCompletedAt: timings.at(-1).returnedAt, releasedAt: up.at, captureToDispatchSeconds: timings.at(-1).returnedAt - rr.at });
     if (final) return 'Final reviewed choice submitted; await actual native wait';
-    const s = await a.call({ action: 'snapshot' }); ok(s.physicalUp && s.capture === '0x0', 'physical UP state required');
+    const s = await a.call({ action: 'snapshot' }); a.requireReleased(name, 'after', s);
     const end = a.now() + 10;
     for (;;) {
       const next = await a.call({ action: 'snapshot' });
