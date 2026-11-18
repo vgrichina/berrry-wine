@@ -4488,3 +4488,35 @@ does not supply those missing waits. No complete original cleanup, backend
 parity, full 27-app coverage, FPS or audio claim follows from this evidence.
 
 Evidence: `scratch/runs/20261118-forsaken-current-browser-world-combat/result.json`.
+
+## Hexen II normal browser encounter and ordinary Quit — 18 November 2026
+
+[Independent release and encounter report](re-notes/hexen2-dialog-release-browser-gameplay-20261118.md),
+published as `20765d3df`, uses helper `34c794d54`, unchanged registered demo
+media, normal production Workers and module `1504acf2…`. Independently recovered
+guest/render bytecode hashes match the served module; actual rendering is
+WebGL1 on the reported ANGLE/Mesa device.
+
+The coordinator reviewed whole courtyard, ramp, chamber and combat frames.
+The living player moves from the courtyard up the ramp into a chamber with two
+visible spiders. Health changes 81→50 while the player remains upright; later
+death is recorded separately. Incoming damage is proved. Enemy damage, defeat
+and guest attack consumption remain unproved. Mouse1 has an independent release
+ACK and physical state 0, but the DOM ledger lacks mouseup; the first Escape
+DOWN exits browser pointer lock. These limits are not hidden by transport ACKs.
+
+Ordinary menu Quit and a balanced Y confirmation produce process exit code 0
+before host cleanup. Runtime browser/display/supervisor/watchdog/enclosing waits
+have drained EOFs and no containment leaks; the separate board watcher retains
+an EOF-receipt gap. The helper repairs a process/document release reader; the
+run-local controller also adopts atomic command publication. Neither establishes
+a game engine or compositor defect. The isolated
+old-fail/new-pass control does not identify the predecessor's missing exception.
+The final authored startup visibility annotation was corrected using raw PNGs;
+visible notice transition evidence comes from a separate authored scope.
+Some run-local helper versions lack contemporaneous prelaunch hashes; the
+authenticated runtime graph is separate from that limitation. This establishes
+the named browser gameplay and Quit result, without software-backend parity,
+full 27-app coverage, FPS or audio claims.
+
+Evidence: `scratch/runs/20261118-hexen2-dialog-release-browser-gameplay/result.json`.
