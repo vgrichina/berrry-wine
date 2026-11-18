@@ -12,7 +12,7 @@ const policyPath = path.join(root, 'tools/no-python-allowlist.json');
 const language = ['py', 'thon'].join('');
 const caller = '#!/bin/sh\n' + language + '3 legacy-task\n';
 const legacy = { pyFiles: ['scratch/committed/task.py'], callers: ['scratch/committed/caller.sh'] };
-function run({ tracked = [...legacy.pyFiles, ...legacy.callers], others = [], files = {},
+function run({ tracked = [...legacy.pyFiles, ...legacy.callers], others = [], files = {}, nonFiles = [],
   index = { 'scratch/committed/caller.sh': caller }, allow = legacy, prune = false } = {}) {
   const errors = [], writes = [], indexReads = [];
   const missing = name => Object.assign(new Error('missing ' + name), { code: 'ENOENT' });
@@ -26,6 +26,11 @@ function run({ tracked = [...legacy.pyFiles, ...legacy.callers], others = [], fi
       if (name === 'node:path') return path;
       if (name === 'node:fs') return {
         existsSync: file => file === policyPath || Object.hasOwn(files, path.relative(root, file)),
+        statSync(file) {
+          const rel = path.relative(root, file);
+          if (!Object.hasOwn(files, rel)) throw missing(rel);
+          return { isFile: () => !nonFiles.includes(rel) };
+        },
         readFileSync(file) {
           if (file === policyPath) return JSON.stringify(allow);
           const rel = path.relative(root, file);
@@ -70,6 +75,9 @@ result = run({ others: ['tools/new.py'], files: { 'tools/new.py': '' } });
 assert.equal(result.status, 1, 'untracked source is checked before commit');
 result = run({ others: ['scratch/transient.py'], files: { 'scratch/transient.py': '' } });
 assert.equal(result.status, 0, 'untracked scratch evidence remains outside the gate');
+result = run({ others: ['tools/directory.py'], files: { 'tools/directory.py': '' },
+  nonFiles: ['tools/directory.py'] });
+assert.equal(result.status, 0, 'untracked non-files are excluded from the source gate');
 result = run({ files: { 'scratch/committed/caller.sh': '#!/bin/sh\necho ported\n' }, prune: true });
 assert.equal(result.status, 0);
 assert.deepEqual(result.writes[0].callers, [], 'a real working-tree port takes precedence over the old index');
@@ -80,4 +88,4 @@ assert.ok(result.errors.some(s => s.includes('missing index blob')));
 result = run({ others: ['tools/new.cjs'], files: { 'tools/new.cjs': 'child.spawnSync("' + language + '3", []);' } });
 assert.equal(result.status, 1, 'new callers outside scratch are rejected');
 assert.ok(result.errors.some(s => s.includes('NEW file(s) that run')));
-console.log('PASS no-python gate: eight index/worktree/ratchet regression cases');
+console.log('PASS no-python gate: nine index/worktree/regular-file/ratchet regression cases');
