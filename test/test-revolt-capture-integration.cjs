@@ -57,6 +57,8 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
     };
     await begin();
     assert.equal(classify(await evaluate(READ)), 'waiting');
+    const obstructedCurrent = await evaluate(READ);
+    assert.throws(() => observer.acceptIdentity(obstructedCurrent), e => e.code === 'LOCAL_NOT_SENT', 'second live-owner snapshot cannot admit through loading');
     await assert.rejects(observer.identity(), e => e.code === 'LOCAL_NOT_SENT');
     await assert.rejects(observer.identity(true), CandidateWait);
     let captures = 0;

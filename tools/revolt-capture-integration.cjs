@@ -15,8 +15,10 @@ function createObserver({evaluate, sameOwner, owner, expectedName, check, onObse
     readiness.classify(s);
     return s;
   }
-  async function identity(candidate = false) {
-    const s = await observe();
+  function acceptIdentity(s, candidate = false) {
+    check();
+    assert.equal(s.page?.apps?.[0]?.name, expectedName);
+    if (owner()) sameOwner(owner(), s.page.apps[0]);
     if (readiness.classify(s) === 'waiting') {
       if (candidate) throw new CandidateWait('discard unadmitted loading candidate');
       const e = Error('normal loading; intent NOT_SENT; fresh whole-frame review and new intent required');
@@ -25,6 +27,7 @@ function createObserver({evaluate, sameOwner, owner, expectedName, check, onObse
     }
     return s.page;
   }
+  async function identity(candidate = false) { return acceptIdentity(await observe(), candidate); }
   async function capture({deadline, candidate, discard}) {
     return readiness.captureReady({observe, sameOwner, deadline, check, onObservation,
       capture: async () => {
@@ -32,7 +35,7 @@ function createObserver({evaluate, sameOwner, owner, expectedName, check, onObse
         catch (e) { if (!(e instanceof CandidateWait)) throw e; discard(); return null; }
       }});
   }
-  return {observe, identity, capture};
+  return {observe, identity, acceptIdentity, capture};
 }
 
 // The existing native/browser operator supplies its unchanged release and
@@ -49,6 +52,8 @@ function adaptBrowser(source) {
   replace('async function capture(name){', 'async function captureCandidate(name){');
   replace('const before=await identity();', 'const before=await observer.identity(true);');
   replace('after=await identity();latest={name,', 'after=await observer.identity(true);const candidate={name,');
+  replace('return {page:(${PAGE_READ}),stopped:', 'return {observation:(${readiness.READ}),page:(${PAGE_READ}),stopped:');
+  replace('same(a,v.page.apps[0]);', 'observer.acceptIdentity(v.observation);same(a,v.page.apps[0]);');
   replace("save(name+'-scene.json',latest);return latest;", "save(name+'-scene.json',candidate);return candidate;");
   replace('const v=await evaluate(admission.DISPLAY_READ);',
     'await observer.identity(true);const v=await evaluate(`(()=>{const s=(${readiness.READ});if(!s.page.apps[0]?.outputVisible)return {loadingSnapshot:s};return (${admission.DISPLAY_READ});})()`);if(v.loadingSnapshot){readiness.classify(v.loadingSnapshot);if(owner)same(owner,v.loadingSnapshot.page.apps[0]);throw new integration.CandidateWait("loading during display proof");}');
@@ -69,6 +74,8 @@ async function capture(name){
 const order=require('./guard.cjs');`);
   replace('if(a.outputVisible)break;', "if(a.outputVisible)break;\n const ordinaryWait=await evaluate(readiness.READ);if(ordinaryWait.dataWait.visible){assert.equal(readiness.classify(ordinaryWait),'waiting');await sleep(50);continue;}");
   replace("save('ready.json',{at:Date.now(),policy:prep.policy});", "startupAdmission=false;save('ready.json',{at:Date.now(),policy:prep.policy});");
+  replace('async function inspect(name){const p=await identity(),state=await evaluate(extra);',
+    "async function inspect(name){const observation=await observer.observe(),p=observation.page,state=await evaluate(extra);log('unadmitted-inspections.jsonl',{at:Date.now(),name,state:readiness.classify(observation),inputAdmission:false});");
   replace("if(!downAt&&failure.code==='LOCAL_NOT_SENT'&&!gate.closed){",
     "if(!downAt&&failure.code==='LOCAL_NOT_SENT'&&!gate.closed){if(!child){assert.equal(op.down,0);assert(!op.armed);op.done=true;log('ordering.jsonl',{stage:'local-before-arm-NOT_SENT',name:op.name,at:Date.now()});}");
   return source;
