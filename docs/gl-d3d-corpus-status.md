@@ -4378,3 +4378,31 @@ This proves the named browser controls, outcome and ordinary Quit, without a
 complete 27-app, backend-parity, FPS, audio or game-completion claim.
 
 Evidence: `scratch/runs/20261118-gltron-current-browser-turns-round/result.json`.
+
+## Alice browser player HUD and W movement — 18 November 2026
+
+[Completed player-control report](re-notes/alice-current-browser-player-hud-20261118.md),
+published as `03dcc660f`, records normal browser WebGL guest/render Workers on
+immutable `57af0a44c` / module `1a8a78d4…`, with sixteen unchanged media pins.
+Natural startup, New Game/Easy, loading and the intro reach third-person Alice
+with the player HUD. The coordinator reviewed neutral and post-W whole frames:
+the timber doorway, lamps and passage move relative to the character. A later
+corrected neutral/W pair supplies additional movement evidence. Autonomous
+intro frames are not used as control proof.
+
+The reused controller mismatched A/S DOWN and UP codes during middle navigation.
+That segment is excluded. Matching ordinary releases cleared the held keys;
+fresh W and Space inputs then had passive physical-UP checks. Jump remained
+visually inconclusive. The proposed mouse attack was NOT_SENT because its
+release child missed the parent's fixed one-second prearm acceptance. The
+controller closed the browser before ordinary Quit, so neither attack nor game
+Quit is verified. No Alice runtime defect or production repair was established.
+
+Focused helper/evidence checks and the locked build passed. The second original's
+browser, display and supervisor actual waits retain both EOFs and no leaks;
+the first original has explicit outer/browser wait gaps, and separate EOF values
+for a matching-release tool were unavailable. Cleanup is distinct from guest
+Quit. This establishes the named browser player movement, without jump, attack,
+backend-parity, complete 27-app or game-completion claims.
+
+Evidence: `scratch/runs/20261118-alice-current-browser-player-hud/result.json`.
