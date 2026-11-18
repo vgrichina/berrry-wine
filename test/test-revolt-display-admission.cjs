@@ -67,8 +67,14 @@ class Socket {
   const now=Date.now(), owner={windowHwnd:65537,processId:1000};
   const m={observation:'current-display',content:'already-displayed',completion:'canvas2d-readback',publication:1,retainedPublicationPixels:true,captureOwner:{hwnd:65537,processId:1000},composition:{windows:[{hwnd:65537,processId:1000}]},source:{kind:'logical',width:640,height:480},output:{width:640,height:480},displayedAt:now-10,requestedAt:now-5,readbackStartedAt:now-2,readbackCompletedAt:now-1};
   verifyReadback(m,owner,now);
+  // A new observation of a static publication is fresh; the publication is
+  // not required to be newly painted. Keep the original display timestamp.
+  verifyReadback({...m,displayedAt:now-86400000},owner,now);
+  verifyReadback({...m,displayedAt:now-30001},owner,now);
+  verifyReadback({...m,displayedAt:now-86400000},owner,now);
   verifyReadback({...m,retainedPublicationPixels:false,rendererWorkAtRequest:{writerHeld:false,gdiPaint:false,repainting:false}},owner,now);
   verifyReadback({...m,content:'ordinary-publication-after-request',displayedAt:now-4,retainedPublicationPixels:false,rendererWorkAtRequest:{writerHeld:true,gdiPaint:false,repainting:false}},owner,now);
-  for(const patch of [{retainedPublicationPixels:false},{displayedAt:now-30001},{completion:'synthetic'},{captureOwner:{hwnd:2,processId:1000}},{source:{kind:'unknown'}},{readbackCompletedAt:now+1}])assert.throws(()=>verifyReadback({...m,...patch},owner,now));
+  for(const patch of [{retainedPublicationPixels:false},{displayedAt:now-60000,requestedAt:now-30000},{displayedAt:now-60000,requestedAt:now-30001},{displayedAt:now+1},{requestedAt:now+1},{completion:'synthetic'},{captureOwner:{hwnd:2,processId:1000}},{captureOwner:{hwnd:65537,processId:1001}},{source:{kind:'unknown'}},{readbackCompletedAt:now+1}])assert.throws(()=>verifyReadback({...m,...patch},owner,now));
+  assert.throws(()=>verifyReadback({...m,content:'ordinary-publication-after-request',displayedAt:now-30001},owner,now),'new-publication claim must follow its request');
   console.log('PASS exact-parent empty/delayed URL, replacement negatives; shared sticky query error/exception/timeout/session closure and independent UP; readback identity/freshness');
 })().catch(e=>{console.error(e);process.exitCode=1;});

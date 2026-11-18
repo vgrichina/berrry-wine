@@ -108,7 +108,12 @@ function verifyReadback(m, owner, now = Date.now(), maxAge = 30000) {
   for (const k of ['displayedAt','requestedAt','readbackStartedAt','readbackCompletedAt']) assert(Number.isFinite(m[k]), k);
   assert(m.displayedAt <= m.readbackStartedAt && m.requestedAt <= m.readbackStartedAt && m.readbackStartedAt <= m.readbackCompletedAt && m.readbackCompletedAt <= now);
   if (m.content === 'ordinary-publication-after-request') assert(m.displayedAt >= m.requestedAt, 'ordinary completion follows request');
-  assert(now - m.displayedAt < maxAge && now - m.requestedAt < maxAge, 'display/request freshness');
+  // displayedAt is the age of the ordinary publication, not this observation.
+  // A static window can remain current indefinitely. The renderer validates
+  // that publication/owner/output around the request-local pixel readback;
+  // callers must still pin the live document, canvas and owner around capture.
+  // Never accept an old request merely because its pixels completed recently.
+  assert(now - m.requestedAt < maxAge, 'request freshness');
 }
 // A display publication can precede completion of boot/first-device work.
 // Observe the existing scheduler, without waking a Worker or changing its work.
