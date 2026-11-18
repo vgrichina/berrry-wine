@@ -39819,5 +39819,12 @@
     "nargs": 2,
     "convention": "stdcall",
     "hash": 2319115076
+  },
+  {
+    "id": 4710,
+    "name": "_initterm_e",
+    "nargs": 2,
+    "convention": "cdecl",
+    "hash": 2916143282
   }
 ]

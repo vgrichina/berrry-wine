@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a6-handlers-crt.wat",
+      "name": "$crt_callback_complete",
+      "baseSHA256": "e26b5f544d39517841c417394e631acd4da095959025d4b88bf7cd539c05cb73",
+      "sha256": "ce4dd0acafadfbb76b03cab851a7d700bde111bc45a8a9a00527208273baa41e",
+      "reason": "Review 20261118 gears VS2012: _initterm_e uses retained CRT mode3 with the existing child/root/parent/expected-ESP validation and per-invocation cursor/result. Mode3 scans NULL-skipping forward table slots, calls cdecl initializers, stops on first nonzero EAX and returns that exact DWORD; empty/success returns zero. Only exit modes drain the registry/close streams. New CACA0042 continuation authenticates mode3 before any return handling; unchanged void/exit paths remain distinct. Authored real PE native and normal Worker oldfail/newpass, nested error/success and callee-saved/ESP tests plus existing init/exit ownership negatives qualify the bounded addition. General ownership remains pending."
+    },
+    {
+      "file": "src/09a6-handlers-crt.wat",
+      "name": "$crt_callback_continue",
+      "baseSHA256": "0262fb6f400ac2e1fb00891eebf3353726348934b301f4abf472ed25ef898a5d",
+      "sha256": "f7faedcf43a0ac9b6348357e34287343de528234594b2e3537bdc3d2f10f92a0",
+      "reason": "Review 20261118 gears VS2012: _initterm_e uses retained CRT mode3 with the existing child/root/parent/expected-ESP validation and per-invocation cursor/result. Mode3 scans NULL-skipping forward table slots, calls cdecl initializers, stops on first nonzero EAX and returns that exact DWORD; empty/success returns zero. Only exit modes drain the registry/close streams. New CACA0042 continuation authenticates mode3 before any return handling; unchanged void/exit paths remain distinct. Authored real PE native and normal Worker oldfail/newpass, nested error/success and callee-saved/ESP tests plus existing init/exit ownership negatives qualify the bounded addition. General ownership remains pending."
+    },
+    {
+      "file": "src/09a6-handlers-crt.wat",
+      "name": "$crt_callback_launch",
+      "baseSHA256": "326bf3853e114a6023f5168546c75f63e5657078fec69009e998848d9fdf3f69",
+      "sha256": "5b43489317b6cb1aaa34d015d4f7239a85001fd626927a7ed811a1cf01fc64ea",
+      "reason": "Review 20261118 gears VS2012: _initterm_e uses retained CRT mode3 with the existing child/root/parent/expected-ESP validation and per-invocation cursor/result. Mode3 scans NULL-skipping forward table slots, calls cdecl initializers, stops on first nonzero EAX and returns that exact DWORD; empty/success returns zero. Only exit modes drain the registry/close streams. New CACA0042 continuation authenticates mode3 before any return handling; unchanged void/exit paths remain distinct. Authored real PE native and normal Worker oldfail/newpass, nested error/success and callee-saved/ESP tests plus existing init/exit ownership negatives qualify the bounded addition. General ownership remains pending."
+    },
+    {
+      "file": "src/09a6-handlers-crt.wat",
+      "name": "$crt_callback_slot",
+      "baseSHA256": "5d07c74336b32a1073bb14e2f83ac2681179f29de74a3f8a1935f4031b16f536",
+      "sha256": "c7f0a3620a6bf917032b20360a5bf8fe93db908a1ed3d01f41769cd4e5180f75",
+      "reason": "Review 20261118 gears VS2012: _initterm_e uses retained CRT mode3 with the existing child/root/parent/expected-ESP validation and per-invocation cursor/result. Mode3 scans NULL-skipping forward table slots, calls cdecl initializers, stops on first nonzero EAX and returns that exact DWORD; empty/success returns zero. Only exit modes drain the registry/close streams. New CACA0042 continuation authenticates mode3 before any return handling; unchanged void/exit paths remain distinct. Authored real PE native and normal Worker oldfail/newpass, nested error/success and callee-saved/ESP tests plus existing init/exit ownership negatives qualify the bounded addition. General ownership remains pending."
+    },
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "7b4d070a889192105ef43e5d9c6054f9b410ddedf76da23894f4a23ded9ef580",
+      "sha256": "5cc4aa1f0097c9ffd37d190388161dcb8c8cd247983fe2b4df3c01f6395b2e21",
+      "reason": "Review 20261118 gears VS2012: _initterm_e uses retained CRT mode3 with the existing child/root/parent/expected-ESP validation and per-invocation cursor/result. Mode3 scans NULL-skipping forward table slots, calls cdecl initializers, stops on first nonzero EAX and returns that exact DWORD; empty/success returns zero. Only exit modes drain the registry/close streams. New CACA0042 continuation authenticates mode3 before any return handling; unchanged void/exit paths remain distinct. Authored real PE native and normal Worker oldfail/newpass, nested error/success and callee-saved/ESP tests plus existing init/exit ownership negatives qualify the bounded addition. General ownership remains pending."
+    }
+  ]
+}

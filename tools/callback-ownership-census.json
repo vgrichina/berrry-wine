@@ -2829,6 +2829,20 @@
     },
     {
       "file": "src/09a-handlers2-runtime.wat",
+      "name": "$handle__initterm_e",
+      "writes": 0,
+      "boundaryCalls": [
+        "$crt_callback_begin"
+      ],
+      "exports": [],
+      "targets": [],
+      "sha256": "1ceb4c7b9ede93e939e8799fe45e17c3e9f0524f313fc5b8e763a241adcc50c2",
+      "kind": "callback",
+      "reason": "Review 20261118 gears VS2012: _initterm_e uses retained CRT mode3 with the existing child/root/parent/expected-ESP validation and per-invocation cursor/result. Mode3 scans NULL-skipping forward table slots, calls cdecl initializers, stops on first nonzero EAX and returns that exact DWORD; empty/success returns zero. Only exit modes drain the registry/close streams. New CACA0042 continuation authenticates mode3 before any return handling; unchanged void/exit paths remain distinct. Authored real PE native and normal Worker oldfail/newpass, nested error/success and callee-saved/ESP tests plus existing init/exit ownership negatives qualify the bounded addition. General ownership remains pending.",
+      "ownership": "pending"
+    },
+    {
+      "file": "src/09a-handlers2-runtime.wat",
       "name": "$handle__purecall",
       "writes": 1,
       "boundaryCalls": [],
@@ -5260,6 +5274,7 @@
       "name": "$win32_dispatch_inner",
       "writes": 69,
       "boundaryCalls": [
+        "$crt_callback_continue",
         "$crt_callback_continue",
         "$crt_callback_continue",
         "$crt_callback_continue"
