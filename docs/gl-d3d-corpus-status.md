@@ -354,6 +354,17 @@ isolated shot/score causality remain unproved; outer launcher143 limitations
 remain recorded. This is DirectDraw/Canvas2D evidence, not a new GL backend case.
 Evidence: `scratch/runs/20261118-donuts-targeting-consumption-confirmation-boundary/result.json`.
 
+The subsequent [numbered-level run](re-notes/donuts-confirmed-level-progression-20261118.md),
+report `f49ef729e`, directly confirms **LEVEL002** in whole frame `u43.png`,
+personally reviewed by the coordinator. The same original consumed36 finite
+gameplay gestures, including six after that checkpoint, and exited through
+ordinary Escape with native actual wait0, both EOFs and no host cancellation.
+LEVEL003 remains unconfirmed; no individual shot or ambient score is credited
+with the transition. Final UP remained OWNER_EXITED/unacknowledged. This run
+used the same immutable source37118/module`eb2395e1…`, original EXE+37 files
+and unchanged input guards. All44 known owned PIDs were nonlive after cleanup.
+Evidence: `scratch/runs/20261118-donuts-confirmed-level-progression/result.json`.
+
 ## November 18 Blood II preparation and level-entry limit
 
 The [frozen preparation repair](re-notes/blood2-frozen-renderer-dependency-repair-combat-20261118.md),
