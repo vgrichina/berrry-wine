@@ -8,6 +8,13 @@ const rtPoints = new Set([0x1696,0x16dd,0x16ff,0x1713,0x1735,0x1745,
   0x2b20,0x2b32,0x2b41,0x2b48,0x2b4f,0x2b51,0x2b5c,0x2b63,
   0x2b6f,0x2b7a,0x2b85,0x2b8c,0x2b95,0x2cfd,0x2d13,0x2d28,0x2d2c,0x2d41]);
 const musicPoints = new Set([0x1c61,0x1c81,0x270c,0x2c72,0x31f6,0x37db]);
+function readPointerFiles(directory){
+  const fs=require('node:fs'),path=require('node:path');
+  // Evidence data is not executable/JSON source. Keep the sealed runtime's
+  // JS/JSON admission policy unchanged, including in late-started Workers.
+  return fs.readdirSync(directory).filter(n=>/^object-pointer-\d+-\d+-\d+\.dat$/.test(n))
+    .map(n=>JSON.parse(fs.readFileSync(path.join(directory,n),'utf8')).object.pointer);
+}
 function createObserver({emit, deadline, now=Date.now, maxRows=16000,
   maxBoundaries=20000000, controlRange=null, knownPointers=()=>[]}={}) {
   if(typeof emit!=='function'||!Number.isFinite(deadline)||deadline<=now()||
@@ -120,19 +127,18 @@ function install(observer,wasm=WebAssembly){
     const result=await Reflect.apply(instantiate,this,[source,imports]);bind(result.instance||result);return result;};
   return ()=>{wasm.Instance=Original;wasm.instantiate=instantiate;};
 }
-module.exports={createObserver,install};
+module.exports={createObserver,install,readPointerFiles};
 if(process.env.BLOOD2_LIFETIME_DIR){
   const fs=require('node:fs'),path=require('node:path'),{threadId}=require('node:worker_threads');
   const dir=process.env.BLOOD2_LIFETIME_DIR;
   if(!path.isAbsolute(dir))throw Error('absolute output required');
   const fd=fs.openSync(path.join(dir,`lifetime-${process.pid}-${threadId}.jsonl`),'wx');
   const observer=createObserver({deadline:Number(process.env.BLOOD2_LIFETIME_DEADLINE),
-    knownPointers:()=>fs.readdirSync(dir).filter(n=>/^object-pointer-\d+-\d+-\d+\.json$/.test(n))
-      .map(n=>JSON.parse(fs.readFileSync(path.join(dir,n),'utf8')).object.pointer),
+    knownPointers:()=>readPointerFiles(dir),
     ...(process.env.BLOOD2_LIFETIME_CONTROL?{controlRange:[0x400000,0x410000]}:{}),
     emit:row=>{fs.writeSync(fd,JSON.stringify({pid:process.pid,hostThread:threadId,...row})+'\n');
       if(row.kind==='constructor-pointer')fs.writeFileSync(path.join(dir,
-        `object-pointer-${process.pid}-${threadId}-${row.object.pointer}.json`),JSON.stringify(row));
+        `object-pointer-${process.pid}-${threadId}-${row.object.pointer}.dat`),JSON.stringify(row));
       if(row.kind==='stop'&&row.reason.startsWith('UNKNOWN')&&process.env.BLOOD2_LIFETIME_CANCEL)
         fs.writeFileSync(process.env.BLOOD2_LIFETIME_CANCEL,JSON.stringify(row));}});
   install(observer);

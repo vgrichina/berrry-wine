@@ -1,6 +1,6 @@
 'use strict';
 const assert=require('node:assert/strict');
-const {createObserver}=require('../tools/blood2-object-lifetime-observer.cjs');
+const {createObserver,readPointerFiles}=require('../tools/blood2-object-lifetime-observer.cjs');
 assert.throws(()=>createObserver({}),/bounds/);
 const memory=new WebAssembly.Memory({initial:32});
 const d=new DataView(memory.buffer),b=new Uint8Array(memory.buffer),rows=[];
@@ -33,4 +33,13 @@ const bound=[];const small=createObserver({emit:r=>bound.push(r),now:()=>1,deadl
 const sh={memory,log_eip(){}};small.wrapImports({host:sh})({exports:e});sh.log_eip(pc);
 assert.equal(bound.at(-1).reason,'UNKNOWN:row-bound');
 assert.throws(()=>createObserver({emit(){},now:()=>1,deadline:100,maxBoundaries:0}),/bounds/);
+// Runtime source guards reject unsealed .json. The handoff must read only
+// diagnostic data files, including when a late Worker starts after the ctor.
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const dir=fs.mkdtempSync(path.join(os.tmpdir(),'blood2-lifetime-'));
+try{
+  fs.writeFileSync(path.join(dir,'object-pointer-1-0-123.dat'),JSON.stringify({object:{pointer:123}}));
+  fs.writeFileSync(path.join(dir,'object-pointer-1-0-456.json'),'not diagnostic data');
+  assert.deepEqual(readPointerFiles(dir),[123]);
+}finally{fs.rmSync(dir,{recursive:true});}
 console.log('PASS native reader: constructor provenance, Release interval, caller/thread/module rows, no writes, unchanged imports, deadline/row bounds');
