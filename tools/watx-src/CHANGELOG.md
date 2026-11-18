@@ -1,3 +1,16 @@
+## 2026-11-18 — preserve Node source Buffer bytes during comment decoding
+
+`tools/watx.js` passes Node Buffers to the byte-to-text helper through a plain
+Uint8Array view with the same offset and length. The compiler's lazy comment
+copy then uses Uint8Array.slice rather than Buffer.slice, which aliases caller
+storage. ROCKROLL's source hash audit exposed the mutation after compilation.
+The vendored parser and normalization algorithm are unchanged; ASCII sources
+still avoid the lazy copy. The production test now verifies Buffer and typed
+array immutability, bounded Buffer views, and original UTF-8 fallback after a
+non-ASCII comment, alongside emitted-module equivalence.
+
+Manifest-sha256: 05b1f8dfeb6d4e70b0d187bc937216a735fdba72843cf4a721b4c0391173fe22
+
 ## 2026-10-30 — build-scoped lexical scan reuse
 
 Recover the lexical mechanism from stranded chains01/05 (candidate
