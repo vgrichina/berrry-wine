@@ -54,11 +54,11 @@ for(;;){
  }
 }
 `;
-function prepare(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'fixture.c'),source);
-const imports={kernel32:['ExitProcess@4','Sleep@4','OutputDebugStringA@4','GetTickCount@0'],user32:['CreateWindowExA@48','SetFocus@4','SetForegroundWindow@4','SetWindowTextA@8','GetDC@4','ReleaseDC@8'],gdi32:['GetPixel@12','TextOutA@20'],ddraw:['DirectDrawCreateEx@16']};
+function prepare(out,authoredSource=source){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'fixture.c'),authoredSource);
+const imports={kernel32:['ExitProcess@4','Sleep@4','OutputDebugStringA@4','GetTickCount@0'],user32:['CreateWindowExA@48','SetFocus@4','SetForegroundWindow@4','SetWindowTextA@8','GetDC@4','ReleaseDC@8','MessageBoxA@16','ShowWindow@8'],gdi32:['GetPixel@12','TextOutA@20'],ddraw:['DirectDrawCreateEx@16']};
 for(const [dll,names]of Object.entries(imports)){fs.writeFileSync(path.join(out,dll+'.def'),'LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n');cp.execFileSync('llvm-dlltool',['-m','i386','-k','-d',path.join(out,dll+'.def'),'-l',path.join(out,dll+'.lib')]);}
 cp.execFileSync('clang',['--target=i686-pc-windows-msvc','-ffreestanding','-fno-stack-protector','-fno-builtin','-O1','-c',path.join(out,'fixture.c'),'-o',path.join(out,'fixture.obj')]);cp.execFileSync('ld',['-mi386pe','--entry','_start','--subsystem','console','--disable-dynamicbase','--no-insert-timestamp','-o',path.join(out,'fixture.exe'),path.join(out,'fixture.obj'),...Object.keys(imports).map(n=>path.join(out,n+'.lib'))]);return path.join(out,'fixture.exe');}
-async function controls(){const {inventory}=require('../tools/rm-startup-run.cjs');const events=[],handlers={};let disabled=false;const session={on:(n,f)=>handlers[n]=f,off:n=>delete handlers[n],send:async(n)=>{events.push(n);if(n==='Debugger.enable')handlers['Debugger.scriptParsed']({scriptLanguage:'WebAssembly',scriptId:'1'});if(n==='Debugger.getScriptSource')return {bytecode:Buffer.from('native-module').toString('base64')};if(n==='Debugger.disable')disabled=true;}};const rows=await inventory(session,'authored');assert.equal(rows.length,1);assert(disabled);assert.deepEqual(events,['Debugger.enable','Debugger.getScriptSource','Debugger.disable']);session.send=async n=>{if(n==='Debugger.enable')handlers['Debugger.scriptParsed']({scriptLanguage:'WebAssembly',scriptId:'1'});if(n==='Debugger.getScriptSource')throw Error('authored inventory failure');if(n==='Debugger.disable')disabled=true;};disabled=false;await assert.rejects(inventory(session,'authored'),/authored inventory failure/);assert(disabled);const {finiteCapture}=require('../tools/rm-startup-run.cjs');let resolveShot,reads=0;const scope={phase:'bound',baseline:{viewport:{width:1,height:1,dpr:1}},page:{evaluate:async()=>{reads++;return {viewport:{width:1,height:1,dpr:1}};},screenshot:()=>new Promise(r=>{resolveShot=r;})}};await assert.rejects(finiteCapture(scope),/whole-frame capture timeout/);assert.equal(scope.phase,'closed');resolveShot(Buffer.from('late'));await new Promise(r=>setTimeout(r,10));assert.equal(reads,1,'late screenshot must not cause a post-UNKNOWN state query');console.log('deferred inventory success/error cleanup and finite late-capture closure PASS');}
+async function controls(){await progressControls();const {inventory}=require('../tools/rm-startup-run.cjs');const events=[],handlers={};let disabled=false;const session={on:(n,f)=>handlers[n]=f,off:n=>delete handlers[n],send:async(n)=>{events.push(n);if(n==='Debugger.enable')handlers['Debugger.scriptParsed']({scriptLanguage:'WebAssembly',scriptId:'1'});if(n==='Debugger.getScriptSource')return {bytecode:Buffer.from('native-module').toString('base64')};if(n==='Debugger.disable')disabled=true;}};const rows=await inventory(session,'authored');assert.equal(rows.length,1);assert(disabled);assert.deepEqual(events,['Debugger.enable','Debugger.getScriptSource','Debugger.disable']);session.send=async n=>{if(n==='Debugger.enable')handlers['Debugger.scriptParsed']({scriptLanguage:'WebAssembly',scriptId:'1'});if(n==='Debugger.getScriptSource')throw Error('authored inventory failure');if(n==='Debugger.disable')disabled=true;};disabled=false;await assert.rejects(inventory(session,'authored'),/authored inventory failure/);assert(disabled);const {finiteCapture}=require('../tools/rm-startup-run.cjs');let resolveShot,reads=0;const scope={phase:'bound',baseline:{viewport:{width:1,height:1,dpr:1}},page:{evaluate:async()=>{reads++;return {viewport:{width:1,height:1,dpr:1}};},screenshot:()=>new Promise(r=>{resolveShot=r;})}};await assert.rejects(finiteCapture(scope),/whole-frame capture timeout/);assert.equal(scope.phase,'closed');resolveShot(Buffer.from('late'));await new Promise(r=>setTimeout(r,10));assert.equal(reads,1,'late screenshot must not cause a post-UNKNOWN state query');console.log('deferred inventory success/error cleanup and finite late-capture closure PASS');}
 async function nativeControls(out,commit,modulePath){
   const {supervise}=require('../tools/native-supervise.cjs'),{PNG}=require('pngjs');
   const fixture=prepare(path.join(out,'input')),rows=[];
@@ -76,5 +76,64 @@ async function nativeControls(out,commit,modulePath){
   }
   fs.writeFileSync(path.join(out,'native-controls.json'),JSON.stringify(rows,null,2));return rows;
 }
-module.exports={prepare,controls,nativeControls};
-if(require.main===module){const [mode,...args]=process.argv.slice(2);if(mode==='prepare')console.log(prepare(path.resolve(args[0])));else (mode==='native'?nativeControls(path.resolve(args[0]),args[1],path.resolve(args[2])):controls()).catch(e=>{console.error(e);process.exitCode=1;});}
+
+async function progressControls(){
+ const vm=require('node:vm'),{readStartupObservation,startupPage}=require('../tools/rm-startup-run.cjs');
+ const win={hwnd:7,processId:1,visible:true,title:'initial UI'},display={windows:[{window:{deref:()=>win}}]};
+ const bridge={presenter:{presents:0},stats:{records:5}};
+ const context={runningApps:[{name:'authored',wine:{running:true,renderer:{windows:{7:win},_currentDisplayRecord:display},hostCtx:{d3dimBridge:bridge}}}],Date};
+ const read=async()=> (await vm.runInNewContext('('+readStartupObservation.toString()+')()',context)).apps[0];
+ assert.equal((await read()).completedPRESENT,0);assert.equal((await read()).composed,true);assert.equal((await read()).ready,false);
+ bridge.presenter.presents=4;display.windows=[];assert.equal((await read()).completedPRESENT,4);assert.equal((await read()).composed,false);assert.equal((await read()).ready,false);
+ display.windows=[{window:{deref:()=>win}}];assert.equal((await read()).ready,true);
+ delete bridge.presenter;assert.equal((await read()).completedPRESENT,null);assert.equal((await read()).execution.eip,null);
+ let nativeReads=0;
+ context.runningApps[0].wine.guestWorker={readExports:async names=>{nativeReads++;
+   assert.deepEqual(Array.from(names),['get_eip','get_yield_reason','get_steps']);
+   return {get_eip:123,get_yield_reason:15,get_steps:99};}};
+ const owned=await read();assert.equal(owned.execution.eip,123);assert.equal(owned.execution.remainingSliceSteps,99);
+ assert.equal(owned.windows[0].modalHwnd,null);assert.equal(nativeReads,1);
+ let active=true,calls=0;const page=startupPage({evaluate:async()=>{calls++;return {apps:[{ready:false}]};}},[],()=>active);
+ const {readInspectionReadiness}=require('../tools/inspection-window.cjs');assert.equal(await page.evaluate(readInspectionReadiness),false);active=false;
+ await assert.rejects(page.evaluate(readInspectionReadiness),/closed startup observer/);assert.equal(calls,1);
+ let finish,callbacks=0;const rows=[];
+ const {InspectionScope}=require('../tools/inspection-window.cjs');
+ const scope=new InspectionScope(startupPage({evaluate:()=>new Promise(r=>{finish=r;})},rows,()=>scope.phase!=='closed',async()=>{callbacks++;}));
+ await assert.rejects(scope.bind({timeoutMs:40,stableMs:20,pollMs:10}),/stabilization timeout/);
+ finish({apps:[{ready:true}]});await new Promise(r=>setTimeout(r,10));
+ assert.equal(rows.length,0);assert.equal(callbacks,0);assert.equal(scope.phase,'closed');
+ console.log('Separate PRESENT/composition/unknown and closed endpoint controls PASS');
+}
+async function progressNativeControls(out,commit,modulePath,selected){
+ const {run}=require('../tools/rm-startup-run.cjs'),{PNG}=require('pngjs');fs.mkdirSync(out,{recursive:true});
+ const noWork=source.replace('for(U i=0;i<200000000;i++)','for(U i=0;i<1;i++)');
+ const zero=noWork.replace('for(;;){\n  ', 'Sleep(25000);for(;;){\n  ');
+ const modal=zero.replace('Sleep(25000);for(;;)', 'MessageBoxA(hwnd,"AUTHORED initial native modal","STARTUP MODAL",0);Sleep(25000);for(;;)').replace('void start(void){','I int S MessageBoxA(P,char*,char*,U);void start(void){');
+ const hidden=noWork.replace('check(C2(primary,11,target,1),28);','check(C2(primary,11,target,1),28);ShowWindow(hwnd,0);Sleep(25000);').replace('void start(void){','I int S ShowWindow(P,int);void start(void){');
+ const rows=[];
+ for(const [name,input,observed]of [['ordinary',noWork,false],['observed',noWork,true],['zero-present',zero,true],['modal',modal,true],['missing-composition',hidden,true]]){
+  if(selected&&!selected.includes(name))continue;
+  const fixture=prepare(path.join(out,name+'-input'),input),dir=path.join(out,name);
+  const terminal=await run({out:dir,commit,modulePath,backend:'software',fixture,delays:[0],startupObservations:observed});
+  const progress=JSON.parse(fs.readFileSync(path.join(dir,'startup-progress.json'))).rows.flatMap(r=>r.apps);
+  if(name==='ordinary'||name==='observed'){
+   assert.equal(terminal.state,'OBSERVED');const png=PNG.sync.read(fs.readFileSync(path.join(dir,'whole-0.png')));
+   assert.deepEqual(Array.from(png.data.subarray((100*png.width+100)*4,(100*png.width+100)*4+4)),[0,0,255,255]);
+   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir,'inputs.json'))),[]);
+   const traces=JSON.parse(fs.readFileSync(path.join(dir,'executors-0.json')));
+   assert(traces.some(r=>r.trace.counts.PRESENT>0&&r.trace.counts.DRAW_UP>0));
+   assert.deepEqual(JSON.parse(fs.readFileSync(path.join(dir,'errors.json'))),[]);
+   if(observed)assert(progress.some(a=>a.completedPRESENT>0&&a.composed===true&&a.ready));
+  }else{
+   assert.equal(terminal.state,'UNKNOWN_CLOSED');assert(terminal.failedAt-terminal.bindStartedAt>=15000);assert(terminal.failedAt-terminal.bindStartedAt<17000);
+   if(name==='missing-composition')assert(progress.some(a=>a.completedPRESENT>0&&a.windows.some(w=>w.composed===false)));
+   else assert(progress.some(a=>a.completedPRESENT===0&&a.composed===true));
+   if(name==='modal')assert(progress.some(a=>a.windows.some(w=>w.visible&&w.isDialog&&w.title==='STARTUP MODAL'&&w.nativeOwnerHwnd)));
+  }
+  rows.push({name,terminal,polls:progress.length});fs.writeFileSync(path.join(out,'native-progress-controls.json'),JSON.stringify(rows,null,2));
+ }
+ return rows;
+}
+
+module.exports={prepare,controls,nativeControls,progressNativeControls};
+if(require.main===module){const [mode,...args]=process.argv.slice(2);if(mode==='progress-native')progressNativeControls(path.resolve(args[0]),args[1],path.resolve(args[2]),args[3]?.split(',')).catch(e=>{console.error(e);process.exitCode=1;});else if(mode==='prepare')console.log(prepare(path.resolve(args[0])));else (mode==='native'?nativeControls(path.resolve(args[0]),args[1],path.resolve(args[2])):controls()).catch(e=>{console.error(e);process.exitCode=1;});}
