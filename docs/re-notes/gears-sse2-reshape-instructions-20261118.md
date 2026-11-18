@@ -82,7 +82,8 @@ pass. Those preliminary scopes are not acceptance evidence.
 The affected original uses ordinary upload with default slice 100000, Workers
 enabled, no module override or app setting change. Its actual module is
 `f678ee1f7c4a82da5e406c56b0d9b3518c72e8f2fdff0f022d101822c7821238`
-(2414068 bytes). All 121 source/module response readbacks match local files;
+(2414068 bytes). All 120 successful source/module readbacks match local files;
+the additional response is an empty 404 for the absent local `build-info.js`.
 the retained manifest checks source consistency before launch. It passes
 reshape and reaches 401070, the gear-building routine. The next explicit
 unsupported instruction is **F2 0F 59 1D 68 43 40 00**, `MULSD xmm3,
