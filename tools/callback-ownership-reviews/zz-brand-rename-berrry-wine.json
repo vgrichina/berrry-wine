@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "9ab98ed90c863db118ca2537507d163eb0b8fd90c763958dfc1ed76ec7ff7d01",
+      "sha256": "74e4ca794ee0f39a1319376a63785a13108c5cc90b9a284260bd8f30756b3750",
+      "reason": "Review 20261117 brand rename: only display strings and comments changed ('Wine-Assembly' -> 'Berrry Wine' in the crash-report title, fatal-error heading and comments). No callback producer, boundary call, write, export or lifetime changed."
+    }
+  ]
+}

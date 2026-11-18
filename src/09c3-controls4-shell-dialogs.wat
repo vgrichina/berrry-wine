@@ -216,10 +216,10 @@
   (data (region.addr $POWER_SCREEN_STRINGS 0x2C) "It's now safe to turn off\00")
   (data (region.addr $POWER_SCREEN_STRINGS 0x46) "your computer.\00")
   ;; The wordmark is this machine's, not Microsoft's.
-  (data (region.addr $POWER_SCREEN_STRINGS 0x55) "Wine-Assembly\00")
+  (data (region.addr $POWER_SCREEN_STRINGS 0x55) "Berrry Wine\00")
   (data (region.addr $POWER_SCREEN_STRINGS 0x63) "by berrry.app\00")
   ;; The footer the safe-to-turn-off screen grows a moment later (kind 2).
-  (data (region.addr $POWER_SCREEN_STRINGS 0x71) "Thanks for running Wine-Assembly.\00")
+  (data (region.addr $POWER_SCREEN_STRINGS 0x71) "Thanks for running Berrry Wine.\00")
   (data (region.addr $POWER_SCREEN_STRINGS 0x93) "Restart\00")
   (data (region.addr $POWER_SCREEN_STRINGS 0x9B) "berrry.app\00")
 
@@ -340,10 +340,10 @@
     (local.set $old (call $gdi_native_select_object (local.get $hdc) (local.get $font)))
     (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00000000)))
     (call $power_text_centred (local.get $hdc) (i32.const 161) (i32.const 175)
-      (region.addr $POWER_SCREEN_STRINGS 0x55) (i32.const 13))
+      (region.addr $POWER_SCREEN_STRINGS 0x55) (i32.const 11))
     (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00FFFFFF)))
     (call $power_text_centred (local.get $hdc) (i32.const 160) (i32.const 174)
-      (region.addr $POWER_SCREEN_STRINGS 0x55) (i32.const 13))
+      (region.addr $POWER_SCREEN_STRINGS 0x55) (i32.const 11))
     (drop (call $gdi_native_select_object (local.get $hdc) (local.get $old)))
     (drop (call $gdi_native_delete_object (local.get $font)))
     (local.set $font (call $power_font (i32.const 13) (i32.const 400)))
@@ -405,7 +405,7 @@
         (local.set $old (call $gdi_native_select_object (local.get $hdc) (local.get $font)))
         (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00245E92)))
         (call $power_text_centred (local.get $hdc) (i32.const 160) (i32.const 326)
-          (region.addr $POWER_SCREEN_STRINGS 0x71) (i32.const 33))
+          (region.addr $POWER_SCREEN_STRINGS 0x71) (i32.const 31))
         (drop (call $gdi_native_select_object (local.get $hdc) (local.get $old)))
         (drop (call $gdi_native_delete_object (local.get $font)))
         ;; The two choices, boxed, bold, in the screen's own orange.
