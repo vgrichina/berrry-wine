@@ -79,6 +79,7 @@ async function browser(out,backend) {
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));
   function verifyPins(){for(const p of pins.files)assert.equal(sha(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);}
   verifyPins();const pinMap=new Map(pins.files.map(p=>['/'+p.path,p.sha256]));
+  let transient;
   let server,browser,chromeWait,c,session,chain,latest,bound,closing=false,phase=false;
   const workers=new Map(),tasks=[];
   const record=(n,v)=>save(out,n,v),log=(n,v)=>fs.appendFileSync(out+'/'+n,JSON.stringify(v)+'\n');
@@ -103,7 +104,7 @@ async function browser(out,backend) {
     if(closing)return;closing=true;record('close-reason.json',{reason,at:Date.now(),hostOnly:true});
     if(c){c.event=()=>{};c.stop();} // Host teardown uses OS signals; no later CDP request after failure.
     if(browser){browser.kill('SIGTERM');let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),3000);})]);}catch(e){browser.kill('SIGKILL');await chromeWait;}finally{clearTimeout(timer);}}
-    c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
+    c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));if(transient)record('transient-cleanup.json',await transient.cleanup(out));record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
   try {
     server=await require(ROOT+'/test/static-server.js').startStaticServer({root:ROOT,crossOriginIsolated:true,rewritePath:p=>p.startsWith('/binaries/')?'/test'+p:p});
@@ -111,12 +112,13 @@ async function browser(out,backend) {
     const port=server.address().port;
     for(const p of pins.http){const r=await fetch('http://127.0.0.1:'+port+p.url);assert.equal(r.status,200);assert.equal(sha(Buffer.from(await r.arrayBuffer())),p.sha256);}
     record('http-dependency-check.json',{passed:true,pins:pins.http});
-    browser=cp.spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--window-size=1024,900','--remote-debugging-port=0','--user-data-dir='+out+'/profile','about:blank'],{stdio:['ignore','pipe','pipe']});
+    transient=require('./browser-transients.cjs').create();record('transient-paths.json',{root:transient.root,profile:transient.profile,tmp:transient.tmp,cache:transient.cache});
+    browser=cp.spawn('/usr/bin/google-chrome',[...require('./browser-component-update-args.cjs'),'--headless=new','--no-sandbox','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--window-size=1024,900','--remote-debugging-port=0',...transient.args,'about:blank'],{env:transient.env(),stdio:['ignore','pipe','pipe']});
     const stdout=fs.createWriteStream(out+'/chrome.stdout',{flags:'wx'}),stderr=fs.createWriteStream(out+'/chrome.stderr',{flags:'wx'});browser.stdout.pipe(stdout);browser.stderr.pipe(stderr);
-    chromeWait=new Promise(r=>browser.once('close',(code,signal)=>{record('chrome-wait.json',{pid:browser.pid,code,signal,actualWait:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded,at:Date.now()});r();}));
+    chromeWait=transient.watch(browser,[stdout,stderr]).then(receipt=>{record('chrome-wait.json',{...receipt,at:Date.now()});return receipt;});
     const stat=fs.readFileSync('/proc/'+browser.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
     record('browser-pid.json',{pid:browser.pid,startToken,port,at:Date.now()});
-    const active=out+'/profile/DevToolsActivePort',endpointDeadline=Date.now()+3000;let url;
+    const active=transient.profile+'/DevToolsActivePort',endpointDeadline=Date.now()+3000;let url;
     while(!(url=devtoolsEndpoint(active))){assert(browser.exitCode===null);assert(Date.now()<endpointDeadline,'complete Chrome endpoint within 3000ms');await wait(25);}
     let requestsIssued=0;c=connection(url,v=>record('UNKNOWN.json',{...v,requestsIssued}));
     const nativeSend=c.send;c.send=(method,params={},target)=>{

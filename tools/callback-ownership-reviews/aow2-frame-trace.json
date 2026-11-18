@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-thread-host.js",
+      "name": "host-file",
+      "baseSHA256": "bdd69751bbdb96beed36e2ddc6c96261ccf2a0ab0dc2de58dcb6fd2586938a8e",
+      "sha256": "36b01dee51b76efb1ec4f3b4678d7702e7cd258be93b54bc77920e749b3083aa",
+      "reason": "Opt-in synchronous frame trace only: at most 256 frames per host with first8/last8 scalar progress samples, request IDs held weakly, branch and yield counts, endpoint generation/frame/wait epochs and outcome. No guest read/command, callback admission, scheduling, wait, resume, abort, limit, receiver/result/error or ownership semantics changed. Sink exceptions isolated and copied scalar data only. Real Worker/local nested completion/failure and stale/blocked/unarmed controls pass. General ownership remains pending. Run 20261118-aow2-send-callback-frame-cause. Run 20261118-aow2-worker-identity-boundary-map-progress adds opt-in failure reservation: 255 ordinary records plus the first subsequent failed/thrown frame, <=256 emitted records and unchanged 16 samples/frame and 10000 drive limit. Later successes are transient. Real Worker and local controls prove late success cannot consume the reserve and real nested errors retain their identity."
+    }
+  ]
+}

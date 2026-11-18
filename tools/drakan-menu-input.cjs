@@ -52,7 +52,9 @@ function fixture({frameMs=0,directInput=true}={}) {
  cb[skip]=cb.length-skip-1;e(0xff,0x25,...u(0x401944));b.set(cb,raw(0x2900));return b;
 }
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),assert=require('node:assert/strict'),crypto=require('node:crypto');
-const c=require('./native-supervisor-common.cjs'),a=require('./drakan-authentic-reviewed.cjs');
+const c=require('./native-supervisor-common.cjs');
+c.installRequireTiming();
+const a=require('./drakan-authentic-reviewed.cjs');
 function policy(p){
  assert(p&&Number.isInteger(p.confirmationMs)&&p.confirmationMs>=500&&p.confirmationMs<=5000);
  for(const k of ['fallbackMs','physicalUpMs','operationMs'])assert(Number.isInteger(p[k])&&p[k]>0&&p[k]<=15000);
@@ -96,7 +98,51 @@ async function release(run,url,name,owner,due,confirmationMs){
  a.save(name+'-up.json',{at:c.now(),sentAt:at,physicalUpACK:reply.ok&&reply.value?.released===true,reply});
  if(!reply.ok)process.exitCode=1;
 }
-async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observation,final=false,route=null}){
+async function standby(run,url,name,standbyUntil){
+ a.R=run;a.URL=url;
+ const target=a.read('native-pid.json'),same=(x,y)=>c.canonical(x)===c.canonical(y);
+ const closed=()=>['cancel-request.json','terminal-input-failure.json','native-wait.json',name+'-disarm.json'].some(n=>fs.existsSync(path.join(run,n)));
+ const identity=()=>{assert(!closed(),'closed scope');assert(same(target,a.read('native-pid.json')),'native owner replaced');assert.equal(c.token(target.pid),target.startToken);const u=new URL(url);assert.equal(u.hostname,'127.0.0.1');assert.equal(u.pathname,'/ctl');assert(c.listenerOwnedBy(target.pid,Number(u.port)),'listener owner replaced');};
+ identity();
+ process.stdout.write(JSON.stringify({state:'READY',armed:false,pid:process.pid,target,at:c.now(),standbyUntil})+'\n');
+ let disconnected=false,cancelled=false,request;
+ const onMessage=m=>{if(m?.cancel)cancelled=true;else if(m?.arm&&!request)request=m;else cancelled=true;};
+ process.on('message',onMessage);process.on('disconnect',()=>disconnected=true);
+ try{
+  while(!request&&!cancelled&&!disconnected&&!closed()&&c.now()<standbyUntil)await c.sleep(5);
+  if(!request||cancelled||disconnected||closed()||c.now()>=standbyUntil)return;
+  const {owner,due,confirmationMs,lease,armBy}=request;
+  assert(Number.isFinite(armBy)&&c.now()<armBy,'late arm');
+  assert(Number.isInteger(confirmationMs)&&confirmationMs>=500&&confirmationMs<=5000);
+  assert(Number.isFinite(due)&&due>c.now()+confirmationMs/1000&&due<standbyUntil);
+  identity();assert(same(owner,a.read('input-owner.json')),'guard owner replaced');
+  assert(same(lease,a.read('lease-snapshot.json')),'document lease replaced');
+  const snapshot=await c.postJSON(url,{action:'snapshot'},Math.max(.001,armBy-c.now()));
+  assert(snapshot.ok&&same({nativeProcess:snapshot.value.nativeProcess,screen:snapshot.value.screen},lease),'live document replaced');
+  identity();assert(same(owner,a.read('input-owner.json')),'guard owner replaced');
+  assert(!cancelled&&!disconnected&&c.now()<armBy,'late/cancelled arm');
+  process.stdout.write(JSON.stringify({state:'ARMED',armed:true,pid:process.pid,target,owner,due,confirmationMs,at:c.now()})+'\n');
+  let at=due;
+  while(c.now()<at){
+   if(fs.existsSync(path.join(run,name+'-disarm.json')))return;
+   const shorten=path.join(run,name+'-release-at.json');if(fs.existsSync(shorten))at=Math.min(at,c.readJSON(shorten).at);
+   await c.sleep(Math.min(5,Math.max(0,(at-c.now())*1000)));
+  }
+  if(!fs.existsSync(path.join(run,name+'-dispatch.json'))||fs.existsSync(path.join(run,name+'-disarm.json')))return;
+  // After DOWN the independent fallback survives parent exit/cancellation.
+  // It still refuses replacement authority; the guard validates owner on UP.
+  assert(same(target,a.read('native-pid.json'))&&same(owner,a.read('input-owner.json')),'release owner replaced');
+  assert.equal(c.token(target.pid),target.startToken);
+  const sentAt=c.now();let reply;
+  try{reply=await c.postJSON(url,{action:'guarded-release',owner:owner.owner},confirmationMs/1000);}catch(e){reply={ok:false,error:String(e)};}
+  const remaining=confirmationMs/1000-(c.now()-sentAt);
+  const physical=reply.ok&&remaining>0?await c.postJSON(url,{action:'snapshot'},remaining):null;
+  const physicalUpACK=reply.ok&&reply.value?.released===true&&reply.value?.owner===owner.owner&&physical?.ok&&
+   physical.value.physicalUp===true&&physical.value.capture==='0x0'&&same({nativeProcess:physical.value.nativeProcess,screen:physical.value.screen},lease)&&c.now()-sentAt<confirmationMs/1000;
+  a.save(name+'-up.json',{at:c.now(),sentAt,physicalUpACK,reply,physical});assert(physicalUpACK,'independent physical UP not proved');
+ }finally{process.removeListener('message',onMessage);if(process.connected)process.disconnect();}
+}
+async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observation,final=false,route=null,prepared=null}){
  assert(/^[a-zA-Z0-9-]+$/.test(name));assert(ms>=80&&ms<=1000);assert(['menu','game'].includes(scene));
  if(pointer){assert(key===undefined);assert(['mousemove','mousedown'].includes(pointer.action));assert(Number.isInteger(pointer.x)&&Number.isInteger(pointer.y));}
  else assert(Number.isInteger(key)&&key>=1&&key<=254);
@@ -105,14 +151,15 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
   a.save(name+'-rejection.json',{at:c.now(),state:'NOT_SENT',effects:false,ms,policy:p,reason:'pulse cannot fit preselected fallback'});
   return 'NOT_SENT: pulse cannot fit preselected fallback';
  }
+ const helper=prepared??await c.prepareReleaseHelper({run:a.R,url:a.URL,name,standbyUntil:a.read('launch.json').deadline});
  const start=c.now(),end=start+p.operationMs/1000,intent=route?'quit':'gameplay';
  const enforce=()=>{
   if(!pointer)return a.policy(intent,['keydown:'+key],review,route,end);
   if(route){assert.equal(route,'ordinary-pointer-quit');assert.equal(scene,'menu');}
   else{assert(end<a.reserve());assert(!fs.existsSync(path.join(a.R,'quit-phase.json')));}
  };
- enforce();
  try{
+  enforce();
   const [owner,before]=await a.lease(),rr=a.read(review+'.json');
   assert(before.physicalUp&&before.capture==='0x0');assert(rr.snapshot.physicalUp&&rr.snapshot.capture==='0x0');
   const reviewFile=path.join(a.R,review+'-review.json');
@@ -132,12 +179,10 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
   const nonce=crypto.randomUUID(),deadline=Math.trunc(Math.min(targeting,due,route?end:a.reserve())*1000);
   a.save(name+'-operation.json',{start,end,policy:p,deadline,targeting,due,nonce,immutable:true,ms,key,pointer,scene,review});
   a.save(review+'-used-by-'+name,{name,nonce});
-  const child=cp.spawn(process.execPath,[__filename,'release',a.R,a.URL,name,owner.owner,String(due),String(p.confirmationMs)],{stdio:['ignore','pipe','pipe']});
-  let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);
-  const wait=new Promise(r=>child.once('close',(code,signal)=>r({pid:child.pid,code,signal,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr})));
+  const wait=helper.waited;
   let error,receipt;
   try{
-   const armed=await new Promise((resolve,reject)=>{const t=setTimeout(()=>reject(Error('UP prearm timeout')),1000);child.stdout.once('data',()=>{clearTimeout(t);resolve(JSON.parse(stdout.split('\n')[0]));});});a.save(name+'-armed.json',armed);
+   const armed=await helper.arm({owner,due,confirmationMs:p.confirmationMs,lease:a.read('lease-snapshot.json')});a.save(name+'-armed.json',armed);
    assert.equal(armed.armed,true);assert(c.now()+p.confirmationMs/1000+ms/1000<due);
    a.opened();enforce();
    if(!reviewAdmission(c.now(),targeting,p)){a.save(name+'-disarm.json',{at:c.now()});return refuse('after-prearm');}
@@ -156,7 +201,8 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
   a.save('last-intent.json',{nonces:[nonce]});a.save(name+'-complete.json',{at:c.now(),consumed:true,physicalUpACK:true,receipt,up,visualConsequence:false,ordinaryQuit:false});
   if(final)return 'Finite final input acknowledged; ordinary exit still requires actual wait';
   const image=await a.capture(name,end);assert.equal(a.read(name+'.json').snapshot.physicalUp,true);return image;
- }catch(e){a.fail(e,name);throw e;}
+ }catch(e){a.fail(e,name);throw e;}finally{helper.cancel();await helper.waited;}
 }
-module.exports={fixture,policy,reviewSeconds,reviewAdmission,durationAdmission,proof,pulse,release};
+module.exports={fixture,policy,reviewSeconds,reviewAdmission,durationAdmission,proof,pulse,release,standby};
 if(require.main===module&&process.argv[2]==='release')release(process.argv[3],process.argv[4],process.argv[5],process.argv[6],Number(process.argv[7]),Number(process.argv[8])).catch(e=>{console.error(e);process.exitCode=1;});
+if(require.main===module&&process.argv[2]==='standby')standby(process.argv[3],process.argv[4],process.argv[5],Number(process.argv[6])).catch(e=>{console.error(e);if(process.connected)process.disconnect();process.exitCode=1;});

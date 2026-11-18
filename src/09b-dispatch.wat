@@ -1142,6 +1142,9 @@
           (else
             (if (i32.eq (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (i32.const 0xDCBAABCD))
               (then (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))))))
+        ;; Completion is after the actual guest callback and sentinel unwind,
+        ;; before EndDialog tears down its owning frame or another poll runs.
+        (call $dialog_input_return)
         ;; This branch always re-dispatches the pump by setting EIP; mark it
         ;; so the outer thunk-zone auto-pop (in $run) doesn't misread an
         ;; unchanged EIP as "handler left EIP alone" and pop [esp].
@@ -1381,6 +1384,7 @@
             (return)))
         ;; Poll host for input
         (local.set $arg0 (call $host_check_input))
+        (global.set $pending_input_token (call $host_check_input_token))
         (if (local.get $arg0)
           (then
             ;; Unpack: msg = low 16 bits, wParam = high 16 bits
@@ -1401,8 +1405,13 @@
                   (else
                     (if (i32.ge_u (local.get $arg4) (i32.const 0xFFFF0000))
                       (then
+                        (if (i32.eqz (call $dialog_input_begin (global.get $pending_input_token)
+                              (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+                          (then (call $dialog_input_reject) (return)))
+                        (global.set $wnd_send_completed (i32.const 1))
                         (drop (call $wat_wndproc_dispatch
                           (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
+                        (call $dialog_input_native_return)
                         (global.set $eip (global.get $dlg_loop_thunk))
                         (global.set $steps (i32.const 0))
                         (return)))))
@@ -1417,6 +1426,9 @@
                 ;; can't reroute input to the inner sub-dialog.
                 (local.set $arg0 (global.get $dlg_pump_hwnd))
                 (local.set $arg4 (global.get $dlg_proc))))
+            (if (i32.eqz (call $dialog_input_begin (global.get $pending_input_token)
+                  (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
+              (then (call $dialog_input_reject) (return)))
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
             (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)) (i32.const 0xDCBAABCD))
             (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $dlg_loop_thunk))

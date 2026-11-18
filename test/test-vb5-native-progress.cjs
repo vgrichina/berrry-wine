@@ -156,7 +156,8 @@ async function stateTests(out){
  send(0x406,0,0);const zero=read();
  // Record the runtime's actual zero-range behavior, never substitute defaults.
  assert.equal(zero.min,0);assert.equal(zero.max,1);assert.equal(zero.pos,1);
- e.wnd_table_set(h,0x402300);assert.equal(read().available,false,'guest subclass cannot claim native getter provenance');
+ e.wnd_table_set(h,0x402300);assert.equal(e.native_progress_get(h,0),0,'guest subclass cannot claim virtual native getter provenance');
+ assert.equal(read().contract,progress.STORAGE,'retained storage has its own provenance');
  e.wnd_table_set(h,0xffff0002);assert(read().available);
  const generation=String(e.wnd_lookup_generation(h));send(2);assert.equal(read().available,false,'destroyed state unavailable');
  e.wnd_lookup_retire(h);assert.equal(read().available,false);

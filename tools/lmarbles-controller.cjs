@@ -19,13 +19,26 @@ const alnumName = name => /^[A-Za-z0-9]+$/.test(name.replaceAll('-', ''));
 
 function save(n, v) { c.save(S.R, n, v); }
 function read(n) { return c.readJSON(P(n)); }
-async function call(command, timeout = 10) {
+async function call(command, timeout = 10, beforeSend = null, diagnosticRecord = null) {
   if (c.exists(P('launch.json')) && read('launch.json').inputPolicy) timeout = Math.min(timeout, 3);
-  const r = await c.postJSON(S.URL, command, timeout);
+  const diagnostic = diagnosticRecord ? { kind: 'diagnostic-only', acceptedReceipt: false, command, ...diagnosticRecord.context } : null;
+  let r;
+  try { r = await c.postJSON(S.URL, command, timeout, beforeSend, diagnostic); }
+  catch (e) { if (diagnostic) diagnostic.error = { name: e.name, message: e.message }; throw e; }
+  finally {
+    if (diagnostic) {
+      diagnostic.returnedAt = now();
+      diagnosticRecord.returnedAt = diagnostic.returnedAt;
+      diagnostic.returnedMonotonicMs = performance.now();
+      // Exclusive creation preserves the first raw reply even on rejection.
+      fs.writeFileSync(P(diagnosticRecord.file), JSON.stringify(diagnostic, null, 2) + '\n', { flag: 'wx' });
+    }
+  }
   if (!r.ok) throw Error(JSON.stringify(r));
   return r.value;
 }
 class ReserveRejected extends Error { constructor(m) { super(m); this.name = 'ReserveRejected'; } }
+class ConnectedBudgetRefused extends Error {}
 const QUIT_ROUTES = { 'leave-game': 'keydown:27', 'confirm-leave': 'keydown:89', 'exit-setup': 'keydown:27', 'confirm-quit': 'keydown:89' };
 
 function reserve() {
@@ -57,7 +70,9 @@ async function bind(review = null) {
     const rr = read(review + '.json'), personal = read(review + '-review.json');
     ok(now() - rr.at >= 0 && now() - rr.at < 30 && now() - personal.at >= 0 && now() - personal.at < 30, 'binding review expired');
     ok(personal.pngSHA256 === rr.pngSHA256 && rr.pngSHA256 === sha(P(review + '.png')));
-    command.reviewedScene = { route: 'native-scene-v1', snapshot: rr.snapshot, pngSHA256: rr.pngSHA256 };
+    ok(rr.receipt?.contract === 'native-whole-capture-v1' && rr.receipt.pngSHA256 === rr.pngSHA256,
+      'binding requires the issued whole-capture receipt');
+    command.reviewedScene = { route: 'native-scene-v1', snapshot: rr.snapshot, pngSHA256: rr.pngSHA256, receipt: rr.receipt };
   }
   save('bind-intent.json', { at: now(), permanent: true, review });
   save('input-owner.json', await call(command)); const s = await call({ action: 'snapshot' });
@@ -122,7 +137,17 @@ async function capture(name, operationDeadline = null) {
       if (operationDeadline !== null) ok(now() < operationDeadline, '3000ms operation completion exceeded');
       return value;
     };
-    const start = now(); const s = await observe({ action: 'snapshot' }); capturePhase();
+    const start = now();
+    if (read('launch.json').nativeScene) {
+      const image = await observe({ action: 'native-scene-capture', path: p });
+      const end = now();
+      ok(end - start <= 3, '3000ms observation exceeded');
+      ok(image.receipt?.contract === 'native-whole-capture-v1' && image.receipt.pngSHA256 === sha(p), 'issued capture/image mismatch');
+      save(name + '.json', { at: start, completedAt: end, snapshot: image.snapshot,
+        image, receipt: image.receipt, pngSHA256: image.receipt.pngSHA256 });
+      return p;
+    }
+    const s = await observe({ action: 'snapshot' }); capturePhase();
     const im = await observe({ cmd: 'png:' + p }); const end = now();
     if (read('launch.json').inputPolicy) ok(end - start <= 3, '3000ms observation exceeded');
     save(name + '.json', { at: start, completedAt: end, snapshot: s, image: im, pngSHA256: sha(p) });
@@ -175,8 +200,9 @@ async function release(name, owner, deadline, final = false) {
   save(name + '-release-fired.json', { at: now(), due, source, fallback: deadline });
   try {
     const strict = read('launch.json').inputPolicy, start = now();
-    const reply = await call({ action: 'guarded-release', owner }, strict ? .5 : 10);
-    if (strict) ok(now() - start <= .5, '500ms release confirmation exceeded');
+    const diagnostic = { file: name + '-release-diagnostic.json', context: { deliveryAt: start, releaseDue: due, source } };
+    const reply = await call({ action: 'guarded-release', owner }, strict ? .5 : 10, null, diagnostic);
+    if (strict) ok(diagnostic.returnedAt - start <= .5, '500ms release confirmation exceeded');
     save(name + '-up.json', { state: 'ACK', reply, at: now() });
   } catch (e) {
     // A reviewed final choice can retire the native before the finite UP.
@@ -219,6 +245,12 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
   policy(intent, keys, review, route);
   try {
     const [owner, before] = await lease(); const rr = read(review + '.json'), reviewed = read(review + '-review.json');
+    const unchanged = () => {
+      opened();
+      ok(isDeepStrictEqual(read('input-owner.json'), owner), 'input owner replaced before connected send/refusal');
+      ok(isDeepStrictEqual(read(review + '.json'), rr) && isDeepStrictEqual(read(review + '-review.json'), reviewed)
+        && sha(P(review + '.png')) === rr.pngSHA256, 'review replaced before connected send/refusal');
+    };
     const native = read('launch.json').nativeScene ?? false;
     if (native) {
       ok(before.physicalUp && before.capture === '0x0', 'native physical UP required before intention');
@@ -293,17 +325,26 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
           return reject('before-dispatch');
         }
         save(name + '-dispatch.json', { at: deliveryAt, nonce, mayHaveEffects: true });
-        const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10);
-        returnedAt = now();
+        const diagnostic = { file: name + '-' + nonce + '-diagnostic.json', context: { deliveryAt, releaseCap, operationDeadline: deadline } };
+        const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10, () => {
+          unchanged();
+          policy(intent, keys, review, route, deadline);
+          const sentAt = now();
+          if (!freshnessFits(sentAt, targetingDeadline, strict)) throw new ConnectedBudgetRefused('connected send targeting freshness expired');
+          if (!(admissionFits(sentAt, deadline, allowance, strict ? releaseCap : null, ms)
+            && sentAt * 1000 < guard.deadline)) throw new ConnectedBudgetRefused('connected send admission expired');
+        }, diagnostic);
+        returnedAt = diagnostic.returnedAt;
         if (strict) ok(returnedAt - deliveryAt <= .5, '500ms confirmation exceeded');
-        receipts.push(receipt);
-        if (receipt.consumedAt) save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
-        save(name + '-receipt.json', receipt);
         ok(receipt.state === 'CONSUMED' && receipt.consumed, receipt);
         // The native pre-effect check can pass just before expiry and
         // publish consumption after it. Do not accept that receipt or
         // reopen the context; the prearmed release remains mandatory.
         ok(Math.trunc(deliveryAt * 1000) <= receipt.consumedAt && receipt.consumedAt < guard.deadline, 'consumption exceeded targeting/admission deadline');
+        ok(returnedAt < receipt.consumedAt / 1000 + ms / 1000, 'late ACK; independent UP retained; no replay');
+        receipts.push(receipt);
+        save(name + '-release-at.json', { at: receipt.consumedAt / 1000 + ms / 1000, immutableOperationDeadline: deadline });
+        save(name + '-receipt.json', receipt);
       }
       save(name + '-down.json', receipts);
       const releaseAt = Math.max(...receipts.map(x => x.consumedAt)) / 1000 + ms / 1000;
@@ -312,11 +353,14 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     } catch (e) { failure = e; }
     finally {
       if (!armed) child.stdout.on('data', b => childOut.push(b));
-      const rc = await Promise.race([closed, c.sleep(15000).then(() => { throw Error('TimeoutExpired: release child'); })]);
+      let waitTimer, rc;
+      try { rc = await Promise.race([closed, new Promise((_, reject) => {
+        waitTimer = setTimeout(() => reject(Error('TimeoutExpired: release child')), 15000);
+      })]); } finally { clearTimeout(waitTimer); }
       save(name + '-release-wait.json', { pid: child.pid, exit: rc, actualWait: true, stdoutEOF: true, stderrEOF: true,
         stdout: Buffer.concat(childOut).toString(), stderr: Buffer.concat(childErr).toString() });
-      if (failure) throw failure;
       ok(rc === 0, 'independent release failed; stop');
+      if (failure && !(receipts.length === 0 && c.beforeBodyRefusalCause(failure) instanceof ConnectedBudgetRefused)) throw failure;
     }
     const up = read(name + '-up.json');
     if (final && up.state === 'OWNER_EXITED') {
@@ -330,6 +374,18 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     }
     ok(up.state === 'ACK' && up.at < deadline, 'independent UP not acknowledged in window');
     if (strict) ok(up.at - deliveryAt <= 1.75, '1750ms independent physical UP exceeded');
+    if (failure) {
+      ok(up.reply?.released === true && up.reply.owner === owner.owner, 'matching independent release required');
+      unchanged();
+      const physical = await call({ action: 'snapshot' }, Math.min(.5, deadline - now()));
+      unchanged();
+      ok(now() < deadline && physical.physicalUp === true && physical.capture === '0x0'
+        && !physical.quit && physical.eip !== '0x0'
+        && isDeepStrictEqual({ mainHwnd: physical.mainHwnd, screen: physical.screen }, read('lease-snapshot.json')),
+      'physical zero and unchanged lease required after refusal');
+      return reject('connected-before-body', c.beforeBodyRefusalCause(failure).message,
+        c.beforeBodyRefusalCause(failure).message.includes('freshness'));
+    }
     // Append-only link instead of overwriting old intent records.
     if (c.exists(P('last-intent.json'))) fs.unlinkSync(P('last-intent.json'));
     save('last-intent.json', { nonces });

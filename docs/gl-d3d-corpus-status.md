@@ -1,5 +1,165 @@
 # OpenGL / Direct3D corpus status, updated 2026-11-18
 
+## November 18 capture, input and shutdown prerequisites
+
+Browser startup fix `8fd08ea3b` adds `--bw-timezone=Etc/UTC` to the private
+browser helper. A traced BetterChromium timezone network probe had consumed
+the 15-second launch bound; explicit UTC passed with that bound unchanged.
+The same author's real production browser Worker passed malformed-record,
+queued CLOSE, same-ID replacement and STOP checks, including pixels, canaries,
+barriers and target destruction. This is browser evidence, distinct from the
+earlier Node Worker result. The coordinator reviewed two original software
+Tunnel frames with changed geometry. Ordinary title close was observed, but
+native-exit logging and individual Chrome/display waits were lost after a
+harness failure; absent PIDs and supervisor cleanup do not fill those gaps.
+Initial black output changed after an inspection resized the viewport and an
+ordinary focus gesture, so no isolated renderer fix is established. The run
+also records disk-floor breaches. Neither full-27 nor crash freedom follows.
+Evidence: `scratch/runs/20261118-d3dim-browser-startup-cause-shutdown-original/result.json`.
+
+Follow-up `c7ac59e41` adds the actual-browser regression to tracked tests;
+report `0a55fecd6` also closes the software Tunnel's native-exit and host-wait
+gaps in a new scope. The coordinator inspected the native `ExitProcess(0)`
+record before host stop, the exited process state, guest/render retirement
+and STOP acknowledgement. Chrome, Xvfb and openbox have individual actual
+waits with both EOFs; the original driver and enclosing command completed 0
+without leaks. This does not repair the predecessor's missing receipts.
+The new original had early black output before a later textured client, so
+no new motion or isolated rendering-fix claim follows. The global disk floor
+crossed after driver cleanup; whole-task disk compliance failed. The WebGL
+counterpart was still open in that run; arbitrary browser/OS crash freedom
+is not established.
+Evidence: `scratch/runs/20261118-d3dim-browser-crash-regression-original-close/result.json`.
+
+The WebGL follow-up (`dd9b09da5`, report `72cd36556`) passes the tracked
+production-browser regression on both executors. The original's actual
+GpuStreamWebGL endpoint records WebGL 1 context activity, 810 draws and
+228 presents in the retained later observation. The coordinator reviewed
+the changed textured Tunnel geometry and inspected native exit 0 before
+host stop, exited process state, retirement and individual Chrome/Xvfb/openbox
+waits with both EOFs. These are backend and shutdown observations, not a
+physical-GPU or performance claim. Original-run samples stayed above the floor;
+whole-task disk compliance failed before/after that run. The retained original
+module and authored regression module have separate source/hash records.
+Full-27 coverage and arbitrary crash freedom remain open.
+Evidence: `scratch/runs/20261118-d3dim-webgl-browser-crash-close-tunnel/result.json`.
+
+ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
+Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
+lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
+independent neutral releases. Disk reserve permanently closed the scope before
+the first acceleration command, so 2 mph is not credited as player driving.
+Acceleration, steering/checkpoint consequence and ordinary Quit remain open.
+The earlier unnamed overlapping DIV did not recur and its identity remains
+unknown; no production visibility repair is claimed. Runtime samples stayed
+above the floor, but prelaunch and lifetime compliance gaps remain recorded.
+Evidence: `scratch/runs/20261118-revolt-startup-dom-obstruction-manual-race/result.json`.
+
+Published `f6962ba5b` corrects capture-request freshness for a retained static
+display. A real browser receipt with a 32.761-second-old publication and a
+43-ms-old request fails the old validator and passes the new one. Old requests
+and owner/output replacements remain rejected. Native tests and the locked
+build passed. The affected GLTron original stopped before input because two
+operator outputs used the same filename. A subsequent operator qualification
+used a GL startup predicate on a GDI fixture and also stopped before input.
+Neither run demonstrates original turns, a round outcome or Quit.
+Evidence: `scratch/runs/20261118-static-display-fresh-capture-gltron-gameplay/result.json`
+and `scratch/runs/20261118-gltron-unique-capture-output-live-turns/result.json`.
+
+The later matching-fixture operator qualified actual native GL capture, trusted
+input, independent release and Quit before one unchanged GLTron original.
+That original reached the arena and reported WINNER 3, PLAYER 4 WINS and
+WINNER 2. The coordinator reviewed a whole arena frame showing PLAYER 4 WINS.
+Ordinary QUIT selection, credits and Escape produced guest exit code 0 before
+host cleanup; the coordinator inspected the retained process-exit state.
+Two visible input-caused turn effects and successful pause remain unproved,
+despite trusted A/S events and physical-UP receipts. A player-selection menu
+alone is not key-binding evidence. This run used `f6962ba5b`, module `a6002d5d…`,
+with all 92 media pins unchanged; independently executing module/roles remain
+unknown. Its 59 retained waits completed with both EOFs and 219 recorded PIDs
+were absent, but the outer tool143/enclosing-wait gap remains unknown.
+Evidence: `scratch/runs/20261118-gltron-matching-fixture-operator-live-round/result.json`.
+
+The normal-pause follow-up (`bc3af94e4`, corrected report `06686105d`)
+establishes the two manual WebGL turn effects. Space paused a live arena;
+Enter resumed it. The coordinator reviewed whole frames showing the same
+intact yellow rider's trail turn from rightward to upward after A, then add
+a second rightward corner after the independently chosen S. The pause held
+for 6.732 seconds. These were separate resume/turn/pause intervals, not a
+simultaneous Enter+A event or autonomous play. Quit Enter was **NOT_SENT**
+after disk-margin closure at 1,535,164,416 free bytes. This is separate from
+the earlier original's Quit 0, and the first authored scope's actual floor
+breach remains recorded. Both tasks used the unchanged 92 media and compiled/
+served `f6962ba5b`/`a6002d5d…` graph; independent executing-bytecode provenance
+remains unknown. Software-backend gameplay is still a separate open outcome.
+Evidence: `scratch/runs/20261118-gltron-normal-pause-manual-turn-effects/result.json`.
+
+The later actual software run (`66b475a05`) reached a textured arena with
+`gl-gps=software`, `glRenderer=null` and 4,430 native draws recorded for the
+original itself. The coordinator reviewed the intact rider and GAME IS PAUSED
+frame; the worker also records ordinary Enter resume. This initial launch
+pause does not establish normal Space pause or either manual turn. Disk
+closure preceded those actions and Quit, and later sampled free space fell
+below 1.5 GB. The earlier changed/cropped display refusal did not recur;
+the uncommitted readiness candidate remains unproved. No game exit or
+full-duration disk compliance is claimed.
+Evidence: `scratch/runs/20261118-gltron-headroom-restored-software-gameplay/result.json`.
+
+Quake II report `d0ed22840` records Game -> Easy and four manual world moves
+on unchanged 67 media/control rows and `f6962ba5b`/`a6002d5d…`. The coordinator
+reviewed the initial room and a later doorway view beside an existing corpse.
+There was no firing, identified living-enemy damage/defeat or ordinary Quit;
+the corpse is not credited as a kill. Shared free space reached 1,498,701,824
+bytes, permanently closing the run with zero later requests. Actual driver,
+browser, supervisor and watchdog waits are retained; the outer-tool143/
+enclosing-wait gap and independently unknown executing modules remain limits.
+The later audit confirmed five-second world-input freshness; the misleading
+30-second refusal diagnostic was corrected. No combat or whole-corpus result
+is inferred from these movement frames.
+Evidence: `scratch/runs/20261118-quake2-current-reviewed-browser-enemy-progress/result.json`
+and `scratch/runs/20261118-quake2-tmpfs-world-enemy-consequence/result.json`.
+
+A further original (`c5d5bbc33`) used the published `06f27181f` renderer and
+admission changes with the unchanged `a6002d5d…` module and 67 media pins.
+Nine guest gestures, including seven world gestures, reached the damaged
+lower doorway; the coordinator reviewed the doorway frame with health 100.
+There was no fire, identified living enemy, combat consequence or ordinary
+Quit. Native readbacks validated, but the new completion-admission branch
+was not exercised, so this is not causal qualification of that branch.
+Disk UNKNOWN permanently closed the run with no later requests; the sampled
+minimum was 974,835,712 bytes. The original invoking tool's exit143 and missing
+enclosing wait remain explicit limits despite 23 retained runtime waits.
+Evidence: `scratch/runs/20261118-quake2-headroom-restored-enemy-gameplay/result.json`.
+
+LTris startup helper `6fe4afd9e` distinguishes an initial empty desktop
+publication from the first completed SDL window publication. Authored browser
+controls and native Quit passed; the original reached only its menu before
+disk preemption. That controller also sent its final DOWN with a
+15.493-second-old readback despite a 15-second freshness limit. The subsequent
+send-boundary guard `75f495225` rejects stale DOWN locally and requires a new
+reviewed intent; its original-game result remains pending. No line clear,
+score consequence or original Quit is established by these helper tests.
+Evidence: `scratch/runs/20261118-ltris-display-startup-readiness-line-clear/result.json`.
+
+ReVolt's qualified operator reached **Select Race**, with Single Race selected;
+the coordinator reviewed the whole host image. Enter followed release arming
+by 126 ms, and independent UP confirmed physical state zero. Disk closure
+preceded the next DOWN. Manual racing, driving, checkpoint and ordinary Quit
+remain unverified. Later post-cleanup free-space observations fell below the
+required 1.5 GB floor; the writer is unknown. Cleanup receipts do not prove
+that the floor held through all drains and later writes.
+Evidence: `scratch/runs/20261118-revolt-qualified-operator-manual-race/result.json`
+and `scratch/runs/20261118-coordinator-revolt-select-race-review/result.json`.
+
+The coordinator reran the existing current-stream shutdown regression on the
+shared working tree: actual software WAT CLEAR/READBACK/PRESENT, ordered
+pending CLOSE/STOP, retired callbacks and cancellation of a real SYNC producer
+passed. The exact module was `fbdaaad01060…`, with unchanged relevant working
+diff before/after. Foreign WIP was included; this is not clean-published-module,
+browser/WebGL, original-game or whole-corpus crash-freedom evidence. Renderer
+exit 1 was explicit harness termination, not a spontaneous crash.
+Evidence: `scratch/runs/20261118-coordinator-current-stream-crash-sweep/result.json`.
+
 ## November 17 NFS3 driving and paired SDK rendering
 
 [NFS3 inherited-timing report](re-notes/nfs3-inherited-timing-visible-driving-20261117.md),
@@ -4406,3 +4566,173 @@ Quit. This establishes the named browser player movement, without jump, attack,
 backend-parity, complete 27-app or game-completion claims.
 
 Evidence: `scratch/runs/20261118-alice-current-browser-player-hud/result.json`.
+
+## NFS III browser throttle, Pause and resume — 18 November 2026
+
+[Browser driving report](re-notes/nfs3-current-browser-driving-pause-20261118.md)
+records helper repair `95df0faa9` and report `c0b550a66`. The registered original
+uses 135 unchanged media pins, module `a6e2bb71…` and pinned published source on
+the actual Glide/WebGL browser Worker route. This is not a D3D-backend claim.
+The helper moves full identity validation before the short independent-release
+clock; focused old-fail/new-pass controls and the locked build passed.
+
+The coordinator reviewed whole fresh-original frames: throttle changes 2→15 MPH
+with RPM increase and road/house approach. Ordinary Escape opens the original
+Single Race - Paused menu. A later Escape resumes the cockpit and advancing race
+clock; the earlier Continue click alone does not establish the resume. Left input
+visibly turns the steering wheel, but coasting prevents an isolated road-turn
+claim. Earlier idle creep is not used as throttle evidence.
+
+Ordinary Quit reaches System confirmation, but activating System does not produce
+an observed native exit within the preselected 15-second window. That scope closes
+without replay; game Quit remains unverified. Native supervisors report actual
+waits/no leaks and browser/display/release waits retain both EOFs, but the second
+original lacks its enclosing-launch receipt (outer tool143, EOF unknown). Complete
+cleanup attestation is explicitly not claimed. These results establish the named
+browser throttle/Pause/resume controls, without ordinary Quit, causal road steering,
+backend parity, complete 27-app coverage, FPS or audio claims.
+
+Evidence: `scratch/runs/20261118-nfs3-current-browser-driving-pause/result.json`.
+
+## Blood II normal browser movement and firing — 18 November 2026
+
+[Browser world/control report](re-notes/blood2-current-browser-world-combat-20261118.md),
+published as `c5b4c4c54`, records unchanged BUILD109 media on pinned `7741a4cfd`
+and module `3e2030df…`, normal 100000-step slices and five guest Workers. Music,
+chaining and uops remain enabled. This is separate from the earlier diagnostic
+native-watch world evidence. Helper media-alias and DirectDraw-menu admission
+repairs passed focused old-fail/new-pass controls and the locked build; no engine
+or music repair is claimed.
+
+The coordinator reviewed whole initial-world/forward frames: the player moves
+out of the elevator into the corridor. After a restart, the reviewed firing pair
+changes ammo 50→49 with health 100. Turning is also recorded. Player death is
+observed separately, but neither its killing actor nor enemy damage/kill is
+proved. Actual key-code matching, independent releases and physical-neutral
+checks accompany the controls. The initialized WebGL bridge's sampled counters
+do not establish GPU authorship of the world pixels; visible rendering and
+backend identity remain separate observations.
+
+Quit reaches the promotional card; after dismissal, worker 4 traps at 0xc06edb.
+The retained stack matches a multimedia timer callback. AM18 attribution is a
+bounded inference, with current occupied module generation/bytes and timer
+kill/selection/detach ordering still missing. No speculative lifetime fix or
+ordinary Quit claim is made. Browser/display/release waits have both EOFs and
+supervisors report no leaks, while two enclosing-launcher waits and board-watcher
+EOF remain explicit gaps. No complete cleanup, backend parity, full 27-app, FPS or
+audio claim is inferred.
+
+Evidence: `scratch/runs/20261118-blood2-current-browser-world-combat/result.json`.
+
+## Forsaken normal browser movement and firing — 18 November 2026
+
+[Browser world/control report](re-notes/forsaken-current-browser-world-combat-20261118.md),
+published as `6efb02c76`, records the unchanged registered demo's 873 media pins
+on source `5af3bae93` and module `3616571e…`. The normal production browser
+reaches the Volcano world. The coordinator reviewed whole neutral, firing and
+movement captures: ammo decreases 2000→1994, and the ship advances toward the
+doorway. A later paired firing interval reaches 1980. Actual RenderWorker WebGL1
+draw/readback and Blt presentation records accompany the world, with zero
+observed producer fallback/decline events. This supplies browser WebGL evidence
+separate from the older native software observations.
+
+Player damage and subsequent white imagery do not establish enemy damage or
+defeat. Pause and return to the main menu still work. Ordinary EXIT GAME and
+promotion dismissal terminate the guest with code 13 and the original
+`D3DAppShowBackBuffer`/`bRenderingIsOK` error, so clean exit 0 is not claimed.
+No causal rendering or teardown repair was established in this run.
+
+Original enclosing-tool exit 143 leaves browser/display/driver waits and EOFs
+missing. Separate bounded cleanup verifies the recorded processes absent but
+does not supply those missing waits. No complete original cleanup, backend
+parity, full 27-app coverage, FPS or audio claim follows from this evidence.
+
+Evidence: `scratch/runs/20261118-forsaken-current-browser-world-combat/result.json`.
+
+## Hexen II normal browser encounter and ordinary Quit — 18 November 2026
+
+[Independent release and encounter report](re-notes/hexen2-dialog-release-browser-gameplay-20261118.md),
+published as `20765d3df`, uses helper `34c794d54`, unchanged registered demo
+media, normal production Workers and module `1504acf2…`. Independently recovered
+guest/render bytecode hashes match the served module; actual rendering is
+WebGL1 on the reported ANGLE/Mesa device.
+
+The coordinator reviewed whole courtyard, ramp, chamber and combat frames.
+The living player moves from the courtyard up the ramp into a chamber with two
+visible spiders. Health changes 81→50 while the player remains upright; later
+death is recorded separately. Incoming damage is proved. Enemy damage, defeat
+and guest attack consumption remain unproved. Mouse1 has an independent release
+ACK and physical state 0, but the DOM ledger lacks mouseup; the first Escape
+DOWN exits browser pointer lock. These limits are not hidden by transport ACKs.
+
+Ordinary menu Quit and a balanced Y confirmation produce process exit code 0
+before host cleanup. Runtime browser/display/supervisor/watchdog/enclosing waits
+have drained EOFs and no containment leaks; the separate board watcher retains
+an EOF-receipt gap. The helper repairs a process/document release reader; the
+run-local controller also adopts atomic command publication. Neither establishes
+a game engine or compositor defect. The isolated
+old-fail/new-pass control does not identify the predecessor's missing exception.
+The final authored startup visibility annotation was corrected using raw PNGs;
+visible notice transition evidence comes from a separate authored scope.
+Some run-local helper versions lack contemporaneous prelaunch hashes; the
+authenticated runtime graph is separate from that limitation. This establishes
+the named browser gameplay and Quit result, without software-backend parity,
+full 27-app coverage, FPS or audio claims.
+
+Evidence: `scratch/runs/20261118-hexen2-dialog-release-browser-gameplay/result.json`.
+
+## Age of Wonders II normal browser army movement — 18 November 2026
+
+[Worker identity and map report](re-notes/aow2-worker-identity-boundary-map-progress-20261118.md)
+records published source `3c6d7d115` and module `1504acf2…`, unchanged registered
+media and real required Borland/MSS companions. The coordinator reviewed whole
+party-selection and two arrival frames: ordinary destination/confirmation inputs
+move the party southeast and farther south, with points 20/20→14/20→10/20.
+Pre/post identity checks and independent release waits accompany both moves.
+All 216 Worker identity reads complete; neither the prior identity timeout nor
+the callback-drive failure reproduces. The bounded trace change is diagnostic,
+without a causal callback repair claim.
+
+Ground remains black while objects and HUD render. Native surface 65 already
+contains zero bytes at ground point (600,300) before transfer to the backbuffer.
+The sampled Device7 strip excludes that point; a geometrically covered neighbor
+maps to zero bytes in texture 68. Actual WebGL executor upload/readback at the
+ground point is black, with no retained draw covering it. This localizes the
+next investigation before transfer/upload, without establishing an intended
+nonblack source, missing geometry, texture defect or WebGL raster defect. The
+executor is observed directly; its vendor/renderer string was not collected.
+
+The controller closes at its fixed command-wait deadline after the terrain
+probe. A later inspection is rejected locally before any endpoint request;
+ordinary Quit is unattempted. Runtime child/enclosing waits and EOFs are retained,
+with earlier control and board-watcher outer-tool gaps recorded separately.
+These named gameplay results do not establish terrain correctness, backend
+parity, full 27-app coverage, FPS or audio.
+
+Evidence: `scratch/runs/20261118-aow2-worker-identity-boundary-map-progress/result.json`.
+
+## Hexen II actual software browser encounter — 18 November 2026
+
+[Software encounter report](re-notes/hexen2-software-living-enemy-consequence-20261118.md),
+published as `a5bff2fa9`, uses clean Git `0b55b3c2f`, authenticated guest/render
+module `a6002d5d…` and 18 unchanged media/control references. The actual selector
+is `gl-gps=software`; natural completed receipts have positive `nativeDraws`,
+`nativeBytes` and `presents` from the WAT rasterizer. The software result is
+supported by execution evidence as well as the selector.
+
+The coordinator reviewed whole courtyard, ramp-advance and close-spider frames.
+The player starts upright at health 85, advances into the chamber and receives
+incoming damage, reaching health 5 with two spiders visible. Mouse1 has a
+trusted window-capture DOWN/UP pair and physical state 0. Its DOWN arrives
+11.906 seconds after the health-5 frame; the following view is death/loading.
+A living attack, enemy hit and kill remain unproved. The window-capture ledger
+explains the current document-ledger omission without recovering the earlier
+WebGL run's missing event record. CTRL remains the registered crouch binding.
+
+Ordinary menu Quit/Y produces process exit 0 before cleanup. This adds a named
+software gameplay/exit result alongside the separate WebGL run. Backend parity,
+enemy damage, full 27-app coverage, FPS and audio remain unqualified. No new
+runtime repair is claimed; the report retains failed-control, command timing
+and cleanup limitations with their actual receipts.
+
+Evidence: `scratch/runs/20261118-hexen2-software-living-enemy-consequence/result.json`.

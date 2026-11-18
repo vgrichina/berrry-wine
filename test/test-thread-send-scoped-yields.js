@@ -150,33 +150,42 @@ async function driver(kind, module) {
     await c.link.abortThreadSendDispatch(true, 1);
   } finally { await c.close(); }
 }
-async function render(kind, module) {
+async function retiredRender(kind, module) {
   const c = await context(kind, module);
   try {
-    const g = gate(); let calls = 0;
-    c.manager._onRenderWait = async () => { calls++; g.enter(); await g.promise; };
-    const r = await c.link.dispatchThreadSend(args(1, 16)); r.renderToken = -2;
+    let calls = 0;
+    c.manager._onRenderWait = () => {
+      calls++;
+      throw new Error('retired D3D9 render hook must not run');
+    };
+    await c.link.dispatchThreadSend(args(1, 1));
+    const outer = await snapshot(c.link);
+    const r = await c.link.dispatchThreadSend(args(2, 16));
+    // Old modules may still yield 16. It no longer owns a renderer operation,
+    // but completing it must retain the ordinary callback frame/epoch fence.
     const state = {};
-    assert.strictEqual(await resolve(c, r, state), 'pending');
-    await g.waiting;
-    await c.link.dispatchThreadSend(args(2, 1));
     const before = await snapshot(c.link);
-    g.release(); await new Promise(r => setImmediate(r));
-    assert.strictEqual(await resolve(c, r, state), 'pending');
+    await assert.rejects(resolve(c, { ...r, waitEpoch: r.waitEpoch + 1 }, state), /ownership mismatch/);
     assert.deepStrictEqual(await snapshot(c.link), before);
-    await c.link.abortThreadSendDispatch(true, 2);
+    assert((await c.link.resumeThreadSendDispatch(undefined, 2)).waitPending);
+    await assert.rejects(c.link.callExport('clear_yield'), /fences export/);
     assert.strictEqual(await resolve(c, r, state), 'resume');
-    assert.strictEqual(calls, 1);
-    await c.link.resumeThreadSendDispatch(undefined, 1, r.waitEpoch);
+    assert.strictEqual(await resolve(c, r, state), 'resume', 'completion retry is idempotent');
+    assert.strictEqual(calls, 0, 'retired render hook is never invoked');
+    assert((await c.link.resumeThreadSendDispatch(undefined, 2, r.waitEpoch)).done);
+    assert.deepStrictEqual(await snapshot(c.link), outer, 'retired yield restores outer wait');
+    await assert.rejects(resolve(c, r, state), /ownership mismatch/);
+    assert.deepStrictEqual(await snapshot(c.link), outer, 'stale completion leaves outer wait intact');
+    await c.link.abortThreadSendDispatch(true, 1);
   } finally { await c.close(); }
 }
 (async () => {
   const module = await fixture();
   for (const kind of ['Worker', 'local']) {
     await controls(kind, module); await delayed(kind, module); await delayed(kind, module, true);
-    await epoch(kind, module); await render(kind, module);
+    await epoch(kind, module); await retiredRender(kind, module);
     await lostCompletion(kind, module); await driver(kind, module);
     await fault(kind, module); await retired(kind, module);
-    console.log('PASS ' + kind + ' scoped generic callback yields, delayed I/O/render, owner identity, stale epochs and outer waits');
+    console.log('PASS ' + kind + ' scoped generic callback yields, delayed I/O, retired render hook, owner identity, stale epochs and outer waits');
   }
 })().catch(error => { console.error(error); process.exitCode = 1; });

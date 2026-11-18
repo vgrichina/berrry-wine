@@ -50,6 +50,15 @@ const argHas = name => args.some(a => a.startsWith(`--${name}=`));
 const CHILD_STATE_TOKEN = getArg('child-state-token', '');
 const CHILD_READONLY_CONTEXT = getArg('child-readonly-context', '');
 const SPAWNED_CHILD = hasFlag('spawned-child');
+const CHILD_MEMORY = hasFlag('child-memory');
+const CHILD_TRANSPORT = getArg('child-transport', 'disk');
+if (!['disk', 'memory'].includes(CHILD_TRANSPORT)) throw new Error('unknown --child-transport');
+if (CHILD_MEMORY && (!SPAWNED_CHILD || !process.send || !CHILD_STATE_TOKEN ||
+    CHILD_READONLY_CONTEXT || argHas('vfs-tree') || argHas('save-vfs') || argHas('overlay-dir')))
+  throw new Error('memory handoff requires an exclusive native child IPC launch');
+const memoryChild = require('../lib/cli-memory-child');
+const memoryInput = CHILD_MEMORY ? memoryChild.receive(process, CHILD_STATE_TOKEN, 'launch') : null;
+let memoryLaunch = null, memoryBefore = null;
 let inheritedReadonly=null,readonlyPreparation=null;
 if (CHILD_READONLY_CONTEXT) {
   if (!SPAWNED_CHILD || typeof process.send !== 'function' || !CHILD_STATE_TOKEN)
@@ -1783,7 +1792,16 @@ async function main() {
       require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex') !== process.env.DISCIPLES2_MODULE_SHA256) {
     throw new Error('actual CLI module differs from sealed qualification');
   }
-  const exeBytes = verifiedAssetFiles ? verifiedAssetFiles.verifiedMedia.exeBytes : readAssetBytes(EXE_PATH);
+  if (CHILD_MEMORY) {
+    memoryLaunch = await memoryInput.promise;
+    if (memoryInput.error || memoryLaunch?.guestExe !== EXE_GUEST_PATH ||
+        !(memoryLaunch.image instanceof Uint8Array) || memoryLaunch.cwd !== GUEST_CWD)
+      throw new Error('memory launch executable/cwd identity mismatch');
+    memoryChild.validate(memoryLaunch.snapshot);
+    inheritedReadonly = { contexts: memoryLaunch.snapshot.readonly };
+  }
+  const exeBytes = CHILD_MEMORY ? memoryLaunch.image :
+    verifiedAssetFiles ? verifiedAssetFiles.verifiedMedia.exeBytes : readAssetBytes(EXE_PATH);
 
   // Where a DLL the guest asks for at run time comes from: what the app mounted
   // in the VFS first, then the directories this process can see. The browser
@@ -1837,6 +1855,7 @@ async function main() {
   });
   let stopped = false;
   let hostExitRequested = false;
+  let memoryGuestExitCode = null;
   // Batches actually executed. Not the same as MAX_BATCHES once --max-seconds
   // or an early exit ends the loop, and it is the throughput number a
   // fixed-duration benchmark is asking for.
@@ -3054,7 +3073,7 @@ async function main() {
   process.env.WINE_PROCESS_DESKTOP = JSON.stringify(processDesktop.endpoint);
   process.env.WINE_COM_MODULE_SHA256 = require('node:crypto').createHash('sha256').update(wasmBytes).digest('hex');
   childObservation = new (require('../lib/cli-child-observation').ChildObservation)({
-    moduleBytes:wasmBytes,runner:__filename,executable:EXE_PATH,
+    moduleBytes:wasmBytes,runner:__filename,executable:EXE_PATH,executableBytes:exeBytes,
     guestExe:EXE_PROCESS_GUEST_PATH || EXE_PATH,port:CONTROL ? CONTROL_PORT : null,
     envelope:getArg('native-child-envelope',null),
   });
@@ -4115,6 +4134,7 @@ async function main() {
 
   // --- Override exit to also log ---
   h.exit = code => {
+    memoryGuestExitCode = code >>> 0;
     childObservation.exit(code);
     recordNativeExit(code);
     processDesktop.retire();
@@ -4127,11 +4147,12 @@ async function main() {
     // A --spawn-processes child has no wire to keep: once its exit code is
     // on its way, drop the IPC channel, which otherwise keeps this process
     // alive after its shutdown work and the parent waiting on it forever.
-    else if (SPAWNED_CHILD && process.send) {
+    else if (SPAWNED_CHILD && process.send && !CHILD_MEMORY) {
       process.send({ t: 'child-exit', code: code >>> 0 }, () => {
         try { process.disconnect(); } catch (_) {}
       });
     }
+    else if (CHILD_MEMORY && process.connected) process.send({ t: 'child-exit', code: code >>> 0 });
   };
 
   // --- Override shell_about to log; the WAT side ($handle_ShellAboutA →
@@ -4223,6 +4244,10 @@ async function main() {
   const pipeChildClosures = [];
   const pipeChildByPid = new Map();
   const livePipeChildren = new Set();
+  onFailure(async () => {
+    for (const rec of livePipeChildren) { rec.terminationCode = 1; rec.child.kill(); }
+    await Promise.all(pipeChildClosures);
+  });
   // Browser aliases require a target-owned table; CLI IPC is unsupported.
   // E4 validity and lifetime are independent of every possible DWORD exit code.
   const processCtl = (op, pid, arg) => {
@@ -4303,27 +4328,35 @@ async function main() {
     }
     if (!guestExe) {
       console.log(`[spawn] CreateProcess "${cmd}": ${name} is not in the VFS`);
+      if (CHILD_TRANSPORT === 'memory') throw new Error('memory child executable not found: ' + name);
       return 0;
     }
     const os = require('os');
     const storage = require('../lib/storage');
-    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-child-'));
+    const inMemory = CHILD_TRANSPORT === 'memory';
+    const tmp = inMemory ? null : fs.mkdtempSync(path.join(os.tmpdir(), 'wa-child-'));
+    const removeTemporary = () => { if (tmp) fs.rmSync(tmp, { recursive: true, force: true }); };
     try {
-      const inDir = path.join(tmp, 'in');
-      const outDir = path.join(tmp, 'out');
-      const regIn = path.join(tmp, 'reg-in.json');
-      const regOut = path.join(tmp, 'reg-out.json');
-      const completion = path.join(tmp, 'complete.json');
+      const inDir = tmp && path.join(tmp, 'in');
+      const outDir = tmp && path.join(tmp, 'out');
+      const regIn = tmp && path.join(tmp, 'reg-in.json');
+      const regOut = tmp && path.join(tmp, 'reg-out.json');
+      const completion = tmp && path.join(tmp, 'complete.json');
       const token = require('crypto').randomBytes(32).toString('hex');
+      const snapshot = inMemory ? memoryChild.capture(vfs, storage) : null;
+      if (inMemory && (cmd.length > 383 || /[^\x01-\x7f]/.test(cmd) || parsed.params.trim().length > 200))
+        throw new Error('memory child command line exceeds supported ASCII startup bounds');
+      const memoryBase = snapshot && memoryChild.baseline(snapshot);
+      const memoryImage = inMemory ? Buffer.from(vfs.files.get(guestExe).data) : null;
       // Borrowed disc bytes stay outside mutable state. Carry the actual
       // source-owned mount plan, directory tree and drive identity separately.
       let readonlyContextArgs = [];
-      if (vfs.readOnlyDrives?.size || vfs.readonlyMediaContexts?.length) {
+      if (!inMemory && (vfs.readOnlyDrives?.size || vfs.readonlyMediaContexts?.length)) {
         let contexts;
         try { contexts = require('../lib/readonly-media-context').capture(vfs); }
         catch (error) {
           console.log(`[spawn] CreateProcess "${cmd}": readonly media context refused: ${error.message}`);
-          fs.rmSync(tmp, { recursive: true, force: true });
+          removeTemporary();
           return 0;
         }
         if (contexts.length) {
@@ -4332,27 +4365,28 @@ async function main() {
           readonlyContextArgs = [`--child-readonly-context=${contextPath}`];
         }
       }
-      const written = saveVfsToHost(vfs, inDir);
+      const written = inMemory ? [] : saveVfsToHost(vfs, inDir);
       const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
-      const exeRow = require('../lib/cli-child-executable').childExecutable(vfs, guestExe, written, tmp);
+      const exeRow = inMemory ? { outputPath: guestExe } :
+        require('../lib/cli-child-executable').childExecutable(vfs, guestExe, written, tmp);
       if (!exeRow) {
-        fs.rmSync(tmp, { recursive: true, force: true });
+        removeTemporary();
         console.log(`[spawn] CreateProcess "${cmd}": ${guestExe} could not be exported`);
         return 0;
       }
-      fs.writeFileSync(regIn, JSON.stringify(storage.exportStore()));
+      if (!inMemory) fs.writeFileSync(regIn, JSON.stringify(storage.exportStore()));
       // An app-local DLL loads as a real PE only when seeded (the app's `dlls`
       // or --dll-seed); the child has no app entry, so hand it the parent's.
       // Rollcage's setup relaunches its own exe as the front end, which then
       // imports QMIXER.DLL from beside it and crashed on the unresolved import.
       const childDllSeeds = [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED]
         .map(appAsset).filter(p => fs.existsSync(p))
-        .map(p => childDllSeedPath(p, written));
+        .map(p => inMemory ? (capturedGuestPath(p) || besideExeGuestPath(p, path.basename(p)) || p) : childDllSeedPath(p, written));
       // VFS trees are mounted after DLL initializers. Forward only explicit
       // files into the child's early mount pass, using the exported native
       // state when present. Never replace guest writes with the original host
       // input, resurrect a deleted file, or materialize unrelated lazy media.
-      const childMountArgs = VFS_MOUNT.flatMap(spec => {
+      const childMountArgs = inMemory ? [] : VFS_MOUNT.flatMap(spec => {
         const eq = spec.lastIndexOf('=');
         if (eq <= 0) throw new Error(`invalid explicit mount: ${spec}`);
         const guest = spec.slice(eq + 1).trim();
@@ -4364,13 +4398,15 @@ async function main() {
       const args = [
         ...childMountArgs,
         ...readonlyContextArgs,
-        `--exe=${exeRow.outputPath}`, `--vfs-tree=${inDir}`, `--exe-guest-path=${guestExe}`,
+        `--exe=${exeRow.outputPath}`, `--exe-guest-path=${guestExe}`,
         `--cwd=${cwd}`, `--args=${parsed.params.trim()}`,
         '--no-build', `--wasm=${WASM_PATH}`, '--quiet-api', '--quiet-blocks',
         '--stuck-after=0', '--max-batches=1000000000', `--max-seconds=${MAX_SECONDS || 600}`,
         '--spawned-child', '--spawn-processes',
-        `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
-        `--child-state-completion=${completion}`, `--child-state-token=${token}`,
+        ...(inMemory ? ['--child-memory', '--child-transport=memory'] :
+          [`--vfs-tree=${inDir}`, `--save-vfs=${outDir}`, `--reg-import=${regIn}`, `--reg-export=${regOut}`,
+            `--child-state-completion=${completion}`]),
+        `--child-state-token=${token}`,
         ...(childDllSeeds.length ? [`--dll-seed=${childDllSeeds.join(',')}`] : []),
         ...childCodePageArgs(),
         ...PIPE_CHILD_ARGS,
@@ -4379,7 +4415,7 @@ async function main() {
         ...(PIPE_CHILD_ARGS.length ? [`--pipe-child-args=${PIPE_CHILD_ARGS.join(' ')}`] : []),
       ];
       const observation = childObservation.prepare(guestExe,exeRow.outputPath,{
-        processId:instance.exports.get_process_id()>>>0,threadId:instance.exports.get_current_thread_id()>>>0});
+        processId:instance.exports.get_process_id()>>>0,threadId:instance.exports.get_current_thread_id()>>>0},memoryImage);
       if (observation) {
         // Observation options are parent-owned, never supplied via guest args
         // or forwarded to unrelated grandchildren through pipe-child-args.
@@ -4387,7 +4423,14 @@ async function main() {
         args.push('--native-child-envelope='+JSON.stringify(observation));
       }
       const { fork } = require('child_process');
-      const child = fork(__filename, args, { stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: processDesktop.environment(ThreadManager.namedEventEnvironment()) });
+      const child = fork(__filename, args, { serialization: inMemory ? 'advanced' : 'json',
+        stdio: ['ignore', 'pipe', 'pipe', 'ipc'], env: processDesktop.environment(ThreadManager.namedEventEnvironment()) });
+      const memoryOutput = inMemory ? memoryChild.receive(child, token, 'completion', (MAX_SECONDS || 600) * 1000 + 60000) : null;
+      let memorySendError = null;
+      if (inMemory) {
+        memoryChild.send(child, token, 'launch', { snapshot, image: memoryImage, guestExe, cwd, command: cmd })
+          .catch(error => { memorySendError = error; child.kill(); });
+      }
       const pid = nextChildPid();
       childObservation.forked(child,observation,pid);
       relayChild(child, `[child ${pid.toString(16)} ${path.win32.basename(guestExe)}]`);
@@ -4398,7 +4441,7 @@ async function main() {
       // request or a guest ExitProcess message. It also covers grandchildren.
       const waitDirectory = process.env.WINE_COM_PROTOCOL_DIR;
       const childWait = { pid: child.pid, parent: process.pid, guestPid: pid, guestExe,
-        actualWait: false, stdoutEOF: false, stderrEOF: false, closed: false };
+        transport: CHILD_TRANSPORT, actualWait: false, stdoutEOF: false, stderrEOF: false, closed: false };
       const saveChildWait = () => {
         if (!waitDirectory) return;
         try {
@@ -4426,15 +4469,28 @@ async function main() {
         if (msg && msg.t === 'process-input-ready') rec.ready = true;
         if (msg && msg.t === 'child-exit') guestCode = msg.code >>> 0;
       });
+      child.on('error', error => { memorySendError = error; console.log('[spawn] native child error: ' + error.message); });
       child.on('close', code => {
         try {
-          childWait.guardedMerge = mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
+          if (inMemory) {
+            const error = memorySendError || memoryOutput.error;
+            const value = memoryOutput.value;
+            childWait.guardedMerge = error || !value || !value.normalExit ||
+                guestCode == null || value.exitCode !== guestCode || code !== 0 || rec.terminationCode != null || terminationSignal
+              ? { merged: false, reason: error?.message || 'no normal, complete memory child exit' }
+              : memoryChild.merge(vfs, storage, memoryBase, value.delta);
+            memoryOutput.dispose();
+            console.log('[spawn] memory child completion: ' + JSON.stringify(childWait.guardedMerge));
+            if (childWait.guardedMerge.partialApplied) {
+              terminationSignal = 'MEMORY_MERGE_ROLLBACK_FAILURE'; stopped = true; process.exitCode = 1;
+            }
+          } else childWait.guardedMerge = mergeChildState(vfs, storage, before, outDir, regOut, completion, token);
         } catch (e) {
           childWait.guardedMerge = { merged: false, reason: String(e.message) };
           console.log(`[spawn] merging ${path.win32.basename(guestExe)}'s files back failed: ${e.message}`);
         }
         childWait.closed = true;saveChildWait();
-        fs.rmSync(tmp, { recursive: true, force: true });
+        removeTemporary();
         rec.exitCode = (rec.terminationCode != null ? rec.terminationCode :
           (guestCode != null ? guestCode : (code == null ? 1 : code))) >>> 0;
         rec.exited = true;
@@ -4444,7 +4500,7 @@ async function main() {
       console.log(`[spawn] CreateProcess "${cmd}" -> ${guestExe} (pid ${pid.toString(16)}, cwd ${cwd})`);
       return pid;
     } catch (e) {
-      fs.rmSync(tmp, { recursive: true, force: true });
+      removeTemporary();
       throw e;
     }
   };
@@ -4453,6 +4509,7 @@ async function main() {
     const cmd = cmdWa ? readStr(cmdWa) : '';
     if (!cmd) return 0;
     if (!count) return spawnVfsChild(cmd, dirWa ? readStr(dirWa) : '', !!forceSpawn, showCmd);
+    if (CHILD_TRANSPORT === 'memory') throw new Error('memory VFS handoff does not support redirected pipe children');
     if (!EXE_PATH) return 0;
     const { ParentHub } = require('../lib/vlan-wire');
     if (ctx.vlanWire && !(ctx.vlanWire instanceof ParentHub)) {
@@ -5421,6 +5478,7 @@ async function main() {
       childObservation?.fail('host cancellation: '+sig);
       recordNativeExit.cancel(sig);
       terminationSignal = sig;
+      for (const rec of livePipeChildren) { rec.terminationCode = 1; rec.child.kill(sig); }
       console.log(`[signal] ${sig} requested orderly shutdown`);
       // Leave through the normal cleanup path. In particular, a controlled
       // recording owns an ffmpeg child plus buffered audio; process.exit()
@@ -5431,6 +5489,11 @@ async function main() {
       if (signalExitWake) signalExitWake();
     });
   }
+  if (CHILD_MEMORY) process.once('disconnect', () => {
+    if (!signalExitStarted) { signalExitStarted = true; terminationSignal = 'IPC_EOF'; stopped = true;
+      for (const rec of livePipeChildren) { rec.terminationCode = 1; rec.child.kill(); }
+      if (signalExitWake) signalExitWake(); }
+  });
   await mainOwner.optionalCall('set_process_id', ctx.processId);
   await mainOwner.optionalCall('set_desktop_color_depth', APP_ENTRY?.desktopColorDepth === 8 ? 8 : 32);
   if (NO_MMX) await mainOwner.optionalCall('set_cpu_mmx', 0);
@@ -5946,6 +6009,15 @@ async function main() {
   const startupShow = startupShowCommand(getArg('startup-show', undefined));
   if (startupShow !== undefined) await mainOwner.call('set_startup_show', startupShow);
   const { entry } = await stageAndLoadPeOwned(mainOwner, memory.buffer, exeBytes, console.log);
+  if (CHILD_MEMORY) {
+    const command = memoryLaunch.command;
+    if (typeof command !== 'string' || command.length > 383 || /[^\x01-\x7f]/.test(command))
+      throw new Error('invalid raw memory child command line');
+    const {get_staging: at} = await mainOwner.read(['get_staging']);
+    const bytes = new TextEncoder().encode(command);
+    new Uint8Array(memory.buffer, at, bytes.length).set(bytes);
+    if (!await mainOwner.call('set_raw_command_line', at, bytes.length)) throw new Error('raw memory child command line refused');
+  }
   // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
   if (hasFlag('observe-morrowind-name')) {
     morrowindNameObserver = require('../lib/morrowind-name-observer').install({
@@ -6095,7 +6167,7 @@ async function main() {
     }
   };
   mountExplicitVfsFiles();
-  if (CHILD_READONLY_CONTEXT) {
+  if (CHILD_READONLY_CONTEXT || CHILD_MEMORY) {
     const media = await require('../lib/readonly-media-context').restore(ctx.vfs, inheritedReadonly.contexts,readonlyPreparation);
     process.on('exit', () => { for (const source of media) require('../lib/media-cli').closeMedia(source); });
     // Native DLL initializers may read profiles relative to the inherited CD.
@@ -6457,6 +6529,13 @@ async function main() {
       for (const error of vfsOverlay.errors) console.log(`[overlay] ${error.message}`);
       if (vfsOverlay.errors.length) throw new Error('overlay hydration failed before DLL discovery');
       nextOverlayFlushAt = Date.now() + OVERLAY_FLUSH_MS;
+    }
+
+    if (CHILD_MEMORY) {
+      memoryChild.restore(ctx.vfs, require('../lib/storage'), memoryLaunch.snapshot);
+      memoryBefore = memoryChild.baseline(memoryLaunch.snapshot);
+      // Release the received file buffers after adopting the private VFS.
+      memoryLaunch.snapshot = null;
     }
 
     // Apply an explicit process cwd only after every mount, including the
@@ -7737,6 +7816,7 @@ async function main() {
   let reviewedSceneBindAttempted = false, reviewedSceneLease = null, nativeSceneLease = null;
   const nativeScene = require('../lib/cli-native-scene');
   const reviewedContexts = nativeScene.createReviewedContexts();
+  const nativeCaptureReceipts = require('../lib/cli-native-capture-receipt').createCaptureReceipts({authority:()=>cliInputSnapshot()});
   let nativeSceneContract = null;
   const cliInputSnapshot = require('../lib/cli-input-owner').createCliInputSnapshot({
       instance, memory, renderer, getDevice: () => ctx.d3dCommands,
@@ -7899,9 +7979,12 @@ async function main() {
       if (cmd.reviewedScene?.route === 'native-scene-v1') {
         reviewedSceneBindAttempted=true;
         const expected=cmd.reviewedScene, s=controlSnapshot();
-        if (!nativeScene.matches(s,expected.snapshot)) throw new Error('reviewed native scene changed before binding');
-        const paint=require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
-        if (paint!==expected.pngSHA256) throw new Error('reviewed native paint changed');
+        if (expected.receipt) nativeCaptureReceipts.verify(s,expected);
+        else {
+          if (!nativeScene.matches(s,expected.snapshot)) throw new Error('reviewed native scene changed before binding');
+          const paint=require('crypto').createHash('sha256').update(canvasToPng(renderer.canvas)).digest('hex');
+          if (paint!==expected.pngSHA256) throw new Error('reviewed native paint changed');
+        }
         nativeSceneLease=nativeScene.context(s);
         return guardedInput.bind();
       }
@@ -7949,6 +8032,15 @@ async function main() {
     if (cmd.action === 'native-startup-readiness')
       return nativeScene.startupReadiness(controlSnapshot(),cliInputSnapshot(),instance,threadManager);
     if (cmd.action === 'guarded-status') return guardedInput.status(cmd.nonce);
+    if (cmd.action === 'native-scene-capture') {
+      if (!cmd.path) throw new Error('native capture needs a complete PNG path');
+      return nativeCaptureReceipts.capture(controlSnapshot,()=>{
+        // Match ordinary queued PNG capture: native window back canvases may
+        // be current while the composited display remains untouched.
+        if (typeof renderer.repaint === 'function') renderer.repaint();
+        return canvasToPng(renderer.canvas);
+      },bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
+    }
     if (cmd.action === 'native-reviewed-capture' || cmd.action === 'native-presentation-capture') {
       if (!cmd.path) throw new Error('reviewed capture needs a complete PNG path');
       if (cmd.action === 'native-presentation-capture') {
@@ -13400,7 +13492,20 @@ if (VERBOSE) {
   processDesktop.retire();
   // The launcher guest can exit while real child hosts still use its desktop.
   // Keep the authority until those OS processes close their transports.
+  if (!hostExitRequested || terminationSignal) {
+    for (const rec of livePipeChildren) { rec.terminationCode = 1; rec.child.kill(); }
+  }
   await Promise.all(pipeChildClosures);
+  if (CHILD_MEMORY) {
+    if (!terminationSignal && hostExitRequested && !memoryInput.error) {
+      const snapshot = memoryChild.capture(ctx.vfs, require('../lib/storage'));
+      await memoryChild.send(process, CHILD_STATE_TOKEN, 'completion', {
+        normalExit: true, exitCode: memoryGuestExitCode,
+        delta: memoryChild.delta(memoryBefore, snapshot),
+      });
+    }
+    memoryInput.dispose();
+  }
   await processDesktop.close();
   // A --vlan-wire run is a forked child, and an open IPC channel keeps node
   // alive after everything else has finished: the run printed its Stats, hit
@@ -13412,6 +13517,8 @@ if (VERBOSE) {
 }
 
 main().catch(async e => {
+  memoryInput?.dispose();
+  if (CHILD_MEMORY && process.connected) process.disconnect();
   childObservation?.fail('runner error: '+e.message);
   recordNativeExit.cancel('runner error');
   process.exitCode = process.exitCode || 1;

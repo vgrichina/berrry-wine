@@ -150,18 +150,64 @@ function listenerOwnedBy(pid, port) {
   return pids.length === 1 && pids[0] === Number(pid);
 }
 
+// Private provenance: remote JSON and arbitrary Error properties cannot mint it.
+const beforeBodyRefusals = new WeakMap();
+const beforeBodyRefusalCause = error => beforeBodyRefusals.get(error);
 // urllib.request.urlopen(POST json, timeout) -> parsed reply.
-function postJSON(url, body, timeoutSec) {
+function postJSON(url, body, timeoutSec, beforeSend = null, diagnostic = null) {
+  const mark = phase => { if (diagnostic) diagnostic[phase] = { at: Date.now(), monotonicMs: performance.now() }; };
+  mark('created');
   return new Promise((resolve, reject) => {
     const data = Buffer.from(JSON.stringify(body));
     const req = http.request(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'Content-Length': data.length } }, res => {
+      mark('response');
+      if (diagnostic) diagnostic.statusCode = res.statusCode;
       const chunks = []; res.on('data', c => chunks.push(c));
-      res.on('end', () => { clearTimeout(timer); try { resolve(JSON.parse(Buffer.concat(chunks).toString())); } catch (e) { reject(e); } });
+      res.on('end', () => { clearTimeout(timer); mark('responseEnd'); try {
+        const raw = Buffer.concat(chunks);
+        if (diagnostic) diagnostic.rawResponseBase64 = raw.toString('base64');
+        const reply = JSON.parse(raw.toString());
+        if (diagnostic) diagnostic.rawReply = reply;
+        mark('parsed'); resolve(reply);
+      } catch (e) { reject(e); } });
       res.on('error', e => { clearTimeout(timer); reject(e); });
     });
     const timer = setTimeout(() => req.destroy(Object.assign(Error('timed out'), { code: 'ETIMEDOUT' })), Math.max(1, timeoutSec * 1000));
     req.on('error', e => { clearTimeout(timer); reject(e); });
-    req.end(data);
+    if (diagnostic) {
+      req.once('socket', socket => {
+        mark('socketAssigned');
+        if (socket.connecting) socket.once('connect', () => mark('connected'));
+        else mark('connected');
+      });
+      req.once('finish', () => mark('requestFinished'));
+    }
+    // Do not queue a guarded body while an Agent is still obtaining or
+    // connecting a socket. The caller's synchronous check is the final action
+    // before handing the complete, already serialized body to the transport.
+    if (beforeSend) req.once('socket', socket => {
+      const send = () => {
+        if (req.destroyed) return;
+        try {
+          assert(!socket.destroyed && socket.writable && !socket.connecting && socket.remoteAddress && socket.remotePort,
+            'connected writable socket required');
+        } catch (e) { req.destroy(e); }
+        if (req.destroyed) return;
+        try { beforeSend(); }
+        catch (cause) {
+          const error = new Error('local connected callback refused before body attempt', { cause });
+          // No end/write/flush has been attempted on this request. Never
+          // certify exceptions from end(), even if no bytes appear to leave.
+          if (!req.headersSent && !req.writableEnded && req.writableLength === 0)
+            beforeBodyRefusals.set(error, cause);
+          req.destroy(error); return;
+        }
+        try { mark('bodyAttempt'); req.end(data); } catch (e) { req.destroy(e); }
+      };
+      if (socket.connecting) socket.once('connect', send);
+      else send();
+    });
+    else { mark('bodyAttempt'); req.end(data); }
   });
 }
 
@@ -208,6 +254,74 @@ function installRequireTiming(env = process.env) {
   return true;
 }
 
-module.exports = { now, sleep, sha256, exists, readJSON, save, canonical, token, processExists, killOwned, freeBytes,
+// Parse complete records, not pipe chunks. Subscribe before the child can
+// publish READY, and retain records arriving before the next waiter.
+function jsonLines(child) {
+  let pending = '', ended = false; const rows = [], waiters = [];
+  function finish(error) { ended = true; for (const w of waiters.splice(0)) w.reject(error); }
+  child.stdout.on('data', b => {
+    pending += b;
+    if (pending.length > 65536) return finish(Error('helper stdout record too large'));
+    let i;
+    while ((i = pending.indexOf('\n')) >= 0) {
+      const line = pending.slice(0, i); pending = pending.slice(i + 1);
+      try { const row = JSON.parse(line), w = waiters.shift(); if (w) w.resolve(row); else rows.push(row); }
+      catch (e) { finish(e); }
+    }
+  });
+  child.once('error', finish);
+  child.stdout.once('end', () => finish(Error('helper stdout EOF before record')));
+  return ms => new Promise((resolve, reject) => {
+    if (rows.length) return resolve(rows.shift());
+    if (ended) return reject(Error('helper stdout already ended'));
+    const w = { resolve: row => { clearTimeout(t); resolve(row); }, reject: e => { clearTimeout(t); reject(e); } };
+    const t = setTimeout(() => { const i = waiters.indexOf(w); if (i >= 0) waiters.splice(i, 1); reject(Error('helper record deadline')); }, ms);
+    waiters.push(w);
+  });
+}
+
+// Startup is a separate finite preparation phase. READY confers no release
+// authority. Call before capture/review and before starting an action clock.
+async function prepareReleaseHelper({ run, url, name, standbyUntil, startupMs = 10000, env = process.env }) {
+  assert(/^[a-zA-Z0-9-]+$/.test(name));
+  assert(Number.isFinite(standbyUntil) && standbyUntil > now());
+  const target = readJSON(path.join(run, 'native-pid.json'));
+  const spawnedAt = now();
+  const child = cp.spawn(process.execPath, [path.join(__dirname, 'drakan-menu-input.cjs'), 'standby', run, url, name,
+    String(standbyUntil)], { env, stdio: ['ignore', 'pipe', 'pipe', 'ipc'] });
+  const next = jsonLines(child); let stdout = '', stderr = ''; const ipcErrors = [];
+  child.stdout.on('data', b => stdout += b); child.stderr.on('data', b => stderr += b);
+  const waited = new Promise(resolve => child.once('close', (code, signal) => resolve({ pid: child.pid, code, signal,
+    actualWait: true, stdoutEOF: child.stdout.readableEnded, stderrEOF: child.stderr.readableEnded, stdout, stderr, ipcErrors })));
+  // connected can race actual peer EOF. A cancellation is best-effort local
+  // retirement; its EPIPE must never crash the parent or mask the real wait.
+  const send = message => { if (child.connected) child.send(message, e => { if (e) ipcErrors.push(String(e)); }); };
+  const cancel = () => send({ cancel: true });
+  try {
+    const ready = await next(Math.min(startupMs, (standbyUntil - now()) * 1000));
+    assert.equal(ready.state, 'READY'); assert.equal(ready.armed, false);
+    assert.equal(canonical(ready.target), canonical(target));
+    save(run, name + '-standby.json', { ...ready, spawnedAt, receivedAt: now(), startupMilliseconds: (now() - spawnedAt) * 1000 });
+    return { child, waited, ready, cancel, async arm({ owner, due, confirmationMs, lease }) {
+      const requestedAt = now(), armBy = requestedAt + 1;
+      try {
+        assert(child.connected, 'standby disconnected');
+        send({ arm: true, owner, due, confirmationMs, lease, armBy });
+        const armed = await next(1000);
+        assert(now() < armBy, 'one-second arm deadline');
+        assert.equal(armed.armed, true); assert.equal(armed.state, 'ARMED');
+        assert.equal(canonical(armed.target), canonical(target));
+        assert.equal(canonical(armed.owner), canonical(owner));
+        assert.equal(armed.due, due); assert.equal(armed.confirmationMs, confirmationMs);
+        return { ...armed, requestedAt, receivedAt: now(), armBy };
+      } catch (e) {
+        if (!exists(path.join(run, name + '-disarm.json'))) save(run, name + '-disarm.json', { at: now(), reason: 'arm failed before DOWN' });
+        cancel(); throw e;
+      }
+    } };
+  } catch (e) { cancel(); await waited; throw e; }
+}
+
+module.exports = { beforeBodyRefusalCause, now, sleep, sha256, exists, readJSON, save, canonical, token, processExists, killOwned, freeBytes,
   returncode, communicate, stdioWithFds, seal, SEALS, fdPath, fdPathPattern, holdBody, holderPathAllowed, readDescriptor,
-  listenerOwnedBy, postJSON, flockExclusive, recordSignals, installRequireTiming };
+  listenerOwnedBy, postJSON, beforeBodyRefusalCause, flockExclusive, recordSignals, installRequireTiming, jsonLines, prepareReleaseHelper };

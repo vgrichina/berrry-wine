@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer.js",
+      "name": "host-file",
+      "baseSHA256": "445a016ec692679a64798554521cd82c4f7c61fdb9e592ad5e09560767621e1e",
+      "sha256": "0e760b37bb3027a9d78157021e5eadb16cc0894e28c23ed9e7a8c1ed1414d867",
+      "reason": "Review 20261118 current-display completion metadata: synchronous immutable canvas read retains request-time writer history and separately freezes renderer hold/paint/repaint states before and after existing validated readback. No scheduling, guest entry, callback lifetime, owner/output validation, retained-pixel lifetime or publication/timestamp changes. The extra operator fence accepts only both complete unheld states; missing/held states still refuse. Actual nativeGL browser old/new natural clean-slice servicing and replacement/read-error/held mutable negatives in run20261118-quake2-completed-capture-metadata-repair-gameplay. Broader callback ownership remains pending."
+    }
+  ]
+}

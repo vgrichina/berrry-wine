@@ -328,3 +328,16 @@ attributed. No Boat, delegated workers or test boxes were used. Recovery,
 module identity, tests and cleanup details are in the run's `RECOVERY.md`.
 Next useful gameplay work is native car recovery and a controlled lap from
 the starting grid; no further startup repair is indicated by this run.
+
+## Current GPS browser admission attempt (2026-11-18)
+
+The fresh published-source normal-browser attempt is recorded in
+[revolt-current-browser-driving-checkpoint-20261118.md](revolt-current-browser-driving-checkpoint-20261118.md).
+Two whole displays show changed natural Demo Mode views, but manual driving,
+checkpoint/lap and ordinary Quit remain unverified. The harness required a
+GPS-presenter-owned frame despite observable native display publications; a
+later module diagnostic excluded three child Workers with empty URLs. Its
+UNKNOWN gate also failed to stop 54 subsequent passive startup observations.
+Zero original input was sent. The scope is closed, with no runtime repair or
+original replay; authored D3DIM publication/discovery/closure controls are the
+next prerequisite, not another original based on this report alone.

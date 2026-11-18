@@ -48,6 +48,20 @@ function sourceEnv(source, module, holder, indexSha) {
   return env;
 }
 
+function registeredManifests(root, args) {
+  const { APPS } = require(path.join(root, 'lib/apps.js'));
+  return args.filter(arg => arg.startsWith('--app=')).flatMap(arg => {
+    const id = arg.slice(6), app = APPS[id];
+    assert(app, 'unknown registered app: ' + id);
+    if (!app.localFileManifest) return [];
+    const requested = path.resolve(root, app.localFileManifest);
+    const canonical = fs.realpathSync(requested);
+    const names = [...new Set([requested, canonical])].map(p => path.relative(root, p));
+    for (const name of names) assert(name && !path.isAbsolute(name) && !name.split(path.sep).includes('..'), 'manifest outside source root');
+    return names;
+  });
+}
+
 function frozenInputs(out, recipe) {
   const root = path.resolve(recipe.cwd);
   const holderFile = recipe.moduleHolder || process.env.LMARBLES_MODULE_HOLDER;
@@ -78,6 +92,9 @@ function frozenInputs(out, recipe) {
     if (fs.statSync(full, { throwIfNoEntry: false })?.isFile() && !rel.startsWith('..') && !path.isAbsolute(rel)) selected.push(rel);
   }
   selected.push('test/candidate-corpus/manifest.json', 'test/binaries/candidates/lmarbles-108/.wine-assembly-browser.json');
+  // Other registered SDL consumers use this supervisor too. Their manifest
+  // must be in the sealed inventory before test/run.js reads any companions.
+  selected.push(...registeredManifests(root, recipe.args));
   // Literal dependencies of the actual runtime closure, including CLI helpers.
   for (let i = 0; i < selected.length; i++) {
     const p = selected[i], body = fs.readFileSync(path.join(root, p), 'latin1');
@@ -216,4 +233,4 @@ async function main() {
   } else throw Error('unknown mode ' + mode);
 }
 if (require.main === module) main().catch(e => { console.error(e); process.exitCode = 1; });
-module.exports = { seal, indexedSource, frozenInputs, run, token: c.token, save };
+module.exports = { seal, indexedSource, registeredManifests, frozenInputs, run, token: c.token, save };

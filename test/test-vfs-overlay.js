@@ -229,6 +229,90 @@ test('OPFS hydration captures one index and holds writers until snapshot reads c
 });
 
 
+test('Node immutable payload aliases preserve metadata, allocation, atomicity and recovery forks', async () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-overlay-reuse-'));
+  const base = path.join(root, 'base'), fork = path.join(root, 'fork');
+  const data = Buffer.alloc(1024 * 1024, 0x61);
+  const changed = Buffer.from(data); changed[changed.length - 1] = 0x62;
+  const file = (name, payload = data, attrs = 32) => ({
+    path: name, kind: 'file', data: payload, attrs,
+    creationTime: { lo: 1, hi: 2 }, lastAccessTime: { lo: 3, hi: 4 },
+    lastWriteTime: { lo: attrs, hi: 6 },
+  });
+  const index = dir => JSON.parse(fs.readFileSync(path.join(dir, 'index.json')));
+  const allocation = dir => fs.readdirSync(path.join(dir, 'blobs')).reduce(
+    (sum, name) => sum + fs.statSync(path.join(dir, 'blobs', name)).blocks * 512, 0);
+  try {
+    await nodeDirStore(base).writeBatch([file('a')]);
+    // Exercise a historical SHA-1 basename without a format migration.
+    const legacy = index(base), first = legacy.records[0].blob;
+    const historical = 'a'.repeat(40) + '.bin';
+    fs.renameSync(path.join(base, 'blobs', first), path.join(base, 'blobs', historical));
+    legacy.records[0].blob = historical;
+    fs.writeFileSync(path.join(base, 'index.json'), JSON.stringify(legacy));
+    const originalIndex = fs.readFileSync(path.join(base, 'index.json'));
+    fs.mkdirSync(path.join(fork, 'blobs'), { recursive: true });
+    fs.copyFileSync(path.join(base, 'index.json'), path.join(fork, 'index.json'));
+    fs.linkSync(path.join(base, 'blobs', historical), path.join(fork, 'blobs', historical));
+    const baseline = allocation(fork);
+    assert(baseline >= data.length, 'measure real allocated blocks on a non-sparse payload');
+    for (let flush = 0; flush < 3; flush++) {
+      const store = nodeDirStore(fork);
+      await store.writeBatch([file('a', data, 128 + flush), file('alias', data, 7)]);
+      assert.strictEqual(allocation(fork), baseline, 'equal flushes allocate no new payload blocks');
+      assert.strictEqual(fs.readdirSync(path.join(fork, 'blobs')).length, 1);
+      const rows = await store.list();
+      assert.strictEqual(rows[0].blob, historical);
+      assert.deepStrictEqual(rows[0], { ...metaOf(file('a', data, 128 + flush)), blob: historical });
+      assert.deepStrictEqual(rows[1], { ...metaOf(file('alias', data, 7)), blob: historical });
+    }
+    const before = fs.readFileSync(path.join(fork, 'index.json'));
+    const rename = fs.renameSync;
+    fs.renameSync = (from, to) => {
+      assert(fs.readFileSync(path.join(fork, 'index.json')).equals(before), 'old index visible until rename');
+      assert(Buffer.from(execFileSync(process.execPath, ['-e',
+        'require(process.argv[1]).nodeDirStore(process.argv[2]).read("a").then(b=>process.stdout.write(Buffer.from(b)))',
+        path.resolve(__dirname, '../lib/overlay-store.js'), fork])).equals(data), 'restart reads committed bytes');
+      const staged = JSON.parse(fs.readFileSync(from));
+      assert.strictEqual(staged.records.find(r => r.path === 'new').blob, historical);
+      assert(fs.readdirSync(path.join(fork, 'blobs')).length > 1, 'new bytes staged before publication');
+      throw new Error('reuse index publication failed');
+    };
+    try {
+      await assert.rejects(nodeDirStore(fork).writeBatch([
+        file('a', changed), file('new'), { path: 'alias', kind: 'whiteout', attrs: 9 },
+      ]), /reuse index publication failed/);
+    } finally { fs.renameSync = rename; }
+    assert(fs.readFileSync(path.join(fork, 'index.json')).equals(before));
+    assert.strictEqual(allocation(fork), baseline, 'rollback removes only newly created blobs');
+    await nodeDirStore(fork).writeBatch([file('a', changed), file('new'),
+      { path: 'alias', kind: 'whiteout', attrs: 9 }]);
+    assert(Buffer.from(await nodeDirStore(fork).read('a')).equals(changed), 'equal length is insufficient');
+    assert(Buffer.from(await nodeDirStore(fork).read('new')).equals(data));
+    assert.strictEqual((await nodeDirStore(fork).list()).find(r => r.path === 'alias').kind, 'whiteout');
+    await nodeDirStore(fork).remove('new');
+    assert.strictEqual(fs.readdirSync(path.join(fork, 'blobs')).length, 1, 'last alias releases old fork link');
+    assert(fs.readFileSync(path.join(base, 'index.json')).equals(originalIndex));
+    assert(Buffer.from(await nodeDirStore(base).read('a')).equals(data), 'base hardlink bytes preserved');
+    // Same-batch aliases and repeated paths can reuse a newly staged blob.
+    await nodeDirStore(fork).writeBatch([file('x'), file('y'), file('x', changed), file('z')]);
+    assert.strictEqual(fs.readdirSync(path.join(fork, 'blobs')).length, 2);
+    await nodeDirStore(fork).remove('y');
+    assert(Buffer.from(await nodeDirStore(fork).read('z')).equals(data));
+    await nodeDirStore(fork).writeBatch([{ path: 'z', kind: 'dir', attrs: 16 }]);
+    assert.strictEqual(fs.readdirSync(path.join(fork, 'blobs')).length, 1);
+    await nodeDirStore(fork).writeBatch([file('empty', Buffer.alloc(0)), file('empty-alias', Buffer.alloc(0))]);
+    const empty = (await nodeDirStore(fork).list()).filter(r => r.path.startsWith('empty'));
+    assert.strictEqual(empty[0].blob, empty[1].blob);
+    // Sparse layout is per-record metadata; only its stored payload aliases.
+    await nodeDirStore(fork).writeBatch([{ ...file('sparse', changed), size: changed.length + 10,
+      sparse: { basePath: 'c:\\base', originalSize: 10, baseSize: 10,
+        ranges: [{ offset: 10, length: changed.length }] } }]);
+    assert.strictEqual((await nodeDirStore(fork).list()).find(r => r.path === 'sparse').blob,
+      (await nodeDirStore(fork).list()).find(r => r.path === 'a').blob);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
 test('Node failed replacement and deletion keep the old committed bytes', async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-overlay-atomic-'));
   const store = nodeDirStore(dir);

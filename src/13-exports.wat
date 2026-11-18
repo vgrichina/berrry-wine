@@ -6025,6 +6025,35 @@
     (if (i32.eq (local.get $field) (i32.const 4)) (then (return (call $prog_step (local.get $sw)))))
     (i32.const 0))
 
+  ;; Retained native storage is distinct from virtual PBM_* results and paint
+  ;; ownership. A guest subclass can chain to the native procedure while owning
+  ;; WM_PAINT. Keep native_progress_get's strict dispatch contract unchanged.
+  ;; Status: 1 ready, -1 retired, -2 wrong class, -3 unsupported procedure,
+  ;; -4 no initialized state, -5 unmapped state. Never initialize on a read.
+  (func (export "native_progress_storage_get") (param $hwnd i32) (param $field i32) (result i32)
+    (local $state i32) (local $sw i32) (local $proc i32)
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd))) (then (return (i32.const -1))))
+    (if (i32.ne (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 17)) (then (return (i32.const -2))))
+    (local.set $proc (call $wnd_table_get (local.get $hwnd)))
+    (if (i32.eqz (i32.or
+          (i32.or (i32.eq (local.get $proc) (global.get $WNDPROC_BUILTIN))
+                  (i32.eq (local.get $proc) (global.get $WNDPROC_CTRL_NATIVE)))
+          (i32.and (i32.gt_u (local.get $proc) (i32.const 0))
+                   (i32.lt_u (local.get $proc) (i32.const 0xfffe0000)))))
+      (then (return (i32.const -3))))
+    (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+    (if (i32.eqz (local.get $state)) (then (return (i32.const -4))))
+    (if (i32.eqz (call $native_edit_contiguous (local.get $state) (i32.const 16)))
+      (then (return (i32.const -5))))
+    (local.set $sw (call $g2w (local.get $state)))
+    (if (i32.eqz (local.get $field)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $field) (i32.const 1)) (then (return (call $prog_min (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 2)) (then (return (call $prog_max (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 3)) (then (return (call $prog_pos (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 4)) (then (return (call $prog_step (local.get $sw)))))
+    (if (i32.eq (local.get $field) (i32.const 5)) (then (return (local.get $proc))))
+    (i32.const 0))
+
   ;; --- Dialog record readers ---
   ;; The JS renderer reads dialog header fields from WND_DLG_RECORDS
   ;; after WAT populates them in $dlg_load. Everything is keyed by the

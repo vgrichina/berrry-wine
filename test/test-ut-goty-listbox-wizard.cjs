@@ -36,7 +36,11 @@ const extraWat=String.raw`
   e.test_wnd_table_set(h,procedure);assert.equal(get().available,false,'unrelated sentinels have no list contract');
  }
  e.test_wnd_table_set(h,0x401234);
- e.list_style(h,0x50000010);assert.equal(get().available,false,'owner-draw without strings stays unsupported');
+ e.list_style(h,0x50000010);
+ assert.equal(e.native_listbox_get(h,0),-1,'owner-draw without strings has no string contract');
+ assert.equal(get().state.storageContract,'native-listbox-opaque-storage-v1');
+ assert.equal(get().state.textAvailable,false,'changing style never relabels retained bytes as item text');
+ assert.deepEqual(get().state.items.map(v=>v.data),[0],'retained item data stays distinct from text');
  e.list_style(h,0x50000050);assert.equal(get().available,true,'owner-draw with native string storage is observable');
  e.test_wnd_table_set(h,0xffff0002);e.list_destroy(h);
  assert.equal(e.native_listbox_get(h,0),-1);assert.equal(e.native_listbox_selected(h,0),-1);

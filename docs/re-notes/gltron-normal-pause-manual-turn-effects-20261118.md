@@ -1,0 +1,25 @@
+# GLTron: normal pause and two manually chosen visible turns
+
+The one original browser run demonstrated two distinct directional effects in unchanged GLTron 0.70. Ordinary Quit remains unproved in this run: the disk guard permanently closed its scope while preparing the selected QUIT frame, before Enter on Quit. Evidence: `scratch/runs/20261118-gltron-normal-pause-manual-turn-effects/result.json`, written last.
+
+The runtime is the accepted published `f6962ba5b1cf2829a66f5cc4d80b293c30719b37` graph and module SHA-256 `a6002d5dbcfeb534a0eadd223da616e525aa1542dad2bde381fe54e00ee862f8`. All 92 registered media inputs matched before and after. The browser used `--disable-component-update` from published `5a451516c`, plus `--disable-background-networking`. No game, configuration, guest clock or state was patched. The optional child Debugger was omitted; independently executing child module bytes and roles remain unknown.
+
+Read-only packaged `scripts/config.lua` establishes human Player 1 and A/S turns. The local README has no control table. Executable disassembly establishes Space → normal pause (`408631` → `4086a7`, return 2) and Enter through `keyboardPause`'s ordinary default → resume (`40ae87`, return 3). Player-selection screenshots were not used as binding proof.
+
+Personally reviewed whole-display evidence, relative to `original/wholehost/`:
+
+| Before | After | Observed effect |
+|---|---|---|
+| `launch-pause-004.png`, `launch-pause-held-005.png` | `normal-pause-007.png`, `normal-pause-held-008.png` | Enter advanced the intact yellow cycle and grew a straight trail; Space restored GAME IS PAUSED. Later wholeframes hold the same position/trail while the pause banner changes color. |
+| `turn-left-009.png` | `after-left-010.png` | A makes the yellow minimap trail turn from rightward to upward; camera heading changes; yellow cycle remains intact. |
+| `turn-right-011.png` | `after-right-012.png` | After personally reviewing the first corner, S adds a second corner and rightward segment in the same round; yellow cycle remains intact. |
+
+Each turn was personally chosen from the actual paused arena. Enter, A/S and Space were separate key intervals, each with its own independently prearmed matching release and physical key state 0. They were not simultaneous Enter+A events. Finite wall-time sequences held keys for 120 ms, with a 100 ms delay before A/S and 500 ms before Space. Actual down/release timestamps and whole-frame reviews are retained in `manual-review.json`. Trusted DOM edges support browser delivery; the changed trail establishes game consequence. No solver, OCR, autoplay, callback input, forced polling/focus or gameplay memory inspection chose a turn.
+
+The original closed at `2026-11-18T11:34:09.023Z`, guard observation **1,535,164,416 free bytes**, below its 1.54 GB preemption margin. `activate-quit-016.png` shows QUIT selected, but its capture failed subsequent owner admission; Enter on Quit and the next preparation were refused locally, with no endpoint requests. No credits or native guest exit is claimed. Host cleanup is not ordinary Quit. No request followed the scope closure and no original was replayed.
+
+Qualification used the exact retained message-driven native GL fixture. Authored scope 1 remained white without the required GL initialization receipt, then closed at an actual **1,496,240,128 bytes**: the required global floor was breached. Its GL startup cause is unknown. Scope 2, within the fixed 600-second/two-scope aggregate, visibly changed blue to red on Enter, exercised separate finite key intervals and exited normally through Escape with guest code 0. Passive startup diagnostics were added offline before scope 2; no tracked production source changed.
+
+All retained runtime waits have actual stdout/stderr EOF, all recorded runtime PIDs are absent, and native supervisors report no leaks. Scope 1's outer tool exited 143 without a retained enclosing wait or separate EOF; that gap is explicit. A detached holder retained actual enclosing waits for scope 2 and the original. The independent drain guard recorded a minimum of 1,534,963,712 bytes and no sampled breach during later cleanup, but its outer tool also exited 143 without the child-wait receipt; both recorded PIDs are absent. It was not present for the entire first scope. A separate finite final sampler retains its actual exit and EOF receipt; the short intervening coverage gap is explicit. Disk observations are sampled, and the shared writer causing the residual burst is unknown.
+
+Selected wholeframes, unique operator scripts and their patches remain in the run; disposable readback PNGs were pruned after hashes, and large closed logs were losslessly gzipped after verified round trips. Git plus recorded binary diffs is the source archive; no source-tree or media copies were retained. Held Blood II, Sims, UT partials/ISO and Heroes II work were untouched. No agents, workers, boxes, Python, Wine or deployment were used. Box ID/expiry/stop receipt are null; state is NOT_CREATED.

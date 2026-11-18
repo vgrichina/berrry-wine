@@ -171,3 +171,4 @@
 (include "11-seh.wat")
 (include "12-wsprintf.wat")
 (include "13-exports.wat")
+(include "14-cli-command-line.wat")
