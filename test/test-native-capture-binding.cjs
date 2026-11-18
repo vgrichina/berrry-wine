@@ -53,9 +53,11 @@ transport.startControlServer=options=>start({...options,onCommand(command){
   finally{globalThis.nativeCaptureActive=false;}
  }
  const result=options.onCommand(command);
+ if(command.action==='guarded-release'&&process.env.NATIVE_CAPTURE_FAULT==='unknown-slow-release')
+  return new Promise(resolve=>setTimeout(()=>resolve(result),350));
  if(command.action!=='guarded-input'&&command.action!=='guarded-key-chord')return result;
  return Promise.resolve(result).then(value=>{
-  if(['unknown','compound-unknown'].includes(process.env.NATIVE_CAPTURE_FAULT))return new Promise(resolve=>setTimeout(()=>resolve(value),650));
+  if(['unknown','compound-unknown','unknown-slow-release'].includes(process.env.NATIVE_CAPTURE_FAULT))return new Promise(resolve=>setTimeout(()=>resolve(value),650));
   if(process.env.NATIVE_CAPTURE_FAULT==='release'){
    options.onCommand({action:'eval',code:'exports.set_focus(0);true'});
    const focus=options.onCommand({action:'eval',code:'exports.get_focus_hwnd()'});
@@ -90,6 +92,23 @@ function animatedFixture(file,mode=''){
  b.writeInt32LE(grab-(escape+16),escape+12);
  Buffer.from([0xff,0x15,0x04,0x18,0x40,0,0x50,0xff,0x15,0,0x18,0x40,0,0xe9,0,0,0,0]).copy(b,grab);
  b.writeInt32LE(loop-(grab+18),grab+14);
+ if(mode==='transition'){
+  // Enter returns from the real SDL/USER pump, then the guest spends 900ms
+  // loading before publishing a different menu. Loading is native work,
+  // not a delayed host reply or a fabricated consumption acknowledgement.
+  b.writeUInt32LE(0x1d80,raw(0x1204));b.writeUInt32LE(0x1d80,raw(0x1404));
+  b.write('GetTickCount\0',raw(0x1d82));b.write('Authored SDL loaded menu\0',raw(0x3600));
+  const enter=b.indexOf(Buffer.from([0x81,0x3d,0x48,0x35,0x40,0,13,0,0,0]),program);
+  assert(enter>=program);const load=raw(0x2fa0),code=[];
+  const u=n=>[n&255,n>>>8&255,n>>>16&255,n>>>24],emit=(...v)=>code.push(...v);
+  emit(0xff,0x15,...u(0x401204),0x89,0xc3);
+  const repeat=code.length;
+  emit(0xff,0x15,...u(0x401204),0x29,0xd8,0x3d,...u(900),0x0f,0x82);
+  emit(...u(repeat-code.length-4));
+  emit(0x6a,0,0x68,...u(0x403600),0xff,0x15,...u(0x401308),0x83,0xc4,8,0xe9);
+  emit(...u(loop-(load+code.length+4)));Buffer.from(code).copy(b,load);
+  b[enter+16]=0xe9;b.writeInt32LE(load-(enter+21),enter+17);
+ }
  if(['compound-modal','compound-capture'].includes(mode)){
   // The authored guest itself enters a real modal/capture API after returning
   // the first SDL Right key (SDLK_RIGHT=275), before another scheduled edge.
@@ -109,6 +128,8 @@ async function main(){
  for(const name of cases){
   const dir=path.join(out,name);fs.mkdirSync(dir);const fixture=animatedFixture(path.join(dir,'animated.exe'),name);fs.writeFileSync(path.join(dir,'fixture.json'),JSON.stringify(fixture));c.R=dir;c.URL='http://127.0.0.1:'+await freePort()+'/ctl';
   Object.assign(process.env,{LMARBLES_CONTROL_OUT:dir,LMARBLES_CONTROL_URL:c.URL,NATIVE_CAPTURE_FAULT:name});
+  if(process.env.NATIVE_CAPTURE_TIMING)Object.assign(process.env,{
+   WINE_PUBLIC_INPUT_TRACE:path.join(dir,'input-trace.jsonl'),WINE_CONTROL_PHASE_TRACE:path.join(dir,'control-phases.json')});
   const media=path.join(ROOT,'test/binaries/candidates/lmarbles-108/game/LMARBLES');
   const args=['node','-e',BOOT,'--','--exe='+fixture.file,'--no-build','--threads','--real-ticks','--screen=1024x712','--max-seconds=55','--max-batches=10000000','--stuck-after=0','--control='+new URL(c.URL).port,'--quiet-api','--quiet-blocks','--no-close','--env=SDL_VIDEODRIVER=windib',...['SDL.dll','libgcc_s_sjlj-1.dll','libwinpthread-1.dll'].map(n=>'--dll-seed='+path.join(media,n)),'--dll-seed='+path.join(ROOT,'test/binaries/dlls/msvcrt.dll')];
   c.save('recipe.json',{cwd:ROOT,args,seconds:355,reserveSeconds:300,watchdogGrace:2,nativeScene:true,moduleHolder:holder,inputPolicy:{confirmationMs:500,physicalUpMs:1750,observationMs:3000,gameFreshnessSeconds:5,menuFreshnessSeconds:30}});
@@ -138,10 +159,24 @@ async function main(){
     await c.bind('first');const owner=c.read('input-owner.json');
     const fresh=await capture('fresh');c.save('fresh-review.json',{at:k.now(),pngSHA256:fresh.receipt.pngSHA256,scene:'game',observation:'Automated animated native fixture; no personal game review claim'});
     const compound=name.startsWith('compound'),keys=compound?['keydown:39','keydown:32']:['keydown:13'];
-    if(name==='unknown'||name==='release'||(compound&&name!=='compound'))await assert.rejects(c.pulse('press',keys,250,'fresh','authored native HTTP fault and independent release'));
+    if(['unknown','unknown-slow-release','release'].includes(name)||(compound&&name!=='compound'))await assert.rejects(c.pulse('press',keys,250,'fresh','authored native HTTP fault and independent release'));
     else await c.pulse('press',keys,250,'fresh','authored native finite keys and independent release');
     const up=c.read('press-up.json');assert.equal(up.state,'ACK');assert(up.reply.released);assert.equal(up.reply.owner,owner.owner);
-    if(name!=='positive'&&name!=='compound'){assert(c.read('terminal-input-failure.json').noReplay);assert.throws(()=>c.opened(),/sticky UNKNOWN/);}
+    if(name==='unknown-slow-release'){
+     const dispatch=c.read('press-dispatch.json');
+     c.save('release-latency.json',{afterDispatchMs:(up.at-dispatch.at)*1000,limitMs:1750,
+      releaseReplyDelayMs:350,downReplyDelayMs:650});
+     assert((up.at-dispatch.at)*1000<=1750,'independent UP confirmation must fit the unchanged 1750ms bound after UNKNOWN');
+    }
+    if(!['positive','compound','transition'].includes(name)){assert(c.read('terminal-input-failure.json').noReplay);assert.throws(()=>c.opened(),/sticky UNKNOWN/);}
+    if(name==='transition'){
+     const consumed=c.read('press-down.json')[0];assert.equal(consumed.nativeMessage.consumption,'owner-user-return');
+     const end=Date.now()+4000;let loaded;
+     do{loaded=await c.call({action:'snapshot'},.5);if(loaded.windows.some(w=>w.title==='Authored SDL loaded menu'))break;await k.sleep(20);}while(Date.now()<end);
+     assert(loaded.windows.some(w=>w.title==='Authored SDL loaded menu'));
+     assert(Date.now()-consumed.consumedAt>=850,'native loading follows exact owner consumption');
+     await capture('loaded');
+    }
     if(compound){
      const diagnostic=fs.readdirSync(dir).find(n=>/^press-.*-diagnostic.json$/.test(n)&&!n.includes('release'));
      const value=c.read(diagnostic).rawReply?.value;
@@ -157,7 +192,7 @@ async function main(){
      }
     }
     if(name==='release')assert.equal(c.read('changed-focus-before-release.json').focus,0);
-    c.save('assertions.json',{animated:true,boundIssuedFirstImage:true,independentUp:up,stickyUnknown:!['positive','compound'].includes(name)});
+    c.save('assertions.json',{animated:true,boundIssuedFirstImage:true,independentUp:up,stickyUnknown:!['positive','compound','transition'].includes(name),nativeLoading:name==='transition'});
    }
   }catch(e){error=e;c.save('fixture-error.json',{error:e.stack});}finally{
    c.save('cancel-request.json',{at:k.now(),fixtureOnly:true,nativeQuit:false});

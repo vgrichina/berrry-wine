@@ -287,8 +287,13 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     if (!admissionFits(now(), deadline, allowance)) return reject('before-prearm');
     ok(deadline + 2 < read('launch.json').deadline, 'operation exceeds fixed runtime');
     policy(intent, keys, review, route, deadline);
-    const releaseCap = now() + (strict ? 1.65 : 2.0);
-    save(name + '-release-cap.json', { at: releaseCap, beforeFirstDown: true });
+    // The fallback also owes a complete release confirmation. Arming at
+    // 1650ms left only 100ms of the 1750ms UP window before child startup,
+    // despite allowing that request 500ms. Reserve all 500ms before DOWN;
+    // child startup can only shorten this cap relative to actual dispatch.
+    const releaseCap = now() + (strict ? 1.25 : 2.0);
+    save(name + '-release-cap.json', { at: releaseCap, beforeFirstDown: true,
+      confirmationReserveMilliseconds: strict ? 500 : null });
     const child = cp.spawn(process.execPath, [SELF, 'release', name, owner.owner, String(releaseCap), ...(final ? ['final'] : [])],
       { stdio: ['ignore', 'pipe', 'pipe'], env: { ...process.env, LMARBLES_CONTROL_OUT: S.R, LMARBLES_CONTROL_URL: S.URL } });
     const childOut = [], childErr = [];
