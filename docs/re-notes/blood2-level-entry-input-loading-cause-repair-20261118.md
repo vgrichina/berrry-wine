@@ -85,7 +85,11 @@ that limitation is recorded separately from verified actual source reads.
 
 All owned native/watchdog scopes were closed and checked without querying
 closed endpoints. No box was created: ID null, state NOT_CREATED, expiry
-null, stop receipt null. Free /home remained above 1.5 GB in recorded samples.
+null, stop receipt null. Native controls remained above the 1.5 GB disk floor.
+After all owned runtimes had closed, shared free space fell to 1,488,637,952
+and then 1,250,779,136 bytes during finalization. The board was alerted;
+this worker's evidence occupies 4.6 MB and foreign files were not deleted.
+No new runtime was launched after the floor breach.
 No agents, workers, Wine, Python or deployment were used. The causal blocker
 is concrete: the actual original's native/HTTP stage evidence is absent,
 and the applicable authored native loading control passes without a behavior
