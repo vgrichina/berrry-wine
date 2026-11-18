@@ -39,3 +39,17 @@ This corrects capture preparation only. It does not establish why the previous
 original screenshot was white, or prove driving, throttle, steering, Pause,
 Continue or Quit. Fresh original results and final custody receipts are added
 after publication and review.
+
+The first fresh page attempt stopped before registering or launching the
+original: clicking the hidden debug-toolbar Launch button failed. Its actual
+native/watchdog waits and browser EOF completed. The supported production
+agent launch action in `lib/agent-remote.js` uses the registry select followed
+by the public `launchApp()` function; it does not click that hidden button.
+An authored heavy native control reproduced the hidden-button refusal and
+passed through that supported route, with the same native module, scene,
+composition pixels and normal Workers. Its normally selectable Notepad
+catalog entry carries only the authored executable; Rock & Roll is absent
+from the normal selector, as a separate prelaunch negative confirmed. Neither
+prelaunch failure registered an original or sent physical game input. The
+corrected driver follows the existing public shell launch route without
+changing shell/runtime code, guest state, focus or scheduling.
