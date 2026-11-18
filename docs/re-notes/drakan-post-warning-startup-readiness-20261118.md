@@ -137,3 +137,11 @@ record-line/hash recovery provenance. No runtime, endpoint or capture was used
 for recovery. The existing unique runtime module remained available and matched
 its pinned hash. Selected PNGs are retained again; recovery does not invent or
 re-render evidence.
+
+The two large original native stdout logs also disappeared during finalization.
+They are explicitly missing; complete logs cannot be reconstructed. Exact
+previously returned tool-output excerpts preserve ordinary ShowWindow, menu
+DOWN/UP delivery and final statistics (`native-log-excerpts-final.json`), with
+source record hashes. Full passive readiness/actor JSONL, actual readbacks,
+guard receipts and native/watchdog wait/EOF receipts remain. No full-log
+retention claim or runtime replay is made.
