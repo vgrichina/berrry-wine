@@ -253,6 +253,22 @@ FPS, audio, gameplay completion or native Quit.
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
 | `scr_rockroll` | Motion observed | Motion observed | Software: `20261118-rockroll-js-startup-rendering-repair`; WebGL: `20261118-dx-wormhole-scifi-paired-motion`; earlier UNKNOWNs retained |
 | `scr_oasaver` | Motion observed | Motion observed | Software: `20261118-oasaver-software-presentation-path-cause`; WebGL: `20261118-oasaver-paired-natural-motion`; earlier startup failures remain unexplained |
+| `scr_scifi` | Motion observed | Motion observed | `20261118-scifi-fallingl-current-paired-motion` |
+| `scr_fallingl` | Motion observed | Motion observed | `20261118-scifi-fallingl-current-paired-motion` |
+
+The [fresh SciFi/Falling Leaves run](re-notes/scifi-fallingl-current-paired-motion-20261118.md),
+report `7268cc780`, uses published source`6f25a1ea0` and module`eb2395e1…`.
+The coordinator reviewed all eight whole frames: SciFi creatures and ground
+shadows move over fixed dunes on both executors; Falling Leaves objects turn
+and change position over a fixed printed backdrop on both. All twelve actual
+page/guest/render module-byte inventories match. Completed PRESENT counts
+advance87→161/276→462 for SciFi software/WebGL and60→104/393→814 for Falling
+Leaves. Each original has actual native/browser/command/watchdog wait0, both
+EOFs and no reported leak; all107 known owned PIDs and four listeners are gone.
+No runtime repair was needed. Dark shapes alone do not establish an alpha
+defect, and these pairs establish neither same-frame parity nor FPS, audio,
+native Quit, real-Windows correctness or historical27 membership.
+Evidence: `scratch/runs/20261118-scifi-fallingl-current-paired-motion/result.json`.
 
 ## November 17 Quake III arena, depth repair and delayed input
 
