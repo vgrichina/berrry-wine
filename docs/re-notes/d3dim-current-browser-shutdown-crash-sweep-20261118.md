@@ -41,8 +41,9 @@ writer or establish continuous floor compliance. No foreign cleanup was done.
 The supervisor records the driver's actual SIGTERM exit, actual supervisor
 status143, stdout/stderr EOF and `leaked:false`; its three tracked PIDs were
 checked separately after termination. There is no guest exit code. The outer
-tool session independently returned143; its enclosing sender/parent wait is
-unknown and is not replaced by the supervisor's successful drain. The scope
+tool session returned143, consistent with the retained launcher's explicit
+propagation of supervisor status143. The tool interface does not separately
+expose its enclosing parent wait or outer pipe EOFs. The scope
 remains closed: no runtime retry, endpoint query, threshold change or later
 original follows.
 
