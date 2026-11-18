@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_CreateDialogParamA",
+      "baseSHA256": "4fdf0d861e4096b9b710ec0461f9c3b8c4555b7d4346fa14369b170a7e330db0",
+      "sha256": "7e80436c4fe4a9a3350dde093e50e52a7c8ef2ad7c042c834f35586bd51ee04a",
+      "reason": "Review 20261118 UT wizard: modeless WS_CHILD pages never replace convenience main HWND, including reentrant creation during outer DialogBox WM_INITDIALOG before main exists. Uses existing main_hwnd_adopt for eligible real top-level dialogs. No callback frame, DLGPROC, stack, message queue, HWND identity/generation, actor, modal invocation or lifetime changed. Authored ordinary modal/nested page old main.topLevel reproduction and native/browser regressions cover causal selection. General callback ownership remains pending."
+    },
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_CreateWindowExA",
+      "baseSHA256": "90635ea688642c1c22e8c025fa6e7cbde75f1e59720f25a6dd76a907227f3ae7",
+      "sha256": "ac6309c957315ed834ca183829fb0d15ae4adfb5082dedf9daf81e65a2d945cf",
+      "reason": "Review 20261118 UT authored modal-init regression: first main adoption is limited to non-WS_CHILD windows. Ordinary child controls created before a modal root shows retain main0; actual root can be selected by ordinary ShowWindow. No guest API callback, stack frame, HWND lifetime, focus or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$show_window_core",
+      "baseSHA256": "f66ef12674cf981311b8ae21a8c2f5980044fb57f0d170c25c128a3fc5872379",
+      "sha256": "6f65067139dbe4bc184ecba600faed7613f8900330ef6f7f4d952b20ebf35d4a",
+      "reason": "Review 20261118: shown real top-level dialog can adopt absent main0. wnd_is_effectively_visible(0) is true for ancestor termination, not a visible main. Existing parent/owner/app-DLGPROC and activation guards retained. Ordinary modal-init authored native/browser regression covers root selection; no callback ownership, stack, lifetime, generation or focus bypass."
+    }
+  ]
+}
