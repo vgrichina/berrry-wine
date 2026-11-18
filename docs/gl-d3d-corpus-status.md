@@ -44,6 +44,20 @@ module and authored regression module have separate source/hash records.
 Full-27 coverage and arbitrary crash freedom remain open.
 Evidence: `scratch/runs/20261118-d3dim-webgl-browser-crash-close-tunnel/result.json`.
 
+Globe ordinary close is repaired by `1ad9afd92` (report `fa13214c8`). The
+fifth COM release yielded through FreeLibrary to the idle page CPU, abandoning
+the native WM_DESTROY callback. Servicing that unload on the owning Worker
+completes all six releases and permits native exit. The native old-fail/new-pass
+fixture, browser unload controls, API batching and locked build passed. For
+both software and WebGL originals, the coordinator inspected ExitProcess 0
+before host stop, exited process state, guest/render retirement and individual
+Chrome/Xvfb/openbox waits with both EOFs. The repaired scopes do not erase the
+earlier UNKNOWN closes. They use the retained `a6002d5d…` module with the
+recorded RPC/source graph; sampled original minima above the floor do not
+establish continuous disk compliance. Full-27 and arbitrary crash freedom
+remain open.
+Evidence: `scratch/runs/20261118-dx-globe-native-close-cause-repair/result.json`.
+
 ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
 Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
 lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
