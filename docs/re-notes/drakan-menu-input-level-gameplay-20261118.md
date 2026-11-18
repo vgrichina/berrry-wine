@@ -39,3 +39,16 @@ native acknowledgment or authentic game result. The fixture includes busy
 guest work and ordinary window painting, not a D3D render workload.
 
 Fresh authentic outcome and publication follow validation below.
+
+Mouse preparation additionally uses an ordinary standard DIMOUSESTATE format.
+The first mouse control exposed a fixture error: one message per two-second
+frame allowed ordinary hover/hit-test messages to delay button dispatch. The
+corrected fixture drains each ordinary message range and reads DirectInput
+from its actual input callback as well as its frame loop. A short click could
+otherwise end between two slow frame samples. Fresh native and full browser
+controls prove button=128 and independent release; browser later reads zero.
+The failed control is closed with actual cleanup and is not game failure.
+The helper accepts reviewed ordinary absolute move/down coordinates, retaining
+the production mapping and exact native message/actor predicates. Three wrong
+mouse-message receipts are rejected. Original menu selection still requires
+the visible difficulty/level consequence.

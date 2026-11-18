@@ -19,8 +19,10 @@ async function main(out,frameMs=800,confirmationMs=5000){
   const end=c.now()+15;for(;;){const s=await a.call({action:'native-startup-readiness'},2);if(s.ready)break;assert(c.now()<end);await c.sleep(30);}
   await a.capture('main');const rr=a.read('main.json');a.save('main-review.json',{at:c.now(),pngSHA256:rr.pngSHA256,scene:'menu',wholeFrame:true,targetHwnd:rr.snapshot.focus,observation:'Authored diagnostic fixture; no original game review claimed'});await a.bind('main');
   if(process.env.DRAKAN_MENU_FIXED==='1'){
-   await require('../tools/drakan-menu-input.cjs').pulse({name:'enter',key:13,review:'main',observation:'Authored diagnostic native USER/DirectInput control; no original claim'});
+   const pointer=process.env.DRAKAN_MENU_POINTER==='1';
+   await require('../tools/drakan-menu-input.cjs').pulse({name:'enter',...(pointer?{pointer:{action:'mousedown',x:300,y:300}}:{key:13}),review:'main',observation:'Authored diagnostic native USER/DirectInput control; no original claim'});
    assert(a.read('enter-complete.json').consumed);assert(a.read('enter-complete.json').physicalUpACK);
+   if(pointer){const result=await a.call({action:'eval',code:`(()=>{const e=instance.exports,dv=new DataView(memory.buffer);return {everDown:dv.getUint32(e.guest_to_wasm(0x402824),true),hresult:dv.getUint32(e.guest_to_wasm(0x40281c),true)};})()`},2);a.save('directinput-mouse.json',result);assert.equal(result.everDown,128);assert.equal(result.hresult,0);}
    a.save('assertions.json',{pass:true,nativeConsumption:true,physicalUpACK:true,policyFixedBeforeDispatch:true});return;
   }
   const [owner]=await a.lease(),nonce=crypto.randomUUID(),begin=c.now(),deadline=Math.trunc((begin+6)*1000);
@@ -60,7 +62,7 @@ async function browser(out){
   await page.goto('http://127.0.0.1:'+server.address().port+'/?debug&no-log&force-threads');await page.waitForFunction(()=>window.wineShell&&window.wineApps,{timeout:15000});
   await page.evaluate(async()=>{window.WINE_THREADS=true;wineApps.APPS.authored_drakan={name:'Authored Drakan menu',exe:'fixture.exe',dlls:[],files:[],threads:true};await wineShell.launchApp('authored_drakan');});
   const sample=()=>page.evaluate(async()=>{const w=wineShell.runningApps.find(a=>a?.name==='authored_drakan')?.wine;if(!w?.guestWorker)return {unavailable:true};const e=w.instance.exports,dv=new DataView(w.memory.buffer),r=p=>dv.getUint32(e.guest_to_wasm(p),true);
-   return {at:Date.now(),actor:await w.guestWorker.readExports(['get_process_id','get_current_thread_id','get_focus_hwnd','get_main_hwnd']),async:r(0x402810),dispatched:r(0x402814),diHRESULT:r(0x402818),diEnter:dv.getUint8(e.guest_to_wasm(0x402e1c)),windows:Object.values(w.renderer.windows).map(v=>({hwnd:v.hwnd,visible:v.visible,title:v.title}))};});
+   return {at:Date.now(),actor:await w.guestWorker.readExports(['get_process_id','get_current_thread_id','get_focus_hwnd','get_main_hwnd']),async:r(0x402810),dispatched:r(0x402814),diHRESULT:r(0x402818),diEnter:dv.getUint8(e.guest_to_wasm(0x402e1c)),diMouse:dv.getUint8(e.guest_to_wasm(0x402f0c)),everMouse:r(0x402824),windows:Object.values(w.renderer.windows).map(v=>({hwnd:v.hwnd,visible:v.visible,title:v.title}))};});
   let before;const end=c.now()+15;while(c.now()<end){before=await sample();if(before.actor?.get_main_hwnd)break;await c.sleep(50);}assert(before.actor?.get_main_hwnd);
   await page.screenshot({path:path.join(out,'before.png')});c.save(out,'before.json',before);
   const child=cp.fork(require.resolve('../tools/nfs3-normal-worker-control.cjs'),['release'],{silent:true});let stdout='',stderr='';child.stdout.on('data',b=>stdout+=b);child.stderr.on('data',b=>stderr+=b);
@@ -73,7 +75,14 @@ async function browser(out){
   c.save(out,'measurement.json',{sentAt,after,confirmationMs:2500,physicalFallbackMs:2800,actualPhysicalDOMInput:true});
   assert(after.dispatched>before.dispatched);assert.equal(after.diHRESULT,0);assert.equal(after.diEnter,128);assert.equal(after.actor.get_current_thread_id,1);
   assert.deepEqual(after.actor,before.actor);assert(c.readJSON(path.join(out,'physical-up.json')).ackAt);
-  await c.sleep(2200);const up=await sample();assert.equal(up.diEnter,0);c.save(out,'after-up.json',up);await page.screenshot({path:path.join(out,'after.png')});
+  await c.sleep(2200);const up=await sample();assert.equal(up.diEnter,0);c.save(out,'after-up.json',up);
+  const point=await page.evaluate(()=>{const w=wineShell.runningApps[0].wine,canvas=w.renderer.canvas,b=canvas.getBoundingClientRect();return {x:b.left+300*b.width/canvas.width,y:b.top+300*b.height/canvas.height};});await page.mouse.move(point.x,point.y);
+  const releaseCode=`const fs=require('fs'),c=require('./tools/native-supervisor-common.cjs');(async()=>{const ws=new WebSocket(${JSON.stringify(chrome.wsEndpoint())});await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});let id=0;const pending=new Map();ws.onmessage=m=>{const v=JSON.parse(m.data),p=pending.get(v.id);if(p){pending.delete(v.id);clearTimeout(p.t);v.error?p.j(Error(JSON.stringify(v.error))):p.r(v.result);}};const send=(method,params,sessionId)=>new Promise((r,j)=>{const n=++id,t=setTimeout(()=>j(Error('CDP timeout')),2000);pending.set(n,{r,j,t});ws.send(JSON.stringify({id:n,method,params,sessionId}));});const s=(await send('Target.attachToTarget',{targetId:${JSON.stringify(page.target()._targetId)},flatten:true})).sessionId;process.stdout.write('armed\\n');setTimeout(async()=>{let receipt;try{if(c.token(${target.pid})!==${JSON.stringify(target.startToken)})throw Error('identity');await send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',buttons:0,x:${point.x},y:${point.y},clickCount:1},s);receipt={ackAt:Date.now()};}catch(e){receipt={error:String(e)};process.exitCode=1;}c.save(${JSON.stringify(out)},'mouse-up.json',receipt);ws.close();},2800);})().catch(e=>{console.error(e);process.exitCode=1;});`;
+  const mouseChild=cp.spawn(process.execPath,['-e',releaseCode],{stdio:['ignore','pipe','pipe']});let mo='',me='';mouseChild.stdout.on('data',b=>mo+=b);mouseChild.stderr.on('data',b=>me+=b);const mouseWait=new Promise(r=>mouseChild.once('close',(code,signal)=>r({pid:mouseChild.pid,code,signal,actualWait:true,stdoutEOF:mouseChild.stdout.readableEnded,stderrEOF:mouseChild.stderr.readableEnded,stdout:mo,stderr:me})));
+  await new Promise(r=>mouseChild.stdout.once('data',r));let mouse;
+  try{await page.mouse.down();const until=Date.now()+2500;while(Date.now()<until){mouse=await sample();if(mouse.everMouse===128&&mouse.dispatched>up.dispatched)break;await c.sleep(25);}}finally{c.save(out,'mouse-release-wait.json',await mouseWait);}
+  assert.equal(mouse.everMouse,128);assert(mouse.dispatched>up.dispatched);assert(c.readJSON(path.join(out,'mouse-up.json')).ackAt);await c.sleep(2200);const mouseUp=await sample();assert.equal(mouseUp.diMouse,0);c.save(out,'mouse-proof.json',{point,down:mouse,up:mouseUp,nativeUSERDispatch:true,directInputConsumed:true});
+  await page.screenshot({path:path.join(out,'after.png')});
   c.save(out,'proof.json',{pass:true,browser:await chrome.version(),moduleSHA256:c.sha256(moduleBytes),base,reads,logs,before,after,up,nativeUSERDispatch:true,ordinaryDirectInput:true,guardedACKClaim:false});
  }catch(e){unknown=true;c.save(out,'failure.json',{error:String(e),noReplay:true});throw e;}
  finally{
@@ -88,6 +97,8 @@ async function unit(){
  const expected={owner:{owner:'owner',epoch:1},nonce:'nonce',deadline:2000,key:13,sentAt:1,hwnd:65537,threadId:1};
  const r={state:'CONSUMED',consumed:true,owner:'owner',epoch:1,nonce:'nonce',deadline:2000,consumedAt:1500,receiptBoundary:'native-input-return',nativeMessage:{consumption:'owner-user-return',nonce:'nonce',token:1,msg:256,wParam:13,hwnd:65537,threadId:1,apiKind:2,remove:true}};
  h.proof(r,expected);
+ const mouse={...expected,key:undefined,pointer:{action:'mousedown',x:300,y:300}},mr=structuredClone(r);mr.nativeMessage.msg=0x201;h.proof(mr,mouse);
+ for(const msg of [0x200,0x202,0x100]){const q=structuredClone(mr);q.nativeMessage.msg=msg;assert.throws(()=>h.proof(q,mouse));}
  for(const edit of [r=>r.state='UNKNOWN',r=>r.owner='foreign',r=>r.epoch++,r=>r.nonce='foreign',r=>r.deadline++,r=>r.consumedAt=2000,r=>r.receiptBoundary='host-handler',r=>r.nativeMessage.consumption='poll',r=>r.nativeMessage.hwnd++,r=>r.nativeMessage.threadId++,r=>r.nativeMessage.token=0,r=>r.nativeMessage.wParam=27,r=>r.nativeMessage.remove=false]){const q=structuredClone(r);edit(q);assert.throws(()=>h.proof(q,expected));}
  console.log('PASS finite policy and thirteen native receipt negatives');
 }
