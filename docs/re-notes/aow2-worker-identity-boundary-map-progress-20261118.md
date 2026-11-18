@@ -68,7 +68,7 @@ configuration or registry edit was used.
 
 Startup 900s, total 1800s, Quit reserve 180s and independent cleanup at 1820s
 were fixed before launch. No bound was extended. The fresh native original
-began at 09:16:23 UTC. Reviewed UI passed main menu → Scenario → Single →
+began at 09:16:24.313 UTC. Reviewed UI passed main menu → Scenario → Single →
 Inioch's Legacy → Start → Julia's Begin dialog. This time Begin's whole PNG,
 JSON and post-check all completed before its ordinary click and independent UP.
 
