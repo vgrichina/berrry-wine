@@ -159,3 +159,51 @@ captures and derived lossless/BMP previews were removed after recording their
 hashes and recovery aliases; `selected-image-retention.json` maps them to the
 retained original whole capture. No source tree snapshot, frame series, capture
 bundle or second original disc was made.
+
+## Final original outcome and blocker
+
+Exact-path selection was published as `0ceafffe1` after focused media/child tests
+and another successful locked full build, followed immediately by strict pull
+and push. A third fresh original scope selected the genuine
+D:\System\Setup.exe with no parameters and D:\ as its working directory, exactly
+the image and inherited directory observed from the ordinary autorun bootstrap.
+This used normal read-only media import, no registered app, overrides or patches.
+The source and pinned module are recorded in `installer-source-files.json` plus
+the relevant dirty-source binary patch.
+
+The real original Window.dll, Core.dll, MSVCRT.dll and COMCTL32.dll loaded and
+ran their initializers. The original created its top-level setup dialog plus
+two nested child dialogs and called ShowWindow for the first wizard page.
+The reviewed-presentation endpoint then remained pending for its complete fixed
+3000ms window, reporting **main.topLevel** as its sole failure. No whole original
+PNG was produced, and no original control was personally reviewed or bound.
+The underlying main-window classification/selection cause remains UNKNOWN; the
+creation log alone does not establish whether USER state or renderer metadata
+is wrong. No guard was suppressed and no main HWND, focus or window was replaced.
+No endpoint request followed the terminal capture failure. The scope was closed
+with orderly TERM, actual native/supervisor/watchdog waits and both pipe EOFs.
+TERM cleanup is not an ordinary installer Cancel or game Quit.
+
+This is the concrete blocker to normal installation: a reviewed original wizard
+is unavailable. The mandatory manifest census remains a 207,876,925-byte source
+lower bound including 81 compressed map entries (50,289,750 bytes). Exact expanded
+mandatory space was intentionally left unknown; no Install action or original
+installation data write occurred. The original overlay reported zero records
+flushed. Three original installer scopes ran in total; zero original game scopes,
+3D world, movement, fire or ordinary Quit are claimed. Earlier UNKNOWN scopes
+were never reopened. No Windows reference behavior was inferred from Wine.
+
+All owned native runtime scopes have retained actual waits and EOFs. No test box
+was created: ID null, state NOT_CREATED, expiry null, stop receipt null. The
+final evidence index and cleanup verification accompany result.json, written
+last. The unique disc remains at its original recovery path and is referenced
+by whole hash; selected process images are recoverable through ordinary import
+and are removed from temporary loader storage after scope closure.
+
+The final audit covers 18 runtime scopes and 88 distinct recorded PIDs: all native,
+supervisor, watchdog, original-child and browser Chrome wait/EOF receipts passed;
+no recorded process remained live. The final whole ISO rehash still matched the
+original SHA and /home free space was 4,035,854,336 bytes. An initial standalone
+board-follow helper did not retain a PID/wait receipt; its actual wait is not
+claimed, and no matching live tail remained in the final process scan. This
+limitation does not replace or weaken the retained native runtime wait evidence.
