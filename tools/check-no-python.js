@@ -27,7 +27,8 @@ const lsFiles = (...a) => execFileSync('git', ['ls-files', '-z', ...a],
 // tracked scratch/ files once made --prune drop 54 committed .py entries
 // (8212da1f6). Untracked files count too, so new Python is caught before it is
 // committed, except untracked scratch/ evidence (per-machine, never built).
-const present = new Set([...lsFiles('--cached'),
+const tracked = new Set(lsFiles('--cached'));
+const present = new Set([...tracked,
   ...lsFiles('--others', '--exclude-standard').filter(f => !f.startsWith('scratch/') && fs.existsSync(path.join(root, f)))]);
 
 const SPAWN = /\b(?:spawn|spawnSync|execFile|execFileSync|exec|execSync|fork)\s*\(\s*['"`](?:[^'"`]*\/)?python[0-9.]*['"`]/;
@@ -40,7 +41,16 @@ function runsPython(file) {
   if (!['.js', '.cjs', '.mjs', '.sh', ''].includes(ext)) return false;
   if (file === 'tools/check-no-python.js') return false; // its own patterns
   let text;
-  try { text = fs.readFileSync(path.join(root, file), 'utf8'); } catch { return false; }
+  try { text = fs.readFileSync(path.join(root, file), 'utf8'); }
+  catch (error) {
+    if (error.code !== 'ENOENT') throw error;
+    if (!tracked.has(file)) return false;
+    // A tracked script absent from this checkout still exists in a full one.
+    // Classify its index content so --prune cannot erase a valid legacy caller.
+    // A failed index read must fail the gate rather than hide a new caller.
+    text = execFileSync('git', ['show', `:${file}`],
+      { cwd: root, maxBuffer: 16 << 20 }).toString('utf8');
+  }
   if (ext === '') return SHEBANG.test(text);
   if (SHEBANG.test(text)) return true;
   if (ext === '.sh') return SHELL.test(text.replace(/^\s*#.*$/gm, ''));
