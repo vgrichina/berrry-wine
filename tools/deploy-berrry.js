@@ -949,7 +949,7 @@ async function deploy() {
 
   const appMeta = {
     subdomain: SUBDOMAIN,
-    title: 'Wine-Assembly \u2014 Windows 98 Emulator',
+    title: 'Berrry Wine \u2014 Windows 98 Emulator',
     description: 'x86 Windows 98 PE interpreter in WebAssembly. Runs real Win32 executables in the browser.',
   };
 
