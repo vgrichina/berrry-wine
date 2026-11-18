@@ -54,7 +54,8 @@
   ;; Texture: +0 root entry, +4 id, +8 w, +12 h, +16 levels, +20 signature,
   ;; +24 tracked, +32 i64 generation, +40 range count, +48 ranges (wa, len).
   ;; At 23360: 32 window publication owners, 32 bytes each: hwnd, primary
-  ;; entry, current DIB, RT, actual PRESENT record sequence, surface creator.
+  ;; entry, current DIB, RT, actual PRESENT record sequence, surface creator,
+  ;; CPU-present stamp.
 
   (func $d3g_fail
     (call $host_log_i32 (i32.const 0x44334750))
@@ -1761,7 +1762,7 @@
   ;; An exact HWND/primary allocation owns each submitted PRESENT. The page
   ;; can compare a delayed bitmap with its originating native RT and record,
   ;; and bind GDI damage to that window's preceding record, not a global clock.
-  (func (export "d3dim_gps_window_present") (param $hwnd i32) (param $rt i32) (result i32)
+  (func $d3g_window_present (export "d3dim_gps_window_present") (param $hwnd i32) (param $rt i32) (result i32)
     (local $pb i32) (local $r i32) (local $entry i32) (local $seq i32)
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
     (if (i32.eqz (local.get $pb)) (then (return (i32.const 0))))
@@ -1780,6 +1781,29 @@
     (if (i32.ne (local.get $seq) (i32.atomic.load offset=16 (local.get $r)))
       (then (return (i32.const 0))))
     (local.get $seq))
+
+  ;; CPU fallback must select the primary that actually presented on this
+  ;; HWND, before considering unrelated offscreen pixel content. Validate the
+  ;; allocation/creator and both sequence reads exactly as bitmap acceptance
+  ;; does. A retired/reused surface or a changed cooperative HWND has no pin.
+  (func (export "d3dim_gps_window_primary_slot") (param $hwnd i32) (param $dib i32) (result i32)
+    (local $seq i32) (local $r i32) (local $slot i32) (local $stamp i32)
+    (local.set $seq (call $d3g_window_present (local.get $hwnd) (i32.const 0)))
+    (if (i32.eqz (local.get $seq)) (then (return (i32.const -1))))
+    (local.set $r (call $d3g_window_owner (i32.load offset=8 (global.get $D3DIM_GPS))
+      (local.get $hwnd) (i32.const 0)))
+    (local.set $stamp (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 24)))
+    (if (i32.ne (i32.load offset=24 (local.get $r)) (local.get $stamp))
+      (then (return (i32.const -1))))
+    (if (i32.and (i32.ne (local.get $dib) (i32.const 0))
+          (i32.ne (local.get $dib) (i32.load offset=8 (local.get $r))))
+      (then (return (i32.const -1))))
+    (local.set $slot (call $dx_slot_of (i32.load offset=4 (local.get $r))))
+    (if (i32.ne (local.get $seq) (call $d3g_window_present (local.get $hwnd) (i32.const 0)))
+      (then (return (i32.const -1))))
+    (if (i32.ne (local.get $stamp) (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 24)))
+      (then (return (i32.const -1))))
+    (local.get $slot))
 
   ;; Reserve the next PRESENT before changing its primary's DIB. A consumer
   ;; may still display the preceding publication while this wait is parked.
@@ -1823,6 +1847,7 @@
     (i32.store offset=8 (local.get $owner) (load.field DxObject misc1 (local.get $primary)))
     (i32.store offset=12 (local.get $owner) (local.get $rt))
     (i32.store offset=20 (local.get $owner) (i32.load (call $dx_surf_creator_ptr (local.get $primary))))
+    (i32.store offset=24 (local.get $owner) (load.field GpsPresent stamp (local.get $p)))
     (i32.atomic.store offset=16 (local.get $owner) (local.get $seq))
     (if (i32.ne (call $d3g_end (local.get $p)) (local.get $seq)) (then (call $d3g_fail)))
     (i32.store offset=24 (local.get $pb) (i32.load offset=28 (local.get $pb)))

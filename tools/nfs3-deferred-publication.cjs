@@ -28,9 +28,9 @@ function observePublication(wine, { capacity = 1024, regions = null } = {}) {
       const slot = (entry - regions.DX_OBJECTS.base) / 32;
       if (!Number.isInteger(slot) || slot < 0 || slot >= regions.DX_OBJECTS.size / 32)
         return { pb, cpuSeq, invalidEntry: entry };
-      const currentType = u(entry), currentDib = u(entry + 20),
+      const currentType = u(entry), currentDib = u(entry + 20), currentFlags = u(entry + 28),
         currentCreator = u(regions.DX_SURF_CREATOR.base + slot * 4);
-      return { pb, cpuSeq, owner: { seq, entry, dib, rt, creator, currentType, currentDib, currentCreator,
+      return { pb, cpuSeq, owner: { seq, entry, dib, rt, creator, currentType, currentDib, currentFlags, currentCreator,
         coherent: seq !== 0 && seq === atomic(a + 16),
         allocationMatches: currentType === 2 && currentDib === dib && currentCreator === creator } };
     }

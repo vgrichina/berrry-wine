@@ -41,3 +41,48 @@ uncommitted sequence, invalid entry, bounded retention, source replacement,
 restoration ownership and exception neutrality. Existing Worker GDI publication
 fences, capture-ordering and native freshness regressions pass. The locked
 full build passes. No causal runtime correction is claimed by this preparation.
+
+The fresh original after preparation exposed an earlier, ordinary boundary
+failure: `_overlayFrameLayer` returned CPU layer objects 10–13 instead of retained
+GPU layer 5, with guest/GDI depths zero and native allocation/creator valid.
+Every actual GPU stale predicate returned false. Publication 17→18 and 19→24
+published those replacements. The subsequent held slice merely preserved an
+already white source. The whole page was reviewed white and the scope closed
+with zero input; no endpoint was reopened.
+
+The repair gives native GPU presents the same scan-out priority as explicit
+CPU primary presents. `d3dim_gps_window_primary_slot(hwnd,dib)` validates the
+actual submitted HWND, current entry/DIB/creator, CPU-present stamp and stable
+publication sequence. CPU fallback selects that exact primary before scoring
+unrelated offscreens. Existing derived-byte, parked/scroll hold and all
+publication fences remain. Actual retained CPU writes still upload; a later
+CPU present, changed cooperative HWND, old DIB or retirement revokes the GPU
+pin. This adds no paint inside a guest slice and changes no freshness clock.
+
+The authored Device2 fixture uses ordinary native Lock/write/Unlock before
+GPU drawing, so the completed GPU frame has a black CPU backing while an
+unrelated offscreen is white. With the same EXE, separate USER/DirectInput
+threads, 64-draw pressure and normal browser/render Workers, old source
+publishes 307,200 opaque white pixels (fingerprint 2596822469), while retained
+GPU pixels remain the blue quarter (fingerprint 328607173). The new source,
+connected canvas and retained GPU all match that complete blue-quarter frame.
+Both whole screenshots were personally reviewed. The old diagnostic correctly
+rejects the replaced selected layer; its complete pixel report is retained.
+
+The native producer/software-executor/host regression also fails when only
+the arbitration block is removed (CPU fallback returns 1 and steals the GPU
+layer), and passes with the repair, checking every retained GPU pixel. Earlier
+native comparison with no registered window did not exercise a destination;
+that was corrected by registering the native window table before comparison.
+Native negatives cover wrong DIB, HWND switch, CPU-present stamp, retained
+native writes, Lock/readback, retirement, reuse and queued Flip backpressure.
+8/16/32-bit host tests cover whole pixels, real CPU replacement and unowned
+fallback. Existing GDI/guest publication fences and retained-primary tests
+pass; locked full build passes.
+
+A separately coordinated, backwards-compatible `entropy_u32` host import is
+included because the gears owner's in-progress native import caused an actual
+LinkError in the shared harness. It uses Web Crypto CSPRNG only, without a
+weak fallback; that owner tested real native/compat and normal browser Worker
+pointer semantics. No gears native files or foreign render Worker files were
+edited here.

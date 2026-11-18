@@ -19,6 +19,9 @@ const { Executor: SoftwareExecutor } = require('../lib/gpu-stream-software');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = `
+  (func (export "flip_flags") (param $this i32) (param $flags i32)
+    (store.field DxObject flags (call $dx_from_this (local.get $this)) (local.get $flags)))
+  (func (export "flip_cpu_note") (call $d3dim_cpu_present_note))
   (func (export "flip_slot") (param $this i32) (result i32)
     (call $dx_slot_of (call $dx_from_this (local.get $this))))
   (func (export "flip_write") (param $this i32) (param $off i32) (param $word i32)
@@ -135,6 +138,7 @@ const extraWat = `
   new Uint8Array(wasmMemory.buffer).set(pe, ex.get_staging());
   assert(ex.load_pe(pe.length));
   ex.init_dx_com_thunks();
+  ex.test_wnd_table_set(0x1234, 0);
   ex.flip_exclusive(0x1234);
 
   const W = 4, H = 4, PITCH = W * 2, LEN = PITCH * H;
@@ -147,7 +151,8 @@ const extraWat = `
 
   const front = ex.flip_surface(W, H), back = ex.flip_surface(W, H);
   const dibA = ex.flip_dib(back) >>> 0, dibB = ex.flip_dib(front) >>> 0;
-  fill(dibA, 0x11); fill(dibB, 0x22);
+  fill(dibA, 0); fill(dibB, 0x22);
+  ex.flip_flags(front, 1);
   assert.strictEqual(ex.flip_paint(back, RED), 1, 'the producer takes the clear of the back buffer');
 
   // The flip: DIBs swap, nothing reads back, nothing is owed.
@@ -161,16 +166,38 @@ const extraWat = `
   assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibA), 1, 'exact GPU Flip front is derived');
   assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(back), dibA), 0, 'same DIB with wrong surface is refused');
   assert.strictEqual(ex.d3dim_gps_dib_is_derived(ex.flip_slot(front), dibB), 0, 'old allocation of same front is refused');
-  assert.deepStrictEqual(bytes(dibA), Array(LEN).fill(0x11), 'the pixels are not in the DIB until something fences it');
+  assert.deepStrictEqual(bytes(dibA), Array(LEN).fill(0), 'the pixels are not in the DIB until something fences it');
   assert.strictEqual(frames.length, p0 + 1, 'the executor received the presented frame');
   const fr = frames.at(-1);
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt), fr.presentSeq, 'actual native RT and PRESENT record identify the primary');
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt + 100), 0, 'different source RT cannot impersonate a present');
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), ex.flip_slot(front), 'native GPU primary owns fallback scan-out');
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234, dibB), -1, 'old DIB cannot acquire native primary pin');
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x9999), -1, 'foreign HWND has no pin');
   ex.flip_exclusive(0x5678);
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), -1, 'cooperative switch revokes scan-out pin');
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt), 0, 'cooperative window switch revokes old publication owner');
   ex.flip_exclusive(0x1234);
   assert.deepStrictEqual([fr.width, fr.height, fr.hwnd], [W, H, 0x1234]);
   assert.deepStrictEqual(Array.from(fr.pixels.subarray(0, 4)), [255, 0, 0, 255], 'presented from GPU memory');
+
+  // The real native GPU owner, host fallback and every displayed pixel join
+  // here: a black CPU DIB plus an unrelated opaque white CPU offscreen must
+  // leave the completed red GPU image selected at the ordinary boundary.
+  const { createCanvas } = require('../lib/canvas-compat');
+  const unrelated = ex.flip_surface(320, 200);
+  ex.flip_flags(unrelated, 4);
+  new Uint8Array(wasmMemory.buffer, ex.flip_dib(unrelated) >>> 0, 320 * 200 * 2).fill(255);
+  const completed = createCanvas(W, H), completedCtx = completed.getContext('2d');
+  const image = completedCtx.createImageData(W, H); image.data.set(fr.pixels);
+  completedCtx.putImageData(image, 0, 0);
+  const gpuLayer = {kind:'gpu',api:'d3dim',canvas:completed,w:W,h:H};
+  const win = {hwnd:0x1234,x:0,y:0,w:W,h:H,visible:true,_dxFrameLayer:gpuLayer};
+  harness.renderer.windows[0x1234] = win;
+  assert.strictEqual(harness.gdi.presentBestDxOffscreen(true), 0, 'native GPU primary defeats unrelated white CPU fallback');
+  assert.strictEqual(win._dxFrameLayer, gpuLayer);
+  assert.deepStrictEqual(Array.from(completedCtx.getImageData(0, 0, W, H).data), Array.from(fr.pixels), 'every completed native GPU pixel stays selected');
+  delete harness.renderer.windows[0x1234];
 
   // A fence on unrelated bytes leaves the target GPU-only and reports it.
   assert.strictEqual(ex.flip_fence(dibA + 4096, 64), 2, 'other targets still hold GPU-only pixels');
@@ -260,7 +287,11 @@ const extraWat = `
   const finalFrame = frames.at(-1);
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, finalFrame.rt + 100), 0,
     'backpressure does not admit a foreign render target');
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), ex.flip_slot(front));
+  ex.flip_cpu_note();
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), -1, 'later actual CPU present revokes GPU scan-out pin');
   assert.strictEqual(ex.flip_release(front), 0);
+  assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), -1, 'retirement revokes native GPU primary pin');
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, finalFrame.rt), 0, 'retired primary revokes its actual PRESENT');
 
   assert.deepStrictEqual(calls, [], 'the WAT producer never calls the host gpu_gl_call');

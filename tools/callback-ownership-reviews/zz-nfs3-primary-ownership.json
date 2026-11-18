@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "1648cb6964f3b644629277fbda2099f90516fbb23c621d09e0c0b57cecd77f17",
+      "sha256": "604fe633fa871ff3cf7a0bdb1c75827c7b6665d361d1c7baca0749efa0f668b0",
+      "reason": "Review 20261118 NFSIII GPU primary arbitration: ordinary CPU fallback selects the exact native HWND/allocation/creator/CPU-stamp validated GPU primary before content heuristics, then uses the existing derived-byte, retained CPU write and parked/scroll hold checks. No guest callback, scheduler, slice/GDI/publication fence, producer clock, async completion or restoration change. The readonly native query double-checks actual publication sequence and CPU stamp and rejects stale DIB/reused/retired/foreign HWND identities. Also supplies the separately coordinated gears EncodePointer host entropy import from Web Crypto CSPRNG; synchronous DWORD only, no retained state, callback or weak fallback; actual native inverse/process/thread/constructor tests pass with that owner. General callback ownership remains pending."
+    }
+  ]
+}
