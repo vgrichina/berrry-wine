@@ -1,6 +1,6 @@
 'use strict';
-// Manual Alice control adapted from the published FoxBear finite input helper.
-// Native warning/menu keys; finite native consumption and independent UP.
+// Manual Alice control adapted from the published Drakan finite input helper.
+// Native menu/movement keys; finite native consumption and independent UP.
 //
 // The fixed Quit reserve is enforced before arm and again before every edge.
 // There is no gameplay delivery loop or automatic Quit sequence.
@@ -434,7 +434,37 @@ async function submit(request) {
   if(request.bind) await bind(request.review);
   if(request.key!==undefined) return pulse(request.name,['keydown:'+request.key],request.ms,request.review,request.observation,!!request.final,request.route?'quit':'gameplay',request.route||null,request.startup===true);
 }
+// A passive preparation phase has its own finite deadline. It does not allocate
+// a capture, bind input, poll USER, advance the guest, or change focus/visibility.
+// The subsequent capture retains its original independent 3000ms deadline.
+async function waitReady(name, seconds = 60) {
+  try {
+    ok(alnumName(name) && Number.isInteger(seconds) && seconds > 0 && seconds <= 60);
+    opened();
+    const launch = read('launch.json'), target = read('native-pid.json');
+    const start = now(), deadline = Math.min(start + seconds, reserve());
+    ok(start < deadline, 'startup preparation cutoff');
+    save(name + '-readiness-intent.json', { start, deadline, seconds, passive: true, target });
+    for (;;) {
+      opened(); ok(now() < deadline, 'passive startup readiness deadline exceeded');
+      const reply = await call({ action: 'native-startup-readiness' }, Math.min(3, deadline - now()));
+      fs.appendFileSync(P(name + '-readiness.jsonl'), JSON.stringify({ at: now(), deadline, reply }) + '\n');
+      ok(now() < deadline && reply.contract === 'native-startup-readiness-v1', 'invalid or late startup readiness');
+      ok(reply.snapshot.nativeProcess.pid === target.pid, 'startup native process changed');
+      ok(reply.snapshot.physicalUp && reply.snapshot.capture === '0x0' && !reply.snapshot.quit,
+        'startup input or process changed');
+      ok(reply.snapshot.screen.w > 0 && reply.snapshot.screen.h > 0 && launch.at <= start);
+      if (reply.ready) {
+        ok(reply.failures.length === 0 && reply.ordinaryOwner.healthy && reply.ordinaryOwner.actorContext,
+          'startup owner not qualified');
+        save(name + '-ready.json', { at: now(), deadline, reply }); return reply;
+      }
+      await c.sleep(Math.min(100, Math.max(0, (deadline - now()) * 1000)));
+    }
+  } catch (e) { fail(e, name + '-readiness'); throw e; }
+}
 async function main(argv) {
+  if (argv[0] === 'ready') return waitReady(argv[1], Number(argv[2] || 60));
   if (argv[0] === 'submit') return console.log(await submit(JSON.parse(fs.readFileSync(0,'utf8'))));
   if (argv[0] === 'review') {
     const rr = read(argv[1] + '.json');
@@ -451,6 +481,6 @@ async function main(argv) {
 }
 if (require.main === module) main(process.argv.slice(2)).catch(e => { console.error(e); process.exitCode = 1; });
 
-module.exports = { save, read, call, reserve, capturePhase, freshness, bind, policy, endpointIdentity, opened, fail, lease, capture,
+module.exports = { save, read, call, reserve, capturePhase, freshness, bind, policy, endpointIdentity, opened, fail, lease, capture, waitReady,
   exitedOwner, admissionAllowance, admissionFits, freshnessFits, release, pulse, submit, ReserveRejected, QUIT_ROUTES, main };
 for (const k of ['R', 'URL']) Object.defineProperty(module.exports, k, { get: () => S[k], set: v => { S[k] = k === 'R' ? path.resolve(String(v)) : v; }, enumerable: true });
