@@ -17,8 +17,9 @@ The previous original's Up returned EAX=1 from `0x4c4fe0` at `0x4c4a70`
 17 times. Its mode and player selector were zero, simulation cursor 328 and
 sequence 332. Disassembly resolves the mode-zero destination to `0x4c5126`:
 the signed comparison `(simulationCursor + lookahead) <= sequence0` returns 1;
-otherwise it returns 0. Mode one returns 0, and modes two through four use a
-different branch. Initialization sets the mode-zero lookahead to 4. Lead 4 is
+otherwise it returns 0. Mode one first tests entry EAX: nonzero returns 0;
+zero falls through to that comparison. Modes two through four use a different
+branch. Initialization sets the mode-zero lookahead to 4. Lead 4 is
 consistent with that rejection, but the internal comparison's operands were
 not dynamically observed. This is an offline predicate explanation, not a new
 measurement of the exact taken instruction. The retained disassemblies and
