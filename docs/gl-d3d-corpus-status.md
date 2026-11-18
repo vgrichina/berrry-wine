@@ -183,6 +183,21 @@ watchdog waits and separate EOFs completed without leaks. A fresh worker now
 targets software/WebGL natural-motion pairs.
 Evidence: `scratch/runs/20261118-oasaver-bounded-startup-progress-cause/result.json`.
 
+The [paired-scene follow-up](re-notes/oasaver-paired-natural-motion-20261118.md),
+report `37118e0f0`, adds a reviewed WebGL motion pair on that same pinned graph:
+silver objects move and rotate against an unchanged cloud background. The
+coordinator reviewed both whole frames. Actual WebGL PRESENT counts rose43→101
+and DRAW_UP counts1117→2636; all three module identities and88 media pins match.
+Software hit the unchanged15-second prebinding limit without an admitted
+frame. That software request disabled startup observations, so independent
+presentation/composition predicates and actual instance inventory are unknown;
+zero PRESENTs cannot be inferred. A fresh worker uses the exact previously
+successful observed software route to target its missing motion pair. Both
+completed scopes retain actual native/command/watchdog waits and EOFs with no
+leaks. Software motion, scene parity, the white rectangle/logo issue, FPS,
+audio, native Quit and full27 remain open.
+Evidence: `scratch/runs/20261118-oasaver-paired-natural-motion/result.json`.
+
 The following table covers the named November17–18 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
@@ -200,6 +215,7 @@ FPS, audio, gameplay completion or native Quit.
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
 | `scr_rockroll` | Motion observed | Motion observed | Software: `20261118-rockroll-js-startup-rendering-repair`; WebGL: `20261118-dx-wormhole-scifi-paired-motion`; earlier UNKNOWNs retained |
+| `scr_oasaver` | Startup scene observed; motion open | Motion observed | Startup: `20261118-oasaver-bounded-startup-progress-cause`; WebGL: `20261118-oasaver-paired-natural-motion`; later software guard failure retained |
 
 ## November 17 Quake III arena, depth repair and delayed input
 
