@@ -12,6 +12,10 @@ function collect(extra = [], { codec = true, revision = null, media = [] } = {})
   const tracked = new Set(revision ? git(['ls-tree', '-r', '--name-only', revision]).toString().trim().split('\n') : []);
   const names = (revision ? [...tracked].filter(n => prefixes.some(p => n === p || n.startsWith(p + '/')))
     : git(['ls-files', ...prefixes]).toString().trim().split('\n')).filter(n => /\.(js|cjs|json)$/.test(n));
+  // CLI process boot mounts these before loading any PE. Fonts are Git data;
+  // ignored local system type libraries are separately hash-pinned below.
+  names.push(...(revision ? [...tracked] : git(['ls-files','fonts']).toString().trim().split('\n'))
+    .filter(n => n.startsWith('fonts/') && /\.(fon|ttf|otf)$/.test(n)));
   names.push(...extra, 'test/candidate-corpus/manifest.json');
   const blobs = new Map();
   if (revision) {
@@ -46,7 +50,9 @@ function collect(extra = [], { codec = true, revision = null, media = [] } = {})
   }
   const selected = new Set(names);
   for (let i = 0; i < names.length; i++) {
-    const file = names[i], body = read(file).toString('latin1');
+    const file = names[i];
+    if (!/\.(js|cjs|json)$/.test(file)) continue;
+    const body = read(file).toString('latin1');
     for (const m of body.matchAll(/require\(['"](\.[^'"]+)['"]\)/g)) {
       const base = path.join(path.dirname(file), m[1]);
       for (const suffix of ['', '.js', '.cjs', '.json', '/index.js']) {
@@ -65,7 +71,11 @@ function collect(extra = [], { codec = true, revision = null, media = [] } = {})
   }));
   // Explicit media pins are a separate input class, never a live-source
   // fallback. In particular the ignored game manifest survives Git selection.
-  for (const pin of media) {
+  const bootPins = require('../lib/process-boot').SYSTEM_DATA_FILES.filter(f => !media.some(p => p.path === f.url)).map(f => {
+    const b = fs.readFileSync(path.join(root,f.url));
+    return { path:f.url, size:b.length, sha256:c.sha256(b) };
+  });
+  for (const pin of [...media,...bootPins]) {
     assert(!path.isAbsolute(pin.path) && !pin.path.split('/').includes('..'));
     assert(!rows.has(pin.path), 'duplicate media input: ' + pin.path);
     const b = fs.readFileSync(path.join(root, pin.path));
@@ -138,6 +148,13 @@ function renderingPreflight(frozen) {
   const render = `const {createCanvas}=require('./lib/canvas-compat');
     const {Win98Renderer}=require('./lib/renderer');
     const {PNG}=require('pngjs');
+    const fs=require('node:fs');
+    const boot=require('./lib/process-boot'),fonts=require('./lib/font-substitutions');
+    const vfs=new (require('./lib/filesystem').VirtualFS)();
+    boot.mountSystemDataFiles(vfs,boot.SYSTEM_DATA_FILES.map(file=>({...file,bytes:new Uint8Array(fs.readFileSync(file.url))})));
+    for(const name of fonts.BUNDLED_BITMAP_FONTS)fs.readFileSync('fonts/'+name);
+    const substitutions=JSON.parse(fs.readFileSync('fonts/substitutions.json','utf8'));
+    for(const mount of fonts.fontMounts(substitutions,{subset:true}))fs.readFileSync('fonts/'+mount.file);
     const canvas=createCanvas(1024,712), renderer=new Win98Renderer(canvas);
     const ctx=canvas.getContext('2d');ctx.fillStyle='#19324b';ctx.fillRect(0,0,1024,712);
     const bytes=canvas.toBuffer('image/png');const png=PNG.sync.read(bytes);
@@ -163,7 +180,7 @@ function renderingPreflight(frozen) {
   assert.equal(r.status, 0, 'immutable renderer preflight failed: ' + r.stderr?.toString());
   assert(r.stdout.toString().includes('whole PNG renderer + Worker PASS'));
   assert(r.stdout.toString().includes('native GuestThreadHost startup PASS'));
-  return { pass: true, wholePNG: [1024, 712], nativeRendererConstructed: true, nativeWorkerStartup: true,
+  return { pass: true, wholePNG: [1024, 712], nativeRendererConstructed: true, nativeWorkerStartup: true, mandatoryBootDataMainWorker: true,
     guestInstructionsExecuted: 0, sourceSHA256: frozen.sourceSHA256, indexSHA256: frozen.indexSHA256,
     workerExit: 0, stdout: r.stdout.toString(), stderr: r.stderr.toString() };
 }

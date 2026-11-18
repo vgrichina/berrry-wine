@@ -29,6 +29,11 @@ function body(out){
   function run(frozen,code){return cp.spawnSync(process.execPath,['-e',code],{cwd:root,env:{...frozen.env,LMARBLES_SOURCE_OBSERVE:out},stdio:c.stdioWithFds(frozen.fds),timeout:15000,maxBuffer:4e6});}
   const frozen=prep.freeze(selected,module);
   try{
+   const incomplete=prep.freeze(selected.filter(r=>r.path!=='test/binaries/tlbs/stdole2.tlb'),module);
+   try{assert.throws(()=>prep.renderingPreflight(incomplete),/unsealed media input.*stdole2/);
+    c.save(out,'missing-boot-data-refused.json',{pass:true,originalsStarted:0,guestInstructionsExecuted:0,missing:'stdole2.tlb'});
+   }finally{incomplete.close();}
+   c.save(out,'complete-boot-preflight.json',prep.renderingPreflight(frozen));
    fs.writeFileSync(path.join(root,data),changed);
    const r=run(frozen,both);assert.equal(r.status,0,r.stderr.toString());
    const reports=r.stdout.toString().trim().split('\n').map(JSON.parse);assert.equal(reports.length,2);assert.deepEqual(reports.map(r=>r.threadId).sort(),[0,1]);

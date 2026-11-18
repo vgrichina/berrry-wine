@@ -92,7 +92,8 @@ function select(file) {
       if (realpath(full) !== alias.canonical) throw Error('sealed media alias identity changed: ' + requested);
       full = alias.file;
     }
-    else if ([path.join(root, 'binaries') + '/', path.join(root, 'test/binaries') + '/'].some(p => full.startsWith(p)))
+    else if (!files.has(full) && [path.join(root, 'binaries') + '/', path.join(root, 'test/binaries') + '/',
+      path.join(root, 'fonts') + '/'].some(p => full.startsWith(p)))
       throw Error('unsealed media input: ' + requested);
   }
   const value = files.get(full);

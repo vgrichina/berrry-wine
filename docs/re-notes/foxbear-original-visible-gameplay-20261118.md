@@ -88,3 +88,101 @@ series, capture bundle or media copy is retained. BloodII lifetime, NFS
 admission and OrganicArt ownership were preserved. No workers, agents, boxes,
 Python, Wine or deployment were used. Box ID/state/expiry/stop receipt:
 null/NOT_CREATED/null/null. Ownership is released and this task stops.
+
+## Moving-frame workflow repair, fresh task on 2026-11-18
+
+Run `20261118-foxbear-moving-scene-reviewed-controls-repair` repairs the
+controller and preparation workflow, but **does not establish original
+gameplay consequences or ordinary F12 Quit**. Its one fresh registered
+launch stopped before PE loading. The predecessor scope above remains closed;
+its missing original wait/EOF receipts remain missing.
+
+The existing `native-reviewed-context-v1` route in `lib/cli-native-scene.js`
+and `test/run.js` already supports animated paint. FoxBear now uses its atomic
+`native-reviewed-capture`, retained exact PNG bytes/hash and native capture ID,
+original wall/monotonic times and per-intent native target verification. No
+runtime input or paint guard was removed or changed. A changing authored native
+GDI pixel reproduces the old paint-equality bind failure; the same real native
+renderer/USER/Worker fixture succeeds through the retained-frame route while
+the PNG changes. This is an authored canvas animation control, not another
+FoxBear run or a fabricated native identity.
+
+At binding and consumption, the route checks the reviewed full native window
+metadata, process/thread, HWND generations, focus/modal/capture/physical state,
+screen and pointer mapping, target ancestry/visibility/enabled state and key
+focus. The permanent input owner retains renderer/queue/device/actor references
+and epoch; the controller also validates the native PID start token and owned
+loopback endpoint. Each retained frame reserves one finite nonce, and the guard
+checks the actual parsed input at consumption. Changing paint alone need not
+invalidate a reviewed frame whose native control context remains unchanged.
+The route's existing gameplay/menu freshness limits are 15/30 seconds from the
+original capture, without renewal; the fresh launch selected these existing
+limits. Native tests also use a stricter five-second controller gameplay bound.
+The 500ms confirmation, 3000ms operation/observation, 1750ms independent-UP and
+fixed Quit reserve remain enforced. No original was paused or frozen.
+
+Real native controls pass six numpad keys and F12 delivery, wrong epoch,
+unretained frame, wrong hash/window, changed focus, replay, stale review,
+lost ACK with independent UP, late confirmation and sticky terminal refusal
+without later endpoint calls. Queued-expiry now actually applies DOWN to the
+renderer queue, expires it before the slow authored native USER pump can
+consume it, purges it and confirms independent UP. An initial late-confirmation
+test used a 1000ms pulse whose finite admission refused before dispatch; its
+coverage assertion failed. The corrected test uses a 100ms authored pulse and
+reaches the deliberate late ACK. This changes test stimulus, not guard budgets.
+Existing retained-context unit controls cover wall/monotonic freshness,
+generation/control metadata, invalid targets and single-frame nonce reservation.
+
+Preparation now places canonical media identities and allowed aliases in the
+authenticated sealed index. The actual registry `binaries/...` spelling maps
+to the same sealed bytes as `test/binaries/...`. Each alias must still resolve
+to its pinned canonical path; retargeted or unlisted media cannot fall back to
+mutable reads. Sync, Buffer/URL, callback, promise and stream reads pass in real
+main and Worker threads. Live file-content mutation cannot alter sealed reads;
+fresh preparation rejects changed designated media hashes. Authored retarget
+and missing-input controls reject. No media copies are retained.
+
+The existing detached `blood2-durable-launcher.cjs` and `native-supervise.cjs`
+are reused. Native wait receipts now also retain the process start token.
+Separate authored submitter TERM and KILL controls pass with actual native and
+watchdog waits, both EOFs and no containment leaks. The frozen renderer and
+GuestThreadHost preflights pass before the fresh registered launch. Code was
+published as `084802a67` after focused tests and a locked full build, followed
+immediately by strict pull/push. The independently rebuilt published WAT closure
+still hashes to `eb2395e1c115980dd78dbb646a26f755a4119a2a1e086942e715240e07c34bc6`;
+raw Git and normalized compiler inputs are independently recorded.
+
+The fresh original's frozen source graph is `084802a67`; the EXE/ART hashes in
+the earlier table are unchanged. Both actual registry paths were read from
+the frozen inventory in main and a real Worker before dispatch. However,
+the first inventory omitted the CLI-global system type libraries. Native
+PID2350139 failed on `test/binaries/tlbs/stdole2.tlb` at the ordinary VFS boot
+mount, before a PE, module instance or original guest Worker started. No
+original scene was captured, no input owner or DOWN was created, and no
+original control endpoint was contacted. The actual native exit is **1**,
+signal null, with actual wait and both EOFs; watchdog exit0 and its actual
+wait/EOFs also survive. Containment owner exit0 is not the native exit code.
+The owned tree is retired with `leaked:false`, minimum observed home free
+space2171752448 bytes and no RAM gate. The helper's terminal-scope check rejects
+locally with zero transport calls. The83 observed main-thread reads include
+the sealed EXE at its actual `binaries/...` alias and the eb239 module bytes,
+both with matching hashes. ART was not reached, and no original Worker-read
+receipt or original module-instantiation/guest-execution proof is claimed.
+
+That preparation gap was repaired **offline**, without a replay. Collection
+now seals the normal boot type libraries and Git font data; rendering preflight
+executes the actual VFS system-data mount and required font reads in both main
+and Worker before any PE. Deliberately omitting stdole2 fails there; the complete
+inventory passes. A full frozen authored animated renderer/input run with normal
+guest Workers also passes using the retained eb239 module. The locked full build
+and shared preparation regressions pass after this correction. This is a
+preparation defect, not a proved guest runtime defect; it authorizes no affected
+additional FoxBear original under this task's one-original limit.
+
+The concrete blocker is original validation after the corrected boot inventory:
+app-specific visible input consequence and ordinary F12 Quit remain unverified.
+Evidence retains exact Git and owned patches, the unique module, logs, media
+hashes and selected named authored PNGs; `result.json` is written last with a
+failed goal. No original source/frame archive, media copy, workers, agents,
+boxes, Python, Wine or deployment were used. Box ID/state/expiry/stop receipt:
+null/NOT_CREATED/null/null. Ownership is released and the task stops.
