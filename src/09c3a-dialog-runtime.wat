@@ -821,7 +821,10 @@
 
   ;; ============================================================
   ;; Read-only public native control observation. Status is explicit: -1 means
-  ;; unavailable (absent, wrong class, subclassed or not initialized). These
+  ;; unavailable (absent, wrong class, unsupported dispatch or not initialized).
+  ;; Listbox storage below explicitly identifies guest-owned dispatch. Other
+  ;; common controls retain their native-procedure-only observation contract.
+  ;; These
   ;; getters never dispatch messages or allocate/copy into guest scratch space.
   ;; JS brackets every read with generation/actor/memory checks.
   (func $native_observation_state (param $h i32) (param $class i32) (result i32)
@@ -833,10 +836,25 @@
     (call $wnd_get_state_ptr (local.get $h)))
 
   ;; Listbox: count, selection, top row, string-buffer pointer/used bytes.
+  ;; This is native STORAGE, not the result of virtual LB_GETTEXT messages or
+  ;; permission to paint. A guest subclass retains this private native state
+  ;; and owns dispatch/WM_PAINT; observing it must not bypass that callback.
+  (func $native_listbox_storage (param $h i32) (result i32)
+    (local $proc i32)
+    (if (i32.or (i32.eqz (call $wnd_lookup_live (local.get $h)))
+          (i32.ne (call $ctrl_table_get_class (local.get $h)) (i32.const 4)))
+      (then (return (i32.const 0))))
+    (local.set $proc (call $wnd_table_get (local.get $h)))
+    (if (i32.and (i32.ne (local.get $proc) (global.get $WNDPROC_CTRL_NATIVE))
+          (i32.or (i32.eqz (local.get $proc))
+            (i32.ge_u (local.get $proc) (i32.const 0xFFFE0000))))
+      (then (return (i32.const 0))))
+    (call $wnd_get_state_ptr (local.get $h)))
+
   ;; Owner-draw lists without strings have no public text contract here.
   (func (export "native_listbox_get") (param $h i32) (param $field i32) (result i32)
     (local $s ptr<ListBoxState>) (local $g i32) (local $style i32)
-    (local.set $g (call $native_observation_state (local.get $h) (i32.const 4)))
+    (local.set $g (call $native_listbox_storage (local.get $h)))
     (if (i32.eqz (local.get $g)) (then (return (i32.const -1))))
     (local.set $style (call $wnd_get_style (local.get $h)))
     (if (i32.and (i32.ne (i32.and (local.get $style) (i32.const 0x30)) (i32.const 0))
@@ -851,11 +869,13 @@
       (then (return (select (call $g2w (call $lb_items_ptr (local.get $s))) (i32.const 0)
         (i32.ne (call $lb_items_ptr (local.get $s)) (i32.const 0))))))
     (if (i32.eq (local.get $field) (i32.const 5)) (then (return (call $lb_items_used (local.get $s)))))
+    (if (i32.eq (local.get $field) (i32.const 6))
+      (then (return (call $wnd_table_get (local.get $h)))))
     (i32.const -1))
 
   (func (export "native_listbox_selected") (param $h i32) (param $index i32) (result i32)
     (local $s ptr<ListBoxState>) (local $g i32)
-    (local.set $g (call $native_observation_state (local.get $h) (i32.const 4)))
+    (local.set $g (call $native_listbox_storage (local.get $h)))
     (if (i32.eqz (local.get $g)) (then (return (i32.const -1))))
     (local.set $s (cast ptr<ListBoxState> (call $g2w (local.get $g))))
     (if (i32.ge_u (local.get $index) (call $lb_count (local.get $s)))
