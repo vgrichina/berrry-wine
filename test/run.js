@@ -1465,6 +1465,7 @@ const RPC_CENSUS = hasFlag('rpc-census'); // --rpc-census: with --threads, per-t
 // instead of reporting.
 let workerThreadHost = null;
 let closeD3DRender = null;
+let d3dimExecutionOwner = null;
 // --wait-slices=N: worker slices per batch while the MAIN thread is parked in a
 // blocking wait a worker has to satisfy. Nothing else can run then, so this is
 // much larger than THREAD_SLICES; set it to THREAD_SLICES to turn the boost off.
@@ -2926,7 +2927,13 @@ async function main() {
   });
   ctx.offerWaveCallback = waveCallbackRouting.offer;
   const base = createHostImports(ctx);
-  closeD3DRender = () => ctx.closeGlide();
+  closeD3DRender = async () => {
+    try { await ctx.closeGlide(); }
+    finally {
+      try { await ctx.closeD3DIMGps(); }
+      finally { await d3dimExecutionOwner?.close(); }
+    }
+  };
   if (ctx.vfs) {
     ctx.vfs.dirs.add('c:\\windows');
     ctx.vfs.dirs.add('c:\\windows\\system');
@@ -5203,7 +5210,22 @@ async function main() {
   // Keep slice execution behind its owner before migrating the remaining
   // startup/inspection/yield exports. Do not select a Worker here until those
   // paths also stop mutating the local instance's guest registers.
-  const mainOwner = require('../lib/guest-main-owner').createGuestMainOwner({ localExports: instance.exports });
+  const localMainOwner = require('../lib/guest-main-owner').createGuestMainOwner({ localExports: instance.exports });
+  const mainOwner = hasFlag('d3dim-render-owner') ? Object.freeze({ ...localMainOwner,
+    async run(steps) {
+      const result = localMainOwner.run(steps);
+      await d3dimExecutionOwner.flush();
+      await d3dimExecutionOwner.turn();
+      return result;
+    },
+  }) : localMainOwner;
+  if (hasFlag('d3dim-render-owner')) {
+    if (ctx.d3dimBackend !== 'software' || ctx.gpuStreamDump || WORKER_THREADS)
+      throw new Error('--d3dim-render-owner requires cooperative guest scheduling and software rendering without a stream dump');
+    d3dimExecutionOwner = new (require('../lib/cli-execution-owner').CliExecutionOwner)(wasmModule, memory);
+    ctx.createD3dimNodeOwner = callbacks => d3dimExecutionOwner.create(callbacks);
+    instance.exports.d3dim_gps_draw_kicks_enable(1);
+  }
   ctx.exports = instance.exports;
   await mainOwner.call('set_hwnd_base', processDesktop.hwndBase);
   // Quiet runs silence the per-call API log from the first instruction, DLL
@@ -5484,6 +5506,8 @@ async function main() {
       traceHost: traceHostNames,
       hostCensus: HOST_CENSUS,
       exports: workerExportsProxy,
+      createD3dimNodeOwner: ctx.createD3dimNodeOwner,
+      onD3dimRenderYield: ctx.createD3dimNodeOwner ? owner => d3dimExecutionOwner.parkThread(tid, owner) : undefined,
       offerWaveCallback: waveCallbackRouting.offer,
       _debugReadFile: TRACE_API && !QUIET_FS,
       ioTraceTag: ctx.ioTraceTag,
@@ -5843,6 +5867,7 @@ async function main() {
   // and has to be propagated like every other one.
   if (NO_SPIN_PARK) inheritWasm('set_spin_park_k', 0);
   else if (Number.isFinite(SPIN_PARK_K)) inheritWasm('set_spin_park_k', SPIN_PARK_K);
+  if (d3dimExecutionOwner) inheritWasm('d3dim_gps_draw_kicks_enable', 1);
 
   threadManager = new ThreadManager(wasmModule, memory, instance, makeWorkerImports, {
     strictServiceTime: serviceClock,
@@ -5898,6 +5923,7 @@ async function main() {
   // Waits on a child process's handle (src/09d7-pipes.wat) ask the host
   // that started it.
   threadManager.processCtl = (op, pid, arg) => (ctx.processCtl ? ctx.processCtl(op, pid, arg) : -1);
+  if (d3dimExecutionOwner) threadManager.isExternallyParked = tid => d3dimExecutionOwner.isParked(tid);
   ctx.closeSyncHandle = handle => threadManager.closeSyncHandle(handle);
 
   const mem = new Uint8Array(memory.buffer);
@@ -11592,6 +11618,7 @@ async function main() {
       const workerStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
       for (let s = 0; s < slices; s++) {
         const sliceStats = threadManager.runSlice(BATCH_SIZE);
+        await d3dimExecutionOwner?.turn();
         await nativeFault.wait();
         if (stopped) break;
         if (sliceStats && sliceStats.steps) workerStepsTotal += sliceStats.steps;

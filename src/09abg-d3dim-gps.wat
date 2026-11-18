@@ -2490,6 +2490,12 @@
     (local.get $r))
 
   ;; ---- Entry points ------------------------------------------------------
+  ;; A cooperative Node owner needs an execution boundary per guest draw,
+  ;; rather than accumulating an entire frame before the host can service
+  ;; input. Publication and the API epilogue still finish before the yield.
+  (global $d3g_draw_kicks (mut i32) (i32.const 0))
+  (func (export "d3dim_gps_draw_kicks_enable") (param $on i32)
+    (global.set $d3g_draw_kicks (i32.ne (local.get $on) (i32.const 0))))
   (func $d3dim_gps_call (param $op i32) (param $wa i32) (param $len i32) (result i32)
     (local $pb i32) (local $r i32)
     ;; Before the first draw there is no GPU target: a CPU access fence has
@@ -2506,6 +2512,8 @@
         (br $done)))
       (if (i32.eq (local.get $op) (i32.const 0x20000)) (then
         (local.set $r (call $d3g_draw (local.get $pb) (local.get $wa)))
+        (if (i32.and (global.get $d3g_draw_kicks) (i32.ne (local.get $r) (i32.const 0)))
+          (then (drop (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_ASYNC)))))
         (if (i32.eqz (local.get $r)) (then (call $d3g_stat (local.get $pb) (i32.const 14) (i32.const 1))))
         (br $done)))
       (if (i32.eq (local.get $op) (i32.const 0x20001)) (then

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "0a015dee8e79e685e15e84f8b1c942b173812c4ff242d3524308fc19920ff8c3",
+      "sha256": "1648cb6964f3b644629277fbda2099f90516fbb23c621d09e0c0b57cecd77f17",
+      "reason": "Review 20261118 D3DIM asynchronous execution: optional Node render owner consumes published ring records using an isolated native memory and instance, never guest callbacks or registers. Host GPU import still returns a real i32; ASYNC requests the existing soft yield only after normal API effects. Main runs service an event turn after their export returns; cooperative render threads are parked at that boundary until their own render completion, without entering their live guest frame from an asynchronous callback. Sibling guest threads keep their own scheduler ownership and can service input. SYNC/CLOSE wait for actual ring retirement and scoped errors; teardown waits render exit and marks pending ring work failed on cancellation. Existing callback admission/restoration and native USER consumption predicates are preserved. Focused native load/pixel/slot/order/callback tests and affected native fixtures are retained in run 20261118-d3dim-async-execution-boundary-nfs3. Broader callback ownership remains pending."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "6731d953f1d044c01ccb6684574580732f6b8a993ac9c7093a0e4120666d2dc2",
+      "sha256": "0b5bfc9a4e7b5c09c48382756ffb543ee5fb66bdb20f72925ec32d8e6c7b7bf1",
+      "reason": "Review 20261118 D3DIM asynchronous execution: optional Node render owner consumes published ring records using an isolated native memory and instance, never guest callbacks or registers. Host GPU import still returns a real i32; ASYNC requests the existing soft yield only after normal API effects. Main runs service an event turn after their export returns; cooperative render threads are parked at that boundary until their own render completion, without entering their live guest frame from an asynchronous callback. Sibling guest threads keep their own scheduler ownership and can service input. SYNC/CLOSE wait for actual ring retirement and scoped errors; teardown waits render exit and marks pending ring work failed on cancellation. Existing callback admission/restoration and native USER consumption predicates are preserved. Focused native load/pixel/slot/order/callback tests and affected native fixtures are retained in run 20261118-d3dim-async-execution-boundary-nfs3. Broader callback ownership remains pending."
+    }
+  ]
+}

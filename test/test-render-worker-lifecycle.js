@@ -210,7 +210,8 @@ function testObservationQueueCapacity() {
 }
 testObservationQueueCapacity();
 
-const sandbox = { console, URLSearchParams, setTimeout, clearTimeout };
+const sandbox = { console, URLSearchParams, setTimeout, clearTimeout,
+  require: require('module').createRequire(path.join(__dirname, '..', 'host.js')) };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8') +
   '\n;globalThis.WineAssembly = WineAssembly;', sandbox);
 const deferred = () => {
