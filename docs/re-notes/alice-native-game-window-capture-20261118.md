@@ -51,5 +51,24 @@ unrelated/reused targets, actor/creator/generation mismatch, duplicate actor,
 modal conflict, hidden targets, exclusive mapping mismatch and independent UP.
 Existing native scene/modal and CLI input-owner regressions also pass.
 The locked full build passed after the concurrent host callback-review owner
-reconciled its review chain. Browser preparation and a fresh original follow
-publication of this tested correction; their outcomes will be recorded here.
+reconciled its review chain. Runtime correction published as `c14f79478`.
+
+The authored browser reproduces the same real Worker sequence: main 65537,
+focus/capture 65538, hidden console and visible triangle. Actual guest and
+renderer Worker bytecode both match 46c9b8e4. The whole browser screenshot was
+personally reviewed. Its fixed personal-review wait expired before input;
+zero browser W edges or browser input consequence is claimed. An earlier
+controller preparation attempt incorrectly observed per-instance USER globals
+from the host shadow; corrected observations use the actual guest Worker.
+Both browser scopes were collected through native supervision, without leaks.
+
+The first fresh original after publication passes the corrected runtime
+readiness contract on the live focused game. Its launcher nevertheless wrongly
+required capture to become nonzero before taking the first frame. This caused
+an avoidable preparation timeout: 457 of 542 retained samples already qualify
+as a selected live game without capture. That scope is closed, fully collected,
+with no capture, binding or input. `waitGameWindow` now accepts the qualified
+selected game with either no capture or valid self capture; it keeps the same
+finite 60-second passive deadline. Tracked predicate tests and the retained
+original observations demonstrate old-fail/new-pass without reopening a scope.
+An affected fresh original follows publication of that preparation correction.

@@ -29,5 +29,28 @@ function fixture(){
   assert(result.length<0x800);b.fill(0,start,start+0x800);result.copy(b,start);
   return b;
 }
-module.exports={fixture};
+// Capture ownership is admissible, not a prerequisite for presentation. The
+// game may present a menu before it decides to acquire the mouse.
+function gameWindowReady(reply){
+  const s=reply?.snapshot;
+  return !!(reply?.contract==='native-startup-readiness-v1'&&reply.ready&&
+    reply.failures.length===0&&s&&s.focusTopLevel!==s.mainHwnd&&
+    require('../lib/cli-native-scene').contextFailures(s,s).length===0);
+}
+async function waitGameWindow(a,seconds=60){
+  assert(Number.isInteger(seconds)&&seconds>0&&seconds<=60);
+  const c=require('./native-supervisor-common.cjs'),fs=require('node:fs'),path=require('node:path');
+  a.opened();const start=c.now(),deadline=Math.min(start+seconds,a.reserve()),target=a.read('native-pid.json');
+  a.save('game-window-wait-intent.json',{start,deadline,seconds,passive:true,captureRequired:false});
+  for(;;){
+    a.opened();assert(c.now()<deadline,'selected game window startup deadline');
+    const r=await a.call({action:'native-startup-readiness'},Math.min(3,deadline-c.now()));
+    fs.appendFileSync(path.join(a.R,'game-window-wait.jsonl'),JSON.stringify({at:c.now(),deadline,reply:r})+'\n');
+    assert(c.now()<deadline&&r.snapshot.nativeProcess.pid===target.pid&&r.snapshot.physicalUp&&!r.snapshot.quit);
+    assert(r.snapshot.capture==='0x0'||!r.failures.includes('input.capture'),'foreign capture');
+    if(gameWindowReady(r)){a.save('game-window-ready.json',{at:c.now(),deadline,reply:r});return r;}
+    await c.sleep(Math.min(100,Math.max(0,(deadline-c.now())*1000)));
+  }
+}
+module.exports={fixture,gameWindowReady,waitGameWindow};
 if(require.main===module)require('node:fs').writeFileSync(process.argv[2],fixture(),{flag:'wx'});

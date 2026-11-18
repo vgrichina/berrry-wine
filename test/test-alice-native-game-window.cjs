@@ -24,6 +24,15 @@ assert(!scene.reviewedRuntimeOwner(base,lease,instance).healthy,'foreign creator
 const manager={threads:new Map([[1,{state:'active',instance:{exports:actorExports}}]])};
 assert(!scene.reviewedRuntimeOwner(base,lease,instance,manager).healthy,'duplicate actor must fail');
 const visible=snapshot();visible.windows[0].visible=true;assert(scene.matches(visible,visible));
+const topology=require('../tools/alice-native-game-window.cjs');
+for(const capture of ['0x0',s.focus]){
+  const v=snapshot();v.capture=capture;
+  assert(topology.gameWindowReady({contract:'native-startup-readiness-v1',ready:true,failures:[],snapshot:v}),
+    'a selected live game can present before acquiring capture');
+}
+const startupConsole=snapshot();startupConsole.windows[0].visible=true;startupConsole.focus=startupConsole.focusTopLevel=startupConsole.mainHwnd;
+startupConsole.focusWindow={...startupConsole.windows[0]};startupConsole.capture='0x0';
+assert(!topology.gameWindowReady({contract:'native-startup-readiness-v1',ready:true,failures:[],snapshot:startupConsole}));
 for(const [name,change]of Object.entries({foreignCapture:v=>v.capture='0x10001',staleCapture:v=>v.windows[1].live=false,
   generation:v=>v.windows[1].generation='0',foreignThread:v=>{v.windows[1].threadId=2;v.focusWindow.threadId=2;},
   mismatchedFocusGeneration:v=>v.focusWindow.generation='8',
