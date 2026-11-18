@@ -8113,6 +8113,7 @@ async function main() {
         fps: derivedFps,
         ffmpeg: FFMPEG_PATH,
         startGuestMs: batchClock.batchTicks(),
+        scale: cmd.scale === undefined ? 1 : Number(cmd.scale),
       });
       return { recording: true, ...videoRecorder.summary(), everyNSteps: videoEvery };
     }
