@@ -163,7 +163,9 @@ class Admission(unittest.TestCase):
  def test_native_slow_operation(self):
   self.start('slow-operation');real=c.capture
   def slow(name,*args):
-   time.sleep(1.8)
+   # Exceed the unchanged whole operation window without relying on a
+   # controller settling delay before this capture.
+   time.sleep(3.05)
    return real(name,*args)
   with patch.object(c,'capture',slow),self.assertRaisesRegex(Exception,'3000ms operation'):
    self.pulse()
