@@ -53,12 +53,20 @@ Two things are new in this refresh:
 
 - **Rollouts compressed with xz.** The box now archives rollouts as
   `.jsonl.xz`, which the scanner reads through `xz -dc`.
-- **Offloaded transcripts.** Between Nov 11 and 13, 1,324 closed worker
-  transcripts from Nov 7–13 were moved to a second box; only an
-  `.offloaded.json` stub stays behind. For those threads the summary uses
-  `tokens_used` from `state_5.sqlite`, put on the thread's start day, with no
-  input/output split. Codex output and cached-input figures for Nov 7–13 are
-  therefore undercounts. Their totals are not.
+- **Offloaded transcripts.** Between Nov 11 and 13, closed worker transcripts
+  from Nov 7–13 were moved to expiring snapshots of leased boxes (retained
+  to Nov 25–27); only an `.offloaded.json` stub stays behind on the box
+  (1,261 stubs, naming `snapshotId` and `remotePath`). On Nov 18 all 18
+  snapshots were pulled with `boat snapshot pull ID --path DIR`, streamed to
+  the laptop archive, and every rollout was reduced to its `session_meta`,
+  `turn_context` and `token_count` lines (1,283 rollouts, 20 MB; the
+  `exact23` bundle is one xz stream split by its `mapping.json` offsets).
+  Those were scanned as `codex-boat-offload.json` and passed both to
+  `codex-state --known=` and to `merge`.
+- **Totals only.** 829 threads whose transcripts no longer exist anywhere
+  still use `tokens_used` from `state_5.sqlite`, put on the thread's start
+  day, with no input/output split, so output and cached-input figures for
+  them are undercounts. Their totals are not.
 
 For the rollouts that were still on disk, the scanned per-thread totals match
 `state_5.sqlite`, except for four threads that were still running when the

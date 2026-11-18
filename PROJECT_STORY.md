@@ -1494,16 +1494,18 @@ Each thread's cumulative counters are counted once. The box's per-thread
 totals match Codex's own database exactly. The Nov 18 refresh added Nov 5–18
 on top of the Nov 4 summary (`--base … --since=2026-11-05`). It scanned the
 box's live rollouts, the archive of the Nov 3–6 rollouts and the retired
-coordinator, and the laptop's logs. For 1,324 worker threads of Nov 7–13,
-whose transcripts had already been moved off the box, it took the per-thread
-total from Codex's `state_5.sqlite` and put it on the thread's start day.
-Those threads have no input/output split.
+coordinator, and the laptop's logs. The 1,283 worker transcripts of Nov 7–13
+that had been offloaded to expiring snapshots were pulled back before the
+snapshots lapsed and scanned like the rest; only their counter lines were
+kept. For the 829 threads whose transcripts no longer exist anywhere, it took
+the per-thread total from Codex's `state_5.sqlite` and put it on the thread's
+start day. Those threads have no input/output split.
 
 ```
                         Codex          Claude
 Tokens on record        92.0 B         41.2 B
   of which cache reads  ~97%           ~98%
-Output tokens           213 M          98 M    (Codex output undercounted Nov 7–13)
+Output tokens           248 M          98 M    (829 Codex threads have totals only)
 Threads                 5,761          877
 Coordinator threads     3  (16.9 B: 6.9 B over 28 days, 4.4 B over 8, 5.6 B over 10)
 Exec workers            31.2 B since Oct 20    Subagents  9.0 B
@@ -1557,14 +1559,14 @@ Weekly, Monday-based, UTC:
 | 10-12 | 980 | 3.6B | – | 3.6B | 9M | 4M | 11 |
 | 10-19 | 446 | 3.5B | – | 3.5B | 14M | 8M | 13 |
 | 10-26 | 904 | 6.6B | 174M | 6.8B | 30M | 8M | 15 |
-| 11-02 | 2238 | 14.9B | 273M | 15.2B | 34M | 7M | 30 |
-| 11-09 | 1595 | 15.6B | 755M | 16.4B | 23M* | 10M | 10 |
+| 11-02 | 2238 | 14.9B | 273M | 15.2B | 46M | 7M | 30 |
+| 11-09 | 1595 | 15.6B | 755M | 16.4B | 45M | 10M | 10 |
 | 11-16 | 690 | 4.5B | 2.6B | 7.0B | 26M | 10M | 16 |
 
 Weeks with no commits (late June, Jul 20) are omitted. The 11-02 row was
 partial (829 commits) when first published. The 11-16 week runs to the
-morning of Nov 18 UTC. \*Output for Nov 7–13 is low because 1,324 worker
-threads there have totals only.
+morning of Nov 18 UTC. Output for 11-02 and 11-09 was first published as
+34M and 23M, before the offloaded Nov 7–13 transcripts were pulled back.
 
 Daily, Sep 5 to Nov 18. The left bar is total tokens and the right bar is
 commits:
