@@ -21,9 +21,14 @@ const root = path.resolve(__dirname, '..');
 const listPath = path.join(root, 'tools', 'no-python-allowlist.json');
 const prune = process.argv.includes('--prune');
 
-const files = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--exclude-standard'],
+const lsFiles = (...a) => execFileSync('git', ['ls-files', '-z', ...a],
   { cwd: root, maxBuffer: 256 << 20 }).toString('utf8').split('\0').filter(Boolean);
-const present = new Set(files.filter(f => fs.existsSync(path.join(root, f))));
+// Tracked files come from the index, NOT the disk: a worktree missing some
+// tracked scratch/ files once made --prune drop 54 committed .py entries
+// (8212da1f6). Untracked files count too, so new Python is caught before it is
+// committed, except untracked scratch/ evidence (per-machine, never built).
+const present = new Set([...lsFiles('--cached'),
+  ...lsFiles('--others', '--exclude-standard').filter(f => !f.startsWith('scratch/') && fs.existsSync(path.join(root, f)))]);
 
 const SPAWN = /\b(?:spawn|spawnSync|execFile|execFileSync|exec|execSync|fork)\s*\(\s*['"`](?:[^'"`]*\/)?python[0-9.]*['"`]/;
 const ARGV = /\[\s*['"`](?:[^'"`]*\/)?python[0-9.]*['"`]\s*,/;
