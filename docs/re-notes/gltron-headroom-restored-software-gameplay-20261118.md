@@ -52,8 +52,10 @@ and private displays closed, and owned raw tmpfs was removed only after verified
 evidence retrieval. Selected named screenshots and unique logs were retained;
 unselected pixels are unrecoverable. Source recovery is Git plus relevant binary
 diffs and owned new-file patches, without source snapshots or media copies.
-The independent lifetime disk monitor's exact sampled minimum and final wait
-are recorded in the result. Sampled observations cannot establish continuous
-global headroom. Foreign WIP, holds and media were untouched. No agents, workers,
+The lifetime monitor's outer tool exited 143 without its final summary or board
+wait receipt; its minimum and separate EOFs are unknown. Runtime watchdog
+samples and the explicit postclosure floor breach remain retained. A final finite
+sampler has an actual child wait and both EOFs. Sampled observations cannot
+establish continuous global headroom. Foreign WIP, holds and media were untouched. No agents, workers,
 boxes, Python, Wine or deployment were used. Box ID/expiry/stop receipt are null;
 state is `NOT_CREATED`.
