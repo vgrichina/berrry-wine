@@ -77,8 +77,8 @@ The ONE authorized original used registered `starcraft_shareware`, unchanged
 Controller commits `8212da1f6` and `9b7b8592c` were each tested, locked-built and
 immediately strict-pulled/pushed before their respective original actions.
 
-The corrected box produced three selected Marine HUD icons and three green
-selection circles in `original/squadverified.png`. Capture-to-dispatch was
+The corrected box produced two selected Marine HUD icons and two unit
+selection circles (the additional ground marker is not a third unit) in `original/squadverified.png`. Capture-to-dispatch was
 2.899 seconds (`boxendpoint-workflow.json`). A separate Attack command was
 consumed and `original/armed.png` visibly showed Select Target. No enemy was
 visible, so the pending command was cancelled through its native Cancel icon;
