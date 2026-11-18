@@ -99,3 +99,6 @@ snapshots; logs and source/module/media identity receipts remain. The result
 records this loss and lists no available screenshots. Git and the retained
 preparation scripts permit binary recovery, but cannot recover original
 screenshot pixels. This limits independent visual review of this run.
+The retained recovery script subsequently reconstructed the exact module and
+4.5-second authored fixture without executing a guest; both hashes match the
+pre-run pins (`binary-recovery.json`). Original PNGs remain unavailable.
