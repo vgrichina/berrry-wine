@@ -218,6 +218,23 @@ leaks. Software motion, scene parity, the white rectangle/logo issue, FPS,
 audio, native Quit and full27 remain open.
 Evidence: `scratch/runs/20261118-oasaver-paired-natural-motion/result.json`.
 
+The [software presentation-path observation](re-notes/oasaver-software-presentation-path-cause-20261118.md),
+observer `054baf9e5` and report `d5371571f`, now adds the missing software
+motion pair. The coordinator reviewed both complete cloud-backed frames:
+left silver/blue and right dark articulated objects change orientation while
+the background and lower-right white rectangle remain unchanged. Actual
+`GpuStreamSoftware` completed PRESENT21→33 and DRAW_UP124→196 on the same
+owner/window/epoch; three actual module-byte inventories match`eb2395e1…`
+and all88 media pins remain unchanged. Before stream drawing, this execution
+also records canonical RGB565 DirectDraw upload/publication; zero stream
+PRESENT therefore does not mean zero presentation of every kind. The old
+colored-geometry frame's exact origin and15-second startup failure remain
+unknown and did not reproduce. No behavior repair, same-frame parity, FPS,
+audio, logo correctness, native Quit or full27 completion is claimed. Original
+native/command/browser/watchdog actual waits were0, both EOFs completed and
+all known owned PIDs/listeners were absent after cleanup.
+Evidence: `scratch/runs/20261118-oasaver-software-presentation-path-cause/result.json`.
+
 The following table covers the named November17–18 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
@@ -235,7 +252,7 @@ FPS, audio, gameplay completion or native Quit.
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
 | `scr_rockroll` | Motion observed | Motion observed | Software: `20261118-rockroll-js-startup-rendering-repair`; WebGL: `20261118-dx-wormhole-scifi-paired-motion`; earlier UNKNOWNs retained |
-| `scr_oasaver` | Startup scene observed; motion open | Motion observed | Startup: `20261118-oasaver-bounded-startup-progress-cause`; WebGL: `20261118-oasaver-paired-natural-motion`; later software guard failure retained |
+| `scr_oasaver` | Motion observed | Motion observed | Software: `20261118-oasaver-software-presentation-path-cause`; WebGL: `20261118-oasaver-paired-natural-motion`; earlier startup failures remain unexplained |
 
 ## November 17 Quake III arena, depth repair and delayed input
 
