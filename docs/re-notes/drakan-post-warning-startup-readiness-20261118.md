@@ -96,3 +96,34 @@ exit and timeout controls refuse admission; every scope retains both actual
 waits and EOFs. This does not change any input/capture/runtime deadline. The
 replacement's outcome will follow tested publication. The earlier error does
 not invalidate the first original's measured input/startup separation.
+
+The receipt-order correction was tested, passed the locked full build and was
+published as `5eeed9ab8` before the explicitly authorized fresh replacement.
+Both its launch recipe and operation entry point wait for verified native
+receipts before capture. This succeeds with native PID 2540351. Warning Enter
+and independent UP complete in 437 ms; 103 passive samples establish ordinary
+main focus 10.783 seconds later. All 233 actual source/module reads match the
+sealed inventory, on main and Worker thread IDs 0, 1 and 2. The module remains
+`a51912dd4922e26a02689ede7e12cab8d8400b1649ab643e4918ad61f4e8dc0a`.
+
+Personally reviewed complete frames establish the Psygnosis logo, Surreal
+intro, Drakan Demo 1.0 snowy title and finally the authentic main menu at batch
+96,746. Its central New Game, Load, Save, Multiplayer, Options, Credits and Quit
+controls are visible. This establishes the requested authentic post-warning
+menu through ordinary initialization/show/focus, without a guest/runtime patch,
+forced visibility/focus, forced wake/poll, pause or wider clocks.
+
+One finite 300 ms Enter was then attempted from that reviewed menu to select
+New Game. The guarded dispatch timed out; the independently prearmed release
+also timed out and records UNKNOWN. Local native logs show WM_KEYDOWN and
+WM_KEYUP for Enter reaching focused `0x10004`, which does not prove either
+native consumption or physical-UP acknowledgment. No later endpoint, capture,
+input retry or ordinary Quit was requested. The runtime scope is CLOSED_UNKNOWN.
+Identity-checked SIGTERM cleanup retains actual native/watchdog waits, both
+EOFs, exit 0 and no leaks. Final native statistics are 106,144 batches, 502
+presents and 479.943 seconds. Level, movement, attack and ordinary Quit remain
+unproved. The concrete remaining blocker is guarded input/release acknowledgment
+at the authentic menu; its cause is not established by those local delivery
+logs. No claim is made that the menu Enter selected New Game, or that the
+renderer/native activation contract needs another fix. All three original
+lifetimes and every predecessor scope remain closed.
