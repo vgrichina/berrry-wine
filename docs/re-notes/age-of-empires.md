@@ -220,6 +220,25 @@ Enter earlier in the session (every reported route typed a name that way).
   `test/test-edit-subclass-key-queue.js`; route and captures in
   `scratch/runs/20261116-aoe-fixes`.
 
+## Soundtrack stopped after one track: MM_MCINOTIFY (fixed 2026-11-18)
+
+- Music is MCI `sequencer` playing `C:\sound\open.mid` (menu), then
+  `music1.mid`, `music2.mid`, ... in game; every `MCI_PLAY` carries
+  `MCI_NOTIFY` with dwCallback `0x10001` (main window).
+- The game counts outstanding notifies in `[obj+0x24c]`: `+1` after each
+  successful notify play (`0x45410e`, `0x4541c1`, `0x4543be`). Its
+  `MM_MCINOTIFY` case (`cmp eax,0x3b9` at `0x454704` → `0x454739`)
+  decrements on **any** status and calls the next-track function `0x454790`
+  only when the count reaches 0 (`0x454762`).
+- Starting a scenario `MCI_STOP`s `open.mid` mid-play. We dropped that
+  notify and only cdaudio ever posted any, so the count stuck at 1 and
+  music1's end did nothing. Windows posts ABORTED on stop/close and
+  SUPERSEDED on a replacing notify play; `lib/host-audio.js` does too now,
+  plus SUCCESSFUL at end of play (c43232518,
+  `test/test-mci-sequencer-notify.js`, run `20261118-aoe-mci-notify`).
+- At 16 ms ticks music1 lasts ~11k steps; `ctl cmd tick-ms:50` after the
+  scenario starts reaches music2 in ~3.5k.
+
 ## Ruled out
 
 - **VFS / `MapViewOfFile`.** Every `.drs` opens (`CreateFileA` → `h:0x700000xx`)
