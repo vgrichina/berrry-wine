@@ -4236,3 +4236,25 @@ music-object invalidation. World arrival followed the gameplay cutoff, so
 movement, firing and enemy consequences remain unproved. Quit input expired
 before native consumption; owned cancellation completed cleanup. Neither run
 establishes backend parity, audio quality or ordinary Quit.
+
+
+## NFS III Flip publication and original scene — 18 November 2026
+
+[Native window-present association report](re-notes/nfs3-native-window-present-association-20261118.md)
+records run `20261118-nfs3-native-window-present-association`. Repair
+`1fe5e1baf` reserves PRESENT capacity before Flip swaps primary/back-buffer
+DIBs, preserving the prior publication during a synchronous wait. Native
+old-fail/new-pass, retirement/reuse/foreign-target negatives, exact-module
+normal Worker rendering controls and locked builds passed. Window/DIB/creator
+and sequence checks remain intact. Launcher correction `49af4ab72` separately
+retains native/browser/watchdog waits after submitter TERM or KILL.
+
+The original uses retained c9 sources, 135 media files and the recovered
+`b8c8fa6c` module with the producer correction. Reviewed whole captures show
+the cockpit, road, rain and opponents at 0 MPH, with positive window and render
+target associations. The driving frame's native scene was 1329 ms old, beyond
+the unchanged 250 ms fence; no bind, DOWN or UP was sent. Driving, steering,
+Pause/Continue and ordinary Quit remain unproved. A disk-floor watchdog ended
+the detached run with retained cleanup; the earlier attached run has an
+explicit outer-wait evidence limitation. Neither result establishes the cause
+of the remaining scene lag or intermittent white composition.
