@@ -4327,3 +4327,25 @@ passed. This establishes the named native gameplay route; authentic-browser
 gameplay, backend parity and complete27-app coverage are not claimed.
 
 Evidence: `scratch/runs/20261118-drakan-prepared-new-game-mouse-route/result.json`.
+
+## ROCKROLL current production browser WebGL motion — 18 November 2026
+
+[Current-graph report](re-notes/rockroll-current-webgl-natural-motion-20261118.md),
+published as `0886eb336`, records a fresh registered `/s` original on published
+`5732320bb` and module `9862d124…`. The coordinator reviewed both whole frames:
+a large edge-on guitar ring changes to a smaller tilted ring of face-on guitars
+and picks. The 403,241 changed pixels include substantial natural geometry motion;
+no input was sent. Actual WebGL1 Intel/Mesa execution records completed draws
+3,939→8,371 and PRESENTs 101→289, with three matching actual module receipts and
+eleven unchanged media paths. This is separate from earlier historical graphs.
+
+Native/browser/watchdog waits retain exit0, both EOFs and no surviving processes
+or external TERM. Browser close is harness teardown, not ordinary guest Quit.
+Focused controls passed; a heavy authored control's earlier UNKNOWN remains
+closed. No production fix was needed. The report accurately retains its shared
+build refusal on concurrent UT callback WIP, which was excluded from the tested
+immutable published graph. A post-compile comment-normalization hash correction
+is recorded separately from canonical served-source pins. Backend parity, audio,
+FPS and the complete historical27-app result remain unproved.
+
+Evidence: `scratch/runs/20261118-rockroll-current-webgl-natural-motion/result.json`.
