@@ -60,5 +60,19 @@ async function waitGameWindow(a,seconds=60){
     await c.sleep(Math.min(100,Math.max(0,(deadline-c.now())*1000)));
   }
 }
-module.exports={fixture,gameWindowReady,waitGameWindow,renderObservation};
+// Match the native USER-return contract: PeekMessage (kind 2) may use
+// PM_NOREMOVE. Consumption here attests the owning API return, not removal.
+function inputReceipt(r,{owner,nonce,deadline,key,sentAt,hwnd,threadId}){
+  assert.equal(r.state,'CONSUMED');assert.equal(r.consumed,true);
+  for(const k of ['owner','epoch'])assert.equal(r[k],owner[k]);
+  assert.equal(r.nonce,nonce);assert.equal(r.deadline,deadline);
+  assert.equal(r.receiptBoundary,'native-input-return');
+  const m=r.nativeMessage;assert.equal(m?.consumption,'owner-user-return');
+  assert.equal(m.nonce,nonce);assert(m.token>0);assert.equal(m.msg,0x100);
+  assert.equal(m.wParam,key);assert.equal(m.hwnd,hwnd);assert.equal(m.threadId,threadId);
+  assert([1,2,3].includes(m.apiKind));assert.equal(typeof m.remove,'boolean');
+  assert(m.apiKind===2||m.remove===true);
+  assert(r.consumedAt>=Math.trunc(sentAt*1000)&&r.consumedAt<deadline);
+}
+module.exports={fixture,gameWindowReady,waitGameWindow,renderObservation,inputReceipt};
 if(require.main===module)require('node:fs').writeFileSync(process.argv[2],fixture(),{flag:'wx'});

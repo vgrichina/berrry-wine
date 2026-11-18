@@ -104,3 +104,16 @@ live process/thread/window/control verification immediately before consumption.
 Tests accept a 20s review and reject the exact 60s boundary. The original
 3000ms observation/operation, 500ms confirmation and independent physical-UP
 deadlines remain separate. No expired scope or image is reused.
+
+The next original reaches a genuine fully rendered Alice main menu, personally
+reviewed as a whole frame. Its ordinary Enter is consumed on hwnd65543/tid1
+through PeekMessage PM_NOREMOVE in 908ms, with independent UP acknowledged.
+The evidence controller incorrectly borrowed Drakan's stronger removal check;
+it closes this scope without any subsequent endpoint request or visual-effect
+claim. The corrected Alice receipt validator matches the production USER-return
+contract: kind2 permits PM_NOREMOVE, while kinds1/3 require removal. Exact owner,
+epoch, nonce, message, window/thread, consumption boundary and immutable deadline
+remain mandatory. Focused negatives cover foreign target/thread/nonce and invalid
+non-removing API kinds. Fresh operation policy allows 2000ms confirmation,
+3000ms independent fallback, 5500ms physical-UP and 8000ms total operation,
+chosen before dispatch from measured 908ms original consumption latency.
