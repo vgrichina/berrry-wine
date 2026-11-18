@@ -59,7 +59,7 @@ At 03:10:05 UTC, required package
 `test/binaries/win98-games-a-d/Age%20of%20Wonders2%20demo-SW/extracted/Ml42ND50.bpl`
 failed with owning Network ID `2346097.272`, canceled `net::ERR_ABORTED`.
 The controller immediately closed `REQUIRED_BODY_UNKNOWN`, before game startup.
-There were no subsequent endpoint requests, replay or additional original.
+There were no subsequent observation/input requests, replay or additional original.
 
 Offline assessment binds its request, server UUID, captured body, continuation
 and caller. Fetch captured and verified 468,992 bytes, SHA256
@@ -74,7 +74,9 @@ identify a cancellation cause or authorize accepting the request.
 
 The historical oleaut32 failure itself was not reproduced: the fresh failure
 is a different required package. The native prerequisite passed this packaged
-graph, whereas this registered original did not. Actual game Worker/module,
+graph, whereas this registered original did not. A Worker Debugger bytecode
+capture matches the pinned module, but the later slot/endpoint ownership read
+was not reached; compilation alone does not establish game execution. Game-owned
 completed Device7 ground draw vertices/texture/state/viewport/coverage,
 effective raster acceptance and last writer were **not reached**. There is no
 fresh terrain, army consequence or ordinary Quit evidence. The observer's
@@ -96,7 +98,7 @@ the custody records. External tool waits were observed too.
 An actual browser control separately qualified the prearmed independent UP:
 after a trusted DOWN without its normal acknowledgement, the independent
 process delivered a trusted UP. No original game input used that capability.
-The original's prearmed source observer was never instantiated by the guest.
+No Device7 observer receipt was collected from the original.
 No boxes were created: ID null, state NOT_CREATED, expiry null, stop receipt
 null. No workers, Wine, Python, foreign edits, deployment, media copies or
 source archives were used. Exact Git, owned patches, source/media pins,
