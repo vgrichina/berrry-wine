@@ -1,0 +1,32 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {VirtualFS}=require('../lib/filesystem');
+const {saveVfsToHost}=require('../lib/vfs-export');
+const {childExecutable}=require('../lib/cli-child-executable');
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'child-image-'));
+try {
+ const vfs=new VirtualFS(),bytes=Buffer.from('MZ selected native image');
+ const source={size:bytes.length,tryRead:(off,len)=>bytes.subarray(off,off+len),fill:async()=>{}};
+ vfs.setProviderFile('D:\\setup.exe',{provider:source,length:bytes.length});vfs.setDriveReadOnly('d');
+ const entry=vfs.files.get('d:\\setup.exe'),provider=entry._provider;
+ let unrelated=0;vfs.files.set('d:\\other.bin',{_provider:{},get data(){unrelated++;throw Error('unrelated');}});
+ const written=saveVfsToHost(vfs,path.join(tmp,'in'));
+ assert.equal(written.length,0,'old snapshot-only lookup cannot load this real lazy image');
+ const row=childExecutable(vfs,'d:\\setup.exe',written,tmp);
+ assert.deepEqual(fs.readFileSync(row.outputPath),bytes);assert.equal(entry._provider,provider);
+ const {seedExeImage}=require('../lib/vfs-seed');
+ seedExeImage(vfs,bytes,'setup.exe','D:\\setup.exe');
+ assert.equal(vfs.files.get('d:\\setup.exe'),entry,'loader seeding retains actual source object');
+ assert.equal(entry._provider,provider);
+ assert.throws(()=>seedExeImage(vfs,Buffer.from('WRONG'),'setup.exe','D:\\setup.exe'),/differs/);
+ assert.throws(()=>seedExeImage(vfs,bytes,'setup.exe','D:\\absent.exe'),/no source owner/);
+ assert.equal(unrelated,0);assert(saveVfsToHost(vfs,path.join(tmp,'after')).every(r=>r.guestPath.startsWith('c:')));
+ assert.equal(vfs.createFile('D:\\setup.exe',0x40000000,2),0);
+ const resident={guestPath:'c:\\setup.exe',outputPath:'existing'};
+ assert.equal(childExecutable(vfs,'c:\\setup.exe',[resident],tmp),resident);
+ assert.equal(childExecutable(vfs,'c:\\missing.exe',[],tmp),null);
+ const asyncOnly=new VirtualFS();asyncOnly.setProviderFile('D:\\pending.exe',{provider:{size:4,tryRead:()=>null,fill:async()=>{}},length:4});asyncOnly.setDriveReadOnly('d');
+ assert.throws(()=>childExecutable(asyncOnly,'d:\\pending.exe',[],path.join(tmp,'uncreated')),/async-only/);
+ assert(!fs.existsSync(path.join(tmp,'uncreated')));
+ console.log('PASS selected provider-backed child image, unchanged readonly state, no unrelated export, pending source fails closed');
+}finally{fs.rmSync(tmp,{recursive:true,force:true});}

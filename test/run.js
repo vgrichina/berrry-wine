@@ -4334,7 +4334,7 @@ async function main() {
       }
       const written = saveVfsToHost(vfs, inDir);
       const before = new Map(written.map(row => [String(row.guestPath).toLowerCase(), row.outputPath]));
-      const exeRow = written.find(row => String(row.guestPath).toLowerCase() === guestExe);
+      const exeRow = require('../lib/cli-child-executable').childExecutable(vfs, guestExe, written, tmp);
       if (!exeRow) {
         fs.rmSync(tmp, { recursive: true, force: true });
         console.log(`[spawn] CreateProcess "${cmd}": ${guestExe} could not be exported`);

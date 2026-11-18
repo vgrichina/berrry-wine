@@ -68,3 +68,49 @@ copy. The retained Manifest permits a mandatory source-size census, but its
 `.uz` map sizes do not establish expanded installation space. Exact expanded
 space remains unknown until the unique disc is available. No installation
 write or incomplete game launch is justified by that lower bound.
+
+## Ordinary bootstrap and provider-backed child repair
+
+The coordinator subsequently restored the one missing disc at its original path,
+with an independent whole-file rehash of all 649,633,792 bytes to the original
+`e184984ca88f001c5ddd52035d76cd64e266e26c74975161b5ed72366c74704f`.
+This worker rehashed it again and performed no download or duplicate disc copy.
+The normal media importer selected `D:\Setup.exe` from AUTORUN.INF and extracted
+only that process image for the native loader. The first actual original scope
+exited without displaying a wizard or installing any files: both ordinary
+CreateProcess and ShellExecute attempts to `D:\System\Setup.exe` failed with
+"could not be exported". Parent/supervisor/watchdog have actual waits and EOFs.
+
+A generated provider-backed PE control reproduces that failure with the same
+native runner and pinned module: the old snapshot-only lookup fails before any
+dialog and the guest exits 47. Source-disc entries deliberately retain their
+provider even after reads, so the mutable-state exporter correctly omits them.
+The selected child image now gets a separate temporary loader file, outside the
+mutable snapshot, while its original media ownership and mount context remain.
+No other media entry is read or exported. Unfilled asynchronous providers still
+fail explicitly; partial bytes never launch.
+
+The first repair control exposed a second failure: `seedExeImage` replaced the
+restored read-only executable with a resident entry, and the existing completion
+guard rejected that unsafe D: state. Seeding now verifies matching loader bytes
+and preserves the exact source-owned object on read-only drives. Missing owners
+or mismatched bytes fail before alias writes. The completion guard is unchanged.
+A fresh native control starts the actual D: child, validates read-only media and
+exact renderer-test arguments, writes PASS, exits 0, and completes a guarded
+merge. Its whole dialog was personally reviewed. A later Enter closed the parent
+before independent UP could be acknowledged, so that submission is UNKNOWN and
+is not an input acceptance pass; its scope stays closed. The earlier exact
+self-child control remains the successful reviewed-input control.
+
+The browser control also launches a real provider-backed D: child through the
+normal shell. Its whole host screenshot personally shows the child-authored
+message after checking read-only drive, profile and exact arguments, alongside
+both running apps. Actual Worker bytecode matches the pinned module. Browser
+input or completed child merge is not claimed. An earlier browser diagnostic
+showed real child Exit0 but parent marker timeout; that separate browser merge
+behavior was not changed in this native loader repair.
+
+Focused checks cover snapshot exclusion, selected-image bytes, unchanged source
+identity/provider, read-only write rejection, unrelated lazy media exclusion,
+resident-image reuse, missing image, asynchronous-source rejection and immutable
+seed mismatch/missing-owner rejection. The existing VFS seeding suite passes.
