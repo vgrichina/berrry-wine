@@ -21,6 +21,11 @@ const files = {
   'lib/host-imports.js': "module.exports='sealed-mismatch'",
   'lib/__sealed_escape.js': "require('../../outside-inventory.js')",
 };
+const manifests = sup.registeredManifests(root, ['node', 'test/run.js', '--app=supertux_013']);
+assert(manifests.includes('test/binaries/candidates/supertux-013/.wine-assembly-browser.json'));
+assert.deepEqual(sup.registeredManifests(root, ['--exe=authored.exe']), []);
+assert.throws(() => sup.registeredManifests(root, ['--app=__missing_app']), /unknown registered app/);
+for (const name of manifests) files[name] = fs.readFileSync(path.join(root, name), 'utf8');
 const rows = Object.entries(files).map(([p, s]) => {
   const b = Buffer.from(s);
   return { path: p, sha256: sha(b), body: b.toString('base64') };
@@ -44,9 +49,13 @@ let [rc, out, err] = run("const a=require('node:assert/strict');const m=require(
   "a.equal(require.resolve('./lib/__sealed_absent_dependency')," + JSON.stringify(path.join(root, 'lib/__sealed_absent_dependency.js')) + ");" +
   "a.equal(require('./lib/host-imports.js'),'sealed-mismatch');console.log('PINNED_OK')");
 assert(rc === 0 && out.includes('PINNED_OK'), JSON.stringify([rc, out, err]));
+[rc, out, err] = run("const fs=require('node:fs'),a=require('node:assert/strict');" +
+  "const m=JSON.parse(fs.readFileSync('./test/binaries/candidates/supertux-013/.wine-assembly-browser.json','utf8'));" +
+  "a.equal(m.schemaVersion,1);a(m.files.length>700);console.log('SUPERTUX_MANIFEST_PINNED')");
+assert(rc === 0 && out.includes('SUPERTUX_MANIFEST_PINNED'), JSON.stringify([rc, out, err]));
 for (const request of ['./lib/process-desktop', './lib/__unlisted_absent', './lib/__sealed_escape']) {
   [rc, out, err] = run('require(' + JSON.stringify(request) + ')');
   assert(rc !== 0 && err.includes('unsealed runtime input'), JSON.stringify([request, rc, out, err]));
 }
 fs.closeSync(source);
-console.log('PASS absent-live dependency, normalized relative import, JSON, package main, require.resolve, existing-live mismatch, outside-inventory refusal; actual Node waits and both EOFs');
+console.log('PASS registered SuperTux manifest selection and actual sealed read, unknown app refusal, absent-live dependency, normalized relative import, JSON, package main, require.resolve, existing-live mismatch, outside-inventory refusal; actual Node waits and both EOFs');
