@@ -167,6 +167,22 @@ Sci-Fi's historical pair exercised actual software/WebGL. Those older pins
 do not prove current-main behavior or complete27 membership.
 Evidence: `scratch/runs/20261118-dx-wormhole-scifi-paired-motion/result.json`.
 
+The [OrganicArt startup investigation](re-notes/oasaver-bounded-startup-progress-cause-20261118.md),
+observer `47095dcb6` and report `1cd05040d`, separates completed presentation
+from display composition and records bounded native progress. Native controls
+and the locked build passed. One software original first sampled a completed
+PRESENT at3568 ms and bound at4108 ms; earlier samples had PRESENT0 with
+composed UI and advancing native progress. Actual software execution recorded
+10 PRESENTs and152 DRAW_UP calls, with all three loaded modules matching
+`eb2395e1…` and88 media pins unchanged. The coordinator reviewed the whole
+colored scene, including the unresolved lower-right white rectangle. Initial
+black-to-scene captures do not establish a motion pair. The earlier15-second
+failure did not reproduce and its cause remains unknown; this is an observer
+change, not a demonstrated emulator repair. Actual original native/command/
+watchdog waits and separate EOFs completed without leaks. A fresh worker now
+targets software/WebGL natural-motion pairs.
+Evidence: `scratch/runs/20261118-oasaver-bounded-startup-progress-cause/result.json`.
+
 The following table covers the named November17–18 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
