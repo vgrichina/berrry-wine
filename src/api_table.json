@@ -39826,5 +39826,19 @@
     "nargs": 2,
     "convention": "cdecl",
     "hash": 2916143282
+  },
+  {
+    "id": 4711,
+    "name": "EncodePointer",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2214531668
+  },
+  {
+    "id": 4712,
+    "name": "DecodePointer",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2433900188
   }
 ]

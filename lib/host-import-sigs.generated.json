@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 303,
+  "count": 304,
   "sigs": {
     "log": {
       "params": [
@@ -113,6 +113,12 @@
       ]
     },
     "real_time_ms": {
+      "params": [],
+      "results": [
+        "i32"
+      ]
+    },
+    "entropy_u32": {
       "params": [],
       "results": [
         "i32"

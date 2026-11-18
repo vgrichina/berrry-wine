@@ -1149,3 +1149,8 @@
   ;; Optional constructor-derived diagnostic; appended to preserve old bases.
   (region.declare $SELECTIVE_WATCH (size 0x00000080) (align 128)
     (owner "13-exports.wat:$selective_watch_check"))
+
+  ;; Immutable after first use; shared memory is the emulated process lifetime.
+  ;; Kept outside instance globals so every guest thread uses the same secret.
+  (region.declare $POINTER_SECRET (size 4) (align 4)
+    (owner "09a0b-handlers-base-late.wat:$pointer_secret"))

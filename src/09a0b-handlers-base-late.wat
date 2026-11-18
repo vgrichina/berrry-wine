@@ -872,6 +872,38 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; stdcall, 1 arg
   )
 
+  ;; EncodePointer/DecodePointer treat every DWORD, including NULL and -1, as
+  ;; opaque bits. No guest address translation or pointer dereference occurs.
+  ;; This is a reversible process-specific obfuscation, not Windows' private
+  ;; bit representation or a claim of equivalent security against the host.
+  (global $POINTER_SECRET i32 (region.addr $POINTER_SECRET 0))
+  (global $POINTER_SECRET_SIZE i32 (region.size $POINTER_SECRET))
+  (func $pointer_secret (result i32)
+    (local $key i32) (local $candidate i32)
+    (local.set $key (i32.atomic.load (region.addr $POINTER_SECRET 0)))
+    (if (local.get $key) (then (return (local.get $key))))
+    (loop $sample
+      (local.set $candidate (call $host_entropy_u32))
+      (br_if $sample (i32.eqz (local.get $candidate))))
+    (local.set $key (i32.atomic.rmw.cmpxchg (region.addr $POINTER_SECRET 0)
+      (i32.const 0) (local.get $candidate)))
+    (if (i32.eqz (local.get $key)) (then (local.set $key (local.get $candidate))))
+    (local.get $key))
+
+  (func $handle_EncodePointer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $key i32)
+    (local.set $key (call $pointer_secret))
+    (i32.store offset=0 (global.get $reg_base)
+      (i32.rotr (i32.xor (local.get $arg0) (local.get $key)) (local.get $key)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  (func $handle_DecodePointer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $key i32)
+    (local.set $key (call $pointer_secret))
+    (i32.store offset=0 (global.get $reg_base)
+      (i32.xor (i32.rotl (local.get $arg0) (local.get $key)) (local.get $key)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
   ;; 491: GetCurrentProcessId — return this emulated process's stable PID
   (func $handle_GetCurrentProcessId (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $current_process_id))
