@@ -61,3 +61,22 @@ test('unused prepared release expires finitely without body/arm or config read',
     assert,process:{argv:['node','release','out','config'],pid:12},Date:{now:()=>time},sleep:async()=>{time=120001;},body}),/finite release preparation/);
   assert.equal(body,false);assert.equal(reads,0);
 });
+test('request expiration before DOWN is definite local refusal; malformed or sent state still closes',()=>{
+  const {verifyReviewedReadback}=require('../tools/revolt-capture-integration.cjs');
+  const owner={windowHwnd:123,processId:1000};
+  const m={observation:'current-display',content:'already-displayed',completion:'canvas2d-readback',
+    publication:1,retainedPublicationPixels:true,captureOwner:{hwnd:123,processId:1000},
+    composition:{windows:[{hwnd:123,processId:1000}]},source:{kind:'logical',width:8,height:8},
+    output:{width:8,height:8},displayedAt:10,requestedAt:100,readbackStartedAt:110,readbackCompletedAt:120};
+  verifyReviewedReadback(m,owner,5099,5000,0);
+  for (const now of [5100,5300]) assert.throws(()=>verifyReviewedReadback(m,owner,now,5000,0),
+    e=>e.code==='LOCAL_NOT_SENT'&&e.cause instanceof assert.AssertionError);
+  assert.throws(()=>verifyReviewedReadback(m,owner,5100,5000,1),
+    e=>e instanceof assert.AssertionError&&e.code!=='LOCAL_NOT_SENT');
+  assert.throws(()=>verifyReviewedReadback(m,owner,5100,5000,undefined),
+    e=>e instanceof assert.AssertionError&&e.code!=='LOCAL_NOT_SENT');
+  for(const patch of [{captureOwner:{hwnd:124,processId:1000}},{retainedPublicationPixels:false},
+    {completion:'incomplete'},{requestedAt:6000}])
+    assert.throws(()=>verifyReviewedReadback({...m,...patch},owner,5300,5000,0),
+      e=>e.code!=='LOCAL_NOT_SENT');
+});
