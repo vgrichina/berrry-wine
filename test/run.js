@@ -4559,7 +4559,16 @@ async function main() {
     const title = readStr(titlePtr);
     logs.push(`[CreateWindow] hwnd=0x${hwnd.toString(16)} title="${title}" style=0x${style.toString(16)} pos=${x},${y} size=${cx}x${cy} menu=${menuId}`);
     ctx.recordWindowText(hwnd, title);
-    if (renderer) renderer.createWindow(hwnd, style, x, y, cx, cy, title, menuId);
+    if (renderer) {
+      renderer.createWindow(hwnd, style, x, y, cx, cy, title, menuId);
+      // Keep the same native process publication as host-window.create_window.
+      // D3DIM admits frames only for their owning process and instance.
+      const win = renderer.windows[hwnd];
+      if (win) {
+        win.processId = ctx.processId;
+        win._lookupProcess = ctx.windowLookupLifetime;
+      }
+    }
     return hwnd;
   };
 
