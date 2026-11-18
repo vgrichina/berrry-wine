@@ -5,8 +5,9 @@ Evidence: `scratch/runs/20261118-blood2-selective-native-lifetime-watch/`.
 The preceding `1f6f6c7e1` observation closed UNKNOWN before menus after
 322 seconds and 6,071 repetitive nonzero Releases. This preparation replaces
 that JS block observer with a default-off native filter and bounded consumer.
-No original was run during preparation. The one newly authorized original is
-reserved until this preparation is tested and published.
+Preparation was tested and published as `12ecbef77` before the one newly
+authorized original. That original closed UNKNOWN at a measured missing
+module-discovery boundary. No music cause or game progress was established.
 
 The native filter captures ECX at the actual IMRT constructor, publishes that
 pointer in diagnostic shared memory, and retains the first live state, primary
@@ -15,6 +16,10 @@ destructor and free argument against that actual object. Late CPU instances
 arm from the module configuration already published by the first instance,
 before their first guest instruction. There is no JSON/DAT pointer polling,
 JS callback on unrelated blocks, or retained nonzero reference-count history.
+The final consumer discovers modules after the real `load_dll` and
+`init_thread` exports return. A proxy exposes these two wrappers while the
+native exports and every execution call remain unchanged. Original return
+values and exceptions propagate; this adds no guest callback or input.
 
 All previous region bases remain unchanged. The appended diagnostic region is
 128 bytes. The native event cap is 64 per shared scope; the consumer permits
@@ -51,7 +56,7 @@ destructor, free and primary invalidation. No fake reference, restored vtable,
 music disable, guest behavior repair, forced polling or suppressed crash is
 introduced. A normal guest Worker/software-render fixture has identical whole
 pixel hashes in all three arms. Its complete image was reviewed: teal desktop
-and gray authored window, not a game menu. Authored render elapsed totals were
+and gray authored window, not a game menu. Initial authored render elapsed totals were
 2,838/2,640/2,158 ms; guest batches were 985/619/1,275. These noisy single samples
 establish no performance improvement, timing equivalence or scheduling claim.
 The watch disables chaining/uops and can perturb execution.
@@ -67,7 +72,7 @@ Worker registry/media/whole-render preflights pass through the historical
 published sealed loader recovered from Git in memory. FoxBear's shared
 preparation, source-view, launcher and supervisor files are not edited.
 
-The original must use the registered normal-Worker/software route, exact
+The original used the registered normal-Worker/software route, exact
 qualified descriptors and finite native/disk watchdog. Actual whole frames
 must establish menus/world before any game input. Existing Enter limits,
 identity, 500 ms confirmations, independent UP, freshness, operation bounds and
@@ -75,3 +80,41 @@ Quit reserve are unchanged. UNKNOWN closes the scope without later endpoint
 requests, replay or a second original; only an already armed release remains
 permitted. Movement, fire, enemy consequence, ordinary Quit and a music cause
 are not established by these preparation controls.
+
+## Original outcome and repaired preparation boundary
+
+Native PID 2425757 ran the qualified frozen module and sealed graph after
+strict publication. Five native instances emitted creation records, but none
+armed: the real registered route did not make the host log call on which the
+first consumer had depended for module discovery. Thus neither construction
+nor an invalidating write was observed. IMUSIC guest threads 2 and 3 exited at
+EIP zero with previous PCs `0x00cd2ccc` and `0x00cd275b`, respectively; the
+retained object register was `0x00c189ec`. This reproduces the earlier music
+failure context but does not identify its invalidating writer or lifetime.
+
+The missing boundary closed the scope UNKNOWN. Zero endpoint requests,
+captures, binds, Enter or other game inputs occurred. No visible menu/world
+was established, and no endpoint was contacted after closure. Owned host
+cancellation produced native exit 0 after 37.144 seconds / 16,205 batches;
+that is not ordinary game Quit. The watch was unarmed, with optimized tiers
+still active, so these figures cannot measure selective-watch overhead or be
+compared as a speed improvement against the older full-block observation.
+
+The discovery gap was repaired offline after closure. The consumer now arms
+at actual native DLL publication and thread initialization, without wrapping
+host logging, `run`, or every import/block. New negative controls verify no-log
+module publication, original return/exception preservation and unchanged
+export objects. Authentic native Worker/register/flags/unrelated-write,
+final Release/free/invalidation and software pixel controls are repeated with
+the repaired consumer. This is a diagnostic preparation repair, not a proved
+emulator/music defect, so the conditional additional original is not spent.
+The closed original is not replayed; actual first invalidation, causal repair,
+movement, fire, enemy consequence and ordinary Quit remain unproved.
+
+Native and watchdog waits are both actual, exit 0 with both EOFs and empty
+drain errors. Native-supervise reports `leaked:false`, no containment signal
+was needed, and the finite disk monitor's observed minimum was 1,987,796,992
+bytes. Final evidence verifies owned processes are nonlive, the control port
+has no listener, and all media/module/source identities still match. No RAM
+gate, agents, Codex workers, boxes, Python, Wine, deployment or held investigations
+were used. Box ID null, state NOT_CREATED, expiry and stop receipt null.

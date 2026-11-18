@@ -11,7 +11,7 @@ function create({emit, deadline, now=Date.now, maxRows=128,control=false}={}) {
   if(typeof emit!=='function'||!Number.isFinite(deadline)||deadline<=now()||
     deadline>now()+660000||!Number.isInteger(maxRows)||maxRows<2||maxRows>256)
     throw Error('selective watch bounds');
-  let active=true, rows=0, callbacks=0, importEntries=0;
+  let active=true, rows=0, callbacks=0, moduleBoundaries=0;
   const contexts=[];
   const record=(kind,data={})=>{if(rows>=maxRows)throw Error('row bound');
     emit({kind,sequence:++rows,at:now(),...data});};
@@ -20,15 +20,15 @@ function create({emit, deadline, now=Date.now, maxRows=128,control=false}={}) {
     // Disarm only at the caller's JS boundary (stop is never called by a store
     // callback). A failing callback throws; it does not resume a failed scope.
     for(const c of contexts)if(c.armed)c.e.set_selective_watch(0,0,0,0,0);
-    emit({kind:'stop',at:now(),reason,rows,callbacks,importEntries});
+    emit({kind:'stop',at:now(),reason,rows,callbacks,moduleBoundaries});
   }
   function fail(error) {
     active=false;
-    emit({kind:'stop',at:now(),reason:'UNKNOWN:observation-error',error:String(error),rows,callbacks,importEntries});
+    emit({kind:'stop',at:now(),reason:'UNKNOWN:observation-error',error:String(error),rows,callbacks,moduleBoundaries});
     throw error;
   }
   function wrapImports(imports) {
-    if(!imports?.host?.memory)return ()=>{};
+    if(!imports?.host?.memory)return instance=>instance;
     if(contexts.length>=32)throw Error('instance bound');
     const h=imports.host,c={id:contexts.length+1,e:null,armed:false};contexts.push(c);
     const memory=h.memory,view=new DataView(memory.buffer);
@@ -88,29 +88,39 @@ function create({emit, deadline, now=Date.now, maxRows=128,control=false}={}) {
         attribution:'observation boundary and actual observing thread/stack; concurrent writer and exact writing instruction UNKNOWN'});
       if(tag===-22||shared[5])throw Error('native observation loss');
     }
-    const log=h.log,logEip=h.log_eip;
-    if(typeof log==='function')h.log=function(...args){
-      ++importEntries;
-      try{arm();}catch(error){fail(error);}
-      return Reflect.apply(log,this,args);
-    };
+    const logEip=h.log_eip;
     h.log_eip=function(pc,...args){
       try{witness(pc|0);}catch(error){fail(error);}
       if(typeof logEip==='function')return Reflect.apply(logEip,this,[pc,...args]);
     };
     return instance=>{try{c.e=instance.exports;
       if(!c.e.set_selective_watch)throw Error('selective native module required');
-      record('instance',{instance:c.id});arm();}catch(error){fail(error);}};
+      record('instance',{instance:c.id});arm();
+      // Guest mappings do not exist at instantiate time. load_dll returns
+      // after publishing actual DLL rows, before the loader invokes DllMain;
+      // init_thread initializes a late CPU's guest mapping. Neither requires
+      // a host log. Preserve the original return, exception and receiver.
+      const exports=Object.create(null);
+      for(const name of Object.keys(c.e)){
+        const original=c.e[name];let value=original;
+        if(['load_dll','init_thread'].includes(name)&&typeof original==='function')
+          value=function(...args){const result=Reflect.apply(original,c.e,args);
+            ++moduleBoundaries;try{arm();}catch(error){fail(error);}return result;};
+        Object.defineProperty(exports,name,{value,enumerable:true});
+      }
+      return new Proxy(instance,{get(target,key){return key==='exports'?exports:Reflect.get(target,key,target);}});
+    }catch(error){fail(error);}};
   }
-  return {wrapImports,stop,summary:()=>({active,rows,callbacks,importEntries,instances:contexts.length})};
+  return {wrapImports,stop,summary:()=>({active,rows,callbacks,moduleBoundaries,instances:contexts.length})};
 }
 function install(observer,wasm=WebAssembly) {
   const Original=wasm.Instance,instantiate=wasm.instantiate;
   wasm.Instance=new Proxy(Original,{construct(target,args,newTarget){
     const bind=observer.wrapImports(args[1]),instance=Reflect.construct(target,args,newTarget===wasm.Instance?target:newTarget);
-    bind(instance);return instance;}});
+    return bind(instance);}});
   wasm.instantiate=async function(source,imports){const bind=observer.wrapImports(imports),
-    result=await Reflect.apply(instantiate,this,[source,imports]);bind(result.instance||result);return result;};
+    result=await Reflect.apply(instantiate,this,[source,imports]);
+    return result.instance?{...result,instance:bind(result.instance)}:bind(result);};
   return ()=>{wasm.Instance=Original;wasm.instantiate=instantiate;};
 }
 module.exports={create,install,TAGS};

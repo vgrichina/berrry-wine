@@ -91,7 +91,7 @@ const reader=create({emit(){},now:()=>1,deadline:100});assert.equal(reader.summa
   const reader=create({emit:r=>events.push(r),now:()=>1,deadline:100});
   reader.wrapImports({host:{memory}})({exports:e});
   assert.deepEqual(calls[0],[0x504792,0x504777,0x5047f9,0x505d2c,0x5060f8]);
-  assert.equal(reader.summary().importEntries,0);reader.stop('disposed');
+  assert.equal(reader.summary().moduleBoundaries,0);reader.stop('disposed');
   assert.deepEqual(calls[1],[0,0,0,0,0]);assert.equal(events.at(-1).kind,'stop');
 }
 {
@@ -124,5 +124,27 @@ const reader=create({emit(){},now:()=>1,deadline:100});assert.equal(reader.summa
   assert.throws(()=>h.log_eip(-22),/native observation loss/);
   const loss=events.find(r=>r.kind==='UNKNOWN:native-watch');assert.equal(loss.shared[5],2);
   assert.equal(loss.thread,7);assert.equal(loss.object,null);assert.equal(events.at(-1).reason,'UNKNOWN:observation-error');
+}
+// No host.log call: constructor readiness comes from the actual load_dll
+// publication boundary. This models the missing boundary found in the single
+// original; the authentic controls below the CLI exercise the real export.
+{
+  const events=[],memory=new WebAssembly.Memory({initial:1,maximum:1,shared:true}),v=new DataView(memory.buffer),calls=[];
+  const sentinel=Error('native load failure');
+  const e={get_dll_count:()=>0,get_dll_capacity:()=>1,get_dll_table:()=>512,
+    guest_to_wasm:n=>n,get_current_thread_id:()=>1,selective_watch_base:()=>128,
+    set_selective_watch:(...args)=>calls.push(args),
+    load_dll(n){assert.equal(this,e);if(!n)throw sentinel;
+      v.setUint32(512,0x1000,true);v.setUint32(520,0x100,true);v.setUint32(0x110c,0x200,true);
+      new Uint8Array(memory.buffer,0x1200,11).set(Buffer.from('IMRT25.DLL\0'));return 41;},
+    init_thread(){return 42;}};
+  const reader=create({emit:r=>events.push(r),now:()=>1,deadline:100});
+  const instance=reader.wrapImports({host:{memory}})({exports:e});assert.equal(calls.length,0);
+  assert.equal(instance.exports.load_dll(1),41);assert.equal(calls.length,1);
+  assert.equal(instance.exports.init_thread(),42);assert.equal(reader.summary().moduleBoundaries,2);
+  assert.throws(()=>instance.exports.load_dll(0),error=>error===sentinel);
+  assert.equal(reader.summary().moduleBoundaries,2);assert.equal(reader.summary().active,true);
+  assert.notEqual(instance.exports,e);assert.equal(events.find(r=>r.kind==='armed').modules[0].base,0x1000);
+  reader.stop('disposed');
 }
 console.log(JSON.stringify({pass:true,moduleSHA256:require('node:crypto').createHash('sha256').update(moduleBytes).digest('hex'),results}));
