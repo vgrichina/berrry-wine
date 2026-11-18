@@ -4406,3 +4406,30 @@ Quit. This establishes the named browser player movement, without jump, attack,
 backend-parity, complete 27-app or game-completion claims.
 
 Evidence: `scratch/runs/20261118-alice-current-browser-player-hud/result.json`.
+
+## NFS III browser throttle, Pause and resume — 18 November 2026
+
+[Browser driving report](re-notes/nfs3-current-browser-driving-pause-20261118.md)
+records helper repair `95df0faa9` and report `c0b550a66`. The registered original
+uses 135 unchanged media pins, module `a6e2bb71…` and pinned published source on
+the actual Glide/WebGL browser Worker route. This is not a D3D-backend claim.
+The helper moves full identity validation before the short independent-release
+clock; focused old-fail/new-pass controls and the locked build passed.
+
+The coordinator reviewed whole fresh-original frames: throttle changes 2→15 MPH
+with RPM increase and road/house approach. Ordinary Escape opens the original
+Single Race - Paused menu. A later Escape resumes the cockpit and advancing race
+clock; the earlier Continue click alone does not establish the resume. Left input
+visibly turns the steering wheel, but coasting prevents an isolated road-turn
+claim. Earlier idle creep is not used as throttle evidence.
+
+Ordinary Quit reaches System confirmation, but activating System does not produce
+an observed native exit within the preselected 15-second window. That scope closes
+without replay; game Quit remains unverified. Native supervisors report actual
+waits/no leaks and browser/display/release waits retain both EOFs, but the second
+original lacks its enclosing-launch receipt (outer tool143, EOF unknown). Complete
+cleanup attestation is explicitly not claimed. These results establish the named
+browser throttle/Pause/resume controls, without ordinary Quit, causal road steering,
+backend parity, complete 27-app coverage, FPS or audio claims.
+
+Evidence: `scratch/runs/20261118-nfs3-current-browser-driving-pause/result.json`.
