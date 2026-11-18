@@ -2,6 +2,32 @@
 
 ## November 18 capture, input and shutdown prerequisites
 
+Browser startup fix `8fd08ea3b` adds `--bw-timezone=Etc/UTC` to the private
+browser helper. A traced BetterChromium timezone network probe had consumed
+the 15-second launch bound; explicit UTC passed with that bound unchanged.
+The same author's real production browser Worker passed malformed-record,
+queued CLOSE, same-ID replacement and STOP checks, including pixels, canaries,
+barriers and target destruction. This is browser evidence, distinct from the
+earlier Node Worker result. The coordinator reviewed two original software
+Tunnel frames with changed geometry. Ordinary title close was observed, but
+native-exit logging and individual Chrome/display waits were lost after a
+harness failure; absent PIDs and supervisor cleanup do not fill those gaps.
+Initial black output changed after an inspection resized the viewport and an
+ordinary focus gesture, so no isolated renderer fix is established. The run
+also records disk-floor breaches. Neither full-27 nor crash freedom follows.
+Evidence: `scratch/runs/20261118-d3dim-browser-startup-cause-shutdown-original/result.json`.
+
+ReVolt report `e8feff64f` reached manually selected Single Race, RC Bandit and
+Toys in the Hood 1. The coordinator reviewed the actual car and race HUD:
+lap 1/3, eighth place and 2 mph. Nine navigation gestures had matching
+independent neutral releases. Disk reserve permanently closed the scope before
+the first acceleration command, so 2 mph is not credited as player driving.
+Acceleration, steering/checkpoint consequence and ordinary Quit remain open.
+The earlier unnamed overlapping DIV did not recur and its identity remains
+unknown; no production visibility repair is claimed. Runtime samples stayed
+above the floor, but prelaunch and lifetime compliance gaps remain recorded.
+Evidence: `scratch/runs/20261118-revolt-startup-dom-obstruction-manual-race/result.json`.
+
 Published `f6962ba5b` corrects capture-request freshness for a retained static
 display. A real browser receipt with a 32.761-second-old publication and a
 43-ms-old request fails the old validator and passes the new one. Old requests
