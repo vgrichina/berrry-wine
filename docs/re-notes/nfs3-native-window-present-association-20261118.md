@@ -37,6 +37,39 @@ same regression. Separate browser pressure controls and exact module recovery
 are recorded in the evidence; whole authored blue/white controls were reviewed
 as control pixels, without claiming game progress or observer neutrality.
 
+The runtime repair was published as `1fe5e1baf` after the focused tests and
+locked full build. Exact recovery of the old 7d347 module was verified before
+applying only the producer delta, producing `b8c8fa6c`. Both exact-module
+light/pressure browser controls completed 60 presents with 62 valid sync
+observations each and zero mismatched DIBs. All six authored whole PNGs are
+byte-identical; this establishes control pixel equivalence, not game progress.
+
+The one fresh registered original used the frozen c9 source, genuine chooser,
+135 verified media files, published wait-source correction and b8c8 native
+repair. Actual Worker module inventories were read back. At 11 and 234 presents
+the native window-present association was positive with matching primary DIB,
+creator, window and CPU stamp. Its whole reviewed page was still white below
+the host strip. No binder or physical DOWN/UP was used. The remaining white
+composition cause was not established by these snapshots.
+
+The attached submitting process then disappeared, its independent watchdog
+reported parent disconnection, and the native supervisor received SIGTERM.
+The sender is UNKNOWN; the coordinator explicitly reported sending no signal.
+The native receipt records cleanup without leaked descendants, and the tool
+wait returned 143, but the dead outer controller did not retain its intended
+watchdog/browser waits. This scope remains closed, with that evidence limit.
+
+A preparation correction puts the existing driver and native supervisor under
+a detached custodian. It retains actual native/watchdog waits and both EOFs,
+with the same 900/920-second limits, 180-second Quit reserve and disk floor.
+Real process controls show attached-owner TERM closing the native/browser
+before an authored WASM result, while loss of the detached launcher's submitting
+process under TERM and KILL allows the browser to execute native WASM and
+finish normally. These controls do not identify the original signal sender.
+The driver, guest runtime, input confirmation/review/freshness fences and
+independent physical release path are unchanged.
+
 Original driving, Pause/Continue and ordinary Quit will be reported only from
-the authorized fresh original after tested publication. No earlier screenshot
-or scope supplies those claims.
+the affected additional original after this preparation correction is tested
+and published. Neither the closed scope nor an earlier screenshot supplies
+those claims.
