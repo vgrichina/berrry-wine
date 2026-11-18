@@ -287,6 +287,24 @@ diagnostic targets the missing command-mix and phase evidence.
 [Repairs and original limits](re-notes/gltron-continuous-capture-release-arm-gameplay-20261117.md);
 [phase evidence and attribution limits](re-notes/gltron-native-user-context-dequeue-latency-20261117.md).
 
+## November 18 Blood II preparation and level-entry limit
+
+The [frozen preparation repair](re-notes/blood2-frozen-renderer-dependency-repair-combat-20261118.md),
+code `2ffa7f555` and report `c277a06fb`, restores the missing `pngjs` dependency.
+Same-loader native main/Worker tests construct the renderer and capture whole
+PNGs; missing-dependency, startup/cancel, terminal closure and locked-build
+checks passed. One original on module `7d347a6a…` rendered menus through the
+Demo Level1 card. The coordinator reviewed the whole Homicide and level-card
+images. Three Enter gestures were consumed; the fourth missed its unchanged
+500-ms confirmation deadline and permanently closed the scope. Independent UP
+was acknowledged. In-level movement/fire, enemy consequence and ordinary Quit
+remain unproved on this run. The launch tool exited143; native/watchdog wait
+records and buffered logs are missing, with sender unknown. Known PIDs and the
+listener were absent; this does not reconstruct the missing waits. All98 media
+files and the manifest matched. A fresh worker investigates level-entry input
+and durable supervision; earlier gameplay below remains separate evidence.
+Evidence: `scratch/runs/20261118-blood2-frozen-renderer-dependency-repair-combat/result.json`.
+
 ## November 12 current original-game progress
 
 | App | Software | WebGL | Native outcome | Evidence |
