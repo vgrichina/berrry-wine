@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-thread-host.js",
+      "name": "host-file",
+      "baseSHA256": "bdd69751bbdb96beed36e2ddc6c96261ccf2a0ab0dc2de58dcb6fd2586938a8e",
+      "sha256": "404e0a8da6fd363afdc522ec2956be5c54f0dbc680194cac0e3bfaf08602ab99",
+      "reason": "Opt-in synchronous frame trace only: at most 256 frames per host with first8/last8 scalar progress samples, request IDs held weakly, branch and yield counts, endpoint generation/frame/wait epochs and outcome. No guest read/command, callback admission, scheduling, wait, resume, abort, limit, receiver/result/error or ownership semantics changed. Sink exceptions isolated and copied scalar data only. Real Worker/local nested completion/failure and stale/blocked/unarmed controls pass. General ownership remains pending. Run 20261118-aow2-send-callback-frame-cause."
+    }
+  ]
+}
