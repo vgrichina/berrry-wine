@@ -4349,3 +4349,32 @@ is recorded separately from canonical served-source pins. Backend parity, audio,
 FPS and the complete historical27-app result remain unproved.
 
 Evidence: `scratch/runs/20261118-rockroll-current-webgl-natural-motion/result.json`.
+
+## GLTron browser turns, round outcome and ordinary Quit — 18 November 2026
+
+[Browser gameplay report](re-notes/gltron-current-browser-turns-round-20261118.md),
+published as `d08044e4a`, records the original registered game on pinned published
+`44221dc3875` / module `9862d124…`, through ordinary guest/render Workers and
+browser WebGL. All 92 registered media hashes match. Later shared main changes
+were excluded from this immutable run. No production code was changed.
+
+The coordinator reviewed whole initial-arena, first-corner, second-corner and
+outcome frames. In one round, A turns the intact yellow cycle's trail upward;
+S adds a rightward segment and second corner. Trusted browser key edges, actual
+native input-dequeue logs, independently armed releases and all-up renderer keys
+accompany these consequences. Resume without further steering ends with PLAYER 3
+WINS and player 1 crashed. Ordinary Quit opens credits; Escape then produces a
+retained owning-process exit0 before host browser close. The transitional title
+image named paused-baseline is explicitly excluded from arena proof.
+
+Focused controller/capture checks passed. The report retains its historical
+shared-build refusal; the callback gate later passed. Successful browser,
+display and release children have actual waits and both pipe EOFs, and the native
+supervisor records child exit0/no leaks. Outer-launcher waits were not retained;
+direct log descriptors do not provide pipe EOF evidence. An earlier controller
+exit1 remains unexplained, with supervisor cleanup recorded separately. Neither
+those gaps nor closed diagnostics are promoted into successful gameplay evidence.
+This proves the named browser controls, outcome and ordinary Quit, without a
+complete 27-app, backend-parity, FPS, audio or game-completion claim.
+
+Evidence: `scratch/runs/20261118-gltron-current-browser-turns-round/result.json`.
