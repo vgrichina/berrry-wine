@@ -4550,3 +4550,29 @@ These named gameplay results do not establish terrain correctness, backend
 parity, full 27-app coverage, FPS or audio.
 
 Evidence: `scratch/runs/20261118-aow2-worker-identity-boundary-map-progress/result.json`.
+
+## Hexen II actual software browser encounter — 18 November 2026
+
+[Software encounter report](re-notes/hexen2-software-living-enemy-consequence-20261118.md),
+published as `a5bff2fa9`, uses clean Git `0b55b3c2f`, authenticated guest/render
+module `a6002d5d…` and 18 unchanged media/control references. The actual selector
+is `gl-gps=software`; natural completed receipts have positive `nativeDraws`,
+`nativeBytes` and `presents` from the WAT rasterizer. The software result is
+supported by execution evidence as well as the selector.
+
+The coordinator reviewed whole courtyard, ramp-advance and close-spider frames.
+The player starts upright at health 85, advances into the chamber and receives
+incoming damage, reaching health 5 with two spiders visible. Mouse1 has a
+trusted window-capture DOWN/UP pair and physical state 0. Its DOWN arrives
+11.906 seconds after the health-5 frame; the following view is death/loading.
+A living attack, enemy hit and kill remain unproved. The window-capture ledger
+explains the current document-ledger omission without recovering the earlier
+WebGL run's missing event record. CTRL remains the registered crouch binding.
+
+Ordinary menu Quit/Y produces process exit 0 before cleanup. This adds a named
+software gameplay/exit result alongside the separate WebGL run. Backend parity,
+enemy damage, full 27-app coverage, FPS and audio remain unqualified. No new
+runtime repair is claimed; the report retains failed-control, command timing
+and cleanup limitations with their actual receipts.
+
+Evidence: `scratch/runs/20261118-hexen2-software-living-enemy-consequence/result.json`.
