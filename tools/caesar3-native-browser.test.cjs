@@ -9,26 +9,26 @@ const R=process.env.EVIDENCE_DIR;assert(R,'set EVIDENCE_DIR to an owned run dire
 fs.mkdirSync(R,{recursive:true});
 const sha=crypto.createHash('sha256').update(source).digest('hex');
 async function fixture(){
- const out=path.join(R,'owned-child');fs.mkdirSync(out);fs.mkdirSync(out+'/profile');
+ const out=path.join(R,'owned-child');fs.mkdirSync(out);const transient=require('./browser-transients.cjs').create();
  const save=(n,v)=>fs.writeFileSync(out+'/'+n,JSON.stringify(v,null,2));
  const server=http.createServer((q,s)=>s.end('owned fixture'));await new Promise(r=>server.listen(0,'127.0.0.1',r));const port=server.address().port;
- const browser=cp.spawn('/usr/bin/google-chrome',['--headless=new','--no-sandbox','--disable-dev-shm-usage','--no-first-run','--remote-debugging-port=0','--user-data-dir='+out+'/profile','about:blank'],{stdio:['ignore','pipe','pipe']});
+ const browser=cp.spawn('/usr/bin/google-chrome',[...require('./browser-component-update-args.cjs'),...transient.args,'--disable-background-networking','--headless=new','--no-sandbox','--disable-dev-shm-usage','--no-first-run','--remote-debugging-port=0','about:blank'],{env:transient.env(),stdio:['ignore','pipe','pipe']});
  let stdout='',stderr='';browser.stdout.on('data',b=>stdout+=b);browser.stderr.on('data',b=>stderr+=b);
- const joined=new Promise(r=>browser.once('close',(code,signal)=>{save('chrome-join.json',{pid:browser.pid,code,signal,actualChildClose:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded});r();}));
+ const joined=transient.watch(browser).then(receipt=>save('chrome-join.json',{...receipt,actualChildClose:true}));
  let ws;try{
-  const active=out+'/profile/DevToolsActivePort';for(let i=0;i<150&&!fs.existsSync(active);i++){assert(browser.exitCode===null);await wait(100);}
+  const active=transient.profile+'/DevToolsActivePort';for(let i=0;i<150&&!fs.existsSync(active);i++){assert(browser.exitCode===null);await wait(100);}
   const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n');ws=new WebSocket('ws://127.0.0.1:'+dp+wp);await new Promise((r,j)=>{ws.onopen=r;ws.onerror=j;});
   let id=0;const pending=new Map(),effects=[];ws.onmessage=e=>{const v=JSON.parse(e.data),p=pending.get(v.id);if(p){pending.delete(v.id);clearTimeout(p.t);v.error?p.reject(Error(JSON.stringify(v.error))):p.resolve(v.result);}};
   const send=(method,params,session)=>{effects.push(method);assert.equal(method,'Browser.close');assert.equal(session,null);return new Promise((resolve,reject)=>{const n=++id,t=setTimeout(()=>{pending.delete(n);reject(Error('UNKNOWN Browser.close'));},30000);pending.set(n,{resolve,reject,t});ws.send(JSON.stringify({id:n,method,params}));});};
-  const compile=new Function('assert','fs','out','browser','server','ws','pending','send','save','wait','joined',`let closing=false;const deadline=Date.now()-1000,teardownDeadline=Date.now()+60000;${close};browserJoin=joined;${action};return {action,close};`);
-  const f=compile(assert,fs,out,browser,server,ws,pending,send,save,wait,joined);
+  const compile=new Function('assert','fs','out','browser','server','ws','pending','send','save','wait','joined','transient',`let closing=false;const deadline=Date.now()-1000,teardownDeadline=Date.now()+60000;${close};browserJoin=joined;${action};return {action,close};`);
+  const f=compile(assert,fs,out,browser,server,ws,pending,send,save,wait,joined,transient);
   await assert.rejects(f.action({action:'click',x:1,y:1}),/assert|false/i);assert.deepEqual(effects,[]);
   save('late-input.json',{refused:true,zeroEffects:effects.length===0});
   await f.action({action:'quit'});await f.close('second waiter');
-  assert.deepEqual(effects,['Browser.close']);assert.equal(browser.exitCode,0);assert.equal(browser.signalCode,null);assert(!server.listening);assert(!fs.existsSync(out+'/profile'));
+  assert.deepEqual(effects,['Browser.close']);assert.equal(browser.exitCode,0);assert.equal(browser.signalCode,null);assert(!server.listening);assert(!fs.existsSync(transient.root));
   const closed=JSON.parse(fs.readFileSync(out+'/closed.json'));assert(closed.actualChildClose);
   save('result.json',{passed:true,sourceSHA256:sha,port,chromePid:browser.pid,effects,lateGameplayRefused:true,closed});
- }finally{if(browser.exitCode===null&&browser.signalCode===null)browser.kill('SIGKILL');await joined;ws?.close();if(server.listening)await new Promise(r=>server.close(r));fs.writeFileSync(out+'/chrome.stdout',stdout);fs.writeFileSync(out+'/chrome.stderr',stderr);}
+ }finally{if(browser.exitCode===null&&browser.signalCode===null)browser.kill('SIGKILL');await joined;await transient.cleanup(out);ws?.close();if(server.listening)await new Promise(r=>server.close(r));fs.writeFileSync(out+'/chrome.stdout',stdout);fs.writeFileSync(out+'/chrome.stderr',stderr);}
 }
 async function controls(){
  const rows=[];

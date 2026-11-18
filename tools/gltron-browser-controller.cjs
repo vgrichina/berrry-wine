@@ -152,6 +152,7 @@ async function browser(out,backend) {
   const launch=JSON.parse(fs.readFileSync(out+'/launch.json'));
   const pins=JSON.parse(fs.readFileSync(out+'/pins.json'));
   for(const p of pins.files)assert.equal(sha(fs.readFileSync(ROOT+'/'+p.path)),p.sha256,p.path);
+  let transient;
   let server,browser,chromeWait,c,session,chain,latest,bound,cutoffTimer,closing=false,phase=false;
   const workers=new Map(),tasks=[];
   const record=(n,v)=>save(out,n,v),log=(n,v)=>fs.appendFileSync(out+'/'+n,JSON.stringify(v)+'\n');
@@ -179,7 +180,7 @@ async function browser(out,backend) {
     if(closing)return;closing=true;clearTimeout(cutoffTimer);record('close-reason.json',{reason,at:Date.now(),hostOnly:true});
     if(c)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
     if(browser){let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),5000);})]);}catch(e){browser.kill('SIGTERM');await chromeWait;}finally{clearTimeout(timer);}}
-    c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));fs.rmSync(out+'/profile',{recursive:true,force:true});record('closed.json',{at:Date.now(),nativeQuitClaim:false});
+    c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));if(transient)record('transient-cleanup.json',await transient.cleanup(out));record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
   try {
     if(backend!=='controls')cutoffTimer=setTimeout(()=>{phase=true;if(!fs.existsSync(out+'/quit-phase.json'))record('quit-phase.json',{at:Date.now(),cutoff:gameplayCutoff(launch),irreversible:true,reason:'mechanical 180s Quit reserve; no automatic input'});},Math.max(0,gameplayCutoff(launch)-Date.now()));
@@ -188,12 +189,13 @@ async function browser(out,backend) {
     const port=server.address().port;
     for(const p of pins.http){const r=await fetch('http://127.0.0.1:'+port+p.url);assert.equal(r.status,200);assert.equal(sha(Buffer.from(await r.arrayBuffer())),p.sha256);}
     record('http-dependency-check.json',{passed:true,pins:pins.http});
-    browser=cp.spawn('/usr/bin/google-chrome',[...require('./browser-component-update-args.cjs'),'--headless=new','--no-sandbox','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--window-size=1024,900','--remote-debugging-port=0','--user-data-dir='+out+'/profile','about:blank'],{stdio:['ignore','pipe','pipe']});
+    transient=require('./browser-transients.cjs').create();record('transient-paths.json',{root:transient.root,profile:transient.profile,tmp:transient.tmp,cache:transient.cache});
+    browser=cp.spawn('/usr/bin/google-chrome',[...require('./browser-component-update-args.cjs'),'--headless=new','--no-sandbox','--no-first-run','--no-default-browser-check','--disable-dev-shm-usage','--enable-unsafe-swiftshader','--window-size=1024,900','--remote-debugging-port=0',...transient.args,'about:blank'],{env:transient.env(),stdio:['ignore','pipe','pipe']});
     const stdout=fs.createWriteStream(out+'/chrome.stdout',{flags:'wx'}),stderr=fs.createWriteStream(out+'/chrome.stderr',{flags:'wx'});browser.stdout.pipe(stdout);browser.stderr.pipe(stderr);
-    chromeWait=new Promise(r=>browser.once('close',(code,signal)=>{record('chrome-wait.json',{pid:browser.pid,code,signal,actualWait:true,stdoutEOF:browser.stdout.readableEnded,stderrEOF:browser.stderr.readableEnded,at:Date.now()});r();}));
+    chromeWait=transient.watch(browser,[stdout,stderr]).then(receipt=>{record('chrome-wait.json',{...receipt,at:Date.now()});return receipt;});
     const stat=fs.readFileSync('/proc/'+browser.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
     record('browser-pid.json',{pid:browser.pid,startToken,port,at:Date.now()});
-    const active=out+'/profile/DevToolsActivePort';for(let n=0;n<100&&!fs.existsSync(active);n++){assert(browser.exitCode===null);await wait(100);}
+    const active=transient.profile+'/DevToolsActivePort';for(let n=0;n<100&&!fs.existsSync(active);n++){assert(browser.exitCode===null);await wait(100);}
     const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n'),url='ws://127.0.0.1:'+dp+wp;c=connection(url);await c.ready;
     record('endpoint.json',{url,pid:browser.pid,startToken});
     c.event=v=>{
