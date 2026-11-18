@@ -68,6 +68,9 @@ function reviewSeconds(p,scene){
 function reviewAdmission(now,targeting,p){
  return Number.isFinite(now)&&Number.isFinite(targeting)&&now+p.confirmationMs/1000<targeting;
 }
+function durationAdmission(p,ms){
+ return Number.isInteger(ms)&&ms>=80&&ms<=1000&&p.confirmationMs+ms<p.fallbackMs;
+}
 function proof(r,{owner,nonce,deadline,key,sentAt,hwnd,threadId,pointer}){
  assert.equal(r.state,'CONSUMED');assert.equal(r.consumed,true);
  for(const k of ['owner','epoch'])assert.equal(r[k],owner[k]);assert.equal(r.nonce,nonce);assert.equal(r.deadline,deadline);
@@ -98,6 +101,10 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
  if(pointer){assert(key===undefined);assert(['mousemove','mousedown'].includes(pointer.action));assert(Number.isInteger(pointer.x)&&Number.isInteger(pointer.y));}
  else assert(Number.isInteger(key)&&key>=1&&key<=254);
  assert(observation?.trim());a.opened();const launch=a.read('launch.json'),p=policy(launch.menuInputPolicy);
+ if(!durationAdmission(p,ms)){
+  a.save(name+'-rejection.json',{at:c.now(),state:'NOT_SENT',effects:false,ms,policy:p,reason:'pulse cannot fit preselected fallback'});
+  return 'NOT_SENT: pulse cannot fit preselected fallback';
+ }
  const start=c.now(),end=start+p.operationMs/1000,intent=route?'quit':'gameplay';
  const enforce=()=>{
   if(!pointer)return a.policy(intent,['keydown:'+key],review,route,end);
@@ -151,5 +158,5 @@ async function pulse({name,key,pointer=null,scene='menu',ms=300,review,observati
   const image=await a.capture(name,end);assert.equal(a.read(name+'.json').snapshot.physicalUp,true);return image;
  }catch(e){a.fail(e,name);throw e;}
 }
-module.exports={fixture,policy,reviewSeconds,reviewAdmission,proof,pulse,release};
+module.exports={fixture,policy,reviewSeconds,reviewAdmission,durationAdmission,proof,pulse,release};
 if(require.main===module&&process.argv[2]==='release')release(process.argv[3],process.argv[4],process.argv[5],process.argv[6],Number(process.argv[7]),Number(process.argv[8])).catch(e=>{console.error(e);process.exitCode=1;});

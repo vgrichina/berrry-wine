@@ -24,9 +24,14 @@ async function main(out,frameMs=800,confirmationMs=5000){
   await a.capture('main');const rr=a.read('main.json');a.save('main-review.json',{at:c.now(),pngSHA256:rr.pngSHA256,scene:'menu',wholeFrame:true,targetHwnd:rr.snapshot.focus,observation:'Authored diagnostic fixture; no original game review claimed'});await a.bind('main');
   if(process.env.DRAKAN_MENU_FIXED==='1'){
    const pointer=process.env.DRAKAN_MENU_POINTER==='1';
+   if(process.env.DRAKAN_DURATION_REJECTION==='1'){
+    const refused=await require('../tools/drakan-menu-input.cjs').pulse({name:'too-long',key:38,ms:1000,review:'main',scene:'menu',observation:'Authored duration admission control'});
+    assert.match(refused,/NOT_SENT/);assert.equal(a.read('too-long-rejection.json').effects,false);
+    assert(!fs.existsSync(path.join(out,'too-long-dispatch.json')));assert(!fs.existsSync(path.join(out,'terminal-input-failure.json')));
+   }
    const delay=Number(process.env.DRAKAN_REVIEW_DELAY_MS||0);assert(Number.isInteger(delay)&&delay>=0&&delay<=21000);
    if(delay){await a.capture('aged');await c.sleep(delay);}
-   const outcome=await require('../tools/drakan-menu-input.cjs').pulse({name:'enter',...(pointer?{pointer:{action:'mousedown',x:300,y:300}}:{key:13}),review:delay?'aged':'main',scene:delay?'game':'menu',observation:'Authored diagnostic native USER/DirectInput control; no original claim'});
+   const outcome=await require('../tools/drakan-menu-input.cjs').pulse({name:'enter',ms:process.env.DRAKAN_DURATION_REJECTION==='1'?700:300,...(pointer?{pointer:{action:'mousedown',x:300,y:300}}:{key:13}),review:delay?'aged':'main',scene:delay?'game':'menu',observation:'Authored diagnostic native USER/DirectInput control; no original claim'});
    if(process.env.DRAKAN_EXPECT_REVIEW_REFUSAL==='1'){
     assert.match(outcome,/NOT_SENT/);assert.equal(a.read('enter-rejection.json').effects,false);
     assert(!fs.existsSync(path.join(out,'enter-dispatch.json')));assert(!fs.existsSync(path.join(out,'terminal-input-failure.json')));
@@ -110,6 +115,8 @@ async function unit(){
  assert.equal(h.reviewAdmission(12.5,15,p),false);
  assert.equal(h.reviewAdmission(12.499,15,p),true);
  assert.equal(h.reviewAdmission(NaN,15,p),false);
+ assert.equal(h.durationAdmission(p,1000),false);assert.equal(h.durationAdmission(p,700),true);
+ for(const ms of [Infinity,NaN,79,1001,300.5])assert.equal(h.durationAdmission(p,ms),false);
  assert.equal(h.reviewSeconds(p,'game'),15);
  const calibrated={...p,gameFreshnessSeconds:60,menuFreshnessSeconds:90};
  assert.equal(h.reviewSeconds(calibrated,'game'),60);assert.equal(h.reviewSeconds(calibrated,'menu'),90);

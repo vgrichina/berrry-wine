@@ -137,3 +137,21 @@ receipt and independent UP. Normal browser USER/DirectInput controls, receipt
 negatives and scene identity/staleness negatives pass. No ACK deadline was
 increased based on the original cancellation. Locked build passed before
 publication and affected original retry.
+
+The affected retry passes the previously cancelled Escape with a660ms native
+receipt and UP. The first close-up was misidentified: its later zoom reveals
+illustrated dragon story artwork, not Rynn or level geometry. A correction is
+retained without rewriting the input reviews. Escape opens/closes the real
+menu over that story; an ArrowUp pulse there is not movement evidence. A
+separately reviewed ordinary Enter reaches the actual mounted rainy outdoor
+level, with ridge/conifers, river, bridge and health/HUD visible.
+
+A subsequent requested1000ms movement was rejected by a helper assertion
+before DOWN: its advertised80..1000ms range conflicted with2500ms confirmation
+and3500ms fallback requiring strict spare time. No movement input was sent;
+this was a deterministic preparation error, not native UNKNOWN. That scope
+was closed and retained actual native/watch EOFs. Duration admission now
+returns NOT_SENT before arming for an incompatible pulse. Unit strict-boundary
+negatives and a fresh authored native1000ms refusal followed by a700ms
+consumed/independently released pulse qualify the correction before another
+affected original. The confirmation/fallback deadlines are unchanged.
