@@ -47,6 +47,12 @@ const WAT = String.raw`
    (call $win32_dispatch (i32.div_u
      (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
    (i32.load (global.get $reg_base)))
+ ;; The producer's texture-cache bucket (byte offset in its block) of the
+ ;; texture the last draw sampled on unit 0: equal for two textures that
+ ;; compete for the same cache entries.
+ (func (export "probe_tex_bucket") (result i32)
+   (i32.sub (call $glg_tex_slot (load.field DxObject misc1 (global.get $gl_sw_r_tex)))
+     (global.get $glg_mem)))
  (func (export "probe_window") (param $hwnd i32) (param $w i32) (param $h i32)
    (call $wnd_table_set (local.get $hwnd) (i32.const 0))
    (call $client_rect_set (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)))`;
