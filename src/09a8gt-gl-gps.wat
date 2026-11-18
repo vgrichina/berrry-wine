@@ -91,7 +91,8 @@
   ;; Block $glg_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +1024 shader cache 64 x {key, id}, +1536 sampler cache
   ;; 32 x {key, border, id, -}, +2048 IR buffer, +4096 texture cache
-  ;; 1024 x {wa, id, w, h, valid, -, -, -} hashed by texel address.
+  ;; 512 sets x 2 ways x {wa, id, w, h, valid, stamp, -, -} hashed by
+  ;; texel address.
 
   (global $GLG_MEM_SIZE i32 (i32.const 36864))
   (global $GLG_BATCH i32 (i32.const 3072))
@@ -145,6 +146,14 @@
   (global $glg_b_fog (mut i32) (i32.const 0))
   (global $glg_b_env0 (mut i32) (i32.const 0))
   (global $glg_b_env1 (mut i32) (i32.const 0))
+  ;; The unit-0 texture and sampler ids of the primitive being classified,
+  ;; set while $glg_prim looks up unit 1: the BIND it is about to emit
+  ;; names them, so the texture and sampler caches must not evict them.
+  ;; 0 outside that window.
+  (global $glg_keep_tex (mut i32) (i32.const 0))
+  (global $glg_keep_smp (mut i32) (i32.const 0))
+  ;; Texture cache recency stamp (entry +20).
+  (global $glg_tex_tick (mut i32) (i32.const 0))
   ;; Emitted-state caches.
   (global $glg_c_color (mut i32) (i32.const -1))
   (global $glg_c_depth (mut i32) (i32.const -1))
@@ -1106,8 +1115,15 @@
     (store.field GpsSampler border (local.get $p) (local.get $border))
     (drop (call $glg_end (local.get $p)))
     ;; Round-robin replacement; slot 31 rotates so a stale id is released.
+    ;; Never the unit-0 sampler of the primitive whose unit-1 sampler this
+    ;; is: its BIND has yet to be emitted.
     (local.set $i (i32.and (local.get $id) (i32.const 31)))
     (local.set $e (i32.add (i32.add (global.get $glg_mem) (i32.const 1536)) (i32.shl (local.get $i) (i32.const 4))))
+    (if (i32.and (i32.ne (global.get $glg_keep_smp) (i32.const 0))
+          (i32.eq (i32.load offset=8 (local.get $e)) (global.get $glg_keep_smp)))
+      (then
+        (local.set $i (i32.and (i32.add (local.get $i) (i32.const 1)) (i32.const 31)))
+        (local.set $e (i32.add (i32.add (global.get $glg_mem) (i32.const 1536)) (i32.shl (local.get $i) (i32.const 4))))))
     (if (i32.load offset=8 (local.get $e)) (then
       (if (i32.and (i32.eq (global.get $glg_c_s0) (i32.load offset=8 (local.get $e))) (i32.ne (global.get $glg_c_bind) (i32.const 0)))
         (then (global.set $glg_c_bind (i32.const 0))))
@@ -1182,9 +1198,10 @@
     (call $glg_stat (i32.const 64) (i32.const 1)))
 
   ;; ---- textures --------------------------------------------------------------
+  ;; The first of the two ways of $wa's set; the second is 32 bytes on.
   (func $glg_tex_slot (param $wa i32) (result i32)
     (i32.add (i32.add (global.get $glg_mem) (i32.const 4096))
-      (i32.shl (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 22)) (i32.const 5))))
+      (i32.shl (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 23)) (i32.const 6))))
 
   ;; Texels at $wa changed (09a8g/09a8b texel writers call this).
   (func $glg_tex_dirty (param $wa i32)
@@ -1192,7 +1209,30 @@
     (if (i32.eqz (global.get $glg_mem)) (then (return)))
     (local.set $e (call $glg_tex_slot (local.get $wa)))
     (if (i32.eq (i32.load (local.get $e)) (local.get $wa))
-      (then (i32.store offset=16 (local.get $e) (i32.const 0)))))
+      (then (i32.store offset=16 (local.get $e) (i32.const 0))))
+    (if (i32.eq (i32.load offset=32 (local.get $e)) (local.get $wa))
+      (then (i32.store offset=48 (local.get $e) (i32.const 0)))))
+
+  ;; The way of the set at $set that a new texture takes: an empty one, else
+  ;; one holding $wa at stale dimensions, else the least recently used --
+  ;; never the one holding $glg_keep_tex (the unit-0 texture of the
+  ;; primitive whose unit-1 texture is being made: releasing it would leave
+  ;; that primitive's BIND naming a released id).
+  (func $glg_tex_victim (param $set i32) (param $wa i32) (result i32)
+    (local $b i32) (local $ka i32) (local $kb i32)
+    (local.set $b (i32.add (local.get $set) (i32.const 32)))
+    (local.set $ka (i32.and (i32.ne (global.get $glg_keep_tex) (i32.const 0))
+      (i32.eq (i32.load offset=4 (local.get $set)) (global.get $glg_keep_tex))))
+    (local.set $kb (i32.and (i32.ne (global.get $glg_keep_tex) (i32.const 0))
+      (i32.eq (i32.load offset=4 (local.get $b)) (global.get $glg_keep_tex))))
+    (if (local.get $ka) (then (return (local.get $b))))
+    (if (local.get $kb) (then (return (local.get $set))))
+    (if (i32.eqz (i32.load offset=4 (local.get $set))) (then (return (local.get $set))))
+    (if (i32.eqz (i32.load offset=4 (local.get $b))) (then (return (local.get $b))))
+    (if (i32.eq (i32.load (local.get $set)) (local.get $wa)) (then (return (local.get $set))))
+    (if (i32.eq (i32.load (local.get $b)) (local.get $wa)) (then (return (local.get $b))))
+    (select (local.get $b) (local.get $set)
+      (i32.lt_s (i32.sub (i32.load offset=20 (local.get $b)) (i32.load offset=20 (local.get $set))) (i32.const 0))))
 
   ;; 0, or the decline reason a texture surface earns.
   (func $glg_tex_ok (param $entry i32) (result i32)
@@ -1216,6 +1256,17 @@
     (local.set $w (load.field DxObject width (local.get $entry)))
     (local.set $hgt (load.field DxObject height (local.get $entry)))
     (local.set $e (call $glg_tex_slot (local.get $wa)))
+    (if (i32.eqz (i32.and (i32.eq (i32.load (local.get $e)) (local.get $wa))
+          (i32.and (i32.eq (i32.load offset=8 (local.get $e)) (local.get $w))
+                   (i32.eq (i32.load offset=12 (local.get $e)) (local.get $hgt)))))
+      (then
+        (if (i32.and (i32.eq (i32.load offset=32 (local.get $e)) (local.get $wa))
+              (i32.and (i32.eq (i32.load offset=40 (local.get $e)) (local.get $w))
+                       (i32.eq (i32.load offset=44 (local.get $e)) (local.get $hgt))))
+          (then (local.set $e (i32.add (local.get $e) (i32.const 32))))
+          (else (local.set $e (call $glg_tex_victim (local.get $e) (local.get $wa)))))))
+    (global.set $glg_tex_tick (i32.add (global.get $glg_tex_tick) (i32.const 1)))
+    (i32.store offset=20 (local.get $e) (global.get $glg_tex_tick))
     (if (i32.and (i32.eq (i32.load (local.get $e)) (local.get $wa))
           (i32.and (i32.eq (i32.load offset=8 (local.get $e)) (local.get $w))
                    (i32.eq (i32.load offset=12 (local.get $e)) (local.get $hgt))))
@@ -1589,6 +1640,10 @@
       (local.set $env0 (call $glg_env (i32.const 0)))))
     (if (local.get $t1) (then
       (local.set $lin (i32.ne (global.get $rast_t1_linear) (i32.const 0)))
+      ;; Unit 0's texture and sampler are already chosen for this BIND:
+      ;; making unit 1's must not release them.
+      (global.set $glg_keep_tex (local.get $t0id))
+      (global.set $glg_keep_smp (local.get $s0))
       (local.set $t1id (call $glg_tex (global.get $rast_t1_entry)))
       (local.set $s1 (if (result i32) (call $gl_1d_selected (i32.const 1))
         (then (call $glg_1d_sampler (i32.const 1)))
@@ -1596,6 +1651,8 @@
           (call $glg_addr (global.get $rast_t1_addr_u) (local.get $lin))
           (call $glg_addr (global.get $rast_t1_addr_v) (local.get $lin))
           (local.get $lin) (global.get $rast_t1_border)))))
+      (global.set $glg_keep_tex (i32.const 0))
+      (global.set $glg_keep_smp (i32.const 0))
       (local.set $key (i32.or (local.get $key) (i32.or (i32.const 64) (i32.or (i32.shl (call $glg_mode (i32.const 1)) (i32.const 7))
         (i32.shl (call $glg_base (i32.const 1)) (i32.const 9))))))
       (if (global.get $glg_q1_bad) (then (local.set $key (i32.or (local.get $key) (i32.const 0x4000)))))

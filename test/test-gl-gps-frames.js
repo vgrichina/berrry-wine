@@ -13,6 +13,11 @@
 //   3. Stencil: the first stencil draw declines (4: the executor's depth
 //      target is D16 and holds no stencil); the next full depth+stencil clear
 //      makes it D24S8 and the stencil frame runs on the GPU.
+//   4. Multitexture with two textures that hash to the same producer
+//      texture-cache bucket (Quake 3 q3dm1 on the WebGL/null executors,
+//      2026-11-18): making unit 1's executor texture must not release unit
+//      0's, which the primitive's BIND then names ("BIND ...: slot 0
+//      texture N was never created or was released").
 const assert = require('assert');
 const { bothArms, bootGlGps } = require('./helpers/gl-gps-context');
 
@@ -225,5 +230,69 @@ const ALL = 0x4000 | 0x100 | 0x400;
     assert.strictEqual(per[3].gpuFrames - per[2].gpuFrames, 1, 'a later stencil frame runs on the GPU');
     assert.strictEqual(per[3].declines, per[2].declines, 'and declines nothing');
     console.log(`PASS stencil: declined first, then on the GPU (worst=${r.cmp.worst})`);
+  }
+  // 4. Unit 0's executor texture survives the cache eviction unit 1's makes.
+  {
+    const TEX2D = 0xde1, T0 = 0x84c0, T1 = 0x84c1, N = 96, BASE = 100;
+    const make = (g, name) => {
+      const px = g.e.guest_alloc(64) >>> 0, v = new Uint8Array(g.memory.buffer, g.wa(px), 64);
+      for (let i = 0; i < 16; i++) v.set([(name * 53 + i * 37) & 255, (name * 29 + i * 91) & 255, (name * 71 + i * 15) & 255, 255], i * 4);
+      g.call('glBindTexture', [TEX2D, name]);
+      g.call('glTexImage2D', [TEX2D, 0, 0x1908, 4, 4, 0, 0x1908, 0x1401, px]);
+      g.call('glTexParameteri', [TEX2D, 0x2801, 0x2600]);
+      g.call('glTexParameteri', [TEX2D, 0x2800, 0x2600]);
+    };
+    // N textures, each drawn once on unit 0: name -> producer cache bucket.
+    // The same calls on every boot, so the texel addresses (and buckets) of
+    // the probe run are the ones the scene's producer arm gets.
+    const fill = g => {
+      const bucket = new Map();
+      g.clear([0, 0, 0, 1], ALL);
+      g.call('glEnable', [TEX2D]);
+      for (let k = 0; k < N; k++) {
+        make(g, BASE + k);
+        g.quad(-1, -1, 1, 1, [1, 1, 1, 1], { t: [[0, 0], [1, 0], [1, 1], [0, 1]] });
+        bucket.set(BASE + k, g.e.probe_tex_bucket());
+      }
+      return bucket;
+    };
+    const probe = await bootGlGps();
+    const seen = new Map(), buckets = fill(probe);
+    let pair = null;
+    for (const [name, b] of buckets) {
+      if (seen.has(b)) { pair = [seen.get(b), name]; break; }
+      seen.set(b, name);
+    }
+    assert.ok(pair, `two of ${N} textures share a texture-cache bucket`);
+    const [A, B] = pair;
+    // Unit 0 = A (B, drawn after it, holds their bucket), unit 1 = B.
+    const scene = g => {
+      const b = fill(g);
+      g.clear([0, 0, 0, 1], ALL);
+      g.call('glBindTexture', [TEX2D, A]);
+      g.call('glActiveTextureARB', [T1]);
+      g.call('glBindTexture', [TEX2D, B]);
+      g.call('glEnable', [TEX2D]);
+      g.call('glColor4f', [1, 1, 1, 1].map(g.f));
+      g.call('glBegin', [7]);
+      for (const [x, y, s, t] of [[-1, -1, 0, 0], [1, -1, 1, 0], [1, 1, 1, 1], [-1, 1, 0, 1]]) {
+        g.call('glMultiTexCoord2fARB', [T0, g.f(s), g.f(t)]);
+        g.call('glMultiTexCoord2fARB', [T1, g.f(1 - t), g.f(s)]);
+        g.call('glVertex3f', [g.f(x), g.f(y), g.f(0)]);
+      }
+      g.call('glEnd');
+      g.call('glDisable', [TEX2D]);
+      g.call('glActiveTextureARB', [T0]);
+      g.call('glDisable', [TEX2D]);
+      g.swap();
+      return { same: b.get(A) === b.get(B), stats: g.stats() };
+    };
+    const r = await bothArms(scene);
+    const st = r.gpOut.stats;
+    assert.ok(r.gpOut.same, `textures ${A} and ${B} share a bucket on the producer arm too`);
+    assert.ok(r.cmp.ok, `two-unit draw matches software: ${JSON.stringify(r.cmp)}`);
+    assert.strictEqual(st.declines, 0, `no declines: ${JSON.stringify(st.reasons)}`);
+    assert.ok(st.gpuFrames >= 1, `a GPU frame: ${st.gpuFrames}`);
+    console.log(`PASS bucket-sharing units: textures ${A}/${B} bound together (worst=${r.cmp.worst})`);
   }
 })().catch(e => { console.error(e.stack || e); process.exitCode = 1; });
