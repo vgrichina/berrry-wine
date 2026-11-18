@@ -4279,3 +4279,28 @@ actual waits and EOFs. Seven selected PNGs were recovered byte-for-byte from
 persisted image-tool responses after unexplained deletion, matching prior hashes
 and sizes. Two full stdout logs remain missing; only exact earlier excerpts
 survive. Recovery introduced no runtime request or new screenshot.
+
+## NFS III primary-source arbitration repair — 18 November 2026
+
+[Completed publication investigation](re-notes/nfs3-deferred-publication-visible-frame-20261118.md)
+records published repair `cf7044e37`. The CPU fallback content heuristic selected
+an unrelated opaque-white offscreen surface over the submitted GPU primary.
+Native HWND, DIB, creator, CPU stamp and sequence validation now selects the
+actual primary before that heuristic. Native and normal-browser old-fail/new-pass
+whole-pixel controls, lifetime/foreign-target/CPU-write negatives and locked builds
+passed. Guest-slice, GDI and publication fences remain intact.
+
+Fresh registered originals used the retained c9 source graph plus recorded
+patches, module `b91a6cdc…`, 135 unchanged media pins and eight live-owner module
+readbacks. Whole reviewed frames show the Corvette cockpit, road and rain; the
+compositor selects retained GPU pixels. The native table distinguishes the black
+primary at slot14 from the unrelated white offscreen surface at slot18.
+
+There was no physical input. A local expired-review admission bug was corrected
+in `c2256a77a`; the later fresh run closed when its 4215ms screenshot exceeded
+the preselected 3000ms capture deadline, before guarded input. Driving, steering,
+Pause/Continue and ordinary Quit remain unverified. All13 scopes retain26 actual
+native/watch waits with both EOFs and no recorded leaks. These rendering results
+do not establish backend parity or the complete historical27-app goal.
+
+Evidence: `scratch/runs/20261118-nfs3-deferred-publication-visible-frame/result.json`.
