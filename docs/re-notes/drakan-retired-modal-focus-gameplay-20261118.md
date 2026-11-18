@@ -49,3 +49,42 @@ The authentic run uses the predecessor's proven source graph and genuine media
 closure, with the published modal-key and focus corrections. Git, owned patches,
 the sealed compiler recipe and unique module provide recovery; no source-tree
 snapshot or media copy is needed. Authentic outcome and cleanup follow below.
+
+## Authentic result
+
+Correction `467fb65b3` was published through ordinary merge `e7f705046` after
+the focused checks and locked full build passed. One fresh registered original
+(native PID 2482839) used the genuine COMCTL32/COMMCTRL pair, unchanged registered
+92-byte Settings100 and 64-path/62-manifest asset closure. Genuine COMCTL32
+DllMain returned EAX 1. The actual main and Worker source/module readback audit
+matches 232 reads across thread IDs 0, 1 and 2. The full genuine warning frame
+was personally reviewed before the finite 300 ms Enter. Native exact-invocation
+consumption and independent physical UP both succeeded.
+
+The repaired retirement behavior is confirmed in the authentic application:
+afterRelease and postProgress report focus NULL, rather than the destroyed IDOK.
+Main Riot Engine HWND 0x10004 is live, generation 4, process 1000/thread 1.
+All **183** retained pending responses before UNKNOWN contain exactly
+`focus.live`, `focus.generation`, `focus.threadIdentity`, `focus.liveIdentity`,
+`focus.thread`, `focus.mainTopLevel`. Ordinary USER owner, actor and process
+checks do not fail. No guarded presentation becomes ready by the unchanged
+3000 ms operation deadline; the scope closes UNKNOWN with no later endpoint.
+
+This is the remaining concrete blocker. At the two retained snapshots the
+renderer calls the main window visible while its native style is still
+`0x00ca0000` (WS_VISIBLE absent). Logs record ShowWindow(5), followed later by
+ShowWindow(1). This is consistent with incomplete show/initialization work,
+but does not prove the active callback, its cause, or an activation defect.
+The authored native activation path passes. No early focus assignment, relaxed
+guard, fabricated live focus, extended operation clock or game-specific fix was
+introduced. A second original was not spent without another demonstrated,
+tested and published correction. Neither predecessor scope was reopened.
+
+Post-warning whole frame, menu, level, visible movement/attack and ordinary Quit
+remain unproved. Local cancellation completed actual native and independent
+watchdog waits with both EOFs and no leaked processes; cancellation exit 0 is
+not ordinary Quit. Native 900 s/watchdog 920 s deadlines and the 180 s Quit
+reserve were unchanged. Original minimum free space was 1,899,126,784 bytes;
+no RAM gate was used. Before launch a temporary shared disk shortage was
+reported and the launch held until space recovered. No box was created: ID
+null, state NOT_CREATED, expiry null, stop receipt null.
