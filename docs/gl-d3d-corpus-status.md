@@ -124,6 +124,19 @@ repair was made in that task. The author adopted JavaScript-only policy after
 the four launches; the follow-up investigation uses JavaScript supervision.
 Evidence: `scratch/runs/20261118-rm-jazz-rockroll-paired-rendering/result.json`.
 
+The [JavaScript startup follow-up](re-notes/rockroll-js-startup-rendering-repair-20261118.md),
+code `a373de9ba` and report `d88c6963e`, measured early debugger attachment
+slowing an authored native startup. Deferring attachment until after capture
+preserves the same finite startup and geometry guards; focused native controls
+and the locked build passed. Both fresh ROCKROLL originals admitted on the
+same `3ab982f2d` / `06eaa397…` runtime. Software produced two whole frames
+showing changing guitars and picks, personally reviewed by the coordinator;
+actual software DRAW counts rose388→895 and PRESENT counts12→31. WebGL
+received an external supervisor SIGTERM before its first capture. Its sender
+is unknown, the scope is closed, and WebGL motion remains unproved. No native
+Quit or complete separate original pipe EOFs are claimed.
+Evidence: `scratch/runs/20261118-rockroll-js-startup-rendering-repair/result.json`.
+
 The following table covers the named November17–18 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
@@ -140,7 +153,7 @@ FPS, audio, gameplay completion or native Quit.
 | `scr_architec` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 | `scr_jazz` | Motion observed | Motion observed | `20261118-rm-jazz-rockroll-paired-rendering` |
-| `scr_rockroll` | Prebinding UNKNOWN; open | Prebinding UNKNOWN; open | `20261118-rm-jazz-rockroll-paired-rendering` |
+| `scr_rockroll` | Motion observed | Startup passed; external signal before capture; motion open | `20261118-rockroll-js-startup-rendering-repair`; earlier prebinding UNKNOWNs retained |
 
 ## November 17 Quake III arena, depth repair and delayed input
 
