@@ -145,6 +145,24 @@ const events = () => evaluate('globalThis.guardEvents');
   // including the real scheduled consumer callback after cancellation.
   const { createGuardedInput } = require('../lib/cli-guarded-input');
   const { startControlServer } = require('../lib/control-server');
+  for (const fault of ['none','release','cancel','owner']) {
+    const refs={queue:[]};let healthy=true, count=0;
+    const broker=createGuardedInput({snapshot:()=>({refs,healthy}),cleanup:()=>{},
+      validateIntent:(_intent,_event,held)=>held.length===count});
+    const binding=broker.bind(),envelope={...binding,nonce:'finite-'+fault,deadline:Date.now()+1000,reviewed:true,intent:{physicalUp:true}};
+    const edges=[{action:'keydown',code:39},{action:'keydown',code:32}];let run;
+    run=broker.compound(envelope,edges,(event,t)=>{
+      broker.consume(t,()=>{count++;});
+      if(count===1&&fault==='release')broker.release(binding.owner);
+      if(count===1&&fault==='owner')healthy=false;
+      if(count===1&&fault==='cancel')queueMicrotask(()=>run.cancel('authored disconnect UNKNOWN'));
+    });
+    const receipt=await run;
+    check('finite compound '+fault, fault==='none' ? receipt.consumed&&count===2 : !receipt.consumed&&count===1);
+    assert.throws(()=>broker.compound(envelope,edges,()=>{}),/nonce/);
+    assert.throws(()=>broker.prepare(envelope,edges[0]),/nonce/);
+    broker.close();
+  }
   let effects = 0;
   const queueRef = [], refs = { queue: queueRef };
   const guard = createGuardedInput({ snapshot: () => ({ refs, healthy: true }), cleanup: () => {} });

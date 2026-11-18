@@ -7838,14 +7838,23 @@ async function main() {
     confirmNativeControl: (fence,event) => require('../lib/cli-native-user-windows').confirmNativeButton(fence,event),
     captureDelivery: () => nativeScene.reviewedContext(controlSnapshot()),
     validateDelivery: expected => JSON.stringify(nativeScene.reviewedContext(controlSnapshot())) === JSON.stringify(expected),
-    validateIntent: (intent,event) => {
+    validateIntent: (intent,event,held=[]) => {
       if (event.charCode !== undefined) require('../lib/cli-native-printable').validatePrintable(event,controlSnapshot(),renderer);
       if (!nativeSceneLease) return true;
       if (nativeSceneContract === nativeScene.REVIEWED_CONTEXT) {
         try { reviewedContexts.verify(controlSnapshot(),intent.review,intent.event,intent.nonce); return true; }
         catch { return false; }
       }
-      if (!nativeScene.matches(controlSnapshot(), intent)) return false;
+      const current=controlSnapshot();
+      if (held.length) {
+        // Only a consumed prefix of this server-owned finite chord may explain
+        // physicalUp=false. Every other context operand remains unchanged.
+        const actual=Object.entries(renderer._physicalKeys||{}).filter(([,down])=>down).map(([k])=>Number(k)).sort((a,b)=>a-b);
+        if (renderer._mouseButtonsMask || current.physicalUp ||
+            JSON.stringify(actual)!==JSON.stringify([...held].sort((a,b)=>a-b)) || intent?.physicalUp!==true) return false;
+        current.physicalUp=true;
+      }
+      if (!nativeScene.matches(current, intent)) return false;
       // A reviewed native intent can pin its complete composited frame as
       // well as its USER identities. Check again at consumption: paint may
       // change while input waits even though HWND/focus remain unchanged.
@@ -8057,6 +8066,19 @@ async function main() {
       },bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
     }
     if (cmd.action === 'guarded-release') return guardedInput.release(cmd.owner);
+    if (cmd.action === 'guarded-key-chord') {
+      if (!nativeSceneLease || nativeSceneContract===nativeScene.REVIEWED_CONTEXT || controlFrozen)
+        throw Error('finite chord requires running whole-native-scene binding');
+      if (!Array.isArray(cmd.keys) || cmd.keys.some(key=>!/^keydown:\d{1,3}$/.test(key)))
+        throw Error('invalid finite key chord');
+      const events=cmd.keys.map(key=>parseInputEntries([`${tickState.batch | 0}:${key}`])[0]);
+      return guardedInput.compound(cmd.guard,events,(event,ticket)=>{
+        const ev={...event,guardedTicket:ticket};
+        let at=scheduledInput.findIndex(e=>e.batch>ev.batch);
+        if(at<0)at=scheduledInput.length;
+        scheduledInput.splice(at,0,ev);
+      });
+    }
     if (cmd.action === 'guarded-input') {
       const evs = parseInputEntries([`${tickState.batch | 0}:${String(cmd.cmd || '')}`]);
       if (evs.length !== 1 || !/^(keydown|keyup|mousemove|mousedown|mouseup)$/.test(evs[0].action))

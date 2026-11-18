@@ -6,6 +6,29 @@ const k=require('../tools/native-supervisor-common.cjs'),c=require('../tools/lma
 const ROOT=path.resolve(__dirname,'..');
 const BOOT=String.raw`
 const fs=require('node:fs'),path=require('node:path');
+const broker=require('./lib/cli-guarded-input'),create=broker.createGuardedInput;
+broker.createGuardedInput=options=>{
+ const value=create(options),consumed=value.nativeConsumed;
+ const compound=value.compound;
+ value.compound=function(envelope,events,enqueue){let i=0;return compound.call(this,envelope,events,(event,ticket)=>{
+  if(i++&&['compound-modal','compound-capture'].includes(process.env.NATIVE_CAPTURE_FAULT))setTimeout(()=>{
+   fs.writeFileSync(path.join(process.env.LMARBLES_CONTROL_OUT,'guest-context-before-second.json'),JSON.stringify(options.captureDelivery()));enqueue(event,ticket);
+  },100);else enqueue(event,ticket);
+ });};
+ value.nativeConsumed=function(token,proof){
+  const result=consumed.call(this,token,proof),fault=process.env.NATIVE_CAPTURE_FAULT;
+  if(result&&proof.wParam===39&&!this.changed&&fault.startsWith('compound-')){
+   this.changed=true;const e=proof.actorExports,r=options.snapshot().refs.renderer;
+   const before=options.captureDelivery();
+   if(fault==='compound-focus')e.set_focus(0);
+   if(fault==='compound-owner')e.set_process_id(e.get_process_id()+1);
+   if(fault==='compound-queue')r.inputQueue=[];
+   if(fault==='compound-foreign')r.handleKeyDown(65);
+   if(fault==='compound-release')value.release(options.snapshot().refs.owner || globalThis.compoundOwner);
+   fs.writeFileSync(path.join(process.env.LMARBLES_CONTROL_OUT,'prefix-context.json'),JSON.stringify({before,after:options.captureDelivery()}));
+  }return result;
+ };return value;
+};
 // Model a native application that updates its window back canvas without
 // requesting a display composite. Capture must invoke the real composite.
 const {Win98Renderer}=require('./lib/renderer'),paint=Win98Renderer.prototype.repaint;
@@ -15,15 +38,24 @@ Win98Renderer.prototype.repaint=function(...args){
 };
 const transport=require('./lib/control-server'),start=transport.startControlServer;
 transport.startControlServer=options=>start({...options,onCommand(command){
+ if(command.action==='guarded-key-chord')globalThis.compoundOwner=command.guard.owner;
+ if(command.action==='guarded-key-chord'&&process.env.NATIVE_CAPTURE_FAULT==='compound-legacy')return (async()=>{
+  const edges=[];
+  for(let i=0;i<command.keys.length;i++){
+   if(i===1){const actual=options.onCommand({action:'snapshot'});fs.writeFileSync(path.join(process.env.LMARBLES_CONTROL_OUT,'legacy-operands.json'),JSON.stringify({expected:command.guard.intent,actual,failures:require('./lib/cli-native-scene').contextFailures(actual,command.guard.intent)}));}
+   edges.push(await options.onCommand({action:'guarded-input',cmd:command.keys[i],guard:{...command.guard,nonce:command.guard.nonce+'/'+i}}));
+  }
+  return {...edges.at(-1),edges};
+ })();
  if(command.action==='native-scene-capture'){
   globalThis.nativeCaptureActive=true;globalThis.nativeCapturePainted=false;
   try{const value=options.onCommand(command);if(!globalThis.nativeCapturePainted)throw Error('capture omitted native display composite');return value;}
   finally{globalThis.nativeCaptureActive=false;}
  }
  const result=options.onCommand(command);
- if(command.action!=='guarded-input')return result;
+ if(command.action!=='guarded-input'&&command.action!=='guarded-key-chord')return result;
  return Promise.resolve(result).then(value=>{
-  if(process.env.NATIVE_CAPTURE_FAULT==='unknown')return new Promise(resolve=>setTimeout(()=>resolve(value),650));
+  if(['unknown','compound-unknown'].includes(process.env.NATIVE_CAPTURE_FAULT))return new Promise(resolve=>setTimeout(()=>resolve(value),650));
   if(process.env.NATIVE_CAPTURE_FAULT==='release'){
    options.onCommand({action:'eval',code:'exports.set_focus(0);true'});
    const focus=options.onCommand({action:'eval',code:'exports.get_focus_hwnd()'});
@@ -35,7 +67,7 @@ transport.startControlServer=options=>start({...options,onCommand(command){
 process.argv=['node','test/run.js',...process.argv.slice(1)];require('./test/run.js');
 `;
 async function freePort(){return new Promise(resolve=>{const s=net.createServer().listen(0,'127.0.0.1',()=>{const p=s.address().port;s.close(()=>resolve(p));});});}
-function animatedFixture(file){
+function animatedFixture(file,mode=''){
  const source=require('./test-ltris-sdl-keyboard.cjs').prepare(),b=Buffer.from(fs.readFileSync(source.file));
  const raw=r=>r-0x1000+0x400,program=raw(0x2000);
  const idle=b.indexOf(Buffer.from([0x68,10,0,0,0,0xff,0x15,0x10,0x13,0x40,0,0x83,0xc4,4]),program);
@@ -51,21 +83,31 @@ function animatedFixture(file){
  // This creates genuine native capture ownership for the capture negative.
  const descriptor=raw(0x1028);b.writeUInt32LE(0x1880,descriptor);b.writeUInt32LE(0x1c40,descriptor+12);b.writeUInt32LE(0x1800,descriptor+16);
  b.writeUInt32LE(80,0x80+24+108);b.write('user32.dll\0',raw(0x1c40));
- for(const [i,n] of ['SetCapture','GetActiveWindow'].entries()){const name=0x1c80+i*32;b.writeUInt32LE(name,raw(0x1800+i*4));b.writeUInt32LE(name,raw(0x1880+i*4));b.write(n+'\0',raw(name+2));}
+ for(const [i,n] of ['SetCapture','GetActiveWindow','MessageBoxA'].entries()){const name=0x1c80+i*32;b.writeUInt32LE(name,raw(0x1800+i*4));b.writeUInt32LE(name,raw(0x1880+i*4));b.write(n+'\0',raw(name+2));}
  const escape=b.indexOf(Buffer.from([0x81,0x3d,0x48,0x35,0x40,0,27,0,0,0]),program);
  const loop=b.indexOf(Buffer.from([0x68,0x40,0x35,0x40,0,0xff,0x15,0x0c,0x13,0x40,0]),program),grab=raw(0x2f40);
  assert(escape>=program&&loop>=program);assert.equal(b[escape+10],0x0f);
  b.writeInt32LE(grab-(escape+16),escape+12);
  Buffer.from([0xff,0x15,0x04,0x18,0x40,0,0x50,0xff,0x15,0,0x18,0x40,0,0xe9,0,0,0,0]).copy(b,grab);
  b.writeInt32LE(loop-(grab+18),grab+14);
+ if(['compound-modal','compound-capture'].includes(mode)){
+  // The authored guest itself enters a real modal/capture API after returning
+  // the first SDL Right key (SDLK_RIGHT=275), before another scheduled edge.
+  b.writeUInt32LE(275,escape+6);
+  if(mode==='compound-modal'){
+   const code=Buffer.from([0x6a,0,0x68,0,0x30,0x40,0,0x68,0,0x30,0x40,0,0x6a,0,0xff,0x15,0x08,0x18,0x40,0,0xe9,0,0,0,0]);
+   code.writeInt32LE(loop-(grab+code.length),code.length-4);code.copy(b,grab);
+  }
+ }
  fs.writeFileSync(file,b,{flag:'wx'});return {file,sha256:k.sha256(b)};
 }
 async function main(){
  const out=path.resolve(process.env.NATIVE_CAPTURE_TEST_OUT),holder=path.resolve(process.env.LMARBLES_MODULE_HOLDER);
- fs.mkdirSync(out,{recursive:true});const fixture=animatedFixture(path.join(out,'animated.exe'));fs.writeFileSync(path.join(out,'fixture.json'),JSON.stringify(fixture));
- const cases=process.argv.slice(2);if(!cases.length)cases.push('positive','mismatch','stale','owner','focus','modal','replacement','capture','authority','release','unknown');
+ fs.mkdirSync(out,{recursive:true});
+ const cases=process.argv.slice(2);if(!cases.length)cases.push('positive','mismatch','stale','owner','focus','modal','replacement','capture','authority','release','unknown',
+  'compound','compound-legacy','compound-focus','compound-modal','compound-capture','compound-owner','compound-queue','compound-foreign','compound-release','compound-unknown');
  for(const name of cases){
-  const dir=path.join(out,name);fs.mkdirSync(dir);c.R=dir;c.URL='http://127.0.0.1:'+await freePort()+'/ctl';
+  const dir=path.join(out,name);fs.mkdirSync(dir);const fixture=animatedFixture(path.join(dir,'animated.exe'),name);fs.writeFileSync(path.join(dir,'fixture.json'),JSON.stringify(fixture));c.R=dir;c.URL='http://127.0.0.1:'+await freePort()+'/ctl';
   Object.assign(process.env,{LMARBLES_CONTROL_OUT:dir,LMARBLES_CONTROL_URL:c.URL,NATIVE_CAPTURE_FAULT:name});
   const media=path.join(ROOT,'test/binaries/candidates/lmarbles-108/game/LMARBLES');
   const args=['node','-e',BOOT,'--','--exe='+fixture.file,'--no-build','--threads','--real-ticks','--screen=1024x712','--max-seconds=55','--max-batches=10000000','--stuck-after=0','--control='+new URL(c.URL).port,'--quiet-api','--quiet-blocks','--no-close','--env=SDL_VIDEODRIVER=windib',...['SDL.dll','libgcc_s_sjlj-1.dll','libwinpthread-1.dll'].map(n=>'--dll-seed='+path.join(media,n)),'--dll-seed='+path.join(ROOT,'test/binaries/dlls/msvcrt.dll')];
@@ -95,12 +137,27 @@ async function main(){
     c.save('first-review.json',{at:k.now(),pngSHA256:first.receipt.pngSHA256,scene:'menu',observation:'Automated authored animated fixture binding; no personal game review claim'});
     await c.bind('first');const owner=c.read('input-owner.json');
     const fresh=await capture('fresh');c.save('fresh-review.json',{at:k.now(),pngSHA256:fresh.receipt.pngSHA256,scene:'game',observation:'Automated animated native fixture; no personal game review claim'});
-    if(name==='unknown'||name==='release')await assert.rejects(c.pulse('press',['keydown:13'],100,'fresh','authored native HTTP fault and independent release'));
-    else await c.pulse('press',['keydown:13'],100,'fresh','authored native finite Enter and independent release');
+    const compound=name.startsWith('compound'),keys=compound?['keydown:39','keydown:32']:['keydown:13'];
+    if(name==='unknown'||name==='release'||(compound&&name!=='compound'))await assert.rejects(c.pulse('press',keys,250,'fresh','authored native HTTP fault and independent release'));
+    else await c.pulse('press',keys,250,'fresh','authored native finite keys and independent release');
     const up=c.read('press-up.json');assert.equal(up.state,'ACK');assert(up.reply.released);assert.equal(up.reply.owner,owner.owner);
-    if(name!=='positive'){assert(c.read('terminal-input-failure.json').noReplay);assert.throws(()=>c.opened(),/sticky UNKNOWN/);}
+    if(name!=='positive'&&name!=='compound'){assert(c.read('terminal-input-failure.json').noReplay);assert.throws(()=>c.opened(),/sticky UNKNOWN/);}
+    if(compound){
+     const diagnostic=fs.readdirSync(dir).find(n=>/^press-.*-diagnostic.json$/.test(n)&&!n.includes('release'));
+     const value=c.read(diagnostic).rawReply?.value;
+     c.save('compound-wire.json',{diagnostic,value});
+     if(name==='compound'){
+      const edges=c.read('press-down.json');assert.equal(edges.length,2);assert.deepEqual(edges.map(e=>e.nativeMessage.wParam),[39,32]);assert(edges.every(e=>e.nativeMessage.consumption==='owner-user-return'));
+      const zero=await c.call({action:'snapshot'});assert(zero.physicalUp);
+      await assert.rejects(c.call({action:'guarded-key-chord',keys,guard:{...owner,nonce:edges[0].nonce.split('/')[0],reviewed:true,deadline:Date.now()+1000,intent:c.read('fresh.json').snapshot}}),/nonce/);
+     }else if(name!=='compound-unknown'){
+      const d=c.read(diagnostic),reply=d.rawReply;
+      assert(reply?.value?.edges?.[0]?.consumed,'first edge actually consumed before true change');
+      assert(!reply.value.edges[1]?.handlerApplied,'second edge refused before effect');
+     }
+    }
     if(name==='release')assert.equal(c.read('changed-focus-before-release.json').focus,0);
-    c.save('assertions.json',{animated:true,boundIssuedFirstImage:true,independentUp:up,stickyUnknown:name!=='positive'});
+    c.save('assertions.json',{animated:true,boundIssuedFirstImage:true,independentUp:up,stickyUnknown:!['positive','compound'].includes(name)});
    }
   }catch(e){error=e;c.save('fixture-error.json',{error:e.stack});}finally{
    c.save('cancel-request.json',{at:k.now(),fixtureOnly:true,nativeQuit:false});
