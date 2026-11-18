@@ -1,12 +1,12 @@
-# Wine-Assembly: run real Windows 98 apps and games in your browser
+# Berrry Wine: run real Windows 98 apps and games in your browser
 
-**[Try it now → wine-assembly.berrry.app](https://wine-assembly.berrry.app)** · [Apps you can run](https://wine-assembly.berrry.app/apps/) · [Compatibility list: 228 games tested, bring your own copy](https://wine-assembly.berrry.app/compat/) · [The story of how it was built](https://wine-assembly.berrry.app/story.html) · [How it works: articles, design docs & reverse-engineering notes](https://wine-assembly.berrry.app/design/)
+**[Try it now → berrry.wine](https://berrry.wine)** · [Apps you can run](https://berrry.wine/apps/) · [Compatibility list: 228 games tested, bring your own copy](https://berrry.wine/compat/) · [The story of how it was built](https://berrry.wine/story.html) · [How it works: articles, design docs & reverse-engineering notes](https://berrry.wine/design/)
 
-[![3D Pinball Space Cadet, SkiFree, Solitaire and other Windows 98 programs running in a browser tab](icons/og-image.png)](https://wine-assembly.berrry.app)
+[![3D Pinball Space Cadet, SkiFree, Solitaire and other Windows 98 programs running in a browser tab](icons/og-image.png)](https://berrry.wine)
 
-Wine-Assembly is a **Windows 98 emulator for the browser** that runs the original, unmodified `.exe` files. There is no operating-system image to boot and no source port to maintain: an x86 interpreter and a reimplementation of the Win32 API are written directly in WebAssembly Text (WAT), and the program's own machine code runs on them. Pinball, SkiFree, Solitaire, Minesweeper, Notepad, Paint, Winamp, DirectX games and 16-bit Windows 3.1 programs all launch in a tab, on desktop and on a phone.
+Berrry Wine is a **Windows 98 emulator for the browser** that runs the original, unmodified `.exe` files. There is no operating-system image to boot and no source port to maintain: an x86 interpreter and a reimplementation of the Win32 API are written directly in WebAssembly Text (WAT), and the program's own machine code runs on them. Pinball, SkiFree, Solitaire, Minesweeper, Notepad, Paint, Winamp, DirectX games and 16-bit Windows 3.1 programs all launch in a tab, on desktop and on a phone.
 
-<a href="https://www.producthunt.com/products/wine-assembly?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-wine-assembly" target="_blank" rel="noopener noreferrer"><img alt="Wine Assembly - Run Windows apps securely in browser using WebAssembly | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1142094&amp;theme=light&amp;t=1778312100355"></a>
+<a href="https://www.producthunt.com/products/wine-assembly?embed=true&amp;utm_source=badge-featured&amp;utm_medium=badge&amp;utm_campaign=badge-wine-assembly" target="_blank" rel="noopener noreferrer"><img alt="Berrry Wine - Run Windows apps securely in browser using WebAssembly | Product Hunt" width="250" height="54" src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1142094&amp;theme=light&amp;t=1778312100355"></a>
 
 Large parts of the reverse engineering, implementation, testing, and documentation were developed in collaboration with Claude Code and Codex. [PROJECT_STORY.md](PROJECT_STORY.md) reconstructs that history from Git and the agent sessions that built it.
 
@@ -14,9 +14,9 @@ Large parts of the reverse engineering, implementation, testing, and documentati
 
 | | | | |
 |:-:|:-:|:-:|:-:|
-| [![Solitaire](screenshots/readme/sol.png)](https://wine-assembly.berrry.app/?app=sol) | [![Chip's Challenge, 16-bit](screenshots/readme/wep16_chips.png)](https://wine-assembly.berrry.app/?app=wep16_chips) | [![SkiFree](screenshots/readme/ski32.png)](https://wine-assembly.berrry.app/?app=ski32) | [![Winamp 2.91](screenshots/readme/winamp.png)](https://wine-assembly.berrry.app/?app=winamp) |
+| [![Solitaire](screenshots/readme/sol.png)](https://berrry.wine/?app=sol) | [![Chip's Challenge, 16-bit](screenshots/readme/wep16_chips.png)](https://berrry.wine/?app=wep16_chips) | [![SkiFree](screenshots/readme/ski32.png)](https://berrry.wine/?app=ski32) | [![Winamp 2.91](screenshots/readme/winamp.png)](https://berrry.wine/?app=winamp) |
 | Solitaire | Chip's Challenge (Win16) | SkiFree | Winamp 2.91 |
-| [![Diablo shareware](screenshots/readme/diablo_shareware.png)](https://wine-assembly.berrry.app/?app=diablo_shareware) | [![Marbles, DirectDraw](screenshots/readme/marbles.png)](https://wine-assembly.berrry.app/?app=marbles) | [![WordPad](screenshots/readme/wordpad.png)](https://wine-assembly.berrry.app/?app=wordpad) | [![Paint](screenshots/readme/mspaint.png)](https://wine-assembly.berrry.app/?app=mspaint) |
+| [![Diablo shareware](screenshots/readme/diablo_shareware.png)](https://berrry.wine/?app=diablo_shareware) | [![Marbles, DirectDraw](screenshots/readme/marbles.png)](https://berrry.wine/?app=marbles) | [![WordPad](screenshots/readme/wordpad.png)](https://berrry.wine/?app=wordpad) | [![Paint](screenshots/readme/mspaint.png)](https://berrry.wine/?app=mspaint) |
 | Diablo shareware | Marbles (DirectDraw) | WordPad | Paint |
 
 Every tile links to that app on the live site. All screenshots are the emulator's own output, captured headlessly from the real binaries.
@@ -33,7 +33,7 @@ The smoke matrix tracks 114 binaries. Its latest recorded complete run reported 
 
 ## How it is different from v86, 98.js, Webamp and js-dos
 
-| Project | What it does | Wine-Assembly |
+| Project | What it does | Berrry Wine |
 |---|---|---|
 | **[v86](https://copy.sh/v86/)** | Full PC emulator that boots a whole operating system from a disk image | Skips BIOS, kernel and disk: loads the PE file directly, so an app starts in seconds instead of booting Windows |
 | **[98.js](https://98.js.org/)** | Pixel-faithful JavaScript recreation of the Windows 98 desktop | Runs the actual `mspaint.exe` and `notepad.exe` that shipped with Windows 98, not a rewrite |

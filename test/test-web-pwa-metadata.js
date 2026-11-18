@@ -13,7 +13,7 @@ const deploy = fs.readFileSync(path.join(root, 'tools/deploy-berrry.js'), 'utf8'
 
 assert(html.includes('<link rel="manifest" href="manifest.webmanifest">'), 'index.html should link the web app manifest');
 assert(html.includes('apple-mobile-web-app-capable" content="yes"'), 'iOS Home Screen launch should use standalone mode');
-assert(html.includes('apple-mobile-web-app-title" content="Wine-Assembly"'), 'iOS Home Screen app should have an explicit title');
+assert(html.includes('apple-mobile-web-app-title" content="Berrry Wine"'), 'iOS Home Screen app should have an explicit title');
 assert(html.includes('apple-mobile-web-app-status-bar-style" content="black-translucent"'), 'iOS standalone status bar should be app-colored');
 assert(html.includes('rel="apple-touch-icon" href="icons/apple-touch-icon.png"'), 'iOS Home Screen should have a touch icon');
 

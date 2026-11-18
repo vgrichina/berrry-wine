@@ -1,7 +1,7 @@
 # Candidate games and sources
 
 Verified 2026-08-20. These are possible future compatibility targets for
-Wine-Assembly, with an emphasis on official demos and shareware that can be
+Berrry Wine, with an emphasis on official demos and shareware that can be
 tested without distributing a full retail game.
 
 ## Windows 98 games A-D archive
@@ -50,7 +50,7 @@ dropped. Both builds' hashes are in `docs/re-notes/atomic-bomberman-demo.md`.
 
 Broken Sword is installed by running the archive's original `SETUP.EXE`
 (SHA-256 `091ad0e2e8f1f49f6c2cb69067c7c0b7c7d75f3255ab227b6ef17152bb6f40ae`)
-inside Wine-Assembly. Its DirectX bootstrap launches `GAMECFIG.EXE` (SHA-256
+inside Berrry Wine. Its DirectX bootstrap launches `GAMECFIG.EXE` (SHA-256
 `2f67c74ce3ce737383c6481e5e50ac47de682f670383f8d385d9d6abfe4da439`),
 which runs the original full-screen installer and writes a 17-file,
 26,815,476-byte tree under `C:\\Sword`. The registered app launches that
@@ -63,7 +63,7 @@ the generated local install tree is republished here. See
 Dungeon Keeper is installed by running the archive's original `KDDATA.EXE`
 (SHA-256 `f121c2f77583e35a258617308f609aefbd73ca249974e3cdbac7520c4cdda92a`)
 with its documented `-d` argument inside ToyVM. The guest emits 166 files and
-19,754,866 bytes; Wine-Assembly launches that output rather than the archive's
+19,754,866 bytes; Berrry Wine launches that output rather than the archive's
 separate pre-unpacked copy. A frozen headless CLI acceptance now crosses the
 main menu and portal into the live Eversmile level. The bundled readme
 explicitly reserves copying rights to Electronic Arts, so the playable demo
@@ -73,7 +73,7 @@ the original distribution can be obtained; it does not redistribute it. See
 
 Darkstone is installed by running the archive's original `Setup.exe` (SHA-256
 `a6d2f8b9173fd43f03aabff0b8cc3fadbd0b15224bcbe5f562a32158a297b502`)
-inside Wine-Assembly. That bootstrap emits the original InstallShield engine,
+inside Berrry Wine. That bootstrap emits the original InstallShield engine,
 which writes a 14-file, 33,471,003-byte playable tree under
 `C:\\Program Files\\DelphineSoft\\Darkstone Demo`. The registered app mounts
 that guest-produced `installed/` tree rather than the separately unpacked
@@ -186,7 +186,7 @@ The preserved **Grand Theft Auto 2** Wild Demo is the original 12,972,175-byte
 (SHA-256
 `f8fc0a9653932f008a03e56ea892fb31dbeb98d228cc4df61b910bcb35d08d21`).
 This is a PackageForTheWeb self-extractor around an InstallShield 5 setup, not
-an already-installed game. Wine Assembly's acceptance starts from that file,
+an already-installed game. Berrry Wine's acceptance starts from that file,
 lets its own LZ32 path emit Disk1, runs the emitted `Setup.exe`, then runs the
 emitted `_INS5576._MP` wizard. The stages are separate processes only because
 the emulator does not yet execute Win32 child processes. The final test checks
@@ -239,7 +239,7 @@ Local inspection of the archived executable found:
   palette-era DirectDraw game using Blizzard's Storm and Smacker stack.
 - File, registry, event, thread, synchronization, timing, and dynamic-library
   calls that overlap substantially with functionality already implemented in
-  Wine-Assembly.
+  Berrry Wine.
 
 This makes the Diablo demo an unusually promising target: its Win95/DirectX 2
 technology overlaps with the DirectDraw SDK samples, DX-Ball, Age of Empires,
@@ -298,7 +298,7 @@ contains two distinct native paths:
 - `BLIZDEMO.EXE`: a separate Blizzard promotional reel; it is not Diablo
   gameplay and is retained only as another disc fixture.
 
-`AUTORUN.EXE` was run to completion entirely inside Wine Assembly. Its worker
+`AUTORUN.EXE` was run to completion entirely inside Berrry Wine. Its worker
 threads exposed a real process-handle bug: `CloseHandle` did not inherit the
 process-owned synchronization-table release callback, eventually exhausting
 all 64 event slots. Sharing that callback with workers let the unchanged
@@ -404,7 +404,7 @@ Two Internet Archive items were used as independent Blizzard-era sources:
   `3c10439a63f1dc06f07fb3451d7d2788ba5cd000c798fd846294f467431663d0`.
 
 Both were exercised through their native Windows installers inside
-Wine-Assembly; no host Wine installation or pre-extracted gameplay shortcut
+Berrry Wine; no host Wine installation or pre-extracted gameplay shortcut
 was used. The shareware CD installer produced the exact 35,912,186-byte
 `stardatsw.mpq` and exited its worker after the cooperative critical-section
 ownership and retry contracts were corrected.
@@ -413,7 +413,7 @@ The standalone demo installer also provided a real-Windows oracle using the
 repository's v86 Windows 98 reference environment. Windows 98 produced a
 970,752-byte `Starcraft.exe` with SHA-256
 `b2461f58aca73df0af402009f2a33fae85ce57626eb938479effd12e972c1c26`.
-Before the memory fix, Wine-Assembly produced the same length but corrupted
+Before the memory fix, Berrry Wine produced the same length but corrupted
 175,467 bytes across 224 of its 237 4 KiB blocks. Tracing showed the first bad
 byte was already present in the PKWARE explode output buffer before VFS
 `WriteFile`, excluding the extracted file, VFS persistence, and mapped-file
@@ -436,7 +436,7 @@ optional faster gameplay path once the installer result has been verified.
 
 The installed demo's ten files were also checked independently under the v86
 Windows 98 reference environment. Their sizes and CRC-32 values exactly match
-the native Wine-Assembly installation: `Starcraft.exe` 970,752 / `f7d9cc58`,
+the native Berrry Wine installation: `Starcraft.exe` 970,752 / `f7d9cc58`,
 `Storm.dll` 202,752 / `048f72d9`, `Local.dll` 52,224 / `7659e716`,
 `SmackW32.dll` 95,232 / `614a9406`, `Battle.snp` 239,358 / `531bcffe`,
 `Standard.snp` 97,258 / `db5e9b18`, `StardateD.mpq` 29,005,415 /
@@ -447,7 +447,7 @@ VFS, and extracted-file corruption from the later `font\\font.gid` failure.
 That failure instead exposed a Win32 loader contract. Microsoft documents that
 [`DllMain` receives a NULL `lpvReserved` for a dynamic process attach and a
 non-NULL value for a static process attach](https://learn.microsoft.com/en-us/windows/win32/dlls/dllmain).
-Wine-Assembly previously passed NULL to every DLL. StarCraft imports
+Berrry Wine previously passed NULL to every DLL. StarCraft imports
 `Storm.dll` at process startup, and disassembly of this 1998 build shows that
 its attach routine branches on that third argument. NULL runs a legacy table
 initializer seeded with `0x10000100`; non-NULL defers initialization until the
@@ -991,7 +991,7 @@ payloads are not all native Windows games: Beneath a Steel Sky, Flight of the
 Amazon Queen, and Lure of the Temptress use GOG's bundled Windows ScummVM;
 Shadow Warrior, Arena, Daggerfall, and Ultima IV use GOG's bundled Windows
 DOSBox to host the original DOS game. The launch checks below execute those
-Windows runtimes directly inside Wine-Assembly. They do not use host Wine or
+Windows runtimes directly inside Berrry Wine. They do not use host Wine or
 DOSBox-X.
 
 The local screenshot set is
@@ -1024,7 +1024,7 @@ first-person dungeon frame,
 
 Research on 2026-08-22 narrowed the next browser targets to distributions that
 were released as demos or shareware. Entries in this file identify and link to
-the original distributions; Wine-Assembly can download and run those packages
+the original distributions; Berrry Wine can download and run those packages
 without republishing them. A playable demo is therefore a valid target even
 when its terms do not grant redistribution, unless those terms explicitly
 prohibit the project's method of obtaining or running it.
@@ -1035,7 +1035,7 @@ The exact 12,669,116-byte `lf2_v19.exe` archived at
 [Archive.org](https://archive.org/details/lf2_v19) is pinned as
 `little-fighter-2-installer` with SHA-1
 `708c6be6dc4a195c1011fde480157862c60fbdee`. The unchanged Win32 installer now
-completes under Wine-Assembly and its installed game reaches interactive
+completes under Berrry Wine and its installed game reaches interactive
 three-fighter VS combat. See
 [`docs/re-notes/little-fighter-2.md`](docs/re-notes/little-fighter-2.md) for the
 installer route, hashes, DirectDraw fix, and frozen gameplay gate.
@@ -1057,7 +1057,7 @@ offers the shareware edition, and its direct
 `1f10dd5830eecf117bc10daf7e85d29f364dbdc2` and SHA-256
 `a3d7da899ab2d3cdd33c6b10747478628175c5a5e0c215eb43a629e6cf98c982`.
 
-Wine-Assembly runs the unchanged bootstrap and the Inno Setup child it creates,
+Berrry Wine runs the unchanged bootstrap and the Inno Setup child it creates,
 then launches the installed game into Target Practice. See
 [`docs/re-notes/pocket-tanks.md`](docs/re-notes/pocket-tanks.md) for the exact
 guest-only installer route and frozen gameplay gate. Keep the installer and
@@ -1073,7 +1073,7 @@ The exact 2,647,172-byte installer from the
 `21aa4fb949c5f0718a59f922df6ad644a80e6715` and installer SHA-256
 `e8a6ddc8a11d49b1e68484f725afc9204d9d15e0bf6cf90f0b14f0d1c9d24302`.
 The unchanged bootstrap and its generated Inno child now complete inside
-Wine-Assembly, and the installed game reaches moving tower gameplay. See
+Berrry Wine, and the installed game reaches moving tower gameplay. See
 [`docs/re-notes/icy-tower.md`](docs/re-notes/icy-tower.md).
 
 The installed readme calls Icy Tower freeware and expressly encourages copying
@@ -1095,7 +1095,7 @@ installer](https://jardinains2.com/download.php?download=1). The current
 
 The installed manual describes this as fully functional shareware that may be
 played indefinitely, but its copyright notice explicitly prohibits
-redistribution or reproduction without written consent. Wine-Assembly
+redistribution or reproduction without written consent. Berrry Wine
 therefore links to the original distribution and keeps both the installer and
 its installed payload local/gitignored. The unchanged installer produces 115
 files; its `jardinains.exe` hashes to
@@ -1122,7 +1122,7 @@ This official package has no installer. Its `README` instructs users to unzip
 all files into one directory, which is exactly what the reproducible candidate
 fetch recipe does. The included NetHack General Public License permits
 verbatim redistribution when its notices and source-access conditions are
-preserved. Wine-Assembly links the original package here and keeps the fetched
+preserved. Berrry Wine links the original package here and keeps the fetched
 runtime local/gitignored. The graphical build reaches an interactive tile
 dungeon; see [`docs/re-notes/nethack-win32.md`](docs/re-notes/nethack-win32.md)
 for exact executable hashes, compatibility fixes, and the gameplay gate.
@@ -1162,7 +1162,7 @@ Recommended order:
    DLL coverage.
 
 [Warcraft II: Tides of Darkness Demo](https://archive.org/details/WarcraftIiTidesOfDarknessDemo)
-is intentionally not ranked as a Wine-Assembly game target. Although the item
+is intentionally not ranked as a Berrry Wine game target. Although the item
 is tagged as a Windows game and includes Win32 autorun/map-editor programs, its
 35.6 MB `war2sw108.zip` contains a DOS4GW `setup.exe` and the playable
 `war2.exe` compressed inside `war2.exa`; only `war2ed95.exe` and the autorun
@@ -1190,7 +1190,7 @@ through their original installers before using any extracted game files.
   32-bit engine; fixing `IsWindow(HWND_BROADCAST)` to reject the `0xFFFF`
   sentinel let that unchanged bootstrap finish, and three ordinary **Next**
   clicks completed the install to `C:\\Team 17\\Worms 2 Demo`. The durable gate
-  runs the bootstrap and its emitted child inside Wine-Assembly and never opens
+  runs the bootstrap and its emitted child inside Berrry Wine and never opens
   an InstallShield cabinet on the host.
 - Total Annihilation is the direct `Total Annihilation.exe`. The native
   self-extractor calls `FindResourceA` with string-form integer names `#130`,
@@ -1223,7 +1223,7 @@ terrain/graphics/level archives, and 140 installed effect and speech WAV files.
 Despite its extension, `worms2.dat` is the actual PE32 game. Static and runtime
 tracing show that `worms2demo.exe` is only a promotional carousel: a click
 posts `WM_CHAR`, enters its `_spawn` implementation, and calls
-`CreateProcessA("worms2.dat", ...)`. Since Wine-Assembly intentionally has a
+`CreateProcessA("worms2.dat", ...)`. Since Berrry Wine intentionally has a
 single-process browser model, the debug manifest launches that exact installed
 PE directly instead of emulating a second process solely for the wrapper.
 
@@ -1468,7 +1468,7 @@ Its SHA-256 is
 This is the native Windows 95/98/NT 4.0 demonstration build, not the unrelated
 DOS/DJGPP Archive item previously recorded by the candidate manifest. The
 installed readme permits a 30-day trial and then requires registration or
-deletion; no public redistribution grant was found. Wine Assembly keeps the
+deletion; no public redistribution grant was found. Berrry Wine keeps the
 download and emulator-installed tree as ignored local fixtures and publishes
 only these source links and compatibility metadata. The original bootstrap,
 its generated Inno child, installation route, and verified interactive

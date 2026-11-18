@@ -1,7 +1,7 @@
 # A software GDI in WebAssembly: rasterising Windows 98 graphics without the browser's canvas
 <!-- description: Why canvas 2D was the wrong target for Windows GDI, and how a rasteriser in WebAssembly Text draws regions, ROPs and bitmap fonts into one surface per window. -->
 
-Windows programs draw through GDI: pens, brushes, regions, paths, palettes, bitmap fonts, metafiles and a hundred raster operations. Wine-Assembly started by translating those calls to the HTML canvas 2D API in JavaScript and ended up with a software rasteriser written in WebAssembly Text, with JavaScript reduced to compositing finished windows onto the screen. This article explains why the canvas was not enough, what the WAT rasteriser covers, and how text is drawn.
+Windows programs draw through GDI: pens, brushes, regions, paths, palettes, bitmap fonts, metafiles and a hundred raster operations. Berrry Wine started by translating those calls to the HTML canvas 2D API in JavaScript and ended up with a software rasteriser written in WebAssembly Text, with JavaScript reduced to compositing finished windows onto the screen. This article explains why the canvas was not enough, what the WAT rasteriser covers, and how text is drawn.
 
 ## Why the canvas 2D API was the wrong target
 
