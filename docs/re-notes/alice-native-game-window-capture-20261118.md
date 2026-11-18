@@ -1,0 +1,55 @@
+# Alice Demo: selected live game window and guest mouse capture
+
+The first-created top-level is not a permanent input/presentation target.
+Alice creates a console and a separate game window on the same process/thread,
+naturally focuses the game, hides the console and calls SetCapture on the game.
+The prior two originals remain closed; neither received input. The earlier
+510-sample timeline is missing, with only its exact final two snapshots recovered.
+See [the original investigation](alice-local-original-browser-gameplay-20261118.md).
+
+`lib/cli-native-scene.js` now derives the selected top-level from native focus
+when no modal exists. Both the original main and selected window must remain
+live with valid generations; the selected window must be visible, top-level
+and belong to the same process/thread. Any exclusive presentation mapping must
+name that window. The hidden console is retained as the real native main;
+no Win32 main/focus/capture state is written by this correction.
+
+The exact selected game may own mouse capture while physical keys/buttons are
+UP. Keyboard intent still requires the reviewed target to be the actual focus.
+Mouse intent requires the reviewed target to be the exact capture owner when
+capture exists and still passes reviewed pointer geometry. Foreign, stale,
+hidden and modal capture fail. Every intent retains the complete reviewed
+window/control context and generations, so a subsequent unrelated window,
+focus switch, reuse, retirement or modal cannot inherit the prior review.
+The input actor remains unique and registered. Alternative top-level admission
+also validates and pins its actual renderer window and creator WASM instance.
+
+These choices follow the separate Win32 contracts for
+[SetCapture](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcapture)
+and [SetFocus](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setfocus).
+No emulator USER API or original media/configuration changes are involved.
+
+Evidence: `scratch/runs/20261118-alice-native-game-window-capture/`.
+An authored PE calls RegisterClass/CreateWindowEx/SetFocus for a visible console,
+creates and focuses a second game top-level, hides the console with ShowWindow
+and calls genuine SetCapture on the game, then draws through ordinary OpenGL.
+With normal Workers and the exact prior 46c9b8e4 module, the baseline contract
+rejects this topology. The corrected contract captures it, consumes ordinary W
+on the game HWND and acknowledges independent physical UP. Personally reviewed
+whole PNGs show the yellow triangle background change from dark blue to red.
+No original gameplay is implied by this authored result.
+
+The first authored fixture construction overwrote its wndproc with padding;
+the corrected generator bounds its actual startup code before the wndproc.
+That failed preparation scope exited and was fully collected. A later inline
+preview appeared blank although decoded PNG pixels and a subsequent exact-file
+view show the same red triangle. The native scope was conservatively cancelled
+before that preview discrepancy was resolved; no blind Escape was sent.
+
+Focused checks cover selected-window capture, keyboard/mouse separation,
+unrelated/reused targets, actor/creator/generation mismatch, duplicate actor,
+modal conflict, hidden targets, exclusive mapping mismatch and independent UP.
+Existing native scene/modal and CLI input-owner regressions also pass.
+The locked full build passed after the concurrent host callback-review owner
+reconciled its review chain. Browser preparation and a fresh original follow
+publication of this tested correction; their outcomes will be recorded here.

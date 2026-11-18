@@ -260,8 +260,10 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
       read('launch.json').startupReadinessSeconds > 0 && read('launch.json').startupReadinessSeconds <= 60,
       'predeclared finite passive startup policy required');
     if (native) {
-      ok(before.physicalUp && before.capture === '0x0', 'native physical UP required before intention');
-      ok(rr.snapshot.physicalUp && rr.snapshot.capture === '0x0', 'review must precede any held input');
+      ok(before.physicalUp && require('../lib/cli-native-scene').contextFailures(before,before).length===0,
+        'native physical UP and selected live target required before intention');
+      ok(rr.snapshot.physicalUp && require('../lib/cli-native-scene').contextFailures(rr.snapshot,rr.snapshot).length===0,
+        'review must precede any held input with a qualified capture owner');
     }
     const fresh = freshness(review);
     ok(now() - reviewed.at >= 0 && now() - reviewed.at < fresh, 'personal review age expired');
@@ -451,7 +453,8 @@ async function waitReady(name, seconds = 60) {
       fs.appendFileSync(P(name + '-readiness.jsonl'), JSON.stringify({ at: now(), deadline, reply }) + '\n');
       ok(now() < deadline && reply.contract === 'native-startup-readiness-v1', 'invalid or late startup readiness');
       ok(reply.snapshot.nativeProcess.pid === target.pid, 'startup native process changed');
-      ok(reply.snapshot.physicalUp && reply.snapshot.capture === '0x0' && !reply.snapshot.quit,
+      ok(reply.snapshot.physicalUp && !reply.snapshot.quit &&
+        (reply.snapshot.capture==='0x0'||!reply.failures.includes('input.capture')),
         'startup input or process changed');
       ok(reply.snapshot.screen.w > 0 && reply.snapshot.screen.h > 0 && launch.at <= start);
       if (reply.ready) {
