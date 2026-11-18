@@ -46,7 +46,7 @@ In a standard `WinMain` → `CreateWindowEx` → `ShowWindow` → message loop f
 
 Critical property: `WM_SIZE` is **always** dispatched before any `PostMessage`d message, because it rides the synchronous ShowWindow call chain while `PostMessage` only touches the queue. Sol relies on this — Deal reads pile rects that the `WM_SIZE` handler populates.
 
-Wine-Assembly before `869248d` matched this: `ShowWindow` redirected EIP to the wndproc with `WM_SIZE` before returning, so by the time the message loop dequeued the posted Deal, the wndproc had already run `WM_SIZE`.
+Berrry Wine before `869248d` matched this: `ShowWindow` redirected EIP to the wndproc with `WM_SIZE` before returning, so by the time the message loop dequeued the posted Deal, the wndproc had already run `WM_SIZE`.
 
 `869248d` moved the synchronous chain to `CreateWindowExA` (CACA0020-0023) but dropped `WM_SIZE` from it; the current chain only covers `WM_ACTIVATEAPP → WM_ACTIVATE → WM_SETFOCUS`. `WM_SIZE` got demoted to async delivery via `$pending_wm_size` in `GetMessageA`, **after** the post-queue drain — which inverts the real-Win32 ordering and is why Deal now runs before sol has sized state.
 

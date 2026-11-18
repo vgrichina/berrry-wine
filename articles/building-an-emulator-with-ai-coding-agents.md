@@ -1,7 +1,7 @@
 # Building an emulator with AI coding agents: what 10,000 commits with Claude Code and Codex taught
 <!-- description: What 10,000 commits with Claude Code and Codex taught: crash instead of stub, record what failed, measure honestly, many agents in one tree, then a coordinator with workers. -->
 
-Wine-Assembly, a Windows 98 emulator written in WebAssembly Text, was built in about five months by one maintainer working with Claude Code and Codex, often several agent sessions at once in one repository. The record of that collaboration is unusually complete. By September 4, 2026 it held 3,758 commits, 431 Claude sessions, 118 Codex rollouts and a 4,400-line shared message board. By November 4 it held 10,740 commits and roughly 100 billion logged agent tokens, all reconstructed in [the project story](/story.html). This article pulls out what actually made it work, for anyone trying to run systems work with coding agents rather than demos.
+Berrry Wine, a Windows 98 emulator written in WebAssembly Text, was built in about five months by one maintainer working with Claude Code and Codex, often several agent sessions at once in one repository. The record of that collaboration is unusually complete. By September 4, 2026 it held 3,758 commits, 431 Claude sessions, 118 Codex rollouts and a 4,400-line shared message board. By November 4 it held 10,740 commits and roughly 100 billion logged agent tokens, all reconstructed in [the project story](/story.html). This article pulls out what actually made it work, for anyone trying to run systems work with coding agents rather than demos.
 
 ## Give the agent a crash, not a wish
 
