@@ -339,6 +339,21 @@ diagnostic targets the missing command-mix and phase evidence.
 [Repairs and original limits](re-notes/gltron-continuous-capture-release-arm-gameplay-20261117.md);
 [phase evidence and attribution limits](re-notes/gltron-native-user-context-dequeue-latency-20261117.md).
 
+## November 18 Donuts native controls and ordinary Quit
+
+The [Donuts boundary correction](re-notes/donuts-targeting-consumption-confirmation-boundary-20261118.md),
+code `95997a6a5` and report `e400e2cb4`, separates fresh native consumption
+from delivery-relative confirmation. Targeting remains5 seconds; confirmation
+500 ms, independent UP1750 ms and operation3000 ms remain unchanged. Eight
+compiled-native boundary controls and the locked build passed. One original
+reached LEVEL001 and consumed five manual gameplay gestures. The coordinator
+reviewed whole frames showing the ship turn right. Ordinary Escape was consumed
+and the exact native owner exited0 with actual wait/EOFs and no host cancellation.
+Final physical UP was unacknowledged after owner exit, not an ACK. LEVEL002 and
+isolated shot/score causality remain unproved; outer launcher143 limitations
+remain recorded. This is DirectDraw/Canvas2D evidence, not a new GL backend case.
+Evidence: `scratch/runs/20261118-donuts-targeting-consumption-confirmation-boundary/result.json`.
+
 ## November 18 Blood II preparation and level-entry limit
 
 The [frozen preparation repair](re-notes/blood2-frozen-renderer-dependency-repair-combat-20261118.md),
