@@ -186,3 +186,21 @@ hashes and selected named authored PNGs; `result.json` is written last with a
 failed goal. No original source/frame archive, media copy, workers, agents,
 boxes, Python, Wine or deployment were used. Box ID/state/expiry/stop receipt:
 null/NOT_CREATED/null/null. Ownership is released and the task stops.
+
+The final image audit found that some early automated captures sampled the
+desktop before deferred window painting, although their native window identity
+and changing GDI pixel were genuine. They are supplementary input controls,
+not evidence of a fully painted fixture. The tracked test now uses the normal
+`--live-present` route, waits for both renderer windows and requires more than
+eight decoded colors before review. `visible-atomic-main` and
+`visible-atomic-old-paint` pass on the same published 6308e7a3b graph and eb239 module:
+the whole painted window was personally inspected, moving paint rejects the
+legacy binder, and the retained-frame route accepts bounded native input.
+
+The slow-pump queued-expiry negative intentionally delays initial WM_PAINT. It
+proves native queue cancellation and independent UP only; it is not a visible
+scene-review positive. A stricter image assertion initially rejected that
+negative before dispatch; the final test makes this distinction explicit. The
+full painted positive and legacy-rejection pairs each decode to 205 colors and
+differ at exactly the real guest GDI pixel (544,264). The current-target
+refusal also passes with a fully painted window.

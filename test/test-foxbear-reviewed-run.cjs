@@ -23,15 +23,25 @@ async function body(){
  if(frozen)a.save('frozen-native.json',{revision:process.env.FOXBEAR_NATIVE_REVISION,moduleSHA256:common.sha256(fs.readFileSync(process.env.FOXBEAR_NATIVE_MODULE)),sourceSHA256:frozen.sourceSHA256,indexSHA256:frozen.indexSHA256});
  const watcher=cp.spawn(process.execPath,[__filename,'--watch',out],{stdio:['ignore','pipe','pipe']}),watchWait=common.communicate(watcher);
  while(!fs.existsSync(path.join(out,'disk-watch-armed.json')))await common.sleep(5);
- const p=cp.spawn(process.execPath,['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--screen=1024x712','--max-seconds=35','--max-batches=10000000','--control='+port,'--quiet-api','--quiet-blocks','--no-close'],{cwd:path.resolve(__dirname,'..'),env:{...(frozen?frozen.env:process.env),WINE_PUBLIC_INPUT_TRACE:path.join(out,'native-input-trace.jsonl')},stdio:frozen?common.stdioWithFds(frozen.fds):['ignore','pipe','pipe']});
+ const p=cp.spawn(process.execPath,['test/run.js','--exe='+exe,'--no-build','--threads','--real-ticks','--live-present','--screen=1024x712','--max-seconds=35','--max-batches=10000000','--control='+port,'--quiet-api','--quiet-blocks','--no-close'],{cwd:path.resolve(__dirname,'..'),env:{...(frozen?frozen.env:process.env),WINE_PUBLIC_INPUT_TRACE:path.join(out,'native-input-trace.jsonl')},stdio:frozen?common.stdioWithFds(frozen.fds):['ignore','pipe','pipe']});
  const waited=common.communicate(p);a.save('native-pid.json',{pid:p.pid,startToken:common.token(p.pid),at:common.now()});
  async function review(name){await a.capture(name);const rr=a.read(name+'.json');a.save(name+'-review.json',{at:common.now(),pngSHA256:rr.pngSHA256,scene:'game',targetHwnd:rr.snapshot.focus,wholeFrame:true,observation:'Automated authored test fixture only'});}
  try{
   const end=Date.now()+15000;for(;;){try{const s=await a.call({action:'snapshot'},.5);if(s.mainHwnd!=='0x0'&&s.focusWindow.live&&s.physicalUp)break;}catch{}assert(Date.now()<end,'authored startup');await common.sleep(25);}
+  while(await a.call({action:'eval',code:'Object.keys(renderer.windows).length'})<2){assert(Date.now()<end,'public renderer window publication');await common.sleep(25);}
+  await common.sleep(250);
   await review('binding');
+  const decoded=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(out,'binding.png'))),colors=new Set();
+  for(let i=0;i<decoded.data.length;i+=4)colors.add(decoded.data.readUInt32LE(i));
+  // The queued-expiry negative deliberately blocks the first native USER
+  // pump, including WM_PAINT. It proves cancellation only, never scene review.
+  if(boundaryCase!=='queued-expiry')assert(colors.size>8,'complete native window must be visibly painted before review');
   if(animated){
-   await common.sleep(650);await a.call({cmd:'png:'+path.join(out,'advanced.png')});
+   await common.sleep(650);await a.capture('advanced');
    const before=a.read('binding.json').pngSHA256,after=common.sha256(fs.readFileSync(path.join(out,'advanced.png')));
+   const next=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(out,'advanced.png'))),nextColors=new Set();
+   for(let i=0;i<next.data.length;i+=4)nextColors.add(next.data.readUInt32LE(i));
+   assert(nextColors.size>8,'advanced reviewed capture must retain the painted native window');
    assert.notEqual(before,after,'actual native GDI animation must change complete encoded paint');
    a.save('animated-paint.json',{before,after,realNativeRepaint:true});
   }
