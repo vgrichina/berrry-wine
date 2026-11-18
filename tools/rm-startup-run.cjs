@@ -83,7 +83,7 @@ async function finiteCapture(scope){
   catch(e){scope.phase='closed';throw e;}
   finally{clearTimeout(timer);}
 }
-async function run({out,commit,modulePath,backend,fixture,earlyDebugger=false,delays=[15000,15000],appName='scr_rockroll',startupObservations=false}){
+async function run({out,commit,modulePath,backend,fixture,earlyDebugger=false,delays=[15000,15000],appName='scr_rockroll',startupObservations=false,presentationObservation=false}){
   assert(['software','webgl'].includes(backend));assert(!earlyDebugger||fixture,'early debugger is authored-only');
   assert(!fs.existsSync(out),'fresh scope directory required');fs.mkdirSync(out,{recursive:true});
   const save=(n,v)=>fs.writeFileSync(path.join(out,n),JSON.stringify(v,null,2)+'\n');
@@ -96,9 +96,14 @@ async function run({out,commit,modulePath,backend,fixture,earlyDebugger=false,de
   const patches=[];
   for(const [n,api]of [['lib/gpu-stream-webgl.js','GpuStreamWebGL'],['lib/gpu-stream-software.js','GpuStreamSoftware']]){const old=files.get(n),suffix='\n;('+observer.toString()+')(globalThis,'+JSON.stringify(api)+');\n';files.set(n,Buffer.concat([old,Buffer.from(suffix)]));patches.push({path:n,baseSHA256:sha(old),sha256:sha(files.get(n)),suffix});}
   if(fixture)files.set(app.exe,fs.readFileSync(fixture));
+  const pathObserver=presentationObservation?require('./oasaver-presentation-observer.cjs'):null;
+  if(pathObserver)for(const n of ['lib/guest-worker.js','lib/d3d-render-worker.js']){
+    const old=files.get(n);files.set(n,Buffer.concat([Buffer.from(pathObserver.prefix),old]));
+    patches.push({path:n,baseSHA256:sha(old),sha256:sha(files.get(n)),prefix:pathObserver.prefix});
+  }
   save('pins-before.json',{commit,pins,media,app,module:{existingPath:modulePath,sha256:sha(module)},fixture:fixture?{path:fixture,sha256:sha(fs.readFileSync(fixture))}:null,patches});
   let server,browser,scope,closedUnknown=false;
-  const requests=[],logs=[],errors=[],sessions=[],moduleReceipts=[],tasks=[],startupRows=[];
+  const requests=[],logs=[],errors=[],sessions=[],moduleReceipts=[],tasks=[],startupRows=[],pathRows=[];
   const terminal={backend,commit,original:!fixture,earlyDebugger,startedAt:new Date().toISOString(),state:'PREPARING',inputs:0};
   const watchTarget=async target=>{if(closedUnknown||!['page','other'].includes(target.type()))return;
     const session=await target.createCDPSession();sessions.push({session,target});
@@ -116,6 +121,7 @@ async function run({out,commit,modulePath,backend,fixture,earlyDebugger=false,de
     save('browser.json',{pid:browser.process().pid,args:browser.process().spawnargs,version:await browser.version()});
     browser.on('targetcreated',t=>{const p=watchTarget(t);tasks.push(p);p.catch(e=>errors.push(String(e)));});
     const page=(await browser.pages())[0];await watchTarget(page.target());
+    if(pathObserver)await page.evaluateOnNewDocument(pathObserver.install);
     page.on('console',m=>logs.push({at:Date.now(),type:m.type(),text:m.text()}));page.on('pageerror',e=>errors.push(String(e)));
     await page.evaluateOnNewDocument(()=>{globalThis.__rmInputs=[];for(const type of ['keydown','keyup','pointerdown','pointerup'])document.addEventListener(type,e=>__rmInputs.push({type,trusted:e.isTrusted}),true);});
     terminal.url='http://127.0.0.1:'+server.address().port+'/index.html?app='+appName+'&threads&d3d-renderer='+backend;
@@ -136,6 +142,18 @@ async function run({out,commit,modulePath,backend,fixture,earlyDebugger=false,de
     const active=()=>!closedUnknown&&scope.phase!=='closed';
     const passivePage={};for(const n of ['evaluate','screenshot'])passivePage[n]=(...args)=>{assert(active(),'closed initial UI capture cannot query endpoint');return page[n](...args);};
     scope=new InspectionScope(startupObservations?startupPage(page,startupRows,active,async row=>{
+      if(pathObserver){
+        const evidence={at:Date.now(),page:null,realms:[]};
+        if(!active())return;
+        evidence.page=await page.evaluate(pathObserver.readPage);
+        for(const {session,target}of sessions){
+          if(!active())return;
+          const r=await session.send('Runtime.evaluate',{expression:'JSON.stringify({native:globalThis.__oaPresentation||null,executors:globalThis.__rmExecutors||null})',returnByValue:true});
+          if(!active())return;
+          evidence.realms.push({target:target.url(),observation:r.result?.value?JSON.parse(r.result.value):null});
+        }
+        if(active()&&pathRows.length<160)pathRows.push(evidence);
+      }
       if(initialCaptured||Date.now()-terminal.bindStartedAt<2000||!row.apps.some(a=>a.visibleTopLevelCount))return;
       initialCaptured=true;
       // Observation only: this geometry is never admitted as an input baseline.
@@ -173,6 +191,7 @@ async function run({out,commit,modulePath,backend,fixture,earlyDebugger=false,de
     if(server)await new Promise(r=>server.close(r));await Promise.allSettled(tasks);
     save('requests.json',requests);save('console.json',logs);save('errors.json',errors);save('modules.json',moduleReceipts);
     save('startup-progress.json',{rows:startupRows,limit:160,passive:true,unknowns:'API and loading completion not exposed; see timestamped console and HTTP progress separately'});
+    if(pathObserver)save('presentation-path.json',{rows:pathRows,limit:160,passive:true,extraNativeCalls:0,debuggerDuringStartup:false});
     save('pins-after.json',media.map(p=>({...p,sha256After:sha(fs.readFileSync(path.join(root,p.path)))})));
     terminal.finishedAt=new Date().toISOString();save('terminal.json',terminal);
   }

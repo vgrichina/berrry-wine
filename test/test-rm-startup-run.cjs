@@ -78,6 +78,7 @@ async function nativeControls(out,commit,modulePath){
 }
 
 async function progressControls(){
+ await require('./test-oasaver-presentation-observer.cjs').controls();
  const vm=require('node:vm'),{readStartupObservation,startupPage}=require('../tools/rm-startup-run.cjs');
  const win={hwnd:7,processId:1,visible:true,title:'initial UI'},display={windows:[{window:{deref:()=>win}}]};
  const bridge={presenter:{presents:0},stats:{records:5}};
@@ -135,5 +136,5 @@ async function progressNativeControls(out,commit,modulePath,selected){
  return rows;
 }
 
-module.exports={prepare,controls,nativeControls,progressNativeControls};
+module.exports={prepare,source,controls,nativeControls,progressNativeControls};
 if(require.main===module){const [mode,...args]=process.argv.slice(2);if(mode==='progress-native')progressNativeControls(path.resolve(args[0]),args[1],path.resolve(args[2]),args[3]?.split(',')).catch(e=>{console.error(e);process.exitCode=1;});else if(mode==='prepare')console.log(prepare(path.resolve(args[0])));else (mode==='native'?nativeControls(path.resolve(args[0]),args[1],path.resolve(args[2])):controls()).catch(e=>{console.error(e);process.exitCode=1;});}
