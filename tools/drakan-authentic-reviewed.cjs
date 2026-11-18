@@ -243,7 +243,7 @@ function firstLine(child, ms) {
   });
 }
 
-async function pulse(name, keys, ms, review, description, final = false, intent = 'gameplay', route = null) {
+async function pulse(name, keys, ms, review, description, final = false, intent = 'gameplay', route = null, startup = false) {
   const startedAt = now(), startedMono = mono();
   ok(alnumName(name) && ms >= 80 && ms <= 1000);
   ok(keys.length === 1 && /^keydown:(?:13|27|37|38|39|40)$/.test(keys[0]), 'one ordinary Drakan keyboard gesture');
@@ -252,6 +252,13 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
   try {
     const [owner, before] = await lease(); const rr = read(review + '.json'), reviewed = read(review + '-review.json');
     const native = read('launch.json').nativeScene ?? false;
+    if (startup) ok(!final && intent === 'gameplay' && keys[0] === 'keydown:13' &&
+      contextContract() && rr.snapshot.mainHwnd === '0x0' && rr.snapshot.nativeMessageBox &&
+      rr.snapshot.nativeMessageBox.threadId === rr.snapshot.focusWindow.threadId,
+      'startup separation requires the reviewed pre-main native warning');
+    if (startup) ok(Number.isInteger(read('launch.json').startupReadinessSeconds) &&
+      read('launch.json').startupReadinessSeconds > 0 && read('launch.json').startupReadinessSeconds <= 60,
+      'predeclared finite passive startup policy required');
     if (native) {
       ok(before.physicalUp && before.capture === '0x0', 'native physical UP required before intention');
       ok(rr.snapshot.physicalUp && rr.snapshot.capture === '0x0', 'review must precede any held input');
@@ -393,6 +400,16 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     }
     if (!progressed) throw Error('no postrelease progress');
     save(name + '-progress.json', { before, afterRelease: b, postProgress: a, at: now() });
+    if (startup) {
+      ok(now() < deadline && mono() < end, '3000ms operation completion exceeded');
+      const completedAt=now();
+      save(name + '-input-complete.json', { contract:'drakan-completed-warning-input-v1',
+        at:completedAt, deadline, startupDeadline:Math.min(completedAt+read('launch.json').startupReadinessSeconds,reserve()),
+        nonces, consumed:true, physicalUp:true, progressed:true,
+        nativeProcess:rr.snapshot.nativeProcess, screen:rr.snapshot.screen,
+        actor:{processId:rr.snapshot.focusWindow.processId,threadId:rr.snapshot.focusWindow.threadId} });
+      return 'Warning input completed; passive startup observation may begin';
+    }
     // UP has been acknowledged and a later native batch has completed.
     // The ordinary queued PNG action forces dirty presentation, composites,
     // encodes and writes before its HTTP completion. A fixed delay adds no
@@ -415,7 +432,7 @@ async function submit(request) {
   const rr=read(request.review+'.json');
   save(request.review+'-review.json',{at:now(),pngSHA256:rr.pngSHA256,scene:request.scene,observation:request.observation,quitRoute:request.route||null,wholeFrame:true,targetHwnd:rr.snapshot.focus});
   if(request.bind) await bind(request.review);
-  if(request.key!==undefined) return pulse(request.name,['keydown:'+request.key],request.ms,request.review,request.observation,!!request.final,request.route?'quit':'gameplay',request.route||null);
+  if(request.key!==undefined) return pulse(request.name,['keydown:'+request.key],request.ms,request.review,request.observation,!!request.final,request.route?'quit':'gameplay',request.route||null,request.startup===true);
 }
 async function main(argv) {
   if (argv[0] === 'submit') return console.log(await submit(JSON.parse(fs.readFileSync(0,'utf8'))));
