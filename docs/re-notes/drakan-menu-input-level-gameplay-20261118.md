@@ -39,3 +39,66 @@ native acknowledgment or authentic game result. The fixture includes busy
 guest work and ordinary window painting, not a D3D render workload.
 
 Fresh authentic outcome and publication follow validation below.
+
+Mouse preparation additionally uses an ordinary standard DIMOUSESTATE format.
+The first mouse control exposed a fixture error: one message per two-second
+frame allowed ordinary hover/hit-test messages to delay button dispatch. The
+corrected fixture drains each ordinary message range and reads DirectInput
+from its actual input callback as well as its frame loop. A short click could
+otherwise end between two slow frame samples. Fresh native and full browser
+controls prove button=128 and independent release; browser later reads zero.
+The failed control is closed with actual cleanup and is not game failure.
+The helper accepts reviewed ordinary absolute move/down coordinates, retaining
+the production mapping and exact native message/actor predicates. Three wrong
+mouse-message receipts are rejected. Original menu selection still requires
+the visible difficulty/level consequence.
+
+The fresh original used sealed 6308e7a3 source plus the three 5aa5dabd JavaScript
+overlays, exact a51912dd module, genuine COMCTL32/COMMCTRL and unchanged
+Settings100/media. Main-menu review at batch100157 was authentic. Warning
+Enter and UP succeeded; ordinary main focus arrived 17.087 seconds after UP
+(17.035 seconds after the completed-input record).
+Its immutable lifetime was 900 seconds, independent-watch intention920 and
+gameplay cutoff720, retaining180 for Quit. Mouse qualification/build publication
+finished at the cutoff; no New Game, level, movement or attack is claimed.
+
+During the reserve, ordinary mouse reference/move returned exact actor-thread1,
+generation4/window10004 USER receipts in418ms and1148ms, with independent UP.
+The immediate image still showed the old cursor; a later passive whole frame
+showed Quit red under the moved software cursor. Ordinary Escape also returned
+an exact865ms receipt. A left click returned an exact723ms receipt and UP ACK,
+then visibly opened the genuine "Too scared to face the perils of Drakan?"
+YES/NO confirmation. These consequences establish this ordinary mouse route
+actually reaches the original menu. They do not establish ordinary exit.
+
+The following move toward YES timed out at the fixed2500ms HTTP deadline.
+Independent release still returned ACK. This is sticky UNKNOWN; no later
+endpoint request, renewed review or replay occurred. The retained trace shows
+host preparation approximately88ms after dispatch, handler return138ms later, the actual
+WM_MOUSEMOVE queued for10004, and no subsequent observed public USER return
+for that ticket. The last observed actor consumer is sequence3219/thread1,
+PeekMessage(all,remove), result0. Its actor diagnostic says same memory/window
+and not retired, but targetOwnerThread0/generation0/visiblefalse are not a
+complete target fence and do not prove the intended window's consumption.
+That incomplete bounded trace cannot distinguish later actor work,
+missed native return or transport completion. It provides no actual late
+consumption latency with which to justify another longer deadline. The normal
+browser controls are positives; no authentic browser failure is claimed.
+
+Containment terminated at the actual900-second deadline and reports no leaks.
+The reused deadline helper had a separate demonstrated defect: its containment
+deadline killed the receipt-writing wrapper and its watcher before it retained
+native/watchdog pipe-close receipts. owner-complete therefore explicitly says
+retainedActualWaits=false. Those missing original receipts cannot be recovered
+or invented. stdout/stderr are streamed prefixes, not proven complete logs.
+
+The targeted drakan-menu-custody helper repairs this ordering. Native termination
+remains at the sealed deadline, with finite escalation and actual pipe close;
+the independently prearmed920 watcher lives outside that containment group.
+The outer wrapper cleanup boundary is935. A real TERM-ignoring child reproduces
+the old missing waits with the retired deadline constants; a fresh corrected
+control retains both actual waits and both EOFs, with no leaks. This custody
+repair does not resolve the original input UNKNOWN, so it does not authorize
+another unchanged original input retry. The concrete remaining blocker is an
+unresolved original native return/ACK after genuine Quit confirmation, and the
+gameplay goal remains unverified.

@@ -72,3 +72,77 @@ selected game with either no capture or valid self capture; it keeps the same
 finite 60-second passive deadline. Tracked predicate tests and the retained
 original observations demonstrate old-fail/new-pass without reopening a scope.
 An affected fresh original follows publication of that preparation correction.
+
+Preparation correction published as `4af0d4ba5`. Its affected original captures
+the genuine game top-level while the console is still visible, then after the
+console hides and the game owns SetCapture. Both captures pass the reviewed
+runtime contract; the first whole frame is gray and the second black, not a
+gameplay claim. Console text reports client/common/sound initialization.
+A read-only diagnostic mistakenly referenced `threadManager`, which is absent
+from controlEval's explicit parameters. The known ReferenceError was recorded
+and the helper closed; that scope was cancelled with zero binding/input and
+actual native/watchdog/EOF collection, without later endpoint calls.
+The corrected diagnostic uses only documented evaluator parameters and passes
+both an exact-parameter regression and a real authored native endpoint. Its
+authored observation records six genuine GL presentations. A subsequent
+authored bind independently rejects an expired reviewed image; zero extra W
+edges were sent in that scope.
+
+The input helper also separates the fixed ACK deadline from pulse duration:
+a 400ms ACK for an 80ms requested pulse is permitted by a 500ms confirmation
+policy, while a 501ms ACK and the operation deadline remain rejected. Independent
+physical UP keeps its original prearmed deadline. The earlier authored W
+actually acknowledged in about six milliseconds, with whole-frame capture
+about 119ms; no original input latency has yet been measured.
+
+The owner's 05:31 timing clarification permits calibrated finite personal
+review allowances before fresh captures. Actual authored operations expired
+the old 15s game/30s browser review allowances before input. New native captures
+therefore pin game60s/menu90s review limits at original capture time, with
+strict expiry, unchanged original timestamps, exact retained bytes and full
+live process/thread/window/control verification immediately before consumption.
+Tests accept a 20s review and reject the exact 60s boundary. The original
+3000ms observation/operation, 500ms confirmation and independent physical-UP
+deadlines remain separate. No expired scope or image is reused.
+
+The next original reaches a genuine fully rendered Alice main menu, personally
+reviewed as a whole frame. Its ordinary Enter is consumed on hwnd65543/tid1
+through PeekMessage PM_NOREMOVE in 908ms, with independent UP acknowledged.
+The evidence controller incorrectly borrowed Drakan's stronger removal check;
+it closes this scope without any subsequent endpoint request or visual-effect
+claim. The corrected Alice receipt validator matches the production USER-return
+contract: kind2 permits PM_NOREMOVE, while kinds1/3 require removal. Exact owner,
+epoch, nonce, message, window/thread, consumption boundary and immutable deadline
+remain mandatory. Focused negatives cover foreign target/thread/nonce and invalid
+non-removing API kinds. Fresh operation policy allows 2000ms confirmation,
+3000ms independent fallback, 5500ms physical-UP and 8000ms total operation,
+chosen before dispatch from measured 908ms original consumption latency.
+
+The fresh authored browser-production control subsequently completes ordinary
+Chrome Input -> DOM -> production renderer W DOWN and independently armed UP.
+Its personally reviewed before/after whole-page PNGs show the same yellow
+triangle changing from blue to red. Exact guest USER main/focus/capture,
+PID/TID/generation/liveness and renderer/window/creator/queue/manager/port/bridge
+identities are verified immediately before input. Both actual guest and renderer
+Worker bytecode hashes equal 46c9b8e4. Browser and supervisor actually wait to EOF
+and retain leaked=false; earlier expired browser scopes remain closed.
+The corrected finite native controller independently reproduces the same W
+visual effect in authored-policy with its calibrated deadlines.
+
+The affected original visibly advances from main menu to Easy/Medium/Hard/
+Nightmare after ordinary Enter. The next Enter is also consumed and physically
+released, but an evidence-controller save wrongly treats the mutable
+last-intent index as write-once. This scope closes without a later endpoint,
+so no level-loading or gameplay consequence is claimed. The fix preserves all
+per-operation immutable files and replaces only the last-intent index after
+successful consumption and independent UP, as the established Alice helper
+already does. A fresh authored test executes two consecutive finite reviewed W
+operations successfully. Its attempted Quit is refused before DOWN by a
+separate review-write ordering error; the initial reserve check now precedes
+the review without demanding the not-yet-written review file, and the complete
+review-dependent policy is still enforced immediately before DOWN.
+The fresh authored Quit test subsequently consumes ordinary Escape, acknowledges
+independent physical UP and exits through the fixture's normal key-UP handler.
+No post-exit capture is requested. The controller records completion separately
+from actual native/watchdog/EOF collection. All these preparation errors and
+closed scopes remain explicit; the next original uses the tested sequence.

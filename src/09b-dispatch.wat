@@ -1559,6 +1559,8 @@
       (then (call $crt_callback_continue (i32.const 1)) (return)))
     (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0038))
       (then (call $crt_callback_continue (i32.const 2)) (return)))
+    (if (i32.eq (local.get $name_rva) (i32.const 0xCACA0042))
+      (then (call $crt_callback_continue (i32.const 3)) (return)))
 
     ;; bsearch continuation — comparator returned eax = sign(key - elem).
     ;; eax==0 → hit; eax<0 → narrow to [low, mid); eax>0 → narrow to [mid+1, high).

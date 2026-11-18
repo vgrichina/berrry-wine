@@ -114,3 +114,96 @@ Focused checks cover snapshot exclusion, selected-image bytes, unchanged source
 identity/provider, read-only write rejection, unrelated lazy media exclusion,
 resident-image reuse, missing image, asynchronous-source rejection and immutable
 seed mismatch/missing-owner rejection. The existing VFS seeding suite passes.
+
+## Native private DLL discovery parity
+
+After publishing the loader repair as `49dd59dba` (strict pull and push both 0),
+the second fresh ordinary autorun reached System\Setup.exe but failed at batch
+0 on the decorated UClass constructor imported from Core.dll. The actual Core
+DLL is on the disc; CLI graph admission considered only the registry's names,
+so it never asked its existing guest-path resolver for this private sibling.
+The browser already admits genuine mounted private siblings. A narrow native
+admission helper now applies that same rule to imports: actual files in the
+executable's guest directory, excluding builtin-only system DLLs, static module
+placeholders and path-shaped requests. No registry list, app registration or
+explicit DLL seed was changed.
+
+A generated disc child importing PRIVATE.DLL reproduces the exact old failure:
+`DiscValue` becomes an unimplemented API and the child crashes at batch 0.
+With native admission, the actual sibling PE loads, DllMain runs, DiscValue
+returns its authored 0x432 value, the child exits 0, and its PASS file merges
+through the unchanged completion guard. The whole parent dialog was personally
+reviewed in a fresh scope with a preselected separate control port. An earlier
+fixture overlap caused EADDRINUSE and the identity guard refused capture; that
+scope was cancelled without binding or input. No original scope was affected.
+Focused negatives cover builtin exclusion, sibling-directory scope, explicit
+path refusal, placeholders and admission without touching provider bytes.
+The browser private-DLL control also personally shows the child-authored dialog;
+its host log proves PRIVATE.DLL discovery, real PE mapping and DllMain return.
+Both actual Workers' bytecode matches the pinned module. No browser input was
+sent. Focused checks and the subsequent locked full build passed.
+
+For direct review of the same genuine System\Setup.exe selected by the autorun
+bootstrap, ordinary importer selection exposed a separate same-basename bug:
+asking for its complete path returned the earlier D:\Setup.exe by basename.
+`chooseCandidate` now permits basename fallback only for bare names. Complete
+paths remain exact, including absent-path rejection; ordinary bare-name default
+selection is preserved. This was detected before any guest launch. The focused
+media CLI test also had a stale source assertion predating configureExeOwned;
+its executable-drive precedence check now names the current owned boot API.
+Both that suite and the same-basename regression checks pass. No manual
+registry, INI, FirstRun, renderer setting or game patch is involved.
+
+Retention uses selected named whole PNGs only. Byte-identical investigation
+captures and derived lossless/BMP previews were removed after recording their
+hashes and recovery aliases; `selected-image-retention.json` maps them to the
+retained original whole capture. No source tree snapshot, frame series, capture
+bundle or second original disc was made.
+
+## Final original outcome and blocker
+
+Exact-path selection was published as `0ceafffe1` after focused media/child tests
+and another successful locked full build, followed immediately by strict pull
+and push. A third fresh original scope selected the genuine
+D:\System\Setup.exe with no parameters and D:\ as its working directory, exactly
+the image and inherited directory observed from the ordinary autorun bootstrap.
+This used normal read-only media import, no registered app, overrides or patches.
+The source and pinned module are recorded in `installer-source-files.json` plus
+the relevant dirty-source binary patch.
+
+The real original Window.dll, Core.dll, MSVCRT.dll and COMCTL32.dll loaded and
+ran their initializers. The original created its top-level setup dialog plus
+two nested child dialogs and called ShowWindow for the first wizard page.
+The reviewed-presentation endpoint then remained pending for its complete fixed
+3000ms window, reporting **main.topLevel** as its sole failure. No whole original
+PNG was produced, and no original control was personally reviewed or bound.
+The underlying main-window classification/selection cause remains UNKNOWN; the
+creation log alone does not establish whether USER state or renderer metadata
+is wrong. No guard was suppressed and no main HWND, focus or window was replaced.
+No endpoint request followed the terminal capture failure. The scope was closed
+with orderly TERM, actual native/supervisor/watchdog waits and both pipe EOFs.
+TERM cleanup is not an ordinary installer Cancel or game Quit.
+
+This is the concrete blocker to normal installation: a reviewed original wizard
+is unavailable. The mandatory manifest census remains a 207,876,925-byte source
+lower bound including 81 compressed map entries (50,289,750 bytes). Exact expanded
+mandatory space was intentionally left unknown; no Install action or original
+installation data write occurred. The original overlay reported zero records
+flushed. Three original installer scopes ran in total; zero original game scopes,
+3D world, movement, fire or ordinary Quit are claimed. Earlier UNKNOWN scopes
+were never reopened. No Windows reference behavior was inferred from Wine.
+
+All owned native runtime scopes have retained actual waits and EOFs. No test box
+was created: ID null, state NOT_CREATED, expiry null, stop receipt null. The
+final evidence index and cleanup verification accompany result.json, written
+last. The unique disc remains at its original recovery path and is referenced
+by whole hash; selected process images are recoverable through ordinary import
+and are removed from temporary loader storage after scope closure.
+
+The final audit covers 18 runtime scopes and 88 distinct recorded PIDs: all native,
+supervisor, watchdog, original-child and browser Chrome wait/EOF receipts passed;
+no recorded process remained live. The final whole ISO rehash still matched the
+original SHA and /home free space was 4,035,854,336 bytes. An initial standalone
+board-follow helper did not retain a PID/wait receipt; its actual wait is not
+claimed, and no matching live tail remained in the final process scan. This
+limitation does not replace or weaken the retained native runtime wait evidence.

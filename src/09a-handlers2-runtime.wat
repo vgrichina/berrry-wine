@@ -58,6 +58,12 @@
     (call $crt_callback_begin (i32.const 0) (local.get $arg0) (local.get $arg1) (i32.const 0))
   )
 
+  ;; int __cdecl _initterm_e(PIFV *first, PIFV *last): ordered [first,last)
+  ;; NULL-skipping walk, returning the first nonzero initializer result.
+  (func $handle__initterm_e (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $crt_callback_begin (i32.const 3) (local.get $arg0) (local.get $arg1) (i32.const 0))
+  )
+
   ;; Translate the x87 control word into the bit layout exposed by the 32-bit
   ;; Microsoft CRT. Exception bits are deliberately reordered; RC moves from
   ;; x87 bits 10..11 to CRT bits 8..9, and PC uses the reverse encoding.

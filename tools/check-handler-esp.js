@@ -116,7 +116,7 @@ for (const file of SRC) {
     }
     // CRT init/exit retains the caller return word privately. The shared
     // entry/continuation owns the cdecl pop for these three front doors.
-    if (['exit', '_cexit', '_initterm'].includes(funcName) &&
+    if (['exit', '_cexit', '_initterm', '_initterm_e'].includes(funcName) &&
         /call \$crt_callback_begin\b/.test(code)) delegates = true;
     // Beep's retained continuation owns the stdcall pop across alertable waits.
     if (funcName === 'Beep' && /call \$beep_begin\b/.test(code)) delegates = true;

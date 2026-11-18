@@ -6657,6 +6657,8 @@ async function main() {
     }
     dlls = await resolveDllGraph({
       exeBytes,
+      isLoadable: name => require('../lib/dll-registry').isLoadableDll(name) ||
+        require('../lib/cli-mounted-private-dll').isMountedPrivateDll(ctx.vfs, name, EXE_PROCESS_GUEST_PATH),
       seeds: [...((ASSET_ENTRY && ASSET_ENTRY.dlls) || []), ...DLL_SEED],
       detectRequiredDlls,
       onMissing: (name, spec, { seed } = {}) => {

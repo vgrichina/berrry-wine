@@ -3865,7 +3865,7 @@
       (return (local.get $fn))))
     (i32.const 0))
 
-  ;; Retained init/exit frames: mode 0=_initterm, 1=exit, 2=_cexit.
+  ;; Retained init/exit frames: mode 0=_initterm, 1=exit, 2=_cexit, 3=_initterm_e.
   ;; 0 ret, 4 cursor, 8 end, 12 mode, 16 exit code, 20 expected ESP;
   ;; 32 parent, 40 expected child, 48 root. Sixteen independent partitions.
   (global $CRT_CALLBACK_CONTEXTS i32 (region.addr $CRT_CALLBACK_CONTEXTS 0))
@@ -3873,6 +3873,7 @@
   (global $crt_callback_owner (mut i64) (i64.const 0))
   (global $crt_callback_depth (mut i32) (i32.const 0))
   (global $crt_cexit_thunk (mut i32) (i32.const 0))
+  (global $crt_initterm_e_thunk (mut i32) (i32.const 0))
 
   (func $crt_callback_frame_at (param $index i32) (result i32)
     (i32.add (region.addr $CRT_CALLBACK_CONTEXTS 0)
@@ -3893,7 +3894,7 @@
   ;; then reserve its child identity before committing any callback state.
   (func $crt_callback_slot (param $mode i32) (param $ptr i32) (param $end i32) (result i32)
     (local $n i32)
-    (if (i32.eqz (local.get $mode))
+    (if (i32.or (i32.eqz (local.get $mode)) (i32.eq (local.get $mode) (i32.const 3)))
       (then
         (block $done (loop $scan
           (br_if $done (i32.ge_u (local.get $ptr) (local.get $end)))
@@ -3911,10 +3912,12 @@
     (i32.const 0))
 
   (func $crt_callback_complete (param $mode i32) (param $ret i32) (param $sp i32) (param $code i32)
-    (if (local.get $mode)
+    (if (i32.or (i32.eq (local.get $mode) (i32.const 1)) (i32.eq (local.get $mode) (i32.const 2)))
       (then
         (global.set $atexit_count (i32.const 0))
         (call $crt_stream_close_all)))
+    (if (i32.eq (local.get $mode) (i32.const 3))
+      (then (i32.store (global.get $reg_base) (local.get $code))))
     (i32.store offset=16 (global.get $reg_base) (local.get $sp))
     (if (i32.eq (local.get $mode) (i32.const 1))
       (then
@@ -3928,10 +3931,16 @@
   (func $crt_callback_launch (param $frame i32) (param $slot i32)
     (local $thunk i32) (local $fn i32) (local $sp i32)
     (local.set $fn (call $gl32 (local.get $slot)))
-    (if (i32.eqz (i32.load offset=12 (local.get $frame)))
+    (if (i32.or (i32.eqz (i32.load offset=12 (local.get $frame)))
+          (i32.eq (i32.load offset=12 (local.get $frame)) (i32.const 3)))
       (then
         (i32.store offset=4 (local.get $frame) (i32.add (local.get $slot) (i32.const 4)))
-        (local.set $thunk (global.get $initterm_thunk)))
+        (local.set $thunk (global.get $initterm_thunk))
+        (if (i32.eq (i32.load offset=12 (local.get $frame)) (i32.const 3))
+          (then
+            (if (i32.eqz (global.get $crt_initterm_e_thunk))
+              (then (global.set $crt_initterm_e_thunk (call $com_cont_thunk (i32.const 0xCACA0042)))))
+            (local.set $thunk (global.get $crt_initterm_e_thunk)))))
       (else
         ;; Pop before entering guest code: nested cleanup cannot repeat this callback.
         (global.set $atexit_count (i32.shr_u (i32.sub (local.get $slot) (global.get $atexit_table)) (i32.const 2)))
@@ -3988,7 +3997,14 @@
     (call $invocation_leave (i64.load offset=40 (local.get $frame)))
     (i64.store offset=40 (local.get $frame) (i64.const 0))
     (if (i64.ne (call $invocation_current) (i64.load offset=32 (local.get $frame))) (then (unreachable)))
-    (local.set $slot (call $crt_callback_slot (local.get $mode) (i32.load offset=4 (local.get $frame)) (i32.load offset=8 (local.get $frame))))
+    ;; Read the callback's EAX only after validating its invocation and RET.
+    ;; Each nested walk owns its frame/result; the first failure never scans
+    ;; or invokes a later initializer. Void _initterm still ignores EAX.
+    (if (i32.and (i32.eq (local.get $mode) (i32.const 3))
+          (i32.ne (i32.load (global.get $reg_base)) (i32.const 0)))
+      (then (i32.store offset=16 (local.get $frame) (i32.load (global.get $reg_base))))
+      (else (local.set $slot (call $crt_callback_slot (local.get $mode)
+        (i32.load offset=4 (local.get $frame)) (i32.load offset=8 (local.get $frame))))))
     (if (local.get $slot)
       (then
         (i64.store offset=40 (local.get $frame) (call $invocation_enter))
