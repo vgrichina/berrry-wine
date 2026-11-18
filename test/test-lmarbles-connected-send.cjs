@@ -7,6 +7,18 @@ const http = require('node:http'), net = require('node:net');
 const ctl = require('../tools/lmarbles-controller.cjs');
 const common = require('../tools/native-supervisor-common.cjs');
 const { createGuardedInput } = require('../lib/cli-guarded-input');
+test('artifact collision refuses before any endpoint or artifact mutation', {timeout:5000}, async()=>{
+  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'intent-name-'));
+  const previous=ctl.R,request=http.request;let requests=0;
+  try{
+    ctl.R=dir;const bytes=Buffer.from('{"nativeReceipt":"retained"}');
+    fs.writeFileSync(path.join(dir,'pause-down.json'),bytes);
+    http.request=()=>{requests++;throw Error('endpoint must never be reached');};
+    await assert.rejects(ctl.pulse('pause-down',['keydown:40'],160,'unused','authored colliding child name'),ctl.ReserveRejected);
+    assert.equal(requests,0);assert.deepEqual(fs.readdirSync(dir),['pause-down.json']);
+    assert.deepEqual(fs.readFileSync(path.join(dir,'pause-down.json')),bytes);
+  }finally{http.request=request;ctl.R=previous;fs.rmSync(dir,{recursive:true,force:true});}
+});
 for (const mode of ['fresh', 'fresh-strict', 'late-consumed', 'expired-socket', 'expired-connect', 'expired-strict', 'replaced', 'review-replaced', 'unknown', 'partial-effect', 'lost-ack', 'partial-write', 'end-throw', 'remote-forgery', 'release-failed', 'release-mismatch', 'physical-held', 'owner-after-refusal', 'snapshot-replaced']) test(mode, { timeout: 15000 }, async () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'connected-send-'));
   const rows = [], refs = { queue: [] }; let physicalUp = true, batch = 0;

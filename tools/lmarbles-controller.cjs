@@ -243,6 +243,11 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     const [, x, y] = keys[0].split(':'); ok(Number(x) >= 0 && Number(x) < 1024 && Number(y) >= 0 && Number(y) < 712);
   }
   ok(description.trim(), 'personal scene review required');
+  // A gesture also publishes name.json/name.png at completion. Reserve its
+  // entire artifact prefix before lease(), arm or DOWN: e.g. "pause-down"
+  // must not collide with the earlier "pause" gesture's DOWN receipt.
+  if (fs.readdirSync(S.R).some(file => file.startsWith(name + '.') || file.startsWith(name + '-')))
+    throw new ReserveRejected('intent artifact name already used; choose a fresh name before any request');
   policy(intent, keys, review, route);
   try {
     const [owner, before] = await lease(); const rr = read(review + '.json'), reviewed = read(review + '-review.json');

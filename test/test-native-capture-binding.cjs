@@ -184,6 +184,27 @@ async function main(){
      if(name==='compound'){
       const edges=c.read('press-down.json');assert.equal(edges.length,2);assert.deepEqual(edges.map(e=>e.nativeMessage.wParam),[39,32]);assert(edges.every(e=>e.nativeMessage.consumption==='owner-user-return'));
       const zero=await c.call({action:'snapshot'});assert(zero.physicalUp);
+      const base=edges[0].nonce.slice(0,-2);
+      const aggregate=await c.call({action:'guarded-status',nonce:base});
+      assert.equal(aggregate.owner,owner.owner);assert.equal(aggregate.epoch,owner.epoch);
+      assert.equal(aggregate.state,'CANCELLED');assert(aggregate.consumed);
+      assert.equal(aggregate.reason,'independent release');
+      assert.deepEqual(aggregate.edges.map(e=>e.nonce),edges.map(e=>e.nonce));
+      assert(aggregate.edges.every(e=>e.consumed&&e.nativeMessage.consumption==='owner-user-return'));
+      c.save('post-chord-status.json',aggregate);
+      const retainedDown=fs.readFileSync(path.join(dir,'press-down.json'));
+      await assert.rejects(c.pulse('press-down',['keydown:40'],160,'fresh','Authored colliding artifact name'),/artifact name already used/);
+      assert.deepEqual(fs.readFileSync(path.join(dir,'press-down.json')),retainedDown);
+      assert(!fs.existsSync(path.join(dir,'terminal-input-failure.json')));
+      // lease() must query the base nonce through the real HTTP handler, then
+      // the next ordinary Escape must cross the real native USER boundary.
+      await capture('next');
+      c.save('next-review.json',{at:k.now(),pngSHA256:c.read('next.json').pngSHA256,scene:'game',observation:'Authored actual native post-chord Escape; no personal original game claim'});
+      await c.pulse('next-escape',['keydown:27'],250,'next','Authored native post-chord Escape');
+      const escape=c.read('next-escape-down.json')[0];
+      assert.equal(escape.nativeMessage.wParam,27);assert.equal(escape.nativeMessage.consumption,'owner-user-return');
+      assert.equal(c.read('next-escape-up.json').state,'ACK');
+      c.save('post-chord-next-escape.json',{aggregate,escape,up:c.read('next-escape-up.json'),actualNative:true});
       await assert.rejects(c.call({action:'guarded-key-chord',keys,guard:{...owner,nonce:edges[0].nonce.split('/')[0],reviewed:true,deadline:Date.now()+1000,intent:c.read('fresh.json').snapshot}}),/nonce/);
      }else if(name!=='compound-unknown'){
       const d=c.read(diagnostic),reply=d.rawReply;
