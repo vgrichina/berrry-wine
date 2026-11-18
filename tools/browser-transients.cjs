@@ -23,7 +23,10 @@ function create() {
   }), {flag:'wx', mode:0o600});
   const api = {
     root, ...dirs,
-    args:Object.freeze(['--user-data-dir=' + dirs.profile, '--disk-cache-dir=' + dirs.cache,
+    // Installed BetterChromium otherwise runs a network timezone probe before
+    // starting Chrome. Its 15s wait can consume the entire launch deadline.
+    // Match the test guest's ordinary UTC locale without changing deadlines.
+    args:Object.freeze(['--bw-timezone=Etc/UTC', '--user-data-dir=' + dirs.profile, '--disk-cache-dir=' + dirs.cache,
       '--crash-dumps-dir=' + dirs.crashes]),
     env(base = process.env) { return {...base, TMPDIR:dirs.tmp, TMP:dirs.tmp, TEMP:dirs.tmp, XDG_CACHE_HOME:dirs.cache}; },
     // Register immediately after spawn, before awaiting startup. close includes
