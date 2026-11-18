@@ -27,6 +27,34 @@ unknown. Its 59 retained waits completed with both EOFs and 219 recorded PIDs
 were absent, but the outer tool143/enclosing-wait gap remains unknown.
 Evidence: `scratch/runs/20261118-gltron-matching-fixture-operator-live-round/result.json`.
 
+The normal-pause follow-up (`bc3af94e4`, corrected report `06686105d`)
+establishes the two manual WebGL turn effects. Space paused a live arena;
+Enter resumed it. The coordinator reviewed whole frames showing the same
+intact yellow rider's trail turn from rightward to upward after A, then add
+a second rightward corner after the independently chosen S. The pause held
+for 6.732 seconds. These were separate resume/turn/pause intervals, not a
+simultaneous Enter+A event or autonomous play. Quit Enter was **NOT_SENT**
+after disk-margin closure at 1,535,164,416 free bytes. This is separate from
+the earlier original's Quit 0, and the first authored scope's actual floor
+breach remains recorded. Both tasks used the unchanged 92 media and compiled/
+served `f6962ba5b`/`a6002d5d…` graph; independent executing-bytecode provenance
+remains unknown. Software-backend gameplay is still a separate open outcome.
+Evidence: `scratch/runs/20261118-gltron-normal-pause-manual-turn-effects/result.json`.
+
+Quake II report `d0ed22840` records Game -> Easy and four manual world moves
+on unchanged 67 media/control rows and `f6962ba5b`/`a6002d5d…`. The coordinator
+reviewed the initial room and a later doorway view beside an existing corpse.
+There was no firing, identified living-enemy damage/defeat or ordinary Quit;
+the corpse is not credited as a kill. Shared free space reached 1,498,701,824
+bytes, permanently closing the run with zero later requests. Actual driver,
+browser, supervisor and watchdog waits are retained; the outer-tool143/
+enclosing-wait gap and independently unknown executing modules remain limits.
+The later audit confirmed five-second world-input freshness; the misleading
+30-second refusal diagnostic was corrected. No combat or whole-corpus result
+is inferred from these movement frames.
+Evidence: `scratch/runs/20261118-quake2-current-reviewed-browser-enemy-progress/result.json`
+and `scratch/runs/20261118-quake2-tmpfs-world-enemy-consequence/result.json`.
+
 LTris startup helper `6fe4afd9e` distinguishes an initial empty desktop
 publication from the first completed SDL window publication. Authored browser
 controls and native Quit passed; the original reached only its menu before
