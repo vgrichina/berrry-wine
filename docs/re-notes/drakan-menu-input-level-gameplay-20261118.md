@@ -1,6 +1,11 @@
 # Drakan menu input and finite acknowledgment — 2026-11-18
 
-Evidence: `scratch/runs/20261118-drakan-menu-input-level-gameplay/`.
+Latest result: **New Game / Normal, mounted heading control, flame attack and
+ordinary confirmed Quit verified** in
+`scratch/runs/20261118-drakan-prepared-new-game-mouse-route/`. Forward travel
+remains unverified. Earlier timeout scopes below remain closed.
+
+Predecessor evidence: `scratch/runs/20261118-drakan-menu-input-level-gameplay/`.
 All predecessor UNKNOWN scopes remain closed, without endpoint requests.
 
 The ordinary renderer keyboard route updates physical/DirectInput key state
@@ -174,10 +179,55 @@ qualifying a fresh policy:4000ms confirmation,5500ms fallback,10000ms UP and
 identity/review/receipt checks and actual900/920/180 custody remain unchanged.
 
 Qualification reproduces old2500ms HTTP failure with a3500ms authored guest
-frame; a fresh4000ms control consumes at approximately3340ms and independently
+frame; a fresh4000ms control consumes at approximately3350ms and independently
 releases. Receipt, duration, review-boundary and scene negatives pass. A normal
 production-browser USER/DirectInput keyboard+mouse control passes after the
 locked build. Its earlier concurrent-build mouse USER-dispatch assertion
 failure is retained, with releases and actual browser/watch EOFs; no cause or
 authentic browser failure is inferred from that authored control. No original
 starts until these preparations, build and strict publication finish.
+
+## Final affected original: verified heading, attack and ordinary Quit
+
+All tests, locked build and strict publication edf62a65d finished before
+the fourth original's fixed900/920/180 lifetime. Exact6308+5aa5 sources,
+published98e scene calibration, unchanged a519 module, genuine COMCTL32 and
+COMMCTRL, original64 media pins and unchanged92-byte Settings100 were sealed
+and checked before launch. Actual main/Worker source/module reads match the
+sealed inventory. This is the qualified native route, not an authentic-browser
+run; no game/runtime logic or identity override was introduced.
+
+Personally reviewed ordinary pointer movement shows New Game red before its
+stationary click, then Normal red before its click. The level loads genuine
+Wartok Canyons assets. Reviewed Enter advances the illustrated story to the
+mounted outdoor level: dragon/rider, health HUD, ridge, bridge and river.
+The left120-pixel pointer action has exact native USER consumption and
+independent UP; the later whole frame shows the peak shift from about250 to360
+pixels, the central conifer shift right and a new tree entering the left edge.
+This verifies player heading control. A stationary1000ms ordinary left click
+has exact native consumption and independent UP, then a whole frame visibly
+shows bright orange flame at the dragon's mouth. This verifies attack effect,
+not enemy damage. A1000ms ArrowUp also consumes with UP; its slight landmark
+differences do not establish forward travel confidently.
+
+Reviewed Escape opens the genuine menu over the level. Quit is hovered and
+visibly red before clicking. The genuine confirmation says there is a game in
+progress and asks whether to quit Drakan. YES is hovered and visibly red
+before the final stationary click. Both final native consumption and
+independent UP ACK succeed. Without any later endpoint request, filesystem
+inspection retains guest Exit0, actual native process exit0/no signal, both
+stdout/stderr EOFs, watchdog exit0 with both EOFs, and no leaks. No cancellation
+request exists for this successful scope. Native stats report664.838 seconds;
+normal exit occurs before gameplay cutoff720 and preserves the entire Quit
+reserve. The fixed watchdog/containment deadlines were never extended.
+
+Selected key images include original-retry/story-result.png (the earlier
+whole mounted level specifically requested for retention), and original-
+measured/mounted-before.png, heading-settled.png, attack-settled.png,
+quit-highlight.png, quit-confirmation.png and hover-confirm-yes.png.
+Four originals in this task all retain both actual native/watch waits and
+EOFs. The run audit checks87 actual recorded child waits with both EOFs and
+nonlive PIDs, including successful and failed authored controls. The deliberate
+old-custody negative retains its expected missing-inner-wait failure separately.
+Box ID/expiry/stop receipt are null, state NOT_CREATED. All old UNKNOWN scopes
+remain closed. Ownership is released after result.json is written last.
