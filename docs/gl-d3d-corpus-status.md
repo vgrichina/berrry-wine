@@ -4433,3 +4433,33 @@ browser throttle/Pause/resume controls, without ordinary Quit, causal road steer
 backend parity, complete 27-app coverage, FPS or audio claims.
 
 Evidence: `scratch/runs/20261118-nfs3-current-browser-driving-pause/result.json`.
+
+## Blood II normal browser movement and firing — 18 November 2026
+
+[Browser world/control report](re-notes/blood2-current-browser-world-combat-20261118.md),
+published as `c5b4c4c54`, records unchanged BUILD109 media on pinned `7741a4cfd`
+and module `3e2030df…`, normal 100000-step slices and five guest Workers. Music,
+chaining and uops remain enabled. This is separate from the earlier diagnostic
+native-watch world evidence. Helper media-alias and DirectDraw-menu admission
+repairs passed focused old-fail/new-pass controls and the locked build; no engine
+or music repair is claimed.
+
+The coordinator reviewed whole initial-world/forward frames: the player moves
+out of the elevator into the corridor. After a restart, the reviewed firing pair
+changes ammo 50→49 with health 100. Turning is also recorded. Player death is
+observed separately, but neither its killing actor nor enemy damage/kill is
+proved. Actual key-code matching, independent releases and physical-neutral
+checks accompany the controls. The initialized WebGL bridge's sampled counters
+do not establish GPU authorship of the world pixels; visible rendering and
+backend identity remain separate observations.
+
+Quit reaches the promotional card; after dismissal, worker 4 traps at 0xc06edb.
+The retained stack matches a multimedia timer callback. AM18 attribution is a
+bounded inference, with current occupied module generation/bytes and timer
+kill/selection/detach ordering still missing. No speculative lifetime fix or
+ordinary Quit claim is made. Browser/display/release waits have both EOFs and
+supervisors report no leaks, while two enclosing-launcher waits and board-watcher
+EOF remain explicit gaps. No complete cleanup, backend parity, full 27-app, FPS or
+audio claim is inferred.
+
+Evidence: `scratch/runs/20261118-blood2-current-browser-world-combat/result.json`.
