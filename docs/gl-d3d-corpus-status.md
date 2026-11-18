@@ -1,4 +1,4 @@
-# OpenGL / Direct3D corpus status, updated 2026-11-17
+# OpenGL / Direct3D corpus status, updated 2026-11-18
 
 ## November 17 NFS3 driving and paired SDK rendering
 
@@ -14,6 +14,21 @@ Escape expired unapplied at its unchanged release-bound deadline; Pause,
 Continue and native Quit remain unproved. Native and enclosing process waits
 and both pipe EOFs completed. The terminal input attempt stays closed.
 Evidence: `scratch/runs/20261117-nfs3-inherited-timing-visible-driving/result.json`.
+
+A later [NFS3 supervision and timing run](re-notes/nfs3-supervision-signal-source-driving-20261117.md),
+report `a0a3cbaa8`, observed released driving to16 MPH with steering and an
+off-road view. The coordinator reviewed the complete16-MPH frame; it was
+delivered as Telegram message3014. The original now supplies the missing
+timing: one synchronous `gpu_stream_kick` took2916.589 ms and blocked HTTP
+entry until2463.302 ms after authorship, beyond the unchanged800-ms Escape
+deadline. The handler did not apply and no native consumption occurred.
+All keys were subsequently observed UP with an empty queue, but that
+observation was1938 ms late. Pause/Continue/native Quit remain open. No
+scheduling repair was established by that run; the endpoint remains closed.
+The earlier unexplained SIGTERM sender remains unknown, separately from this
+measured render-starvation cause. Native/inner lifecycle waits completed;
+the final advisory watcher wait remains unverified.
+Evidence: `scratch/runs/20261117-nfs3-supervision-signal-source-driving/result.json`.
 
 [Four SDK examples](re-notes/dxsdk-four-examples-paired-rendering-20261117.md)
 (`112c6ef43`) and the
@@ -77,6 +92,24 @@ per-call Device2 traces were not captured; matching authored Device2 controls
 remain separate from original native-D3DRM/GPS evidence. Earlier software
 Viewer's blank captures remain separate from this successful fresh pair.
 
+The [startup geometry follow-up](re-notes/rm-startup-geometry-architec-geometry-paired-20261117.md),
+helper `0aba2d17a` and report `fa6f4ae83`, adds finite stabilization before
+inspection binding. An authored native startup reproduced the backing and
+presentation transition with a fixed viewport before secondary inspection.
+Completed presentation and stable geometry establish one baseline; bound
+geometry/generation guards remain strict, with never-ready/stable, stalled,
+post-bind mutation and rebind-refusal controls. Focused tests and the locked
+build passed. No dimensions are forced and no bound scope is rebaselined.
+
+Three fresh originals on the same `3ab982f2d` / `06eaa397…` graph show
+ARCHITEC WebGL's rotating mechanism and GEOMETRY's gold shapes moving on both
+executors. The coordinator reviewed all three complete pairs; GEOMETRY WebGL's
+later frame was delivered as Telegram message3013. The historical closed
+ARCHITEC transition remains separate and its cause remains unassigned. Native,
+browser, helper, watchdog and durable enclosing waits/EOFs completed; the final
+caller shell's143 is distinguished from the durable owner's actual command0.
+Evidence: `scratch/runs/20261117-rm-startup-geometry-architec-geometry-paired/result.json`.
+
 The following table covers the named November17 moving-scene results only;
 it neither reconstructs nor completes the historical 27-app set. Each cell
 means reviewed natural scene motion on that actual executor, not visual parity,
@@ -90,7 +123,8 @@ FPS, audio, gameplay completion or native Quit.
 | `dx_twist` | Motion observed | Motion observed | `20261117-dxsdk-four-examples-paired-rendering` |
 | `dx_globe` | Motion observed | Motion observed | `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
 | `dx_viewer` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-dxsdk-globe-viewer-paired-retained-rendering` |
-| `scr_architec` | Motion observed | Pre-capture refusal; open | `20261117-dxsdk-viewer-viewport-fix-architec-paired` |
+| `scr_architec` | Motion observed | Motion observed | Software: `20261117-dxsdk-viewer-viewport-fix-architec-paired`; WebGL: `20261117-rm-startup-geometry-architec-geometry-paired` |
+| `scr_geometry` | Motion observed | Motion observed | `20261117-rm-startup-geometry-architec-geometry-paired` |
 
 ## November 17 Quake III arena, depth repair and delayed input
 

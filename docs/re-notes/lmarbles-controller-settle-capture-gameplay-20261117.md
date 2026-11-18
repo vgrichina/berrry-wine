@@ -42,9 +42,9 @@ Direct encoder/whole-pixel and loader proofs are
 hash-referenced from the prior runs rather than repeated.
 
 Earlier authored-only failures are preserved separately. One admission was
-locally NOT_SENT during concurrent build work. The first input holder received
-TERM from its invoking tool; subsequent launches refused before creating native
-or watchdog children. The run-specific holder repair records TERM/HUP/INT while
+locally NOT_SENT during concurrent build work. The first input-holder invocation ended with exit 143 and the holder process
+was gone; the signal sender was not recorded. Subsequent launches refused before
+creating native or watchdog children. The run-specific holder repair records TERM/HUP/INT while
 retaining its sealed descriptors until explicit stop. A DirectDraw software-mode
 probe produced gray pixels and was rejected; it is not counted as a positive
 visual proof. The hardware-backed authored cases supply that proof.
