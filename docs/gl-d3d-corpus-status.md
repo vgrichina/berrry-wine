@@ -4520,3 +4520,33 @@ the named browser gameplay and Quit result, without software-backend parity,
 full 27-app coverage, FPS or audio claims.
 
 Evidence: `scratch/runs/20261118-hexen2-dialog-release-browser-gameplay/result.json`.
+
+## Age of Wonders II normal browser army movement — 18 November 2026
+
+[Worker identity and map report](re-notes/aow2-worker-identity-boundary-map-progress-20261118.md)
+records published source `3c6d7d115` and module `1504acf2…`, unchanged registered
+media and real required Borland/MSS companions. The coordinator reviewed whole
+party-selection and two arrival frames: ordinary destination/confirmation inputs
+move the party southeast and farther south, with points 20/20→14/20→10/20.
+Pre/post identity checks and independent release waits accompany both moves.
+All 216 Worker identity reads complete; neither the prior identity timeout nor
+the callback-drive failure reproduces. The bounded trace change is diagnostic,
+without a causal callback repair claim.
+
+Ground remains black while objects and HUD render. Native surface 65 already
+contains zero bytes at ground point (600,300) before transfer to the backbuffer.
+The sampled Device7 strip excludes that point; a geometrically covered neighbor
+maps to zero bytes in texture 68. Actual WebGL executor upload/readback at the
+ground point is black, with no retained draw covering it. This localizes the
+next investigation before transfer/upload, without establishing an intended
+nonblack source, missing geometry, texture defect or WebGL raster defect. The
+executor is observed directly; its vendor/renderer string was not collected.
+
+The controller closes at its fixed command-wait deadline after the terrain
+probe. A later inspection is rejected locally before any endpoint request;
+ordinary Quit is unattempted. Runtime child/enclosing waits and EOFs are retained,
+with earlier control and board-watcher outer-tool gaps recorded separately.
+These named gameplay results do not establish terrain correctness, backend
+parity, full 27-app coverage, FPS or audio.
+
+Evidence: `scratch/runs/20261118-aow2-worker-identity-boundary-map-progress/result.json`.
