@@ -182,6 +182,13 @@
       "baseSHA256": "78756704277e20f2d8b1be3bd7c7bb37fbd56c82582dea95d3fcb875c162d014",
       "sha256": "71888ea52749325cf13e70051aab2aa13c7b6bfde06cf9143905abda4ba48618",
       "reason": "Review 20261118 AoE MCI notify: sequencer/waveaudio MCI_PLAY records MCI_NOTIFY hwnd; end of play posts MM_MCINOTIFY SUCCESSFUL from the existing per-batch guest-time pump; STOP/CLOSE post ABORTED, a new notify play posts SUPERSEDED; CLI sequencer keeps playing on the MCI clock without an AudioContext. Same _cdNotify -> post_window_message path cdaudio already used; no new callback, export or guest EIP write. Run 20261118-aoe-mci-notify."
+    },
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "baseSHA256": "6c1e8f7412c85b3a45ba5f30aa893bc5b74098508f315a247a0f1c3e520812a7",
+      "sha256": "7f74c0fe7b48d9b6e048bf200e858e6028f1947777d495d1500414bc7b18fdd8",
+      "reason": "Review 20261117 brand rename: only display strings and comments changed ('Wine-Assembly' -> 'Berrry Wine' in the crash-report title, fatal-error heading and a comment). No callback producer, boundary call, write, export or lifetime changed."
     }
   ],
   "additions": [
