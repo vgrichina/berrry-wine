@@ -86,3 +86,28 @@ LinkError in the shared harness. It uses Web Crypto CSPRNG only, without a
 weak fallback; that owner tested real native/compat and normal browser Worker
 pointer semantics. No gears native files or foreign render Worker files were
 edited here.
+
+Published `cf7044e37` was exercised on a fresh exact original (135 media pins,
+eight actual owner module readbacks, b91a6cdc native module recovered from the
+b8c8 source plus this native patch). Whole Corvette loading and whole rainy
+cockpit at 0 MPH were personally reviewed. The actual DIB table now confirms
+slot 14 is the native 640×480 RGB565 primary with entirely black CPU bytes;
+slot 18 is an unrelated 640×480 offscreen with every byte FF. The compositor
+source and retained GPU match. This directly validates the causal repair on
+the original, not only the authored fixture.
+
+The first requested throttle did not reach input preparation: the screenshot
+was 17,736 ms old when the command was processed, so the old driver passed a
+negative preparation budget. The scope closed UNKNOWN with zero physical
+edges and actual native/watch EOF. It was not reopened. The association commit
+label in that scope's environment was mistyped; a retained erratum records
+this. Exact recovered source, module bytes and eight actual owner readbacks
+are authoritative; the runtime was unaffected.
+
+`reviewedInputAdmission` now refuses an expired/future screenshot or insufficient
+preparation reserve as known NOT_SENT before any browser request. It retains
+the original screenshot timestamp, unchanged 15s lifetime, 3s native preparation,
+500ms native confirmation and independent 250ms physical UP. A fresh capture
+and its filesystem handoff are retrieved together to avoid spending the review
+window between requests. Focused tests reproduce the exact negative-budget
+failure and check known refusal, boundary, clock and admitted reserve cases.

@@ -158,4 +158,17 @@ function classify(report) {
     }, 0),
     causalPixelConclusion: false, safeMidSlicePublicationProved: false };
 }
-module.exports = { observePublication, classify };
+// Admission happens before any browser request or physical edge. Reserve the
+// existing 3s native preparation plus prearm/confirmation time inside the
+// unchanged 15s screenshot review lifetime. Expiry is a known no-send result.
+function reviewedInputAdmission(capturedAt, now) {
+  if (!Number.isSafeInteger(capturedAt) || !Number.isSafeInteger(now))
+    throw Error('review admission clocks');
+  const ageMs = now - capturedAt, remainingMs = 15000 - ageMs;
+  return Object.freeze({ admitted: ageMs >= 0 && remainingMs > 6500,
+    state: ageMs >= 0 && remainingMs > 6500 ? 'ADMITTED' : 'NOT_SENT',
+    ageMs, remainingMs, preparationBudgetMs: 3000,
+    reason: ageMs >= 0 && remainingMs > 6500 ? null : 'review preparation reserve',
+    screenshotAt: capturedAt, reviewLifetimeMs: 15000, operationReserveMs: 6500 });
+}
+module.exports = { observePublication, classify, reviewedInputAdmission };

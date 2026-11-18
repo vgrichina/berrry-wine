@@ -97,3 +97,22 @@ assert.equal(o.report().extraGuestPolls, 0); assert.equal(o.report().pixelReads,
   assert.equal(w.report().errors.length, 0); w.close();
 }
 console.log('PASS bounded passive completion/slice/publication trace, identity and lifetime negatives, return/throw/restore preservation');
+// Actual controller failure: an expired screenshot produced a negative
+// prepareCapture budget and closed an otherwise valid, zero-input scope.
+{
+  const { reviewedInputAdmission } = require('../tools/nfs3-deferred-publication.cjs');
+  const shot = 1794982884266, dispatch = 1794982902002;
+  assert(Math.min(3000, 15000 - (dispatch - shot) - 50) < 0);
+  const expired = reviewedInputAdmission(shot, dispatch);
+  assert.equal(expired.state, 'NOT_SENT'); assert.equal(expired.screenshotAt, shot);
+  assert.equal(expired.admitted, false);
+  assert.equal(reviewedInputAdmission(shot, shot - 1).state, 'NOT_SENT');
+  assert.equal(reviewedInputAdmission(shot, shot + 8500).state, 'NOT_SENT');
+  const fresh = reviewedInputAdmission(shot, shot + 2000);
+  assert(fresh.admitted && fresh.remainingMs > fresh.operationReserveMs);
+  assert(fresh.preparationBudgetMs > 0 && fresh.preparationBudgetMs <= 3000);
+  assert.equal(fresh.reviewLifetimeMs, 15000);
+  assert(Object.isFrozen(fresh));
+  assert.throws(() => reviewedInputAdmission(NaN, dispatch));
+}
+console.log('PASS expired/future/insufficient-reserve review is known NOT_SENT, fresh admission preserves original screenshot timestamp and finite native budget');
