@@ -8035,7 +8035,9 @@ async function main() {
     if (cmd.action === 'native-scene-capture') {
       if (!cmd.path) throw new Error('native capture needs a complete PNG path');
       return nativeCaptureReceipts.capture(controlSnapshot,()=>{
-        presentForRead();
+        // Match ordinary queued PNG capture: native window back canvases may
+        // be current while the composited display remains untouched.
+        if (typeof renderer.repaint === 'function') renderer.repaint();
         return canvasToPng(renderer.canvas);
       },bytes=>fs.writeFileSync(cmd.path,bytes,{flag:'wx'}));
     }

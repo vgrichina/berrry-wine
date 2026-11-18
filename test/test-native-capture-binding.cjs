@@ -6,8 +6,20 @@ const k=require('../tools/native-supervisor-common.cjs'),c=require('../tools/lma
 const ROOT=path.resolve(__dirname,'..');
 const BOOT=String.raw`
 const fs=require('node:fs'),path=require('node:path');
+// Model a native application that updates its window back canvas without
+// requesting a display composite. Capture must invoke the real composite.
+const {Win98Renderer}=require('./lib/renderer'),paint=Win98Renderer.prototype.repaint;
+Win98Renderer.prototype.repaint=function(...args){
+ if(!globalThis.nativeCaptureActive)return;
+ const result=paint.apply(this,args);globalThis.nativeCapturePainted=true;return result;
+};
 const transport=require('./lib/control-server'),start=transport.startControlServer;
 transport.startControlServer=options=>start({...options,onCommand(command){
+ if(command.action==='native-scene-capture'){
+  globalThis.nativeCaptureActive=true;globalThis.nativeCapturePainted=false;
+  try{const value=options.onCommand(command);if(!globalThis.nativeCapturePainted)throw Error('capture omitted native display composite');return value;}
+  finally{globalThis.nativeCaptureActive=false;}
+ }
  const result=options.onCommand(command);
  if(command.action!=='guarded-input')return result;
  return Promise.resolve(result).then(value=>{
@@ -64,6 +76,8 @@ async function main(){
    for(;;){try{const s=await c.call({action:'snapshot'},1);if(s.mainHwnd!=='0x0'&&s.focusWindow.live&&fs.existsSync(path.join(dir,'native-pid.json')))break;}catch{}assert(performance.now()<until,'native SDL readiness');await k.sleep(50);}
    async function capture(stem){await c.capture(stem);return c.read(stem+'.json').image;}
    const first=await capture('first');await k.sleep(200);const second=await capture('second');
+   const rgba=require('pngjs').PNG.sync.read(fs.readFileSync(path.join(dir,'first.png'))).data;
+   assert(rgba.some((v,i)=>i%4!==3&&v!==0),'actual complete composed fixture image is nonblack');
    assert.notEqual(first.receipt.pngSHA256,second.receipt.pngSHA256,'actual ordinary native animation continues');
    const expected={route:'native-scene-v1',snapshot:first.snapshot,pngSHA256:first.receipt.pngSHA256,receipt:first.receipt};
    if(name==='mismatch')expected.receipt=second.receipt;
