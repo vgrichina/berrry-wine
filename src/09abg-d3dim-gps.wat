@@ -1781,17 +1781,25 @@
       (then (return (i32.const 0))))
     (local.get $seq))
 
+  ;; Reserve the next PRESENT before changing its primary's DIB. A consumer
+  ;; may still display the preceding publication while this wait is parked.
+  ;; Swapping first would invalidate that publication throughout the wait.
+  (func $d3g_present_ready (param $pb i32)
+    (local $h i32) (local $old i32)
+    (local.set $h (call $d3g_h))
+    (local.set $old (i32.load offset=24 (local.get $pb)))
+    (if (i32.and (i32.ne (local.get $old) (i32.const 0))
+          (i32.lt_s (i32.sub (i32.atomic.load (i32.add (local.get $h) (offset-of GpsRing done_seq))) (local.get $old)) (i32.const 0)))
+      (then (call $d3g_sync (local.get $pb)))))
+
   ;; PRESENT; at most two in flight. stamp = the CPU present sequence, so a
   ;; later CPU present retires this layer.
   (func $d3g_present (param $pb i32) (param $rt i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
       (param $hwnd i32) (param $dx i32) (param $dy i32) (param $primary i32)
-    (local $h i32) (local $old i32) (local $p i32) (local $seq i32) (local $gamma i32) (local $owner i32)
+    (local $h i32) (local $p i32) (local $seq i32) (local $gamma i32) (local $owner i32)
     (local.set $h (call $d3g_h))
     (local.set $gamma (call $d3g_gamma (local.get $pb)))
-    (local.set $old (i32.load offset=24 (local.get $pb)))
-    (if (i32.and (i32.ne (local.get $old) (i32.const 0))
-          (i32.lt_s (i32.sub (i32.atomic.load (i32.add (local.get $h) (offset-of GpsRing done_seq))) (local.get $old)) (i32.const 0)))
-      (then (call $d3g_sync (local.get $pb))))
+    (call $d3g_present_ready (local.get $pb))
     (call $gps_mark (local.get $h) (i32.load offset=20 (local.get $pb)) (i32.const 0x44334450))
     (i32.store offset=20 (local.get $pb) (i32.add (i32.load offset=20 (local.get $pb)) (i32.const 1)))
     (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_PRESENT) (size-of GpsPresent)))
@@ -1860,6 +1868,7 @@
                   (i32.gt_s (i32.add (local.get $py) (local.get $ph)) (local.get $hgt))))
       (then (return (i32.const 0))))
     (call $d3g_prepare (local.get $pb) (local.get $t) (i32.const 0))
+    (call $d3g_present_ready (local.get $pb))
     (call $page_watch_write (local.get $front) (i32.const 32))
     (call $page_watch_write (local.get $back) (i32.const 32))
     (local.set $tmp (load.field DxObject misc1 (local.get $front)))

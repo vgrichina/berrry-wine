@@ -109,15 +109,22 @@ const extraWat = `
 
 (async () => {
   let ex, wasmMemory, gps = null, ring = null, ringAddr = 0, kicks = 0;
+  let deferAsync = false, checkingFlip = false, associationWaits = 0;
   const frames = [], calls = [];
   const harness = await bootRenderHarness({ fonts: 'none', extraWat,
     extraHostOverrides: {
       gpu_gl_call: (...args) => { calls.push(args); return 0; },
       gpu_stream_kick: (r, mode) => {
         r >>>= 0; kicks++;
+        if (checkingFlip && mode === GS.CONST.KICK_SYNC) {
+          associationWaits++;
+          assert(ex.d3dim_gps_window_present(0x1234, 0) > 0,
+            'backpressure must retain the preceding primary/DIB publication until the next Flip can publish');
+        }
         if (!gps) gps = new SoftwareExecutor({ getExports: () => ex, getMemory: () => wasmMemory.buffer,
           onPresent: f => frames.push(f) });
         if (!ring || ringAddr !== r) { ring = new GS.Ring(() => wasmMemory.buffer, r); ringAddr = r; }
+        if (deferAsync && mode === GS.CONST.KICK_ASYNC) return 1;
         GS.drain([ring], gps);
         if ((mode | 0) === GS.CONST.KICK_CLOSE) { gps.close(); gps = null; ring = null; ringAddr = 0; }
         return 1;
@@ -236,8 +243,25 @@ const extraWat = `
   const lastFrame = frames.at(-1);
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, fr.rt), 0, 'previous actual RT cannot impersonate the later Flip');
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, lastFrame.rt), lastFrame.presentSeq);
+
+  // Real records remain queued when an asynchronous consumer has not drained
+  // them yet. The next Flip must wait before it changes the primary's DIB:
+  // otherwise even the current publication is rejected while the wait parks.
+  deferAsync = true;
+  for (let i = 0; i < 4; i++) {
+    assert.strictEqual(ex.flip_paint(back, i & 1 ? RED : GREEN), 1);
+    checkingFlip = true;
+    try { assert.strictEqual(ex.flip_try(front, back), 1); }
+    finally { checkingFlip = false; }
+  }
+  deferAsync = false;
+  ex.flip_fence(0, 0);
+  assert(associationWaits > 0, 'the test exercised actual queued PRESENT backpressure');
+  const finalFrame = frames.at(-1);
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, finalFrame.rt + 100), 0,
+    'backpressure does not admit a foreign render target');
   assert.strictEqual(ex.flip_release(front), 0);
-  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, lastFrame.rt), 0, 'retired primary revokes its actual PRESENT');
+  assert.strictEqual(ex.d3dim_gps_window_present(0x1234, finalFrame.rt), 0, 'retired primary revokes its actual PRESENT');
 
   assert.deepStrictEqual(calls, [], 'the WAT producer never calls the host gpu_gl_call');
   assert(kicks > 0, 'records went through the GPU stream consumer');
