@@ -31,5 +31,43 @@ show the guest's four labels. Tests cover read-only observation, changed data,
 callback replacement, missing state, unsupported procedures, retirement,
 identity/style/owner mismatch and fabricated text/check-state rejection.
 The prior string-list test now explicitly distinguishes the opaque contract
-from the still-refused string getter. Publication and affected original
-installation results are recorded below when complete.
+from the still-refused string getter. The focused tests and final locked build
+pass. Repair `0f544db09` was immediately strict-pulled/pushed successfully.
+The tested/final module is byte-identical, SHA256
+`b9b3ba8e195212293e955e778292aef27a0b73817179b12fc1620e272a3ecef9`.
+
+Fresh affected original `original-install` uses that module, unchanged
+`D:\System\Setup.exe`, inherited `d:\` cwd, the unique retained ISO SHA256
+`e184984ca88f001c5ddd52035d76cd64e266e26c74975161b5ed72366c74704f`, and an
+initially empty normal overlay. Ordinary Next/I Agree/default destination Next
+all have real callback-return receipts and independent UP. Whole
+`components-ready.png` shows the guest's four rows: Unreal Tournament Game,
+Game Content, NetGames USA Stat Utils, DirectX. Actual displayed required space
+is 670 Megabytes; the selected game row says "Installation is required."
+Default component choices are preserved. Native row selection is not a
+checkbox state, and no check state is inferred from opaque DWORDs.
+
+Before any component Next or Install, a fresh whole capture 43.963 seconds
+later (`components-final.png`) shows only the teal desktop. Its native dialog
+and component metadata still report visible/live, unchanged generations 1/48,
+focus `0x10002`, modal `0x10001`, main HWND zero. There was no intervening
+input. This is an actual native presentation loss, with cause unknown, not a
+retroactive explanation of the separate prior browser/cwd unknowns. The scope
+closes UNKNOWN with no subsequent runtime endpoint or input. Install is not
+pressed, no installed game/startup is claimed, and the overlay contains just
+the normally created destination directory. No browser fallback was attempted.
+
+Host free space at requirement review is 2,515,595,264 bytes, separate from
+the guest's displayed 1023 MB. The scope's independent watchdog measures a
+minimum 1,925,365,760 bytes, above the host floor. Filesystem cancellation after
+closure has actual native/supervisor/watchdog waits and both pipe EOF, plus an
+owner-complete record. The original enclosing launcher tool returns 143 and
+does not retain an enclosing-owner wait/EOF receipt; that gap is explicit,
+and complete cleanup is not claimed. The earlier three trace scopes retain
+all four waits/EOF, including enclosing owner. No boxes were created.
+
+Exact Git patches, module binary delta and verified reconstruction, media and
+dependency recovery, selected captures, receipts, wait audit and limitations
+are in the run's final `result.json`. Next work needs a bounded reproduction
+of this native idle presentation loss before attempting further installer
+input; the closed scope must not be reopened.
