@@ -26,6 +26,7 @@ async function call(command, timeout = 10, beforeSend = null) {
   return r.value;
 }
 class ReserveRejected extends Error { constructor(m) { super(m); this.name = 'ReserveRejected'; } }
+class ConnectedBudgetRefused extends Error {}
 const QUIT_ROUTES = { 'leave-game': 'keydown:27', 'confirm-leave': 'keydown:89', 'exit-setup': 'keydown:27', 'confirm-quit': 'keydown:89' };
 
 function reserve() {
@@ -219,6 +220,12 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
   policy(intent, keys, review, route);
   try {
     const [owner, before] = await lease(); const rr = read(review + '.json'), reviewed = read(review + '-review.json');
+    const unchanged = () => {
+      opened();
+      ok(isDeepStrictEqual(read('input-owner.json'), owner), 'input owner replaced before connected send/refusal');
+      ok(isDeepStrictEqual(read(review + '.json'), rr) && isDeepStrictEqual(read(review + '-review.json'), reviewed)
+        && sha(P(review + '.png')) === rr.pngSHA256, 'review replaced before connected send/refusal');
+    };
     const native = read('launch.json').nativeScene ?? false;
     if (native) {
       ok(before.physicalUp && before.capture === '0x0', 'native physical UP required before intention');
@@ -294,15 +301,12 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
         }
         save(name + '-dispatch.json', { at: deliveryAt, nonce, mayHaveEffects: true });
         const receipt = await call({ action: 'guarded-input', cmd: key, guard }, strict ? .5 : 10, () => {
-          opened();
-          ok(isDeepStrictEqual(read('input-owner.json'), owner), 'input owner replaced before connected send');
-          ok(isDeepStrictEqual(read(review + '.json'), rr) && isDeepStrictEqual(read(review + '-review.json'), reviewed)
-            && sha(P(review + '.png')) === rr.pngSHA256, 'review replaced before connected send');
+          unchanged();
           policy(intent, keys, review, route, deadline);
           const sentAt = now();
-          ok(freshnessFits(sentAt, targetingDeadline, strict), 'connected send targeting freshness expired');
-          ok(admissionFits(sentAt, deadline, allowance, strict ? releaseCap : null, ms)
-            && sentAt * 1000 < guard.deadline, 'connected send admission expired');
+          if (!freshnessFits(sentAt, targetingDeadline, strict)) throw new ConnectedBudgetRefused('connected send targeting freshness expired');
+          if (!(admissionFits(sentAt, deadline, allowance, strict ? releaseCap : null, ms)
+            && sentAt * 1000 < guard.deadline)) throw new ConnectedBudgetRefused('connected send admission expired');
         });
         returnedAt = now();
         if (strict) ok(returnedAt - deliveryAt <= .5, '500ms confirmation exceeded');
@@ -322,11 +326,14 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     } catch (e) { failure = e; }
     finally {
       if (!armed) child.stdout.on('data', b => childOut.push(b));
-      const rc = await Promise.race([closed, c.sleep(15000).then(() => { throw Error('TimeoutExpired: release child'); })]);
+      let waitTimer, rc;
+      try { rc = await Promise.race([closed, new Promise((_, reject) => {
+        waitTimer = setTimeout(() => reject(Error('TimeoutExpired: release child')), 15000);
+      })]); } finally { clearTimeout(waitTimer); }
       save(name + '-release-wait.json', { pid: child.pid, exit: rc, actualWait: true, stdoutEOF: true, stderrEOF: true,
         stdout: Buffer.concat(childOut).toString(), stderr: Buffer.concat(childErr).toString() });
-      if (failure) throw failure;
       ok(rc === 0, 'independent release failed; stop');
+      if (failure && !(receipts.length === 0 && c.beforeBodyRefusalCause(failure) instanceof ConnectedBudgetRefused)) throw failure;
     }
     const up = read(name + '-up.json');
     if (final && up.state === 'OWNER_EXITED') {
@@ -340,6 +347,18 @@ async function pulse(name, keys, ms, review, description, final = false, intent 
     }
     ok(up.state === 'ACK' && up.at < deadline, 'independent UP not acknowledged in window');
     if (strict) ok(up.at - deliveryAt <= 1.75, '1750ms independent physical UP exceeded');
+    if (failure) {
+      ok(up.reply?.released === true && up.reply.owner === owner.owner, 'matching independent release required');
+      unchanged();
+      const physical = await call({ action: 'snapshot' }, Math.min(.5, deadline - now()));
+      unchanged();
+      ok(now() < deadline && physical.physicalUp === true && physical.capture === '0x0'
+        && !physical.quit && physical.eip !== '0x0'
+        && isDeepStrictEqual({ mainHwnd: physical.mainHwnd, screen: physical.screen }, read('lease-snapshot.json')),
+      'physical zero and unchanged lease required after refusal');
+      return reject('connected-before-body', c.beforeBodyRefusalCause(failure).message,
+        c.beforeBodyRefusalCause(failure).message.includes('freshness'));
+    }
     // Append-only link instead of overwriting old intent records.
     if (c.exists(P('last-intent.json'))) fs.unlinkSync(P('last-intent.json'));
     save('last-intent.json', { nonces });

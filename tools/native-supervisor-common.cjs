@@ -150,6 +150,9 @@ function listenerOwnedBy(pid, port) {
   return pids.length === 1 && pids[0] === Number(pid);
 }
 
+// Private provenance: remote JSON and arbitrary Error properties cannot mint it.
+const beforeBodyRefusals = new WeakMap();
+const beforeBodyRefusalCause = error => beforeBodyRefusals.get(error);
 // urllib.request.urlopen(POST json, timeout) -> parsed reply.
 function postJSON(url, body, timeoutSec, beforeSend = null) {
   return new Promise((resolve, reject) => {
@@ -170,9 +173,18 @@ function postJSON(url, body, timeoutSec, beforeSend = null) {
         try {
           assert(!socket.destroyed && socket.writable && !socket.connecting && socket.remoteAddress && socket.remotePort,
             'connected writable socket required');
-          beforeSend();
-          req.end(data);
         } catch (e) { req.destroy(e); }
+        if (req.destroyed) return;
+        try { beforeSend(); }
+        catch (cause) {
+          const error = new Error('local connected callback refused before body attempt', { cause });
+          // No end/write/flush has been attempted on this request. Never
+          // certify exceptions from end(), even if no bytes appear to leave.
+          if (!req.headersSent && !req.writableEnded && req.writableLength === 0)
+            beforeBodyRefusals.set(error, cause);
+          req.destroy(error); return;
+        }
+        try { req.end(data); } catch (e) { req.destroy(e); }
       };
       if (socket.connecting) socket.once('connect', send);
       else send();
@@ -292,6 +304,6 @@ async function prepareReleaseHelper({ run, url, name, standbyUntil, startupMs = 
   } catch (e) { cancel(); await waited; throw e; }
 }
 
-module.exports = { now, sleep, sha256, exists, readJSON, save, canonical, token, processExists, killOwned, freeBytes,
+module.exports = { beforeBodyRefusalCause, now, sleep, sha256, exists, readJSON, save, canonical, token, processExists, killOwned, freeBytes,
   returncode, communicate, stdioWithFds, seal, SEALS, fdPath, fdPathPattern, holdBody, holderPathAllowed, readDescriptor,
-  listenerOwnedBy, postJSON, flockExclusive, recordSignals, installRequireTiming, jsonLines, prepareReleaseHelper };
+  listenerOwnedBy, postJSON, beforeBodyRefusalCause, flockExclusive, recordSignals, installRequireTiming, jsonLines, prepareReleaseHelper };
