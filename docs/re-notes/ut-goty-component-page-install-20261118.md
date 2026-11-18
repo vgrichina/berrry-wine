@@ -71,3 +71,12 @@ dependency recovery, selected captures, receipts, wait audit and limitations
 are in the run's final `result.json`. Next work needs a bounded reproduction
 of this native idle presentation loss before attempting further installer
 input; the closed scope must not be reopened.
+
+## Correction: idle presentation claim withdrawn
+
+The ready and allegedly teal-only final PNG cited above have identical SHA-256
+`3ebe8bf2648f25f47c95f6b4484f400253a67b854fdd180646d30063bb7ea79a`.
+Fresh bounded tracing and decoded pixels retain the complete dialog. The
+image viewer intermittently displayed those same bytes as teal-only; native
+presentation loss and main-HWND causation are therefore not established.
+See [the correction and original continuation](ut-goty-idle-dialog-presentation-repair-20261118.md).
