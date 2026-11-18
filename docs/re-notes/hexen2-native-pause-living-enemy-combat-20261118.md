@@ -59,8 +59,11 @@ observation preceded host cleanup. This is ordinary Quit, not host cancellation.
 The runtime closed normally. Browser, display, release helpers, supervisor,
 launcher, watchdog and invoker have actual waits and both output EOFs; runtime
 waits exited 0. All 86 collected owned PIDs were absent and containment reported
-no leaks. The outer tool wait for the finite messageboard watcher returned 143;
-its own tail wait/EOF receipt is retained. No closed scope was reopened.
+no leaks. The outer tool wait for the first finite messageboard watcher returned
+143; its inner tail wait/EOF receipt is missing and must remain unknown.
+The later commit watcher has its actual tail wait/EOF receipt. No matching
+watcher or tail process remained at the final host inspection. No closed scope
+was reopened.
 
 The runtime disk watchdog recorded minimum free space 1,503,506,432 bytes
 and reason completed. Subsequent external disk growth reduced retrieval
