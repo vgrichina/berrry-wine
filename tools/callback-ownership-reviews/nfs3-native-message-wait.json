@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "31946075d164bf1cb82d463e8c2c4ebbab0648a3b6b41bc64851867fd701bb24",
+      "sha256": "f2a9148e54034c4f1778e31fa4887f4902eedf125ea2242aa33fd939950d04c6",
+      "reason": "Review 20261118 NFS3 native message-wait freshness: after the existing owning has_pending_message probe, emit bounded read-only USER context with native producer wall/monotonic timestamps through existing asynchronous input_validate metadata. No extra guest input poll, callback, resume, EIP/stack restoration, clock/state/memory write, render publication or order change. Native input guard admits only an unchanged live actor endpoint and producer age at most250ms on both clocks; metadata never confirms input consumption. Actual normalWorker separate-UI/render software oldfail/newpass, focused native getter/memory/import and retired/late/replaced owner negatives qualify this source correction; general callback ownership remains pending. Evidence run20261118-nfs3-native-scene-freshness-cause."
+    }
+  ]
+}

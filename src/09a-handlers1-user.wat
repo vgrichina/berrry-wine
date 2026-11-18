@@ -879,9 +879,14 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; stdcall, 1 arg
   )
 
-  ;; 99: GetFocus — STUB: unimplemented
+  ;; 99: GetFocus — the calling queue's live focus, or NULL. An idle/shadow
+  ;; instance or a retired foreign HWND cannot supply focus for this thread.
   (func $handle_GetFocus (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (global.get $focus_hwnd))
+    (i32.store offset=0 (global.get $reg_base)
+      (select (global.get $focus_hwnd) (i32.const 0)
+        (i32.and (call $wnd_lookup_live (global.get $focus_hwnd))
+          (i32.eq (call $wnd_get_thread (global.get $focus_hwnd))
+            (global.get $current_thread_id)))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
 
   ;; 100: ReleaseDC(hwnd, hdc) — release the WAT-owned DC, return 1.
