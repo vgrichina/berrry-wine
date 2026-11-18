@@ -1,5 +1,47 @@
 # OpenGL / Direct3D corpus status, updated 2026-11-18
 
+## November 18 capture, input and shutdown prerequisites
+
+Published `f6962ba5b` corrects capture-request freshness for a retained static
+display. A real browser receipt with a 32.761-second-old publication and a
+43-ms-old request fails the old validator and passes the new one. Old requests
+and owner/output replacements remain rejected. Native tests and the locked
+build passed. The affected GLTron original stopped before input because two
+operator outputs used the same filename. A subsequent operator qualification
+used a GL startup predicate on a GDI fixture and also stopped before input.
+Neither run demonstrates original turns, a round outcome or Quit.
+Evidence: `scratch/runs/20261118-static-display-fresh-capture-gltron-gameplay/result.json`
+and `scratch/runs/20261118-gltron-unique-capture-output-live-turns/result.json`.
+
+LTris startup helper `6fe4afd9e` distinguishes an initial empty desktop
+publication from the first completed SDL window publication. Authored browser
+controls and native Quit passed; the original reached only its menu before
+disk preemption. That controller also sent its final DOWN with a
+15.493-second-old readback despite a 15-second freshness limit. The subsequent
+send-boundary guard `75f495225` rejects stale DOWN locally and requires a new
+reviewed intent; its original-game result remains pending. No line clear,
+score consequence or original Quit is established by these helper tests.
+Evidence: `scratch/runs/20261118-ltris-display-startup-readiness-line-clear/result.json`.
+
+ReVolt's qualified operator reached **Select Race**, with Single Race selected;
+the coordinator reviewed the whole host image. Enter followed release arming
+by 126 ms, and independent UP confirmed physical state zero. Disk closure
+preceded the next DOWN. Manual racing, driving, checkpoint and ordinary Quit
+remain unverified. Later post-cleanup free-space observations fell below the
+required 1.5 GB floor; the writer is unknown. Cleanup receipts do not prove
+that the floor held through all drains and later writes.
+Evidence: `scratch/runs/20261118-revolt-qualified-operator-manual-race/result.json`
+and `scratch/runs/20261118-coordinator-revolt-select-race-review/result.json`.
+
+The coordinator reran the existing current-stream shutdown regression on the
+shared working tree: actual software WAT CLEAR/READBACK/PRESENT, ordered
+pending CLOSE/STOP, retired callbacks and cancellation of a real SYNC producer
+passed. The exact module was `fbdaaad01060…`, with unchanged relevant working
+diff before/after. Foreign WIP was included; this is not clean-published-module,
+browser/WebGL, original-game or whole-corpus crash-freedom evidence. Renderer
+exit 1 was explicit harness termination, not a spontaneous crash.
+Evidence: `scratch/runs/20261118-coordinator-current-stream-crash-sweep/result.json`.
+
 ## November 17 NFS3 driving and paired SDK rendering
 
 [NFS3 inherited-timing report](re-notes/nfs3-inherited-timing-visible-driving-20261117.md),
