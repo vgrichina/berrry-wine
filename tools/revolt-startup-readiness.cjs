@@ -1,5 +1,6 @@
 'use strict';
-// Startup observation only. This never admits input or changes a dialog.
+// Unadmitted observation only, including later menu captures. Never admits
+// input, changes a dialog, or recovers a failed/UNKNOWN request.
 const assert = require('node:assert/strict');
 const admission = require('./revolt-display-admission.cjs');
 const pageRead = admission.PAGE_READ.replace(
@@ -17,7 +18,10 @@ const DATA_WAIT_READ = `(() => {
       actionsVisible:[...e.querySelectorAll('button')].some(visible),
       autoContinue:e.querySelector('.wa-game-wait-note')?.textContent==='Loading will continue automatically.'}:null};
 })()`;
-const READ = `({page:(${pageRead}),dataWait:(${DATA_WAIT_READ})})`;
+const unobstructedRead = pageRead.replace("for(const e of document.querySelectorAll('*')){",
+  "for(const e of [...document.querySelectorAll('*')].filter(e=>!e.closest('.wa-game-wait'))){");
+assert.notEqual(unobstructedRead, pageRead);
+const READ = `({page:(${pageRead}),dataWait:(${DATA_WAIT_READ}),withoutDataWait:(${unobstructedRead})})`;
 
 function classify(snapshot) {
   const {page, dataWait} = snapshot;
@@ -26,7 +30,8 @@ function classify(snapshot) {
   assert(app.running && !app.stopped && app.guestWorker, 'live startup owner required');
   if (app.outputVisible) return 'ready';
   const d = dataWait?.dialog;
-  assert(app.outputVisibility?.reason === 'intersecting painted DOM box' &&
+  assert(snapshot.withoutDataWait?.apps?.[0]?.outputVisible === true &&
+    app.outputVisibility?.reason === 'intersecting painted DOM box' &&
     app.outputVisibility.element?.dataWait === true && dataWait?.visible &&
     dataWait.current?.state === 'waiting' && d?.visible &&
     d.className === 'wa-launch wa-game-wait' && d.role === 'dialog' && d.marker === '1' &&
@@ -39,20 +44,26 @@ function classify(snapshot) {
 // between its two snapshots. Discard that candidate and observe naturally;
 // no action scene exists until both ends pass the unchanged visible predicate.
 async function captureReady({observe, capture, sameOwner, deadline,
-  now = Date.now, sleep = ms => new Promise(r => setTimeout(r, ms)), onObservation = () => {}}) {
+  now = Date.now, sleep = ms => new Promise(r => setTimeout(r, ms)), onObservation = () => {}, check = () => {}}) {
   assert(Number.isFinite(deadline), 'finite startup deadline required');
   let owner;
   for (;;) {
+    check();
     assert(now() < deadline, 'finite startup readiness deadline');
     const before = await observe();
+    check();
+    assert(now() < deadline, 'finite startup readiness deadline');
     const app = before.page?.apps?.[0];
     if (owner) sameOwner(owner, app); else owner = app;
     const state = classify(before);
     onObservation({stage: 'before', state, snapshot: before});
     if (state === 'waiting') { await sleep(50); continue; }
     const candidate = await capture(before);
+    check();
+    assert(now() < deadline, 'finite startup readiness deadline');
     if (candidate === null) { await sleep(50); continue; }
     const after = await observe();
+    check();
     sameOwner(owner, after.page?.apps?.[0]);
     const finalState = classify(after);
     onObservation({stage: 'after', state: finalState, snapshot: after, discarded: finalState !== 'ready'});

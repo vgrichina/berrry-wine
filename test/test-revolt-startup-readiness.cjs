@@ -2,7 +2,7 @@
 const assert = require('node:assert/strict');
 const {classify, captureReady} = require('../tools/revolt-startup-readiness.cjs');
 function snapshot(waiting = false) {
-  return {page: {isolated: true, apps: [{id: 'original', running: true, guestWorker: true,
+  return {withoutDataWait: {apps: [{outputVisible: true}]}, page: {isolated: true, apps: [{id: 'original', running: true, guestWorker: true,
     outputVisible: !waiting, outputVisibility: {reason: 'intersecting painted DOM box', element: {dataWait: true}}}]},
   dataWait: {visible: true, current: {state: 'waiting'}, dialog: {className: 'wa-launch wa-game-wait',
     role: 'dialog', marker: '1', visible: true, progressVisible: true, actionsVisible: false, autoContinue: true}}};
@@ -13,7 +13,8 @@ const sameOwner = (a, b) => assert.equal(a?.id, b?.id, 'startup owner replaced')
   assert.equal(classify(snapshot(true)), 'waiting');
   for (const change of [s => {s.dataWait.current.state = 'error';}, s => {s.dataWait.dialog.actionsVisible = true;},
     s => {s.page.apps[0].outputVisibility.element.dataWait = false;}, s => {s.dataWait.visible = false;},
-    s => {s.dataWait.dialog.progressVisible = false;}, s => {s.dataWait.dialog.className += ' foreign';}]) {
+    s => {s.dataWait.dialog.progressVisible = false;}, s => {s.dataWait.dialog.className += ' foreign';},
+    s => {s.withoutDataWait.apps[0].outputVisible = false;}]) {
     const s = snapshot(true); change(s); assert.throws(() => classify(s), /unexpected startup obstruction/);
   }
   let at = 0, captures = 0;
