@@ -77,7 +77,10 @@ queues/MSG memory, without instantiating the guest VM.
   transport. Memory mode sends PE bytes, the private writable C: namespace,
   empty directories, file names, attributes, FILETIMEs, C: volume metadata and
   registry/INI state over token-bound, sequenced, hashed Node IPC chunks. It
-  retains the existing executable/argument parsing and explicit/inherited cwd.
+  preserves raw command-line spelling, quotes and spacing in GetCommandLineA/W,
+  and explicit/inherited cwd. The current startup layout supports ASCII raw
+  lines up to 383 bytes and parsed arguments up to 200 bytes; memory launches
+  outside those bounds fail closed, rather than silently truncating them.
   Readonly drives carry source-owned mount recipes and pins; children reopen
   and verify the original sources without exporting media bytes. Writable lazy
   entries must support synchronous materialization. Other writable drives and

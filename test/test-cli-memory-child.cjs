@@ -102,7 +102,7 @@ const api = String.raw`typedef unsigned long U; typedef void *P;
 void API ExitProcess(U);void API OutputDebugStringA(const char*);void API Sleep(U);
 U API CreateDirectoryA(const char*,P);P API CreateFileA(const char*,U,U,P,U,U,P);
 U API ReadFile(P,P,U,U*,P);U API WriteFile(P,const void*,U,U*,P);U API CloseHandle(P);
-U API DeleteFileA(const char*);P API GetCommandLineA(void);U API GetCurrentDirectoryA(U,char*);
+U API DeleteFileA(const char*);P API GetCommandLineA(void);P API GetCommandLineW(void);U API GetCurrentDirectoryA(U,char*);
 U API CreateProcessA(const char*,char*,P,P,U,U,P,P,P,P);U API WaitForSingleObject(P,U);
 U API GetExitCodeProcess(P,U*);U API TerminateProcess(P,U);
 P API ShellExecuteA(P,const char*,const char*,const char*,const char*,int);
@@ -119,7 +119,7 @@ function compile(name, code, mode) {
     '-o', path.join(temp, name + '.exe'), path.join(temp, name + '.obj'), path.join(temp, 'kernel32.lib'), path.join(temp, 'shell32.lib')]);
 }
 function build() {
-  const names = { kernel32: ['ExitProcess@4','OutputDebugStringA@4','Sleep@4','CreateDirectoryA@8','CreateFileA@28','ReadFile@20','WriteFile@20','CloseHandle@4','DeleteFileA@4','GetCommandLineA@0','GetCurrentDirectoryA@8','CreateProcessA@40','WaitForSingleObject@8','GetExitCodeProcess@8','TerminateProcess@8'], shell32: ['ShellExecuteA@24'] };
+  const names = { kernel32: ['ExitProcess@4','OutputDebugStringA@4','Sleep@4','CreateDirectoryA@8','CreateFileA@28','ReadFile@20','WriteFile@20','CloseHandle@4','DeleteFileA@4','GetCommandLineA@0','GetCommandLineW@0','GetCurrentDirectoryA@8','CreateProcessA@40','WaitForSingleObject@8','GetExitCodeProcess@8','TerminateProcess@8'], shell32: ['ShellExecuteA@24'] };
   for (const [name, exports] of Object.entries(names)) {
     fs.writeFileSync(path.join(temp, name + '.def'), 'LIBRARY ' + name + '.dll\nEXPORTS\n' + exports.join('\n') + '\n');
     command('llvm-dlltool', ['-m','i386','-k','-d',path.join(temp,name+'.def'),'-l',path.join(temp,name+'.lib')]);
@@ -127,6 +127,8 @@ function build() {
   compile('child', api + String.raw`
 void start(void){U n=0,mode;char b[4],cwd[260];const char*args=GetCommandLineA();const char*p=args;
 while(*p)p++;mode=(U)(p[-1]-'0');
+{const unsigned short*w=GetCommandLineW();const char*a=args;while(*a&&*w==(unsigned char)*a){a++;w++;}if(*a||*w)ExitProcess(80);}
+if(mode!=4){static char expected[]="\"C:\\MemoryInstall\\child.exe\"  \"two words\" /mode:0";char*e=expected;while(*e)e++;e[-1]='0'+mode;if(!eq(args,expected))ExitProcess(79);OutputDebugStringA("EXACT_RAW_COMMAND_LINE_A_W_OK");}
 GetCurrentDirectoryA(260,cwd);if(!eq(cwd,"c:\\memoryinstall"))ExitProcess(81);
 if(mode==3)Sleep(5000);else Sleep(50);
 P h=CreateFileA("payload.dat",0x80000000,1,0,3,0,0);if(h==(P)-1||!ReadFile(h,b,4,&n,0)||n!=4||b[0]!='M'||b[3]!='!')ExitProcess(82);CloseHandle(h);
@@ -134,7 +136,7 @@ OutputDebugStringA("REAL_CHILD_READ_PARENT_BYTES");OutputDebugStringA(args);
 put("receipt.ok","READ",4);DeleteFileA("stale.txt");ExitProcess(mode==2?71:23);}`, 0);
   const b = fs.readFileSync(path.join(temp, 'child.exe'));
   const parent = api + 'static const unsigned char child[]={' + [...b].join(',') + '};\n' + String.raw`
-void start(void){U si[17]={68},pi[4]={0},code=999,w;static char cmd[]="\"C:\\MemoryInstall\\child.exe\" \"two words\" /mode:0";
+void start(void){U si[17]={68},pi[4]={0},code=999,w;static char cmd[]="\"C:\\MemoryInstall\\child.exe\"  \"two words\" /mode:0";
 char*p=cmd;while(*p)p++;p[-1]='0'+MODE;
 CreateDirectoryA("C:\\MemoryInstall",0);put("C:\\MemoryInstall\\child.exe",child,sizeof(child));put("C:\\MemoryInstall\\payload.dat","MEM!",4);put("C:\\MemoryInstall\\stale.txt","gone",4);
 if(MODE==4){if((U)ShellExecuteA(0,"open","C:\\MemoryInstall\\child.exe","\"two words\" /mode:4","C:\\MemoryInstall",1)<=32)ExitProcess(83);OutputDebugStringA("PARENT_EARLY_EXIT");ExitProcess(0);}
@@ -207,6 +209,7 @@ async function malformed(kind) {
     if(mode===3){assert.match(log,/CANCEL_WAIT_REAL_EXIT_OK/);assert.match(log,/"merged":false/);}
     else {assert.match(log,/REAL_CHILD_READ_PARENT_BYTES/);assert.match(log,/two words.*\/mode:/);assert.match(log,/"merged":true/);}
     if(mode===0||mode===2)assert.match(log,/PARENT_WAIT_EXIT_RECEIPT_WHITEOUT_OK/);
+    if(mode!==3&&mode!==4)assert.match(log,/EXACT_RAW_COMMAND_LINE_A_W_OK/);
     if(mode===1||mode===4)assert.match(log,/PARENT_EARLY_EXIT/);
     console.log('PASS actual PE memory child mode '+mode);
   }

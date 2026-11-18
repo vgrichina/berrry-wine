@@ -4344,6 +4344,8 @@ async function main() {
       const completion = tmp && path.join(tmp, 'complete.json');
       const token = require('crypto').randomBytes(32).toString('hex');
       const snapshot = inMemory ? memoryChild.capture(vfs, storage) : null;
+      if (inMemory && (cmd.length > 383 || /[^\x01-\x7f]/.test(cmd) || parsed.params.trim().length > 200))
+        throw new Error('memory child command line exceeds supported ASCII startup bounds');
       const memoryBase = snapshot && memoryChild.baseline(snapshot);
       const memoryImage = inMemory ? Buffer.from(vfs.files.get(guestExe).data) : null;
       // Borrowed disc bytes stay outside mutable state. Carry the actual
@@ -6007,6 +6009,15 @@ async function main() {
   const startupShow = startupShowCommand(getArg('startup-show', undefined));
   if (startupShow !== undefined) await mainOwner.call('set_startup_show', startupShow);
   const { entry } = await stageAndLoadPeOwned(mainOwner, memory.buffer, exeBytes, console.log);
+  if (CHILD_MEMORY) {
+    const command = memoryLaunch.command;
+    if (typeof command !== 'string' || command.length > 383 || /[^\x01-\x7f]/.test(command))
+      throw new Error('invalid raw memory child command line');
+    const {get_staging: at} = await mainOwner.read(['get_staging']);
+    const bytes = new TextEncoder().encode(command);
+    new Uint8Array(memory.buffer, at, bytes.length).set(bytes);
+    if (!await mainOwner.call('set_raw_command_line', at, bytes.length)) throw new Error('raw memory child command line refused');
+  }
   // MORROWIND_NAME_ATTACH_BEGIN: loaded image, before any guest initializer.
   if (hasFlag('observe-morrowind-name')) {
     morrowindNameObserver = require('../lib/morrowind-name-observer').install({
