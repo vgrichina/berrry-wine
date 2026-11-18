@@ -114,3 +114,31 @@ Focused checks cover snapshot exclusion, selected-image bytes, unchanged source
 identity/provider, read-only write rejection, unrelated lazy media exclusion,
 resident-image reuse, missing image, asynchronous-source rejection and immutable
 seed mismatch/missing-owner rejection. The existing VFS seeding suite passes.
+
+## Native private DLL discovery parity
+
+After publishing the loader repair as `49dd59dba` (strict pull and push both 0),
+the second fresh ordinary autorun reached System\Setup.exe but failed at batch
+0 on the decorated UClass constructor imported from Core.dll. The actual Core
+DLL is on the disc; CLI graph admission considered only the registry's names,
+so it never asked its existing guest-path resolver for this private sibling.
+The browser already admits genuine mounted private siblings. A narrow native
+admission helper now applies that same rule to imports: actual files in the
+executable's guest directory, excluding builtin-only system DLLs, static module
+placeholders and path-shaped requests. No registry list, app registration or
+explicit DLL seed was changed.
+
+A generated disc child importing PRIVATE.DLL reproduces the exact old failure:
+`DiscValue` becomes an unimplemented API and the child crashes at batch 0.
+With native admission, the actual sibling PE loads, DllMain runs, DiscValue
+returns its authored 0x432 value, the child exits 0, and its PASS file merges
+through the unchanged completion guard. The whole parent dialog was personally
+reviewed in a fresh scope with a preselected separate control port. An earlier
+fixture overlap caused EADDRINUSE and the identity guard refused capture; that
+scope was cancelled without binding or input. No original scope was affected.
+Focused negatives cover builtin exclusion, sibling-directory scope, explicit
+path refusal, placeholders and admission without touching provider bytes.
+The browser private-DLL control also personally shows the child-authored dialog;
+its host log proves PRIVATE.DLL discovery, real PE mapping and DllMain return.
+Both actual Workers' bytecode matches the pinned module. No browser input was
+sent. Focused checks and the subsequent locked full build passed.

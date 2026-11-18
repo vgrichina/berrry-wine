@@ -22,6 +22,14 @@ try {
  assert.throws(()=>seedExeImage(vfs,bytes,'setup.exe','D:\\absent.exe'),/no source owner/);
  assert.equal(unrelated,0);assert(saveVfsToHost(vfs,path.join(tmp,'after')).every(r=>r.guestPath.startsWith('c:')));
  assert.equal(vfs.createFile('D:\\setup.exe',0x40000000,2),0);
+ const {isMountedPrivateDll}=require('../lib/cli-mounted-private-dll');
+ let touched=0;vfs.files.set('d:\\private.dll',{get data(){touched++;throw Error('no admission I/O');}});
+ assert(isMountedPrivateDll(vfs,'Private.DLL','D:\\setup.exe'));
+ assert.equal(touched,0);
+ assert(!isMountedPrivateDll(vfs,'private.dll','D:\\other\\setup.exe'));
+ assert(!isMountedPrivateDll(vfs,'D:\\private.dll','D:\\setup.exe'));
+ vfs.files.set('d:\\kernel32.dll',{data:bytes});assert(!isMountedPrivateDll(vfs,'kernel32.dll','D:\\setup.exe'));
+ vfs.files.set('d:\\placeholder.dll',{staticModule:true});assert(!isMountedPrivateDll(vfs,'placeholder.dll','D:\\setup.exe'));
  const resident={guestPath:'c:\\setup.exe',outputPath:'existing'};
  assert.equal(childExecutable(vfs,'c:\\setup.exe',[resident],tmp),resident);
  assert.equal(childExecutable(vfs,'c:\\missing.exe',[],tmp),null);
