@@ -512,7 +512,6 @@
     (local $saved_budget i32) (local $saved_start i32) (local $shared_cache_generation i32)
     (local $saved_running_outer i32)
     (local $saved_api_depth i32)
-    (call $timer_lifetime_run_entry)
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION)) (then
       (drop (call $writer_check))
       (if (i32.or (global.get $help_macro_frames) (global.get $help_vfs_phase))
