@@ -4258,3 +4258,24 @@ Pause/Continue and ordinary Quit remain unproved. A disk-floor watchdog ended
 the detached run with retained cleanup; the earlier attached run has an
 explicit outer-wait evidence limitation. Neither result establishes the cause
 of the remaining scene lag or intermittent white composition.
+
+
+## Drakan original main menu — 18 November 2026
+
+[Post-warning startup report](re-notes/drakan-post-warning-startup-readiness-20261118.md)
+records run `20261118-drakan-post-warning-startup-readiness`. Preparation
+repairs `2b8ba1b67` and `5eeed9ab8` separate completed warning input from
+passive startup readiness and wait for verified native launch receipts.
+Authored native/browser controls and locked builds passed. In the original,
+ordinary ShowWindow gave the main window focus about 11 seconds after the
+completed warning Enter and independent UP. No forced focus or visibility was
+needed. Reviewed whole frames show publisher/intro screens, the demo title
+and the authentic New Game/Load/Save/Options/Credits/Quit menu.
+
+A finite menu Enter and its independent release timed out UNKNOWN. Local
+keydown/keyup delivery does not establish native consumption or UP acknowledgment;
+level entry, movement, attack and ordinary Quit remain unproved. Cleanup retains
+actual waits and EOFs. Seven selected PNGs were recovered byte-for-byte from
+persisted image-tool responses after unexplained deletion, matching prior hashes
+and sizes. Two full stdout logs remain missing; only exact earlier excerpts
+survive. Recovery introduced no runtime request or new screenshot.
