@@ -95,6 +95,31 @@ closed, so whole-task disk compliance failed. Full-27, Windows/backend parity,
 hardware, performance and arbitrary crash freedom remain open.
 Evidence: `scratch/runs/20261118-dx-boids-flip-current-paired-motion-native-close/result.json`.
 
+Architecture report `1960ec53d` adds author-reviewed moving scene pairs on
+actual software and WebGL executors. Ordinary Escape reaches native
+ExitProcess **123** before host stop, followed by guest/render retirement and
+individual driver/browser/display waits 0 with both EOFs. This records the exact
+guest status; it does not classify 123 as a normal Windows exit. Wormhole also
+shows moving pairs and ordinary Escape/native exit 0 under both selectors,
+but both execute native DirectDraw/Canvas2D with no D3D or WebGL executor.
+Those Wormhole observations do not fill a D3D/WebGL coverage cell. Four earlier
+UNKNOWN scopes remain closed, including an external exit 143 with unknown
+sender and missing waits. No product change or recompile was justified.
+Evidence: [Architecture/Wormhole report](re-notes/dx-wormhole-architec-current-paired-motion-native-close-20261118.md),
+run `20261118-wormhole-architec-current-paired-motion-native-close`.
+
+Hexen II reports `4a78e3fe3` and `ae6351986` verify ordinary native Pause/resume
+and menu Quit with guest exit 0 before host cleanup on the retained WebGL graph.
+Three finite Ctrl gestures leave both spiders upright; enemy damage and defeat
+remain unproved. Receipt delivery alone does not establish that the active game
+binding performed an attack. Unique selected images/logs were preserved in
+tmpfs when disk space prevented full durable retrieval; minimal receipts retain
+the successful exit and cleanup evidence. The actual module object was retained,
+but executing bytecode was not independently recovered. This adds a shutdown
+observation without completing combat or full-27 coverage.
+Evidence: [Hexen II Pause/combat report](re-notes/hexen2-native-pause-living-enemy-combat-20261118.md),
+run `20261118-hexen2-native-pause-living-enemy-combat`.
+
 ReVolt report `3026b89f9` advances beyond menu navigation: personally chosen
 Up and Up+Left holds produce road-to-curb movement and changed heading at 8 mph,
 which the coordinator reviewed in the retained whole frame. Review ages are
