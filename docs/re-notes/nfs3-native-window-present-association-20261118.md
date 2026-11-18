@@ -69,7 +69,27 @@ finish normally. These controls do not identify the original signal sender.
 The driver, guest runtime, input confirmation/review/freshness fences and
 independent physical release path are unchanged.
 
-Original driving, Pause/Continue and ordinary Quit will be reported only from
-the affected additional original after this preparation correction is tested
-and published. Neither the closed scope nor an earlier screenshot supplies
-those claims.
+The preparation correction was tested, built and published as `49af4ab72`.
+The authorized additional original retained the same frozen source, chooser,
+135 media pins and exact b8c8 native repair, with actual guest/render Worker
+module readbacks. Its initial whole loading screen had a 27 ms native scene,
+positive window association and a selected, non-stale GPU layer. After loading,
+the whole personally reviewed screenshot `original-durable/post-loading-scene.png`
+showed the cockpit, road, rain and opponents at 0 MPH. Native window and RT
+association were both 54032 with matching DIB, creator, window and CPU stamp 1.
+However, that screenshot's native scene was approximately 1329 ms old and
+`ready=false`. It did not authorize input. No bind or physical DOWN/UP occurred.
+
+The independent watchdog then observed free disk at 1466826752 bytes, below
+the required 1.5 GB floor, and closed the scope. The native supervisor retained
+SIGTERM followed by SIGKILL cleanup, `leaked=false` and `pollError=null`; the
+detached custodian retained actual native and watchdog waits and both EOFs.
+The run remained closed when shared disk space subsequently recovered.
+
+The tested producer repair fixes the demonstrated invalid association during
+Flip backpressure. Original driving, road consequence, Pause/Continue and
+ordinary Quit remain unverified: no reviewed driving screenshot coincided
+with an admissibly fresh native scene before the disk-floor closure. The
+cause of the remaining scene lag and intermittent white composition is not
+established by the retained snapshots. No additional original was launched,
+and no freshness, identity, generation or retirement check was relaxed.
