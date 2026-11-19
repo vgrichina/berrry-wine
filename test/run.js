@@ -5355,6 +5355,9 @@ async function main() {
     });
   }
   if (GL_GPS) instance.exports.gl_gps_enable(1);
+  // --gl-ff-vs=0: GL fixed-function T&L stays on the CPU (src/09a8gv-gl-gps-vs.wat
+  // otherwise hands whole draws to the executor as a generated vertex shader).
+  if (GL_GPS && getArg('gl-ff-vs', '1') === '0') instance.exports.gl_gps_vs_enable(0);
   // D3D9/D3D8 presents so far (09akg stat 4), for --cpu-window.
   const d3d9Frames = () => instance.exports.d3d9_gps_stat
     ? instance.exports.d3d9_gps_stat(4) >>> 0 : 0;
@@ -13323,6 +13326,11 @@ if (VERBOSE) {
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
       ` front-presents=${st(64)} cpu-stencil-pixels=${st(65)} canon-declines=${st(66)}` +
       ` active=${instance.exports.gl_gps_active()}`);
+    // 09a8gv: whole draws as a generated VS, and per-draw declines 96+r.
+    const vsr = [];
+    for (let r = 1; r < 32; r++) if (st(96 + r)) vsr.push(`${r}:${st(96 + r)}`);
+    console.log(`[gl-gps-vs] vs-draws=${st(80)} vs-tris=${st(81)} vs-verts=${st(82)} vs-builds=${st(84)}` +
+      ` mip-chains=${st(85)} cpu-verts=${st(86)} vs-declines=${vsr.join(',') || 'none'}`);
   }
   if (instance.exports.d3d9_gps_stat && instance.exports.d3d9_gps_stat(14)) {
     // src/09akg-d3d9-gps.wat d3d9_gps_stat: counters, decline reasons 16+r,

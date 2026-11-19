@@ -307,6 +307,9 @@
   (local.set $ctx (call $g2w (local.get $ctx)))
   (memory.fill (local.get $ctx) (i32.const 0) (local.get $bytes))
   (memory.copy (local.get $ctx) (local.get $desc) (i32.const 128))
+  ;; +116..127 are only read from $desc above; in the context they hold the
+  ;; per-triangle depth offset and d3d_software_bind_depth_bias's state.
+  (i64.store offset=116 (local.get $ctx) (i64.const 0)) (i32.store offset=124 (local.get $ctx) (i32.const 0))
   (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 8)) (then
     (i32.store offset=252 (local.get $ctx) (i32.const 16))
     (if (call $d3d_shader_vm_has_point_size (i32.load offset=52 (local.get $ctx))) (then
@@ -915,6 +918,7 @@
     (local.set $c (local.get $a))))
   (i32.store offset=160 (local.get $ctx) (local.get $a)) (i32.store offset=164 (local.get $ctx) (local.get $b))
   (i32.store offset=168 (local.get $ctx) (local.get $c)) (f32.store offset=172 (local.get $ctx) (select (local.get $size) (local.get $area) (local.get $point)))
+  (f32.store offset=116 (local.get $ctx) (call $d3d_software_depth_offset (local.get $ctx) (local.get $a) (local.get $b) (local.get $c)))
   (local.set $lo (f32.min (f32.load (local.get $a)) (f32.min (f32.load (local.get $b)) (f32.load (local.get $c)))))
   (local.set $hi (f32.max (f32.load (local.get $a)) (f32.max (f32.load (local.get $b)) (f32.load (local.get $c)))))
   (if (local.get $wire) (then (local.set $lo (f32.floor (f32.add (local.get $lo) (f32.const 0.5)))) (local.set $hi (f32.floor (f32.add (local.get $hi) (f32.const 0.5))))))
@@ -1256,9 +1260,11 @@
             (else (local.set $v (f32.div (f32.sub (f32.convert_i32_u (local.get $y)) (f32.load offset=4 (local.get $a))) (local.get $dy)))))
           (local.set $u (f32.sub (f32.const 1) (local.get $v))) (local.set $w (f32.const 0))))
         (if (local.get $point) (then (local.set $u (f32.const 1)) (local.set $v (f32.const 0)) (local.set $w (f32.const 0))))
+        (local.set $z (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 8) (local.get $u) (local.get $v) (local.get $w)))
+        (if (f32.ne (f32.load offset=116 (local.get $ctx)) (f32.const 0)) (then
+          (local.set $z (f32.min (f32.const 1) (f32.max (f32.const 0) (f32.add (local.get $z) (f32.load offset=116 (local.get $ctx))))))))
         (local.set $z (call $d3d_software_quantize_depth
-          (i32.shr_u (i32.load offset=204 (local.get $ctx)) (i32.const 16))
-          (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 8) (local.get $u) (local.get $v) (local.get $w))))
+          (i32.shr_u (i32.load offset=204 (local.get $ctx)) (i32.const 16)) (local.get $z)))
         ;; The W depth/fog fragment reads screen-linear rhw from the output
         ;; vertex byte offset its descriptor names (word 6): 12, the position
         ;; w lane, when varyings are perspective-correct, or a texture lane the
@@ -1675,6 +1681,35 @@
         (i32.or (i32.load offset=128 (local.get $ctx)) (i32.load offset=192 (local.get $ctx)))))) (then (return (i32.const 0))))
   (call $d3d_shader_vm_free (i32.load offset=280 (local.get $ctx))) (i32.store offset=280 (local.get $ctx) (i32.const 0))
   (i32.store offset=256 (local.get $ctx) (local.get $enabled)) (i32.store offset=260 (local.get $ctx) (local.get $color)) (i32.const 1))
+;; Depth bias for programmed (vertex shader) draws: +120 constant bias in
+;; [0, 1] depth units, +124 slope factor. Each filled triangle's offset is
+;; bias + slope * max(|dz/dx|, |dz/dy|) over its screen vertices (the GPU
+;; stream's z_bias/slope_bias, GL polygon offset), stored at +116 by
+;; prepare and added to the interpolated depth (clamped to [0, 1]) before
+;; quantization. Points and lines take the constant part only.
+(func (export "d3d_software_bind_depth_bias") (param $ctx i32) (param $bias f32) (param $slope f32) (result i32)
+  (if (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (i32.const 288))) (then (return (i32.const 0))))
+  (if (i32.or (i32.ne (i32.load (local.get $ctx)) (i32.const 0x44535031))
+    (i32.or (i32.ne (i32.load offset=140 (local.get $ctx)) (i32.const 1))
+      (i32.or (i32.load offset=128 (local.get $ctx)) (i32.load offset=192 (local.get $ctx))))) (then (return (i32.const 0))))
+  (if (i32.eqz (i32.and (f32.le (f32.abs (local.get $bias)) (f32.const 1)) (f32.le (f32.abs (local.get $slope)) (f32.const 65536))))
+    (then (return (i32.const 0))))
+  (f32.store offset=120 (local.get $ctx) (local.get $bias)) (f32.store offset=124 (local.get $ctx) (local.get $slope)) (i32.const 1))
+(func $d3d_software_depth_offset (param $ctx i32) (param $a i32) (param $b i32) (param $c i32) (result f32)
+  (local $off f32) (local $ux f32) (local $uy f32) (local $uz f32) (local $vx f32) (local $vy f32) (local $vz f32) (local $den f32)
+  (local.set $off (f32.load offset=120 (local.get $ctx)))
+  (if (f32.eq (f32.load offset=124 (local.get $ctx)) (f32.const 0)) (then (return (local.get $off))))
+  (local.set $ux (f32.sub (f32.load (local.get $b)) (f32.load (local.get $a))))
+  (local.set $uy (f32.sub (f32.load offset=4 (local.get $b)) (f32.load offset=4 (local.get $a))))
+  (local.set $uz (f32.sub (f32.load offset=8 (local.get $b)) (f32.load offset=8 (local.get $a))))
+  (local.set $vx (f32.sub (f32.load (local.get $c)) (f32.load (local.get $a))))
+  (local.set $vy (f32.sub (f32.load offset=4 (local.get $c)) (f32.load offset=4 (local.get $a))))
+  (local.set $vz (f32.sub (f32.load offset=8 (local.get $c)) (f32.load offset=8 (local.get $a))))
+  (local.set $den (f32.sub (f32.mul (local.get $ux) (local.get $vy)) (f32.mul (local.get $uy) (local.get $vx))))
+  (if (f32.eq (local.get $den) (f32.const 0)) (then (return (local.get $off))))
+  (f32.add (local.get $off) (f32.mul (f32.load offset=124 (local.get $ctx))
+    (f32.max (f32.abs (f32.div (f32.sub (f32.mul (local.get $uz) (local.get $vy)) (f32.mul (local.get $uy) (local.get $vz))) (local.get $den)))
+      (f32.abs (f32.div (f32.sub (f32.mul (local.get $ux) (local.get $vz)) (f32.mul (local.get $uz) (local.get $vx))) (local.get $den)))))))
 ;; Private target flag in the blend word; existing users leave it zero.
 (func (export "d3d_software_bind_color_format") (param $ctx i32) (param $format i32) (result i32)
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (i32.const 288))) (then (return (i32.const 0))))

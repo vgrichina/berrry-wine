@@ -88,6 +88,33 @@
   ;; CPU-only stencil DrawPixels, 66 canonicalizer declines, 67 depth/stencil
   ;; readbacks.
   ;;
+  ;; Fixed-function T&L as a vertex shader (09a8gv): a triangle draw that
+  ;; cannot go whole to the executor with a generated VS runs the CPU path
+  ;; above instead -- per draw, no frame fallback.
+  ;; VS-path declines (gl_gps_stat 96 + r) and what taking them needs:
+  ;;   1 lighting               lights/material in VS constants
+  ;;   2 sphere map             normal matrix + reflection in the VS
+  ;;   3 user clip planes       clip distances (none in vs_2_0)
+  ;;   4 select/feedback        none (needs transformed vertices on the CPU)
+  ;;   5 flat, colours vary     provoking-vertex colour (D3D flat = first)
+  ;;   6 polygon mode not fill  none (WAT: CPU edges)
+  ;;   7 lines/points/edge polygons   VS lines and point sprites
+  ;;   8 vertex stride not 76/112   a layout per packed record kind
+  ;;   9 1D texture             as decline 9
+  ;;  10 viewport/depth range outside the target   guard-band viewport
+  ;;  11 no GPS_CAP_VS_IR       -
+  ;;  12 texture state the producer declines   as declines 10/25
+  ;;  13 vertex w not 1         FLOAT4 position input
+  ;;  14 draw not on the executor   -
+  ;;  15 over 16384 vertices    split the draw
+  ;;  16 the 09af1 canonicalizer refused the VS   none (a bug to fix)
+  ;;  17 the 09af1 canonicalizer refused the combine   none (a bug to fix)
+  ;;  18 no raster target       -
+  ;;  19 bottom-up target       none (WAT: flip y)
+  ;; VS-path stats: 80 VS draws, 81 their triangles, 82 their vertices, 84 VS
+  ;; builds, 85 mip-chain uploads, 86 vertices the CPU path transformed while
+  ;; the producer was on.
+  ;;
   ;; Block $glg_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +1024 shader cache 64 x {key, id}, +1536 sampler cache
   ;; 32 x {key, border, id, -}, +2048 IR buffer, +4096 texture cache
@@ -171,6 +198,11 @@
   (global $glg_last_ps (mut i32) (i32.const 0))
   ;; Per draw.
   (global $glg_draw_reason (mut i32) (i32.const 0))
+  ;; RASTER cull (1 none) and polygon offset; non-default only while 09a8gv
+  ;; builds a VS draw's RASTER.
+  (global $glg_r_cull (mut i32) (i32.const 1))
+  (global $glg_r_zbias (mut f32) (f32.const 0))
+  (global $glg_r_slope (mut f32) (f32.const 0))
   (global $glg_need_raster (mut i32) (i32.const 0))
   (global $glg_read_site (mut i32) (i32.const 0))
   (global $glg_q1_bad (mut i32) (i32.const 0))
@@ -297,6 +329,11 @@
     (local.set $n (global.get $glg_b_n))
     (if (i32.eqz (local.get $n)) (then (return)))
     (global.set $glg_b_n (i32.const 0))
+    ;; An open batch of 09a8gv raw vertices is its own DRAW_UP.
+    (if (global.get $glv_b_vs) (then (call $glv_flush (local.get $n)) (return)))
+    ;; Pretransformed vertices are target coordinates: the whole target is
+    ;; the viewport again after a 09a8gv draw set its own.
+    (call $glv_vp_reset)
     (local.set $p (call $glg_begin (global.get $GPS_OP_DRAW_UP) (size-of GpsDraw)))
     (store.field GpsDraw prim (local.get $p) (global.get $GPS_PRIM_TRIANGLELIST))
     (store.field GpsDraw index_size (local.get $p) (i32.const 0))
@@ -397,6 +434,8 @@
     (store.field GpsTargets color (local.get $p) (local.get $c))
     (store.field GpsTargets depth (local.get $p) (global.get $glg_ds_id))
     (drop (call $glg_end (local.get $p)))
+    ;; TARGETS resets the executor's viewport to the whole target.
+    (global.set $glv_vp_on (i32.const 0))
     (global.set $glg_c_color (local.get $c))
     (global.set $glg_c_depth (global.get $glg_ds_id)))
 
@@ -675,6 +714,7 @@
     (global.set $glg_c_raster (i32.const 0))
     (global.set $glg_c_bind (i32.const 0))
     (global.set $glg_c_consts (i32.const 0))
+    (global.set $glv_c_ok (i32.const 0))
     (i32.const 1))
 
   ;; Into a GPU frame if this one may be one. $zok: the caller is about to
@@ -961,7 +1001,7 @@
     (store.field GpsRaster zfunc (local.get $s) (select (i32.load offset=20 (local.get $st)) (i32.const 8) (local.get $depth)))
     (store.field GpsRaster zwrite (local.get $s)
       (i32.and (local.get $depth) (i32.ne (i32.load offset=24 (local.get $st)) (i32.const 0))))
-    (store.field GpsRaster cull (local.get $s) (i32.const 1))
+    (store.field GpsRaster cull (local.get $s) (global.get $glg_r_cull))
     (store.field GpsRaster blend (local.get $s) (local.get $blend))
     (store.field GpsRaster src_rgb (local.get $s) (select (i32.load offset=4 (local.get $st)) (i32.const 2) (local.get $blend)))
     (store.field GpsRaster dst_rgb (local.get $s) (select (i32.load offset=8 (local.get $st)) (i32.const 1) (local.get $blend)))
@@ -1001,6 +1041,12 @@
     (store.field GpsRaster scissor_bottom (local.get $s) (local.get $b))
     (store.field GpsRaster blend_op (local.get $s) (i32.const 1))
     (store.field GpsRaster blend_op_alpha (local.get $s) (i32.const 1))
+    ;; Culling and polygon offset are the VS path's (09a8gv $glv_draw sets
+    ;; them around its own RASTER); pretransformed draws are culled on the
+    ;; CPU and biased there.
+    (if (local.get $depth) (then
+      (store.field GpsRaster z_bias (local.get $s) (global.get $glg_r_zbias))
+      (store.field GpsRaster slope_bias (local.get $s) (global.get $glg_r_slope))))
     (if (i32.and (i32.ne (global.get $glg_c_raster) (i32.const 0))
           (call $d3g_row_eq (local.get $s) (i32.add (global.get $glg_mem) (i32.const 608)) (i32.const 96)))
       (then (return)))
@@ -1084,10 +1130,17 @@
     (select (i32.const 3) (i32.const 1) (i32.eq (local.get $code) (i32.const 3))))
 
   (func $glg_sampler (param $au i32) (param $av i32) (param $linear i32) (param $border i32) (result i32)
-    (local $key i32) (local $i i32) (local $e i32) (local $id i32) (local $p i32) (local $f i32)
+    (local $f i32)
     (local.set $f (select (i32.const 2) (i32.const 1) (local.get $linear)))
+    (call $glg_sampler_f (local.get $au) (local.get $av) (local.get $f) (local.get $f) (i32.const 0) (local.get $border)))
+
+  ;; A sampler by filters: min/mag 1 point, 2 linear; mip 0 none, 1 point,
+  ;; 2 linear (09a8gv's mipmapped unit 0).
+  (func $glg_sampler_f (param $au i32) (param $av i32) (param $min i32) (param $mag i32) (param $mip i32) (param $border i32) (result i32)
+    (local $key i32) (local $i i32) (local $e i32) (local $id i32) (local $p i32)
     (local.set $key (i32.or (i32.or (local.get $au) (i32.shl (local.get $av) (i32.const 4)))
-      (i32.or (i32.shl (local.get $f) (i32.const 8)) (i32.const 0x80000000))))
+      (i32.or (i32.or (i32.shl (local.get $min) (i32.const 8)) (i32.shl (local.get $mag) (i32.const 10)))
+        (i32.or (i32.shl (local.get $mip) (i32.const 12)) (i32.const 0x80000000)))))
     ;; Border colour matters only to the border mode.
     (if (i32.and (i32.ne (local.get $au) (i32.const 4)) (i32.ne (local.get $av) (i32.const 4)))
       (then (local.set $border (i32.const 0))))
@@ -1105,9 +1158,9 @@
     (store.field GpsSampler id (local.get $p) (local.get $id))
     (store.field GpsSampler address_u (local.get $p) (local.get $au))
     (store.field GpsSampler address_v (local.get $p) (local.get $av))
-    (store.field GpsSampler min (local.get $p) (local.get $f))
-    (store.field GpsSampler mag (local.get $p) (local.get $f))
-    (store.field GpsSampler mip (local.get $p) (i32.const 0))
+    (store.field GpsSampler min (local.get $p) (local.get $min))
+    (store.field GpsSampler mag (local.get $p) (local.get $mag))
+    (store.field GpsSampler mip (local.get $p) (local.get $mip))
     (store.field GpsSampler address_w (local.get $p) (i32.const 0))
     (store.field GpsSampler max_level (local.get $p) (i32.const 0))
     (store.field GpsSampler max_aniso (local.get $p) (i32.const 0))
@@ -1211,7 +1264,8 @@
     (if (i32.eq (i32.load (local.get $e)) (local.get $wa))
       (then (i32.store offset=16 (local.get $e) (i32.const 0))))
     (if (i32.eq (i32.load offset=32 (local.get $e)) (local.get $wa))
-      (then (i32.store offset=48 (local.get $e) (i32.const 0)))))
+      (then (i32.store offset=48 (local.get $e) (i32.const 0))))
+    (call $glv_tex_dirty (local.get $wa)))
 
   ;; The way of the set at $set that a new texture takes: an empty one, else
   ;; one holding $wa at stale dimensions, else the least recently used --

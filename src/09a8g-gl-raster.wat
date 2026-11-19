@@ -3863,7 +3863,11 @@
     (global.set $gl_sw_vertex_stride (call $gl_source_packed_stride (local.get $start)))
     (local.set $base (i32.add (local.get $start) (i32.const 32)))
     (local.set $i (i32.const 0))
-    (block $done (loop $lp
+    (block $done
+    ;; With the GL GPS producer on, the executor may take the whole draw
+    ;; with a generated vertex shader (09a8gv); 0 = this loop draws it.
+    (br_if $done (call $glv_draw (local.get $start) (local.get $vertices) (local.get $step) (local.get $mvp) (local.get $vp)))
+    (loop $lp
       (br_if $done (i32.gt_u (i32.add (local.get $i) (local.get $step)) (local.get $vertices)))
       (local.set $v (i32.add (local.get $base) (i32.mul (local.get $i) (global.get $gl_sw_vertex_stride))))
       (if (i32.eq (i32.load offset=4 (local.get $start)) (i32.const 0x10009))
