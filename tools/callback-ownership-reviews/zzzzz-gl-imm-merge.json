@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch",
+      "baseSHA256": "c77796520b826444bb3613c6b6a9ce7533883fcb147dd1fe65b018d5606d4455",
+      "sha256": "2a7fd340d53b30261ab84854bae3394bff999934abc6e32b064f30351581a1c2",
+      "reason": "Review 20261119 GL immediate merge: after $gl_imm_dispatch declines, any call that is not GL immediate-mode first draws software GL's open merged draw ($gl_merge_flush -> $gl_sw_consume: WAT rasterizer work under the GL object lock, guest-invisible). No EIP write, guest callback, export, boundary call or invocation lifetime changed. Run 20261119-gl-imm-batch."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "3b7a3da6a0b32c81a5654b1acb755552c8f35f52ac5e6382b44216566f009e56",
+      "sha256": "184e3b95581f395c0ade840838e9eb7961527d85fd5783f0b970fe277472610a",
+      "reason": "Review 20261119 GL immediate merge: at the single exit of $run, software GL's open merged draw is drawn ($gl_merge_flush) before the host can present, read back or capture. No EIP write, guest callback, export, boundary call or invocation lifetime changed. Run 20261119-gl-imm-batch."
+    }
+  ]
+}

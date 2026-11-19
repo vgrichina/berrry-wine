@@ -730,6 +730,8 @@
     (global.set $glg_last_why (local.get $why))
     (global.set $glg_last_eip (select (global.get $api_return_eip) (global.get $eip)
       (i32.ne (global.get $api_handler_depth) (i32.const 0))))
+    ;; A merged draw (09a8c) lands later than its glEnd; name that glEnd.
+    (if (global.get $gl_merge_flushing) (then (global.set $glg_last_eip (global.get $gl_merge_eip))))
     (global.set $glg_decline_seq (i32.add (global.get $glg_decline_seq) (i32.const 1)))
     (if (global.get $glg_strict) (then (call $glg_fail (i32.add (i32.const 100) (local.get $why))))))
 

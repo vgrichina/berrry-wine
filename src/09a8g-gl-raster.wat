@@ -3805,6 +3805,7 @@
   (func $gl_sw_draw (param $start i32) (param $vertices i32) (param $step i32)
     (local $b i32) (local $mvp i32) (local $vp i32) (local $i i32) (local $base i32)
     (local $v i32) (local $phase_cell i32)
+    (global.set $gl_sw_stat_draws (i32.add (global.get $gl_sw_stat_draws) (i32.const 1)))
     (call $gl_logic_begin)
     (global.set $rast_stencil_state (call $gl_stencil_state))
     (global.set $rast_color_mask (call $gl_color_mask_bits (global.get $gl_sw_rt)))
@@ -3906,6 +3907,7 @@
   ;; parameter and delete). A DIB target is never queued: GDI reads those bits
   ;; whenever it likes, with no fence to stop it.
   (global $gl_sw_in_worker (mut i32) (i32.const 0))
+  (global $gl_sw_stat_draws (mut i32) (i32.const 0))
   ;; 0 not yet known, 1 a Worker took the last draw, 2 none took one this
   ;; frame -- don't build another snapshot until the next SwapBuffers.
   (global $gl_sw_worker_ok (mut i32) (i32.const 0))
@@ -4203,6 +4205,7 @@
 
   ;; ---- exports --------------------------------------------------------------
   (func $gl_sw_export_set_enabled (export "gl_sw_set_enabled") (param $on i32)
+    (call $gl_merge_flush)
     (call $d3dim_worker_fence)
     (if (i32.and (i32.ne (local.get $on) (i32.const 0)) (i32.eqz (global.get $gl_sw_enabled)))
       (then (call $gl_sw_state_defaults)))
@@ -4211,6 +4214,16 @@
     (global.get $gl_sw_enabled))
   (func $gl_sw_export_triangles (export "gl_sw_triangles") (result i32)
     (global.get $gl_sw_triangles))
+  ;; $gl_sw_draw calls, and packed records that joined an open merged draw
+  ;; instead of making their own (09a8c $gl_merge_take).
+  (func $gl_sw_export_draws (export "gl_sw_draws") (result i32)
+    (global.get $gl_sw_stat_draws))
+  (func $gl_sw_export_merged (export "gl_sw_merged") (result i32)
+    (global.get $gl_merge_stat_joined))
+  ;; Nonzero turns merging off (an A/B arm in one build); draws what is open.
+  (func $gl_sw_export_merge_off (export "gl_sw_merge_off") (param $off i32)
+    (call $gl_merge_flush)
+    (global.set $gl_merge_off (local.get $off)))
   (func $gl_sw_export_lines (export "gl_sw_lines") (result i32)
     (global.get $gl_sw_lines))
   (func $gl_sw_export_points (export "gl_sw_points") (result i32)
@@ -4326,6 +4339,7 @@
         (global.set $gl_sw_default_h (local.get $h)))))
 
   (func $gl_sw_export_reset (export "gl_sw_reset")
+    (call $gl_merge_flush)
     (call $d3dim_worker_fence)
     (call $glg_hook_unbind)
     (global.set $glg_presented (i32.const 0))
@@ -4839,6 +4853,8 @@
   (func $gl_period_track
     (local $b i32) (local $face i32) (local $name i32) (local $v i32)
     (if (i32.eqz (i32.and (i32.load (global.get $gl_sw_st)) (i32.const 0x10000))) (then (return)))
+    ;; The material changes: a merged draw still open (09a8c) lights with the old.
+    (call $gl_merge_flush)
     (local.set $b (call $gl_mtx_block))
     (local.set $face (i32.load offset=4116 (global.get $gl_sw_st)))
     (local.set $name (i32.load offset=4120 (global.get $gl_sw_st)))

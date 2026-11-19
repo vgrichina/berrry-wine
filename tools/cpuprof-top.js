@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Rank functions by self time in a V8 .cpuprofile (node --cpu-prof output).
 // Usage: node tools/cpuprof-top.js <file.cpuprofile> [top=30] [--callers=NAME]
-//        [--names] [--wasm-only] [--incl=NAME[,NAME...]] [--lines=NAME]
+//        [--names] [--wasm-only] [--incl=NAME[,NAME...]] [--lines=NAME] [--window=START:END]
 const fs = require('fs');
 
 const file = process.argv[2];
@@ -18,11 +18,22 @@ for (const n of prof.nodes) byId.set(n.id, n);
 const parent = new Map();
 for (const n of prof.nodes) for (const c of n.children || []) parent.set(c, n.id);
 
+// --window=START:END (ms from the first sample; END may be empty) keeps one
+// phase of a profile that spans boot, loading and gameplay, as
+// tools/wasm-phase-profile.js does for subsystems.
+const windowArg = (process.argv.find(a => a.startsWith('--window=')) || '').slice(9);
+const [winLo, winHi] = windowArg
+  ? windowArg.split(':').map((v, i) => (v === '' || v === undefined ? (i ? Infinity : 0) : Number(v)))
+  : [-Infinity, Infinity];
+
 // timeDeltas[i] is the time spent before samples[i] was taken.
 const self = new Map();
 let total = 0;
+let clock = 0;
 for (let i = 0; i < prof.samples.length; i++) {
   const dt = (prof.timeDeltas[i] || 0) / 1000; // ms
+  clock += dt > 0 ? dt : 0;
+  if (clock < winLo || clock > (winHi === undefined ? Infinity : winHi)) continue;
   total += dt;
   const id = prof.samples[i];
   self.set(id, (self.get(id) || 0) + dt);

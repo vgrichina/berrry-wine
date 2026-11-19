@@ -46,6 +46,9 @@ const WAT = String.raw`
  (func (export "probe_invoke") (param $thunk i32) (result i32)
    (call $win32_dispatch (i32.div_u
      (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 8)))
+   ;; Control returns to the host here, as at the end of $run: land software
+   ;; GL's open merged draw (09a8c) exactly as $run's exit does.
+   (if (global.get $gl_merge_n) (then (call $gl_merge_flush)))
    (i32.load (global.get $reg_base)))
  ;; The producer's texture-cache bucket (byte offset in its block) of the
  ;; texture the last draw sampled on unit 0: equal for two textures that

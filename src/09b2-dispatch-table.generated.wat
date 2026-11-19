@@ -4200,6 +4200,8 @@
   ;; Hand-written dispatch wrapper is in 09b-dispatch.wat
   ;; ============================================================
   (func $gl_imm_dispatch_op (param $id i32) (result i32)
+    (if (i32.eq (local.get $id) (i32.const 2907)) (then (return (i32.const 277)))) ;; glBegin
+    (if (i32.eq (local.get $id) (i32.const 2908)) (then (return (i32.const 22)))) ;; glEnd
     (if (i32.eq (local.get $id) (i32.const 2909)) (then (return (i32.const 791)))) ;; glColor3f
     (if (i32.eq (local.get $id) (i32.const 2911)) (then (return (i32.const 1049)))) ;; glColor4f
     (if (i32.eq (local.get $id) (i32.const 2914)) (then (return (i32.const 540)))) ;; glTexCoord2f

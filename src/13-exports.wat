@@ -908,6 +908,8 @@
     ;; What this call actually got through. $block_budget can end up negative --
     ;; a fold retires k blocks in one go and subtracts all k -- so this can read
     ;; slightly above the budget it was given; that is honest, not a wrap.
+    ;; Software GL's open merged draw (09a8c) lands before the host looks.
+    (if (global.get $gl_merge_n) (then (call $gl_merge_flush)))
     (global.set $last_run_blocks
       (i32.sub (local.get $max_blocks) (global.get $block_budget)))
     ;; Bank this call's blocks and give an outer (re-entrant) call its own

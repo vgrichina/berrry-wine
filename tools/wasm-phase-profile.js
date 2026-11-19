@@ -38,6 +38,10 @@ const BUCKETS = [
   ['gdi-raster', /^\$?(gdi_|host_gdi_|raster_|span_|blit_)/],
   ['interp-dispatch', /^\$?(next|branch_end|block_|cache_|decode|loop_match|thread_|dispatch_)/],
   ['mem-translate', /^\$?(g2w|w2g|gs\d+|gl\d+|guest_page_translate|guest_read|guest_write|mem_)/],
+  // After mem-translate: gl32/gs32 are guest loads/stores, not OpenGL.
+  ['gl-gps-producer', /^\$?(glg_|gps_)/],
+  ['gl-wat', /^\$?(gl_|glu_|rast_|handle_gl|handle_wgl)/],
+  ['uop-engine', /^\$?(uop_|uwc_|uc_|th_uop_)/],
   ['interp-regs-flags', /^\$?(set_reg|get_reg|flag_|get_zf|get_cf|get_sf|get_of|get_pf|get_af)/],
   ['interp-fpu', /^\$?(fpu_|th_fpu|x87)/],
   ['interp-handlers', /^\$?(th_|do_|alu|shift|string_op|rep_|mmx_)/],

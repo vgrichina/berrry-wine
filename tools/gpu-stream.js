@@ -4,7 +4,8 @@
 // gpu-stream.js — inspect and replay GPU stream v2 dumps (docs/gpu-stream-v2.md)
 //
 // tl;dr
-//   node tools/gpu-stream.js list  FILE            one line per record: seq, op, key fields
+//   node tools/gpu-stream.js list  FILE [--tail]   one line per record: seq, op, key fields
+//                                                  (--tail: the record tail as u32 words)
 //   node tools/gpu-stream.js stats FILE [--json]   counts per op, bytes, draws, vertices,
 //                                                  presents, hash (NullExecutor)
 //   node tools/gpu-stream.js replay FILE --executor=null|soft|webgl
@@ -45,6 +46,14 @@ function keyFields(rec) {
     parts.push(`${k}=${typeof v === 'number' && !Number.isInteger(v) ? +v.toFixed(4) : v}`);
   }
   if (rec.tail.length) parts.push(`tail=${rec.tail.length}B`);
+  // --tail: the variable-length tail as little-endian u32 words (BIND
+  // entries {slot, texture, sampler}, CONSTS floats as bits, ...).
+  if (rec.tail.length && has('tail')) {
+    const t = rec.tail;
+    const words = [];
+    for (let o = 0; o + 4 <= t.length; o += 4) words.push((t[o] | (t[o + 1] << 8) | (t[o + 2] << 16) | (t[o + 3] << 24)) >>> 0);
+    parts.push(`[${words.join(',')}]`);
+  }
   return parts.join(' ');
 }
 

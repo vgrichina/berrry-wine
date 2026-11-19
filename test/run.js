@@ -13264,6 +13264,7 @@ if (VERBOSE) {
       console.log(`[gl-census] software raster: triangles=${((sw.gl_sw_triangles() >>> 0) + (wk.glTriangles || 0))}` +
         ` dropped-at-eye-plane=${(sw.gl_sw_clipped() >>> 0) + (wk.glClipped || 0)}` +
         ` culled=${(sw.gl_sw_culled() >>> 0) + (wk.glCulled || 0)}` +
+        (sw.gl_sw_draws ? ` draws=${sw.gl_sw_draws() >>> 0} merged-records=${sw.gl_sw_merged() >>> 0}` : '') +
         (wk.glQueued ? ` worker-draws=${wk.glQueued} worker-tex-uploads=${wk.glTexQueued || 0}` : '') +
         ` presents=${sw.gl_sw_presents() >>> 0} tex-uploads=${sw.gl_sw_tex_uploads() >>> 0}` +
         ` tex-unsupported=${sw.gl_sw_tex_unsupported() >>> 0} target-slot=${sw.gl_sw_slot() | 0}` +

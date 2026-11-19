@@ -514,11 +514,111 @@
     ;; The one funnel every immediate-mode and vertex-array draw passes
     ;; through, and the record is complete here -- so it is where the WAT
     ;; software rasterizer reads a draw (src/09a8g-gl-raster.wat). Inert
-    ;; unless a host enabled it.
-    (call $gl_sw_consume (local.get $start) (local.get $vertices))
+    ;; unless a host enabled it. A plain triangle record may instead join the
+    ;; open merged draw below; anything else first draws what that holds.
+    (if (i32.eqz (call $gl_merge_take (local.get $start) (local.get $vertices) (local.get $bytes)))
+      (then
+        (call $gl_merge_flush)
+        (call $gl_sw_consume (local.get $start) (local.get $vertices))))
     ;; Submit only complete draws, after the software consumer has read them.
     (if (i32.ge_u (global.get $gl_stream_used_bytes) (i32.const 0x00080000))
       (then (drop (call $gl_wat_stream_flush)))))
+
+  ;; ---- merged software draws ---------------------------------------------
+  ;; Quake II draws its world as one glBegin(GL_POLYGON)..glEnd per surface,
+  ;; ~800 per frame, with nothing but further Begin/attribute/vertex/End calls
+  ;; between surfaces that share a texture. Each End used to be a full
+  ;; $gl_sw_consume -> $gl_sw_draw: texture capture, colour selection, stencil,
+  ;; MVP multiply, clip/light/texture-matrix/viewport setup, GPS draw begin/end.
+  ;; With WAT-owned WGL nothing but the software rasterizer reads a packed
+  ;; record, so consecutive plain triangle records (identical opcode and header
+  ;; word, whole triangles) are appended to one open record and drawn once, in
+  ;; their original order, when anything else happens. Per-triangle work and
+  ;; the GPS stream it produces are unchanged; only per-draw setup is shared.
+  ;;
+  ;; The open record is drawn ($gl_merge_flush) before anything that could
+  ;; change what it would draw or let anyone see the target:
+  ;;   - every Win32 call that does not take $gl_imm_dispatch (09b-dispatch),
+  ;;   - every encoder call that does not take $gl_imm_fast, including list
+  ;;     replay and host-driven calls ($gl_wat_encode_call),
+  ;;   - a colour that COLOR_MATERIAL turns into a material ($gl_period_track),
+  ;;   - any packed record that does not join it (order), and
+  ;;   - the end of every $run (host present, readback, capture, other threads).
+  ;; It is never opened for a front/both-buffer or DIB target (visible as soon
+  ;; as a draw returns), with a render Worker, with more than one producer, or
+  ;; outside render mode/fill polygon mode (those are boundary records).
+  (global $gl_merge_buf (mut i32) (i32.const 0))
+  (global $gl_merge_n (mut i32) (i32.const 0))
+  (global $gl_merge_bytes (mut i32) (i32.const 0))
+  (global $gl_merge_ctx (mut i32) (i32.const 0))
+  (global $gl_merge_off (mut i32) (i32.const 0))
+  (global $gl_merge_eip (mut i32) (i32.const 0))
+  (global $gl_merge_flushing (mut i32) (i32.const 0))
+  (global $gl_merge_stat_joined (mut i32) (i32.const 0))
+  (global $GL_MERGE_CAP i32 (i32.const 0x20000))
+
+  (func $gl_merge_flush
+    (local $n i32)
+    (if (i32.eqz (global.get $gl_merge_n)) (then (return)))
+    (local.set $n (global.get $gl_merge_n))
+    (global.set $gl_merge_n (i32.const 0))
+    (global.set $gl_merge_bytes (i32.const 0))
+    (call $gl_object_enter)
+    (global.set $gl_merge_flushing (i32.const 1))
+    (call $gl_sw_consume (global.get $gl_merge_buf) (local.get $n))
+    (global.set $gl_merge_flushing (i32.const 0))
+    (call $gl_object_leave))
+
+  ;; 1 when the finished record at $start now belongs to the open merged draw.
+  (func $gl_merge_take (param $start i32) (param $vertices i32) (param $bytes i32) (result i32)
+    (local $g i32) (local $dst i32)
+    (if (global.get $gl_merge_off) (then (return (i32.const 0))))
+    ;; GPS strict mode traps at the declining draw, inside its own glEnd.
+    (if (global.get $glg_strict) (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $gl_sw_enabled)) (then (return (i32.const 0))))
+    (if (global.get $gl_sw_in_worker) (then (return (i32.const 0))))
+    (if (global.get $gl_sw_bitmap) (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
+    ;; Separate triangles, optionally prelit; no edge, stipple or period bits.
+    (if (i32.ne (i32.and (i32.load offset=8 (local.get $start)) (i32.const 0xFFFDFFFF)) (i32.const 4))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (i32.or (i32.eq (i32.load offset=4 (local.get $start)) (i32.const 0x10000))
+                         (i32.eq (i32.load offset=4 (local.get $start)) (i32.const 0x10002))))
+      (then (return (i32.const 0))))
+    (if (i32.rem_u (local.get $vertices) (i32.const 3)) (then (return (i32.const 0))))
+    (if (i32.gt_u (local.get $bytes) (global.get $GL_MERGE_CAP)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gl_wgl_owned)) (then (return (i32.const 0))))
+    (if (i32.gt_u (i32.atomic.load (region.addr $GL_MTX_BLOCKS 20)) (i32.const 1))
+      (then (return (i32.const 0))))
+    (if (i32.ne (call $gl_color_selection (i32.const 0)) (i32.const 0x405))
+      (then (return (i32.const 0))))
+    (if (global.get $gl_merge_n) (then
+      (if (i32.or
+            (i32.or (i32.ne (i32.load offset=8 (global.get $gl_merge_buf)) (i32.load offset=8 (local.get $start)))
+                    (i32.ne (i32.load offset=4 (global.get $gl_merge_buf)) (i32.load offset=4 (local.get $start))))
+            (i32.or (i32.ne (global.get $gl_merge_ctx) (global.get $gl_current_context))
+                    (i32.gt_u (i32.add (global.get $gl_merge_bytes) (local.get $bytes)) (global.get $GL_MERGE_CAP))))
+        (then (call $gl_merge_flush)))))
+    (if (i32.eqz (global.get $gl_merge_buf)) (then
+      (local.set $g (call $gl_alloc_affine (i32.add (global.get $GL_MERGE_CAP) (i32.const 32))))
+      (if (i32.eqz (local.get $g)) (then (return (i32.const 0))))
+      (global.set $gl_merge_buf (call $g2w (local.get $g)))))
+    (if (global.get $gl_merge_n)
+      (then (global.set $gl_merge_stat_joined (i32.add (global.get $gl_merge_stat_joined) (i32.const 1))))
+      (else
+        (memory.copy (global.get $gl_merge_buf) (local.get $start) (i32.const 32))
+        (global.set $gl_merge_ctx (global.get $gl_current_context))))
+    (memory.copy (i32.add (global.get $gl_merge_buf) (i32.add (i32.const 32) (global.get $gl_merge_bytes)))
+      (i32.add (local.get $start) (i32.const 32)) (local.get $bytes))
+    (global.set $gl_merge_bytes (i32.add (global.get $gl_merge_bytes) (local.get $bytes)))
+    (global.set $gl_merge_n (i32.add (global.get $gl_merge_n) (local.get $vertices)))
+    ;; The guest call a decline in this draw names (09a8gt $glg_note_decline):
+    ;; the latest joined glEnd, as unmerged its draw would be the last to note.
+    (global.set $gl_merge_eip (select (global.get $api_return_eip) (global.get $eip)
+      (i32.ne (global.get $api_handler_depth) (i32.const 0))))
+    (i32.store (global.get $gl_merge_buf) (i32.add (global.get $gl_merge_bytes) (i32.const 32)))
+    (i32.store offset=20 (global.get $gl_merge_buf) (global.get $gl_merge_bytes))
+    (i32.const 1))
 
   (func $gl_finish_immediate (result i32)
     (local $exact i32) (local $stride i32) (local $count i32) (local $mode i32) (local $out_mode i32)
@@ -972,11 +1072,26 @@
   ;; private primitive and change no published server value, so they skip
   ;; the nested object lock; current-attribute setters keep it. (Guest calls
   ;; arrive with the dispatcher's outer lock already held.)
+  ;;
+  ;; glBegin (21) outside Begin/End and glEnd (22) inside it take the same
+  ;; shortcut. Outside list compilation every stage ahead of
+  ;; $gl_wat_encode_call_locked's own Begin/End arms is gated on other
+  ;; opcodes (none tests 21/22 by value, and their range tests exclude
+  ;; both); the only effects they have on these two are clearing
+  ;; $gl_list_result and $gl_sw_border_set_failed, the call counter and
+  ;; $gl_wat_init, all repeated here. A Begin already inside Begin, or an End
+  ;; outside it, keeps the general path and its diagnosis.
   ;; Returns 1 when the call was consumed, 0 to take the general path.
   (func $gl_imm_fast (param $op i32) (param $stack i32) (result i32)
-    (local $ctx i32) (local $vertex i32)
-    (if (i32.eqz (i32.or (i32.or (i32.eq (local.get $op) (i32.const 23)) (i32.eq (local.get $op) (i32.const 25)))
-        (i32.le_u (i32.sub (local.get $op) (i32.const 28)) (i32.const 3))))
+    (local $ctx i32) (local $vertex i32) (local $bracket i32)
+    (local.set $bracket (i32.le_u (i32.sub (local.get $op) (i32.const 21)) (i32.const 1)))
+    (if (i32.eqz (i32.or (local.get $bracket)
+        (i32.or (i32.or (i32.eq (local.get $op) (i32.const 23)) (i32.eq (local.get $op) (i32.const 25)))
+          (i32.le_u (i32.sub (local.get $op) (i32.const 28)) (i32.const 3)))))
+      (then (return (i32.const 0))))
+    ;; Begin opens a primitive; everything else here needs one open.
+    (if (i32.ne (i32.eq (local.get $op) (i32.const 21))
+                (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0)))
       (then (return (i32.const 0))))
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
@@ -990,9 +1105,62 @@
     (global.set $gl_sw_border_set_failed (i32.const 0))
     (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
     (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
-    (if (i32.eqz (call $gl_state_intercept (local.get $op) (local.get $stack))) (then (unreachable)))
+    (if (local.get $bracket)
+      (then (call $gl_imm_bracket (local.get $op) (local.get $stack)))
+      (else (call $gl_imm_attr (local.get $op) (local.get $stack))))
     (if (i32.eqz (local.get $vertex)) (then (call $gl_object_leave)))
     (i32.const 1))
+
+  ;; $gl_state_intercept's arms for the six attribute/vertex opcodes the
+  ;; shortcuts take, without the ~20 opcode tests ahead of them there (all of
+  ;; which, $gl_interleaved_intercept and $gl_current_color_query included,
+  ;; are gated on other opcodes). Same stores, same order, same calls.
+  (func $gl_imm_attr (param $op i32) (param $stack i32)
+    (local $p i32)
+    (if (i32.eq (local.get $op) (i32.const 30)) (then
+      (call $gl_append_vertex (f32.load offset=4 (local.get $stack))
+        (f32.load offset=8 (local.get $stack)) (f32.load offset=12 (local.get $stack)))
+      (return)))
+    (if (i32.eq (local.get $op) (i32.const 28)) (then
+      (global.set $gl_tex_s (f32.load offset=4 (local.get $stack)))
+      (global.set $gl_tex_t (f32.load offset=8 (local.get $stack)))
+      (global.set $gl_tex_r (f32.const 0)) (global.set $gl_tex_q (f32.const 1))
+      (return)))
+    (if (i32.eq (local.get $op) (i32.const 31)) (then
+      (local.set $p (call $g2w (i32.load offset=4 (local.get $stack))))
+      (call $gl_append_vertex (f32.load (local.get $p))
+        (f32.load offset=4 (local.get $p)) (f32.load offset=8 (local.get $p)))
+      (return)))
+    (if (i32.eq (local.get $op) (i32.const 29)) (then
+      (call $gl_append_vertex (f32.load offset=4 (local.get $stack))
+        (f32.load offset=8 (local.get $stack)) (f32.const 0))
+      (return)))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 23)) (i32.eq (local.get $op) (i32.const 25))) (then
+      (global.set $gl_source_tag (i32.const 0))
+      (global.set $gl_color_r (f32.load offset=4 (local.get $stack)))
+      (global.set $gl_color_g (f32.load offset=8 (local.get $stack)))
+      (global.set $gl_color_b (f32.load offset=12 (local.get $stack)))
+      (global.set $gl_color_a (select (f32.load offset=16 (local.get $stack)) (f32.const 1)
+        (i32.eq (local.get $op) (i32.const 25))))
+      (call $gl_period_color)
+      (return)))
+    (if (i32.eqz (call $gl_state_intercept (local.get $op) (local.get $stack))) (then (unreachable))))
+
+  ;; $gl_wat_encode_call_locked's glBegin/glEnd arms, shared with the
+  ;; shortcut above so the two cannot drift.
+  (func $gl_imm_bracket (param $op i32) (param $stack i32)
+    (global.set $gl_list_result (i32.const 0))
+    (if (i32.eq (local.get $op) (i32.const 21)) (then
+      (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then (unreachable)))
+      (global.set $gl_immediate_mode (i32.load offset=4 (local.get $stack)))
+      (global.set $gl_material_prelit (i32.const 0))
+      (global.set $gl_material_lit_floats (i32.const 0))
+      (global.set $gl_immediate_floats (i32.const 0))
+      (global.set $gl_immediate_has_source (i32.const 0))
+      (return)))
+    (drop (call $gl_finish_immediate))
+    (global.set $gl_material_prelit (i32.const 0))
+    (global.set $gl_material_lit_floats (i32.const 0)))
 
   ;; The same calls, taken before $win32_dispatch's general machinery. Half-
   ;; Life issues ~18k of them per frame through `call [qgl slot]`, and each
@@ -1007,10 +1175,9 @@
   ;; API logging is preserved exactly. Returns 1 when the call completed.
   (func $gl_imm_dispatch (param $thunk_idx i32) (result i32)
     (local $meta i32) (local $name_rva i32) (local $route i32) (local $op i32)
-    (local $ctx i32) (local $esp i32) (local $vertex i32)
-    (if (i32.or (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0))
-                (i32.eqz (global.get $gl_current_context)))
-      (then (return (i32.const 0))))
+    (local $ctx i32) (local $esp i32) (local $vertex i32) (local $bracket i32)
+    (local $saved_return_eip i32)
+    (if (i32.eqz (global.get $gl_current_context)) (then (return (i32.const 0))))
     (if (i32.or (i32.or (i32.ne (global.get $pending_armed) (i32.const 0))
                         (i32.ne (global.get $dll_drain_pending) (i32.const 0)))
                 (i32.and (i32.ne (global.get $handler_hist_enabled) (i32.const 0))
@@ -1027,6 +1194,11 @@
     (local.set $route (call $gl_imm_dispatch_op (i32.load offset=4 (local.get $meta))))
     (if (i32.eqz (local.get $route)) (then (return (i32.const 0))))
     (local.set $op (i32.and (local.get $route) (i32.const 0xFF)))
+    ;; Begin opens a primitive; everything else here needs one open.
+    (if (i32.ne (i32.eq (local.get $op) (i32.const 21))
+                (i32.lt_s (global.get $gl_immediate_mode) (i32.const 0)))
+      (then (return (i32.const 0))))
+    (local.set $bracket (i32.le_u (i32.sub (local.get $op) (i32.const 21)) (i32.const 1)))
     (local.set $ctx (call $gl_list_context))
     (if (i32.eqz (local.get $ctx)) (then (return (i32.const 0))))
     ;; $gl_list_intercept captures exactly when a list is open and not replaying.
@@ -1060,6 +1232,10 @@
         (call $host_log (local.get $name_rva) (call $strlen (local.get $name_rva)))))
     (global.set $api_handler_depth (i32.add (global.get $api_handler_depth) (i32.const 1)))
     (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    ;; The innermost call's guest return address, as $win32_dispatch keeps
+    ;; it: GL GPS decline diagnostics name the glEnd a draw declined in.
+    (local.set $saved_return_eip (global.get $api_return_eip))
+    (global.set $api_return_eip (call $gl32 (local.get $esp)))
     (local.set $vertex (i32.ge_u (local.get $op) (i32.const 29)))
     ;; Vertices only append to this instance's private primitive and change
     ;; no published value, so they take neither the lock nor its publish;
@@ -1070,9 +1246,11 @@
     (global.set $gl_sw_border_set_failed (i32.const 0))
     (global.set $gl_wat_stat_calls (i64.add (global.get $gl_wat_stat_calls) (i64.const 1)))
     (if (i32.eqz (call $gl_wat_init)) (then (unreachable)))
-    (if (i32.eqz (call $gl_state_intercept (local.get $op) (call $g2w (local.get $esp))))
-      (then (unreachable)))
+    (if (local.get $bracket)
+      (then (call $gl_imm_bracket (local.get $op) (call $g2w (local.get $esp))))
+      (else (call $gl_imm_attr (local.get $op) (call $g2w (local.get $esp)))))
     (if (i32.eqz (local.get $vertex)) (then (call $gl_object_leave)))
+    (global.set $api_return_eip (local.get $saved_return_eip))
     (global.set $api_handler_depth (i32.sub (global.get $api_handler_depth) (i32.const 1)))
     ;; $handle_gpu_api's result and APIENTRY cleanup: EAX = 0, pop the return
     ;; address and stack_dwords argument words. The caller resumes at it.
@@ -1089,9 +1267,11 @@
   ;; but legal current/material setters inside Begin are completed server state.
   (func $gl_wat_encode_call (param $op i32) (param $stack i32) (param $aux i32) (result i32)
     (local $result i32)
-    (if (i32.and (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+    (if (i32.and (i32.or (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0))
+                         (i32.eq (local.get $op) (i32.const 21)))
                  (i32.ne (global.get $gl_current_context) (i32.const 0)))
       (then (if (call $gl_imm_fast (local.get $op) (local.get $stack)) (then (return (i32.const 0))))))
+    (call $gl_merge_flush)
     (call $gl_object_enter)
     (call $gl_section_note (local.get $op))
     (local.set $result (call $gl_wat_encode_call_locked (local.get $op) (local.get $stack) (local.get $aux)))
@@ -1282,17 +1462,8 @@
     (if (i32.eq (local.get $op) (i32.const 19)) (then
       (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then (unreachable)))
       (global.set $gl_shade_model (i32.load offset=4 (local.get $stack))) (return (i32.const 0))))
-    (if (i32.eq (local.get $op) (i32.const 21)) (then
-      (if (i32.ge_s (global.get $gl_immediate_mode) (i32.const 0)) (then (unreachable)))
-      (global.set $gl_immediate_mode (i32.load offset=4 (local.get $stack)))
-      (global.set $gl_material_prelit (i32.const 0))
-      (global.set $gl_material_lit_floats (i32.const 0))
-      (global.set $gl_immediate_floats (i32.const 0))
-    (global.set $gl_immediate_has_source (i32.const 0)) (return (i32.const 0))))
-    (if (i32.eq (local.get $op) (i32.const 22)) (then
-      (drop (call $gl_finish_immediate))
-      (global.set $gl_material_prelit (i32.const 0))
-      (global.set $gl_material_lit_floats (i32.const 0)) (return (i32.const 0))))
+    (if (i32.le_u (i32.sub (local.get $op) (i32.const 21)) (i32.const 1)) (then
+      (call $gl_imm_bracket (local.get $op) (local.get $stack)) (return (i32.const 0))))
     (if (i32.eq (local.get $op) (i32.const 23)) (then
       (global.set $gl_color_r (f32.load offset=4 (local.get $stack)))
       (global.set $gl_color_g (f32.load offset=8 (local.get $stack)))

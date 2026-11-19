@@ -605,6 +605,7 @@ out.push('  ;; ============================================================');
 // the shortcut and the table disagree. Result: (stack_dwords << 8) | opcode, or
 // 0 for every other api id.
 const glImmediateApis = [
+  ['glBegin', 21], ['glEnd', 22],
   ['glColor3f', 23], ['glColor4f', 25], ['glTexCoord2f', 28],
   ['glVertex2f', 29], ['glVertex3f', 30], ['glVertex3fv', 31],
 ];
