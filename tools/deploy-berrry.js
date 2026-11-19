@@ -57,6 +57,10 @@ const ASSET_PART_SIZE = 10 * 1024 * 1024;
 
 // Skip individual large files (>500KB) that aren't essential
 const MAX_BINARY_SIZE = 500 * 1024;
+// Link-preview cards are generated full-bleed game art (500-800KB for a
+// detailed 3D or isometric game); they are always needed, so they get their
+// own cap instead of being skipped.
+const OG_CARD_DIR = 'screenshots/og/', MAX_OG_CARD_SIZE = 2 * 1024 * 1024;
 // But always include these even if large
 const LARGE_OK = new Set(['cards.dll']);
 const LARGE_OK_PATHS = new Set([
@@ -450,7 +454,7 @@ function collectBinaries() {
     for (const f of found) {
       if (seen.has(f.rel)) continue;
       const stat = fs.statSync(f.full);
-      if (stat.size > MAX_BINARY_SIZE &&
+      if (stat.size > (f.rel.startsWith(OG_CARD_DIR) ? MAX_OG_CARD_SIZE : MAX_BINARY_SIZE) &&
           !LARGE_OK.has(path.basename(f.full).toLowerCase()) &&
           !LARGE_OK_PATHS.has(f.rel)) {
         console.log('  SKIP (too large): ' + f.rel + ' (' + (stat.size / 1024).toFixed(0) + 'KB)');
