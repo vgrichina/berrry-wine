@@ -9,7 +9,15 @@
     "declines": 14,
     "declinedFrames": 15,
     "reasonBase": 16,
-    "dsReadbacks": 67
+    "dsReadbacks": 67,
+    "vsDraws": 80,
+    "vsTriangles": 81,
+    "vsVertices": 82,
+    "vsBuilds": 84,
+    "cpuVertices": 86,
+    "vsReasonBase": 96,
+    "mipChains": 72,
+    "mipLevelUploads": 73
   },
   "exports": {
     "gl_gps_strict": "(param i32)",
@@ -150,6 +158,108 @@
       "code": 26,
       "name": "the 09af1 canonicalizer refused the combine",
       "executorGrowth": "none (a bug to fix)"
+    }
+  ],
+  "vsReasons": [
+    {
+      "code": 1,
+      "name": "lighting",
+      "executorGrowth": "lights/material in VS constants"
+    },
+    {
+      "code": 2,
+      "name": "sphere map",
+      "executorGrowth": "normal matrix + reflection in the VS"
+    },
+    {
+      "code": 3,
+      "name": "user clip planes",
+      "executorGrowth": "clip distances (none in vs_2_0)"
+    },
+    {
+      "code": 4,
+      "name": "select/feedback",
+      "executorGrowth": "none (needs transformed vertices on the CPU)"
+    },
+    {
+      "code": 5,
+      "name": "flat, colours vary",
+      "executorGrowth": "provoking-vertex colour (D3D flat = first)"
+    },
+    {
+      "code": 6,
+      "name": "polygon mode not fill",
+      "executorGrowth": "none (WAT: CPU edges)"
+    },
+    {
+      "code": 7,
+      "name": "lines/points/edge polygons",
+      "executorGrowth": "VS lines and point sprites"
+    },
+    {
+      "code": 8,
+      "name": "vertex stride not 76/112",
+      "executorGrowth": "a layout per packed record kind"
+    },
+    {
+      "code": 9,
+      "name": "1D texture",
+      "executorGrowth": "as decline 9"
+    },
+    {
+      "code": 10,
+      "name": "viewport/depth range outside the target",
+      "executorGrowth": "guard-band viewport"
+    },
+    {
+      "code": 11,
+      "name": "no GPS_CAP_VS_IR",
+      "executorGrowth": "-"
+    },
+    {
+      "code": 12,
+      "name": "texture state the producer declines",
+      "executorGrowth": "as declines 10/25"
+    },
+    {
+      "code": 13,
+      "name": "vertex w not 1",
+      "executorGrowth": "FLOAT4 position input"
+    },
+    {
+      "code": 14,
+      "name": "draw not on the executor",
+      "executorGrowth": "-"
+    },
+    {
+      "code": 15,
+      "name": "over 16384 vertices",
+      "executorGrowth": "split the draw"
+    },
+    {
+      "code": 16,
+      "name": "the 09af1 canonicalizer refused the VS",
+      "executorGrowth": "none (a bug to fix)"
+    },
+    {
+      "code": 17,
+      "name": "the 09af1 canonicalizer refused the combine",
+      "executorGrowth": "none (a bug to fix)"
+    },
+    {
+      "code": 18,
+      "name": "no raster target",
+      "executorGrowth": "-"
+    },
+    {
+      "code": 19,
+      "name": "bottom-up target",
+      "executorGrowth": "none (WAT: flip y)"
+    },
+    {
+      "code": 20,
+      "name": "unit 0 not one texture (incomplete mip chain, mixed-filter GL_CLAMP)",
+      "executorGrowth": "per-level LOD in the VS"
     }
   ]
 }

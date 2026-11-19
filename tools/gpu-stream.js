@@ -9,6 +9,8 @@
 //                                                  presents, hash (NullExecutor)
 //   node tools/gpu-stream.js replay FILE --executor=null|soft|webgl
 //                                   [--png=OUT.png] [--frame=N] [--width=W --height=H]
+//                                   [--presents=N]   stop after the Nth PRESENT (fixed work)
+//                                   prints wall ms and this process's user CPU ms
 //
 // Dumps come from `test/run.js --gpu-stream-dump=FILE` (lib/gpu-stream.js
 // DumpWriter). replay --executor=soft boots the WAT software rasterizer the
@@ -119,11 +121,26 @@ async function replay() {
     executor = new Executor({ canvas, backend, onPresent });
   } else usage(`unknown executor '${kind}'`);
 
+  // --presents=N: fixed work for executor A/Bs -- stop after the record of
+  // the Nth PRESENT (every record before it still executes).
+  let maxRecords;
+  const presentsN = flag('presents') !== null ? Number(flag('presents')) : null;
+  if (presentsN !== null) {
+    if (!(Number.isInteger(presentsN) && presentsN >= 1)) usage('--presents=N needs N >= 1');
+    let n = 0, seen = 0;
+    for (const rec of new GS.DumpReader(bytes).records()) {
+      n++;
+      if (rec.name === 'PRESENT' && ++seen === presentsN) { maxRecords = n; break; }
+    }
+    if (maxRecords === undefined) usage(`--presents=${presentsN}: the dump has only ${seen} presents`);
+  }
   const t0 = process.hrtime.bigint();
-  const r = GS.replay(bytes, executor);
+  const c0 = process.cpuUsage();
+  const r = GS.replay(bytes, executor, { maxRecords });
   const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+  const cpu = process.cpuUsage(c0);
   if (executor.close) executor.close();
-  const line = [`${r.records} records`, `${ms.toFixed(1)} ms`];
+  const line = [`${r.records} records`, `${ms.toFixed(1)} ms`, `user ${(cpu.user / 1e3).toFixed(1)} ms`];
   if (kind === 'null') {
     const s = executor.stats();
     line.push(`presents ${s.presents}`, `draws ${s.draws}`, `vertices ${s.vertices}`, `hash ${s.hash}`);

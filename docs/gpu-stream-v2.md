@@ -418,8 +418,11 @@ same pixel centres as pretransformed draws, z/w 0..1 into zmin..zmax, w
 for perspective-correct varyings. oD0/oD1 and oT0..7 feed the pixel
 shader's v0/v1 and t0..7 (an unwritten output reads zero). `fog_mode 1`
 (vertex) blends with D3D's oFog factor (1 = no fog) and needs a shader that
-writes oFog; fog modes 2/3, W depth, `linear 1` and z/slope bias are
-refused with a vertex shader. CONSTS stage 0 sets c0..c255. Executors with
+writes oFog; fog modes 2/3, W depth and `linear 1` are refused with a
+vertex shader. z/slope bias (depth_mode 1) applies to the post-viewport
+triangle as for pretransformed draws (GL polygon offset: WebGL
+`polygonOffset`, the software executor per triangle in the native
+rasterizer). CONSTS stage 0 sets c0..c255. Executors with
 a vertex stage set CAP_VS_IR: the software one runs the IR in the native
 VM (oT0..5, six samplers); the WebGL one prints it to GLSL
 (`compileCoreVS` in `lib/d3d9-shader.js`) when the context has 260 vertex

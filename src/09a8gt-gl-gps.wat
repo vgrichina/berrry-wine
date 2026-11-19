@@ -88,6 +88,35 @@
   ;; CPU-only stencil DrawPixels, 66 canonicalizer declines, 67 depth/stencil
   ;; readbacks.
   ;;
+  ;; Fixed-function T&L as a vertex shader (09a8gv): a triangle draw that
+  ;; cannot go whole to the executor with a generated VS runs the CPU path
+  ;; above instead -- per draw, no frame fallback.
+  ;; VS-path declines (gl_gps_stat 96 + r) and what taking them needs:
+  ;;   1 lighting               lights/material in VS constants
+  ;;   2 sphere map             normal matrix + reflection in the VS
+  ;;   3 user clip planes       clip distances (none in vs_2_0)
+  ;;   4 select/feedback        none (needs transformed vertices on the CPU)
+  ;;   5 flat, colours vary     provoking-vertex colour (D3D flat = first)
+  ;;   6 polygon mode not fill  none (WAT: CPU edges)
+  ;;   7 lines/points/edge polygons   VS lines and point sprites
+  ;;   8 vertex stride not 76/112   a layout per packed record kind
+  ;;   9 1D texture             as decline 9
+  ;;  10 viewport/depth range outside the target   guard-band viewport
+  ;;  11 no GPS_CAP_VS_IR       -
+  ;;  12 texture state the producer declines   as declines 10/25
+  ;;  13 vertex w not 1         FLOAT4 position input
+  ;;  14 draw not on the executor   -
+  ;;  15 over 16384 vertices    split the draw
+  ;;  16 the 09af1 canonicalizer refused the VS   none (a bug to fix)
+  ;;  17 the 09af1 canonicalizer refused the combine   none (a bug to fix)
+  ;;  18 no raster target       -
+  ;;  19 bottom-up target       none (WAT: flip y)
+  ;;  20 unit 0 not one texture (incomplete mip chain, mixed-filter GL_CLAMP)   per-level LOD in the VS
+  ;; VS-path stats: 80 VS draws, 81 their triangles, 82 their vertices, 84 VS
+  ;; builds, 86 vertices the CPU path transformed while the producer was on.
+  ;; Unit 0's mip chain is the "mip chains" cache below ($glg_t0_chain,
+  ;; stats 72-76), shared with $glg_prim.
+  ;;
   ;; Block $glg_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +1024 shader cache 64 x {key, id}, +1536 sampler cache
   ;; 32 x {key, border, id, -}, +2048 IR buffer, +4096 texture cache
@@ -183,6 +212,11 @@
   (global $glg_last_ps (mut i32) (i32.const 0))
   ;; Per draw.
   (global $glg_draw_reason (mut i32) (i32.const 0))
+  ;; RASTER cull (1 none) and polygon offset; non-default only while 09a8gv
+  ;; builds a VS draw's RASTER.
+  (global $glg_r_cull (mut i32) (i32.const 1))
+  (global $glg_r_zbias (mut f32) (f32.const 0))
+  (global $glg_r_slope (mut f32) (f32.const 0))
   (global $glg_need_raster (mut i32) (i32.const 0))
   (global $glg_read_site (mut i32) (i32.const 0))
   (global $glg_q1_bad (mut i32) (i32.const 0))
@@ -309,6 +343,11 @@
     (local.set $n (global.get $glg_b_n))
     (if (i32.eqz (local.get $n)) (then (return)))
     (global.set $glg_b_n (i32.const 0))
+    ;; An open batch of 09a8gv raw vertices is its own DRAW_UP.
+    (if (global.get $glv_b_vs) (then (call $glv_flush (local.get $n)) (return)))
+    ;; Pretransformed vertices are target coordinates: the whole target is
+    ;; the viewport again after a 09a8gv draw set its own.
+    (call $glv_vp_reset)
     (local.set $p (call $glg_begin (global.get $GPS_OP_DRAW_UP) (size-of GpsDraw)))
     (store.field GpsDraw prim (local.get $p) (global.get $GPS_PRIM_TRIANGLELIST))
     (store.field GpsDraw index_size (local.get $p) (i32.const 0))
@@ -409,6 +448,8 @@
     (store.field GpsTargets color (local.get $p) (local.get $c))
     (store.field GpsTargets depth (local.get $p) (global.get $glg_ds_id))
     (drop (call $glg_end (local.get $p)))
+    ;; TARGETS resets the executor's viewport to the whole target.
+    (global.set $glv_vp_on (i32.const 0))
     (global.set $glg_c_color (local.get $c))
     (global.set $glg_c_depth (global.get $glg_ds_id)))
 
@@ -687,6 +728,7 @@
     (global.set $glg_c_raster (i32.const 0))
     (global.set $glg_c_bind (i32.const 0))
     (global.set $glg_c_consts (i32.const 0))
+    (global.set $glv_c_ok (i32.const 0))
     (i32.const 1))
 
   ;; Into a GPU frame if this one may be one. $zok: the caller is about to
@@ -973,7 +1015,7 @@
     (store.field GpsRaster zfunc (local.get $s) (select (i32.load offset=20 (local.get $st)) (i32.const 8) (local.get $depth)))
     (store.field GpsRaster zwrite (local.get $s)
       (i32.and (local.get $depth) (i32.ne (i32.load offset=24 (local.get $st)) (i32.const 0))))
-    (store.field GpsRaster cull (local.get $s) (i32.const 1))
+    (store.field GpsRaster cull (local.get $s) (global.get $glg_r_cull))
     (store.field GpsRaster blend (local.get $s) (local.get $blend))
     (store.field GpsRaster src_rgb (local.get $s) (select (i32.load offset=4 (local.get $st)) (i32.const 2) (local.get $blend)))
     (store.field GpsRaster dst_rgb (local.get $s) (select (i32.load offset=8 (local.get $st)) (i32.const 1) (local.get $blend)))
@@ -1013,6 +1055,12 @@
     (store.field GpsRaster scissor_bottom (local.get $s) (local.get $b))
     (store.field GpsRaster blend_op (local.get $s) (i32.const 1))
     (store.field GpsRaster blend_op_alpha (local.get $s) (i32.const 1))
+    ;; Culling and polygon offset are the VS path's (09a8gv $glv_draw sets
+    ;; them around its own RASTER); pretransformed draws are culled on the
+    ;; CPU and biased there.
+    (if (local.get $depth) (then
+      (store.field GpsRaster z_bias (local.get $s) (global.get $glg_r_zbias))
+      (store.field GpsRaster slope_bias (local.get $s) (global.get $glg_r_slope))))
     (if (i32.and (i32.ne (global.get $glg_c_raster) (i32.const 0))
           (call $d3g_row_eq (local.get $s) (i32.add (global.get $glg_mem) (i32.const 608)) (i32.const 96)))
       (then (return)))
@@ -1101,7 +1149,7 @@
     (call $glg_sampler_f (local.get $au) (local.get $av) (local.get $f) (local.get $f) (i32.const 0) (local.get $border)))
 
   ;; A sampler by filters: min/mag 1 point, 2 linear; mip 0 none, 1 point,
-  ;; 2 linear (unit 0's whole mip chain, $glg_t0_chain).
+  ;; 2 linear (unit 0's whole mip chain, $glg_t0_chain; also 09a8gv's).
   (func $glg_sampler_f (param $au i32) (param $av i32) (param $min i32) (param $mag i32) (param $mip i32) (param $border i32) (result i32)
     (local $key i32) (local $i i32) (local $e i32) (local $id i32) (local $p i32)
     (local.set $key (i32.or (i32.or (local.get $au) (i32.shl (local.get $av) (i32.const 4)))
@@ -1371,9 +1419,13 @@
   ;; max_level 0 and no bias. The min/mag switch is at LOD 0 (GL allows
   ;; c = 0.5 for MAG LINEAR + MIN *_MIPMAP_NEAREST; executors use 0).
   ;;
-  ;; Cache: $glg_mem +36864, 512 sets x 2 ways x 96 bytes {wa0, id, w, h,
+  ;; Cache: $glg_mem +36864, 256 sets x 4 ways x 96 bytes {wa0, id, w, h,
   ;; -, stamp, levels, log position, the wa of levels 1..11}, hashed by
-  ;; level 0's texel address. A level is re-uploaded when its surface is no
+  ;; level 0's texel address. Four ways, not two: a whole chain is costly
+  ;; to re-upload, and with draws reaching the executor whole (09a8gv) Quake
+  ;; 2's demo drew three textures of one 2-way set every frame -- 936
+  ;; evictions and 7476 level uploads in 1800 batches; 4 ways: 42 chains
+  ;; (one per texture), 308 level uploads. A level is re-uploaded when its surface is no
   ;; longer the one recorded (a new glTexImage) or the dirty log names it
   ;; since the way's log position: $glg_tex_dirty appends every texel
   ;; address written to a 1024-entry ring at +135168; a way that fell more
@@ -1383,7 +1435,7 @@
   ;; 76 log overruns.
   (func $glg_chain_set (param $wa i32) (result i32)
     (i32.add (i32.add (global.get $glg_mem) (i32.const 36864))
-      (i32.mul (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 23)) (i32.const 192))))
+      (i32.mul (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 24)) (i32.const 384))))
 
   ;; From $glg_tex_dirty: texels at $wa changed.
   (func $glg_chain_dirty (param $wa i32)
@@ -1429,30 +1481,33 @@
   (func $glg_tex_chain (param $entry i32) (param $slot i32) (param $n i32) (result i32)
     (local $wa i32) (local $w i32) (local $hgt i32) (local $set i32) (local $b i32) (local $e i32)
     (local $k i32) (local $lv i32) (local $mask i32) (local $i i32) (local $x i32) (local $id i32)
-    (local $old i32) (local $rec i32)
+    (local $old i32) (local $rec i32) (local $v i32)
     (local.set $wa (load.field DxObject misc1 (local.get $entry)))
     (local.set $w (load.field DxObject width (local.get $entry)))
     (local.set $hgt (load.field DxObject height (local.get $entry)))
     (local.set $set (call $glg_chain_set (local.get $wa)))
-    (local.set $b (i32.add (local.get $set) (i32.const 96)))
+    ;; The way holding this chain, and the victim should none: the first
+    ;; empty way, else the least recently used.
     (local.set $e (i32.const 0))
-    (if (i32.and (i32.and (i32.eq (i32.load (local.get $set)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $set)) (i32.const 0)))
-          (i32.and (i32.and (i32.eq (i32.load offset=8 (local.get $set)) (local.get $w)) (i32.eq (i32.load offset=12 (local.get $set)) (local.get $hgt)))
-                   (i32.eq (i32.load offset=24 (local.get $set)) (local.get $n))))
-      (then (local.set $e (local.get $set))))
-    (if (i32.and (i32.eqz (local.get $e))
-          (i32.and (i32.and (i32.eq (i32.load (local.get $b)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $b)) (i32.const 0)))
+    (local.set $v (local.get $set))
+    (local.set $i (i32.const 0))
+    (block $found (loop $ways
+      (local.set $b (i32.add (local.get $set) (i32.mul (local.get $i) (i32.const 96))))
+      (if (i32.and (i32.and (i32.eq (i32.load (local.get $b)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $b)) (i32.const 0)))
             (i32.and (i32.and (i32.eq (i32.load offset=8 (local.get $b)) (local.get $w)) (i32.eq (i32.load offset=12 (local.get $b)) (local.get $hgt)))
-                     (i32.eq (i32.load offset=24 (local.get $b)) (local.get $n)))))
-      (then (local.set $e (local.get $b))))
+                     (i32.eq (i32.load offset=24 (local.get $b)) (local.get $n))))
+        (then (local.set $e (local.get $b)) (br $found)))
+      (if (i32.ne (i32.load offset=4 (local.get $v)) (i32.const 0)) (then
+        (if (i32.or (i32.eqz (i32.load offset=4 (local.get $b)))
+              (i32.lt_s (i32.sub (i32.load offset=20 (local.get $b)) (i32.load offset=20 (local.get $v))) (i32.const 0)))
+          (then (local.set $v (local.get $b))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $ways (i32.lt_u (local.get $i) (i32.const 4)))))
     (global.set $glg_tex_tick (i32.add (global.get $glg_tex_tick) (i32.const 1)))
     (if (i32.eqz (local.get $e))
       (then
-        ;; A new chain: an empty way, else the least recently used one.
-        (local.set $e (if (result i32) (i32.eqz (i32.load offset=4 (local.get $set))) (then (local.get $set))
-          (else (if (result i32) (i32.eqz (i32.load offset=4 (local.get $b))) (then (local.get $b))
-            (else (select (local.get $b) (local.get $set)
-              (i32.lt_s (i32.sub (i32.load offset=20 (local.get $b)) (i32.load offset=20 (local.get $set))) (i32.const 0))))))))
+        ;; A new chain in the victim way.
+        (local.set $e (local.get $v))
         (local.set $old (i32.load offset=4 (local.get $e)))
         (if (local.get $old) (then
           (if (i32.eq (global.get $glg_c_t0) (local.get $old)) (then (global.set $glg_c_bind (i32.const 0))))
