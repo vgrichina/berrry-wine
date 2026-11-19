@@ -13322,6 +13322,7 @@ if (VERBOSE) {
     console.log(`[gl-gps] ${names.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
       ` decline-reasons=${reasons.join(',') || 'none'} readback-sites=${sites.join(',') || 'none'}` +
       ` front-presents=${st(64)} cpu-stencil-pixels=${st(65)} canon-declines=${st(66)}` +
+      ` mip-chains=${st(72)} mip-level-uploads=${st(73)} mip-chain-hits=${st(74)} mip-incomplete=${st(75)} mip-log-overruns=${st(76)}` +
       ` active=${instance.exports.gl_gps_active()}`);
   }
   if (instance.exports.d3d9_gps_stat && instance.exports.d3d9_gps_stat(14)) {

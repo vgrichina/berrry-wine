@@ -92,9 +92,11 @@
   ;; cache, +1024 shader cache 64 x {key, id}, +1536 sampler cache
   ;; 32 x {key, border, id, -}, +2048 IR buffer, +4096 texture cache
   ;; 512 sets x 2 ways x {wa, id, w, h, valid, stamp, -, -} hashed by
-  ;; texel address.
+  ;; texel address, +36864 mip-chain cache (see "mip chains"), +135168
+  ;; texel-write log 1024 x wa.
+  ;; Stats 72-76: mip chains (see "mip chains").
 
-  (global $GLG_MEM_SIZE i32 (i32.const 36864))
+  (global $GLG_MEM_SIZE i32 (i32.const 139264))
   (global $GLG_BATCH i32 (i32.const 3072))
   (global $glg_on (mut i32) (i32.const 0))
   (global $glg_dead (mut i32) (i32.const 0))
@@ -154,6 +156,16 @@
   (global $glg_keep_smp (mut i32) (i32.const 0))
   ;; Texture cache recency stamp (entry +20).
   (global $glg_tex_tick (mut i32) (i32.const 0))
+  ;; Mip chains: texel writes logged so far; unit 0's sampler from
+  ;; $glg_t0_chain; the last chain looked up (slot, level 0 entry, log count
+  ;; then, id, levels) -- valid while no texel was written since.
+  (global $glg_dlog_n (mut i32) (i32.const 0))
+  (global $glg_t0_smp (mut i32) (i32.const 0))
+  (global $glg_memo_slot (mut i32) (i32.const 0))
+  (global $glg_memo_entry (mut i32) (i32.const 0))
+  (global $glg_memo_log (mut i32) (i32.const 0))
+  (global $glg_memo_id (mut i32) (i32.const 0))
+  (global $glg_memo_levels (mut i32) (i32.const 0))
   ;; Emitted-state caches.
   (global $glg_c_color (mut i32) (i32.const -1))
   (global $glg_c_depth (mut i32) (i32.const -1))
@@ -1084,10 +1096,17 @@
     (select (i32.const 3) (i32.const 1) (i32.eq (local.get $code) (i32.const 3))))
 
   (func $glg_sampler (param $au i32) (param $av i32) (param $linear i32) (param $border i32) (result i32)
-    (local $key i32) (local $i i32) (local $e i32) (local $id i32) (local $p i32) (local $f i32)
+    (local $f i32)
     (local.set $f (select (i32.const 2) (i32.const 1) (local.get $linear)))
+    (call $glg_sampler_f (local.get $au) (local.get $av) (local.get $f) (local.get $f) (i32.const 0) (local.get $border)))
+
+  ;; A sampler by filters: min/mag 1 point, 2 linear; mip 0 none, 1 point,
+  ;; 2 linear (unit 0's whole mip chain, $glg_t0_chain).
+  (func $glg_sampler_f (param $au i32) (param $av i32) (param $min i32) (param $mag i32) (param $mip i32) (param $border i32) (result i32)
+    (local $key i32) (local $i i32) (local $e i32) (local $id i32) (local $p i32)
     (local.set $key (i32.or (i32.or (local.get $au) (i32.shl (local.get $av) (i32.const 4)))
-      (i32.or (i32.shl (local.get $f) (i32.const 8)) (i32.const 0x80000000))))
+      (i32.or (i32.or (i32.shl (local.get $min) (i32.const 8)) (i32.shl (local.get $mag) (i32.const 10)))
+        (i32.or (i32.shl (local.get $mip) (i32.const 12)) (i32.const 0x80000000)))))
     ;; Border colour matters only to the border mode.
     (if (i32.and (i32.ne (local.get $au) (i32.const 4)) (i32.ne (local.get $av) (i32.const 4)))
       (then (local.set $border (i32.const 0))))
@@ -1105,9 +1124,9 @@
     (store.field GpsSampler id (local.get $p) (local.get $id))
     (store.field GpsSampler address_u (local.get $p) (local.get $au))
     (store.field GpsSampler address_v (local.get $p) (local.get $av))
-    (store.field GpsSampler min (local.get $p) (local.get $f))
-    (store.field GpsSampler mag (local.get $p) (local.get $f))
-    (store.field GpsSampler mip (local.get $p) (i32.const 0))
+    (store.field GpsSampler min (local.get $p) (local.get $min))
+    (store.field GpsSampler mag (local.get $p) (local.get $mag))
+    (store.field GpsSampler mip (local.get $p) (local.get $mip))
     (store.field GpsSampler address_w (local.get $p) (i32.const 0))
     (store.field GpsSampler max_level (local.get $p) (i32.const 0))
     (store.field GpsSampler max_aniso (local.get $p) (i32.const 0))
@@ -1211,7 +1230,8 @@
     (if (i32.eq (i32.load (local.get $e)) (local.get $wa))
       (then (i32.store offset=16 (local.get $e) (i32.const 0))))
     (if (i32.eq (i32.load offset=32 (local.get $e)) (local.get $wa))
-      (then (i32.store offset=48 (local.get $e) (i32.const 0)))))
+      (then (i32.store offset=48 (local.get $e) (i32.const 0))))
+    (call $glg_chain_dirty (local.get $wa)))
 
   ;; The way of the set at $set that a new texture takes: an empty one, else
   ;; one holding $wa at stale dimensions, else the least recently used --
@@ -1290,6 +1310,19 @@
         (i32.store offset=4 (local.get $e) (local.get $id))
         (i32.store offset=8 (local.get $e) (local.get $w))
         (i32.store offset=12 (local.get $e) (local.get $hgt))))
+    (call $glg_upload_level (local.get $id) (i32.const 0) (local.get $entry))
+    (i32.store offset=16 (local.get $e) (i32.const 1))
+    (call $glg_stat (i32.const 9) (i32.const 1))
+    (local.get $id))
+
+  ;; Level $level of executor texture $id from surface $entry's texels.
+  (func $glg_upload_level (param $id i32) (param $level i32) (param $entry i32)
+    (local $wa i32) (local $w i32) (local $hgt i32) (local $pitch i32)
+    (local $fmt i32) (local $y i32) (local $n i32) (local $k i32) (local $pos i32) (local $dst i32)
+    (local $p i32) (local $band i32)
+    (local.set $wa (load.field DxObject misc1 (local.get $entry)))
+    (local.set $w (load.field DxObject width (local.get $entry)))
+    (local.set $hgt (load.field DxObject height (local.get $entry)))
     (local.set $pitch (load.field DxObject pitch (local.get $entry)))
     (local.set $fmt (call $dx_surf_fmt_get (local.get $entry)))
     (local.set $band (call $glg_band (local.get $w)))
@@ -1310,7 +1343,7 @@
         (br $rows)))
       (local.set $p (call $glg_begin (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
       (store.field GpsUpload id (local.get $p) (local.get $id))
-      (store.field GpsUpload level (local.get $p) (i32.const 0))
+      (store.field GpsUpload level (local.get $p) (local.get $level))
       (store.field GpsUpload face (local.get $p) (i32.const 0))
       (store.field GpsUpload x (local.get $p) (i32.const 0))
       (store.field GpsUpload y (local.get $p) (local.get $y))
@@ -1321,9 +1354,229 @@
       (store.field GpsUpload bytes (local.get $p) (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n)))
       (drop (call $glg_end (local.get $p)))
       (local.set $y (i32.add (local.get $y) (local.get $n)))
-      (br $bands)))
+      (br $bands))))
+
+  ;; ---- mip chains ------------------------------------------------------------
+  ;; A mipmapped GL texture on unit 0 is ONE executor TEX2D holding its whole
+  ;; chain, and the sampler carries MIN_FILTER/MAG_FILTER: the executor picks
+  ;; the level (and min vs mag) per pixel, as GL hardware does, instead of
+  ;; 09a8g's $gl_sw_mip_select picking one level per triangle -- so a run of
+  ;; triangles on one GL texture is one BIND and one DRAW_UP, not a BIND per
+  ;; level switch. GL 1.1 completeness: every level down to 1x1, each half
+  ;; the last (rounded down, at least 1), 32bpp, no border texels. An
+  ;; incomplete chain keeps the per-level path (stat 75), which draws what
+  ;; software GL draws (the deepest level uploaded); GL would disable the
+  ;; unit. TEXTURE_BASE_LEVEL/MAX_LEVEL and LOD clamps are GL 1.2 and not
+  ;; implemented by the GL front end, so the chain is always 0..n-1 with
+  ;; max_level 0 and no bias. The min/mag switch is at LOD 0 (GL allows
+  ;; c = 0.5 for MAG LINEAR + MIN *_MIPMAP_NEAREST; executors use 0).
+  ;;
+  ;; Cache: $glg_mem +36864, 512 sets x 2 ways x 96 bytes {wa0, id, w, h,
+  ;; -, stamp, levels, log position, the wa of levels 1..11}, hashed by
+  ;; level 0's texel address. A level is re-uploaded when its surface is no
+  ;; longer the one recorded (a new glTexImage) or the dirty log names it
+  ;; since the way's log position: $glg_tex_dirty appends every texel
+  ;; address written to a 1024-entry ring at +135168; a way that fell more
+  ;; than 1024 writes behind re-uploads every level (stat 76).
+  ;; Stats: 72 chain textures created, 73 chain level uploads, 74 chain
+  ;; hits with nothing to upload, 75 incomplete chains (per-level path),
+  ;; 76 log overruns.
+  (func $glg_chain_set (param $wa i32) (result i32)
+    (i32.add (i32.add (global.get $glg_mem) (i32.const 36864))
+      (i32.mul (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 23)) (i32.const 192))))
+
+  ;; From $glg_tex_dirty: texels at $wa changed.
+  (func $glg_chain_dirty (param $wa i32)
+    (i32.store (i32.add (i32.add (global.get $glg_mem) (i32.const 135168))
+        (i32.shl (i32.and (global.get $glg_dlog_n) (i32.const 1023)) (i32.const 2)))
+      (local.get $wa))
+    (global.set $glg_dlog_n (i32.add (global.get $glg_dlog_n) (i32.const 1)))
+    (global.set $glg_memo_slot (i32.const 0)))
+
+  ;; Levels of a complete chain whose level 0 is $w x $h (1 + log2 of the
+  ;; larger side).
+  (func $glg_chain_full (param $w i32) (param $h i32) (result i32)
+    (local $n i32)
+    (local.set $n (i32.const 1))
+    (block $done (loop $lp
+      (br_if $done (i32.eqz (i32.or (i32.gt_u (i32.shr_u (local.get $w) (i32.sub (local.get $n) (i32.const 1))) (i32.const 1))
+                                    (i32.gt_u (i32.shr_u (local.get $h) (i32.sub (local.get $n) (i32.const 1))) (i32.const 1)))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br $lp)))
+    (local.get $n))
+
+  ;; Level $k (1..12) of slot $slot whose level 0 is $w x $h: its surface
+  ;; entry, or 0 when missing, the wrong size or not drawable here.
+  (func $glg_chain_level (param $slot i32) (param $k i32) (param $w i32) (param $h i32) (result i32)
+    (local $obj i32) (local $lw i32) (local $lh i32)
+    (if (i32.gt_u (local.get $k) (i32.const 12)) (then (return (i32.const 0))))
+    (local.set $obj (i32.load (call $gl_sw_mip_at (local.get $slot) (local.get $k))))
+    (if (i32.eqz (local.get $obj)) (then (return (i32.const 0))))
+    (local.set $obj (call $dx_from_this (local.get $obj)))
+    (if (i32.eqz (local.get $obj)) (then (return (i32.const 0))))
+    (local.set $lw (i32.shr_u (local.get $w) (local.get $k)))
+    (local.set $lh (i32.shr_u (local.get $h) (local.get $k)))
+    (if (i32.eqz (local.get $lw)) (then (local.set $lw (i32.const 1))))
+    (if (i32.eqz (local.get $lh)) (then (local.set $lh (i32.const 1))))
+    (if (i32.or (i32.ne (load.field DxObject width (local.get $obj)) (local.get $lw))
+                (i32.ne (load.field DxObject height (local.get $obj)) (local.get $lh)))
+      (then (return (i32.const 0))))
+    (if (call $glg_tex_ok (local.get $obj)) (then (return (i32.const 0))))
+    (local.get $obj))
+
+  ;; The executor texture holding the $n-level chain of slot $slot (level 0
+  ;; is $entry), uploading the levels that changed.
+  (func $glg_tex_chain (param $entry i32) (param $slot i32) (param $n i32) (result i32)
+    (local $wa i32) (local $w i32) (local $hgt i32) (local $set i32) (local $b i32) (local $e i32)
+    (local $k i32) (local $lv i32) (local $mask i32) (local $i i32) (local $x i32) (local $id i32)
+    (local $old i32) (local $rec i32)
+    (local.set $wa (load.field DxObject misc1 (local.get $entry)))
+    (local.set $w (load.field DxObject width (local.get $entry)))
+    (local.set $hgt (load.field DxObject height (local.get $entry)))
+    (local.set $set (call $glg_chain_set (local.get $wa)))
+    (local.set $b (i32.add (local.get $set) (i32.const 96)))
+    (local.set $e (i32.const 0))
+    (if (i32.and (i32.and (i32.eq (i32.load (local.get $set)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $set)) (i32.const 0)))
+          (i32.and (i32.and (i32.eq (i32.load offset=8 (local.get $set)) (local.get $w)) (i32.eq (i32.load offset=12 (local.get $set)) (local.get $hgt)))
+                   (i32.eq (i32.load offset=24 (local.get $set)) (local.get $n))))
+      (then (local.set $e (local.get $set))))
+    (if (i32.and (i32.eqz (local.get $e))
+          (i32.and (i32.and (i32.eq (i32.load (local.get $b)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $b)) (i32.const 0)))
+            (i32.and (i32.and (i32.eq (i32.load offset=8 (local.get $b)) (local.get $w)) (i32.eq (i32.load offset=12 (local.get $b)) (local.get $hgt)))
+                     (i32.eq (i32.load offset=24 (local.get $b)) (local.get $n)))))
+      (then (local.set $e (local.get $b))))
+    (global.set $glg_tex_tick (i32.add (global.get $glg_tex_tick) (i32.const 1)))
+    (if (i32.eqz (local.get $e))
+      (then
+        ;; A new chain: an empty way, else the least recently used one.
+        (local.set $e (if (result i32) (i32.eqz (i32.load offset=4 (local.get $set))) (then (local.get $set))
+          (else (if (result i32) (i32.eqz (i32.load offset=4 (local.get $b))) (then (local.get $b))
+            (else (select (local.get $b) (local.get $set)
+              (i32.lt_s (i32.sub (i32.load offset=20 (local.get $b)) (i32.load offset=20 (local.get $set))) (i32.const 0))))))))
+        (local.set $old (i32.load offset=4 (local.get $e)))
+        (if (local.get $old) (then
+          (if (i32.eq (global.get $glg_c_t0) (local.get $old)) (then (global.set $glg_c_bind (i32.const 0))))
+          (if (i32.eq (global.get $glg_c_t1) (local.get $old)) (then (global.set $glg_c_bind (i32.const 0))))
+          (if (i32.eq (global.get $glg_b_t0) (local.get $old)) (then (call $glg_flush)))
+          (if (i32.eq (global.get $glg_b_t1) (local.get $old)) (then (call $glg_flush)))
+          (call $glg_release (local.get $old))))
+        (local.set $id (call $glg_id))
+        (call $glg_flush)
+        (call $gps_create (global.get $glg_h) (local.get $id) (global.get $GPS_KIND_TEX2D)
+          (global.get $GPS_FMT_A8B8G8R8) (local.get $n) (local.get $w) (local.get $hgt) (i32.const 0))
+        (i32.store (local.get $e) (local.get $wa))
+        (i32.store offset=4 (local.get $e) (local.get $id))
+        (i32.store offset=8 (local.get $e) (local.get $w))
+        (i32.store offset=12 (local.get $e) (local.get $hgt))
+        (i32.store offset=24 (local.get $e) (local.get $n))
+        (memory.fill (i32.add (local.get $e) (i32.const 32)) (i32.const 0) (i32.const 64))
+        (local.set $mask (i32.const -1))
+        (call $glg_stat (i32.const 72) (i32.const 1)))
+      (else
+        (local.set $id (i32.load offset=4 (local.get $e)))
+        (if (i32.gt_u (i32.sub (global.get $glg_dlog_n) (i32.load offset=28 (local.get $e))) (i32.const 1024))
+          (then
+            (local.set $mask (i32.const -1))
+            (call $glg_stat (i32.const 76) (i32.const 1)))
+          (else
+            (local.set $i (i32.load offset=28 (local.get $e)))
+            (block $logged (loop $log
+              (br_if $logged (i32.eq (local.get $i) (global.get $glg_dlog_n)))
+              (local.set $x (i32.load (i32.add (i32.add (global.get $glg_mem) (i32.const 135168))
+                (i32.shl (i32.and (local.get $i) (i32.const 1023)) (i32.const 2)))))
+              (if (i32.eq (local.get $x) (local.get $wa)) (then (local.set $mask (i32.or (local.get $mask) (i32.const 1)))))
+              (local.set $k (i32.const 1))
+              (block $lvs (loop $lvl
+                (br_if $lvs (i32.ge_u (local.get $k) (local.get $n)))
+                (if (i32.eq (local.get $x) (i32.load offset=28 (i32.add (local.get $e) (i32.shl (local.get $k) (i32.const 2)))))
+                  (then (local.set $mask (i32.or (local.get $mask) (i32.shl (i32.const 1) (local.get $k))))))
+                (local.set $k (i32.add (local.get $k) (i32.const 1)))
+                (br $lvl)))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br $log)))))))
+    ;; Levels whose surface is not the one recorded (+32 holds level 1).
+    (local.set $k (i32.const 1))
+    (block $lvs (loop $lvl
+      (br_if $lvs (i32.ge_u (local.get $k) (local.get $n)))
+      (local.set $lv (call $glg_chain_level (local.get $slot) (local.get $k) (local.get $w) (local.get $hgt)))
+      (if (i32.eqz (local.get $lv)) (then (call $glg_fail (i32.const 21))))
+      (local.set $rec (i32.add (local.get $e) (i32.add (i32.const 28) (i32.shl (local.get $k) (i32.const 2)))))
+      (if (i32.ne (i32.load (local.get $rec)) (load.field DxObject misc1 (local.get $lv))) (then
+        (i32.store (local.get $rec) (load.field DxObject misc1 (local.get $lv)))
+        (local.set $mask (i32.or (local.get $mask) (i32.shl (i32.const 1) (local.get $k))))))
+      (if (i32.and (local.get $mask) (i32.shl (i32.const 1) (local.get $k))) (then
+        (call $glg_upload_level (local.get $id) (local.get $k) (local.get $lv))
+        (call $glg_stat (i32.const 73) (i32.const 1))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $lvl)))
+    (if (i32.and (local.get $mask) (i32.const 1)) (then
+      (call $glg_upload_level (local.get $id) (i32.const 0) (local.get $entry))
+      (call $glg_stat (i32.const 73) (i32.const 1))))
+    (if (i32.eqz (local.get $mask)) (then (call $glg_stat (i32.const 74) (i32.const 1))))
     (i32.store offset=16 (local.get $e) (i32.const 1))
-    (call $glg_stat (i32.const 9) (i32.const 1))
+    (i32.store offset=20 (local.get $e) (global.get $glg_tex_tick))
+    (i32.store offset=28 (local.get $e) (global.get $glg_dlog_n))
+    (local.get $id))
+
+  ;; Unit 0 of a triangle as its whole GL texture: the executor texture id
+  ;; (sampler in $glg_t0_smp), or 0 to take the per-level path ($glg_tex of
+  ;; the level $gl_sw_mip_select chose, one filter per triangle).
+  (func $glg_t0_chain (result i32)
+    (local $slot i32) (local $f i32) (local $entry i32) (local $w i32) (local $hgt i32)
+    (local $n i32) (local $k i32) (local $id i32) (local $min i32) (local $mag i32) (local $mip i32)
+    (local $au i32) (local $av i32)
+    (local.set $slot (global.get $gl_sw_r_slot0))
+    (if (i32.eqz (local.get $slot)) (then (return (i32.const 0))))
+    (local.set $f (global.get $gl_sw_r_flags0))
+    (local.set $min (select (i32.const 2) (i32.const 1) (i32.ne (i32.and (local.get $f) (i32.const 64)) (i32.const 0))))
+    (local.set $mag (select (i32.const 2) (i32.const 1) (i32.and (local.get $f) (i32.const 1))))
+    (local.set $au (call $gl_sw_flags_address (local.get $f) (i32.const 2)))
+    (local.set $av (call $gl_sw_flags_address (local.get $f) (i32.const 4)))
+    ;; GL_CLAMP under mixed filters: nearest wants the edge texel at s = 1,
+    ;; linear the half-border tap (a BORDER sampler plus a saturate in the
+    ;; shader); one sampler cannot be both, so the per-level path draws it.
+    (if (i32.and (i32.ne (local.get $min) (local.get $mag))
+          (i32.or (i32.eq (local.get $au) (i32.const 0x2900)) (i32.eq (local.get $av) (i32.const 0x2900))))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load (local.get $slot))) (then (return (i32.const 0))))
+    (local.set $entry (call $dx_from_this (i32.load (local.get $slot))))
+    (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
+    (if (call $glg_tex_ok (local.get $entry)) (then (return (i32.const 0))))
+    (local.set $w (load.field DxObject width (local.get $entry)))
+    (local.set $hgt (load.field DxObject height (local.get $entry)))
+    (local.set $n (i32.const 1))
+    (if (i32.and (local.get $f) (i32.const 32)) (then
+      (if (i32.and (i32.and (i32.eq (global.get $glg_memo_slot) (local.get $slot)) (i32.eq (global.get $glg_memo_entry) (local.get $entry)))
+            (i32.eq (global.get $glg_memo_log) (global.get $glg_dlog_n)))
+        (then
+          (local.set $id (global.get $glg_memo_id))
+          (local.set $n (global.get $glg_memo_levels))
+          (call $glg_stat (i32.const 74) (i32.const 1)))
+        (else
+          (local.set $n (call $glg_chain_full (local.get $w) (local.get $hgt)))
+          (local.set $k (i32.const 1))
+          (block $ok (loop $lv
+            (br_if $ok (i32.ge_u (local.get $k) (local.get $n)))
+            (if (i32.eqz (call $glg_chain_level (local.get $slot) (local.get $k) (local.get $w) (local.get $hgt))) (then
+              (call $glg_stat (i32.const 75) (i32.const 1))
+              (return (i32.const 0))))
+            (local.set $k (i32.add (local.get $k) (i32.const 1)))
+            (br $lv)))
+          (if (i32.gt_u (local.get $n) (i32.const 1)) (then
+            (local.set $id (call $glg_tex_chain (local.get $entry) (local.get $slot) (local.get $n)))
+            (global.set $glg_memo_slot (local.get $slot))
+            (global.set $glg_memo_entry (local.get $entry))
+            (global.set $glg_memo_log (global.get $glg_dlog_n))
+            (global.set $glg_memo_id (local.get $id))
+            (global.set $glg_memo_levels (local.get $n))))))))
+    (local.set $mip (select
+      (select (i32.const 2) (i32.const 1) (i32.ne (i32.and (local.get $f) (i32.const 512)) (i32.const 0)))
+      (i32.const 0) (i32.gt_u (local.get $n) (i32.const 1))))
+    (if (i32.eqz (local.get $id)) (then (local.set $id (call $glg_tex (local.get $entry)))))
+    (global.set $glg_t0_smp (call $glg_sampler_f
+      (call $glg_addr (local.get $au) (i32.eq (local.get $min) (i32.const 2)))
+      (call $glg_addr (local.get $av) (i32.eq (local.get $min) (i32.const 2)))
+      (local.get $min) (local.get $mag) (local.get $mip) (global.get $gl_sw_r_border)))
     (local.get $id))
 
   ;; ---- texenv combine -> ps_1_4 ----------------------------------------------
@@ -1624,13 +1877,19 @@
       (call $glg_raster)))
     (if (local.get $tex) (then
       (local.set $lin (i32.and (local.get $flags) (i32.const 1)))
-      (local.set $t0id (call $glg_tex (global.get $gl_sw_r_tex)))
-      (local.set $s0 (if (result i32) (call $gl_1d_selected (i32.const 0))
-        (then (call $glg_1d_sampler (i32.const 0)))
-        (else (call $glg_sampler
-          (call $glg_addr (call $gl_sw_flags_address (local.get $flags) (i32.const 2)) (local.get $lin))
-          (call $glg_addr (call $gl_sw_flags_address (local.get $flags) (i32.const 4)) (local.get $lin))
-          (local.get $lin) (global.get $gl_sw_r_border)))))
+      ;; A triangle samples the GL texture whole (every level, per-pixel
+      ;; filter); else the level and filter 09a8g chose for it.
+      (local.set $t0id (if (result i32) (local.get $span) (then (i32.const 0)) (else (call $glg_t0_chain))))
+      (if (local.get $t0id)
+        (then (local.set $s0 (global.get $glg_t0_smp)))
+        (else
+          (local.set $t0id (call $glg_tex (global.get $gl_sw_r_tex)))
+          (local.set $s0 (if (result i32) (call $gl_1d_selected (i32.const 0))
+            (then (call $glg_1d_sampler (i32.const 0)))
+            (else (call $glg_sampler
+              (call $glg_addr (call $gl_sw_flags_address (local.get $flags) (i32.const 2)) (local.get $lin))
+              (call $glg_addr (call $gl_sw_flags_address (local.get $flags) (i32.const 4)) (local.get $lin))
+              (local.get $lin) (global.get $gl_sw_r_border)))))))
       (local.set $key (i32.or (i32.const 1) (i32.or (i32.shl (call $glg_mode (i32.const 0)) (i32.const 1))
         (i32.shl (call $glg_base (i32.const 0)) (i32.const 3)))))
       ;; Projective coordinates (Q != 1 or a texture matrix): texld t0_dz,
