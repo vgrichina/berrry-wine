@@ -79,10 +79,10 @@ async function freshUserControls(){
   const page=(await browser.pages())[0];await page.setContent('<body style="margin:0;background:#234"><canvas width="800" height="600"></canvas>');
   await page.evaluate(()=>{const c=document.querySelector('canvas'),x=c.getContext('2d');x.fillStyle='#336699';x.fillRect(0,0,800,600);});await sleep(300);
   let serial=0;
-  async function fixture(){
+  async function fixture(evidenceSink){
    const name='source-'+serial++;
    const identity={target:'real-browser-'+browser.process().pid,owner:'authored-test',generation:1,viewport:'800x600',focus:1,modal:0,capture:0,module:'test',realm:1};
-   let mutateOn=0,count=0;const a=createNativeEquivalence({env:display.env,checkpoint:()=>{},context:async()=>{
+   let mutateOn=0,count=0;const a=createNativeEquivalence({env:display.env,checkpoint:()=>{},evidenceSink,context:async()=>{
     count++;if(mutateOn&&count===mutateOn)identity.generation++;return structuredClone(identity);}});
    const shot=await a.captureReview(name),png=shot.png;
    const image={sha256:shot.sha256,completedAt:shot.at};
@@ -107,6 +107,38 @@ async function freshUserControls(){
    await assert.rejects(f.a.prove(f.name,{...f.intent,imageSHA256:crypto.createHash('sha256').update(changed).digest('hex')},f.image));assert(f.a.closed);results.push('forged onepixel review source refuses');}
   {const f=await fixture();await page.evaluate(()=>{const x=document.querySelector('canvas').getContext('2d');x.fillStyle='#ff0000';x.fillRect(10,10,1,1);});await sleep(500);
    await assert.rejects(f.a.prove(f.name,f.intent,f.image),/RGBA differs/);assert(f.a.closed);results.push('actual changed presentation refuses');}
+  {const rows=[],f=await fixture(row=>{rows.push(row);return true;});
+   // Caller-owned review PNG cannot mutate the private capture.
+   f.png.fill(0);const proof=await f.a.prove(f.name,f.intent,f.image);
+   const row=rows[0];assert.equal(row.source.sha256,f.image.sha256);assert.equal(row.equal,true);
+   row.source.png.fill(0);row.fresh.png.fill(0);row.source.identity.generation=999;row.fresh.identity.generation=999;
+   await f.a.beforeDown(proof,f.intent,f.image);f.a.fence(proof,f.intent,f.image);
+   assert.deepEqual(rows.map(r=>r.stage),['prove','pre-down-equivalent','socket-equivalent']);
+   assert.equal(rows[1].source.identity.generation,1);assert.equal(rows[1].source.at,f.image.completedAt);
+   results.push('public PNG and evidence copies cannot mutate private proof images or identity');}
+  {const rows=[],f=await fixture(row=>{rows.push(row);return true;});
+   await page.evaluate(()=>{document.body.style.background='#b52';document.querySelector('canvas').style.visibility='hidden';});await sleep(300);
+   let downs=0;const controller=createController({page:async()=>{throw Error('must not authorize');},dispatch:()=>downs++,release:{},close:()=>{},equivalence:f.a});
+   await assert.rejects(f.a.prove(f.name,f.intent,f.image),/RGBA differs/);assert(f.a.closed);assert.equal(rows.length,1);
+   const r=rows[0];assert.equal(r.authoritative,false);assert.equal(r.refusal,'whole-frame RGBA differs');assert.equal(r.equal,false);
+   for(const image of [r.source,r.fresh]){const p=PNG.sync.read(image.png);assert.equal(p.width,image.width);assert.equal(p.height,image.height);
+    assert.equal(crypto.createHash('sha256').update(image.png).digest('hex'),image.sha256);
+    assert.equal(crypto.createHash('sha256').update(p.data).digest('hex'),image.rgbaSHA256);
+    assert.equal(image.orientation,'top-left-row-major-RGBA8');assert.equal(image.personallyReviewed,false);}
+   assert(!PNG.sync.read(r.source.png).data.equals(PNG.sync.read(r.fresh.png).data));
+   const {png:sp,...sm}=r.source,{png:fp,...fm}=r.fresh;
+   const metadata={...r,source:sm,fresh:fm};const serialized=JSON.stringify(metadata);
+   for(const privateValue of [f.a.key,f.intent.nonce])assert(!serialized.includes(privateValue));
+   assert(!('payload' in r)&&!('signature' in r));assert.equal(r.source.review.reviewedAt,f.intent.reviewedAt);
+   await assert.rejects(controller.gesture(f.intent,f.image,r));assert.equal(downs,0);
+   if(process.env.EQUIVALENCE_EVIDENCE_DIRECTORY){const d=path.resolve(process.env.EQUIVALENCE_EVIDENCE_DIRECTORY);fs.mkdirSync(d,{recursive:true});
+    for(const [n,b] of [['source.png',sp],['fresh.png',fp],['mismatch.json',JSON.stringify({...metadata,downs},null,2)]]){
+     fs.writeFileSync(path.join(d,n),b,{flag:'wx'});assert.deepEqual(fs.readFileSync(path.join(d,n)),Buffer.from(b));}}
+   results.push('real native browser mismatch retains complete source/fresh with hash readback, refusal and zeroDOWN');}
+  for(const sink of [()=>{throw Error('disk failure');},()=>false,async()=>true]){
+   const f=await fixture(sink);let downs=0;const controller=createController({page:async()=>{throw Error('must not authorize');},dispatch:()=>downs++,release:{},close:()=>{},equivalence:f.a});
+   await assert.rejects(f.a.prove(f.name,f.intent,f.image),/evidence sink/);assert(f.a.closed);
+   await assert.rejects(controller.gesture(f.intent,f.image,{}));assert.equal(downs,0);results.push('failed or asynchronous evidence sink closes zeroDOWN');}
   {const f=await fixture();f.intent.reviewedAt=Date.now()-16000;await assert.rejects(f.a.prove(f.name,f.intent,f.image),/age expired/);results.push('review age refuses');}
   {const f=await fixture();const p=await f.a.prove(f.name,f.intent,f.image),i={...f.intent,completedAt:f.image.completedAt};
    await assert.rejects(verifyPageEquivalence(f.a.key,{...p,signature:'0'.repeat(64)},i),/forged/);
