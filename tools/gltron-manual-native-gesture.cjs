@@ -121,10 +121,12 @@ function validate(choice,image,authority){
   assert.equal(new Set(choice.steps.map(s=>s.nonce)).size,4,'unique per-key nonce');
   assert.equal(new Set(choice.steps.map(s=>s.name)).size,4,'unique per-key evidence');
 }
-function createGroup({page,dispatch,releases,close,record=()=>{},fence,equivalence}){
+function createGroup({page,dispatch,releases,close,record=()=>{},fence,equivalence,manualPlan}){
+  assert(!(equivalence&&manualPlan),'choose one explicit review capability');
+  if(manualPlan)assert.equal(manualPlan.capability,'native-manual-plan-v1','explicit manual plan required');
   let active=false,terminal=false,controller;
   const seen=new Set(),closureErrors=[];
-  const stop=reason=>{if(!terminal){terminal=true;controller?.close(reason);try{close(reason);}catch(error){closureErrors.push(error);}}};
+  const stop=reason=>{if(!terminal){terminal=true;manualPlan?.close();controller?.close(reason);try{close(reason);}catch(error){closureErrors.push(error);}}};
   return {get terminal(){return terminal;},
     async gesture(input,image,proofHandles){
       assert(!terminal&&!active,'group closed/concurrent');
@@ -133,7 +135,10 @@ function createGroup({page,dispatch,releases,close,record=()=>{},fence,equivalen
       // Explicit opt-in: preserve the private common implementation's handle
       // identities. Cloning a signed envelope must never create authority.
       let authority;
-      if(proofHandles!==undefined){try{
+      if(manualPlan){try{
+        authority=manualPlan.open(proofHandles,choice,frame);validate(choice,frame,authority);
+      }catch(error){stop(error.message);throw error;}}
+      else if(proofHandles!==undefined){try{
         assert(equivalence&&Array.isArray(proofHandles)&&proofHandles.length===4,'four explicit private equivalence proofs required');
         assert.equal(new Set(proofHandles).size,4,'one use proof per exact edge');
         authority={equivalence,proofs:proofHandles.slice(),next:0};
@@ -145,7 +150,15 @@ function createGroup({page,dispatch,releases,close,record=()=>{},fence,equivalen
       for(const s of choice.steps){assert(!seen.has(s.nonce),'old scope never replayed');seen.add(s.nonce);}
       active=true;
       const armed=[],started=new Set(),finished=new Set(),results=[],errors=closureErrors;
-      const check=async()=>{assert(!terminal,'group permanently closed');validate(choice,frame,authority);await fence(choice,frame);assert(!terminal);validate(choice,frame,authority);};
+      const ready=()=>{if(!manualPlan)return;
+        for(const {i,receipt:r} of armed){if(finished.has(i))continue;
+          assert(releases[i].alive!==false&&Number.isSafeInteger(r?.at)&&
+            Number.isSafeInteger(r?.fallback)&&Number.isSafeInteger(r?.releaseDue)&&
+            r.fallback-r.at===1750&&r.releaseDue-r.at===1500&&
+            Date.now()+choice.steps[i].ms<r.releaseDue&&Date.now()+choice.steps[i].ms<r.fallback,
+          'all pending manual plan UP participants must be READY');
+        }};
+      const check=async()=>{assert(!terminal,'group permanently closed');ready();validate(choice,frame,authority);await fence(choice,frame);assert(!terminal);ready();validate(choice,frame,authority);};
       try{
         await check();
         // Every UP participant is independently armed before the first DOWN.
@@ -157,7 +170,7 @@ function createGroup({page,dispatch,releases,close,record=()=>{},fence,equivalen
           await check();
           if(step.delayMs)await new Promise(r=>setTimeout(r,step.delayMs));
           await check();
-          controller=(authority?createStrictController:single.createController)({equivalence:authority?.equivalence,page:(...args)=>{assert(!terminal,'group permanently closed');return page(...args);},close:stop,record,
+          controller=(authority&&!authority.manual?createStrictController:single.createController)({equivalence:authority?.manual?undefined:authority?.equivalence,manualContext:authority?.manual?authority.equivalence:undefined,page:(...args)=>{assert(!terminal,'group permanently closed');return page(...args);},close:stop,record,
             // The transport owns the sole final socket fence. Its synchronous
             // callback schedules UP only after capture, immediately before send.
             dispatch:async (edge,publish)=>{await check();
