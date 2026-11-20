@@ -17,7 +17,8 @@
 //   - *_MIPMAP_LINEAR draws with no decline;
 //   - glTexSubImage2D of level 2 after a frame re-uploads that level only;
 //   - an incomplete chain (level 3 missing) keeps the per-level path
-//     (stat 75) and matches software GL exactly.
+//     (stat 75) and matches software GL exactly;
+//   - 3-4 chains of one cache set stay resident across frames (software).
 const assert = require('assert');
 const path = require('path');
 const { bootGlGps, comparePictures } = require('./helpers/gl-gps-context');
@@ -151,7 +152,51 @@ async function incomplete(label, makeExecutor) {
   console.log(`PASS ${label} incomplete chain: per-level path, matches software GL (worst ${cmp.worst})`);
 }
 
+// Several chains of one cache set stay resident: 200 small mipmapped
+// textures are drawn once to find which share a set, then the largest group
+// (3 or 4 -- the ways in a set) is drawn every frame for three frames with no
+// new chain and no level upload (a 2-way set rebuilt them every frame).
+async function sharedSet(label, makeExecutor) {
+  const N = 200, S = 16, LEVELS = 5;
+  const gp = await scene({ gps: 1, makeExecutor }, g => {
+    const draw = name => {
+      g.call('glBindTexture', [0xde1, name]);
+      floor(g);
+    };
+    const sets = new Map();
+    for (let t = 0; t < N; t++) {
+      g.call('glBindTexture', [0xde1, 2 + t]);
+      for (let l = 0; l < LEVELS; l++) {
+        const w = S >> l, n = w * w * 4;
+        const px = g.e.guest_alloc(n) >>> 0;
+        new Uint8Array(g.memory.buffer, g.wa(px), n).fill(t & 255);
+        g.call('glTexImage2D', [0xde1, l, 0x1908, w, w, 0, 0x1908, 0x1401, px]);
+      }
+      g.call('glTexParameteri', [0xde1, 0x2801, 0x2700]);
+      g.call('glTexParameteri', [0xde1, 0x2800, 0x2600]);
+      draw(2 + t);
+      const set = g.e.probe_chain_set();
+      if (!sets.has(set)) sets.set(set, []);
+      sets.get(set).push(2 + t);
+    }
+    g.swap();
+    const group = [...sets.values()].sort((a, b) => b.length - a.length)[0].slice(0, 4);
+    const frame = () => { g.clear([0, 0, 0, 1], ALL); for (const t of group) draw(t); g.swap(); };
+    frame();
+    const after1 = { chains: stat(g, 72), uploads: stat(g, 73) };
+    frame(); frame();
+    return { group, after1, chains: stat(g, 72), uploads: stat(g, 73) };
+  });
+  const { group, after1, chains, uploads } = gp.out;
+  assert.ok(group.length >= 3, `${label}: 3+ of ${N} textures share a set, largest group ${group.length}`);
+  assert.strictEqual(gp.stats.declines, 0, `${label}: no declines ${JSON.stringify(gp.stats.reasons)}`);
+  assert.strictEqual(chains - after1.chains, 0, `${label}: ${group.length} chains of one set stay resident (new chains ${chains - after1.chains})`);
+  assert.strictEqual(uploads - after1.uploads, 0, `${label}: no level re-uploaded (${uploads - after1.uploads})`);
+  console.log(`PASS ${label} ${group.length} chains in one set: resident across frames, 0 new chains, 0 re-uploads`);
+}
+
 (async () => {
+  await sharedSet('software', null);
   const soft = await nearestChain('software', null);
   await linearChain('software', null);
   await subImage('software', null);

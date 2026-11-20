@@ -1371,9 +1371,12 @@
   ;; max_level 0 and no bias. The min/mag switch is at LOD 0 (GL allows
   ;; c = 0.5 for MAG LINEAR + MIN *_MIPMAP_NEAREST; executors use 0).
   ;;
-  ;; Cache: $glg_mem +36864, 512 sets x 2 ways x 96 bytes {wa0, id, w, h,
+  ;; Cache: $glg_mem +36864, 256 sets x 4 ways x 96 bytes {wa0, id, w, h,
   ;; -, stamp, levels, log position, the wa of levels 1..11}, hashed by
-  ;; level 0's texel address. A level is re-uploaded when its surface is no
+  ;; level 0's texel address, LRU by stamp within a set. Four ways, not two
+  ;; (same 98304 bytes): a whole chain is costly to re-upload, and three hot
+  ;; textures of one 2-way set evicted each other every frame -- Quake 3
+  ;; q3dm1 built 315 chains in 4500 batches, 244 with 4 ways. A level is re-uploaded when its surface is no
   ;; longer the one recorded (a new glTexImage) or the dirty log names it
   ;; since the way's log position: $glg_tex_dirty appends every texel
   ;; address written to a 1024-entry ring at +135168; a way that fell more
@@ -1383,7 +1386,7 @@
   ;; 76 log overruns.
   (func $glg_chain_set (param $wa i32) (result i32)
     (i32.add (i32.add (global.get $glg_mem) (i32.const 36864))
-      (i32.mul (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 23)) (i32.const 192))))
+      (i32.mul (i32.shr_u (i32.mul (local.get $wa) (i32.const 0x9E3779B1)) (i32.const 24)) (i32.const 384))))
 
   ;; From $glg_tex_dirty: texels at $wa changed.
   (func $glg_chain_dirty (param $wa i32)
@@ -1429,30 +1432,33 @@
   (func $glg_tex_chain (param $entry i32) (param $slot i32) (param $n i32) (result i32)
     (local $wa i32) (local $w i32) (local $hgt i32) (local $set i32) (local $b i32) (local $e i32)
     (local $k i32) (local $lv i32) (local $mask i32) (local $i i32) (local $x i32) (local $id i32)
-    (local $old i32) (local $rec i32)
+    (local $old i32) (local $rec i32) (local $v i32)
     (local.set $wa (load.field DxObject misc1 (local.get $entry)))
     (local.set $w (load.field DxObject width (local.get $entry)))
     (local.set $hgt (load.field DxObject height (local.get $entry)))
     (local.set $set (call $glg_chain_set (local.get $wa)))
-    (local.set $b (i32.add (local.get $set) (i32.const 96)))
+    ;; The way holding this chain, and the victim should none: the first
+    ;; empty way, else the least recently used.
     (local.set $e (i32.const 0))
-    (if (i32.and (i32.and (i32.eq (i32.load (local.get $set)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $set)) (i32.const 0)))
-          (i32.and (i32.and (i32.eq (i32.load offset=8 (local.get $set)) (local.get $w)) (i32.eq (i32.load offset=12 (local.get $set)) (local.get $hgt)))
-                   (i32.eq (i32.load offset=24 (local.get $set)) (local.get $n))))
-      (then (local.set $e (local.get $set))))
-    (if (i32.and (i32.eqz (local.get $e))
-          (i32.and (i32.and (i32.eq (i32.load (local.get $b)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $b)) (i32.const 0)))
+    (local.set $v (local.get $set))
+    (local.set $i (i32.const 0))
+    (block $found (loop $ways
+      (local.set $b (i32.add (local.get $set) (i32.mul (local.get $i) (i32.const 96))))
+      (if (i32.and (i32.and (i32.eq (i32.load (local.get $b)) (local.get $wa)) (i32.ne (i32.load offset=4 (local.get $b)) (i32.const 0)))
             (i32.and (i32.and (i32.eq (i32.load offset=8 (local.get $b)) (local.get $w)) (i32.eq (i32.load offset=12 (local.get $b)) (local.get $hgt)))
-                     (i32.eq (i32.load offset=24 (local.get $b)) (local.get $n)))))
-      (then (local.set $e (local.get $b))))
+                     (i32.eq (i32.load offset=24 (local.get $b)) (local.get $n))))
+        (then (local.set $e (local.get $b)) (br $found)))
+      (if (i32.ne (i32.load offset=4 (local.get $v)) (i32.const 0)) (then
+        (if (i32.or (i32.eqz (i32.load offset=4 (local.get $b)))
+              (i32.lt_s (i32.sub (i32.load offset=20 (local.get $b)) (i32.load offset=20 (local.get $v))) (i32.const 0)))
+          (then (local.set $v (local.get $b))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $ways (i32.lt_u (local.get $i) (i32.const 4)))))
     (global.set $glg_tex_tick (i32.add (global.get $glg_tex_tick) (i32.const 1)))
     (if (i32.eqz (local.get $e))
       (then
-        ;; A new chain: an empty way, else the least recently used one.
-        (local.set $e (if (result i32) (i32.eqz (i32.load offset=4 (local.get $set))) (then (local.get $set))
-          (else (if (result i32) (i32.eqz (i32.load offset=4 (local.get $b))) (then (local.get $b))
-            (else (select (local.get $b) (local.get $set)
-              (i32.lt_s (i32.sub (i32.load offset=20 (local.get $b)) (i32.load offset=20 (local.get $set))) (i32.const 0))))))))
+        ;; A new chain in the victim way.
+        (local.set $e (local.get $v))
         (local.set $old (i32.load offset=4 (local.get $e)))
         (if (local.get $old) (then
           (if (i32.eq (global.get $glg_c_t0) (local.get $old)) (then (global.set $glg_c_bind (i32.const 0))))
