@@ -188,3 +188,44 @@ each boundary. The retained hidden observation alone does not justify
 changing the input guard, forcing visibility or replaying this closed scope.
 All local supervised processes and the independent watchdog joined; private
 profile/display/socket/auth were removed, and no remote box was created.
+
+### 2026-11-20: actual filename star-precision defect repaired
+
+Run `20261120-tileworld-native-filename-formatter-repair-gameplay` retains
+the first real filename formatting call with the accepted `_iob` repair.
+At PE `0x404c60`, native code pushes filename `cc-ms.dac`, precision255,
+format `0x422cdc` (`%.*s`) and destination, then calls sprintf; return is
+`0x404c65`. The builtin formatter returned the literal `s`, length1.
+ESP advances4 and EBX/ESI/EDI/EBP survive. This directly demonstrates the
+filename-buffer corruption; the earlier browser's five literal labels remain
+a separate retained visual observation.
+
+`src/12-wsprintf.wat` now consumes CRT dynamic width and precision arguments
+before each value. Negative precision is omitted; negative width means left
+alignment. CRT string/character fields and integer zero precision follow that
+contract. The dialect gate preserves User32's existing behavior. There is no
+host text replacement, rendering overlay, input change or `_iob` change.
+Recompiling the exact accepted f696 closure with the unchanged `_iob` resolver
+and this formatter produces module
+`6d1c386be119ad9b05b3597aa5c3bb7755ba6d4f981859ed454bbff3dc8cd9c5`.
+The same native entry registers and stack arguments now produce `cc-ms.dac`,
+length9, with unchanged ESP/nonvolatile behavior. Focused real x86 API-thunk
+tests cover sprintf/vsprintf/_vsnprintf, zero/bounded/negative precision,
+width/combined stars and following arguments, truncation, null handling,
+output guards/counts and cdecl/nonvolatile preservation. These and the User32
+A/W front-door regression pass, as does the literal locked build. The first
+front-door attempt rejected concurrently changing compilation inputs; the
+stable rerun passed.
+
+The sole fresh browser attempt served and HTTP-readback-verified the matching
+source closure and all16 media hashes, but stopped before native startup
+admission: the run harness omitted the reused `startup.cjs` required by
+`expression.cjs`. This is an author harness error, not a guest failure. Its
+closed scope was not replayed and received no later endpoint requests.
+The personally reviewed whole frame shows only the launching desktop, with
+no game window. Actual page module readback is retained; CPU Worker/module
+provenance, readable picker, manual selection, chip/level progress and Quit
+were not reached. All supervised processes and finite watchdog joined;
+private profile/display/socket/auth were removed. No remote box was created.
+The next authorized attempt must restore the exact accepted startup helper
+and preflight the complete helper dependency closure before launching.

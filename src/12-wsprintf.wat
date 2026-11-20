@@ -133,6 +133,22 @@
       (br $l2)))
     (i32.mul (local.get $width) (local.get $unit)))
 
+  ;; Space padding for a CRT field, including negative '*' widths.
+  (func $fmt_field (param $dst i32) (param $written i32) (param $width i32)
+        (param $left i32) (param $wide i32) (result i32)
+    (local $unit i32) (local $end i32)
+    (if (i32.eqz (local.get $left))
+      (then (return (call $apply_pad_x (local.get $dst) (local.get $written)
+        (local.get $width) (i32.const 32) (local.get $wide)))))
+    (local.set $unit (call $fmt_unit (local.get $wide)))
+    (local.set $end (i32.mul (local.get $width) (local.get $unit)))
+    (block $done (loop $pad
+      (br_if $done (i32.ge_u (local.get $written) (local.get $end)))
+      (call $fmt_put (i32.add (local.get $dst) (local.get $written)) (local.get $wide) (i32.const 32))
+      (local.set $written (i32.add (local.get $written) (local.get $unit)))
+      (br $pad)))
+    (local.get $written))
+
   ;; Shared formatting engine for User32 wsprintf and the currently-supported
   ;; CRT printf subset. $dialect keeps that policy boundary explicit: their
   ;; cdecl vararg plumbing is identical, but their full format contracts are
@@ -144,7 +160,7 @@
     (local $pad_zero i32) (local $width i32) (local $length i32)
     (local $unit i32) (local $src_wide i32) (local $src_unit i32)
     (local $prec i32) (local $start i32) (local $neg i32) (local $min_digits i32)
-    (local $alt i32)
+    (local $alt i32) (local $left i32)
     (local.set $unit (call $fmt_unit (local.get $wide)))
     (block $done (loop $loop
       (local.set $ch (call $fmt_get (i32.add (local.get $fmt) (local.get $fi)) (local.get $wide)))
@@ -158,11 +174,12 @@
       ;; Got '%' — reset per-conversion state.
       (local.set $pad_zero (i32.const 0))
       (local.set $alt (i32.const 0))
+      (local.set $left (i32.const 0))
       (local.set $width (i32.const 0))
       (local.set $length (i32.const 0))
       (local.set $fi (i32.add (local.get $fi) (local.get $unit)))
       (local.set $ch (call $fmt_get (i32.add (local.get $fmt) (local.get $fi)) (local.get $wide)))
-      ;; Flags: '-', '+', '0', ' ', '#'. Only '0' and '#' affect the output here.
+      ;; Flags: '-', '+', '0', ' ', '#'. CRT also honors '-' alignment.
       (block $skip_flags (loop $fl
         (br_if $skip_flags (i32.and (i32.ne (local.get $ch) (i32.const 45))
           (i32.and (i32.ne (local.get $ch) (i32.const 43))
@@ -173,9 +190,23 @@
           (then (local.set $pad_zero (i32.const 1))))
         (if (i32.eq (local.get $ch) (i32.const 35))
           (then (local.set $alt (i32.const 1))))
+        (if (i32.and (i32.eqz (local.get $dialect)) (i32.eq (local.get $ch) (i32.const 45)))
+          (then (local.set $left (i32.const 1))))
         (local.set $fi (i32.add (local.get $fi) (local.get $unit)))
         (local.set $ch (call $fmt_get (i32.add (local.get $fmt) (local.get $fi)) (local.get $wide)))
         (br $fl)))
+      ;; Only CRT accepts '*' width/precision. Consume each int before the
+      ;; conversion argument; negative width means left alignment.
+      (if (i32.and (i32.eqz (local.get $dialect)) (i32.eq (local.get $ch) (i32.const 42)))
+        (then
+          (local.set $width (call $gl32 (local.get $arg_ptr)))
+          (local.set $arg_ptr (i32.add (local.get $arg_ptr) (i32.const 4)))
+          (if (i32.lt_s (local.get $width) (i32.const 0))
+            (then
+              (local.set $left (i32.const 1))
+              (local.set $width (i32.sub (i32.const 0) (local.get $width)))))
+          (local.set $fi (i32.add (local.get $fi) (local.get $unit)))
+          (local.set $ch (call $fmt_get (i32.add (local.get $fmt) (local.get $fi)) (local.get $wide)))))
       ;; Width digits.
       (block $skip_w (loop $wl
         (br_if $skip_w (i32.or (i32.lt_u (local.get $ch) (i32.const 48)) (i32.gt_u (local.get $ch) (i32.const 57))))
@@ -195,6 +226,15 @@
           (local.set $prec (i32.const 0))
           (local.set $fi (i32.add (local.get $fi) (local.get $unit)))
           (local.set $ch (call $fmt_get (i32.add (local.get $fmt) (local.get $fi)) (local.get $wide)))
+          (if (i32.and (i32.eqz (local.get $dialect)) (i32.eq (local.get $ch) (i32.const 42)))
+            (then
+              (local.set $prec (call $gl32 (local.get $arg_ptr)))
+              (local.set $arg_ptr (i32.add (local.get $arg_ptr) (i32.const 4)))
+              ;; A negative precision is omitted, rather than zero.
+              (if (i32.lt_s (local.get $prec) (i32.const 0))
+                (then (local.set $prec (i32.const -1))))
+              (local.set $fi (i32.add (local.get $fi) (local.get $unit)))
+              (local.set $ch (call $fmt_get (i32.add (local.get $fmt) (local.get $fi)) (local.get $wide)))))
           (block $skip_p (loop $pl
             (br_if $skip_p (i32.or (i32.lt_u (local.get $ch) (i32.const 48)) (i32.gt_u (local.get $ch) (i32.const 57))))
             (local.set $prec (i32.add (i32.mul (local.get $prec) (i32.const 10))
@@ -260,32 +300,43 @@
                 (local.get $arg) (i32.eq (local.get $ch) (i32.const 88)) (local.get $wide)))
               (else (call $write_uint_x (i32.add (local.get $out) (local.get $oi))
                 (local.get $arg) (local.get $wide)))))
+          ;; CRT precision zero suppresses a zero integer's digits.
+          (if (i32.and (i32.eqz (local.get $dialect))
+                (i32.and (i32.eqz (local.get $prec)) (i32.eqz (local.get $arg))))
+            (then (local.set $written (i32.const 0))))
           (local.set $min_digits
             (if (result i32) (i32.ge_s (local.get $prec) (i32.const 0))
               (then (local.get $prec))
-              (else (if (result i32) (i32.and (i32.ne (local.get $pad_zero) (i32.const 0))
-                                              (i32.gt_u (local.get $width) (local.get $neg)))
+              (else (if (result i32) (i32.and (i32.eqz (local.get $left))
+                    (i32.and (i32.ne (local.get $pad_zero) (i32.const 0))
+                             (i32.gt_u (local.get $width) (local.get $neg))))
                 (then (i32.sub (local.get $width) (local.get $neg)))
                 (else (i32.const 0))))))
           (local.set $oi (i32.add (local.get $oi)
             (call $apply_pad_x (i32.add (local.get $out) (local.get $oi)) (local.get $written)
               (local.get $min_digits) (i32.const 48) (local.get $wide))))
           (local.set $oi (i32.add (local.get $start)
-            (call $apply_pad_x (i32.add (local.get $out) (local.get $start))
-              (i32.sub (local.get $oi) (local.get $start)) (local.get $width) (i32.const 32) (local.get $wide))))
+            (call $fmt_field (i32.add (local.get $out) (local.get $start))
+              (i32.sub (local.get $oi) (local.get $start)) (local.get $width) (local.get $left) (local.get $wide))))
           (br $loop)))
       ;; 'c': character
       (if (i32.eq (local.get $ch) (i32.const 99))
         (then
+          (local.set $start (local.get $oi))
           (call $fmt_put (i32.add (local.get $out) (local.get $oi)) (local.get $wide)
             (i32.and (local.get $arg)
               (select (i32.const 0xFFFF) (i32.const 0xFF) (local.get $wide))))
           (local.set $oi (i32.add (local.get $oi) (local.get $unit)))
+          (if (i32.eqz (local.get $dialect))
+            (then (local.set $oi (i32.add (local.get $start)
+              (call $fmt_field (i32.add (local.get $out) (local.get $start))
+                (local.get $unit) (local.get $width) (local.get $left) (local.get $wide))))))
           (br $loop)))
       ;; 's'/'S': string. A bare %s matches the output width and %S is the
       ;; other width; an h/l/w prefix overrides either.
       (if (i32.or (i32.eq (local.get $ch) (i32.const 115)) (i32.eq (local.get $ch) (i32.const 83)))
         (then
+          (local.set $start (local.get $oi))
           (if (i32.eqz (local.get $arg))
             (then
               ;; NULL string -> "(null)"
@@ -320,6 +371,10 @@
                 (local.set $oi (i32.add (local.get $oi) (local.get $unit)))
                 (local.set $sptr (i32.add (local.get $sptr) (local.get $src_unit)))
                 (br $sl)))))
+          (if (i32.eqz (local.get $dialect))
+            (then (local.set $oi (i32.add (local.get $start)
+              (call $fmt_field (i32.add (local.get $out) (local.get $start))
+                (i32.sub (local.get $oi) (local.get $start)) (local.get $width) (local.get $left) (local.get $wide))))))
           (br $loop)))
       ;; Unknown specifier: skip it.
       (br $loop)))
