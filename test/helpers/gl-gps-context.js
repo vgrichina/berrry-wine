@@ -53,6 +53,11 @@ const WAT = String.raw`
  (func (export "probe_tex_bucket") (result i32)
    (i32.sub (call $glg_tex_slot (load.field DxObject misc1 (global.get $gl_sw_r_tex)))
      (global.get $glg_mem)))
+ ;; The mip-chain cache set (byte offset in the producer's block) of that
+ ;; texture: equal for chains that compete for the same ways.
+ (func (export "probe_chain_set") (result i32)
+   (i32.sub (call $glg_chain_set (load.field DxObject misc1 (global.get $gl_sw_r_tex)))
+     (global.get $glg_mem)))
  (func (export "probe_window") (param $hwnd i32) (param $w i32) (param $h i32)
    (call $wnd_table_set (local.get $hwnd) (i32.const 0))
    (call $client_rect_set (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)))`;
