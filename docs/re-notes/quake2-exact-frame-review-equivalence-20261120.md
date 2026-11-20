@@ -53,3 +53,23 @@ Localhost box ID null, state NOT_CREATED, expiry null, stop receipt null. Root
 owns shutdown. Git, relevant binary diffs and owned new-file patches are the
 source archive; selected named images and unique logs are retained without
 source snapshots or media copies.
+
+Continuation: `scratch/runs/20261120-quake2-fresh-user-equivalence-original-combat/`.
+The equivalent page path now requires an owning USER observation strictly after
+the HMAC authenticated fresh capture's completion, taking the maximum with the
+caller's bound. Invalid bounds refuse. The common helper and direct five-second
+API are unchanged. Actual ccdd47 oldfail admitted a current-ready pre-fresh USER
+observation; final controls refuse pre-fresh/equal-time/weaker-caller cases with
+zero DOWN and accept a genuinely later observation. Stricter caller bounds hold.
+Final realBrowser equality/identity/race/age/signature/replay controls, native
+guard/legacy/capture tests and the locked guarded build pass.
+
+Final exact-code receiver: source 1795166139707, completion 1795166139805,
+personal review 1795166153493, signed fresh completion 1795166153604, owning USER
+1795166153708, actual WM_KEYDOWN65 consumption 1795166153884, separate trusted
+physical-zero UP 1795166154196. The old five-second API rejects that source.
+An earlier 80 ms receiver intent consumed DOWN but its UP had already fired
+during synchronous full-frame checks; that scope closed permanently. The fresh
+final receiver used a 400 ms intent within unchanged limits. No original claim
+comes from these receiver controls. See the continuation result for the bounded
+original outcome and cleanup/publication receipts.

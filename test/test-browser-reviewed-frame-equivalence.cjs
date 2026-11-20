@@ -8,7 +8,66 @@ const {createNativeEquivalence,verifyPageEquivalence}=require('../lib/browser-re
 const {reviewed,createController}=require('../tools/quake2-native-consumption-input.cjs');
 const {captureWhole,create}=require('../tools/browser-transients.cjs');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+// Model only native owner state here; real full-root capture/equality is tested
+// below. Use the actual guard, common USER helper and signed page verifier.
+async function freshUserControls(){
+ const {createBrowserNativeInput}=require('../lib/browser-native-input.js');
+ const common=require('../tools/gltron-current-native-input.cjs');
+ let factory=require('../tools/quake2-native-consumption-input.cjs').createQuake2Session;
+ if(process.env.QUAKE2_EQUIVALENCE_BASELINE){
+  const Module=require('node:module'),m=new Module(__filename,module);
+  m.filename=path.resolve(__dirname,'../tools/quake2-native-consumption-input.cjs');m.paths=module.paths;
+  m._compile(cp.execFileSync('git',['show','ccdd47c986193c42d56f216619ba4a6834d239f9:tools/quake2-native-consumption-input.cjs'],{encoding:'utf8'}),m.filename);
+  factory=m.exports.createQuake2Session;
+ }
+ for(const variant of ['pre-fresh','equal-fresh','post-fresh','stricter-caller','invalid-caller']){
+  const scene=[1,1000,65537,65537,0,65537,7,0,7,0],words=[2,65537,7,0,1,1000];
+  const instance={exports:{capture_publication_word:i=>words[i],get_authoritative_capture_hwnd:()=>65537,
+   wnd_lookup_live:()=>1,wnd_lookup_generation:()=>7n,get_window_thread:()=>1}};
+  const gps={endpoint:{},presenter:{layer:{canvas:{}}}};
+  const renderer={canvas:{},inputQueue:[],windows:{65537:{visible:true,processId:1000,wasm:instance}},
+   handleKeyDown(){},handleKeyUp(){},handleMouseDown(){},handleMouseUp(){},peekKeyDownState:()=>0};
+  const wine={instance,renderer,processId:1000,running:true,_processObject:{},_wasmModule:{},memory:{buffer:new ArrayBuffer(64)},
+   hostCtx:{getGlGpsBridge:()=>gps},guestWorker:{link:{slot:0,worker:{},endpointIdentity:1}}};
+  const guard=createBrowserNativeInput(wine,{trusted:()=>true});wine._browserNativeInput=guard;
+  const root={document:{hasFocus:()=>true,visibilityState:'visible'}};
+  const observe=()=>guard.withActor(0,'check_input',()=>guard.observe(scene));
+  const key=crypto.randomBytes(32).toString('hex');
+  const helpers={...common,verifyPageEquivalence,inspectNativeRoute:()=>({running:true,guestWorker:true,
+   scopes:[{currentContext:true,guardedInput:true,nativeInputActor:true,tokenImport:true,consumedImport:true}],bridge:guard.snapshot()})};
+  const session=factory(root,wine,helpers,{equivalenceKey:key});
+  const sourceAt=Date.now();observe();session.observe();const native=session.context();
+  const observedAt=guard.snapshot().observedAt;assert(guard.snapshot().ready);
+  await sleep(2);const freshAt=Date.now();await sleep(2);const completedAt=Date.now();
+  const intent={kind:'key',code:65,key:'a',domCode:'KeyA',nonce:crypto.randomUUID(),name:'action-0',ms:80,
+   mode:'menu',review:'explicit fixture intent',reviewedAt:sourceAt,imageSHA256:'a'.repeat(64),completedAt:sourceAt};
+  const digest=JSON.stringify([intent.nonce,intent.name,intent.kind,intent.code,null,null,null,intent.key,intent.domCode,
+   intent.ms,intent.mode,intent.review,intent.reviewedAt,intent.imageSHA256]);
+  const shape={rgbaSHA256:'b'.repeat(64),width:800,height:600,orientation:'top-left-row-major-RGBA8'};
+  const body={version:'native-whole-frame-equivalence-v1',id:crypto.randomUUID(),intent:digest,
+   source:{...shape,sha256:intent.imageSHA256,at:sourceAt,completedAt:sourceAt,reviewedAt:sourceAt},
+   fresh:{...shape,at:freshAt,completedAt,personallyReviewed:false},identity:{native}};
+  if(variant==='equal-fresh')body.fresh.completedAt=observedAt,body.fresh.at=observedAt;
+  if(variant==='post-fresh'){await sleep(2);observe();assert(guard.snapshot().observedAt>completedAt);}
+  const payload=JSON.stringify(body),envelope={payload,signature:crypto.createHmac('sha256',Buffer.from(key,'hex')).update(payload).digest('hex')};
+  let bound=sourceAt-1;
+  if(variant==='stricter-caller'){await sleep(2);observe();bound=Date.now()+100;}
+  if(variant==='invalid-caller')bound=NaN;
+  let downs=0;const dispatch=()=>downs++;
+  if(variant==='invalid-caller')await assert.rejects(session.prepareEquivalent(intent,bound,envelope),/bound/);
+  else{
+   const state=await session.prepareEquivalent(intent,bound,envelope);
+   if(state.prepared)dispatch();
+   assert.equal(downs,variant==='post-fresh'?1:0,variant+' must enforce signed fresh completion and caller bound');
+   if(variant==='post-fresh')assert.equal(state.prepared.state,'PREPARED');
+   else{assert(guard.snapshot().ready,'negative remains meaningfully current-ready');assert(!state.prepared);}
+  }
+  session.close('fixture complete');console.log('PASS signed fresh USER boundary '+variant+' DOWN='+downs);
+ }
+}
 (async()=>{
+ await freshUserControls();
+ if(process.env.QUAKE2_EQUIVALENCE_USER_ONLY)return;
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'review-equivalence-')),transient=create();
  let display,browser;const results=[];
  try{

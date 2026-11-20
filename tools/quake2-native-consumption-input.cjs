@@ -70,7 +70,12 @@ function createQuake2Session(root,wine,helpers,{equivalenceKey}={}){
       if(JSON.stringify(proof.identity.native)!==JSON.stringify({scene:scene.slice(),slot,viewport:geometry(),owner:binding.owner}))
         throw Error('equivalence native context mismatched');
       if(nonces.has(intent.nonce))throw Error('equivalence nonce reused');
-      const state=helpers.observeAndPrepareNativeIntent(wine,{...intent,owner:binding.owner,reviewed:true},notBefore);
+      if(!Number.isSafeInteger(notBefore))throw Error('equivalence invalid USER observation bound');
+      // Only this opt-in path requires a USER observation strictly after the
+      // authenticated fresh capture completed. A caller can tighten this
+      // boundary, never weaken it to the old reviewed source timestamp.
+      const state=helpers.observeAndPrepareNativeIntent(wine,{...intent,owner:binding.owner,reviewed:true},
+        Math.max(notBefore,proof.fresh.completedAt));
       if(state.prepared){nonces.add(intent.nonce);if(state.prepared.state!=='PREPARED')throw Error('equivalence native prepare refused');
         state.reviewEquivalence={source:proof.source,fresh:proof.fresh,id:proof.id};}
       return state;
