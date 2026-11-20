@@ -998,6 +998,50 @@
       (call $gl32 (i32.sub (i32.add (local.get $d) (local.get $bw)) (i32.const 4))))
     (i32.add (local.get $pc) (i32.const 32)))
 
+  ;; 88 X87M code base idx sc disp w x / 89 X87MS (the same, a store) /
+  ;; 90 X87R code (07e kind 32). One x87 instruction each, through 06's
+  ;; $fpu_exec_mem / $fpu_exec_reg exactly as th_fpu_mem / th_fpu_reg run
+  ;; it. A memory form first proves [ga, ga+size) in its window (size is
+  ;; code>>12; a written window holds no decoded code), re-guarding on a
+  ;; miss; a re-guard that fails exits to x before anything changed, and
+  ;; threaded code runs the instruction. So $fpu_exec_mem never faults
+  ;; here. A run of x87 ops is taken here without going back to $uop_fast
+  ;; between them.
+  (global $uop_x87_ops (mut i32) (i32.const 0))
+  (func (export "uop_x87_ops") (result i32) (global.get $uop_x87_ops))
+  (func $uop_x87 (param $pc i32) (result i32)
+    (local $op i32) (local $code i32) (local $ga i32) (local $w i32) (local $n i32) (local $v i32)
+    (loop $L
+      (local.set $op (i32.load (local.get $pc)))
+      (local.set $code (i32.load offset=4 (local.get $pc)))
+      (global.set $uop_x87_ops (i32.add (global.get $uop_x87_ops) (i32.const 1)))
+      (if (i32.eq (local.get $op) (i32.const 90))
+        (then
+          (call $fpu_exec_reg (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7))
+            (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 15))
+            (i32.and (local.get $code) (i32.const 15)))
+          (local.set $pc (i32.add (local.get $pc) (i32.const 8))))
+        (else
+          (local.set $ga (i32.add (i32.add (i32.load (i32.load offset=8 (local.get $pc)))
+                                           (i32.shl (i32.load (i32.load offset=12 (local.get $pc)))
+                                                    (i32.load offset=16 (local.get $pc))))
+                                  (i32.load offset=20 (local.get $pc))))
+          (local.set $w (i32.load offset=24 (local.get $pc)))
+          (local.set $n (i32.shr_u (local.get $code) (i32.const 12)))
+          (local.set $v (i32.load offset=4 (local.get $w)))
+          (if (i32.or (i32.gt_u (i32.sub (local.get $ga) (i32.load (local.get $w)))
+                                (i32.sub (local.get $v) (local.get $n)))
+                      (i32.lt_u (local.get $v) (local.get $n)))
+            (then
+              (if (i32.eqz (call $uop_reguard (local.get $w) (local.get $ga) (local.get $n)))
+                (then (return (i32.load offset=28 (local.get $pc)))))))
+          (call $fpu_exec_mem (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7))
+            (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 15))
+            (local.get $ga))
+          (local.set $pc (i32.add (local.get $pc) (i32.const 32)))))
+      (br_if $L (i32.lt_u (i32.sub (i32.load (local.get $pc)) (i32.const 88)) (i32.const 3))))
+    (local.get $pc))
+
   (global $uop_io_kind   (mut i32) (i32.const 0)) ;; 0 exited, 1 service op at pc, 2 window miss
   (global $uop_io_budget (mut i32) (i32.const 0))
   (global $uop_io_ga     (mut i32) (i32.const 0))
@@ -1040,6 +1084,8 @@
                                              (i32.eq (local.get $op) (i32.const 16)))
                       (then (i32.const 24)) (else (i32.const 20))))))))
           (br $L)))
+      (if (i32.lt_u (i32.sub (local.get $op) (i32.const 88)) (i32.const 3))
+        (then (local.set $pc (call $uop_x87 (local.get $pc))) (br $L)))
       (if (i32.eq (local.get $op) (i32.const 79)) (then
         (call $pending_push (i32.load offset=4 (local.get $pc))
           (i32.load offset=8 (local.get $pc))
@@ -1140,7 +1186,10 @@
                   ;; Pending CALL/RET observation services.
                   $svc $svc
                   $c81 $c82 $c83 $c84 $c85 $c86
-                  $svc $c0
+                  $svc
+                  ;; 88-90 X87M / X87MS / X87R: calls, $uop_run's $uop_x87
+                  $svc $svc $svc
+                  $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
         (global.set $eip (i32.load offset=4 (local.get $pc)))

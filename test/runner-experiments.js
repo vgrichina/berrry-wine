@@ -86,6 +86,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // REP MOVS/STOS as bulk COPY/FILL ops (07e kind 30, 07d 82/83; on by
   // default, --no-uop-rep turns it off and the tier declines such heads).
   const repWanted = () => uopWanted() && !hasFlag('no-uop-rep') && (appPolicy() || {}).uopRep !== false;
+  // x87 (07e kind 32, 07d X87M/X87MS/X87R; on by default, --no-uop-x87 or
+  // `uopX87: false` turns it off, with the ES/CS/SS/DS prefixes and FWAIT).
+  const uopX87Wanted = () => uopWanted() && !hasFlag('no-uop-x87') && (appPolicy() || {}).uopX87 !== false;
+  // LEAVE (07e kind 33; on by default, --no-uop-leave or `uopLeave: false`).
+  const uopLeaveWanted = () => uopWanted() && !hasFlag('no-uop-leave') && (appPolicy() || {}).uopLeave !== false;
   // Trace heads (on by default; --no-uop-trace-heads or `uopTraceHeads: false`
   // on the app turns them off; --uop-trace-heads=MIN,MAX sets the limits): a hot
   // head with no back edge is lowered as a forward trace -- straight-line
@@ -385,6 +390,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     inheritWasm('set_uop_trace_heads', traceWanted() ? 1 : 0);
     inheritWasm('set_uop_mmx', mmxWanted() ? 1 : 0);
     inheritWasm('set_uop_rep', repWanted() ? 1 : 0);
+    inheritWasm('set_uop_x87', uopX87Wanted() ? 1 : 0);
+    inheritWasm('set_uop_leave', uopLeaveWanted() ? 1 : 0);
     for (const [setter, wanted] of WIDEN) if (wanted()) inheritWasm(setter, 1);
     if (traceWanted()) {
       if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) inheritWasm('set_uop_trace_limits', TRACE_LIMITS[0], TRACE_LIMITS[1]);
@@ -431,6 +438,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (available('set_uop_trace_heads')) set('set_uop_trace_heads', traceWanted() ? 1 : 0);
       if (available('set_uop_mmx')) set('set_uop_mmx', mmxWanted() ? 1 : 0);
       if (available('set_uop_rep')) set('set_uop_rep', repWanted() ? 1 : 0);
+      if (available('set_uop_x87')) set('set_uop_x87', uopX87Wanted() ? 1 : 0);
+      if (available('set_uop_leave')) set('set_uop_leave', uopLeaveWanted() ? 1 : 0);
       if (traceWanted() && available('set_uop_trace_limits')) {
         if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) set('set_uop_trace_limits', TRACE_LIMITS[0], TRACE_LIMITS[1]);
       }
