@@ -1,6 +1,6 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),crypto=require('node:crypto');
-const {createExactLoader}=require('../tools/gltron-qualified-run-loader.cjs');
+const {createExactLoader,preflightModule}=require('../tools/gltron-qualified-run-loader.cjs');
 const root=path.resolve(__dirname,'..'),run=root+'/scratch-fixture-new',old=root+'/scratch-fixture-closed';
 const descriptor=source=>({source,sha256:crypto.createHash('sha256').update(source).digest('hex'),identity:'exact fixture'});
 test('old relative routing fails; actual compiled lazy absolute pin executes its body',()=>{
@@ -39,4 +39,15 @@ test('preflight rejects a missing startup helper inside a lazy body before any e
   const complete=createExactLoader({root,sources});
   assert.equal(complete.preflight([run+'/browser.cjs']).length,3);
   assert.equal(complete.compiled.length,0);
+});
+test('compiled module ABI preflight rejects missing and wrong-kind native exports',()=>{
+  // A real compiled module exporting f() as a function. No runtime or fixture
+  // returns can turn an absent authoritative-capture export into a capability.
+  const bytes=Buffer.from('0061736d0100000001040160000003020100070501016600000a040102000b','hex');
+  const proof=preflightModule(bytes,[{name:'f',kind:'function'}]);
+  assert.equal(proof.sha256,crypto.createHash('sha256').update(bytes).digest('hex'));
+  assert.equal(proof.bytes,bytes.length);
+  assert.throws(()=>preflightModule(bytes,[{name:'f',kind:'global'}]),/f:global/);
+  assert.throws(()=>preflightModule(bytes,[{name:'get_authoritative_capture_hwnd',kind:'function'}]),/get_authoritative_capture_hwnd:function/);
+  assert.throws(()=>preflightModule(bytes,[]),/explicit native module exports/);
 });

@@ -26,7 +26,6 @@ function createExactLoader({root,sources,externals=[]}){
       if(q.startsWith('.')||path.isAbsolute(q)){
         const target=path.resolve(path.dirname(filename),q);
         if(external.has(target))return native(target);
-        if(external.has(target))return native(target);
         if(target===root||target.startsWith(root+path.sep)||retained.has(target))return load(target);
         throw Error('dependency outside exact qualified closure '+target);
       }
@@ -58,4 +57,13 @@ function createExactLoader({root,sources,externals=[]}){
   }
   return {load,preflight,compiled,identities:[...retained].map(([filename,r])=>({filename,sha256:r.sha256,identity:r.identity}))};
 }
-module.exports={createExactLoader};
+// Check the compiled binary itself before opening any runtime scope. Syntax
+// and successful JS imports cannot prove a native controller's Wasm ABI.
+function preflightModule(bytes,requiredExports){
+  assert(Array.isArray(requiredExports)&&requiredExports.length,'explicit native module exports required');
+  const module=new WebAssembly.Module(bytes),exports=WebAssembly.Module.exports(module);
+  const missing=requiredExports.filter(row=>!exports.some(e=>e.name===row.name&&e.kind===row.kind));
+  assert.equal(missing.length,0,'qualified native module exports unavailable: '+missing.map(e=>e.name+':'+e.kind).join(', '));
+  return {sha256:sha(bytes),bytes:bytes.byteLength,exports,imports:WebAssembly.Module.imports(module)};
+}
+module.exports={createExactLoader,preflightModule};
