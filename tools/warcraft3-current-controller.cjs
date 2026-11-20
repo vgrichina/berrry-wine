@@ -178,4 +178,42 @@ function loadCaptureAuthority(record=()=>{}){
   };
   m._compile(fs.readFileSync(file,'utf8'),file);return m.exports;
 }
-module.exports={ROOT,PINS,POLICY,INPUTS,sha,git,qualifiedSource,qualifiedLoader,frozenGraph,observeProducer,producerKey,createReadiness,scope,sendPublished,manualIntent,nativeReadExpression,createCaptureCodec,loadCaptureAuthority};
+// Passive opt-in diagnostic. Caller objects and their properties never enter
+// the ring; no timers, console sink, scene refresh or producer work is added.
+function createPassiveNativeTrace(api){
+  const capacity=256,width=8,ring=new Float64Array(capacity*width);
+  const clock=performance.now.bind(performance),apply=Reflect.apply;
+  let count=0;const totals=new Float64Array(7),last=new Float64Array(7);
+  const scalar=v=>typeof v==='number'&&Number.isFinite(v)?v:typeof v==='boolean'?+v:0;
+  function record(method,phase,arg,result){
+   try {
+    const n=count++,i=(n%capacity)*width;
+    ring[i]=n;ring[i+1]=clock();ring[i+2]=method;ring[i+3]=phase;
+    ring[i+4]=scalar(arg);ring[i+5]=scalar(result);
+    ring[i+6]=typeof result==='number'?1:typeof result==='boolean'?2:0;
+    ring[i+7]=0;
+    if(phase===0){totals[method]++;last[method]=ring[i+1];}
+   }catch{/* Diagnostic failure cannot replace callback result/exception. */}
+  }
+  const names=['_unused','observe','validate','consumed','dequeued','status','close'];
+  for(let method=0;method<names.length;method++){
+   const name=names[method],descriptor=Object.getOwnPropertyDescriptor(api,name);
+   if(!descriptor||typeof descriptor.value!=='function')continue;
+   const original=descriptor.value;
+   Object.defineProperty(api,name,{...descriptor,value:function(...args){
+    record(method,0,args[0],undefined);
+    let result;
+    try {result=apply(original,this,args);}catch(error){record(method,2,args[0],undefined);throw error;}
+    record(method,1,args[0],result);return result;
+   }});
+  }
+  // Only copied numeric cells leave the ring. No references to caller objects.
+  Object.defineProperty(api,'traceSnapshot',{value:()=>({capacity,width,count,rows:Array.from(ring)})});
+  Object.defineProperty(api,'traceCounters',{value:()=>({count,totals:Array.from(totals),last:Array.from(last)})});
+  return api;
+ }
+function passiveNativeTraceBootstrap(){
+  return `;(()=>{const original=globalThis.createBrowserNativeInput;
+    globalThis.createBrowserNativeInput=function(...args){return (${createPassiveNativeTrace})(Reflect.apply(original,this,args));};})();`;
+}
+module.exports={ROOT,PINS,POLICY,INPUTS,sha,git,qualifiedSource,qualifiedLoader,frozenGraph,observeProducer,producerKey,createReadiness,scope,sendPublished,manualIntent,nativeReadExpression,createCaptureCodec,loadCaptureAuthority,createPassiveNativeTrace,passiveNativeTraceBootstrap};
