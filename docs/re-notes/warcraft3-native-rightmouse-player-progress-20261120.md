@@ -597,3 +597,29 @@ remains blocked. No new box/runtime was created: ID null, NOT_CREATED, expiry
 null, stop receipt null. Exact module10bdae/CRT887eb5/media/proof references were
 SHA-verified without copying. Publication receipts and exact source patches
 are retained with the run.
+
+## Decode-fixed original and launch environment, 2026-11-20
+
+Run `20261120-warcraft3-decode-fixed-original-prologue` executed the affected
+original with committed `84ce0e7b1`, module10bdae and real CRT887eb5. The software
+producer advanced and both actual worker modules matched the retained module.
+The retained whole800x600 host frame shows Warcraft's menu within the browser
+and the fullscreen-consent strip. Host consent and game input were not sent;
+profile/Prologue/Thrall/objective/Quit remain unproved.
+
+The physical environment check could not verify the required TMPDIR/cache:
+Chrome's `/proc` environment exposed neither variable. Independently, the
+qualified transient helper's launch-environment construction replaces TMPDIR
+with its own tmpfs child. This is a task-environment failure, not evidence of a
+game or decoder failure. The driver was signalled to close before consent;
+45 ordinary requests preceded closure, with no subsequent endpoint requests
+and no replay. Finite supervision joined all owned children without leaks.
+
+The run-local driver now reapplies and checks the exact requested environment
+before browser launch, retaining its original executed source as a patch.
+A local Node child verifies the corrected paths; the negative child confirms
+the old TMPDIR override. That negative child also used the old TMPDIR and thus
+did not meet the task's exact-environment requirement. These offline controls
+do not establish a corrected Chrome environment or native gameplay. The closed
+original is not relaunched. No shared bridge, host, timing guard or game state
+was changed. Box ID null, NOT_CREATED; expiry and stop receipt null.
