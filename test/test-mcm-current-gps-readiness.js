@@ -10,7 +10,7 @@ const GPS = require('../lib/gpu-stream-render-worker');
 const { makeProducer } = require('./gpu-stream-fixture');
 const bytes = Buffer.from('0061736d01000000', 'hex');
 
-function fixture() {
+function fixture(app='dx_boids') {
   const producer = makeProducer();
   const instance = new WebAssembly.Instance(new WebAssembly.Module(bytes));
   const adapter = GPS.create({instance, memory:{buffer:producer.buffer}, backend:'software',
@@ -21,11 +21,11 @@ function fixture() {
   const layer={writeSeq:1,stale:()=>false};
   const win={wasm:instance,processId:3,_gpuFrameLayer:layer};
   const bridge={endpoint:port,presenter:{layer,win,stamp:0,presents:1}};
-  const wine={running:true,instance,processId:3,hostCtx:{getD3dimBridge:()=>bridge},
+  const wine={running:true,instance,renderer:{peekKeyDownState:()=>null},processId:3,hostCtx:{getD3dimBridge:()=>bridge},
     guestWorker:{link:{endpointIdentity:7,slot:0,worker:{},module:{}}},
     _renderWorkerManager:{worker:{},ports:new Map([[9,port]])}};
   const common={crypto:webcrypto,Atomics,SharedArrayBuffer};
-  const page=vm.createContext({...common,crossOriginIsolated:true,runningApps:[{name:'dx_boids',wine}]});
+  const page=vm.createContext({...common,crossOriginIsolated:true,runningApps:[{name:app,wine}]});
   const guest=vm.createContext({...common,endpointIdentity:7,workerSlot:0,instance});
   const entry={options:port.options,adapter};
   const render=vm.createContext({...common,instance,endpoints:new Map([[9,entry]])});
@@ -33,8 +33,8 @@ function fixture() {
     url:sessionId==='guest'?'guest-worker.js':'d3d-render-worker.js',
     scripts:[{scriptId:'1',bytecodeAvailable:true,sha256:bound.sha(bytes)}]}]));
   let time=Date.now(), dispatches=0;
-  const chain=bound.createChain({app:'dx_boids',workers,pageSession:'page',now:()=>time,
-    evaluate:async(expression,session)=>JSON.parse(JSON.stringify(vm.runInContext(expression,
+  const chain=bound.createChain({app,workers,pageSession:'page',now:()=>time,
+    evaluate:async(expression,session)=>JSON.parse(JSON.stringify(await vm.runInContext(expression,
       session==='guest'?guest:session==='render'?render:page))),
     send:async method=>method==='Debugger.getScriptSource'?{bytecode:bytes.toString('base64')}:{data:Buffer.from('image').toString('base64')}});
   const review=c=>({...c,review:'Reviewed full current frame'});
@@ -55,6 +55,34 @@ test('current GPS ownership passes with absent legacy readiness and actual softw
     await f.chain.admit(f.review(s.capture),f.dispatch);
     assert.equal(f.dispatches,1);
   } finally {f.adapter.destroy();}
+});
+
+test('MCM observation adapter arms exact synchronous API once and requires a new reviewed capture',async()=>{
+  const f=fixture('mcm');try {
+    f.wine.memory={};let calls=0;
+    f.wine.armD3dimPublicationObservation=async options=>{
+      assert.equal(options.synchronousSource,true);assert.equal(options.maxRecords,256);calls++;
+      return f.wine._d3dimPublicationJoin={synchronous:{valid:()=>true,owner:{scope:'own'},observationGeneration:1}};
+    };
+    const old=await f.chain.capture('before-arm');
+    const receipt=await f.chain.armSynchronousSource();
+    assert.equal(receipt.endpoint,7);assert.equal(calls,1);
+    await assert.rejects(f.chain.armSynchronousSource(),/unarmed MCM/);
+    await assert.rejects(f.chain.admit(f.review(old.capture),f.dispatch),/current reviewed capture/);
+    assert.equal(f.dispatches,0);
+  }finally{f.adapter.destroy();}
+});
+
+test('MCM arming replacement closes the adapter before any input',async()=>{
+  const f=fixture('mcm');try {
+    f.wine.memory={};
+    f.wine.armD3dimPublicationObservation=async()=>{
+      f.wine.memory={};
+      return f.wine._d3dimPublicationJoin={synchronous:{valid:()=>true}};
+    };
+    await assert.rejects(f.chain.armSynchronousSource(),/owner changed while arming/);
+    assert(f.chain.closed);assert.equal(f.dispatches,0);
+  }finally{f.adapter.destroy();}
 });
 
 for(const [name,mutate] of Object.entries({

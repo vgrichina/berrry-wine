@@ -2,6 +2,7 @@
 // Native-CDP capture/admission chain. No guest memory, clocks or callbacks are written.
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const {currentSynchronousSource, ARM_SYNCHRONOUS_SOURCE} = require('./mcm-synchronous-source.cjs');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const FIELDS = ['processId', 'processObject', 'endpoint', 'endpointObject', 'workerObject',
@@ -30,6 +31,7 @@ function same(a, b) {
 // Object tokens are scoped to this actual document. Replacing an owner with an
 // equal-looking object, or reloading the page, cannot reuse a reviewed token.
 const PAGE_READ = `(() => {
+  const currentSynchronousSource = ${currentSynchronousSource.toString()};
   const k = '__mcmPassiveIdentityV1';
   if (!globalThis[k]) Object.defineProperty(globalThis, k, {value:{
     epoch:crypto.randomUUID(), ids:new WeakMap(), next:0}});
@@ -45,8 +47,12 @@ const PAGE_READ = `(() => {
     const owned=ports.filter(p=>p===b?.endpoint&&p.options?.api==='d3dim-gps');
     if(b?.endpoint&&(owned.length!==1||b.workerAsyncError||b.workerClosing))throw Error('D3DIM GPS owner unavailable');
     if(!b?.endpoint&&ports.some(p=>p.options?.api==='d3dim-gps'))throw Error('unbound D3DIM GPS endpoint');
-    const p=owned.length===1?owned[0]:null, presenter=b?.presenter, layer=presenter?.layer, win=presenter?.win;
-    if(p&&(!layer||!win||win._gpuFrameLayer!==layer||layer.stale?.()||!presenter.presents||
+    const p=owned.length===1?owned[0]:null, presenter=b?.presenter, win=presenter?.win;
+    let layer=presenter?.layer, synchronous=null;
+    if(p&&win?._dxFrameLayer&&w?.renderer?._overlayFrameLayer(win)===win._dxFrameLayer) {
+      synchronous=currentSynchronousSource(w,win);layer=synchronous.layer;
+    }
+    if(p&&(!layer||!win||(!synchronous&&win._gpuFrameLayer!==layer)||layer.stale?.()||!presenter.presents||
       presenter.stamp===null||!layer.writeSeq||win.wasm!==w.instance||win.processId!==w.processId))
       throw Error('current D3DIM GPS publication required');
     return {name:a.name,running:!!w?.running,stopped:!!w?._stopped,guestWorker:!!g,
@@ -55,7 +61,7 @@ const PAGE_READ = `(() => {
       renderWorkerObject:token(w?._renderWorkerManager?.worker)??'none',
       renderRole:p?'d3dim-gps':'none',renderBridge:p?token(b):'none',
       renderWindow:p?token(win):'none',renderLayer:p?token(layer):'none',
-      publication:p?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
+      publication:synchronous?synchronous.publication:p?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
       guestEndpoint:l?.endpointIdentity,slot:l?.slot,workerObject:token(l?.worker),
       moduleObject:token(l?.module),epoch:state.epoch,
       slice:w?._workerLastSlice??null,d3dStats:g?.d3dStats??null,
@@ -105,7 +111,7 @@ function rendererFields(endpoint) {
 }
 
 function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now}) {
-  let latest = null, busy = false, closed = false;
+  let latest = null, busy = false, closed = false, synchronousArmed = false;
   // CDP WebAssembly scripts are immutable within their actual Worker/session.
   // Cache only bytes we recovered and hashed ourselves. Each use still reads
   // current page/Worker/instance/renderer identities and the full script set.
@@ -287,7 +293,21 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     }
     return {stream,at:new Date(now()).toISOString(),render};
   }
-  return {capture, admit, readLive, progress, get closed(){return closed;}};
+  async function armSynchronousSource() {
+    assert(!closed && !busy && !synchronousArmed && app==='mcm', 'idle unarmed MCM chain required');
+    busy=true;
+    try {
+      const before=await readLive();
+      const receipt=await evaluate(ARM_SYNCHRONOUS_SOURCE);
+      const after=await readLive();same(before.identity,after.identity);
+      assert.equal(receipt.endpoint,after.identity.endpoint,'armed actual command endpoint');
+      assert.equal(receipt.processId,after.identity.processId,'armed actual process');
+      synchronousArmed=true;latest=null;
+      return receipt;
+    } catch(error) {closed=true;throw error;}
+    finally {busy=false;}
+  }
+  return {capture, admit, readLive, progress, armSynchronousSource, get closed(){return closed;}};
 }
 
 const KEYS = {ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};
@@ -337,4 +357,4 @@ async function hold({send, session, keys, holdMs, sample, renderSample, saveSamp
   if(error) {error.holdReceipt={started,releaseAt,samples,attempted:attempted.map(k=>k.key)};throw error;}
   return {started,releaseAt,samples,attempted:attempted.map(k=>k.key),meaning:'physical host interval; passive counters do not prove DirectInput polls or simulation steps'};
 }
-module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, WORKER_READ, RENDER_READ};
+module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE};

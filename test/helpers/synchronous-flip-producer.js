@@ -20,7 +20,7 @@ const { Win98Renderer } = require('../../lib/renderer');
 const { createCanvas } = require('../../lib/raster-canvas');
 const { BASE } = require('../../lib/region-map.generated');
 
-module.exports = async function synchronousFlipControl() {
+module.exports = async function synchronousFlipControl(inspect = () => {}) {
   const extra = `
     (global $sync_fixture_front (mut i32) (i32.const 0))
     (func (export "sync_fixture_main")
@@ -99,6 +99,7 @@ module.exports = async function synchronousFlipControl() {
     const join = new R.SurfacePublicationJoin({epoch,journal,memory,renderer,owner,
       ownerScope:owner.scope,workerSlot:9,endpointId:link.endpointIdentity,observationGeneration:1});
     ctx.d3dimPublicationJoin = join;
+    await inspect({phase:'setup',renderer,window:renderer.windows[0x77],join,link,memory,ctx,gdi,host});
     assert.equal(await link.callExport('sync_fixture_flip'), 0);
     const record = journal.records()[0];
     assert(record, 'real synchronous native Flip must produce a source witness');
@@ -133,14 +134,17 @@ module.exports = async function synchronousFlipControl() {
     assert.equal(join.rows.length,1,'actual synchronous request must join canonical decode and compositor');
     assert.deepEqual(join.rows[0].canonicalRead.sharedOverlayAdmission,{empty:true});
     assert.equal(join.rows[0].request.serial,record.request.serial);
+    await inspect({phase:'published', renderer, window, join, record, link, memory, ctx, gdi, host});
     if (process.env.D3DIM_SYNC_EVIDENCE) console.log('SYNC_COMPLETED_SOURCE ' + JSON.stringify({record,
       retainedHex:Buffer.from(journal.readRetained(record)).toString('hex'), rows:join.rows}));
     renderer.repaint(); assert.equal(join.rows.length,1,'duplicate publication is not another completed frame');
+    await inspect({phase:'repainted', renderer, window, join, record, link, memory, ctx, gdi, host});
     await link.callExport('sync_fixture_hud');
     const presentation = gdi.surfacePresentations.get(0x200000+(front-BASE.DX_OBJECTS)/32);
     assert.equal(presentation.owedPresentRequest,null,'partial HUD has no completed producer request');
     renderer.repaint();
     assert.equal(join.rows.length,1,'partial HUD cannot inherit the old retained source');
+    await inspect({phase:'incomplete', renderer, window, join, record, link, memory, ctx, gdi, host});
     assert.equal(renderer.canvas.getContext('2d').getImageData(0,0,1,1).data[0],255,
       'ordinary HUD pixels remain current rather than selecting the retained older image');
     assert.equal(await link.callExport('sync_fixture_flip'), 0);
@@ -171,6 +175,7 @@ module.exports = async function synchronousFlipControl() {
     renderer.repaint();
     assert.equal(join.rows.length,2,'fresh full decode and current empty selection qualify');
     assert.equal(join.rows[1].request.serial,next.request.serial);
+    await inspect({phase:'replacement', renderer, window, join, record:next, link, memory, ctx, gdi, host});
     const pending = epoch.begin();
     await link.callExport('sync_fixture_flip');
     assert.match(journal.records()[2].versionRejected,/not-sole/);
@@ -201,6 +206,8 @@ module.exports = async function synchronousFlipControl() {
       negativeEpoch.end(ticket);
     }
     negativeProducer.close();
+    join.retire('native-fixture-owner-retired');
+    await inspect({phase:'retired-owner',renderer,window,join,record,link,memory,ctx,gdi,host});
     console.log('actual owning Worker synchronous native Flip source/retained-copy/concurrent rejection PASS');
   } finally { await link.stop(); }
 };
