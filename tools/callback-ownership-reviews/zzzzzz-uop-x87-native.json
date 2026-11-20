@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "ac1dd7ab24e4b2a72086e286525b86eb41a6d2a3709bb7438dc03c1c185661b0",
+      "sha256": "084887a7eff7a51a0d7b7030c57b239542221ab62db4abe993c35ffc244a4ae8",
+      "reason": "Review 20261120 uop native x87: one inherited compile-time setter row (set_uop_x87_native, --no-uop-x87-native) beside set_uop_x87. No callback, timer, guest entry or lifetime change."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "aed6922137217995a363aa9c79f3ab9237e2f0818f6df80fcf1b2d8a1de56bcf",
+      "sha256": "d8e4dc0887a904e41a21487cf67958f0c58efbfc8b3b23892ac1d50b455c704c",
+      "reason": "Review 20261120 uop native x87: br_table gains ops 91-107, arms that read/write only the per-thread x87 file and globals ($fpu_top/$fpu_tag/$fpu_sw/$fpu_cw), guest memory inside proven windows, and AX (FNSTSW); every declined case leaves through the existing $svc exit to $uop_run's $uop_x87 with nothing written. Calls only $fpu_mul (pure). No EIP write, guest call/return, callback frame or lifetime change."
+    }
+  ]
+}
