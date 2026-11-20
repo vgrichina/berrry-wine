@@ -273,3 +273,34 @@ source repair was needed. This establishes bounded actual WebGL browser
 move/reply, without full-game acceptance, a disk-latency repair, or a general
 hardware/performance claim. Source recovery uses Git plus recorded patches;
 no source/media archives, local browser, extra box, workers or public deployment.
+
+### 2026-11-20: native DI7 observation seam; manual integration still unqualified
+
+Evidence: `scratch/runs/20261120-pawn-directinput7-consumer-after-temp-cleanup/`.
+No original Pawn or browser was launched. The current native dispatcher and
+DirectInput handlers were exercised through a real v7 mouse created by
+`IDirectInput7::CreateDeviceEx`, using fixture-only setup exports and the
+unchanged renderer producer. The existing `jig-owning-api-observer.js` observed
+actual owning-instance API entry/return, HRESULT, stack cleanup and guest output.
+Buffered DOWN and independent UP returned correctly; PEEK returned the same
+DOWN record without consuming it. Unacquired state retained DIERR_NOTACQUIRED.
+Ordinary renderer motion plus DOWN and independent UP also returned through
+native `GetDeviceState`.
+
+These are native fixture observations, not prepared manual-input confirmation.
+Real +5/-5 producer motions and no motion gave byte-identical native states, so
+returned-byte equality cannot establish prepared-motion lineage. The current
+browser guard allocates its receipt token during USER dequeue, confirms native
+USER returns, and retires pending DOWN on physical UP before that receipt.
+DI7 requires an actual producer-to-owning-consumer link with the same identity,
+generation and lifetime fences; host queue state or USER receipts remain
+insufficient. No such integration or old-fail/new-pass acceptance was completed.
+
+The final lifetime fixture failed an author assertion expecting immediate COM
+pointer reuse: the actual allocator chose the next unused slot after Release,
+consistent with its documented allocation policy. Its separate watchdog also
+exited on an unsupported new stage name. Both failures are retained; the scope
+closed without replay. They establish no game/API defect or pointer-reuse proof.
+All known native children exited and were joined. Fresh move/reply, second turn,
+Quit, first writer, PV, record-four causality and historical allocation lifetimes
+remain unproved/UNKNOWN. Existing historical move/reply evidence above is unchanged.
