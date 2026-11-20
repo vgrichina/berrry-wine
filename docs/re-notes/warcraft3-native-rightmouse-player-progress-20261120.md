@@ -1,5 +1,37 @@
 # Warcraft III native right mouse — 20 November 2026
 
+## Standard recipe original, 2026-11-20 15:28 UTC
+
+Run `20261120-warcraft3-standard-recipe-original-prologue` applies the exact
+hash-bound next recipe, removing the added profile-argv predicate. Chrome151
+rewrote proc cmdline into one space-separated string containing the correct
+profile flag; Puppeteer's spawnargs retained the flag as an individual argument.
+The requested temp/cache and physical profile realpath were recorded without
+adding an input-authority gate. The actual original launched, the software
+producer advanced, and both actual workers matched module10bdae. The whole
+private800x600 consent frame was personally reviewed; trusted consent DOWN/UP
+completed, followed by native owner binding and a reviewed fullscreen main menu.
+
+The first Single Player click at page(665,198) was published15:29:33.084,
+applied15:29:33.092 and remained DELIVERY_PENDING until independent trusted UP
+at15:29:33.176. Native status then returned UNKNOWN: physical UP preceded
+native USER return. No native consumption token or removal was produced.
+This is a real input-consumption refusal, not a setup assertion or a500ms
+timeout. It does not establish why the guest failed to consume the click.
+The scope closed15:29:33.179 after91 ordinary requests, with zero later
+requests or replay. Profile, Prologue, Thrall movement/objective and normal
+Quit remain unproved; no gameplay credit or speculative runtime fix is claimed.
+
+Eight schema checks, real helper READY/cancel/joins/EOF and31 focused checks
+pass. The existing250/500ms and private one-use guards are unchanged; historical
+native controls are referenced by hash without calibration. All22 supervised
+PIDs are nonlive, supervisor leaked=false, browser/display/helpers have actual
+joins and the transient profile was removed. Runtime minimum home free space
+was1,618,276,352 bytes. No box was created: IDnull/NOT_CREATED, expiry and stop
+receipt null. Exact source diffs, named consent/menu/fence images, media/proof
+references and final build/publication status are retained in the run, with
+result.json written last.
+
 Follow-up: `20261120-warcraft3-restored-floor-mouse2-player-progress`.
 This separately authorized fresh scope reached actual native owner binding on
 an independently checked whole private 800×600 display. CPU and render Worker
