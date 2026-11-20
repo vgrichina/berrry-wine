@@ -51,3 +51,51 @@ parent close/EOF receipts, non-leaking supervisor receipts, and removed profiles
 private display sockets/auth files. The run result records the final PID checks.
 The next diagnostic needs a newly authorized scope with sustainable disk space;
 it should use the same bounded observers at the reviewed menu interval.
+
+## Bounded software critical-path experiment
+
+Evidence: `scratch/runs/20261120-quake3-software-shader-critical-path-repair/`.
+No production repair accepted. A fresh actual software original retained the
+first 51 GPU records, all input blobs, seven DRAW_UP timings (482.760–523.345 ms),
+and the exact pixel IR and VM packets. These are the early logo, personally
+reviewed as a whole browser frame, not the main menu. Each draw advances three
+triangles. The 26-packet pixel program repeatedly executes MOV/MIN/MAX/MUL/ADD
+and samples through handler51; most source modifiers are zero. Existing lazy
+operand gathering and destination-mask pruning are already present.
+
+Tested remedy: after source_row completes its load or relative gather, return
+the vector immediately when the low-byte source modifier is zero. This leaves
+all addressing, nonzero modifiers, shaders and fences intact. The protected
+closure has 304 function imports (305 total imports including memory), so the
+target code body is definition8863 / function9167. The unmodified rebuild's
+16,983 function bodies match actual128b byte for byte; only a 35-byte custom
+section differs. An additional test module replaces only body9167 in actual128b,
+retaining every other section and function body.
+
+Seven-draw replays execute the captured real command stream through the native
+software executor. All color-surface and depth-surface hashes agree after each
+draw, with identical nontiming executor state. The explicit TurboFan pairs favor
+the candidate (exact-body pairs: 1425.789 versus 1510.756 ms and 1399.407 versus
+1636.347 ms). Default-tier pairs do not: 1114.701 versus 1036.744 ms and 1496.455
+versus 1476.071 ms. These are local, noisy process timings, not a demonstrated
+improvement in the original browser. Disassembly was inspected for both x64
+V8 15.7.57 TurboFan and SpiderMonkey C158 Ion: the zero path bypasses the modifier
+chain; V8 body size remains 1472 bytes, Ion grows 591 to 604 bytes. Node replay
+uses V8 13.6, a different engine version; neither capture proves the browser's
+actual compilation tier. No ARM64 or remote measurement was performed.
+
+The existing shader VM suite passed 331 cases, including modifier, special-value,
+relative-address and cancellation cases; busy-doorbell and retirement controls
+passed. The literal locked build passed with the experimental source present.
+Its fresh native candidate diagnostic then hit UNKNOWN Runtime.evaluate timeout
+before the workload/provenance export completed. That scope permanently closed;
+no later endpoint request, retry or manual input followed. All supervised trees
+joined with leaked:false and private profiles/displays were removed. This failed
+comparison is not evidence of a shader fault or a speedup. The source experiment
+was removed; the rejected patch, modules, native disassembly, exact inputs and
+recovery helpers remain in the run. Gameplay and ordinary Quit remain unproved.
+
+The precise next test is a matching browser-tier comparison of this retained
+51-record workload with complete readbacks, outside concurrent build activity.
+Do not promote the shortcut from optimized-tier replay alone, weaken the input
+limits, or substitute the separate WebGL presentation proof.
