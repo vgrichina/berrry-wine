@@ -7,8 +7,20 @@ const wait = ms => new Promise(r => setTimeout(r, ms));
 const FIELDS = ['processId', 'processObject', 'endpoint', 'endpointObject', 'workerObject',
   'workerTarget', 'workerInstance', 'moduleObject', 'moduleSha256', 'epoch',
   'renderEndpoint', 'renderEndpointObject', 'renderWorkerObject',
-  'rendererTarget', 'rendererEpoch', 'rendererModuleSha256'];
+  'rendererTarget', 'rendererEpoch', 'rendererModuleSha256', 'renderRole',
+  'renderBridge', 'renderWindow', 'renderLayer', 'rendererAdapter',
+  'rendererExecutor', 'rendererExecutorRole', 'rendererContext'];
 const MAX_AGE_MS = 12000;
+// Startup only. A port is published before endpoint.ready settles and before
+// the first PRESENT; neither event alone admits a scene or an input.
+const READY_READ = `(() => {
+  if(typeof runningApps==='undefined'||runningApps.length!==1)return false;
+  const w=runningApps[0].wine,b=w?.hostCtx?.getD3dimBridge?.(),p=b?.endpoint,v=b?.presenter;
+  return !!(w?.running&&!w._stopped&&w.guestWorker&&p&&!p.closed&&
+    p.options?.api==='d3dim-gps'&&w._renderWorkerManager?.ports?.get(p.id)===p&&
+    !b.workerAsyncError&&!b.workerClosing&&v?.layer&&v.win&&v.presents&&
+    v.win._gpuFrameLayer===v.layer&&!v.layer.stale?.());
+})()`;
 function same(a, b) {
   for (const field of FIELDS) {
     assert(a?.[field] !== undefined && a[field] !== null && a[field] !== '', 'missing identity ' + field);
@@ -29,12 +41,21 @@ const PAGE_READ = `(() => {
   return {isolated:crossOriginIsolated, apps:(typeof runningApps==='undefined'?[]:runningApps).map(a=>{
     const w=a.wine, g=w?.guestWorker, l=g?.link;
     const ports=[...(w?._renderWorkerManager?.ports?.values()||[])].filter(p=>!p.closed);
-    const owned=ports.filter(p=>p.id===g?.d3dStats?.renderEndpointId);
-    const p=owned.length===1?owned[0]:ports.length===1?ports[0]:null;
+    const b=w?.hostCtx?.getD3dimBridge?.();
+    const owned=ports.filter(p=>p===b?.endpoint&&p.options?.api==='d3dim-gps');
+    if(b?.endpoint&&(owned.length!==1||b.workerAsyncError||b.workerClosing))throw Error('D3DIM GPS owner unavailable');
+    if(!b?.endpoint&&ports.some(p=>p.options?.api==='d3dim-gps'))throw Error('unbound D3DIM GPS endpoint');
+    const p=owned.length===1?owned[0]:null, presenter=b?.presenter, layer=presenter?.layer, win=presenter?.win;
+    if(p&&(!layer||!win||win._gpuFrameLayer!==layer||layer.stale?.()||!presenter.presents||
+      presenter.stamp===null||!layer.writeSeq||win.wasm!==w.instance||win.processId!==w.processId))
+      throw Error('current D3DIM GPS publication required');
     return {name:a.name,running:!!w?.running,stopped:!!w?._stopped,guestWorker:!!g,
       processId:w?.processId,processObject:token(w),endpoint:l?.endpointIdentity,endpointObject:token(l),
       renderEndpoint:p?.id??'none',renderEndpointObject:p?token(p):'none',
       renderWorkerObject:token(w?._renderWorkerManager?.worker)??'none',
+      renderRole:p?'d3dim-gps':'none',renderBridge:p?token(b):'none',
+      renderWindow:p?token(win):'none',renderLayer:p?token(layer):'none',
+      publication:p?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
       guestEndpoint:l?.endpointIdentity,slot:l?.slot,workerObject:token(l?.worker),
       moduleObject:token(l?.module),epoch:state.epoch,
       slice:w?._workerLastSlice??null,d3dStats:g?.d3dStats??null,
@@ -58,10 +79,30 @@ const RENDER_READ = `(() => {
     if(!s.ids.has(e))s.ids.set(e,s.epoch+':'+(++s.next));
     if(typeof instance==='undefined'||!instance)throw Error('renderer instance unavailable');
     if(!s.ids.has(instance))s.ids.set(instance,s.epoch+':'+(++s.next));
+    const token=o=>{if(!o)return 'none';if(!s.ids.has(o))s.ids.set(o,s.epoch+':'+(++s.next));return s.ids.get(o);};
+    const live=e.options?.api==='d3dim-gps'?e.adapter?.identity?.():null;
     return {id,epoch:s.ids.get(e)+'/'+s.ids.get(instance),failed:!!e.failed,
+      role:e.options?.api??null,adapter:token(e.adapter),
+      executor:token(live?.executor),executorRole:live?.executorRole??null,
+      context:token(live?.context),contextLost:live?.contextLost??null,
+      closed:live?.closed??null,error:live?.error??null,ring:live?.ring??null,
+      glRenderer:live?.glRenderer??null,stats:live?.stats??null,
       control:e.control?{completed:Atomics.load(e.control,1),error:Atomics.load(e.control,2),commands:Atomics.load(e.control,5)}:null};
   });
 })()`;
+
+function rendererFields(endpoint) {
+  assert(endpoint.role==='d3dim-gps' && !endpoint.failed && !endpoint.control?.error &&
+    endpoint.closed===false && endpoint.error===0 && endpoint.ring>0,
+    'live D3DIM GPS renderer required');
+  assert(endpoint.executor!=='none' && ['webgl','software'].includes(endpoint.executorRole),
+    'actual renderer executor required');
+  assert(endpoint.executorRole==='webgl' ? endpoint.context!=='none' && endpoint.contextLost===false &&
+    typeof endpoint.glRenderer==='string' && endpoint.glRenderer.length>0 : endpoint.context==='none',
+    'actual live renderer context required');
+  return {rendererAdapter:endpoint.adapter,rendererExecutor:endpoint.executor,
+    rendererExecutorRole:endpoint.executorRole,rendererContext:endpoint.context};
+}
 
 function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now}) {
   let latest = null, busy = false, closed = false;
@@ -75,7 +116,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       'complete recovered live module inventory required');
     return [...new Map(w.scripts.map(s=>[s.scriptId,s])).values()];
   }
-  async function readLive() {
+  async function collectLive() {
     const started = performance.now(), timings = [];
     async function measured(operation, task) {
       const at = performance.now();
@@ -119,10 +160,12 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     assert.equal(scripts.length,1,'unique recovered live Worker module required');
     const owners=observations.filter(o=>!o.guest).flatMap(o=>o.value.filter(e=>e.id===a.renderEndpoint).map(endpoint=>({r:o.w,endpoint})));
     let rendererTarget='none',rendererEpoch='none',rendererModuleSha256='none',owner,renderScripts;
+    let actualRenderer={rendererAdapter:'none',rendererExecutor:'none',rendererExecutorRole:'none',rendererContext:'none'};
     if(a.renderEndpoint!=='none') {
       assert.equal(owners.length,1,'unique actual owning renderer required');
       owner=owners[0];const {r,endpoint}=owner;
-      assert(!endpoint.failed&&!endpoint.control?.error,'live renderer required');
+      assert.equal(endpoint.role,a.renderRole,'renderer role mismatch');
+      actualRenderer=rendererFields(endpoint);
       rendererTarget=r.targetId;rendererEpoch=endpoint.epoch;
       renderScripts=modules(r);
       assert.equal(new Set(renderScripts.map(s=>s.sha256)).size,1,'unique actual renderer module required');
@@ -131,7 +174,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     for(const h of hashes)if(h.status==='rejected')throw h.reason;
     const moduleSha256=hashes[0].value;
     if(owner)rendererModuleSha256=hashes[1].value;
-    const rendererIdentity={rendererTarget,rendererEpoch,rendererModuleSha256};
+    const rendererIdentity={rendererTarget,rendererEpoch,rendererModuleSha256,...actualRenderer};
     const identity = {...a, workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity};
     same(identity, identity);
     // Recheck page references after asynchronous Worker reads. Never cache a
@@ -144,7 +187,12 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     for(const r of finalReads)if(r.status==='rejected')throw r.reason;
     const after=finalReads[0].value;
     assert.deepEqual(finalReads[1].value,live,'guest instance changed during identity read');
-    if(owner)assert(finalReads[2].value.some(e=>e.id===a.renderEndpoint&&e.epoch===rendererEpoch&&!e.failed&&!e.control?.error),'renderer instance changed during identity read');
+    if(owner) {
+      const endpoints=finalReads[2].value.filter(e=>e.id===a.renderEndpoint);
+      assert.equal(endpoints.length,1,'unique owning renderer recheck required');
+      assert.equal(endpoints[0].epoch,rendererEpoch,'renderer instance changed during identity read');
+      assert.deepEqual(rendererFields(endpoints[0]),actualRenderer,'renderer executor/context changed during identity read');
+    }
     assert(after.isolated && after.apps.length === 1 && after.apps[0].name===app && after.apps[0].running && !after.apps[0].stopped);
     same(identity, {...after.apps[0], workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity});
     assert.equal(workers.get(w.sessionId),w,'Worker session replaced during identity read');
@@ -153,7 +201,14 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       assert.equal(workers.get(owner.r.sessionId),owner.r,'renderer session replaced during identity read');
       assert.deepEqual(modules(owner.r),renderScripts,'renderer module inventory changed');
     }
-    return {identity, page:after, worker:{targetId:w.targetId, sessionId:w.sessionId, ...live},timing:{totalMs:performance.now()-started,reads:timings}};
+    return {identity, page:after, worker:{targetId:w.targetId, sessionId:w.sessionId, ...live},
+      renderer:owner?finalReads[2].value.find(e=>e.id===a.renderEndpoint):null,
+      timing:{totalMs:performance.now()-started,reads:timings}};
+  }
+  async function readLive() {
+    assert(!closed, 'closed chain');
+    try { return await collectLive(); }
+    catch(error) { closed = true; throw error; }
   }
   function fresh(capture) {
     const age = now() - Date.parse(capture?.at);
@@ -174,7 +229,8 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       const png = Buffer.from(shot.data, 'base64');
       latest = {label, at, completedAt:new Date(now()).toISOString(), sha256:sha(png), identity:after.identity};
       return {capture:structuredClone(latest), png, before, after};
-    } finally { busy = false; }
+    } catch(error) { closed = true; throw error; }
+    finally { busy = false; }
   }
   async function admit(review, dispatch) {
     assert(!closed && !busy, 'closed or concurrent chain'); busy = true;
@@ -198,7 +254,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     assert(['page','renderer'].includes(stream), 'known passive progress stream');
     const page = await evaluate(PAGE_READ), a = page.apps[0];
     assert(page.apps.length === 1 && a?.running && !a.stopped);
-    for (const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject'])
+    for (const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderWindow','renderLayer'])
       assert.equal(a[f], identity[f], 'held identity changed: '+f);
     function worker(target, digest) {
       const matches=[...workers.values()].filter(w=>w.targetId===target&&!w.closed);
@@ -216,13 +272,16 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     if(identity.rendererTarget!=='none') {
       const r=worker(identity.rendererTarget,identity.rendererModuleSha256);
       const endpoints=await evaluate(RENDER_READ,r.sessionId);
-      assert(endpoints.filter(e=>e.id===identity.renderEndpoint).length===1 && endpoints.some(e=>e.id===identity.renderEndpoint&&e.epoch===identity.rendererEpoch&&!e.failed&&!e.control?.error),'held renderer epoch changed');
+      const owned=endpoints.filter(e=>e.id===identity.renderEndpoint);
+      assert(owned.length===1&&owned[0].epoch===identity.rendererEpoch,'held renderer epoch changed');
+      const fields=rendererFields(owned[0]);
+      for(const f of Object.keys(fields))assert.equal(fields[f],identity[f],'held renderer changed: '+f);
       assert.equal(worker(identity.rendererTarget,identity.rendererModuleSha256),r,'held renderer replaced');
       // A renderer reply is usable only while its page owner still matches.
       // This read is independent of the page sampling loop.
       const after=await evaluate(PAGE_READ);
       assert(after.apps.length===1&&after.apps[0]?.running&&!after.apps[0].stopped);
-      for(const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject'])
+      for(const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderWindow','renderLayer'])
         assert.equal(after.apps[0][f],identity[f],'held identity changed: '+f);
       render.push({targetId:r.targetId,endpoints});
     }
@@ -278,4 +337,4 @@ async function hold({send, session, keys, holdMs, sample, renderSample, saveSamp
   if(error) {error.holdReceipt={started,releaseAt,samples,attempted:attempted.map(k=>k.key)};throw error;}
   return {started,releaseAt,samples,attempted:attempted.map(k=>k.key),meaning:'physical host interval; passive counters do not prove DirectInput polls or simulation steps'};
 }
-module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, PAGE_READ, WORKER_READ, RENDER_READ};
+module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, WORKER_READ, RENDER_READ};
