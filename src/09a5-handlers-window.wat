@@ -4792,8 +4792,14 @@
           (i32.or (i32.eq (local.get $cmd) (i32.const 9))
                   (i32.eq (local.get $cmd) (i32.const 10))))))
     (if (i32.and
-          (i32.and (local.get $activating)
-                   (i32.eqz (call $wnd_get_parent (local.get $hwnd))))
-          (i32.ne (global.get $active_hwnd) (local.get $hwnd)))
+          (local.get $activating)
+          (i32.eqz (call $wnd_get_parent (local.get $hwnd))))
       (then
-        (drop (call $activate_window_with_host (local.get $hwnd))))))
+        (if (i32.ne (global.get $active_hwnd) (local.get $hwnd))
+          (then (drop (call $activate_window_with_host (local.get $hwnd))))
+          (else
+            ;; Hiding a window revokes the host's accepted foreground record
+            ;; without necessarily changing USER's active_hwnd. An activating
+            ;; ShowWindow must publish that activation again, even for the
+            ;; same guest HWND. Do not repeat guest activation callbacks.
+            (drop (call $host_activate_window (local.get $hwnd))))))))
