@@ -46,6 +46,9 @@
 //   eval:EXPR     evaluate EXPR in the page and print its result
 //   evalfile:PATH evaluate the contents of PATH in the page (no ';' escaping)
 //   shot:PATH     screenshot to PATH
+//   ctrace:MS:PATH  record a browser-wide Chrome trace (page, Workers, GPU
+//                 process) for MS ms into PATH (.gz = gzipped); read it with
+//                 tools/chrome-trace-summary.js. Headful only for timing.
 //
 // `--eval=@PATH` reads the final readout expression from a file too. Reach for
 // the file forms for anything longer than one expression: steps split on ';',
@@ -91,6 +94,21 @@ const opt = (name, dflt) => {
   const a = argv.find(x => x.startsWith(`--${name}=`));
   return a === undefined ? dflt : a.slice(name.length + 3);
 };
+// --root=DIR serves another working tree (its index.html, lib/ and build/)
+// through the built-in server instead of this one, so an A/B drives every arm
+// with the same probe and the same steps: an arm worktree that predates a
+// probe option (ctrace:) still gets it.
+const SERVE_ROOT = path.resolve(opt('root', '') || ROOT);
+// ctrace:MS:PATH records a browser-wide Chrome trace (every process: the page
+// main thread, its Workers, the GPU process) for MS milliseconds into PATH,
+// gzipped when PATH ends in .gz. Summarize it with tools/chrome-trace-summary.js.
+// --ctrace-categories=a,b replaces the default set below, which is what the
+// DevTools Performance panel records plus the GPU process's own `gpu` events:
+// enough for per-thread busy time and sampled JS/wasm self time.
+const CTRACE_CATEGORIES = (opt('ctrace-categories', '') || [
+  'toplevel', 'devtools.timeline', 'disabled-by-default-devtools.timeline',
+  'v8.execute', 'disabled-by-default-v8.cpu_profiler', 'gpu',
+].join(',')).split(',').map(s => s.trim()).filter(Boolean);
 
 const APP = opt('app', 'mspaint98');
 // The launch controls are intentionally hidden in the normal desktop view.
@@ -208,7 +226,7 @@ function mimeType(file) {
 }
 
 function startStaticServer() {
-  const root = fs.realpathSync(ROOT);
+  const root = fs.realpathSync(SERVE_ROOT);
   const server = http.createServer((req, res) => {
     let pathname;
     try { pathname = decodeURIComponent(new URL(req.url, 'http://127.0.0.1').pathname); }
@@ -258,6 +276,42 @@ function startStaticServer() {
 }
 
 const wait = ms => new Promise(r => setTimeout(r, ms));
+
+// The `ctrace:` step. Tracing on the BROWSER target is browser-wide, which is
+// the point: the guest Worker, the render Worker and the GPU process are
+// separate threads/processes, and "which one is the bottleneck" needs all of
+// them on one clock. Chrome streams the trace back (gzipped itself when asked).
+async function chromeTrace(browser, ms, outPath) {
+  const cdp = await browser.target().createCDPSession();
+  try {
+    const gz = outPath.endsWith('.gz');
+    const complete = new Promise(r => cdp.once('Tracing.tracingComplete', r));
+    await cdp.send('Tracing.start', {
+      transferMode: 'ReturnAsStream', streamFormat: 'json', streamCompression: gz ? 'gzip' : 'none',
+      traceConfig: { recordMode: 'recordAsMuchAsPossible', includedCategories: CTRACE_CATEGORIES },
+    });
+    await wait(ms);
+    await cdp.send('Tracing.end');
+    const { stream } = await complete;
+    const fd = fs.openSync(outPath, 'w');
+    let bytes = 0;
+    try {
+      for (;;) {
+        const r = await cdp.send('IO.read', { handle: stream, size: 1 << 20 });
+        const buf = Buffer.from(r.data, r.base64Encoded ? 'base64' : 'utf8');
+        fs.writeSync(fd, buf);
+        bytes += buf.length;
+        if (r.eof) break;
+      }
+    } finally {
+      fs.closeSync(fd);
+      await cdp.send('IO.close', { handle: stream }).catch(() => {});
+    }
+    return bytes;
+  } finally {
+    await cdp.detach().catch(() => {});
+  }
+}
 
 function validateQueuedSteps(command, directory) {
   if (command.quit === true && Object.keys(command).length === 1) return null;
@@ -724,6 +778,13 @@ async function main() {
       } else if (kind === 'shot') {
         await page.screenshot({ path: rest });
         console.log(`shot ${rest}`);
+        continue;
+      } else if (kind === 'ctrace') {
+        const c = rest.indexOf(':');
+        const ms = Number(rest.slice(0, c));
+        if (c < 0 || !(ms > 0)) throw new Error(`ctrace step must look like ctrace:5000:out.json.gz: "${step}"`);
+        const bytes = await chromeTrace(browser, ms, rest.slice(c + 1));
+        console.log(`ctrace ${rest} (${bytes} bytes, load ${os.loadavg().map(x => x.toFixed(2)).join(' ')})`);
         continue;
       } else if (kind === 'key') {
         // `Alt+KeyS`, `Shift+F2`: hold the leading modifiers around the press.
