@@ -3,6 +3,7 @@
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const {currentSynchronousSource, ARM_SYNCHRONOUS_SOURCE} = require('./mcm-synchronous-source.cjs');
+const menuContext = require('./mcm-menu-reviewed-context.cjs');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const FIELDS = ['processId', 'processObject', 'pageInstance', 'pageRenderer', 'endpoint', 'endpointObject', 'workerObject',
@@ -151,8 +152,28 @@ function rendererFields(endpoint) {
     rendererExecutorRole:endpoint.executorRole,rendererContext:endpoint.context};
 }
 
+const MENU_CONTEXT_READ = `(() => {
+  const state=globalThis.__mcmPassiveIdentityV1;
+  if(!state||runningApps.length!==1)throw Error('MENU document owner unavailable');
+  const token=o=>{if(!o)return null;if(!state.ids.has(o))state.ids.set(o,state.epoch+':'+(++state.next));return state.ids.get(o);};
+  const a=runningApps[0],w=a.wine,r=w.renderer,screen=document.getElementById('screen');
+  const wins=Object.values(r.windows).filter(v=>v.visible&&!v.isChild).sort((a,b)=>b.zOrder-a.zOrder);
+  const win=wins[0],modal=r.getActiveModalWindow?.();
+  if(a.name!=='mcm'||!w.running||w._stopped||!screen||!win||modal||
+    win.wasm!==w.instance||win.processId!==w.processId||
+    w._d3dimGpsObservation?.state!=='PREPARED'||w._d3dimGpsObservation.endpoint)
+    throw Error('prepared genuine MCM MENU owner required');
+  return {hwnd:win.hwnd,generation:token(win),memory:token(w.memory),preparation:token(w._d3dimGpsObservation),
+    canvas:token(screen),focus:token(document.activeElement),modal:null,
+    viewport:{width:innerWidth,height:innerHeight,deviceScaleFactor:devicePixelRatio,
+      screen:screen.getBoundingClientRect().toJSON()},
+    window:{x:win.x,y:win.y,w:win.w,h:win.h,style:win.style,zOrder:win.zOrder}};
+})()`;
 function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now,
-  readinessTimeoutMs = 10000, gpsSourcePreparation = false}) {
+  readinessTimeoutMs = 10000, gpsSourcePreparation = false, reviewedMenuContext}) {
+  assert(reviewedMenuContext===undefined||reviewedMenuContext?.capability===menuContext.CAPABILITY&&
+    typeof reviewedMenuContext.evidenceSink==='function'&&gpsSourcePreparation&&app==='mcm',
+  'explicit MCM MENU capability and full image sink require GPS preparation');
   const currentPageRead=gpsSourcePreparation?GPS_PAGE_READ:PAGE_READ;
   assert(Number.isInteger(readinessTimeoutMs)&&readinessTimeoutMs>0&&readinessTimeoutMs<=10000,
     'bounded first-present readiness timeout');
@@ -395,7 +416,44 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
   // Ordinary startup dialogs use capture/admit. Only a reviewed menu with a
   // real legacy owner may arm; Start follows a fresh post-arm capture.
   const armMenuSource=review=>armSynchronousSource({...review,stage:review?.stage});
-  return {capture, admit, readLive, progress, armSynchronousSource, armMenuSource, get closed(){return closed;}};
+  let menu;
+  if(reviewedMenuContext)menu=menuContext.createMenuContext({now,evidenceSink:reviewedMenuContext.evidenceSink,
+    checkpoint:()=>{assert(!closed&&synchronousArmed,'live post-preparation MENU chain required');
+      reviewedMenuContext.checkpoint?.();},
+    capture:async()=>Buffer.from((await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},pageSession)).data,'base64'),
+    identity:async()=>{
+      const live=await readLive(),context=await evaluate(MENU_CONTEXT_READ);
+      return {session:pageSession,owner:live.identity,process:live.identity.processObject,
+        endpoint:live.identity.endpointObject,epoch:live.identity.epoch,module:live.identity.moduleSha256,...context};
+    }});
+  async function captureMenuContext(){
+    assert(menu&&!closed&&!busy,'explicit idle MENU capability required');busy=true;
+    try{return await menu.captureReview();}catch(e){closed=true;throw e;}finally{busy=false;}
+  }
+  function reviewMenuContext(intent){
+    assert(menu&&!closed&&!busy,'explicit idle MENU capability required');
+    try{return menu.review(intent);}catch(e){closed=true;throw e;}
+  }
+  async function startMenuContext(handle,intent){
+    assert(menu&&!closed&&!busy,'explicit idle MENU capability required');busy=true;
+    try{return await menu.start(handle,intent,(edge,proof)=>{
+      const base={x:edge.x,y:edge.y,button:'left',clickCount:1};
+      // Preserve the ordinary 100ms independent physical release. No capture,
+      // source preparation, module transfer or other work follows this fence.
+      let release;
+      const up=()=>release??=send('Input.dispatchMouseEvent',{type:'mouseReleased',...base},pageSession);
+      const timer=setTimeout(()=>{up().catch(()=>{});},edge.holdMs);
+      const started=now();
+      const down=send('Input.dispatchMouseEvent',{type:'mousePressed',...base},pageSession);
+      return (async()=>{try{
+        await down;await wait(Math.max(0,edge.holdMs-(now()-started)));
+        return {proof,downStartedAt:started,physicalHoldMs:edge.holdMs};
+      }finally{clearTimeout(timer);await up();}})();
+    });}catch(e){closed=true;throw e;}finally{busy=false;}
+  }
+  return {capture, admit, readLive, progress, armSynchronousSource, armMenuSource,
+    captureMenuContext,reviewMenuContext,startMenuContext,
+    close(){closed=true;menu?.close();},get closed(){return closed;}};
 }
 
 const KEYS = {ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};
@@ -445,4 +503,4 @@ async function hold({send, session, keys, holdMs, sample, renderSample, saveSamp
   if(error) {error.holdReceipt={started,releaseAt,samples,attempted:attempted.map(k=>k.key)};throw error;}
   return {started,releaseAt,samples,attempted:attempted.map(k=>k.key),meaning:'physical host interval; passive counters do not prove DirectInput polls or simulation steps'};
 }
-module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, GPS_PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE, ARM_GPS_SOURCE};
+module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, GPS_PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE, ARM_GPS_SOURCE, MENU_CONTEXT_READ};
