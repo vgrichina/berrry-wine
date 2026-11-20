@@ -2,15 +2,21 @@
 const path=require('node:path');
 const ROOT=process.env.WINE_BRIDGE_ROOT||path.resolve(__dirname,'..');
 const supported=require(ROOT+'/tools/gltron-current-native-input.cjs');
+// The opt-in path uses the qualified adapter unchanged. Keep the legacy Hexen
+// five-second path below, including its local NOT_SENT behavior.
+const qualified=require(ROOT+'/tools/quake2-native-consumption-input.cjs');
+const {verifyPageEquivalence}=require(ROOT+'/lib/browser-reviewed-frame-equivalence.cjs');
 const POLICY=Object.freeze({reviewMs:5000,nativeMs:500,releaseFallbackMs:1750,maxHoldMs:1500});
 // Installed at the end of the served host.js, before any shell launch. The
 // existing observer retains getImports' actual host table and captured context.
 function hostBootstrap(){
-  return `\n;globalThis.WINE_BROWSER_NATIVE_INPUT=true;\n${supported.installNativeRouteObserver.toString()}\n${supported.inspectNativeRoute.toString()}\n${supported.observeAndBindNativeOwner.toString()}\n${supported.observeAndPrepareNativeIntent.toString()}\n${createHexenSession.toString()}\ninstallNativeRouteObserver(globalThis,WineAssembly);\nglobalThis.createHexenNativeSession=w=>createHexenSession(globalThis,w,{inspectNativeRoute,observeAndBindNativeOwner,observeAndPrepareNativeIntent});\n`;
+  return `\n;globalThis.WINE_BROWSER_NATIVE_INPUT=true;\n${supported.installNativeRouteObserver.toString()}\n${supported.inspectNativeRoute.toString()}\n${supported.observeAndBindNativeOwner.toString()}\n${supported.observeAndPrepareNativeIntent.toString()}\n${verifyPageEquivalence.toString()}\n${qualified.createQuake2Session.toString()}\n${createHexenSession.toString()}\ninstallNativeRouteObserver(globalThis,WineAssembly);\nglobalThis.createHexenNativeSession=(w,options)=>createHexenSession(globalThis,w,{inspectNativeRoute,observeAndBindNativeOwner,observeAndPrepareNativeIntent,verifyPageEquivalence,createQualifiedSession:createQuake2Session},options);\n`;
 }
 // Page-local object identities are never serialized into authority. Numeric
 // HWND/generation metadata is additional to process/module/memory/Worker refs.
-function createHexenSession(root,wine,helpers){
+function createHexenSession(root,wine,helpers,options={}){
+  if(options.equivalenceKey)return (helpers.createQualifiedSession||qualified.createQuake2Session)(root,wine,
+    {...helpers,verifyPageEquivalence:helpers.verifyPageEquivalence||verifyPageEquivalence},options);
   let terminal=false,binding=null,refs=null,scene=null,slot=null;
   const nonces=new Set();
   const current=()=>{
@@ -77,7 +83,8 @@ function reviewed(intent,image){
 }
 // One runtime scope, explicit per-edge personal review, no retries. Close is
 // controller-local and synchronous: it must retire transport, not query it.
-function createController({page,dispatch,release,close,record=()=>{}}){
+function createController({page,dispatch,release,close,record=()=>{},equivalence}){
+  if(equivalence)return qualified.createController({page,dispatch,release,close,record,equivalence});
   let terminal=false,active=false;const nonces=new Set();
   const stop=reason=>{if(!terminal){terminal=true;close(reason);}};
   const gate=()=>{if(terminal)throw Error('HEXEN_NATIVE_UNKNOWN permanently closed');};
