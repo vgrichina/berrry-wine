@@ -5,11 +5,11 @@ const crypto = require('node:crypto');
 const {currentSynchronousSource, ARM_SYNCHRONOUS_SOURCE} = require('./mcm-synchronous-source.cjs');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const wait = ms => new Promise(r => setTimeout(r, ms));
-const FIELDS = ['processId', 'processObject', 'endpoint', 'endpointObject', 'workerObject',
+const FIELDS = ['processId', 'processObject', 'pageInstance', 'pageRenderer', 'endpoint', 'endpointObject', 'workerObject',
   'workerTarget', 'workerInstance', 'moduleObject', 'moduleSha256', 'epoch',
   'renderEndpoint', 'renderEndpointObject', 'renderWorkerObject',
   'rendererTarget', 'rendererEpoch', 'rendererModuleSha256', 'renderRole',
-  'renderBridge', 'renderWindow', 'renderLayer', 'rendererAdapter',
+  'renderBridge', 'renderPresenter', 'renderWindow', 'renderLayer', 'rendererAdapter',
   'rendererExecutor', 'rendererExecutorRole', 'rendererContext'];
 const MAX_AGE_MS = 12000;
 // Startup only. A port is published before endpoint.ready settles and before
@@ -31,6 +31,7 @@ function same(a, b) {
 // Object tokens are scoped to this actual document. Replacing an owner with an
 // equal-looking object, or reloading the page, cannot reuse a reviewed token.
 const PAGE_READ = `(() => {
+  const allowPending=false;
   const currentSynchronousSource = ${currentSynchronousSource.toString()};
   const k = '__mcmPassiveIdentityV1';
   if (!globalThis[k]) Object.defineProperty(globalThis, k, {value:{
@@ -53,22 +54,38 @@ const PAGE_READ = `(() => {
     if(p&&win?._dxFrameLayer&&win._dxFrameLayer.kind!=='gpu'&&w?.renderer?._overlayFrameLayer(win)===win._dxFrameLayer) {
       synchronous=currentSynchronousSource(w,win);layer=synchronous.layer;
     }
-    if(p&&(!layer||!win||(!synchronous&&win._gpuFrameLayer!==layer)||layer.stale?.()||!presenter.presents||
-      presenter.stamp===null||!layer.writeSeq||win.wasm!==w.instance||win.processId!==w.processId))
-      throw Error('current D3DIM GPS publication required');
+    // Evaluate the exact refusal predicates once, in this read. Only the
+    // pristine production Presenter before its first frame is known pending.
+    const reasons=p?{
+      missingLayer:!layer,missingWindow:!win,
+      gpuAliasMismatch:!!(win&&!synchronous&&win._gpuFrameLayer!==layer),
+      staleLayer:!!layer?.stale?.(),zeroPresents:!presenter?.presents,
+      nullStamp:presenter?.stamp===null,zeroWriteSeq:!layer?.writeSeq,
+      wasmOwnerMismatch:!!win&&win.wasm!==w.instance,
+      processMismatch:!!win&&win.processId!==w.processId}:null;
+    const pending=!!(p&&presenter&&presenter.layer===null&&presenter.win===null&&
+      presenter.presents===0&&presenter.stamp===null&&w?.running&&!w._stopped&&g&&l&&
+      w.instance&&w.renderer&&w._renderWorkerManager.worker);
+    if(reasons&&Object.values(reasons).some(Boolean)&&!(allowPending&&pending))
+      throw Error('current D3DIM GPS publication required '+JSON.stringify(reasons));
     return {name:a.name,running:!!w?.running,stopped:!!w?._stopped,guestWorker:!!g,
       processId:w?.processId,processObject:token(w),endpoint:l?.endpointIdentity,endpointObject:token(l),
+      pageInstance:token(w?.instance),pageRenderer:token(w?.renderer),
       renderEndpoint:p?.id??'none',renderEndpointObject:p?token(p):'none',
       renderWorkerObject:token(w?._renderWorkerManager?.worker)??'none',
       renderRole:p?'d3dim-gps':'none',renderBridge:p?token(b):'none',
-      renderWindow:p?token(win):'none',renderLayer:p?token(layer):'none',
-      publication:synchronous?synchronous.publication:p?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
+      renderPresenter:p?token(presenter):'none',
+      renderWindow:p&&win?token(win):'none',renderLayer:p&&layer?token(layer):'none',
+      readiness:pending?'pending-first-present':'ready',
+      publication:synchronous?synchronous.publication:p&&!pending?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
       guestEndpoint:l?.endpointIdentity,slot:l?.slot,workerObject:token(l?.worker),
       moduleObject:token(l?.module),epoch:state.epoch,
       slice:w?._workerLastSlice??null,d3dStats:g?.d3dStats??null,
       physical:[37,38,39,40].map(key=>({key,state:w?.renderer?.peekKeyDownState(key)??null}))};
   })};
 })()`;
+const PENDING_READ = PAGE_READ.replace('const allowPending=false;', 'const allowPending=true;');
+const OWNER_FIELDS = FIELDS.filter(f=>!['renderWindow','renderLayer'].includes(f));
 const WORKER_READ = `(() => {
   if (typeof endpointIdentity==='undefined'||typeof workerSlot==='undefined'||typeof instance==='undefined'||!instance) return null;
   if (!globalThis.__mcmPassiveInstanceV1) Object.defineProperty(globalThis,'__mcmPassiveInstanceV1',
@@ -111,7 +128,10 @@ function rendererFields(endpoint) {
     rendererExecutorRole:endpoint.executorRole,rendererContext:endpoint.context};
 }
 
-function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now}) {
+function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now,
+  readinessTimeoutMs = 10000}) {
+  assert(Number.isInteger(readinessTimeoutMs)&&readinessTimeoutMs>0&&readinessTimeoutMs<=10000,
+    'bounded first-present readiness timeout');
   let latest = null, busy = false, closed = false, synchronousArmed = false;
   // CDP WebAssembly scripts are immutable within their actual Worker/session.
   // Cache only bytes we recovered and hashed ourselves. Each use still reads
@@ -123,7 +143,8 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       'complete recovered live module inventory required');
     return [...new Map(w.scripts.map(s=>[s.scriptId,s])).values()];
   }
-  async function collectLive() {
+  async function collectLive(allowPending = false) {
+    const pageExpression=allowPending?PENDING_READ:PAGE_READ;
     const started = performance.now(), timings = [];
     async function measured(operation, task) {
       const at = performance.now();
@@ -148,7 +169,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       moduleCache.set(w,{signature,sha256:digest,bytes:bytes.length});
       return digest;
     }
-    const page = await read(PAGE_READ, undefined, 'page.before');
+    const page = await read(pageExpression, undefined, 'page.before');
     assert(page.isolated && page.apps.length === 1, 'one isolated registered app required');
     const a = page.apps[0];
     assert(a.name === app && a.running && !a.stopped && a.guestWorker, 'live registered app required');
@@ -187,7 +208,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     // Recheck page references after asynchronous Worker reads. Never cache a
     // live object identity, target membership or running/failed status.
     const finalReads=await Promise.allSettled([
-      read(PAGE_READ, undefined, 'page.after'),
+      read(pageExpression, undefined, 'page.after'),
       read(WORKER_READ,w.sessionId,'guest.after'),
       ...(owner?[read(RENDER_READ,owner.r.sessionId,'renderer.after')]:[])
     ]);
@@ -201,7 +222,11 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       assert.deepEqual(rendererFields(endpoints[0]),actualRenderer,'renderer executor/context changed during identity read');
     }
     assert(after.isolated && after.apps.length === 1 && after.apps[0].name===app && after.apps[0].running && !after.apps[0].stopped);
-    same(identity, {...after.apps[0], workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity});
+    const finalIdentity={...after.apps[0], workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity};
+    if(a.readiness==='pending-first-present'&&after.apps[0].readiness==='ready') {
+      for(const f of OWNER_FIELDS)assert.equal(finalIdentity[f],identity[f],'first-present owner changed: '+f);
+      Object.assign(identity,finalIdentity);
+    } else same(identity,finalIdentity);
     assert.equal(workers.get(w.sessionId),w,'Worker session replaced during identity read');
     assert.deepEqual(modules(w),scripts,'guest module inventory changed');
     if(owner) {
@@ -217,6 +242,20 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     try { return await collectLive(); }
     catch(error) { closed = true; throw error; }
   }
+  async function readyBeforeCapture() {
+    const deadline=performance.now()+readinessTimeoutMs;
+    let owner;
+    for(;;) {
+      const live=await collectLive(true);
+      if(owner)for(const f of OWNER_FIELDS)assert.equal(live.identity[f],owner[f],
+        'first-present owner changed: '+f);
+      if(owner)assert(performance.now()<deadline,'bounded first-present readiness expired');
+      if(live.page.apps[0].readiness==='ready')return live;
+      owner??=live.identity;
+      assert(performance.now()<deadline,'bounded first-present readiness expired');
+      await wait(Math.min(50,Math.max(1,deadline-performance.now())));
+    }
+  }
   function fresh(capture) {
     const age = now() - Date.parse(capture?.at);
     if (!(Number.isFinite(age) && age >= 0 && age <= MAX_AGE_MS)) {
@@ -227,7 +266,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
   async function capture(label) {
     assert(!closed && !busy, 'closed or concurrent chain'); busy = true;
     try {
-      const before = await readLive();
+      const before = await readyBeforeCapture();
       // Validation after a screenshot can be slow on a busy renderer. It must
       // not make the reviewed pixels appear younger than their capture.
       const at = new Date(now()).toISOString();
@@ -261,7 +300,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     assert(['page','renderer'].includes(stream), 'known passive progress stream');
     const page = await evaluate(PAGE_READ), a = page.apps[0];
     assert(page.apps.length === 1 && a?.running && !a.stopped);
-    for (const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderWindow','renderLayer'])
+    for (const f of ['processId','processObject','pageInstance','pageRenderer','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderPresenter','renderWindow','renderLayer'])
       assert.equal(a[f], identity[f], 'held identity changed: '+f);
     function worker(target, digest) {
       const matches=[...workers.values()].filter(w=>w.targetId===target&&!w.closed);
@@ -288,7 +327,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       // This read is independent of the page sampling loop.
       const after=await evaluate(PAGE_READ);
       assert(after.apps.length===1&&after.apps[0]?.running&&!after.apps[0].stopped);
-      for(const f of ['processId','processObject','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderWindow','renderLayer'])
+      for(const f of ['processId','processObject','pageInstance','pageRenderer','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderPresenter','renderWindow','renderLayer'])
         assert.equal(after.apps[0][f],identity[f],'held identity changed: '+f);
       render.push({targetId:r.targetId,endpoints});
     }

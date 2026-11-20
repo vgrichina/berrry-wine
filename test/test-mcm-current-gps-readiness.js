@@ -13,7 +13,7 @@ const { createCanvas } = require('../lib/raster-canvas');
 const { makeProducer } = require('./gpu-stream-fixture');
 const bytes = Buffer.from('0061736d01000000', 'hex');
 
-function fixture(app='dx_boids') {
+function fixture(app='dx_boids', {pending=false, timeout=10000}={}) {
   const producer = makeProducer();
   const instance = new WebAssembly.Instance(new WebAssembly.Module(bytes));
   const adapter = GPS.create({instance, memory:{buffer:producer.buffer}, backend:'software',
@@ -24,8 +24,9 @@ function fixture(app='dx_boids') {
   const win={hwnd:1,wasm:instance,processId:3,_backCanvas:createCanvas(2,2)};
   const renderer={windows:{1:win},peekKeyDownState:()=>null,
     _overlayFrameLayer:Win98Renderer.prototype._overlayFrameLayer};
-  const presenter=new Presenter({api:'d3dim-gps',renderer});
-  presenter.present({hwnd:1,stamp:0,surface:createCanvas(2,2)});
+  const presenter=new Presenter({api:'d3dim-gps',renderer,createCanvas});
+  const present=()=>presenter.present({hwnd:1,stamp:0,surface:createCanvas(2,2)});
+  if(!pending)present();
   const layer=presenter.layer;
   const bridge={endpoint:port,presenter};
   const wine={running:true,instance,renderer,processId:3,hostCtx:{getD3dimBridge:()=>bridge},
@@ -39,15 +40,120 @@ function fixture(app='dx_boids') {
   const workers=new Map(['guest','render'].map(sessionId=>[sessionId,{sessionId,targetId:sessionId,
     url:sessionId==='guest'?'guest-worker.js':'d3d-render-worker.js',
     scripts:[{scriptId:'1',bytecodeAvailable:true,sha256:bound.sha(bytes)}]}]));
-  let time=Date.now(), dispatches=0;
-  const chain=bound.createChain({app,workers,pageSession:'page',now:()=>time,
-    evaluate:async(expression,session)=>JSON.parse(JSON.stringify(await vm.runInContext(expression,
-      session==='guest'?guest:session==='render'?render:page))),
-    send:async method=>method==='Debugger.getScriptSource'?{bytecode:bytes.toString('base64')}:{data:Buffer.from('image').toString('base64')}});
+  let time=Date.now(), dispatches=0, reads=0, screenshots=0;
+  const chain=bound.createChain({app,workers,pageSession:'page',now:()=>time,readinessTimeoutMs:timeout,
+    evaluate:async(expression,session)=>{reads++;return JSON.parse(JSON.stringify(await vm.runInContext(expression,
+      session==='guest'?guest:session==='render'?render:page)));},
+    send:async method=>{if(method==='Debugger.getScriptSource')return {bytecode:bytes.toString('base64')};screenshots++;return {data:Buffer.from('image').toString('base64')};}});
   const review=c=>({...c,review:'Reviewed full current frame'});
-  return {chain,wine,bridge,port,layer,entry,adapter,kick,workers,review,page,
+  const oldCapture=async()=>{
+    const Module=require('node:module'),{execFileSync}=require('node:child_process');
+    const file=require.resolve('../tools/mcm-bound-input.cjs'),legacy=new Module(file,module);
+    legacy.paths=Module._nodeModulePaths(require('node:path').dirname(file));
+    legacy._compile(execFileSync('git',['show','8e7989e5c:tools/mcm-bound-input.cjs'],{encoding:'utf8'}),file);
+    const old=legacy.exports.createChain({app,workers,pageSession:'page',evaluate:async expression=>
+      JSON.parse(JSON.stringify(vm.runInContext(expression,page))),send:async()=>assert.fail('premature old screenshot')});
+    await assert.rejects(old.capture('old-premature'),/current D3DIM GPS publication required/);
+    assert(old.closed);
+  };
+  return {chain,wine,bridge,port,layer,entry,adapter,kick,workers,review,page,present,oldCapture,
+    get reads(){return reads;},get screenshots(){return screenshots;},
     advance:ms=>time+=ms, dispatch:()=>++dispatches,get dispatches(){return dispatches;}};
 }
+
+test('published owner waits for first complete PRESENT before capture or intent',async()=>{
+  const f=fixture('mcm',{pending:true});try {
+    assert.throws(()=>vm.runInContext(bound.PAGE_READ,f.page),/missingLayer.*missingWindow/);
+    const capture=f.chain.capture('first');
+    await new Promise(r=>setTimeout(r,20));
+    assert.equal(f.screenshots,0);assert.equal(f.dispatches,0);
+    f.present();
+    const s=await capture;
+    assert.equal(f.screenshots,1);
+    await f.chain.admit(f.review(s.capture),f.dispatch);
+    assert.equal(f.dispatches,1);
+  }finally{f.adapter.destroy();}
+});
+
+test('first PRESENT wait expires and permanently closes with no later requests',async()=>{
+  const f=fixture('mcm',{pending:true,timeout:30});try {
+    await assert.rejects(f.chain.capture('never'),/readiness expired/);
+    assert(f.chain.closed);assert.equal(f.screenshots,0);
+    const reads=f.reads;f.present();await assert.rejects(f.chain.readLive(),/closed chain/);
+    assert.equal(f.reads,reads);
+  }finally{f.adapter.destroy();}
+});
+
+for(const [name,mutate] of Object.entries({
+  replacement:f=>{f.wine._renderWorkerManager.worker={};},
+  mainInstance:f=>{f.wine.instance={};},
+  mainRenderer:f=>{f.wine.renderer={...f.wine.renderer};},
+  presenter:f=>{f.bridge.presenter=new Presenter({api:'d3dim-gps',renderer:f.wine.renderer,createCanvas});},
+  retired:f=>{f.port.closed=true;},
+  context:f=>{const read=f.adapter.identity;f.adapter.identity=()=>({...read(),executorRole:'webgl',context:{},contextLost:true,glRenderer:'lost'});},
+  generation:f=>{f.kick(2);f.kick(0);},
+  incomplete:f=>{f.present();f.bridge.presenter.layer.writeSeq=0;},
+  wrongOwner:f=>{f.present();f.bridge.presenter.win.wasm={};},
+  stale:f=>{f.present();f.bridge.presenter.layer.stale=()=>true;},
+}))test('first PRESENT pending does not excuse '+name,async()=>{
+  const f=fixture('mcm',{pending:true});try {
+    const capture=f.chain.capture('pending');
+    await new Promise(r=>setTimeout(r,20));mutate(f);
+    await assert.rejects(capture);
+    assert(f.chain.closed);assert.equal(f.screenshots,0);assert.equal(f.dispatches,0);
+    const reads=f.reads;await assert.rejects(f.chain.readLive(),/closed chain/);assert.equal(f.reads,reads);
+  }finally{f.adapter.destroy();}
+});
+
+test('publication refusal carries exactly nine same-read scalar predicates',()=>{
+  const f=fixture();try {
+    f.layer.writeSeq=0;
+    assert.throws(()=>vm.runInContext(bound.PAGE_READ,f.page),error=>{
+      const reasons=JSON.parse(error.message.slice(error.message.indexOf('{')));
+      assert.equal(Object.keys(reasons).length,9);
+      assert(Object.values(reasons).every(v=>typeof v==='boolean'));
+      assert.deepEqual(Object.keys(reasons).filter(k=>reasons[k]),['zeroWriteSeq']);
+      return true;
+    });
+  }finally{f.adapter.destroy();}
+});
+
+test('actual native producer first complete PRESENT releases the bounded capture',async()=>{
+  const {bootGpsDevice}=require('./helpers/d3dim-gps-device');
+  const g=await bootGpsDevice({extraWat:`
+    (func (export "mcm_first_present") (param $surface i32)
+      (local $pb i32) (local $entry i32) (local $target i32)
+      (local.set $pb (call $d3g_pb))
+      (local.set $entry (call $dx_from_this (local.get $surface)))
+      (call $dx_coop_hwnd_set (i32.const 1))
+      (local.set $target (call $d3g_find (local.get $pb) (load.field DxObject misc1 (local.get $entry))))
+      (call $d3g_present (local.get $pb) (i32.load offset=28 (local.get $target))
+        (i32.const 0) (i32.const 0) (i32.const 2) (i32.const 2)
+        (i32.const 1) (i32.const 0) (i32.const 0) (local.get $entry))
+      (drop (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_SYNC))))`});
+  const surface=g.surface(2,2,{caps:0x6040}),device=g.device(surface);
+  const vertices=g.e.guest_alloc(128);
+  g.vertices(vertices,[[0,0,.5,1,0xff00ff00],[2,0,.5,1,0xff00ff00],[0,2,.5,1,0xff00ff00]]);
+  g.e.gd_draw(device,4,vertices,3);
+  assert.equal(g.e.gd_clear(surface,1,0xff00ff00,1,0,0,2,2,0),1);g.fence();
+  const f=fixture('mcm',{pending:true});try {
+    f.wine.instance=g.h.instance;
+    const win=f.wine.renderer.windows[1];win.wasm=g.h.instance;
+    // This callback receives only the native ring executor's real output.
+    g.executor().options.presentPixels=frame=>f.bridge.presenter.present(frame);
+    await f.oldCapture();
+    assert.throws(()=>vm.runInContext(bound.PAGE_READ,f.page),/current D3DIM GPS publication required/);
+    const capture=f.chain.capture('native-first');
+    await new Promise(r=>setTimeout(r,20));assert.equal(f.screenshots,0);
+    g.e.mcm_first_present(surface);
+    assert.equal(f.bridge.presenter.presents,1);
+    assert(g.e.d3dim_gps_window_present(1,0)>0,'actual native HWND publication');
+    const s=await capture;
+    assert.equal(s.after.page.apps[0].publication.presents,1);
+    assert.deepEqual([...f.bridge.presenter.canvas.getContext('2d').getImageData(0,0,1,1).data],[0,255,0,255]);
+    await f.chain.admit(f.review(s.capture),f.dispatch);assert.equal(f.dispatches,1);
+  }finally{f.adapter.destroy();g.executor()?.close();}
+});
 
 test('current GPS ownership passes with absent legacy readiness and actual software fallback',async()=>{
   const f=fixture();try {
