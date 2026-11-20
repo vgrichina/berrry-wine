@@ -1,4 +1,37 @@
-# OpenGL / Direct3D corpus status, updated 2026-11-18
+# OpenGL / Direct3D corpus status, updated 2026-11-20
+
+## November 20 native input controls and remaining gameplay
+
+Disciples II's owning-Worker query/consumer observer and fixture remain
+uncommitted WIP. All 17 real two-CPUWorker cases passed with observation off
+and on (34 variants), along with ten focused groups and the locked build.
+These fixture results use module `78214bbe…` on the recorded shared tree;
+authored POINT-use counters do not establish consumption by the original.
+The fresh original used a separately pinned immutable graph/module
+`cc4fb822…` and reached only the reviewed loading screen. Its independent
+monitor cancelled at 1,491,152,896 free bytes, with a sampled minimum of
+1,121,411,072. No input, hover, NewQuest, map action or ordinary Quit occurred.
+The scope is closed; later disk recovery does not repair that outcome.
+Evidence: `scratch/runs/20261120-disciples2-native-receiver-gameplay-20261120/result.json`.
+
+Quake II's uncommitted input bridge records a real owning-Worker GetMessage
+return for key 65, independent trusted UP and public guest WndProc caption
+`DU`. Focused tests and the locked build passed, but the tested native runtime
+uses the separately recorded `f6962ba5b`/`a6002d5d…` graph; the shared
+build is not substituted for it. A later healthy-control launcher received
+SIGTERM before guest DOWN at 00:28:03.850 UTC. The sender is unknown; that
+scope is closed without replay or later ordinary requests. Its sampled disk
+minimum exceeded 2.1 GB, so that observation does not attribute the signal to
+disk pressure. Remaining native fault controls, original living-enemy
+consequence and ordinary Quit remain unproved. Executing-bytecode attestation
+is also absent; a transport receipt alone is not a gameplay result.
+Evidence: `scratch/runs/20261120-quake2-native-receiver-enemy-gameplay-20261120/result.json`.
+
+The coordinator retained 91 passive file-metadata samples after the Disciples
+cancellation. Free space stayed above 2.095 GB during that observation, and
+the earlier burst did not recur. Process visibility was incomplete; the
+historical writer remains unknown. The observer read metadata only.
+Evidence: `scratch/runs/20261120-coordinator-floor-writer-observation/result.json`.
 
 ## November 18 capture, input and shutdown prerequisites
 
