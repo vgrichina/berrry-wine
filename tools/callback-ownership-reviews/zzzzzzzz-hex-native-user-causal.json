@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "f2a9148e54034c4f1778e31fa4887f4902eedf125ea2242aa33fd939950d04c6",
+      "sha256": "5a58988c63cf5aa98a0663cdf7a9ed1c6ccb9957d16a57fcce10e5070a8a4137",
+      "reason": "20261120 bounded native USER causal diagnostic only. No guest context, EIP, callback ownership, queue selection, validation or consumption decision changes. Native path adds records to per-instance globals; no guest memory or shared region storage. Worker opt-in captures native records before existing host imports and before/after existing CPU slice/local waits, preserving original receivers, results and exceptions; no callback driver is added. Per-configuration single use nonce, finite30s lifetime, explicit cancel, replacement, retirement, errors and overflow stop collection; no post-close endpoint probe. General callback ownership remains pending. Production Worker native controls are run separately in this feature."
+    },
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "403ffc8ba151e610958392f2eed234d6979e36b6bb51e97182e810f2426a5c2f",
+      "sha256": "32073ad2ebf484c033e36e07a3a1fee6e5a645686159061b7d352ae154eb21da",
+      "reason": "20261120 bounded native USER causal diagnostic only. No guest context, EIP, callback ownership, queue selection, validation or consumption decision changes. Native path adds records to per-instance globals; no guest memory or shared region storage. Worker opt-in captures native records before existing host imports and before/after existing CPU slice/local waits, preserving original receivers, results and exceptions; no callback driver is added. Per-configuration single use nonce, finite30s lifetime, explicit cancel, replacement, retirement, errors and overflow stop collection; no post-close endpoint probe. General callback ownership remains pending. Production Worker native controls are run separately in this feature."
+    }
+  ]
+}

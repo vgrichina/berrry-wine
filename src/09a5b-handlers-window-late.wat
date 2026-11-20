@@ -52,8 +52,10 @@
     ;; GetMessage/PeekMessage call instead of using it as a throwaway probe.
     (if (i32.eqz (global.get $pending_input_packed))
       (then
+        (call $native_user_event (i32.const 3) (i32.const 0))
         (local.set $packed (call $host_check_input))
         (global.set $pending_input_token (call $host_check_input_token))
+        (call $native_user_event (i32.const 4) (local.get $packed))
         (if (i32.ne (local.get $packed) (i32.const 0))
           (then
             (global.set $pending_input_packed (local.get $packed))
@@ -126,8 +128,10 @@
     ;; The host probe removes an event. Keep all its fields for the following
     ;; PeekMessage/GetMessage and do not probe again while that event is cached.
     (if (i32.eqz (global.get $pending_input_packed)) (then
-      (local.set $packed (call $host_check_input))
+      (call $native_user_event (i32.const 3) (i32.const 0))
+        (local.set $packed (call $host_check_input))
         (global.set $pending_input_token (call $host_check_input_token))
+        (call $native_user_event (i32.const 4) (local.get $packed))
       (if (local.get $packed) (then
         (global.set $pending_input_packed (local.get $packed))
         (global.set $pending_input_hwnd (call $host_check_input_hwnd (global.get $focus_hwnd)))
