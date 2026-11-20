@@ -10,6 +10,8 @@ const sigs = {
   input_validate: { params: ['i32'], results: ['i32'] },
   check_input: { params: [], results: ['i32'] },
   input_consumed: { params: ['i32', 'i32', 'i32'], results: ['i32'] },
+  get_async_key_state: { params: ['i32'], results: ['i32'] },
+  get_key_down_state: { params: ['i32'], results: ['i32'] },
   gpu_gl_call: { params: ['i32', 'i32', 'i32'], results: ['i32'] },
 };
 if (!isMainThread) {
@@ -24,11 +26,14 @@ if (!isMainThread) {
   try {
     if (mode === 'failure') {
       for (const [name, args] of [['check_input', []], ['input_validate', [9]],
-        ['input_consumed', [9, 1, 32]]]) {
+        ['input_consumed', [9, 1, 32]], ['get_async_key_state', [65]],
+        ['get_key_down_state', [65]]]) {
         assert.throws(() => w.imports.host[name](...args), /publication queue closed or failed/);
       }
     } else {
       w.imports.host.set_mouse_position(12, 34);
+      assert.equal(w.imports.host.get_async_key_state(65), 0x8001);
+      assert.equal(w.imports.host.get_key_down_state(65), 0x8000);
       assert.equal(w.imports.host.check_input(), 0x201);
       assert.equal(w.imports.host.input_validate(9), 1);
       assert.equal(w.imports.host.input_consumed(9, 1, 32), 1);
@@ -53,6 +58,15 @@ if (!isMainThread) {
     if (mode === 'failure') q.fail();
     const main = RPC.createMainBroker(memory, {
       set_mouse_position: (x, y) => order.push(['warp', x, y]),
+      get_async_key_state: key => {
+        assert.equal(key, 65);
+        assert.deepEqual(order[0], ['warp', 12, 34]);
+        order.push(['async-key']); return 0x8001;
+      },
+      get_key_down_state: key => {
+        assert.equal(key, 65);
+        order.push(['key']); return 0x8000;
+      },
       input_validate: (...a) => {
         order.push(['validate', ...a]);
         if (a[0] === 0) return 0x424e49;
@@ -98,7 +112,11 @@ if (!isMainThread) {
       });
       if (regression) throw regression;
       if (mode === 'failure') assert.deepEqual(order, [], 'failed transport posts no input RPC');
-      else { assert(inputDone); assert(graphics); }
+      else {
+        assert(inputDone); assert(graphics);
+        assert.equal(order.filter(row => row[0] === 'async-key').length, 1);
+        assert.equal(order.filter(row => row[0] === 'key').length, 1);
+      }
       console.log('PASS actual Worker held publication: ' + mode);
     } finally {
       clearTimeout(timeout); release();
