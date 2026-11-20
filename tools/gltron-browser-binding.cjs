@@ -291,11 +291,35 @@ function reviewHostBootstrap(scene,review,live,now=Date.now()){
   return {x:live.button.x,y:live.button.y};
 }
 
+function trackWorkerContext(workers,event) {
+  const w=workers.get(event.sessionId);
+  if(w&&['Runtime.executionContextCreated','Runtime.executionContextDestroyed','Runtime.executionContextsCleared'].includes(event.method))w.contextEpoch=(w.contextEpoch??0)+1;
+}
 function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo', expectedModules = null, now = Date.now,onTicketObservation=()=>{}}) {
-  let latest = null, pinnedIdentity = null, busy = false, closed = false, startup = null;
+  let latest = null, pinnedIdentity = null, busy = false, closed = false, startup = null, prepared = null, pinnedTransport = null;
   const consumed = new Set();
+  // Debugger also reports each passive Runtime.evaluate as a JS script. Such
+  // observation scripts are not module incarnations and must not invalidate
+  // an otherwise unchanged wasm proof. Include pending wasm parses as well.
+  const moduleStamp=w=>JSON.stringify(w.scripts.filter(s=>s.bytecodeAvailable||s.url?.startsWith('wasm://')));
+  // Only immutable bytes are memoized. Actual Worker instance/endpoint reads
+  // and page owner/output checks still run for every separate intent.
+  const moduleProofs=new WeakMap();
+  async function moduleProof(w,scripts,incarnation) {
+    assert(scripts.length>0,'actual module required');
+    const key=JSON.stringify([w.targetId,w.sessionId,w.contextEpoch,incarnation,scripts.map(s=>[s.scriptId,s.sha256])]);
+    const prior=moduleProofs.get(w);
+    if(prior?.key===key)return prior.hash;
+    const source=await send('Debugger.getScriptSource',{scriptId:scripts[0].scriptId},w.sessionId);
+    assert(source.bytecode,'live module bytecode required');
+    const hash=sha(Buffer.from(source.bytecode,'base64'));
+    assert.equal(hash,scripts[0].sha256,'live module bytes changed');
+    moduleProofs.set(w,Object.freeze({key,hash}));
+    return hash;
+  }
   async function readLive() {
     assert(!closed,'closed chain');
+    pinnedTransport?.();
     const page = await evaluate(PAGE_READ);
     assert(page.isolated && page.apps.length === 1, 'one isolated registered app required');
     const a = page.apps[0];
@@ -310,9 +334,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
     const {w, live} = matches[0];
     const scripts = [...new Map(w.scripts.filter(s => s.bytecodeAvailable && s.sha256 && !s.error).map(s=>[s.scriptId,s])).values()];
     assert.equal(scripts.length, 1, 'unique recovered live Worker module required');
-    const source = await send('Debugger.getScriptSource', {scriptId:scripts[0].scriptId}, w.sessionId);
-    assert(source.bytecode, 'live module bytecode required');
-    const moduleSha256 = sha(Buffer.from(source.bytecode, 'base64'));
+    const moduleSha256 = await moduleProof(w,scripts,live.instance);
     assert.equal(moduleSha256, scripts[0].sha256, 'live module bytes changed');if(expectedModules)assert(expectedModules.includes(moduleSha256),'immutable staged module required');
     let rendererTarget='none',rendererEpoch='none',rendererModuleSha256='none';
     if(a.renderEndpoint!=='none') {
@@ -326,9 +348,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
       rendererTarget=r.targetId;rendererEpoch=endpoint.epoch;
       const modules=[...new Map(r.scripts.filter(s=>s.sha256&&s.bytecodeAvailable&&!s.error).map(s=>[s.scriptId,s])).values()];
       assert.equal(new Set(modules.map(s=>s.sha256)).size,1,'unique actual renderer module required');
-      const bytes=await send('Debugger.getScriptSource',{scriptId:modules[0].scriptId},r.sessionId);
-      assert(bytes.bytecode,'actual renderer module bytes required');
-      rendererModuleSha256=sha(Buffer.from(bytes.bytecode,'base64'));
+      rendererModuleSha256=await moduleProof(r,modules,endpoint.epoch);
       assert.equal(rendererModuleSha256,modules[0].sha256);
     }
     const rendererIdentity={rendererTarget,rendererEpoch,rendererModuleSha256};
@@ -351,7 +371,18 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
       after.apps[0].outputVisible, 'owner/output hidden or clipped during identity validation');
     same(identity, {...after.apps[0], workerTarget:w.targetId, workerInstance:live.instance, moduleSha256,...rendererIdentity});
     assert(!w.closed, 'Worker detached during identity read');
-    return {identity, page:after, worker:{targetId:w.targetId, sessionId:w.sessionId, ...live}};
+    // A positive pre-ticket NOT_READY is still the same intent. Remember the
+    // attested transport/script objects only for that bounded arm loop; never
+    // cache a scene, readiness result, publication, or input admission.
+    const transportProof=[...workers.values()].filter(x=>!x.closed).map(x=>Object.freeze({worker:x,
+      target:x.targetId,session:x.sessionId,context:x.contextEpoch,scripts:moduleStamp(x)}));
+    const validateTransport=()=>{
+      const current=[...workers.values()].filter(x=>!x.closed);
+      assert.equal(current.length,transportProof.length,'attested Worker set changed');
+      for(const p of transportProof)assert(current.includes(p.worker)&&p.worker.targetId===p.target&&p.worker.sessionId===p.session&&p.worker.contextEpoch===p.context&&moduleStamp(p.worker)===p.scripts,'attested Worker/module/context changed');
+    };
+    validateTransport();pinnedTransport??=validateTransport;
+    return {identity, page:after, worker:{targetId:w.targetId, sessionId:w.sessionId, ...live},validateTransport};
   }
   function fresh(capture, maxAgeMs=MAX_AGE_MS) {
     const age = now() - Date.parse(capture?.at);
@@ -364,9 +395,10 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
     assert(!closed && !busy, 'closed or concurrent chain'); busy = true;
     try {
       let before,shot;
+      before=startup?.proof??await readLive();
       for(;;){
         if(startup)assert(now()<startup.deadline,'bounded PREBIND startup readiness expired');
-        before=await readLive();
+        before.validateTransport();
         shot=await captureScene({evaluate,identity:before.identity,now,precheckDeadline:startup?.deadline??null,onTicketObservation});
         if(shot.state!=='NOT_READY')break;
         // Only this positive, nonce-bound, pre-request result can stay in
@@ -435,12 +467,22 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
     try {
       assert(!startup,'startup deadline already fixed');
       assert(Number.isFinite(deadline)&&deadline>now(),'bounded PREBIND startup deadline');
-      startup={deadline,onObservation:onObservation??(()=>{})};
-      const live=await readLive();
+      const live=prepared??await readLive();prepared=null;
+      live.validateTransport();
+      startup={deadline,onObservation:onObservation??(()=>{}),proof:live};
       return await awaitStartupReady({evaluate,identity:live.identity,deadline,now,onObservation});
     }catch(e){closed=true;throw e;}finally{busy=false;}
   }
-  return {capture, admit, readLive, progress, prepareStartup, get closed(){return closed;}};
+  async function prepareAttestation() {
+    assert(!closed&&!busy&&!latest&&!startup&&!prepared,'unarmed attestation only');busy=true;
+    try {
+      const live=await readLive();
+      Object.freeze(live.identity);Object.freeze(live.worker);
+      prepared=Object.freeze(live);
+      return structuredClone({identity:live.identity,worker:live.worker});
+    }catch(e){closed=true;throw e;}finally{busy=false;}
+  }
+  return {capture, admit, readLive, progress, prepareAttestation, prepareStartup, get closed(){return closed;}};
 }
 
-module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady,HOST_READ,HOST_FIELDS,sameHostOwner,consentButton,reviewHostBootstrap};
+module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady,HOST_READ,HOST_FIELDS,sameHostOwner,consentButton,reviewHostBootstrap,trackWorkerContext};

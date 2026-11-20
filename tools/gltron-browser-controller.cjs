@@ -199,6 +199,7 @@ async function browser(out,backend) {
     const [dp,wp]=fs.readFileSync(active,'utf8').trim().split('\n'),url='ws://127.0.0.1:'+dp+wp;c=connection(url);await c.ready;
     record('endpoint.json',{url,pid:browser.pid,startToken});
     c.event=v=>{
+      require(ROOT+'/'+HELPER).trackWorkerContext(workers,v);
       if(v.method==='Target.attachedToTarget'&&v.params.targetInfo.type==='worker'){
         const {sessionId,targetInfo}=v.params,w={sessionId,targetId:targetInfo.targetId,url:targetInfo.url,scripts:[],closed:false};workers.set(sessionId,w);
         const task=(async()=>{await c.send('Runtime.enable',{},sessionId);await c.send('Runtime.evaluate',{expression:GL_OBSERVER},sessionId);await c.send('Debugger.enable',{},sessionId);await c.send('Target.setAutoAttach',{autoAttach:true,waitForDebuggerOnStart:true,flatten:true},sessionId);await c.send('Runtime.runIfWaitingForDebugger',{},sessionId);})();tasks.push(task);task.catch(e=>log('worker-errors.jsonl',{error:String(e)}));
@@ -270,6 +271,7 @@ async function browser(out,backend) {
     await hostBootstrap({out,evaluate,send:c.send,session,owner:startupOwner,browserIdentity:{url,pid:browser.pid,startToken,targetId},deadline:startupEnd});
     const selected=await binding.awaitStartupReady({evaluate,identity:startupOwner,deadline:startupEnd,selectOutput:true,onObservation:s=>log('startup-initial-display.jsonl',s)});
     const selectedOwner=await chain.readLive();assert.equal(selectedOwner.identity.outputCanvasObject,selected.outputCanvasObject,'selected startup output replaced');
+    await chain.prepareAttestation();
     const startupReadiness=await chain.prepareStartup(startupEnd,s=>log('startup-readiness.jsonl',s));
     // This is a passive observation, not a promise that paint stays idle
     // across the asynchronous module reads preceding the final arm.
