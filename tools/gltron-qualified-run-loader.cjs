@@ -64,6 +64,18 @@ function preflightModule(bytes,requiredExports){
   const module=new WebAssembly.Module(bytes),exports=WebAssembly.Module.exports(module);
   const missing=requiredExports.filter(row=>!exports.some(e=>e.name===row.name&&e.kind===row.kind));
   assert.equal(missing.length,0,'qualified native module exports unavailable: '+missing.map(e=>e.name+':'+e.kind).join(', '));
-  return {sha256:sha(bytes),bytes:bytes.byteLength,exports,imports:WebAssembly.Module.imports(module)};
+  const typed=requiredExports.filter(row=>row.signature!==undefined);
+  const signatures=[];
+  if(typed.length){
+    const decoded=require('./wasm-abi-diff.js').decodeWasm(bytes);
+    for(const row of typed){
+      assert.equal(row.kind,'function','signature requires a function export');
+      const actual=decoded.exports.find(e=>e.name===row.name);
+      const signature=decoded.funcSignatures[actual.index];
+      assert.equal(signature,row.signature,'qualified native module signature '+row.name);
+      signatures.push({name:row.name,signature});
+    }
+  }
+  return {sha256:sha(bytes),bytes:bytes.byteLength,exports,imports:WebAssembly.Module.imports(module),signatures};
 }
 module.exports={createExactLoader,preflightModule};

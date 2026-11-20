@@ -51,3 +51,11 @@ test('compiled module ABI preflight rejects missing and wrong-kind native export
   assert.throws(()=>preflightModule(bytes,[{name:'get_authoritative_capture_hwnd',kind:'function'}]),/get_authoritative_capture_hwnd:function/);
   assert.throws(()=>preflightModule(bytes,[]),/explicit native module exports/);
 });
+test('compiled ABI checks resolved function types, including imported function indices',()=>{
+  // Imported f(i32)->i64 is index 0; defined g()->() is index 1.
+  const bytes=Buffer.from('0061736d0100000001090260017f017e6000000207010168016600000302010107090201660000016700010a040102000b','hex');
+  const proof=preflightModule(bytes,[{name:'f',kind:'function',signature:'(i32) -> (i64)'},{name:'g',kind:'function',signature:'() -> ()'}]);
+  assert.deepEqual(proof.signatures,[{name:'f',signature:'(i32) -> (i64)'},{name:'g',signature:'() -> ()'}]);
+  assert.throws(()=>preflightModule(bytes,[{name:'f',kind:'function',signature:'(i32) -> (i32)'}]),/qualified native module signature f/);
+  assert.throws(()=>preflightModule(bytes,[{name:'g',kind:'function',signature:'(i32) -> (i64)'}]),/qualified native module signature g/);
+});
