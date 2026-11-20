@@ -2242,6 +2242,36 @@
     ;; it is today.
     (dispatch-next))
 
+  ;; $branch_end_at for a transfer that used to return to $run's desk: a
+  ;; completed GL short call (09a8c $gl_short_call) continuing at its return
+  ;; address. Same guards, the same one-block charge and the same lookup as the
+  ;; desk, and deliberately none of the transfer-edge hooks the desk never ran
+  ;; (diagnostic counters, the block-executor discovery gate, the uop tier's
+  ;; hot bump): a return address bumped here becomes a uop head the desk path
+  ;; never makes, which moves the default block clock (Q2 GPS stream differed
+  ;; at batch 1800 with $branch_end). The desk's resolve-miss decode stays
+  ;; with the desk.
+  (func $branch_end_quiet
+     (local $nx_fn i32) (local $nx_op i32) (local $t i32)
+    (call $pending_entry (global.get $eip) (i32.load offset=16 (global.get $reg_base)))
+    (if (i32.or (i32.or (global.get $dbg_chain_guard)
+                       (i32.eq (global.get $eip) (global.get $bp_addr)))
+        (i32.or (global.get $code16)
+        (i32.or (global.get $yield_flag) (global.get $yield_reason))))
+      (then (return)))
+    (if (i32.le_s (global.get $block_budget) (i32.const 0)) (then (return)))
+    (if (i32.or (i32.eq (global.get $eip) (global.get $sbh_eip_a))
+                (i32.eq (global.get $eip) (global.get $sbh_eip_b)))
+      (then (return)))
+    (local.set $t (call $page_resolve (global.get $eip)))
+    (if (i32.eqz (local.get $t)) (then (return)))
+    (global.set $block_budget (i32.sub (global.get $block_budget) (i32.const 1)))
+    (global.set $steps (i32.sub (global.get $steps) (i32.const 1)))
+    (global.set $dbg_prev2_eip (global.get $dbg_prev_eip))
+    (global.set $dbg_prev_eip (global.get $eip))
+    (global.set $ip (i32.and (local.get $t) (i32.const -2)))
+    (dispatch-next))
+
   ;; Recycling the decoded-code arena means resetting $thread_alloc to the base
   ;; and invalidating every cached block. That is only safe between blocks.
   ;; While a synchronous wndproc runs nested inside a handler — SendMessage,

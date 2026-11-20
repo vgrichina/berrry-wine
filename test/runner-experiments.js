@@ -249,6 +249,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // run-time switch, so both arms decode identically.
   const NO_X87_ISLAND_PREDECODE = hasFlag('no-x87-island-predecode');
   const NO_JUMP_TABLE = hasFlag('no-jump-table');
+  // --no-gl-short-call: decoded CALLs into pure-state GL thunks take
+  // $win32_dispatch and $run's desk again (09a8c $gl_short_call).
+  const NO_GL_SHORT_CALL = hasFlag('no-gl-short-call');
   const NO_RLE_RUN = hasFlag('no-rle-run');
   // Prototype folds under measurement, both off unless asked for.
   const ALU8_SIB = hasFlag('alu8-sib');
@@ -357,6 +360,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (NO_STACK_FUSION) inheritWasm('set_stack_fusion', 0);
     if (NO_X87_ISLAND_PREDECODE) inheritWasm('set_x87_island_predecode', 0);
     if (NO_JUMP_TABLE) inheritWasm('set_jump_table', 0);
+    if (NO_GL_SHORT_CALL) inheritWasm('set_gl_short_call', 0);
     if (NO_RLE_RUN) inheritWasm('set_rle_run', 0);
     if (ALU8_SIB) inheritWasm('set_alu8_sib', 1);
     if (IMPLODE_CMP_RUN) inheritWasm('set_implode_cmp_run', 1);
@@ -534,6 +538,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (NO_JUMP_TABLE && available('set_jump_table')) {
       set('set_jump_table', 0);
     }
+    if (NO_GL_SHORT_CALL && available('set_gl_short_call')) set('set_gl_short_call', 0);
     if (NO_RLE_RUN && available('set_rle_run')) {
       set('set_rle_run', 0);
     }

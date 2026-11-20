@@ -63,12 +63,13 @@ const STAT_NAMES = ['draws', 'tris', 'spanQuads', 'clears', 'presents', 'readbac
 
 // opts.makeExecutor(getExports, getMemory): another executor than the
 // software one (test-gl-gps-mip-chain.js runs headless WebGL through it).
-async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, makeExecutor = null } = {}) {
+// opts.extraWat: more probe exports appended to this helper's (tools/bench-gl-call.js).
+async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, makeExecutor = null, extraWat = '' } = {}) {
   let memory, executor = null, ring = null, ringAddr = 0;
   const kicks = { n: 0, records: {} };
   // host log_i32 words ($glg_fail logs 0x474c4750 then its code).
   const logs = [];
-  const h = await bootRenderHarness({ fonts: 'none', width: size, height: size, extraWat: WAT,
+  const h = await bootRenderHarness({ fonts: 'none', width: size, height: size, extraWat: WAT + extraWat,
     extraHostOverrides: {
       gpu_gl_call: ownedGlCall(() => memory, { gps }),
       log_i32(v) { logs.push(v >>> 0); if (logs.length > 64) logs.shift(); },
@@ -162,7 +163,7 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, makeExecutor = null
   const clear = (rgba, mask = 0x4000) => { call('glClearColor', rgba.map(f)); call('glClear', [mask]); };
   // The code of the last $glg_fail (the word after its 'GLGP' tag), or null.
   const failCode = () => { const i = logs.lastIndexOf(0x474c4750); return i >= 0 && i + 1 < logs.length ? logs[i + 1] : null; };
-  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context, logs, failCode };
+  return { e, memory, call, f, stats, front, swap, prim, quad, clear, kicks, wa, size, str, dc, context, logs, failCode, resolve };
 }
 
 // The two arms' presented pictures: equal within $tol per channel.

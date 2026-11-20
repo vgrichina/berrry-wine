@@ -179,6 +179,9 @@
       (then
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))
+        ;; Pure-state GL call: complete it and chain on (09a8c $gl_short_call).
+        (if (call $gl_short_call (i32.shr_u (i32.sub (local.get $target) (global.get $thunk_guest_base)) (i32.const 3)))
+          (then (global.set $eip (local.get $op)) (return_call $branch_end_quiet)))
         (call $win32_dispatch (i32.div_u (i32.sub (local.get $target) (global.get $thunk_guest_base)) (i32.const 8)))
         (if (global.get $steps) (then (global.set $eip (local.get $op))))
         (return)))
@@ -1229,6 +1232,9 @@
       (then
         (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $op))
+        ;; Pure-state GL call: complete it and chain on (09a8c $gl_short_call).
+        (if (call $gl_short_call (i32.shr_u (i32.sub (local.get $target) (global.get $thunk_guest_base)) (i32.const 3)))
+          (then (global.set $eip (local.get $op)) (return_call $branch_end_quiet)))
         (call $win32_dispatch (i32.div_u (i32.sub (local.get $target) (global.get $thunk_guest_base)) (i32.const 8)))
         (if (global.get $steps) (then (global.set $eip (local.get $op))))
         (return)))

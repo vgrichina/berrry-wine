@@ -12439,6 +12439,10 @@ if (VERBOSE) {
 
   console.log(`\nStats: ${apiTotal()} API calls, ${batchesRun} batches`
     + ` in ${executionElapsedSeconds.toFixed(3)}s (${(batchesRun / Math.max(executionElapsedSeconds,0.001)).toFixed(0)} batches/s)`);
+  // 09a8c $gl_short_call: GL calls completed inside the decoded CALL (main instance).
+  if (instance.exports.get_gl_short_calls && instance.exports.get_gl_short_calls() > 0n)
+    console.log(`gl short calls (main instance): ${instance.exports.get_gl_short_calls()}`
+      + (instance.exports.get_gl_short_call() ? '' : ' (switch now off)'));
   if (PRESENT_CAP && instance.exports.get_present_paced_count) {
     console.log(`present pacing (main instance): cap ${PRESENT_CAP}/s ${PRESENT_PACE_MODE ? 'smooth' : 'deadline'}, `
       + `${instance.exports.get_present_paced_count()} frames slept `

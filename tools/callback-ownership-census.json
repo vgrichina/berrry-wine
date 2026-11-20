@@ -668,7 +668,7 @@
     {
       "file": "src/05-alu.wat",
       "name": "$th_call_ind",
-      "writes": 3,
+      "writes": 4,
       "boundaryCalls": [],
       "exports": [],
       "targets": [
@@ -682,12 +682,16 @@
         ],
         [
           "local.get",
+          "$op"
+        ],
+        [
+          "local.get",
           "$target"
         ]
       ],
-      "sha256": "e8d8dd7edb8dea28fe2362d59735023c129d19ab048bf3b7f03762e5b299861f",
+      "sha256": "befdf57d27c077d674529efc8515d487fbba0b02abf319ede97c55cb65bb0c1a",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Memory CALL protected review 2026-11-03: absolute FF15 admission only; preflight every target/return-slot byte, exclude DIB readback, then commit one architectural CALL and stop before target execution. Thunk calls preserve their ordinary shadow-stack exclusion and resume the existing dispatcher only after disarm. No new guest handler, callback invocation, retained identity or context restoration. Ordinary inline dispatch unchanged; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Memory CALL protected review 2026-11-03: absolute FF15 admission only; preflight every target/return-slot byte, exclude DIB readback, then commit one architectural CALL and stop before target execution. Thunk calls preserve their ordinary shadow-stack exclusion and resume the existing dispatcher only after disarm. No new guest handler, callback invocation, retained identity or context restoration. Ordinary inline dispatch unchanged; callback ownership remains pending.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). GL short call (09a8c $gl_short_call): a whitelisted pure-state GL thunk call completes inline and continues at the pushed return address through $branch_end_quiet; same return EIP, one block charged, no callback or retained guest reference (20261120-gl-short-call).",
       "ownership": "pending"
     },
     {
@@ -1734,7 +1738,7 @@
     {
       "file": "src/06b-core-handlers.wat",
       "name": "$th_call_ind_ro",
-      "writes": 2,
+      "writes": 3,
       "boundaryCalls": [],
       "exports": [],
       "targets": [
@@ -1744,18 +1748,22 @@
         ],
         [
           "local.get",
+          "$op"
+        ],
+        [
+          "local.get",
           "$target"
         ]
       ],
-      "sha256": "d8771b23e24307a55f34ae4b457d2f32f0ec3d6d26e7669cb479ed260c371b4a",
+      "sha256": "2da8ec88c6a61571fd3b0d39bdcabd182937790f45971fb2a9abccc225605f95",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). GL short call (09a8c $gl_short_call): a whitelisted pure-state GL thunk call completes inline and continues at the pushed return address through $branch_end_quiet; same return EIP, one block charged, no callback or retained guest reference (20261120-gl-short-call).",
       "ownership": "pending"
     },
     {
       "file": "src/06b-core-handlers.wat",
       "name": "$th_call_r",
-      "writes": 2,
+      "writes": 3,
       "boundaryCalls": [],
       "exports": [],
       "targets": [
@@ -1765,12 +1773,16 @@
         ],
         [
           "local.get",
+          "$op"
+        ],
+        [
+          "local.get",
           "$target"
         ]
       ],
-      "sha256": "2ad3b6d8fc105c70ce814252ac5d86c663191dde39e2ee5ab8736490a595022f",
+      "sha256": "6ab4a09c7ce05d845280522b8604c6c8e2d2df549ac7cbe3e6524f64dd14ee59",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context). GL short call (09a8c $gl_short_call): a whitelisted pure-state GL thunk call completes inline and continues at the pushed return address through $branch_end_quiet; same return EIP, one block charged, no callback or retained guest reference (20261120-gl-short-call).",
       "ownership": "pending"
     },
     {

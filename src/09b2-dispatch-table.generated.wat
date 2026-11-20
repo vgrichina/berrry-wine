@@ -4207,6 +4207,67 @@
     (if (i32.eq (local.get $id) (i32.const 2916)) (then (return (i32.const 798)))) ;; glVertex3f
     (if (i32.eq (local.get $id) (i32.const 2917)) (then (return (i32.const 287)))) ;; glVertex3fv
     (i32.const 0))
+  (func $gl_short_call_op (param $id i32) (result i32)
+    (if (i32.eq (local.get $id) (i32.const 2907)) (then (return (i32.const 277)))) ;; glBegin
+    (if (i32.eq (local.get $id) (i32.const 2908)) (then (return (i32.const 22)))) ;; glEnd
+    (if (i32.eq (local.get $id) (i32.const 2909)) (then (return (i32.const 791)))) ;; glColor3f
+    (if (i32.eq (local.get $id) (i32.const 2910)) (then (return (i32.const 280)))) ;; glColor3fv
+    (if (i32.eq (local.get $id) (i32.const 2911)) (then (return (i32.const 1049)))) ;; glColor4f
+    (if (i32.eq (local.get $id) (i32.const 2912)) (then (return (i32.const 282)))) ;; glColor4fv
+    (if (i32.eq (local.get $id) (i32.const 3054)) (then (return (i32.const 1080)))) ;; glColor4ub
+    (if (i32.eq (local.get $id) (i32.const 2913)) (then (return (i32.const 283)))) ;; glColor4ubv
+    (if (i32.eq (local.get $id) (i32.const 3057)) (then (return (i32.const 314)))) ;; glColor3ubv
+    (if (i32.eq (local.get $id) (i32.const 2914)) (then (return (i32.const 540)))) ;; glTexCoord2f
+    (if (i32.eq (local.get $id) (i32.const 3413)) (then (return (i32.const 351)))) ;; glTexCoord2fv
+    (if (i32.eq (local.get $id) (i32.const 4430)) (then (return (i32.const 1144)))) ;; glTexCoord4f
+    (if (i32.eq (local.get $id) (i32.const 4431)) (then (return (i32.const 377)))) ;; glTexCoord4fv
+    (if (i32.eq (local.get $id) (i32.const 2915)) (then (return (i32.const 541)))) ;; glVertex2f
+    (if (i32.eq (local.get $id) (i32.const 3409)) (then (return (i32.const 347)))) ;; glVertex2fv
+    (if (i32.eq (local.get $id) (i32.const 3415)) (then (return (i32.const 609)))) ;; glVertex2i
+    (if (i32.eq (local.get $id) (i32.const 2916)) (then (return (i32.const 798)))) ;; glVertex3f
+    (if (i32.eq (local.get $id) (i32.const 2917)) (then (return (i32.const 287)))) ;; glVertex3fv
+    (if (i32.eq (local.get $id) (i32.const 4460)) (then (return (i32.const 1142)))) ;; glVertex4f
+    (if (i32.eq (local.get $id) (i32.const 4461)) (then (return (i32.const 375)))) ;; glVertex4fv
+    (if (i32.eq (local.get $id) (i32.const 3241)) (then (return (i32.const 831)))) ;; glNormal3f
+    (if (i32.eq (local.get $id) (i32.const 3242)) (then (return (i32.const 320)))) ;; glNormal3fv
+    (if (i32.eq (local.get $id) (i32.const 3439)) (then (return (i32.const 875)))) ;; glMultiTexCoord2fARB
+    (if (i32.eq (local.get $id) (i32.const 4338)) (then (return (i32.const 629)))) ;; glMultiTexCoord2fvARB
+    (if (i32.eq (local.get $id) (i32.const 3437)) (then (return (i32.const 361)))) ;; glActiveTextureARB
+    (if (i32.eq (local.get $id) (i32.const 3438)) (then (return (i32.const 362)))) ;; glClientActiveTextureARB
+    (if (i32.eq (local.get $id) (i32.const 2896)) (then (return (i32.const 266)))) ;; glEnable
+    (if (i32.eq (local.get $id) (i32.const 2894)) (then (return (i32.const 264)))) ;; glDisable
+    (if (i32.eq (local.get $id) (i32.const 3404)) (then (return (i32.const 342)))) ;; glEnableClientState
+    (if (i32.eq (local.get $id) (i32.const 3425)) (then (return (i32.const 355)))) ;; glDisableClientState
+    (if (i32.eq (local.get $id) (i32.const 2886)) (then (return (i32.const 512)))) ;; glAlphaFunc
+    (if (i32.eq (local.get $id) (i32.const 2887)) (then (return (i32.const 513)))) ;; glBlendFunc
+    (if (i32.eq (local.get $id) (i32.const 2891)) (then (return (i32.const 261)))) ;; glDepthFunc
+    (if (i32.eq (local.get $id) (i32.const 2892)) (then (return (i32.const 262)))) ;; glDepthMask
+    (if (i32.eq (local.get $id) (i32.const 2893)) (then (return (i32.const 1031)))) ;; glDepthRange
+    (if (i32.eq (local.get $id) (i32.const 2890)) (then (return (i32.const 260)))) ;; glCullFace
+    (if (i32.eq (local.get $id) (i32.const 3259)) (then (return (i32.const 337)))) ;; glFrontFace
+    (if (i32.eq (local.get $id) (i32.const 2905)) (then (return (i32.const 275)))) ;; glShadeModel
+    (if (i32.eq (local.get $id) (i32.const 2902)) (then (return (i32.const 528)))) ;; glPolygonMode
+    (if (i32.eq (local.get $id) (i32.const 3056)) (then (return (i32.const 569)))) ;; glPolygonOffset
+    (if (i32.eq (local.get $id) (i32.const 2904)) (then (return (i32.const 1042)))) ;; glScissor
+    (if (i32.eq (local.get $id) (i32.const 2906)) (then (return (i32.const 1044)))) ;; glViewport
+    (if (i32.eq (local.get $id) (i32.const 4244)) (then (return (i32.const 1164)))) ;; glColorMask
+    (if (i32.eq (local.get $id) (i32.const 3253)) (then (return (i32.const 587)))) ;; glHint
+    (if (i32.eq (local.get $id) (i32.const 4404)) (then (return (i32.const 392)))) ;; glStencilMask
+    (if (i32.eq (local.get $id) (i32.const 4403)) (then (return (i32.const 905)))) ;; glStencilFunc
+    (if (i32.eq (local.get $id) (i32.const 4405)) (then (return (i32.const 906)))) ;; glStencilOp
+    (if (i32.eq (local.get $id) (i32.const 2921)) (then (return (i32.const 291)))) ;; glMatrixMode
+    (if (i32.eq (local.get $id) (i32.const 2919)) (then (return (i32.const 33)))) ;; glLoadIdentity
+    (if (i32.eq (local.get $id) (i32.const 2920)) (then (return (i32.const 290)))) ;; glLoadMatrixf
+    (if (i32.eq (local.get $id) (i32.const 4344)) (then (return (i32.const 365)))) ;; glMultMatrixf
+    (if (i32.eq (local.get $id) (i32.const 2924)) (then (return (i32.const 38)))) ;; glPushMatrix
+    (if (i32.eq (local.get $id) (i32.const 2923)) (then (return (i32.const 37)))) ;; glPopMatrix
+    (if (i32.eq (local.get $id) (i32.const 2925)) (then (return (i32.const 1063)))) ;; glRotatef
+    (if (i32.eq (local.get $id) (i32.const 2926)) (then (return (i32.const 808)))) ;; glScalef
+    (if (i32.eq (local.get $id) (i32.const 2927)) (then (return (i32.const 809)))) ;; glTranslatef
+    (if (i32.eq (local.get $id) (i32.const 2922)) (then (return (i32.const 3108)))) ;; glOrtho
+    (if (i32.eq (local.get $id) (i32.const 2918)) (then (return (i32.const 3104)))) ;; glFrustum
+    (if (i32.eq (local.get $id) (i32.const 2928)) (then (return (i32.const 554)))) ;; glBindTexture
+    (i32.const 0))
   (func $api_stdcall_stack_bytes (param $id i32) (result i32)
     (block $abi60
     (block $abi56

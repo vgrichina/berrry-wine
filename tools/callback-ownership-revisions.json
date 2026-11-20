@@ -103,8 +103,8 @@
       "file": "lib/worker-imports.js",
       "name": "host-file",
       "baseSHA256": "53d6f5370385dcd23c45d263c7cc08a02f46f2d1e82ed08dcb24f97b8ee59d05",
-      "sha256": "4dd4c6dbc032c1168b755e47be9c3ba36010f18943bda7744e66f02edad29717",
-      "reason": "retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change."
+      "sha256": "79343e8643fc142b228f83c91efcc92b7db192dc1a100033b45004eac4382830",
+      "reason": "retire/d3dim-20261117: D3DIM is GPU stream only; removed the d3dim_gpu_enable / set_d3dim_gpu_present switches and the retired 0x20000-0x20004 host forwarding. No producer shape, write, boundary or lifetime change. 20261120 GL short call: one more inherited WASM setter (set_gl_short_call / get_gl_short_call); no producer shape, callback owner, write, boundary or lifetime change."
     },
     {
       "file": "lib/ne-guest-bridge.js",

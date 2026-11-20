@@ -626,6 +626,53 @@ for (const [name, opcode] of glImmediateApis) {
 }
 out.push('    (i32.const 0))');
 
+// Pure-state GL entry points that $gl_short_call (09a8c) may run straight
+// from a decoded CALL handler, which then continues at the return address
+// through $branch_end instead of returning to $run. Each row must be routed
+// by the table below to exactly `$gl_object_enter; $handle_gpu_api(opcode,
+// dwords); $gl_object_leave` and the opcode must not be one of
+// $handle_gpu_api's special cases (14 glGetString, 48/51 WGL create/make
+// current, 50 wglGetProcAddress, 52-54 pixel format, 55 present), so the
+// shortcut is that route's body and nothing else. Excluded on purpose: present
+// and WGL, glFinish/glFlush, glReadPixels and every glGet*/glIs* query,
+// texture uploads and object create/delete, display lists, clears and the
+// client-array draws (they read or write the drawable, or can grow without
+// bound). Result: (stack_dwords << 8) | opcode, or 0.
+const glShortCallApis = [
+  'glBegin', 'glEnd',
+  'glColor3f', 'glColor3fv', 'glColor4f', 'glColor4fv', 'glColor4ub', 'glColor4ubv', 'glColor3ubv',
+  'glTexCoord2f', 'glTexCoord2fv', 'glTexCoord4f', 'glTexCoord4fv',
+  'glVertex2f', 'glVertex2fv', 'glVertex2i', 'glVertex3f', 'glVertex3fv', 'glVertex4f', 'glVertex4fv',
+  'glNormal3f', 'glNormal3fv',
+  'glMultiTexCoord2fARB', 'glMultiTexCoord2fvARB', 'glActiveTextureARB', 'glClientActiveTextureARB',
+  'glEnable', 'glDisable', 'glEnableClientState', 'glDisableClientState',
+  'glAlphaFunc', 'glBlendFunc', 'glDepthFunc', 'glDepthMask', 'glDepthRange', 'glCullFace', 'glFrontFace',
+  'glShadeModel', 'glPolygonMode', 'glPolygonOffset', 'glScissor', 'glViewport', 'glColorMask', 'glHint',
+  'glStencilMask', 'glStencilFunc', 'glStencilOp',
+  'glMatrixMode', 'glLoadIdentity', 'glLoadMatrixf', 'glMultMatrixf', 'glPushMatrix', 'glPopMatrix',
+  'glRotatef', 'glScalef', 'glTranslatef', 'glOrtho', 'glFrustum',
+  'glBindTexture',
+];
+const glShortCallSpecial = new Set([14, 48, 50, 51, 52, 53, 54, 55]);
+out.push('  (func $gl_short_call_op (param $id i32) (result i32)');
+for (const name of glShortCallApis) {
+  const matches = apiTable.filter(api => api.name === name);
+  if (matches.length !== 1) {
+    fatal(`short-call GL api ${name} must match exactly one api_table.json entry (found ${matches.length})`);
+    continue;
+  }
+  const api = matches[0];
+  const opcode = gpuApiOrder.indexOf(name);
+  const route = handlerCall(api);
+  if (opcode < 0 || glShortCallSpecial.has(opcode) ||
+      route.trim() !== `(call $handle_gpu_api (i32.const ${opcode}) (i32.const ${gpuApis.get(name)}) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))`) {
+    fatal(`short-call GL api ${name} is not routed to plain $handle_gpu_api`);
+    continue;
+  }
+  out.push(`    (if (i32.eq (local.get $id) (i32.const ${api.id})) (then (return (i32.const ${(gpuApis.get(name) << 8) | opcode})))) ;; ${name}`);
+}
+out.push('    (i32.const 0))');
+
 // Native callback history must retain the exact stdcall parent ESP. Generate
 // this from the same ABI metadata as dispatch; unknown/cdecl APIs fail closed.
 const stackBytes = api => api.convention === 'stdcall' && Number.isInteger(api.nargs) ? (api.nargs + 1) * 4 : -1;
