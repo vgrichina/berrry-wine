@@ -623,3 +623,48 @@ did not meet the task's exact-environment requirement. These offline controls
 do not establish a corrected Chrome environment or native gameplay. The closed
 original is not relaunched. No shared bridge, host, timing guard or game state
 was changed. Box ID null, NOT_CREATED; expiry and stop receipt null.
+
+
+## Corrected local launch recipe, 2026-11-20
+
+Run `20261120-warcraft3-corrected-local-env-original-prologue` seals the
+previous run's staged evidence after actual home headroom recovered. Its own
+actual tool Node reports the requested TMPDIR and compile-cache directory.
+The local launch recipe reapplies TMPDIR, TMP, TEMP and NODE_COMPILE_CACHE
+**after** the qualified transient helper's environment construction. A fresh
+Node child confirms the corrected effective temp/cache paths. The old helper's
+TMPDIR override is demonstrated in an ordinary JavaScript object only; no
+child was launched with the wrong environment. Module10bdae, CRT887eb5,
+original media and nativeMouse2 control proofs were SHA-verified and referenced
+without copies or repeating calibration. Eight schemas, real physical-helper
+argv/READY/cancel-before-DOWN/joins/EOF, all31 focused tests and the full locked
+build pass. The helper transport fixture dispatches zero inputs.
+
+The new browser scope stopped at an added operator profile-argument assertion
+before navigation, Warcraft launch, consent or input, with zero ordinary
+endpoint requests and zero later requests. The assertion inspected
+Puppeteer's reported PID's proc cmdline for the expected user-data-dir flag;
+it failed before retaining that argv. Consequently this is an operator-added
+launch-observation blocker, **not** proof of an incorrect Chrome profile,
+environment, module or game failure. The exact reason the flag was absent
+remains unknown. Mode-only `originalLaunched:true` fields are explicitly
+corrected by the audit: a browser was created, but the original game was not.
+No actual worker/module or engine attestation is claimed for this scope.
+
+The executed driver remains unchanged and permanently closed. A hash-bound
+next-driver substitution retains path observations first and removes the
+extra argv assertion; it was not executed. Temp/profile observations are
+operational evidence, not new native input-authority predicates. No shared
+bridge/host/Hex/GL/WAT change, guard widening, state write, replay or later
+endpoint request occurred. The original250ms freshness and500ms delivery
+guards remain. Profile, Prologue, Thrall movement/objective and normal Quit
+remain unproved. The launch-environment correction has local-child validation
+only; corrected original-browser/gameplay qualification remains outstanding.
+
+The whole private root was verified800x600 before Chrome. All13 tracked PIDs
+are nonlive; browser/display have actual join and EOF receipts, supervisor
+leaked=false, and the owned transient profile was cleaned. Runtime home free
+space stayed above the floor (minimum1,640,960,000 bytes). No box was created:
+ID null, NOT_CREATED, expiry null, stopReceipt null. Exact Git/diffs, run-local
+new-file patches, prior-proof/media references and next-driver recipe are
+retained in the run; result.json is published last.
