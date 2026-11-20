@@ -57,7 +57,7 @@ function installInitializedObserver(root,getApps=()=>root.runningApps||[]) {
     return result;
   };
 }
-function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0,afterFirstInputDelay=0,
+function fixture({messageDriven=false,drawOnce=false,timerMs=0,movingGeometry=false,firstInputDelay=0,afterFirstInputDelay=0,
   triangles=1,width=480,height=360}={}){
   assert(Number.isInteger(triangles)&&triangles>=1&&triangles<=16384);
   assert(Number.isInteger(width)&&width>=480&&width<=1920);
@@ -94,10 +94,17 @@ function fixture({messageDriven=false,drawOnce=false,timerMs=0,firstInputDelay=0
     emit(0x85,0xc0);jump(drawOnce?'loop':'draw',0x84);push(base+0x3640);call('TranslateMessage');push(base+0x3640);call('DispatchMessageA');
     if(timerMs){emit(0x81,0x3d,...u(base+0x3644),...u(0x113));jump('loop',0x85);}
     else if(drawOnce)jump('loop');
-    label('draw');push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
+    label('draw');
+    if(movingGeometry)emit(0x81,0x35,...u(base+0x3618),...u(0x80000000));
+    push(0x3f800000);push(0x3e800000);push(0x3e000000);emit(0xff,0x35,...u(base+0x3608));call('glClearColor');push(0x4000);call('glClear');
     if(triangles>1)emit(0xc7,0x05,...u(base+0x3614),...u(triangles));
     label('triangle');push(4);call('glBegin');for(const n of [0x3f000000,0x3f800000,0x3f800000])push(n);call('glColor3f');
-    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){for(const n of p)push(n);call('glVertex2f');}call('glEnd');
+    for(const p of [[0xbf000000,0xbf000000],[0xbf000000,0x3f000000],[0x3f000000,0]]){
+      if(movingGeometry)emit(0xb8,...u(p[0]),0x33,0x05,...u(base+0x3618),0x50);
+      else push(p[0]);
+      push(p[1]);
+      call('glVertex2f');
+    }call('glEnd');
     if(triangles>1){emit(0xff,0x0d,...u(base+0x3614));jump('triangle',0x85);}
     emit(0xff,0x35,...u(base+0x3604));call('SwapBuffers');
     if(firstInputDelay){emit(0x83,0x3d,...u(base+0x360c),0);jump('after-initial-delay',0x85);

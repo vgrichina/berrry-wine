@@ -102,9 +102,14 @@ function readinessExpression(identity,selectOutput=false,allowPendingDamage=fals
   for(const k of ${JSON.stringify(FIELDS.filter(k=>!['workerTarget','workerInstance','moduleSha256','rendererTarget','rendererEpoch','rendererModuleSha256',...(selectOutput?['outputCanvasObject']:[])].includes(k)))})if(a[k]!==want[k])throw Error('startup identity changed '+k);
   const w=runningApps[0].wine,r=w.renderer;
   const pending=[];
-  if(w._dxDirty||w._dxLockDeferred||w._presentFrameDue)pending.push('host surface publication');
-  if(r._workerPublicationHeld()||r._workerGdiPaintDepth>0||r._repainting)pending.push('held/in-flight paint');
-  if(!${allowPendingDamage}&&(r._repaintScheduled||r._repaintPending||r._workerRepaintDeferred))pending.push('ordinary damage');
+  // Ordinary publication retains source and output together before the next
+  // writer begins. Production can validate/read that exact displayed record
+  // during later work; demanding a second idle interval races every slice.
+  // Never admit an in-progress composition or an unretained writer's pixels.
+  const retained=!!r._currentDisplayRecord?.pixels&&!r._repainting;
+  if(!retained&&(w._dxDirty||w._dxLockDeferred||w._presentFrameDue))pending.push('host surface publication');
+  if(r._repainting||(!retained&&(r._workerPublicationHeld()||r._workerGdiPaintDepth>0)))pending.push('held/in-flight paint');
+  if(!retained&&!${allowPendingDamage}&&(r._repaintScheduled||r._repaintPending||r._workerRepaintDeferred))pending.push('ordinary damage');
   if(!r._currentDisplayRecord)pending.push('no ordinary complete display');
   if(pending.length)return {ready:false,pending,at:Date.now(),publication:a.publication};
   const record=r._validateCurrentDisplayCapture({owner:{hwnd:a.windowHwnd,window:r.windows[a.windowHwnd],processId:w.processId,instance:w.instance}});
@@ -294,6 +299,31 @@ function reviewHostBootstrap(scene,review,live,now=Date.now()){
 function trackWorkerContext(workers,event) {
   const w=workers.get(event.sessionId);
   if(w&&['Runtime.executionContextCreated','Runtime.executionContextDestroyed','Runtime.executionContextsCleared'].includes(event.method))w.contextEpoch=(w.contextEpoch??0)+1;
+}
+// Share immutable bytecode across startup inventory, endpoint attestation and
+// capture chains. Every use still joins the actual executing module object.
+function createAttestedModuleSource({send,workers}) {
+  const proofs=new WeakMap();
+  return async function(method,params,sessionId) {
+    if(method!=='Debugger.getScriptSource')return send(method,params,sessionId);
+    const worker=workers.get(sessionId);
+    assert(worker&&!worker.closed,'live module Worker required');
+    const stamp=async()=>{
+      assert(!worker.closed&&workers.get(sessionId)===worker,'module Worker replaced');
+      const r=await send('Runtime.evaluate',{expression:'__ptctExecutorObserver.identity()',returnByValue:true},sessionId);
+      assert(!r.exceptionDetails&&r.result?.value,'actual executing module identity required');
+      return JSON.stringify([worker.targetId,worker.sessionId,worker.contextEpoch,
+        worker.scripts.filter(s=>s.url?.startsWith('wasm://')).map(s=>s.scriptId),params.scriptId,r.result.value]);
+    };
+    const key=await stamp(),prior=proofs.get(worker);
+    if(prior?.key===key)return prior.source;
+    const source=await send(method,params,sessionId);
+    assert(source.bytecode,'actual module bytecode required');
+    assert.equal(await stamp(),key,'executing module changed during recovery');
+    const immutable=Object.freeze({...source});
+    proofs.set(worker,Object.freeze({key,source:immutable}));
+    return immutable;
+  };
 }
 function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo', expectedModules = null, now = Date.now,onTicketObservation=()=>{}}) {
   let latest = null, pinnedIdentity = null, busy = false, closed = false, startup = null, prepared = null, pinnedTransport = null;
@@ -485,4 +515,4 @@ function createChain({evaluate, send, workers, pageSession, app = 'heretic2_demo
   return {capture, admit, readLive, progress, prepareAttestation, prepareStartup, get closed(){return closed;}};
 }
 
-module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady,HOST_READ,HOST_FIELDS,sameHostOwner,consentButton,reviewHostBootstrap,trackWorkerContext};
+module.exports={createChain,captureScene,same,sha,FIELDS,MAX_AGE_MS,PAGE_READ,WORKER_READ,RENDER_READ,readinessExpression,awaitStartupReady,HOST_READ,HOST_FIELDS,sameHostOwner,consentButton,reviewHostBootstrap,trackWorkerContext,createAttestedModuleSource};
