@@ -79,6 +79,12 @@ const PAGE_READ = `(() => {
       readiness:pending?'pending-first-present':'ready',
       publication:synchronous?synchronous.publication:p&&!pending?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
       guestEndpoint:l?.endpointIdentity,slot:l?.slot,workerObject:token(l?.worker),
+      sourceArm:{endpoint:token(l?._renderLegacyEndpoint),threads:token(w?.threadManager),
+        predicates:{missingEndpoint:!l?._renderLegacyEndpoint,
+          closedEndpoint:!!l?._renderLegacyEndpoint?.closed,missingThreads:!w?.threadManager,
+          mainOwnerMismatch:!!w?.threadManager&&w.threadManager.mainInstance!==w.instance,
+          missingNativeInstance:!w?.instance?.nativeInstance,
+          alreadyArmed:!!(w?._d3dimPublicationJoin||w?._d3dimPublicationArming)}},
       moduleObject:token(l?.module),epoch:state.epoch,
       slice:w?._workerLastSlice??null,d3dStats:g?.d3dStats??null,
       physical:[37,38,39,40].map(key=>({key,state:w?.renderer?.peekKeyDownState(key)??null}))};
@@ -333,13 +339,34 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     }
     return {stream,at:new Date(now()).toISOString(),render};
   }
-  async function armSynchronousSource() {
+  async function armSynchronousSource(menuReview) {
     assert(!closed && !busy && !synchronousArmed && app==='mcm', 'idle unarmed MCM chain required');
     busy=true;
     try {
+      if(menuReview) {
+        assert(menuReview.stage==='menu-before-start' && latest &&
+          menuReview.label===latest.label && menuReview.sha256===latest.sha256 &&
+          menuReview.review?.trim(), 'reviewed menu before Start required');
+        same(latest.identity,menuReview.identity);fresh(latest);
+      }
       const before=await readLive();
+      if(menuReview) {
+        same(latest.identity,before.identity);fresh(latest);
+        const source=before.page.apps[0].sourceArm;
+        assert(source && Object.values(source.predicates).every(v=>v===false),
+          'menu source arm prerequisites '+JSON.stringify(source??null));
+        for(const key of ['endpoint','threads']) {
+          assert.equal(before.identity.sourceArm[key],source[key],
+            'menu source owner changed during read: '+key);
+          assert.equal(latest.identity.sourceArm[key],source[key],
+            'reviewed menu source owner changed: '+key);
+        }
+      }
       const receipt=await evaluate(ARM_SYNCHRONOUS_SOURCE);
       const after=await readLive();same(before.identity,after.identity);
+      if(menuReview)for(const key of ['endpoint','threads'])
+        assert.equal(after.page.apps[0].sourceArm[key],before.page.apps[0].sourceArm[key],
+          'menu source owner changed: '+key);
       assert.equal(receipt.endpoint,after.identity.endpoint,'armed actual command endpoint');
       assert.equal(receipt.processId,after.identity.processId,'armed actual process');
       synchronousArmed=true;latest=null;
@@ -347,7 +374,10 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     } catch(error) {closed=true;throw error;}
     finally {busy=false;}
   }
-  return {capture, admit, readLive, progress, armSynchronousSource, get closed(){return closed;}};
+  // Ordinary startup dialogs use capture/admit. Only a reviewed menu with a
+  // real legacy owner may arm; Start follows a fresh post-arm capture.
+  const armMenuSource=review=>armSynchronousSource({...review,stage:review?.stage});
+  return {capture, admit, readLive, progress, armSynchronousSource, armMenuSource, get closed(){return closed;}};
 }
 
 const KEYS = {ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};

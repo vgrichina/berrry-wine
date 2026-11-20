@@ -57,6 +57,53 @@ was launched and no endpoint request was made to any previous closed scope.
 Localhost box ID null, state NOT_CREATED, expiry null, stop receipt null. Root
 owns shutdown; this task joins its own supervisors and finite watchdogs.
 
+## Menu stage source arming, 2026-11-20
+
+Evidence: `scratch/runs/20261120-mcm-menu-stage-source-arm-quarry/`.
+The fresh driver removes automatic startup arming. Ordinary hardware-change
+and profile dialogs, followed by quarry setup, advance through the existing
+reviewed capture/admission chain. `armMenuSource` requires an explicit fresh
+`menu-before-start` review. Its same page read records the actual legacy
+endpoint and thread-manager object tokens and six prerequisite predicates.
+An absent/closed endpoint, absent threads/native instance, wrong main owner,
+or existing observation refuses before the host arm call. A successful arm
+pins endpoint/threads through the host call and consumes the review, requiring
+a new capture before Start. The host boundary, readiness, input, retained
+source-copy and current-publication guards are unchanged.
+
+Ten focused stage tests and 28 readiness regressions on the frozen graph
+pass. The unchanged prior native29/CPU source proofs are referenced by hash;
+no native calibration was repeated. Preflight recovered 183 source files,
+all 305 WASM imports, the exact f5ae module and 311 media references. The
+deploy-only `build-info.js` is explicitly optional in the frozen index and
+remains absent locally. The full locked build passes.
+
+The sole affected original passed the hardware-change and profile dialogs,
+Single Player, Stunt Quarry, Practice, T-riffic selection and rider/bike setup.
+The actual guest Worker module was recovered and matched once. At the visible
+rider/bike Start menu, the exact same-read source prerequisites were:
+`missingEndpoint=true`; `closedEndpoint`, `missingThreads`,
+`mainOwnerMismatch`, `missingNativeInstance` and `alreadyArmed` all false.
+The owning legacy endpoint remained absent even at this menu. Arming refused
+before calling the host; Start was never dispatched. This is the first precise
+blocker, and the scope is permanently closed. No replay, later endpoint request,
+fake readiness, repaint or historical source promotion followed. Quarry loading,
+source copy/publication, Escape/current display and ordinary Quit/guest retirement
+remain unproved. Browser termination is cleanup only.
+After closure, an offline-only hardening check also pins the legacy endpoint
+and threads to the reviewed menu across the asynchronous live read. Its
+equal-looking endpoint replacement negative passes. This additional guard
+was not rerun against the original; its runtime-tested predecessor is retained
+as a patch with the preflight adapter hash. It follows the unchanged predicate
+that refused the actual absent endpoint.
+
+All owned native/browser/watchdog/board participants physically joined with
+EOF, no tracked process leak, and the temporary profile was removed. The
+sampled /home floor stayed above 1,500,000,000 bytes. Localhost box ID null,
+state NOT_CREATED, expiry null, stop receipt null; root shutdown delegates this
+completed owned cleanup. Strict publication and the final own-path commit are
+recorded in this run's result; foreign held regions/maps remain untouched.
+
 The follow-up evidence is
 `scratch/runs/20261120-mcm-tested-first-present-affected-original/`. It adopted
 the exact tested adapter/test patch SHA-256
