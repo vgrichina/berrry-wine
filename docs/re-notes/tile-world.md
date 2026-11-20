@@ -88,3 +88,47 @@ nonvolatile-register preservation, and any file/directory failure/error.
 Determine why startup re-enters getpathbuffer before choosing a handler to
 change. Do not increase heap capacity, add media, force wakes or bypass the
 fatal branch on the evidence currently retained.
+
+### 2026-11-20: bounded built-in CRT history identifies argument-handler loop
+
+Run `20261120-tileworld-bounded-crt-fileio-causal-repair` retains the a600
+module and f696 CLI dependencies with explicit SDL.dll and built-in CRT.
+A read-only import observer keeps first32/last64 API records, bounded stack
+words and file-call history in TMPFS, counts all API entries, and stops at
+50,000 completed calls. Offline controls cover finite bound, NULL allocation,
+first OOM reason and nonvolatile-register violation detection. The original
+reaches the bound in four batches; its normal CLI error handler labels the
+authored diagnostic stop `CRASH`. This is not an observed guest fault or OOM.
+
+The missing intervening imports are **sprintf** (thunk `0x41df60`, IAT
+`0x438418`, return `0x4047a4`) and **strtol** (thunk `0x41df58`, IAT
+`0x43843c`, return `0x404567`). Retained late sprintf calls have format
+`%.*s`, precision259, return1; late strtol calls use base10, return0 and
+eventually NULL input. Both and malloc retain ESP delta4 and EBX/ESI/EDI/EBP
+in the retained samples. Counts: malloc16646, sprintf16641, strtol16642;
+no NULL allocation or heap_oom_trace occurred before the finite bound.
+The observer did not retain a separate first32 path-allocation ring, parser
+argc/argv outputs, strtol end-pointer output, or a live errno cell.
+
+Native stack words plus exact PE disassembly tie getpathbuffer re-entry to
+the argument callback: `0x404770 -> 0x410df0`, sprintf at `0x40479f`, return
+through `0x410504` into parser `0x410490`. It is not a proven file-enumeration
+loop: _findfirst/_findnext/_fullpath/_stat/_mkdir were never observed. The
+only file calls are missing DDRAW.DLL attributes (-1; exact last-error not
+retained) and successful stdout/stderr file creation. Do not infer more-media
+need from the optional DLL probe.
+
+Next source/test remedy: first retain GetCommandLineA's returned string,
+__getmainargs argc/argv outputs, SDL's resulting argc/argv and the parser's
+four arguments at `0x410490`, then its loop index/argc comparison and callback
+return at `0x410504`. Keep separate first/last path-allocation records and
+strtol end-pointer/sprintf output bytes. Audit `src/10-helpers.wat`
+store_fake_argv_a, `src/09a-handlers2-runtime.wat` __getmainargs and the exact
+native parser compare/branch before choosing a patch. The shared formatter
+in `src/12-wsprintf.wat` lacks dynamic `.*` precision, but that independently
+visible defect is not proven to cause this argument loop; changing it alone
+would not establish a startup repair. A focused native reproducer must first
+show the actual bad argc/index transition or ABI/output corruption, then
+old-fail/new-pass and negative API controls. No product patch, browser replay,
+chip, level completion or Quit is claimed. All supervised processes joined;
+no remote box was created.
