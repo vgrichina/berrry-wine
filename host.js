@@ -6020,7 +6020,7 @@ class WineAssembly {
       if(!ownerIds.has(value))ownerIds.set(value,++nextOwnerId);
       return ownerIds.get(value);
     };
-    const validateOwner=()=>{
+    const validateOwner=(requireIdleHost=false)=>{
       let failed;
       const rejected=(name,value)=>{if(value){failed=name;return true;}return false;};
       // Preserve the admission guard's short circuit order and thrown errors.
@@ -6028,7 +6028,7 @@ class WineAssembly {
           rejected('link',guest.link!==link) || rejected('threads',this.threadManager!==threads) ||
           rejected('instance',this.instance!==instance) || rejected('memory',this.memory!==memory) ||
           rejected('renderer',this.renderer!==renderer) || rejected('processId',this.processId!==processId) ||
-          rejected('hostWrites',this._d3dimHostWritesInFlight) || rejected('mainInstance',threads.mainInstance!==instance) ||
+          rejected('hostWrites',requireIdleHost && this._d3dimHostWritesInFlight) || rejected('mainInstance',threads.mainInstance!==instance) ||
           rejected('localExports',guest.localMainExports && guest.localMainExports()!==instance.exports) ||
           rejected('participants',admission && !admission.sameParticipants()) ||
           rejected('epochInvalid',Atomics.load(epoch.words,2))) {
@@ -6057,11 +6057,15 @@ class WineAssembly {
         this._d3dimPublicationArmBoundary=boundary;
       });
       releaseWriters=threads.holdWriterObservationBoundary();
-      admission=await guest.attachWriterObservationAtBoundary(epoch,{threads,timeoutMs:boundaryTimeoutMs,validateOwner});
+      // Attachment must precede every writer. Later endpoint binding runs
+      // inside the already observed gpu_stream_kick host call; it installs
+      // the join and grants no permission to read an active source writer.
+      admission=await guest.attachWriterObservationAtBoundary(epoch,{threads,timeoutMs:boundaryTimeoutMs,
+        validateOwner:()=>validateOwner(true)});
       this._d3dimWriterObservation=epoch;
       synchronousArm=await link._ask({t:'synchronousFlipObservation',action:'arm',endpointIdentity:link.endpointIdentity,
         owner:synchronousOwner,maxRecords,journalBuffer:synchronousJournal.buffer,retainedBuffer:synchronousJournal.retainedBuffer});
-      validateOwner();
+      validateOwner(true);
       if(!epoch.snapshot())throw new Error('GPS preparation requires an idle writer boundary');
       registration=new RenderWorker.PreparedGpsObservation({epoch,timeoutMs:creationTimeoutMs,validateOwner,
         options:{ownerGeneration:ownerScope,maxRecords,writerEpochBuffer:epoch.buffer,

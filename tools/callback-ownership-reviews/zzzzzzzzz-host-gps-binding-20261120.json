@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "7d180d9125dbd3ce10299802bcb8173cf9ef6a727be4b1b04601d7f9db151c0a",
+      "sha256": "cfd663e6e7a433879d1402ea4f0f2379c68c795d550f689e7b9ca0804b1e7d8b",
+      "reason": "Original MCM proved hostWrites=1 at real GPS binding inside observed gpu_stream_kick, with all captured owner identities equal and epochInvalid=0. Keep idle-host validation at writer attachment and synchronous-arm acknowledgment; validate captured owners, participants and unpoisoned epoch across each later bind await without demanding the observed host call has returned. Binding grants no source-read/publication authority; unchanged writer seals, retained pages and joins still qualify publication. No new callback, timer, subscription or cleanup owner: finite preparation timer, replacement/cancel/retirement invalidation, error-listener removal and onClose settlement remain unchanged. Actual production method regression covers active attachment and arm-ack refusal, active bind without publication, owner replacement and invalid epoch during acknowledgment. Existing ten GPS lifecycle tests pass."
+    }
+  ]
+}

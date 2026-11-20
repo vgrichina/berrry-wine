@@ -18,7 +18,7 @@ const controls=[];
 const mutations={stopped:f=>f.host._stopped=true,guest:f=>f.host.guestWorker={},link:f=>f.guest.link={},threads:f=>f.host.threadManager={},instance:f=>f.host.instance={},memory:f=>f.host.memory={},renderer:f=>f.host.renderer={},processId:f=>f.host.processId++,hostWrites:f=>f.host._d3dimHostWritesInFlight=1,mainInstance:f=>f.threads.mainInstance={},localExports:f=>f.guest.localMainExports=()=>({}),participants:f=>f.admission.sameParticipants=()=>false,epochInvalid:f=>Atomics.store(f.epoch.words,2,1)};
 fixture().validate();
 for(const [predicate,mutate] of Object.entries(mutations)){
- const f=fixture();mutate(f);let detail;assert.throws(()=>f.validate(),e=>{detail=JSON.parse(e.message.slice(e.message.indexOf('{')));return true;});assert.deepEqual(detail.failed,[predicate]);assert.equal(detail.expected.processId,1000);assert.equal(detail.expected.epoch,detail.actual.epoch);
+ const f=fixture();mutate(f);let detail;assert.throws(()=>f.validate(true),e=>{detail=JSON.parse(e.message.slice(e.message.indexOf('{')));return true;});assert.deepEqual(detail.failed,[predicate]);assert.equal(detail.expected.processId,1000);assert.equal(detail.expected.epoch,detail.actual.epoch);
  if(['guest','link','threads','instance','memory','renderer','processId'].includes(predicate))assert.notEqual(detail.expected[predicate],detail.actual[predicate]);
  controls.push({predicate,refused:true,boundedDiagnostic:detail});
 }
@@ -48,4 +48,64 @@ assert.equal(boundedDetail.actual.hostWrites,'bigint');
 assert(JSON.stringify(boundedDetail).length<1500);
 const defaultHealthy=fixture();defaultHealthy.guest.localMainExports=undefined;
 defaultHealthy.admission=null;defaultHealthy.validate();
-console.log(JSON.stringify({faultControls:6,diagnosticsOnly:true,healthyPASS:true,epochVersionIsSampleNotOwner:true,controls,originalCauseProven:false}));
+// Binding occurs during an observed gpu_stream_kick. Activity is not owner
+// replacement and does not grant retained-source/publication authority.
+const binding=fixture();binding.host._d3dimHostWritesInFlight=1;
+Atomics.store(binding.epoch.words,0,2);Atomics.store(binding.epoch.words,1,509438);
+binding.validate();assert.throws(()=>binding.validate(true),/hostWrites/);
+for(const [predicate,mutate] of Object.entries(mutations)){
+ if(predicate==='hostWrites')continue;
+ const f=fixture();f.host._d3dimHostWritesInFlight=1;mutate(f);
+ assert.throws(()=>f.validate(),new RegExp('"'+predicate+'"'));
+}
+console.log(JSON.stringify({faultControls:6,healthyPASS:true,epochVersionIsSampleNotOwner:true,
+ controls,bindingActivityAccepted:true,initialAttachmentActivityRefused:true,bindingOwnersAndEpochStillRequired:true}));
+
+// Execute the production preparation and its actual bind callback together.
+// This catches passing the idle validator to bind, or dropping it at attach.
+(async()=>{
+ const R=require('../lib/render-worker');
+ const a=source.indexOf('  async prepareD3dimGpsPublicationObservation(');
+ const b=source.indexOf('\n  async armQuake2WriterObservation(',a);
+ assert(a>0&&b>a);
+ const prepare=vm.runInNewContext('(class { '+source.slice(a,b)+' }).prototype.prepareD3dimGpsPublicationObservation',{
+  Atomics,SharedArrayBuffer,WeakMap,Number,setTimeout,clearTimeout,
+  RenderWorker:{WriterEpoch:R.WriterEpoch,PreparedGpsObservation:R.PreparedGpsObservation,
+   SurfaceVersionJournal:class {},SurfacePublicationJoin:class {
+    constructor(){this.rows=[];}retire(){this.retired=true;}
+   }}
+ });
+ for(const mode of ['active-at-attach','active-at-arm-ack','active-at-bind','replaced-at-bind-ack','invalid-at-bind-ack']){
+  const f=fixture();f.instance.nativeInstance={};let attached=0,unsubscribed=0;
+  f.host.threadManager.holdWriterObservationBoundary=()=>()=>{};
+  f.guest.attachWriterObservationAtBoundary=async(epoch,{validateOwner})=>{
+   if(mode==='active-at-attach')f.host._d3dimHostWritesInFlight=1;
+   validateOwner();attached++;return f.admission;
+  };
+  f.link._ask=async message=>{
+   if(message.action==='arm'&&mode==='active-at-arm-ack')f.host._d3dimHostWritesInFlight=1;
+   return {generation:3};
+  };
+  f.link.onRetiring=()=>()=>{unsubscribed++;};
+  if(mode.startsWith('active-at-')&&mode!=='active-at-bind'){
+   await assert.rejects(prepare.call(f.host,{maxRecords:1}),/hostWrites/);
+   assert.equal(attached,mode==='active-at-attach'?0:1);continue;
+  }
+  const p=await prepare.call(f.host,{maxRecords:1});
+  assert.equal(p.state,'PREPARED');assert.equal(p.endpoint,null);
+  f.host._d3dimHostWritesInFlight=1;Atomics.store(p.epoch.words,0,2);
+  const endpoint={id:9,options:{api:'d3dim-gps'},addEventListener(){},removeEventListener(){},
+   producerObservation:async action=>{
+    if(action==='stop')return;
+    if(mode==='replaced-at-bind-ack')f.host.instance={};
+    if(mode==='invalid-at-bind-ack')p.epoch.invalidate();
+    return {owner:{scope:p.options.ownerGeneration,endpointId:9,generation:2},generation:3};
+   }};
+  if(mode==='active-at-bind'){
+   await p.bind(endpoint);assert.equal(p.state,'ARMED');
+   assert.equal(p.join.synchronous.rows.length,0);assert.equal(p.epoch.snapshot(),null);
+  }else await assert.rejects(p.bind(endpoint),/instance|epochInvalid/);
+  await p.cancel();assert.equal(p.state,'CLOSED');assert.equal(unsubscribed,1);
+ }
+ console.log('PASS actual GPS prepare/bind: idle attachment, observed active bind, replacement, invalid epoch; no publication authority');
+})().catch(error=>{console.error(error);process.exitCode=1;});
