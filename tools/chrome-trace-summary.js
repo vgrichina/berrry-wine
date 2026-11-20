@@ -191,8 +191,20 @@ for (const p of profiles.values()) {
   const s = t.samples || (t.samples = { totalUs: 0, kind: { wasm: 0, js: 0, gc: 0, program: 0, idle: 0 }, self: new Map(), incl: new Map() });
   const info = new Map();
   for (const [id, n] of p.nodes) info.set(id, frameName(n.callFrame || {}));
+  // Sample i covers the interval to sample i+1. A gap far above the sampling
+  // interval (the sampler starved, or the profile started before the trace
+  // window) is not time spent in that one frame: cap it at 4x the median
+  // interval and count it separately, and drop samples outside the window.
+  const times = [];
+  for (let i = 0, t = p.startTime; i < p.samples.length; i++) { t += p.deltas[i] || 0; times.push(t); }
+  const gaps = times.slice(1).map((t, i) => t - times[i]).filter(x => x > 0).sort((a, b) => a - b);
+  const median = gaps.length ? gaps[gaps.length >> 1] : 0;
+  const cap = median > 0 ? 4 * median : Infinity;
   for (let i = 0; i < p.samples.length; i++) {
-    const dt = Math.max(0, p.deltas[i + 1] !== undefined ? p.deltas[i + 1] : (p.deltas[i] || 0));
+    if (times[i] < t0 || times[i] > t1) continue;
+    const raw = Math.max(0, i + 1 < times.length ? times[i + 1] - times[i] : median);
+    const dt = Math.min(raw, cap);
+    s.lostUs = (s.lostUs || 0) + (raw - dt);
     const id = p.samples[i];
     const f = info.get(id);
     if (!f) continue;
@@ -228,6 +240,7 @@ for (const { t, busyPct } of rows) {
   if (t.samples) {
     const s = t.samples;
     row.sampledMs = ms(s.totalUs);
+    row.sampleGapMs = ms(s.lostUs || 0);
     row.split = Object.fromEntries(Object.entries(s.kind).map(([k, v]) => [k, pct(v, s.totalUs)]));
     row.top = [...s.self].filter(([k]) => k !== '(idle)').sort((a, b) => b[1] - a[1]).slice(0, TOP)
       .map(([k, v]) => ({ fn: k, ms: ms(v), pct: pct(v, s.totalUs) }));
@@ -245,7 +258,7 @@ console.log(`${out.file}: window ${out.windowMs} ms, ${out.wasmNames ? out.wasmN
 for (const r of out.threads) {
   console.log(`\n== ${r.process} / ${r.thread} (${r.pid}:${r.tid})  busy ${r.busyMs} ms = ${r.busyPct}%`);
   if (r.split) {
-    console.log(`   sampled ${r.sampledMs} ms: ` + Object.entries(r.split).map(([k, v]) => `${k} ${v}%`).join('  '));
+    console.log(`   sampled ${r.sampledMs} ms (+${r.sampleGapMs} ms unsampled gaps): ` + Object.entries(r.split).map(([k, v]) => `${k} ${v}%`).join('  '));
     for (const f of r.top) console.log(`   ${String(f.ms).padStart(8)} ms ${String(f.pct).padStart(5)}%  ${f.fn}`);
     if (r.incl && r.incl.length) {
       console.log('   -- inclusive (--incl) --');
