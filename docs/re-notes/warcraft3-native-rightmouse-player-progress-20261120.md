@@ -700,3 +700,47 @@ space stayed above the floor (minimum1,640,960,000 bytes). No box was created:
 ID null, NOT_CREATED, expiry null, stopReceipt null. Exact Git/diffs, run-local
 new-file patches, prior-proof/media references and next-driver recipe are
 retained in the run; result.json is published last.
+
+## Deliberate 300 ms first press, 2026-11-20
+
+Run `20261120-warcraft3-deliberate-press-original-prologue` reused the released
+standard recipe, changing only the requested local temp/cache paths, fresh
+scope timestamp and personally chosen first press duration. All31 focused
+tests, eight schemas and physical helper READY/cancel/join/EOF checks passed;
+36 module/media/control references matched their hashes. No production code,
+shared bridge, native guard or game state was changed, and no calibration was
+repeated. No full build was needed for this run-local/documentation task.
+
+The actual original reached the personally reviewed whole800x600 main menu
+after trusted host consent DOWN/UP. Both actual worker modules matched
+10bdae; the loaded CRT matched887eb5. The first Single Player press at665,198
+used300ms within the existing1500ms hold and500ms native delivery bounds.
+Independent UP was prearmed at15:36:05.094Z. DOWN was published at05.239Z,
+logged on wire at05.240Z and applied at05.247Z. Three status results remained
+DELIVERY_PENDING without native USER consumption. At05.283Z the status guard
+refused a258ms-old check_input observation (monotonic257.425ms); fresh=false
+was the only false readiness predicate. All14 structural predicates, owner,
+focus, modal, capture and viewport remained valid. This establishes an expired
+observation, not a structural identity change or a proved game failure.
+
+The scope permanently closed at05.286Z, before its original500ms deadline
+(05.597Z) and before trusted independent UP at05.541Z. The release fired at
+05.538Z and acknowledged at05.544Z. Thus this run's terminal cause differs
+from the previous90ms release-before-USER failure; increasing the intended
+press duration did not establish native consumption. No status relaxation,
+timeout widening, replay or later ordinary endpoint request was attempted.
+There were69 ordinary requests and zero after closure. Profile, Prologue,
+Thrall movement/objective and normal Quit remain unproved.
+
+Finite native supervision joined the browser/display/helpers with EOF and
+reported leaked=false; all21 tracked PIDs were nonlive. The physical profile,
+private display socket/lock/auth and owned empty temp child were removed.
+Runtime minimum home free space was1,584,328,704 bytes. Box ID null,
+NOT_CREATED, expiry null, stopReceipt null. Exact Git/diffs, owned run-local
+patches, four selected host/menu/pre-DOWN/fence images and media references
+are retained; result.json is written last. The shared checkout already had
+MERGE_HEAD041a7830 with HEADc3fa9a44e before these documentation edits.
+The coordinator cleared the merge bookkeeping and released its Git hold at
+15:38:06Z without changing held sources. This worker leaves foreign files
+untouched; its own explicit documentation commit/publication receipts are
+retained with the run.
