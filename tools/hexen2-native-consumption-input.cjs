@@ -15,8 +15,17 @@ function hostBootstrap(){
 // Page-local object identities are never serialized into authority. Numeric
 // HWND/generation metadata is additional to process/module/memory/Worker refs.
 function createHexenSession(root,wine,helpers,options={}){
-  if(options.equivalenceKey)return (helpers.createQualifiedSession||qualified.createQuake2Session)(root,wine,
-    {...helpers,verifyPageEquivalence:helpers.verifyPageEquivalence||verifyPageEquivalence},options);
+  if(Object.hasOwn(options,'manualContextKey')&&!/^[a-f0-9]{64}$/.test(options.manualContextKey||''))
+    throw Error('invalid explicit manual-context key');
+  if(options.manualContextKey&&options.equivalenceKey)throw Error('choose one explicit review capability');
+  if(options.manualContextKey||options.equivalenceKey){
+    const manual=!!options.manualContextKey,verify=helpers.verifyPageEquivalence||verifyPageEquivalence;
+    if(manual)wine._requireReviewedManualContext=true;
+    return (helpers.createQualifiedSession||qualified.createQuake2Session)(root,wine,
+      {...helpers,verifyPageEquivalence:(key,envelope,intent)=>verify(key,envelope,intent,
+        manual?'native-manual-context-v1':'native-whole-frame-equivalence-v1')},
+      {...options,equivalenceKey:options.manualContextKey||options.equivalenceKey});
+  }
   let terminal=false,binding=null,refs=null,scene=null,slot=null;
   const nonces=new Set();
   const current=()=>{
@@ -83,7 +92,12 @@ function reviewed(intent,image){
 }
 // One runtime scope, explicit per-edge personal review, no retries. Close is
 // controller-local and synchronous: it must retire transport, not query it.
-function createController({page,dispatch,release,close,record=()=>{},equivalence}){
+function createController({page,dispatch,release,close,record=()=>{},equivalence,manualContext}){
+  if(equivalence?.capability==='native-manual-context-v1')throw Error('manual context requires explicit manualContext option');
+  if(manualContext){
+    if(equivalence||manualContext.capability!=='native-manual-context-v1')throw Error('explicit manual-context capability required');
+    return createManualController({page,dispatch,release,close,record,manualContext});
+  }
   if(equivalence)return qualified.createController({page,dispatch,release,close,record,equivalence});
   let terminal=false,active=false;const nonces=new Set();
   const stop=reason=>{if(!terminal){terminal=true;close(reason);}};
@@ -151,6 +165,79 @@ function createController({page,dispatch,release,close,record=()=>{},equivalence
         active=false;
       }
       if(nativeError)throw nativeError;
+      return {proof,up,guestAttack:false,enemyConsequence:false};
+    },
+  };
+}
+// The manual path keeps expensive context/capture/retention outside the native
+// ticket. Its final capture still runs at the actual socket boundary. Dispatch
+// must invoke publish synchronously AFTER that capture, immediately before send.
+function createManualController({page,dispatch,release,close,record,manualContext:a}){
+  let terminal=false,active=false;const nonces=new Set();
+  const stop=reason=>{if(!terminal){terminal=true;close(reason);}};
+  const gate=()=>{if(terminal)throw Error('HEXEN_NATIVE_UNKNOWN permanently closed');};
+  async function call(method,...args){gate();const at=Date.now();
+    try{const result=await page(method,...args);record({method,at,receivedAt:Date.now(),late:terminal,result});gate();return result;}
+    catch(e){stop(e.message);throw e;}}
+  return {get terminal(){return terminal;},close:stop,
+    async bind(deadline){gate();try{return await supported.waitForNativeOwner({deadline,
+      observe:()=>call('observe'),close:()=>stop('native owner UNKNOWN'),record});}catch(e){stop(e.message);throw e;}},
+    async gesture(intent,image,handle){
+      gate();let armed=false,downStarted=false,error=null,proof=null,up=null;
+      const check=()=>{gate();qualified.exactEdge(intent);a.validate(handle,intent,image);};
+      try{
+        if(active||nonces.has(intent.nonce))throw Error('HEXEN_NATIVE_UNKNOWN concurrent/stale nonce');
+        check();active=true;nonces.add(intent.nonce);
+        // Includes identity queries, whole capture and synchronous retention.
+        // None of these starts or renews a native ticket or release deadline.
+        await a.beforeDown(handle,intent,image);check();
+        const arm=await release.arm(intent);armed=true;check();
+        const releaseGate=()=>{
+          if(!Number.isSafeInteger(arm?.at)||!Number.isSafeInteger(arm?.fallback)||
+            !Number.isSafeInteger(arm?.releaseDue)||arm.fallback-arm.at!==1750||
+            Date.now()+intent.ms>=arm.releaseDue||Date.now()+intent.ms>=arm.fallback||release.alive===false)
+            throw Error('HEXEN_NATIVE_UNKNOWN independent release window expired/unavailable');
+        };
+        let state,start;const until=Date.now()+POLICY.nativeMs;
+        do{
+          check();releaseGate();start=Date.now();
+          state=await call('prepareEquivalent',{...intent,completedAt:image.completedAt},image.completedAt,handle);
+          if(!state.prepared)await new Promise(r=>setTimeout(r,5));
+        }while(!state.prepared&&Date.now()<until);
+        if(!state.prepared)throw Error('HEXEN_NATIVE_UNKNOWN no new native USER observation');
+        const deadline=start+POLICY.nativeMs;let published=false,dispatching=false;
+        // Invoked by the transport inside authority.fence, after final capture
+        // and writer completion. No earlier callback can start the hold clock.
+        const publish=()=>{
+          if(!dispatching||published)throw Error('HEXEN_NATIVE_UNKNOWN missing/duplicate socket boundary');
+          check();releaseGate();
+          if(Date.now()>=deadline)throw Error('HEXEN_NATIVE_UNKNOWN final socket native 500ms expired');
+          release.due(intent.nonce,Date.now()+intent.ms);
+          published=true;downStarted=true;
+        };
+        proof=await supported.waitForNativeConsumption({deadline,
+          close:()=>stop('DOWN/native 500ms UNKNOWN'),record,
+          dispatch:async()=>{check();releaseGate();const at=Date.now();dispatching=true;
+            try{const ack=await dispatch(intent,publish);
+              if(!published)throw Error('HEXEN_NATIVE_UNKNOWN transport omitted final socket boundary');
+              record({method:'DOWN',at,receivedAt:Date.now(),late:terminal,transportACK:ack});
+            }finally{dispatching=false;}},
+          observe:()=>{if(!published)throw Error('HEXEN_NATIVE_UNKNOWN unpublished DOWN');return call('status',intent.nonce);}});
+        if(!proof.consumed||proof.receiptBoundary!=='owner-worker-native-user-return'||
+          proof.nativeMessage?.consumption!=='owner-user-return'||!proof.nativeMessage.token||
+          (intent.kind==='mouse'?proof.nativeMessage.msg!==0x201:
+            ![0x100,0x104].includes(proof.nativeMessage.msg)||proof.nativeMessage.wParam!==intent.code))
+          throw Error('HEXEN_NATIVE_UNKNOWN invalid native USER return; transport is not proof');
+      }catch(e){error=e;stop(e.message);}
+      finally{
+        if(armed){
+          if(!downStarted)try{release.cancel(intent.nonce);}catch(e){error??=e;stop(e.message);}
+          try{up=await supported.finishNativeRelease(release,intent.nonce,error);}catch(e){error??=e;stop(e.message);}
+        }
+        active=false;
+        try{a.consume(handle);}catch(e){error??=e;stop(e.message);}
+      }
+      if(error)throw error;
       return {proof,up,guestAttack:false,enemyConsequence:false};
     },
   };
