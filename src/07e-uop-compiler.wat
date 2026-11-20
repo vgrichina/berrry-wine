@@ -399,7 +399,7 @@
   (func $uc_decode (param $addr i32) (param $R i32)
     (local $p i32) (local $v i32) (local $b i32) (local $n i32) (local $form i32)
     (local $w i32) (local $e i32) (local $op i32) (local $b2 i32) (local $O0 i32)
-    (local $O1 i32) (local $O2 i32) (local $reg i32) (local $rep i32)
+    (local $O1 i32) (local $O2 i32) (local $reg i32) (local $rep i32) (local $sg i32)
     (memory.fill (local.get $R) (i32.const 0) (i32.const 256))
     (i32.store (local.get $R) (local.get $addr))
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
@@ -416,6 +416,20 @@
           (local.set $p (i32.add (local.get $p) (i32.const 1)))
           (local.set $b (call $uc_rd8 (local.get $p)))
           (br $pl)))
+      ;; ES/CS/SS/DS overrides in flat 32-bit code: the threaded decoder
+      ;; drops them ($apply_seg_override), so they are no-ops here too. MSVC
+      ;; writes `ds:` on hand-tuned loops -- Quake III's mixer clip loop.
+      ;; FS/GS keep a base and stay unsupported below.
+      (if (i32.and (i32.eqz (global.get $code16))
+            (i32.or (i32.or (i32.eq (local.get $b) (i32.const 0x26)) (i32.eq (local.get $b) (i32.const 0x2E)))
+                    (i32.or (i32.eq (local.get $b) (i32.const 0x36)) (i32.eq (local.get $b) (i32.const 0x3E)))))
+        (then
+          (local.set $sg (i32.const 1))
+          (local.set $n (i32.add (local.get $n) (i32.const 1)))
+          (if (i32.gt_u (local.get $n) (i32.const 14)) (then (call $uc_unsup (local.get $R)) (return)))
+          (local.set $p (i32.add (local.get $p) (i32.const 1)))
+          (local.set $b (call $uc_rd8 (local.get $p)))
+          (br $pl)))
       (br_if $pd (i32.ne (local.get $b) (i32.const 0x66)))
       (local.set $n (i32.add (local.get $n) (i32.const 1)))
       (if (i32.gt_u (local.get $n) (i32.const 14)) (then (call $uc_unsup (local.get $R)) (return)))
@@ -429,7 +443,7 @@
     ;; bits; O0 is [EDI], O1 [ESI] -- the operands $uc_win proves windows on.
     (if (local.get $rep)
       (then
-        (if (i32.or (i32.eqz (global.get $uc_rep))
+        (if (i32.or (i32.or (i32.eqz (global.get $uc_rep)) (local.get $sg))
               (i32.eqz (i32.or (i32.or (i32.eq (local.get $b) (i32.const 0xA4)) (i32.eq (local.get $b) (i32.const 0xA5)))
                                (i32.or (i32.eq (local.get $b) (i32.const 0xAA)) (i32.eq (local.get $b) (i32.const 0xAB))))))
           (then (call $uc_unsup (local.get $R)) (return)))
