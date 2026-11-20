@@ -30,7 +30,8 @@ ordinary host fullscreen with independent UP. Its complete native source
 frame was personally reviewed: dark blue background, yellow triangle, Chrome
 automation banner and fullscreen Escape notice. The manually chosen ordinary
 `a` edge was refused before release arming or guest DOWN because fresh whole
-RGBA differed after the fullscreen notice disappeared. The old five-second
+RGBA differed. The source included a transient fullscreen notice; the changed
+pixels were not isolated and no later frame was inspected. The old five-second
 check also refused the retained source. This is the intended strict refusal;
 there was no matching-phase search, retry or successor runtime scope.
 
