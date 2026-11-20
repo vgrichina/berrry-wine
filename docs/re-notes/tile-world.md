@@ -54,3 +54,37 @@ between batches 245 and 600, equal to host surface uploads, ~7.8 `BitBlt`
 rectangles each. Tile World redraws on change (clock 200 -> 137 over the window
 = ~63 once-per-second redraws + moves/pickups). Evidence:
 `scratch/runs/20261010T0700Z-tworld-cli-frames`.
+
+### 2026-11-20: startup path-buffer allocations, CRT route matters
+
+Run `20261120-tileworld-fileio-allocation-causal-repair-gameplay` traces the
+registered 1.3.1 PE's retained `fileio.c:348` dialog to `0x410df0`:
+`malloc(260)` via `0x41df10` / IAT `0x4383e0`, return `0x410dfe`;
+the zero-result branch sets the file/line and calls the fatal wrapper.
+The earlier native dialog arguments and whole frame are retained in that run.
+This identifies the allocation site, not the underlying failure cause.
+
+The same retained a600 module with Git f696 CLI dependencies and explicit
+SDL.dll (built-in CRT, matching the browser's DLL choice) repeatedly makes
+successful 260-byte allocations at that return address. The CLI comparison
+with automatic DLL discovery loads a real msvcrt.dll and reaches SDL window
+creation instead. These are different CRT contracts; the real-CRT run is not
+an old-fail/new-pass repair. No new failing malloc return, errno or heap OOM
+reason was captured. Upstream BR903/tworld master identifies itself as 1.3.2;
+its getpathbuffer/memerrexit shape agrees, but its line numbers are not the
+1.3.1 binary's source mapping.
+
+The repeated trace exceeded the disk floor; both supervised runs had already
+ended and their tracked processes were joined when the breach was observed.
+The 105,499,260-byte trace was gzip-compressed, restored through a streaming
+SHA-256 check, and only then unlinked. No further runtime query or replay,
+source fix, chip/level progress or Quit is claimed.
+
+Next causal test: retain a bounded first/last allocation and API ring, counts,
+the first heap_oom_trace(size, reason), and the actual native call stack at
+`0x410dfe` and its caller. Include the two intervening imports (their names
+are absent from this filtered trace), their arguments/returns, cdecl ESP and
+nonvolatile-register preservation, and any file/directory failure/error.
+Determine why startup re-enters getpathbuffer before choosing a handler to
+change. Do not increase heap capacity, add media, force wakes or bypass the
+fatal branch on the evidence currently retained.
