@@ -51,6 +51,14 @@ with both pipe EOFs, and exit 143 is preserved as cancellation, not success.
 Allocation peaks therefore remain UNKNOWN. Production custody code was not
 changed. Both native receipts report no leaks; owned profile/temp are absent.
 
+After runtime cleanup and direct joins completed, the separate metadata
+monitor observed `/home` free space fall to 1,483,743,232 bytes at
+1795165724099. That permanently closed task runtime eligibility too. There
+were no later endpoint requests or fresh scopes. The global drop still has
+UNKNOWN writer attribution; later recovery does not reopen the task. The
+monitor's `actualRuntimeLaunched:false` describes that metadata helper only,
+not the whole task; the diagnostic launch receipts remain authoritative.
+
 Two command review descriptions used anticipated selection names while the
 retained frames still showed track selection/loading. The images are the
 evidence; no separate reviewed bike-selection/start-screen claim is made.
