@@ -7,6 +7,9 @@ const { webcrypto } = require('node:crypto');
 const { test } = require('node:test');
 const bound = require('../tools/mcm-bound-input.cjs');
 const GPS = require('../lib/gpu-stream-render-worker');
+const { Presenter } = require('../lib/gpu-stream-host');
+const { Win98Renderer } = require('../lib/renderer');
+const { createCanvas } = require('../lib/raster-canvas');
 const { makeProducer } = require('./gpu-stream-fixture');
 const bytes = Buffer.from('0061736d01000000', 'hex');
 
@@ -18,10 +21,14 @@ function fixture(app='dx_boids') {
   const kick = mode => adapter.execute({t:'gps-kick',ring:producer.header,mode});
   kick(0);
   const port={id:9,options:{api:'d3dim-gps',backend:'webgl'},closed:false};
-  const layer={writeSeq:1,stale:()=>false};
-  const win={wasm:instance,processId:3,_gpuFrameLayer:layer};
-  const bridge={endpoint:port,presenter:{layer,win,stamp:0,presents:1}};
-  const wine={running:true,instance,renderer:{peekKeyDownState:()=>null},processId:3,hostCtx:{getD3dimBridge:()=>bridge},
+  const win={hwnd:1,wasm:instance,processId:3,_backCanvas:createCanvas(2,2)};
+  const renderer={windows:{1:win},peekKeyDownState:()=>null,
+    _overlayFrameLayer:Win98Renderer.prototype._overlayFrameLayer};
+  const presenter=new Presenter({api:'d3dim-gps',renderer});
+  presenter.present({hwnd:1,stamp:0,surface:createCanvas(2,2)});
+  const layer=presenter.layer;
+  const bridge={endpoint:port,presenter};
+  const wine={running:true,instance,renderer,processId:3,hostCtx:{getD3dimBridge:()=>bridge},
     guestWorker:{link:{endpointIdentity:7,slot:0,worker:{},module:{}}},
     _renderWorkerManager:{worker:{},ports:new Map([[9,port]])}};
   const common={crypto:webcrypto,Atomics,SharedArrayBuffer};
@@ -44,6 +51,10 @@ function fixture(app='dx_boids') {
 
 test('current GPS ownership passes with absent legacy readiness and actual software fallback',async()=>{
   const f=fixture();try {
+    assert.equal(f.layer.kind,'gpu');
+    assert.equal(f.bridge.presenter.win._gpuFrameLayer,f.layer);
+    assert.equal(f.bridge.presenter.win._dxFrameLayer,f.layer);
+    assert.equal(f.wine.renderer._overlayFrameLayer(f.bridge.presenter.win),f.layer);
     assert.equal(f.wine.guestWorker.d3dStats?.renderEndpointId,undefined);
     assert.equal(vm.runInContext(bound.READY_READ,f.page),true);
     const s=await f.chain.capture('current');

@@ -49,7 +49,8 @@ const PAGE_READ = `(() => {
     if(!b?.endpoint&&ports.some(p=>p.options?.api==='d3dim-gps'))throw Error('unbound D3DIM GPS endpoint');
     const p=owned.length===1?owned[0]:null, presenter=b?.presenter, win=presenter?.win;
     let layer=presenter?.layer, synchronous=null;
-    if(p&&win?._dxFrameLayer&&w?.renderer?._overlayFrameLayer(win)===win._dxFrameLayer) {
+    // GPS Presenter owns both slots; only a selected CPU layer needs the native-source proof.
+    if(p&&win?._dxFrameLayer&&win._dxFrameLayer.kind!=='gpu'&&w?.renderer?._overlayFrameLayer(win)===win._dxFrameLayer) {
       synchronous=currentSynchronousSource(w,win);layer=synchronous.layer;
     }
     if(p&&(!layer||!win||(!synchronous&&win._gpuFrameLayer!==layer)||layer.stale?.()||!presenter.presents||
