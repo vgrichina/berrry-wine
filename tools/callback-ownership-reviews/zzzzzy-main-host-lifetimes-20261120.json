@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-thread-host.js",
+      "name": "host-file",
+      "baseSHA256": "36b01dee51b76efb1ec4f3b4678d7702e7cd258be93b54bc77920e749b3083aa",
+      "sha256": "da9781ec6d25a770023b3ab5ddcb43121954c6c2118d2c0aa3d885bf8ea80e72",
+      "reason": "Exact reviewed overlay baseline reconstructed from Git blob plus retained patch and SHA-256 verified in run 20261120-main-callback-lifetime-hex-context-finish. Actual committed cleanup regressions reproduced: throwing callbacks suppress siblings, reentrant stop lacks cached promise, startup metadata errors bypass cleanup, physical CPU exit prematurely certifies writer quiescence before renderer exit. Restore admission fencing, once-only fanout, cached reentrant promises, arbitrary error preservation, failed-owner explicit retry and both physical joins before quiescence. Production WorkerLink25/host15/startup29/bootstrap51/render-manager32 focused controls pass, together with actual Worker nested DLL unload, native DLL reader interleavings and Worker NE lifecycle/cancellation. Existing loader receipt/context/pin authority is unchanged; no new guest callback entry or nonlocal admission. Broader invocation ownership remains pending."
+    },
+    {
+      "file": "lib/render-worker.js",
+      "name": "host-file",
+      "baseSHA256": "e6de185d7f869054c1f65863707c066220647f1ef26ce2711e44930cfc8b298d",
+      "sha256": "e8a7eb10d6f8f9c9c2ece5c1c33c103d7cd95ecbb5fda941ec693413b47e4835",
+      "reason": "Exact reviewed overlay baseline reconstructed from Git blob plus retained patch and SHA-256 verified in run 20261120-main-callback-lifetime-hex-context-finish. Actual committed cleanup regressions reproduced: throwing callbacks suppress siblings, reentrant stop lacks cached promise, startup metadata errors bypass cleanup, physical CPU exit prematurely certifies writer quiescence before renderer exit. Restore admission fencing, once-only fanout, cached reentrant promises, arbitrary error preservation, failed-owner explicit retry and both physical joins before quiescence. Production WorkerLink25/host15/startup29/bootstrap51/render-manager32 focused controls pass, together with actual Worker nested DLL unload, native DLL reader interleavings and Worker NE lifecycle/cancellation. Existing loader receipt/context/pin authority is unchanged; no new guest callback entry or nonlocal admission. Broader invocation ownership remains pending."
+    }
+  ]
+}
