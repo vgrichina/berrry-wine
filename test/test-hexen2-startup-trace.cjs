@@ -3,6 +3,26 @@ const test = require('node:test'), assert = require('node:assert/strict');
 const fs = require('node:fs'), os = require('node:os'), path = require('node:path');
 const {Lifecycle, connect, observeHTTP} = require('../tools/hexen2-startup-trace.cjs');
 
+test('owned DOM point uses current viewport and canvas scale; refuses offsets and stale focus',()=>{
+  const {point}=require('../tools/hexen2-owned-dom-target.cjs');
+  const s={hasFocus:true,visible:'visible',width:1092,height:813,visual:{scale:1,x:0,y:0},rect:{left:64,top:48,right:864,bottom:648,width:800,height:600},canvasWidth:640,canvasHeight:480};
+  assert.deepEqual(point(s,264,198),{x:264,y:198,canvasX:160,canvasY:120});
+  assert.throws(()=>point({...s,hasFocus:false},264,198),/focus/);
+  assert.throws(()=>point(s,20,20),/outside/);
+  assert.throws(()=>point({...s,visual:{scale:2,x:0,y:0}},264,198),/unmapped/);
+});
+
+test('mouse ACK or activation cannot substitute for a trusted event at the current canvas',()=>{
+  const {createOwnedTarget}=require('../tools/hexen2-owned-dom-target.cjs');
+  const target=createOwnedTarget({}),before={timeOrigin:42,url:'http://127.0.0.1:9/'};
+  const edge={at:100,type:'mousedown',x:264,y:198};
+  for(const ledger of [[],[{...edge,trusted:false,targetCanvas:true}],[{...edge,trusted:true,targetCanvas:false}],[{...edge,trusted:true,targetCanvas:true,x:260}],[{...edge,trusted:true,targetCanvas:true,at:99}]])
+    assert.throws(()=>target.delivered(before,{...before,ledger},edge),/trusted DOM mouse edge/);
+  assert.throws(()=>target.delivered(before,{...before,timeOrigin:43,ledger:[]},edge));
+  const actual={...edge,trusted:true,targetCanvas:true};
+  assert.deepEqual(target.delivered(before,{...before,ledger:[actual]},edge),[actual]);
+});
+
 test('trace exhaustion rejects the actual in-flight reply and closes without later dispatch', async () => {
   const Original=globalThis.WebSocket, rows=[], sent=[];
   class Socket extends EventTarget {
