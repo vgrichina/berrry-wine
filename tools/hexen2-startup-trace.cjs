@@ -181,4 +181,125 @@ async function launchChrome(lifecycle, options) {
     adopt(owned);
   }});
 }
-module.exports = {...common, connect, launchChrome, observeHTTP, probeLoopback};
+// Serialized into a run-local host overlay only. Install at the host factory's
+// final return, after native guard registration AND the host-write wrappers.
+// Observation must never replace a guest return, exception, or actor scope.
+function installUserReturnObserver(h, owner, record) {
+  const user = [], calls = [];
+  let actor = null, stopped = false, emitted = 0, sequence = 0;
+  const attempt = fn => {
+    if (stopped) return;
+    try { fn(); } catch (error) {
+      stopped = true;
+      try { record({kind:'observer-stop', error:String(error).slice(0,256)}); } catch {}
+    }
+  };
+  const emit = row => {
+    if (++emitted > 128) throw Error('UNKNOWN Hexen observer finite128 limit');
+    record({at:Date.now(), sequence:++sequence, ...row});
+  };
+  const remember = (list, row) => { list.push(row); if (list.length > 32) list.shift(); };
+  const scope = h.browserInputScope;
+  if (!scope || typeof scope.withActor !== 'function' || typeof h.input_consumed !== 'function')
+    throw Error('Hexen observer requires final native guard callbacks');
+  const originalActor = scope.withActor;
+  scope.withActor = function(slot, name, fn) {
+    const previous = actor; actor = {slot, name};
+    try { return originalActor.call(this, slot, name, fn); }
+    finally { actor = previous; }
+  };
+  const consumed = h.input_consumed;
+  h.input_consumed = function(...args) {
+    // Call exactly once with the original receiver, arguments and active scope.
+    // An original exception bypasses observation and propagates unchanged.
+    const result = consumed.apply(this, args);
+    attempt(() => {
+      const [token, threadId, ptr, apiKind, remove] = args;
+      const p = args[15] >>> 0, buffer = owner.memory.buffer;
+      if (args.length !== 16 || p > buffer.byteLength - 16) throw Error('UNKNOWN native MSG metadata');
+      const view = new DataView(buffer);
+      const row = {kind:'native-user-return', token, threadId, ptr, apiKind, remove,
+        result, actor:actor && {...actor}, scene:args.slice(5,15),
+        message:Array.from({length:4},(_,i)=>view.getUint32(p+4*i,true))};
+      remember(calls, row); emit(row);
+    });
+    return result;
+  };
+  const log = h.log;
+  h.log = function(ptr, len, ...stack) {
+    attempt(() => {
+      // TextDecoder rejects SharedArrayBuffer views in some engines. Copy only
+      // the bounded API name; never retain or print bytecode or memory bodies.
+      const bytes = new Uint8Array(owner.memory.buffer, ptr, Math.min(len,128));
+      const name = new TextDecoder().decode(Uint8Array.from(bytes)).replace(/\0.*$/,'');
+      if (/^(GetMessage[AW]|PeekMessage[AW]|DispatchMessage[AW]|PostQuitMessage|ExitProcess)$/.test(name)) {
+        if (stack.length < 10) throw Error('UNKNOWN forwarded guest register snapshot');
+        const row = {name, at:Date.now(), actor:actor && {...actor}, esp:stack[0]>>>0,
+          return:stack[1]>>>0, args:stack.slice(2,7).map(n=>n>>>0)};
+        remember(user,row);
+        if (name === 'ExitProcess') {
+          const e = owner.instance.exports;
+          if (typeof e.guest_read32 !== 'function') throw Error('UNKNOWN guest stack reader');
+          emit({kind:'guest-pre-exit', ...row,
+            words:Array.from({length:64},(_,i)=>e.guest_read32(row.esp+4*i)>>>0),
+            user:user.slice(), calls:calls.slice()});
+        }
+      }
+    });
+    return log.call(this, ptr, len, ...stack);
+  };
+  attempt(() => emit({kind:'observer-installed', afterFinalHostCallbacks:true}));
+}
+
+function userReturnOverlay(host) {
+  const needle = '    return { host: h, gdi: base.gdi, __captureWin16FarFault: captureWin16FarFault };';
+  const at = host.indexOf(needle);
+  if (at < 0 || at !== host.lastIndexOf(needle) ||
+      host.lastIndexOf('h.input_consumed=',at) < 0 ||
+      host.lastIndexOf('for (const [name, fn] of Object.entries(h))',at) < 0)
+    throw Error('UNKNOWN Hexen final host callback installation point');
+  return host.replace(needle, `    (${installUserReturnObserver.toString()})(h, self, row => console.log('HEXEN_USER_WITNESS', JSON.stringify(row)));\n` + needle);
+}
+
+// The page's idle WASM instance cannot supply EAX. Read it only on the
+// executing Worker's existing log_api_exit callback, without another RPC.
+function installWorkerUserObserver(host, memory, getExports, slot, record) {
+  const entries=[], returns=[];
+  let stopped=false, emitted=0;
+  const attempt=fn=>{if(stopped)return;try{fn();}catch(error){stopped=true;try{record({kind:'worker-observer-stop',error:String(error).slice(0,256)});}catch{}}};
+  const emit=row=>{if(++emitted>128)throw Error('UNKNOWN Hexen worker observer finite128 limit');record({at:Date.now(),slot,...row});};
+  const log=host.log,exit=host.log_api_exit;
+  host.log=function(ptr,len,...args){
+    attempt(()=>{
+      const name=new TextDecoder().decode(Uint8Array.from(new Uint8Array(memory.buffer,ptr,Math.min(len,128)))).replace(/\0.*$/,'');
+      if(entries.length>=32)throw Error('UNKNOWN nested API observer limit');
+      const interested=/^(GetMessage[AW]|PeekMessage[AW]|DispatchMessage[AW]|PostQuitMessage|ExitProcess)$/.test(name);
+      const e=getExports(),esp=interested?e.get_esp()>>>0:0;
+      const row=interested?{name,esp,return:e.guest_read32(esp)>>>0,args:Array.from({length:5},(_,i)=>e.guest_read32(esp+4+4*i)>>>0)}:null;
+      entries.push(row);
+      if(name==='ExitProcess')emit({kind:'worker-pre-exit',entry:row,
+        words:Array.from({length:64},(_,i)=>e.guest_read32(esp+4*i)>>>0),returns:returns.slice()});
+    });
+    return log.call(this,ptr,len,...args);
+  };
+  host.log_api_exit=function(...args){
+    attempt(()=>{
+      const entry=entries.pop();if(!entry)return;
+      const e=getExports(),row={kind:'guest-user-api-return',entry,eax:e.get_eax()>>>0,eip:e.get_eip()>>>0,esp:e.get_esp()>>>0};
+      returns.push(row);if(returns.length>32)returns.shift();
+      // Retain idle returns in the ring, without a broad stream of polls.
+      if(row.eax||/^Dispatch|^PostQuit/.test(entry.name))emit(row);
+    });
+    return exit.apply(this,args);
+  };
+}
+
+function workerUserReturnOverlay(source) {
+  const needle='    return {\n      imports: { host: Object.assign({ memory }, host) },';
+  if(source.indexOf(needle)<0||source.indexOf(needle)!==source.lastIndexOf(needle))
+    throw Error('UNKNOWN Hexen final Worker callback installation point');
+  return source.replace(needle,`    (${installWorkerUserObserver.toString()})(host, memory, opts.getExports, slot, row => console.log('HEXEN_WORKER_WITNESS', JSON.stringify(row)));\n`+needle);
+}
+
+module.exports = {...common, connect, launchChrome, observeHTTP, probeLoopback,
+  installUserReturnObserver, userReturnOverlay, installWorkerUserObserver, workerUserReturnOverlay};
