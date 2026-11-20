@@ -132,3 +132,59 @@ show the actual bad argc/index transition or ABI/output corruption, then
 old-fail/new-pass and negative API controls. No product patch, browser replay,
 chip, level completion or Quit is claimed. All supervised processes joined;
 no remote box was created.
+
+### 2026-11-20: native argument-loop cause repaired; browser owner still hidden
+
+Run `20261120-tileworld-native-argv-loop-causal-repair` first compared the
+actual f696 CRT handlers with the shared tree (the argument, strtol and
+sprintf handlers are identical), then retained bounded first/last API and
+native block rings. GetCommandLineA is terminated `C:\tworld.exe`;
+__getmainargs returns argc1 and argv[1]=NULL. SDL's splitter also produces
+one argument. The PE parser nevertheless receives argc **0x41922a**, with a
+correctly increasing index. Its callback returns zero and the next signed
+comparison continues past argv's terminator. strtol returns zero with its
+end-pointer output captured; sprintf `%.*s` returns the independently wrong
+literal `s`. Neither is the cause of the invalid argc.
+
+The loader binds MSVCRT's **_iob data array** to thunk 0x7500110. Original
+startup code at 0x418d65 copies eight FILE dwords into imported stdout at
+_iob+32, overwriting the adjacent **atexit** descriptor at 0x7500138 from
+`{0x387b8,2477}` to `{0x589188,6}`. The observer's historical field names
+`onexitIat`/`onexitThunk` refer to this atexit import, not _onexit. Two native
+calls via 0x401000 now dispatch the wrong handler and pop20 bytes each.
+ESP rises32 bytes; the return at 0x41922a overwrites argc saved at EBP-0x1c.
+This proves a FILE-data/import-binding corruption, not heap exhaustion or a
+file-enumeration problem.
+
+The narrow source fix extends the existing CRTDLL/MSVCR70 `_iob` data
+resolver to exactly MSVCRT.DLL, case insensitive. Unrelated modules and
+symbol/module suffixes remain rejected; authentic DLL exports retain
+precedence. The frozen control recompiles byte-identically to a600. Replacing
+only this function produces module
+`9fad60add0e7bc86dbcb957709450df5833024e0ba735c7f5bd5db22d856e022`.
+With the same original PE, SDL and media, atexit preserves its descriptor,
+returns with cdecl ESP delta4 and preserved nonvolatile registers, parser
+argc is1 and the native branch takes 0x410738 (completion). No strtol,
+formatter, heap-size, media, callback-wake or input-guard changes were made.
+The focused data-import/native-cdecl regression and stdio regression pass;
+the literal locked build passed. Evidence retains old-fail/new-pass API and
+native observations, exact source/module recovery and foreign diffs.
+
+One fresh coherent browser original actually reads back the repaired module
+in the page and CPU Worker (305 imports each), accepted f696 JS, accepted
+bridge and16 registered media files. Normal browser focus was admitted.
+At the first native observation, Tile World's live HWND65537 is **hidden**,
+with client rect23,43,-6,-27, focus0 and a healthy but not-ready software
+scene. The existing startup observer throws `sampled native owner
+missing/hidden` while the launch overlay remains visible; the scope closes
+without binding, input or later endpoint requests. No picker/board capture,
+chip, level or ordinary Quit was earned. The reviewed screenshot is only the
+prelaunch desktop; the WebGL toolbar selector earns no renderer credit.
+
+The next remedy is a bounded native window-creation/show/size history that
+distinguishes SDL's initial hidden window from a failed later ShowWindow or
+size publication, with native HWND/generation/thread ownership recorded at
+each boundary. The retained hidden observation alone does not justify
+changing the input guard, forcing visibility or replaying this closed scope.
+All local supervised processes and the independent watchdog joined; private
+profile/display/socket/auth were removed, and no remote box was created.

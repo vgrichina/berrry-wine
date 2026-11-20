@@ -117,7 +117,9 @@ const extraWat = String.raw`
  assert.equal(e.t_resolve(0x401280,0x4012a0)>>>0,iob,'case-insensitive DLL and exact symbol');
  put(0x401280,'MsVcR70.DlL');
  assert.equal(e.t_resolve(0x401280,0x4012a0)>>>0,iob,'MSVCR70 exports the same FILE data ABI');
- for(const name of ['msvcr70.dll.extra','msvcrt.dll','vendor.dll']){
+ put(0x401280,'MsVcRt.DlL');
+ assert.equal(e.t_resolve(0x401280,0x4012a0)>>>0,iob,'MSVCRT exports FILE data, not a callable accessor');
+ for(const name of ['msvcr70.dll.extra','msvcrt.dll.extra','msvcrt20.dll','vendor.dll']){
    put(0x401280,name);
    assert.equal(e.t_resolve(0x401280,0x4012a0),0,'unrecognized _iob ABI: '+name);
  }
@@ -184,6 +186,30 @@ const extraWat = String.raw`
  o.load_dll(pe.length,0x700000);
  assert.equal(o.guest_read32(0x701140)>>>0,0x601300,'real DLL data export takes precedence');
  assert.notEqual(o.guest_read32(0x701140)>>>0,otherIob);
+ // Tile World's MSVCRT startup writes stdout as data, then registers two
+ // cdecl exit handlers. A thunk-backed _iob corrupts adjacent descriptors.
+ const ms=await bootRenderHarness({extraWat,fonts:'none'}),m=ms.exports;
+ const msPe=makePe('MsVcRt.DlL');
+ msPe.fill(0,0x3A2,0x3B4);msPe.write('atexit\0',0x3A2);
+ // push ebp; mov ebp,esp; sub esp,4; mov [ebp-4],1;
+ // push callback; call [atexit]; add esp,4 (twice); return saved argc.
+ const code=Buffer.from('5589e583ec04c745fc010000006800134000ff154411400083c4046800134000ff154411400083c4048b45fcc9c3','hex');
+ code.copy(msPe,0x200);msPe[0x500]=0xC3;
+ new Uint8Array(ms.memory.buffer).set(msPe,m.get_staging());m.load_pe(msPe.length);
+ const msIob=m.guest_read32(0x401140)>>>0,msThunk=m.get_thunk_base()>>>0;
+ assert(msIob<msThunk||msIob>=(m.get_thunk_end()>>>0),'MSVCRT static data import outside thunk zone');
+ for(let i=0;i<0x400;i++)m.guest_write8(0x501000+i,msPe[0x200+i]);
+ m.t_import_dll(0x500000);
+ assert.equal(m.guest_read32(0x501140)>>>0,msIob,'MSVCRT DLL caller shares FILE data');
+ const descriptors=()=>Array.from({length:(m.get_thunk_end()-msThunk)/4},(_,i)=>m.guest_read32(msThunk+i*4));
+ const before=descriptors();
+ // Original's fallback copies exactly eight dwords into imported stdout.
+ for(let i=0;i<8;i++)m.guest_write32(msIob+32+i*4,0x11220000+i);
+ assert.deepEqual(descriptors(),before,'native FILE data writes preserve all API descriptors');
+ m.call_func(0x401000,0,0,0,0);
+ for(let i=0;i<20&&m.get_eip();i++)m.run(1000);
+ assert.equal(m.get_eip(),0,'two native atexit calls return normally');
+ assert.equal(m.get_eax(),1,'cdecl cleanup preserves saved argc');
  console.log('PASS CRTDLL _iob static EXE/DLL identity, FILE ownership, shared instances, distinct processes and native export precedence');
 })().catch(error=>{console.error(error.stack||error);process.exitCode=1;});
 

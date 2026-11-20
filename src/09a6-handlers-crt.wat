@@ -1413,7 +1413,7 @@
         (return (local.get $winner))))
     (local.get $iob))
 
-  ;; CRTDLL and MSVCR70 export _iob as a FILE array, not a callable accessor.
+  ;; CRTDLL, MSVCRT and MSVCR70 export _iob as a FILE array, not an accessor.
   ;; Other vendors must still resolve normally. Both loader paths pass linear
   ;; string pointers. Binding this data to a thunk lets freopen overwrite
   ;; adjacent thunk metadata (GLTron's redirected stdout corrupted abs).
@@ -1423,6 +1423,20 @@
     (local $iob i32)
     (if (i32.eqz (call $str_eq (local.get $name_wa) "_iob"))
       (then (return (i32.const 0))))
+    ;; MSVCRT's callable accessor is __p__iob. Its _iob import is the array
+    ;; itself: SDL copies redirected FILEs into +32/+64, so a thunk binding
+    ;; corrupts adjacent API descriptors and their stack-cleanup contracts.
+    (if (i32.and
+          (i32.eq (i32.or (i32.load (local.get $dll_wa)) (i32.const 0x20202020)) (i32.const 0x6376736d))
+          (i32.and
+            (i32.eq (i32.or (i32.load offset=4 (local.get $dll_wa)) (i32.const 0x20202020)) (i32.const 0x642e7472))
+            (i32.and
+              (i32.eq (i32.or (i32.load16_u offset=8 (local.get $dll_wa)) (i32.const 0x2020)) (i32.const 0x6c6c))
+              (i32.eqz (i32.load8_u offset=10 (local.get $dll_wa))))))
+      (then
+        (local.set $iob (call $crt_iob_ensure))
+        (if (i32.eqz (local.get $iob)) (then (unreachable)))
+        (return (local.get $iob))))
     (if (i32.and
           (i32.eq (i32.or (i32.load (local.get $dll_wa)) (i32.const 0x20202020)) (i32.const 0x6376736d))
           (i32.and
