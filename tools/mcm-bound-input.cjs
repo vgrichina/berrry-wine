@@ -4,6 +4,7 @@ const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
 const {currentSynchronousSource, ARM_SYNCHRONOUS_SOURCE} = require('./mcm-synchronous-source.cjs');
 const menuContext = require('./mcm-menu-reviewed-context.cjs');
+const gameplayContext = require('./mcm-gameplay-reviewed-context.cjs');
 const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const wait = ms => new Promise(r => setTimeout(r, ms));
 const FIELDS = ['processId', 'processObject', 'pageInstance', 'pageRenderer', 'endpoint', 'endpointObject', 'workerObject',
@@ -28,6 +29,21 @@ function same(a, b) {
     assert(a?.[field] !== undefined && a[field] !== null && a[field] !== '', 'missing identity ' + field);
     assert.equal(b?.[field], a[field], 'identity changed: ' + field);
   }
+}
+// Execution slices, RPC counters and presentation samples are observations,
+// not owner identity. Keep an explicit projection rather than deleting today's
+// known volatile keys: future diagnostics must not silently become authority.
+function menuOwner(identity) {
+  same(identity, identity);
+  const fields=[...FIELDS,'guestEndpoint','slot'];
+  const owner=Object.fromEntries(fields.map(field=>{
+    assert(identity[field]!==undefined&&identity[field]!==null,'missing MENU owner '+field);
+    return [field,identity[field]];
+  }));
+  assert(identity.sourceArm?.threads&&identity.sourceArm.endpoint===null&&identity.sourceArm.predicates,
+    'complete MENU source owner required');
+  owner.sourceArm=structuredClone(identity.sourceArm);
+  return owner;
 }
 // Object tokens are scoped to this actual document. Replacing an owner with an
 // equal-looking object, or reloading the page, cannot reuse a reviewed token.
@@ -163,17 +179,24 @@ const MENU_CONTEXT_READ = `(() => {
     win.wasm!==w.instance||win.processId!==w.processId||
     w._d3dimGpsObservation?.state!=='PREPARED'||w._d3dimGpsObservation.endpoint)
     throw Error('prepared genuine MCM MENU owner required');
+  if(!w.memory||!w.instance?.nativeInstance||!w.threadManager||w.threadManager.mainInstance!==w.instance)
+    throw Error('live MENU native instance/thread owner required');
   return {hwnd:win.hwnd,generation:token(win),memory:token(w.memory),preparation:token(w._d3dimGpsObservation),
+    nativeInstance:token(w.instance.nativeInstance),threads:token(w.threadManager),
+    observer:token(globalThis.__mcmNativeObserve)??'none',
     canvas:token(screen),focus:token(document.activeElement),modal:null,
     viewport:{width:innerWidth,height:innerHeight,deviceScaleFactor:devicePixelRatio,
       screen:screen.getBoundingClientRect().toJSON()},
     window:{x:win.x,y:win.y,w:win.w,h:win.h,style:win.style,zOrder:win.zOrder}};
 })()`;
 function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now,
-  readinessTimeoutMs = 10000, gpsSourcePreparation = false, reviewedMenuContext}) {
+  readinessTimeoutMs = 10000, gpsSourcePreparation = false, reviewedMenuContext, reviewedGameplayContext}) {
   assert(reviewedMenuContext===undefined||reviewedMenuContext?.capability===menuContext.CAPABILITY&&
     typeof reviewedMenuContext.evidenceSink==='function'&&gpsSourcePreparation&&app==='mcm',
   'explicit MCM MENU capability and full image sink require GPS preparation');
+  assert(reviewedGameplayContext===undefined||reviewedGameplayContext?.capability===gameplayContext.CAPABILITY&&
+    typeof reviewedGameplayContext.evidenceSink==='function'&&gpsSourcePreparation&&app==='mcm',
+  'explicit MCM GAMEPLAY capability and complete image sink require GPS preparation');
   const currentPageRead=gpsSourcePreparation?GPS_PAGE_READ:PAGE_READ;
   assert(Number.isInteger(readinessTimeoutMs)&&readinessTimeoutMs>0&&readinessTimeoutMs<=10000,
     'bounded first-present readiness timeout');
@@ -423,7 +446,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     capture:async()=>Buffer.from((await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},pageSession)).data,'base64'),
     identity:async()=>{
       const live=await readLive(),context=await evaluate(MENU_CONTEXT_READ);
-      return {session:pageSession,owner:live.identity,process:live.identity.processObject,
+      return {session:pageSession,owner:menuOwner(live.identity),process:live.identity.processObject,
         endpoint:live.identity.endpointObject,epoch:live.identity.epoch,module:live.identity.moduleSha256,...context};
     }});
   async function captureMenuContext(){
@@ -451,10 +474,61 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       }finally{clearTimeout(timer);await up();}})();
     });}catch(e){closed=true;throw e;}finally{busy=false;}
   }
+  // A separate one-use authority for each personally reviewed gameplay edge.
+  // No direct or MENU capture, intent, timestamp or equality is reused here.
+  let gameplay;
+  async function captureGameplayContext(){
+    assert(reviewedGameplayContext&&!closed&&!busy&&(!gameplay||gameplay.closed),
+      'explicit idle GAMEPLAY capability required');busy=true;
+    try{
+      gameplay=gameplayContext.createGameplayContext({now,...reviewedGameplayContext,
+        checkpoint:()=>{assert(!closed&&synchronousArmed,'live prepared GAMEPLAY chain required');reviewedGameplayContext.checkpoint?.();},
+        capture:async()=>Buffer.from((await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false},pageSession)).data,'base64'),
+        down:edge=>send('Input.dispatchKeyEvent',{type:'keyDown',key:edge.key,code:edge.code,windowsVirtualKeyCode:edge.vk},pageSession),
+        identity:async()=>{
+          const live=await readLive(),id=live.identity;
+          assert(id.renderRole==='d3dim-gps'&&id.renderEndpoint!=='none','actual published GPS GAMEPLAY required');
+          const context=await evaluate(GAMEPLAY_CONTEXT_READ);
+          same(id,(await readLive()).identity);
+          return {session:pageSession,owner:Object.fromEntries(FIELDS.map(k=>[k,id[k]])),
+            process:id.processObject,endpoint:id.endpointObject,epoch:id.epoch,module:id.moduleSha256,...context};
+        }});
+      return await gameplay.captureReview();
+    }catch(e){closed=true;throw e;}finally{busy=false;}
+  }
+  function reviewGameplayContext(intent){
+    assert(gameplay&&!closed&&!busy,'idle explicit GAMEPLAY source required');
+    try{return gameplay.review(intent);}catch(e){closed=true;throw e;}
+  }
+  async function dispatchGameplayContext(handle,intent){
+    assert(gameplay&&!closed&&!busy,'idle explicit GAMEPLAY source required');busy=true;
+    try{return await gameplay.dispatch(handle,intent);}catch(e){closed=true;throw e;}
+    finally{gameplay.close();busy=false;}
+  }
   return {capture, admit, readLive, progress, armSynchronousSource, armMenuSource,
     captureMenuContext,reviewMenuContext,startMenuContext,
-    close(){closed=true;menu?.close();},get closed(){return closed;}};
+    captureGameplayContext,reviewGameplayContext,dispatchGameplayContext,
+    close(){closed=true;menu?.close();gameplay?.close();},get closed(){return closed;}};
 }
+
+const GAMEPLAY_CONTEXT_READ = `(() => {
+  const state=globalThis.__mcmPassiveIdentityV1;
+  if(!state||runningApps.length!==1)throw Error('GAMEPLAY document owner unavailable');
+  const token=o=>{if(!o)return null;if(!state.ids.has(o))state.ids.set(o,state.epoch+':'+(++state.next));return state.ids.get(o);};
+  const a=runningApps[0],w=a.wine,r=w.renderer,b=w.hostCtx?.getD3dimBridge?.(),win=b?.presenter?.win;
+  const screen=document.getElementById('screen'),modal=r.getActiveModalWindow?.();
+  if(a.name!=='mcm'||!w.running||w._stopped||!screen||!win||modal||
+    !b.endpoint||b.endpoint.closed||b.workerAsyncError||b.workerClosing||
+    win.wasm!==w.instance||win.processId!==w.processId||!win.visible||
+    !w.memory||!w.instance.nativeInstance||!w.threadManager||w.threadManager.mainInstance!==w.instance||
+    w._d3dimGpsObservation?.endpoint!==b.endpoint||w._d3dimGpsObservation?.state!=='PUBLISHED')
+    throw Error('genuine live GPS GAMEPLAY owner required');
+  return {mode:'GAMEPLAY',gps:true,hwnd:win.hwnd,generation:token(win),memory:token(w.memory),
+    preparation:token(w._d3dimGpsObservation),nativeInstance:token(w.instance.nativeInstance),threads:token(w.threadManager),
+    observer:token(globalThis.__mcmNativeObserve)??'none',canvas:token(screen),focus:token(document.activeElement),modal:null,
+    viewport:{width:innerWidth,height:innerHeight,deviceScaleFactor:devicePixelRatio,screen:screen.getBoundingClientRect().toJSON()},
+    window:{x:win.x,y:win.y,w:win.w,h:win.h,style:win.style,zOrder:win.zOrder}};
+})()`;
 
 const KEYS = {ArrowUp:38,ArrowDown:40,ArrowLeft:37,ArrowRight:39,Enter:13,Escape:27};
 async function hold({send, session, keys, holdMs, sample, renderSample, saveSample = ()=>{}}) {
@@ -503,4 +577,4 @@ async function hold({send, session, keys, holdMs, sample, renderSample, saveSamp
   if(error) {error.holdReceipt={started,releaseAt,samples,attempted:attempted.map(k=>k.key)};throw error;}
   return {started,releaseAt,samples,attempted:attempted.map(k=>k.key),meaning:'physical host interval; passive counters do not prove DirectInput polls or simulation steps'};
 }
-module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, GPS_PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE, ARM_GPS_SOURCE, MENU_CONTEXT_READ};
+module.exports = {createChain, hold, same, menuOwner, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, GPS_PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE, ARM_GPS_SOURCE, MENU_CONTEXT_READ};
