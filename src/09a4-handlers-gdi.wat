@@ -1319,17 +1319,52 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
-  ;; Return the live process capture owner, clearing an HWND that died without
-  ;; going through the ordinary window teardown path.
-  (func $capture_live (result i32)
-    (local $hwnd i32)
-    (local.set $hwnd (global.get $capture_hwnd))
-    (if (i32.and
-          (i32.ne (local.get $hwnd) (i32.const 0))
-          (i32.lt_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0)))
-      (then
-        (global.set $capture_hwnd (i32.const 0))
-        (return (i32.const 0))))
+  ;; Authoritative process capture is shared by every CPUWorker and host shadow.
+  ;; Cursor records use +0/+4/+8; reserve their previously unused +12 words
+  ;; (slots 0..5) for serial, HWND, generation low/high, actor TID and PID.
+  ;; No region moves, heap pointers or actor-local globals are used by readers.
+  (func $capture_word_addr (param $field i32) (result i32)
+    (i32.add (global.get $CURSOR_THREAD_STATE)
+      (i32.add (i32.const 12) (i32.shl (local.get $field) (i32.const 4)))))
+  (func $capture_publication_word (export "capture_publication_word")
+      (param $field i32) (result i32)
+    (if (i32.gt_u (local.get $field) (i32.const 5)) (then (return (i32.const 0))))
+    (i32.atomic.load (call $capture_word_addr (local.get $field))))
+
+  ;; Writers serialize with window lifetime mutation. Publish before callbacks;
+  ;; readers never wait for an actor whose synchronous host import is pending.
+  (func $capture_store (param $hwnd i32)
+    (local $gen i64)
+    (call $lock_wnd_acquire)
+    (drop (i32.atomic.rmw.add (call $capture_word_addr (i32.const 0)) (i32.const 1)))
+    (local.set $gen (call $wnd_lookup_generation (local.get $hwnd)))
+    (i32.atomic.store (call $capture_word_addr (i32.const 1)) (local.get $hwnd))
+    (i32.atomic.store (call $capture_word_addr (i32.const 2)) (i32.wrap_i64 (local.get $gen)))
+    (i32.atomic.store (call $capture_word_addr (i32.const 3))
+      (i32.wrap_i64 (i64.shr_u (local.get $gen) (i64.const 32))))
+    (i32.atomic.store (call $capture_word_addr (i32.const 4))
+      (select (global.get $current_thread_id) (i32.const 0) (i32.ne (local.get $hwnd) (i32.const 0))))
+    (i32.atomic.store (call $capture_word_addr (i32.const 5))
+      (select (call $current_process_id) (i32.const 0) (i32.ne (local.get $hwnd) (i32.const 0))))
+    ;; Legacy diagnostic export only. Routing and USER APIs use shared state.
+    (global.set $capture_hwnd (local.get $hwnd))
+    (drop (i32.atomic.rmw.add (call $capture_word_addr (i32.const 0)) (i32.const 1)))
+    (call $lock_wnd_release))
+
+  (func $capture_live (export "get_authoritative_capture_hwnd") (result i32)
+    (local $serial i32) (local $hwnd i32) (local $gen i64) (local $tid i32)
+    (local.set $serial (call $capture_publication_word (i32.const 0)))
+    (if (i32.and (local.get $serial) (i32.const 1)) (then (return (i32.const 0))))
+    (local.set $hwnd (call $capture_publication_word (i32.const 1)))
+    (if (i32.eqz (local.get $hwnd)) (then (return (i32.const 0))))
+    (local.set $gen (i64.or
+      (i64.extend_i32_u (call $capture_publication_word (i32.const 2)))
+      (i64.shl (i64.extend_i32_u (call $capture_publication_word (i32.const 3))) (i64.const 32))))
+    (local.set $tid (call $capture_publication_word (i32.const 4)))
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd))) (then (return (i32.const 0))))
+    (if (i64.ne (local.get $gen) (call $wnd_lookup_generation (local.get $hwnd))) (then (return (i32.const 0))))
+    (if (i32.ne (local.get $tid) (call $wnd_get_thread (local.get $hwnd))) (then (return (i32.const 0))))
+    (if (i32.ne (local.get $serial) (call $capture_publication_word (i32.const 0))) (then (return (i32.const 0))))
     (local.get $hwnd))
 
   ;; GetCapture and ReleaseCapture are thread-queue APIs: another guest thread
@@ -1349,10 +1384,12 @@
   ;; notification synchronously even when ReleaseCapture itself caused it.
   (func $capture_replace (param $next i32) (result i32)
     (local $previous i32)
+    (call $lock_wnd_acquire)
     (local.set $previous (call $capture_live))
     (if (i32.eq (local.get $previous) (local.get $next))
-      (then (return (local.get $previous))))
-    (global.set $capture_hwnd (local.get $next))
+      (then (call $lock_wnd_release) (return (local.get $previous))))
+    (call $capture_store (local.get $next))
+    (call $lock_wnd_release)
     (if (i32.ne (local.get $previous) (i32.const 0))
       (then
         (drop (call $wnd_send_message

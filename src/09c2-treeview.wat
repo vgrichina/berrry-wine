@@ -626,8 +626,8 @@
         (then (call $zero_memory (local.get $view) (i32.const 16))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $views)))
-    (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-      (then (global.set $capture_hwnd (i32.const 0))))
+    (if (i32.eq (call $capture_live) (local.get $hwnd))
+      (then (call $capture_store (i32.const 0))))
     (if (i32.eq (global.get $sb_pressed_hwnd) (local.get $hwnd))
       (then
         (global.set $sb_pressed_hwnd (i32.const 0))
@@ -1560,8 +1560,8 @@
       (then
         (global.set $sb_pressed_hwnd (i32.const 0))
         (global.set $sb_pressed_part (i32.const 0))
-        (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-          (then (global.set $capture_hwnd (i32.const 0))))
+        (if (i32.eq (call $capture_live) (local.get $hwnd))
+          (then (call $capture_store (i32.const 0))))
         (call $paint_flag_set_inv (local.get $hwnd))
         (call $treeview_paint_wat (local.get $hwnd))
         (return (i32.const 1))))
@@ -1638,7 +1638,7 @@
                   (then
                     (global.set $tv_drag_anchor_y (local.get $y))
                     (global.set $tv_drag_anchor_row (call $tv_view_row))
-                    (global.set $capture_hwnd (local.get $hwnd))))
+                    (call $capture_store (local.get $hwnd))))
                 (call $paint_flag_set_inv (local.get $hwnd))
                 (call $treeview_paint_wat (local.get $hwnd))
                 (return (i32.const 1))))))))

@@ -511,7 +511,7 @@
             (global.set $sb_pressed_part (local.get $part))
             (if (i32.eq (local.get $part) (i32.const 5))
               (then
-                (global.set $capture_hwnd (local.get $hwnd))
+                (call $capture_store (local.get $hwnd))
                 (global.set $sb_drag_anchor_coord (local.get $coord))
                 (global.set $sb_drag_anchor_pos (local.get $pos))))
             (drop (call $wnd_send_message
@@ -597,8 +597,8 @@
                       (local.get $hwnd)))))))
             (global.set $sb_pressed_hwnd (i32.const 0))
             (global.set $sb_pressed_part (i32.const 0))
-            (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-              (then (global.set $capture_hwnd (i32.const 0))))
+            (if (i32.eq (call $capture_live) (local.get $hwnd))
+              (then (call $capture_store (i32.const 0))))
             (call $invalidate_hwnd (local.get $hwnd))
             (drop (call $wnd_send_message (local.get $parent) (local.get $sb_msg)
                     (i32.const 8) (local.get $hwnd))))) ;; SB_ENDSCROLL

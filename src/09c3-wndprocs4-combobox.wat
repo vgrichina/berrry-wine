@@ -209,8 +209,8 @@
     ;; misses the listbox entirely. Falls back to combo for variants without
     ;; a popup shell (CBS_SIMPLE).
     (if (local.get $popup)
-      (then  (global.set $capture_hwnd (local.get $popup)))
-      (else  (global.set $capture_hwnd (local.get $hwnd))))
+      (then  (call $capture_store (local.get $popup)))
+      (else  (call $capture_store (local.get $hwnd))))
     ;; CBN_DROPDOWN(7) → parent
     (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
     (if (local.get $parent)
@@ -264,10 +264,10 @@
     (call $cb_set_is_dropped (local.get $sw) (i32.const 0))
     (if (i32.eq (global.get $combo_open_hwnd) (local.get $hwnd))
       (then (global.set $combo_open_hwnd (i32.const 0))))
-    (if (i32.or (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
+    (if (i32.or (i32.eq (call $capture_live) (local.get $hwnd))
                 (i32.and (i32.ne (local.get $popup) (i32.const 0))
-                         (i32.eq (global.get $capture_hwnd) (local.get $popup))))
-      (then (global.set $capture_hwnd (i32.const 0))))
+                         (i32.eq (call $capture_live) (local.get $popup))))
+      (then (call $capture_store (i32.const 0))))
     (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
     (local.set $ctrl_id (i32.and (call $ctrl_table_get_id (local.get $hwnd)) (i32.const 0xFFFF)))
     (if (local.get $parent)

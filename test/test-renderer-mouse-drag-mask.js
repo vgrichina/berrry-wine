@@ -540,4 +540,44 @@ assert.deepStrictEqual(insetChildRenderer._hitTestDeepChild({ hwnd: 800, wasm: i
   { hwnd: 801, sx: 20, sy: 40 },
   'deep child routing uses the same target client origin as capture and MSG.pt');
 
+// A captured press outside the 480px owner reproduced an empty hit-test
+// candidate list in the native browser. DOWN must follow MOVE/UP capture.
+const captureDownRenderer = new Win98Renderer(canvas);
+let captureDownHwnd = 900;
+const captureDownWasm = { exports: {
+  get_capture_hwnd: () => 0, // idle shadow's legacy global
+  get_authoritative_capture_hwnd: () => captureDownHwnd,
+  wnd_top_level: hwnd => hwnd,
+  wnd_mouse_msg_origin_x: () => 3,
+  wnd_mouse_msg_origin_y: () => 23,
+} };
+captureDownRenderer.wasm = captureDownWasm;
+for (const hwnd of [900, 901]) captureDownRenderer.windows[hwnd] = {
+  hwnd, visible: true, isChild: false, x: 0, y: 0, w: 480, h: 360,
+  style: 0, wasm: captureDownWasm,
+};
+captureDownRenderer.handleMouseDown(490, 248, 0);
+assert.deepStrictEqual(captureDownRenderer.inputQueue.filter(e => e.msg === 0x201)
+  .map(e => [e.hwnd, e.wParam, e.lParam]), [[900, 1, (225 << 16) | 487]],
+  'outside captured DOWN uses the capture owner and client coordinates');
+captureDownRenderer.handleMouseUp(490, 248, 0);
+captureDownHwnd = 901;
+captureDownRenderer.handleMouseDown(490, 248, 0);
+assert.strictEqual(captureDownRenderer.inputQueue.filter(e => e.msg === 0x201).at(-1).hwnd, 901,
+  'a subsequent DOWN follows actual capture transfer');
+captureDownRenderer.handleMouseUp(490, 248, 0);
+captureDownHwnd = 0;
+captureDownRenderer.inputQueue.length = 0;
+captureDownRenderer.handleMouseDown(490, 248, 0);
+assert(!captureDownRenderer.inputQueue.some(e => e.msg === 0x201),
+  'an outside press without capture stays outside');
+captureDownHwnd = 900;
+captureDownRenderer.windows[900].wasm = { exports: {} };
+assert.strictEqual(captureDownRenderer._resolveCaptureTarget(900, captureDownWasm), null,
+  'the same numeric HWND in another module/context cannot inherit capture');
+captureDownRenderer.windows[900].wasm = captureDownWasm;
+captureDownRenderer.windows[900]._lookupLifetime = {invalid: true};
+assert.strictEqual(captureDownRenderer._resolveCaptureTarget(900, captureDownWasm), null,
+  'a retired renderer publication cannot inherit capture');
+
 console.log('PASS  renderer mouse drag moves carry button state');

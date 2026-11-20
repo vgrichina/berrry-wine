@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "5d35de9f5289e8e27e029e8584df3afd02b5eff5e65df5ed3ad80754ddad8f26",
+      "sha256": "78414dd254adc4adc6215d9c5f263c1e792e134d2968dc36e28bbbe694d86c40",
+      "reason": "20261120 authoritative capture publication: route captured DOWN before hit testing and read the actual shared CPUWorker capture publication for DOWN/MOVE/UP. The publication carries HWND, immutable window generation, actor TID and PID with a serial; module/context/process identities remain object-bound. Reject foreign module/context, retired window generation and retired process publications. Native USER return and independent UP boundaries are unchanged, as are 250/500/5000/1750 limits. No scene snapshot supplies current capture authority. Separate real Worker/host-shadow API tests cover transfer, wrong actor, ReleaseCapture, retirement and numeric reuse. Actual final exact34c plus owned WAT candidate10bdae outside750,248 consumed token1 plus independent trusted UP. Original menu Enter consumed then ExitProcess0 before next identity; enemy consequence and ordinary Quit remain unproved. Evidence run20261120-authoritative-capture-publication; general callback ownership remains pending."
+    }
+  ]
+}

@@ -393,7 +393,7 @@
     (if (i32.or
           (i32.eq (local.get $msg) (i32.const 0x0201))
           (i32.and (i32.eq (local.get $msg) (i32.const 0x0200))
-                   (i32.eq (global.get $capture_hwnd) (local.get $hwnd))))
+                   (i32.eq (call $capture_live) (local.get $hwnd))))
       (then
         (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
         (local.set $w (i32.and (local.get $sz) (i32.const 0xffff)))
@@ -424,7 +424,7 @@
             (i32.div_s (i32.mul (local.get $coord) (local.get $range)) (local.get $track_len))))
         (call $trk_set_pos (local.get $sw) (local.get $pos))
         (if (i32.eq (local.get $msg) (i32.const 0x0201))
-          (then (global.set $capture_hwnd (local.get $hwnd))))
+          (then (call $capture_store (local.get $hwnd))))
         (call $invalidate_hwnd (local.get $hwnd))
         (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
         (local.set $scroll_msg (select (i32.const 0x0115) (i32.const 0x0114) (local.get $vert)))
@@ -436,9 +436,9 @@
 
     (if (i32.eq (local.get $msg) (i32.const 0x0202))
       (then
-        (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
+        (if (i32.eq (call $capture_live) (local.get $hwnd))
           (then
-            (global.set $capture_hwnd (i32.const 0))
+            (call $capture_store (i32.const 0))
             (local.set $pos (call $trk_pos (local.get $sw)))
             (local.set $vert (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0002)))
             (local.set $scroll_msg (select (i32.const 0x0115) (i32.const 0x0114) (local.get $vert)))

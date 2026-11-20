@@ -1705,7 +1705,7 @@
         ;; Grab mouse capture so the renderer routes WM_MOUSEMOVE here
         ;; with MK_LBUTTON while the user drags — needed for selection
         ;; extension. Released on WM_LBUTTONUP below.
-        (global.set $capture_hwnd (local.get $hwnd))
+        (call $capture_store (local.get $hwnd))
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         ;; Mark focused + drag-tracking bit 4 (0x10).
@@ -1880,8 +1880,8 @@
 	              (then
 	                (global.set $sb_pressed_hwnd (i32.const 0))
 	                (global.set $sb_pressed_part (i32.const 0))
-	                (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-	                  (then (global.set $capture_hwnd (i32.const 0))))
+	                (if (i32.eq (call $capture_live) (local.get $hwnd))
+	                  (then (call $capture_store (i32.const 0))))
 	                (return (i32.const 0))))
 	            (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
 	            (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
@@ -1909,8 +1909,8 @@
 	              (then
 	                (global.set $sb_pressed_hwnd (i32.const 0))
 	                (global.set $sb_pressed_part (i32.const 0))
-	                (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-	                  (then (global.set $capture_hwnd (i32.const 0))))
+	                (if (i32.eq (call $capture_live) (local.get $hwnd))
+	                  (then (call $capture_store (i32.const 0))))
 	                (return (i32.const 0))))
 	            ;; Thumb drag through the shared geometry, so the thumb tracks
 	            ;; the pointer instead of the private 16px thumb this used to
@@ -1972,8 +1972,8 @@
 	            (global.set $sb_pressed_part (i32.const 0))
 	            (call $invalidate_hwnd (local.get $hwnd))))
 	        ;; Release capture grabbed on WM_LBUTTONDOWN.
-        (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-          (then (global.set $capture_hwnd (i32.const 0))))
+        (if (i32.eq (call $capture_live) (local.get $hwnd))
+          (then (call $capture_store (i32.const 0))))
         (return (i32.const 0))))
 
     ;; ---------- WM_PAINT (0x000F) ----------

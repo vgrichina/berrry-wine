@@ -2062,8 +2062,8 @@
       (then
         (global.set $sb_pressed_hwnd (i32.const 0))
         (global.set $sb_pressed_part (i32.const 0))
-        (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-          (then (global.set $capture_hwnd (i32.const 0))))
+        (if (i32.eq (call $capture_live) (local.get $hwnd))
+          (then (call $capture_store (i32.const 0))))
         (call $paint_flag_set_inv (local.get $hwnd))
         (return (i32.const 1))))
 
@@ -2144,7 +2144,7 @@
                   (then
                     (call $lv_set_drag_anchor_y (local.get $sw) (local.get $y))
                     (call $lv_set_drag_anchor_top (local.get $sw) (call $lv_top_index (local.get $sw)))
-                    (global.set $capture_hwnd (local.get $hwnd))))
+                    (call $capture_store (local.get $hwnd))))
                 (call $paint_flag_set_inv (local.get $hwnd))
                 (return (i32.const 1))))))
         (local.set $header_h (call $lv_header_h (local.get $sw)))

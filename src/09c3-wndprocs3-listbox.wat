@@ -587,7 +587,7 @@
                               ;; and WM_LBUTTONUP are routed to this listbox
                               ;; even when the cursor leaves it. sb_pressed
                               ;; drives the thumb-pressed paint visual.
-                              (global.set $capture_hwnd (local.get $hwnd))
+                              (call $capture_store (local.get $hwnd))
                               (global.set $sb_pressed_hwnd (local.get $hwnd))
                               (global.set $sb_pressed_part (i32.const 5))))))))))
                 (drop (call $wnd_send_message
@@ -666,8 +666,8 @@
             (call $invalidate_hwnd (local.get $hwnd))))
         ;; Release mouse capture if we owned it (thumb drag). Harmless if
         ;; another hwnd holds capture — we only clear our own.
-        (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-          (then (global.set $capture_hwnd (i32.const 0))))
+        (if (i32.eq (call $capture_live) (local.get $hwnd))
+          (then (call $capture_store (i32.const 0))))
         (return (i32.const 0))))
 
     ;; ---------- WM_MOUSEMOVE (0x0200) — thumb drag ----------

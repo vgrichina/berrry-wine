@@ -496,7 +496,7 @@
       (then
         (call $button_cancel_press (local.get $hwnd))
         (if (i32.and (i32.eq (local.get $msg) (i32.const 0x001F))
-              (i32.eq (global.get $capture_hwnd) (local.get $hwnd)))
+              (i32.eq (call $capture_live) (local.get $hwnd)))
           (then (drop (call $capture_replace (i32.const 0)))))
         (return (i32.const 0))))
 
@@ -613,7 +613,7 @@
             (if (i32.ne (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state))
               (then (return (i32.const 0))))))
         (call $button_cancel_press (local.get $hwnd))
-        (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
+        (if (i32.eq (call $capture_live) (local.get $hwnd))
           (then (drop (call $capture_replace (i32.const 0)))))
         (if (i32.and (i32.ne (local.get $click_on_focus_loss) (i32.const 0))
               (i32.eq (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state)))
@@ -669,7 +669,7 @@
         (if (i32.ne (local.get $wParam) (i32.const 9))
           (then
             (call $button_cancel_press (local.get $hwnd))
-            (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
+            (if (i32.eq (call $capture_live) (local.get $hwnd))
               (then (drop (call $capture_replace (i32.const 0)))))))
         (return (i32.const 0))))
 
@@ -748,7 +748,7 @@
                 (select (i32.const 0x201) (i32.const 0x601)
                   (i32.eq (local.get $msg) (i32.const 0x0100))))) ;; tracking + origin + pressed
             (call $btn_set_flags (local.get $state_w) (local.get $flags))
-            (global.set $capture_hwnd (local.get $hwnd))
+            (call $capture_store (local.get $hwnd))
             ;; BS_OWNERDRAW: ask parent to repaint via WM_DRAWITEM. Other
             ;; kinds rely on WM_PAINT → button_wndproc drawing the bevel.
             (if (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0F))
@@ -836,8 +836,8 @@
               (then (return (i32.const 0))))
             ;; Retire tracking and appearance together.
             (local.set $flags (i32.and (local.get $flags) (i32.const -1538)))
-            (if (i32.eq (global.get $capture_hwnd) (local.get $hwnd))
-              (then (global.set $capture_hwnd (i32.const 0))))
+            (if (i32.eq (call $capture_live) (local.get $hwnd))
+              (then (call $capture_store (i32.const 0))))
             ;; Captured UP reaches this control even outside its client rect.
             ;; Negative signed coordinates compare above the bounds unsigned;
             ;; right/bottom edges are excluded. Cancel before auto-toggle or
