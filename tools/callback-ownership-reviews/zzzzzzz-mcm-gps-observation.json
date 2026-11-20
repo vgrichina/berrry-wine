@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "8c97865ffa92a67b6d6318d9c26b291ffe0980c2e543fc43ee46f623bea520c9",
+      "sha256": "985d34ab5d6f1074abfee9a8e009320bc2c3e3599bd1f4be682644362d525b4d",
+      "reason": "20261120 explicit GPS preparation: capture actual guest/link/instance/memory/process/renderer/thread owners at an ordinary scheduler boundary; hold writer admission through synchronous observer installation, validate participants across awaits, then resume only the same captured continuation. Actual GPS factory waits for render writer/journal installation before returning the real port; errors terminate that newly owned port. PREPARED has no publication join. Stop/reinit and guest retirement synchronously invalidate the epoch and retire both joins, remove owned error/retirement listeners, clear the finite preparation timer and settle cleanup outcomes. Native source/publication checks remain unchanged; no guest EIP, input, frame, callback or clock writes. Lifecycle9 and existing manager32 cancellation/replacement/stop/failure controls pass; native GPS/source qualification is separate. General callback ownership remains pending."
+    },
+    {
+      "file": "lib/render-worker.js",
+      "name": "host-file",
+      "baseSHA256": "e8a7eb10d6f8f9c9c2ece5c1c33c103d7cd95ecbb5fda941ec693413b47e4835",
+      "sha256": "aa7ff924ac8117bbbe1b2691332c794e895d04ad09914f2bf496d790a2702669",
+      "reason": "20261120 explicit actual GPS observation control uses a distinct wire message and the existing bounded request map/timer settlement. PreparedGpsObservation shares one same-port installation, rejects replacement and wrong owners, rechecks acknowledgment identity, and gains ARMED only after writer/source acknowledgment. PUBLISHED requires qualified synchronous join rows. Cancellation closes admission before cleanup, invalidates epoch, removes its own listeners, unsubscribes retirement, clears timer and preserves all cleanup outcomes; late acknowledgment cannot revive it. No new guest execution or native completion authority. Lifecycle9 and unchanged render-manager32 failure/fanout/reentry/termination controls pass. Native source qualification is separate; general callback ownership remains pending."
+    }
+  ]
+}

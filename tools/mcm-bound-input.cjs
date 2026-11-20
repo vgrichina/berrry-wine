@@ -32,6 +32,7 @@ function same(a, b) {
 // equal-looking object, or reloading the page, cannot reuse a reviewed token.
 const PAGE_READ = `(() => {
   const allowPending=false;
+  const gpsPreparation=false;
   const currentSynchronousSource = ${currentSynchronousSource.toString()};
   const k = '__mcmPassiveIdentityV1';
   if (!globalThis[k]) Object.defineProperty(globalThis, k, {value:{
@@ -43,6 +44,7 @@ const PAGE_READ = `(() => {
   };
   return {isolated:crossOriginIsolated, apps:(typeof runningApps==='undefined'?[]:runningApps).map(a=>{
     const w=a.wine, g=w?.guestWorker, l=g?.link;
+    if(gpsPreparation&&w?._d3dimGpsObservation?.state==='CLOSED')throw Error('GPS preparation closed');
     const ports=[...(w?._renderWorkerManager?.ports?.values()||[])].filter(p=>!p.closed);
     const b=w?.hostCtx?.getD3dimBridge?.();
     const owned=ports.filter(p=>p===b?.endpoint&&p.options?.api==='d3dim-gps');
@@ -79,18 +81,33 @@ const PAGE_READ = `(() => {
       readiness:pending?'pending-first-present':'ready',
       publication:synchronous?synchronous.publication:p&&!pending?{stamp:presenter.stamp,writeSeq:layer.writeSeq,presents:presenter.presents}:null,
       guestEndpoint:l?.endpointIdentity,slot:l?.slot,workerObject:token(l?.worker),
-      sourceArm:{endpoint:token(l?._renderLegacyEndpoint),threads:token(w?.threadManager),
-        predicates:{missingEndpoint:!l?._renderLegacyEndpoint,
-          closedEndpoint:!!l?._renderLegacyEndpoint?.closed,missingThreads:!w?.threadManager,
+      sourceArm:{endpoint:token(gpsPreparation?p:l?._renderLegacyEndpoint),threads:token(w?.threadManager),
+        predicates:{missingEndpoint:gpsPreparation?false:!l?._renderLegacyEndpoint,
+          closedEndpoint:!!(gpsPreparation?p:l?._renderLegacyEndpoint)?.closed,missingThreads:!w?.threadManager,
           mainOwnerMismatch:!!w?.threadManager&&w.threadManager.mainInstance!==w.instance,
           missingNativeInstance:!w?.instance?.nativeInstance,
-          alreadyArmed:!!(w?._d3dimPublicationJoin||w?._d3dimPublicationArming)}},
+          alreadyArmed:!!(w?._d3dimGpsObservation||w?._d3dimPublicationJoin||w?._d3dimPublicationArming)}},
       moduleObject:token(l?.module),epoch:state.epoch,
       slice:w?._workerLastSlice??null,d3dStats:g?.d3dStats??null,
       physical:[37,38,39,40].map(key=>({key,state:w?.renderer?.peekKeyDownState(key)??null}))};
   })};
 })()`;
 const PENDING_READ = PAGE_READ.replace('const allowPending=false;', 'const allowPending=true;');
+const GPS_PAGE_READ = PAGE_READ.replace('const gpsPreparation=false;', 'const gpsPreparation=true;');
+const ARM_GPS_SOURCE = `(async () => {
+  if(typeof runningApps==='undefined'||runningApps.length!==1)throw Error('one MCM owner required');
+  const app=runningApps[0],w=app.wine,g=w?.guestWorker,link=g?.link,r=w?.renderer,
+    instance=w?.instance,memory=w?.memory,processId=w?.processId;
+  if(app.name!=='mcm'||!w.running||w._stopped||!link||!r||!instance||!memory)
+    throw Error('live MCM command owner required');
+  const prepared=await w.prepareD3dimGpsPublicationObservation({maxRecords:256,creationTimeoutMs:20000});
+  if(runningApps.length!==1||runningApps[0]!==app||w.guestWorker!==g||g.link!==link||
+      w.renderer!==r||w.instance!==instance||w.memory!==memory||w.processId!==processId||
+      !w.running||w._stopped||w._d3dimGpsObservation!==prepared||
+      !['PREPARED','ARMED','PUBLISHED'].includes(prepared.state))throw Error('GPS preparation owner changed');
+  return {endpoint:link.endpointIdentity,slot:link.slot,processId,state:prepared.state,
+    renderEndpoint:prepared.endpoint?.id??null,qualified:false};
+})()`;
 const OWNER_FIELDS = FIELDS.filter(f=>!['renderWindow','renderLayer'].includes(f));
 const WORKER_READ = `(() => {
   if (typeof endpointIdentity==='undefined'||typeof workerSlot==='undefined'||typeof instance==='undefined'||!instance) return null;
@@ -135,7 +152,8 @@ function rendererFields(endpoint) {
 }
 
 function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = Date.now,
-  readinessTimeoutMs = 10000}) {
+  readinessTimeoutMs = 10000, gpsSourcePreparation = false}) {
+  const currentPageRead=gpsSourcePreparation?GPS_PAGE_READ:PAGE_READ;
   assert(Number.isInteger(readinessTimeoutMs)&&readinessTimeoutMs>0&&readinessTimeoutMs<=10000,
     'bounded first-present readiness timeout');
   let latest = null, busy = false, closed = false, synchronousArmed = false;
@@ -150,7 +168,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
     return [...new Map(w.scripts.map(s=>[s.scriptId,s])).values()];
   }
   async function collectLive(allowPending = false) {
-    const pageExpression=allowPending?PENDING_READ:PAGE_READ;
+    const pageExpression=allowPending?currentPageRead.replace('const allowPending=false;','const allowPending=true;'):currentPageRead;
     const started = performance.now(), timings = [];
     async function measured(operation, task) {
       const at = performance.now();
@@ -304,7 +322,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
   // logical frame/keyboard-poll or simulation-step assertion.
   async function progress(identity, stream = 'page') {
     assert(['page','renderer'].includes(stream), 'known passive progress stream');
-    const page = await evaluate(PAGE_READ), a = page.apps[0];
+    const page = await evaluate(currentPageRead), a = page.apps[0];
     assert(page.apps.length === 1 && a?.running && !a.stopped);
     for (const f of ['processId','processObject','pageInstance','pageRenderer','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderPresenter','renderWindow','renderLayer'])
       assert.equal(a[f], identity[f], 'held identity changed: '+f);
@@ -331,7 +349,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
       assert.equal(worker(identity.rendererTarget,identity.rendererModuleSha256),r,'held renderer replaced');
       // A renderer reply is usable only while its page owner still matches.
       // This read is independent of the page sampling loop.
-      const after=await evaluate(PAGE_READ);
+      const after=await evaluate(currentPageRead);
       assert(after.apps.length===1&&after.apps[0]?.running&&!after.apps[0].stopped);
       for(const f of ['processId','processObject','pageInstance','pageRenderer','endpoint','endpointObject','workerObject','moduleObject','epoch','renderEndpoint','renderEndpointObject','renderWorkerObject','renderRole','renderBridge','renderPresenter','renderWindow','renderLayer'])
         assert.equal(after.apps[0][f],identity[f],'held identity changed: '+f);
@@ -362,7 +380,7 @@ function createChain({evaluate, send, workers, pageSession, app = 'mcm', now = D
             'reviewed menu source owner changed: '+key);
         }
       }
-      const receipt=await evaluate(ARM_SYNCHRONOUS_SOURCE);
+      const receipt=await evaluate(gpsSourcePreparation?ARM_GPS_SOURCE:ARM_SYNCHRONOUS_SOURCE);
       const after=await readLive();same(before.identity,after.identity);
       if(menuReview)for(const key of ['endpoint','threads'])
         assert.equal(after.page.apps[0].sourceArm[key],before.page.apps[0].sourceArm[key],
@@ -427,4 +445,4 @@ async function hold({send, session, keys, holdMs, sample, renderSample, saveSamp
   if(error) {error.holdReceipt={started,releaseAt,samples,attempted:attempted.map(k=>k.key)};throw error;}
   return {started,releaseAt,samples,attempted:attempted.map(k=>k.key),meaning:'physical host interval; passive counters do not prove DirectInput polls or simulation steps'};
 }
-module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE};
+module.exports = {createChain, hold, same, sha, FIELDS, MAX_AGE_MS, READY_READ, PAGE_READ, GPS_PAGE_READ, WORKER_READ, RENDER_READ, ARM_SYNCHRONOUS_SOURCE, ARM_GPS_SOURCE};

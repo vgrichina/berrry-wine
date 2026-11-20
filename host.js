@@ -3247,6 +3247,8 @@ class WineAssembly {
     // An explicitly armed Redline launch cannot drop its admission request
     // across an await or silently continue through cooperative fallback.
     const redlineStartup = typeof window !== 'undefined' && window.WINE_REDLINE_STARTUP;
+    if (this._d3dimGpsObservation) await this._d3dimGpsObservation.cancel('process-reinitialized');
+    this._d3dimGpsObservation=null;
     this._d3dimPublicationJoin?.retire('process-reinitialized');
     if (this._processObject.exited) {
       this._processObject = { wine: this, exited: false, exitCode: 259 };
@@ -5599,6 +5601,7 @@ class WineAssembly {
   }
 
   stop(options = {}) {
+    this._d3dimGpsObservation?.cancel('process-retired');
     this.renderer?.failCurrentDisplayCapture?.({ instance: this.instance, processId: this.processId },
       new Error('Current display capture owner stopped'));
     this._d3dimPublicationJoin?.retire('process-retired');
@@ -5975,8 +5978,90 @@ class WineAssembly {
   async _createRenderWorkerEndpoint(options) {
     const manager = await this._getRenderWorkerManager();
     const endpoint = manager.createEndpoint(options);
-    await endpoint.ready;
-    return endpoint;
+    try {
+      await endpoint.ready;
+      if (options.api === 'd3dim-gps' && this._d3dimGpsObservation)
+        await this._d3dimGpsObservation.bind(endpoint);
+      return endpoint;
+    } catch (error) {
+      await endpoint.terminate();
+      throw error;
+    }
+  }
+
+  async prepareD3dimGpsPublicationObservation({ maxRecords = 256, boundaryTimeoutMs = 1000,
+      creationTimeoutMs = 5000 } = {}) {
+    if (this._d3dimGpsObservation || this._d3dimPublicationJoin || this._d3dimPublicationArming ||
+        this._stopped || !this.guestWorker || !this.threadManager || !this.renderer || !this.instance?.nativeInstance)
+      throw new Error('idle instrumented GPS production owner required');
+    if (!Number.isInteger(maxRecords) || maxRecords < 1 || maxRecords > 4096 ||
+        !Number.isInteger(boundaryTimeoutMs) || boundaryTimeoutMs < 1 || boundaryTimeoutMs > 5000 ||
+        !Number.isInteger(creationTimeoutMs) || creationTimeoutMs < 1 || creationTimeoutMs > 20000)
+      throw new Error('bounded GPS preparation required');
+    const guest=this.guestWorker, link=guest.link, threads=this.threadManager, instance=this.instance;
+    const memory=this.memory, renderer=this.renderer, processId=this.processId;
+    const epoch=new RenderWorker.WriterEpoch();
+    const storage=()=>new RenderWorker.SurfaceVersionJournal(new SharedArrayBuffer(maxRecords*65536),
+      new SharedArrayBuffer(4*(16+2*1024*1024)));
+    const journal=storage(), synchronousJournal=storage();
+    const ownerScope=`process:${processId}:endpoint:${link.endpointIdentity}:gps`;
+    const synchronousOwner={scope:ownerScope+':synchronous',endpointId:link.endpointIdentity,generation:link.endpointIdentity};
+    let boundary, releaseWriters, registration, admission, synchronousArm;
+    const validateOwner=()=>{
+      if (this._stopped || this.guestWorker!==guest || guest.link!==link || this.threadManager!==threads ||
+          this.instance!==instance || this.memory!==memory || this.renderer!==renderer || this.processId!==processId ||
+          this._d3dimHostWritesInFlight || threads.mainInstance!==instance ||
+          (guest.localMainExports && guest.localMainExports()!==instance.exports) ||
+          (admission && !admission.sameParticipants()) || Atomics.load(epoch.words,2))
+        throw new Error('GPS preparation owner retired/replaced or epoch invalid');
+    };
+    this._d3dimPublicationArming=true;
+    try {
+      if(this.running)await new Promise((resolve,reject)=>{
+        const timer=setTimeout(()=>reject(new Error('GPS preparation idle boundary timed out')),boundaryTimeoutMs);
+        boundary={continuation:null,enter:(step,delayMs)=>{
+          boundary.continuation={step,delayMs};clearTimeout(timer);resolve();
+        }};
+        this._d3dimPublicationArmBoundary=boundary;
+      });
+      releaseWriters=threads.holdWriterObservationBoundary();
+      admission=await guest.attachWriterObservationAtBoundary(epoch,{threads,timeoutMs:boundaryTimeoutMs,validateOwner});
+      this._d3dimWriterObservation=epoch;
+      synchronousArm=await link._ask({t:'synchronousFlipObservation',action:'arm',endpointIdentity:link.endpointIdentity,
+        owner:synchronousOwner,maxRecords,journalBuffer:synchronousJournal.buffer,retainedBuffer:synchronousJournal.retainedBuffer});
+      validateOwner();
+      if(!epoch.snapshot())throw new Error('GPS preparation requires an idle writer boundary');
+      registration=new RenderWorker.PreparedGpsObservation({epoch,timeoutMs:creationTimeoutMs,validateOwner,
+        options:{ownerGeneration:ownerScope,maxRecords,writerEpochBuffer:epoch.buffer,
+          surfaceVersionBuffer:journal.buffer,retainedSurfaceBuffer:journal.retainedBuffer},
+        onArm:(endpoint,receipt)=>{
+          const join=new RenderWorker.SurfacePublicationJoin({epoch,journal,memory,ownerScope,renderer,
+            workerSlot:link.slot,endpointId:endpoint.id,owner:receipt.owner,observationGeneration:receipt.generation});
+          join.synchronous=new RenderWorker.SurfacePublicationJoin({epoch,journal:synchronousJournal,memory,
+            ownerScope:synchronousOwner.scope,renderer,workerSlot:link.slot,endpointId:link.endpointIdentity,
+            owner:synchronousOwner,observationGeneration:synchronousArm.generation});
+          this._d3dimPublicationJoin=join;return join;
+        },onClose:()=>link._stopping||link._stopped?undefined:link._ask({t:'synchronousFlipObservation',action:'close'})});
+      this._d3dimGpsObservation=registration;
+      registration.unsubscribe=link.onRetiring(()=>registration.cancel('guest-owner-retired'));
+      const endpoint=this.hostCtx?.getD3dimBridge?.()?.endpoint;
+      if(endpoint)await registration.bind(endpoint);
+      return registration;
+    } catch(error) {
+      epoch.invalidate();
+      if(registration)await registration.cancel(String(error));
+      else if(synchronousArm)await link._ask({t:'synchronousFlipObservation',action:'close'}).catch(()=>{});
+      throw error;
+    } finally {
+      this._d3dimPublicationArming=false;releaseWriters?.();
+      if(boundary&&this._d3dimPublicationArmBoundary===boundary){
+        this._d3dimPublicationArmBoundary=null;
+        const next=boundary.continuation;
+        if(next&&this.running&&!this._stopped&&this.guestWorker===guest&&this.instance===instance&&
+            this.threadManager===threads&&this.memory===memory&&this.renderer===renderer&&
+            this.processId===processId&&guest.link===link)this._scheduleStep(next.step,next.delayMs);
+      }
+    }
   }
 
   async armQuake2WriterObservation(options = {}) {
