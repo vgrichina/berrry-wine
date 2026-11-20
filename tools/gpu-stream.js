@@ -10,6 +10,8 @@
 //   node tools/gpu-stream.js replay FILE --executor=null|soft|webgl
 //                                   [--png=OUT.png] [--frame=N] [--width=W --height=H]
 //                                   [--presents=N]   stop after the Nth PRESENT (fixed work)
+//                                   [--time-from=M]  also time presents M+1..N on their
+//                                                    own (soft/webgl; earlier records still run)
 //                                   prints wall ms and this process's user CPU ms
 //
 // Dumps come from `test/run.js --gpu-stream-dump=FILE` (lib/gpu-stream.js
@@ -94,8 +96,14 @@ async function replay() {
   if (frameN !== null && !(Number.isInteger(frameN) && frameN >= 1)) usage('--frame=N is 1-based');
   let presents = 0;
   let captured = null;
+  // --time-from=M: snapshot the clocks at the Mth PRESENT so the tail of a
+  // fixed-work replay (gameplay past a menu) can be timed without the head.
+  const timeFrom = flag('time-from') !== null ? Number(flag('time-from')) : null;
+  if (timeFrom !== null && !(Number.isInteger(timeFrom) && timeFrom >= 1)) usage('--time-from=M needs M >= 1');
+  let mark = null;
   const onPresent = (info) => {
     presents++;
+    if (presents === timeFrom) mark = { t: process.hrtime.bigint(), c: process.cpuUsage() };
     if (!pngOut) return;
     if (frameN !== null && presents !== frameN) return;
     if (!info || !info.pixels) throw new Error('executor present gave no pixels (onPresent({pixels,width,height}))');
@@ -145,6 +153,12 @@ async function replay() {
     const s = executor.stats();
     line.push(`presents ${s.presents}`, `draws ${s.draws}`, `vertices ${s.vertices}`, `hash ${s.hash}`);
   } else line.push(`presents ${presents}`);
+  if (timeFrom !== null) {
+    if (kind === 'null') usage('--time-from needs a pixel executor (soft or webgl)');
+    if (!mark) usage(`--time-from=${timeFrom}: only ${presents} presents ran`);
+    const tail = process.cpuUsage(mark.c);
+    line.push(`from present ${timeFrom}: ${(Number(process.hrtime.bigint() - mark.t) / 1e6).toFixed(1)} ms, user ${(tail.user / 1e3).toFixed(1)} ms`);
+  }
   console.log(`replay --executor=${kind}: ${line.join(', ')}`);
   if (pngOut) {
     if (kind === 'null') usage('--png needs a pixel executor (soft or webgl)');
