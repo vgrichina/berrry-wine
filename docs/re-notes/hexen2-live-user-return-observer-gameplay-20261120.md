@@ -60,3 +60,34 @@ static candidate. Living-enemy consequence and ordinary Quit remain UNPROVED.
 No speculative guest repair, target/capture campaign, Wine, workers, deployment
 or old endpoint replay occurred. Local box ID=null, state=NOT_CREATED,
 expiry=null, stopReceipt=null; coordinator retains shutdown ownership.
+
+## Released observer adopted and built, 2026-11-20
+
+Run `scratch/runs/20261120-hexen2-final-observer-build-fixed-guard-gameplay/`
+adopted the released patch byte-for-byte unchanged. All 13 focused tests and
+`flock /tmp/wine-build.lock bash tools/build.sh` passed. Build temporaries
+used owned tmpfs; the independent floor monitor recorded minimum
+1502265344 B with no low sample. Observer commit `eb47ad602` contains the
+helper, test and this note. Immediate strict pull refused to overwrite
+foreign-held `src/00-regions.wat` and `lib/region-map.generated.js`; push
+did not run and neither held file was resolved.
+
+Exactly one fresh original started with the same 34c/72dc graph, tested
+committed 65a guard, existing trusted DOM target helper and verified 18
+Hexen media pins. One actual CPU Worker bytecode fetch matched 10bdae;
+page/process/CPU/GL endpoint and generation identities were recorded.
+The final host observer installation and executing-Worker startup USER
+returns are now actual witnesses: PeekMessageA, GetMessageA returning 1
+(caller 439a99), and DispatchMessageA (caller 439ab0). These startup
+messages establish observer operation, not removal of a manual input token
+or the earlier ExitProcess(0) cause. No new guest exit was observed.
+
+The independent runtime monitor closed the scope at /home 1499918336 B,
+before frame review or any gesture. A capture command file written after
+closure was never dispatched (no receipt, screenshot or corresponding CDP
+request). No later runtime request or retry occurred. Build floor PASS
+does not imply runtime floor PASS. Enemy consequence, ordinary Quit and
+the earlier higher exit caller remain UNPROVED/UNKNOWN. Browser, release
+helper, display, monitor and launcher were directly joined with both EOFs;
+native supervisors reported no leaks. Local box null/NOT_CREATED,
+expiry null, stop receipt null; coordinator retains shutdown ownership.
