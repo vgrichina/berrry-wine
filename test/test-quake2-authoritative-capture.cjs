@@ -94,4 +94,70 @@ test('Quake II session refuses absent authoritative exports before any helper',(
   assert.throws(()=>session.observe(),/authoritative capture exports/);
   assert.throws(()=>session.observe(),/permanently closed/);
 });
-console.log(JSON.stringify({passed,scope:'JS guard controls; no native or combat claim'}));
+// Exercise the actual released readiness closure, with fixture-local clocks.
+// No observation is fabricated by context(), and no input guard is bypassed.
+function sessionFixture({legacy=false}={}){
+  let clock=Date.now();
+  const f=fixture((wine,options)=>createBrowserNativeInput(wine,{...options,now:()=>clock,monotonic:()=>clock}));
+  const helpers=require('../tools/gltron-current-native-input.cjs');
+  const host={browserInputScope:f.guard,check_input_token(){},input_consumed(){}};
+  f.wine.hostCtx.guardedInput=f.guard;f.wine.hostCtx.nativeInputActor=()=>f.guard.snapshot();
+  const root={__gltronNativeRoutes:[{wine:f.wine,ctx:f.wine.hostCtx,host}]};
+  if(legacy){const snapshot=f.guard.snapshot;f.guard.snapshot=()=>{const s=snapshot();delete s.readiness;return s;};}
+  let prepares=0;
+  const session=createQuake2Session(root,f.wine,{...helpers,
+    observeAndPrepareNativeIntent(...args){prepares++;return helpers.observeAndPrepareNativeIntent(...args);},
+    verifyPageEquivalence:async()=>{throw Error('stale input must fail before proof verification');}});
+  assert(session.observe().binding);
+  return {...f,root,host,session,age(){clock+=251;},prepares:()=>prepares};
+}
+test('released nonadmitting context permits only stale observation; absent diagnostics remain strict',()=>{
+  const f=sessionFixture(),before=f.guard.snapshot();f.age();
+  const stale=f.guard.snapshot();assert(!stale.ready);
+  if(!stale.readiness){assert.throws(()=>f.session.context(),/no longer ready/);return;}
+  assert(stale.readiness.observationReady);
+  assert.deepEqual(Object.entries(stale.readiness.predicates).filter(([,v])=>!v).map(([k])=>k),['fresh']);
+  const context=f.session.context();assert.deepEqual(context.scene,before.scene);
+  assert.equal(f.guard.snapshot().observedAt,before.observedAt);
+  assert.equal(f.guard.snapshot().producerMonoAt,before.producerMonoAt);
+  assert.equal(f.prepares(),0);assert.equal(f.r.inputQueue.length,0);
+  assert.throws(()=>f.session.prepare({},0),/no longer ready/);assert.equal(f.prepares(),0);
+  assert.throws(()=>f.session.context(),/permanently closed/);
+});
+test('old bridge fallback stays strict for stale context',()=>{
+  const f=sessionFixture({legacy:true});f.age();assert.throws(()=>f.session.context(),/no longer ready/);
+});
+test('stale status fails before consulting a nonce receipt',()=>{
+  const f=sessionFixture();f.age();assert.throws(()=>f.session.status('one'),/no longer ready/);
+});
+for(const fault of ['module','memory','window','actor','retired-actor','endpoint','render-error','render-closing',
+  'capture-transfer','capture-serial','generation','thread','hidden','process','instance','focus','modal','import'])
+test('stale observation cannot hide '+fault,()=>{
+  const f=sessionFixture();f.age();
+  if(fault==='module')f.wine._wasmModule={};
+  if(fault==='memory')f.wine.memory={buffer:new ArrayBuffer(64)};
+  if(fault==='window')f.r.windows[65537]={...f.r.windows[65537]};
+  if(fault==='actor')f.wine.guestWorker.link.worker={};
+  if(fault==='retired-actor')f.wine.guestWorker.link._retirementComplete=true;
+  if(fault==='endpoint')f.wine.hostCtx.getGlGpsBridge().endpoint.closed=true;
+  if(fault==='render-error')f.wine.hostCtx.getGlGpsBridge().workerAsyncError=Error('fixture');
+  if(fault==='render-closing')f.wine.hostCtx.getGlGpsBridge().workerClosing=true;
+  if(fault==='capture-transfer')f.words[1]++;
+  if(fault==='capture-serial')f.words[0]+=2;
+  if(fault==='generation')f.reuse();
+  if(fault==='thread')f.thread(2);
+  if(fault==='hidden')f.r.windows[65537].visible=false;
+  if(fault==='process')f.r.windows[65537].processId++;
+  if(fault==='instance')f.r.windows[65537].wasm={};
+  if(fault==='focus'){f.scene[3]++;f.observe();f.age();}
+  if(fault==='modal'){f.scene[4]=65538;f.observe();f.age();}
+  if(fault==='import')f.host.browserInputScope={};
+  assert.throws(()=>f.session.context(),/QUAKE2_NATIVE_/);assert.equal(f.prepares(),0);
+  assert.equal(f.r.inputQueue.length,0);assert.throws(()=>f.session.context(),/permanently closed/);
+});
+(async()=>{
+  const f=sessionFixture();f.age();
+  await assert.rejects(f.session.prepareEquivalent({},0,{}),/no longer ready/);assert.equal(f.prepares(),0);
+  console.log('PASS stale equivalent preparation refuses before proof verification');
+  console.log(JSON.stringify({passed:passed+1,scope:'JS guard controls; no native or combat claim'}));
+})().catch(e=>{console.error(e);process.exitCode=1;});

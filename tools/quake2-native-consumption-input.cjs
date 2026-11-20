@@ -31,7 +31,7 @@ function createQuake2Session(root,wine,helpers,{equivalenceKey}={}){
       g?.presenter?.layer,g?.presenter?.layer?.canvas];
   };
   const close=reason=>{terminal=true;wine._browserNativeInput?.close(reason);};
-  function check(){
+  function check(admitting=true){
     if(terminal)throw Error('QUAKE2_NATIVE_UNKNOWN permanently closed');
     if(equivalenceKey&&(root.document?.hasFocus?.()!==true||root.document?.visibilityState!=='visible'))
       throw Error('QUAKE2_NATIVE_UNKNOWN reviewed document not focused/visible');
@@ -50,7 +50,10 @@ function createQuake2Session(root,wine,helpers,{equivalenceKey}={}){
     if(!audit.running||audit.stopped||!audit.guestWorker||!audit.scopes.length||
       audit.scopes.some(v=>!v.currentContext||!v.guardedInput||!v.nativeInputActor||!v.tokenImport||!v.consumedImport)||
       !s?.healthy||s.terminal)throw Error('QUAKE2_NATIVE_UNAVAILABLE actual imports/owning Worker');
-    if(binding&&!s.ready)throw Error('QUAKE2_NATIVE_UNKNOWN authoritative owner no longer ready');
+    // Context describes the bound owner without admitting input. Reuse the
+    // bridge's exact structural predicates; older bridges remain strict.
+    const eligible=admitting?s.ready:(s.readiness?.observationReady??s.ready);
+    if(binding&&!eligible)throw Error('QUAKE2_NATIVE_UNKNOWN authoritative owner no longer ready');
     if(refs&&(current().some((v,i)=>v!==refs[i])||s.slot!==slot||
       !s.scene||s.scene.some((v,i)=>v!==scene[i])))throw Error('QUAKE2_NATIVE_UNKNOWN owner/focus/modal/source/context changed');
     return s;
@@ -80,7 +83,7 @@ function createQuake2Session(root,wine,helpers,{equivalenceKey}={}){
         state.reviewEquivalence={source:proof.source,fresh:proof.fresh,id:proof.id};}
       return state;
     }catch(e){close(e.message);throw e;}},
-    context(){return guarded(()=>{const s=check();if(!binding)throw Error('unbound review context');
+    context(){return guarded(()=>{const s=check(false);if(!binding)throw Error('unbound review context');
       return {scene:s.scene,slot:s.slot,viewport:geometry(),owner:binding.owner};});},
     prepare(intent,notBefore){return guarded(()=>{
       check();if(!binding)throw Error('QUAKE2_NATIVE_UNAVAILABLE unbound');
