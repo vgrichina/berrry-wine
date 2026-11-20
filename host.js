@@ -6007,13 +6007,45 @@ class WineAssembly {
     const ownerScope=`process:${processId}:endpoint:${link.endpointIdentity}:gps`;
     const synchronousOwner={scope:ownerScope+':synchronous',endpointId:link.endpointIdentity,generation:link.endpointIdentity};
     let boundary, releaseWriters, registration, admission, synchronousArm;
+    const ownerIds=new WeakMap();let nextOwnerId=0;
+    const primitive=value=>{
+      if(value==null)return null;
+      if(typeof value==='boolean')return value;
+      if(typeof value==='number')return Number.isFinite(value)?value:null;
+      if(typeof value==='string')return value.slice(0,80);
+      return typeof value;
+    };
+    const ownerId=value=>{
+      if(!value||!['object','function'].includes(typeof value))return primitive(value);
+      if(!ownerIds.has(value))ownerIds.set(value,++nextOwnerId);
+      return ownerIds.get(value);
+    };
     const validateOwner=()=>{
-      if (this._stopped || this.guestWorker!==guest || guest.link!==link || this.threadManager!==threads ||
-          this.instance!==instance || this.memory!==memory || this.renderer!==renderer || this.processId!==processId ||
-          this._d3dimHostWritesInFlight || threads.mainInstance!==instance ||
-          (guest.localMainExports && guest.localMainExports()!==instance.exports) ||
-          (admission && !admission.sameParticipants()) || Atomics.load(epoch.words,2))
-        throw new Error('GPS preparation owner retired/replaced or epoch invalid');
+      let failed;
+      const rejected=(name,value)=>{if(value){failed=name;return true;}return false;};
+      // Preserve the admission guard's short circuit order and thrown errors.
+      if (rejected('stopped',this._stopped) || rejected('guest',this.guestWorker!==guest) ||
+          rejected('link',guest.link!==link) || rejected('threads',this.threadManager!==threads) ||
+          rejected('instance',this.instance!==instance) || rejected('memory',this.memory!==memory) ||
+          rejected('renderer',this.renderer!==renderer) || rejected('processId',this.processId!==processId) ||
+          rejected('hostWrites',this._d3dimHostWritesInFlight) || rejected('mainInstance',threads.mainInstance!==instance) ||
+          rejected('localExports',guest.localMainExports && guest.localMainExports()!==instance.exports) ||
+          rejected('participants',admission && !admission.sameParticipants()) ||
+          rejected('epochInvalid',Atomics.load(epoch.words,2))) {
+        let detail='';
+        try {
+          const expected={guest:ownerId(guest),link:ownerId(link),threads:ownerId(threads),
+            instance:ownerId(instance),memory:ownerId(memory),renderer:ownerId(renderer),
+            processId:primitive(processId),epoch:ownerId(epoch),endpoint:primitive(link.endpointIdentity)};
+          const actual={guest:ownerId(this.guestWorker),link:ownerId(guest.link),threads:ownerId(this.threadManager),
+            instance:ownerId(this.instance),memory:ownerId(this.memory),renderer:ownerId(this.renderer),
+            processId:primitive(this.processId),epoch:ownerId(epoch),endpoint:primitive(guest.link?.endpointIdentity),
+            hostWrites:primitive(this._d3dimHostWritesInFlight||0),epochActive:Atomics.load(epoch.words,0),
+            epochVersion:Atomics.load(epoch.words,1),epochInvalid:Atomics.load(epoch.words,2)};
+          detail=' '+JSON.stringify({failed:[failed],expected,actual});
+        } catch (_) { /* Optional diagnostics must not replace the primary rejection. */ }
+        throw new Error('GPS preparation owner retired/replaced or epoch invalid'+detail);
+      }
     };
     this._d3dimPublicationArming=true;
     try {

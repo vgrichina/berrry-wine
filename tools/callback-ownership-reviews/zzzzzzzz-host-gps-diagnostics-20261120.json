@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "985d34ab5d6f1074abfee9a8e009320bc2c3e3599bd1f4be682644362d525b4d",
+      "sha256": "7d180d9125dbd3ce10299802bcb8173cf9ef6a727be4b1b04601d7f9db151c0a",
+      "reason": "20261120 GPS diagnostic review against exact preceding host SHA 985d34ab: only validateOwner diagnostic hunk changes. The original thirteen OR predicates retain their order, truthiness, short circuit behavior and thrown predicate errors. First rejection retains the original primary message; optional formatting is caught. WeakMap identity numbers do not retain owner objects, fixed-size summaries contain only null/boolean/finite number/bounded string values, and no participant method is rerun for diagnostics. No admission, epoch, scheduler, timeout, registration, onArm/onClose, retirement listener, cancellation, endpoint cleanup or continuation path changes. Captured guest/link/thread/instance/memory/renderer/process owners remain compared across awaits; participant identity and epoch invalidation remain authoritative. The existing preparation catch invalidates epoch, cancels registration or closes synchronous observation, rethrows its primary error, and finally releases writers/resumes only the same owner. PreparedGpsObservation continues to reject late/replaced/error binds, remove listeners and clear its finite timer on cancellation. Thirteen predicate negatives, default/healthy/epoch-version controls, six short-circuit/primary-error/diagnostic-fault/bounded-payload controls and ten existing GPS lifecycle tests pass. No native MCM cause or gameplay qualification is claimed; broader callback ownership remains pending."
+    }
+  ]
+}
