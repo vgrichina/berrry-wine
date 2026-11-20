@@ -896,6 +896,70 @@ CASES.push({
 });
 CASES.push({ name: 'mmx-gate-off', regs: { ecx: N }, declines: true, nommx: true, code: mmxOps(MMX_GROUPS['mmx-addsub']) });
 
+// ---- x87 (07e kind 32, 07d X87M / X87MS / X87R) ----
+// Each case starts with FNINIT so every arm enters with the same x87 state;
+// main() compares TOP, the status word and the tag word besides memory. The
+// loops stay stack-balanced and leave their values through stores, FISTP and
+// FNSTSW AX folded into a general register.
+const X87_TAIL = [[0x83, 0xC6, 0x04], [0x83, 0xC7, 0x04], 0x49, J(cc.NZ, 'l'), 0xC3];
+const x87Mem = (a) => [[0xDB, 0xE3],                        // fninit
+  L('l'), [0xDB, 0x06], [0xDF, 0x46, 0x04],                 // fild dword [esi]; fild word [esi+4]
+  [0xD8, 0xC9],                                             // fmul st0, st1
+  [0xD8, 0x87, ...d32(0x4000)], [0xD9, 0x97, ...d32(0x4000)], // fadd / fst dword [edi+0x4000]
+  [0xD9, 0xC9],                                             // fxch st1
+  [0xDC, 0xA7, ...d32(0x5000)],                             // fsub qword [edi+0x5000]
+  [0xDD, 0x97, ...d32(0x6005)],                             // fst qword [edi+0x6005] (straddles a page now and then)
+  [0xDE, 0xC1],                                             // faddp st1
+  [0x3E, 0xD9, 0x05, ...d32(a.buf + 0x1F000)], 0x9B,        // ds: fld dword [abs]; fwait
+  [0xDE, 0xC9],                                             // fmulp st1
+  [0xD8, 0x56, 0x08], [0xDF, 0xE0],                         // fcom dword [esi+8]; fnstsw ax
+  [0x25, ...d32(0x4700)], [0x01, 0xC3],                     // and eax, 0x4700; add ebx, eax
+  [0xDB, 0x1F], ...X87_TAIL];                               // fistp dword [edi]
+CASES.push({ name: 'x87-mem', regs: { ecx: N }, head: 'l', code: x87Mem });
+// Register forms and the constants, FNSTSW AX into TEST AH / Jcc (the pair
+// threaded code fuses), 16- and 64-bit integer stores, FNSTCW / FLDCW.
+CASES.push({
+  name: 'x87-reg', regs: { ecx: N }, head: 'l',
+  code: [[0xDB, 0xE3],
+    L('l'), [0xDB, 0x06], [0xD9, 0xE8], [0xD9, 0xEB],       // fild dword [esi]; fld1; fldpi
+    [0xD8, 0xCA], [0xD9, 0xCA], [0xD9, 0xE1], [0xD9, 0xE0], // fmul st0,st2; fxch st2; fabs; fchs
+    [0xD8, 0xF1], [0xDE, 0xE2], [0xD9, 0xFC],               // fdiv st0,st1; fsubrp st2; frndint
+    [0xD9, 0xE5], [0xDF, 0xE0], [0x01, 0xC3],               // fxam; fnstsw ax; add ebx, eax
+    [0xD9, 0x7F, 0x08], [0xD9, 0x6F, 0x08],                 // fnstcw / fldcw [edi+8]
+    [0xD9, 0xC1], [0xDF, 0x5F, 0x0C], [0xD9, 0xC0], [0xDF, 0x7F, 0x10], // fld st1; fistp word [edi+12]; fld st0; fistp qword [edi+16]
+    [0xDE, 0xD9], [0xDF, 0xE0], [0x01, 0xC3],               // fcompp; fnstsw ax; add ebx, eax
+    // two random int16s compared: FNSTSW AX / TEST AH / Jcc goes both ways
+    [0xDF, 0x46, 0x02], [0xDE, 0x5E, 0x06],                 // fild word [esi+2]; ficomp word [esi+6]
+    [0xDF, 0xE0], [0xF6, 0xC4, 0x41], J(cc.NZ, 's'), 0x42, L('s'), // fnstsw ax; test ah,41h; jnz; inc edx
+    ...X87_TAIL],
+});
+// What the tier leaves to threaded code: FCOMI (EFLAGS) declines the loop,
+// and so does every x87 form with the gate off (--no-uop-x87).
+CASES.push({ name: 'x87-fcomi', regs: { ecx: N }, declines: true, head: 'l',
+  code: [[0xDB, 0xE3], L('l'), [0xDB, 0x06], [0xD9, 0xE8], [0xDB, 0xF1], [0xDD, 0xD8], [0xDD, 0xD8], ...X87_TAIL] });
+CASES.push({ name: 'x87-gate-off', regs: { ecx: N }, declines: true, nox87: true, head: 'l', code: x87Mem });
+// Quake III's _ftol (quake3.exe 0x49e890: an EBP frame, FWAIT, FNSTCW,
+// FLDCW truncation, FISTP m64, LEAVE) called from the loop. Threaded code
+// runs the body as one fused op (06 $th_ftol_native); the program follows
+// the call and runs it instruction by instruction, LEAVE included (kind 33).
+const Q3_FTOL = [0x55, 0x8B, 0xEC, 0x83, 0xC4, 0xF4, 0x9B, 0xD9, 0x7D, 0xFE, 0x9B, 0x66, 0x8B, 0x45, 0xFE,
+  0x80, 0xCC, 0x0C, 0x66, 0x89, 0x45, 0xFC, 0xD9, 0x6D, 0xFC, 0xDF, 0x7D, 0xF4, 0xD9, 0x6D, 0xFE,
+  0x8B, 0x45, 0xF4, 0x8B, 0x55, 0xF8, 0xC9, 0xC3];
+CASES.push({
+  name: 'x87-ftol-leave', regs: { ecx: N }, head: 'l',
+  code: [[0xDB, 0xE3],
+    L('l'), [0xDB, 0x06], [0xD8, 0x4E, 0x04], CALL('f'),    // fild dword [esi]; fmul dword [esi+4]; call _ftol
+    [0x89, 0x07], [0x89, 0x97, ...d32(0x4000)],             // mov [edi], eax; mov [edi+0x4000], edx
+    ...X87_TAIL, L('f'), Q3_FTOL],
+});
+// LEAVE alone: an EBP frame around a load and a store, the frame torn down
+// with LEAVE; --no-uop-leave declines the same loop.
+const leaveLoop = [L('l'), CALL('f'), 0x49, J(cc.NZ, 'l'), 0xC3,
+  L('f'), 0x55, [0x89, 0xE5], [0x83, 0xEC, 0x08], [0x8B, 0x06], [0x89, 0x45, 0xFC], [0x03, 0x45, 0xFC],
+  [0x89, 0x07], [0x83, 0xC6, 0x04], [0x83, 0xC7, 0x04], 0xC9, 0xC3];
+CASES.push({ name: 'leave-frame', regs: { ecx: N }, code: leaveLoop });
+CASES.push({ name: 'leave-gate-off', regs: { ecx: N }, declines: true, noleave: true, code: leaveLoop });
+
 // Scan limit: the loop is small, but a never-taken exit leads 4KB away into
 // 700 supported instructions, so the flood from the head overflows MAX_SCAN
 // at the full span. The compiler must halve the span and keep the loop, the
@@ -991,6 +1055,8 @@ function runCase(inst, c, a, codeAddr, mode) {
   // A known MMX file on entry, the same for every mode.
   if (e.set_mmx) for (let k = 0; k < 8; k++) e.set_mmx(k, BigInt.asIntN(64, 0x0123456789ABCDEFn * BigInt(k + 1)));
   if (c.nommx) e.set_uop_mmx(0);
+  if (c.nox87) e.set_uop_x87(0);
+  if (c.noleave) e.set_uop_leave(0);
   if (c.norep) e.set_uop_rep(0);
   // A known flag state on entry: a sub that sets CF.
   e.set_uop(mode === 'off' ? 0 : 1);
@@ -1028,6 +1094,8 @@ function runCase(inst, c, a, codeAddr, mode) {
     if (!pc) {
       if (c.aggr) e.set_aggressive_stack(0);
       if (c.nommx) e.set_uop_mmx(1);
+      if (c.nox87) e.set_uop_x87(1);
+      if (c.noleave) e.set_uop_leave(1);
       if (c.norep) e.set_uop_rep(1);
       unfeat();
       if (c.trace) e.set_uop_trace_heads(0);
@@ -1060,6 +1128,7 @@ function runCase(inst, c, a, codeAddr, mode) {
   const st = {
     ok, eip: e.get_eip() >>> 0, stops: stops.join(','), nstops: stops.length, flags: e.uop_flags(), mem: hash(mem, g2w, a),
     regs: REGS.map((r) => e['get_' + r]() >>> 0),
+    fpu: [e.get_fpu_top(), e.get_fpu_sw(), e.get_fpu_tags()].join(','),
     mmx: e.get_mmx ? [0, 1, 2, 3, 4, 5, 6, 7].map((k) => BigInt.asUintN(64, e.get_mmx(k)).toString(16)).join(',') : '',
     installs: e.uop_stats(2) - before.installs, enters: e.uop_stats(4) - before.enters,
     blocks: e.uop_stats(5) - before.blocks, sp, lf: e.get_logical_frame_count() - lf0,
@@ -1069,6 +1138,8 @@ function runCase(inst, c, a, codeAddr, mode) {
   e.set_uop(0);
   if (c.aggr) e.set_aggressive_stack(0);
   if (c.nommx) e.set_uop_mmx(1);
+  if (c.nox87) e.set_uop_x87(1);
+  if (c.noleave) e.set_uop_leave(1);
   if (c.norep) e.set_uop_rep(1);
   unfeat();
   if (c.trace) e.set_uop_trace_heads(0);
@@ -2007,6 +2078,7 @@ async function main() {
       if (st.flags !== off.flags) diffs.push(`flags ${st.flags.toString(2)} vs ${off.flags.toString(2)}`);
       if (st.mem !== off.mem) diffs.push('memory differs');
       if (st.mmx !== off.mmx) diffs.push(`mmx ${st.mmx} vs ${off.mmx}`);
+      if (st.fpu !== off.fpu) diffs.push(`fpu top,sw,tag ${st.fpu} vs ${off.fpu}`);
       // Batch stops. Under the block clock the program charges the cuts
       // threaded code makes once it has split at every in-loop entry (steady
       // state); "pre" installs before threaded code has taken every path, so

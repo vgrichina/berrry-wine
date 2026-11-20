@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "4dd4c6dbc032c1168b755e47be9c3ba36010f18943bda7744e66f02edad29717",
+      "sha256": "ac1dd7ab24e4b2a72086e286525b86eb41a6d2a3709bb7438dc03c1c185661b0",
+      "reason": "Review 20261119 uop x87/LEAVE lowering: two inherited compile-time setter rows (set_uop_x87 --no-uop-x87, set_uop_leave --no-uop-leave) beside set_uop_mmx / set_uop_rep. No callback, timer, guest entry or lifetime change."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "4876c8a9013099747ce8ca25dfd010faaa3e9826389fb27b8a39e5a6a9546b12",
+      "sha256": "aed6922137217995a363aa9c79f3ab9237e2f0818f6df80fcf1b2d8a1de56bcf",
+      "reason": "Review 20261119 uop x87 lowering: br_table gains three service entries (ops 88-90 X87M/X87MS/X87R) that return to $uop_run exactly as the existing CALL/RET observation services do; $uop_run's $uop_x87 runs 06's $fpu_exec_mem/$fpu_exec_reg. No EIP write, guest call/return, callback frame or lifetime change; writes/targets unchanged."
+    }
+  ]
+}
