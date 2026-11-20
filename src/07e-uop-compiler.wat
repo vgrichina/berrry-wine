@@ -80,7 +80,10 @@
   ;; 2 memory store; O0 the r/m. Lowered to 07d X87R (90) / X87M (88) /
   ;; X87MS (89), service ops that run 06's $fpu_exec_reg / $fpu_exec_mem
   ;; through $uop_run's $uop_x87 after a window guard: the x87 state is
-  ;; never cached in the program. FCMOV, FCOMI and FNSTENV/FRSTOR/FNSAVE
+  ;; never cached in the program. The hot forms ($uc_x87_native_op,
+  ;; --no-uop-x87-native) are 07d's native 91-107 instead, the same layouts
+  ;; with the fast arm's bits above the code's low 16; their fallback is the
+  ;; service path. FCMOV, FCOMI and FNSTENV/FRSTOR/FNSAVE
   ;; forms decline. With it the decoder takes FWAIT (kind 7) and the
   ;; ES/CS/SS/DS prefixes, which reach x87 memory forms only; a segment
   ;; prefix on a string op or a rep declines.
@@ -3187,17 +3190,125 @@
   ;; access in a window first (07d $uop_x87: a miss re-guards, else exits to
   ;; this instruction's stub with nothing changed) and only then runs
   ;; $fpu_exec_mem, so the deopt re-runs the whole instruction threaded.
+  ;; The 07d native x87 op for a kind-32 instruction, with the fast arm's
+  ;; code bits (16 and up, 07d's "native x87" header) above it: op | bits,
+  ;; or 0 for the 88-90 service op. $code is 88-90's code word, $mem
+  ;; whether the form has a memory operand. Every form here has one 06 arm
+  ;; whose arithmetic the 07d arm repeats; FTST, the constants, the
+  ;; transcendentals, FFREE, the DA/DE integer memory forms and the m16/m80
+  ;; forms stay service ops.
+  (func $uc_x87_native_op (param $code i32) (param $mem i32) (result i32)
+    (local $g i32) (local $r i32) (local $rm i32) (local $a i32)
+    (local.set $g (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7)))
+    (local.set $r (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 7)))
+    (local.set $rm (i32.and (local.get $code) (i32.const 7)))
+    ;; $fpu_arith's operation r (D8 / DC memory, D8 register): kind, swap
+    ;; for the reversed forms, ZE for the divides, a pop for FCOMP
+    (local.set $a
+      (if (result i32) (i32.lt_u (i32.sub (local.get $r) (i32.const 2)) (i32.const 2))
+        (then (i32.or (i32.const 0x40000) (i32.shl (i32.sub (local.get $r) (i32.const 2)) (i32.const 22))))
+        (else (i32.or (i32.or
+          (i32.shl (select (local.get $r)
+                           (i32.add (i32.const 2) (i32.shr_u (i32.sub (local.get $r) (i32.const 4)) (i32.const 1)))
+                           (i32.lt_u (local.get $r) (i32.const 2)))
+                   (i32.const 16))
+          (select (i32.const 0x80000) (i32.const 0) (i32.and (local.get $r) (i32.const 1))))
+          (select (i32.const 0x100000) (i32.const 0) (i32.ge_u (local.get $r) (i32.const 6)))))))
+    ;; r0 add / r1 mul carry no swap even though r is odd: r1's bit is the kind
+    (if (i32.eq (local.get $r) (i32.const 1)) (then (local.set $a (i32.const 0x10000))))
+    (if (local.get $mem)
+      (then
+        (if (i32.eqz (local.get $g)) (then (return (i32.or (i32.const 98) (local.get $a)))))
+        (if (i32.eq (local.get $g) (i32.const 4)) (then (return (i32.or (i32.const 99) (local.get $a)))))
+        (if (i32.eq (local.get $g) (i32.const 1))
+          (then
+            (if (i32.eqz (local.get $r)) (then (return (i32.const 91))))
+            (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 94))))
+            (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x1005E))))
+            (if (i32.eq (local.get $r) (i32.const 5)) (then (return (i32.const 100))))
+            (if (i32.eq (local.get $r) (i32.const 7)) (then (return (i32.const 101))))
+            (return (i32.const 0))))
+        (if (i32.eq (local.get $g) (i32.const 5))
+          (then
+            (if (i32.eqz (local.get $r)) (then (return (i32.const 92))))
+            (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 95))))
+            (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x1005F))))
+            (return (i32.const 0))))
+        (if (i32.eq (local.get $g) (i32.const 3))
+          (then
+            (if (i32.eqz (local.get $r)) (then (return (i32.const 93))))
+            (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 96))))
+            (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x10060))))
+            (return (i32.const 0))))
+        (if (i32.and (i32.eq (local.get $g) (i32.const 7)) (i32.eq (local.get $r) (i32.const 7)))
+          (then (return (i32.const 97))))
+        (return (i32.const 0))))
+    ;; register forms. 105's bit 24: the 8-byte layout
+    ;; D8: $fpu_arith on ST(0), ST(rm), as the memory forms
+    (if (i32.eqz (local.get $g)) (then (return (i32.or (i32.const 0x1000069) (local.get $a)))))
+    ;; DC / DE: ST(rm) = ST(0) op ST(rm) with no ZE; add and mul are
+    ;; v op ST(0) (swapped, as 06 writes them); DE pops. DC/2-3 are the
+    ;; FCOM/FCOMP aliases, DE/3 rm 1 FCOMPP.
+    (if (i32.or (i32.eq (local.get $g) (i32.const 4)) (i32.eq (local.get $g) (i32.const 6)))
+      (then
+        (if (i32.lt_u (i32.sub (local.get $r) (i32.const 2)) (i32.const 2))
+          (then
+            (if (i32.eq (local.get $g) (i32.const 4))
+              (then (return (i32.or (i32.const 0x1000069) (local.get $a)))))
+            (if (i32.and (i32.eq (local.get $r) (i32.const 3)) (i32.eq (local.get $rm) (i32.const 1)))
+              (then (return (i32.const 0x1840069))))
+            (return (i32.const 0))))
+        (return (i32.or (i32.or (i32.const 0x1200069)
+                                (select (i32.const 0x400000) (i32.const 0) (i32.eq (local.get $g) (i32.const 6))))
+                        (i32.or (i32.and (local.get $a) (i32.const 0x70000))
+                                (select (i32.const 0x80000) (i32.const 0)
+                                        (i32.or (i32.lt_u (local.get $r) (i32.const 2))
+                                                (i32.and (local.get $r) (i32.const 1)))))))))
+    (if (i32.eq (local.get $g) (i32.const 1))
+      (then
+        (if (i32.eqz (local.get $r)) (then (return (i32.const 102))))
+        (if (i32.eq (local.get $r) (i32.const 1)) (then (return (i32.const 103))))
+        (if (i32.and (i32.eq (local.get $r) (i32.const 4)) (i32.lt_u (local.get $rm) (i32.const 2)))
+          (then (return (i32.const 106))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $g) (i32.const 5))
+      (then
+        (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 104))))
+        (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x10068))))
+        ;; FUCOM / FUCOMP: 06's same compare
+        (if (i32.eq (local.get $r) (i32.const 4)) (then (return (i32.const 0x1040069))))
+        (if (i32.eq (local.get $r) (i32.const 5)) (then (return (i32.const 0x1440069))))
+        (return (i32.const 0))))
+    ;; DA E9 FUCOMPP
+    (if (i32.and (i32.eq (local.get $g) (i32.const 2))
+                 (i32.and (i32.eq (local.get $r) (i32.const 5)) (i32.eq (local.get $rm) (i32.const 1))))
+      (then (return (i32.const 0x1840069))))
+    (if (i32.and (i32.eq (local.get $g) (i32.const 7))
+                 (i32.and (i32.eq (local.get $r) (i32.const 4)) (i32.eqz (local.get $rm))))
+      (then (return (i32.const 107))))
+    (i32.const 0))
+
   (func $uc_x87_insn (param $R i32) (result i32)
-    (local $O0 i32) (local $form i32)
+    (local $O0 i32) (local $form i32) (local $code i32) (local $nat i32)
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
     (local.set $form (i32.load offset=28 (local.get $R)))
     ;; $uc_sp_role gives kind 32 no role, so no slot is forwarded to it
     (if (global.get $uc_fwd_kind) (then (return (i32.const 22))))
+    (local.set $code (i32.load offset=12 (local.get $R)))
+    (if (global.get $uc_x87_native)
+      (then (local.set $nat (call $uc_x87_native_op (local.get $code) (i32.ne (local.get $form) (i32.const 0))))))
+    (if (local.get $nat)
+      (then (local.set $code (i32.or (i32.and (local.get $code) (i32.const 0xFFFF))
+                                     (i32.and (local.get $nat) (i32.const 0xFFFF0000))))))
     (if (i32.eqz (local.get $form))
-      (then (call $uc_o1 (i32.const 90) (call $uc_aN (i32.load offset=12 (local.get $R))))
+      (then (call $uc_o1 (select (i32.and (local.get $nat) (i32.const 0xFF)) (i32.const 90) (local.get $nat))
+                         (call $uc_aN (local.get $code)))
             (return (i32.const 0))))
-    (call $uc_emit (select (i32.const 89) (i32.const 88) (i32.eq (local.get $form) (i32.const 2))) (i32.const 7)
-      (call $uc_aN (i32.load offset=12 (local.get $R)))
+    (call $uc_emit (select (i32.and (local.get $nat) (i32.const 0xFF))
+                           (select (i32.const 89) (i32.const 88) (i32.eq (local.get $form) (i32.const 2)))
+                           (local.get $nat))
+      (i32.const 7)
+      (call $uc_aN (local.get $code))
       (call $uc_mbase (local.get $O0)) (call $uc_midx (local.get $O0))
       (call $uc_aN (i32.load offset=12 (local.get $O0))) (call $uc_aN (i32.load offset=16 (local.get $O0)))
       (call $uc_win (local.get $O0) (i32.eq (local.get $form) (i32.const 2))) (call $uc_xstub))
@@ -4746,7 +4857,10 @@
   (func $uc_is_store (param $op i32) (result i32)
     (i32.or (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 17)) (i32.const 3))
                     (i32.lt_u (i32.sub (local.get $op) (i32.const 38)) (i32.const 3)))
-            (i32.or (i32.eq (local.get $op) (i32.const 73)) (i32.eq (local.get $op) (i32.const 89)))))
+            (i32.or (i32.or (i32.eq (local.get $op) (i32.const 73)) (i32.eq (local.get $op) (i32.const 89)))
+                    ;; native x87 stores: 94-97 FST/FIST m32/m64, 101 FNSTCW
+                    (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 94)) (i32.const 4))
+                            (i32.eq (local.get $op) (i32.const 101))))))
 
   (func $uc_encode_write (param $code i32)
     (local $p i32) (local $end i32) (local $o i32) (local $j i32) (local $a i64) (local $ty i32)
@@ -5255,6 +5369,13 @@
     (global.set $uc_x87 (i32.ne (local.get $flag) (i32.const 0)))
     (call $uop_flush))
   (func (export "get_uop_x87") (result i32) (global.get $uc_x87))
+  ;; --no-uop-x87-native: kind 32 lowers every form to the 88-90 service ops
+  ;; (the 20261119 shape) instead of 07d's native 91-107, for programs
+  ;; compiled from now on.
+  (global $uc_x87_native (mut i32) (i32.const 1))
+  (func (export "set_uop_x87_native") (param $flag i32)
+    (global.set $uc_x87_native (i32.ne (local.get $flag) (i32.const 0)))
+    (call $uop_flush))
   ;; --no-uop-leave: kind 33 off for programs compiled from now on.
   (func (export "set_uop_leave") (param $flag i32)
     (global.set $uc_leave (i32.ne (local.get $flag) (i32.const 0)))
