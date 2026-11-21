@@ -137,6 +137,8 @@ async function main() {
   // closed face is FIELD_H = 21 px.
   const cb = e.test_create_combobox(0, 0, 200, 100, CBS_DROPDOWNLIST);
   check('combobox hwnd allocated', cb !== 0, 'hwnd=0x' + cb.toString(16));
+  check('dialog requests arrows and characters while leaving Tab navigation',
+    e.send_message(cb, 0x0087, 0, 0) === 0x0081);
 
   // create allocates: parent + combobox + inner listbox + WS_POPUP shell
   const slotsAfterCreate = e.wnd_count_used();

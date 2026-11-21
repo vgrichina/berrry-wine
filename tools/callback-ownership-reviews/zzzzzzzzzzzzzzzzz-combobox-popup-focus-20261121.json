@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "abff626f6e4a11994864ac354c4490f57dc8f4bf6cfb4366e907bc221ccb1564",
+      "sha256": "06bc6a4b4c641d40b3459f031a183d7b74e25a5a04eb802a48a91d9279dfe64a",
+      "reason": "COMBOBOX popup keyboard review 20261121: _seedKeyboardFocus returns before consulting the idle shadow for a Worker-owned instance. Live USER focus remains authoritative at keyboard dequeue. This removes a speculative _setInputFocus call and its pending Worker focus publication; it adds no callback, asynchronous boundary, lifetime, context restoration or ownership claim. Local instance seeding and explicit mouse focus keep their existing path. Full authored 14-checkpoint production CPU/renderer oracle passes including popup pixels; broader invocation ownership remains pending."
+    }
+  ]
+}

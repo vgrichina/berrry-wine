@@ -379,6 +379,11 @@
     (local $paint_state_g i32)
     (local $prev_lb i32) (local $prev_edit i32) (local $prev_popup i32)
 
+    ;; Dialog navigation must leave selection arrows to WM_KEYDOWN below.
+    ;; Keep Tab with the dialog manager; character input belongs to the combo.
+    (if (i32.eq (local.get $msg) (i32.const 0x0087)) ;; WM_GETDLGCODE
+      (then (return (i32.const 0x0081)))) ;; DLGC_WANTARROWS | DLGC_WANTCHARS
+
     (local.set $field_h (i32.const 21))
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 

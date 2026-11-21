@@ -26,7 +26,7 @@ assert(/msg\.sync\.focusHwnd !== undefined[\s\S]*?ex\.set_focus\(focus\)[\s\S]*?
   'guest Worker should apply renderer focus with real messages before running the next slice');
 assert(host.includes('self._workerFocusHwnd = r.focusHwnd | 0;'),
   'browser Worker loop should cache the focus returned by slot 0');
-assert(/const owns = \(self\._hwndBase && self\._multiApp\)[\s\S]*?if \(win && win\.processId\) return win\.processId === self\.processId;[\s\S]*?return e\.hwnd >= self\._hwndBase/.test(host),
+assert(/const ownsWindow = \(self\._hwndBase && self\._multiApp\)[\s\S]*?if \(win && win\.processId\) return win\.processId === self\.processId;[\s\S]*?return e\.hwnd >= self\._hwndBase/.test(host),
   'multi-app input should prefer recorded process ownership over a stale HWND range');
 assert(/if \(win && win\.processId\) return win\.processId === self\.processId;/.test(host),
   'guest threads in one Win32 process should share ownership of queued window input');
@@ -71,6 +71,26 @@ assert.deepStrictEqual(renderer.inputQueue.map(event => [event.msg, event.wParam
   [0x0100, 0x43],
   [0x0102, 0x43],
 ], 'Worker-backed keydown and character messages should stay ordered in the guest queue');
+
+// An open combo's internal list can dominate the idle instance's geometry
+// while live USER still focuses the combo. A zero shadow is not proof that
+// the Worker needs a focus transition before its next key.
+let focusSeeds = 0;
+let shadowReads = 0;
+const popupWasm = { exports: {
+  get_focus_hwnd() { shadowReads++; return 0; },
+  wnd_child_from_point_deep() { throw Error('Worker popup must not be a focus seed'); },
+  wnd_client_screen_x: () => 0,
+  wnd_screen_w: () => 180,
+  set_focus_hwnd() { focusSeeds++; },
+} };
+const popupRenderer = new RendererProbe(popupWasm);
+popupRenderer._guestWorkerFocusPublishers = new Set([() => { focusSeeds++; }]);
+popupRenderer.handleKeyDown(0x28, { code: 'ArrowDown' });
+assert.strictEqual(shadowReads, 0, 'Worker focus seeding must not consult the idle shadow');
+assert.strictEqual(focusSeeds, 0, 'opening a popup must not publish a speculative focus change');
+assert.strictEqual(popupRenderer.inputQueue[0].hwnd || 0, 0,
+  'popup arrow stays untargeted so live USER focus selects its receiver');
 
 let fallbackCalls = 0;
 const fallbackHwnd = () => { fallbackCalls++; return 0x10002; };
@@ -177,7 +197,8 @@ console.log('PASS browser Worker keyboard and menu input avoid the idle WASM ins
 // Exercise the actual browser host closures, not a regex describing a focus
 // guess. Within one Worker slice the guest may reject mouse activation, or
 // redirect focus in a callback; neither waits for the next slice snapshot.
-const context = { console, createHostImports, inputEventHwnd };
+const context = { console, createHostImports, inputEventHwnd,
+  require: require('module').createRequire(path.join(root, 'host.js')) };
 vm.runInNewContext(host + '\n;globalThis.WineAssembly = WineAssembly;', context);
 for (const threaded of [false, true]) {
   const wine = new context.WineAssembly();
