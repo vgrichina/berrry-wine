@@ -1,5 +1,33 @@
 # Zuma Deluxe: current ordinary launch
 
+## D3DIM CPU presentation input ownership, 2026-11-21
+
+The retained native-play title run drew a visible title window but rejected
+input: manager, port, module and memory matched, while `presenter.win` did not
+match the native input window. No native click was delivered. The runtime is
+closed; its endpoint was not queried during this repair and no new original
+was launched. Its own terminal outcome is `UNKNOWN`, `finite deadline UNKNOWN`;
+the supervisor records exit 1, no termination signal and `leaked: false`.
+
+Offline regression through the real `presentBestDxOffscreen(true)` host path
+reproduced a concrete missing ownership publication: a CPU DirectDraw primary
+copies the correct pixels into the window DX layer without invoking the GPU
+Presenter. Requiring that Presenter's window alone therefore rejects this
+legitimate D3DIM presentation path. The retained title mismatch is consistent
+with this defect; its limited observation does not prove the selected copy path.
+
+The completed CPU copy now publishes its exact window, layer, canvas, memory,
+instance and consumer endpoint/epoch. Native input checks these identities
+against the current window and consumer, alongside the existing manager,
+module, process, lifetime, focus, generation and deadline guards. Closing
+D3DIM clears the publication. No GPU Presenter state is fabricated.
+`test-nfs3-legacy-native-input.cjs` checks real CPU-copy pixels, native USER
+receipt, repeated-copy stability and rejection of changed owners/layers,
+retirement, errors, competing graphics owners and expired deadlines. It failed
+before the repair at the expected ready predicate and passes after it.
+Evidence: `scratch/runs/20261121-zuma-d3dim-owner/`. Zuma gameplay remains
+unverified on the repaired source.
+
 ## Canonical initializer/caller static diagnosis, 2026-11-10
 
 No original startup was retried. Run

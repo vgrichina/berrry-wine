@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "cc67e7e1aa3491a2ee61a0cae2f6da5d844e1dedbfc74892e3353d6a358ab408",
+      "sha256": "f6137cde8e428053b6ae117de055f327065cfccd992226515145acb63c603f82",
+      "reason": "A completed CPU DirectDraw pixel copy publishes its exact window, selected layer/canvas, memory, instance and D3DIM endpoint/epoch for native input observation. This does not fabricate a GPU Presenter frame. The record is replaced only by a later real copy and cleared on D3DIM close; guard identity fences reject endpoint/epoch, source, window, memory and layer changes. No guest calls, callback registrations, continuation, scheduling or native receipt changes. Actual host-copy pixels and old-failing/new-passing native USER owner regression plus lifetime rejection controls are retained in run 20261121-zuma-d3dim-owner. General callback ownership remains pending."
+    }
+  ]
+}
