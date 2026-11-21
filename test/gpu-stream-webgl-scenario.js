@@ -1078,6 +1078,9 @@
       for (const step of perspectiveMipCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`perspective mip scenario threw: ${e.stack || e}`); }
     try {
+      for (const step of visibilityCases({ GS, p, check })) drain();
+    } catch (e) { failures.push(`visibility scenario threw: ${e.stack || e}`); }
+    try {
       for (const step of cubeMipCases({ GS, p, check, native: !!(backend && backend.gl) })) drain();
     } catch (e) { failures.push(`cube mip scenario threw: ${e.stack || e}`); }
     try {
@@ -1576,5 +1579,215 @@
     yield { name: 'release-cube-mips' };
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, W, H, irShader, TEX_IR };
+  // Independent visibility probes: a rejected fragment must leave both depth
+  // and stencil untouched. Subsequent draws turn those planes into RGB.
+  function* visibilityCases({ GS, p, check, capture = () => {} }) {
+    const C = GS.CONST, size = 16, rt = 401, ds = 402, layout = 403, ps = 404;
+    const emit = (op, f, tail) => p.emit(op, f, tail);
+    const put = bytes => { const a = p.arenaAlloc(bytes.length); p.arenaView(a, bytes.length).set(bytes); return a; };
+    const base = { depth_mode: 1, zfunc: 2, zwrite: 1, cull: 1, src_rgb: 2, dst_rgb: 1,
+      src_alpha: 2, dst_alpha: 1, blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15,
+      fill: 3, linear: 1, scissor_right: size, scissor_bottom: size };
+    const stencil = { stencil_enable: 1, stencil_func: 8, stencil_fail: 1, stencil_zfail: 1,
+      stencil_pass: 1, stencil_mask: 255, stencil_wmask: 255 };
+    const raster = f => emit('RASTER', { ...base, ...f });
+    const clear = (f = {}) => emit('CLEAR', { mask: 7, colormask: 15, rgba: 0xff000000,
+      z: 1, stencil: 0, right: size, bottom: size, ...f });
+    const quad = (rgba, z = 0.25, reverse = false, bounds = [0, 0, size, size], shader = ps) => {
+      const [x0, y0, x1, y1] = bounds, corners = [[x0,y0],[x1,y0],[x0,y1],[x1,y1]];
+      const order = reverse ? [0,2,1,1,2,3] : [0,1,2,1,3,2];
+      const data = new Float32Array(order.flatMap(i => [...corners[i], z, 1, ...rgba]));
+      emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps: shader, layout, stride: 32, count: 6, vcount: 6,
+        voff: put(new Uint8Array(data.buffer)) });
+    };
+    let stamp = 4000;
+    function* read(name, want, color = rt) {
+      const dst = p.arenaAlloc(size * size * 4);
+      emit('READBACK', { rt: color, fmt: C.FMT_A8B8G8R8, x: 0, y: 0, w: size, h: size, pitch: size * 4, dst });
+      emit('PRESENT', { rt: color, w: size, h: size, stamp: ++stamp });
+      yield { name, stamp, dst, size };
+      const pixels = p.arenaView(dst, size * size * 4).slice();
+      for (const [x,y] of [[3,5],[11,5],[3,11],[11,11]]) {
+        const got = [...pixels.subarray((y * size + x) * 4, (y * size + x) * 4 + 4)];
+        const expected = typeof want === 'function' ? want(x,y) : want;
+        check(name + ' analytical @' + x + ',' + y, got.every((v,i) => Math.abs(v-expected[i]) <= 1), 'got '+got+' expected '+expected);
+      }
+      capture(name, pixels);
+      p.store('arena_tail', p.load('arena_head'));
+    }
+    emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, width: size, height: size, levels: 1 });
+    emit('CREATE', { id: ds, kind: C.KIND_DS, fmt: C.FMT_D24S8, width: size, height: size, levels: 1 });
+    const elems = new Uint8Array(16), dv = new DataView(elems.buffer);
+    [C.USAGE_POSITIONT,C.USAGE_COLOR].forEach((usage,i) => { dv.setUint8(i*8+1,C.VTYPE_FLOAT4); dv.setUint8(i*8+2,usage); dv.setUint16(i*8+4,i*16,true); });
+    emit('LAYOUT', { id: layout, stride: 32, count: 2 }, elems);
+    emit('SHADER', { id: ps, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+    emit('TARGETS', { color: rt, depth: ds }); emit('BIND', { count: 0 });
+    for (const func of [1,2,3,4,5,6,7,8]) for (const alpha of [0,1]) {
+      const pass = [false,false,alpha<1,alpha===1,alpha<=1,alpha>1,alpha!==1,alpha>=1,true][func];
+      clear();
+      raster({ ...stencil, alpha_func: func, alpha_ref: 255, stencil_pass: 3, stencil_ref: 9, colormask: 0 });
+      quad([1,0,0,alpha]);
+      raster({ ...stencil, stencil_func: 3, stencil_ref: pass ? 9 : 0, zwrite: 0, depth_mode: 0 });
+      quad([0,1,0,1],0.5);
+      raster({ zwrite: 0 }); quad([0,0,1,1],0.5);
+      yield* read('alpha-'+func+'-'+alpha, pass ? [0,255,0,255] : [0,0,255,255]);
+    }
+    // Constant shader output avoids interpolation precision becoming an
+    // equality oracle. Compare adjacent binary32 values around ref/255.
+    const cps = 407, constantIR = irShader([[OPC.MOV,R0S,0xa0e40000]]);
+    emit('SHADER',{ id: cps, stage: 1, ir_bytes: constantIR.length },constantIR);
+    for (const ref of [0,128,255]) {
+      const b = Math.fround(ref/255), bits = new Uint32Array(new Float32Array([b]).buffer)[0];
+      // ES highp does not promise binary32 subnormal preservation; zero's
+      // neighbors here stay inside its required range. Interior edges are
+      // the exact adjacent binary32 values, not an epsilon comparison.
+      const edges = ref === 0 ? [-1/65536,0,1/65536]
+        : [bits-1,bits,bits+1].map(v => new Float32Array(new Uint32Array([v]).buffer)[0]);
+      for (const func of [2,3,4,5,6,7]) for (const [edge,alpha] of edges.entries()) {
+        const a = Math.min(1,Math.max(0,alpha));
+        const pass = [false,false,a<b,a===b,a<=b,a>b,a!==b,a>=b][func];
+        clear();
+        emit('CONSTS',{ stage: 1, first: 0, count: 1 },new Uint8Array(new Float32Array([1,0,0,alpha]).buffer));
+        raster({ ...stencil, alpha_func: func, alpha_ref: ref, stencil_pass: 3, stencil_ref: 9, colormask: 0 });
+        quad([1,0,0,1],0.25,false,undefined,cps);
+        raster({ ...stencil, stencil_func: 3, stencil_ref: pass ? 9 : 0, zwrite: 0, depth_mode: 0 });
+        quad([0,1,0,1],0.5); raster({ zwrite: 0 }); quad([0,0,1,1],0.5);
+        yield* read('alpha-edge-'+ref+'-'+func+'-'+edge,pass ? [0,255,0,255] : [0,0,255,255]);
+      }
+    }
+    emit('RELEASE',{ id: cps });
+    for (const mask of [0,15,240,255]) {
+      clear({ stencil: 165 });
+      raster({ ...stencil, stencil_pass: 3, stencil_ref: 60, stencil_wmask: mask, colormask: 0 });
+      quad([1,0,0,1]);
+      raster({ ...stencil, depth_mode: 0, stencil_func: 3, stencil_ref: (165 & ~mask) | (60 & mask) });
+      quad([0,1,0,1]);
+      yield* read('masked-write-'+mask,[0,255,0,255]);
+      clear({ mask: 4, stencil: 90, left: 8 });
+      raster({ ...stencil, depth_mode: 0, stencil_func: 3, stencil_ref: 90, colormask: 1 });
+      quad([1,0,0,1]);
+      yield* read('clear-after-mask-'+mask,x => x>=8 ? [255,255,0,255] : [0,255,0,255]);
+    }
+    for (const reverse of [false,true]) {
+      clear(); raster({ ...stencil, two_sided: 1, stencil_pass: 3, stencil_ref: 7,
+        ccw_func: 8, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 4, colormask: 0 });
+      quad([1,0,0,1],0.25,reverse);
+      raster({ ...stencil, depth_mode: 0, stencil_func: 3, stencil_ref: reverse ? 1 : 7 });
+      quad([0,1,0,1]); yield* read('two-sided-'+reverse,[0,255,0,255]);
+    }
+    // D3D ignores CCW stencil state for standalone lines and points.
+    // GL treats them as front faces, unlike our clockwise triangles (BACK).
+    const nontriangle = (prim, alpha = 1) => {
+      const xy = prim === C.PRIM_POINTLIST ? [[3,5],[11,5],[3,11],[11,11]]
+        : [[1,5],[15,5],[15,11],[1,11]];
+      const data = new Float32Array(xy.flatMap(([x,y]) => [x,y,0.25,1,1,0,0,alpha]));
+      emit('DRAW_UP', { prim, ps, layout, stride: 32, count: xy.length, vcount: xy.length,
+        voff: put(new Uint8Array(data.buffer)) });
+    };
+    for (const prim of [C.PRIM_POINTLIST,C.PRIM_LINELIST,C.PRIM_LINESTRIP]) for (const two_sided of [0,1,0,1]) {
+      clear();
+      raster({ ...stencil, two_sided, stencil_pass: 3, stencil_ref: 7,
+        ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1, colormask: 0 });
+      nontriangle(prim);
+      raster({ ...stencil, depth_mode: 0, stencil_func: 3, stencil_ref: 7 });
+      quad([0,1,0,1]);
+      yield* read('nontriangle-'+prim+'-two-sided-'+two_sided,[0,255,0,255]);
+    }
+    // Probe each stencil operation path independently, including partial
+    // write masks. CLEAR must override the previous draw's write mask.
+    for (const prim of [C.PRIM_POINTLIST,C.PRIM_LINELIST,C.PRIM_LINESTRIP]) {
+      for (const path of ['fail','zfail','pass']) for (const mask of [0,15,240,255]) {
+        clear({ stencil: 165, z: path === 'zfail' ? 0 : 1 });
+        raster({ ...stencil, two_sided: 1, stencil_func: path === 'fail' ? 1 : 8,
+          stencil_fail: 6, stencil_zfail: 3, stencil_pass: 2, stencil_ref: 60, stencil_wmask: mask,
+          ccw_func: 8, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1, colormask: 0 });
+        nontriangle(prim);
+        const result = path === 'fail' ? 90 : path === 'zfail' ? 60 : 0;
+        raster({ ...stencil, depth_mode: 0, stencil_func: 3, stencil_ref: (165 & (255 ^ mask)) | (result & mask) });
+        quad([0,1,0,1]);
+        yield* read('nontriangle-'+prim+'-'+path+'-mask-'+mask,[0,255,0,255]);
+      }
+      // A single sticky RASTER spans triangle -> point/line -> triangle.
+      // The CCW triangles reject; only the standalone primitives mark 7.
+      clear();
+      raster({ ...stencil, two_sided: 1, stencil_pass: 3, stencil_ref: 7,
+        ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1, colormask: 0 });
+      quad([1,0,0,1],0.125,true); nontriangle(prim); quad([1,0,0,1],0.125,true);
+      raster({ ...stencil, stencil_func: 3, stencil_ref: 7, depth_mode: 0 });
+      quad([0,1,0,1]);
+      yield* read('sticky-triangle-nontriangle-'+prim,[0,255,0,255]);
+      // Rejected alpha must not select FAIL/ZFAIL/PASS or write depth.
+      for (const path of ['fail','zfail','pass']) {
+        clear({ z: path === 'zfail' ? 0 : 1 });
+        raster({ ...stencil, two_sided: 1, stencil_func: path === 'fail' ? 1 : 8,
+          stencil_fail: 3, stencil_zfail: 3, stencil_pass: 3, stencil_ref: 7,
+          ccw_func: 8, ccw_fail: 3, ccw_zfail: 3, ccw_pass: 3,
+          alpha_func: 5, alpha_ref: 255, colormask: 0 });
+        nontriangle(prim,1);
+        raster({ ...stencil, stencil_func: 3, stencil_ref: 0, depth_mode: 0 });
+        quad([0,1,0,1]);
+        yield* read('nontriangle-alpha-reject-'+prim+'-'+path,[0,255,0,255]);
+      }
+      clear();
+      raster({ ...stencil, two_sided: 1, stencil_pass: 4, zwrite: 0,
+        ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1, colormask: 0,
+        scissor_left: 8, scissor_top: 8 });
+      nontriangle(prim); nontriangle(prim);
+      raster({ ...stencil, stencil_func: 3, stencil_ref: 2, depth_mode: 0 });
+      quad([0,1,0,1]);
+      yield* read('nontriangle-clipped-overlap-'+prim,(x,y) => x>=8 && y>=8 ? [0,255,0,255] : [0,0,0,255]);
+      for (const colormask of [0,1,2,4,8,5,10,15]) {
+        clear({ rgba: 0x80402010 });
+        raster({ ...stencil, two_sided: 1, stencil_pass: 3, stencil_ref: 7, zwrite: 0, colormask,
+          ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1 });
+        nontriangle(prim);
+        yield* read('nontriangle-color-mask-'+prim+'-'+colormask,
+          [16,32,64,128].map((v,i) => colormask & (1<<i) ? [255,0,0,255][i] : v));
+        raster({ ...stencil, stencil_func: 3, stencil_ref: 7, zwrite: 0 });
+        quad([0,0,1,1],0.5);
+        yield* read('nontriangle-zwrite-off-'+prim+'-'+colormask,[0,0,255,255]);
+      }
+    }
+    // The occlusion count pass must use the same primitive-specific state
+    // without consuming the real pass's stencil/depth writes.
+    clear();
+    const countDst = p.arenaAlloc(4);
+    emit('FENCE',{ kind: C.FENCEK_OCCLUSION_BEGIN });
+    raster({ ...stencil, two_sided: 1, stencil_pass: 3, stencil_ref: 7,
+      ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1, colormask: 0 });
+    nontriangle(C.PRIM_POINTLIST);
+    emit('FENCE',{ kind: C.FENCEK_OCCLUSION_END, dst: countDst });
+    raster({ ...stencil, stencil_func: 3, stencil_ref: 7, depth_mode: 0 });
+    quad([0,1,0,1]);
+    yield* read('nontriangle-occlusion',[0,255,0,255]);
+    const count = new DataView(p.arenaView(countDst,4).buffer,p.arenaView(countDst,4).byteOffset,4).getUint32(0,true);
+    check('four points pass occlusion independently of color mask',count===4,'got '+count+' expected 4');
+    const rt2 = 405, ds2 = 406;
+    const createTargets = () => {
+      emit('CREATE', { id: rt2, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, width: size, height: size, levels: 1 });
+      emit('CREATE', { id: ds2, kind: C.KIND_DS, fmt: C.FMT_D24S8, width: size, height: size, levels: 1 });
+    };
+    createTargets();
+    for (const reuse of [false,true]) {
+      if (reuse) { for (const id of [rt2,ds2]) emit('RELEASE',{id}); createTargets(); }
+      emit('TARGETS', { color: rt, depth: ds }); clear();
+      raster({ ...stencil, two_sided: 1, stencil_pass: 3, stencil_ref: 7,
+        ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1, colormask: 0 });
+      nontriangle(C.PRIM_POINTLIST);
+      emit('TARGETS', { color: rt2, depth: ds2 });
+      clear({ mask: 1 }); // Fresh DS must start at depth 1, stencil 0.
+      nontriangle(C.PRIM_LINELIST);
+      raster({ ...stencil, stencil_func: 3, stencil_ref: 7, depth_mode: 0 });
+      quad([0,1,0,1]);
+      yield* read('target-switch-reuse-'+reuse,[0,255,0,255],rt2);
+      emit('TARGETS', { color: rt, depth: ds });
+      quad([0,1,0,1]);
+      yield* read('target-switch-return-'+reuse,[0,255,0,255]);
+    }
+    for (const id of [rt2,ds2]) emit('RELEASE',{id});
+    for (const id of [rt,ds,layout,ps]) emit('RELEASE',{id});
+    yield { name: 'release-visibility' };
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, W, H, irShader, TEX_IR };
 });
