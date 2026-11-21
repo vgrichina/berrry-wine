@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "baseSHA256": "d212bc2dbe7ca360d773fbabe3553e62cb10bd3a89d7de21536b5a5a0981c496",
+      "sha256": "54040ead9d0331fbbc6c8286de96119ae1b24ab755dc5d1917645e12740913b2",
+      "reason": "Review 20261121 ordinary ShellExecute child VFS publication: attach one exact child host/context/VFS/memory before run; accept one terminal exit after handle retirement. Preserve existing WinExec hooks and tracked process callbacks. Refuse publication to stopped/retired/replaced parent host context, memory or file map, and refuse stale child contexts, memory, VFS or foreign/repeated completion. Snapshot entry identities and non-materializing value stamps fence parent writes, replacements, deletions and concurrent sibling outputs before applying existing mergeChildFrom through ordinary VFS mutations. No guest entry, callback invocation, input, scope rebinding, clock, scheduler, renderer or suspended-context restoration changes. Authored parent ShellExecute/normal Sleep retry/ReadFile and child CreateFile/WriteFile/CloseHandle/ExitProcess full browser real CPU Worker oldfail parent71 child0 versus newpass both0, matched actual module bytes, plus parallel outputs and focused real VFS lifecycle negatives in run20261121-shell-child-vfs. General callback ownership remains pending. Each VFS launch carries its captured application definition through queue/cancel/restart, preventing same-executable registry replacement from mixing another callers mount or arguments with this completion."
+    }
+  ]
+}

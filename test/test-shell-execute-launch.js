@@ -13,6 +13,175 @@ const fs = require('fs');
 const path = require('path');
 const { createBrowserShell } = require('../lib/browser-shell.js');
 
+// Exercise the real snapshot/adopt/merge operations. Only PE boot is replaced;
+// the retained full browser control separately executes both authored PEs.
+(async () => {
+  const { VirtualFS } = require('../lib/filesystem');
+  const put = (vfs, p, text, close = true) => {
+    const h = vfs.createFile(p, 0x40000000, 2);
+    assert(h); const bytes = Buffer.from(text);
+    assert(vfs.writeFile(h, bytes, bytes.length).ok);
+    if (close) vfs.closeHandle(h);
+    return h;
+  };
+  const read = (vfs, p) => {
+    const h = vfs.createFile(p, 0x80000000, 3);
+    if (!h) return null;
+    const buf = new Uint8Array(1024), result = vfs.readFile(h, buf, buf.length); vfs.closeHandle(h);
+    assert(result.ok);
+    return Buffer.from(buf.subarray(0, result.bytesRead)).toString();
+  };
+  function fixture(singleApp = false) {
+    const apps = {}, launches = [], parentVfs = new VirtualFS();
+    for (const name of ['child.exe', 'sibling.exe']) put(parentVfs, 'c:\\' + name, 'MZ');
+    const parent = { _helpCtx: { vfs: parentVfs }, memory: {}, _stopped: false };
+    const shell = createBrowserShell({ apps, singleApp: () => singleApp,
+      screenCanvasSize: () => ({ w: 640, h: 480 }), appendDebugLog() {} });
+    shell.launchApp = (key, options) => launches.push({ app: options._vfsAppEntry || apps[key], options });
+    async function launch(name = 'child.exe', options = {}) {
+      assert(shell.launchVfsExe('c:\\' + name, parent, '', '', options));
+      const row = launches.at(-1), vfs = new VirtualFS();
+      for (const mount of row.app.mounts) await mount(vfs);
+      row.child = { _helpCtx: { vfs }, memory: {}, _stopped: false };
+      await row.options.beforeRun?.(row.child);
+      row.finish = () => { vfs.closeAllDiskHandles(); row.child._stopped = true; row.options.onExit(row.child); };
+      return row;
+    }
+    return { shell, parent, vfs: parentVfs, launches, launch };
+  }
+  // Closed bytes, independent sibling output, parent writes, deletion, and
+  // actual open-handle identity survive both completions in either order.
+  for (const reverse of [false, true]) {
+    const f = fixture();
+    put(f.vfs, 'c:\\gone.txt', 'delete me');
+    put(f.vfs, 'c:\\edited.txt', 'before');
+    put(f.vfs, 'c:\\deleted-parent.txt', 'before');
+    const reader = f.vfs.createFile('c:\\gone.txt', 0x80000000, 3);
+    const a = await f.launch(), b = await f.launch('sibling.exe');
+    const av = a.child._helpCtx.vfs, bv = b.child._helpCtx.vfs;
+    put(av, 'c:\\a.txt', 'closed A'); put(bv, 'c:\\b.txt', 'closed B');
+    const openChild = put(av, 'c:\\open-child.txt', 'closed by stop', false);
+    put(av, 'c:\\conflict.txt', 'child');
+    put(bv, 'c:\\conflict.txt', 'sibling');
+    const writer = put(f.vfs, 'c:\\conflict.txt', 'parent', false);
+    put(f.vfs, 'c:\\edited.txt', 'new parent');
+    av.deleteFile('c:\\edited.txt'); av.deleteFile('c:\\gone.txt');
+    f.vfs.deleteFile('c:\\deleted-parent.txt');
+    put(av, 'c:\\deleted-parent.txt', 'child still has this');
+    put(f.vfs, 'c:\\unrelated.txt', 'unrelated');
+    assert.equal(read(f.vfs, 'c:\\a.txt'), null, 'new files publish only at exit');
+    for (const row of reverse ? [b, a] : [a, b]) row.finish();
+    assert.equal(read(f.vfs, 'c:\\a.txt'), 'closed A');
+    assert.equal(read(f.vfs, 'c:\\b.txt'), 'closed B');
+    assert.equal(read(f.vfs, 'c:\\open-child.txt'), 'closed by stop');
+    assert(av.handles.get(openChild).closed);
+    assert.equal(read(f.vfs, 'c:\\conflict.txt'), 'parent');
+    assert.equal(read(f.vfs, 'c:\\edited.txt'), 'new parent', 'shared-entry parent write defeats child delete');
+    assert.equal(read(f.vfs, 'c:\\deleted-parent.txt'), null, 'child cannot resurrect parent deletion');
+    assert.equal(read(f.vfs, 'c:\\unrelated.txt'), 'unrelated');
+    assert.equal(read(f.vfs, 'c:\\gone.txt'), null);
+    const buffer = new Uint8Array(1024), result = f.vfs.readFile(reader, buffer, buffer.length);
+    assert.equal(Buffer.from(buffer.subarray(0, result.bytesRead)).toString(), 'delete me', 'unlinked reader retains entry');
+    assert(!f.vfs.handles.get(writer).closed, 'merge does not close a parent handle');
+    const bytes = Buffer.from('!'); assert(f.vfs.writeFile(writer, bytes, 1).ok);
+    assert.equal(read(f.vfs, 'c:\\conflict.txt'), 'parent!');
+    put(f.vfs, 'c:\\a.txt', 'after completion'); a.finish();
+    assert.equal(read(f.vfs, 'c:\\a.txt'), 'after completion', 'late exit is inert');
+    f.vfs.closeAllDiskHandles();
+  }
+  // Launch/parent/child identities and null failure completion are terminal.
+  for (const mode of ['null', 'stopped-parent', 'parent-context', 'parent-vfs', 'parent-memory',
+    'parent-map', 'retired-parent', 'child-context', 'child-vfs', 'child-memory']) {
+    const f = fixture(); let calls = 0;
+    const row = await f.launch('child.exe', { onExit() { calls++; } });
+    put(row.child._helpCtx.vfs, 'c:\\out.txt', 'unpublishable');
+    if (mode === 'null') row.options.onExit(null);
+    if (mode === 'stopped-parent') f.parent._stopped = true;
+    if (mode === 'parent-context') f.parent._helpCtx = { vfs: f.vfs };
+    if (mode === 'parent-vfs') f.parent._helpCtx.vfs = new VirtualFS();
+    if (mode === 'parent-memory') f.parent.memory = {};
+    if (mode === 'parent-map') f.vfs.files = new Map(f.vfs.files);
+    if (mode === 'retired-parent') f.vfs.closeAllDiskHandles();
+    if (mode === 'child-context') row.child._helpCtx = { vfs: row.child._helpCtx.vfs };
+    if (mode === 'child-vfs') row.child._helpCtx.vfs = new VirtualFS();
+    if (mode === 'child-memory') row.child.memory = {};
+    row.finish(); row.options.onExit(null);
+    assert(!f.vfs.files.has('c:\\out.txt'), mode);
+    assert.equal(calls, 1, mode + ' callback completes once');
+    await assert.rejects(row.options.beforeRun(row.child), /already ended/);
+  }
+  {
+    const f = fixture(); let exits = 0;
+    const row = await f.launch('child.exe', { beforeRun(child) { child.startup = true; }, onExit() { exits++; } });
+    assert(row.child.startup);
+    const alien = { _helpCtx: { vfs: new VirtualFS() }, _stopped: true };
+    put(alien._helpCtx.vfs, 'c:\\alien.txt', 'wrong callback');
+    row.options.onExit(alien); assert.equal(exits, 0);
+    put(row.child._helpCtx.vfs, 'c:\\out.txt', 'right callback'); row.finish();
+    assert.equal(read(f.vfs, 'c:\\out.txt'), 'right callback');
+    assert.equal(read(f.vfs, 'c:\\alien.txt'), null); assert.equal(exits, 1);
+  }
+  {
+    const f = fixture(); let release, entered;
+    const started = new Promise(resolve => { entered = resolve; });
+    const pending = f.launch('child.exe', { beforeRun() {
+      entered(); return new Promise(resolve => { release = resolve; });
+    } });
+    await started;
+    const row = f.launches[0]; row.options.onExit(null); release();
+    await assert.rejects(pending, /already ended/, 'cancel during attachment prevents startup');
+    row.child._stopped = true; put(row.child._helpCtx.vfs, 'c:\\late.txt', 'late bytes');
+    row.options.onExit(row.child);
+    assert.equal(read(f.vfs, 'c:\\late.txt'), null);
+  }
+  {
+    const f = fixture();
+    f.vfs.createDirectory('c:\\removed-dir');
+    // Capturing a baseline must never touch the data getter of mounted media.
+    const lazy = { _provider: {}, _size: 99, attrs: 0x20 };
+    Object.defineProperty(lazy, 'data', { get() { throw new Error('lazy materialization'); } });
+    f.vfs.files.set('c:\\lazy.bin', lazy);
+    const row = await f.launch();
+    put(row.child._helpCtx.vfs, 'c:\\removed-dir\\late.txt', 'must not recreate ancestor');
+    f.vfs.removeDirectory('c:\\removed-dir');
+    row.finish();
+    assert(!f.vfs.dirs.has('c:\\removed-dir'), 'merge cannot recreate a deleted parent directory');
+    assert.equal(read(f.vfs, 'c:\\removed-dir\\late.txt'), null);
+    assert.equal(f.vfs.files.get('c:\\lazy.bin'), lazy);
+  }
+  {
+    const f = fixture(); let exits = 0;
+    assert.equal(f.shell.launchVfsExe('c:\\missing.exe', f.parent, '', '', { onExit() { exits++; } }), false);
+    assert.equal(f.launches.length, 0); assert.equal(exits, 0);
+    assert(f.shell.launchVfsExe('c:\\dxsetup.exe', f.parent, '', '', { onExit(child, outcome) {
+      assert.equal(child, null); assert.equal(outcome, 'already-satisfied'); exits++;
+    } }));
+    assert.equal(exits, 1); assert.equal(f.launches.length, 0);
+    const callbacks = { bypassSingleApp: true, beforeRun() {}, onExit() {} };
+    assert(f.shell.launchVfsExe('c:\\child.exe', f.parent, '', '', callbacks));
+    assert.equal(f.launches[0].options.beforeRun, callbacks.beforeRun);
+    assert.equal(f.launches[0].options.onExit, callbacks.onExit, 'tracked process keeps its own merge lifecycle');
+  }
+  {
+    const f = fixture();
+    assert(f.shell.launchVfsExe('c:\\child.exe', f.parent, '', 'first'));
+    const first = f.launches[0];
+    put(f.vfs, 'c:\\only-second.txt', 'second snapshot');
+    assert(f.shell.launchVfsExe('c:\\child.exe', f.parent, '', 'second'));
+    const second = f.launches[1];
+    const a = new VirtualFS(), b = new VirtualFS();
+    for (const mount of first.options._vfsAppEntry.mounts) await mount(a);
+    for (const mount of second.options._vfsAppEntry.mounts) await mount(b);
+    assert.equal(first.options._vfsAppEntry.args, 'first');
+    assert.equal(second.options._vfsAppEntry.args, 'second');
+    assert.equal(read(a, 'c:\\only-second.txt'), null);
+    assert.equal(read(b, 'c:\\only-second.txt'), 'second snapshot');
+    assert.notEqual(first.options.onExit, second.options.onExit, 'each queued same-name launch retains its own completion');
+    first.options.onExit(null); second.options.onExit(null);
+  }
+  console.log('ok: ordinary child exit merges closed bytes with sibling/parent conflicts and lifecycle identity fences');
+})().catch(e => { console.error(e); process.exitCode = 1; });
+
 const apps = {
   wordpad:   { exe: 'binaries/win98-apps/wordpad.exe' },
   mspaint98: { exe: 'binaries/win98-apps/mspaint.exe' },
