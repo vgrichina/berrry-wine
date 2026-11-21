@@ -1084,6 +1084,9 @@
       for (const step of cubeMipCases({ GS, p, check, native: !!(backend && backend.gl) })) drain();
     } catch (e) { failures.push(`cube mip scenario threw: ${e.stack || e}`); }
     try {
+      for (const step of blendCases({ GS, p, check })) drain();
+    } catch (e) { failures.push(`blend scenario threw: ${e.stack || e}`); }
+    try {
       for (const step of cubeSamplerCases({ GS, p, check, negative: !!(backend && backend.gl) })) {
         let error;
         try { drain(); } catch (e) { error = e; }
@@ -1789,5 +1792,139 @@
     yield { name: 'release-visibility' };
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, W, H, irShader, TEX_IR };
+// Independent blend-factor arithmetic and masked-write lifetime controls.
+  function* blendCases({ GS, p, check, capture = () => {} }) {
+    const C = GS.CONST, size = 16, rt = 401, ds = 402, layout = 403, ps = 404;
+    const emit = (op, f, tail) => p.emit(op, f, tail);
+    const put = bytes => { const a = p.arenaAlloc(bytes.length); p.arenaView(a, bytes.length).set(bytes); return a; };
+    const base = { depth_mode: 1, zfunc: 2, zwrite: 1, cull: 1, src_rgb: 2, dst_rgb: 1,
+      src_alpha: 2, dst_alpha: 1, blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15,
+      fill: 3, linear: 1, scissor_right: size, scissor_bottom: size };
+    const raster = f => emit('RASTER', { ...base, ...f });
+    const clear = (f = {}) => emit('CLEAR', { mask: 7, colormask: 15, rgba: 0xff000000,
+      z: 1, stencil: 0, right: size, bottom: size, ...f });
+    const quad = (rgba, z = 0.25, reverse = false, bounds = [0, 0, size, size], shader = ps) => {
+      const [x0, y0, x1, y1] = bounds, corners = [[x0,y0],[x1,y0],[x0,y1],[x1,y1]];
+      const order = reverse ? [0,2,1,1,2,3] : [0,1,2,1,3,2];
+      const data = new Float32Array(order.flatMap(i => [...corners[i], z, 1, ...rgba]));
+      emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps: shader, layout, stride: 32, count: 6, vcount: 6,
+        voff: put(new Uint8Array(data.buffer)) });
+    };
+    let stamp = 5000;
+    function* read(name, want, color = rt) {
+      const dst = p.arenaAlloc(size * size * 4);
+      emit('READBACK', { rt: color, fmt: C.FMT_A8B8G8R8, x: 0, y: 0, w: size, h: size, pitch: size * 4, dst });
+      emit('PRESENT', { rt: color, w: size, h: size, stamp: ++stamp });
+      yield { name, stamp, dst, size };
+      const pixels = p.arenaView(dst, size * size * 4).slice();
+      for (const [x,y] of [[3,5],[11,5],[3,11],[11,11]]) {
+        const got = [...pixels.subarray((y * size + x) * 4, (y * size + x) * 4 + 4)];
+        const expected = typeof want === 'function' ? want(x,y) : want;
+        check(name + ' analytical @' + x + ',' + y, got.every((v,i) => Math.abs(v-expected[i]) <= 1), 'got '+got+' expected '+expected);
+      }
+      capture(name, pixels);
+      p.store('arena_tail', p.load('arena_head'));
+    }
+    emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, width: size, height: size, levels: 1 });
+    emit('CREATE', { id: ds, kind: C.KIND_DS, fmt: C.FMT_D24S8, width: size, height: size, levels: 1 });
+    const elems = new Uint8Array(16), dv = new DataView(elems.buffer);
+    [C.USAGE_POSITIONT,C.USAGE_COLOR].forEach((usage,i) => { dv.setUint8(i*8+1,C.VTYPE_FLOAT4); dv.setUint8(i*8+2,usage); dv.setUint16(i*8+4,i*16,true); });
+    emit('LAYOUT', { id: layout, stride: 32, count: 2 }, elems);
+    emit('SHADER', { id: ps, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+    emit('TARGETS', { color: rt, depth: ds }); emit('BIND', { count: 0 });
+
+    const S=[0.8,0.4,0.2,0.6], D=[51,102,153,77], d=D.map(v=>v/255);
+    const factor=(n)=>[null,[0,0,0,0],[1,1,1,1],S,S.map(v=>1-v),Array(4).fill(S[3]),Array(4).fill(1-S[3]),Array(4).fill(d[3]),Array(4).fill(1-d[3]),d,d.map(v=>1-v),[...Array(3).fill(Math.min(S[3],1-d[3])),1]][n];
+    for(let a=1;a<=11;a++) for(let b=1;b<=10;b++) {
+      clear({rgba:0x4d996633});raster({depth_mode:0,blend:1,src_rgb:a,dst_rgb:b,src_alpha:a,dst_alpha:b});quad(S);
+      const A=factor(a),B=factor(b),want=S.map((v,i)=>Math.round(255*Math.min(1,Math.max(0,v*A[i]+d[i]*B[i]))));
+      yield* read('factors-'+a+'-'+b,want);
+    }
+
+    for(let mask=0;mask<16;mask++) {
+      clear({rgba:0x4d996633});raster({depth_mode:0,blend:0,colormask:mask});quad([1,0,1,0]);
+      yield* read('mask-'+mask,[255,0,255,0].map((v,i)=>mask&(1<<i)?v:D[i]));
+      clear({mask:1,colormask:15,rgba:0x4d996633});raster({depth_mode:0,blend:1,src_rgb:7,dst_rgb:8,src_alpha:2,dst_alpha:1});quad(S);
+      yield* read('reenable-'+mask,S.map((v,i)=>Math.round(255*(i===3?v:v*d[3]+d[i]*(1-d[3])))));
+    }
+    const tex=410,samp=411,tps=412,tl=413;
+    emit('CREATE',{id:tex,kind:C.KIND_TEX2D,fmt:C.FMT_A8B8G8R8,width:1,height:1,levels:1});
+    const texel=new Uint8Array([200,80,40,128]);emit('UPLOAD',{id:tex,w:1,h:1,pitch:4,bytes:4,src:put(texel)});
+    emit('SAMPLER',{id:samp,address_u:3,address_v:3,min:1,mag:1});emit('SHADER',{id:tps,stage:1,ir_bytes:TEX_IR.length},TEX_IR);
+    const te=new Uint8Array(24),td=new DataView(te.buffer);[C.USAGE_POSITIONT,C.USAGE_COLOR,C.USAGE_TEXCOORD].forEach((u,i)=>{td.setUint8(i*8+1,C.VTYPE_FLOAT4);td.setUint8(i*8+2,u);td.setUint16(i*8+4,i*16,true)});emit('LAYOUT',{id:tl,stride:48,count:3},te);
+    // Keep the query rectangle inside the target: native edge coverage at
+    // the framebuffer boundary differs from the software pixel-centre rule.
+    const tv=new Float32Array([[2,2],[14,2],[2,14],[14,2],[14,14],[2,14]].flatMap(([x,y])=>[x,y,0.25,1,1,1,1,1,0.5,0.5,0,1]));
+    // Source-alpha RGB blend over D, separate alpha = source alpha:
+    // round([200,80,40] * 128/255 + D.rgb * 127/255), alpha 128.
+    const blended=[126,91,96,128];
+
+    const rt2=414,ds2=415;
+    const createPair=()=>{emit('CREATE',{id:rt2,kind:C.KIND_RT,fmt:C.FMT_A8B8G8R8,width:size,height:size,levels:1});emit('CREATE',{id:ds2,kind:C.KIND_DS,fmt:C.FMT_D24S8,width:size,height:size,levels:1});};
+    createPair();
+    for(const reuse of [false,true]) {
+      if(reuse){
+        for(const id of [rt2,ds2])emit('RELEASE',{id});createPair();
+        emit('RELEASE',{id:tex});
+        emit('CREATE',{id:tex,kind:C.KIND_TEX2D,fmt:C.FMT_A8B8G8R8,width:1,height:1,levels:1});
+        emit('UPLOAD',{id:tex,w:1,h:1,pitch:4,bytes:4,src:put(texel)});
+      }
+      for(const target of [rt,rt2,rt])for(const queried of [false,true])for(const mask of [15,7,8,0]) {
+        emit('TARGETS',{color:target,depth:target===rt?ds:ds2});
+        clear({rgba:0x4d996633});raster({depth_mode:1,blend:1,src_rgb:5,dst_rgb:6,src_alpha:2,dst_alpha:1,colormask:mask,
+          stencil_enable:1,stencil_func:8,stencil_fail:1,stencil_zfail:1,stencil_pass:3,stencil_ref:7,stencil_mask:255,stencil_wmask:255});
+        emit('BIND',{count:1},new Uint8Array(new Uint32Array([0,tex,samp]).buffer));
+        const dst=p.arenaAlloc(4);if(queried)emit('FENCE',{kind:C.FENCEK_OCCLUSION_BEGIN});
+        emit('DRAW_UP',{prim:C.PRIM_TRIANGLELIST,ps:tps,layout:tl,stride:48,count:6,vcount:6,voff:put(new Uint8Array(tv.buffer))});
+        if(queried)emit('FENCE',{kind:C.FENCEK_OCCLUSION_END,dst});
+        yield* read('textured-query-'+reuse+'-'+target+'-'+queried+'-'+mask,blended.map((v,i)=>mask&(1<<i)?v:D[i]),target);
+        if(queried){const count=new DataView(p.arenaView(dst,4).slice().buffer).getUint32(0,true);check('textured query count ignores color mask '+mask,count===144,'got '+count+' expected 144');}
+        // A COPY must preserve the resulting alpha and ignore the last draw mask.
+        const copyTo=target===rt?rt2:rt;
+        emit('COPY',{src:target,dst:copyTo,sw:size,sh:size,dw:size,dh:size,filter:1});
+        yield* read('copy-query-'+reuse+'-'+target+'-'+queried+'-'+mask,blended.map((v,i)=>mask&(1<<i)?v:D[i]),copyTo);
+        // The counting pass must leave depth/stencil for the real pass;
+        // color masking must not suppress the real pass's writes to them.
+        emit('BIND',{count:0});
+        raster({depth_mode:1,zfunc:3,zwrite:0,stencil_enable:1,stencil_func:3,stencil_ref:7,
+          stencil_fail:1,stencil_zfail:1,stencil_pass:1,stencil_mask:255,stencil_wmask:0});
+        quad([0,1,0,1]);
+        yield* read('depth-stencil-query-'+reuse+'-'+target+'-'+queried+'-'+mask,[0,255,0,255],target);
+      }
+    }
+    // Both a newly allocated count target and a reused one must preserve
+    // sampler bindings as a single query switches between color targets.
+    const switchedCount=p.arenaAlloc(4);
+    emit('FENCE',{kind:C.FENCEK_OCCLUSION_BEGIN});
+    for(const target of [rt,rt2,rt]) {
+      emit('TARGETS',{color:target,depth:target===rt?ds:ds2});clear({rgba:0x4d996633});
+      raster({depth_mode:0,blend:1,src_rgb:5,dst_rgb:6,src_alpha:2,dst_alpha:1});
+      emit('BIND',{count:1},new Uint8Array(new Uint32Array([0,tex,samp]).buffer));
+      emit('DRAW_UP',{prim:C.PRIM_TRIANGLELIST,ps:tps,layout:tl,stride:48,count:6,vcount:6,voff:put(new Uint8Array(tv.buffer))});
+      yield* read('single-query-target-'+target,blended,target);
+    }
+    emit('FENCE',{kind:C.FENCEK_OCCLUSION_END,dst:switchedCount});
+    yield {name:'single-query-end'};
+    check('single query accumulates across targets',new DataView(p.arenaView(switchedCount,4).slice().buffer).getUint32(0,true)===432);
+    emit('TARGETS',{color:rt,depth:ds});clear({rgba:0x4d996633});
+    raster({alpha_func:5,alpha_ref:128,stencil_enable:1,stencil_func:8,stencil_ref:7,
+      stencil_fail:3,stencil_zfail:3,stencil_pass:3,stencil_mask:255,stencil_wmask:255});
+    emit('BIND',{count:1},new Uint8Array(new Uint32Array([0,tex,samp]).buffer));
+    const rejectedCount=p.arenaAlloc(4);
+    emit('FENCE',{kind:C.FENCEK_OCCLUSION_BEGIN});
+    emit('DRAW_UP',{prim:C.PRIM_TRIANGLELIST,ps:tps,layout:tl,stride:48,count:6,vcount:6,voff:put(new Uint8Array(tv.buffer))});
+    emit('FENCE',{kind:C.FENCEK_OCCLUSION_END,dst:rejectedCount});
+    yield* read('textured-alpha-equality-rejected',D);
+    check('alpha rejection counts zero',new DataView(p.arenaView(rejectedCount,4).slice().buffer).getUint32(0,true)===0);
+    emit('BIND',{count:0});
+    raster({zfunc:3,zwrite:0,stencil_enable:1,stencil_func:3,stencil_ref:0,
+      stencil_fail:1,stencil_zfail:1,stencil_pass:1,stencil_mask:255,stencil_wmask:0});
+    quad([0,0,1,1],1);
+    yield* read('alpha-reject-keeps-depth-stencil',[0,0,255,255]);
+    for(const id of [rt2,ds2])emit('RELEASE',{id});
+    for(const id of [tex,samp,tps,tl])emit('RELEASE',{id});
+    for(const id of [rt,ds,layout,ps])emit('RELEASE',{id});yield {name:'release-blend'};
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, W, H, irShader, TEX_IR };
 });
