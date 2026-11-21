@@ -1075,6 +1075,9 @@
       failures.push(`scenario threw: ${e && e.stack || e}`);
     }
     try {
+      for (const step of perspectiveMipCases({ GS, p, check })) drain();
+    } catch (e) { failures.push(`perspective mip scenario threw: ${e.stack || e}`); }
+    try {
       for (const step of cubeSamplerCases({ GS, p, check, negative: !!(backend && backend.gl) })) {
         let error;
         try { drain(); } catch (e) { error = e; }
@@ -1212,5 +1215,163 @@
     yield { name: 'release-all' };
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, W, H, irShader, TEX_IR };
+  // Perspective coordinates are quotients of affine planes. Evaluate those
+  // planes independently at pixel centres and at their 2x2 derivative peers;
+  // do not use the executor's shader helpers as the sampling oracle.
+  function* perspectiveMipCases({ GS, p, check, capture = () => {}, negative = false }) {
+    const C = GS.CONST, size = 64, rt = 200, layout = 201, ps = 202, image = 203, copy = 204;
+    const emit = (...a) => p.emit(...a);
+    const put = b => { const at = p.arenaAlloc(b.length); p.arenaView(at, b.length).set(b); return at; };
+    const words = (...v) => new Uint8Array(new Uint32Array(v).buffer);
+    emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, levels: 1, width: size, height: size });
+    emit('TARGETS', { color: rt });
+    const elems = new Uint8Array(24), dv = new DataView(elems.buffer);
+    [C.USAGE_POSITIONT, C.USAGE_TEXCOORD, C.USAGE_TEXCOORD].forEach((usage, i) => {
+      elems[i * 8 + 1] = C.VTYPE_FLOAT4; elems[i * 8 + 2] = usage; elems[i * 8 + 3] = i === 2 ? 1 : 0;
+      dv.setUint16(i * 8 + 4, i * 16, true);
+    });
+    emit('LAYOUT', { id: layout, count: 3, stride: 48 }, elems);
+    emit('SHADER', { id: ps, stage: 1, ir_bytes: TWO_IR.length }, TWO_IR);
+    emit('RASTER', { depth_mode: 0, zfunc: 8, cull: 1, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+      blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15, fill: 3, linear: 0,
+      scissor_right: size, scissor_bottom: size });
+    const q = x => 1 - 0.9 * x / size;
+    const uv = (slot, x) => slot ? [0.91 - 0.008 * x / q(x), 0.37] : [-0.23 + 0.023 * x / q(x), 0.61];
+    const mod = (n, d) => ((n % d) + d) % d;
+    const color = (x, y, l) => [20 + (11 * x + 3 * y + 43 * l) % 190,
+      30 + (5 * x + 13 * y + 37 * l) % 180, 40 + (7 * x + 9 * y + 29 * l) % 170, 255];
+    const sample = (w, h, levels, s, slot, x) => {
+      const coord = uv(slot, x), a = uv(slot, x & ~1), b = uv(slot, (x & ~1) + 1);
+      const lod = Math.log2(Math.hypot((b[0] - a[0]) * w, (b[1] - a[1]) * h)) + s.bias;
+      const linear = (lod <= 0 ? s.mag : s.min) === 2;
+      const L = Math.min(Math.max(lod, s.low), levels - 1);
+      const fold = (u, mode) => mode === 1 ? mod(u, 1) : mode === 2 ? 1 - Math.abs(1 - mod(u, 2))
+        : mode === 3 ? Math.min(Math.max(u, 0), 1) : Math.min(Math.max(u, -1), 2);
+      const atLevel = l => {
+        const z = [Math.max(1, w >> l), Math.max(1, h >> l)];
+        const c = coord.map((u, i) => fold(u, s.addr[i]) * z[i] - (linear ? 0.5 : 0));
+        const at = (x, y) => {
+          const taps = [x, y].map((v, i) => s.addr[i] === 1 ? mod(v, z[i]) : s.addr[i] === 2
+            ? Math.min(mod(v, 2 * z[i]), 2 * z[i] - 1 - mod(v, 2 * z[i])) : Math.min(Math.max(v, 0), z[i] - 1));
+          if ([x, y].some((v, i) => s.addr[i] === 4 && (v < 0 || v >= z[i]))) return s.border;
+          return color(taps[0], taps[1], l);
+        };
+        const ix = Math.floor(c[0]), iy = Math.floor(c[1]);
+        if (!linear) return at(ix, iy);
+        const fx = c[0] - ix, fy = c[1] - iy, taps = [at(ix, iy), at(ix + 1, iy), at(ix, iy + 1), at(ix + 1, iy + 1)];
+        return taps[0].map((_, k) => (taps[0][k] * (1 - fx) + taps[1][k] * fx) * (1 - fy)
+          + (taps[2][k] * (1 - fx) + taps[3][k] * fx) * fy);
+      };
+      const l = s.mip === 1 ? Math.floor(L + 0.5) : s.mip === 2 ? Math.floor(L) : 0;
+      const a0 = atLevel(l), r = s.mip === 2 ? L - l : 0;
+      return { lod, color: r ? a0.map((v, k) => v * (1 - r) + atLevel(l + 1)[k] * r) : a0 };
+    };
+    let stamp = 3000;
+    const samplers = [
+      { min: 1, mag: 2, mip: 1, addr: [1, 2], bias: 0, low: 0, border: [71, 113, 157, 255] },
+      { min: 2, mag: 1, mip: 2, addr: [4, 3], bias: 0.25, low: 0, border: [71, 113, 157, 255] },
+    ];
+    for (const [w, h, levels] of [[16, 8, 5], [16, 8, 2], [15, 7, 4], [15, 7, 2], [9, 5, 1]]) {
+      for (const id of [image, copy]) {
+        emit('CREATE', { id, kind: C.KIND_TEX2D, fmt: C.FMT_A8B8G8R8, width: w, height: h, levels });
+        for (let l = 0; l < levels; l++) {
+          const lw = Math.max(1, w >> l), lh = Math.max(1, h >> l), b = new Uint8Array(lw * lh * 4);
+          for (let y = 0; y < lh; y++) for (let x = 0; x < lw; x++) b.set(color(x, y, l), (y * lw + x) * 4);
+          emit('UPLOAD', { id, level: l, w: lw, h: lh, pitch: lw * 4, bytes: b.length, src: put(b) });
+        }
+      }
+      for (const mode of ['mixed', 'no-mip', 'max-level', 'point', 'linear', 'point-no-mip', 'linear-no-mip', 'reverse-mirror']) {
+        const ss = samplers.map((_, i) => {
+          const s = samplers[mode === 'reverse-mirror' ? 1 - i : i];
+          return { ...s, min: mode.startsWith('point') ? 1 : mode.startsWith('linear') ? 2 : s.min,
+            mag: mode.startsWith('point') ? 1 : mode.startsWith('linear') ? 2 : s.mag,
+            addr: mode === 'reverse-mirror' ? [i ? 1 : 2, i ? 4 : 3] : s.addr,
+            mip: mode.includes('no-mip') ? 0 : s.mip, low: mode === 'max-level' ? Math.min(1, levels - 1) : 0 };
+        });
+        ss.forEach((s, i) => emit('SAMPLER', { id: 205 + i, min: s.min, mag: s.mag, mip: s.mip,
+          address_u: s.addr[0], address_v: s.addr[1], lod_bias: s.bias, max_level: s.low, border: 0xff9d7147 }));
+        let reference;
+        for (const distinct of [true, false]) {
+          const name = `${w}x${h}-L${levels}-${mode}-${distinct ? 'distinct' : 'alias'}`;
+          emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff223344, right: size, bottom: size });
+          emit('BIND', { count: 2 }, words(0, image, 205, 1, distinct ? copy : image, 206));
+          const v = [];
+          for (const [x, y] of [[0, 0], [size, 0], [0, size], [size, 0], [size, size], [0, size]])
+            v.push(x, y, 0.5, q(x), ...uv(0, x), 0, 1, ...uv(1, x), 0, 1);
+          emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 6, vcount: 6,
+            voff: put(new Uint8Array(new Float32Array(v).buffer)) });
+          const dst = p.arenaAlloc(size * size * 4 + 8); p.arenaView(dst, size * size * 4 + 8).fill(0xa7);
+          emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: size, h: size, pitch: size * 4, dst });
+          emit('PRESENT', { rt, w: size, h: size, surface: 95, stamp: ++stamp });
+          yield { name, stamp, dst, size };
+          const pixels = p.arenaView(dst, size * size * 4).slice();
+          capture(name, pixels);
+          check(name + ' canary', p.arenaView(dst + pixels.length, 8).every(v => v === 0xa7));
+          check(name + ' ring retired', p.load('read_pos') === p.load('write_pos') && p.load('error_code') === 0);
+          for (const x of [4, 8, 10, 12, 20, 28, 36, 44, 52, 58, 60]) {
+            const samples = ss.map((s, i) => sample(w, h, levels, s, i, x));
+            const want = samples[0].color.map((c, k) => Math.round(c * samples[1].color[k] / 255));
+            const got = [...pixels.subarray((16 * size + x) * 4, (16 * size + x) * 4 + 4)];
+            check(name + ` analytical x=${x}`, got.every((c, k) => Math.abs(c - want[k]) <= 3),
+              `got ${got}, expected ${want}, LOD ${samples.map(s => s.lod.toFixed(3))}`);
+          }
+          if (distinct) reference = pixels;
+          else check(name + ' equals distinct images', pixels.every((v, i) => Math.abs(v - reference[i]) <= 1));
+          p.store('arena_tail', p.load('arena_head'));
+        }
+        for (const id of [205, 206]) emit('RELEASE', { id });
+      }
+      if (w === 15 && levels === 2) {
+        const lw = w >> 1, lh = h >> 1;
+        for (const id of [205, 206]) emit('SAMPLER', { id, min: 1, mag: 1, mip: 1,
+          address_u: 1, address_v: 2, lod_bias: 10, max_level: 1 });
+        for (const kind of ['upload-edge', 'copy-edge', 'copy-opaque-edge']) {
+          emit('CLEAR', { mask: 1, colormask: 15, rgba: 0x4000ff00, right: size, bottom: size });
+          for (const id of [image, copy]) {
+            if (kind === 'upload-edge') {
+              const b = new Uint8Array([180, 220, 60, 255]);
+              emit('UPLOAD', { id, level: 1, x: lw - 1, y: lh - 1, w: 1, h: 1, pitch: 4, bytes: 4, src: put(b) });
+            } else emit('COPY', { src: rt, dst: id, sw: 1, sh: 1, dx: lw - 1, dy: lh - 1, dw: 1, dh: 1,
+              filter: 1 | (1 << 8) | (kind === 'copy-opaque-edge' ? 1 << 24 : 0) });
+          }
+          emit('BIND', { count: 2 }, words(0, image, 205, 1, image, 206));
+          const v = [];
+          for (const [x, y] of [[0, 0], [size, 0], [0, size], [size, 0], [size, size], [0, size]]) {
+            const t = [(lw - 0.5) / lw, (lh - 0.5) / lh, 0, 1];
+            v.push(x, y, 0.5, q(x), ...t, ...t);
+          }
+          emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 6, vcount: 6,
+            voff: put(new Uint8Array(new Float32Array(v).buffer)) });
+          const dst = p.arenaAlloc(size * size * 4 + 8); p.arenaView(dst, size * size * 4 + 8).fill(0xa7);
+          emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: size, h: size, pitch: size * 4, dst });
+          emit('PRESENT', { rt, w: size, h: size, surface: 95, stamp: ++stamp });
+          yield { name: kind, stamp, dst, size };
+          const pixels = p.arenaView(dst, size * size * 4).slice(), at = (16 * size + 8) * 4;
+          const got = [...pixels.subarray(at, at + 4)];
+          const want = kind === 'upload-edge' ? [127, 190, 14, 255] : [0, 255, 0, kind === 'copy-edge' ? 16 : 255];
+          check(kind + ' last logical texel at mip 1', got.every((c, i) => Math.abs(c - want[i]) <= 1), `got ${got}, expected ${want}`);
+          check(kind + ' canary', p.arenaView(dst + pixels.length, 8).every(v => v === 0xa7));
+          capture(kind, pixels); p.store('arena_tail', p.load('arena_head'));
+        }
+        for (const id of [205, 206]) emit('RELEASE', { id });
+      }
+      for (const id of [image, copy]) emit('RELEASE', { id });
+    }
+    if (negative) {
+      emit('CREATE', { id: image, kind: C.KIND_TEX2D, fmt: C.FMT_A8B8G8R8, width: 9, height: 5, levels: 1 });
+      const v = new Float32Array(6 * 12);
+      emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 6, vcount: 6, voff: put(new Uint8Array(v.buffer)) });
+      const dst = p.arenaAlloc(8); p.arenaView(dst, 8).fill(0x9b);
+      emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: 1, h: 1, pitch: 4, dst });
+      emit('PRESENT', { rt, w: size, h: size, surface: 95, stamp: ++stamp });
+      yield { name: 'stale-2d-negative', error: true, stamp };
+      check('invalid 2D draw stops readback', p.arenaView(dst, 8).every(v => v === 0x9b));
+      check('invalid 2D draw records error', p.load('error_code') !== 0);
+      return;
+    }
+    for (const id of [rt, layout, ps]) emit('RELEASE', { id });
+    yield { name: 'release-perspective' };
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, W, H, irShader, TEX_IR };
 });
