@@ -16,7 +16,7 @@ function forms(source) {
  }
  assert.equal(depth,0);return out;
 }
-const files=['09a8-handlers-directx.wat','01-header.wat','03-registers.wat','03a-page-watch.wat','10-helpers.wat'];
+const files=['09a8-handlers-directx.wat','01-header.wat','03-registers.wat','03a-page-watch.wat','10-helpers.wat','13-exports.wat'];
 const controlSource=process.argv.find(x=>x.startsWith('--control-source='));
 const sources=files.map((f,i)=>fs.readFileSync(i===0&&controlSource?controlSource.slice('--control-source='.length):path.join(ROOT,'src',f),'utf8'));
 if(process.argv.includes('--baseline'))assert.equal(sha(sources[0]),'d5fb8b951707ffef055ba46eddcabc812b2b4ea8660956122c1e6da34cf2ef4e');
@@ -27,6 +27,7 @@ for(const name of byName.keys())if(/^\$di_(kbd_|dik_to_vk)/.test(name))funcs.add
 const picked=new Map(),stubs=new Map();
 funcs.add('$page_watch_write_one');
 funcs.add('$page_watch_cell');
+funcs.add('$shared_heap_address');
 for(const name of ['$handle_IDirectInputDevice_GetDeviceState','$g2w_affine_span','$zero_memory','$page_watch_write','$page_watch_valid','$handle_IDirectInputDevice_SetProperty','$handle_IDirectInputDevice_GetProperty','$di_valid_device_dword_property'])funcs.add(name);
 byName.set('$uwc_on','(global $uwc_on (mut i32) (i32.const 0))');
 byName.set('$fault_sync_epoch','(global $fault_sync_epoch (mut i32) (i32.const 0))');
@@ -88,7 +89,7 @@ const runner=fs.readFileSync(path.join(ROOT,'test/run.js'),'utf8');
 const wiring=runner.match(/  h\.get_key_down_state = \(vKey\) =>\n[^;]+;/)[0];
 require('vm').runInNewContext(wiring,{h:host,renderer});
 const memory=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true});
-const imports={host:{memory,...host,get_ticks:()=>100,log_i32:()=>{throw Error('wild COM slot');}}};
+const imports={host:{memory,...host,shared_heap:()=>{throw Error('out-of-scope shared heap access');},get_ticks:()=>100,log_i32:()=>{throw Error('wild COM slot');}}};
 if(process.argv.includes('--control-missing-bridge'))delete imports.host.di_keyboard_buffer;
 let publishBoundary=()=>{};
 if(process.argv.includes('--rpc')) {

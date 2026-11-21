@@ -24,6 +24,7 @@ function form(name) {
 }
 const names = ['win16_arena_base', 'win16_process_arena_ensure', 'win16_process_arena_release',
   'win16_arena_slot_base', 'win16_task_shared', 'win16_dll_rec', 'win16_dll_refs_ptr',
+  'win16_ls32_has_pairs', 'win16_ls32_row',
   'g2w_affine_span', 'zero_memory', 'lock_owner_id', 'lock_acquire', 'lock_release'];
 let source = names.map(form).join('\n').replaceAll('(region.addr $WIN16_PROCESS_ARENA 0)', '(i32.const 256)')
   .replaceAll('(region.addr $WIN16_PROCESS_ARENA 4)', '(i32.const 260)')
@@ -38,6 +39,8 @@ const globals = { WIN16_ARENA: 0x100000, WIN16_SEG_MAX: 943, DLL_LOAD_LOCK: 512,
   host_shadow: 0, lock_identity: 0, uwc_on: 0 };
 source = `
 (import "host" "memory" (memory 1024 1024 shared))
+;; Fixture-only placement, clear of the arena and guest-memory canaries.
+(region.declare-fixed $WIN16_LS_CONNECTIONS (base 0x20000) (size ${RegionMap.SIZE.WIN16_LS_CONNECTIONS}))
 (import "host" "current_thread_id" (global $current_thread_id i32))
 (import "host" "is_win16" (global $is_win16 i32))
 (import "host" "reserve" (func $virtual_reserve_place (param i32 i32 i32) (result i32)))
@@ -89,6 +92,12 @@ function instance(id, pure = 0) {
       return ga - globals.image_base + globals.GUEST_BASE;
     },
     watch(wa, size) {
+      if (wa === 0x20000 || wa === 0x20200) {
+        unpublished();
+        assert.equal(size, wa === 0x20000 ? 384 : RegionMap.SIZE.WIN16_LS_CONNECTIONS - 512);
+        assert(bytes.subarray(wa,wa+size).every(value=>value===0));
+        return;
+      }
       if (wa === 1024) {
         unpublished();assert.equal(size,200);
         assert(bytes.subarray(wa,wa+size).every(value=>value===0),'fixed lifetime reset before publication');
@@ -167,6 +176,8 @@ async function concurrentPublication() {
       watch(wa, size) {
         assert.equal(Atomics.load(state, 64), 0, 'no publication before initialization');
         if (wa === 1024) assert.equal(size, 200, 'fixed ownership reset');
+        else if (wa === 0x20000) assert.equal(size, 384);
+        else if (wa === 0x20200) assert.equal(size, ${RegionMap.SIZE.WIN16_LS_CONNECTIONS - 512});
         else { assert.equal(wa, d.backing); assert.equal(size, d.size); }
         const bytes = new Uint8Array(d.memory.buffer);
         assert.equal(bytes[wa], 0); assert.equal(bytes[wa + size - 1], 0);
