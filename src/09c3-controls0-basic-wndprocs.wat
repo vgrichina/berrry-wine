@@ -2570,6 +2570,21 @@
           (call $prog_clamp (local.get $sw) (call $prog_pos (local.get $sw))))
         (call $invalidate_hwnd (local.get $hwnd))
         (return (local.get $old))))
+    ;; PBM_GETRANGE(0x0407): TRUE selects low, FALSE selects high.
+    ;; Optional PBRANGE output is two signed 32-bit limits, low then high.
+    (if (i32.eq (local.get $msg) (i32.const 0x0407))
+      (then
+        (if (local.get $lParam)
+          (then
+            (local.set $range (call $g2w (local.get $lParam)))
+            (i32.store (local.get $range) (call $prog_min (local.get $sw)))
+            (i32.store offset=4 (local.get $range) (call $prog_max (local.get $sw)))))
+        (return (if (result i32) (local.get $wParam)
+          (then (call $prog_min (local.get $sw)))
+          (else (call $prog_max (local.get $sw)))))))
+    ;; PBM_GETPOS(0x0408): return the current UINT position without repainting.
+    (if (i32.eq (local.get $msg) (i32.const 0x0408))
+      (then (return (call $prog_pos (local.get $sw)))))
     ;; WM_PAINT
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
