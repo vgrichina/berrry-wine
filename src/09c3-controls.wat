@@ -1280,6 +1280,24 @@
             (if (i32.ge_s (local.get $old) (local.get $index))
               (then (i32.store offset=4 (local.get $sw) (i32.add (local.get $old) (i32.const 1)))))))
         (return (local.get $index))))
+    ;; TCM_DELETEITEM: remove the indexed inline label, keeping remaining order.
+    ;; Microsoft specifies no automatic selection after deletion. This bounded
+    ;; native path supports applications that explicitly reselect their page;
+    ;; leave selection to their following TCM_SETCURSEL, without notifications.
+    (if (i32.eq (local.get $msg) (i32.const 0x1308))
+      (then
+        (if (i32.ge_u (local.get $wParam) (local.get $count))
+          (then (return (i32.const 0))))
+        (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
+          (i32.mul (local.get $wParam) (i32.const 15))))
+        (local.set $count (i32.sub (local.get $count) (i32.const 1)))
+        (memory.copy (local.get $rec) (i32.add (local.get $rec) (i32.const 15))
+          (i32.mul (i32.sub (local.get $count) (local.get $wParam)) (i32.const 15)))
+        (call $zero_memory (i32.add (i32.add (local.get $sw) (i32.const 8))
+          (i32.mul (local.get $count) (i32.const 15))) (i32.const 15))
+        (i32.store (local.get $sw) (local.get $count))
+        (call $paint_flag_set_inv (local.get $hwnd))
+        (return (i32.const 1))))
     ;; TCM_SETITEMA/W: TCIF_TEXT selects pszText; cchTextMax is ignored.
     ;; Only the native short ASCII label subset fits this inline mirror.
     ;; Validate before touching any record; no callback/non-ASCII inference.
