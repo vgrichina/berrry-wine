@@ -73,7 +73,7 @@ directly — decode 2.4 to linear, two nearest beam lines x four horizontal
 taps, a vertical Gaussian spot that widens with gun intensity and is
 integrated over the output pixel, a quarter-resolution halation buffer, and a
 phosphor mask in device pixels with brightness compensation, then encode 2.2.
-The selected scaler and dedither do not run (`lastBackend` is
+The selected scaler does not run (`lastBackend` is
 `webgl-beam+crt`, `lastCrt` reports lines/doublescan/mask/bloom). VGA
 doublescans sources of 300 rows or fewer. The mask is dropped when a canvas
 pixel is not a whole number of device pixels and faded in below ~2.25 output

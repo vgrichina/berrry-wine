@@ -224,69 +224,6 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
         viewport: sharpViewport,
       };
 
-      source.width = 8;
-      source.height = 8;
-      output.width = 16;
-      output.height = 16;
-      renderer.presentationFilter.resize(16, 16);
-      const ditherCtx = source.getContext('2d');
-      const checkerImage = ditherCtx.createImageData(8, 8);
-      for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
-          const p = (y * 8 + x) * 4;
-          checkerImage.data[p] = ((x + y) & 1) ? 0 : 255;
-          checkerImage.data[p + 2] = ((x + y) & 1) ? 255 : 0;
-          checkerImage.data[p + 3] = 255;
-        }
-      }
-      ditherCtx.putImageData(checkerImage, 0, 0);
-      renderer.presentationFilter.present(source, 'scale-auto', {},
-        { dedither: 'mdapt' });
-      let deditherPixels = output.getContext('2d').getImageData(0, 0, 16, 16).data;
-      const mdapt = {
-        backend: renderer.presentationFilter.lastDeditherBackend,
-        scale: renderer.presentationFilter.lastPixelScaleMultiplier,
-        center: pixel(deditherPixels, 16, 8, 8),
-      };
-
-      output.width = 8;
-      output.height = 8;
-      renderer.presentationFilter.resize(8, 8);
-      ditherCtx.fillStyle = 'rgb(255, 0, 0)';
-      ditherCtx.fillRect(0, 0, 4, 8);
-      ditherCtx.fillStyle = 'rgb(0, 0, 255)';
-      ditherCtx.fillRect(4, 0, 4, 8);
-      renderer.presentationFilter.present(source, 'nearest', {},
-        { dedither: 'mdapt' });
-      deditherPixels = output.getContext('2d').getImageData(0, 0, 8, 8).data;
-      mdapt.edgeLeft = pixel(deditherPixels, 8, 2, 4);
-      mdapt.edgeRight = pixel(deditherPixels, 8, 5, 4);
-
-      source.width = 12;
-      source.height = 12;
-      output.width = 12;
-      output.height = 12;
-      renderer.presentationFilter.resize(12, 12);
-      const orderedCtx = source.getContext('2d');
-      const orderedImage = orderedCtx.createImageData(12, 12);
-      for (let y = 0; y < 12; y++) {
-        for (let x = 0; x < 12; x++) {
-          const p = (y * 12 + x) * 4;
-          const bright = (x & 1) === 0 && (y & 1) === 0;
-          orderedImage.data[p] = bright ? 255 : 0;
-          orderedImage.data[p + 1] = bright ? 255 : 0;
-          orderedImage.data[p + 2] = bright ? 255 : 0;
-          orderedImage.data[p + 3] = 255;
-        }
-      }
-      orderedCtx.putImageData(orderedImage, 0, 0);
-      renderer.presentationFilter.present(source, 'nearest', {},
-        { dedither: 'jinc2' });
-      deditherPixels = output.getContext('2d').getImageData(0, 0, 12, 12).data;
-      const jinc2 = {
-        backend: renderer.presentationFilter.lastDeditherBackend,
-        quarter: pixel(deditherPixels, 12, 4, 4),
-      };
       // With a plain sampling mode, no crop and no shader, presenting is a
       // full-canvas copy that produces what the compositor gives for free:
       // the logical canvas becomes the visible surface and the output canvas
@@ -357,8 +294,6 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
         composed,
         integer,
         sharp,
-        mdapt,
-        jinc2,
         gpuError: String(renderer.presentationFilter.lastError || ''),
       };
     });
@@ -428,19 +363,6 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
     assert.deepStrictEqual(result.scaleCrt.passes, [],
       'CRT replaces the pixel scaler: the beam reads the native frame');
 
-    assert.strictEqual(result.mdapt.backend, 'webgl-mdapt', result.gpuError);
-    assert.strictEqual(result.mdapt.scale, 2,
-      'dedither should run at native resolution before the selected scaler');
-    assert(Math.abs(result.mdapt.center[0] - 128) <= 1 &&
-      Math.abs(result.mdapt.center[2] - 128) <= 1,
-    `MDAPT should reconstruct the red/blue checkerboard midpoint: ${result.mdapt.center}`);
-    assert.deepStrictEqual(result.mdapt.edgeLeft, [255, 0, 0, 255]);
-    assert.deepStrictEqual(result.mdapt.edgeRight, [0, 0, 255, 255],
-      'MDAPT detection must leave an ordinary solid edge intact');
-    assert.strictEqual(result.jinc2.backend, 'webgl-jinc2', result.gpuError);
-    assert(result.jinc2.quarter.slice(0, 3).every(channel => channel > 0 && channel < 255),
-      `Jinc2 should reconstruct an intermediate tone from ordered dither: ${result.jinc2.quarter}`);
-
     assert.strictEqual(result.fsr1.backend, 'webgl-fsr1', result.gpuError);
     assert(Math.abs(result.fsr1.center[0] - 128) <= 2);
     assert(Math.abs(result.fsr1.center[1] - 64) <= 2);
@@ -480,7 +402,7 @@ const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/M
     assert.strictEqual(result.sharp.viewport.dstW * result.sharp.viewport.nativeH,
       result.sharp.viewport.dstH * result.sharp.viewport.nativeW,
       'sharp physical destination must preserve native aspect ratio');
-    console.log('PASS  native dedither, auto 2x/3x/4x, HQ correction, Retina staging, aspect ratio, and CRT');
+    console.log('PASS  auto 2x/3x/4x, HQ correction, Retina staging, aspect ratio, and CRT');
   } finally {
     await browser.close();
     if (server.closeAllConnections) server.closeAllConnections();

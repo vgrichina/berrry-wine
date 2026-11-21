@@ -61,7 +61,7 @@
 // it regardless of the emulated screen size).
 //
 // --gpu runs the page on SwiftShader instead of Chrome's default --disable-gpu,
-// so the WebGL presentation paths (scale-auto, fsr1, dedither, CRT) actually
+// so the WebGL presentation paths (scale-auto, fsr1, CRT) actually
 // run. Without it every presentation falls back to 2D canvas and a GPU-only
 // bug looks fixed.
 //

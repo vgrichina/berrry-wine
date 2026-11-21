@@ -14,7 +14,7 @@ rewritten.
 The pixel regression `test/test-opengl-gamma-web.js` exercises actual local
 WebGL and a real render Worker frame, distinct RGB tables, identity
 restoration, repeated presentation, untouched source/GL readback, every scaler
-with and without an exclusive viewport, dedither, both correction backends,
+with and without an exclusive viewport, both correction backends,
 and exclusion of DirectDraw and hidden windows. Q3 q3dm1 acceptance uses
 hardware gamma explicitly enabled and paired captures with only the display
 correction toggled. Evidence: `scratch/runs/20261019-q3-display-gamma-no-threads`
@@ -27,7 +27,7 @@ presentation canvas (texture upload of the whole output, draw, copy back).
 Headless Chrome on an M1 (ANGLE Metal, alternating arms, loaded box) measured
 it at +0.7 to +1.0 ms/frame at 1x and +1.8 to +3.4 ms/frame at 1920x1080
 (throughput). The tables are now applied where each path already handles the
-source: GPU scalers (FSR1, auto pixel scale, dedither) correct the source
+source: GPU scalers (FSR1, auto pixel scale) correct the source
 texture in a source-sized framebuffer pass; Canvas2D scalers draw through an
 SVG `feComponentTransfer` table filter that is used only after a 256-entry
 ramp drawn through it matches the tables exactly, otherwise through one WebGL

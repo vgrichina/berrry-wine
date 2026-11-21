@@ -137,7 +137,7 @@ function beamUniforms(gl) {
   const { gl, filter, blits } = harness();
   filter.resize(1280, 960);
   assert.strictEqual(filter.present({ width: 640, height: 480 }, 'scale-auto',
-    { preset: 'vga' }, { dedither: 'mdapt' }), true);
+    { preset: 'vga' }), true);
   assert.strictEqual(filter.lastBackend, 'webgl-beam+crt');
   assert.strictEqual(filter.lastCrt.backend, 'webgl-beam');
   assert.strictEqual(filter.lastCrt.preset, 'vga');
@@ -145,11 +145,9 @@ function beamUniforms(gl) {
   assert.strictEqual(filter.lastCrt.doublescan, false);
   assert.strictEqual(filter.lastCrt.mask, 'grille');
   assert.strictEqual(filter.lastCrt.bloom, 'on');
-  assert.strictEqual(filter.lastDeditherBackend, 'bypassed-crt',
-    'dedither applies only with CRT off');
   assert.deepStrictEqual(filter.lastPixelScalePasses, [],
     'the selected scaler does not run under CRT');
-  assert(!('scale2x' in filter._gpu.programs) && !('mdaptPass0' in filter._gpu.programs));
+  assert(!('scale2x' in filter._gpu.programs));
   const u = beamUniforms(gl);
   assert.deepStrictEqual(u.u_source_size, [640, 480]);
   assert.strictEqual(u.u_lines, 480);

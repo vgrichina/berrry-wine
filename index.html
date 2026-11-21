@@ -1794,17 +1794,9 @@
           <option value="fsr1">FSR 1 (EASU + RCAS)</option>
         </select>
       </span>
-      <span class="debug-dedither">
-        <label>Dedither:</label>
-        <select id="presentation-dedither-select" onchange="applyDeditherMode(this.value)" autocomplete="off" title="Blend detected low-colour dither patterns before scaling">
-          <option value="off" selected>Off</option>
-          <option value="mdapt">MDAPT</option>
-          <option value="jinc2">Jinc2</option>
-        </select>
-      </span>
       <span class="debug-crt">
         <label>CRT:</label>
-        <select id="crt-preset-select" onchange="applyCrtEffects()" autocomplete="off" title="Draw the native frame as a CRT beam with a phosphor mask; replaces the scaler and dedither while on">
+        <select id="crt-preset-select" onchange="applyCrtEffects()" autocomplete="off" title="Draw the native frame as a CRT beam with a phosphor mask; replaces the scaler while on">
           <option value="off" selected>Off</option>
           <option value="vga">VGA monitor</option>
           <option value="arcade">Arcade/TV</option>
@@ -2327,7 +2319,6 @@ Resource-aware Win98 emulator
     // stable while the state and behavior live in the testable module.
     window.setRuntimeLogging = pageSettingsController.setRuntimeLogging;
     window.apply2dScalingMode = pageSettingsController.apply2dScalingMode;
-    window.applyDeditherMode = pageSettingsController.applyDeditherMode;
     window.applyCrtEffects = pageSettingsController.applyCrtEffects;
 
     // Launching, stopping, run-slice policy and the tab-local LAN segment all
