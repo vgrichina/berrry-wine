@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 305,
+  "count": 306,
   "sigs": {
     "log": {
       "params": [
@@ -909,6 +909,18 @@
         "i32"
       ],
       "results": []
+    },
+    "shared_heap": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
     },
     "ctrl_sb_trace": {
       "params": [

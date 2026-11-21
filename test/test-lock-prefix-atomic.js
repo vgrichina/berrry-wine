@@ -2,14 +2,15 @@
 // LOCK-prefixed read-modify-write (07-decoder.wat $try_emit_locked, handler
 // 499 $th_lock_rmw) gives the same architectural result as the plain handlers.
 //
-// Under Worker threads ($LOCK_MODE 1) the decoder routes every LOCK RMW and
+// In both thread modes the decoder routes every supported LOCK RMW and
 // every XCHG with memory through one compare-and-swap handler instead of the
 // ordinary per-form handlers. That handler re-derives each form's result and
-// flags, so this runs every supported form twice -- mode 0 (the cooperative
-// encoding, untouched) and mode 1 -- from fresh code addresses, and requires
+// flags, so this runs every supported form twice -- cooperative mode 0 and
+// concurrent mode 1 -- from fresh code addresses, and requires
 // identical memory, EAX/ECX and arithmetic flags, plus an absolute expected
 // value so "both wrong the same way" cannot pass. It also checks the encoding
-// itself: mode 1 must dispatch handler 499 and mode 0 must never.
+// itself: both modes must dispatch handler 499: separate processes can share
+// system heap bytes even when guest threads use the cooperative scheduler.
 //
 // Operands: aligned, unaligned-within-a-qword (still the atomic path), and one
 // that crosses an 8-byte boundary (the split-lock mutex path).
@@ -166,7 +167,7 @@ async function main() {
       if (c.wantEcx !== undefined) check(m1.ecx === (c.wantEcx >>> 0), `${label}: ecx`, `got 0x${m1.ecx.toString(16)}`);
       if (c.wantEax !== undefined) check(m1.eax === (c.wantEax >>> 0), `${label}: eax`, `got 0x${m1.eax.toString(16)}`);
       check(m1.hits > 0, `${label}: mode 1 dispatches handler 499`);
-      check(m0.hits === 0, `${label}: mode 0 never dispatches handler 499`);
+      check(m0.hits > 0, `${label}: mode 0 retains atomic semantics for process peers`);
     }
   }
 

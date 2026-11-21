@@ -5469,6 +5469,23 @@
   (global $PROCESS_HEAP_HANDLE i32 (i32.const 0x00BEEF00))
   (global $PRIVATE_HEAP_MAGIC i32 (i32.const 0x50414548)) ;; "HEAP"
 
+  ;; Shared heap handles resolve through the system authority. The tag routes
+  ;; stale capabilities to that authority too; it never grants validity itself.
+  (func $shared_heap_handle (param $handle i32) (result i32)
+    (i32.eq (i32.and (local.get $handle) (i32.const 0xff000000)) (i32.const 0xd5000000)))
+
+  (func $shared_heap_api (param $op i32) (param $a i32) (param $b i32) (param $c i32) (param $d i32) (result i32)
+    (local $value i32) (local $error i32)
+    (local.set $value (call $host_shared_heap (local.get $op) (local.get $a) (local.get $b) (local.get $c) (local.get $d)))
+    ;; API failure travels with the result, never in mutable host error state
+    ;; shared by browser CPUs. This prefix is outside every successful value.
+    (if (i32.eq (i32.and (local.get $value) (i32.const 0xff000000)) (i32.const 0xf0000000)) (then
+      (local.set $error (i32.and (local.get $value) (i32.const 0xffffff)))
+      (global.set $last_error (local.get $error))
+      (return (if (result i32) (i32.eq (local.get $op) (i32.const 6))
+        (then (i32.const -1)) (else (i32.const 0))))))
+    (local.get $value))
+
   (func $heap_api_handle_valid (param $handle i32) (result i32)
     (if (i32.eq (local.get $handle) (global.get $PROCESS_HEAP_HANDLE))
       (then (return (i32.const 1))))
@@ -5478,6 +5495,8 @@
 
   ;; 33: HeapCreate(flOptions, dwInitialSize, dwMaximumSize) — 3 args stdcall
   (func $handle_HeapCreate (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.ne (i32.and (local.get $arg0) (i32.const 0x04000000)) (i32.const 0)) (then
+      (call $toolhelp_return (call $shared_heap_api (i32.const 1) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0)) (i32.const 3)) (return)))
     (i32.store offset=0 (global.get $reg_base) (call $heap_alloc (i32.const 8)))
     (if (i32.load offset=0 (global.get $reg_base))
       (then
@@ -5489,6 +5508,8 @@
 
   ;; 34: HeapDestroy(hHeap) → BOOL. The process heap cannot be destroyed.
   (func $handle_HeapDestroy (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $shared_heap_handle (local.get $arg0)) (then
+      (call $toolhelp_return (call $shared_heap_api (i32.const 2) (local.get $arg0) (i32.const 0) (i32.const 0) (i32.const 0)) (i32.const 1)) (return)))
     (if (i32.and
           (i32.ne (local.get $arg0) (global.get $PROCESS_HEAP_HANDLE))
           (call $heap_api_handle_valid (local.get $arg0)))
@@ -5506,6 +5527,8 @@
   ;; 35: HeapAlloc
   (func $handle_HeapAlloc (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $record i32) (local $ptr i32)
+    (if (call $shared_heap_handle (local.get $arg0)) (then
+      (call $toolhelp_return (call $shared_heap_api (i32.const 3) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0)) (i32.const 3)) (return)))
     (if (i32.eqz (call $heap_api_handle_valid (local.get $arg0)))
       (then
         (global.set $last_error (i32.const 6)) ;; ERROR_INVALID_HANDLE
@@ -5526,6 +5549,8 @@
 
   ;; 36: HeapFree
   (func $handle_HeapFree (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (call $shared_heap_handle (local.get $arg0)) (then
+      (call $toolhelp_return (call $shared_heap_api (i32.const 4) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0)) (i32.const 3)) (return)))
     (if (i32.or (i32.eqz (call $heap_api_handle_valid (local.get $arg0)))
                 (i32.eqz (local.get $arg2)))
       (then
@@ -5533,6 +5558,9 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
+    (if (call $shared_heap_address (local.get $arg2)) (then
+      (global.set $last_error (i32.const 87))
+      (call $toolhelp_return (i32.const 0) (i32.const 3)) (return)))
     (if (i32.eqz (call $toolhelp_alloc_remove (local.get $arg0) (local.get $arg2))) (then
       (global.set $last_error (i32.const 87))
       (call $toolhelp_return (i32.const 0) (i32.const 3)) (return)))
@@ -5558,12 +5586,19 @@
   ;; copy — there is nothing better to be had without knowing its size.
   (func $handle_HeapReAlloc (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $tmp i32) (local $old_usable i32) (local $copy i32) (local $record i32)
+    (if (call $shared_heap_handle (local.get $arg0)) (then
+      (call $toolhelp_return (call $shared_heap_api (i32.const 5) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)) (i32.const 4)) (return)))
     (if (i32.eqz (call $heap_api_handle_valid (local.get $arg0)))
       (then
         (global.set $last_error (i32.const 6)) ;; ERROR_INVALID_HANDLE
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
+    ;; A private heap cannot adopt a system-heap allocation. In particular,
+    ;; never pass its address to the private block-header reader below.
+    (if (call $shared_heap_address (local.get $arg2)) (then
+      (global.set $last_error (i32.const 87))
+      (call $toolhelp_return (i32.const 0) (i32.const 4)) (return)))
     (local.set $record (call $toolhelp_alloc_reserve (local.get $arg0) (local.get $arg2)))
     (if (i32.eqz (local.get $record)) (then
       (call $toolhelp_return (i32.const 0) (i32.const 4)) (return)))
@@ -5636,6 +5671,14 @@
   ;; NULL reserves return 64KB-granularity bases; commits are page-aligned.
   (func $handle_VirtualAlloc (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $size i32) (local $new_top i32)
+    ;; The system heap reservation has no process-private sparse backing.
+    (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+          (i32.and (i32.lt_u (local.get $arg0) (i32.const 0x81000000))
+            (i64.gt_u (i64.add (i64.extend_i32_u (local.get $arg0))
+              (i64.extend_i32_u (local.get $arg1))) (i64.const 0x80000000))))
+      (then
+        (global.set $last_error (i32.const 487))
+        (call $toolhelp_return (i32.const 0) (i32.const 4)) (return)))
     (if (i32.eqz (call $guest_page_protection_valid (local.get $arg3)))
       (then
         (global.set $last_error (i32.const 87)) ;; ERROR_INVALID_PARAMETER

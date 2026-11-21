@@ -370,8 +370,15 @@
   ;; Everything $g2w does once the direct window has missed. Only the
   ;; g2w-fast macro calls it; a direct-window address passed here would be
   ;; mistranslated, since this never tests that window.
+  ;; Guest system-heap reservation. Scalars use the authority; translating
+  ;; this range to process-private linear memory would break cross-process data.
+  (func $shared_heap_address (param $ga i32) (result i32)
+    (i32.lt_u (i32.sub (local.get $ga) (i32.const 0x80000000)) (i32.const 0x01000000)))
+
   (func $g2w_slow (param $ga i32) (result i32)
     (local $wa i32)
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (drop (call $host_shared_heap (i32.const 12) (local.get $ga) (i32.const 0) (i32.const 0) (i32.const 0))) (unreachable)))
     ;; CreateDIBSection pointers live in a dedicated high guest range backed by
     ;; the final 64MB of linear memory. Test it only after the normal direct
     ;; window misses so ordinary loads retain their original hot path.
@@ -531,6 +538,8 @@
   ;; few x86 word/dword accesses that actually cross a non-contiguous boundary.
   (func $gl32 (param $ga i32) (result i32)
     (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32) (local $redirected i32)
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (return (call $host_shared_heap (i32.const 10) (local.get $ga) (i32.const 4) (i32.const 0) (i32.const 0)))))
     ;; A complete direct-window dword cannot fault or run a mapping barrier.
     ;; Guest page edges inside that window are still physically contiguous.
     ;; Keep partial spans on the translating path below, including its SEH
@@ -585,6 +594,7 @@
 
   (func $gl64 (param $ga i32) (result i64)
     (local $wa i32) (local $end_wa i32) (local $epoch i32)
+    (if (call $shared_heap_address (local.get $ga)) (then (return (i64.or (i64.extend_i32_u (call $gl32 (local.get $ga))) (i64.shl (i64.extend_i32_u (call $gl32 (i32.add (local.get $ga) (i32.const 4)))) (i64.const 32))))))
     (local.set $wa (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE)))
     (if (i32.le_u (local.get $wa) (i32.sub (region.end $DIRECT_WINDOW) (i32.const 8)))
       (then (return (i64.load (local.get $wa)))))
@@ -603,6 +613,8 @@
 
   (func $gl16 (param $ga i32) (result i32)
     (local $wa i32) (local $end_wa i32) (local $g2w_wa i32) (local $epoch i32)
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (return (call $host_shared_heap (i32.const 10) (local.get $ga) (i32.const 2) (i32.const 0) (i32.const 0)))))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.ne (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFF))
       (then (return (i32.load16_u (local.get $wa)))))
@@ -617,6 +629,8 @@
       (i32.shl (i32.load8_u (call $g2w (i32.add (local.get $ga) (i32.const 1)))) (i32.const 8))))
   (func $gl8 (param $ga i32) (result i32)
     (local $g2w_wa i32)
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (return (call $host_shared_heap (i32.const 10) (local.get $ga) (i32.const 1) (i32.const 0) (i32.const 0)))))
     (i32.load8_u (g2w-fast (local.get $ga))))
   ;; Cheap "could a write here be touching code?" test, for one guest address.
   ;; Page-granular over the whole guest space ($code_page_test, 04-cache; exact
@@ -946,6 +960,8 @@
     ;; Reject an unenrolled CPU before translation, filters or the store.
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
       (then (drop (call $writer_check))))
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (drop (call $host_shared_heap (i32.const 11) (local.get $ga) (i32.const 4) (local.get $v) (i32.const 0))) (return)))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFC))
       (then
@@ -1000,6 +1016,10 @@
     ;; Reject an unenrolled CPU before translation, filters or the store.
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
       (then (drop (call $writer_check))))
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (call $gs32 (i32.add (local.get $ga) (i32.const 0)) (i32.wrap_i64 (i64.shr_u (local.get $v) (i64.const 0))))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 4)) (i32.wrap_i64 (i64.shr_u (local.get $v) (i64.const 32))))
+      (return)))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFF8))
       (then
@@ -1038,6 +1058,7 @@
   ;; adjacent sparse guest pages need not be adjacent in WASM memory.
   (func $gl128 (param $ga i32) (result v128)
     (local $wa i32) (local $g2w_wa i32)
+    (if (call $shared_heap_address (local.get $ga)) (then (return (i32x4.replace_lane 3 (i32x4.replace_lane 2 (i32x4.replace_lane 1 (i32x4.splat (call $gl32 (local.get $ga))) (call $gl32 (i32.add (local.get $ga) (i32.const 4)))) (call $gl32 (i32.add (local.get $ga) (i32.const 8)))) (call $gl32 (i32.add (local.get $ga) (i32.const 12)))))))
     (if (i32.le_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFF0))
       (then
         (local.set $wa (g2w-fast (local.get $ga)))
@@ -1062,6 +1083,12 @@
         ;; Reject an unenrolled CPU before translation, filters or the store.
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
       (then (drop (call $writer_check))))
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (call $gs32 (i32.add (local.get $ga) (i32.const 0)) (i32x4.extract_lane 0 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 4)) (i32x4.extract_lane 1 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 8)) (i32x4.extract_lane 2 (local.get $v)))
+      (call $gs32 (i32.add (local.get $ga) (i32.const 12)) (i32x4.extract_lane 3 (local.get $v)))
+      (return)))
     (local.set $wa (g2w-fast (local.get $ga)))
         ;; Unmapped: the miss is reported, and the write goes nowhere.
         (if (i32.eq (local.get $wa) (global.get $NULL_SENTINEL)) (then (return)))
@@ -1093,6 +1120,8 @@
     ;; Reject an unenrolled CPU before translation, filters or the store.
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
       (then (drop (call $writer_check))))
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (drop (call $host_shared_heap (i32.const 11) (local.get $ga) (i32.const 2) (local.get $v) (i32.const 0))) (return)))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.ne (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFF))
       (then
@@ -1136,6 +1165,8 @@
     ;; Reject an unenrolled CPU before translation, filters or the store.
     (if (i32.atomic.load offset=4 (global.get $WRITER_SESSION))
       (then (drop (call $writer_check))))
+    (if (call $shared_heap_address (local.get $ga)) (then
+      (drop (call $host_shared_heap (i32.const 11) (local.get $ga) (i32.const 1) (local.get $v) (i32.const 0))) (return)))
     (local.set $wa (g2w-fast (local.get $ga)))
     (if (i32.and ;; inline $code_page_test: slot = (ga>>12 ^ ga>>28 ^ (ga>>30)<<15) & 0xFFFF
               (i32.load8_u (i32.add (global.get $CODE_PAGE_BITMAP)

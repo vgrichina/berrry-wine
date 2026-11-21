@@ -2092,6 +2092,8 @@ SetColorAdjustment — validate and copy complete per-DC state.
     ;; Our heap stores block size (including 4-byte header) at [ptr-4]
     ;; Only valid for pointers in our heap range; return -1 for unknown pointers
     (local $size i32)
+    (if (call $shared_heap_handle (local.get $arg0)) (then
+      (call $toolhelp_return (call $shared_heap_api (i32.const 6) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0)) (i32.const 3)) (return)))
     (if (i32.eqz (call $heap_api_handle_valid (local.get $arg0)))
       (then
         (global.set $last_error (i32.const 6)) ;; ERROR_INVALID_HANDLE

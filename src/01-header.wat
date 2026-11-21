@@ -308,6 +308,9 @@
   ;; nothing anywhere naming the allocation that started it.
   (import "host" "heap_oom_trace"
     (func $host_heap_oom_trace (param i32 i32)))
+  ;; System authority operations; allocation bytes never use a private mirror.
+  (import "host" "shared_heap"
+    (func $host_shared_heap (param i32 i32 i32 i32 i32) (result i32)))
 
   ;; Every standard scrollbar strip as it is painted: control-local rect,
   ;; orientation, and the page model it was handed. A strip that is flat grey

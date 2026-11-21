@@ -2576,8 +2576,8 @@
     (i32.const 1))
 
   ;; A LOCK-prefixed read-modify-write, or XCHG with a memory operand, as
-  ;; handler 499 ($th_lock_rmw, 05-alu.wat): an atomic compare-and-swap. Only
-  ;; called when $LOCK_MODE says guest threads run concurrently. $op is the
+  ;; handler 499 ($th_lock_rmw, 05-alu.wat): an atomic compare-and-swap.
+  ;; Process peers can share system heap bytes in either thread mode. $op is the
   ;; opcode byte already consumed; returns 1 having consumed the instruction,
   ;; or 0 having consumed nothing more, which leaves the ordinary decode (and
   ;; its non-atomic handlers) in charge. Declines: register forms (a LOCK on
@@ -3287,11 +3287,11 @@
               (call $host_log_i32 (global.get $d_pc))
               (unreachable)))))
 
-      ;; Guest threads on Workers: a LOCK-prefixed read-modify-write, and XCHG
-      ;; with memory (locked by definition), must be indivisible across them.
-      ;; $LOCK_MODE is 0 under the cooperative scheduler, so this costs that
-      ;; path one load per instruction and changes nothing it emits.
-      (if (i32.load (global.get $LOCK_MODE))
+      ;; LOCK and memory XCHG must be indivisible across Worker threads and
+      ;; separate processes, even when guest threads run cooperatively.
+      (if (i32.or (i32.load (global.get $LOCK_MODE))
+            (i32.or (local.get $prefix_lock)
+              (i32.eq (i32.and (local.get $op) (i32.const 0xFE)) (i32.const 0x86))))
         (then
           (if (i32.or (local.get $prefix_lock)
                       (i32.or (i32.eq (local.get $op) (i32.const 0x86)) (i32.eq (local.get $op) (i32.const 0x87))))

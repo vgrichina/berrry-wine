@@ -875,6 +875,17 @@ nW — STUB: unimplemented
   ;; +0C=OwningThread, +10=LockSemaphore, +14=SpinCount.
   (func $critical_section_init (param $arg0 i32) (param $spin i32)
     (local $cs i32)
+    ;; Initialization owns no thread lock yet. Publish the six guest words to
+    ;; the system byte store; the local cleanup registry holds WASM addresses
+    ;; and must never retain an authority pointer. Enter/promotion is separate.
+    (if (call $shared_heap_address (local.get $arg0)) (then
+      (call $gs32 (local.get $arg0) (i32.const 0))
+      (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const -1))
+      (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0))
+      (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (i32.const 0))
+      (call $gs32 (i32.add (local.get $arg0) (i32.const 16)) (i32.const 0))
+      (call $gs32 (i32.add (local.get $arg0) (i32.const 20)) (local.get $spin))
+      (return)))
     (local.set $cs (call $g2w (local.get $arg0)))
     ;; Zero the struct then set LockCount = -1 (unlocked)
     (i32.store (local.get $cs) (i32.const 0))            ;; DebugInfo

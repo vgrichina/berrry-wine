@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "604fe633fa871ff3cf7a0bdb1c75827c7b6665d361d1c7baca0749efa0f668b0",
+      "sha256": "e4a3d047c6d907f407bdaef0cc57cf102aa7d1f3201304dfc7b9e9d0a4ddce55",
+      "reason": "Shared-heap prerequisite: synchronous authority allocation/read/write/CAS calls retain no guest continuation or callback. Node client belongs to the existing system namespace and shutdown set; browser page serializes the same allocator. No EIP/ESP ownership or callback entry/restoration changes; broader ownership remains pending."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "192295a5459bf9972b16f7d223bf703ff2f7303dd02edd18af14aed95781f25f",
+      "sha256": "e93e082a6e5aa6b4d8ad97a7166d7c45bb88ed7bb84462a49076b80bb2aa9421",
+      "reason": "Shared-heap prerequisite: synchronous authority allocation/read/write/CAS calls retain no guest continuation or callback. Node client belongs to the existing system namespace and shutdown set; browser page serializes the same allocator. No EIP/ESP ownership or callback entry/restoration changes; broader ownership remains pending."
+    }
+  ]
+}

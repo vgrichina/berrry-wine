@@ -1452,6 +1452,8 @@
   ;; deliberately never changes last error, on either success or failure.
   (func $handle_HeapValidate (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $valid i32)
+    (if (call $shared_heap_handle (local.get $arg0)) (then
+      (call $toolhelp_return (call $host_shared_heap (i32.const 7) (local.get $arg0) (local.get $arg1) (local.get $arg2) (i32.const 0)) (i32.const 3)) (return)))
     (block $done
       (br_if $done
         (i32.ne (i32.and (local.get $arg1) (i32.const -2)) (i32.const 0)))

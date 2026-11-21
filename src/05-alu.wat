@@ -2544,6 +2544,22 @@
     (local.set $f_op (global.get $flag_op)) (local.set $f_a (global.get $flag_a))
     (local.set $f_b (global.get $flag_b)) (local.set $f_res (global.get $flag_res))
     (local.set $f_ss (global.get $flag_sign_shift)) (local.set $f_cf (global.get $saved_cf))
+    (if (call $shared_heap_address (local.get $addr))
+      (then
+        ;; The authority serializes CAS across distinct process memories.
+        ;; A failed CAS must recompute both result and flags from fresh bytes.
+        (loop $shared_cas
+          (local.set $old (call $host_shared_heap (i32.const 10) (local.get $addr) (local.get $width) (i32.const 0) (i32.const 0)))
+          (global.set $flag_op (local.get $f_op)) (global.set $flag_a (local.get $f_a))
+          (global.set $flag_b (local.get $f_b)) (global.set $flag_res (local.get $f_res))
+          (global.set $flag_sign_shift (local.get $f_ss)) (global.set $saved_cf (local.get $f_cf))
+          (local.set $res (call $lock_compute (local.get $kind) (local.get $sub) (local.get $old)
+            (local.get $src) (local.get $wcode)))
+          (if (i32.wrap_i64 (i64.shr_u (local.get $res) (i64.const 32))) (then
+            (br_if $shared_cas (i32.ne (local.get $old)
+              (call $host_shared_heap (i32.const 13) (local.get $addr) (local.get $old)
+                (i32.wrap_i64 (local.get $res)) (local.get $width))))))))
+      (else
     (if (i32.le_u (i32.add (i32.and (local.get $addr) (i32.const 7)) (local.get $width)) (i32.const 8))
       (then
         (local.set $wq (call $g2w (i32.and (local.get $addr) (i32.const -8))))
@@ -2583,6 +2599,7 @@
                 (then (call $gs16 (local.get $addr) (i32.wrap_i64 (local.get $res))))
                 (else (call $gs32 (local.get $addr) (i32.wrap_i64 (local.get $res)))))))))
         (i32.atomic.store (global.get $LOCK_MUTEX) (i32.const 0))))
+      ))
     ;; Register results: XADD and XCHG hand back the old value; a CMPXCHG that
     ;; found a different value loads it into the accumulator.
     (if (i32.or (i32.eq (local.get $kind) (i32.const 3)) (i32.eq (local.get $kind) (i32.const 5)))
