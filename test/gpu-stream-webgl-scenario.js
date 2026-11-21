@@ -1081,6 +1081,7 @@
       for (const step of viewportCases({ GS, p, check })) drain();
       for (const step of visibilityCases({ GS, p, check })) drain();
       for (const step of linePointCases({ GS, p, check })) drain();
+      for (const step of programmedLinePointCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`visibility scenario threw: ${e.stack || e}`); }
     try {
       for (const step of cubeMipCases({ GS, p, check, native: !!(backend && backend.gl) })) drain();
@@ -2154,9 +2155,13 @@
   // shared-junction or diagonal tie assertions. The software backend's stable
   // one-pixel squares/quads and the documented interpolation equation agree
   // here; no OpenGL edge rule is used as a D3D reference.
-  function* linePointCases({ GS, p, check, capture = () => {} }) {
-    const C = GS.CONST, size = 16, rt = 901, ds = 902, layout = 903, ps = 904;
-    const emit = (op, fields, tail) => p.emit(op, fields, tail);
+  function* linePointCases({ GS, p, check, capture = () => {}, programmed = false }) {
+    const C = GS.CONST, size = 16, rt = 901, ds = 902, layout = 903, ps = 904, vs = 905;
+    let vp = { x: 0, y: 0, w: size, h: size };
+    const emit = (op, fields, tail) => {
+      if (op === 'VIEWPORT') vp = fields;
+      return p.emit(op, fields, tail);
+    };
     const put = bytes => {
       const pos = p.arenaAlloc(bytes.length);
       p.arenaView(pos, bytes.length).set(bytes);
@@ -2172,8 +2177,13 @@
     const clear = () => emit('CLEAR', { mask: 7, colormask: 15, rgba: 0xff000000,
       z: 0.5, stencil: 0, right: size, bottom: size });
     const draw = (prim, vertices, indices) => {
-      emit('DRAW_UP', { prim, ps, layout, stride: 32, count: indices ? indices.length : vertices.length,
-        vcount: vertices.length, voff: put(new Uint8Array(new Float32Array(vertices.flat()).buffer)),
+      // Invert the D3D viewport independently of the WebGL epilogue:
+      // x=vx+(X/W+1)*vw/2, y=vy+(1-Y/W)*vh/2, z=Z/W, q=1/W.
+      // Powers of two keep all authored clip coordinates exact in FLOAT4.
+      const input = programmed ? vertices.map(([x,y,z,q,...color]) =>
+        [(2*(x-vp.x)/vp.w-1)/q,(1-2*(y-vp.y)/vp.h)/q,z/q,1/q,...color]) : vertices;
+      emit('DRAW_UP', { prim, vs: programmed ? vs : 0, ps, layout, stride: 32, count: indices ? indices.length : vertices.length,
+        vcount: vertices.length, voff: put(new Uint8Array(new Float32Array(input.flat()).buffer)),
         ...(indices ? { index_size: 2, ioff: put(new Uint8Array(new Uint16Array(indices).buffer)) } : {}) });
     };
     const quad = (color, z = 0.375) => draw(C.PRIM_TRIANGLELIST,
@@ -2196,17 +2206,18 @@
     emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, width: size, height: size, levels: 1 });
     emit('CREATE', { id: ds, kind: C.KIND_DS, fmt: C.FMT_D24S8, width: size, height: size, levels: 1 });
     const elems = new Uint8Array(16), dv = new DataView(elems.buffer);
-    [C.USAGE_POSITIONT,C.USAGE_COLOR].forEach((usage,i) => {
+    [programmed ? C.USAGE_POSITION : C.USAGE_POSITIONT,C.USAGE_COLOR].forEach((usage,i) => {
       dv.setUint8(i * 8 + 1, C.VTYPE_FLOAT4); dv.setUint8(i * 8 + 2, usage); dv.setUint16(i * 8 + 4, i * 16, true);
     });
     emit('LAYOUT', { id: layout, stride: 32, count: 2 }, elems);
     emit('SHADER', { id: ps, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+    if (programmed) emit('SHADER', { id: vs, stage: 0, ir_bytes: PASS_VS.length }, PASS_VS);
     emit('TARGETS', { color: rt, depth: ds }); emit('BIND', { count: 0 });
     // Prime the perspective triangle program before any point/line. Its
     // coverage lift must not leak through the program cache into lines.
     raster({ linear: 0 }); quad([0,0,0,1]); clear();
     for (const prim of [C.PRIM_POINTLIST,C.PRIM_LINELIST,C.PRIM_LINESTRIP]) {
-      for (const indexed of [0,1]) for (const linear of [0,1]) for (const clipped of [0,1]) {
+      for (const indexed of [0,1]) for (const linear of (programmed ? [0] : [0,1])) for (const clipped of [0,1]) {
         const points = prim === C.PRIM_POINTLIST ? [[4,6],[8,6],[12,6],[8,10]]
           : [[4,6],[12,6],[12,12], ...(prim === C.PRIM_LINESTRIP ? [[4,12]] : [])];
         const order = prim === C.PRIM_LINELIST ? [0,1,1,2] : points.map((_,i) => i);
@@ -2225,11 +2236,11 @@
           : [[6,6],[8,6],[10,6],[12,8],[12,10],
             ...(prim === C.PRIM_LINESTRIP ? [[6,12],[8,12],[10,12]] : []),[0,0],[7,7]];
         const state = { linear, ...(clipped ? { scissor_left: 6, scissor_top: 4, scissor_right: 10, scissor_bottom: 12 } : {}) };
-        const name = 'line-point-' + prim + '-' + indexed + '-' + linear + '-' + clipped;
+        const name = (programmed ? 'programmed-' : '') + 'line-point-' + prim + '-' + indexed + '-' + linear + '-' + clipped;
         emit('VIEWPORT', { x: clipped ? 4 : 0, y: clipped ? 4 : 0, w: clipped ? 8 : size,
           h: clipped ? 8 : size, zmin: 0, zmax: 1 });
-        const send = (z, gradient = false) => {
-          const vertices = points.map(([x,y],i) => [x,y,z,i % 2 ? 2 : 0.5,
+        const send = (z, gradient = false, varyingDepth = false) => {
+          const vertices = points.map(([x,y],i) => [x,y,varyingDepth ? (i % 2 ? 0.75 : 0.125) : z,i % 2 ? 2 : 0.5,
             ...(gradient ? [i % 2,0,0,1] : [1,0,0,1])]);
           // Lists share vertex 1; strips share every interior vertex. The
           // repeated point checks indexed reuse without ambiguous junctions.
@@ -2269,11 +2280,32 @@
               : ((1 - t) * qa * ca + t * qb * cb) / ((1 - t) * qa + t * qb);
             return [Math.round(255 * value),0,0,255];
           }, gradientSamples);
+          if (programmed) {
+            clear(); raster(state); send(0, false, true);
+            raster({ ...state, zwrite: 0 }); quad([0,0,1,1]);
+            // Clip Z/W interpolates affinely in projected t, unlike color.
+            // The .375 overlay separates the .125/.75 endpoints with a
+            // strict margin at these samples; no equality/tie assertion.
+            yield* read(name + '-varying-depth', (x,y) => {
+              if (!inClip(x,y)) return [0,0,0,255];
+              if (!hit(x,y)) return [0,0,255,255];
+              const [ia,ib] = segments.find(s => onSegment(x,y,s)), a = points[ia], b = points[ib];
+              const t = ((x-a[0])*(b[0]-a[0])+(y-a[1])*(b[1]-a[1])) /
+                ((b[0]-a[0])**2+(b[1]-a[1])**2);
+              const z = (1-t)*(ia % 2 ? 0.75 : 0.125)+t*(ib % 2 ? 0.75 : 0.125);
+              return z < 0.375 ? [255,0,0,255] : [0,0,255,255];
+            }, samples);
+          }
         }
       }
     }
     for (const id of [rt,ds,layout,ps]) emit('RELEASE', { id });
+    if (programmed) emit('RELEASE', { id: vs });
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, viewportCases, linePointCases, W, H, irShader, TEX_IR };
+  function* programmedLinePointCases(options) {
+    yield* linePointCases({ ...options, programmed: true });
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, viewportCases, linePointCases, programmedLinePointCases, W, H, irShader, TEX_IR };
 });
