@@ -1191,6 +1191,7 @@
   (local $u f32) (local $v f32) (local $w f32) (local $iw f32) (local $riw f32) (local $z f32)
   (local $output i32) (local $wire i32) (local $point i32) (local $sprite i32) (local $dx f32) (local $dy f32) (local $half f32) (local $value f32)
   (local $vmask i32) (local $vmask_valid i32) (local $glide i32) (local $glide_q f32)
+  (local $top0 i32) (local $top1 i32) (local $top2 i32)
   (local $qu v128) (local $qv v128) (local $qw v128) (local $qiw v128) (local $qriw v128)
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (i32.const 256))) (then (return (i32.const -1))))
   (if (i32.ne (i32.load (local.get $ctx)) (i32.const 0x44535031)) (then (return (i32.const -1))))
@@ -1246,6 +1247,13 @@
     ;; is visible only to a shader that divides by such a varying and cares
     ;; which infinity it gets.
     (if (i32.eqz (local.get $vmask_valid)) (then
+    ;; Top-left ownership depends only on the prepared vertex snapshots, not
+    ;; on the sample. Cache the exact predicate alongside the varying mask.
+    ;; Preparation (including outline edges) and every resumed call invalidate
+    ;; both; no cache survives a step or reads mutable caller vertices.
+    (local.set $top0 (call $d3d_software_inside (local.get $b) (local.get $c) (f32.const 0)))
+    (local.set $top1 (call $d3d_software_inside (local.get $c) (local.get $a) (f32.const 0)))
+    (local.set $top2 (call $d3d_software_inside (local.get $a) (local.get $b) (f32.const 0)))
     (local.set $vmask (i32.const 0)) (local.set $j (i32.const 0))
     (loop $scan
       (local.set $offset (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 2))))
@@ -1393,9 +1401,11 @@
         (else (if (local.get $wire) (then
           (br_if $outside (i32.eqz (call $d3d_software_line_inside (local.get $a) (local.get $b) (local.get $x) (local.get $y)
             (i32.and (i32.load offset=252 (local.get $ctx)) (i32.const 64)))))) (else
-        (br_if $outside (i32.eqz (i32.and (call $d3d_software_inside (local.get $b) (local.get $c) (local.get $e0))
-          (i32.and (call $d3d_software_inside (local.get $c) (local.get $a) (local.get $e1))
-            (call $d3d_software_inside (local.get $a) (local.get $b) (local.get $e2))))))))))
+        (br_if $outside (i32.eqz (i32.and
+          (i32.or (f32.gt (local.get $e0) (f32.const 0)) (i32.and (f32.eq (local.get $e0) (f32.const 0)) (local.get $top0)))
+          (i32.and
+            (i32.or (f32.gt (local.get $e1) (f32.const 0)) (i32.and (f32.eq (local.get $e1) (f32.const 0)) (local.get $top1)))
+            (i32.or (f32.gt (local.get $e2) (f32.const 0)) (i32.and (f32.eq (local.get $e2) (f32.const 0)) (local.get $top2)))))))))))
         (local.set $bits (i32.or (local.get $bits) (i32.shl (i32.const 1) (local.get $lane)))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1))) (br_if $lanes (i32.lt_u (local.get $lane) (i32.const 4))))
     (if (local.get $bits) (then

@@ -112,4 +112,55 @@ const { bootRenderHarness } = require('./render-helper');
     device.destroy();
   }
   console.log('PASS empty quad work elision, subsequent temp/input reset, shared edge, budgets 1/3/256 and release');
+
+  // A single draw changes edge directions repeatedly, including after a
+  // degenerate and after clipping. The oracle evaluates the original f32
+  // edge expression at integer pixel centers, independently of tile walking.
+  const triangles = [
+    [[0,0],[16,0],[0,16]], [[16,0],[16,16],[0,16]],
+    [[1,1],[1,14],[14,1]], [[2,2],[13,2],[13,13]],
+    [[-4,-2],[18,1],[3,18]], [[7,7],[7,7],[7,7]],
+    [[0.00000011920928955078125,0],[16,16],[0,1]],
+    [[2,2.000000238418579],[14,2],[2,14]],
+    [[16,16],[0,16],[16,0]],
+  ];
+  const f = Math.fround;
+  const edge = (a,b,x,y) => f(f(f(b[0]-a[0])*f(y-a[1])) - f(f(b[1]-a[1])*f(x-a[0])));
+  const inside = (a,b,e) => e > 0 || (e === 0 && (b[1] < a[1] || (b[1] === a[1] && b[0] > a[0])));
+  const expected = new Uint8Array(256);
+  let expectedSamples = 0;
+  for (let [a,b,c] of triangles) {
+    const area = edge(a,b,c[0],c[1]);
+    if (!area) continue;
+    if (area < 0) [b,c] = [c,b];
+    for (let y=0;y<16;y++) for (let x=0;x<16;x++)
+      if (inside(b,c,edge(b,c,x,y)) && inside(c,a,edge(c,a,x,y)) && inside(a,b,edge(a,b,x,y))) {
+        expected[y*16+x] = 1; expectedSamples++;
+      }
+  }
+  for (const budget of [1,3,256]) {
+    const device = new Device({width:16,height:16,quadBudget:budget,getExports:()=>e,getMemory:()=>memory.buffer});
+    const base = device.bytes, vertices = new Uint8Array(triangles.length*3*20), view = new DataView(vertices.buffer);
+    triangles.flat().forEach(([x,y],i)=>{
+      [x,y,0.5,1].forEach((v,j)=>view.setFloat32(i*20+j*4,v,true));
+      vertices.set([255,255,255,255],i*20+16);
+    });
+    device.clear([0,0,0,0],1);
+    const draw = device.prepare({primitive:4,primitiveCount:triangles.length,stride:20,vertices,
+      attributes:[{register:0,usage:9,usageIndex:0,type:3,offset:0},{register:1,usage:10,usageIndex:0,type:4,offset:16}],
+      vertexShader:null,pixelShader:new Uint32Array([0xffff0101,1,0x800f0000,0x90e40000,0xffff]),
+      fixedFunction:{lighting:false,specular:false,fog:false,textureFactor:0xffffffff,
+        stages:[{colorOp:2,colorArg1:0,colorArg2:1,alphaOp:2,alphaArg1:0,alphaArg2:1,
+          constant:0xffffffff,texCoordIndex:0,transformFlags:0},{colorOp:1}]},
+      state:{cull:1,zenable:false}});
+    vertices.fill(0); // caller storage is no longer the prepared snapshot
+    let status = 1, steps = 0;
+    while (status === 1) { status=device.step(draw); assert(++steps<2000); }
+    assert.equal(status,0);device.completeDraw(draw);device.release(draw);
+    assert.equal(device.lastDrawSamples,BigInt(expectedSamples),'exact edge ownership sample count');
+    const pixels=device.readPixels();
+    for(let i=0;i<256;i++) assert.equal(pixels[i*4+3]!==0,!!expected[i],`edge coverage ${i}, budget ${budget}`);
+    assert.equal(device.bytes,base,'snapshot allocations released');device.destroy();
+  }
+  console.log('PASS edge ownership oracle, winding changes, clipped/degenerate geometry, adjacent f32 boundaries, snapshot lifetime and resume');
 })().catch(error => { console.error(error); process.exitCode = 1; });

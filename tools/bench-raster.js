@@ -4,6 +4,10 @@
 // which part of it the texture sampler is.
 //
 //   node tools/bench-raster.js [--size=640x480] [--reps=5] [--arms=a,b] [--json]
+//   node tools/bench-raster.js --module=baseline.wasm --compare-module=candidate.wasm --reps=21 --json
+// Both modules receive --warmups=12 untimed draws per arm, then paired AB/BA
+// CPU and wall samples. Paired runs require exact pixels/depth/samples/bytes.
+// `varying` and `varyingLinear` also vary depth, RHW and diffuse by vertex.
 //
 // WHY THIS EXISTS. "The software rasterizer is slow" is not actionable, and the
 // whole-app measurements that provoke it cannot be: a Black & White 2 frame is
@@ -100,9 +104,11 @@ const flag = (name, fallback) => {
 const size = String(flag('size', '640x480')).split('x').map(Number);
 const [width, height] = size;
 const reps = Number(flag('reps', '5'));
+const warmups = Number(flag('warmups', '12'));
 if (!Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1)
   throw new Error('--size must be WxH');
 if (!Number.isInteger(reps) || reps < 1 || reps > 51) throw new Error('--reps must be 1..51');
+if (!Number.isInteger(warmups) || warmups < 1 || warmups > 100) throw new Error('--warmups must be 1..100');
 
 // ps_1_1. Without a texture the shader just moves the diffuse input; with one
 // it declares the stage, samples it and moves that. Identical instruction count
@@ -129,7 +135,7 @@ const PS_TEX = new Uint32Array([0xffff0101,
 // is identical, but almost no pixel passes the coverage test, so neither the
 // shader VM nor the framebuffer write runs. `covered - sliver` is therefore the
 // shading half and `sliver` alone is the setup floor the walk pays regardless.
-function quad(sliver) {
+function quad(sliver, varying = false) {
   // POSITIONT float4 at 0, diffuse D3DCOLOR at 16, TEXCOORD0 float2 at 20.
   const stride = 28, vertices = new Uint8Array(6 * stride), v = new DataView(vertices.buffer);
   // Two triangles covering the target, with a texture coordinate that sweeps
@@ -139,8 +145,9 @@ function quad(sliver) {
     : [[0, 0], [width, 0], [0, height], [width, 0], [width, height], [0, height]];
   points.forEach(([x, y], j) => {
     const at = j * stride;
-    [x, y, 0.5, 1].forEach((c, k) => v.setFloat32(at + k * 4, c, true));
-    vertices.set([255, 255, 255, 255], at + 16);
+    [x, y, varying ? 0.1 + 0.7 * j / 6 : 0.5, varying ? 0.25 + j / 3 : 1]
+      .forEach((c, k) => v.setFloat32(at + k * 4, c, true));
+    vertices.set(varying ? [31 + j * 37, 240 - j * 29, 20 + j * 41, 255] : [255, 255, 255, 255], at + 16);
     v.setFloat32(at + 20, x / width, true);
     v.setFloat32(at + 24, y / height, true);
   });
@@ -170,6 +177,8 @@ const ARMS = {
   point: () => ({ pixelShader: PS_TEX, textures: [texture(1, 1)] }),
   bilinear: () => ({ pixelShader: PS_TEX, textures: [texture(1, 2)] }),
   trilinear: () => ({ pixelShader: PS_TEX, textures: [texture(9, 2)] }),
+  varying: () => ({ pixelShader: PS_FLAT, textures: [], varying: true }),
+  varyingLinear: () => ({ pixelShader: PS_TEX, textures: [texture(1, 2)], varying: true }),
 };
 
 const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xffffffff,
@@ -183,55 +192,72 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
   // An explicit module permits interleaved old/new runs without changing the
   // shared checkout. Keep its identity beside the raw measurements.
   const modulePath = flag('module', null);
-  const bytes = modulePath ? fs.readFileSync(modulePath) : null;
-  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none',
-    prebuiltModule: bytes ? await WebAssembly.compile(bytes) : null });
-  const device = new Device({ width, height, getExports: () => e, getMemory: () => memory.buffer });
-  const covered = quad(false), slivered = quad(true);
+  const comparePath = flag('compare-module', null);
+  if (comparePath && !modulePath) throw new Error('--compare-module requires --module');
+  const variants = [];
+  for (const file of comparePath ? [modulePath, comparePath] : [modulePath]) {
+    const bytes = file ? fs.readFileSync(file) : null;
+    const h = await bootRenderHarness({ fonts: 'none',
+      prebuiltModule: bytes ? await WebAssembly.compile(bytes) : null });
+    variants.push({ file, bytes, ...h, device: new Device({ width, height,
+      getExports: () => h.exports, getMemory: () => h.memory.buffer }) });
+  }
+  const covered = quad(false), slivered = quad(true), varied = quad(false, true);
   const stride = covered.stride;
   const attributes = [{ register: 0, usage: 9, usageIndex: 0, type: 3, offset: 0 },
     { register: 1, usage: 10, usageIndex: 0, type: 4, offset: 16 },
     { register: 2, usage: 5, usageIndex: 0, type: 1, offset: 20 }];
 
   const draw = name => {
-    const { sliver, ...arm } = ARMS[name]();
+    const { sliver, varying, ...arm } = ARMS[name]();
     return { primitive: 4, primitiveCount: 2, stride, attributes,
-      vertices: (sliver ? slivered : covered).vertices,
+      vertices: (sliver ? slivered : varying ? varied : covered).vertices,
       vertexShader: null, fixedFunction: FIXED, state: { cull: 1, zenable: false }, ...arm };
   };
 
-  // One untimed pass per arm: the first draw of a shape compiles its shader and
-  // warms every tier, and timing a compile as if it were fill rate is the
-  // classic way to get this measurement wrong.
-  for (const name of selected) { device.clear([0, 0, 0, 1], 1); device.draw(draw(name)); device.present(); }
+  // Repeated untimed passes warm shader compilation, allocation and tiering
+  // for both modules before any measured pair.
+  for (let warm = 0; warm < warmups; warm++) for (const name of selected) for (const { device } of variants) {
+    device.clear([0, 0, 0, 1], 1); device.draw(draw(name)); device.present();
+  }
 
-  const samples = Object.fromEntries(selected.map(name => [name, []]));
-  const cpuSamples = Object.fromEntries(selected.map(name => [name, []]));
+  const keys = variants.flatMap((_, i) => selected.map(name => variants.length === 1 ? name : `${i}:${name}`));
+  const samples = Object.fromEntries(keys.map(name => [name, []]));
+  const cpuSamples = Object.fromEntries(keys.map(name => [name, []]));
   const outputs = {};
   const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
   for (let rep = 0; rep < reps; rep++) {
     // Rotate the order every rep so no arm is permanently first or last.
     const order = selected.map((_, i) => selected[(i + rep) % selected.length]);
     for (const name of order) {
-      const command = draw(name);
-      device.clear([0, 0, 0, 1], 1);
-      const started = process.hrtime.bigint();
-      const cpuStarted = process.cpuUsage();
-      device.draw(command);
-      device.present();
-      const cpu = process.cpuUsage(cpuStarted);
-      cpuSamples[name].push((cpu.user + cpu.system) / 1000);
-      samples[name].push(Number(process.hrtime.bigint() - started) / 1e6);
-      outputs[name] = { pixels: digest(device.readPixels()),
-        depth: digest(new Uint8Array(memory.buffer, device.depth.wa, device.depth.bytes)),
-        samples: String(device.lastDrawSamples) };
+      // Alternate AB/BA within each arm, after warming both exact modules.
+      for (const variant of rep % 2 ? [...variants].reverse() : variants) {
+        const { device, memory } = variant;
+        const key = variants.length === 1 ? name : `${variants.indexOf(variant)}:${name}`;
+        const command = draw(name);
+        device.clear([0, 0, 0, 1], 1);
+        const started = process.hrtime.bigint();
+        const cpuStarted = process.cpuUsage();
+        device.draw(command);
+        device.present();
+        const cpu = process.cpuUsage(cpuStarted);
+        cpuSamples[key].push((cpu.user + cpu.system) / 1000);
+        samples[key].push(Number(process.hrtime.bigint() - started) / 1e6);
+        const output = { pixels: digest(device.readPixels()),
+          depth: digest(new Uint8Array(memory.buffer, device.depth.wa, device.depth.bytes)),
+          samples: String(device.lastDrawSamples), allocationBytes: device.bytes };
+        if (outputs[key] && JSON.stringify(outputs[key]) !== JSON.stringify(output)) throw new Error(`unstable output ${key}`);
+        outputs[key] = output;
+      }
     }
   }
-  device.destroy();
+  for (const { device } of variants) device.destroy();
+  if (variants.length === 2) for (const name of selected)
+    require('assert/strict').deepEqual(outputs[`0:${name}`], outputs[`1:${name}`], `paired output ${name}`);
 
   const median = list => [...list].sort((a, b) => a - b)[list.length >> 1];
   const pixels = width * height;
-  const rows = selected.map(name => {
+  const rows = keys.map(name => {
     const ms = median(samples[name]);
     return { arm: name, ms: +ms.toFixed(2), nsPerPixel: +(ms * 1e6 / pixels).toFixed(1),
       spread: +(Math.max(...samples[name]) / Math.min(...samples[name])).toFixed(2) };
@@ -239,7 +265,9 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
   const flat = rows.find(r => r.arm === 'flat');
 
   if (args.includes('--json')) { console.log(JSON.stringify({ width, height, reps, rows,
-    moduleSHA256: bytes ? digest(bytes) : null, engine: process.versions,
+    warmups, order: 'rotated arms, paired AB/BA',
+    moduleSHA256: variants[0].bytes ? digest(variants[0].bytes) : null,
+    modules: variants.map(v => ({ path: v.file, sha256: v.bytes ? digest(v.bytes) : null })), engine: process.versions,
     samples, cpuSamples, outputs }, null, 2)); return; }
   console.log(`software rasterizer, one covering quad at ${width}x${height} (${pixels} px), ` +
     `median of ${reps} interleaved reps`);
