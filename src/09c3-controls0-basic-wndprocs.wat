@@ -2504,6 +2504,11 @@
     ;; PBM_SETRANGE(0x0401): lParam low=min, high=max.
     (if (i32.eq (local.get $msg) (i32.const 0x0401))
       (then
+        ;; Both range setters return the LOWORD of each previous limit.
+        (local.set $old
+          (i32.or
+            (i32.and (call $prog_min (local.get $sw)) (i32.const 0xFFFF))
+            (i32.shl (call $prog_max (local.get $sw)) (i32.const 16))))
         (local.set $min (i32.shr_s (i32.shl (local.get $lParam) (i32.const 16)) (i32.const 16)))
         (local.set $max (i32.shr_s (local.get $lParam) (i32.const 16)))
         (if (i32.le_s (local.get $max) (local.get $min))
@@ -2513,7 +2518,7 @@
         (call $prog_set_pos (local.get $sw)
           (call $prog_clamp (local.get $sw) (call $prog_pos (local.get $sw))))
         (call $invalidate_hwnd (local.get $hwnd))
-        (return (i32.const 0))))
+        (return (local.get $old))))
     ;; PBM_SETPOS(0x0402): return previous position.
     (if (i32.eq (local.get $msg) (i32.const 0x0402))
       (then
@@ -2550,6 +2555,11 @@
         (return (local.get $old))))
     (if (i32.eq (local.get $msg) (i32.const 0x0406))
       (then
+        ;; Pack before replacing either limit, including prior 32-bit ranges.
+        (local.set $old
+          (i32.or
+            (i32.and (call $prog_min (local.get $sw)) (i32.const 0xFFFF))
+            (i32.shl (call $prog_max (local.get $sw)) (i32.const 16))))
         (local.set $min (local.get $wParam))
         (local.set $max (local.get $lParam))
         (if (i32.le_s (local.get $max) (local.get $min))
@@ -2559,7 +2569,7 @@
         (call $prog_set_pos (local.get $sw)
           (call $prog_clamp (local.get $sw) (call $prog_pos (local.get $sw))))
         (call $invalidate_hwnd (local.get $hwnd))
-        (return (i32.const 0))))
+        (return (local.get $old))))
     ;; WM_PAINT
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
