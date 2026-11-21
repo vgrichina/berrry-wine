@@ -163,7 +163,6 @@ function createController({page,dispatch,release,close,record=()=>{},equivalence
           close:()=>stop('DOWN/native 500ms UNKNOWN'),record,
           dispatch:async()=>{gate();reviewCheck();releaseGate();
             if(equivalent){await equivalence.beforeDown(proofHandle,intent,image);gate();reviewCheck();releaseGate();}
-            release.due(intent.nonce,Date.now()+intent.ms);
             downStarted=true;const at=Date.now();
             try{const ack=await dispatch(intent);record({method:'DOWN',at,receivedAt:Date.now(),late:terminal,transportACK:ack});}
             catch(e){record({method:'DOWN',at,error:e.message,late:terminal});throw e;}},
@@ -173,6 +172,10 @@ function createController({page,dispatch,release,close,record=()=>{},equivalence
           (intent.kind==='mouse'?proof.nativeMessage.msg!==0x201:
             ![0x100,0x104].includes(proof.nativeMessage.msg)||proof.nativeMessage.wParam!==intent.code))
           throw Error('QUAKE2_NATIVE_UNKNOWN invalid native USER return; transport is not proof');
+        // A normal guest may consume DOWN later than its browser dispatch ACK.
+        // Start the short hold only after that genuine native return. The
+        // independently armed releaseDue/fallback remains finite on failure.
+        release.due(intent.nonce,Math.min(armReceipt.releaseDue,Date.now()+intent.ms));
       }catch(e){nativeError=e;stop(e.message);}
       finally{
         if(armed){

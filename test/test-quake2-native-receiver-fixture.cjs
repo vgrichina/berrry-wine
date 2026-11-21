@@ -9,6 +9,29 @@ function imports(b){
 }
 (async()=>{
  let groups=0;const test=async(name,f)=>{await f();console.log('PASS '+name);groups++;};
+ await test('short physical hold follows genuine native return; failure retains independent fallback',async()=>{
+  const {createController}=require('../tools/quake2-native-consumption-input.cjs');
+  for(const kind of ['key','mouse'])for(const outcome of ['consumed','pending','cancelled','invalid','dispatch-failure']){
+   const trace=[],nonce=kind+'-'+outcome,at=Date.now(),image={completedAt:at,sha256:'a'.repeat(64)};
+   const intent={kind,code:kind==='mouse'?1:13,button:kind==='mouse'?0:undefined,x:640,y:500,
+    key:'Enter',domCode:'Enter',ms:50,nonce,name:'action-1',mode:'menu',review:'Reviewed authored triangle',reviewedAt:at,imageSHA256:image.sha256};
+   let closed=false,armed;
+   const release={alive:true,arm:async()=>{armed=Date.now();trace.push('arm');return {at:armed,fallback:armed+1750,releaseDue:armed+1500};},
+    due:(n,due)=>{assert.equal(n,nonce);assert(trace.includes('native-return'));assert.equal(closed,false);assert(due<=armed+1500&&due>armed);trace.push('due');},
+    cancel:()=>trace.push('cancel-no-down'),finish:async()=>{trace.push('independent-up');return {ok:true};}};
+   const c=createController({release,close:()=>{closed=true;trace.push('close');},
+    dispatch:async()=>{trace.push('down');assert(!trace.includes('due'));if(outcome==='dispatch-failure')throw Error('actual transport failed');},
+    page:async method=>{assert(!closed,'no query after first UNKNOWN');if(method==='prepare')return {prepared:{state:'PREPARED'}};
+     assert.equal(method,'status');await new Promise(r=>setTimeout(r,20));
+     if(outcome==='pending')return {state:'DELIVERY_PENDING'};
+     if(outcome==='cancelled')return {state:'CANCELLED',consumed:false};
+     trace.push('native-return');return {state:'CONSUMED',consumed:true,receiptBoundary:'owner-worker-native-user-return',
+      nativeMessage:{consumption:'owner-user-return',token:outcome==='invalid'?0:1,msg:kind==='mouse'?0x201:0x100,wParam:intent.code}};}});
+   if(outcome==='consumed'){await c.gesture(intent,image);assert.deepEqual(trace,['arm','down','native-return','due','independent-up']);assert(!c.terminal);}
+   else{await assert.rejects(c.gesture(intent,image));assert(c.terminal);assert(!trace.includes('due'));assert(!trace.includes('cancel-no-down'));assert.equal(trace.at(-1),'independent-up');
+    const before=trace.length;await assert.rejects(c.gesture({...intent,nonce:nonce+'-retry'},image));assert.equal(trace.length,before);}
+  }
+ });
  await test('owned children retain real close, signal and stdio receipts',async()=>{
   const cp=require('node:child_process'),{ownChild}=require('../tools/quake2-native-release.cjs');
   const launch=body=>{const p=cp.spawn(process.execPath,['-e',body],{stdio:['pipe','pipe','pipe']});return ownChild(p);};
