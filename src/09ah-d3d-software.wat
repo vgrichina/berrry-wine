@@ -1190,7 +1190,7 @@
   (local $bank i32) (local $offset i32) (local $e0 f32) (local $e1 f32) (local $e2 f32)
   (local $u f32) (local $v f32) (local $w f32) (local $iw f32) (local $riw f32) (local $z f32)
   (local $output i32) (local $wire i32) (local $point i32) (local $sprite i32) (local $dx f32) (local $dy f32) (local $half f32) (local $value f32)
-  (local $vmask i32) (local $glide i32) (local $glide_q f32)
+  (local $vmask i32) (local $vmask_valid i32) (local $glide i32) (local $glide_q f32)
   (local $qu v128) (local $qv v128) (local $qw v128) (local $qiw v128) (local $qriw v128)
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (i32.const 256))) (then (return (i32.const -1))))
   (if (i32.ne (i32.load (local.get $ctx)) (i32.const 0x44535031)) (then (return (i32.const -1))))
@@ -1205,6 +1205,7 @@
     (if (i32.le_s (local.get $budget) (i32.const 0)) (then (return (i32.const 1))))
     (local.set $budget (i32.sub (local.get $budget) (i32.const 1)))
     (if (i32.eqz (i32.load offset=192 (local.get $ctx))) (then
+      (local.set $vmask_valid (i32.const 0))
       (if (i32.eqz (call $d3d_software_prepare (local.get $ctx))) (then
         (i32.store offset=252 (local.get $ctx) (i32.and (i32.load offset=252 (local.get $ctx)) (i32.const 127)))
         (i32.store offset=128 (local.get $ctx) (i32.add (i32.load offset=128 (local.get $ctx)) (i32.const 3)))
@@ -1233,9 +1234,11 @@
     ;; compiled program in src/09ag-d3d-shader-vm.wat records no input mask), so
     ;; bound it by the data instead: a varying that is +0 at all three vertices
     ;; interpolates to zero at every pixel of this triangle, whatever the
-    ;; weights. Scan the three vertices once per quad -- 32 integer loads,
-    ;; against the interpolate-and-scale it saves four times over -- and store a
-    ;; literal zero for those instead of calling $d3d_software_interp.
+    ;; weights. Scan the three immutable vertex snapshots once per prepared
+    ;; geometry within this step call, rather than repeating 96 loads per quad.
+    ;; Preparation invalidates the local cache, including for outline edges;
+    ;; a resumed step starts invalid so no state is retained across calls.
+    ;; Store a literal zero for those instead of calling $d3d_software_interp.
     ;;
     ;; The store stays unconditional. Skipping it would leave the previous
     ;; triangle's value in the register bank, which is the trap here: this VM
@@ -1249,6 +1252,7 @@
     ;; could interpolate to -0 on an outside helper lane and now reads +0. That
     ;; is visible only to a shader that divides by such a varying and cares
     ;; which infinity it gets.
+    (if (i32.eqz (local.get $vmask_valid)) (then
     (local.set $vmask (i32.const 0)) (local.set $j (i32.const 0))
     (loop $scan
       (local.set $offset (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 2))))
@@ -1267,6 +1271,7 @@
           (i32.eqz (i32.load (i32.add (local.get $c) (local.get $offset))))))
         (then (local.set $vmask (i32.or (local.get $vmask) (i32.shl (i32.const 1) (i32.add (local.get $j) (i32.const 28)))))))
       (local.set $j (i32.add (local.get $j) (i32.const 1))) (br_if $scan_specular (i32.lt_u (local.get $j) (i32.const 4))))
+    (local.set $vmask_valid (i32.const 1))))
     (local.set $lane (i32.const 0)) (local.set $bits (i32.const 0))
     (loop $lanes
       (local.set $x (i32.add (i32.load offset=132 (local.get $ctx)) (i32.and (local.get $lane) (i32.const 1))))
