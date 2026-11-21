@@ -453,3 +453,40 @@ independently prearmed trusted UP and release ACK with unchanged
 retained. No second Pawn original, forced state/focus, clock/pump change, Wine,
 Python, worker agent, deployment or test box was used. This is a causal native
 receipt repair, not completed Pawn undo/redo acceptance.
+
+### 2026-11-21 corrected history and continued play
+
+Run `20261121-pawn-history-fixed` used exactly one fresh original on immutable
+published `ce9c41c0366d9a6b80f40569c90d7ae239e9015b`, reusing the accepted
+authored oldfail/newpass proof above. Both initial and final actual CPUWorker
+bytecode matched the retained module
+`79c7a04f44ea0d6e48e851f6e0350f09da8c4a8717f77c6df9965d6c1cdd4834`.
+The module was compiled from the full published commit, including the earlier
+callback repair, rather than the earlier isolated menu-control overlay.
+Served source and all nine media identities matched before and after the run.
+
+Full reviewed frames show ordinary mouse Game/New, the reversed board with
+Black below, White AI e2–e4, human Black d7–d5, then White e4×d5. Clicking
+`<<` restored the black pawn on d5 and returned White's pawn to e4, with red
+history outlines. Clicking `>>` restored the capture: White's pawn on d5,
+the black pawn absent, e4 empty, and yellow e4/d5 outlines. These direct menu
+receipts selected commands 4 and 5 respectively, with client consumed=false
+and token=0. The frames establish restoration and redo independently of those
+receipts. Black then legally played Qd8×d5, and White replied Nb1–c3; the final
+frame shows the black queen on d5, White's captured pawn absent, and yellow
+b1/c3 outlines. Continued play confirms Black's turn after redo. The history
+view has no separate turn readout or move list; White-to-move at the undone
+position is inferred from the restored position, not independently tested by
+branching into a new move there.
+
+All six gestures retained independently prearmed trusted physical UP and
+release-dispatch ACK, with unchanged 500/1800/5000/20000 ms bounds. No UNKNOWN,
+CANCELLED, replay or second original occurred. One passive screenshot helper
+resized the viewport from 1272×853 to 800×600 through Puppeteer's default;
+the complete board remained visible and its input coordinates did not change.
+The browser used an owned private X display and the production software route.
+Actual inner and outer waits exited 0 with both stdout/stderr EOF; the native
+supervisor reported no leaks, and browser/display/profile cleanup completed.
+No runtime source change, forced guest state/focus, clock/pump/Present change,
+Wine, Python, subworker, public deployment or test box was used. This verifies
+the bounded capture/history/continued-play sequence, not a full game.
