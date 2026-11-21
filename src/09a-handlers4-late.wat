@@ -1479,8 +1479,8 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
   ;; Change this thread queue's active top-level and synchronously deliver the
   ;; documented WM_ACTIVATE pair. Deactivation sees the old active HWND;
   ;; publication occurs before the new window's activation callback. If it picks
-  ;; a descendant focus itself, preserve that choice; otherwise DefWindowProc's
-  ;; default is represented by moving focus to the activated top-level.
+  ;; focus itself (including NULL), preserve that choice. DefWindowProc owns
+  ;; WM_ACTIVATE's default focus handling, inside the notification.
   ;; Queue-instance generation advances only when a different HWND is
   ;; published. This catches nested A->C->A without cancelling on SetActive(A).
   (global $active_transition_serial (mut i32) (i32.const 0))
@@ -1495,7 +1495,7 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
   ;; The cause belongs to this invocation, not a global: a mouse activation
   ;; callback may call SetActiveWindow, whose nested notification is WA_ACTIVE.
   (func $active_window_transition_reason (param $target i32) (param $reason i32) (result i32)
-    (local $previous i32) (local $old_focus i32) (local $serial i32) (local $focus_serial i32)
+    (local $previous i32) (local $old_focus i32) (local $serial i32)
     (local.set $previous (global.get $active_hwnd))
     (if (i32.and
           (i32.ne (local.get $previous) (i32.const 0))
@@ -1541,40 +1541,15 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
           (i32.ne (global.get $active_hwnd) (local.get $target)))
       (then (return (local.get $previous))))
 
-    ;; WM_ACTIVATE's default procedure assigns focus only when the window is
-    ;; not minimized. Respect an application-selected child focus established
-    ;; by the activation callback itself.
+    ;; Do not repeat DefWindowProc's focus policy after WM_ACTIVATE returns.
+    ;; A handled notification may deliberately keep another focus or NULL;
+    ;; even SetFocus(NULL) while already NULL must survive. Publication serials
+    ;; cannot distinguish that same-value choice from no focus call at all.
+    ;; Default processing already validates disabled/foreign/dead targets in
+    ;; focus_set_core and preserves reentrant focus notification winners.
     (local.set $old_focus (global.get $focus_hwnd))
-    (if (i32.and
-          (i32.and
-            (i32.ne (local.get $target) (i32.const 0))
-            (i32.eq (global.get $active_hwnd) (local.get $target)))
-          (i32.and
-            (i32.ge_s (call $wnd_table_find (local.get $target)) (i32.const 0))
-            (i32.eqz (call $wnd_min_get (local.get $target)))))
+    (if (i32.eqz (local.get $target))
       (then
-        (if (i32.or
-              (i32.eqz (local.get $old_focus))
-              (i32.ne (call $wnd_top_level (local.get $old_focus)) (local.get $target)))
-          (then
-            (drop (call $focus_publish (local.get $target)))
-            (local.set $focus_serial (global.get $focus_transition_serial))
-            (if (i32.and
-                  (i32.ne (local.get $old_focus) (i32.const 0))
-                  (i32.ge_s (call $wnd_table_find (local.get $old_focus)) (i32.const 0)))
-              (then
-                (drop (call $wnd_send_message
-                  (local.get $old_focus) (i32.const 0x0008) ;; WM_KILLFOCUS
-                  (local.get $target) (i32.const 0)))))
-            (if (i32.or
-                  (i32.ne (global.get $active_transition_serial) (local.get $serial))
-                  (i32.or (i32.ne (global.get $active_hwnd) (local.get $target))
-                    (i32.eqz (call $focus_transfer_current (local.get $target) (local.get $focus_serial)))))
-              (then (return (local.get $previous))))
-            (drop (call $wnd_send_message
-              (local.get $target) (i32.const 0x0007) ;; WM_SETFOCUS
-              (local.get $old_focus) (i32.const 0))))))
-      (else
         ;; Clearing this thread's active window also releases focus belonging
         ;; to the window being deactivated.
         (if (i32.and

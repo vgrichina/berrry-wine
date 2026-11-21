@@ -229,6 +229,7 @@ const extraWat = String.raw`
   const write32 = (n, value) => view.setUint32(toWasm(n), value, true);
   const thunk = name => e.test_focus_thunk(apiTable.find(api => api.name === name).id) >>> 0;
   const defDlg = thunk('DefDlgProcA');
+  const defWindow = thunk('DefWindowProcA');
   const setActive = thunk('SetActiveWindow');
   const setFocus = thunk('SetFocus');
   const destroy = thunk('DestroyWindow');
@@ -288,7 +289,12 @@ const extraWat = String.raw`
   // activation. Draining the old dialog's queue must not reclaim focus.
   const oldDialog = e.test_setfocus_make_dialog() >>> 0;
   e.test_setfocus_add_child(oldDialog, 600, WS_CHILD_VISIBLE | WS_TABSTOP);
-  const newWindow = makeTop(code(ret0));
+  // This case expects default activation focus: delegate to DefWindowProc
+  // rather than consuming WM_ACTIVATE with an unconditional zero return.
+  const newWindow = makeTop(code([
+    ...Array(4).fill([0xff, 0x74, 0x24, 16]).flat(),
+    0xb8, ...u32(defWindow), 0xff, 0xd0, ...ret0,
+  ]));
   e.test_set_focus_hwnd(oldDialog);
   e.set_post_queue_count(0);
   liveDefault(oldDialog, call1(setActive, newWindow));

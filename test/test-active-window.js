@@ -21,7 +21,8 @@ const RECORD_BYTES = LPARAMS + CAPACITY * 4;
 const u32 = value => [value, value >>> 8, value >>> 16, value >>> 24]
   .map(byte => byte & 0xff);
 
-function makeWndProc(observed, callback = []) {
+let defaultActivateThunk;
+function makeWndProc(observed, callback = [], defaultActivation = true) {
   const out = [];
   const emit = (...bytes) => out.push(...bytes.map(byte => byte & 0xff));
   const storeIndexedEax = address => emit(0x89, 0x04, 0x8d, ...u32(address));
@@ -35,6 +36,14 @@ function makeWndProc(observed, callback = []) {
   }
   emit(0x41); // inc ecx
   emit(0x89, 0x0d, ...u32(observed + COUNT)); // mov [count],ecx
+  // These fixtures expect ordinary default focus, so actually delegate
+  // WM_ACTIVATE. Run optional reentry hooks after default processing, allowing
+  // the hook to select the final focus/active window without a later default.
+  if (defaultActivation) {
+    const chain = [...Array(4).fill([0xff, 0x74, 0x24, 16]).flat(),
+      0xb8, ...u32(defaultActivateThunk), 0xff, 0xd0];
+    emit(0x83, 0x7c, 0x24, 8, 6, 0x75, chain.length, ...chain);
+  }
   emit(...callback);
   emit(0x31, 0xc0); // xor eax,eax
   emit(0x83, 0x7c, 0x24, 8, 0x13, 0x75, 5); // accept WM_QUERYOPEN for OpenIcon
@@ -44,6 +53,9 @@ function makeWndProc(observed, callback = []) {
 }
 
 const extraWat = String.raw`
+  (func (export "test_focus_serial") (result i32) (global.get $focus_transition_serial))
+  (func (export "test_window_slot") (param $hwnd i32) (result i32)
+    (call $wnd_table_find (local.get $hwnd)))
   (func (export "test_native_control") (param $h i32)
     (call $wnd_table_set (local.get $h) (global.get $WNDPROC_CTRL_NATIVE)))
   (func (export "test_restore_modal_focus") (param $owner i32)
@@ -245,7 +257,8 @@ const extraWat = String.raw`
   const bytes = new Uint8Array(memory.buffer);
   const view = new DataView(memory.buffer);
   const observed = e.guest_alloc(RECORD_BYTES) >>> 0;
-  const proc = e.guest_alloc(128) >>> 0;
+  defaultActivateThunk = e.test_thunk(apiTable.find(api => api.name === 'DefWindowProcA').id);
+  const proc = e.guest_alloc(256) >>> 0;
   bytes.set(makeWndProc(observed), toWasm(proc));
 
   const WS_VISIBLE = 0x10000000;
@@ -411,7 +424,7 @@ const extraWat = String.raw`
     const nestedAction = [0x68, ...u32(first), 0xb8, ...u32(setActiveThunk), 0xff, 0xd0];
     const whenClick = [0x83, 0x7c, 0x24, 12, 2, 0x75, nestedAction.length, ...nestedAction];
     bytes.set(makeWndProc(observed, [0x83, 0x7c, 0x24, 8, 6,
-      0x75, whenClick.length, ...whenClick]), toWasm(clickProc));
+      0x75, whenClick.length, ...whenClick], false), toWasm(clickProc));
     resetRecords();
     e.test_click_activate(clickTarget);
     assert.strictEqual(e.test_get_active(), first);
@@ -496,6 +509,52 @@ const extraWat = String.raw`
   assert.strictEqual(e.test_focus_api(foreign, stack), 0);
   assert.strictEqual(e.test_focus(), focusA);
 
+  // Consuming WM_ACTIVATE is distinct from delegating it to DefWindowProc.
+  // In particular, publication serials do not record same-value SetFocus(NULL).
+  for (const mode of ['handled', 'null', 'null-twice', 'already-null', 'child', 'foreign', 'dead', 'reused-slot']) {
+    const hook = e.guest_alloc(512);
+    const target = e.test_make_window(hook, WS_VISIBLE, 0, 1);
+    const child = e.test_make_window(proc, WS_VISIBLE | WS_CHILD, target, 1);
+    const dead = e.test_make_window(proc, WS_VISIBLE, 0, 1);
+    const deadSlot = e.test_window_slot(dead);
+    const deadGeneration = e.wnd_lookup_generation(dead);
+    e.test_destroy(dead);
+    const replacement = mode === 'reused-slot' ? e.test_make_window(proc, WS_VISIBLE, 0, 1) : 0;
+    if (replacement) {
+      assert.strictEqual(e.test_window_slot(replacement), deadSlot, 'negative really reuses the retired slot');
+      assert.notStrictEqual(e.wnd_lookup_generation(replacement), deadGeneration,
+        'replacement has a different lifetime generation');
+    }
+    e.test_set_active(focusA, stack);
+    e.test_focus_api(mode === 'already-null' ? 0 : focusA, stack);
+    resetRecords();
+    const serial = e.test_focus_serial();
+    const select = hwnd => [0x68, ...u32(hwnd), 0xb8, ...u32(focusThunk), 0xff, 0xd0];
+    const action = mode.includes('null') ? [...select(0), ...(mode === 'null-twice' ? select(0) : [])] :
+      mode === 'child' ? select(child) : mode === 'foreign' ? select(foreign) :
+      mode === 'dead' || mode === 'reused-slot' ? select(dead) : [];
+    const onActive = [0x83, 0x7c, 0x24, 12, 0, 0x74, action.length, ...action];
+    bytes.set(makeWndProc(observed, [0x83, 0x7c, 0x24, 8, 6,
+      0x75, onActive.length, ...onActive], false), toWasm(hook));
+    e.test_set_active(target, stack);
+    assert.strictEqual(e.test_get_active(), target, `${mode}: active window is independent of focus`);
+    const expected = mode.includes('null') ? 0 : mode === 'child' ? child : focusA;
+    assert.strictEqual(e.test_focus(), expected, `${mode}: no second default focus after callback`);
+    if (mode === 'already-null') assert.strictEqual(e.test_focus_serial(), serial,
+      'already-NULL intent survives without a focus publication');
+    assert(!records().some(r => r.hwnd === target && r.msg === 7),
+      `${mode}: consumed activation does not synthesize top-level SETFOCUS`);
+    if (replacement) assert(!records().some(r => r.hwnd === replacement && r.msg === 7),
+      'a stale HWND cannot focus the new generation in its old slot');
+  }
+  e.test_set_active(focusA, stack);
+  e.test_focus_api(focusA, stack);
+  resetRecords();
+  e.test_set_active(disabled, stack);
+  assert.strictEqual(e.test_get_active(), disabled, 'activation and valid keyboard focus remain distinct');
+  assert.strictEqual(e.test_focus(), focusA, 'no fallback after default focus rejects a disabled target');
+  assert(!records().some(r => r.hwnd === disabled && r.msg === 7));
+
   // Reenter from KILLFOCUS. It must already observe the new focus, and the
   // nested selection must not receive a later stale outer SETFOCUS.
   const focusHook = e.guest_alloc(256);
@@ -572,7 +631,7 @@ const extraWat = String.raw`
   const activeC = [0x83, 0x7c, 0x24, 12, 0, 0x74, armedC.length, ...armedC];
   const chain = [...activeC, ...Array(4).fill([0xff, 0x74, 0x24, 16]).flat(),
     0xb8, ...u32(defThunk), 0xff, 0xd0];
-  bytes.set(makeWndProc(observed, [0x83, 0x7c, 0x24, 8, 6, 0x75, chain.length, ...chain]), toWasm(chainProc));
+  bytes.set(makeWndProc(observed, [0x83, 0x7c, 0x24, 8, 6, 0x75, chain.length, ...chain], false), toWasm(chainProc));
   view.setUint32(toWasm(armed), 0, true);
   e.test_set_active(focusA, stack);
   resetRecords();
