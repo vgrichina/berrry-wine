@@ -46,7 +46,7 @@ recover the old mesh or explain the entire earlier white interval.
 
 No current renderer contract violation was isolated, so no runtime change,
 new original diagnostic, input, endpoint request, Wine reference, build or
-production oldFAIL/newPASS claim follows. The historical missing56 bytes issue
+production oldFAIL/newPASS claim follows. The historical56 unretained triangles
 remains an evidence limitation; it is resolved as insufficient support for a
 current missing-triangle defect. Broader original white-scene cause and ordinary
 Quit13 remain unproved and separate. Joined authored/test scopes have actual
