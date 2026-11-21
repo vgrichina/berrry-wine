@@ -306,6 +306,7 @@
     (local $thumb_len i32) (local $thumb_pos i32) (local $cx i32) (local $cy i32)
     (local $coord i32) (local $long_dim i32) (local $parent i32) (local $scroll_msg i32)
     (local $i i32) (local $code i32) (local $step i32) (local $next_pos i64)
+    (local $rect i32)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
     (if (i32.eqz (local.get $state))
@@ -442,6 +443,55 @@
         (return (local.get $old))))
     (if (i32.eq (local.get $msg) (i32.const 0x0418))
       (then (return (call $trk_line (local.get $sw)))))
+    ;; TBM_GETTHUMBRECT (WM_USER+25) / TBM_GETCHANNELRECT (WM_USER+26).
+    ;; lParam is a caller RECT in trackbar client coordinates; no return value.
+    ;; Match the existing WM_PAINT bounds, including its minimum thumb length
+    ;; and wide signed range calculation, without painting or invalidating.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0419))
+                (i32.eq (local.get $msg) (i32.const 0x041A)))
+      (then
+        (if (i32.eqz (local.get $lParam)) (then (return (i32.const 0))))
+        (local.set $rect (call $g2w (local.get $lParam)))
+        (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
+        (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
+        (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
+        (local.set $vert (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0002)))
+        (local.set $cx (i32.div_s (local.get $w) (i32.const 2)))
+        (local.set $cy (i32.div_s (local.get $h) (i32.const 2)))
+        (if (i32.eq (local.get $msg) (i32.const 0x041A))
+          (then
+            (i32.store (local.get $rect)
+              (select (i32.sub (local.get $cx) (i32.const 2)) (i32.const 4) (local.get $vert)))
+            (i32.store offset=4 (local.get $rect)
+              (select (i32.const 4) (i32.sub (local.get $cy) (i32.const 2)) (local.get $vert)))
+            (i32.store offset=8 (local.get $rect)
+              (select (i32.add (local.get $cx) (i32.const 2)) (i32.sub (local.get $w) (i32.const 4)) (local.get $vert)))
+            (i32.store offset=12 (local.get $rect)
+              (select (i32.sub (local.get $h) (i32.const 4)) (i32.add (local.get $cy) (i32.const 2)) (local.get $vert)))
+            (return (i32.const 0))))
+        (local.set $thumb_len (call $trk_thumb_len (local.get $sw)))
+        (if (i32.lt_s (local.get $thumb_len) (i32.const 8)) (then (local.set $thumb_len (i32.const 8))))
+        (local.set $track_len
+          (i32.sub (select (local.get $h) (local.get $w) (local.get $vert)) (local.get $thumb_len)))
+        (if (i32.lt_s (local.get $track_len) (i32.const 1)) (then (local.set $track_len (i32.const 1))))
+        (local.set $min (call $trk_min (local.get $sw)))
+        (local.set $range
+          (i64.sub (i64.extend_i32_s (call $trk_max (local.get $sw))) (i64.extend_i32_s (local.get $min))))
+        (if (i64.le_s (local.get $range) (i64.const 0)) (then (local.set $range (i64.const 1))))
+        (local.set $thumb_pos
+          (i32.wrap_i64 (i64.div_s
+            (i64.mul (i64.sub (i64.extend_i32_s (call $trk_pos (local.get $sw))) (i64.extend_i32_s (local.get $min)))
+              (i64.extend_i32_s (local.get $track_len)))
+            (local.get $range))))
+        (i32.store (local.get $rect)
+          (select (i32.sub (local.get $cx) (i32.const 8)) (local.get $thumb_pos) (local.get $vert)))
+        (i32.store offset=4 (local.get $rect)
+          (select (local.get $thumb_pos) (i32.sub (local.get $cy) (i32.const 8)) (local.get $vert)))
+        (i32.store offset=8 (local.get $rect)
+          (select (i32.add (local.get $cx) (i32.const 8)) (i32.add (local.get $thumb_pos) (local.get $thumb_len)) (local.get $vert)))
+        (i32.store offset=12 (local.get $rect)
+          (select (i32.add (local.get $thumb_pos) (local.get $thumb_len)) (i32.add (local.get $cy) (i32.const 8)) (local.get $vert)))
+        (return (i32.const 0))))
     ;; TBM_SETTHUMBLENGTH / GETTHUMBLENGTH
     (if (i32.eq (local.get $msg) (i32.const 0x041B))
       (then
