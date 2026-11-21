@@ -1067,7 +1067,91 @@
     (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $out))
     (local.get $out))
 
-  ;; Read EDITSTREAM until callback EOF/error. RTF metadata can exceed 64K
+  ;; Incremental RTF root-group boundary. EDITSTREAM ends when the RTF block
+  ;; ends, even if the producer has not returned EOF. Keep the cursor, nesting
+  ;; and binary-byte count in invocation-owned scratch beside pcb, not globals:
+  ;; callbacks can stream into another control synchronously. A partial control
+  ;; word is retried from its backslash when the next buffer arrives.
+  (func $edit_stream_rtf_end (param $raw i32) (param $len i32) (param $scratch i32) (result i32)
+    (local $i i32) (local $depth i32) (local $binary i32) (local $ch i32)
+    (local $j i32) (local $word i32) (local $word_end i32) (local $number i32)
+    (local $negative i32) (local $take i32)
+    ;; SF_RTF's legacy bare-text input is not a brace-delimited RTF document.
+    (if (i32.lt_u (local.get $len) (i32.const 6)) (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (i32.load (local.get $raw)) (i32.const 0x74725C7B))
+          (i32.ne (i32.load8_u offset=4 (local.get $raw)) (i32.const 102)))
+      (then (return (i32.const 0))))
+    (local.set $i (i32.load offset=4 (local.get $scratch)))
+    (local.set $depth (i32.load offset=8 (local.get $scratch)))
+    (local.set $binary (i32.load offset=12 (local.get $scratch)))
+    (block $pending (loop $scan
+      (br_if $pending (i32.ge_u (local.get $i) (local.get $len)))
+      (if (local.get $binary)
+        (then
+          (local.set $take (i32.sub (local.get $len) (local.get $i)))
+          (if (i32.gt_u (local.get $take) (local.get $binary))
+            (then (local.set $take (local.get $binary))))
+          (local.set $binary (i32.sub (local.get $binary) (local.get $take)))
+          (local.set $i (i32.add (local.get $i) (local.get $take)))
+          (br $scan)))
+      (local.set $ch (i32.load8_u (i32.add (local.get $raw) (local.get $i))))
+      (if (i32.eq (local.get $ch) (i32.const 92))
+        (then
+          (local.set $j (i32.add (local.get $i) (i32.const 1)))
+          (br_if $pending (i32.ge_u (local.get $j) (local.get $len)))
+          (local.set $word (local.get $j))
+          (block $word_done (loop $letters
+            (br_if $pending (i32.ge_u (local.get $j) (local.get $len)))
+            (local.set $ch (i32.load8_u (i32.add (local.get $raw) (local.get $j))))
+            (br_if $word_done (i32.or (i32.lt_u (local.get $ch) (i32.const 97))
+              (i32.gt_u (local.get $ch) (i32.const 122))))
+            (local.set $j (i32.add (local.get $j) (i32.const 1)))
+            (br $letters)))
+          (if (i32.eq (local.get $j) (local.get $word))
+            (then ;; Escaped brace/backslash or another one-byte control symbol.
+              (local.set $i (i32.add (local.get $j) (i32.const 1)))
+              (br $scan)))
+          (local.set $word_end (local.get $j))
+          (local.set $negative (i32.eq (local.get $ch) (i32.const 45)))
+          (if (local.get $negative) (then (local.set $j (i32.add (local.get $j) (i32.const 1)))))
+          (local.set $number (i32.const 0))
+          (block $number_done (loop $digits
+            (br_if $pending (i32.ge_u (local.get $j) (local.get $len)))
+            (local.set $ch (i32.load8_u (i32.add (local.get $raw) (local.get $j))))
+            (br_if $number_done (i32.or (i32.lt_u (local.get $ch) (i32.const 48))
+              (i32.gt_u (local.get $ch) (i32.const 57))))
+            ;; Saturate malformed oversized lengths rather than wrap to a
+            ;; small binary span that could expose an embedded closing brace.
+            (if (i32.le_u (local.get $number) (i32.const 214748363))
+              (then (local.set $number (i32.add (i32.mul (local.get $number) (i32.const 10))
+                (i32.sub (local.get $ch) (i32.const 48)))))
+              (else (local.set $number (i32.const 2147483647))))
+            (local.set $j (i32.add (local.get $j) (i32.const 1)))
+            (br $digits)))
+          (if (i32.and (i32.eqz (local.get $negative))
+                (i32.eq (i32.sub (local.get $word_end) (local.get $word)) (i32.const 3)))
+            (then
+              (if (i32.and (i32.eq (i32.load16_u (i32.add (local.get $raw) (local.get $word))) (i32.const 0x6962))
+                    (i32.eq (i32.load8_u (i32.add (local.get $raw) (i32.add (local.get $word) (i32.const 2)))) (i32.const 110)))
+                (then (local.set $binary (local.get $number))))))
+          (if (i32.eq (local.get $ch) (i32.const 32))
+            (then (local.set $j (i32.add (local.get $j) (i32.const 1)))))
+          (local.set $i (local.get $j))
+          (br $scan)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (if (i32.eq (local.get $ch) (i32.const 123))
+        (then (local.set $depth (i32.add (local.get $depth) (i32.const 1)))))
+      (if (i32.eq (local.get $ch) (i32.const 125))
+        (then
+          (local.set $depth (i32.sub (local.get $depth) (i32.const 1)))
+          (if (i32.eqz (local.get $depth)) (then (return (local.get $i))))))
+      (br $scan)))
+    (i32.store offset=4 (local.get $scratch) (local.get $i))
+    (i32.store offset=8 (local.get $scratch) (local.get $depth))
+    (i32.store offset=12 (local.get $scratch) (local.get $binary))
+    (i32.const 0))
+
+  ;; Read EDITSTREAM until callback EOF/error or the RTF root closes. RTF metadata can exceed 64K
   ;; before any visible text, independently of the control's text limit.
   ;; Grow the raw buffer geometrically; allocation failure is dwError=8,
   ;; never a silently successful truncated document.
@@ -1076,7 +1160,7 @@
     (local $stream_w i32) (local $cookie i32) (local $callback i32)
     (local $raw i32) (local $pcb i32) (local $len i32) (local $capacity i32)
     (local $got i32) (local $error i32) (local $allocated i32)
-    (local $new_size i32) (local $new_raw i32)
+    (local $new_size i32) (local $new_raw i32) (local $rtf_end i32)
     (local.set $stream_w (call $g2w (local.get $stream_g)))
     (local.set $cookie (i32.load (local.get $stream_w)))
     (local.set $callback (i32.load offset=8 (local.get $stream_w)))
@@ -1095,12 +1179,13 @@
       (then
         (i32.store offset=4 (local.get $stream_w) (i32.const 8))
         (return (i32.const 0))))
-    (local.set $pcb (call $heap_alloc (i32.const 4)))
+    (local.set $pcb (call $heap_alloc (i32.const 16)))
     (if (i32.eqz (local.get $pcb))
       (then
         (call $heap_free (local.get $raw))
         (i32.store offset=4 (local.get $stream_w) (i32.const 8))
         (return (i32.const 0))))
+    (memory.fill (call $g2w (local.get $pcb)) (i32.const 0) (i32.const 16))
     (block $done (loop $read
       (if (i32.eq (local.get $len) (local.get $allocated))
         (then
@@ -1128,6 +1213,12 @@
       (if (i32.gt_u (local.get $got) (local.get $capacity))
         (then (local.set $got (local.get $capacity))))
       (local.set $len (i32.add (local.get $len) (local.get $got)))
+      (if (i32.and (local.get $flags) (i32.const 2))
+        (then
+          (local.set $rtf_end (call $edit_stream_rtf_end
+            (call $g2w (local.get $raw)) (local.get $len) (call $g2w (local.get $pcb))))
+          (if (local.get $rtf_end)
+            (then (local.set $len (local.get $rtf_end)) (br $done)))))
       (br_if $done (i32.eqz (local.get $got)))
       (br $read)))
     (i32.store offset=4 (local.get $stream_w) (local.get $error))

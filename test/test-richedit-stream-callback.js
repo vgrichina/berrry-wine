@@ -66,27 +66,34 @@ async function main() {
     return e.send_message(hwnd, EM_STREAMIN, flags, stream);
   }
 
-  function streamCallback(hwnd, text, flags = SF_TEXT, callbackError = 0) {
+  function streamCallback(hwnd, text, flags = SF_TEXT, callbackError = 0, { chunk = 4096, repeatFinal = false } = {}) {
     const source = allocAscii(text);
-    const cookie = e.guest_alloc(12);
+    const cookie = e.guest_alloc(16);
     e.guest_write32(cookie, source);
     e.guest_write32(cookie + 4, text.length);
     e.guest_write32(cookie + 8, 0);
+    e.guest_write32(cookie + 12, 0);
 
     // stdcall callback: cookie={source,length,offset}. Respect each cb request,
     // advance the offset, and report zero bytes at EOF.
     const codeBytes = Buffer.from([
       0x56,0x57,0x53,                    // push esi, edi, ebx
       0x8b,0x54,0x24,0x10,              // edx=cookie
+      0xff,0x42,0x0c,                   // count callback invocations
       0x8b,0x4a,0x04,0x8b,0x5a,0x08,    // ecx=length, ebx=offset
       0x29,0xd9,                         // ecx-=offset
       0x3b,0x4c,0x24,0x18,0x76,0x04,    // if remaining<=cb keep it
       0x8b,0x4c,0x24,0x18,              // otherwise ecx=cb
+      0x81,0xf9,...[chunk&255,chunk>>>8&255,chunk>>>16&255,chunk>>>24],
+      0x76,0x05,0xb9,...[chunk&255,chunk>>>8&255,chunk>>>16&255,chunk>>>24],
       0x89,0xc8,0x8b,0x32,0x01,0xde,    // eax=count; esi=source+offset
       0x8b,0x7c,0x24,0x14,              // edi=buffer
-      0x01,0x42,0x08,0xf3,0xa4,         // offset+=count; rep movsb
+      ...(repeatFinal ? [0x3b,0x44,0x24,0x18,0x75,0x03] : []),
+      0x01,0x42,0x08,0xf3,0xa4,         // final partial chunk may rely on RTF EOF
       0x8b,0x54,0x24,0x1c,0x89,0x02,    // *pcb=count
       0xb8,callbackError,0,0,0,          // return callback status
+      // Bound a deliberately repeating producer even on the broken reader.
+      0x8b,0x54,0x24,0x10,0x83,0x7a,0x0c,100,0x72,0x05,0xb8,31,0,0,0,
       0x5b,0x5f,0x5e,                    // restore registers
       0xc2,0x10,0x00,
     ]);
@@ -100,7 +107,7 @@ async function main() {
     e.guest_write32(stream + 4, 0);
     e.guest_write32(stream + 8, callback);
     const result = e.send_message(hwnd, EM_STREAMIN, flags, stream);
-    return { result, error: e.guest_read32(stream + 4), bytesConsumed: e.guest_read32(cookie + 8) };
+    return { result, error: e.guest_read32(stream + 4), bytesConsumed: e.guest_read32(cookie + 8), calls: e.guest_read32(cookie + 12) };
   }
 
   let passed = 0;
@@ -162,6 +169,34 @@ async function main() {
     longResult.error === 0 && longResult.bytesConsumed === longRtf.length &&
       readText(edit) === 'Readable body after metadata',
     JSON.stringify({ ...longResult, text: readText(edit) }));
+
+  // RTF owns its end-of-stream marker. A producer may still have bytes (or
+  // repeat its last short chunk) after the root group closes. Do not request
+  // EOF from that producer or append data outside the document.
+  const ended = streamCallback(edit, String.raw`{\rtf1 Exact document}UNREAD TAIL`, SF_RTF);
+  check('RTF root close ends the document within a callback buffer',
+    ended.error === 0 && readText(edit) === 'Exact document', JSON.stringify(ended));
+  const boundaryRtf = '{\\rtf1 ' + 'a'.repeat(4087) + String.raw`\{literal\} tail}`;
+  const boundary = streamCallback(edit, boundaryRtf + 'UNREAD TAIL', SF_RTF);
+  check('RTF escaped braces across callback boundaries do not terminate early',
+    boundary.error === 0 && readText(edit) === 'a'.repeat(4087) + '{literal} tail', JSON.stringify(boundary));
+  const textWithBraces = String.raw`{\rtf1 plain}TEXT TAIL`;
+  streamCallback(edit, textWithBraces, SF_TEXT);
+  check('SF_TEXT retains braces and trailing bytes', readText(edit) === textWithBraces);
+  const repeatingRtf = '{\\rtf1 ' + 'b'.repeat(9000) + '}';
+  const repeating = streamCallback(edit, repeatingRtf, SF_RTF, 0, { repeatFinal: true });
+  check('RTF root EOF stops a producer that repeats its final partial buffer',
+    repeating.error === 0 && repeating.calls === 3 && readText(edit) === 'b'.repeat(9000), JSON.stringify(repeating));
+  for (const chunk of [1, 2, 3, 7]) {
+    const split = streamCallback(edit, String.raw`{\rtf1 {nested} A\{B\}C}TRAIL`, SF_RTF, 0, { chunk });
+    check('RTF lexical state survives short callback chunks ' + chunk,
+      split.error === 0 && readText(edit) === 'nested A{B}C', JSON.stringify(split));
+  }
+  for (const chunk of [1, 3, 4096]) {
+    const binary = streamCallback(edit, String.raw`{\rtf1{\pict\bin6 }}}}}}}Visible}TAIL`, SF_RTF, 0, { chunk });
+    check('RTF binary braces are not root markers, chunk ' + chunk,
+      binary.error === 0 && readText(edit) === 'Visible', JSON.stringify(binary));
+  }
 
   const failedChunk = streamCallback(edit, 'failed callback data', SF_TEXT, 123);
   check('callback errors discard that callback buffer and preserve dwError',

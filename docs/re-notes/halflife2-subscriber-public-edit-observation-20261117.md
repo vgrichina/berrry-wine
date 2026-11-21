@@ -1,5 +1,46 @@
 # Half-Life 2 Subscriber Agreement public Edit diagnosis
 
+## 2026-11-21: native RTF end-of-stream defect established
+
+Run `scratch/runs/20261121-halflife2-edit-provenance/` freshly verifies the
+original package identity below. Its CRC-checked stream at file offset 127828
+is a 35,783-byte NUL-terminated RTF document (SHA-256
+`9d83d2804f231aedf114f080669e800d21d11ab99f8c433f782420749544bffb`).
+The existing filesystem stylesheet expansion leaves its length unchanged.
+The historical 453,207 report therefore does not establish a legitimate long
+agreement; the connection to that particular historical value remains an
+inference until observed in the original invocation.
+
+Disassembly of the CRC-verified Wise bootstrap locates SF_RTF/EM_STREAMIN at
+0x1000a629 and its actual callback at 0x1000a639. The callback uses imported
+lstrlenA and advances its source offset only for a full requested chunk. It
+repeats its final partial chunk if called again. This is compatible with
+[Microsoft's documented callback stopping conditions](https://learn.microsoft.com/en-us/windows/win32/api/richedit/nc-richedit-editstreamcallback):
+stream-in also ends when the RTF block ends. Our native reader previously
+waited only for callback zero/error, and its projection consumed bytes after
+the root group closed.
+
+The generic repair recognizes the RTF root boundary incrementally before
+requesting another callback. Invocation-owned scratch preserves nesting,
+escaped controls, partial words/parameters and binary payload lengths across
+buffers. SF_TEXT remains EOF-driven; no complete-text/capture limit changes.
+An authored real x86 callback that repeats its final partial buffer fails the
+old reader and completes in three callbacks after repair. The focused native
+suite changes from 11/21 to 21/21; cases include trailing data, nested/escaped
+braces, one-byte callbacks, binary braces, long metadata and callback errors.
+The existing large Edit layout/allocation/password tests also pass.
+
+A separate forensic native Edit experiment streams the package RTF through
+the same authored callback: repaired WM_GETTEXTLENGTH and backing length are
+32,928, with nine callbacks, capacity 35,780 and validated live allocation
+35,788 bytes. The bounded old-reader experiment repeats until callback 100's
+explicit safety error, producing 88,815 characters. It does not reproduce or
+claim to explain the exact historical 453,207 value. An ordinary authored PE
+also verifies native streamed length and produces an inspected complete capture
+with native text, scrollbar and sibling buttons. Final build/publication and
+any bounded original progress are recorded in this run's result.json; these
+experiments alone do not establish agreement acceptance or installation.
+
 Published repair `f169ac488` adds bounded numeric provenance to native text
 refusals: signed reported length, exported pointer, memory byte length and a
 memory-span check. It never reads, decodes or hashes refused text. Password
