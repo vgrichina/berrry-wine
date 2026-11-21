@@ -1078,6 +1078,7 @@
       for (const step of perspectiveMipCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`perspective mip scenario threw: ${e.stack || e}`); }
     try {
+      for (const step of viewportCases({ GS, p, check })) drain();
       for (const step of visibilityCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`visibility scenario threw: ${e.stack || e}`); }
     try {
@@ -2069,5 +2070,84 @@
       yield {name:'fog-release'};
     }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, W, H, irShader, TEX_IR };
+  // Integer top-left coverage at a viewport/scissor boundary, including the
+  // depth and stencil writes later draws observe, and copied color pixels.
+  function* viewportCases({GS,p,check,capture = () => {}}) {
+ const C=GS.CONST,S=16,rt=601,ds=602,other=605,ds2=606,layout=603,ps=604;
+ const emit=(op,f,tail)=>p.emit(op,f,tail), put=b=>{const a=p.arenaAlloc(b.length);p.arenaView(a,b.length).set(b);return a;};
+ const base={depth_mode:1,zfunc:2,zwrite:1,cull:1,src_rgb:2,dst_rgb:1,src_alpha:2,dst_alpha:1,blend_op:1,blend_op_alpha:1,alpha_func:8,colormask:15,fill:3,linear:1,scissor_right:S,scissor_bottom:S};
+ const raster=f=>emit('RASTER',{...base,...f}), clear=(f={})=>emit('CLEAR',{mask:7,colormask:15,rgba:0xff000000,z:1,stencil:0,right:S,bottom:S,...f});
+ const target=(color=rt,depth=ds)=>emit('TARGETS',{color,depth}),vp=(x,y,w,h)=>emit('VIEWPORT',{x,y,w,h,zmin:0,zmax:1});
+ const quad=(rgba,z=.25)=>{const data=new Float32Array([[-1,-1],[S+1,-1],[-1,S+1],[S+1,-1],[S+1,S+1],[-1,S+1]].flatMap(x=>[...x,z,1,...rgba]));emit('DRAW_UP',{prim:C.PRIM_TRIANGLELIST,ps,layout,stride:32,count:6,vcount:6,voff:put(new Uint8Array(data.buffer))});};
+ let stamp=6000;
+ function* read(name,want,color=rt){const dst=p.arenaAlloc(S*S*4);emit('READBACK',{rt:color,fmt:C.FMT_A8B8G8R8,w:S,h:S,pitch:S*4,dst});emit('PRESENT',{rt:color,w:S,h:S,stamp:++stamp});yield{name,stamp,dst,size:S};const px=p.arenaView(dst,S*S*4).slice();for(let y=0;y<S;y++)for(let x=0;x<S;x++){const exp=typeof want==='function'?want(x,y):want,got=[...px.slice((y*S+x)*4,(y*S+x+1)*4)];check(name+' analytical '+x+','+y,got.every((v,i)=>Math.abs(v-exp[i])<=1),'got '+got+' expected '+exp);}capture(name,px);p.store('arena_tail',p.load('arena_head'));}
+ const create=(id,kind)=>emit('CREATE',{id,kind,fmt:kind===C.KIND_DS?C.FMT_D24S8:C.FMT_A8B8G8R8,width:S,height:S,levels:1});
+ for(const [id,k]of[[rt,C.KIND_RT],[ds,C.KIND_DS],[other,C.KIND_RT],[ds2,C.KIND_DS]])create(id,k);
+ const elems=new Uint8Array(16),dv=new DataView(elems.buffer);[C.USAGE_POSITIONT,C.USAGE_COLOR].forEach((u,i)=>{dv.setUint8(i*8+1,C.VTYPE_FLOAT4);dv.setUint8(i*8+2,u);dv.setUint16(i*8+4,i*16,true);});emit('LAYOUT',{id:layout,stride:32,count:2},elems);
+ const ir=irShader([[1,0x801F0000,0x90E40000]]);emit('SHADER',{id:ps,stage:1,ir_bytes:ir.length},ir);emit('BIND',{count:0});target();
+ const inside=(x,y,a,b,c,d)=>x>=a&&y>=b&&x<c&&y<d;
+ const st={stencil_enable:1,stencil_func:8,stencil_fail:1,stencil_zfail:1,stencil_pass:3,stencil_ref:9,stencil_mask:255,stencil_wmask:255};
+ // All expectations are integer rectangle intersections and constant depth tests.
+ for(const rect of [[6,1,14,10],[0,0,2,2],[4,3,12,13],[12,13,16,16]]){
+  target();clear();vp(4,3,8,10);raster({...st,scissor_left:rect[0],scissor_top:rect[1],scissor_right:rect[2],scissor_bottom:rect[3]});quad([1,0,0,1]);
+  const covered=(x,y)=>inside(x,y,4,3,12,13)&&inside(x,y,...rect);
+  yield*read('viewport-intersection-'+rect, (x,y)=>covered(x,y)?[255,0,0,255]:[0,0,0,255]);
+  target();raster({...st,stencil_func:3,stencil_pass:1,zwrite:0,depth_mode:0});quad([0,1,0,1],.5);
+  yield*read('stencil-sentinel-'+rect,(x,y)=>covered(x,y)?[0,255,0,255]:[0,0,0,255]);
+  raster({zwrite:0});quad([0,0,1,1],.5);
+  yield*read('depth-sentinel-'+rect,(x,y)=>covered(x,y)?[0,255,0,255]:[0,0,255,255]);
+ }
+ target();clear();vp(4,3,8,10);raster({scissor_left:6,scissor_top:1,scissor_right:14,scissor_bottom:10,colormask:0,zwrite:0});quad([1,0,0,1]);clear({rgba:0xff302010,left:1,top:2,right:15,bottom:14,z:.125,stencil:7});
+ yield*read('clear-own-rectangle',(x,y)=>inside(x,y,1,2,15,14)?[16,32,48,255]:[0,0,0,255]);
+ target();raster({zwrite:0});quad([0,0,1,1],.5);yield*read('clear-depth-sentinel',(x,y)=>inside(x,y,1,2,15,14)?[16,32,48,255]:[0,0,255,255]);
+ raster({...st,depth_mode:0,zwrite:0,stencil_func:3,stencil_pass:1,stencil_ref:7});quad([0,1,0,1]);yield*read('clear-stencil-sentinel',(x,y)=>inside(x,y,1,2,15,14)?[0,255,0,255]:[0,0,255,255]);
+ // COPY must not leave its source framebuffer selected for the next CLEAR.
+ target(other,ds2);clear({rgba:0xff0000ff});vp(2,2,3,3);raster({scissor_right:4,scissor_bottom:4});quad([1,1,0,1]);
+ emit('COPY',{src:rt,dst:other,sw:S,sh:S,dw:S,dh:S,filter:1});clear({mask:1,rgba:0xffff00ff,left:8,right:16});
+ yield*read('copy-then-clear-target',(x,y)=>x>=8?[255,0,255,255]:inside(x,y,1,2,15,14)?[0,255,0,255]:[0,0,255,255],other);
+ target(other,ds2);clear();raster({depth_mode:0});quad([1,0,0,1]);yield*read('target-resets-viewport',[255,0,0,255],other);
+
+ for(const linear of [0,1])for(const sc of [[0,0,16,16],[6,4,10,12]]){
+  target();clear();vp(4,4,8,8);raster({...st,linear,scissor_left:sc[0],scissor_top:sc[1],scissor_right:sc[2],scissor_bottom:sc[3]});
+  const data=new Float32Array([[4,4],[12,4],[4,12],[12,4],[12,12],[4,12]].flatMap(x=>[...x,.25,1,1,0,0,1]));
+  emit('DRAW_UP',{prim:C.PRIM_TRIANGLELIST,ps,layout,stride:32,count:6,vcount:6,voff:put(new Uint8Array(data.buffer))});
+  const covered=(x,y)=>inside(x,y,4,4,12,12)&&inside(x,y,...sc);
+  yield*read('edge-color-'+linear+'-'+sc,(x,y)=>covered(x,y)?[255,0,0,255]:[0,0,0,255]);
+  emit('COPY',{src:rt,dst:other,sw:S,sh:S,dw:S,dh:S,filter:1});yield*read('edge-copy-'+linear+'-'+sc,(x,y)=>covered(x,y)?[255,0,0,255]:[0,0,0,255],other);
+  target();raster({...st,depth_mode:0,zwrite:0,stencil_func:3,stencil_pass:1});quad([0,1,0,1]);
+  yield*read('edge-stencil-'+linear+'-'+sc,(x,y)=>covered(x,y)?[0,255,0,255]:[0,0,0,255]);
+  raster({zwrite:0});quad([0,0,1,1],.5);yield*read('edge-depth-'+linear+'-'+sc,(x,y)=>covered(x,y)?[0,255,0,255]:[0,0,255,255]);
+ }
+ // The coverage lift must not move the sample along an affine color or
+ // depth plane. These expectations use the original integer pixel centre.
+ target();clear();vp(4,4,8,8);raster({linear:1});
+ const gradient=new Float32Array([[4,4],[12,4],[4,12],[12,4],[12,12],[4,12]].flatMap(([x,y])=>
+  [x,y,.125+(y-4)/16,1,(y-4)/8,0,0,1]));
+ emit('DRAW_UP',{prim:C.PRIM_TRIANGLELIST,ps,layout,stride:32,count:6,vcount:6,voff:put(new Uint8Array(gradient.buffer))});
+ const covered=(x,y)=>inside(x,y,4,4,12,12);
+ yield*read('linear-integer-color-plane',(x,y)=>covered(x,y)?[Math.round(255*(y-4)/8),0,0,255]:[0,0,0,255]);
+ // At y=8, stored z=.375. A coverage-only lift stores .37890625,
+ // incorrectly admitting the blue LESS sentinel at .376953125.
+ raster({linear:1,zwrite:0});quad([0,0,1,1],.376953125);
+ yield*read('linear-integer-depth-plane',(x,y)=>!covered(x,y)?[0,0,0,255]:y>=9?[0,0,255,255]:[Math.round(255*(y-4)/8),0,0,255]);
+ // Shared strip vertices belong to two different color planes. Resolve
+ // both index widths and the strip's alternating winding before correcting.
+ for(const index_size of [0,2,4]){
+  target();clear();vp(4,4,8,8);raster({linear:1,depth_mode:0});
+  let verts=[[4,4,0],[12,4,.25],[4,12,.75],[12,12,.5]];
+  if(index_size)verts=verts.slice().reverse();
+  const data=new Float32Array(verts.flatMap(([x,y,c])=>[x,y,.25,1,c,0,0,1]));
+  const ib=index_size===2?new Uint16Array([3,2,1,0]):new Uint32Array([3,2,1,0]);
+  emit('DRAW_UP',{prim:C.PRIM_TRIANGLESTRIP,ps,layout,stride:32,count:4,vcount:4,index_size,
+   voff:put(new Uint8Array(data.buffer)),ioff:index_size?put(new Uint8Array(ib.buffer)):0});
+  yield*read('linear-shared-strip-'+index_size,(x,y)=>{
+   if(!covered(x,y))return[0,0,0,255];
+   const u=(x-4)/8,v=(y-4)/8,c=u+v<=1?.25*u+.75*v:.5-.25*u+.25*v;
+   return[Math.round(255*c),0,0,255];
+  });
+ }
+ for(const id of[rt,ds,other,ds2,layout,ps])emit('RELEASE',{id});yield{name:'release'};
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, viewportCases, W, H, irShader, TEX_IR };
 });
