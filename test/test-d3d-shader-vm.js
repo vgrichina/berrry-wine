@@ -14,6 +14,8 @@ const { bootRenderHarness } = require('./render-helper');
   const { exports: e, memory } = await bootRenderHarness({ fonts: 'none', extraWat: fragment + `
     (func (export "shader_test_alloc") (param $n i32) (result i32)
       (call $g2w (call $heap_alloc (local.get $n))))
+    (func (export "shader_test_address") (param $x i32) (param $n i32) (param $mode i32) (result i32)
+      (call $d3d_shader_vm_address (local.get $x) (local.get $n) (local.get $mode)))
     (func (export "shader_test_quad_lod") (param $ctx i32) (param $u0 f32) (param $u1 f32) (param $u2 f32) (param $u3 f32)
       (param $v0 f32) (param $v1 f32) (param $v2 f32) (param $v3 f32) (param $lane i32) (result f32)
       (call $d3d_shader_vm_lane (call $d3d_shader_vm_quad_lod
@@ -65,6 +67,19 @@ const { bootRenderHarness } = require('./render-helper');
   const b = [[2,3,4,5],[3,4,5,6],[4,5,6,7],[5,6,7,8]];
   const c = [[0.25,0.5,0.75,1],[1,2,3,4],[2,3,4,5],[3,4,5,6]];
   let cases = 0;
+  // Integer footprint oracle is independent of the sampler's scalar/vector
+  // twins, which share address(). Include every interior texel of both POT
+  // and NPOT dimensions, plus negative and outside taps and integer limits.
+  for (const n of [1,2,3,7,16,31,256,1023,2047,2048]) {
+    const taps = [...Array(n).keys(), -2147483648, -3*n-1, -n, -1, n, n+1, 3*n+1, 2147483647];
+    for (const mode of [1,2,3,4]) for (const x of taps) {
+      const repeat = ((x % n) + n) % n, mirror = ((x % (2*n)) + 2*n) % (2*n);
+      const expected = mode === 1 ? repeat : mode === 2 ? (mirror < n ? mirror : 2*n-1-mirror) :
+        mode === 3 ? Math.max(0,Math.min(n-1,x)) : (x < 0 || x >= n ? -1 : x);
+      assert.strictEqual(e.shader_test_address(x,n,mode), expected, `address ${x}/${n} mode${mode}`);
+    }
+    cases++;
+  }
   // LOG and LOGP use a finite negative sentinel for both signs of zero.
   // Keep log2's internal -Infinity policy separate (texture LOD relies on it).
   for (const opcode of [15, 79]) for (let scalar = 0; scalar < 4; scalar++)

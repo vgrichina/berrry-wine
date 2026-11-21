@@ -1376,6 +1376,10 @@
 ;; and /texture-addressing-modes. Point ties choose floor(u*width).
 (func $d3d_shader_vm_address (param $x i32) (param $n i32) (param $mode i32) (result i32)
   (local $period i32)
+  ;; Bound texture dimensions are 1..2048. Every address mode leaves an
+  ;; in-range integer tap unchanged; avoid decoding the mode and taking a
+  ;; signed remainder for the common interior footprint (including NPOT).
+  (if (i32.lt_u (local.get $x) (local.get $n)) (then (return (local.get $x))))
   (if (i32.eq (local.get $mode) (i32.const 1)) (then
     (local.set $x (i32.rem_s (local.get $x) (local.get $n)))
     (return (select (i32.add (local.get $x) (local.get $n)) (local.get $x) (i32.lt_s (local.get $x) (i32.const 0))))))
