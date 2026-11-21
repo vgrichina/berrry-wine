@@ -92,7 +92,17 @@ function loadCompilerContext() {
 // build performs on every compile anyway. lowerIR still refuses a type its own
 // width table has no entry for, so an unknown type cannot silently become 4
 // bytes wide in this output either.
+//
+// The build's own compile already lowered every declaration and wrote it to
+// build/watx-facts.json (tools/watx-facts.js). When those facts are provably
+// current — same src/ bytes, same compiler — they ARE this answer, from the
+// same lowerIR, so read them instead of paying for a second parse+expand.
+// Anything else (missing, stale, WINE_WATX_FACTS=0) falls through to the
+// original computation below.
 function loweredLayouts() {
+  const factsTool = require(path.join(ROOT, 'tools', 'watx-facts.js'));
+  const facts = factsTool.loadFreshFacts();
+  if (facts) return factsTool.loweredDeclarations(facts);
   const ctx = loadCompilerContext();
   const { watxSourceClosure } = require(path.join(ROOT, 'tools', 'watx-closure.js'));
   const closure = watxSourceClosure();

@@ -320,7 +320,8 @@ node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 # a tag guard, 26 per-arm. Verified to exit 1 on each of six planted failures by
 # test/test-union-gate.js, which plants into a COPY of src/ (`--src=DIR`) rather
 # than the shared tree. A gate that cannot fail is not a gate.
-node tools/union-gate.js > /dev/null || { node tools/union-gate.js; exit 1; }
+# (Runs after the compile, below: it reads the lowered unions from
+# build/watx-facts.json.)
 
 # ControlState — the per-window control state behind WND_RECORDS.state_ptr, and
 # the SECOND union in the tree. It is a harder union than GdiObject: it has no
@@ -563,7 +564,8 @@ node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 # number used to be greppable and now is not. `node tools/gen-layout-offsets.js
 # --at=VSock:0x38` prints the field, and with no arguments it prints the whole
 # table.
-node tools/gen-layout-offsets.js --check
+# (Runs after the compile, below: it reads the lowered layouts from
+# build/watx-facts.json.)
 
 echo "Concatenating WAT parts..."
 # From the src/main.watx include list, not a shell glob: combined.wat must be
@@ -585,6 +587,14 @@ node tools/check-parens.js build/combined.wat --no-diff --quiet
 # / check-parens / func-index surface and is never itself compiled.
 echo "Compiling (WATX)..."
 node tools/build-compile-wat.js
+
+# Declaration-only gates, moved here from above because they read what the
+# compile already resolved (build/watx-facts.json, docs/watx-facts.md) instead
+# of re-parsing the tree. Each falls back to computing the answer itself when
+# the facts do not match src/ and the compiler byte for byte, so the ORDER is
+# about speed, never about correctness. See their comment blocks above.
+node tools/union-gate.js > /dev/null || { node tools/union-gate.js; exit 1; }
+node tools/gen-layout-offsets.js --check
 
 # Two (data ...) segments that cover the same byte: the later one wins at
 # instantiation and eats the earlier one's NUL terminator, which turns a

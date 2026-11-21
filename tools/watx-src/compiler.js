@@ -369,6 +369,11 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
       // writes an artifact prints this; a caller that does not, ignores it.
       regions: wasmResult.regions || null,
     };
+    // Opt-in pass-1 facts: every declaration this compile resolved, as plain
+    // JSON-able data. A consumer that needs only declarations (layout offsets,
+    // the region map, the export surface) can read these instead of parsing
+    // and expanding the whole closure again. Never changes wasmBinary.
+    if (options.facts) result.facts = watxCompileFacts(lowered, wasmResult.facts);
     if (debugArtifacts) {
       result.wasmText = wasmText;
       result.expanded = formatSexpr(expanded);
@@ -387,6 +392,25 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
       diagnostics: [{ type: 'error', msg: e.message, line: e.line || 0, col: e.col || 0 }],
     };
   }
+}
+
+// The lowered declaration records (lowerIR) in their own shape, minus the
+// derived lookup maps: a layout's fieldByName is its fields by name, and an
+// enum's members Map becomes an object in declaration order.
+function watxCompileFacts(lowered, moduleFacts) {
+  const declarations = [];
+  for (const rec of lowered) {
+    if (!rec || typeof rec.type !== 'string' || !rec.type.endsWith('-lowered')) continue;
+    if (rec.type === 'layout-lowered') {
+      const { fieldByName, ...rest } = rec;
+      declarations.push(rest);
+    } else if (rec.type === 'enum-lowered') {
+      declarations.push({ ...rec, members: Object.fromEntries(rec.members) });
+    } else {
+      declarations.push(rec);
+    }
+  }
+  return { declarations, ...(moduleFacts || {}) };
 }
 
 function compile(source, vfs = new Map(), options = {}) {
