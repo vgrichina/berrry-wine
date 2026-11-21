@@ -2497,6 +2497,7 @@
   ;; sunken progress well, and invalidates on state changes.
 
   (func $progress_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
+    (local $sum i64)
     (local $hdc i32) (local $sz i32) (local $w i32) (local $h i32)
     (local $state i32) (local $sw i32) (local $old i32)
     (local $min i32) (local $max i32) (local $pos i32) (local $range i32) (local $inner_w i32) (local $fill_w i32)
@@ -2557,9 +2558,17 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0403))
       (then
         (local.set $old (call $prog_pos (local.get $sw)))
+        ;; Add signed positions before clamping; i32 addition can wrap to the
+        ;; opposite boundary even though both inputs are valid signed values.
+        (local.set $sum (i64.add
+          (i64.extend_i32_s (local.get $old))
+          (i64.extend_i32_s (local.get $wParam))))
+        (if (i64.lt_s (local.get $sum) (i64.extend_i32_s (call $prog_min (local.get $sw))))
+          (then (local.set $sum (i64.extend_i32_s (call $prog_min (local.get $sw))))))
+        (if (i64.gt_s (local.get $sum) (i64.extend_i32_s (call $prog_max (local.get $sw))))
+          (then (local.set $sum (i64.extend_i32_s (call $prog_max (local.get $sw))))))
         (call $prog_set_pos (local.get $sw)
-          (call $prog_clamp (local.get $sw)
-            (i32.add (local.get $old) (local.get $wParam))))
+          (i32.wrap_i64 (local.get $sum)))
         (call $invalidate_hwnd (local.get $hwnd))
         (return (local.get $old))))
     ;; PBM_SETSTEP(0x0404), PBM_STEPIT(0x0405), PBM_SETRANGE32(0x0406).
