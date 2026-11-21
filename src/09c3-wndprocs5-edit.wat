@@ -2819,6 +2819,88 @@
         (call $invalidate_hwnd (local.get $hwnd))
         (return (i32.const 0))))
 
+    ;; ---------- EM_POSFROMCHAR (0x00D6), bounded ANSI plain EDIT ----------
+    ;; Microsoft: wParam is a document character index, lParam is unused;
+    ;; signed client x/y occupy LOWORD/HIWORD. The end insertion point and
+    ;; indexes beyond it return -1; delimiters identify the line's text end.
+    ;; Use the existing unwrapped painter's font, 4px origin, 16px rows and
+    ;; scroll offsets. These local pixels are not measured Windows parity.
+    ;; RichEdit's pointer/version-dependent protocol must keep its old path.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00D6))
+                 (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
+      (then
+        ;; Preserve the prior fallback for shapes outside established geometry.
+        (if (i32.or (call $wnd_unicode_get (local.get $hwnd))
+              (i32.or (call $edit_wraps (local.get $hwnd))
+                (i32.or
+                  (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                                   (i32.const 0x23)) (i32.const 0))
+                  (i32.ne (i32.and (call $ctrl_get_ex_style (local.get $hwnd))
+                                   (i32.const 0x00707000)) (i32.const 0)))))
+          (then (return (i32.const 0))))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $text_len (load.field.memarg EditState text_len (local.get $state_w)))
+        ;; A support bound, not a Windows document-size limit.
+        (if (i32.gt_u (local.get $text_len) (i32.const 65535))
+          (then (return (i32.const 0))))
+        (local.set $buf (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
+        (local.set $lo (i32.const 0))
+        (block $posfromchar_text_done (loop $posfromchar_text
+          (br_if $posfromchar_text_done (i32.ge_u (local.get $lo) (local.get $text_len)))
+          (local.set $vk (i32.load8_u (i32.add (local.get $buf) (local.get $lo))))
+          ;; Printable ASCII and multiline CRLF only: no guessed tab stops,
+          ;; codepage character units or single-line delimiter rendering.
+          (if (i32.eq (local.get $vk) (i32.const 13))
+            (then
+              (if (i32.ge_u (i32.add (local.get $lo) (i32.const 1)) (local.get $text_len))
+                (then (return (i32.const 0))))
+              (if (i32.ne (i32.load8_u (i32.add (local.get $buf)
+                             (i32.add (local.get $lo) (i32.const 1)))) (i32.const 10))
+                (then (return (i32.const 0))))
+              (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)))
+                (then (return (i32.const 0))))
+              (local.set $lo (i32.add (local.get $lo) (i32.const 1))))
+            (else
+              (if (i32.or (i32.lt_u (local.get $vk) (i32.const 32))
+                           (i32.gt_u (local.get $vk) (i32.const 126)))
+                (then (return (i32.const 0))))))
+          (local.set $lo (i32.add (local.get $lo) (i32.const 1)))
+          (br $posfromchar_text)))
+        ;; Empty text has no character at index zero. Unsigned comparison
+        ;; also rejects -1 without treating it as a special caret request.
+        (if (i32.ge_u (local.get $wParam) (local.get $text_len))
+          (then (return (i32.const -1))))
+        (local.set $lo (call $edit_line_start (local.get $state_w) (local.get $wParam)))
+        (local.set $hi (i32.sub (local.get $wParam) (local.get $lo)))
+        (local.set $cur (call $edit_line_text_len (local.get $state_w) (local.get $lo)))
+        ;; Both bytes of CRLF lie just beyond the last drawn character.
+        (if (i32.gt_u (local.get $hi) (local.get $cur))
+          (then (local.set $hi (local.get $cur))))
+        (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+        (local.set $brush (call $gdi_native_select_object (local.get $hdc)
+          (select (load.field.memarg EditState font (local.get $state_w)) (i32.const 0x30021)
+            (i32.ne (load.field.memarg EditState font (local.get $state_w)) (i32.const 0)))))
+        (local.set $px (i32.const 0))
+        (if (local.get $hi)
+          (then
+            (local.set $px (call $host_measure_text (local.get $hdc)
+              (i32.add (local.get $buf) (local.get $lo)) (local.get $hi) (i32.const 0)))
+            (if (i32.eqz (local.get $px))
+              (then (local.set $px (i32.mul (local.get $hi) (i32.const 8)))))))
+        (drop (call $gdi_native_select_object (local.get $hdc) (local.get $brush)))
+        (local.set $cx (i32.sub (i32.add (i32.const 4) (local.get $px))
+          (load.field.memarg EditState scroll_x (local.get $state_w))))
+        (local.set $cy (i32.const 4))
+        (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4))
+          (then (local.set $cy (i32.add (i32.const 4) (i32.mul (i32.const 16)
+            (i32.sub (call $edit_line_from_char (local.get $state_w) (local.get $wParam))
+              (load.field.memarg EditState scroll_top (local.get $state_w))))))))
+        ;; Mask x before OR: a negative x must not overwrite the y WORD.
+        ;; Offscreen positions remain signed packed coordinates, not errors.
+        (return (i32.or (i32.and (local.get $cx) (i32.const 0xFFFF))
+          (i32.shl (local.get $cy) (i32.const 16))))))
+
     ;; ---------- EM_CHARFROMPOS (0x00D7), bounded ANSI plain EDIT ----------
     ;; Microsoft: signed packed client coordinates, unused wParam; return
     ;; document character in LOWORD and line in HIWORD, or -1 outside.
