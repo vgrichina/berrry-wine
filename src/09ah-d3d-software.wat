@@ -1220,13 +1220,6 @@
     (if (local.get $point) (then
       (if (i32.load offset=200 (local.get $ctx)) (then
         (local.set $sprite (i32.and (i32.load offset=4 (i32.load offset=200 (local.get $ctx))) (i32.const 1)))))))
-    ;; Clear only the temp registers this program can name, not all 128. The
-    ;; bank is 8192 bytes and a ps_1_1 shader may reach two registers of it, so
-    ;; the constant was clearing 2KB per pixel -- about 630MB per 640x480 draw,
-    ;; and a measurable fraction of an untextured pixel. The span is computed
-    ;; once when the VM context is created and can never exceed the bank.
-    (memory.fill (i32.add (local.get $vm) (i32.const 32)) (i32.const 0)
-      (call $d3d_shader_vm_temp_bytes (local.get $vm)))
     ;; The varying loop below is a FIXED 28 iterations and the specular loop a
     ;; fixed 4, run for all four lanes of every quad whether the lane is inside
     ;; the triangle or not -- and a pixel shader that reads one varying pays for
@@ -1405,10 +1398,17 @@
             (call $d3d_software_inside (local.get $a) (local.get $b) (local.get $e2))))))))))
         (local.set $bits (i32.or (local.get $bits) (i32.shl (i32.const 1) (local.get $lane)))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1))) (br_if $lanes (i32.lt_u (local.get $lane) (i32.const 4))))
+    (if (local.get $bits) (then
+    ;; An empty coverage mask cannot execute a shader or write a fragment.
+    ;; Defer the temp reset and SIMD varying bank setup until coverage is
+    ;; known. A covered quad still initializes ALL four lanes, including
+    ;; derivative helpers, and each VM entry still starts with clean temps.
+    ;; Temp and varying banks are disjoint, including the sprite scalar path.
+    (memory.fill (i32.add (local.get $vm) (i32.const 32)) (i32.const 0)
+      (call $d3d_shader_vm_temp_bytes (local.get $vm)))
     (if (i32.eqz (local.get $sprite)) (then
       (call $d3d_software_quad_varyings (local.get $vm) (local.get $a) (local.get $b) (local.get $c) (local.get $vmask)
         (local.get $qu) (local.get $qv) (local.get $qw) (local.get $qiw) (local.get $qriw))))
-    (if (local.get $bits) (then
       (i32.store offset=8 (local.get $vm) (i32.const 0)) (i32.store offset=12 (local.get $vm) (i32.const 1))
       (i32.store offset=16 (local.get $vm) (local.get $bits))
       ;; Derivative helper lanes execute but coverage/depth remain output-only.

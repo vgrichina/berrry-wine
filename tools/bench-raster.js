@@ -87,6 +87,8 @@
 // draw census (run.js --d3d9-gps=software stats print the executor's) before claiming
 // any app-level win from a rasterizer change.
 const path = require('path');
+const fs = require('fs');
+const crypto = require('crypto');
 const { bootRenderHarness } = require(path.join(__dirname, '..', 'test', 'render-helper'));
 const { Device } = require(path.join(__dirname, '..', 'lib', 'd3d9-software-backend'));
 
@@ -178,7 +180,12 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
   const selected = String(flag('arms', Object.keys(ARMS).join(','))).split(',');
   for (const name of selected) if (!ARMS[name]) throw new Error(`unknown arm ${name}`);
 
-  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none' });
+  // An explicit module permits interleaved old/new runs without changing the
+  // shared checkout. Keep its identity beside the raw measurements.
+  const modulePath = flag('module', null);
+  const bytes = modulePath ? fs.readFileSync(modulePath) : null;
+  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none',
+    prebuiltModule: bytes ? await WebAssembly.compile(bytes) : null });
   const device = new Device({ width, height, getExports: () => e, getMemory: () => memory.buffer });
   const covered = quad(false), slivered = quad(true);
   const stride = covered.stride;
@@ -199,6 +206,9 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
   for (const name of selected) { device.clear([0, 0, 0, 1], 1); device.draw(draw(name)); device.present(); }
 
   const samples = Object.fromEntries(selected.map(name => [name, []]));
+  const cpuSamples = Object.fromEntries(selected.map(name => [name, []]));
+  const outputs = {};
+  const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
   for (let rep = 0; rep < reps; rep++) {
     // Rotate the order every rep so no arm is permanently first or last.
     const order = selected.map((_, i) => selected[(i + rep) % selected.length]);
@@ -206,9 +216,15 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
       const command = draw(name);
       device.clear([0, 0, 0, 1], 1);
       const started = process.hrtime.bigint();
+      const cpuStarted = process.cpuUsage();
       device.draw(command);
       device.present();
+      const cpu = process.cpuUsage(cpuStarted);
+      cpuSamples[name].push((cpu.user + cpu.system) / 1000);
       samples[name].push(Number(process.hrtime.bigint() - started) / 1e6);
+      outputs[name] = { pixels: digest(device.readPixels()),
+        depth: digest(new Uint8Array(memory.buffer, device.depth.wa, device.depth.bytes)),
+        samples: String(device.lastDrawSamples) };
     }
   }
   device.destroy();
@@ -222,7 +238,9 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
   });
   const flat = rows.find(r => r.arm === 'flat');
 
-  if (args.includes('--json')) { console.log(JSON.stringify({ width, height, reps, rows }, null, 2)); return; }
+  if (args.includes('--json')) { console.log(JSON.stringify({ width, height, reps, rows,
+    moduleSHA256: bytes ? digest(bytes) : null, engine: process.versions,
+    samples, cpuSamples, outputs }, null, 2)); return; }
   console.log(`software rasterizer, one covering quad at ${width}x${height} (${pixels} px), ` +
     `median of ${reps} interleaved reps`);
   console.log('  arm         median    ns/px    vs flat   rep spread');
