@@ -2419,6 +2419,18 @@
                 (i32.add (local.get $lParam) (i32.shl (local.get $text_len) (i32.const 1))) (i32.const 0)))
               (else (call $gs8 (i32.add (local.get $lParam) (local.get $text_len)) (i32.const 0))))))
         (return (local.get $text_len))))
+    ;; SB_ISSIMPLE reads the existing mode, with FALSE for unattached state.
+    ;; Its parameters are ignored; reading must not allocate or publish state.
+    (if (i32.eq (local.get $msg) (i32.const 0x040E))
+      (then
+        (local.set $state (call $statusbar_state_get (local.get $hwnd) (i32.const 0)))
+        (if (local.get $state)
+          (then
+            (return (i32.ne
+              (call $statusbar_simple_mode
+                (cast ptr<StatusBarState> (call $g2w (local.get $state))))
+              (i32.const 0)))))
+        (return (i32.const 0))))
     ;; SB_SIMPLE selects between the preserved ordinary pane and simple part.
     (if (i32.eq (local.get $msg) (i32.const 0x0409))
       (then
