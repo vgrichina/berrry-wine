@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "5a58988c63cf5aa98a0663cdf7a9ed1c6ccb9957d16a57fcce10e5070a8a4137",
+      "sha256": "25e3d8fbcf51c39bfb0f170e99702fb64a958a6ed74b53b54647c95d862a85cf",
+      "reason": "Review 20261121 D3DIM lazy Lock default: the init handler calls the existing d3dim_lazy_enable(1) export once, before 'ready', when msg.sharedRenderWorker && msg.d3dimGpu && msg.d3dimLazySync !== false (the call 82193049e removed). No callback producer, boundary call, write or lifetime changed; the export was already reachable through callExport from setLazySync."
+    }
+  ]
+}

@@ -8,6 +8,13 @@
 //
 // WebGL is the default for every supported version. Software is the only
 // alternate UI mode; legacy URL spellings must not split the two backends.
+//
+// Legacy Direct3D's executor is no longer a page global (WINE_D3DIM_GPU is
+// gone): host.js hands the guest worker d3dimGpu = renderer !== 'software'
+// at launch, and that worker owns lazy Lock sync. Lazy sync is on for the
+// shared-WebGL path unless ?no-lazy-sync, and never on for Software. The
+// worker's own init has to turn it on (82193049e dropped that call and the
+// browser silently went eager), so this reads the guest global back.
 
 const assert = require('assert');
 const path = require('path');
@@ -48,7 +55,8 @@ const root = path.join(__dirname, '..');
   const bothHalves = page => page.evaluate(() => ({
     select: document.getElementById('d3d-renderer-select').value,
     renderer: window.WineD3D.renderer,
-    d3dim: window.WINE_D3DIM_GPU === true,
+    // What host.js passes the guest worker as d3dimGpu at the next launch.
+    d3dim: !(window.WineD3D && window.WineD3D.renderer === 'software'),
     options: Array.from(document.getElementById('d3d-renderer-select').options).map(o => o.value),
   }));
   try {
@@ -87,11 +95,17 @@ const root = path.join(__dirname, '..');
     });
     assert.strictEqual(d3d9Gps, 'software',
       'Software selects the D3D9 GPU stream software executor');
+    assert.strictEqual(await plain.page.evaluate(() => runningApps[0].wine.guestWorker.d3dimGpu), false,
+      'Software launches the guest worker without the D3DIM WebGL executor');
     assert.strictEqual(await plain.page.evaluate(() => runningApps[0].wine.guestWorker.callExport('test_lazy_enabled')), 0,
       'software worker remains eager');
+    // An explicit live toggle is a different contract: since 36cfef40c the
+    // software executor is a GPU stream v2 consumer too, and a shared software
+    // worker accepts deferred completion when asked (test-render-worker-
+    // lifecycle.js, 'shared software preserves native deferred completion').
     await plain.page.evaluate(() => setLazySync(true));
-    assert.strictEqual(await plain.page.evaluate(() => runningApps[0].wine.guestWorker.callExport('test_lazy_enabled')), 0,
-      'live toggle cannot enable lazy synchronization for software');
+    assert.strictEqual(await plain.page.evaluate(() => runningApps[0].wine.guestWorker.callExport('test_lazy_enabled')), 1,
+      'a live toggle reaches a shared software worker');
     assert.deepStrictEqual(plain.errors, [], 'no page errors');
     await plain.page.close();
 
@@ -109,6 +123,8 @@ const root = path.join(__dirname, '..');
         await launchApp();
       });
       const enabled = () => lazyPage.page.evaluate(() => runningApps[0].wine.guestWorker.callExport('test_lazy_enabled'));
+      assert.strictEqual(await lazyPage.page.evaluate(() => runningApps[0].wine.guestWorker.d3dimGpu), true,
+        'the default launch hands the guest worker the D3DIM WebGL executor');
       assert.strictEqual(await enabled(), disabled ? 0 : 1, 'shared WebGL honors default and URL opt-out');
       await lazyPage.page.evaluate(() => setLazySync(false));
       assert.strictEqual(await enabled(), 0, 'live opt-out reaches guest instance');
@@ -118,9 +134,11 @@ const root = path.join(__dirname, '..');
       await lazyPage.page.close();
     }
 
+    // ?d3dim-gpu[=0] was retired by 36cfef40c; a stale link must not split
+    // the two generations or pick a mode of its own.
     for (const [query, expected] of [
       ['?debug&d3dim-gpu', 'webgl'],
-      ['?debug&d3dim-gpu=0', 'software'],
+      ['?debug&d3dim-gpu=0', 'webgl'],
       ['?debug&d3d9-renderer=software&d3dim-gpu', 'software'],
       ['?debug&d3d-renderer=software', 'software'],
       ['?debug&d3d-renderer=webgl&d3d9-renderer=software', 'webgl'],
