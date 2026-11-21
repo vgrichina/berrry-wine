@@ -536,6 +536,39 @@ Route (box2; flags as for UT2003 above):
 
 ## UT 348 route (2026-10-06)
 
+### Native main-menu input handoff (2026-11-21)
+
+`scratch/runs/20261121-ut-mainmenu-handoff/` proves one unchanged 599-file
+original through its normal Software Rendering wizard, rendered main menu,
+and **Game → Start Practice Session**. `original/after-12.png` shows the
+Practice setup screen with Tournament DeathMatch, `dm-morpheusdemo`, and its
+Morpheus preview. This checkpoint does not establish a started match.
+
+The retained failure mixed splash thread 2's HWND 98305 with thread 1's
+shared capture HWND 65560. Its native wait repeatedly displaced the actual
+input owner's observation. `guest-rpc.js` now omits scene metadata when native
+capture belongs to another thread; native calls and routing remain unchanged.
+The original subsequently observed the main actor at slot 0 with matching
+focus/capture 65560. A separate authored window-replacement case exposed the
+private requester's inability to retire a successfully completed old scene.
+The production guard's `release(owner, nonce)` relinquishes only completed
+native input with trusted physical UP and the same process/transport
+incarnation. It grants no new authority: a subsequent `bind()` must pass the
+unchanged fresh-scene checks.
+
+Both causes have separate actual-Worker authored old-fail/new-pass controls.
+The original reused the accepted startup transport and focus-navigation
+evidence without rerunning those controls. All six observed CPUWorkers
+matched the retained `d7a39d3fa` module
+`2c37a26bd614bc2b2529d3921185bc111aa11547c1454135b9a01fca2a3a03f2`;
+the exact two production JS changes are retained as `candidate.patch`.
+Ten physical actions received exact native ACKs and prearmed independent
+trusted UP/release ACKs within unchanged bounds. After reopening Game, two
+Down presses visibly selected Start Practice Session; Enter opened it.
+No focus, guest/configuration, pump, or presentation override was used.
+Normal shutdown completed with both native supervisors exiting 0, no leaks,
+and drained wrapper/browser/display/release waits. No box was created.
+
 `--app=ut348_demo` mounts `test/binaries/candidates/unreal-tournament-348-demo/extracted/`
 through a manifest written by `node tools/gen-tree-manifest.js <root>
 --exe=System/UnrealTournament.exe --flatten=System`. The game opens

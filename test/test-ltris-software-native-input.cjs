@@ -18,7 +18,7 @@ function fixture(options={trusted:()=>true}){
   const call=(name,fn)=>guard.withActor(0,name,fn),observe=()=>call('check_input',()=>guard.observe(scene));
   observe();
   const prepare=()=>{const b=guard.bind();guard.prepare({owner:b.owner,nonce:'sdl',reviewed:true,
-    reviewedAt:wall,imageSHA256:'a'.repeat(64),code:13,mode:'game'});};
+    reviewedAt:wall,imageSHA256:'a'.repeat(64),code:13,mode:'game'});return b;};
   const down=()=>{renderer.handleKeyDown(13);return call('check_input',()=>guard.dequeued(renderer.inputQueue.shift()));};
   const consume=token=>{const v=new DataView(memory.buffer);[10,0x100,13,1].forEach((n,i)=>v.setUint32(32+4*i,n,true));
     return call('input_consumed',()=>guard.consumed(token,1,32,1,1,[...scene,32]));};
@@ -210,3 +210,47 @@ async function dialogWorkerCases(){
   console.log('PASS actual CPUWorker browser DialogBox entry/retained return and lifecycle/attachment negatives '+JSON.stringify(results));
 }
 if(require.main===module)dialogWorkerCases().catch(e=>{console.error(e);process.exitCode=1;});
+
+// Retirement removes authority after exact native return plus trusted UP.
+// A completed callback may destroy the old scene before the requester retires
+// its binding. The new scene still needs an independent fresh native sample.
+{
+  const f=fixture();f.prepare();assert.equal(f.consume(f.down()),1);f.renderer.handleKeyUp(13);
+  const oldScene=f.guard.snapshot().scene;delete f.renderer.windows[10];
+  assert.equal(f.guard.snapshot().ready,false);
+  const receipt=f.guard.status('sdl'),owner=receipt.physicalUp.owner;
+  const retired=f.guard.release(owner,'sdl');assert.deepEqual(retired.scene,oldScene);
+  assert.throws(()=>f.guard.bind(),/unavailable/,'retirement cannot promote a missing window');
+  f.renderer.windows[10]={visible:true,wasm:f.instance,wasmMemory:f.wine.memory,processId:7};
+  f.clock(1251,251);assert.throws(()=>f.guard.bind(),/unavailable/,'retirement cannot renew producer clocks');
+  f.observe();const fresh=f.guard.bind();assert.notEqual(fresh.owner,owner);
+  assert.throws(()=>f.guard.release(owner,'sdl'),/release refused/,'old owner cannot retire the new binding');
+  console.log('PASS completed scene retirement; fresh bind independently fences window, age and owner');
+}
+for(const fault of ['prepared','delivery-pending','pending','no-up','untrusted-up','cancelled-up','wrong-owner','wrong-nonce','memory','transport','process','terminal']){
+  const f=fixture();let owner=f.prepare().owner;
+  if(fault==='prepared'||fault==='delivery-pending'){
+    if(fault==='delivery-pending')assert(f.down()>0);
+    assert.throws(()=>f.guard.release(owner,'sdl'),/release refused/,fault);continue;
+  }
+  if(fault==='pending'){
+    const token=f.down();assert(token>0);f.renderer.handleKeyUp(13);owner=f.guard.status('sdl').physicalUp.owner;
+  }else{
+    assert.equal(f.consume(f.down()),1);
+    if(fault!=='no-up'&&fault!=='cancelled-up')f.renderer.handleKeyUp(13);
+  }
+  if(fault==='untrusted-up'){
+    // A reported receipt is a copy and cannot revoke or fabricate trust.
+    // Test the absence of genuine UP on a separate native-consumed ticket.
+    const a=fixture({trusted:type=>type==='keydown'}),b=a.prepare();assert.equal(a.consume(a.down()),1);a.renderer.handleKeyUp(13);
+    assert.equal(a.guard.status('sdl').physicalUp,null);assert.throws(()=>a.guard.release(b.owner,'sdl'),/release refused/);continue;
+  }
+  if(fault==='cancelled-up')f.renderer.handleKeyUp(13,{browserInputCancellation:'blur'});
+  if(fault==='wrong-owner')owner+='wrong';
+  if(fault==='memory')f.wine.memory={buffer:new ArrayBuffer(4096)};
+  if(fault==='transport')f.wine.guestWorker={...f.wine.guestWorker};
+  if(fault==='process')f.wine._processObject={};
+  if(fault==='terminal')f.guard.close();
+  assert.throws(()=>f.guard.release(owner,fault==='wrong-nonce'?'other':'sdl'),/release refused/,fault);
+}
+console.log('PASS incomplete, untrusted, cancelled, foreign and replaced-incarnation retirement refusals');

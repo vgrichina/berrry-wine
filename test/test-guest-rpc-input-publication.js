@@ -17,12 +17,12 @@ const sigs = {
 if (!isMainThread) {
   const { memory, publication, mode } = workerData;
   const e = { get_main_hwnd: () => 65, get_focus_hwnd: () => 65,
-    wnd_lookup_generation: () => 3n, get_window_thread: () => 7,
+    wnd_lookup_generation: () => 3n, get_window_thread: h => mode === 'foreign-capture' && h === 66 ? 8 : 7,
     get_current_thread_id: () => 7, get_process_id: () => 8,
-    modal_dialog_hwnd: () => 0, get_capture_hwnd: () => 65,
-    guest_to_wasm: p => p + 16 };
+    modal_dialog_hwnd: () => 0, get_capture_hwnd: () => mode === 'foreign-capture' ? 66 : 65,
+    get_yield_reason: () => 7, guest_to_wasm: p => p + 16 };
   const w = RPC.createWorkerImports(memory, sigs, m => parentPort.postMessage(m),
-    { slot: 2, renderPublication: publication, getExports: () => e });
+    { slot: 2, endpointIdentity: 11, renderPublication: publication, getExports: () => e });
   try {
     if (mode === 'failure') {
       for (const [name, args] of [['check_input', []], ['input_validate', [9]],
@@ -35,6 +35,7 @@ if (!isMainThread) {
       assert.equal(w.imports.host.get_async_key_state(65), 0x8001);
       assert.equal(w.imports.host.get_key_down_state(65), 0x8000);
       assert.equal(w.imports.host.check_input(), 0x201);
+      w.sampleNativeMessageWait();
       assert.equal(w.imports.host.input_validate(9), 1);
       assert.equal(w.imports.host.input_consumed(9, 1, 32), 1);
       parentPort.postMessage({ t: 'inputDone' });
@@ -46,7 +47,7 @@ if (!isMainThread) {
   async function run(mode) {
     const memory = { buffer: new SharedArrayBuffer(8192 * 65536) };
     const q = new PublicationQueue(new SharedArrayBuffer(64 + 256));
-    const order = [], context = [7, 8, 65, 65, 0, 65, 3, 0, 3, 0];
+    const order = [], context = mode === 'foreign-capture' ? [] : [7, 8, 65, 65, 0, 65, 3, 0, 3, 0];
     let release, entered, inputDone = false, graphics = false;
     const gate = new Promise(r => { release = r; });
     const admitted = new Promise(r => { entered = r; });
@@ -70,6 +71,10 @@ if (!isMainThread) {
       input_validate: (...a) => {
         order.push(['validate', ...a]);
         if (a[0] === 0) return 0x424e49;
+        if (a[0] === -1) {
+          assert.deepEqual(a.slice(1,11),context);
+          assert.equal(a[13],11);assert(a[11]>0&&a[12]>0);return 0;
+        }
         assert.deepEqual(a, [9, ...context]); return 1;
       },
       check_input: (...a) => {
@@ -116,6 +121,8 @@ if (!isMainThread) {
         assert(inputDone); assert(graphics);
         assert.equal(order.filter(row => row[0] === 'async-key').length, 1);
         assert.equal(order.filter(row => row[0] === 'key').length, 1);
+        assert.equal(order.filter(row => row[0] === 'validate' && row[1] === -1).length,
+          mode === 'foreign-capture' ? 0 : 1,'foreign wait cannot publish or renew owner metadata');
       }
       console.log('PASS actual Worker held publication: ' + mode);
     } finally {
@@ -126,7 +133,7 @@ if (!isMainThread) {
       } finally { q.fail(); await w.terminate(); }
     }
   }
-  (async () => { await run('pending'); await run('failure'); })().catch(e => {
+  (async () => { await run('pending'); await run('foreign-capture'); await run('failure'); })().catch(e => {
     console.error(e); process.exitCode = 1;
   });
 }
