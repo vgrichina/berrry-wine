@@ -2,6 +2,17 @@
 
 App id `forsaken_demo`, candidate `forsaken-demo` (registered 2026-10-11, w5).
 
+## November 21: missing-triangle report checked against the current renderer
+
+The [retained-report and native counterexample study](forsaken-missing-triangles-cause-20261121.md)
+confirms that the historical56 triangles are absent from a four-hit diagnostic,
+not demonstrated missing rasterization. Actual current immutable native render
+Workers draw all60 authored triangles, indexed and nonindexed; truncated4/59
+negative controls detect exactly56/one missing. The existing source/output
+separation regression also passes. No new renderer defect or runtime patch is
+proved, and no new original run was justified. The broader old whitening
+interval and ordinary Quit13 remain separate unresolved questions.
+
 ## November 12: combat white viewport and joined state trace
 
 Current original combat on module`04c53419…` shows living movement and player
