@@ -269,9 +269,11 @@
   ;; WND_RECORDS.state_ptr but through $tab_native_state_get, which keeps its
   ;; own 32-slot (hwnd, state) table in $TAB_NATIVE_STATE_TABLE. It is declared
   ;; here anyway because it is the same KIND of record and shares the same
-  ;; hazard: 128 bytes = two counters and eight 15-byte fixed label records, so
+  ;; hazard: the 128-byte prefix is two counters and eight 15-byte labels, so
   ;; the array is not i32-strided and only count@0 and selected@4 are words.
   ;; Naming them is what stops a reader taking `offset=8` for a third counter.
+  ;; Public native tabs extend the allocation to 160 bytes, with eight opaque
+  ;; i32 item values at +128. This layout describes the unchanged mirror prefix.
   (layout TabNativeState
     (field count     i32)          ;; +0   tabs inserted, hard-capped at 8
     (field selected  i32)          ;; +4   TCM_SETCURSEL
@@ -999,6 +1001,7 @@
   ;; separate so observing TCM_* messages cannot corrupt its WM_CREATE state.
   (func $tab_native_state_get (param $hwnd i32) (param $create i32) (result i32)
     (local $i i32) (local $addr i32) (local $empty i32) (local $state i32)
+    (local $extended i32)
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (i32.const 32)))
       (local.set $addr (i32.add (global.get $TAB_NATIVE_STATE_TABLE)
@@ -1015,6 +1018,19 @@
     (local.set $state (call $heap_alloc (i32.const 128)))
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (call $zero_memory (call $g2w (local.get $state)) (i32.const 128))
+    ;; Only public CLASS27 owns the tail. DLL/hybrid and WinHelp mirrors keep
+    ;; their 128-byte allocation. Publish no table entry until extension succeeds;
+    ;; realloc failure retains the original block, which we explicitly free.
+    ;; The table owns the final pointer; NCDESTROY/reset free that whole block.
+    (if (i32.and
+          (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 27))
+          (i32.ne (local.get $hwnd) (global.get $help_topics_tab_hwnd)))
+      (then
+        (local.set $extended (call $heap_realloc (local.get $state) (i32.const 160) (i32.const 0)))
+        (if (i32.eqz (local.get $extended))
+          (then (call $heap_free (local.get $state)) (return (i32.const 0))))
+        (local.set $state (local.get $extended))
+        (call $zero_memory (i32.add (call $g2w (local.get $state)) (i32.const 128)) (i32.const 32))))
     (i32.store (local.get $empty) (local.get $hwnd))
     (i32.store offset=4 (local.get $empty) (local.get $state))
     (local.get $state))
@@ -1043,9 +1059,10 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan))))
 
-  ;; Tab mirror state is 128 inline bytes: count@0, selected@4, followed by
-  ;; eight 15-byte records {len:u8, text[14]}. No secondary allocations are
-  ;; needed. It lives in TAB_NATIVE_STATE_TABLE, not COMCTL32's window state.
+  ;; Tab mirror prefix is 128 inline bytes: count@0, selected@4, followed by
+  ;; eight 15-byte records {len:u8, text[14]}. Public native tabs also own a
+  ;; 32-byte tail, handled only by their wndproc. No secondary allocation lives
+  ;; beyond creation. The table is separate from COMCTL32's window state.
   ;; Hybrid callers guard this with tab_native_is. The public native procedure
   ;; calls it only after validating a mutation (and, for mouse input, veto).
   (func $tab_native_note_message
@@ -1166,6 +1183,24 @@
           (br $hit)))))
     )
 
+  ;; Validate the native short ASCII subset before a combined mutation writes
+  ;; either field. A callback, NULL, long or non-ASCII text is unsupported here.
+  (func $tab_control_text_length (param $text i32) (param $wide i32) (result i32)
+    (local $len i32) (local $ch i32)
+    (if (i32.or (i32.eqz (local.get $text)) (i32.eq (local.get $text) (i32.const -1)))
+      (then (return (i32.const -1))))
+    (loop $validate
+      (local.set $ch (if (result i32) (local.get $wide)
+        (then (call $gl16 (i32.add (local.get $text) (i32.shl (local.get $len) (i32.const 1)))))
+        (else (call $gl8 (i32.add (local.get $text) (local.get $len))))))
+      (if (i32.eqz (local.get $ch)) (then (return (local.get $len))))
+      (if (i32.or (i32.ge_u (local.get $len) (i32.const 14))
+                  (i32.gt_u (local.get $ch) (i32.const 127)))
+        (then (return (i32.const -1))))
+      (local.set $len (i32.add (local.get $len) (i32.const 1)))
+      (br $validate))
+    (i32.const -1))
+
   ;; Public class-27 procedure over the existing eight-label mirror. Hybrid
   ;; DLL controls keep their installed procedure and never enter this fallback.
   ;; Notification storage belongs to this synchronous invocation, so nested
@@ -1190,7 +1225,7 @@
     (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $state i32) (local $sw i32) (local $count i32) (local $old i32)
     (local $index i32) (local $rec i32) (local $item i32) (local $text i32)
-    (local $i i32) (local $len i32) (local $wide i32)
+    (local $i i32) (local $len i32) (local $wide i32) (local $mask i32) (local $data i32)
     (local $x i32) (local $y i32) (local $left i32) (local $right i32)
     (local $hit_dc i32) (local $hit_width i32) (local $hit_height i32) (local $hit_top i32)
     (local $generation i64)
@@ -1398,8 +1433,25 @@
       (then
         (if (i32.or (i32.eqz (local.get $lParam)) (i32.ge_u (local.get $count) (i32.const 8)))
           (then (return (i32.const -1))))
+        (local.set $item (call $g2w (local.get $lParam)))
+        (local.set $mask (i32.load (local.get $item)))
+        ;; Preserve legacy text-only insertion/truncation. Combined native
+        ;; text+param insertions validate both fields before shifting anything.
+        (if (i32.eq (i32.and (local.get $mask) (i32.const 9)) (i32.const 9))
+          (then
+            (if (i32.lt_s (call $tab_control_text_length
+                  (i32.load offset=12 (local.get $item))
+                  (i32.eq (local.get $msg) (i32.const 0x133E))) (i32.const 0))
+              (then (return (i32.const -1))))))
         (local.set $index (select (local.get $wParam) (local.get $count)
           (i32.lt_u (local.get $wParam) (local.get $count))))
+        (local.set $data (i32.add (i32.add (local.get $sw) (i32.const 128))
+          (i32.shl (local.get $index) (i32.const 2))))
+        (memory.copy (i32.add (local.get $data) (i32.const 4)) (local.get $data)
+          (i32.shl (i32.sub (local.get $count) (local.get $index)) (i32.const 2)))
+        (i32.store (local.get $data) (i32.const 0))
+        (if (i32.and (local.get $mask) (i32.const 8))
+          (then (i32.store (local.get $data) (i32.load offset=24 (local.get $item)))))
         (call $tab_native_note_message (local.get $hwnd) (local.get $msg)
           (local.get $index) (local.get $lParam))
         (if (i32.eqz (local.get $count))
@@ -1423,10 +1475,17 @@
           (i32.mul (i32.sub (local.get $count) (local.get $wParam)) (i32.const 15)))
         (call $zero_memory (i32.add (i32.add (local.get $sw) (i32.const 8))
           (i32.mul (local.get $count) (i32.const 15))) (i32.const 15))
+        (local.set $data (i32.add (i32.add (local.get $sw) (i32.const 128))
+          (i32.shl (local.get $wParam) (i32.const 2))))
+        (memory.copy (local.get $data) (i32.add (local.get $data) (i32.const 4))
+          (i32.shl (i32.sub (local.get $count) (local.get $wParam)) (i32.const 2)))
+        (i32.store (i32.add (i32.add (local.get $sw) (i32.const 128))
+          (i32.shl (local.get $count) (i32.const 2))) (i32.const 0))
         (i32.store (local.get $sw) (local.get $count))
         (call $paint_flag_set_inv (local.get $hwnd))
         (return (i32.const 1))))
-    ;; TCM_SETITEMA/W: TCIF_TEXT selects pszText; cchTextMax is ignored.
+    ;; TCM_SETITEMA/W: TEXT and PARAM select independent fields; an opaque
+    ;; 32-bit value is copied, never translated/dereferenced. cchTextMax is ignored.
     ;; Only the native short ASCII label subset fits this inline mirror.
     ;; Validate before touching any record; no callback/non-ASCII inference.
     (if (i32.or (i32.eq (local.get $msg) (i32.const 0x1306))
@@ -1436,39 +1495,35 @@
                     (i32.ge_u (local.get $wParam) (local.get $count)))
           (then (return (i32.const 0))))
         (local.set $item (call $g2w (local.get $lParam)))
-        (if (i32.eqz (i32.and (i32.load (local.get $item)) (i32.const 1)))
-          (then (return (i32.const 1))))
-        (local.set $text (i32.load offset=12 (local.get $item)))
-        (if (i32.or (i32.eqz (local.get $text))
-                    (i32.eq (local.get $text) (i32.const -1)))
-          (then (return (i32.const 0))))
-        (local.set $wide (i32.eq (local.get $msg) (i32.const 0x133D)))
-        (block $text_valid (loop $validate_text
-          (local.set $i (if (result i32) (local.get $wide)
-            (then (call $gl16 (i32.add (local.get $text) (i32.shl (local.get $len) (i32.const 1)))))
-            (else (call $gl8 (i32.add (local.get $text) (local.get $len))))))
-          (br_if $text_valid (i32.eqz (local.get $i)))
-          (if (i32.or (i32.ge_u (local.get $len) (i32.const 14))
-                      (i32.gt_u (local.get $i) (i32.const 127)))
-            (then (return (i32.const 0))))
-          (local.set $len (i32.add (local.get $len) (i32.const 1)))
-          (br $validate_text)))
-        (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
-          (i32.mul (local.get $wParam) (i32.const 15))))
-        (call $zero_memory (local.get $rec) (i32.const 15))
-        (i32.store8 (local.get $rec) (local.get $len))
-        (local.set $i (i32.const 0))
-        (block $text_copied (loop $copy_text
-          (br_if $text_copied (i32.ge_u (local.get $i) (local.get $len)))
-          (i32.store8 (i32.add (i32.add (local.get $rec) (i32.const 1)) (local.get $i))
-            (if (result i32) (local.get $wide)
-              (then (call $gl16 (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1)))))
-              (else (call $gl8 (i32.add (local.get $text) (local.get $i))))))
-          (local.set $i (i32.add (local.get $i) (i32.const 1)))
-          (br $copy_text)))
-        (call $paint_flag_set_inv (local.get $hwnd))
+        (local.set $mask (i32.load (local.get $item)))
+        (if (i32.and (local.get $mask) (i32.const 1))
+          (then
+            (local.set $text (i32.load offset=12 (local.get $item)))
+            (local.set $wide (i32.eq (local.get $msg) (i32.const 0x133D)))
+            (local.set $len (call $tab_control_text_length (local.get $text) (local.get $wide)))
+            (if (i32.lt_s (local.get $len) (i32.const 0)) (then (return (i32.const 0))))
+            (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
+              (i32.mul (local.get $wParam) (i32.const 15))))
+            (call $zero_memory (local.get $rec) (i32.const 15))
+            (i32.store8 (local.get $rec) (local.get $len))
+            (local.set $i (i32.const 0))
+            (block $text_copied (loop $copy_text
+              (br_if $text_copied (i32.ge_u (local.get $i) (local.get $len)))
+              (i32.store8 (i32.add (i32.add (local.get $rec) (i32.const 1)) (local.get $i))
+                (if (result i32) (local.get $wide)
+                  (then (call $gl16 (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1)))))
+                  (else (call $gl8 (i32.add (local.get $text) (local.get $i))))))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br $copy_text)))
+            (call $paint_flag_set_inv (local.get $hwnd))))
+        (if (i32.and (local.get $mask) (i32.const 8))
+          (then (i32.store
+            (i32.add (i32.add (local.get $sw) (i32.const 128))
+              (i32.shl (local.get $wParam) (i32.const 2)))
+            (i32.load offset=24 (local.get $item)))))
         (return (i32.const 1))))
-    ;; Text query A/W uses the caller's capacity, including the terminator.
+    ;; A/W queries write only masked fields. Text uses the caller's capacity,
+    ;; including the terminator; PARAM never inspects an unmasked text pointer.
     (if (i32.or (i32.eq (local.get $msg) (i32.const 0x1305))
                 (i32.eq (local.get $msg) (i32.const 0x133C)))
       (then
@@ -1501,6 +1556,10 @@
                 (if (local.get $wide)
                   (then (i32.store16 (i32.add (local.get $text) (i32.shl (local.get $len) (i32.const 1))) (i32.const 0)))
                   (else (i32.store8 (i32.add (local.get $text) (local.get $len)) (i32.const 0))))))))
+        (if (i32.and (i32.load (local.get $item)) (i32.const 8))
+          (then (i32.store offset=24 (local.get $item)
+            (i32.load (i32.add (i32.add (local.get $sw) (i32.const 128))
+              (i32.shl (local.get $wParam) (i32.const 2)))))))
         (return (i32.const 1))))
     (if (i32.eq (local.get $msg) (i32.const 0x130C))
       (then
@@ -1518,6 +1577,7 @@
         (return (local.get $old))))
     (if (i32.eq (local.get $msg) (i32.const 0x1309))
       (then
+        (call $zero_memory (i32.add (local.get $sw) (i32.const 128)) (i32.const 32))
         (call $tab_native_note_message (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam))
         (i32.store offset=4 (local.get $sw) (i32.const -1))
         (return (i32.const 1))))
