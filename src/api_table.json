@@ -39854,5 +39854,12 @@
     "nargs": 1,
     "convention": "cdecl",
     "hash": 1795382296
+  },
+  {
+    "id": 4715,
+    "name": "MakeCriticalSectionGlobal",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3256346330
   }
 ]

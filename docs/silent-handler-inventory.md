@@ -1,5 +1,13 @@
 # Silent-handler inventory history
 
+2026-11-21: 231 -> 230. ConvertToGlobalHandle's numeric identity stub now
+traps explicitly: general global-handle promotion needs authority references
+and source consumption. MakeCriticalSectionGlobal delegates to the shared
+heap's ownership/wait authority. Exact old/new inventory comparison removes
+only ConvertToGlobalHandle; pin
+`3f86c68c43074a4b08ef7140d7a35fe707a705de3900e9f8564ed4e1dcd17ce6`.
+Evidence: `20261121-sims-global-cs`.
+
 2026-11-05: 239 -> 237. Both vertex-buffer Unlock handlers now clear shared
 object lock state and reject invalid objects. ProcessVerticesStrided checks
 that state before processing; Lock marks it through the common VB alias.

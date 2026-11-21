@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "e4a3d047c6d907f407bdaef0cc57cf102aa7d1f3201304dfc7b9e9d0a4ddce55",
+      "sha256": "89d5e12d42dbc2229f9ecf731bee88239cbdc29fd0e780dcab755b815bd115d9",
+      "reason": "Global CS: serialized synchronous authority operations own recursion and wait grants; shared memory and native process-birth identity travel to the authority. Existing yield9 retains its EIP/ESP frame and retries its generation-bound grant. Thread retirement routes through existing cs cleanup; transport disconnect removes its own owners/waiters. No guest callbacks are retained or dispatched by the new host calls."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "e93e082a6e5aa6b4d8ad97a7166d7c45bb88ed7bb84462a49076b80bb2aa9421",
+      "sha256": "dc4a67326f3f622cdc3e820d6d738034d84e34dd112a5f41dd3b8b202255664b",
+      "reason": "Global CS: serialized synchronous authority operations own recursion and wait grants; shared memory and native process-birth identity travel to the authority. Existing yield9 retains its EIP/ESP frame and retries its generation-bound grant. Thread retirement routes through existing cs cleanup; transport disconnect removes its own owners/waiters. No guest callbacks are retained or dispatched by the new host calls."
+    }
+  ]
+}

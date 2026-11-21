@@ -875,16 +875,10 @@ nW — STUB: unimplemented
   ;; +0C=OwningThread, +10=LockSemaphore, +14=SpinCount.
   (func $critical_section_init (param $arg0 i32) (param $spin i32)
     (local $cs i32)
-    ;; Initialization owns no thread lock yet. Publish the six guest words to
-    ;; the system byte store; the local cleanup registry holds WASM addresses
-    ;; and must never retain an authority pointer. Enter/promotion is separate.
+    ;; Shared sections are initialized in one authority transaction. Never put
+    ;; authority pointers in the process-private WASM cleanup registry.
     (if (call $shared_heap_address (local.get $arg0)) (then
-      (call $gs32 (local.get $arg0) (i32.const 0))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const -1))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (i32.const 0))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 16)) (i32.const 0))
-      (call $gs32 (i32.add (local.get $arg0) (i32.const 20)) (local.get $spin))
+      (drop (call $shared_cs_call (i32.const 20) (local.get $arg0) (global.get $current_thread_id) (local.get $spin)))
       (return)))
     (local.set $cs (call $g2w (local.get $arg0)))
     ;; Zero the struct then set LockCount = -1 (unlocked)
@@ -967,6 +961,7 @@ nW — STUB: unimplemented
   ;; ended inside a section, and callers report it.
   (func $cs_release_owned (param $owner i32) (result i32)
     (local $i i32) (local $cs i32) (local $n i32)
+    (local.set $n (call $shared_cs_call (i32.const 27) (i32.const 0) (local.get $owner) (i32.const 0)))
     (block $done
       (loop $scan
         (br_if $done (i32.ge_u (local.get $i) (global.get $CS_TABLE_ENTRIES)))
@@ -1054,6 +1049,24 @@ nW — STUB: unimplemented
   (func $handle_EnterCriticalSection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cs i32) (local $me i32) (local $prev i32) (local $spin i32)
     (local $owner i32) (local $round i32)
+    (if (call $shared_heap_address (local.get $arg0)) (then
+      (local.set $prev (call $shared_cs_call (i32.const 22) (local.get $arg0) (global.get $current_thread_id)
+        (if (result i32) (i32.and (i32.ne (global.get $cs_park_pending) (i32.const 0))
+            (i32.eq (global.get $cs_wait_addr) (local.get $arg0)))
+          (then (global.get $cs_wait_owner)) (else (i32.const 0)))))
+      (if (i32.ne (local.get $prev) (i32.const 1)) (then
+        ;; The generation is retained in the parked frame diagnostics. A retry
+        ;; cannot silently acquire a deleted/reinitialized section at this VA.
+        (call $cs_block (local.get $arg0) (local.get $prev)) (return)))
+      (if (global.get $cs_park_pending) (then
+        (if (i32.ne (i32.load offset=16 (global.get $reg_base)) (global.get $cs_park_esp)) (then
+          (global.set $cs_resume_esp_delta (i32.sub (i32.load offset=16 (global.get $reg_base)) (global.get $cs_park_esp)))))
+        (global.set $cs_park_pending (i32.const 0))))
+      (global.set $cs_wait_addr (i32.const 0))
+      (global.set $cs_wait_owner (i32.const 0))
+      (global.set $handler_set_eip (i32.const 0))
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+      (return)))
     (local.set $cs (call $g2w (local.get $arg0)))
     (local.set $me (global.get $current_thread_id))
     ;; Contended from inside a synchronous wndproc: parking is not available.
@@ -1153,6 +1166,9 @@ nW — STUB: unimplemented
   ;; immediate FALSE and never parks the calling guest thread.
   (func $handle_TryEnterCriticalSection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cs i32) (local $me i32) (local $prev i32)
+    (if (call $shared_heap_address (local.get $arg0)) (then
+      (call $toolhelp_return (call $shared_cs_call (i32.const 23) (local.get $arg0) (global.get $current_thread_id) (i32.const 0)) (i32.const 1))
+      (return)))
     (local.set $cs (call $g2w (local.get $arg0)))
     (local.set $me (global.get $current_thread_id))
     (if (call $cs_owner_aligned (local.get $cs))
@@ -1196,6 +1212,10 @@ nW — STUB: unimplemented
   ;; 332: LeaveCriticalSection(lpCriticalSection)
   (func $handle_LeaveCriticalSection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cs i32) (local $rec i32)
+    (if (call $shared_heap_address (local.get $arg0)) (then
+      (drop (call $shared_cs_call (i32.const 24) (local.get $arg0) (global.get $current_thread_id) (i32.const 0)))
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+      (return)))
     (local.set $cs (call $g2w (local.get $arg0)))
     (call $cs_unaligned_lock (local.get $cs))
     ;; A non-owner Leave is invalid and must not mutate the section. The former
@@ -1231,6 +1251,10 @@ nW — STUB: unimplemented
   ;; 333: DeleteCriticalSection(lpCriticalSection)
   (func $handle_DeleteCriticalSection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cs i32)
+    (if (call $shared_heap_address (local.get $arg0)) (then
+      (drop (call $shared_cs_call (i32.const 25) (local.get $arg0) (global.get $current_thread_id) (i32.const 0)))
+      (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+      (return)))
     (local.set $cs (call $g2w (local.get $arg0)))
     (i32.store (local.get $cs) (i32.const 0))
     (i32.store offset=4 (local.get $cs) (i32.const -1))
@@ -1243,6 +1267,20 @@ nW — STUB: unimplemented
     (call $cs_unregister (local.get $cs))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
+
+  ;; Process-shared operations retain authority-owned generations, owner and
+  ;; wait queue. The six public words are projections of that state, never a
+  ;; second independently consumable lock in this process's linear memory.
+  (func $shared_cs_call (param $op i32) (param $address i32) (param $tid i32) (param $generation i32) (result i32)
+    (call $host_shared_heap (local.get $op) (local.get $address) (local.get $tid) (local.get $generation) (call $current_process_id)))
+
+  (func $handle_MakeCriticalSectionGlobal (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    ;; A private pointer cannot be promoted into shared bytes by changing its
+    ;; numeric identity. Win9x callers must allocate the section in HEAP_SHARED.
+    (if (i32.eqz (call $shared_heap_address (local.get $arg0))) (then
+      (call $crash_unimplemented (local.get $name_ptr)) (return)))
+    (drop (call $shared_cs_call (i32.const 21) (local.get $arg0) (global.get $current_thread_id) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; 334: GetCurrentThread — 0 args, return pseudo-handle 0xFFFFFFFE (-2)
   (func $handle_GetCurrentThread (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

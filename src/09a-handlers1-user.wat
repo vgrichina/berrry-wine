@@ -483,12 +483,11 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
-  ;; ConvertToGlobalHandle promotes a process-local kernel handle so it can be
-  ;; inherited by another process. This emulator has one process and stable
-  ;; handle identities, therefore the promoted handle is the same handle.
+  ;; Global handle promotion requires an authority reference and consumes the
+  ;; local source. A numeric identity return grants neither contract across
+  ;; real process peers. Keep unsupported promotion explicit.
   (func $handle_ConvertToGlobalHandle (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+    (call $crash_unimplemented (local.get $name_ptr))
   )
 
   ;; Primary-monitor enumeration. Each suspended callback owns a stack frame:
