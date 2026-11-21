@@ -467,8 +467,64 @@
     (local $img i32) (local $img_w i32) (local $img_h i32) (local $img_x i32) (local $img_y i32)
     (local $parent i32)
     (local $click_on_focus_loss i32)
+    (local $click_generation i64)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+
+    ;; BM_CLICK (Microsoft): deliver mouse DOWN/UP through the public window
+    ;; procedure so subclasses and the existing native activation path see
+    ;; the same transitions and parent BN_CLICKED. Bounded to native enabled
+    ;; push/default-push, checkbox/autocheckbox and radio/autoradio controls.
+    ;; No inactive-dialog policy: callers activate their dialog as documented.
+    (if (i32.eq (local.get $msg) (i32.const 0x00F5))
+      (then
+        (if (i32.or (i32.eqz (local.get $state))
+                    (i32.eqz (call $wnd_lookup_live (local.get $hwnd))))
+          (then (return (i32.const 0))))
+        (local.set $kind (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 15)))
+        (if (i32.or
+              (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 134217728)) (i32.const 0))
+              (i32.and (i32.gt_u (local.get $kind) (i32.const 4))
+                       (i32.ne (local.get $kind) (i32.const 9))))
+          (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        ;; Private bit11 owns this invocation across guest callbacks. A
+        ;; recursive BM_CLICK on this same button must not duplicate DOWN/UP.
+        (if (i32.and (call $btn_flags (local.get $state_w)) (i32.const 0x800))
+          (then (return (i32.const 0))))
+        (local.set $click_generation (call $wnd_lookup_generation (local.get $hwnd)))
+        (call $btn_set_flags (local.get $state_w)
+          (i32.or (call $btn_flags (local.get $state_w)) (i32.const 0x800)))
+        (block $click_done
+          ;; Resolve focus before entering the native DOWN handler, whose
+          ;; physical-input path assumes its state survives SetFocus. Focus
+          ;; callbacks may destroy this target or choose another focus winner.
+          (call $set_focus (local.get $hwnd))
+          (br_if $click_done
+            (i32.or (i32.ne (global.get $focus_hwnd) (local.get $hwnd))
+              (i32.or (i32.eqz (call $wnd_lookup_live (local.get $hwnd)))
+                (i32.or
+                  (i64.ne (call $wnd_lookup_generation (local.get $hwnd)) (local.get $click_generation))
+                  (i32.ne (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state))))))
+          (drop (call $wnd_send_message (local.get $hwnd)
+            (i32.const 0x0201) (i32.const 1) (i32.const 0)))
+          ;; DOWN can destroy/recreate the target. Never send UP or touch the
+          ;; retained state unless both the window lifetime and state survive.
+          (br_if $click_done (i32.or (i32.eqz (call $wnd_lookup_live (local.get $hwnd)))
+              (i32.or
+                (i64.ne (call $wnd_lookup_generation (local.get $hwnd)) (local.get $click_generation))
+                (i32.ne (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state)))))
+          (drop (call $wnd_send_message (local.get $hwnd)
+            (i32.const 0x0202) (i32.const 0) (i32.const 0))))
+        ;; UP/BN_CLICKED can reenter or destroy the control too.
+        (if (i32.and (call $wnd_lookup_live (local.get $hwnd))
+              (i32.and
+                (i64.eq (call $wnd_lookup_generation (local.get $hwnd)) (local.get $click_generation))
+                (i32.eq (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state))))
+          (then
+            (call $btn_set_flags (local.get $state_w)
+              (i32.and (call $btn_flags (local.get $state_w)) (i32.const -2049)))))
+        (return (i32.const 0))))
 
     ;; BM_SETSTYLE: bounded native push/default-push transitions. Preserve
     ;; unrelated style bits and all state except the default-border flag.
