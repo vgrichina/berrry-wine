@@ -83,6 +83,7 @@
   (func $d3g_decline (param $pb i32) (param $why i32)
     (local $a i32)
     (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1))
+    (call $gps_stat_api (global.get $GPS_API_D3DIM) (global.get $GPS_STAT_DECLINES) (i32.const 1))
     (local.set $a (i32.add (i32.add (local.get $pb) (i32.const 23312)) (i32.shl (local.get $why) (i32.const 2))))
     (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (i32.const 1)))
     (call $host_log_i32 (i32.const 0x44334744))
@@ -106,8 +107,7 @@
   (func $d3g_kick (param $pb i32) (param $mode i32) (result i32)
     (local $h i32)
     (local.set $h (call $d3g_h))
-    (i32.store offset=12 (local.get $pb) (load.field.memarg GpsRing write_pos (local.get $h)))
-    (i32.store offset=16 (local.get $pb) (load.field.memarg GpsRing arena_head (local.get $h)))
+    (call $gps_kick_mark (local.get $h))
     (call $gps_kick (local.get $h) (local.get $mode)))
 
   (func $d3g_sync (param $pb i32)
@@ -115,17 +115,9 @@
     (if (i32.ne (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_SYNC)) (i32.const 1))
       (then (call $d3g_fail))))
 
-  ;; Begin a record; hand the consumer a quarter of the ring or arena at a time.
+  ;; Begin a record ($gps_begin_auto hands the consumer a quarter at a time).
   (func $d3g_begin (param $pb i32) (param $op i32) (param $n i32) (result i32)
-    (local $h i32)
-    (local.set $h (call $d3g_h))
-    (if (i32.or
-          (i32.ge_u (i32.sub (load.field.memarg GpsRing write_pos (local.get $h)) (i32.load offset=12 (local.get $pb)))
-            (i32.shr_u (global.get $D3G_RING_BYTES) (i32.const 2)))
-          (i32.ge_u (i32.sub (load.field.memarg GpsRing arena_head (local.get $h)) (i32.load offset=16 (local.get $pb)))
-            (i32.shr_u (global.get $D3G_ARENA_BYTES) (i32.const 2))))
-      (then (drop (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_ASYNC)))))
-    (call $gps_begin (local.get $h) (local.get $op) (local.get $n)))
+    (call $gps_begin_auto (call $d3g_h) (local.get $op) (local.get $n)))
 
   (func $d3g_end (param $p i32) (result i32)
     (call $gps_end (call $d3g_h) (local.get $p) (i32.const 0)))
@@ -164,19 +156,9 @@
   ;; UPLOAD a w x n block at (x, y).
   (func $d3g_upload_at (param $pb i32) (param $id i32) (param $level i32) (param $x i32) (param $y i32)
       (param $w i32) (param $n i32) (param $src i32)
-    (local $p i32)
-    (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
-    (store.field GpsUpload id (local.get $p) (local.get $id))
-    (store.field GpsUpload level (local.get $p) (local.get $level))
-    (store.field GpsUpload face (local.get $p) (i32.const 0))
-    (store.field GpsUpload x (local.get $p) (local.get $x))
-    (store.field GpsUpload y (local.get $p) (local.get $y))
-    (store.field GpsUpload w (local.get $p) (local.get $w))
-    (store.field GpsUpload h (local.get $p) (local.get $n))
-    (store.field GpsUpload pitch (local.get $p) (i32.shl (local.get $w) (i32.const 2)))
-    (store.field GpsUpload src (local.get $p) (local.get $src))
-    (store.field GpsUpload bytes (local.get $p) (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n)))
-    (drop (call $d3g_end (local.get $p))))
+    (call $gps_upload (call $d3g_h) (local.get $id) (local.get $level) (i32.const 0)
+      (local.get $x) (local.get $y) (local.get $w) (local.get $n) (i32.shl (local.get $w) (i32.const 2))
+      (local.get $src) (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n))))
 
   ;; Rows per band of $w RGBA pixels.
   (func $d3g_band_rows (param $w i32) (result i32)
@@ -982,6 +964,10 @@
     (local.get $id))
 
   ;; ---- Textures ----------------------------------------------------------
+  ;; Cache slot $e (an entry address) as a texture-diagnostic slot index.
+  (func $d3g_td_slot (param $pb i32) (param $e i32) (result i32)
+    (i32.shr_u (i32.sub (local.get $e) (i32.add (local.get $pb) (i32.const 6656))) (i32.const 8)))
+
   (func $d3g_tex_free (param $pb i32) (param $e i32)
     (local $i i32) (local $r i32)
     (if (i32.eqz (i32.load (local.get $e))) (then (return)))
@@ -1111,7 +1097,7 @@
     (local $mip i32) (local $keyed i32) (local $kb i32) (local $mode i32) (local $lv i32) (local $n i32)
     (local $w i32) (local $hgt i32) (local $bpp i32) (local $pitch i32) (local $wa i32) (local $sig i32)
     (local $i i32) (local $e i32) (local $slot i32) (local $j i32) (local $t i32) (local $id i32)
-    (local $g i64)
+    (local $g i64) (local $diag i32) (local $hash i64)
     (local.set $mip (i32.ne (i32.load offset=188 (local.get $d)) (i32.const 0)))
     (local.set $keyed (i32.ne (i32.load offset=52 (local.get $d)) (i32.const 0)))
     (local.set $kb (i32.ne (i32.load offset=160 (local.get $d)) (i32.const 0)))
@@ -1198,7 +1184,9 @@
               (then
                 (local.set $g (call $d3g_tex_gen (local.get $e) (i32.const 1)))
                 (if (i64.eq (local.get $g) (i64.load offset=240 (local.get $e)))
-                  (then (return (i32.load offset=4 (local.get $e)))))
+                  (then
+                    (call $gps_td_use (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $e)))
+                    (return (i32.load offset=4 (local.get $e)))))
                 ;; Only edge pages moved: a neighbour's write, unless the
                 ;; texture's own bytes there changed too.
                 (if (i32.and (i64.ne (local.get $g) (i64.const -1))
@@ -1206,19 +1194,29 @@
                   (then
                     (i64.store offset=240 (local.get $e) (local.get $g))
                     (i32.store offset=23348 (local.get $pb) (i32.add (i32.load offset=23348 (local.get $pb)) (i32.const 1)))
+                    (call $gps_td_use (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $e)))
                     (return (i32.load offset=4 (local.get $e)))))))))
         (local.set $slot (local.get $e))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $scan (i32.lt_u (local.get $i) (global.get $D3G_TEX_CACHE))))
     (call $d3g_stat (local.get $pb) (i32.const 8) (i32.const 1))
+    (local.set $diag (call $gps_td (call $d3g_h)))
     (if (local.get $slot)
       (then
+        (if (local.get $diag) (then
+          (call $gps_td_drop (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $slot))
+            (if (result i32) (i32.ne (i32.load offset=20 (local.get $slot)) (local.get $sig))
+              (then (global.get $GPS_TD_DESCRIPTOR))
+              (else (select (global.get $GPS_TD_WRITE) (global.get $GPS_TD_UNTRACKED)
+                (i32.ne (i32.load offset=24 (local.get $slot)) (i32.const 0))))))))
         (if (i32.ne (i32.load offset=20 (local.get $slot)) (local.get $sig))
           (then (call $d3g_tex_free (local.get $pb) (local.get $slot)))))
       (else
         (local.set $i (i32.load offset=40 (local.get $pb)))
         (i32.store offset=40 (local.get $pb) (i32.rem_u (i32.add (local.get $i) (i32.const 1)) (global.get $D3G_TEX_CACHE)))
         (local.set $slot (i32.add (i32.add (local.get $pb) (i32.const 6656)) (i32.shl (local.get $i) (i32.const 8))))
+        (if (i32.and (i32.ne (local.get $diag) (i32.const 0)) (i32.ne (i32.load (local.get $slot)) (i32.const 0)))
+          (then (call $gps_td_drop (call $d3g_h) (local.get $i) (global.get $GPS_TD_EVICT))))
         (call $d3g_tex_free (local.get $pb) (local.get $slot))))
     (local.set $id (i32.load offset=4 (local.get $slot)))
     (if (i32.eqz (i32.load (local.get $slot))) (then
@@ -1247,6 +1245,8 @@
     (i64.store offset=32 (local.get $slot) (call $d3g_tex_gen (local.get $slot) (i32.const 0)))
     (i64.store offset=240 (local.get $slot) (call $d3g_tex_gen (local.get $slot) (i32.const 1)))
     (i64.store offset=248 (local.get $slot) (call $d3g_tex_edge_hash (local.get $slot)))
+    (if (local.get $diag) (then (local.set $hash (call $gps_td_seed
+      (i32.load offset=4 (local.get $lv)) (i32.load offset=8 (local.get $lv)) (local.get $n)))))
     (local.set $i (i32.const 0))
     (loop $decode
       (local.set $e (i32.add (local.get $lv) (i32.mul (local.get $i) (i32.const 48))))
@@ -1255,10 +1255,16 @@
       (if (i32.eqz (local.get $wa)) (then
         (call $d3g_tex_free (local.get $pb) (local.get $slot))
         (return (i32.const 0))))
+      (if (local.get $diag) (then (local.set $hash (call $d3g_hash_bytes (local.get $wa)
+        (i32.shl (i32.mul (i32.load offset=4 (local.get $e)) (i32.load offset=8 (local.get $e))) (i32.const 2))
+        (local.get $hash)))))
       (call $d3g_upload_rgba (local.get $pb) (local.get $id) (local.get $i)
         (i32.load offset=4 (local.get $e)) (i32.load offset=8 (local.get $e)) (local.get $wa))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $decode (i32.lt_u (local.get $i) (local.get $n))))
+    (if (local.get $diag) (then
+      (call $gps_td_fill (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $slot)) (local.get $hash))
+      (call $gps_td_use (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $slot)))))
     (local.get $id))
 
   ;; ---- Draws -------------------------------------------------------------
@@ -2983,7 +2989,9 @@
     (local.set $i (i32.const 0))
     (loop $tex
       (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 6656)) (i32.shl (local.get $i) (i32.const 8))))
-      (if (i32.eq (i32.load (local.get $e)) (local.get $entry)) (then (call $d3g_tex_free (local.get $pb) (local.get $e))))
+      (if (i32.eq (i32.load (local.get $e)) (local.get $entry)) (then
+        (call $gps_td_drop (call $d3g_h) (local.get $i) (global.get $GPS_TD_RELEASE))
+        (call $d3g_tex_free (local.get $pb) (local.get $e))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $tex (i32.lt_u (local.get $i) (global.get $D3G_TEX_CACHE))))
     (if (i32.eq (i32.load offset=188 (local.get $pb)) (local.get $entry))

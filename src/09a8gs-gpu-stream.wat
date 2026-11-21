@@ -43,6 +43,8 @@
   ;; Producer API tags (GpsRing.api): which host bridge owns the consumer.
   (global $GPS_API_GLIDE i32 (i32.const 1))
   (global $GPS_API_D3DIM i32 (i32.const 2))
+  (global $GPS_API_GL i32 (i32.const 3))
+  (global $GPS_API_D3D9 i32 (i32.const 4))
 
   ;; Opcodes. APPEND ONLY: tools/gpu-stream-ops.json is the baseline.
   (global $GPS_OP_WRAP i32 (i32.const 0))
@@ -224,7 +226,11 @@
     (field caps_max_samplers i32)
     (field caps_max_aniso i32)
     (field caps_formats i32)
-    (field reserved i32 2))
+    ;; Producer-private: write_pos / arena_head at the producer's last own
+    ;; kick ($gps_kick_mark), which $gps_begin_auto measures from. Consumers
+    ;; never read them; open and reset zero them.
+    (field kick_wp i32)
+    (field kick_ah i32))
 
   ;; Record header; the payload follows at (size-of GpsRecord).
   (layout GpsRecord
@@ -453,7 +459,9 @@
     (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing arena_head)) (i32.const 0))
     (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing arena_tail)) (i32.const 0))
     (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing error_seq)) (i32.const 0))
-    (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing error_code)) (i32.const 0)))
+    (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing error_code)) (i32.const 0))
+    (store.field.memarg GpsRing kick_wp (local.get $h) (i32.const 0))
+    (store.field.memarg GpsRing kick_ah (local.get $h) (i32.const 0)))
 
   (func $gps_check (param $h i32)
     ;; A consumer that failed stops; the producer must not keep writing.
@@ -464,6 +472,8 @@
   ;; CLOSE return after the consumer executed every published record.
   (func $gps_kick (param $h i32) (param $mode i32) (result i32)
     (local $r i32)
+    (if (i32.eq (local.get $mode) (global.get $GPS_KICK_SYNC))
+      (then (call $gps_stat (local.get $h) (global.get $GPS_STAT_SYNCS) (i32.const 1))))
     (local.set $r (call $host_gpu_stream_kick (local.get $h) (local.get $mode)))
     (call $gps_check (local.get $h))
     (if (i32.and (i32.ne (local.get $mode) (global.get $GPS_KICK_ASYNC)) (i32.ne (local.get $r) (i32.const 0)))
@@ -476,6 +486,27 @@
   (func $gps_sync (param $h i32)
     (if (i32.ne (call $gps_kick (local.get $h) (global.get $GPS_KICK_SYNC)) (i32.const 1))
       (then (call $gps_fail))))
+
+  ;; A producer's own kick: remember where it handed the consumer the ring,
+  ;; so $gps_begin_auto can hand over the next quarter.
+  (func $gps_kick_mark (param $h i32)
+    (store.field.memarg GpsRing kick_wp (local.get $h) (load.field.memarg GpsRing write_pos (local.get $h)))
+    (store.field.memarg GpsRing kick_ah (local.get $h) (load.field.memarg GpsRing arena_head (local.get $h))))
+
+  ;; $gps_begin, first handing the consumer what was published since the
+  ;; producer's last kick once that is a quarter of the ring or of the arena,
+  ;; so it runs while the guest keeps writing. Every producer's begin
+  ;; wrapper ends here after closing its own open batch.
+  (func $gps_begin_auto (param $h i32) (param $op i32) (param $n i32) (result i32)
+    (if (i32.or
+          (i32.ge_u (i32.sub (load.field.memarg GpsRing write_pos (local.get $h)) (load.field.memarg GpsRing kick_wp (local.get $h)))
+            (i32.shr_u (load.field.memarg GpsRing ring_bytes (local.get $h)) (i32.const 2)))
+          (i32.ge_u (i32.sub (load.field.memarg GpsRing arena_head (local.get $h)) (load.field.memarg GpsRing kick_ah (local.get $h)))
+            (i32.shr_u (load.field.memarg GpsRing arena_bytes (local.get $h)) (i32.const 2))))
+      (then
+        (call $gps_kick_mark (local.get $h))
+        (drop (call $gps_kick (local.get $h) (global.get $GPS_KICK_ASYNC)))))
+    (call $gps_begin (local.get $h) (local.get $op) (local.get $n)))
 
   ;; Reserve a record of $payload bytes and return the payload address. The
   ;; record is invisible to the consumer until $gps_end publishes it. Writes a
@@ -529,6 +560,7 @@
       (load.field.memarg GpsRing seq_counter (local.get $h)) (i32.const 1)) (i32.const 1)))
     (store.field.memarg GpsRecord flags (local.get $p) (local.get $flags))
     (store.field.memarg GpsRecord seq (local.get $p) (local.get $seq))
+    (call $gps_account (local.get $h) (local.get $p))
     (local.set $size (i32.and (i32.add (load.field.memarg GpsRecord bytes (local.get $p)) (i32.const 7)) (i32.const -8)))
     (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing submit_seq)) (local.get $seq))
     (i32.atomic.store (i32.add (local.get $h) (offset-of GpsRing write_pos))
@@ -622,22 +654,219 @@
     (store.field.memarg GpsCreate size (local.get $p) (local.get $size))
     (drop (call $gps_end (local.get $h) (local.get $p) (i32.const 0))))
 
-  ;; Upload $bytes already placed at arena position $src.
-  (func $gps_upload (param $h i32) (param $id i32) (param $level i32)
-      (param $w i32) (param $hgt i32) (param $pitch i32) (param $src i32) (param $bytes i32)
+  ;; UPLOAD the w x hgt block at (x, y) of level $level / face $face from the
+  ;; $bytes already placed at arena position $src, rows $pitch apart. The
+  ;; one UPLOAD writer: a producer closes its own open batch first.
+  (func $gps_upload (param $h i32) (param $id i32) (param $level i32) (param $face i32)
+      (param $x i32) (param $y i32) (param $w i32) (param $hgt i32) (param $pitch i32)
+      (param $src i32) (param $bytes i32)
     (local $p i32)
-    (local.set $p (call $gps_begin (local.get $h) (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
+    (local.set $p (call $gps_begin_auto (local.get $h) (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
     (store.field.memarg GpsUpload id (local.get $p) (local.get $id))
     (store.field.memarg GpsUpload level (local.get $p) (local.get $level))
-    (store.field.memarg GpsUpload face (local.get $p) (i32.const 0))
-    (store.field.memarg GpsUpload x (local.get $p) (i32.const 0))
-    (store.field.memarg GpsUpload y (local.get $p) (i32.const 0))
+    (store.field.memarg GpsUpload face (local.get $p) (local.get $face))
+    (store.field.memarg GpsUpload x (local.get $p) (local.get $x))
+    (store.field.memarg GpsUpload y (local.get $p) (local.get $y))
     (store.field.memarg GpsUpload w (local.get $p) (local.get $w))
     (store.field.memarg GpsUpload h (local.get $p) (local.get $hgt))
     (store.field.memarg GpsUpload pitch (local.get $p) (local.get $pitch))
     (store.field.memarg GpsUpload src (local.get $p) (local.get $src))
     (store.field.memarg GpsUpload bytes (local.get $p) (local.get $bytes))
     (drop (call $gps_end (local.get $h) (local.get $p) (i32.const 0))))
+
+  ;; ---- Shared accounting (gps_stat) ------------------------------------------
+  ;; Every producer's counters share one prefix, at the same index for every
+  ;; API, after the ring directory in $GPU_STREAM: 8 APIs x 32 words, indexed
+  ;; by GpsRing.api. Records are counted where they are published ($gps_end),
+  ;; so no producer can count one differently; declines (producer policy)
+  ;; and SYNC kicks are counted at their one call each. Never reset: hosts
+  ;; difference two reads.
+  ;;   0 PRESENTs (frames)        1 DRAW + DRAW_UP records
+  ;;   2 READBACK records         3 READBACK bytes (pitch x h)
+  ;;   4 UPLOAD records           5 UPLOAD bytes
+  ;;   6 declines                 7 SYNC kicks (producer waits)
+  ;;   8..15 reserved for the shared prefix
+  ;; 16..31: texture-cache diagnostics, counted only while gps_tex_diag(1)
+  ;; is on (Glide and D3DIM caches; the content hashes cost CPU):
+  ;;  16 fills (cache misses decoded and uploaded)
+  ;;  17 distinct cached textures used, summed over frames
+  ;;  18 capacity evictions of an entry already used in the current frame
+  ;;  19 + c entries dropped by cause c: 0 released by the app or a close,
+  ;;     1 capacity eviction, 2 write invalidation (an overlapping TMU write,
+  ;;     page-watch generation or edge bytes moved), 3 palette change,
+  ;;     4 descriptor change on the same surface, 5 untracked (no watch:
+  ;;     every lookup refills)
+  ;;  25 + c fills whose decoded bytes equal an entry dropped by cause c
+  ;;     (newest of the last 256 drops): a refill that re-sent unchanged bytes
+  ;;  31 fills whose decoded bytes equal another live entry (same content
+  ;;     under a different key)
+  ;; Control words after the stats: +0 diagnostics on, +4 api of the newest
+  ;; PRESENT, +8 + 4 x api the api's diagnostic table (heap, wasm).
+  (global $GPS_STAT_FRAMES i32 (i32.const 0))
+  (global $GPS_STAT_DRAWS i32 (i32.const 1))
+  (global $GPS_STAT_READBACKS i32 (i32.const 2))
+  (global $GPS_STAT_READBACK_BYTES i32 (i32.const 3))
+  (global $GPS_STAT_UPLOADS i32 (i32.const 4))
+  (global $GPS_STAT_UPLOAD_BYTES i32 (i32.const 5))
+  (global $GPS_STAT_DECLINES i32 (i32.const 6))
+  (global $GPS_STAT_SYNCS i32 (i32.const 7))
+  (global $GPS_TD_SLOTS i32 (i32.const 64))
+  (global $GPS_TD_RING i32 (i32.const 256))
+  ;; Cause codes for $gps_td_drop (stats 19 + c, 25 + c).
+  (global $GPS_TD_RELEASE i32 (i32.const 0))
+  (global $GPS_TD_EVICT i32 (i32.const 1))
+  (global $GPS_TD_WRITE i32 (i32.const 2))
+  (global $GPS_TD_PALETTE i32 (i32.const 3))
+  (global $GPS_TD_DESCRIPTOR i32 (i32.const 4))
+  (global $GPS_TD_UNTRACKED i32 (i32.const 5))
+
+  (func $gps_stats (param $api i32) (result i32)
+    (i32.add (i32.add (global.get $GPU_STREAM) (i32.mul (global.get $GPS_RING_MAX) (size-of GpsRing)))
+      (i32.shl (i32.and (local.get $api) (i32.const 7)) (i32.const 7))))
+  (func $gps_stat_ctl (result i32)
+    (i32.add (call $gps_stats (i32.const 0)) (i32.const 0x400)))
+
+  (func $gps_stat_api (param $api i32) (param $i i32) (param $n i32)
+    (local $a i32)
+    (local.set $a (i32.add (call $gps_stats (local.get $api)) (i32.shl (i32.and (local.get $i) (i32.const 31)) (i32.const 2))))
+    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (local.get $n))))
+  (func $gps_stat (param $h i32) (param $i i32) (param $n i32)
+    (call $gps_stat_api (load.field.memarg GpsRing api (local.get $h)) (local.get $i) (local.get $n)))
+  (func $gps_stat_get (param $api i32) (param $i i32) (result i32)
+    (i32.load (i32.add (call $gps_stats (local.get $api)) (i32.shl (i32.and (local.get $i) (i32.const 31)) (i32.const 2)))))
+
+  ;; The record at $p (header) was just published on $h.
+  (func $gps_account (param $h i32) (param $p i32)
+    (local $op i32) (local $q i32)
+    (local.set $op (load.field.memarg GpsRecord op (local.get $p)))
+    (local.set $q (i32.add (local.get $p) (size-of GpsRecord)))
+    (if (i32.eq (local.get $op) (global.get $GPS_OP_UPLOAD)) (then
+      (call $gps_stat (local.get $h) (global.get $GPS_STAT_UPLOADS) (i32.const 1))
+      (call $gps_stat (local.get $h) (global.get $GPS_STAT_UPLOAD_BYTES)
+        (load.field.memarg GpsUpload bytes (local.get $q)))
+      (return)))
+    (if (i32.or (i32.eq (local.get $op) (global.get $GPS_OP_DRAW_UP)) (i32.eq (local.get $op) (global.get $GPS_OP_DRAW)))
+      (then (call $gps_stat (local.get $h) (global.get $GPS_STAT_DRAWS) (i32.const 1)) (return)))
+    (if (i32.eq (local.get $op) (global.get $GPS_OP_PRESENT)) (then
+      (call $gps_stat (local.get $h) (global.get $GPS_STAT_FRAMES) (i32.const 1))
+      (i32.store offset=4 (call $gps_stat_ctl) (load.field.memarg GpsRing api (local.get $h)))
+      (return)))
+    (if (i32.eq (local.get $op) (global.get $GPS_OP_READBACK)) (then
+      (call $gps_stat (local.get $h) (global.get $GPS_STAT_READBACKS) (i32.const 1))
+      (call $gps_stat (local.get $h) (global.get $GPS_STAT_READBACK_BYTES)
+        (i32.mul (load.field.memarg GpsReadback pitch (local.get $q)) (load.field.memarg GpsReadback h (local.get $q)))))))
+
+  (func (export "gps_stat") (param $api i32) (param $i i32) (result i32)
+    (if (i32.or (i32.ge_u (local.get $api) (i32.const 8)) (i32.ge_u (local.get $i) (i32.const 32)))
+      (then (return (i32.const 0))))
+    (call $gps_stat_get (local.get $api) (local.get $i)))
+  ;; Zero-argument reads for hosts that can only poll those (the page HUD
+  ;; through a Worker's readExports): the API that presented last and its
+  ;; frames, readbacks and uploads so far.
+  (func (export "gps_stat_active") (result i32) (i32.load offset=4 (call $gps_stat_ctl)))
+  (func (export "gps_stat_frames") (result i32)
+    (call $gps_stat_get (i32.load offset=4 (call $gps_stat_ctl)) (global.get $GPS_STAT_FRAMES)))
+  (func (export "gps_stat_readbacks") (result i32)
+    (call $gps_stat_get (i32.load offset=4 (call $gps_stat_ctl)) (global.get $GPS_STAT_READBACKS)))
+  (func (export "gps_stat_uploads") (result i32)
+    (call $gps_stat_get (i32.load offset=4 (call $gps_stat_ctl)) (global.get $GPS_STAT_UPLOADS)))
+
+  ;; ---- Texture-cache diagnostics (opt-in, stats 16..31) ----------------------
+  ;; Per-API table: 64 x i64 content hash of the slot's live texture (0 =
+  ;; none), 64 x i32 frame stamp (frames + 1 when last used), then a ring of
+  ;; 256 x {i64 hash, i32 cause, pad} of dropped entries and its cursor.
+  (func (export "gps_tex_diag") (param $on i32)
+    (i32.store (call $gps_stat_ctl) (i32.ne (local.get $on) (i32.const 0))))
+
+  ;; The table for $h's API while diagnostics are on, else 0.
+  (func $gps_td (param $h i32) (result i32)
+    (local $at i32) (local $t i32) (local $g i32)
+    (if (i32.or (i32.eqz (local.get $h)) (i32.eqz (i32.load (call $gps_stat_ctl)))) (then (return (i32.const 0))))
+    (local.set $at (i32.add (i32.add (call $gps_stat_ctl) (i32.const 8))
+      (i32.shl (i32.and (load.field.memarg GpsRing api (local.get $h)) (i32.const 7)) (i32.const 2))))
+    (local.set $t (i32.load (local.get $at)))
+    (if (local.get $t) (then (return (local.get $t))))
+    (local.set $g (call $gps_alloc (i32.const 4880)))
+    (if (i32.eqz (local.get $g)) (then (return (i32.const 0))))
+    (local.set $t (call $gps_wa (local.get $g)))
+    (memory.fill (local.get $t) (i32.const 0) (i32.const 4880))
+    (i32.store (local.get $at) (local.get $t))
+    (local.get $t))
+
+  ;; FNV-1a seed for a texture's content hash: its shape.
+  (func $gps_td_seed (param $w i32) (param $hgt i32) (param $levels i32) (result i64)
+    (i64.mul (i64.xor (i64.const 0xcbf29ce484222325)
+      (i64.extend_i32_u (i32.xor (i32.xor (local.get $w) (i32.shl (local.get $hgt) (i32.const 12)))
+        (i32.shl (local.get $levels) (i32.const 24)))))
+      (i64.const 0x100000001b3)))
+
+  ;; The cache forgot every slot at once (a producer re-open).
+  (func $gps_td_forget (param $h i32)
+    (local $t i32)
+    (local.set $t (call $gps_td (local.get $h)))
+    (if (local.get $t) (then (memory.fill (local.get $t) (i32.const 0) (i32.const 768)))))
+
+  ;; Slot $slot was looked up and is bound for the current frame.
+  (func $gps_td_use (param $h i32) (param $slot i32)
+    (local $t i32) (local $a i32) (local $frame i32)
+    (local.set $t (call $gps_td (local.get $h)))
+    (if (i32.or (i32.eqz (local.get $t)) (i32.ge_u (local.get $slot) (global.get $GPS_TD_SLOTS))) (then (return)))
+    (local.set $frame (i32.add (call $gps_stat_get (load.field.memarg GpsRing api (local.get $h)) (global.get $GPS_STAT_FRAMES)) (i32.const 1)))
+    (local.set $a (i32.add (i32.add (local.get $t) (i32.const 512)) (i32.shl (local.get $slot) (i32.const 2))))
+    (if (i32.ne (i32.load (local.get $a)) (local.get $frame)) (then
+      (i32.store (local.get $a) (local.get $frame))
+      (call $gps_stat (local.get $h) (i32.const 17) (i32.const 1)))))
+
+  ;; Slot $slot's texture is dropped for $cause ($GPS_TD_*).
+  (func $gps_td_drop (param $h i32) (param $slot i32) (param $cause i32)
+    (local $t i32) (local $a i32) (local $hash i64) (local $r i32) (local $cur i32)
+    (local.set $t (call $gps_td (local.get $h)))
+    (if (i32.or (i32.eqz (local.get $t)) (i32.ge_u (local.get $slot) (global.get $GPS_TD_SLOTS))) (then (return)))
+    (local.set $a (i32.add (i32.add (local.get $t) (i32.const 512)) (i32.shl (local.get $slot) (i32.const 2))))
+    (if (i32.and (i32.eq (local.get $cause) (global.get $GPS_TD_EVICT))
+          (i32.eq (i32.load (local.get $a))
+            (i32.add (call $gps_stat_get (load.field.memarg GpsRing api (local.get $h)) (global.get $GPS_STAT_FRAMES)) (i32.const 1))))
+      (then (call $gps_stat (local.get $h) (i32.const 18) (i32.const 1))))
+    (i32.store (local.get $a) (i32.const 0))
+    (call $gps_stat (local.get $h) (i32.add (i32.const 19) (local.get $cause)) (i32.const 1))
+    (local.set $hash (i64.load (i32.add (local.get $t) (i32.shl (local.get $slot) (i32.const 3)))))
+    (if (i64.eqz (local.get $hash)) (then (return)))
+    (i64.store (i32.add (local.get $t) (i32.shl (local.get $slot) (i32.const 3))) (i64.const 0))
+    (local.set $cur (i32.load offset=4864 (local.get $t)))
+    (local.set $r (i32.add (i32.add (local.get $t) (i32.const 768))
+      (i32.shl (i32.and (local.get $cur) (i32.sub (global.get $GPS_TD_RING) (i32.const 1))) (i32.const 4))))
+    (i64.store (local.get $r) (local.get $hash))
+    (i32.store offset=8 (local.get $r) (local.get $cause))
+    (i32.store offset=4864 (local.get $t) (i32.add (local.get $cur) (i32.const 1))))
+
+  ;; Slot $slot now holds a fresh upload whose decoded bytes hash to $hash.
+  (func $gps_td_fill (param $h i32) (param $slot i32) (param $hash i64)
+    (local $t i32) (local $i i32) (local $r i32) (local $cur i32) (local $n i32)
+    (local.set $t (call $gps_td (local.get $h)))
+    (if (i32.or (i32.eqz (local.get $t)) (i32.ge_u (local.get $slot) (global.get $GPS_TD_SLOTS))) (then (return)))
+    (call $gps_stat (local.get $h) (i32.const 16) (i32.const 1))
+    (block $live (loop $scan
+      (if (i32.and (i32.ne (local.get $i) (local.get $slot))
+            (i64.eq (i64.load (i32.add (local.get $t) (i32.shl (local.get $i) (i32.const 3)))) (local.get $hash)))
+        (then (call $gps_stat (local.get $h) (i32.const 31) (i32.const 1)) (br $live)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (global.get $GPS_TD_SLOTS)))))
+    (local.set $cur (i32.load offset=4864 (local.get $t)))
+    (local.set $n (select (global.get $GPS_TD_RING) (local.get $cur)
+      (i32.gt_u (local.get $cur) (global.get $GPS_TD_RING))))
+    (local.set $i (i32.const 0))
+    (block $dropped (loop $ring
+      (br_if $dropped (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $r (i32.add (i32.add (local.get $t) (i32.const 768))
+        (i32.shl (i32.and (i32.sub (i32.sub (local.get $cur) (i32.const 1)) (local.get $i))
+          (i32.sub (global.get $GPS_TD_RING) (i32.const 1))) (i32.const 4))))
+      (if (i64.eq (i64.load (local.get $r)) (local.get $hash)) (then
+        (call $gps_stat (local.get $h) (i32.add (i32.const 25) (i32.load offset=8 (local.get $r))) (i32.const 1))
+        (br $dropped)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $ring)))
+    (i64.store (i32.add (local.get $t) (i32.shl (local.get $slot) (i32.const 3)))
+      (select (i64.const 1) (local.get $hash) (i64.eqz (local.get $hash)))))
 
   (func $gps_mark (param $h i32) (param $frame i32) (param $tag i32)
     (local $p i32)

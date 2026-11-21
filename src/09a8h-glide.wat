@@ -82,8 +82,6 @@
     (field draw_prim i32)
     (field draw_end i32)         ;; arena position after its last vertex
     (field draw_count i32)
-    (field kick_pos i32)         ;; write_pos at the last kick
-    (field kick_arena i32)       ;; arena_head at the last kick
     (field present_seq i32 2)    ;; seqs of the two newest PRESENTs (pacing)
     (field frame i32)
     (field gamma_id i32)
@@ -148,8 +146,7 @@
     (local $h i32)
     (local.set $h (call $glide_ring))
     (call $glide_close_draw (local.get $pb))
-    (store.field GlideGps kick_pos (local.get $pb) (load.field.memarg GpsRing write_pos (local.get $h)))
-    (store.field GlideGps kick_arena (local.get $pb) (load.field.memarg GpsRing arena_head (local.get $h)))
+    (call $gps_kick_mark (local.get $h))
     (if (i32.eq (local.get $mode) (global.get $GPS_KICK_SYNC)) (then (call $glide_stat (i32.const 8) (i32.const 1))))
     (call $gps_kick (local.get $h) (local.get $mode)))
 
@@ -241,21 +238,13 @@
   ;; here, after the last stage tag: tagging closes the draw). A CLEAR's
   ;; effect on the stage is $glide_lfb_cleared's.
   (func $glide_begin (param $pb i32) (param $op i32) (param $n i32) (result i32)
-    (local $h i32)
-    (local.set $h (call $glide_ring))
     (call $glide_close_draw (local.get $pb))
     (if (i32.eq (local.get $op) (global.get $GPS_OP_DRAW_UP)) (then
       (call $glide_stat (i32.const 1) (i32.const 1))
       (call $glide_lfb_forget (local.get $pb) (load.field GlideGps target (local.get $pb)))))
     (if (i32.eq (local.get $op) (global.get $GPS_OP_CLEAR))
       (then (call $glide_stat (i32.const 2) (i32.const 1))))
-    (if (i32.or
-          (i32.ge_u (i32.sub (load.field.memarg GpsRing write_pos (local.get $h))
-            (load.field GlideGps kick_pos (local.get $pb))) (i32.shr_u (global.get $GLIDE_RING_BYTES) (i32.const 2)))
-          (i32.ge_u (i32.sub (load.field.memarg GpsRing arena_head (local.get $h))
-            (load.field GlideGps kick_arena (local.get $pb))) (i32.shr_u (global.get $GLIDE_ARENA_BYTES) (i32.const 2))))
-      (then (drop (call $glide_kick (local.get $pb) (global.get $GPS_KICK_ASYNC)))))
-    (call $gps_begin (local.get $h) (local.get $op) (local.get $n)))
+    (call $gps_begin_auto (call $glide_ring) (local.get $op) (local.get $n)))
 
   (func $glide_end (param $p i32) (result i32)
     (call $gps_end (call $glide_ring) (local.get $p) (i32.const 0)))
@@ -283,7 +272,6 @@
   ;; UPLOAD rows [y, y+hgt) of level $level from arena position $src.
   (func $glide_upload (param $pb i32) (param $id i32) (param $level i32)
       (param $y i32) (param $w i32) (param $hgt i32) (param $pitch i32) (param $src i32)
-    (local $p i32)
     (if (i32.or (i32.eq (local.get $id) (i32.load (elem-addr GlideGps color (local.get $pb) (i32.const 0))))
           (i32.eq (local.get $id) (i32.load (elem-addr GlideGps color (local.get $pb) (i32.const 1)))))
       (then
@@ -291,18 +279,10 @@
         (call $glide_stat (i32.const 6) (local.get $hgt)))
       (else (call $glide_stat (i32.const 7) (i32.const 1))))
     (call $glide_lfb_forget (local.get $pb) (local.get $id))
-    (local.set $p (call $glide_begin (local.get $pb) (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
-    (store.field GpsUpload id (local.get $p) (local.get $id))
-    (store.field GpsUpload level (local.get $p) (local.get $level))
-    (store.field GpsUpload face (local.get $p) (i32.const 0))
-    (store.field GpsUpload x (local.get $p) (i32.const 0))
-    (store.field GpsUpload y (local.get $p) (local.get $y))
-    (store.field GpsUpload w (local.get $p) (local.get $w))
-    (store.field GpsUpload h (local.get $p) (local.get $hgt))
-    (store.field GpsUpload pitch (local.get $p) (local.get $pitch))
-    (store.field GpsUpload src (local.get $p) (local.get $src))
-    (store.field GpsUpload bytes (local.get $p) (i32.mul (local.get $pitch) (local.get $hgt)))
-    (drop (call $glide_end (local.get $p))))
+    (call $glide_close_draw (local.get $pb))
+    (call $gps_upload (call $glide_ring) (local.get $id) (local.get $level) (i32.const 0)
+      (i32.const 0) (local.get $y) (local.get $w) (local.get $hgt) (local.get $pitch)
+      (local.get $src) (i32.mul (local.get $pitch) (local.get $hgt))))
 
   (func $glide_arena (param $pb i32) (param $n i32) (result i32)
     (call $glide_close_draw (local.get $pb))
@@ -407,7 +387,7 @@
           (i32.ne (i32.load offset=244 (call $glide_state)) (i32.const 0)))
       (then (call $glide_present (local.get $pb))))
     (if (i32.ne (load.field.memarg GpsRing write_pos (call $glide_ring))
-          (load.field GlideGps kick_pos (local.get $pb)))
+          (load.field.memarg GpsRing kick_wp (call $glide_ring)))
       (then (drop (call $glide_kick (local.get $pb) (global.get $GPS_KICK_ASYNC))))))
 
   ;; grFinish / status reads: everything issued has executed.
@@ -520,6 +500,7 @@
     (if (i32.ne (call $glide_kick (local.get $pb) (global.get $GPS_KICK_CLOSE)) (i32.const 1))
       (then (call $glide_fail)))
     (call $gps_ring_reset (call $glide_ring))
+    (call $gps_td_forget (call $glide_ring))
     (i32.store offset=12 (global.get $GLIDE_STATE) (i32.const 0)))
 
   ;; grGlideShutdown: return the ring, producer block, texture RAM and IR.
@@ -739,6 +720,7 @@
       (param $large i32) (param $aspect i32) (param $format i32) (param $mask i32) (result i32)
     (local $e i32) (local $at i32) (local $id i32) (local $total i32) (local $lod i32)
     (local $w i32) (local $hgt i32) (local $off i32) (local $pos i32) (local $ram i32) (local $tries i32)
+    (local $diag i32) (local $hash i64)
     (if (i32.ne (local.get $mask) (i32.const 3)) (then (call $glide_fail)))   ;; split even/odd chains
     (if (i32.eqz (call $glide_format_ok (local.get $format))) (then (call $glide_fail)))
     (local.set $total (call $glide_tex_bytes (local.get $small) (local.get $large)
@@ -756,6 +738,7 @@
                        (i32.eq (i32.load offset=24 (local.get $at)) (local.get $format))))))
         (then
           (i32.store offset=44 (local.get $at) (i32.const 1))   ;; pinned for this pipeline
+          (call $gps_td_use (call $glide_ring) (local.get $e))
           (return (i32.load offset=32 (local.get $at)))))
       (local.set $e (i32.add (local.get $e) (i32.const 1)))
       (br_if $scan (i32.lt_u (local.get $e) (global.get $GLIDE_TEX_CACHE)))))
@@ -764,6 +747,10 @@
     (call $glide_create (local.get $pb) (local.get $id) (global.get $GPS_KIND_TEX2D)
       (global.get $GPS_FMT_A8B8G8R8) (i32.add (i32.sub (local.get $small) (local.get $large)) (i32.const 1))
       (call $glide_dim_w (local.get $large) (local.get $aspect)) (call $glide_dim_h (local.get $large) (local.get $aspect)))
+    (local.set $diag (call $gps_td (call $glide_ring)))
+    (if (local.get $diag) (then (local.set $hash (call $gps_td_seed
+      (call $glide_dim_w (local.get $large) (local.get $aspect)) (call $glide_dim_h (local.get $large) (local.get $aspect))
+      (i32.add (i32.sub (local.get $small) (local.get $large)) (i32.const 1))))))
     (local.set $lod (local.get $large))
     (loop $levels
       (local.set $w (call $glide_dim_w (local.get $lod) (local.get $aspect)))
@@ -771,6 +758,8 @@
       (local.set $pos (call $glide_arena (local.get $pb) (i32.shl (i32.mul (local.get $w) (local.get $hgt)) (i32.const 2))))
       (call $glide_decode (call $glide_arena_ptr (local.get $pos)) (i32.add (local.get $ram) (local.get $off))
         (i32.mul (local.get $w) (local.get $hgt)) (local.get $format) (i32.add (call $glide3_ext) (i32.const 128)))
+      (if (local.get $diag) (then (local.set $hash (call $d3g_hash_bytes (call $glide_arena_ptr (local.get $pos))
+        (i32.shl (i32.mul (local.get $w) (local.get $hgt)) (i32.const 2)) (local.get $hash)))))
       (call $glide_upload (local.get $pb) (local.get $id) (i32.sub (local.get $lod) (local.get $large)) (i32.const 0)
         (local.get $w) (local.get $hgt) (i32.shl (local.get $w) (i32.const 2)) (local.get $pos))
       (local.set $off (i32.add (local.get $off) (i32.shl (i32.mul (local.get $w) (local.get $hgt))
@@ -787,7 +776,12 @@
       (br_if $slot (i32.and (i32.ne (i32.load (local.get $at)) (i32.const 0))
         (i32.and (i32.eq (i32.load offset=44 (local.get $at)) (i32.const 1))
           (i32.lt_u (local.get $tries) (i32.const 3))))))
-    (if (i32.load (local.get $at)) (then (call $glide_release (local.get $pb) (i32.load offset=32 (local.get $at)))))
+    (if (i32.load (local.get $at)) (then
+      (call $gps_td_drop (call $glide_ring) (local.get $e) (global.get $GPS_TD_EVICT))
+      (call $glide_release (local.get $pb) (i32.load offset=32 (local.get $at)))))
+    (if (local.get $diag) (then
+      (call $gps_td_fill (call $glide_ring) (local.get $e) (local.get $hash))
+      (call $gps_td_use (call $glide_ring) (local.get $e))))
     (i32.store (local.get $at) (i32.const 1))
     (i32.store offset=4 (local.get $at) (local.get $unit))
     (i32.store offset=8 (local.get $at) (local.get $start))
@@ -817,6 +811,8 @@
               (i32.gt_u (local.get $end) (i32.load offset=8 (local.get $at))))))))
         (if (local.get $hit) (then
           (i32.store (local.get $at) (i32.const 0))
+          (call $gps_td_drop (call $glide_ring) (local.get $e)
+            (select (global.get $GPS_TD_PALETTE) (global.get $GPS_TD_WRITE) (local.get $palette)))
           (call $glide_release (local.get $pb) (i32.load offset=32 (local.get $at)))))))
       (local.set $e (i32.add (local.get $e) (i32.const 1)))
       (br_if $scan (i32.lt_u (local.get $e) (global.get $GLIDE_TEX_CACHE)))))
@@ -1792,8 +1788,7 @@
 
   (func $glide_kick_wait_slot (param $pb i32) (param $seq i32)
     (call $glide_close_draw (local.get $pb))
-    (store.field GlideGps kick_pos (local.get $pb) (load.field.memarg GpsRing write_pos (call $glide_ring)))
-    (store.field GlideGps kick_arena (local.get $pb) (load.field.memarg GpsRing arena_head (call $glide_ring)))
+    (call $gps_kick_mark (call $glide_ring))
     (call $gps_slot_wait (call $glide_ring) (i32.const 0) (local.get $seq)))
 
   ;; Write the whole stage back: RGB565 -> R,G,B,255 UPLOADs in bands.

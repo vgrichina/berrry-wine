@@ -63,6 +63,7 @@ queues/MSG memory, without instantiating the guest VM.
 - **CLI, by app id:** `node test/run.js --app=sol` — takes the exe, its DLLs, its data files and its command line from `lib/apps.js`, the same registry the desktop icons read, so the CLI mounts exactly what the browser mounts. `--app=` with an unknown id prints the full id list. An explicit `--exe`/`--args` overrides the registry.
 - **PNG render:** `node test/run.js --exe=path/to/exe --png=output.png`
 - **GPU stream dump:** `--gpu-stream-dump=FILE` tees every GPU stream v2 record (plus the arena bytes it reads) into a `GPSD` dump for `tools/gpu-stream.js list|stats|replay` ([format](gpu-stream-v2.md)).
+- **GPU stream texture-cache diagnostics:** `--gps-tex-diag` hashes every decoded Glide/D3DIM texture and counts evictions, invalidation causes and content repeats (`gps_stat` 16..31); the exit `[gps]` lines print them next to the shared per-API frames/draws/readbacks/uploads ([accounting](gpu-stream-v2.md#ring-directory-entry)).
 - **Remote/headless control:** add `--control-stdin` for newline-delimited JSON
   commands on stdin. Add `--frozen` to park before the first batch and advance
   only through `{"action":"step","n":N}` commands; snapshots and PNG captures
