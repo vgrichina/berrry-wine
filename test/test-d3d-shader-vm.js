@@ -463,6 +463,29 @@ const { bootRenderHarness } = require('./render-helper');
     return {desc,table,pixels,free(){for(const p of [...pixels,desc,table])e.d3d_shader_vm_free(p);}};
   }
   const sampleLOD=(ctx,lod,u=.5,v=.5)=>[0,1,2,3].map(c=>e.d3d_shader_vm_sample_lod(ctx,0,u,v,lod,c));
+  // A legal PS1.4 dependent projection can produce huge but finite UVs
+  // from constants inside [-1,1]. All four lanes have identical coordinates:
+  // dx=dy=0, so the independently colored mip0 must be red. Scaling the
+  // endpoints before subtraction overflowed to Inf-Inf and sampled NaNs.
+  for (const canonical of [false,true]) for (const lanes of [1,5,15])
+  for (const sign of [-1,1]) for (const filter of [1,2]) for (const axis of [0,1]) {
+    const normalized=ir([ins(1,d(1),opnd(2,0)),ins(66,d(0),s(1,0xe4,9))],1);
+    u32[(normalized+8)/4]=1;u32[(normalized+12)/4]=0xffff0104;
+    const core=canonical?e.d3d_shader_ir_canonicalize(normalized):0;
+    if(canonical)assert.ok(core,'dependent projection canonicalizes');
+    const program=e.d3d_shader_vm_compile(core||normalized);
+    assert.ok(program,'dependent projection compiles');
+    const ctx=e.d3d_shader_vm_context(program,lanes),m=mipFixture(ctx,{min:filter,mag:filter});
+    const uv=axis?[.25,sign]:[sign,.25];
+    register(ctx,0,[...uv.map(v=>Array(4).fill(v)),Array(4).fill(1e-38),Array(4).fill(1)],2);
+    u32[(ctx+24)/4]=15;
+    assert.strictEqual(e.d3d_shader_vm_run(ctx,1),1,'projection source survives budget yield');
+    assert.strictEqual(e.d3d_shader_vm_run(ctx,256),0);
+    near(register(ctx,0),rgbaLanes(Array(4).fill(colors[0])),
+      `constant projected finite UV canonical${canonical} lanes${lanes} sign${sign} filter${filter} axis${axis}`);
+    assert.strictEqual(e.d3d_shader_vm_live_mask(ctx),lanes,'helpers do not add coverage');
+    m.free();for(const p of [ctx,program,core,normalized])if(p)e.d3d_shader_vm_free(p);cases++;
+  }
   function cubeFixture(ctx,stage=0) {
     const desc=e.shader_test_alloc(64),table=e.shader_test_alloc(6*3*16),pixels=[];
     for(let face=0;face<6;face++)for(let level=0;level<3;level++) {

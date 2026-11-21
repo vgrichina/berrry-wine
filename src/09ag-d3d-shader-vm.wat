@@ -1886,12 +1886,20 @@
 ;; No shader-visible derivative opcodes or anisotropic filtering are claimed.
 (func $d3d_shader_vm_quad_lod (param $mip i32) (param $u v128) (param $v v128) (result v128)
   (local $ux v128) (local $uy v128) (local $vx v128) (local $vy v128) (local $rho v128)
-  (local.set $u (f32x4.mul (local.get $u) (f32x4.splat (f32.convert_i32_u (i32.load offset=52 (local.get $mip))))))
-  (local.set $v (f32x4.mul (local.get $v) (f32x4.splat (f32.convert_i32_u (i32.load offset=56 (local.get $mip))))))
+  (local $width v128) (local $height v128)
+  (local.set $width (f32x4.splat (f32.convert_i32_u (i32.load offset=52 (local.get $mip)))))
+  (local.set $height (f32x4.splat (f32.convert_i32_u (i32.load offset=56 (local.get $mip)))))
   (local.set $ux (f32x4.sub (local.get $u) (i8x16.shuffle 4 5 6 7 0 1 2 3 12 13 14 15 8 9 10 11 (local.get $u) (local.get $u))))
   (local.set $vx (f32x4.sub (local.get $v) (i8x16.shuffle 4 5 6 7 0 1 2 3 12 13 14 15 8 9 10 11 (local.get $v) (local.get $v))))
   (local.set $uy (f32x4.sub (local.get $u) (i8x16.shuffle 8 9 10 11 12 13 14 15 0 1 2 3 4 5 6 7 (local.get $u) (local.get $u))))
   (local.set $vy (f32x4.sub (local.get $v) (i8x16.shuffle 8 9 10 11 12 13 14 15 0 1 2 3 4 5 6 7 (local.get $v) (local.get $v))))
+  ;; Differentiate before converting to texel units. Identical finite UVs
+  ;; (including dependent projections) have zero footprint even when UV*size
+  ;; would overflow; scaling endpoints first produces Inf-Inf instead.
+  (local.set $ux (f32x4.mul (local.get $ux) (local.get $width)))
+  (local.set $uy (f32x4.mul (local.get $uy) (local.get $width)))
+  (local.set $vx (f32x4.mul (local.get $vx) (local.get $height)))
+  (local.set $vy (f32x4.mul (local.get $vy) (local.get $height)))
   (local.set $rho (f32x4.max (f32x4.add (f32x4.mul (local.get $ux) (local.get $ux)) (f32x4.mul (local.get $vx) (local.get $vx)))
     (f32x4.add (f32x4.mul (local.get $uy) (local.get $uy)) (f32x4.mul (local.get $vy) (local.get $vy)))))
   ;; Zero footprint selects magnification; huge finite differences saturate to
