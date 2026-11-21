@@ -907,6 +907,11 @@
     (owner "09a8-handlers-directx.wat:$dx_aux_ref_add"))
   (region.declare $DX_VTBL_REGISTRY (size 0x0000014c)
     (owner "09a8-handlers-directx.wat:$dx_vtable_registry_reset"))
+  ;; Wasm address of the per-slot chain index over COM_WRAPPERS_AUX (128KB in
+  ;; the DIB arena, built once the pool is large), 0 until then. Shared, so
+  ;; every thread instance walks the same chains.
+  (region.declare $COM_AUX_INDEX (size 0x00000004) (align 0x00000004)
+    (owner "09a8-handlers-directx.wat:$dx_aux_index_locked"))
   (region.declare $VSOCK_TABLE (size 0x00004000) (align 0x00001000)
     (stride $VSOCK_REC_SIZE (count $VSOCK_MAX))
     (owner "09d-winsock.wat:$vsock_rec"))

@@ -1427,41 +1427,171 @@
     (call $lock_release (global.get $LOCK_DX))
     (local.get $r))
 
-  ;; Scan-then-append over the aux pool: held under $LOCK_DX so two threads
+  ;; Per-slot chains over the aux pool. Every lookup by owner slot used to
+  ;; scan the whole pool up to the cursor, and once Diablo II's Direct3D
+  ;; renderer has filled it (16384 texture views) that was 16K entries per
+  ;; QueryInterface, per final Release and per primary AddRef/Release count --
+  ;; several scans for each of the ~200 textures it creates and releases a
+  ;; frame, ~15% of the town's main guest thread in the browser. A chain is
+  ;; the set of aux entries whose slot field is that slot, so walking it
+  ;; visits exactly what the scan matched.
+  ;;
+  ;; The index is 128KB -- a head per DX_OBJECTS slot, then a next per aux
+  ;; wrapper, both aux index + 1 with 0 = end -- and the fixed region map has
+  ;; no 128KB left, so it is taken from the DIB arena the first time the pool
+  ;; passes $DX_AUX_INDEX_AT entries, built from the entries already there,
+  ;; and published in the shared $COM_AUX_INDEX cell. Below that size, or if
+  ;; the arena is full, every lookup is the linear scan it always was. Mutated
+  ;; only under $LOCK_DX, at the places an entry's slot field is written;
+  ;; walks are bounded so a reader racing a relink cannot loop.
+  (global $COM_AUX_INDEX i32 (region.addr $COM_AUX_INDEX 0))
+  (global $COM_AUX_INDEX_SIZE i32 (region.size $COM_AUX_INDEX))
+  (global $DX_AUX_INDEX_AT i32 (i32.const 256))
+  ;; Where the full-pool recycle search resumes. A bias only (the predicate
+  ;; decides), so a per-instance copy is fine, like $dx_recycle_cursor.
+  (global $dx_aux_recycle_cursor (mut i32) (i32.const 0))
+  (func $dx_aux_head_ptr (param $base i32) (param $slot i32) (result i32)
+    (i32.add (local.get $base) (i32.shl (local.get $slot) (i32.const 2))))
+  (func $dx_aux_chain_ptr (param $base i32) (param $i i32) (result i32)
+    (i32.add (i32.add (local.get $base) (i32.shl (global.get $DX_MAX) (i32.const 2)))
+      (i32.shl (local.get $i) (i32.const 2))))
+  ;; The index's wasm address once built, else 0. $LOCK_DX held. Builds it
+  ;; when the pool ($n entries) has grown past the threshold.
+  (func $dx_aux_index_locked (param $n i32) (result i32)
+    (local $base i32) (local $g i32) (local $i i32)
+    (local.set $base (i32.atomic.load (global.get $COM_AUX_INDEX)))
+    (if (i32.or (i32.ne (local.get $base) (i32.const 0))
+                (i32.lt_u (local.get $n) (global.get $DX_AUX_INDEX_AT)))
+      (then (return (local.get $base))))
+    (local.set $g (call $dib_alloc
+      (i32.shl (i32.add (global.get $DX_MAX) (global.get $COM_WRAPPERS_AUX_MAX)) (i32.const 2))))
+    (if (i32.eqz (local.get $g)) (then (return (i32.const 0))))
+    ;; $dib_alloc zeroed it: every chain starts empty.
+    (local.set $base (i32.add (global.get $DIB_BACKING_BASE)
+      (i32.sub (local.get $g) (global.get $DIB_GUEST_BASE))))
+    (block $done (loop $build
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (call $dx_aux_link_at (local.get $base) (local.get $i)
+        (i32.load offset=4 (i32.add (global.get $COM_WRAPPERS_AUX)
+          (i32.shl (local.get $i) (i32.const 3)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $build)))
+    (i32.atomic.store (global.get $COM_AUX_INDEX) (local.get $base))
+    (local.get $base))
+  ;; Push aux index $i onto $slot's chain. $LOCK_DX held.
+  (func $dx_aux_link_at (param $base i32) (param $i i32) (param $slot i32)
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return)))
+    (i32.atomic.store (call $dx_aux_chain_ptr (local.get $base) (local.get $i))
+      (i32.atomic.load (call $dx_aux_head_ptr (local.get $base) (local.get $slot))))
+    (i32.atomic.store (call $dx_aux_head_ptr (local.get $base) (local.get $slot))
+      (i32.add (local.get $i) (i32.const 1))))
+  ;; Entry $i's slot field now holds $slot: keep the index in step. $LOCK_DX
+  ;; held; $n counts the pool including $i. If this is what builds the index,
+  ;; the build already read $i's slot field and linked it.
+  (func $dx_aux_link (param $i i32) (param $slot i32) (param $n i32)
+    (local $base i32)
+    (local.set $base (i32.atomic.load (global.get $COM_AUX_INDEX)))
+    (if (i32.eqz (local.get $base)) (then
+      (drop (call $dx_aux_index_locked (local.get $n)))
+      (return)))
+    (call $dx_aux_link_at (local.get $base) (local.get $i) (local.get $slot)))
+  ;; Remove aux index $i from $slot's chain. $LOCK_DX held.
+  (func $dx_aux_unlink (param $i i32) (param $slot i32)
+    (local $p i32) (local $cur i32) (local $guard i32) (local $base i32)
+    (local.set $base (i32.atomic.load (global.get $COM_AUX_INDEX)))
+    (if (i32.eqz (local.get $base)) (then (return)))
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return)))
+    (local.set $p (call $dx_aux_head_ptr (local.get $base) (local.get $slot)))
+    (block $done (loop $walk
+      (local.set $cur (i32.atomic.load (local.get $p)))
+      (br_if $done (i32.eqz (local.get $cur)))
+      (br_if $done (i32.gt_u (local.get $cur) (global.get $COM_WRAPPERS_AUX_MAX)))
+      (if (i32.eq (local.get $cur) (i32.add (local.get $i) (i32.const 1))) (then
+        (i32.atomic.store (local.get $p)
+          (i32.atomic.load (call $dx_aux_chain_ptr (local.get $base) (local.get $i))))
+        (i32.atomic.store (call $dx_aux_chain_ptr (local.get $base) (local.get $i)) (i32.const 0))
+        (br $done)))
+      (local.set $p (call $dx_aux_chain_ptr (local.get $base)
+        (i32.sub (local.get $cur) (i32.const 1))))
+      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
+      (br_if $done (i32.gt_u (local.get $guard) (global.get $COM_WRAPPERS_AUX_MAX)))
+      (br $walk))))
+  ;; Append entry $n (the cursor before its bump; slot field already stored).
+  ;; $LOCK_DX held. A pool restarted from 0 must not keep links into its old
+  ;; entries, so the first append of a fresh pool empties the index.
+  (func $dx_aux_append_link (param $n i32) (param $slot i32)
+    (local $base i32)
+    (local.set $base (i32.atomic.load (global.get $COM_AUX_INDEX)))
+    (if (i32.and (i32.eqz (local.get $n)) (i32.ne (local.get $base) (i32.const 0))) (then
+      (memory.fill (local.get $base) (i32.const 0)
+        (i32.shl (i32.add (global.get $DX_MAX) (global.get $COM_WRAPPERS_AUX_MAX)) (i32.const 2)))))
+    (call $dx_aux_link (local.get $n) (local.get $slot) (i32.add (local.get $n) (i32.const 1))))
+  ;; The aux index of $slot's wrapper with $vtbl, or -1.
+  (func $dx_aux_find (param $slot i32) (param $vtbl i32) (result i32)
+    (local $cur i32) (local $i i32) (local $n i32) (local $guard i32) (local $wa i32)
+    (local $base i32)
+    (local.set $n (i32.load (global.get $COM_AUX_NEXT_SHARED)))
+    (local.set $base (i32.atomic.load (global.get $COM_AUX_INDEX)))
+    (if (i32.eqz (local.get $base)) (then
+      ;; No index yet: the small pool's linear scan.
+      (block $miss (loop $scan
+        (br_if $miss (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $wa (i32.add (global.get $COM_WRAPPERS_AUX) (i32.shl (local.get $i) (i32.const 3))))
+        (if (i32.and
+              (i32.eq (i32.load (local.get $wa)) (local.get $vtbl))
+              (i32.eq (i32.load offset=4 (local.get $wa)) (local.get $slot)))
+          (then (return (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $scan)))
+      (return (i32.const -1))))
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i32.const -1))))
+    (local.set $cur (i32.atomic.load (call $dx_aux_head_ptr (local.get $base) (local.get $slot))))
+    (block $done (loop $walk
+      (br_if $done (i32.eqz (local.get $cur)))
+      (local.set $i (i32.sub (local.get $cur) (i32.const 1)))
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $wa (i32.add (global.get $COM_WRAPPERS_AUX) (i32.shl (local.get $i) (i32.const 3))))
+      (if (i32.and
+            (i32.eq (i32.load (local.get $wa)) (local.get $vtbl))
+            (i32.eq (i32.load offset=4 (local.get $wa)) (local.get $slot)))
+        (then (return (local.get $i))))
+      (local.set $cur (i32.atomic.load (call $dx_aux_chain_ptr (local.get $base) (local.get $i))))
+      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
+      (br_if $done (i32.gt_u (local.get $guard) (global.get $COM_WRAPPERS_AUX_MAX)))
+      (br $walk)))
+    (i32.const -1))
+
+  ;; Find-then-append over the aux pool: held under $LOCK_DX so two threads
   ;; querying the same interface get one shared wrapper instead of two racing
   ;; appends into the same slot.
   (func $dx_get_wrapper_for_vtbl_locked (param $slot i32) (param $vtbl_guest i32) (result i32)
     (local $primary_wa i32) (local $aux_wa i32) (local $i i32) (local $n i32)
-    (local $owner i32)
+    (local $owner i32) (local $k i32)
     (local.set $primary_wa (i32.add (global.get $COM_WRAPPERS)
       (i32.mul (local.get $slot) (i32.const 8))))
     ;; Primary hit?
     (if (i32.eq (i32.load (local.get $primary_wa)) (local.get $vtbl_guest)) (then
       (return (i32.add (i32.sub (local.get $primary_wa) (global.get $GUEST_BASE))
                        (global.get $image_base)))))
-    ;; Scan aux pool for (vtbl, slot) match.
+    ;; An aux wrapper of this slot with this vtbl?
     (local.set $n (i32.load (global.get $COM_AUX_NEXT_SHARED)))
-    (local.set $i (i32.const 0))
-    (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
-      (local.set $aux_wa (i32.add (global.get $COM_WRAPPERS_AUX)
-        (i32.mul (local.get $i) (i32.const 8))))
-      (if (i32.and
-            (i32.eq (i32.load (local.get $aux_wa)) (local.get $vtbl_guest))
-            (i32.eq (i32.load (i32.add (local.get $aux_wa) (i32.const 4))) (local.get $slot)))
-        (then (return (i32.add (i32.sub (local.get $aux_wa) (global.get $GUEST_BASE))
-                               (global.get $image_base)))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $lp)))
+    (local.set $i (call $dx_aux_find (local.get $slot) (local.get $vtbl_guest)))
+    (if (i32.ge_s (local.get $i) (i32.const 0)) (then
+      (return (i32.add (i32.sub
+        (i32.add (global.get $COM_WRAPPERS_AUX) (i32.shl (local.get $i) (i32.const 3)))
+        (global.get $GUEST_BASE)) (global.get $image_base)))))
     ;; Miss — bump allocate.
     (if (i32.ge_u (local.get $n) (global.get $COM_WRAPPERS_AUX_MAX)) (then
       ;; Final Release retires the owner but leaves its wrappers addressable.
       ;; Like DX_OBJECTS, this pool must recycle retired entries once full:
       ;; Diablo II creates new texture views on each Load. A zero interface
       ;; count alone is insufficient: other live views can still own the object.
-      (local.set $i (i32.const 0))
+      ;; The search resumes after the last reuse, so a steady create/release
+      ;; workload does not rescan the still-live prefix every time.
+      (local.set $i (global.get $dx_aux_recycle_cursor))
       (block $no_retired (loop $retired
-        (br_if $no_retired (i32.ge_u (local.get $i) (local.get $n)))
+        (br_if $no_retired (i32.ge_u (local.get $k) (local.get $n)))
+        (if (i32.ge_u (local.get $i) (local.get $n)) (then (local.set $i (i32.const 0))))
         (local.set $aux_wa (i32.add (global.get $COM_WRAPPERS_AUX)
           (i32.shl (local.get $i) (i32.const 3))))
         (local.set $owner (i32.load offset=4 (local.get $aux_wa)))
@@ -1469,13 +1599,17 @@
               (i32.lt_u (local.get $owner) (global.get $DX_MAX))) (then
           (if (i32.eqz (load.field DxObject type
                 (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $owner) (i32.const 5))))) (then
+            (call $dx_aux_unlink (local.get $i) (local.get $owner))
             (i32.store (local.get $aux_wa) (local.get $vtbl_guest))
             (i32.store offset=4 (local.get $aux_wa) (local.get $slot))
+            (call $dx_aux_link (local.get $i) (local.get $slot) (local.get $n))
             (i32.atomic.store (i32.add (global.get $COM_AUX_REFS)
               (i32.shl (local.get $i) (i32.const 2))) (i32.const 0))
+            (global.set $dx_aux_recycle_cursor (i32.add (local.get $i) (i32.const 1)))
             (return (i32.add (i32.sub (local.get $aux_wa) (global.get $GUEST_BASE))
               (global.get $image_base)))))))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br $retired)))
       ;; Surface views have incompatible descriptor ABIs. Exhaustion must
       ;; never change an already published interface beneath its caller.
@@ -1490,6 +1624,7 @@
       (i32.mul (local.get $n) (i32.const 8))))
     (i32.store (local.get $aux_wa) (local.get $vtbl_guest))
     (i32.store (i32.add (local.get $aux_wa) (i32.const 4)) (local.get $slot))
+    (call $dx_aux_append_link (local.get $n) (local.get $slot))
     (i32.store (global.get $COM_AUX_NEXT_SHARED) (i32.add (local.get $n) (i32.const 1)))
     (i32.add (i32.sub (local.get $aux_wa) (global.get $GUEST_BASE))
              (global.get $image_base)))
@@ -1593,11 +1728,30 @@
     (if (i32.lt_s (local.get $i) (i32.const 0)) (then (return (i32.const 0))))
     (i32.atomic.load (i32.add (global.get $COM_AUX_REFS) (i32.shl (local.get $i) (i32.const 2)))))
   ;; Sum (or, with $clear, zero) the secondary counts of every aux wrapper of
-  ;; $slot.
+  ;; $slot. Walks the slot's chain once the pool is indexed (see
+  ;; $dx_aux_index_locked), else the whole small pool.
   (func $dx_aux_refs_of_slot (param $slot i32) (param $clear i32) (result i32)
-    (local $n i32) (local $i i32) (local $sum i32) (local $cell i32)
+    (local $n i32) (local $i i32) (local $sum i32) (local $cell i32) (local $cur i32)
+    (local $guard i32) (local $base i32)
     (local.set $n (i32.load (global.get $COM_AUX_NEXT_SHARED)))
+    (local.set $base (i32.atomic.load (global.get $COM_AUX_INDEX)))
+    (if (i32.eqz (local.get $base)) (then
+      (block $end (loop $scan
+        (br_if $end (i32.ge_u (local.get $i) (local.get $n)))
+        (if (i32.eq (i32.load offset=4 (i32.add (global.get $COM_WRAPPERS_AUX)
+              (i32.shl (local.get $i) (i32.const 3)))) (local.get $slot))
+          (then
+            (local.set $cell (i32.add (global.get $COM_AUX_REFS) (i32.shl (local.get $i) (i32.const 2))))
+            (local.set $sum (i32.add (local.get $sum) (i32.atomic.load (local.get $cell))))
+            (if (local.get $clear) (then (i32.atomic.store (local.get $cell) (i32.const 0))))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $scan)))
+      (return (local.get $sum))))
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i32.const 0))))
+    (local.set $cur (i32.atomic.load (call $dx_aux_head_ptr (local.get $base) (local.get $slot))))
     (block $done (loop $lp
+      (br_if $done (i32.eqz (local.get $cur)))
+      (local.set $i (i32.sub (local.get $cur) (i32.const 1)))
       (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
       (if (i32.eq (i32.load offset=4 (i32.add (global.get $COM_WRAPPERS_AUX)
             (i32.shl (local.get $i) (i32.const 3)))) (local.get $slot))
@@ -1605,7 +1759,9 @@
           (local.set $cell (i32.add (global.get $COM_AUX_REFS) (i32.shl (local.get $i) (i32.const 2))))
           (local.set $sum (i32.add (local.get $sum) (i32.atomic.load (local.get $cell))))
           (if (local.get $clear) (then (i32.atomic.store (local.get $cell) (i32.const 0))))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (local.set $cur (i32.atomic.load (call $dx_aux_chain_ptr (local.get $base) (local.get $i))))
+      (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
+      (br_if $done (i32.gt_u (local.get $guard) (global.get $COM_WRAPPERS_AUX_MAX)))
       (br $lp)))
     (local.get $sum))
   ;; The count a COM method returns for $this given the object total $total.
@@ -15639,20 +15795,13 @@
     (if (i32.eq (i32.load (local.get $primary_wa)) (local.get $vtbl_guest)) (then
       (return (i32.add (i32.sub (local.get $primary_wa) (global.get $GUEST_BASE))
                        (global.get $image_base)))))
-    ;; Scan aux pool for (vtbl, slot) match.
+    ;; An aux wrapper of this slot with this vtbl? (chain walk, $dx_aux_find)
     (local.set $n (i32.load (global.get $COM_AUX_NEXT_SHARED)))
-    (local.set $i (i32.const 0))
-    (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
-      (local.set $aux_wa (i32.add (global.get $COM_WRAPPERS_AUX)
-        (i32.mul (local.get $i) (i32.const 8))))
-      (if (i32.and
-            (i32.eq (i32.load (local.get $aux_wa)) (local.get $vtbl_guest))
-            (i32.eq (i32.load (i32.add (local.get $aux_wa) (i32.const 4))) (local.get $slot)))
-        (then (return (i32.add (i32.sub (local.get $aux_wa) (global.get $GUEST_BASE))
-                               (global.get $image_base)))))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $lp)))
+    (local.set $i (call $dx_aux_find (local.get $slot) (local.get $vtbl_guest)))
+    (if (i32.ge_s (local.get $i) (i32.const 0)) (then
+      (return (i32.add (i32.sub
+        (i32.add (global.get $COM_WRAPPERS_AUX) (i32.shl (local.get $i) (i32.const 3)))
+        (global.get $GUEST_BASE)) (global.get $image_base)))))
     ;; Miss — bump allocate.
     (if (i32.ge_u (local.get $n) (global.get $COM_WRAPPERS_AUX_MAX)) (then
       (return (i32.const 0))))
@@ -15660,6 +15809,7 @@
       (i32.mul (local.get $n) (i32.const 8))))
     (i32.store (local.get $aux_wa) (local.get $vtbl_guest))
     (i32.store (i32.add (local.get $aux_wa) (i32.const 4)) (local.get $slot))
+    (call $dx_aux_append_link (local.get $n) (local.get $slot))
     (i32.store (global.get $COM_AUX_NEXT_SHARED) (i32.add (local.get $n) (i32.const 1)))
     (i32.add (i32.sub (local.get $aux_wa) (global.get $GUEST_BASE))
              (global.get $image_base)))

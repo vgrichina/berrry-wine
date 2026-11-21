@@ -46,6 +46,9 @@
 //   eval:EXPR     evaluate EXPR in the page and print its result
 //   evalfile:PATH evaluate the contents of PATH in the page (no ';' escaping)
 //   shot:PATH     screenshot to PATH
+//   profstart[:US] start the V8 sampling profiler (interval US, default 200)
+//                 on the page and every Worker target, nested ones included
+//   profstop:DIR  stop it and write one .cpuprofile per thread into DIR
 //
 // `--eval=@PATH` reads the final readout expression from a file too. Reach for
 // the file forms for anything longer than one expression: steps split on ';',
@@ -684,12 +687,45 @@ async function main() {
     await wait(READY_MS);
     console.log(`ready  cursor=${JSON.stringify(await readCursor(page))}`);
 
+    const profSessions = [];
     for await (const step of probeSteps()) {
       const colon = step.indexOf(':');
       const kind = colon < 0 ? step : step.slice(0, colon);
       const rest = colon < 0 ? '' : step.slice(colon + 1);
       if (kind === 'wait') {
         await wait(Number(rest) || 0);
+      } else if (kind === 'profstart') {
+        // V8 sampling profiler on the page and on every live Worker target
+        // (guest Workers and the render Worker, nested ones included -- they
+        // are browser targets, not only page.workers()).
+        profSessions.length = 0;
+        const short = u => u.replace(/^https?:\/\/[^/]+\//, '').replace(/\?.*$/, '');
+        const targets = [{ label: 'page', session: await page.target().createCDPSession() },
+          ...page.workers().filter(w => w.client).map((w, i) => ({ label: `worker${i} ${short(w.url())}`, session: w.client }))];
+        for (const t of targets) {
+          try {
+            await t.session.send('Profiler.enable');
+            await t.session.send('Profiler.setSamplingInterval', { interval: Number(rest) || 200 });
+            await t.session.send('Profiler.start');
+            profSessions.push(t);
+          } catch (e) { console.log(`profstart: ${t.label}: ${e.message}`); }
+        }
+        console.log(`profstart ${profSessions.map(s => s.label).join(', ')}`);
+        continue;
+      } else if (kind === 'profstop') {
+        // profstop:DIR writes one .cpuprofile per thread (DevTools-loadable).
+        fs.mkdirSync(rest, { recursive: true });
+        let n = 0;
+        for (const s of profSessions) {
+          try {
+            const { profile } = await s.session.send('Profiler.stop');
+            const file = path.join(rest, `${n++}-${s.label.replace(/[^\w.-]+/g, '_')}.cpuprofile`);
+            fs.writeFileSync(file, JSON.stringify(profile));
+            console.log(`profstop ${s.label} -> ${file}`);
+          } catch (e) { console.log(`profstop ${s.label}: ${e.message}`); }
+        }
+        profSessions.length = 0;
+        continue;
       } else if (kind === 'eval') {
         const v = await page.evaluate(async expr => {
           try { return JSON.stringify(await eval(expr)); } catch (e) { return 'ERROR: ' + e.message; }
