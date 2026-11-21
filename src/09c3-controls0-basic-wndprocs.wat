@@ -2365,6 +2365,60 @@
                   (then (call $statusbar_state_publish
                     (local.get $hwnd) (local.get $sw))))))))
         (return (i32.const 1))))
+    ;; SB_GETTEXTA/W and SB_GETTEXTLENGTHA/W for the retained ordinary pane
+    ;; and SB_SIMPLEID. This state represents ASCII normal text, drawing type
+    ;; zero only: LOWORD is the character count, HIWORD therefore stays zero.
+    ;; Query the requested store independently of which pane is displayed.
+    ;; No allocation, publication, invalidation or font/layout change on reads.
+    (if (i32.and
+          (i32.or (i32.eqz (local.get $wParam))
+                  (i32.eq (local.get $wParam) (i32.const 0xFF)))
+          (i32.or
+            (i32.or (i32.eq (local.get $msg) (i32.const 0x0402))
+                    (i32.eq (local.get $msg) (i32.const 0x0403)))
+            (i32.or (i32.eq (local.get $msg) (i32.const 0x040D))
+                    (i32.eq (local.get $msg) (i32.const 0x040C)))))
+      (then
+        (local.set $state (call $statusbar_state_get (local.get $hwnd) (i32.const 0)))
+        (if (local.get $state)
+          (then
+            (local.set $sw (cast ptr<StatusBarState> (call $g2w (local.get $state))))
+            (if (local.get $wParam)
+              (then
+                (local.set $text_g (call $statusbar_simple_ptr (local.get $sw)))
+                (local.set $text_len (call $statusbar_simple_len (local.get $sw))))
+              (else
+                (local.set $text_g (call $statusbar_normal_ptr (local.get $sw)))
+                (local.set $text_len (call $statusbar_normal_len (local.get $sw)))))
+            (if (local.get $text_g)
+              (then (local.set $text_w (call $g2w (local.get $text_g))))))
+          (else
+            ;; An uninitialized ordinary pane can still have its creation
+            ;; caption in TITLE_TABLE. Reading it must not attach state.
+            (if (i32.eqz (local.get $wParam))
+              (then
+                (local.set $text_w (call $title_table_get_ptr (local.get $hwnd)))
+                (local.set $text_len (call $title_table_get_len (local.get $hwnd)))))))
+        (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0402))
+                    (i32.eq (local.get $msg) (i32.const 0x040D)))
+          (then
+            ;; The caller supplies room for count+1 characters; GETTEXT has
+            ;; no capacity parameter. Include exactly one A/W NUL terminator.
+            (block $status_query_done (loop $status_query_copy
+              (br_if $status_query_done (i32.ge_u (local.get $tmp_g) (local.get $text_len)))
+              (local.set $part_len (i32.load8_u (i32.add (local.get $text_w) (local.get $tmp_g))))
+              (if (i32.eq (local.get $msg) (i32.const 0x040D))
+                (then (call $gs16
+                  (i32.add (local.get $lParam) (i32.shl (local.get $tmp_g) (i32.const 1)))
+                  (local.get $part_len)))
+                (else (call $gs8 (i32.add (local.get $lParam) (local.get $tmp_g)) (local.get $part_len))))
+              (local.set $tmp_g (i32.add (local.get $tmp_g) (i32.const 1)))
+              (br $status_query_copy)))
+            (if (i32.eq (local.get $msg) (i32.const 0x040D))
+              (then (call $gs16
+                (i32.add (local.get $lParam) (i32.shl (local.get $text_len) (i32.const 1))) (i32.const 0)))
+              (else (call $gs8 (i32.add (local.get $lParam) (local.get $text_len)) (i32.const 0))))))
+        (return (local.get $text_len))))
     ;; SB_SIMPLE selects between the preserved ordinary pane and simple part.
     (if (i32.eq (local.get $msg) (i32.const 0x0409))
       (then
