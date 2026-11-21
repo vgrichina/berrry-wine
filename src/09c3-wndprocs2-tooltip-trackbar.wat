@@ -305,7 +305,7 @@
     (local $style i32) (local $vert i32) (local $range i32) (local $track_len i32)
     (local $thumb_len i32) (local $thumb_pos i32) (local $cx i32) (local $cy i32)
     (local $coord i32) (local $long_dim i32) (local $parent i32) (local $scroll_msg i32)
-    (local $i i32)
+    (local $i i32) (local $code i32) (local $step i32) (local $next_pos i64)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
     (if (i32.eqz (local.get $state))
@@ -324,6 +324,65 @@
       (then
         (call $heap_free (local.get $state))
         (call $wnd_set_state_ptr (local.get $hwnd) (i32.const 0))
+        (return (i32.const 0))))
+
+    ;; Trackbars keep direction keys when IsDialogMessage queries the control.
+    ;; Tab remains dialog navigation (DLGC_WANTARROWS, not WANTALLKEYS).
+    (if (i32.eq (local.get $msg) (i32.const 0x0087))
+      (then (return (i32.const 1))))
+
+    ;; WM_KEYDOWN / WM_KEYUP: VK_PRIOR..VK_DOWN are exactly the eight
+    ;; navigation keys. TBS_VERT changes the notification message, while
+    ;; TBS_REVERSED is a label and does not reverse the keyboard direction.
+    (if (i32.and
+          (i32.or (i32.eq (local.get $msg) (i32.const 0x0100))
+                  (i32.eq (local.get $msg) (i32.const 0x0101)))
+          (i32.and (i32.ge_u (local.get $wParam) (i32.const 0x21))
+                   (i32.le_u (local.get $wParam) (i32.const 0x28))))
+      (then
+        (local.set $code (i32.const 8)) ;; TB_ENDTRACK on relevant key release.
+        (if (i32.eq (local.get $msg) (i32.const 0x0100))
+          (then
+            (local.set $pos (call $trk_pos (local.get $sw)))
+            (if (i32.le_u (local.get $wParam) (i32.const 0x22))
+              (then
+                (local.set $step (call $trk_page (local.get $sw)))
+                (local.set $code (i32.sub (local.get $wParam) (i32.const 0x1f))))
+              (else
+                (if (i32.le_u (local.get $wParam) (i32.const 0x24))
+                  (then
+                    (local.set $pos
+                      (select (call $trk_min (local.get $sw)) (call $trk_max (local.get $sw))
+                        (i32.eq (local.get $wParam) (i32.const 0x24))))
+                    (local.set $code
+                      (select (i32.const 6) (i32.const 7)
+                        (i32.eq (local.get $wParam) (i32.const 0x24)))))
+                  (else
+                    (local.set $step (call $trk_line (local.get $sw)))
+                    (local.set $code
+                      (select (i32.const 0) (i32.const 1)
+                        (i32.le_u (local.get $wParam) (i32.const 0x26))))))))
+            ;; Widen before stepping so an overshoot cannot wrap past the
+            ;; opposite endpoint before the inclusive range clamp.
+            (local.set $next_pos
+              (i64.add (i64.extend_i32_s (local.get $pos))
+                (select
+                  (i64.sub (i64.const 0) (i64.extend_i32_s (local.get $step)))
+                  (i64.extend_i32_s (local.get $step))
+                  (i32.eqz (i32.and (local.get $code) (i32.const 1))))))
+            (if (i64.lt_s (local.get $next_pos) (i64.extend_i32_s (call $trk_min (local.get $sw))))
+              (then (local.set $next_pos (i64.extend_i32_s (call $trk_min (local.get $sw))))))
+            (if (i64.gt_s (local.get $next_pos) (i64.extend_i32_s (call $trk_max (local.get $sw))))
+              (then (local.set $next_pos (i64.extend_i32_s (call $trk_max (local.get $sw))))))
+            (call $trk_set_pos (local.get $sw) (i32.wrap_i64 (local.get $next_pos)))
+            (call $invalidate_hwnd (local.get $hwnd))))
+        (local.set $vert (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0002)))
+        ;; Keyboard notifications carry no position in HIWORD. Publish the
+        ;; position first: the parent may synchronously query TBM_GETPOS.
+        (drop (call $wnd_send_message
+          (call $wnd_get_parent (local.get $hwnd))
+          (select (i32.const 0x0115) (i32.const 0x0114) (local.get $vert))
+          (local.get $code) (local.get $hwnd)))
         (return (i32.const 0))))
 
     ;; TBM_GETPOS / TBM_GETRANGEMIN / TBM_GETRANGEMAX
