@@ -1087,6 +1087,9 @@
       for (const step of blendCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`blend scenario threw: ${e.stack || e}`); }
     try {
+      for (const step of fogCases({ GS, p, check, native: !!(backend && backend.gl) })) drain();
+    } catch (e) { failures.push(`fog scenario threw: ${e.stack || e}`); }
+    try {
       for (const step of cubeSamplerCases({ GS, p, check, negative: !!(backend && backend.gl) })) {
         let error;
         try { drain(); } catch (e) { error = e; }
@@ -1926,5 +1929,145 @@
     for(const id of [rt,ds,layout,ps])emit('RELEASE',{id});yield {name:'release-blend'};
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, W, H, irShader, TEX_IR };
+  function* fogCases({ GS, p, check, native = false, capture = () => {} }) {
+      // Stream v2: table R is the fog blend, independent of BIND's sampler;
+      // fog changes RGB after shader output, preserving that output's alpha.
+      const C = GS.CONST, size = 16, rt = 501, ds = 502, layout = 503, ps = 504;
+      const fog = 505, tps = 506, other = 507, copy = 508;
+      const emit = (op, f, tail) => p.emit(op, f, tail);
+      const put = bytes => { const a = p.arenaAlloc(bytes.length); p.arenaView(a, bytes.length).set(bytes); return a; };
+      const base = { depth_mode: 0, zfunc: 2, zwrite: 1, cull: 1, src_rgb: 2, dst_rgb: 1,
+        src_alpha: 2, dst_alpha: 1, blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15,
+        fill: 3, linear: 1, scissor_right: size, scissor_bottom: size };
+      const raster = f => emit('RASTER', { ...base, ...f });
+      const clear = (f = {}) => emit('CLEAR', { mask: 7, colormask: 15, rgba: 0x4d996633,
+        z: 1, stencil: 0, right: size, bottom: size, ...f });
+      const create = (id, kind, width = size, height = size, levels = 1) => emit('CREATE',
+        { id, kind, fmt: kind === C.KIND_DS ? C.FMT_D24S8 : C.FMT_A8B8G8R8, width, height, levels });
+      const bind = (id, sampler) => emit('BIND', { count: id ? 1 : 0 },
+        id ? new Uint8Array(new Uint32Array([0, id, sampler]).buffer) : undefined);
+      const quad = ({ u = 1 / 64, q = 1, z = 0.25, rgba = [1, 1, 1, 1], shader = tps } = {}) => {
+        const data = new Float32Array([[2,2],[14,2],[2,14],[14,2],[14,14],[2,14]]
+          .flatMap(([x,y]) => [x,y,z,q,...rgba,u,0.5,0,1]));
+        emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps: shader, layout, stride: 48, count: 6, vcount: 6,
+          voff: put(new Uint8Array(data.buffer)) });
+      };
+      let stamp = 6000;
+      function* read(name, want, color = rt) {
+        const dst = p.arenaAlloc(size * size * 4);
+        emit('READBACK', { rt: color, fmt: C.FMT_A8B8G8R8, w: size, h: size, pitch: size * 4, dst });
+        emit('PRESENT', { rt: color, w: size, h: size, stamp: ++stamp });
+        yield { name, stamp, dst, size };
+        const pixels = p.arenaView(dst, size * size * 4).slice();
+        // Stay inside the authored rectangle; native framebuffer boundaries
+        // and shared diagonal coverage retain their existing precision rules.
+        for (let y = 3; y < 14; y++) for (let x = 3; x < 14; x++) {
+          const got = [...pixels.subarray((y * size + x) * 4, (y * size + x) * 4 + 4)];
+          check(name + ' analytical @' + x + ',' + y, got.every((v,i) => Math.abs(v-want[i]) <= 1),
+            'got ' + got + ' expected ' + want);
+        }
+        capture(name, pixels);
+        p.store('arena_tail', p.load('arena_head'));
+      }
+      create(rt, C.KIND_RT); create(ds, C.KIND_DS); create(other, C.KIND_RT); create(copy, C.KIND_RT);
+      const elems = new Uint8Array(24), dv = new DataView(elems.buffer);
+      [C.USAGE_POSITIONT,C.USAGE_COLOR,C.USAGE_TEXCOORD].forEach((usage,i) => {
+        dv.setUint8(i*8+1,C.VTYPE_FLOAT4); dv.setUint8(i*8+2,usage); dv.setUint16(i*8+4,i*16,true);
+      });
+      emit('LAYOUT', { id: layout, stride: 48, count: 3 }, elems);
+      emit('SHADER', { id: ps, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+      emit('SHADER', { id: tps, stage: 1, ir_bytes: TEX_IR.length }, TEX_IR);
+      create(fog, C.KIND_TEX2D, 64, 1, 7);
+      const table = new Uint8Array(256);
+      for (let i = 0; i < 64; i++) table.set(i % 2 ? [255,200,80,128] : [0,40,240,64], i*4);
+      emit('UPLOAD', { id: fog, w: 64, h: 1, pitch: 256, bytes: 256, src: put(table) });
+      const mip = new Uint8Array(128); for (let i = 0; i < 32; i++) mip.set([50,100,150,200], i*4);
+      emit('UPLOAD', { id: fog, level: 1, w: 32, h: 1, pitch: 128, bytes: 128, src: put(mip) });
+      const samplers = [510,511,512,513];
+      for (let i = 0; i < samplers.length; i++) emit('SAMPLER', { id: samplers[i], address_u: 1, address_v: 3,
+        min: i === 1 ? 2 : 1, mag: i === 1 ? 2 : 1, mip: i < 2 ? 0 : i-1, max_level: i < 2 ? 0 : 1 });
+      emit('TARGETS', { color: rt, depth: ds }); bind(fog, samplers[0]);
+      const source = [255,200,80,128], fogRGB = [20,60,100];
+      const mixed = (s, a, flags = 0) => s.map((v,i) => i === 3 ? v : Math.round(
+        (flags & 1 ? 0 : v*(1-a)) + (flags & 2 ? 0 : fogRGB[i]*a)));
+      const fogState = { fog_mode: 2, fog_table: fog, fog_color: 0x00643c14 };
+      // q=1 gives W=0: table[0].r=0, so table fog must leave RGBA alone.
+      // Point at u=1/64 selects texel 1; LINEAR would blend texels 0 and 1.
+      for (const mode of [0,1,2,3,0,2]) {
+        clear(); raster({ ...fogState, fog_mode: mode }); quad();
+        yield* read('fog-mode-' + mode, mixed(source, mode === 1 ? 1 : mode === 3 ? 0.25 : 0));
+      }
+    // Software's negative wrap at an exact texel boundary can round below
+    // that boundary during interpolation. Keep that native precision case,
+    // and use a quarter-texel interior for the shared software contract.
+    for (const u of [1/64,1+1/64,-1+1.25/64,...(native ? [-1+1/64] : [])]) {
+        clear(); raster(fogState); quad({ u }); yield* read('shared-fog-wrap-' + u, source);
+      }
+      // W=0 + depth_bias gives exact table indices 0, 1/4, 1/2, 1.
+      for (const bias of [0,256,512,1024,65535]) for (const alpha of [0,255]) {
+        const a = bias === 65535 ? 1 : bias/1024;
+        clear(); raster({ ...fogState, depth_bias: bias, fog_color: (alpha << 24) | 0x00643c14 }); quad();
+        yield* read('fog-factor-' + bias + '-color-alpha-' + alpha, mixed(source,a));
+      }
+      for (let i = 0; i < samplers.length; i++) {
+        bind(fog, samplers[i]);
+        const s = i === 0 ? source : i === 1 ? [127.5,120,160,96] : [50,100,150,200];
+        clear(); raster({ ...fogState, depth_bias: 512 }); quad();
+        yield* read('shared-fog-filter-' + i, mixed(s,0.5));
+      }
+      bind(fog, samplers[0]);
+      // Output alpha is texture alpha times vertex alpha; vertex fog uses
+      // vertex alpha itself, independent of the shader result's alpha.
+      for (const a of [0,0.25,0.5,1]) {
+        clear(); raster({ ...fogState, fog_mode: 1 }); quad({ rgba: [1,1,1,a] });
+        yield* read('fog-shader-alpha-' + a, mixed([255,200,80,128*a],a));
+      }
+      if (native) for (const flags of [1,2,3]) {
+        clear(); raster({ ...fogState, depth_bias: 512, fog_flags: flags }); quad();
+        yield* read('fog-flags-' + flags, mixed(source,0.5,flags));
+      }
+      // A nonalias draw changes the image back to native LINEAR fog lookup;
+      // returning to the shared draw must restore exact colour fetches.
+      bind(0); clear(); raster({ ...fogState, depth_bias: 512 }); quad({ shader: ps, rgba: [1,0,0,0.4] });
+      yield* read('fog-nonalias-interpolation', mixed([255,0,0,102],0.5));
+      bind(fog, samplers[0]); clear(); raster({ ...fogState, depth_bias: 512 }); quad();
+      yield* read('fog-alias-after-nonalias', mixed(source,0.5));
+      const stencil = { stencil_enable: 1, stencil_func: 8, stencil_mask: 255, stencil_wmask: 255,
+        stencil_fail: 1, stencil_zfail: 1, stencil_pass: 3, stencil_ref: 5 };
+      clear(); raster({ ...fogState, ...stencil, depth_mode: 1, alpha_func: 5, alpha_ref: 100 }); quad();
+      raster({ ...fogState, ...stencil, depth_mode: 1, stencil_ref: 9 }); quad({ z: 0.75 });
+      raster({ ...fogState, ...stencil, depth_mode: 1, stencil_ref: 9, alpha_func: 5, alpha_ref: 128 });
+      quad({ z: 0.1, rgba: [1,1,1,0] });
+      yield* read('fog-depth-alpha-rejections',source);
+      bind(0); raster({ ...stencil, stencil_func: 3, stencil_pass: 1, depth_mode: 1, zfunc: 5 });
+      quad({ z: 0.5, shader: ps, rgba: [0,1,0,0.6] });
+      yield* read('fog-depth-stencil-stored',[0,255,0,153]);
+      bind(fog,samplers[0]);
+      for (const target of [other,rt]) {
+        emit('TARGETS',{ color: target, depth: ds }); clear(); raster({ ...fogState, depth_bias: 512 }); quad();
+        yield* read('fog-target-' + target,mixed(source,0.5),target);
+        raster({ colormask: 0 }); clear({ mask: 1, rgba: 0x80503010 });
+        yield* read('fog-clear-' + target,[16,48,80,128],target);
+        raster({ ...fogState, depth_bias: 512 }); quad();
+        emit('COPY',{ src: target, dst: copy, sw:size,sh:size,dw:size,dh:size,filter:1 });
+        yield* read('fog-copy-' + target,mixed(source,0.5),copy);
+      }
+      emit('RELEASE',{ id: other }); create(other,C.KIND_RT); emit('TARGETS',{color:other,depth:ds});
+      clear(); raster(fogState); quad(); yield* read('fog-target-reuse',source,other);
+      // COPY and partial UPLOAD change the same live table/image; no stale
+      // shadow or shader variant may preserve the old texels or fog factors.
+      emit('TARGETS',{color:rt,depth:ds}); clear({rgba:0xa0605040});
+      emit('COPY',{src:rt,dst:fog,sw:16,sh:1,dw:16,dh:1,filter:1});
+      clear(); raster(fogState); quad(); yield* read('fog-table-copy',mixed([64,80,96,160],64/255));
+      emit('UPLOAD',{id:fog,w:1,h:1,pitch:4,bytes:4,src:put(new Uint8Array([192,100,120,140]))});
+      clear(); raster(fogState); quad(); yield* read('fog-table-partial-upload',mixed([64,80,96,160],192/255));
+      bind(0); emit('RELEASE',{id:fog}); create(fog,C.KIND_TEX2D,64,1);
+      for(let i=0;i<64;i++)table.set([0,180,40,200],i*4);
+      emit('UPLOAD',{id:fog,w:64,h:1,pitch:256,bytes:256,src:put(table)});
+      bind(fog,samplers[0]); clear(); raster(fogState); quad(); yield* read('fog-table-reuse',[0,180,40,200]);
+      for (const id of [fog,tps,other,copy,...samplers,rt,ds,layout,ps]) emit('RELEASE',{id});
+      yield {name:'fog-release'};
+    }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, W, H, irShader, TEX_IR };
 });
