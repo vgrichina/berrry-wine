@@ -362,6 +362,36 @@ const { bootRenderHarness } = require('./render-helper');
     actual.forEach((v,i)=>assert.ok(Math.abs(v-expected[i])<2e-6,`${label} component ${i}: ${v} != ${expected[i]}`));
   }
   const texTokens=[0xffff0101,66,dstToken(3),1,dstToken(0),srcToken(3),65535];
+  // A cached TEX component must retain partial writes, helper lanes and the
+  // projected invalid-lane mask. Re-executing the same packet after a yield
+  // must use the new coordinates and texture bytes, not the previous cache.
+  for (const projection of [0,4]) for (const mask of [1,2,5,10,15]) for (const lanes of [1,5,15]) {
+    // Partial TEX writes are a VM packet capability;
+    // the PS1.1 token validator correctly requires a full destination mask.
+    const normalized=ir([ins(66,opnd(3,0,mask)),ins(1,d(0),opnd(3,0))]);
+    u32[(normalized+8)/4]=1;u32[(normalized+12)/4]=0xffff0101;
+    const program=e.d3d_shader_vm_compile(normalized);
+    e.d3d_shader_vm_free(normalized);assert.ok(program,'masked TEX VM program');
+    const ctx=e.d3d_shader_vm_context(program,lanes),pixels=texture(ctx,{filter:2,addressU:4,addressV:2});
+    assert.strictEqual(e.d3d_shader_vm_bind_projection(ctx,0,projection),1);
+    for(let rep=0;rep<3;rep++) {
+      const u=rep===2?[NaN,Infinity,-0,1]:[.25+rep*.25,.75,-.25,1.25];
+      const v=[.25,.75,-0,1],q=projection?[1,0,Infinity,-0]:[1,1,1,1];
+      const before=[u,v,[0,-0,1,-1],q].map(row=>row.map(Math.fround));
+      register(ctx,0,before,3);u32[(ctx+24)/4]=lanes;u32[(ctx+8)/4]=0;
+      new Uint8Array(mem.buffer,pixels,24)[0]=rep*71;
+      const expected=before.map((row,c)=>row.map((old,lane)=>{
+        if(!(mask&(1<<c))||!(lanes&(1<<lane)))return old;
+        if(projection && lane!==0)return 0;
+        return e.d3d_shader_vm_sample_lod(ctx,0,u[lane],v[lane],0,c);
+      })).flat();
+      assert.strictEqual(e.d3d_shader_vm_run(ctx,1),1,'TEX retires before budget yield');
+      register(ctx,0,null,3).forEach((value,i)=>assert.ok(Object.is(value,expected[i]),
+        `TEX cache projection${projection} mask${mask} lanes${lanes} rep${rep} word${i}`));
+      assert.strictEqual(e.d3d_shader_vm_run(ctx,1),0,'resume MOV after TEX');
+    }
+    e.d3d_shader_vm_free(pixels);e.d3d_shader_vm_free(ctx);e.d3d_shader_vm_free(program);cases++;
+  }
   // Independently colored mip levels: choosing/blending levels has an exact
   // answer, unrelated to texture-coordinate arithmetic or the shader compiler.
   function mipFixture(ctx,{mode=2,min=1,mag=1,bias=0,max=0,first=0,format=0}={}) {

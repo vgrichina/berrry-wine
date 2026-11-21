@@ -2029,6 +2029,16 @@
     (local.set $stage (i32.sub (i32.load offset=4 (local.get $pkt)) (i32.const 384)))
     (if (i32.eq (local.get $op) (i32.const 51)) (then (local.set $stage (call $d3d_shader_vm_tex_stage (local.get $pkt)))))
     (local.set $desc (call $d3d_shader_vm_sampler (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage)))
+    ;; A 2D cache hit already has every channel. Skip repeated coordinate
+    ;; setup, using the sampler decoded above. Projected samples still need
+    ;; their validity mask; TEXBEML still needs its per-component luminance.
+    ;; Cube sampling never fills this cache. Run clears its packet key before
+    ;; each execution, so neither a new quad nor a resumed packet can reuse it.
+    (local.set $cache (i32.add (local.get $regs) (i32.const 74076)))
+    (if (i32.eq (i32.load (local.get $cache)) (local.get $pkt)) (then
+      (if (i32.eqz (i32.load offset=40 (local.get $desc))) (then
+        (if (i32.ne (local.get $op) (i32.const 34)) (then
+          (return (v128.load offset=4 (i32.add (local.get $cache) (i32.shl (local.get $comp) (i32.const 4)))))))))))
     (local.set $j (i32.add (local.get $regs) (i32.shl (i32.add (local.get $stage) (i32.const 144)) (i32.const 6))))
     (if (i32.eq (local.get $op) (i32.const 17))
       (then
