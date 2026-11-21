@@ -3305,6 +3305,11 @@
     (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32)
     (result i32)
     (local $tab i32) (local $state i32)
+    ;; Class 27 is also the public WAT fallback. Only this internal HWND may
+    ;; touch WinHelp's global page and topic state.
+    (if (i32.ne (local.get $hwnd) (global.get $help_topics_tab_hwnd))
+      (then (return (call $tab_control_wndproc
+        (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam)))))
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then (return (call $tab_native_paint (local.get $hwnd)))))
     ;; TCM_GETITEMCOUNT, answered from the same mirror the strip paints.

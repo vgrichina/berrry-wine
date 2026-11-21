@@ -1550,6 +1550,17 @@
                  (i32.eq (local.get $d1) (i32.const 0x616d696e)))
       (then (return (i32.const 34))))
     ;; "syst"+"reev" -> TreeView
+    ;; Public tab fallback is exact, so application classes sharing the prefix
+    ;; retain their registered procedures. CreateWindow's class lookup still
+    ;; wins before this fallback, including an explicitly loaded COMCTL32.
+    (if (i32.and (i32.eq (local.get $d0) (i32.const 0x74737973))
+          (i32.and (i32.eq (local.get $d1) (i32.const 0x6f636261))
+            (i32.and
+              (i32.eq (i32.or (i32.load offset=8 (local.get $wa)) (i32.const 0x20202020))
+                      (i32.const 0x6f72746e))
+              (i32.eq (i32.or (i32.load offset=12 (local.get $wa)) (i32.const 0x00202020))
+                      (i32.const 0x0032336c)))))
+      (then (return (i32.const 27))))
     (if (i32.and (i32.eq (local.get $d0) (i32.const 0x74737973))
                  (i32.eq (local.get $d1) (i32.const 0x76656572)))
       (then (return (i32.const 8))))
@@ -1905,7 +1916,15 @@
     (local $slot i32)
     (local.set $slot (call $class_find_slot (local.get $name_wa)))
     (if (i32.lt_s (local.get $slot) (i32.const 0))
-      (then (return (i32.const 0))))
+      (then
+        ;; Named dialog-template controls also resolve their procedure here.
+        ;; Synthesize only the exact public tab class, after registered-class
+        ;; lookup failed; application and native DLL registrations stay intact.
+        (if (i32.ge_u (local.get $name_wa) (i32.const 0x10000))
+          (then
+            (if (i32.eq (call $comctl_class_ctrl_id (local.get $name_wa)) (i32.const 27))
+              (then (return (i32.or (global.get $WNDPROC_CTRL_KIND) (i32.const 27)))))))
+        (return (i32.const 0))))
     (i32.load offset=12 (call $class_record_addr (local.get $slot)))
   )
 

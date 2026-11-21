@@ -986,6 +986,13 @@
       (local.get $slot) (local.get $marked)))
 
   (func $tab_native_is (param $hwnd i32) (result i32)
+    ;; Public WAT tabs own their messages at the native procedure, including
+    ;; mouse veto and subclass chaining. The legacy hybrid pre-dispatch mirror
+    ;; remains for DLL tabs and the internal WinHelp strip only.
+    (if (i32.and
+          (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 27))
+          (i32.ne (local.get $hwnd) (global.get $help_topics_tab_hwnd)))
+      (then (return (i32.const 0))))
     (call $native_control_is_marked (global.get $NATIVE_TAB_BITS) (local.get $hwnd)))
 
   ;; COMCTL32 owns the ordinary per-window state pointer. Keep our paint mirror
@@ -1039,13 +1046,14 @@
   ;; Tab mirror state is 128 inline bytes: count@0, selected@4, followed by
   ;; eight 15-byte records {len:u8, text[14]}. No secondary allocations are
   ;; needed. It lives in TAB_NATIVE_STATE_TABLE, not COMCTL32's window state.
+  ;; Hybrid callers guard this with tab_native_is. The public native procedure
+  ;; calls it only after validating a mutation (and, for mouse input, veto).
   (func $tab_native_note_message
     (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32)
     (local $state i32) (local $sw ptr<TabNativeState>) (local $item_w i32)
     (local $count i32) (local $index i32) (local $i i32) (local $j i32)
     (local $src i32) (local $dst i32) (local $text_g i32) (local $text_w i32)
     (local $len i32) (local $x i32) (local $left i32) (local $right i32)
-    (if (i32.eqz (call $tab_native_is (local.get $hwnd))) (then (return)))
     ;; Do not allocate while forwarding WM_CREATE or unrelated private traffic.
     ;; TCM_INSERTITEMW (0x133E) matters as much as the A form: a Unicode app
     ;; adds its tabs through it and only through it, so mirroring just the A
@@ -1157,6 +1165,159 @@
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $hit)))))
     )
+
+  ;; Public class-27 procedure over the existing eight-label mirror. Hybrid
+  ;; DLL controls keep their installed procedure and never enter this fallback.
+  ;; Notification storage belongs to this synchronous invocation, so nested
+  ;; parent sends cannot overwrite an outer NMHDR or its selection snapshot.
+  (func $tab_control_notify (param $hwnd i32) (param $code i32) (result i32)
+    (local $note i32) (local $result i32)
+    (local.set $note (call $heap_alloc (i32.const 12)))
+    (if (i32.eqz (local.get $note)) (then (return (i32.const 1))))
+    (call $gs32 (local.get $note) (local.get $hwnd))
+    (call $gs32 (i32.add (local.get $note) (i32.const 4))
+      (call $ctrl_table_get_id (local.get $hwnd)))
+    (call $gs32 (i32.add (local.get $note) (i32.const 8)) (local.get $code))
+    (local.set $result (call $wnd_send_message
+      (call $wnd_get_parent (local.get $hwnd)) (i32.const 0x004E)
+      (call $ctrl_table_get_id (local.get $hwnd)) (local.get $note)))
+    (if (i32.eqz (global.get $wnd_send_completed))
+      (then (local.set $result (i32.const 1))))
+    (call $heap_free (local.get $note))
+    (local.get $result))
+
+  (func $tab_control_wndproc
+    (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
+    (local $state i32) (local $sw i32) (local $count i32) (local $old i32)
+    (local $index i32) (local $rec i32) (local $item i32) (local $text i32)
+    (local $i i32) (local $len i32) (local $wide i32)
+    (local $x i32) (local $y i32) (local $left i32) (local $right i32)
+    (local $generation i64)
+    (if (i32.eq (local.get $msg) (i32.const 0x000F))
+      (then (return (call $tab_native_paint (local.get $hwnd)))))
+    (if (i32.eq (local.get $msg) (i32.const 0x0082))
+      (then (call $tab_native_state_release (local.get $hwnd)) (return (i32.const 0))))
+    ;; In particular, WinHelp publishes its tab HWND after WM_CREATE returns.
+    ;; Do not allocate or change selection on creation/private messages.
+    (if (i32.and
+          (i32.or (i32.lt_u (local.get $msg) (i32.const 0x1304))
+                  (i32.gt_u (local.get $msg) (i32.const 0x133E)))
+          (i32.ne (local.get $msg) (i32.const 0x0201)))
+      (then (return (i32.const 0))))
+    (local.set $state (call $tab_native_state_get (local.get $hwnd) (i32.const 0)))
+    (if (i32.eqz (local.get $state))
+      (then
+        (local.set $state (call $tab_native_state_get (local.get $hwnd) (i32.const 1)))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const -1))))
+        (i32.store offset=4 (call $g2w (local.get $state)) (i32.const -1))))
+    (local.set $sw (call $g2w (local.get $state)))
+    (local.set $count (i32.load (local.get $sw)))
+    (local.set $old (i32.load offset=4 (local.get $sw)))
+    (if (i32.eq (local.get $msg) (i32.const 0x1304))
+      (then (return (local.get $count))))
+    (if (i32.eq (local.get $msg) (i32.const 0x130B))
+      (then (return (local.get $old))))
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x1307))
+                (i32.eq (local.get $msg) (i32.const 0x133E)))
+      (then
+        (if (i32.or (i32.eqz (local.get $lParam)) (i32.ge_u (local.get $count) (i32.const 8)))
+          (then (return (i32.const -1))))
+        (local.set $index (select (local.get $wParam) (local.get $count)
+          (i32.lt_u (local.get $wParam) (local.get $count))))
+        (call $tab_native_note_message (local.get $hwnd) (local.get $msg)
+          (local.get $index) (local.get $lParam))
+        (if (i32.eqz (local.get $count))
+          (then (i32.store offset=4 (local.get $sw) (i32.const 0)))
+          (else
+            (if (i32.ge_s (local.get $old) (local.get $index))
+              (then (i32.store offset=4 (local.get $sw) (i32.add (local.get $old) (i32.const 1)))))))
+        (return (local.get $index))))
+    ;; Text query A/W uses the caller's capacity, including the terminator.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x1305))
+                (i32.eq (local.get $msg) (i32.const 0x133C)))
+      (then
+        (if (i32.or (i32.eqz (local.get $lParam)) (i32.ge_u (local.get $wParam) (local.get $count)))
+          (then (return (i32.const 0))))
+        (local.set $item (call $g2w (local.get $lParam)))
+        (if (i32.and (i32.load (local.get $item)) (i32.const 1))
+          (then
+            (local.set $text (i32.load offset=12 (local.get $item)))
+            (local.set $len (i32.load offset=16 (local.get $item)))
+            (if (i32.and (i32.ne (local.get $text) (i32.const 0))
+                         (i32.gt_s (local.get $len) (i32.const 0)))
+              (then
+                (local.set $wide (i32.eq (local.get $msg) (i32.const 0x133C)))
+                (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
+                  (i32.mul (local.get $wParam) (i32.const 15))))
+                (local.set $len (i32.sub (local.get $len) (i32.const 1)))
+                (if (i32.gt_u (local.get $len) (i32.load8_u (local.get $rec)))
+                  (then (local.set $len (i32.load8_u (local.get $rec)))))
+                (local.set $text (call $g2w (local.get $text)))
+                (block $copied (loop $copy
+                  (br_if $copied (i32.ge_u (local.get $i) (local.get $len)))
+                  (if (local.get $wide)
+                    (then (i32.store16 (i32.add (local.get $text) (i32.shl (local.get $i) (i32.const 1)))
+                      (i32.load8_u (i32.add (i32.add (local.get $rec) (i32.const 1)) (local.get $i)))))
+                    (else (i32.store8 (i32.add (local.get $text) (local.get $i))
+                      (i32.load8_u (i32.add (i32.add (local.get $rec) (i32.const 1)) (local.get $i))))))
+                  (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                  (br $copy)))
+                (if (local.get $wide)
+                  (then (i32.store16 (i32.add (local.get $text) (i32.shl (local.get $len) (i32.const 1))) (i32.const 0)))
+                  (else (i32.store8 (i32.add (local.get $text) (local.get $len)) (i32.const 0))))))))
+        (return (i32.const 1))))
+    (if (i32.eq (local.get $msg) (i32.const 0x130C))
+      (then
+        (if (i32.ge_u (local.get $wParam) (local.get $count))
+          (then
+            (if (i32.eq (local.get $wParam) (i32.const -1))
+              (then (i32.store offset=4 (local.get $sw) (i32.const -1))
+                    (call $paint_flag_set_inv (local.get $hwnd))))
+            (return (i32.const -1))))
+        (call $tab_native_note_message (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam))
+        (return (local.get $old))))
+    (if (i32.eq (local.get $msg) (i32.const 0x1309))
+      (then
+        (call $tab_native_note_message (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam))
+        (i32.store offset=4 (local.get $sw) (i32.const -1))
+        (return (i32.const 1))))
+    (if (i32.eq (local.get $msg) (i32.const 0x0201))
+      (then
+        (if (call $ctrl_style_disabled (call $wnd_get_style (local.get $hwnd)))
+          (then (return (i32.const 0))))
+        (local.set $x (i32.extend16_s (local.get $lParam)))
+        (local.set $y (i32.shr_s (local.get $lParam) (i32.const 16)))
+        (if (i32.or (i32.lt_s (local.get $y) (i32.const 0)) (i32.ge_s (local.get $y) (i32.const 20)))
+          (then (return (i32.const 0))))
+        (local.set $i (i32.const 0))
+        (block $done (loop $hit
+          (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+          (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
+            (i32.mul (local.get $i) (i32.const 15))))
+          (local.set $right (i32.add (local.get $left)
+            (i32.add (i32.mul (i32.load8_u (local.get $rec)) (i32.const 5)) (i32.const 16))))
+          (if (i32.and (i32.ge_s (local.get $x) (local.get $left)) (i32.lt_s (local.get $x) (local.get $right)))
+            (then
+              (if (i32.eq (local.get $i) (local.get $old)) (then (return (i32.const 0))))
+              (local.set $generation (call $wnd_lookup_generation (local.get $hwnd)))
+              (if (call $tab_control_notify (local.get $hwnd) (i32.const -552)) (then (return (i32.const 0))))
+              ;; A parent can destroy the control or replace its items/selection
+              ;; in the veto callback. Never commit an obsolete candidate.
+              (if (i32.or
+                    (i64.ne (call $wnd_lookup_generation (local.get $hwnd)) (local.get $generation))
+                    (i32.ne (call $tab_native_state_get (local.get $hwnd) (i32.const 0)) (local.get $state)))
+                (then (return (i32.const 0))))
+              (if (i32.or (i32.ne (i32.load offset=4 (local.get $sw)) (local.get $old))
+                          (i32.ne (i32.load (local.get $sw)) (local.get $count)))
+                (then (return (i32.const 0))))
+              (i32.store offset=4 (local.get $sw) (local.get $i))
+              (call $paint_flag_set_inv (local.get $hwnd))
+              (drop (call $tab_control_notify (local.get $hwnd) (i32.const -551)))
+              (return (i32.const 0))))
+          (local.set $left (local.get $right))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $hit)))))
+    (i32.const 0))
 
   ;; A property sheet's page dialog is a sibling of its tab control, inset
   ;; below the tab row. The tab owns the exposed band above that sibling, but
