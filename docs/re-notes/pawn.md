@@ -371,3 +371,28 @@ or subsequent runtime observation was made. This run proves the emulator
 receipt fix and native controls, not fresh original gameplay. Chrome closed,
 its owned profile was removed, and the finite native supervisor recorded no
 leaked children. No sandbox box was created (ID/expiry/stop receipt null).
+
+### 2026-11-21 normal mouse menu receipt boundary
+
+Run `20261121-menu-input-contract` repairs the normal nonclient menu contract.
+The synchronous WAT menu tracker does not enqueue a client WM_LBUTTONDOWN.
+The browser bridge now acknowledges explicit menu open/selection intents as
+`MENU_HANDLED`, with exact native tracker identity and selected command ID;
+it leaves client consumption false and the native USER token zero. Cancellation,
+disabled items and separators cannot satisfy a selection receipt. Existing
+client DOWN and independent trusted physical UP requirements remain separate.
+An ordinary authored PE in the production shell/actual CPUWorker fails the old
+contract and, with the repair, visibly receives its native command callback twice.
+Focused negative controls and the literal locked build pass.
+
+The one fresh immutable Pawn run used matching actual Worker modules and
+unchanged media. A trusted e2-e4 drag received native USER receipts, and Pawn
+replied e7-e6. Mouse Game/open and New/command 1 then received distinct menu
+tracker receipts and visibly reset the board, reversed sides, and produced a
+white AI opening move. No new-game dialog appeared on this observed path;
+dialog cancel/accept and a subsequent human move were not tested. Waiting for
+the next reviewed input timed out and closed the scope UNKNOWN without replay
+or later endpoint requests. All three gestures retained independently prearmed
+trusted UP and release acknowledgments. The original inner supervisor and outer
+actual wait/both-EOF receipts are retained; exit 1 records that review timeout,
+not a native input receipt failure. No sandbox box was created.
