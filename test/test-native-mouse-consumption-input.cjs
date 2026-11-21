@@ -127,6 +127,37 @@ test('typed DOM2/VK2 exact right MSG and truthful nonremoving/removing returns',
   assert(last.nativeRemoval.remove);assert.equal(f.consume(edge,1,1),0);
   assert.throws(f.prepare,/refused/);f.down();assert.equal(f.r.downs,1);
 });
+test('USER motion requires exact native WM_MOUSEMOVE return, point, buttons and owner',()=>{
+  for(const fault of ['none','point','buttons','untrusted','actor','scene','deadline']){
+    let wall=Date.now(),mono=performance.now(),moves=0;
+    const f=fixture({clock:{now:()=>wall,monotonic:()=>mono},configure(wine){
+      const r=wine.renderer;r._mouseButtonsMask=1;r._shiftDown=true;
+      r.handleMouseMove=function(x,y){moves++;this.inputQueue.push({hwnd:10,msg:0x200,
+        wParam:this._mouseButtonsMask|4,lParam:((y-20)<<16)|(x-10)});};
+    }});
+    Object.assign(f.intent,{kind:'motion',code:1});
+    assert.equal(f.prepare().state,'PREPARED');
+    if(fault==='untrusted')f.trust(false);
+    f.r.handleMouseMove(50,70);
+    assert.equal(moves,fault==='untrusted'?0:1);
+    assert.equal(f.g.status('one').consumed,false,'producer/queue alone confers no receipt');
+    if(fault==='untrusted')continue;
+    const edge=f.dequeue();assert(edge.token>0);
+    assert.equal(edge.event.msg,0x200);assert.equal(edge.event.wParam,5);
+    if(fault==='point')edge.event={...edge.event,lParam:0};
+    if(fault==='buttons')edge.event={...edge.event,wParam:0};
+    if(fault==='actor')f.wine.guestWorker.link={slot:0,worker:{},endpointIdentity:18};
+    if(fault==='scene')f.scene[3]++;
+    if(fault==='deadline'){wall+=501;mono+=501;}
+    assert.equal(f.consume(edge,2,1),fault==='none'?1:0,fault);
+    const result=f.g.status('one');assert.equal(result.consumed,fault==='none',fault);
+    if(fault==='none'){
+      assert.equal(result.receiptBoundary,'owner-worker-native-user-return');
+      assert.equal(result.nativeMessage.msg,0x200);assert.equal(result.nativeMessage.lParam,(50<<16)|40);
+      assert.equal(f.consume(edge,2,1),0,'removal cannot replay');
+    }
+  }
+});
 test('capture context can observe a stale scene without preparing input or refreshing its timestamp',async()=>{
   let wall=Date.now(),mono=performance.now();
   const f=fixture({clock:{now:()=>wall,monotonic:()=>mono},configure(wine){

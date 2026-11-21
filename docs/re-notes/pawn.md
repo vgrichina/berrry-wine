@@ -1,9 +1,40 @@
 # Pawn 3
 
 A chess program. `--app=pawn`, exe `binaries/wep32-community/Pawn/Pawn.exe`.
-Renders its board through Direct3D 9 and reads the mouse through DirectInput 7.
+Renders its board through Direct3D 9. It creates a DirectInput 7 mouse, but
+normal windowed gameplay consumes native USER mouse messages; its keyboard
+uses DirectInput immediate state.
 
 ## Running it
+
+### November 21 mouse consumer diagnosis
+
+Run `20261121-pawn-consumer-cause` passively traces the original software
+route: mouse `0x08222010` is created and formatted, but never acquired or
+polled. Keyboard `0x08222018` is acquired and returns 1,710 successful
+256-byte GetDeviceState calls in the bounded idle trace. No mouse
+GetDeviceData or GetDeviceState occurs. A separate native diagnostic drag
+returns WM_MOUSEMOVE, WM_LBUTTONDOWN and WM_LBUTTONUP through PeekMessageA
+and DispatchMessageA at Pawn's original `0x419ca1` call site.
+
+The buffered receipt precondition from `20261121-pawn-normal-load` therefore
+cannot become ready for this consumer: it requires an acquired mouse and a
+phase-2 GetDeviceData poll, neither of which this route produces. That closed
+run was never queried or replayed. A keyboard poll is not a mouse poll.
+
+The browser receipt bridge previously refused every USER motion intent.
+It now supports exact WM_MOUSEMOVE confirmation through the existing owning
+Worker USER-return protocol. Preparation derives the client point and current
+button/modifier mask from the real renderer. Confirmation requires that exact
+message, coordinates and mask, under the existing actor, scene, generation,
+geometry and deadline fences. Queue publication alone grants no receipt.
+Buffered DI intents retain their separate native-ring protocol.
+
+The new regression fails against the Git baseline at preparation and passes
+with the fix, including wrong point/buttons, untrusted input, replacement
+actor, changed scene, deadline and replay controls. Existing mouse and native
+Peek/Get checks and the locked full build pass. This diagnosis and bridge
+repair do not alone establish a fresh browser move or AI reply.
 
 ```bash
 node test/run.js --app=pawn --no-build --headless-gl --screen=1024x768 \
