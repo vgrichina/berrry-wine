@@ -1197,6 +1197,42 @@
       (then (return (call $tab_native_paint (local.get $hwnd)))))
     (if (i32.eq (local.get $msg) (i32.const 0x0082))
       (then (call $tab_native_state_release (local.get $hwnd)) (return (i32.const 0))))
+    ;; TCM_GETITEMRECT: zero-based index, tab-client RECT, TRUE/FALSE.
+    ;; Bound this to ordinary horizontal native tabs. These are the existing
+    ;; painter's label widths and top inset, not Windows default metrics.
+    ;; Mouse hit cells also include the blank two-pixel unselected top inset.
+    (if (i32.eq (local.get $msg) (i32.const 0x130A))
+      (then
+        ;; Bottom/vertical/buttons/multiline/fixed-width/owner-drawn geometry
+        ;; is not represented by this native painter. Never fabricate a RECT.
+        (if (i32.or (i32.eqz (local.get $lParam))
+                    (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                      (i32.const 0x2782)) (i32.const 0)))
+          (then (return (i32.const 0))))
+        (local.set $state (call $tab_native_state_get (local.get $hwnd) (i32.const 0)))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $sw (call $g2w (local.get $state)))
+        (if (i32.ge_u (local.get $wParam) (i32.load (local.get $sw)))
+          (then (return (i32.const 0))))
+        (local.set $i (i32.const 0))
+        (local.set $left (i32.const 0))
+        (loop $rect
+          (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
+            (i32.mul (local.get $i) (i32.const 15))))
+          (local.set $right (i32.add (local.get $left)
+            (i32.add (i32.mul (i32.load8_u (local.get $rec)) (i32.const 5)) (i32.const 16))))
+          (if (i32.eq (local.get $i) (local.get $wParam))
+            (then
+              (call $gs32 (local.get $lParam) (local.get $left))
+              (call $gs32 (i32.add (local.get $lParam) (i32.const 4))
+                (select (i32.const 0) (i32.const 2)
+                  (i32.eq (local.get $i) (i32.load offset=4 (local.get $sw)))))
+              (call $gs32 (i32.add (local.get $lParam) (i32.const 8)) (local.get $right))
+              (call $gs32 (i32.add (local.get $lParam) (i32.const 12)) (i32.const 20))
+              (return (i32.const 1))))
+          (local.set $left (local.get $right))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $rect))))
     ;; Microsoft tab-controls: WANTARROWS | WANTCHARS, and direction-key
     ;; selection. This bounded fallback covers ordinary horizontal tabs only.
     ;; Home/End selection is not specified by that contract. Internal WinHelp
