@@ -1,0 +1,30 @@
+'use strict';
+const test=require('node:test'),assert=require('node:assert/strict'),vm=require('node:vm');
+const {workerBootstrap,decode,verifyTrace,fields}=require('./ut-poll-publication-trace.cjs');
+const {verifyWorkers}=require('./ut-observer-scope.cjs');
+test('stack/import trace preserves results, errors, memory and registers, and honors OFF',async()=>{
+ const listeners=[],rows=new Int32Array(new SharedArrayBuffer((8+8192*48)*4)),control=new Int32Array(new SharedArrayBuffer(8));control[0]=1;
+ const memory=new WebAssembly.Memory({initial:1,maximum:1,shared:true}),bytes=Buffer.from(memory.buffer);bytes.writeUInt32LE(0x401234,1024);
+ const expected=Buffer.from(bytes),error=Error('same'),ex={get_eip:()=>0x401000,get_current_thread_id:()=>7,get_eax:()=>11,get_esp:()=>1024,guest_to_wasm:()=>{throw Error('unsafe translation called');},run:x=>x+1};let imports,names;
+ const context={addEventListener:(t,f)=>listeners.push(f),postMessage:m=>{if(m.t==='utPollNames')names=m.names;},Atomics:Object.create(Atomics),SharedArrayBuffer,Int32Array,DataView,performance,WebAssembly:{instantiate:async(m,i)=>{imports=i;return {exports:ex};},Instance:class{}}};
+ context.RegionMap={g2w:p=>p,BASE:{VIRTUAL_BACKING_BASE:65536,GUEST_PAGE_TABLE:32768}};
+ vm.runInNewContext('('+workerBootstrap+')()',context);
+ listeners[0]({data:{t:'init',slot:3,endpointIdentity:17,utPollPublication:{rows:rows.buffer,control:control.buffer}}});
+ const result=await context.WebAssembly.instantiate({}, {host:{memory,check_input:()=>123,input_consumed:()=>{throw error;}}});
+ assert.equal(imports.host.check_input(),123);assert.throws(()=>imports.host.input_consumed(),e=>e===error);assert.equal(result.exports.run(10),11);assert(bytes.equals(expected));assert.equal(ex.get_eax(),11);
+ const raw=Array.from({length:rows[0]},(_,i)=>Array.from(rows.subarray(8+i*48,8+(i+1)*48))),records=raw.map(r=>decode(r,names));
+ assert.equal(fields.length,48);assert(records.some(r=>r.kind==='import-entry'&&r.import==='check_input'&&r.thread===7&&r.eip===0x401000&&r.stack0===0x401234&&r.stackMask===65535));
+ assert(records.some(r=>r.kind==='import-return'&&r.result===123));assert(records.some(r=>r.kind==='error'));assert(records.some(r=>r.kind==='run-return'));
+ assert(verifyTrace([{slot:3,endpoint:17,names,rows:raw}],[],{armed:true}).complete);
+ control[0]=0;const n=rows[0];imports.host.check_input();assert.equal(rows[0],n);
+});
+test('incomplete, foreign and unarmed trace cannot support causal classification',()=>{
+ const row=Array(48).fill(0);row[0]=row[47]=1;row[8]=0;row[9]=2;const b={slot:0,endpoint:2,names:['check_input'],rows:[row]};
+ assert(verifyTrace([b],[],{armed:true}).complete);
+ for(const kind of ['LOST','TORN','worker-error'])assert.throws(()=>verifyTrace([b],[{kind}],{armed:true}));
+ assert.throws(()=>verifyTrace([b],[]));assert.throws(()=>verifyTrace([],[],{armed:true}));
+ const torn=row.slice();torn[47]=0;assert.throws(()=>verifyTrace([{...b,rows:[torn]}],[],{armed:true}));
+ const dropped=row.slice();dropped[0]=dropped[47]=3;assert.throws(()=>verifyTrace([{...b,rows:[row,dropped]}],[],{armed:true}));
+ assert.throws(()=>verifyTrace([{...b,endpoint:3}],[],{armed:true}));
+ for(const rows of [[],[{sources:[],modules:[{match:true}]}],[{sources:[{match:false}],modules:[{match:true}]}],[{sources:[{match:true}],modules:[{match:false}]}],[{sources:[{match:true}],modules:[{match:true}],error:'retired collector'}]])assert.throws(()=>verifyWorkers(rows));
+});
