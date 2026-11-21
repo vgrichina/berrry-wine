@@ -10,7 +10,7 @@ const root=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').updat
 // Plain ANSI ASCII CLASS2 only. No undo/notification or same-text replacement oracle.
 // BOOL flags normalized. WM_SETTEXT reset follows requested lifecycle.
 const cases=[
- {"text":"","ops":"S(0xb9,1,0);Q();S(0xb9,0,0);Q();","want":"","sel":[0,0],"flags":[0,1,0,0],"ro":false,"single":true},
+ {"text":"","ops":"S(0xb9,1,0x13579bdf);Q();S(0xb9,0,0x2468ace0);Q();","want":"","sel":[0,0],"flags":[0,1,0,0],"ro":false,"single":true},
  {"text":"A\r\nB\r\nC\r\nD","ops":"S(0xb1,0,0);S(0xb6,0,2);S(0xb9,1,0);Q();S(0xb9,0,0);Q();","want":"A\r\nB\r\nC\r\nD","sel":[0,0],"flags":[0,1,0,0],"viewport":2,"count":4},
  {"text":"SAVE","ops":"S(0xb9,1,0);Q();S(0xb9,0,0);Q();","want":"SAVE","sel":[4,4],"flags":[0,1,0,0],"ro":false,"single":true},
  {"text":"SAVE","ops":"S(0xb9,2,0);Q();S(0xb9,0x80000000,0);Q();S(0xb9,1,0);Q();","want":"SAVE","sel":[4,4],"flags":[0,1,1,1,1],"ro":false,"single":true},
