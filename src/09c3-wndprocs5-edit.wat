@@ -2629,6 +2629,13 @@
           (then (call $gs32 (local.get $wParam) (local.get $lo))))
         (if (local.get $lParam)
           (then (call $gs32 (local.get $lParam) (local.get $hi))))
+        ;; Plain EDIT returns -1 if either ordered endpoint cannot fit in
+        ;; the packed WORDs; optional DWORD outputs above retain full values.
+        (if (i32.and
+              (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+              (i32.or (i32.gt_u (local.get $lo) (i32.const 65535))
+                      (i32.gt_u (local.get $hi) (i32.const 65535))))
+          (then (return (i32.const -1))))
         (return (i32.or (i32.and (local.get $lo) (i32.const 0xFFFF))
                         (i32.shl (local.get $hi) (i32.const 16))))))
 
