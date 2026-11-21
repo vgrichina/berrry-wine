@@ -73,6 +73,7 @@ assert.deepStrictEqual(renderer.inputQueue[0], {
   msg: 0x0202,
   wParam: 0,
   lParam: (20 << 16) | 15,
+  pointerProcess: undefined,
   mouseX: 55,
   mouseY: 70,
   mouseButtons: 0,
@@ -205,6 +206,7 @@ const nativeDialog = {
 };
 const nativeDialogRenderer = new FakeRenderer();
 nativeDialogRenderer.wasm = nativeDialogWasm;
+nativeDialogRenderer.windows = { [nativeDialog.hwnd]: nativeDialog };
 nativeDialogRenderer.inputQueue = [];
 nativeDialogRenderer._mouseX = 132;
 nativeDialogRenderer._mouseY = 79;
@@ -224,6 +226,7 @@ assert.deepStrictEqual(nativeDialogRenderer.inputQueue, [{
   msg: 0x0201,
   wParam: 1,
   lParam: (19 << 16) | 32,
+  pointerProcess: undefined,
   mouseX: 132,
   mouseY: 79,
   mouseButtons: 1,

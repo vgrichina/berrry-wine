@@ -135,7 +135,7 @@ test('USER motion requires exact native WM_MOUSEMOVE return, point, buttons and 
       r.handleMouseMove=function(x,y){moves++;this.inputQueue.push({hwnd:10,msg:0x200,
         wParam:this._mouseButtonsMask|4,lParam:((y-20)<<16)|(x-10)});};
     }});
-    Object.assign(f.intent,{kind:'motion',code:1});
+    Object.assign(f.intent,{kind:'motion',code:1,reviewedAt:wall});
     assert.equal(f.prepare().state,'PREPARED');
     if(fault==='untrusted')f.trust(false);
     f.r.handleMouseMove(50,70);
