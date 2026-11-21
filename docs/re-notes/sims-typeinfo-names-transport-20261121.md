@@ -34,3 +34,22 @@ established by these controls. Any bounded original outcome is recorded in the
 run's final `result.json`.
 
 ABI source: [ITypeInfo::GetIDsOfNames](https://learn.microsoft.com/en-us/windows/win32/api/oaidl/nf-oaidl-itypeinfo-getidsofnames).
+
+The single bounded original on published `63d47fe54` confirms that genuine
+OpenCAB returns S_OK and ISetupCABFile calls proceed, followed by successful
+component collection/item calls. This confirms the earlier integration's
+progress; the name-lookup correction is qualified by its separate native tests.
+The next typeinfo rejection is IID `DEF5FEEC-225A-11D3-88AA-00C04F72F303`.
+An offline probe using the actual native SLTG metadata finds eight slots and
+one rejected method: slot 5, output/retval pointer to VT_SAFEARRAY (27).
+This needs an owned typed SAFEARRAY output codec and lifetime, not a validation
+bypass. A later ISetupComponent slot 41 callback path also reports a stdcall
+stack mismatch; its cause is not established by this run.
+
+The personally reviewed whole 800x600 image still shows the support-file error
+0x80004001. No physical input or native Quit is claimed. The parent reaches its
+45-second guard and writes that image, but orderly shutdown stalls. Independent
+80-second supervision sends TERM then KILL to its owned group and reports no
+leaked processes. The registrar's wait/both EOF receipt is complete; Embedding's
+wait/both EOF receipt remains incomplete, and killed-owner exit audits are
+unavailable. There was no control endpoint, subsequent endpoint request or replay.
