@@ -825,6 +825,38 @@
     (then (f32.mul (local.get $value) (local.get $riw)))
     (else (f32.div (local.get $value) (local.get $iw)))))
 
+;; Four quad lanes already occupy one VM SIMD vector per varying. Interpolate
+;; directly into that layout, retaining the scalar multiply/add order and the
+;; direct-division fallback for nonfinite reciprocals (including helper lanes).
+(func $d3d_software_quad_varyings
+  (param $vm i32) (param $a i32) (param $b i32) (param $c i32) (param $vmask i32)
+  (param $u v128) (param $v v128) (param $w v128) (param $iw v128) (param $riw v128)
+  (local $j i32) (local $offset i32) (local $bank i32) (local $value v128) (local $finite v128)
+  (local.set $finite (f32x4.le (f32x4.abs (local.get $riw)) (f32x4.splat (f32.const 3.4028234663852886e38))))
+  (loop $varyings
+    (local.set $offset (select
+      (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 2)))
+      (i32.add (i32.const 144) (i32.shl (i32.sub (local.get $j) (i32.const 28)) (i32.const 2)))
+      (i32.lt_u (local.get $j) (i32.const 28))))
+    (local.set $bank (if (result i32) (i32.lt_u (local.get $j) (i32.const 4))
+      (then (i32.add (i32.const 8224) (i32.shl (local.get $j) (i32.const 4))))
+      (else (if (result i32) (i32.lt_u (local.get $j) (i32.const 28))
+        (then (i32.add (i32.const 24608) (i32.shl (i32.sub (local.get $j) (i32.const 4)) (i32.const 4))))
+        (else (i32.add (i32.const 8288) (i32.shl (i32.sub (local.get $j) (i32.const 28)) (i32.const 4))))))))
+    (local.set $value (v128.const i32x4 0 0 0 0))
+    (if (i32.and (i32.shr_u (local.get $vmask) (local.get $j)) (i32.const 1)) (then
+      (local.set $value (f32x4.add (f32x4.add
+        (f32x4.mul (local.get $u) (v128.load32_splat (i32.add (local.get $a) (local.get $offset))))
+        (f32x4.mul (local.get $v) (v128.load32_splat (i32.add (local.get $b) (local.get $offset)))))
+        (f32x4.mul (local.get $w) (v128.load32_splat (i32.add (local.get $c) (local.get $offset))))))
+      (local.set $value (if (result v128) (i32.eq (i32x4.bitmask (local.get $finite)) (i32.const 15))
+        (then (f32x4.mul (local.get $value) (local.get $riw)))
+        (else (v128.bitselect (f32x4.mul (local.get $value) (local.get $riw))
+          (f32x4.div (local.get $value) (local.get $iw)) (local.get $finite)))))))
+    (v128.store (i32.add (local.get $vm) (local.get $bank)) (local.get $value))
+    (local.set $j (i32.add (local.get $j) (i32.const 1)))
+    (br_if $varyings (i32.lt_u (local.get $j) (i32.const 32)))))
+
 (func $d3d_software_depth_pass (param $fn i32) (param $z f32) (param $old f32) (result i32)
   (block $always (block $ge (block $ne (block $gt (block $le (block $eq (block $lt (block $never
     (br_table $never $never $lt $eq $le $gt $ne $ge $always $never (local.get $fn)))
@@ -1159,6 +1191,7 @@
   (local $u f32) (local $v f32) (local $w f32) (local $iw f32) (local $riw f32) (local $z f32)
   (local $output i32) (local $wire i32) (local $point i32) (local $sprite i32) (local $dx f32) (local $dy f32) (local $half f32) (local $value f32)
   (local $vmask i32) (local $glide i32) (local $glide_q f32)
+  (local $qu v128) (local $qv v128) (local $qw v128) (local $qiw v128) (local $qriw v128)
   (if (i32.eqz (call $d3d_shader_vm_range (local.get $ctx) (i32.const 256))) (then (return (i32.const -1))))
   (if (i32.ne (i32.load (local.get $ctx)) (i32.const 0x44535031)) (then (return (i32.const -1))))
   (if (i32.le_s (i32.load offset=140 (local.get $ctx)) (i32.const 0)) (then (return (i32.load offset=140 (local.get $ctx)))))
@@ -1302,6 +1335,17 @@
             (then (call $d3d_software_table_fog_factor (i32.load offset=280 (local.get $ctx))
               (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 8) (local.get $u) (local.get $v) (local.get $w)) (local.get $iw)))
             (else (call $d3d_software_perspective (call $d3d_software_interp (local.get $a) (local.get $b) (local.get $c) (i32.const 128) (local.get $u) (local.get $v) (local.get $w)) (local.get $iw) (local.get $riw)))))))
+        (local.set $qu (i8x16.shuffle 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+          (local.get $qu) (f32x4.splat (local.get $u))))
+        (local.set $qv (i8x16.shuffle 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+          (local.get $qv) (f32x4.splat (local.get $v))))
+        (local.set $qw (i8x16.shuffle 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+          (local.get $qw) (f32x4.splat (local.get $w))))
+        (local.set $qiw (i8x16.shuffle 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+          (local.get $qiw) (f32x4.splat (local.get $iw))))
+        (local.set $qriw (i8x16.shuffle 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19
+          (local.get $qriw) (f32x4.splat (local.get $riw))))
+        (if (local.get $sprite) (then
         (local.set $j (i32.const 0))
         (loop $varyings
           (local.set $bank (select (i32.const 8224)
@@ -1336,6 +1380,7 @@
                 (i32.add (i32.const 144) (i32.shl (local.get $j) (i32.const 2))) (local.get $u) (local.get $v) (local.get $w)) (local.get $iw) (local.get $riw)))
               (else (f32.const 0))))
           (local.set $j (i32.add (local.get $j) (i32.const 1))) (br_if $specular (i32.lt_u (local.get $j) (i32.const 4))))
+        ))
       (block $outside
         (br_if $outside (i32.or (i32.lt_u (local.get $x) (i32.load offset=76 (local.get $ctx)))
           (i32.or (i32.lt_u (local.get $y) (i32.load offset=80 (local.get $ctx)))
@@ -1355,6 +1400,9 @@
             (call $d3d_software_inside (local.get $a) (local.get $b) (local.get $e2))))))))))
         (local.set $bits (i32.or (local.get $bits) (i32.shl (i32.const 1) (local.get $lane)))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1))) (br_if $lanes (i32.lt_u (local.get $lane) (i32.const 4))))
+    (if (i32.eqz (local.get $sprite)) (then
+      (call $d3d_software_quad_varyings (local.get $vm) (local.get $a) (local.get $b) (local.get $c) (local.get $vmask)
+        (local.get $qu) (local.get $qv) (local.get $qw) (local.get $qiw) (local.get $qriw))))
     (if (local.get $bits) (then
       (i32.store offset=8 (local.get $vm) (i32.const 0)) (i32.store offset=12 (local.get $vm) (i32.const 1))
       (i32.store offset=16 (local.get $vm) (local.get $bits))

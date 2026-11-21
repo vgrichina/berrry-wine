@@ -99,3 +99,51 @@ The precise next test is a matching browser-tier comparison of this retained
 51-record workload with complete readbacks, outside concurrent build activity.
 Do not promote the shortcut from optimized-tier replay alone, weaken the input
 limits, or substitute the separate WebGL presentation proof.
+
+## SIMD quad interpolation repair, 2026-11-21
+
+Evidence: `scratch/runs/20261121-quake3-generic-alu/`. The real retained
+51-record workload runs through the existing software Executor. A default
+Node/V8 CPU profile attributes 367 samples to software step and 220 to shader
+component execution. Splitting the common ALU dispatch out of the large
+component frame did not consistently improve timing; that experiment was
+removed. The accepted change instead interpolates the 28 varyings and four
+specular components across all four quad lanes with SIMD, directly into the
+VM's existing vector layout. It preserves the scalar multiply/add order,
+zero-mask stores, helper lanes, and per-lane direct division when the reciprocal
+is nonfinite. Point sprites retain their scalar coordinate replacement path.
+Shader operations, sampling, cancellation, coverage/depth, fences and input
+guards are unchanged.
+
+The final control/candidate modules were compiled from one frozen source set,
+with only the software raster source changed; earlier exploratory modules
+straddled foreign COM work and are excluded. Eight alternating-order process
+pairs on local x64 Node24.18.1 / V8 13.6.233.17-node.50, using default automatic
+tiering, reduced seven-draw totals from median1110.056ms to870.130ms. Every pair
+improved (8.647–41.937%; median paired reduction22.033%). All color surfaces,
+depth surfaces and nontiming executor state match after every draw in all16
+runs. This is actual executor computation, not a browser input-latency or
+optimized-tier benchmark claim. No ARM64 measurement was performed.
+
+Matched V8 15.7.57 TurboFan and SpiderMonkey C158 Ion x64 disassembly shows
+packed multiply/add/store loops without arithmetic helper calls. The new
+helper is512/292bytes respectively; the retained sprite fallback and vector
+packing increase step size24640→25920 /4931→5701bytes. V8's step frame grows
+0x1d0→0x230; helper SIMD spills are on its interrupt slow path. These shells
+are not the measured Node engine/tier; their code establishes structure only.
+
+The331-case shader VM suite and focused address/call/loop/budget/temp-span,
+pipeline/backend/mip/setup/clip/stream, line/point/texgen/fog tests pass. A new
+generic regression compares16896 lanes bit-for-bit with scalar interpolation,
+including signed zeros, subnormals, mixed reciprocal fallbacks, infinities and
+signed/payload/signaling NaNs. The locked build passes; all17029 code bodies in
+its shipping module match the tested candidate (custom metadata differs).
+A broader QuakeII CLI worker-parity test run against the previous build failed
+on zero queued worker draws; it is retained as a failed check, not candidate
+validation.
+
+One bounded90-second original Node software startup reached the personally
+reviewed complete main menu, with299 presents and396974 triangles. No input was
+sent. Browser responsiveness, movement/combat and ordinary Quit remain
+unproved. The supervised original exited0, with leaked:false. No remote box,
+Wine, Python, guard changes, or closed runtime replay was used.
