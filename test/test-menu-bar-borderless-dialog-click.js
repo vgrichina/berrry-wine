@@ -109,3 +109,53 @@ function makeRenderer({ barCount, takeClick }) {
 }
 
 console.log('PASS  menu bar on a borderless WS_POPUP dialog takes its own clicks');
+
+// Explicit browser menu receipts use the native tracker return, never a
+// fabricated client DOWN. These are JS guard controls, not physical input.
+function guardedMenu({consumer='menu-tracker',action='open',trust=true,mutate=()=>{}}={}) {
+  const {createBrowserNativeInput}=require('../lib/browser-native-input');
+  const {r,strip}=makeRenderer({barCount:1,takeClick:true});
+  strip.isDialog=false;strip.parentHwnd=0;strip.processId=7;
+  r._hitTestDeepChild=()=>null;r.wasm.exports.get_focus_hwnd=()=>strip.hwnd;
+  r.canvas={width:1305,height:200,getBoundingClientRect:()=>({left:0,top:0,right:1305,bottom:200,width:1305,height:200})};
+  r._clientOriginScreen=()=>({x:0,y:18});r.peekKeyDownState=()=>!!r._mouseButtonsMask;
+  let open=action==='select'?strip.hwnd:0;
+  const words=[0n,1n,BigInt(strip.hwnd),7n,1n,40n,8n,1n,0n];
+  r.wasm.exports.native_menu_pointer_receipt=i=>words[i];
+  r.wasm.exports.menu_open_hwnd=()=>open;
+  const handle=()=>{words[0]++;words[7]=action==='open'?1n:2n;words[8]=action==='select'?100n:0n;
+    open=action==='open'?strip.hwnd:0;mutate(words,r);return 1;};
+  r.wasm.exports.menu_handle_bar_click=handle;r.wasm.exports.menu_handle_mouse_open=handle;
+  const gps={endpoint:{},presenter:{layer:{canvas:{}}}};
+  const wine={renderer:r,instance:r.wasm,memory:{buffer:new ArrayBuffer(128)},_wasmModule:{},
+    _processObject:{},running:true,processId:7,guestWorker:{link:{slot:0,worker:{},endpointIdentity:17}},
+    hostCtx:{getGlGpsBridge:()=>gps}};
+  const g=createBrowserNativeInput(wine,{trusted:()=>trust}),scene=[1,7,strip.hwnd,strip.hwnd,0,0,1,0,1,0];
+  g.withActor(0,'check_input',()=>g.observe(scene));const binding=g.bind();
+  g.prepare({owner:binding.owner,nonce:'menu',kind:'mouse',code:1,button:0,x:40,y:8,
+    ...(consumer==='client'?{}:{consumer}),menuAction:action,commandId:100,reviewed:true,reviewedAt:Date.now(),imageSHA256:'a'.repeat(64)});
+  r.handleMouseDown(40,8,0,{});return {g,r,words};
+}
+for(const action of ['open','select']) {
+  const {g,r}=guardedMenu({action}),receipt=g.status('menu');
+  assert.strictEqual(receipt.state,'MENU_HANDLED');assert.strictEqual(receipt.consumed,false);
+  assert.strictEqual(receipt.nativeMessage,null);assert.strictEqual(receipt.token,0);
+  assert.strictEqual(receipt.receiptBoundary,'synchronous-wat-menu-tracker-return');
+  assert.strictEqual(receipt.menuReceipt.action,action);assert.strictEqual(receipt.physicalUp,null);
+  assert.deepStrictEqual(r.inputQueue,[]);
+  r.handleMouseUp(40,8,0,{});assert.strictEqual(g.status('menu').physicalUp.trusted,true);
+  g.close();assert.strictEqual(g.status('menu').state,'MENU_HANDLED');
+}
+// The default client contract still refuses a synchronously handled menu.
+assert.strictEqual(guardedMenu({consumer:'client'}).g.status('menu').state,'UNKNOWN');
+for(const mutate of [w=>w[0]++,w=>w[1]++,w=>w[2]++,w=>w[3]++,w=>w[4]++,w=>w[5]++,w=>w[6]++,
+  w=>w[7]=3n,w=>w[8]=101n]) {
+  const {g,r}=guardedMenu({action:'select',mutate});assert.strictEqual(g.status('menu').state,'UNKNOWN');
+  const n=r.inputQueue.length;r.handleMouseDown(40,8,0,{});assert.strictEqual(r.inputQueue.length,n);
+}
+assert.strictEqual(guardedMenu({trust:false}).g.status('menu').state,'PREPARED');
+{
+  const {g,r}=guardedMenu({mutate:(w,r)=>r.inputQueue.push({msg:0x201,wParam:1,lParam:0})});
+  assert.strictEqual(g.status('menu').state,'UNKNOWN');assert.deepStrictEqual(r.inputQueue,[]);
+}
+console.log('PASS  distinct menu open/selection return; cancellation, wrong command/identity/point/sequence and untrusted negatives');

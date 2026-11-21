@@ -6414,37 +6414,15 @@
       "name": "$menu_handle_mouse_open",
       "writes": 0,
       "boundaryCalls": [
-        "$menu_open_hwnd_get",
-        "$menu_open_top_get",
-        "$menu_bar_screen_x",
-        "$menu_bar_screen_y",
-        "$menu_bar_screen_h",
-        "$menu_dropdown_x",
-        "$menu_dropdown_y",
-        "$menu_dropdown_width",
-        "$menu_hittest_dropdown",
-        "$menu_open_hover_set",
-        "$menu_open_sub_hover_set",
-        "$menu_activate",
-        "$menu_open_hover_get",
-        "$menu_open_hover_get",
-        "$menu_hittest_submenu",
-        "$menu_open_hover_get",
-        "$menu_open_sub_hover_set",
-        "$menu_activate",
-        "$menu_open_x_get",
-        "$menu_hittest_bar",
-        "$menu_activate_bar_command",
-        "$menu_open",
-        "$menu_close"
+        "$menu_handle_mouse_open_result"
       ],
       "exports": [
         "menu_handle_mouse_open"
       ],
       "targets": [],
-      "sha256": "9d87bfdddf6b5c13f6a19fe95a30048b2919fa9567c624d70ebe89caeda18d5c",
+      "sha256": "006adf5b52b81d264159a73139bbd6922faa65cb62e617a900f34d0d42054ed8",
       "kind": "mixed-dispatch",
-      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
+      "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review. Review 20261121: existing Boolean menu mouse wrapper delegates unchanged hit tests and activation to an internal helper, then publishes the synchronous WAT tracker return with selected command id. Cancellation/disabled/no selection is kind3, selection kind2; no client MSG or owning CPUWorker consumption is implied. Existing edit/TPM/post callback paths and admission remain unchanged; no new guest entry, EIP/ESP restoration or scheduling authority. Broader invocation ownership remains pending.",
       "ownership": "pending"
     },
     {
