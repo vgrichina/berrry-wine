@@ -2801,6 +2801,22 @@
         (if (i32.eq (local.get $lo) (i32.const -1))
           (then (local.set $lo (call $edit_line_from_char (local.get $state_w)
                                  (load.field.memarg EditState cursor (local.get $state_w))))))
+        ;; Plain EDIT does not process this message for single-line controls.
+        ;; For unwrapped multiline EDIT, a nonexistent line returns -1, not
+        ;; text_len. Keep the helper's end clamp for GETLINE/internal callers,
+        ;; and leave wrapped and RichEdit behavior outside this bounded fix.
+        (if (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+          (then
+            (if (i32.eqz (i32.and
+                  (load.field.memarg EditState flags (local.get $state_w)) (i32.const 1)))
+              (then (return (i32.const 0))))
+            (if (i32.and (i32.eqz (call $edit_wraps (local.get $hwnd)))
+                         (i32.ge_s (local.get $lo) (i32.const 0)))
+              (then
+                (if (i32.gt_u (local.get $lo)
+                      (call $edit_line_from_char (local.get $state_w)
+                        (load.field.memarg EditState text_len (local.get $state_w))))
+                  (then (return (i32.const -1))))))))
         (return (call $edit_line_index (local.get $state_w) (local.get $lo)))))
 
     ;; ---------- EM_GETLINECOUNT (0x00BA) ----------
