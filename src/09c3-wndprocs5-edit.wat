@@ -2819,6 +2819,80 @@
         (call $invalidate_hwnd (local.get $hwnd))
         (return (i32.const 0))))
 
+    ;; ---------- EM_CHARFROMPOS (0x00D7), bounded ANSI plain EDIT ----------
+    ;; Microsoft: signed packed client coordinates, unused wParam; return
+    ;; document character in LOWORD and line in HIWORD, or -1 outside.
+    ;; Reuse the mouse/font/scroll geometry without moving the selection,
+    ;; caret or viewport. Midpoint ties retain our existing mouse policy;
+    ;; exact Windows pixel-boundary parity has not been measured.
+    ;; RichEdit uses a POINTL pointer and a different result: do not enter.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00D7))
+                 (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
+      (then
+        ;; Preserve the previous zero fallback for layouts this geometry
+        ;; cannot describe: Unicode/DBCS, wrap, alignment, password and RTL.
+        (if (i32.or (call $wnd_unicode_get (local.get $hwnd))
+              (i32.or (call $edit_wraps (local.get $hwnd))
+                (i32.or
+                  (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                                   (i32.const 0x23)) (i32.const 0))
+                  (i32.ne (i32.and (call $ctrl_get_ex_style (local.get $hwnd))
+                                   (i32.const 0x00707000)) (i32.const 0)))))
+          (then (return (i32.const 0))))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $text_len (load.field.memarg EditState text_len (local.get $state_w)))
+        ;; WORD indexes cannot represent arbitrary large documents. Empty
+        ;; text has no documented last character; retain its old fallback.
+        (if (i32.or (i32.eqz (local.get $text_len))
+                     (i32.gt_u (local.get $text_len) (i32.const 65535)))
+          (then (return (i32.const 0))))
+        (local.set $buf (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
+        (local.set $lo (i32.const 0))
+        (block $charfrompos_text_done (loop $charfrompos_text
+          (br_if $charfrompos_text_done (i32.ge_u (local.get $lo) (local.get $text_len)))
+          (local.set $vk (i32.load8_u (i32.add (local.get $buf) (local.get $lo))))
+          ;; ASCII printable bytes and CRLF only; tabs and codepage-specific
+          ;; character units need a separate contract and measurement path.
+          (if (i32.eq (local.get $vk) (i32.const 13))
+            (then
+              (if (i32.ge_u (i32.add (local.get $lo) (i32.const 1)) (local.get $text_len))
+                (then (return (i32.const 0))))
+              (if (i32.ne (i32.load8_u (i32.add (local.get $buf)
+                             (i32.add (local.get $lo) (i32.const 1)))) (i32.const 10))
+                (then (return (i32.const 0))))
+              (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)))
+                (then (return (i32.const 0))))
+              (local.set $lo (i32.add (local.get $lo) (i32.const 1))))
+            (else
+              (if (i32.or (i32.lt_u (local.get $vk) (i32.const 32))
+                           (i32.gt_u (local.get $vk) (i32.const 126)))
+                (then (return (i32.const 0))))))
+          (local.set $lo (i32.add (local.get $lo) (i32.const 1)))
+          (br $charfrompos_text)))
+        (local.set $cx (i32.shr_s (i32.shl (local.get $lParam) (i32.const 16)) (i32.const 16)))
+        (local.set $cy (i32.shr_s (local.get $lParam) (i32.const 16)))
+        (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
+        (if (i32.or
+              (i32.ge_u (local.get $cx) (i32.and (local.get $sz) (i32.const 0xFFFF)))
+              (i32.ge_u (local.get $cy) (i32.shr_u (local.get $sz) (i32.const 16))))
+          (then (return (i32.const -1))))
+        (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+        (drop (call $gdi_native_select_object (local.get $hdc)
+          (select (load.field.memarg EditState font (local.get $state_w)) (i32.const 0x30021)
+            (i32.ne (load.field.memarg EditState font (local.get $state_w)) (i32.const 0)))))
+        (local.set $cur (call $edit_xy_to_offset (local.get $state_w) (local.get $hdc)
+          (local.get $cx)
+          (select (local.get $cy) (i32.const 4)
+            (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)) (i32.const 0)))))
+        ;; The helper returns caret positions, including the end insertion
+        ;; point. The query documents the last character beyond document end.
+        ;; An intermediate line's end already identifies its CR delimiter.
+        (if (i32.ge_u (local.get $cur) (local.get $text_len))
+          (then (local.set $cur (i32.sub (local.get $text_len) (i32.const 1)))))
+        (return (i32.or (local.get $cur)
+          (i32.shl (call $edit_line_from_char (local.get $state_w) (local.get $cur)) (i32.const 16))))))
+
     ;; ---------- EM_GETLINE (0x00C4), ANSI unwrapped plain EDIT ----------
     ;; The caller's initial WORD is a character capacity, not a byte offset
     ;; or room for a terminator. Copy line text only; return its copied count
