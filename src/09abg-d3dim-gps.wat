@@ -31,12 +31,11 @@
   (global $D3G_ARENA_BYTES i32 (i32.const 8388608))
   (global $D3G_BAND i32 (i32.const 2097152))
   (global $D3G_TARGETS i32 (i32.const 32))
-  (global $D3G_TEX_CACHE i32 (i32.const 64))
   (global $D3G_SHADER_CACHE i32 (i32.const 64))
   (global $D3G_SAMPLER_CACHE i32 (i32.const 32))
   ;; Producer block offsets. Tables: targets 32 x 128 B at 1280, depth
   ;; 32 x 16 B at 5376, shaders 64 x 8 B at 5888, samplers 32 x 8 B at 6400,
-  ;; textures 64 x 256 B at 6656. Stats are 16 words at 80 (d3dim_gps_stat).
+  ;; at 6656 the $gtc texture cache (wasm; 256-byte payloads, see $d3g_texture). Stats are 16 words at 80 (d3dim_gps_stat).
   ;; Parked primary: +164 dib, +168 pitch, +172 bpp, +176 fmt, +180 height,
   ;; +184 parked, +188 entry; park slots 4 x 32 B at 23040 ($d3g_slot), the
   ;; park sequence at 23168, the merge spare slot at 23184. Readbacks per
@@ -966,7 +965,16 @@
   ;; ---- Textures ----------------------------------------------------------
   ;; Cache slot $e (an entry address) as a texture-diagnostic slot index.
   (func $d3g_td_slot (param $pb i32) (param $e i32) (result i32)
-    (i32.shr_u (i32.sub (local.get $e) (i32.add (local.get $pb) (i32.const 6656))) (i32.const 8)))
+    (call $gtc_index (call $d3g_tc (local.get $pb)) (local.get $e)))
+  ;; Created on first use, after the producer's own blocks, so the guest
+  ;; heap layout ahead of the first texture is what it was before the cache.
+  (func $d3g_tc (param $pb i32) (result i32)
+    (local $c i32)
+    (local.set $c (i32.load offset=6656 (local.get $pb)))
+    (if (i32.eqz (local.get $c)) (then
+      (local.set $c (call $gtc_create (global.get $GTC_SLOTS) (i32.const 256) (global.get $GTC_BUDGET)))
+      (i32.store offset=6656 (local.get $pb) (local.get $c))))
+    (local.get $c))
 
   (func $d3g_tex_free (param $pb i32) (param $e i32)
     (local $i i32) (local $r i32)
@@ -978,6 +986,7 @@
       (call $page_watch_release (i32.load (local.get $r)) (i32.load offset=4 (local.get $r)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $ranges)))
+    (call $gtc_drop (call $d3g_tc (local.get $pb)) (call $d3g_td_slot (local.get $pb) (local.get $e)))
     (memory.fill (local.get $e) (i32.const 0) (i32.const 256)))
 
   ;; A watched range's pages split in two: interior pages lie wholly inside
@@ -1097,7 +1106,7 @@
     (local $mip i32) (local $keyed i32) (local $kb i32) (local $mode i32) (local $lv i32) (local $n i32)
     (local $w i32) (local $hgt i32) (local $bpp i32) (local $pitch i32) (local $wa i32) (local $sig i32)
     (local $i i32) (local $e i32) (local $slot i32) (local $j i32) (local $t i32) (local $id i32)
-    (local $g i64) (local $diag i32) (local $hash i64)
+    (local $g i64) (local $diag i32) (local $hash i64) (local $c i32) (local $bytes i32) (local $v i32)
     (local.set $mip (i32.ne (i32.load offset=188 (local.get $d)) (i32.const 0)))
     (local.set $keyed (i32.ne (i32.load offset=52 (local.get $d)) (i32.const 0)))
     (local.set $kb (i32.ne (i32.load offset=160 (local.get $d)) (i32.const 0)))
@@ -1168,11 +1177,21 @@
         (i32.store offset=32 (local.get $t) (i32.or (i32.load offset=32 (local.get $t)) (i32.const 2)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $rts (i32.lt_u (local.get $i) (local.get $n))))
+    (local.set $i (i32.const 0))
+    (loop $size
+      (local.set $e (i32.add (local.get $lv) (i32.mul (local.get $i) (i32.const 48))))
+      (local.set $bytes (i32.add (local.get $bytes)
+        (i32.shl (i32.mul (i32.load offset=4 (local.get $e)) (i32.load offset=8 (local.get $e))) (i32.const 2))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $size (i32.lt_u (local.get $i) (local.get $n))))
     ;; Cache: same root entry. Same signature and unchanged watch = hit.
+    ;; One texture per draw: the previous lookup's pin ends here.
+    (local.set $c (call $d3g_tc (local.get $pb)))
+    (call $gtc_unpin (local.get $c))
     (local.set $i (i32.const 0))
     (local.set $slot (i32.const 0))
     (loop $scan
-      (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 6656)) (i32.shl (local.get $i) (i32.const 8))))
+      (local.set $e (call $gtc_entry (local.get $c) (local.get $i)))
       (if (i32.eq (i32.load (local.get $e)) (i32.load (local.get $lv))) (then
         (if (i32.and (i32.and (i32.eq (i32.load offset=20 (local.get $e)) (local.get $sig))
                               (i32.ne (i32.load offset=24 (local.get $e)) (i32.const 0)))
@@ -1185,6 +1204,7 @@
                 (local.set $g (call $d3g_tex_gen (local.get $e) (i32.const 1)))
                 (if (i64.eq (local.get $g) (i64.load offset=240 (local.get $e)))
                   (then
+                    (call $gtc_use (local.get $c) (local.get $i))
                     (call $gps_td_use (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $e)))
                     (return (i32.load offset=4 (local.get $e)))))
                 ;; Only edge pages moved: a neighbour's write, unless the
@@ -1194,11 +1214,12 @@
                   (then
                     (i64.store offset=240 (local.get $e) (local.get $g))
                     (i32.store offset=23348 (local.get $pb) (i32.add (i32.load offset=23348 (local.get $pb)) (i32.const 1)))
+                    (call $gtc_use (local.get $c) (local.get $i))
                     (call $gps_td_use (call $d3g_h) (call $d3g_td_slot (local.get $pb) (local.get $e)))
                     (return (i32.load offset=4 (local.get $e)))))))))
         (local.set $slot (local.get $e))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $scan (i32.lt_u (local.get $i) (global.get $D3G_TEX_CACHE))))
+      (br_if $scan (i32.lt_u (local.get $i) (call $gtc_slots (local.get $c)))))
     (call $d3g_stat (local.get $pb) (i32.const 8) (i32.const 1))
     (local.set $diag (call $gps_td (call $d3g_h)))
     (if (local.get $slot)
@@ -1210,17 +1231,23 @@
               (else (select (global.get $GPS_TD_WRITE) (global.get $GPS_TD_UNTRACKED)
                 (i32.ne (i32.load offset=24 (local.get $slot)) (i32.const 0))))))))
         (if (i32.ne (i32.load offset=20 (local.get $slot)) (local.get $sig))
-          (then (call $d3g_tex_free (local.get $pb) (local.get $slot)))))
-      (else
-        (local.set $i (i32.load offset=40 (local.get $pb)))
-        (i32.store offset=40 (local.get $pb) (i32.rem_u (i32.add (local.get $i) (i32.const 1)) (global.get $D3G_TEX_CACHE)))
-        (local.set $slot (i32.add (i32.add (local.get $pb) (i32.const 6656)) (i32.shl (local.get $i) (i32.const 8))))
-        (if (i32.and (i32.ne (local.get $diag) (i32.const 0)) (i32.ne (i32.load (local.get $slot)) (i32.const 0)))
-          (then (call $gps_td_drop (call $d3g_h) (local.get $i) (global.get $GPS_TD_EVICT))))
-        (call $d3g_tex_free (local.get $pb) (local.get $slot))))
+          (then (call $d3g_tex_free (local.get $pb) (local.get $slot))))))
+    ;; A kept entry refills in place: pin it, then evict least recently used
+    ;; textures until this one fits (and a slot is free for a new entry).
+    (if (local.get $slot) (then (if (i32.load (local.get $slot))
+      (then (call $gtc_use (local.get $c) (call $d3g_td_slot (local.get $pb) (local.get $slot)))))))
+    (block $fits (loop $evict
+      (local.set $v (call $gtc_victim (local.get $c) (local.get $bytes) (i32.eqz (local.get $slot))))
+      (br_if $fits (i32.lt_s (local.get $v) (i32.const 0)))
+      (call $gps_td_drop (call $d3g_h) (local.get $v) (global.get $GPS_TD_EVICT))
+      (call $d3g_tex_free (local.get $pb) (call $gtc_entry (local.get $c) (local.get $v)))
+      (br $evict)))
+    (if (i32.eqz (local.get $slot))
+      (then (local.set $slot (call $gtc_entry (local.get $c) (call $gtc_free_slot (local.get $c))))))
     (local.set $id (i32.load offset=4 (local.get $slot)))
     (if (i32.eqz (i32.load (local.get $slot))) (then
       (local.set $id (call $d3g_new_id (local.get $pb)))
+      (call $gtc_claim (local.get $c) (call $d3g_td_slot (local.get $pb) (local.get $slot)) (local.get $bytes))
       (call $d3g_create (local.get $id) (global.get $GPS_KIND_TEX2D) (global.get $GPS_FMT_A8B8G8R8)
         (local.get $n) (i32.load offset=4 (local.get $lv)) (i32.load offset=8 (local.get $lv)))
       (i32.store (local.get $slot) (i32.load (local.get $lv)))
@@ -2987,13 +3014,13 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $depth (i32.lt_u (local.get $i) (i32.const 32))))
     (local.set $i (i32.const 0))
-    (loop $tex
-      (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 6656)) (i32.shl (local.get $i) (i32.const 8))))
+    (if (i32.load offset=6656 (local.get $pb)) (then (loop $tex
+      (local.set $e (call $gtc_entry (call $d3g_tc (local.get $pb)) (local.get $i)))
       (if (i32.eq (i32.load (local.get $e)) (local.get $entry)) (then
         (call $gps_td_drop (call $d3g_h) (local.get $i) (global.get $GPS_TD_RELEASE))
         (call $d3g_tex_free (local.get $pb) (local.get $e))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br_if $tex (i32.lt_u (local.get $i) (global.get $D3G_TEX_CACHE))))
+      (br_if $tex (i32.lt_u (local.get $i) (call $gtc_slots (call $d3g_tc (local.get $pb))))))))
     (if (i32.eq (i32.load offset=188 (local.get $pb)) (local.get $entry))
       (then (call $d3g_park_drop (local.get $pb))))
     (call $lock_release (global.get $D3DIM_GPS)))

@@ -115,6 +115,19 @@ equal to another live entry. `test/run.js` prints them as `[gps]` lines;
 the page HUD reads `gps_stat_active/frames/readbacks/uploads` and shows
 readbacks and uploads per frame for the API that presented last.
 
+**Texture cache.** Glide and D3DIM keep decoded textures in one shared
+`$gtc_*` slot cache (`09a8gu-gps-tex-cache.wat`): 512 slots per producer,
+least-recently-used eviction under a 32 MB byte budget, and pinning — an
+entry looked up since the producer's last `$gtc_unpin` (Glide: the pipeline
+being built; D3DIM: the draw's texture) is never named a victim. The cache
+only does bookkeeping: each producer keeps its own key and validity in its
+slot payload (Glide: TMU range, descriptor and the palette content key for
+P8/AP88, released on an overlapping TMU write; D3DIM: surface identity,
+signature and page-watch generations) and evicts through its own RELEASE
+path, so GPU-side ids stay per ring. Diablo II's town (~200 textures per
+frame) went from ~198 uploads per frame on the old 64-slot round robin to
+~12 (run 20261121-gps-plumbing).
+
 **Capability block.** `drain()` writes the executor's `caps()` into the
 header before it executes the first record, and sets `CAP_VALID` (1) last.
 WAT reads it to decide what the guest is told; nothing else negotiates

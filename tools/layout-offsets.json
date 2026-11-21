@@ -2067,7 +2067,7 @@
       "file": "src/09a8h-glide.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 12188,
+      "size": 9120,
       "fields": [
         {
           "name": "next_id",
@@ -2302,7 +2302,7 @@
           "stride": 4
         },
         {
-          "name": "tex_next",
+          "name": "tex_cache",
           "type": "i32",
           "offset": 132,
           "size": 4,
@@ -2310,7 +2310,7 @@
           "stride": 4
         },
         {
-          "name": "shader_next",
+          "name": "pal_key",
           "type": "i32",
           "offset": 136,
           "size": 4,
@@ -2318,7 +2318,7 @@
           "stride": 4
         },
         {
-          "name": "sampler_next",
+          "name": "shader_next",
           "type": "i32",
           "offset": 140,
           "size": 4,
@@ -2326,7 +2326,7 @@
           "stride": 4
         },
         {
-          "name": "vx_origin",
+          "name": "sampler_next",
           "type": "i32",
           "offset": 144,
           "size": 4,
@@ -2334,15 +2334,15 @@
           "stride": 4
         },
         {
-          "name": "vx_height",
-          "type": "f32",
+          "name": "vx_origin",
+          "type": "i32",
           "offset": 148,
           "size": 4,
           "count": 1,
           "stride": 4
         },
         {
-          "name": "vx_s0",
+          "name": "vx_height",
           "type": "f32",
           "offset": 152,
           "size": 4,
@@ -2350,7 +2350,7 @@
           "stride": 4
         },
         {
-          "name": "vx_t0",
+          "name": "vx_s0",
           "type": "f32",
           "offset": 156,
           "size": 4,
@@ -2358,7 +2358,7 @@
           "stride": 4
         },
         {
-          "name": "vx_s1",
+          "name": "vx_t0",
           "type": "f32",
           "offset": 160,
           "size": 4,
@@ -2366,7 +2366,7 @@
           "stride": 4
         },
         {
-          "name": "vx_t1",
+          "name": "vx_s1",
           "type": "f32",
           "offset": 164,
           "size": 4,
@@ -2374,15 +2374,15 @@
           "stride": 4
         },
         {
-          "name": "vx_hint_q0",
-          "type": "i32",
+          "name": "vx_t1",
+          "type": "f32",
           "offset": 168,
           "size": 4,
           "count": 1,
           "stride": 4
         },
         {
-          "name": "vx_needs_z",
+          "name": "vx_hint_q0",
           "type": "i32",
           "offset": 172,
           "size": 4,
@@ -2390,9 +2390,17 @@
           "stride": 4
         },
         {
+          "name": "vx_needs_z",
+          "type": "i32",
+          "offset": 176,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
           "name": "vx_bias",
           "type": "f64",
-          "offset": 176,
+          "offset": 180,
           "size": 8,
           "count": 1,
           "stride": 8
@@ -2400,7 +2408,7 @@
         {
           "name": "vx_dual",
           "type": "i32",
-          "offset": 184,
+          "offset": 188,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2408,7 +2416,7 @@
         {
           "name": "snap",
           "type": "i32",
-          "offset": 188,
+          "offset": 192,
           "size": 336,
           "count": 84,
           "stride": 4
@@ -2416,7 +2424,7 @@
         {
           "name": "vtx",
           "type": "i32",
-          "offset": 524,
+          "offset": 528,
           "size": 180,
           "count": 45,
           "stride": 4
@@ -2424,7 +2432,7 @@
         {
           "name": "fog",
           "type": "i32",
-          "offset": 704,
+          "offset": 708,
           "size": 64,
           "count": 16,
           "stride": 4
@@ -2432,23 +2440,15 @@
         {
           "name": "gamma",
           "type": "i32",
-          "offset": 768,
+          "offset": 772,
           "size": 768,
           "count": 192,
           "stride": 4
         },
         {
-          "name": "tex",
-          "type": "i32",
-          "offset": 1536,
-          "size": 3072,
-          "count": 768,
-          "stride": 4
-        },
-        {
           "name": "shader",
           "type": "i32",
-          "offset": 4608,
+          "offset": 1540,
           "size": 6656,
           "count": 1664,
           "stride": 4
@@ -2456,7 +2456,7 @@
         {
           "name": "sampler",
           "type": "i32",
-          "offset": 11264,
+          "offset": 8196,
           "size": 512,
           "count": 128,
           "stride": 4
@@ -2464,7 +2464,7 @@
         {
           "name": "key",
           "type": "i32",
-          "offset": 11776,
+          "offset": 8708,
           "size": 96,
           "count": 24,
           "stride": 4
@@ -2472,7 +2472,7 @@
         {
           "name": "last_raster",
           "type": "i32",
-          "offset": 11872,
+          "offset": 8804,
           "size": 96,
           "count": 24,
           "stride": 4
@@ -2480,7 +2480,7 @@
         {
           "name": "last_consts",
           "type": "i32",
-          "offset": 11968,
+          "offset": 8900,
           "size": 88,
           "count": 22,
           "stride": 4
@@ -2488,7 +2488,7 @@
         {
           "name": "last_bind",
           "type": "i32",
-          "offset": 12056,
+          "offset": 8988,
           "size": 28,
           "count": 7,
           "stride": 4
@@ -2496,7 +2496,7 @@
         {
           "name": "stage",
           "type": "i32",
-          "offset": 12084,
+          "offset": 9016,
           "size": 96,
           "count": 24,
           "stride": 4
@@ -2504,7 +2504,7 @@
         {
           "name": "lfb_tag",
           "type": "i32",
-          "offset": 12180,
+          "offset": 9112,
           "size": 8,
           "count": 2,
           "stride": 4
