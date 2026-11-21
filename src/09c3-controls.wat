@@ -1221,6 +1221,36 @@
     (call $heap_free (local.get $note))
     (local.get $result))
 
+  ;; Normal native tab selection with the keyboard path's synchronous veto
+  ;; and lifetime checks. A callback may replace the HWND, state, or selection;
+  ;; in that case its newer state wins. Never dereference the old mirror after
+  ;; a generation/state mismatch, or touch it after the final notification.
+  (func $tab_control_select (param $hwnd i32) (param $index i32) (result i32)
+    (local $state i32) (local $sw i32) (local $count i32) (local $old i32)
+    (local $generation i64)
+    (local.set $state (call $tab_native_state_get (local.get $hwnd) (i32.const 0)))
+    (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+    (local.set $sw (call $g2w (local.get $state)))
+    (local.set $count (i32.load (local.get $sw)))
+    (local.set $old (i32.load offset=4 (local.get $sw)))
+    (if (i32.or (i32.ge_u (local.get $index) (local.get $count))
+                (i32.eq (local.get $index) (local.get $old)))
+      (then (return (i32.const 0))))
+    (local.set $generation (call $wnd_lookup_generation (local.get $hwnd)))
+    (if (call $tab_control_notify (local.get $hwnd) (i32.const -552))
+      (then (return (i32.const 0))))
+    (if (i32.or
+          (i64.ne (call $wnd_lookup_generation (local.get $hwnd)) (local.get $generation))
+          (i32.ne (call $tab_native_state_get (local.get $hwnd) (i32.const 0)) (local.get $state)))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.ne (i32.load offset=4 (local.get $sw)) (local.get $old))
+                (i32.ne (i32.load (local.get $sw)) (local.get $count)))
+      (then (return (i32.const 0))))
+    (i32.store offset=4 (local.get $sw) (local.get $index))
+    (call $paint_flag_set_inv (local.get $hwnd))
+    (drop (call $tab_control_notify (local.get $hwnd) (i32.const -551)))
+    (i32.const 0))
+
   (func $tab_control_wndproc
     (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $state i32) (local $sw i32) (local $count i32) (local $old i32)
@@ -1233,6 +1263,19 @@
       (then (return (call $tab_native_paint (local.get $hwnd)))))
     (if (i32.eq (local.get $msg) (i32.const 0x0082))
       (then (call $tab_native_state_release (local.get $hwnd)) (return (i32.const 0))))
+    ;; TCM_SETCURFOCUS: Microsoft specifies normal-tab selection and both
+    ;; selection notifications, unlike silent TCM_SETCURSEL. Item focus uses
+    ;; the normal-tab selection index; no separate keyboard-focus HWND write.
+    ;; Bound this to the supported ordinary painter. Button mode needs a
+    ;; distinct item-focus state and must not be implemented as selection.
+    ;; No return value is specified. Invalid indices are safely ignored here;
+    ;; this does not claim undocumented Windows negative/deselection behavior.
+    (if (i32.eq (local.get $msg) (i32.const 0x1330))
+      (then
+        (if (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+              (i32.const 0x2782)) (i32.const 0))
+          (then (return (i32.const 0))))
+        (return (call $tab_control_select (local.get $hwnd) (local.get $wParam)))))
     ;; TCM_ADJUSTRECT: FALSE window -> display, nonzero TRUE inverse.
     ;; Four signed LONGs in tab client space; Microsoft specifies no return.
     ;; Geometry is deliberately the ordinary horizontal native painter's:
@@ -1392,22 +1435,7 @@
               (select (i32.const -1) (i32.const 1)
                 (i32.eq (local.get $wParam) (i32.const 0x25)))))
             (if (i32.ge_u (local.get $index) (local.get $count)) (then (return (i32.const 0))))
-            (local.set $generation (call $wnd_lookup_generation (local.get $hwnd)))
-            (if (call $tab_control_notify (local.get $hwnd) (i32.const -552))
-              (then (return (i32.const 0))))
-            ;; The veto callback may destroy/recreate this HWND, replace its
-            ;; mirror, or change selection/items. Never overwrite newer state.
-            (if (i32.or
-                  (i64.ne (call $wnd_lookup_generation (local.get $hwnd)) (local.get $generation))
-                  (i32.ne (call $tab_native_state_get (local.get $hwnd) (i32.const 0)) (local.get $state)))
-              (then (return (i32.const 0))))
-            (if (i32.or (i32.ne (i32.load offset=4 (local.get $sw)) (local.get $old))
-                        (i32.ne (i32.load (local.get $sw)) (local.get $count)))
-              (then (return (i32.const 0))))
-            (i32.store offset=4 (local.get $sw) (local.get $index))
-            (call $paint_flag_set_inv (local.get $hwnd))
-            (drop (call $tab_control_notify (local.get $hwnd) (i32.const -551)))
-            (return (i32.const 0))))))
+            (return (call $tab_control_select (local.get $hwnd) (local.get $index)))))))
     ;; In particular, WinHelp publishes its tab HWND after WM_CREATE returns.
     ;; Do not allocate or change selection on creation/private messages.
     (if (i32.and
