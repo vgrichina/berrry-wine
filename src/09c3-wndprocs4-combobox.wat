@@ -731,6 +731,12 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0146))
       (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x018B) (i32.const 0) (i32.const 0)))))
 
+    ;; ---------- CB_GETTOPINDEX / CB_SETTOPINDEX — use the backing list's scroll path ----------
+    (if (i32.eq (local.get $msg) (i32.const 0x015B))
+      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x018E) (i32.const 0) (i32.const 0)))))
+    (if (i32.eq (local.get $msg) (i32.const 0x015C))
+      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0197) (local.get $wParam) (i32.const 0)))))
+
     ;; ---------- CB_GETCURSEL (0x0147) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0147))
       (then (return (call $cb_cur_sel (local.get $state_w)))))
