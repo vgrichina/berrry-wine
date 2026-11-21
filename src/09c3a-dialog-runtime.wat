@@ -1304,6 +1304,22 @@
   (func $dialog_input_reject
     (global.set $eip (global.get $dlg_loop_thunk))
     (global.set $steps (i32.const 0)))
+  ;; DialogBox has no application message loop to call IsDialogMessage.
+  ;; Run the same USER selection policy before dispatching to a control.
+  ;; Keep the original input frame/MSG: its return authenticates the key,
+  ;; while any resulting WM_COMMAND is delivered by the normal modal pump.
+  (func $dialog_input_keyboard (param $hwnd i32) (param $msg i32) (param $wp i32) (param $lp i32) (result i32)
+    (local $message i32) (local $handled i32)
+    (if (i32.ne (local.get $msg) (i32.const 0x100)) (then (return (i32.const 0))))
+    (local.set $message (call $heap_alloc (i32.const 28)))
+    (memory.fill (call $g2w (local.get $message)) (i32.const 0) (i32.const 28))
+    (call $gs32 (local.get $message) (local.get $hwnd))
+    (call $gs32 (i32.add (local.get $message) (i32.const 4)) (local.get $msg))
+    (call $gs32 (i32.add (local.get $message) (i32.const 8)) (local.get $wp))
+    (call $gs32 (i32.add (local.get $message) (i32.const 12)) (local.get $lp))
+    (local.set $handled (call $dialog_process_message (global.get $dlg_pump_hwnd) (local.get $message)))
+    (call $heap_free (local.get $message))
+    (local.get $handled))
   (func $dialog_input_native_return
     (if (i32.eqz (global.get $dialog_input_frame)) (then (return)))
     (if (i32.and (global.get $wnd_send_completed) (i32.eqz (global.get $yield_flag)))

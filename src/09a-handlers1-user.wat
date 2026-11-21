@@ -1933,24 +1933,28 @@
   ;; calls IsDialogMessageA on every pump iteration; while this answered 0
   ;; unconditionally, Enter simply fell through to the edit and vanished.
   ;;
-  ;; Only the two command keys are claimed. Everything else still answers 0,
-  ;; so the caller goes on to TranslateMessage/DispatchMessage exactly as it
-  ;; did before -- USER would have dispatched those same messages itself and
-  ;; returned TRUE, and this way the app's own pump stays in charge of them.
+  ;; Selection keys share their policy with DialogBox's native input loop.
+  ;; Other messages remain with the caller's TranslateMessage/DispatchMessage.
   (func $handle_IsDialogMessageA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $handled i32)
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+    (local.set $handled (call $dialog_process_message (local.get $arg0) (local.get $arg1)))
+    (i32.store (global.get $reg_base) (local.get $handled)))
+
+  (func $dialog_process_message (param $arg0 i32) (param $arg1 i32) (result i32)
+    (local $handled i32)
     (local $target i32) (local $msg i32) (local $vk i32)
     (local $walk i32) (local $depth i32) (local $inside i32)
     (local $code i32) (local $def i32) (local $id i32) (local $btn i32)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))  ;; stdcall, 2 args
+    (local $dialog_generation i64) (local $target_generation i64)
     (if (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg1)))
-      (then (return)))
+      (then (return (local.get $handled))))
     (local.set $target (call $gl32 (local.get $arg1)))
     (local.set $msg (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
     (local.set $vk (call $gl32 (i32.add (local.get $arg1) (i32.const 8))))
     ;; WM_KEYDOWN only, and only the keys USER itself claims: the two command
     ;; keys, Tab, and the four arrows. Everything else still falls through.
-    (if (i32.ne (local.get $msg) (i32.const 0x0100)) (then (return)))
+    (if (i32.ne (local.get $msg) (i32.const 0x0100)) (then (return (local.get $handled))))
     (if (i32.eqz (i32.or
           (i32.or
             (i32.eq (local.get $vk) (i32.const 0x0D))
@@ -1959,7 +1963,7 @@
             (i32.eq (local.get $vk) (i32.const 0x09))
             (i32.and (i32.ge_u (local.get $vk) (i32.const 0x25))
                      (i32.le_u (local.get $vk) (i32.const 0x28))))))
-      (then (return)))
+      (then (return (local.get $handled))))
     ;; The message must belong to this dialog or one of its descendants.
     (local.set $inside (i32.eq (local.get $target) (local.get $arg0)))
     (local.set $walk (local.get $target))
@@ -1972,29 +1976,36 @@
       (local.set $depth (i32.add (local.get $depth) (i32.const 1)))
       (br_if $done_walk (i32.ge_u (local.get $depth) (i32.const 32)))
       (br $up)))
-    (if (i32.eqz (local.get $inside)) (then (return)))
+    (if (i32.eqz (local.get $inside)) (then (return (local.get $handled))))
+    (local.set $dialog_generation (call $wnd_lookup_generation (local.get $arg0)))
+    (local.set $target_generation (call $wnd_lookup_generation (local.get $target)))
     ;; A control that asks for every key keeps it (DLGC_WANTALLKEYS/MESSAGE).
     (local.set $code (call $wnd_send_message
       (local.get $target) (i32.const 0x0087)
       (local.get $vk) (local.get $arg1)))
-    (if (i32.and (local.get $code) (i32.const 0x0004)) (then (return)))
+    ;; WM_GETDLGCODE is application code and can retire either window.
+    (if (i32.or
+          (i64.ne (local.get $dialog_generation) (call $wnd_lookup_generation (local.get $arg0)))
+          (i64.ne (local.get $target_generation) (call $wnd_lookup_generation (local.get $target))))
+      (then (return (i32.const 1))))
+    (if (i32.and (local.get $code) (i32.const 0x0004)) (then (return (local.get $handled))))
     ;; Tab and the arrows move the focus, and a control that asked for them
     ;; (DLGC_WANTTAB / DLGC_WANTARROWS -- an edit or a listbox) keeps them.
     (if (i32.eq (local.get $vk) (i32.const 0x09))
       (then
-        (if (i32.and (local.get $code) (i32.const 0x0002)) (then (return)))
+        (if (i32.and (local.get $code) (i32.const 0x0002)) (then (return (local.get $handled))))
         (local.set $btn (call $dialog_next_tabstop
           (local.get $arg0) (local.get $target)
           (select (i32.const -1) (i32.const 1)
             (i32.and (call $host_get_key_down_state (i32.const 0x10))
                      (i32.const 0x8000)))))
         (if (local.get $btn) (then (call $set_focus (local.get $btn))))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-        (return)))
+        (local.set $handled (i32.const 1))
+        (return (local.get $handled))))
     (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0x25))
                  (i32.le_u (local.get $vk) (i32.const 0x28)))
       (then
-        (if (i32.and (local.get $code) (i32.const 0x0001)) (then (return)))
+        (if (i32.and (local.get $code) (i32.const 0x0001)) (then (return (local.get $handled))))
         ;; VK_LEFT (0x25) and VK_UP (0x26) go back; VK_RIGHT/VK_DOWN forward.
         (local.set $btn (call $dialog_next_group_item
           (local.get $arg0) (local.get $target)
@@ -2004,15 +2015,15 @@
               (i32.ne (local.get $btn) (i32.const 0))
               (i32.ne (local.get $btn) (local.get $target)))
           (then (call $set_focus (local.get $btn))))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-        (return)))
+        (local.set $handled (i32.const 1))
+        (return (local.get $handled))))
     (if (i32.eq (local.get $vk) (i32.const 0x1B))
       (then
-        (drop (call $wnd_send_message
-          (local.get $arg0) (i32.const 0x0111) (i32.const 2)
-          (call $ctrl_find_by_id (local.get $arg0) (i32.const 2))))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-        (return)))
+        (call $dialog_key_command
+          (local.get $arg0) (i32.const 2)
+          (call $ctrl_find_by_id (local.get $arg0) (i32.const 2)))
+        (local.set $handled (i32.const 1))
+        (return (local.get $handled))))
     ;; VK_RETURN on a focused pushbutton fires that button, not the dialog's
     ;; default -- USER makes the focused button the default for as long as it
     ;; holds the focus. Diablo's menus are exactly this shape: five ownerdrawn
@@ -2025,31 +2036,34 @@
         (if (i32.eqz (i32.and (call $wnd_get_style (local.get $target))
                               (i32.const 0x08000000)))  ;; !WS_DISABLED
           (then
-            (drop (call $wnd_send_message
-              (local.get $arg0) (i32.const 0x0111)
-              (call $ctrl_table_get_id (local.get $target)) (local.get $target)))
-            (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-            (return)))))
+            (call $dialog_key_command
+              (local.get $arg0)
+              (call $ctrl_table_get_id (local.get $target)) (local.get $target))
+            (local.set $handled (i32.const 1))
+            (return (local.get $handled))))))
     ;; VK_RETURN: the dialog's own default id when it claims one, IDOK when
     ;; it does not. A default button that exists but is disabled swallows the
     ;; key rather than firing -- an absent one does not.
     (local.set $def (call $wnd_send_message
       (local.get $arg0) (i32.const 0x0400) (i32.const 0) (i32.const 0)))  ;; DM_GETDEFID
+    (if (i64.ne (local.get $dialog_generation) (call $wnd_lookup_generation (local.get $arg0)))
+      (then (return (i32.const 1))))
     (if (i32.eq (i32.shr_u (local.get $def) (i32.const 16)) (i32.const 0x554B))
       (then
         (local.set $id (i32.and (local.get $def) (i32.const 0xFFFF)))
         (local.set $btn (call $ctrl_find_by_id (local.get $arg0) (local.get $id)))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-        (if (i32.eqz (local.get $btn)) (then (return)))
+        (local.set $handled (i32.const 1))
+        (if (i32.eqz (local.get $btn)) (then (return (local.get $handled))))
         (if (i32.and (call $wnd_get_style (local.get $btn)) (i32.const 0x08000000))
-          (then (return)))
-        (drop (call $wnd_send_message
-          (local.get $arg0) (i32.const 0x0111) (local.get $id) (local.get $btn)))
-        (return)))
-    (drop (call $wnd_send_message
-      (local.get $arg0) (i32.const 0x0111) (i32.const 1)
-      (call $ctrl_find_by_id (local.get $arg0) (i32.const 1))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+          (then (return (local.get $handled))))
+        (call $dialog_key_command
+          (local.get $arg0) (local.get $id) (local.get $btn))
+        (return (local.get $handled))))
+    (call $dialog_key_command
+      (local.get $arg0) (i32.const 1)
+      (call $ctrl_find_by_id (local.get $arg0) (i32.const 1)))
+    (local.set $handled (i32.const 1))
+    (local.get $handled)
   )
 
   ;; 128: IsIconic(hwnd) → BOOL — is the window minimized?

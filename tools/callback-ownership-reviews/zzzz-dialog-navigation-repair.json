@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "46dacc04629058d9ce2d92e251e6146037ad5a3a41d5faabb9c88604be16d508",
+      "sha256": "ffaa595e5f9b89e0b71475b06b3a7a45e2cb578b5379e1fd13bcf9faf6061629",
+      "reason": "Modal posted and native keyboard input runs the shared IsDialogMessage policy before target dispatch. Native entry keeps dialog_input_begin before selection and dialog_input_native_return after it; handled commands post to the original modal pump continuation. No new guest continuation or callback identity; handled paths reuse dialog_input_reject only to resume the existing dlg_loop_thunk."
+    }
+  ]
+}

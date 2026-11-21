@@ -1349,6 +1349,13 @@
                 (local.set $queued (i32.const 1))))))
         (if (local.get $queued)
           (then
+            ;; Posted keyboard messages use the same dialog selection policy
+            ;; as hardware input; a resulting command re-enters this queue.
+            (if (call $dialog_input_keyboard
+                  (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3))
+              (then
+                (call $dialog_input_reject) ;; Resume the pump without target dispatch.
+                (return)))
             ;; Dispatch by hwnd wndproc — WAT-native controls handle directly
             (local.set $arg4 (call $wnd_table_get (local.get $arg0)))
             ;; WNDPROC_DIALOG is a USER marker, not a WAT callback. Enter its
@@ -1409,8 +1416,11 @@
                               (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
                           (then (call $dialog_input_reject) (return)))
                         (global.set $wnd_send_completed (i32.const 1))
-                        (drop (call $wat_wndproc_dispatch
-                          (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
+                        (if (i32.eqz (call $dialog_input_keyboard
+                              (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
+                          (then
+                            (drop (call $wat_wndproc_dispatch
+                              (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))))
                         (call $dialog_input_native_return)
                         (global.set $eip (global.get $dlg_loop_thunk))
                         (global.set $steps (i32.const 0))
@@ -1429,6 +1439,13 @@
             (if (i32.eqz (call $dialog_input_begin (global.get $pending_input_token)
                   (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))
               (then (call $dialog_input_reject) (return)))
+            (if (call $dialog_input_keyboard
+                  (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3))
+              (then
+                (global.set $wnd_send_completed (i32.const 1))
+                (call $dialog_input_native_return)
+                (call $dialog_input_reject) ;; Resume after the authenticated USER return.
+                (return)))
             (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
             (call $gs32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)) (i32.const 0xDCBAABCD))
             (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $dlg_loop_thunk))

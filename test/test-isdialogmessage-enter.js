@@ -45,7 +45,14 @@ const extraWat = String.raw`
 
   (func (export "test_focus") (result i32) (global.get $focus_hwnd))
 
+  (func (export "test_nested_child") (param $parent i32) (param $class i32) (param $id i32) (param $style i32) (result i32)
+    (call $ctrl_create_child (local.get $parent) (local.get $class) (local.get $id)
+      (i32.const 0) (i32.const 0) (i32.const 80) (i32.const 24) (local.get $style) (i32.const 0)))
+
   (func (export "test_set_focus") (param $hwnd i32) (global.set $focus_hwnd (local.get $hwnd)))
+
+  (func (export "test_subclass") (param $hwnd i32) (param $proc i32)
+    (call $wnd_table_set (local.get $hwnd) (local.get $proc)))
 
   (func (export "test_is_dialog_message") (param $dlg i32) (param $msg i32) (result i32)
     (call $handle_IsDialogMessageA
@@ -150,6 +157,21 @@ const extraWat = String.raw`
   check(`Enter on a focused button fires its own id, not IDOK (${r.command})`,
     r.command === 2);
   e.test_set_focus(0);
+
+  // A modeless dialog uses the same policy as the native modal loop, even
+  // when its input target belongs to a nested page rather than the root.
+  const group = e.test_nested_child(dlg, 3, 1061, 0x50000007) >>> 0;
+  const page = e.test_nested_child(group, 0, 0, 0x50000000) >>> 0;
+  const list = e.test_nested_child(page, 4, 1103, 0x50010003) >>> 0;
+  // The guest subclass returns DLGC_WANTARROWS (1) for WM_GETDLGCODE.
+  e.test_subclass(list, dlgproc);
+  e.test_set_focus(list);
+  r = post(list, 0x0100, 0x28);
+  check('nested list keeps arrows requested by WM_GETDLGCODE',
+    r.claimed === 0 && (e.test_focus() >>> 0) === list);
+  r = post(list, 0x0100, 0x09);
+  check('Tab from a nested page wraps to the root first tabstop',
+    r.claimed === 1 && (e.test_focus() >>> 0) === ok);
 
   // Everything else is still the application's to dispatch: answering 0 keeps
   // the caller's own TranslateMessage/DispatchMessage in charge.
