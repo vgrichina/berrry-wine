@@ -2743,6 +2743,10 @@
     ;; PBM_GETPOS(0x0408): return the current UINT position without repainting.
     (if (i32.eq (local.get $msg) (i32.const 0x0408))
       (then (return (call $prog_pos (local.get $sw)))))
+    ;; PBM_GETSTEP(0x040D): return the current signed increment (default 10).
+    ;; Query only: preserve all 32 bits without changing state or repainting.
+    (if (i32.eq (local.get $msg) (i32.const 0x040D))
+      (then (return (call $prog_step (local.get $sw)))))
     ;; WM_PAINT
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
