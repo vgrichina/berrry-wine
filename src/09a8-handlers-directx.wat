@@ -11507,6 +11507,28 @@
     (if (local.get $vk) (then (return (local.get $vk))))
     (local.get $dik))
 
+  ;; Immediate X/Y coordinates use the same axis mode for every data format.
+  ;; The event FIFO has its own position history; a state read only consumes
+  ;; the immediate motion accumulator (including when an axis is remapped).
+  (func $di_mouse_state_x (param $entry i32) (result i32)
+    (local $delta i32)
+    (local.set $delta (call $di_mouse_delta_take_x))
+    (if (i32.and (load.field DxObject flags (local.get $entry))
+                 (global.get $DIDEV_AXIS_ABSOLUTE))
+      (then
+        (global.set $di_mouse_abs_x (i32.add (global.get $di_mouse_abs_x) (local.get $delta)))
+        (return (global.get $di_mouse_abs_x))))
+    (local.get $delta))
+  (func $di_mouse_state_y (param $entry i32) (result i32)
+    (local $delta i32)
+    (local.set $delta (call $di_mouse_delta_take_y))
+    (if (i32.and (load.field DxObject flags (local.get $entry))
+                 (global.get $DIDEV_AXIS_ABSOLUTE))
+      (then
+        (global.set $di_mouse_abs_y (i32.add (global.get $di_mouse_abs_y) (local.get $delta)))
+        (return (global.get $di_mouse_abs_y))))
+    (local.get $delta))
+
   ;; GetDeviceState under an application-defined format: each object the
   ;; format names, at its offset ($wa is the zeroed, dwDataSize-long buffer;
   ;; SetDataFormat already proved every offset fits). Wheel motion is never
@@ -11526,10 +11548,10 @@
         (return)))
     (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2) (i32.const 0)))
     (if (i32.ge_s (local.get $ofs) (i32.const 0))
-      (then (i32.store (i32.add (local.get $wa) (local.get $ofs)) (call $di_mouse_delta_take_x))))
+      (then (i32.store (i32.add (local.get $wa) (local.get $ofs)) (call $di_mouse_state_x (local.get $entry)))))
     (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2) (i32.const 1)))
     (if (i32.ge_s (local.get $ofs) (i32.const 0))
-      (then (i32.store (i32.add (local.get $wa) (local.get $ofs)) (call $di_mouse_delta_take_y))))
+      (then (i32.store (i32.add (local.get $wa) (local.get $ofs)) (call $di_mouse_state_y (local.get $entry)))))
     (local.set $buttons (call $host_get_mouse_buttons_live))
     (local.set $i (i32.const 0))
     (block $done (loop $mouse_buttons
@@ -11592,15 +11614,8 @@
     (if (i32.eq (local.get $dev_type) (i32.const 2))
       (then
         ;; Mouse — DIMOUSESTATE: lX(4), lY(4), lZ(4), rgbButtons[4](4)
-        (local.set $dx (call $di_mouse_delta_take_x))
-        (local.set $dy (call $di_mouse_delta_take_y))
-        (if (i32.and (load.field DxObject flags (local.get $entry))
-                     (global.get $DIDEV_AXIS_ABSOLUTE))
-          (then
-            (global.set $di_mouse_abs_x (i32.add (global.get $di_mouse_abs_x) (local.get $dx)))
-            (global.set $di_mouse_abs_y (i32.add (global.get $di_mouse_abs_y) (local.get $dy)))
-            (local.set $dx (global.get $di_mouse_abs_x))
-            (local.set $dy (global.get $di_mouse_abs_y))))
+        (local.set $dx (call $di_mouse_state_x (local.get $entry)))
+        (local.set $dy (call $di_mouse_state_y (local.get $entry)))
         (local.set $buttons (call $host_get_mouse_buttons_live))
         (if (i32.ge_u (local.get $arg1) (i32.const 4))
           (then (i32.store (local.get $wa) (local.get $dx))))

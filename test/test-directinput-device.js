@@ -673,6 +673,69 @@ const extraWat = `
   assert.strictEqual(wat.test_di_mouse_get_state(mouse, data) >>> 0, 0);
   assert.deepStrictEqual([wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0], [4, 4],
     'relative axis mode reports the delta since the last read');
+
+  // Custom offsets do not change DIPROP_AXISMODE semantics. Use an origin
+  // sampled after each acquisition: DirectInput does not promise zero there.
+  // Microsoft: Interpreting Mouse Axis Data; DIDEVICEOBJECTDATA; GetDeviceData.
+  const customMouse = wat.test_di_mouse_create() >>> 0;
+  const customFormat = 0x00417000, customObjects = 0x00417100;
+  [24, 16, 2, 16, 2, customObjects].forEach((v, i) =>
+    wat.guest_write32(customFormat + i * 4, v));
+  [[0, 8, 3, 0], [0, 0, 0x103, 0]].forEach((object, i) =>
+    object.forEach((v, j) => wat.guest_write32(customObjects + i * 16 + j * 4, v)));
+  assert.strictEqual(wat.test_di_set_data_format(customMouse, customFormat) >>> 0, 0);
+  wat.guest_write32(property + 16, 0);
+  assert.strictEqual(wat.test_di_set_buffer_size(customMouse, 2, property) >>> 0, 0);
+  wat.guest_write32(property + 16, 8);
+  assert.strictEqual(wat.test_di_set_buffer_size(customMouse, 1, property) >>> 0, 0);
+  assert.strictEqual(wat.test_di_acquire(customMouse) >>> 0, 0);
+  const customPosition = () => {
+    assert.strictEqual(wat.test_di_mouse_get_state(customMouse, data) >>> 0, 0);
+    return [wat.guest_read32(data + 8) | 0, wat.guest_read32(data) | 0];
+  };
+  const customRecords = (flags = 0, limit = 8) => {
+    wat.guest_write32(count, limit);
+    assert.strictEqual(wat.test_di_mouse_get_data(customMouse, data, count, flags) >>> 0, 0);
+    return Array.from({length: wat.guest_read32(count)}, (_, i) =>
+      [0, 1, 3].map(j => wat.guest_read32(data + i * 16 + j * 4) | 0));
+  };
+  const customOrigin = customPosition();
+  renderer.handleRelativeMouseMove(5, -3);
+  const customMoved = customOrigin.map((v, i) => v + [5, -3][i]);
+  assert.deepStrictEqual(customPosition(), customMoved, 'custom absolute axes accumulate physical motion');
+  const customPeek = customRecords(1);
+  assert.deepStrictEqual(customPeek.map(r => r[0]), [8, 0], 'buffered offsets follow the custom format');
+  assert.deepStrictEqual(customRecords(1), customPeek, 'custom PEEK preserves offset, coordinate and sequence');
+  assert.deepStrictEqual(customRecords(0, 1), customPeek.slice(0, 1));
+  assert.deepStrictEqual(customPosition(), customMoved, 'partial custom buffered drain preserves absolute state');
+  assert.deepStrictEqual(customRecords(), customPeek.slice(1));
+  assert.deepStrictEqual(customPosition(), customMoved, 'custom absolute idle preserves its position');
+  renderer.handleRelativeMouseMove(-2, 4);
+  const customNext = customRecords();
+  assert.deepStrictEqual(customNext.map((r, i) => r[1] - customPeek[i][1]), [-2, 4],
+    'custom absolute buffered events keep their independent running positions');
+  assert.deepStrictEqual(customPosition(), customMoved.map((v, i) => v + [-2, 4][i]),
+    'custom buffer-first read preserves immediate pending motion');
+  assert.strictEqual(wat.test_di_unacquire(customMouse) >>> 0, 0);
+  assert.strictEqual(wat.test_di_mouse_get_state(customMouse, data) >>> 0, 0x8007000c);
+  assert.strictEqual(wat.test_di_acquire(customMouse) >>> 0, 0);
+  const reacquiredOrigin = customPosition();
+  renderer.handleRelativeMouseMove(3, 2);
+  assert.strictEqual(customRecords().length, 2, 'custom read consumes both motion records');
+  assert.deepStrictEqual(customPosition(), reacquiredOrigin.map((v, i) => v + [3, 2][i]));
+  assert.deepStrictEqual(customPosition(), reacquiredOrigin.map((v, i) => v + [3, 2][i]),
+    'reacquired custom absolute state stays stable after a buffered drain');
+  assert.strictEqual(wat.test_di_unacquire(customMouse) >>> 0, 0);
+  wat.guest_write32(property + 16, 1);
+  assert.strictEqual(wat.test_di_set_buffer_size(customMouse, 2, property) >>> 0, 0);
+  assert.strictEqual(wat.test_di_acquire(customMouse) >>> 0, 0);
+  renderer.handleRelativeMouseMove(4, -1);
+  assert.deepStrictEqual(customRecords(1).map(r => r.slice(0, 2)), [[8, 4], [0, -1]]);
+  assert.deepStrictEqual(customPosition(), [4, -1], 'custom relative state reports motion since the last state read');
+  customRecords();
+  assert.deepStrictEqual(customPosition(), [0, 0], 'custom relative idle returns zero');
+  assert.strictEqual(wat.test_di_unacquire(customMouse) >>> 0, 0);
+
   assert.strictEqual(wat.test_di_get_property(mouse, 3, property) >>> 0, 0x80004001,
     'an unmodeled DirectInput property fails honestly with DIERR_UNSUPPORTED');
   wat.guest_write32(property + 12, 1); // DIPH_BYOFFSET is invalid for buffer size
