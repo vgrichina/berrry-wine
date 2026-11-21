@@ -762,6 +762,13 @@ succeeded in RAM — so the host must: `flush()` resolves to
 `{written, removed, failed, errors}` and `overlay.errors` keeps every failure
 (quota exhaustion, a `VfsPendingError` from a still-lazy entry, a store
 reject). Silence there would be a "kept" import that quietly kept nothing.
+`failed` counts unresolved failed paths through that checkpoint, including
+earlier queued batches. Empty checkpoints and successful writes to other paths
+cannot clear a failure; successfully publishing that path clears it. Dirty
+marks remain available for retry with the latest resident contents. Historical
+`errors` remain available after recovery. Guest `FlushFileBuffers` validates
+resident VFS state and `CloseHandle` releases a handle; neither awaits this
+separate host checkpoint or promises durable overlay publication.
 
 **Crash consistency** (risk item 4, in the small): the Node store writes blobs
 first and the index last, and the index goes to a temp file that is then

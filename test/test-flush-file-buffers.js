@@ -4,7 +4,7 @@
 
 // FlushFileBuffers has no deferred work in the synchronous in-memory VFS, but
 // it must not turn every handle into a successful disk flush. Pin both halves:
-// immediate durability for a writable file and Win32 BOOL/LastError behavior
+// immediate resident commit for a writable file and Win32 BOOL/LastError behavior
 // for read-only, closed, invalid, and console handles.
 
 const assert = require('assert');
@@ -15,6 +15,11 @@ const { bootRenderHarness } = require('./render-helper');
   const memory = new WebAssembly.Memory({ initial: 2 });
   const ctx = { getMemory: () => memory.buffer };
   const host = createFilesystemImports(ctx);
+
+  // Check before opening files: the Win16-compatible handle lookup may
+  // subsequently resolve 2 as the low-word alias of a real file handle.
+  assert.strictEqual(host.fs_flush_file_buffers(2), 6,
+    'an unallocated console-style handle is not a buffered disk file');
 
   const writable = ctx.vfs.createFile('C:\\archive.rar', 0x40000000, 2);
   assert(writable, 'writable archive opens');
@@ -33,8 +38,6 @@ const { bootRenderHarness } = require('./render-helper');
     'a handle without GENERIC_WRITE reports ERROR_ACCESS_DENIED');
   assert.strictEqual(host.fs_flush_file_buffers(0xDEADBEEF), 6,
     'an unknown handle reports ERROR_INVALID_HANDLE');
-  assert.strictEqual(host.fs_flush_file_buffers(2), 6,
-    'a console output handle is not treated as a buffered disk file');
   assert(ctx.vfs.closeHandle(writable), 'writable fixture closes');
   assert.strictEqual(host.fs_flush_file_buffers(writable), 6,
     'a closed file handle reports ERROR_INVALID_HANDLE');
