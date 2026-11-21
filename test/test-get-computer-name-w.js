@@ -33,8 +33,6 @@ const extraWat = String.raw`
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
     (i32.load offset=0 (global.get $reg_base)))
 
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 `;
 
 (async () => {

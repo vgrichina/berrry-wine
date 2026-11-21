@@ -16,3 +16,12 @@ identity is unknown. No browser, server, or Boat was created.
 
 Next investigation: inspect the provider choices and original lobby setup
 before attempting a session. An idle connection dialog is not gameplay proof.
+
+## Not a graphics sample (2026-11-18)
+
+bellhop.exe imports only KERNEL32, USER32, GDI32, ole32 and COMCTL32: no
+DirectDraw or Direct3D, so it has no GPU-stream readbacks or uploads to
+measure. A headless census run that "ends early" is the CLI stuck detector
+(`--stuck-after`, default 10 batches) firing on the idle Choose A Connection
+dialog (TCP/IP is enumerated by IDirectPlay3_EnumConnections); no trap or
+unimplemented API is involved. Run `scratch/runs/20261118-glide-stats-early-exit`.

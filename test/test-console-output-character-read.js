@@ -45,8 +45,6 @@ const extraWat = String.raw`
     (i32.const 1))
   (func (export "test_lookup_api") (param $name i32) (result i32)
     (call $lookup_api_id (call $g2w (local.get $name))))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
 `;

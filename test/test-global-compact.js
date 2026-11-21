@@ -38,8 +38,6 @@ const extraWat = String.raw`
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
 
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 `;
 
 (async () => {

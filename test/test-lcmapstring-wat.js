@@ -12,8 +12,6 @@ const extraWat = String.raw`
     (call $lcmap_string_core
       (local.get $src) (local.get $count) (local.get $dst)
       (local.get $dst_count) (local.get $wide) (local.get $flags)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 `;
 
 async function main() {

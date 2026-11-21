@@ -495,7 +495,8 @@
   ;;   +0 the surface's COM object (guest pointer), 0 = no image yet
   ;;   +4 flags: 1 linear (MAG_FILTER), 2 clamp S, 4 clamp T, 8 flags
   ;;      initialised, 16 opaque, 32 MIN_FILTER uses mipmaps, 64 MIN_FILTER
-  ;;      samples linearly within a level, 128 GL_CLAMP S, 256 GL_CLAMP T
+  ;;      samples linearly within a level, 128 GL_CLAMP S, 256 GL_CLAMP T,
+  ;;      512 MIN_FILTER blends two levels (*_MIPMAP_LINEAR)
   ;; A name at or above 4096 has no slot and samples as white. Levels 1..12
   ;; live in $GL_SW_MIPS, 48 bytes per name.
   (func $gl_sw_tex_slot (param $name i32) (result i32)
@@ -699,7 +700,7 @@
   ;; and REPEAT in both directions.
   (func $gl_sw_tex_flags (param $slot i32) (result i32)
     (if (i32.eqz (i32.and (i32.load offset=4 (local.get $slot)) (i32.const 8)))
-      (then (i32.store offset=4 (local.get $slot) (i32.const 41))))
+      (then (i32.store offset=4 (local.get $slot) (i32.const 553))))
     (i32.load offset=4 (local.get $slot)))
 
   ;; Address of level $level's object (1..12) for texture slot $slot.
@@ -761,9 +762,12 @@
     ;; bit 0 of the low byte is the within-level filter.
     (if (i32.eq (local.get $pname) (i32.const 0x2801))
       (then
-        (local.set $flags (i32.and (local.get $flags) (i32.const -97)))
+        (local.set $flags (i32.and (local.get $flags) (i32.const -609)))
         (if (i32.le_u (i32.sub (local.get $value) (i32.const 0x2700)) (i32.const 3))
           (then (local.set $flags (i32.or (local.get $flags) (i32.const 32)))))
+        ;; *_MIPMAP_LINEAR: blend two levels (the GPU stream's sampler mip 2).
+        (if (i32.le_u (i32.sub (local.get $value) (i32.const 0x2702)) (i32.const 1))
+          (then (local.set $flags (i32.or (local.get $flags) (i32.const 512)))))
         (if (i32.and (i32.or
                        (i32.le_u (i32.sub (local.get $value) (i32.const 0x2700)) (i32.const 3))
                        (i32.le_u (i32.sub (local.get $value) (i32.const 0x2600)) (i32.const 1)))
@@ -2839,6 +2843,11 @@
   (global $gl_sw_r_zbuf (mut i32) (i32.const 0))
   (global $gl_sw_r_dx (mut i32) (i32.const 0))
   (global $gl_sw_r_dy (mut i32) (i32.const 0))
+  ;; Unit 0's bound 2D slot and its sampling flags as resolved, before
+  ;; $gl_sw_mip_select swaps in a level and a filter: the GPU stream (09a8gt
+  ;; $glg_t0_chain) draws the whole chain. Slot 0 for white or a 1D texture.
+  (global $gl_sw_r_slot0 (mut i32) (i32.const 0))
+  (global $gl_sw_r_flags0 (mut i32) (i32.const 0))
 
   ;; 0 when the primitive has nowhere to go: no texture surface, or a
   ;; scissor box with no area.
@@ -2888,6 +2897,9 @@
     (global.set $gl_sw_r_rt (local.get $rt))
     (global.set $gl_sw_r_tex (local.get $tex))
     (global.set $gl_sw_r_flags (local.get $flags))
+    (global.set $gl_sw_r_flags0 (local.get $flags))
+    (global.set $gl_sw_r_slot0 (select (i32.const 0) (local.get $slot)
+      (i32.or (i32.eq (local.get $tex) (global.get $gl_sw_white)) (call $gl_1d_selected (i32.const 0)))))
     (global.set $gl_sw_r_border (call $gl_sw_draw_border (local.get $slot) (i32.const 0) (local.get $flags)))
     (global.set $gl_sw_r_zbuf (local.get $zbuf))
     (i32.const 1))

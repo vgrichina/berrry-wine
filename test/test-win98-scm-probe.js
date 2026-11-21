@@ -6,8 +6,6 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 
   (func (export "test_call_OpenSCManagerA") (result i32)
     (local $saved_esp i32)

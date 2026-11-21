@@ -101,8 +101,6 @@ const extraWat = String.raw`
       (select (i32.const 1) (i32.const 2) (local.get $attached))))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
   (func (export "test_read16") (param $address i32) (result i32)
     (i32.load16_u (call $g2w (local.get $address))))
 `;

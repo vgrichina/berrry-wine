@@ -51,7 +51,7 @@ function installArcanumPresentationCounter(renderer, hwnd, width=640, height=480
     filtering=true;sinkCopy=null;
     try{const result=filterPresent.call(this,source,mode,effects,options);
       if(result===true&&mode==='nearest'&&!(effects?.scanlines||effects?.mask||effects?.glow)&&
-          (!options?.dedither||options.dedither==='off')&&sinkCopy?.source===source){
+          sinkCopy?.source===source){
         const copy=copies.get(source);if(copy)accept({...copy,sinkDrawArgs:sinkCopy.args},'completed visible filter.present',filter.canvas);
       }
       return result;

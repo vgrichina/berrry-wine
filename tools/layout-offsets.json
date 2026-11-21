@@ -2059,7 +2059,7 @@
       "file": "src/09a8h-glide.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 12188,
+      "size": 12196,
       "fields": [
         {
           "name": "next_id",
@@ -2507,6 +2507,14 @@
           "offset": 12092,
           "size": 96,
           "count": 24,
+          "stride": 4
+        },
+        {
+          "name": "lfb_tag",
+          "type": "i32",
+          "offset": 12188,
+          "size": 8,
+          "count": 2,
           "stride": 4
         }
       ]

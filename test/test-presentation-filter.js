@@ -7,10 +7,6 @@ const {
   PresentationFilter,
   SCALE2X_FRAGMENT_SHADER,
   SCALE3X_FRAGMENT_SHADER,
-  MDAPT_PASS0_FRAGMENT_SHADER,
-  MDAPT_PASS2_FRAGMENT_SHADER,
-  MDAPT_PASS4_FRAGMENT_SHADER,
-  JINC2_DEDITHER_FRAGMENT_SHADER,
   FSR_EASU_FRAGMENT_SHADER,
   POST_FRAGMENT_SHADER,
 } = require('../lib/presentation-filter');
@@ -30,10 +26,8 @@ assert(html.includes('<option value="scale-auto">Scale (2x / 3x / 4x)</option>')
 assert(!html.includes('<option value="scale2x">'));
 assert(!html.includes('<option value="scale3x">'));
 assert(html.includes('<option value="fsr1">FSR 1 (EASU + RCAS)</option>'));
-assert(html.includes('id="presentation-dedither-select"'));
+assert(!html.includes('presentation-dedither-select'), 'the dedither control was removed');
 assert(html.includes('<option value="off" selected>Off</option>'));
-assert(html.includes('<option value="mdapt">MDAPT</option>'));
-assert(html.includes('<option value="jinc2">Jinc2</option>'));
 assert(html.includes('id="crt-preset-select"'));
 assert(html.includes('<option value="vga">VGA monitor</option>'));
 assert(html.includes('<option value="arcade">Arcade/TV</option>'));
@@ -100,13 +94,6 @@ assert.strictEqual(draws.length, 1);
 assert.strictEqual(draws[0].smoothing, true);
 assert.strictEqual(filter.lastPixelScaleMultiplier, 4,
   'automatic pixel scaling should select its canonical stage from physical pixels');
-
-draws.length = 0;
-filter.present(source, 'nearest', {}, { dedither: 'mdapt' });
-assert.strictEqual(filter.lastDeditherMode, 'mdapt');
-assert.strictEqual(filter.lastDeditherBackend, 'unavailable',
-  'dedither should leave the source intact when WebGL is unavailable');
-assert.strictEqual(filter.lastBackend, 'canvas-nearest');
 
 draws.length = 0;
 filter.present(source, 'fsr1');
@@ -192,11 +179,6 @@ assert(SCALE2X_FRAGMENT_SHADER.includes('same_color(D, B)'));
 assert(SCALE2X_FRAGMENT_SHADER.includes('same_color(H, F)'));
 assert(SCALE3X_FRAGMENT_SHADER.includes('fract(source) * 3.0'));
 assert(SCALE3X_FRAGMENT_SHADER.includes('same_color(E, I)'));
-assert(MDAPT_PASS0_FRAGMENT_SHADER.includes('color_distance'));
-assert(MDAPT_PASS2_FRAGMENT_SHADER.includes('smoothstep(vec2(1.25, 5.25)'));
-assert(MDAPT_PASS4_FRAGMENT_SHADER.includes('center*c.rgb+pu*u+pd*d+pl*l+pr*r'));
-assert(JINC2_DEDITHER_FRAGMENT_SHADER.includes('for (int y=-1;y<=2;y++)'));
-assert(JINC2_DEDITHER_FRAGMENT_SHADER.includes('mix(unclamped,filtered,0.8)'));
 assert(FSR_EASU_FRAGMENT_SHADER.includes('easu_tap'));
 assert(FSR_EASU_FRAGMENT_SHADER.includes('12 EASU taps') ||
   FSR_EASU_FRAGMENT_SHADER.includes('vec3 o = sample_pixel'));

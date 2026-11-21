@@ -86,6 +86,14 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // REP MOVS/STOS as bulk COPY/FILL ops (07e kind 30, 07d 82/83; on by
   // default, --no-uop-rep turns it off and the tier declines such heads).
   const repWanted = () => uopWanted() && !hasFlag('no-uop-rep') && (appPolicy() || {}).uopRep !== false;
+  // x87 (07e kind 32, 07d X87M/X87MS/X87R; on by default, --no-uop-x87 or
+  // `uopX87: false` turns it off, with the ES/CS/SS/DS prefixes and FWAIT).
+  const uopX87Wanted = () => uopWanted() && !hasFlag('no-uop-x87') && (appPolicy() || {}).uopX87 !== false;
+  // --no-uop-x87-native: every x87 form as an 88-90 service op, none as a
+  // native 07d 91-107 op in $uop_fast (A/B and fallback coverage).
+  const uopX87NativeWanted = () => !hasFlag('no-uop-x87-native');
+  // LEAVE (07e kind 33; on by default, --no-uop-leave or `uopLeave: false`).
+  const uopLeaveWanted = () => uopWanted() && !hasFlag('no-uop-leave') && (appPolicy() || {}).uopLeave !== false;
   // Trace heads (on by default; --no-uop-trace-heads or `uopTraceHeads: false`
   // on the app turns them off; --uop-trace-heads=MIN,MAX sets the limits): a hot
   // head with no back edge is lowered as a forward trace -- straight-line
@@ -136,6 +144,10 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // memory it landed on, and read the VirtualAlloc backing's contiguity at
   // exit (test/runner-win-census.js). Main instance only.
   const UOP_WIN_CENSUS = hasFlag('uop-win-census');
+  // --uop-x87-census: the x87 forms that reach 07d's $uop_x87 service path
+  // (every x87 op the native $uop_fast arms do not take), by form. Main
+  // instance only.
+  const UOP_X87_CENSUS = hasFlag('uop-x87-census');
   // --uop-reguard-span=BYTES: how far a uop re-guard may grow its window
   // around the page it missed on (07d $uop_reguard_wide; default 64KB, 4096 =
   // the old one-page window). Every instance: each thread re-guards its own.
@@ -385,6 +397,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     inheritWasm('set_uop_trace_heads', traceWanted() ? 1 : 0);
     inheritWasm('set_uop_mmx', mmxWanted() ? 1 : 0);
     inheritWasm('set_uop_rep', repWanted() ? 1 : 0);
+    inheritWasm('set_uop_x87', uopX87Wanted() ? 1 : 0);
+    inheritWasm('set_uop_x87_native', uopX87NativeWanted() ? 1 : 0);
+    inheritWasm('set_uop_leave', uopLeaveWanted() ? 1 : 0);
     for (const [setter, wanted] of WIDEN) if (wanted()) inheritWasm(setter, 1);
     if (traceWanted()) {
       if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) inheritWasm('set_uop_trace_limits', TRACE_LIMITS[0], TRACE_LIMITS[1]);
@@ -418,6 +433,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);
       set('set_uop', 1);
       if (UOP_WIN_CENSUS && available('set_uop_win_census')) set('set_uop_win_census', 1);
+      if (UOP_X87_CENSUS && available('set_uop_x87_census')) set('set_uop_x87_census', 1);
       if (UOP_REGUARD_SPAN !== null && available('set_uop_reguard_span')) set('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
       if (UOP_POOR_WORK !== null && available('set_uop_poor_work')) set('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
       if (NO_UOP_TRACE_CUT && available('set_uop_trace_cut')) set('set_uop_trace_cut', 0);
@@ -431,6 +447,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (available('set_uop_trace_heads')) set('set_uop_trace_heads', traceWanted() ? 1 : 0);
       if (available('set_uop_mmx')) set('set_uop_mmx', mmxWanted() ? 1 : 0);
       if (available('set_uop_rep')) set('set_uop_rep', repWanted() ? 1 : 0);
+      if (available('set_uop_x87')) set('set_uop_x87', uopX87Wanted() ? 1 : 0);
+      if (available('set_uop_x87_native')) set('set_uop_x87_native', uopX87NativeWanted() ? 1 : 0);
+      if (available('set_uop_leave')) set('set_uop_leave', uopLeaveWanted() ? 1 : 0);
       if (traceWanted() && available('set_uop_trace_limits')) {
         if (TRACE_LIMITS[0] || TRACE_LIMITS[1]) set('set_uop_trace_limits', TRACE_LIMITS[0], TRACE_LIMITS[1]);
       }
@@ -620,6 +639,21 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
         (x.uop_hot_halvings ? ` halvings=${x.uop_hot_halvings() >>> 0}` : ''));
       if (UOP_WIN_CENSUS) require('./runner-win-census').reportWinCensus(instance, log);
+      if (UOP_X87_CENSUS && x.uop_x87_hist) {
+        const rows = [];
+        for (let k = 0; k < 576; k++) {
+          const n = x.uop_x87_hist(k) >>> 0;
+          if (!n) continue;
+          const name = k < 512
+            ? `reg ${(0xD8 + (k >> 6)).toString(16)}/${(k >> 3) & 7} st${k & 7}`
+            : `mem ${(0xD8 + ((k - 512) >> 3)).toString(16)}/${(k - 512) & 7}`;
+          rows.push([name, n]);
+        }
+        rows.sort((a, b) => b[1] - a[1]);
+        const tot = rows.reduce((t, r) => t + r[1], 0);
+        log(`uop x87 census: service ops=${x.uop_x87_ops ? x.uop_x87_ops() >>> 0 : '?'} counted=${tot}`);
+        for (const [name, n] of rows) log(`  ${name.padEnd(14)} ${String(n).padStart(11)} ${(100 * n / (tot || 1)).toFixed(2)}%`);
+      }
       if (aggrWanted()) {
         // $uop_cstat 6..25: the aggressive-stack counters of every program
         // kept (07e $uc_sp_block). plain = pairs the conservative "nothing

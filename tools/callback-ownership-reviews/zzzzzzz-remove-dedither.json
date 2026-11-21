@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer.js",
+      "name": "host-file",
+      "baseSHA256": "0e760b37bb3027a9d78157021e5eadb16cc0894e28c23ed9e7a8c1ed1414d867",
+      "sha256": "5fe5591cbead4188dbde1b4f7766bd24254845923690f5e23e945d2d1fc96d1a",
+      "reason": "Review 20261120 dedither removal: deleted the presentationDeditherMode field, its normalizer and setter, the direct-presentation dedither check, and the dedither option/observation field passed to PresentationFilter.present. No callback producer, boundary call, write, export or lifetime changed."
+    }
+  ]
+}

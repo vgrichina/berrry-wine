@@ -1050,8 +1050,9 @@
   (region.declare $CRT_OVERRIDE_TABLE (size 0x00000400) (align 0x00000010)
     (owner "09a6-handlers-crt.wat:$CRT_OVERRIDE_TABLE"))
   ;; Glide 2 process-shared board, lock, immutable stream and packet staging.
-  ;; Fixed state uses 532 bytes; streams, texture payloads and LFB live on heap.
-  (region.declare $GLIDE_STATE (size 0x00000220) (align 0x00000010)
+  ;; Fixed state uses 532 bytes plus 128 bytes of GPS accounting
+  ;; (glide_gps_stat); streams, texture payloads and LFB live on heap.
+  (region.declare $GLIDE_STATE (size 0x000002A0) (align 0x00000010)
     (owner "09a8h-glide.wat:$GLIDE_STATE"))
   ;; GPU stream v2 ring directory: 8 x 192-byte GpsRing entries (header,
   ;; completion slots, producer words). Ring bytes and arenas are heap memory.

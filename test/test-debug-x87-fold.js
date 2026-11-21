@@ -60,8 +60,17 @@ const [inheritHalf, applyHalf] = experiments.split('function applyMain');
 assert(applyHalf, 'runner-experiments still has an applyMain');
 assert(inheritHalf.includes("inheritWasm('set_x87_fuse_debug'"),
   'the CLI mask is recorded for future guest threads, not just the main instance');
-assert(applyHalf.includes('instance.exports.set_x87_fuse_debug('),
+// Main-instance setters go through one visitor, visitMain(available, set),
+// shared by applyMain (set = instance.exports[name]) and the Worker-owned
+// applyMainOwned route, so the mask has to be in the visitor and both
+// routes have to call it.
+assert(/set\('set_x87_fuse_debug',/.test(inheritHalf.slice(inheritHalf.indexOf('function visitMain'))),
+  'the CLI mask is one of the main-instance setters in visitMain');
+assert(/visitMain\([^)]*instance\.exports\[name\]/.test(applyHalf.replace(/\s+/g, ' ')),
   'the CLI mask is applied to the main instance');
+assert(/visitMain\(name => owner\.supports\(name\)/.test(
+  experiments.slice(experiments.indexOf('function applyMainOwned'))),
+  'the CLI mask is applied on the Worker-owned main route too');
 
 const workerImports = fs.readFileSync(
   path.join(root, 'lib', 'worker-imports.js'), 'utf8');

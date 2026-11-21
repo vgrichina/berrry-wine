@@ -174,6 +174,13 @@
   ;;                                          window, as COPY's and FILL's.
   ;;   86 EMMS                                $fpu_tag = 0, $th_emms's one store
   ;;                                          (07e kind 27 form 4)
+  ;;   88 X87M / 89 X87MS / 90 X87R           x87 service ops ($uop_x87, 06)
+  ;;   91-101 XFLD32 XFLD64 XFILD32 XFST32    native x87 memory forms, 88's
+  ;;          XFST64 XFIST32 XFISTP64 XARM32  layout; 102-107 XFLDR XFXCH
+  ;;          XARM64 XFLDCW XFNSTCW           XFSTR XARR XUN XFNSTSW, 90's.
+  ;;                                          Any case 06 treats specially
+  ;;                                          falls back to $uop_x87 (see the
+  ;;                                          "native x87" header at $uop_fast)
 
   ;; The main thread's arena. Each guest thread is its own instance over the
   ;; shared memory and a program names its instance's $reg_base, so every
@@ -998,6 +1005,85 @@
       (call $gl32 (i32.sub (i32.add (local.get $d) (local.get $bw)) (i32.const 4))))
     (i32.add (local.get $pc) (i32.const 32)))
 
+  ;; 88 X87M code base idx sc disp w x / 89 X87MS (the same, a store) /
+  ;; 90 X87R code (07e kind 32). One x87 instruction each, through 06's
+  ;; $fpu_exec_mem / $fpu_exec_reg exactly as th_fpu_mem / th_fpu_reg run
+  ;; it. A memory form first proves [ga, ga+size) in its window (size is
+  ;; code>>12; a written window holds no decoded code), re-guarding on a
+  ;; miss; a re-guard that fails exits to x before anything changed, and
+  ;; threaded code runs the instruction. So $fpu_exec_mem never faults
+  ;; here. A run of x87 ops is taken here without going back to $uop_fast
+  ;; between them.
+  (global $uop_x87_ops (mut i32) (i32.const 0))
+  (func (export "uop_x87_ops") (result i32) (global.get $uop_x87_ops))
+  ;; --uop-x87-census: the x87 instructions that reach this service path, by
+  ;; form. 576 u32 counters at +0x2400 of the main arena's windows area (the
+  ;; win census owns its first 9KB, the cut slots start at +0x3000): a
+  ;; register form at (group<<6 | reg<<3 | rm), a memory form at 512 +
+  ;; (group<<3 | reg). Off: one global test per service op.
+  (global $uop_x87_census (mut i32) (i32.const 0))
+  (func $uop_x87_hist_slot (param $k i32) (result i32)
+    (i32.add (i32.add (global.get $uop_arena) (global.get $uop_wins_off))
+             (i32.add (i32.const 0x2400) (i32.shl (local.get $k) (i32.const 2)))))
+  (func $uop_x87_count (param $op i32) (param $code i32)
+    (local $s i32)
+    (local.set $s (call $uop_x87_hist_slot
+      (if (result i32) (i32.or (i32.eq (local.get $op) (i32.const 90)) (i32.ge_u (local.get $op) (i32.const 102)))
+        (then (i32.or (i32.or (i32.shl (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7)) (i32.const 6))
+                              (i32.shl (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 7)) (i32.const 3)))
+                      (i32.and (local.get $code) (i32.const 7))))
+        (else (i32.or (i32.const 512)
+                (i32.or (i32.shl (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7)) (i32.const 3))
+                        (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 7))))))))
+    (i32.store (local.get $s) (i32.add (i32.load (local.get $s)) (i32.const 1))))
+  (func (export "set_uop_x87_census") (param $on i32)
+    (global.set $uop_x87_census (i32.ne (local.get $on) (i32.const 0)))
+    (memory.fill (call $uop_x87_hist_slot (i32.const 0)) (i32.const 0) (i32.const 2304)))
+  (func (export "uop_x87_hist") (param $k i32) (result i32)
+    (if (result i32) (i32.lt_u (local.get $k) (i32.const 576))
+      (then (i32.load (call $uop_x87_hist_slot (local.get $k))))
+      (else (i32.const 0))))
+  ;; Also the fallback of the native x87 ops 91-107 ($uop_fast hands one
+  ;; over, still at its pc, whenever its fast arm declines -- a window miss,
+  ;; a stack fault, an exact-integer shadow, NaN, a zero divisor, an integer
+  ;; store out of range). Their words are laid out as 88/89 (91-101) or 90
+  ;; (102-107) and the low 16 bits of their code word are 88-90's, so this
+  ;; runs the original instruction through 06 exactly; the bits above 16 are
+  ;; the fast arm's and are ignored here.
+  (func $uop_x87 (param $pc i32) (result i32)
+    (local $op i32) (local $code i32) (local $ga i32) (local $w i32) (local $n i32) (local $v i32)
+    (loop $L
+      (local.set $op (i32.load (local.get $pc)))
+      (local.set $code (i32.load offset=4 (local.get $pc)))
+      (global.set $uop_x87_ops (i32.add (global.get $uop_x87_ops) (i32.const 1)))
+      (if (global.get $uop_x87_census) (then (call $uop_x87_count (local.get $op) (local.get $code))))
+      (if (i32.or (i32.eq (local.get $op) (i32.const 90)) (i32.ge_u (local.get $op) (i32.const 102)))
+        (then
+          (call $fpu_exec_reg (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7))
+            (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 15))
+            (i32.and (local.get $code) (i32.const 15)))
+          (local.set $pc (i32.add (local.get $pc) (i32.const 8))))
+        (else
+          (local.set $ga (i32.add (i32.add (i32.load (i32.load offset=8 (local.get $pc)))
+                                           (i32.shl (i32.load (i32.load offset=12 (local.get $pc)))
+                                                    (i32.load offset=16 (local.get $pc))))
+                                  (i32.load offset=20 (local.get $pc))))
+          (local.set $w (i32.load offset=24 (local.get $pc)))
+          (local.set $n (i32.and (i32.shr_u (local.get $code) (i32.const 12)) (i32.const 15)))
+          (local.set $v (i32.load offset=4 (local.get $w)))
+          (if (i32.or (i32.gt_u (i32.sub (local.get $ga) (i32.load (local.get $w)))
+                                (i32.sub (local.get $v) (local.get $n)))
+                      (i32.lt_u (local.get $v) (local.get $n)))
+            (then
+              (if (i32.eqz (call $uop_reguard (local.get $w) (local.get $ga) (local.get $n)))
+                (then (return (i32.load offset=28 (local.get $pc)))))))
+          (call $fpu_exec_mem (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7))
+            (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 15))
+            (local.get $ga))
+          (local.set $pc (i32.add (local.get $pc) (i32.const 32)))))
+      (br_if $L (i32.lt_u (i32.sub (i32.load (local.get $pc)) (i32.const 88)) (i32.const 3))))
+    (local.get $pc))
+
   (global $uop_io_kind   (mut i32) (i32.const 0)) ;; 0 exited, 1 service op at pc, 2 window miss
   (global $uop_io_budget (mut i32) (i32.const 0))
   (global $uop_io_ga     (mut i32) (i32.const 0))
@@ -1040,6 +1126,10 @@
                                              (i32.eq (local.get $op) (i32.const 16)))
                       (then (i32.const 24)) (else (i32.const 20))))))))
           (br $L)))
+      ;; 88-90 the generic x87 service ops, 91-107 a native x87 op its fast
+      ;; arm declined
+      (if (i32.lt_u (i32.sub (local.get $op) (i32.const 88)) (i32.const 20))
+        (then (local.set $pc (call $uop_x87 (local.get $pc))) (br $L)))
       (if (i32.eq (local.get $op) (i32.const 79)) (then
         (call $pending_push (i32.load offset=4 (local.get $pc))
           (i32.load offset=8 (local.get $pc))
@@ -1110,12 +1200,95 @@
       (br $L))
     (unreachable))
 
+  ;; ---- native x87 (ops 91-107, 07e $uc_x87_native) -----------------------
+  ;; The hot x87 forms run here on the per-thread register file ($fpu_base,
+  ;; physical slot p at +p*8) and the $fpu_top / $fpu_tag / $fpu_sw /
+  ;; $fpu_cw globals, computing exactly what 06's $fpu_exec_mem /
+  ;; $fpu_exec_reg compute: the same f64 operations on the same operands in
+  ;; the same order, FMUL through $fpu_mul's PC24 rounding, FIST through
+  ;; $fpu_round's RC modes. Every case 06 handles in a way these arms do not
+  ;; -- a stack overflow or underflow (IE|SF), any exact-integer shadow
+  ;; ($fpu_raw_tag non-zero: FILD m64's payloads), an unordered compare, a
+  ;; zero divisor where $fpu_arith raises ZE, an integer store out of range
+  ;; or NaN, a memory access outside the op's window -- is decided BEFORE
+  ;; anything is written and goes to $svc, where $uop_run's $uop_x87 runs the
+  ;; whole instruction through 06 (and re-guards or exits on a window miss).
+  ;; So the fallback sees exactly the state the instruction began with, and
+  ;; $fpu_set_exc is only ever called by 06.
+  ;;
+  ;; Code word: bits 0-15 88-90's code (size<<12 | group<<8 | reg<<4 | rm),
+  ;; for $uop_x87. Above it, the fast arm's: 94-97 bit 16 = pop. 98/99/105
+  ;; (the arithmetic and compare core $xar): bits 16-18 kind (0 add, 1 mul,
+  ;; 2 sub, 3 div, 4 compare), 19 swap (x, y = ST(0), other unless set:
+  ;; then y, x), 20 ZE (a zero divisor raises ZE, $fpu_arith's forms), 21 the
+  ;; result goes to ST(rm) (else ST(0)), 22-23 pops after, 24 the 8-byte
+  ;; register layout (105) rather than the 32-byte memory one.
+  ;;
+  ;; The macros name $uop_fast's locals and are only meaningful inside it.
+  (defmacro (ux-slot $P)            ;; FPU_FILE address of physical slot P
+    (i32.add (global.get $fpu_base) (i32.shl $P (i32.const 3))))
+  ;; ga and window of a 32-byte x87 memory op (88's layout: code base idx sc
+  ;; disp w x); non-zero unless [ga, ga+N) is inside the window. A span
+  ;; under N (a poisoned slot has 4) always misses. The guards below are
+  ;; predicates the arms branch on (br_if $svc): a macro body names no label.
+  (defmacro (ux-ea-miss $N)
+    (block (result i32)
+    (local.set $ga (i32.add (i32.add (i32.load (i32.load offset=8 (local.get $pc)))
+                                     (i32.shl (i32.load (i32.load offset=12 (local.get $pc)))
+                                              (i32.load offset=16 (local.get $pc))))
+                            (i32.load offset=20 (local.get $pc))))
+    (local.set $w (i32.load offset=24 (local.get $pc)))
+    (local.set $v (i32.load offset=4 (local.get $w)))
+    (i32.or (i32.gt_u (i32.sub (local.get $ga) (i32.load (local.get $w)))
+                      (i32.sub (local.get $v) $N))
+            (i32.lt_u (local.get $v) $N))))
+  (defmacro (ux-wa)
+    (i32.add (local.get $ga) (i32.load offset=8 (local.get $w))))
+  ;; TOP and the tag byte into $t / $k; non-zero while any exact shadow is
+  ;; live (06 would move or drop it: this file never touches it).
+  (defmacro (ux-state-bad)
+    (block (result i32)
+    (local.set $t (global.get $fpu_top))
+    (local.set $k (global.get $fpu_tag))
+    (global.get $fpu_raw_tag)))
+  ;; A push may go ahead: no shadow, and ST(7) (slot $p, the new TOP) empty.
+  (defmacro (ux-push-bad)
+    (block (result i32)
+    (local.set $t (global.get $fpu_top))
+    (local.set $k (global.get $fpu_tag))
+    (local.set $p (i32.and (i32.sub (local.get $t) (i32.const 1)) (i32.const 7)))
+    (i32.or (i32.ne (global.get $fpu_raw_tag) (i32.const 0))
+            (i32.and (i32.shr_u (local.get $k) (local.get $p)) (i32.const 1)))))
+  (defmacro (ux-push $V)            ;; after ux-push-bad; V read before any write
+    (f64.store (ux-slot (local.get $p)) $V)
+    (global.set $fpu_top (local.get $p))
+    (global.set $fpu_tag (i32.or (local.get $k) (i32.shl (i32.const 1) (local.get $p)))))
+  ;; A pop may go ahead: ST(0) tagged valid (else 06 raises IE|SF).
+  (defmacro (ux-pop-bad)
+    (i32.eqz (i32.and (i32.shr_u (local.get $k) (local.get $t)) (i32.const 1))))
+  ;; Pop, on the locals: the slot keeps its value, as the register does.
+  (defmacro (ux-pop)
+    (local.set $k (i32.and (local.get $k) (i32.xor (i32.const 0xFF) (i32.shl (i32.const 1) (local.get $t)))))
+    (local.set $t (i32.and (i32.add (local.get $t) (i32.const 1)) (i32.const 7))))
+  ;; $fpu_round: $fa rounded by the control word's RC.
+  (defmacro (ux-round)
+    (local.set $n (i32.and (i32.shr_u (global.get $fpu_cw) (i32.const 10)) (i32.const 3)))
+    (local.set $fa
+      (if (result f64) (i32.eqz (local.get $n)) (then (f64.nearest (local.get $fa)))
+      (else (if (result f64) (i32.eq (local.get $n) (i32.const 1)) (then (f64.floor (local.get $fa)))
+      (else (if (result f64) (i32.eq (local.get $n) (i32.const 2)) (then (f64.ceil (local.get $fa)))
+      (else (f64.trunc (local.get $fa))))))))))
+
   (func $uop_fast (param $pc i32) (param $budget i32) (result i32)
     (local $ga i32) (local $w i32) (local $v i32) (local $x i64) (local $y i64) (local $q i64)
     (local $n i32) (local $bw i32) (local $dw i32) (local $sw i32)
+    (local $t i32) (local $k i32) (local $p i32) (local $c i32) (local $fa f64) (local $fb f64)
     (loop $L
       (block $svc
       (block $miss
+      (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
+      (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
+      (block $c94 (block $c93 (block $c92 (block $c91
       (block $c86 (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
       (block $c77 (block $c76 (block $mxcore (block $c75 (block $c74 (block $c73 (block $c72
       (block $c71 (block $c70 (block $c69 (block $c68
@@ -1140,7 +1313,13 @@
                   ;; Pending CALL/RET observation services.
                   $svc $svc
                   $c81 $c82 $c83 $c84 $c85 $c86
-                  $svc $c0
+                  $svc
+                  ;; 88-90 X87M / X87MS / X87R: calls, $uop_run's $uop_x87
+                  $svc $svc $svc
+                  ;; 91-107 native x87
+                  $c91 $c92 $c93 $c94 $c95 $c96 $c97 $c98 $c99 $c100 $c101
+                  $c102 $c103 $c104 $c105 $c106 $c107
+                  $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
         (global.set $eip (i32.load offset=4 (local.get $pc)))
@@ -2027,6 +2206,173 @@
         ;; 86 EMMS: the x87 tag word cleared, as $th_emms does
         (global.set $fpu_tag (i32.const 0))
         (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
+        ;; 91 XFLD32 code base idx sc disp w x: FLD m32
+        (br_if $svc (ux-ea-miss (i32.const 4))) (br_if $svc (ux-push-bad))
+        (ux-push (f64.promote_f32 (f32.load (ux-wa))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 92 XFLD64: FLD m64
+        (br_if $svc (ux-ea-miss (i32.const 8))) (br_if $svc (ux-push-bad))
+        (ux-push (f64.load (ux-wa)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 93 XFILD32: FILD m32
+        (br_if $svc (ux-ea-miss (i32.const 4))) (br_if $svc (ux-push-bad))
+        (ux-push (f64.convert_i32_s (i32.load (ux-wa))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 94 XFST32: FST / FSTP (bit 16) m32
+        (br_if $svc (ux-ea-miss (i32.const 4))) (br_if $svc (ux-state-bad))
+        (local.set $c (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 0x10000)))
+        (if (local.get $c) (then (br_if $svc (ux-pop-bad))))
+        (f32.store (ux-wa) (f32.demote_f64 (f64.load (ux-slot (local.get $t)))))
+        (if (local.get $c)
+          (then (ux-pop) (global.set $fpu_tag (local.get $k)) (global.set $fpu_top (local.get $t))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 95 XFST64: FST / FSTP (bit 16) m64
+        (br_if $svc (ux-ea-miss (i32.const 8))) (br_if $svc (ux-state-bad))
+        (local.set $c (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 0x10000)))
+        (if (local.get $c) (then (br_if $svc (ux-pop-bad))))
+        (f64.store (ux-wa) (f64.load (ux-slot (local.get $t))))
+        (if (local.get $c)
+          (then (ux-pop) (global.set $fpu_tag (local.get $k)) (global.set $fpu_top (local.get $t))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 96 XFIST32: FIST / FISTP (bit 16) m32, $fpu_to_i32's rounding; a
+        ;; NaN or out-of-range value (IE, the indefinite) is 06's
+        (br_if $svc (ux-ea-miss (i32.const 4))) (br_if $svc (ux-state-bad))
+        (local.set $c (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 0x10000)))
+        (if (local.get $c) (then (br_if $svc (ux-pop-bad))))
+        (local.set $fa (f64.load (ux-slot (local.get $t))))
+        (ux-round)
+        (br_if $svc (i32.or (f64.ne (local.get $fa) (local.get $fa))
+                            (i32.or (f64.ge (local.get $fa) (f64.const 2147483648.0))
+                                    (f64.lt (local.get $fa) (f64.const -2147483648.0)))))
+        (i32.store (ux-wa) (i32.trunc_sat_f64_s (local.get $fa)))
+        (if (local.get $c)
+          (then (ux-pop) (global.set $fpu_tag (local.get $k)) (global.set $fpu_top (local.get $t))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 97 XFISTP64: FISTP m64, $fpu_to_i64's rounding (a live exact
+        ;; shadow is ux-state's $svc)
+        (br_if $svc (ux-ea-miss (i32.const 8))) (br_if $svc (ux-state-bad)) (br_if $svc (ux-pop-bad))
+        (local.set $fa (f64.load (ux-slot (local.get $t))))
+        (ux-round)
+        (br_if $svc (i32.or (f64.ne (local.get $fa) (local.get $fa))
+                            (i32.or (f64.ge (local.get $fa) (f64.const 9223372036854775808.0))
+                                    (f64.lt (local.get $fa) (f64.const -9223372036854775808.0)))))
+        (i64.store (ux-wa) (i64.trunc_sat_f64_s (local.get $fa)))
+        (ux-pop) (global.set $fpu_tag (local.get $k)) (global.set $fpu_top (local.get $t))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 98 XARM32: ST(0) op= m32 (D8 /r), or a compare: the operand, then $xar
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (local.set $fb (f64.promote_f32 (f32.load (ux-wa))))
+        (br $xar))
+        ;; 99 XARM64: the same with m64 (DC /r)
+        (br_if $svc (ux-ea-miss (i32.const 8)))
+        (local.set $fb (f64.load (ux-wa)))
+        (br $xar))
+        ;; 100 XFLDCW: FLDCW m16
+        (br_if $svc (ux-ea-miss (i32.const 2)))
+        (global.set $fpu_cw (i32.load16_u (ux-wa)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 101 XFNSTCW: FNSTCW m16
+        (br_if $svc (ux-ea-miss (i32.const 2)))
+        (i32.store16 (ux-wa) (global.get $fpu_cw))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 102 XFLDR code: FLD ST(rm), read before the push
+        (br_if $svc (ux-push-bad))
+        (ux-push (f64.load (ux-slot (i32.and (i32.add (local.get $t)
+                                                      (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 7)))
+                                             (i32.const 7)))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
+        ;; 103 XFXCH code: FXCH ST(rm), both tagged valid as 06's two
+        ;; $fpu_set leave them
+        (br_if $svc (ux-state-bad))
+        (local.set $p (i32.and (i32.add (local.get $t) (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 7)))
+                               (i32.const 7)))
+        (local.set $fa (f64.load (ux-slot (local.get $t))))
+        (f64.store (ux-slot (local.get $t)) (f64.load (ux-slot (local.get $p))))
+        (f64.store (ux-slot (local.get $p)) (local.get $fa))
+        (global.set $fpu_tag (i32.or (local.get $k)
+          (i32.or (i32.shl (i32.const 1) (local.get $t)) (i32.shl (i32.const 1) (local.get $p)))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
+        ;; 104 XFSTR code: FST / FSTP (bit 16) ST(rm)
+        (br_if $svc (ux-state-bad))
+        (local.set $c (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 0x10000)))
+        (if (local.get $c) (then (br_if $svc (ux-pop-bad))))
+        (local.set $p (i32.and (i32.add (local.get $t) (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 7)))
+                               (i32.const 7)))
+        (f64.store (ux-slot (local.get $p)) (f64.load (ux-slot (local.get $t))))
+        (local.set $k (i32.or (local.get $k) (i32.shl (i32.const 1) (local.get $p))))
+        (if (local.get $c) (then (ux-pop)))
+        (global.set $fpu_tag (local.get $k)) (global.set $fpu_top (local.get $t))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
+        ;; 105 XARR code: register arithmetic or compare with ST(rm), then $xar
+        (local.set $fb (f64.load (ux-slot (i32.and (i32.add (global.get $fpu_top)
+                                                            (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 7)))
+                                                   (i32.const 7))))))
+        ;; $xar: ST(0) with $fb (the other operand), the code word's kind.
+        ;; Everything that can send the op to 06 is tested before any write.
+        (local.set $c (i32.load offset=4 (local.get $pc)))
+        (br_if $svc (ux-state-bad))
+        (local.set $fa (f64.load (ux-slot (local.get $t))))
+        (local.set $n (i32.and (i32.shr_u (local.get $c) (i32.const 22)) (i32.const 3)))
+        (if (local.get $n)
+          (then
+            (br_if $svc (ux-pop-bad))
+            (br_if $svc (i32.and (i32.eq (local.get $n) (i32.const 2))
+                                 (i32.eqz (i32.and (i32.shr_u (local.get $k)
+                                                              (i32.and (i32.add (local.get $t) (i32.const 1)) (i32.const 7)))
+                                                   (i32.const 1)))))))
+        (local.set $v (i32.and (i32.shr_u (local.get $c) (i32.const 16)) (i32.const 7)))
+        (if (i32.eq (local.get $v) (i32.const 4))
+          (then
+            ;; $fpu_compare(ST(0), other): C3/C2/C0; unordered is 06's (IE)
+            (br_if $svc (i32.or (f64.ne (local.get $fa) (local.get $fa)) (f64.ne (local.get $fb) (local.get $fb))))
+            (global.set $fpu_sw
+              (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xB8FF))
+                      (select (i32.const 0x0100)
+                              (select (i32.const 0x4000) (i32.const 0) (f64.eq (local.get $fa) (local.get $fb)))
+                              (f64.lt (local.get $fa) (local.get $fb))))))
+          (else
+            ;; x, y = $fa, $fb, swapped by bit 19
+            (if (i32.and (local.get $c) (i32.const 0x80000))
+              (then (local.set $fa (local.get $fb))
+                    (local.set $fb (f64.load (ux-slot (local.get $t))))))
+            ;; $fpu_arith's ZE: a zero divisor
+            (br_if $svc (i32.and (i32.and (i32.eq (local.get $v) (i32.const 3))
+                                          (i32.ne (i32.and (local.get $c) (i32.const 0x100000)) (i32.const 0)))
+                                 (f64.eq (local.get $fb) (f64.const 0))))
+            (local.set $fa
+              (if (result f64) (i32.eqz (local.get $v)) (then (f64.add (local.get $fa) (local.get $fb)))
+              (else (if (result f64) (i32.eq (local.get $v) (i32.const 1))
+                (then (if (result f64) (i32.and (global.get $fpu_cw) (i32.const 0x300))
+                        (then (f64.mul (local.get $fa) (local.get $fb)))
+                        (else (call $fpu_mul (local.get $fa) (local.get $fb)))))
+              (else (if (result f64) (i32.eq (local.get $v) (i32.const 2))
+                (then (f64.sub (local.get $fa) (local.get $fb)))
+                (else (f64.div (local.get $fa) (local.get $fb)))))))))
+            (local.set $p (select (i32.and (i32.add (local.get $t) (i32.and (local.get $c) (i32.const 7))) (i32.const 7))
+                                  (local.get $t)
+                                  (i32.and (local.get $c) (i32.const 0x200000))))
+            (f64.store (ux-slot (local.get $p)) (local.get $fa))
+            (local.set $k (i32.or (local.get $k) (i32.shl (i32.const 1) (local.get $p))))))
+        (if (local.get $n)
+          (then (ux-pop)
+                (if (i32.eq (local.get $n) (i32.const 2)) (then (ux-pop)))))
+        (global.set $fpu_tag (local.get $k)) (global.set $fpu_top (local.get $t))
+        (local.set $pc (i32.add (local.get $pc)
+                                (select (i32.const 8) (i32.const 32) (i32.and (local.get $c) (i32.const 0x1000000)))))
+        (br $L))
+        ;; 106 XUN code: FCHS (rm 0) / FABS (rm 1)
+        (br_if $svc (ux-state-bad))
+        (local.set $fa (f64.load (ux-slot (local.get $t))))
+        (f64.store (ux-slot (local.get $t))
+          (select (f64.abs (local.get $fa)) (f64.neg (local.get $fa))
+                  (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 1))))
+        (global.set $fpu_tag (i32.or (local.get $k) (i32.shl (i32.const 1) (local.get $t))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
+        ;; 107 XFNSTSW code: FNSTSW AX
+        (global.set $fpu_sw (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xC7FF))
+                                    (i32.shl (global.get $fpu_top) (i32.const 11))))
+        (i32.store16 (global.get $reg_base) (global.get $fpu_sw))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))

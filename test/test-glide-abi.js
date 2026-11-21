@@ -300,8 +300,13 @@ call('_grSstIdle@0');
   assert.strictEqual(up.data.readUInt32LE(2 * up.fields.pitch + 3 * 4), 0xff00ff00,
     'the RGB565 green pixel lands at (3, 2)');
 }
+m = rec.mark();
 assert.strictEqual(call('_grLfbReadRegion@28', [1, 3, 2, 1, 1, 2, pixel]), 1);
-assert.strictEqual(view.getUint16(wa(pixel), true), 0x5acb);
+// Nothing touched the back buffer since WriteRegion published the stage, so
+// the stage still holds it: the read sees the green write itself, not the
+// recorder's 0x5a READBACK fill, and issues no READBACK.
+assert.strictEqual(view.getUint16(wa(pixel), true), 0x07e0, 'read region served by the published stage');
+assert(!rec.recordsSince(m).some(r => r.name === 'READBACK'), 'no READBACK for an unchanged buffer');
 assert.strictEqual(call('_grSstVRetraceOn@0'), 0);
 ticks = 16;
 assert.strictEqual(call('_grSstVRetraceOn@0'), 1, 'virtual retrace advances with clock');

@@ -30,8 +30,6 @@ const extraWat = String.raw`
     (call $gs32 (local.get $ga) (local.get $value)))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
   (func (export "test_stack") (result i32)
     (global.get $GUEST_STACK))
 `;

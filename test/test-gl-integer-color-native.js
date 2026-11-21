@@ -38,7 +38,13 @@ function boot(mutation='') {
     (import "fixture" "free" (func $heap_free (param i32)))
     (import "fixture" "encode" (func $gl_wat_encode_call (param i32 i32 i32) (result i32)))
     (defmacro (g2w-fast $p) (call $g2w $p))
-    ${['$gl8','$gl16','$gl32'].map(n=>form(registers,n)).join('\n')}
+    ;; $gl32's direct-window fast path (c693e2b8b), matched to translate():
+    ;; guest p below the fixture's 4 MB memory is p-0x400000+4096, the same
+    ;; rule translate() applies; everything else takes the g2w path.
+    (global $image_base i32 (i32.const 0x400000))
+    (global $GUEST_BASE i32 (i32.const 4096))
+    (global $eip_redirected (mut i32) (i32.const 0))
+    ${['$gl8','$gl16','$gl32'].map(n=>form(registers,n).split('(region.end $DIRECT_WINDOW)').join('(i32.const 0x400000)')).join('\n')}
     ${body}
     (export "invoke" (func $handle_glColor_integer))
     (export "query" (func $gl_source_query))`;

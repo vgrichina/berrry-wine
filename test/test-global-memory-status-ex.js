@@ -28,7 +28,13 @@ const { bootRenderHarness } = require('./render-helper');
   assert.strictEqual(e.get_esp(), 0x00300008);
   const first = snapshot();
   assert.strictEqual(first[0], 64);
-  assert.strictEqual(first[2], memory.buffer.byteLength);
+  // ullTotalPhys is $virtual_backing_capacity: the pool a guest commit can
+  // come from (plus the extension window on a larger memory), not the whole
+  // linear memory -- the rest is emulator-private.
+  const { SIZE, END } = require('../lib/region-map.generated.js');
+  const mapEnd = Math.max(...Object.values(END));
+  const extension = Math.max(0, memory.buffer.byteLength - mapEnd);
+  assert.strictEqual(first[2], SIZE.VIRTUAL_BACKING_BASE + extension);
   assert.ok(first[4] > 0 && first[4] <= first[2]);
   assert.strictEqual(first[1], Math.floor((first[2] - first[4]) * 100 / first[2]));
   for (const i of [3, 5, 7, 9, 11, 13, 14, 15]) assert.strictEqual(first[i], 0);

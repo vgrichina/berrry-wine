@@ -8,8 +8,6 @@ const { bootRenderHarness } = require('./render-helper');
 const extraWat = String.raw`
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 
   (func (export "test_set_process_version_headers")
       (param $os_major i32) (param $os_minor i32)

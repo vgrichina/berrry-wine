@@ -10,7 +10,7 @@ function fixture(){const game=canvas('game'),desktop=canvas('desktop'),sink=canv
  const r={windows:{7:win},canvas:desktop,ctx:desktop.ctx,presentationCanvas:sink,_directPresentation:false,
    presentationFilter:{canvas:sink,present(source){sink.ctx.drawImage(source);return true;}},
    _buildExclusivePresentationSource(){derived.ctx.drawImage(game,0,0);return derived;},
-   _presentDisplayCanvas(){if(this.noop)return;if(this._directPresentation)return;return this.presentationFilter.present(this._exclusivePresentationSource||desktop,'nearest',{}, {dedither:'off'});}};
+   _presentDisplayCanvas(){if(this.noop)return;if(this._directPresentation)return;return this.presentationFilter.present(this._exclusivePresentationSource||desktop,'nearest',{}, {});}};
  return{r,layer,win,game,desktop,sink,derived};}
 const raw=Context.prototype.drawImage;
 {

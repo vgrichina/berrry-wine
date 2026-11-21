@@ -58,7 +58,9 @@ const extraWat = String.raw`
     (i32.store offset=16 (global.get $reg_base) (local.get $saved))
     (i32.load offset=0 (global.get $reg_base)))
 
-  (func (export "test_call_CloseHandle") (param $handle i32) (result i32)
+  ;; Not test_call_CloseHandle: the generated dispatch table exports that one
+  ;; (09b2), without the ESP-delta capture this test asserts on.
+  (func (export "test_token_close_handle") (param $handle i32) (result i32)
     (local $saved i32)
     (local.set $saved (i32.load offset=16 (global.get $reg_base)))
     (call $handle_CloseHandle
@@ -70,8 +72,6 @@ const extraWat = String.raw`
 
   (func (export "test_get_token_esp_delta") (result i32)
     (global.get $test_token_esp_delta))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
   (func (export "test_token_handle_value")
@@ -272,22 +272,22 @@ const extraWat = String.raw`
   assert.strictEqual(privilegeAttr(tokenInfo, 17), 2,
     'separately opened handles observe the same process token state');
 
-  assert.strictEqual(e.test_call_CloseHandle(token), 1, 'CloseHandle releases a live token handle');
+  assert.strictEqual(e.test_token_close_handle(token), 1, 'CloseHandle releases a live token handle');
   assert.strictEqual(e.test_get_token_esp_delta(), 8, 'CloseHandle pops one stdcall argument');
   assert.strictEqual(e.test_call_AdjustTokenPrivileges(token, 1, 0, 0, 0, 0), 0,
     'closed generations are invalid immediately');
   assert.strictEqual(e.test_get_last_error(), 6);
-  assert.strictEqual(e.test_call_CloseHandle(token), 0, 'closing a stale generation fails');
+  assert.strictEqual(e.test_token_close_handle(token), 0, 'closing a stale generation fails');
   assert.strictEqual(e.test_get_last_error(), 6);
 
-  assert.strictEqual(e.test_call_CloseHandle(queryOnly), 1);
-  assert.strictEqual(e.test_call_CloseHandle(adjustOnly), 1);
-  assert.strictEqual(e.test_call_CloseHandle(secondQuery), 1);
+  assert.strictEqual(e.test_token_close_handle(queryOnly), 1);
+  assert.strictEqual(e.test_token_close_handle(adjustOnly), 1);
+  assert.strictEqual(e.test_token_close_handle(secondQuery), 1);
   assert.strictEqual(e.test_call_OpenProcessToken(-1, 0x28, handleOut), 1);
   const replacement = u32(handleOut);
   assert.notStrictEqual(replacement, token,
     'a reused slot advances its generation and rejects stale aliases');
-  assert.strictEqual(e.test_call_CloseHandle(replacement), 1);
+  assert.strictEqual(e.test_token_close_handle(replacement), 1);
 
   const live = [];
   for (let i = 0; i < 32; i++) {
@@ -301,10 +301,10 @@ const extraWat = String.raw`
     'the 33rd simultaneous token handle fails cleanly');
   assert.strictEqual(e.test_get_last_error(), 8, 'a full token table reports ERROR_NOT_ENOUGH_MEMORY');
   assert.strictEqual(u32(handleOut), 0xdddddddd, 'table exhaustion leaves the output untouched');
-  for (const handle of live) assert.strictEqual(e.test_call_CloseHandle(handle), 1);
+  for (const handle of live) assert.strictEqual(e.test_token_close_handle(handle), 1);
 
   e.test_set_last_error(0x4444);
-  assert.strictEqual(e.test_call_CloseHandle(0x7a000001), 1,
+  assert.strictEqual(e.test_token_close_handle(0x7a000001), 1,
     'a VFS-range handle is not stolen by the token CloseHandle namespace');
   assert.strictEqual(e.test_get_last_error(), 0x4444,
     'the ordinary non-token CloseHandle fallback remains unchanged');

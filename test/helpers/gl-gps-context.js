@@ -53,6 +53,11 @@ const WAT = String.raw`
  (func (export "probe_tex_bucket") (result i32)
    (i32.sub (call $glg_tex_slot (load.field DxObject misc1 (global.get $gl_sw_r_tex)))
      (global.get $glg_mem)))
+ ;; The mip-chain cache set (byte offset in the producer's block) of that
+ ;; texture: equal for chains that compete for the same ways.
+ (func (export "probe_chain_set") (result i32)
+   (i32.sub (call $glg_chain_set (load.field DxObject misc1 (global.get $gl_sw_r_tex)))
+     (global.get $glg_mem)))
  (func (export "probe_window") (param $hwnd i32) (param $w i32) (param $h i32)
    (call $wnd_table_set (local.get $hwnd) (i32.const 0))
    (call $client_rect_set (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)))`;
@@ -61,7 +66,9 @@ const STAT_NAMES = ['draws', 'tris', 'spanQuads', 'clears', 'presents', 'readbac
   'rtUploads', 'rtUploadRows', 'texUploads', 'gpuFrames', 'swFrames', 'syncs', 'texHits',
   'declines', 'declinedFrames'];
 
-async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
+// opts.makeExecutor(getExports, getMemory): another executor than the
+// software one (test-gl-gps-mip-chain.js runs headless WebGL through it).
+async function bootGlGps({ gps = 1, dropCaps = 0, size = 16, makeExecutor = null } = {}) {
   let memory, executor = null, ring = null, ringAddr = 0;
   const kicks = { n: 0, records: {} };
   // host log_i32 words ($glg_fail logs 0x474c4750 then its code).
@@ -73,7 +80,8 @@ async function bootGlGps({ gps = 1, dropCaps = 0, size = 16 } = {}) {
       gpu_stream_kick(addr, mode) {
         addr >>>= 0; kicks.n++;
         if (!executor) {
-          executor = new Executor({ getExports: () => h.exports, getMemory: () => memory.buffer });
+          executor = makeExecutor ? makeExecutor(() => h.exports, () => memory.buffer)
+            : new Executor({ getExports: () => h.exports, getMemory: () => memory.buffer });
           if (dropCaps) {
             const caps = executor.caps.bind(executor);
             executor.caps = () => { const c = caps(); return { ...c, flags: (c.flags & ~dropCaps) >>> 0 }; };
