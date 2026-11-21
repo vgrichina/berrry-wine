@@ -4836,7 +4836,7 @@
         (if (i32.ne (local.get $cmd) (i32.const -1))
           (then (call $menu_post (call $mdi_frame_maximized_child (local.get $hwnd))
             (i32.const 0x0112) (local.get $cmd) (i32.const 0))))
-        (return (i32.const 1))))
+        (return (i32.const 3))))
     (local.set $idx (call $menu_hittest_bar
       (local.get $hwnd)
       (call $menu_bar_screen_x (local.get $hwnd))
@@ -4844,7 +4844,9 @@
       (local.get $sx) (local.get $sy)))
     (if (i32.lt_s (local.get $idx) (i32.const 0)) (then (return (i32.const 0))))
     (if (call $menu_activate_bar_command (local.get $hwnd) (local.get $idx))
-      (then (return (i32.const 1))))
+      (then (return (i32.or
+        (i32.shl (call $menu_bar_id (local.get $hwnd) (local.get $idx)) (i32.const 2))
+        (i32.const 2)))))
     (call $menu_open (local.get $hwnd) (local.get $idx))
     (i32.const 1))
 
@@ -5927,7 +5929,9 @@
       (global.set $menu_pointer_tid (local.get $tid))
       (global.set $menu_pointer_x (local.get $sx))
       (global.set $menu_pointer_y (local.get $sy))
-      (global.set $menu_pointer_kind (i32.const 1))
-      (global.set $menu_pointer_command (i32.const 0))
+      ;; Preserve the actual tracker outcome: direct bar commands select
+      ;; without opening a dropdown; MDI chrome is neither outcome.
+      (global.set $menu_pointer_kind (i32.and (local.get $handled) (i32.const 3)))
+      (global.set $menu_pointer_command (i32.shr_u (local.get $handled) (i32.const 2)))
       (global.set $menu_pointer_sequence (i64.add (global.get $menu_pointer_sequence) (i64.const 1)))))
-    (local.get $handled))
+    (i32.ne (local.get $handled) (i32.const 0)))

@@ -15,6 +15,9 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = String.raw`
+  (func (export "test_set_menu") (param $hwnd i32) (param $menu i32)
+    (call $handle_SetMenu (local.get $hwnd) (local.get $menu)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
   ;; Push a TrackPopupMenu frame [ret, hMenu, flags, x, y, 0, hWnd, 0] and
   ;; return its guest ESP.
   (func (export "test_tpm_frame") (param $hmenu i32) (param $flags i32) (param $hwnd i32) (result i32)
@@ -154,5 +157,37 @@ const extraWat = String.raw`
   assert.strictEqual(e.test_eax(), 0);
   assert.strictEqual(e.test_esp() >>> 0, sp + 32);
 
-  console.log('PASS  TrackPopupMenu TPM_RETURNCMD parks until the popup closes and returns the pick');
+  // A direct menubar command selects without opening a dropdown. Preserve
+  // its exact command in the pointer receipt, and the public boolean return.
+  drain();
+  const bar = e.test_call_CreatePopupMenu() >>> 0;
+  assert.strictEqual(e.test_call_AppendMenuA(bar, 0, 4, strA('<<')), 1);
+  assert.strictEqual(e.test_call_AppendMenuA(bar, 0, 5, strA('>>')), 1);
+  assert.strictEqual(e.test_call_AppendMenuA(bar, 0x10, hmenu, strA('Game')), 1);
+  e.test_set_menu(hwnd, bar);
+  const bx = ui.menu_bar_screen_x(hwnd), by = ui.menu_bar_screen_y(hwnd) + 4;
+  for (const [index, id] of [[0, 4], [1, 5]]) {
+    const x = bx + ui.menu_bar_item_x(hwnd, index) + 5;
+    const sequence = ui.native_menu_pointer_receipt(0);
+    assert.strictEqual(ui.menu_handle_bar_click(hwnd, x, by), 1);
+    assert.strictEqual(ui.native_menu_pointer_receipt(0), sequence + 1n);
+    assert.strictEqual(ui.native_menu_pointer_receipt(7), 2n, 'command selected, not popup opened');
+    assert.strictEqual(ui.native_menu_pointer_receipt(8), BigInt(id));
+    assert.strictEqual(ui.menu_open_hwnd(), 0);
+    assert.ok(e.test_posted(msgBuf));
+    assert.strictEqual(e.guest_read32(msgBuf + 4), 0x111);
+    assert.strictEqual(e.guest_read32(msgBuf + 8), id);
+    assert.strictEqual(e.test_posted(msgBuf), 0, 'one command only');
+  }
+  const x = bx + ui.menu_bar_item_x(hwnd, 2) + 5;
+  assert.strictEqual(ui.menu_handle_bar_click(hwnd, x, by), 1);
+  assert.strictEqual(ui.native_menu_pointer_receipt(7), 1n, 'popup remains an open receipt');
+  assert.strictEqual(ui.native_menu_pointer_receipt(8), 0n);
+  assert.strictEqual(ui.menu_open_hwnd(), hwnd);
+  ui.menu_close();
+  const sequence = ui.native_menu_pointer_receipt(0);
+  assert.strictEqual(ui.menu_handle_bar_click(hwnd, bx - 10, by), 0);
+  assert.strictEqual(ui.native_menu_pointer_receipt(0), sequence, 'miss grants no receipt');
+
+  console.log('PASS  TrackPopupMenu return and direct menubar command pointer receipts');
 })().catch(err => { console.error('FAIL ', err && err.stack || err); process.exit(1); });

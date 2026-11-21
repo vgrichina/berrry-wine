@@ -422,3 +422,34 @@ outer supervisor waits exited 0, outer stdout/stderr both reached EOF and
 the inner supervisor reported no leaked children. No runtime source change,
 guest-state manipulation, forced focus, clock/pump change or test box was used.
 This proves the bounded post-reset move/reply/capture sequence, not a full game.
+
+### 2026-11-21 direct history command receipt repair
+
+Run `20261121-pawn-undo-redo` inspected the original PE (no menu resources)
+and normal UI before using history. Game contains New/Load/Save/Quit
+(commands 1/2/3/12). The advertised top bar is `|<`, `<<`, `>>`, `>|`,
+with native command IDs 13/4/5/14. These are direct command items, not popups.
+
+The sole immutable production-browser original used published `d7a39d3fa`
+and actual CPUWorker module `2c37a26b`. After ordinary Game/New, White opened
+d2–d4 on this run's reversed board. Human Black played e7–e5 and White
+captured d4×e5. The first ordinary `<<` click then closed UNKNOWN: the WAT
+bar-click wrapper always recorded kind 1 (popup opened), even when the tracker
+posted a direct WM_COMMAND and closed. No later runtime query or replay was
+made. Undo's visible result, captured-piece restoration, redo and subsequent
+play remain unverified; the UNKNOWN receipt is not proof the guest ignored undo.
+
+The generic repair preserves the tracker's actual result: direct bar commands
+record selection kind 2 and the exact ID; popup opens remain kind 1; MDI chrome
+is neither. The exported handler retains its boolean return. An ordinary authored
+PE in the full production shell/actual CPUWorker fails the old receipt contract
+and passes with only this WAT source changed. Two ordinary clicks visibly invoke
+its guest WM_COMMAND callback twice, with MENU_HANDLED, consumed=false, token=0.
+Native tests cover distinct `<<`/`>>` IDs, one posted command each, popup opening,
+and outside misses. Focused menu, disabled-owner, renderer, CLI receipt and MDI
+tests and the literal locked build pass. Every original and authored DOWN retains
+independently prearmed trusted UP and release ACK with unchanged
+500/1800/5000/20000 ms bounds. Inner/outer actual waits and both outer EOFs are
+retained. No second Pawn original, forced state/focus, clock/pump change, Wine,
+Python, worker agent, deployment or test box was used. This is a causal native
+receipt repair, not completed Pawn undo/redo acceptance.
