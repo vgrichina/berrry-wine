@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 304,
+  "count": 305,
   "sigs": {
     "log": {
       "params": [
@@ -358,6 +358,18 @@
       ]
     },
     "input_consumed": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "di_mouse_receipt": {
       "params": [
         "i32",
         "i32",

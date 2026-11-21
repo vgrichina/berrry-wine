@@ -632,6 +632,12 @@
       (if (i32.gt_u (local.get $limit) (i32.atomic.load (global.get $DX_LIGHT_LIMIT)))
         (then (i32.atomic.store (global.get $DX_LIGHT_LIMIT) (local.get $limit))))))
     (call $lock_release (global.get $LOCK_DX))
+    ;; Lifetime publication is outside the allocator lock: host imports may
+    ;; park a Worker. Every allocation, including recycle, starts a new epoch.
+    (if (i32.and (i32.ne (local.get $r) (i32.const 0))
+                 (i32.eq (local.get $type) (i32.const 7)))
+      (then (drop (call $host_di_mouse_receipt (local.get $r)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))))
     ;; Kind 21 publishes object allocation to the host-side live-surface
     ;; index. Keep the import outside LOCK_DX: a real Worker import is an RPC
     ;; and no thread may park while holding this spinlock.
@@ -1522,6 +1528,9 @@
     (if (i32.eq (global.get $dx_scroll_hold_wa) (local.get $entry_wa))
       (then (global.set $dx_scroll_hold_wa (i32.const 0))))
     (local.set $type (i32.load (local.get $entry_wa)))
+    (if (i32.eq (local.get $type) (i32.const 7))
+      (then (drop (call $host_di_mouse_receipt (local.get $entry_wa)
+        (i32.const 1) (i32.const 0) (i32.const 0) (i32.const 0)))))
     (if (i32.eq (local.get $type) (i32.const 2))
       (then (call $dx_surf_note_write (local.get $entry_wa))
         (call $dx_surf_pal_detach (local.get $entry_wa))))
@@ -11351,6 +11360,8 @@
             (return)))))
     (store.field DxObject flags (local.get $entry)
       (i32.or (local.get $flags) (global.get $DIDEV_ACQUIRED)))
+    (drop (call $host_di_mouse_receipt (local.get $entry)
+      (i32.const 7) (i32.const 0) (i32.const 0) (i32.const 0)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
@@ -11368,6 +11379,8 @@
       (then (drop (call $host_di_keyboard_buffer (local.get $entry) (i32.const 1) (i32.const 0)))))
     (store.field DxObject flags (local.get $entry)
       (i32.and (local.get $flags) (i32.const 0xFFFFFBFF)))
+    (drop (call $host_di_mouse_receipt (local.get $entry)
+      (i32.const 6) (i32.const 0) (i32.const 0) (i32.const 0)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0)) ;; DI_OK
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
@@ -11705,6 +11718,8 @@
     (local $delivered i32) (local $commit i32)
     (local $queued i32) (local $button_index i32) (local $event i32) (local $event_type i32)
     (local $abs i32) (local $ax i32) (local $ay i32)
+    (local $producer_sequence i32) (local $lineage i32) (local $in_ring i32)
+    (local $peek_sequence i32) (local $receipt_active i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (if (i32.eqz (call $di_device_is_acquired (local.get $entry)))
       (then
@@ -11745,6 +11760,8 @@
         (return)))
     (if (i32.eq (local.get $dev_type) (i32.const 2))
       (then
+        (local.set $receipt_active (call $host_di_mouse_receipt (local.get $entry)
+          (i32.const 2) (i32.const 0) (i32.const 0) (i32.const 0)))
         (local.set $buttons (call $host_get_mouse_buttons_live))
         (if (i32.eqz (global.get $di_mouse_data_initialized))
           (then
@@ -11783,6 +11800,7 @@
             (return)))
         (local.set $commit (i32.eqz (i32.and (local.get $arg4) (i32.const 1))))
         (local.set $delivered (i32.const 0))
+        (local.set $peek_sequence (global.get $di_mouse_data_sequence))
 
         ;; Each packed FIFO word is a button edge (1..4 bare or stamped, 7/8
         ;; stamped) or a signed 28-bit delta: type 5 X, 6 Y, 9 wheel.
@@ -11790,11 +11808,40 @@
         (block $buttons_done (loop $buttons_loop
           (br_if $buttons_done (i32.ge_u (local.get $button_index) (local.get $queued)))
           (br_if $buttons_done (i32.ge_u (local.get $delivered) (local.get $requested)))
-          (local.set $event
-            (if (result i32) (local.get $commit)
-              (then (call $di_mouse_event_take))
-              (else (call $di_mouse_event_peek (local.get $button_index)))))
+          (local.set $producer_sequence (i32.add
+            (i32.atomic.load offset=8 (global.get $DI_MOUSE_INPUT_STATE))
+            (select (i32.const 0) (local.get $button_index) (local.get $commit))))
+          (local.set $event (call $di_mouse_event_peek
+            (select (i32.const 0) (local.get $button_index) (local.get $commit))))
           (br_if $buttons_done (i32.eqz (local.get $event)))
+          ;; Only real ring positions carry lineage; coalesced overflow and
+          ;; synthetic live-state edges must never confirm prepared input.
+          (local.set $lineage (i32.const 0))
+          (local.set $in_ring (i32.lt_u
+                (select (i32.const 0) (local.get $button_index) (local.get $commit))
+                (i32.sub (i32.atomic.load offset=12 (global.get $DI_MOUSE_INPUT_STATE))
+                         (i32.atomic.load offset=8 (global.get $DI_MOUSE_INPUT_STATE)))))
+          (if (i32.and (i32.ne (local.get $receipt_active) (i32.const 0)) (local.get $in_ring))
+            (then (local.set $lineage (call $host_di_mouse_receipt
+              (local.get $entry) (i32.const 3) (local.get $producer_sequence)
+              (local.get $event) (i32.const 0)))))
+          (if (local.get $commit) (then
+            (if (local.get $in_ring)
+              (then
+                ;; Validation parks at the page broker. Another native actor
+                ;; may win this position while parked; it owns that record.
+                (if (i32.ne (i32.atomic.rmw.cmpxchg offset=8
+                      (global.get $DI_MOUSE_INPUT_STATE) (local.get $producer_sequence)
+                      (i32.add (local.get $producer_sequence) (i32.const 1)))
+                    (local.get $producer_sequence)) (then (br $buttons_loop))))
+              (else (drop (call $di_mouse_event_take))))))
+          (if (i32.lt_s (local.get $lineage) (i32.const 0))
+            (then
+              (if (local.get $commit) (then (drop (call $host_di_mouse_receipt
+                (local.get $entry) (i32.const 8) (local.get $producer_sequence)
+                (local.get $event) (i32.const 0)))))
+              (local.set $button_index (i32.add (local.get $button_index) (i32.const 1)))
+              (br $buttons_loop)))
           (local.set $event_type
             (if (result i32) (i32.le_u (local.get $event) (i32.const 4))
               (then (local.get $event))
@@ -11836,17 +11883,33 @@
           ;; (and whether) the object is reported.
           (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2)
             (call $di_mouse_object_index (local.get $ofs))))
+          (if (i32.and (i32.lt_s (local.get $ofs) (i32.const 0))
+                (i32.and (i32.ne (local.get $lineage) (i32.const 0)) (local.get $commit)))
+            (then (drop (call $host_di_mouse_receipt (local.get $entry)
+              (i32.const 8) (local.get $producer_sequence) (local.get $event) (i32.const 0)))))
           (if (i32.ge_s (local.get $ofs) (i32.const 0))
             (then
               (call $di_mouse_data_write (local.get $arg2) (local.get $arg1)
                 (local.get $delivered) (local.get $ofs) (local.get $data)
-                (call $di_mouse_event_stamp (local.get $event) (local.get $event_type)))))
+                (call $di_mouse_event_stamp (local.get $event) (local.get $event_type)))
+              ;; PEEK advances only its local sequence. Returning multiple
+              ;; records must preserve the sequence a later removal returns.
+              (if (i32.eqz (local.get $commit)) (then
+                (call $gs32 (i32.add (local.get $arg2)
+                  (i32.add (i32.mul (local.get $delivered) (local.get $arg1)) (i32.const 12)))
+                  (local.get $peek_sequence))))
+              (if (i32.gt_s (local.get $lineage) (i32.const 0))
+                (then (drop (call $host_di_mouse_receipt (local.get $entry)
+                  (select (i32.const 5) (i32.const 4) (local.get $commit))
+                  (local.get $producer_sequence) (local.get $event)
+                  (i32.add (local.get $arg2) (i32.mul (local.get $delivered) (local.get $arg1)))))))))
           (if (local.get $commit)
             (then
               (if (call $di_mouse_event_is_button (local.get $event_type))
                 (then (call $di_mouse_button_commit_state (local.get $event_type))))
               (global.set $di_mouse_data_sequence
                 (i32.add (global.get $di_mouse_data_sequence) (i32.const 1)))))
+          (local.set $peek_sequence (i32.add (local.get $peek_sequence) (i32.const 1)))
           (if (i32.ge_s (local.get $ofs) (i32.const 0))
             (then (local.set $delivered (i32.add (local.get $delivered) (i32.const 1)))))
           (local.set $button_index (i32.add (local.get $button_index) (i32.const 1)))

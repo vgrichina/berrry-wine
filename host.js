@@ -2934,6 +2934,7 @@ class WineAssembly {
       h.check_input_token=()=>guard.token(self._lastInputEvent);
       h.input_validate=(token,...values)=>guard.validate(token,values);
       h.input_consumed=(token,tid,ptr,kind,remove,...values)=>guard.consumed(token,tid,ptr,kind,remove,values);
+      h.di_mouse_receipt=(entry,phase,sequence,word,ptr,...values)=>guard.directInput(entry,phase,sequence,word,ptr,values);
     }
     h.check_input_lparam = () => {
       return self._lastInputEvent ? (self._lastInputEvent.lParam | 0) : 0;

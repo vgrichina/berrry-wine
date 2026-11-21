@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "cfd663e6e7a433879d1402ea4f0f2379c68c795d550f689e7b9ca0804b1e7d8b",
+      "sha256": "da2413f4834cbdd96df1715dbc3afad4484a590353673cacdcec14cc1bfc90fd",
+      "reason": "DirectInput receipt bridge: synchronous renderer publication hook records exact ring position before tail publication; synchronous owning-native host import records lifecycle/poll/selected returned record. The hook calls only the guard and never enters guest code. Worker RPC carries caller scene and pointer translation, with actor/instance/window/device generation and deadline fences. No guest callback, EIP/ESP redirection, timer or retained guest continuation is added. Native main and real OS Worker tests cover consumption, nonconsuming PEEK/count, independent release, motion, native COM/acquisition lifetime and refusal controls."
+    },
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "78414dd254adc4adc6215d9c5f263c1e792e134d2968dc36e28bbbe694d86c40",
+      "sha256": "abff626f6e4a11994864ac354c4490f57dc8f4bf6cfb4366e907bc221ccb1564",
+      "reason": "DirectInput receipt bridge: synchronous renderer publication hook records exact ring position before tail publication; synchronous owning-native host import records lifecycle/poll/selected returned record. The hook calls only the guard and never enters guest code. Worker RPC carries caller scene and pointer translation, with actor/instance/window/device generation and deadline fences. No guest callback, EIP/ESP redirection, timer or retained guest continuation is added. Native main and real OS Worker tests cover consumption, nonconsuming PEEK/count, independent release, motion, native COM/acquisition lifetime and refusal controls."
+    }
+  ]
+}

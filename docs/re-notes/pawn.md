@@ -304,3 +304,39 @@ closed without replay. They establish no game/API defect or pointer-reuse proof.
 All known native children exited and were joined. Fresh move/reply, second turn,
 Quit, first writer, PV, record-four causality and historical allocation lifetimes
 remain unproved/UNKNOWN. Existing historical move/reply evidence above is unchanged.
+
+### 2026-11-21: native buffered DI receipts implemented
+
+Run `20261121-pawn-di7-native-receipts` implements the missing integration.
+An opt-in `consumer: 'directinput-buffered'` mouse or motion intent binds the
+device and acquisition generation observed at actual native GetDeviceData.
+The production renderer tags exact ring positions before publishing its tail;
+native selection, atomic removal and written guest records confirm those
+positions through the owning Worker RPC. Returned-byte equality and USER
+dequeue confer no DI receipt. PEEK records an observation while leaving the
+ticket pending; count-only reads confer none. Physical UP remains independent
+and can precede consumption of buffered DOWN. Release and Unacquire/reacquire
+invalidate pending generations. Missing/wrong native actor metadata cannot
+deliver tagged DOWN, while UP remains deliverable. Multiple PEEK records now
+retain the sequence numbers their later removal returns.
+
+Actual Git-baseline WAT and bridge return native DOWN/UP but fail receipt
+confirmation in both main and real OS Worker controls. The new native controls
+pass both routes, including byte-equal unowned DOWN, +5/-5 and absent motion,
+PEEK/count-only, expiry, wrong device/actor, independent UP, final COM Release
+and same-pointer reacquisition. The lifetime fixture expects the allocator's
+fresh-slot preference after Release; it does not demand immediate pointer reuse
+or change allocation policy. Native API entry/return observations use
+`tools/jig-owning-api-observer.js` on the executing instance. The canonical
+locked build and existing DirectInput-device/USER/mouse/scheduling tests pass.
+The separate buffered-keyboard extraction test fails on a missing
+`$selective_watch_on` definition outside its selected source fragments; this
+is also reproduced with unchanged baseline DirectInput source.
+
+The single bounded browser attempt closed UNKNOWN during startup waiting for
+a native owner. Its retained HTTP ledger has no Pawn media or emulator-module
+request; no prepared input, move/reply or screenshot was obtained. No replay
+or subsequent runtime observation was made. This run proves the emulator
+receipt fix and native controls, not fresh original gameplay. Chrome closed,
+its owned profile was removed, and the finite native supervisor recorded no
+leaked children. No sandbox box was created (ID/expiry/stop receipt null).

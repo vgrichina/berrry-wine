@@ -120,6 +120,9 @@
   (import "host" "check_input_token" (func $host_check_input_token (result i32)))
   (import "host" "input_validate" (func $host_input_validate (param i32) (result i32)))
   (import "host" "input_consumed" (func $host_input_consumed (param i32 i32 i32 i32 i32) (result i32)))
+  ;; Native DirectInput lifetime/poll/record boundary. Sequence is the shared
+  ;; producer ring position, never inferred from returned motion bytes.
+  (import "host" "di_mouse_receipt" (func $host_di_mouse_receipt (param i32 i32 i32 i32 i32) (result i32)))
   ;; check_input() → packed event (0 = none)
   (import "host" "input_pump_idle" (func $host_input_pump_idle (param i32)))
   ;; input_pump_idle(thread) — native unfiltered message pump exhausted all
