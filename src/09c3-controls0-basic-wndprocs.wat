@@ -470,6 +470,32 @@
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
+    ;; BM_SETSTYLE: bounded native push/default-push transitions. Preserve
+    ;; unrelated style bits and all state except the default-border flag.
+    ;; This does not select a dialog default ID or touch sibling controls.
+    (if (i32.eq (local.get $msg) (i32.const 0x00F4))
+      (then
+        (local.set $kind (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 15)))
+        (if (i32.and (i32.lt_u (local.get $kind) (i32.const 2))
+                    (i32.lt_u (local.get $wParam) (i32.const 2)))
+          (then
+            (drop (call $wnd_set_style (local.get $hwnd)
+              (i32.or (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const -16))
+                      (local.get $wParam))))
+            (if (local.get $state)
+              (then
+                (local.set $state_w (call $g2w (local.get $state)))
+                (call $btn_set_flags (local.get $state_w)
+                  (i32.or (i32.and (call $btn_flags (local.get $state_w)) (i32.const -5))
+                          (i32.shl (local.get $wParam) (i32.const 2))))))
+            ;; Only LOWORD(lParam) is the redraw BOOL (Microsoft contract).
+            (if (i32.and (local.get $lParam) (i32.const 0xFFFF))
+              (then
+                (call $invalidate_hwnd (local.get $hwnd))
+                (drop (call $wnd_send_message (local.get $hwnd)
+                  (i32.const 0x000F) (i32.const 0) (i32.const 0)))))))
+        (return (i32.const 0))))
+
     ;; WM_GETDLGCODE: report the actual button style, not the temporary
     ;; focused/default border paint flag. No input or check state is changed.
     (if (i32.eq (local.get $msg) (i32.const 0x0087))
