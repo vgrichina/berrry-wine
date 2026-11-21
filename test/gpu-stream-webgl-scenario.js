@@ -1078,6 +1078,9 @@
       for (const step of perspectiveMipCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`perspective mip scenario threw: ${e.stack || e}`); }
     try {
+      for (const step of cubeMipCases({ GS, p, check, native: !!(backend && backend.gl) })) drain();
+    } catch (e) { failures.push(`cube mip scenario threw: ${e.stack || e}`); }
+    try {
       for (const step of cubeSamplerCases({ GS, p, check, negative: !!(backend && backend.gl) })) {
         let error;
         try { drain(); } catch (e) { error = e; }
@@ -1373,5 +1376,205 @@
     yield { name: 'release-perspective' };
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, W, H, irShader, TEX_IR };
+
+  // Independent face-interior cube oracle. Constant major-axis directions
+  // give an exact isotropic footprint shared by native cube and software LOD.
+  // Seams/corners are native controls (alias vs distinct), not software oracles.
+  function* cubeMipCases({ GS, p, check, capture = () => {}, negative = false, npot = false, native = false, observe = () => {}, quick = false, manySamplers = false }) {
+    const C = GS.CONST, size = 32, rt = 300, layout = 301, ps = 302, image = 303, copy = 304;
+    const emit = (...args) => p.emit(...args);
+    const put = b => { const at = p.arenaAlloc(b.length); p.arenaView(at, b.length).set(b); return at; };
+    const words = (...v) => new Uint8Array(new Uint32Array(v).buffer);
+    emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, levels: 1, width: size, height: size });
+    emit('TARGETS', { color: rt });
+    const elems = new Uint8Array(24), dv = new DataView(elems.buffer);
+    [C.USAGE_POSITIONT, C.USAGE_TEXCOORD, C.USAGE_TEXCOORD].forEach((usage, i) => {
+      elems[i * 8 + 1] = C.VTYPE_FLOAT4; elems[i * 8 + 2] = usage; elems[i * 8 + 3] = i === 2 ? 1 : 0;
+      dv.setUint16(i * 8 + 4, i * 16, true);
+    });
+    emit('LAYOUT', { id: layout, count: 3, stride: 48 }, elems);
+    const ir = irShader([[OPC.TEXLD, R0, 0xB0E40000], [OPC.TEXLD, R1, 0xB0E40001], [OPC.MUL, R0S, SRC_R0, SRC_R1]]);
+    emit('SHADER', { id: ps, stage: 1, ir_bytes: ir.length }, ir);
+    emit('RASTER', { depth_mode: 0, zfunc: 8, cull: 1, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+      blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15, fill: 3, linear: 1,
+      scissor_right: size, scissor_bottom: size });
+    const color = (f, l, x, y) => [25 + (31 * x + 7 * y + 43 * l + 19 * f) % 190,
+      20 + (11 * x + 29 * y + 37 * l + 23 * f) % 200, 30 + (17 * x + 13 * y + 53 * l + 11 * f) % 180, 255];
+    const direction = (face, u, v) => [[1, -v, -u], [-1, -v, u], [u, 1, v], [u, -1, -v], [u, -v, 1], [-u, -v, -1]][face];
+    const sample = (w, levels, face, s, raw, slot) => {
+      const lod = raw + s.bias, linear = (lod <= 0 ? s.mag : s.min) === 2;
+      const L = Math.min(Math.max(lod, s.low), levels - 1);
+      const atLevel = l => {
+        const n = Math.max(1, w >> l), u = (slot ? 0.3125 : 0.4375) * n - (linear ? 0.5 : 0), x = Math.floor(u), f = u - x;
+        const at = (x, y) => color(face, l, Math.max(0, Math.min(n - 1, x)), Math.max(0, Math.min(n - 1, y)));
+        if (!linear) return at(x, x);
+        const taps = [at(x, x), at(x + 1, x), at(x, x + 1), at(x + 1, x + 1)];
+        return taps[0].map((_, k) => (taps[0][k] * (1 - f) + taps[1][k] * f) * (1 - f)
+          + (taps[2][k] * (1 - f) + taps[3][k] * f) * f);
+      };
+      const l = !s.mip ? 0 : s.mip === 1 ? Math.floor(L + 0.5) : Math.floor(L), a = atLevel(l);
+      const r = s.mip === 2 ? L - l : 0;
+      return r ? a.map((v, k) => v * (1 - r) + atLevel(l + 1)[k] * r) : a;
+    };
+    let stamp = 4000;
+    function* read(name) {
+      const dst = p.arenaAlloc(size * size * 4 + 8); p.arenaView(dst, size * size * 4 + 8).fill(0xa7);
+      emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: size, h: size, pitch: size * 4, dst });
+      emit('PRESENT', { rt, w: size, h: size, surface: 96, stamp: ++stamp });
+      yield { name, stamp, dst, size };
+      const pixels = p.arenaView(dst, size * size * 4).slice();
+      check(name + ' canary', p.arenaView(dst + pixels.length, 8).every(v => v === 0xa7));
+      check(name + ' ring retired', p.load('read_pos') === p.load('write_pos') && p.load('error_code') === 0);
+      capture(name, pixels); p.store('arena_tail', p.load('arena_head')); return pixels;
+    }
+    if (manySamplers) {
+      // Eight mixed native cube samplers plus fog exercise private native
+      // magnification views alongside a reserved texture unit.
+      emit('RELEASE', { id: ps });
+      const instructions = [[OPC.TEXLD, [0, 0, 15], [3, 0, 0xe4], [10, 0, 0]]];
+      for (let n = 1; n < 8; n++) instructions.push([OPC.TEXLD, [0, 1, 15], [3, 0, 0xe4], [10, n, 0]],
+        [OPC.MUL, [0, 0, 15], [0, 0, 0xe4], [0, 1, 0xe4]]);
+      const many = vsIRShader(instructions), header = new DataView(many.buffer);
+      header.setUint32(8, 1, true); header.setUint32(12, 0xffff0200, true);
+      emit('SHADER', { id: ps, stage: 1, ir_bytes: many.length }, many);
+      emit('CREATE', { id: image, kind: C.KIND_CUBE, fmt: C.FMT_A8B8G8R8, width: 4, height: 4, levels: 2 });
+      for (let face = 0; face < 6; face++) for (let level = 0; level < 2; level++) {
+        const w = 4 >> level, bytes = new Uint8Array(w * w * 4);
+        for (let i = 0; i < bytes.length; i += 4) bytes.set([40, 220, 90, 255], i);
+        emit('UPLOAD', { id: image, face, level, w, h: w, pitch: w * 4, bytes: bytes.length, src: put(bytes) });
+      }
+      emit('CREATE', { id: 307, kind: C.KIND_TEX2D, fmt: C.FMT_A8B8G8R8, width: 64, height: 1, levels: 1 });
+      emit('SAMPLER', { id: 305, address_u: 3, address_v: 3, min: 1, mag: 2, mip: 1 });
+      emit('BIND', { count: 8 }, words(...Array.from({ length: 8 }, (_, n) => [n, image, 305]).flat()));
+      emit('RASTER', { depth_mode: 0, zfunc: 8, cull: 1, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+        blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15, fill: 3, linear: 1,
+        fog_mode: C.FOG_TABLE_W, fog_table: 307, scissor_right: size, scissor_bottom: size });
+      const vertices = new Float32Array([0, 0, 0.5, 1, 1, 0, 0, 1, 1, 0, 0, 1,
+        size, 0, 0.5, 1, 1, 0, 0, 1, 1, 0, 0, 1, 0, size, 0.5, 1, 1, 0, 0, 1, 1, 0, 0, 1]);
+      emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 3, vcount: 3,
+        voff: put(new Uint8Array(vertices.buffer)) });
+      const pixels = yield* read('many-cube-samplers-fog');
+      const at = (8 * size + 8) * 4;
+      const want = [40, 220, 90, 255].map(v => Math.round(255 * (v / 255) ** 8));
+      check('many native cube samplers draw', want.every((v, k) => Math.abs(pixels[at + k] - v) <= 2),
+        'got ' + [...pixels.subarray(at, at + 4)] + ' expected ' + want);
+      for (const id of [rt, layout, ps, image, 305, 307]) emit('RELEASE', { id });
+      yield { name: 'release-many-cube-samplers' };
+      return;
+    }
+    if (npot === 'unsupported') {
+      emit('CREATE', { id: image, kind: C.KIND_CUBE, fmt: C.FMT_A8B8G8R8, width: 3, height: 3, levels: 2 });
+      const dst = p.arenaAlloc(8); p.arenaView(dst, 8).fill(0x9b);
+      emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: 1, h: 1, pitch: 4, dst });
+      emit('PRESENT', { rt, w: size, h: size, surface: 96, stamp: ++stamp });
+      yield { name: 'unsupported-npot-cube-mips', error: true, match: 'WebGL1 NPOT cube mip storage', stamp };
+      check('unsupported NPOT stops readback', p.arenaView(dst, 8).every(v => v === 0x9b));
+      check('unsupported NPOT records error', p.load('error_code') === GS.ERR.UNSUPPORTED);
+      return;
+    }
+    const configs = [
+      { name: 'point', min: 1, mag: 1, mip: 1, bias: 0, low: 0 },
+      { name: 'linear', min: 2, mag: 2, mip: 2, bias: 0, low: 0 },
+      { name: 'bias', min: 1, mag: 1, mip: 1, bias: 2, low: 0 },
+      { name: 'negative-bias', min: 2, mag: 2, mip: 2, bias: -2, low: 0 },
+      { name: 'max', min: 1, mag: 1, mip: 1, bias: 0, low: 1 },
+      { name: 'mixed-max', min: 1, mag: 2, mip: 1, bias: 0, low: 1 },
+      { name: 'reverse-mixed', min: 2, mag: 1, mip: 2, bias: 0.25, low: 0 },
+      { name: 'max-past-resident', min: 2, mag: 1, mip: 2, bias: 0, low: 7 },
+      { name: 'no-mip', min: 1, mag: 2, mip: 0, bias: 0, low: 0 },
+    ];
+    for (const [w, levels] of (npot === 'base' ? [[3, 1]] : npot ? [[3, 2]] : quick ? [[8, 2]] : [[8, 4], [8, 2], [8, 1]])) {
+      for (const id of [image, copy]) {
+        emit('CREATE', { id, kind: C.KIND_CUBE, fmt: C.FMT_A8B8G8R8, width: w, height: w, levels });
+        for (let f = 0; f < 6; f++) for (let l = 0; l < levels; l++) {
+          const n = Math.max(1, w >> l), bytes = new Uint8Array(n * n * 4);
+          for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) bytes.set(color(f, l, x, y), (y * n + x) * 4);
+          emit('UPLOAD', { id, face: f, level: l, w: n, h: n, pitch: n * 4, bytes: bytes.length, src: put(bytes) });
+        }
+      }
+      for (const cfg of [configs[8], ...configs.slice(0, 8)].filter(c => !quick || ['no-mip', 'bias', 'mixed-max', 'reverse-mixed'].includes(c.name))) {
+        const ss = [cfg, { ...cfg, min: cfg.mag, mag: cfg.min, mip: cfg.mip === 1 ? 2 : cfg.mip, bias: cfg.bias - 0.25 }];
+        ss.forEach((s, i) => emit('SAMPLER', { id: 305 + i, min: s.min, mag: s.mag, mip: s.mip,
+          address_u: 3, address_v: 3, lod_bias: s.bias, max_level: s.low }));
+        for (const face of (quick ? [0] : [0, 1, 2, 3, 4, 5])) for (const raw of (quick ? [-2, -1, -0.125, 0.75, 2.25] : [-2, 0.75, 2.25])) {
+          let reference;
+          for (const distinct of [true, false]) {
+            const name = 'cube-' + w + '-L' + levels + '-' + cfg.name + '-f' + face + '-lod' + raw + (distinct ? '-distinct' : '-alias');
+            emit('BIND', { count: 2 }, words(0, image, 305, 1, distinct ? copy : image, 306));
+            const v = [], slope = 2 ** raw * 2 / w;
+            for (const [x, y] of [[0, 0], [size, 0], [0, size], [size, 0], [size, size], [0, size]]) {
+              const d = direction(face, -0.125 + (x - 16) * slope, -0.125 + (y - 16) * slope);
+              const other = direction(face, -0.375 + (x - 16) * slope, -0.375 + (y - 16) * slope);
+              v.push(x, y, 0.5, 1, ...d, 1, ...other, 1);
+            }
+            emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 6, vcount: 6,
+              voff: put(new Uint8Array(new Float32Array(v).buffer)) });
+            const pixels = yield* read(name), got = [...pixels.subarray((16 * size + 16) * 4, (16 * size + 16) * 4 + 4)];
+            const samples = ss.map((s, slot) => sample(w, levels, face, s, raw, slot));
+            const want = samples[0].map((c, k) => Math.round(c * samples[1][k] / 255));
+            // Native seamless filtering can mix adjacent 1x1 faces even at
+            // an interior direction; software clamps each face. Retain the
+            // analytical result as an observation instead of changing it.
+            const seam = ss.some(s => {
+              const lod = raw + s.bias, linear = (lod <= 0 ? s.mag : s.min) === 2;
+              const L = Math.min(Math.max(lod, s.low), levels - 1);
+              return linear && s.mip && (w >> (s.mip === 1 ? Math.floor(L + 0.5) : Math.ceil(L))) <= 1;
+            });
+            const implicitLOD = levels === Math.floor(Math.log2(w)) + 1 && ss.some(s =>
+              s.mip === 2 && s.min === s.mag && s.bias === 0 && s.low === 0);
+            if (native && (seam || implicitLOD)) observe(name, { got, analytical: want,
+              reason: seam ? 'native seamless 1x1 faces; software clamps face taps'
+                : 'unconstrained native implicit cube LOD differs from projected software LOD' });
+            else check(name + ' analytical', got.every((v, k) => Math.abs(v - want[k]) <= 3), 'got ' + got + ' expected ' + want);
+            if (distinct) reference = pixels;
+            else check(name + ' equals distinct', pixels.every((v, i) => Math.abs(v - reference[i]) <= 1));
+          }
+        }
+        for (const id of [305, 306]) emit('RELEASE', { id });
+      }
+      if (w === 8 && levels === 2) {
+        const define = () => [0, 1].forEach(i => emit('SAMPLER', { id: 305 + i, min: i ? 2 : 1, mag: i ? 1 : 2,
+          mip: i ? 1 : 2, address_u: 3, address_v: 3, lod_bias: -2, max_level: 1 }));
+        define();
+        for (const mode of ['upload', 'copy', 'copy-opaque', 'sampler-reuse', 'image-reuse']) {
+          const c = mode === 'upload' ? [20, 220, 60, 255] : mode === 'image-reuse' ? [190, 30, 100, 255] : [60, 180, 90, mode === 'copy' ? 64 : 255];
+          if (mode === 'sampler-reuse') { for (const id of [305, 306]) emit('RELEASE', { id }); define(); }
+          for (const id of [image, copy]) {
+            if (mode === 'image-reuse') {
+              emit('RELEASE', { id });
+              emit('CREATE', { id, kind: C.KIND_CUBE, fmt: C.FMT_A8B8G8R8, width: w, height: w, levels });
+            }
+            if (mode.startsWith('copy')) {
+              emit('CLEAR', { mask: 1, colormask: 15, rgba: 0x405ab43c, right: size, bottom: size });
+              emit('COPY', { src: rt, dst: id, sw: 4, sh: 4, dw: 4, dh: 4,
+                filter: 1 | (1 << 8) | (mode === 'copy-opaque' ? 1 << 24 : 0) });
+            } else if (mode !== 'sampler-reuse') {
+              const bytes = new Uint8Array(4 * 4 * 4); for (let k = 0; k < bytes.length; k += 4) bytes.set(c, k);
+              emit('UPLOAD', { id, level: 1, face: 0, w: 4, h: 4, pitch: 16, bytes: bytes.length, src: put(bytes) });
+            }
+          }
+          let reference;
+          for (const distinct of [true, false]) {
+            emit('BIND', { count: 2 }, words(0, image, 305, 1, distinct ? copy : image, 306));
+            const v = [];
+            for (const [x, y] of [[0, 0], [size, 0], [0, size], [size, 0], [size, size], [0, size]])
+              v.push(x, y, 0.5, 1, 1, 0, 0, 1, 1, 0, 0, 1);
+            emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 6, vcount: 6,
+              voff: put(new Uint8Array(new Float32Array(v).buffer)) });
+            const name = 'cube-mip-' + mode + (distinct ? '-distinct' : '-alias'), pixels = yield* read(name);
+            const got = [...pixels.subarray((16 * size + 16) * 4, (16 * size + 16) * 4 + 4)], want = c.map(v => Math.round(v * v / 255));
+            check(name + ' independent updated level', got.every((v, k) => Math.abs(v - want[k]) <= 2), 'got ' + got + ' expected ' + want);
+            if (distinct) reference = pixels;
+            else check(name + ' equals distinct', pixels.every((v, i) => Math.abs(v - reference[i]) <= 1));
+          }
+        }
+        for (const id of [305, 306]) emit('RELEASE', { id });
+      }
+      for (const id of [image, copy]) emit('RELEASE', { id });
+    }
+    for (const id of [rt, layout, ps]) emit('RELEASE', { id });
+    yield { name: 'release-cube-mips' };
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, W, H, irShader, TEX_IR };
 });
