@@ -1080,6 +1080,7 @@
     try {
       for (const step of viewportCases({ GS, p, check })) drain();
       for (const step of visibilityCases({ GS, p, check })) drain();
+      for (const step of linePointCases({ GS, p, check })) drain();
     } catch (e) { failures.push(`visibility scenario threw: ${e.stack || e}`); }
     try {
       for (const step of cubeMipCases({ GS, p, check, native: !!(backend && backend.gl) })) drain();
@@ -2149,5 +2150,130 @@
  for(const id of[rt,ds,other,ds2,layout,ps])emit('RELEASE',{id});yield{name:'release'};
   }
 
-  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, viewportCases, W, H, irShader, TEX_IR };
+  // Integer point centres and axis-aligned line interiors, with no endpoint,
+  // shared-junction or diagonal tie assertions. The software backend's stable
+  // one-pixel squares/quads and the documented interpolation equation agree
+  // here; no OpenGL edge rule is used as a D3D reference.
+  function* linePointCases({ GS, p, check, capture = () => {} }) {
+    const C = GS.CONST, size = 16, rt = 901, ds = 902, layout = 903, ps = 904;
+    const emit = (op, fields, tail) => p.emit(op, fields, tail);
+    const put = bytes => {
+      const pos = p.arenaAlloc(bytes.length);
+      p.arenaView(pos, bytes.length).set(bytes);
+      return pos;
+    };
+    const base = { depth_mode: 1, zfunc: 2, zwrite: 1, cull: 1, src_rgb: 2, dst_rgb: 1,
+      src_alpha: 2, dst_alpha: 1, blend_op: 1, blend_op_alpha: 1, alpha_func: 8,
+      colormask: 15, fill: 3, scissor_right: size, scissor_bottom: size };
+    const stencil = { stencil_enable: 1, stencil_func: 8, stencil_fail: 3, stencil_zfail: 3,
+      stencil_pass: 3, stencil_ref: 7, stencil_mask: 255, stencil_wmask: 255,
+      two_sided: 1, ccw_func: 1, ccw_fail: 1, ccw_zfail: 1, ccw_pass: 1 };
+    const raster = fields => emit('RASTER', { ...base, ...fields });
+    const clear = () => emit('CLEAR', { mask: 7, colormask: 15, rgba: 0xff000000,
+      z: 0.5, stencil: 0, right: size, bottom: size });
+    const draw = (prim, vertices, indices) => {
+      emit('DRAW_UP', { prim, ps, layout, stride: 32, count: indices ? indices.length : vertices.length,
+        vcount: vertices.length, voff: put(new Uint8Array(new Float32Array(vertices.flat()).buffer)),
+        ...(indices ? { index_size: 2, ioff: put(new Uint8Array(new Uint16Array(indices).buffer)) } : {}) });
+    };
+    const quad = (color, z = 0.375) => draw(C.PRIM_TRIANGLELIST,
+      [[-1,-1],[17,-1],[-1,17],[17,-1],[17,17],[-1,17]].map(([x,y]) => [x,y,z,1,...color]));
+    let stamp = 9000;
+    function* read(name, want, samples) {
+      const dst = p.arenaAlloc(size * size * 4);
+      emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, x: 0, y: 0, w: size, h: size, pitch: size * 4, dst });
+      emit('PRESENT', { rt, w: size, h: size, stamp: ++stamp });
+      yield { name, stamp, dst, size };
+      const pixels = p.arenaView(dst, size * size * 4).slice();
+      for (const [x,y] of samples) {
+        const got = [...pixels.slice((y * size + x) * 4, (y * size + x) * 4 + 4)], expected = want(x,y);
+        check(name + ' @' + x + ',' + y, got.every((v,i) => Math.abs(v - expected[i]) <= 1),
+          'got ' + got + ' expected ' + expected);
+      }
+      capture(name, pixels);
+      p.store('arena_tail', p.load('arena_head'));
+    }
+    emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, width: size, height: size, levels: 1 });
+    emit('CREATE', { id: ds, kind: C.KIND_DS, fmt: C.FMT_D24S8, width: size, height: size, levels: 1 });
+    const elems = new Uint8Array(16), dv = new DataView(elems.buffer);
+    [C.USAGE_POSITIONT,C.USAGE_COLOR].forEach((usage,i) => {
+      dv.setUint8(i * 8 + 1, C.VTYPE_FLOAT4); dv.setUint8(i * 8 + 2, usage); dv.setUint16(i * 8 + 4, i * 16, true);
+    });
+    emit('LAYOUT', { id: layout, stride: 32, count: 2 }, elems);
+    emit('SHADER', { id: ps, stage: 1, ir_bytes: FLAT_IR.length }, FLAT_IR);
+    emit('TARGETS', { color: rt, depth: ds }); emit('BIND', { count: 0 });
+    // Prime the perspective triangle program before any point/line. Its
+    // coverage lift must not leak through the program cache into lines.
+    raster({ linear: 0 }); quad([0,0,0,1]); clear();
+    for (const prim of [C.PRIM_POINTLIST,C.PRIM_LINELIST,C.PRIM_LINESTRIP]) {
+      for (const indexed of [0,1]) for (const linear of [0,1]) for (const clipped of [0,1]) {
+        const points = prim === C.PRIM_POINTLIST ? [[4,6],[8,6],[12,6],[8,10]]
+          : [[4,6],[12,6],[12,12], ...(prim === C.PRIM_LINESTRIP ? [[4,12]] : [])];
+        const order = prim === C.PRIM_LINELIST ? [0,1,1,2] : points.map((_,i) => i);
+        const segments = prim === C.PRIM_POINTLIST ? [] : order.slice(1).flatMap((b,i) =>
+          prim === C.PRIM_LINELIST && i % 2 ? [] : [[order[i],b]]);
+        const onSegment = (x, y, [ia,ib]) => {
+          const a = points[ia], b = points[ib], dx = b[0] - a[0], dy = b[1] - a[1];
+          const t = ((x - a[0]) * dx + (y - a[1]) * dy) / (dx * dx + dy * dy);
+          return t > 0 && t < 1 && Math.abs((x - a[0]) * dy - (y - a[1]) * dx) < 0.5 * Math.hypot(dx,dy);
+        };
+        const inClip = (x,y) => !clipped || (x >= 6 && x < 10 && y >= 4 && y < 12);
+        const covered = (x,y) => prim === C.PRIM_POINTLIST ? points.some(a => x === a[0] && y === a[1])
+          : segments.some(s => onSegment(x,y,s));
+        const hit = (x,y) => covered(x,y) && inClip(x,y);
+        const samples = prim === C.PRIM_POINTLIST ? [...points,[0,0],[5,6]]
+          : [[6,6],[8,6],[10,6],[12,8],[12,10],
+            ...(prim === C.PRIM_LINESTRIP ? [[6,12],[8,12],[10,12]] : []),[0,0],[7,7]];
+        const state = { linear, ...(clipped ? { scissor_left: 6, scissor_top: 4, scissor_right: 10, scissor_bottom: 12 } : {}) };
+        const name = 'line-point-' + prim + '-' + indexed + '-' + linear + '-' + clipped;
+        emit('VIEWPORT', { x: clipped ? 4 : 0, y: clipped ? 4 : 0, w: clipped ? 8 : size,
+          h: clipped ? 8 : size, zmin: 0, zmax: 1 });
+        const send = (z, gradient = false) => {
+          const vertices = points.map(([x,y],i) => [x,y,z,i % 2 ? 2 : 0.5,
+            ...(gradient ? [i % 2,0,0,1] : [1,0,0,1])]);
+          // Lists share vertex 1; strips share every interior vertex. The
+          // repeated point checks indexed reuse without ambiguous junctions.
+          if (indexed) draw(prim, vertices, prim === C.PRIM_POINTLIST ? [...order,0] : order);
+          else draw(prim, order.map(i => vertices[i]));
+        };
+        for (const path of ['pass','zfail','fail','mask']) {
+          clear();
+          const ref = path === 'zfail' ? 9 : path === 'fail' ? 11 : 7;
+          raster({ ...state, ...stencil, stencil_func: path === 'fail' ? 1 : 8,
+            stencil_ref: ref, colormask: path === 'mask' ? 0 : 15 });
+          send(path === 'zfail' ? 0.75 : 0.25);
+          yield* read(name + '-' + path + '-color', (x,y) => hit(x,y) && path === 'pass'
+            ? [255,0,0,255] : [0,0,0,255], samples);
+          // A quad at .375 passes clear depth .5 but fails stored depth .25.
+          raster({ ...state, zwrite: 0 }); quad([0,0,1,1]);
+          yield* read(name + '-' + path + '-depth', (x,y) => {
+            if (hit(x,y) && (path === 'pass' || path === 'mask')) return path === 'pass' ? [255,0,0,255] : [0,0,0,255];
+            return inClip(x,y) ? [0,0,255,255] : [0,0,0,255];
+          }, samples);
+          emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff000000, right: size, bottom: size });
+          raster({ ...state, ...stencil, depth_mode: 0, zwrite: 0, stencil_func: 3,
+            stencil_ref: ref, stencil_fail: 1, stencil_zfail: 1, stencil_pass: 1, two_sided: 0 });
+          quad([0,1,0,1]);
+          yield* read(name + '-' + path + '-stencil', (x,y) => hit(x,y) ? [0,255,0,255] : [0,0,0,255], samples);
+        }
+        if (prim !== C.PRIM_POINTLIST) {
+          clear(); raster(state); send(0.25,true);
+          const gradientSamples = samples.filter(([x,y]) => covered(x,y));
+          yield* read(name + '-gradient-color', (x,y) => {
+            if (!hit(x,y)) return [0,0,0,255];
+            const [ia,ib] = segments.find(s => onSegment(x,y,s)), a = points[ia], b = points[ib];
+            const dx = b[0] - a[0], dy = b[1] - a[1];
+            const t = ((x - a[0]) * dx + (y - a[1]) * dy) / (dx * dx + dy * dy);
+            const ca = ia % 2, cb = ib % 2, qa = ca ? 2 : 0.5, qb = cb ? 2 : 0.5;
+            const value = linear ? (1 - t) * ca + t * cb
+              : ((1 - t) * qa * ca + t * qb * cb) / ((1 - t) * qa + t * qb);
+            return [Math.round(255 * value),0,0,255];
+          }, gradientSamples);
+        }
+      }
+    }
+    for (const id of [rt,ds,layout,ps]) emit('RELEASE', { id });
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, perspectiveMipCases, cubeMipCases, visibilityCases, blendCases, fogCases, viewportCases, linePointCases, W, H, irShader, TEX_IR };
 });
