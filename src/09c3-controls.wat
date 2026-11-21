@@ -112,7 +112,7 @@
     (field image_ord     i32)      ;; +12  RT_ICON/RT_BITMAP resource ordinal, or 0
     (field font          i32))     ;; +16  HFONT from WM_SETFONT; ends at +20
 
-  ;; Progress bar (ctrl_class 17). 16 bytes — $progress_wndproc heap_alloc 16,
+  ;; Progress bar (ctrl_class 17). 24 bytes — $progress_wndproc heap_alloc 24,
   ;; twice (WM_CREATE and the lazy path for a template control that gets PBM_*
   ;; first). $prog_state_init writes 0/100/0/10, the comctl32 defaults.
   ;; NOTE the trap this layout exists to close: min/max/pos land on the SAME
@@ -123,7 +123,9 @@
     (field min   i32)              ;; +0
     (field max   i32)              ;; +4
     (field pos   i32)              ;; +8   clamped into [min,max] by $prog_clamp
-    (field step  i32))             ;; +12  PBM_STEPIT increment; ends at +16
+    (field step  i32)              ;; +12  PBM_STEPIT increment
+    (field bar_color i32)          ;; +16  COLORREF or CLR_DEFAULT (0xFF000000)
+    (field bk_color  i32))         ;; +20  COLORREF or CLR_DEFAULT; ends at +24
 
   ;; TrackBar (ctrl_class 19). 24 bytes — $trackbar_wndproc heap_alloc 24.
   (layout TrackBarState
@@ -418,12 +420,24 @@
     (load.field.memarg ProgressState step (local.get $sw)))
   (func $prog_set_step (param $sw ptr<ProgressState>) (param $v i32)
     (store.field.memarg ProgressState step (local.get $sw) (local.get $v)))
+  (func $prog_bar_color (param $sw ptr<ProgressState>) (result i32)
+    (load.field.memarg ProgressState bar_color (local.get $sw)))
+  (func $prog_set_bar_color (param $sw ptr<ProgressState>) (param $v i32)
+    (store.field.memarg ProgressState bar_color (local.get $sw) (local.get $v)))
+  (func $prog_bk_color (param $sw ptr<ProgressState>) (result i32)
+    (load.field.memarg ProgressState bk_color (local.get $sw)))
+  (func $prog_set_bk_color (param $sw ptr<ProgressState>) (param $v i32)
+    (store.field.memarg ProgressState bk_color (local.get $sw) (local.get $v)))
   ;; Fresh bar: 0..100, pos 0, step 10 — the comctl32 defaults.
   (func $prog_state_init (param $sw i32)
     (call $prog_set_min (local.get $sw) (i32.const 0))
     (call $prog_set_max (local.get $sw) (i32.const 100))
     (call $prog_set_pos (local.get $sw) (i32.const 0))
-    (call $prog_set_step (local.get $sw) (i32.const 10)))
+    (call $prog_set_step (local.get $sw) (i32.const 10))
+    ;; Retain the sentinel, not an inferred Windows default RGB value: setters
+    ;; return CLR_DEFAULT until explicitly customized (Microsoft CommCtrl.h).
+    (call $prog_set_bar_color (local.get $sw) (i32.const 0xFF000000))
+    (call $prog_set_bk_color (local.get $sw) (i32.const 0xFF000000)))
   ;; Clamp a candidate position into the bar's range.
   (func $prog_clamp (param $sw i32) (param $pos i32) (result i32)
     (if (i32.lt_s (local.get $pos) (call $prog_min (local.get $sw)))

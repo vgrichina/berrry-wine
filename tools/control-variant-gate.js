@@ -123,6 +123,7 @@ add('StaticState', [
 add('ProgressState', [
   '$prog_min', '$prog_set_min', '$prog_max', '$prog_set_max',
   '$prog_pos', '$prog_set_pos', '$prog_step', '$prog_set_step',
+  '$prog_bar_color', '$prog_set_bar_color', '$prog_bk_color', '$prog_set_bk_color',
 ], 'accessor layer; $prog_state_init writes the comctl32 defaults 0/100/0/10 through these');
 
 add('TrackBarState', [

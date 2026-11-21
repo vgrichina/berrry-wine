@@ -3347,7 +3347,7 @@
       "file": "src/09c3-controls.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 16,
+      "size": 24,
       "fields": [
         {
           "name": "min",
@@ -3377,6 +3377,22 @@
           "name": "step",
           "type": "i32",
           "offset": 12,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "bar_color",
+          "type": "i32",
+          "offset": 16,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "bk_color",
+          "type": "i32",
+          "offset": 20,
           "size": 4,
           "count": 1,
           "stride": 4

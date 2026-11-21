@@ -2619,6 +2619,7 @@
   ;; sunken progress well, and invalidates on state changes.
 
   (func $progress_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
+    (local $brush i32)
     (local $sum i64)
     (local $range64 i64) (local $inner_h i32) (local $fill_h i32)
     (local $hdc i32) (local $sz i32) (local $w i32) (local $h i32)
@@ -2628,7 +2629,7 @@
     ;; WM_CREATE
     (if (i32.eq (local.get $msg) (i32.const 0x0001))
       (then
-        (local.set $state (call $heap_alloc (i32.const 16)))
+        (local.set $state (call $heap_alloc (i32.const 24)))
         (local.set $sw (call $g2w (local.get $state)))
         (call $prog_state_init (local.get $sw))
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))
@@ -2646,7 +2647,7 @@
     ;; update.
     (if (i32.eqz (local.get $state))
       (then
-        (local.set $state (call $heap_alloc (i32.const 16)))
+        (local.set $state (call $heap_alloc (i32.const 24)))
         (local.set $sw (call $g2w (local.get $state)))
         (call $prog_state_init (local.get $sw))
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))))
@@ -2747,6 +2748,25 @@
     ;; Query only: preserve all 32 bits without changing state or repainting.
     (if (i32.eq (local.get $msg) (i32.const 0x040D))
       (then (return (call $prog_step (local.get $sw)))))
+    ;; Classic PBM_SETBARCOLOR (WM_USER+9), PBM_SETBKCOLOR = CCM_SETBKCOLOR.
+    ;; Microsoft documents wParam=0, lParam=COLORREF, previous color returned,
+    ;; and CLR_DEFAULT (0xFF000000) restoring the default. Keep that sentinel
+    ;; distinct from RGB black/white and CLR_NONE. This native painter has no
+    ;; visual styles; its existing default RGBs/geometry are emulator policy.
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/pbm-setbarcolor
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/pbm-setbkcolor
+    (if (i32.eq (local.get $msg) (i32.const 0x0409))
+      (then
+        (local.set $old (call $prog_bar_color (local.get $sw)))
+        (call $prog_set_bar_color (local.get $sw) (local.get $lParam))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (local.get $old))))
+    (if (i32.eq (local.get $msg) (i32.const 0x2001))
+      (then
+        (local.set $old (call $prog_bk_color (local.get $sw)))
+        (call $prog_set_bk_color (local.get $sw) (local.get $lParam))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (local.get $old))))
     ;; WM_PAINT
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
@@ -2757,10 +2777,20 @@
         (if (i32.and (i32.gt_s (local.get $w) (i32.const 0))
                      (i32.gt_s (local.get $h) (i32.const 0)))
           (then
+            (local.set $brush (i32.const 0x30010)) ;; existing WHITE_BRUSH
+            (if (i32.ne (call $prog_bk_color (local.get $sw)) (i32.const 0xFF000000))
+              (then (local.set $brush (call $gdi_native_create_solid_brush
+                (call $prog_bk_color (local.get $sw))))))
             (drop (call $gdi_native_fill_rect (local.get $hdc)
                     (i32.const 0) (i32.const 0)
                     (local.get $w) (local.get $h)
-                    (i32.const 0x30010))) ;; WHITE_BRUSH
+                    (local.get $brush)))
+            (if (i32.ne (call $prog_bk_color (local.get $sw)) (i32.const 0xFF000000))
+              (then (drop (call $gdi_native_delete_object (local.get $brush)))))
+            (local.set $brush (i32.const 14)) ;; existing COLOR_HIGHLIGHT brush
+            (if (i32.ne (call $prog_bar_color (local.get $sw)) (i32.const 0xFF000000))
+              (then (local.set $brush (call $gdi_native_create_solid_brush
+                (call $prog_bar_color (local.get $sw))))))
             (local.set $min (call $prog_min (local.get $sw)))
             (local.set $max (call $prog_max (local.get $sw)))
             (local.set $pos (call $prog_clamp (local.get $sw) (call $prog_pos (local.get $sw))))
@@ -2791,7 +2821,7 @@
                           (i32.sub (i32.sub (local.get $h) (i32.const 2)) (local.get $fill_h))
                           (i32.sub (local.get $w) (i32.const 2))
                           (i32.sub (local.get $h) (i32.const 2))
-                          (i32.const 14))))))))
+                          (local.get $brush))))))))
               (else
             ;; Signed32 limits span up to 2^32-1. Widen each operand before
             ;; subtraction and multiplication; packed widths keep the product in i64.
@@ -2815,8 +2845,10 @@
                       (i32.const 2) (i32.const 2)
                       (i32.add (i32.const 2) (local.get $fill_w))
                       (i32.sub (local.get $h) (i32.const 2))
-                      (i32.const 14))))))) ;; COLOR_HIGHLIGHT
+                      (local.get $brush)))))))
               ))
+            (if (i32.ne (call $prog_bar_color (local.get $sw)) (i32.const 0xFF000000))
+              (then (drop (call $gdi_native_delete_object (local.get $brush)))))
             (drop (call $gdi_native_draw_edge (local.get $hdc)
                     (i32.const 0) (i32.const 0)
                     (local.get $w) (local.get $h)
