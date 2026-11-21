@@ -8,8 +8,6 @@ const { bootRenderHarness } = require('./render-helper');
   const { exports: e } = await bootRenderHarness({ extraWat: `
     (func (export "test_set_last_error") (param $value i32)
       (global.set $last_error (local.get $value)))
-    (func (export "test_get_last_error") (result i32)
-      (global.get $last_error))
     (func (export "test_imagelist_create") (result i32)
       (call $handle_ImageList_Create
         (i32.const 16) (i32.const 16) (i32.const 0x21)

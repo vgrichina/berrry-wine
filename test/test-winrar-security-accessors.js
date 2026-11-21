@@ -15,8 +15,6 @@ const extraWat = String.raw`
     (global.get $security_test_esp_after))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 
   (func (export "test_IsValidSid") (param $sid i32) (result i32)
     (call $security_test_begin)

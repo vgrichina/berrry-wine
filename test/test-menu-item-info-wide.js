@@ -14,8 +14,6 @@ const MFS_CHECKED = 0x08;
   const { exports: e } = await bootRenderHarness({ extraWat: `
     (func (export "test_set_last_error") (param $value i32)
       (global.set $last_error (local.get $value)))
-    (func (export "test_get_last_error") (result i32)
-      (global.get $last_error))
     (func (export "test_menu_create") (result i32)
       (call $handle_CreatePopupMenu
         (i32.const 0) (i32.const 0) (i32.const 0)

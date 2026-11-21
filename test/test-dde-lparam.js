@@ -43,8 +43,6 @@ const extraWat = String.raw`
     (call $dde_lparam_object_valid (local.get $lparam) (local.get $msg)))
   (func (export "test_set_last_error") (param $value i32)
     (global.set $last_error (local.get $value)))
-  (func (export "test_get_last_error") (result i32)
-    (global.get $last_error))
 `;
 
 function low32(value) {

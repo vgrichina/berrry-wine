@@ -16,8 +16,6 @@ const WS_EX_TRANSPARENT = 0x20;
   const { exports: e } = await bootRenderHarness({ extraWat: `
     (func (export "test_set_last_error") (param $value i32)
       (global.set $last_error (local.get $value)))
-    (func (export "test_get_last_error") (result i32)
-      (global.get $last_error))
     (func (export "test_make_window")
         (param $hwnd i32) (param $parent i32) (param $style i32)
         (param $x i32) (param $y i32) (param $w i32) (param $h i32)
