@@ -2287,6 +2287,11 @@
       (then (return (call $d3d_shader_vm_status (local.get $ctx) (i32.const 1)))))
     (local.set $nextpc (i32.add (local.get $pc) (local.get $step)))
     (block $execute
+    (block $special
+    ;; Plain ALU packets need no flow, phase, kill or sampler prologue. Keep
+    ;; common source snapshots, coissue and retirement on the existing path.
+    (br_if $special (i32.or (i32.le_u (local.get $op) (i32.const 4))
+      (i32.and (i32.ge_u (local.get $op) (i32.const 7)) (i32.le_u (local.get $op) (i32.const 8)))))
     (if (i32.and (i32.ge_u (local.get $op) (i32.const 69)) (i32.le_u (local.get $op) (i32.const 72))) (then
       (if (local.get $partner) (then (return (call $d3d_shader_vm_status (local.get $ctx) (i32.const -1)))))
       (if (i32.le_u (local.get $op) (i32.const 70))
@@ -2456,6 +2461,7 @@
           (f32x4.lt (v128.load offset=32 (local.get $dst)) (f32x4.splat (f32.const 0))))))
       (i32.store offset=57568 (local.get $ctx) (i32.or (i32.load offset=57568 (local.get $ctx))
         (i32.and (local.get $bits) (i32x4.bitmask (local.get $x)))))))
+    ) ;; $special
     ;; Snapshot every source-dependent component this packet can consume, before
     ;; any destination store. x is consumed by the four ops that publish it
     ;; outside the commit (36, 38, 47, 54) whatever the mask says, and otherwise
