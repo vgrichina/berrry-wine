@@ -75,7 +75,36 @@ async function main(){
  assert.equal(await checked(rt,12,[0xffffffff,p+112,p+116,p+120,p+124]),HR.INVALID);
  for(const off of [112,116,120,124])assert.equal(read(p+off),0xdeadbeef);
  a.exchange=exchange;
- const unsupportedBefore=authority.requests.size;assert.equal(await checked(rt,10,[0,0,0]),HR.NOTIMPL);assert.equal(authority.requests.size,unsupportedBefore,'local-only not sent');
+ const unsupportedBefore=authority.requests.size;assert.equal(await checked(rt,15,[0,0,0]),HR.NOTIMPL);assert.equal(authority.requests.size,unsupportedBefore,'local-only not sent');
+ // ITypeInfo names are a counted array of terminated UTF-16 strings. Its
+ // output is one DISPID per name, including native failure sentinels.
+ for(const spelling of ['File','fIlE','NoSuchMember']){
+  const q=a.string(spelling,true);put(p+64,q);put(p+100,0xdeadbeef);put(p+104,0xdeadbeef);
+  try{
+   const hr=await checked(ti,10,[p+64,1,p+104]);
+   assert.equal(await checked(rt,10,[p+64,1,p+100]),hr,'native name lookup HRESULT');
+   assert.equal(read(p+100),read(p+104),'native name lookup DISPID');
+   if(spelling==='File')assert.equal(read(p+100),7);
+  }finally{m.free(q);}
+ }
+ assert.equal(await checked(rt,7,[7,p+64,4,p+96]),0);assert.equal(read(p+96),2);
+ assert.equal(await checked(rt,10,[p+64,2,p+100]),0);
+ assert.equal(read(p+100),7);assert.equal(read(p+104),0,'native parameter ordinal');
+ for(let i=0;i<2;i++)await v.freeBstr(read(p+64+i*4));
+ // Validate every ID before publication, even after a valid first result.
+ const namesBefore=allocations.size,namesExchange=a.exchange.bind(a),namePair=[a.string('File',true),a.string('File',true)];
+ put(p+64,namePair[0]);put(p+68,namePair[1]);put(p+100,0xdeadbeef);put(p+104,0xdeadbeef);
+ a.exchange=async(...args)=>{const reply=await namesExchange(...args);if(args[1]===10)reply[4][2]=[7,-1];return reply;};
+ assert.equal(await checked(rt,10,[p+64,2,p+100]),HR.INVALID);
+ assert.equal(read(p+100),0xdeadbeef);assert.equal(read(p+104),0xdeadbeef);a.exchange=namesExchange;
+ for(const q of namePair)m.free(q);assert.equal(allocations.size,namesBefore);
+ assert.equal(await checked(rt,10,[0,1,p+100]),HR.POINTER);
+ assert.equal(await checked(rt,10,[p+64,16385,p+100]),HR.INVALID);
+ // Malformed wire names cannot be interpreted as shorter native names.
+ for(const value of [null,'410','410000004200',42]){
+  const scope=v.scope();try{await assert.rejects(a.contracts.decodeInput({k:'names',n:1},[value],[0,1],scope),e=>e instanceof HResult&&e.value===HR.INVALID);}
+  finally{await scope.close();}
+ }
  // Malformed graphs cannot create a lease or survive failed reconstruction.
  for(const bad of [{vt:26,value:null},{vt:28,value:{bounds:'00000000',element:{vt:3,value:null}}},{vt:29,value:-1}]){
   const scope=v.scope();await assert.rejects(v.readDescriptor('typedesc',bad,scope));await scope.close();
@@ -199,7 +228,10 @@ async function main(){
   vfs.setProviderFile(file,{attrs:32,provider:{size:4,readRange:async()=>{
    fills++;assert.equal(e.get_yield_reason(),12);
    if(mode==='cancel'){const request=[...authority.requests.values()].find(r=>r.state==='executing'&&r.method===4);assert(request);transport.cancelCall(request.ticket);assert.equal(request.entry.calls,1);}
-   if(mode==='nested')assert.equal(await c.call(ti,1,[]),await c.call(ti,2,[])+1);
+   if(mode==='nested'){
+    assert.equal(await c.call(ti,1,[]),await c.call(ti,2,[])+1);
+    put(p+64,name);assert.equal(await c.call(rt,10,[p+64,1,p+100]),0);assert.equal(read(p+100),7);
+   }
    if(mode==='retire')retired=true;
    if(mode==='disconnect'){const row=a.objects.get(derived).proxy;savedChannel=row.channel;await c.call(savedChannel,1);assert.equal(await c.call(row.address,4,[]),0);}
    return Uint8Array.of(1,2,3,4);
@@ -217,6 +249,12 @@ async function main(){
  // A completed reply cancelled before poll must retire its transferred
  // interface lease. A forged reference cannot consume an unrelated packet.
  const complete=transport.complete.bind(transport);let cancelledReplies=0;
+ // A real native lookup completed on its owner still cannot publish after
+ // cancellation. It carries no interface attachments to mask request cleanup.
+ transport.complete=(ticket,response)=>{const result=complete(ticket,response);transport.cancelCall(ticket);return result;};
+ put(p+64,name);put(p+100,0xdeadbeef);
+ assert.equal(await checked(rt,10,[p+64,1,p+100]),HR.DISCONNECTED);assert.equal(read(p+100),0xdeadbeef);
+ transport.complete=complete;await m.drain();
  transport.complete=(ticket,response)=>{const result=complete(ticket,response);if(response?.attachments?.length){cancelledReplies++;transport.cancelCall(ticket);}return result;};
  put(p+48,0xdeadbeef);assert.equal(await checked(derived,4,[0,1033,p+48]),HR.DISCONNECTED);assert.equal(read(p+48),0xdeadbeef);assert.equal(cancelledReplies,1);
  transport.complete=complete;await m.drain();
@@ -238,6 +276,8 @@ async function main(){
  async function remote2(object,iid){pin(iid);const packet=await m.marshalReference(p,object);assert.equal(packet.hresult,0);
   m2.write(scratch2,Buffer.from(iid,'hex'));assert.equal(await proxy2.unmarshalReference(packet.reference,scratch2,scratch2+16),0);return c2.word(scratch2+16);}
  const ti2=await remote2(ti,IID_INFO);assert.notEqual(ti2,ti);
+ const name2=a2.string('fIlE',true);c2.putWord(scratch2+64,name2);
+ assert.equal(await c2.call(ti2,10,[scratch2+64,1,scratch2+72]),0);assert.equal(c2.word(scratch2+72),7);m2.free(name2);
  assert.equal(await c2.call(ti2,3,[scratch2+24]),0);const graph2=c2.word(scratch2+24);assert.equal(m2.guid(graph2),derivedIID);assert.notEqual(graph2,ti);
  assert.equal(await c2.call(ti2,19,[graph2]),0);
  assert.equal(await c2.call(ti2,18,[scratch2+24,scratch2+28]),0);const lib2=c2.word(scratch2+24);assert.equal(await c2.call(lib2,3,[]),await checked(lib,3,[]));await m2.release(lib2);
@@ -256,7 +296,7 @@ async function main(){
  assert.equal(read(item+4),1);assert.equal(read(collection+4),1);
  await m.release(ti);await m.release(lib);for(const q of codes)m.free(q);for(const q of [p,original,table,server,text,name,dp,result,media,mediaTable,collection,collectionTable,item,itemTable])m.free(q);
  assert.equal(allocations.size,0,'all owned codec/factory/proxy/graph storage retired');
- console.log(JSON.stringify({status:'PASS',independentNativeOwners:true,nativeByValueVariant:true,nestedCollectionItem:true,cancelExecuting:true,cancelUnpolledReply:true,malformedReference:true,retirement:true,nestedNativeIO:true,finalOwnedAllocations:allocations.size,nativeFactories:true,nativeTypeInfoAndLibRoundtrip:true,ownedDescriptorGraphs:true,inheritedDispatch:true,nativeInvoke:true,customBstrMethod:true,frameRestore:true,resource:resource.metadata,moduleSHA256:sha(wasm),sourcePin:comRuntimeSourcePin()}));
+ console.log(JSON.stringify({status:'PASS',nativeTypeInfoNames:true,memberAndParameterIDs:true,malformedNameAndLateID:true,nestedNames:true,cancelledNamesReply:true,independentNativeOwners:true,nativeByValueVariant:true,nestedCollectionItem:true,cancelExecuting:true,cancelUnpolledReply:true,malformedReference:true,retirement:true,nestedNativeIO:true,finalOwnedAllocations:allocations.size,nativeFactories:true,nativeTypeInfoAndLibRoundtrip:true,ownedDescriptorGraphs:true,inheritedDispatch:true,nativeInvoke:true,customBstrMethod:true,frameRestore:true,resource:resource.metadata,moduleSHA256:sha(wasm),sourcePin:comRuntimeSourcePin()}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};
