@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-thread-host.js",
+      "name": "host-file",
+      "baseSHA256": "da9781ec6d25a770023b3ab5ddcb43121954c6c2118d2c0aa3d885bf8ea80e72",
+      "sha256": "95e2d0d0d0af71d809b01940b9e7859db727e87570ae90549a49a2bdb804c343",
+      "reason": "Modal invocation transport prerequisite: forward data-only inputWitness attachment from the same blocking Worker RPC alongside existing waitEntry. No callback entry, guest execution, asynchronous completion, scheduler or lifetime change. guest-rpc samples the existing native 32xi64 witness on the actual CPU import stack, validates request tuple/stage/monotonic sequence, and supplies an immutable trailing attachment. Missing or malformed negotiated modal proofs refuse without consumer invocation. Browser kinds6/7 acceptance remains closed; no gameplay or modal ACK claim. Real native CPUWorker DialogBox entry/return and invalid attachment controls in run20261121-modal-invocation-transport. Broader invocation ownership remains pending. WorkerLink supplies its own endpoint identity separately from the attachment; broker requires exact endpoint and native process/thread agreement and sequences per endpoint to prevent slot reuse inheritance."
+    }
+  ]
+}
