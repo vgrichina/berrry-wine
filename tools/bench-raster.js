@@ -179,6 +179,12 @@ const ARMS = {
   trilinear: () => ({ pixelShader: PS_TEX, textures: [texture(9, 2)] }),
   varying: () => ({ pixelShader: PS_FLAT, textures: [], varying: true }),
   varyingLinear: () => ({ pixelShader: PS_TEX, textures: [texture(1, 2)], varying: true }),
+  outputBlend: () => ({ pixelShader: PS_FLAT, textures: [], varying: true,
+    state: { blend: true, srcblend: 5, dstblend: 6 } }),
+  outputMasked: () => ({ pixelShader: PS_FLAT, textures: [], varying: true,
+    state: { colorWriteMask: 5 } }),
+  outputFog: () => ({ pixelShader: PS_FLAT, textures: [], varying: true,
+    fogState: { enabled: true, color: 0xff123456, tableMode: 3, start: 0, end: 1, density: 1 } }),
 };
 
 const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xffffffff,
@@ -209,10 +215,10 @@ const FIXED = { lighting: false, specular: false, fog: false, textureFactor: 0xf
     { register: 2, usage: 5, usageIndex: 0, type: 1, offset: 20 }];
 
   const draw = name => {
-    const { sliver, varying, ...arm } = ARMS[name]();
+    const { sliver, varying, state, ...arm } = ARMS[name]();
     return { primitive: 4, primitiveCount: 2, stride, attributes,
       vertices: (sliver ? slivered : varying ? varied : covered).vertices,
-      vertexShader: null, fixedFunction: FIXED, state: { cull: 1, zenable: false }, ...arm };
+      vertexShader: null, fixedFunction: FIXED, state: { cull: 1, zenable: false, ...state }, ...arm };
   };
 
   // Repeated untimed passes warm shader compilation, allocation and tiering

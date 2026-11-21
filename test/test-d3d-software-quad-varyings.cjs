@@ -4,6 +4,12 @@ const { bootRenderHarness } = require('./render-helper');
 
 (async () => {
   const { exports: e, memory } = await bootRenderHarness({ fonts: 'none', extraWat: `
+    (export "fragment_output" (func $d3d_software_output))
+    (func (export "scalar_output") (param $src i32) (result i32)
+      (i32.or (i32.shl (call $d3d_software_channel (f32.load (local.get $src))) (i32.const 16))
+        (i32.or (i32.shl (call $d3d_software_channel (f32.load offset=16 (local.get $src))) (i32.const 8))
+          (i32.or (call $d3d_software_channel (f32.load offset=32 (local.get $src)))
+            (i32.shl (call $d3d_software_channel (f32.load offset=48 (local.get $src))) (i32.const 24))))))
     (func (export "quad_varyings") (param $vm i32) (param $vertices i32) (param $weights i32) (param $mask i32)
       (call $d3d_software_quad_varyings (local.get $vm) (local.get $vertices)
         (i32.add (local.get $vertices) (i32.const 160)) (i32.add (local.get $vertices) (i32.const 320))
@@ -21,6 +27,26 @@ const { bootRenderHarness } = require('./render-helper');
   const alloc = n => e.guest_to_wasm(e.guest_alloc(n)) >>> 0;
   const vm = alloc(25000), vertices = alloc(480), weights = alloc(80);
   const u32 = new Uint32Array(memory.buffer), f32 = new Float32Array(memory.buffer);
+  // Compare production packing with the original scalar expression. Exercise
+  // both sides of every UNORM8 rounding boundary and arbitrary raw f32 words,
+  // including signed zero, infinities, subnormals and signed/payload NaNs.
+  const outputCtx = alloc(288), outputSrc = alloc(64);
+  const words = [0, 0x80000000, 1, 0x80000001, 0x7f7fffff, 0xff7fffff,
+    0x7f800000, 0xff800000, 0x7fc12345, 0xffc12345, 0x7f800001, 0xff800001];
+  const cast = new Float32Array(1), raw = new Uint32Array(cast.buffer);
+  for (let n=0;n<255;n++) {
+    cast[0]=(n+0.5)/255;
+    words.push(raw[0]-1,raw[0],raw[0]+1);
+  }
+  let seed=0x18273645;
+  for(let i=0;i<20000;i++) { seed=(Math.imul(seed,1664525)+1013904223)>>>0;words.push(seed); }
+  for(let i=0;i<words.length;i++) {
+    for(let j=0;j<4;j++) u32[outputSrc/4+j*4]=words[(i+j*517)%words.length];
+    assert.equal(e.fragment_output(outputCtx,outputSrc,0x12345678)>>>0,e.scalar_output(outputSrc)>>>0,
+      `scalar channel parity at raw input ${i}`);
+  }
+  e.d3d_shader_vm_free(outputCtx);e.d3d_shader_vm_free(outputSrc);
+  console.log('PASS output packing scalar parity at all UNORM8 boundaries and 20k raw f32 inputs');
   const bits = new Uint32Array(1);
   const values = [0, -0, 1, -1, 0.3, 1e-40, -1e-40, 3.4028234663852886e38, Infinity, -Infinity, NaN];
   let checks = 0;

@@ -1772,10 +1772,17 @@
     (if (i32.and (i32.load offset=224 (local.get $ctx)) (i32.const 2)) (then
       (local.set $v (f32x4.replace_lane 3 (local.get $v) (f32x4.extract_lane 3
         (call $d3d_software_blend_eval (i32.load offset=232 (local.get $ctx)) (local.get $s) (local.get $d) (local.get $k)))))))))
-  (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 0 (local.get $v))) (i32.const 16))))
-  (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 1 (local.get $v))) (i32.const 8))))
-  (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 2 (local.get $v))) (i32.const 0))))
-  (local.set $packed (i32.or (local.get $packed) (i32.shl (call $d3d_software_channel (f32x4.extract_lane 3 (local.get $v))) (i32.const 24))))
+  ;; Same per-channel f32 clamp, multiply, add and truncation as channel().
+  ;; Strict SIMD min/max propagate NaNs; saturating conversion maps them to
+  ;; zero, matching channel's early return. Finite results are in [0,255.5],
+  ;; so signed saturation changes neither rounding nor the packed integer.
+  (local.set $v (i32x4.trunc_sat_f32x4_s (f32x4.add
+    (f32x4.mul (f32x4.min (f32x4.max (local.get $v) (v128.const f32x4 0 0 0 0))
+      (v128.const f32x4 1 1 1 1)) (v128.const f32x4 255 255 255 255))
+    (v128.const f32x4 0.5 0.5 0.5 0.5))))
+  (local.set $packed (i32.or (i32.shl (i32x4.extract_lane 0 (local.get $v)) (i32.const 16))
+    (i32.or (i32.shl (i32x4.extract_lane 1 (local.get $v)) (i32.const 8))
+      (i32.or (i32x4.extract_lane 2 (local.get $v)) (i32.shl (i32x4.extract_lane 3 (local.get $v)) (i32.const 24))))))
   ;; Expand the packed precision immediately, so the next blend reads the
   ;; quantized destination. Channel masks are applied by the caller afterward.
   (if (i32.and (i32.load offset=224 (local.get $ctx)) (i32.const 0x80000000)) (then
