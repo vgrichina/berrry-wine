@@ -1910,3 +1910,48 @@ exited. Cleanup and publication records accompany the final run result.
 Local native box ID/state/expiry are **N/A**; explicitly delegated local
 shutdown is complete and ownership is handed back. The task stops with the
 new checkpoint preserved; further objective progress is untested.
+
+## 2026-11-21: sky is not a fallback, and not a slow path
+
+Report: "fps lags when rendering sky — software renderer?" Checked on main
+`e84d78dfa` (ref_gl, GPU stream v2). **No.** Run
+`scratch/runs/20261121-q2-sky-fps/`.
+
+**Sky route (headless).** The CLI default clock (200 ms/batch) times the
+loading plaque out ("Loading plaque timed out", stuck at `client_connect`);
+`--tick-ms-per-batch=10` loads `demo1` by batch ~1800. The start position has
+the unit1 sky overhead: hold PGDN (`+lookup` in `default.cfg`) for 60 batches.
+
+```bash
+node test/run.js --app=quake2_demo --headless-gl --args='+set vid_ref gl +map demo1' \
+  --batch-size=100000 --tick-ms-per-batch=10 --max-batches=2000 --stuck-after=1000000 \
+  --cpu-window=1870:1995 --input=1800:keydown:0x22,1860:keyup:0x22,1990:png:sky.png --no-close
+```
+
+(`--headless-gl` matters: without it the CLI's software GPS executor has no
+canvas factory and crashes on the first present with `document is not defined`.)
+`--cpu-window` now also prints the GL GPS deltas for its window:
+
+| window 1870..1995 | presents | draws | tris | tex-uploads | readbacks | sw-frames | declines | user CPU | ms/present |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| looking ahead | 66 | 3293 | 182170 | 116 | 0 | 0 | 0 | 2.321 s | 35.2 |
+| sky ~half the screen | 93 | 1395 | 67427 | 4 | 0 | 0 | 0 | 1.756 s | 18.9 |
+
+**Browser (headful Chrome, real GPU, `?debug&perf`).** Menu → Enter, Enter →
+base1, then PGDN: `PRESENT/s` 47 → 80 (cooperative), 66 → 80 (Threads), GPS
+`declines 0 readbacks 0` throughout, no new long task at the transition, step
+p99 ≤ 3 ms. 80/s is the present cap; the HUD is 96-98% guest.
+
+**What the sky costs.** The sky textures are 24-bit `env/unit1_*.tga`
+(256×256, `GL_RGB`, `it_sky` so no mipmaps, `GL_LINEAR`), uploaded once at map
+load; nothing re-uploads per frame. ref_gl never sets `GL_CLAMP` (its only wrap
+calls, at `0x1000a63b`/`0x1000a650`, pass `GL_REPEAT`), so the border-texel
+shader path (decline 10 / `_filteredTex`) is never taken. The guest's sky code
+(`DrawSkyPolygon`..`R_DrawSkyBox`, ref_gl `0x1000cb00`-`0x1000d390`;
+`ClipSkyPolygon`'s `MAX_CLIP_VERTS` error is at `0x1000cd26`) is ~3% of
+executed blocks in both views (`--handler-hist --hot-block-dump`: 2.79% with
+sky, 3.28% without — sky surfaces in the PVS are clipped whether or not they
+end up on screen). Frame cost follows the world: a sky view culls most of it.
+Open courtyards are slower because more world is visible, not because of the
+sky. If a device reproduces a sky-specific drop, capture its HUD
+(`?debug&perf&perf-stream`) before suspecting the executor.

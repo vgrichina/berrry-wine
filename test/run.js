@@ -5358,6 +5358,16 @@ async function main() {
   // D3D9/D3D8 presents so far (09akg stat 4), for --cpu-window.
   const d3d9Frames = () => instance.exports.d3d9_gps_stat
     ? instance.exports.d3d9_gps_stat(4) >>> 0 : 0;
+  // GL GPS counters for --cpu-window: [stat index, label] (09a8gt gl_gps_stat).
+  const GL_WINDOW_STATS = [[4, 'presents'], [0, 'draws'], [1, 'tris'], [9, 'tex-uploads'], [5, 'readbacks'],
+    [11, 'sw-frames'], [14, 'declines']];
+  const glWindowSnap = () => GL_WINDOW_STATS.map(([i]) => instance.exports.gl_gps_stat(i) >>> 0);
+  // Printed only once the GL ring has been used (a non-GL app reads all zero).
+  const glWindowDelta = w => {
+    const now = glWindowSnap();
+    if (!w.gl || !now.some(Boolean)) return '';
+    return ' gl ' + now.map((v, k) => `${GL_WINDOW_STATS[k][1]}=${(v - w.gl[k]) >>> 0}`).join(' ');
+  };
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -8367,11 +8377,11 @@ async function main() {
       break;
     }
     for (const w of CPU_WINDOWS) {
-      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); w.d9 = d3d9Frames(); }
+      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); w.d9 = d3d9Frames(); w.gl = glWindowSnap(); }
       else if (w.cpu && !w.done && batch >= w.stop) {
         const d = process.cpuUsage(w.cpu);
         w.done = true;
-        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
+        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}${glWindowDelta(w)}`);
       }
     }
     if (cpuProf) {
@@ -12074,7 +12084,7 @@ if (VERBOSE) {
     if (!w.cpu || w.done) continue;
     const d = process.cpuUsage(w.cpu);
     w.done = true;
-    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
+    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}${glWindowDelta(w)}`);
   }
   // The control server would otherwise hold the process open; unref lets a
   // reply resolved in the final batch still flush while the exit path prints.
