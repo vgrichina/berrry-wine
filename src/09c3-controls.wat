@@ -1198,6 +1198,33 @@
       (then (return (call $tab_native_paint (local.get $hwnd)))))
     (if (i32.eq (local.get $msg) (i32.const 0x0082))
       (then (call $tab_native_state_release (local.get $hwnd)) (return (i32.const 0))))
+    ;; TCM_ADJUSTRECT: FALSE window -> display, nonzero TRUE inverse.
+    ;; Four signed LONGs in tab client space; Microsoft specifies no return.
+    ;; Geometry is deliberately the ordinary horizontal native painter's:
+    ;; 20px row, page frame at y=19, two-pixel raised edges. Its interior is
+    ;; [left+2, top+21, right-2, bottom-2], not guessed Windows metrics.
+    ;; Do not consult sibling page positions: callers use this to place pages.
+    ;; Bottom/vertical/buttons/multiline/fixed-width/owner-draw stay unsupported.
+    (if (i32.eq (local.get $msg) (i32.const 0x1328))
+      (then
+        (if (i32.or (i32.eqz (local.get $lParam))
+                    (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                      (i32.const 0x2782)) (i32.const 0)))
+          (then (return (i32.const 0))))
+        (local.set $i (select (i32.const -1) (i32.const 1) (local.get $wParam)))
+        (call $gs32 (local.get $lParam)
+          (i32.add (call $gl32 (local.get $lParam))
+            (i32.mul (local.get $i) (i32.const 2))))
+        (call $gs32 (i32.add (local.get $lParam) (i32.const 4))
+          (i32.add (call $gl32 (i32.add (local.get $lParam) (i32.const 4)))
+            (i32.mul (local.get $i) (i32.const 21))))
+        (call $gs32 (i32.add (local.get $lParam) (i32.const 8))
+          (i32.sub (call $gl32 (i32.add (local.get $lParam) (i32.const 8)))
+            (i32.mul (local.get $i) (i32.const 2))))
+        (call $gs32 (i32.add (local.get $lParam) (i32.const 12))
+          (i32.sub (call $gl32 (i32.add (local.get $lParam) (i32.const 12)))
+            (i32.mul (local.get $i) (i32.const 2))))
+        (return (i32.const 0))))
     ;; TCM_HITTEST: TCHITTESTINFO has signed LONG client x/y and UINT flags.
     ;; Use the existing mouse cells, including the blank unselected top inset.
     ;; Bound geometry to the ordinary horizontal painter, as GETITEMRECT does.
