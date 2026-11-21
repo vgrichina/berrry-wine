@@ -233,6 +233,79 @@
       expectPx('two slots: green * red', f, 3, 30, [0, 0, 0, 255]);
       expectPx('two slots: slot 1 wraps', f, 9, 30, [0, 255, 0, 255]);
 
+      // One image may be bound to two slots with independent sampling state.
+      // GL1 texture parameters belong to the image, not the texture unit.
+      emit('BIND', { count: 2 }, i32s(0, ID.TEXB, ID.SAMP, 1, ID.TEXB, ID.SAMPWRAP));
+      clear(0xff000000);
+      draw(ID.TWO, quad(0.5, [1, 1, 1, 1], () => [-0.25, 0.5, 1, -0.25, 0.5]));
+      f = present();
+      expectPx('aliased image: clamp cyan * wrap red', f, 20, 20, [0, 0, 0, 255]);
+      emit('BIND', { count: 2 }, i32s(0, ID.TEXB, ID.SAMPWRAP, 1, ID.TEXB, ID.SAMP));
+      clear(0xff000000);
+      draw(ID.TWO, quad(0.5, [1, 1, 1, 1], () => [-0.25, 0.5, 1, -0.25, 0.5]));
+      f = present();
+      expectPx('aliased image: reversed slots still independent', f, 20, 20, [0, 0, 0, 255]);
+      const aliasDraw = (name, a, b, uv, want, tex = ID.TEXB) => {
+        emit('BIND', { count: 2 }, i32s(0, tex, a, 1, tex, b));
+        clear(0xff000000);
+        draw(ID.TWO, quad(0.5, [1, 1, 1, 1], uv));
+        expectPx(name, present(), 20, 20, want);
+      };
+      emit('SAMPLER', { id: 15, address_u: 3, address_v: 3, min: 2, mag: 2 });
+      emit('SAMPLER', { id: 16, address_u: 4, address_v: 3, min: 2, mag: 2, border: 0xff00ffff });
+      emit('SAMPLER', { id: 17, address_u: 2, address_v: 3, min: 1, mag: 1 });
+      aliasDraw('aliased image: identical samplers', ID.SAMPWRAP, ID.SAMPWRAP,
+        () => [-0.25, 0.5, 1, -0.25, 0.5], [255, 0, 0, 255]);
+      aliasDraw('aliased image: point * linear', ID.SAMP, 15,
+        () => [0.5, 0.5, 1, 0.5, 0.5], [128, 0, 0, 255]);
+      aliasDraw('aliased image: linear * point', 15, ID.SAMP,
+        () => [0.5, 0.5, 1, 0.5, 0.5], [128, 0, 0, 255]);
+      aliasDraw('aliased image: border taps * clamp', 16, ID.SAMP,
+        () => [0, 0.5, 1, 0, 0.5], [0, 255, 128, 255]);
+      aliasDraw('aliased image: mirror * wrap', 17, ID.SAMPWRAP,
+        () => [1.25, 0.5, 1, 1.25, 0.5], [0, 0, 0, 255]);
+      aliasDraw('aliased image: one real level excludes zero mip tail', ID.SAMPWRAP, ID.SAMPMIP,
+        (x, y) => [x * 4, 0.5, 1, x * 4, 0.5], [0, 255, 255, 255]);
+      const redMip = new Uint8Array(8 * 8 * 4);
+      for (let i = 0; i < redMip.length; i += 4) redMip.set([255, 0, 0, 255], i);
+      emit('UPLOAD', { id: ID.MIP, level: 0, w: 8, h: 8, pitch: 32, src: arenaPut(redMip), bytes: redMip.length });
+      aliasDraw('aliased image: no mip * level 1', ID.SAMPWRAP, ID.SAMPMIP,
+        (x, y) => [x / 4, y / 4, 1, x / 4, y / 4], [255, 0, 0, 255], ID.MIP);
+      aliasDraw('aliased image: level 1 * no mip', ID.SAMPMIP, ID.SAMPWRAP,
+        (x, y) => [x / 4, y / 4, 1, x / 4, y / 4], [255, 0, 0, 255], ID.MIP);
+      // A later draw's depth rejection still observes the aliased draw's write.
+      raster({ depth_mode: 1, zfunc: 2, zwrite: 1 });
+      aliasDraw('aliased image: depth write', ID.SAMPWRAP, ID.SAMPWRAP,
+        () => [-0.25, 0.5, 1, -0.25, 0.5], [255, 0, 0, 255]);
+      draw(ID.FLAT, quad(0.75, [0, 0, 1, 1]));
+      expectPx('aliased image: farther draw rejected', present(), 20, 20, [255, 0, 0, 255]);
+      const translucent = new Uint8Array([0, 255, 255, 128, 255, 0, 0, 128]);
+      emit('UPLOAD', { id: ID.TEXB, w: 2, h: 1, pitch: 8, src: arenaPut(translucent), bytes: 8 });
+      raster({ blend: 1, src_rgb: 5, dst_rgb: 6 });
+      clear(0xff00ff00);
+      emit('BIND', { count: 2 }, i32s(0, ID.TEXB, ID.SAMPWRAP, 1, ID.TEXB, ID.SAMPWRAP));
+      draw(ID.TWO, quad(0.5, [1, 1, 1, 1], () => [-0.25, 0.5, 1, -0.25, 0.5]));
+      expectPx('aliased image: blend after both samples', present(), 20, 20, [64, 191, 0, 255]);
+      check('aliased image: blend RT alpha', near(readback(20, 20, 1, 1)(0, 0), [64, 191, 0, 64], 2));
+      raster({});
+      // Updates and ID reuse must affect the next draw without cached texels.
+      const green = new Uint8Array([0, 255, 0, 255, 0, 255, 0, 255]);
+      emit('UPLOAD', { id: ID.TEXB, w: 2, h: 1, pitch: 8, src: arenaPut(green), bytes: 8 });
+      aliasDraw('aliased image: updated texels', ID.SAMP, ID.SAMPWRAP,
+        () => [-0.25, 0.5, 1, -0.25, 0.5], [0, 255, 0, 255]);
+      emit('RELEASE', { id: ID.TEXB });
+      emit('CREATE', { id: ID.TEXB, kind: CONST.KIND_TEX2D, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 2, height: 1 });
+      const blue = new Uint8Array([0, 0, 255, 255, 0, 0, 255, 255]);
+      emit('UPLOAD', { id: ID.TEXB, w: 2, h: 1, pitch: 8, src: arenaPut(blue), bytes: 8 });
+      aliasDraw('aliased image: recreated ID after rebind', ID.SAMP, ID.SAMPWRAP,
+        () => [-0.25, 0.5, 1, -0.25, 0.5], [0, 0, 255, 255]);
+      emit('CREATE', { id: 18, kind: CONST.KIND_RT, fmt: CONST.FMT_A8B8G8R8, levels: 1, width: 1, height: 2 });
+      const rtRows = new Uint8Array([0, 255, 255, 255, 255, 0, 0, 255]);
+      emit('UPLOAD', { id: 18, w: 1, h: 2, pitch: 4, src: arenaPut(rtRows), bytes: 8 });
+      emit('SAMPLER', { id: 19, address_u: 3, address_v: 1, min: 1, mag: 1 });
+      aliasDraw('aliased RT: top-down clamp * wrap', ID.SAMP, 19,
+        () => [0.5, -0.25, 1, 0.5, -0.25], [0, 0, 0, 255], 18);
+
       // 4. cull (D3DCULL in RT pixel space): 2 drops screen-clockwise, 3 drops counter-clockwise.
       const cwTri = [[0, 0, 0.5, 1, 1, 0, 1], [W, 0, 0.5, 1, 1, 0, 1], [0, H, 0.5, 1, 1, 0, 1]];
       const ccwTri = [cwTri[0], cwTri[2], cwTri[1]];
