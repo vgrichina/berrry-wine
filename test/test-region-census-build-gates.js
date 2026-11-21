@@ -193,7 +193,13 @@ sourceMap.set('host.js', 'const clean = 1;');
 assert.strictEqual(api.jsCopies({ sources: sourceMap }).hits.length, 0);
 
 const build = fs.readFileSync(path.join(repo, 'tools/build.sh'), 'utf8');
-const commands = build.split('\n').filter(l => /^node tools\/(region-census|gen-region-map)\.js/.test(l));
+// build.sh declares steps that run concurrently, so "in this order" is spelled
+// after=: region-map waits for region-gate, and the group waits for region-map.
+const steps = build.split('\n')
+  .map(l => l.match(/^step (\S+)((?: \S+)*?) -- (node tools\/(?:region-census|gen-region-map)\.js.*)$/))
+  .filter(Boolean);
+const commands = steps.map(m => m[3]);
 assert.deepStrictEqual(commands, ['node tools/region-census.js --gate', 'node tools/gen-region-map.js --check', 'node tools/region-census.js --build-gates']);
+assert.deepStrictEqual(steps.map(m => m[2].trim()), ['', `after=${steps[0][1]}`, `after=${steps[1][1]}`]);
 fs.writeFileSync(path.join(out, 'results.json'), JSON.stringify({ pass: true, victim: { name, base }, commands, invocations: results }, null, 2) + '\n');
 console.log(`PASS: ${results.length} actual production CLI invocations; 15 violation combinations, guards, unavailable inputs, legacy/record/unsupported modes, omission controls and API isolation`);
