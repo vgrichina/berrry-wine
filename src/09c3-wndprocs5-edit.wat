@@ -222,9 +222,16 @@
                  (local.get $n))
   )
 
+  ;; A private byte after a plain ANSI buffer's capacity and NUL holds the
+  ;; modification BOOL. Existing flags are limited to bits 0..5 by native
+  ;; readers, so adding a flags bit would invalidate otherwise valid controls.
+  ;; No extra EditState field, per-instance side table or observer change.
+  (func $edit_modify_byte (param $buf i32) (param $cap i32) (result i32)
+    (i32.add (call $g2w (local.get $buf)) (i32.add (local.get $cap) (i32.const 1))))
+
   ;; Ensure EditState has capacity for at least $need_cap chars (excl NUL).
-  (func $edit_ensure_cap (param $state_w ptr<EditState>) (param $need_cap i32)
-    (local $cap i32) (local $new_cap i32) (local $old_buf i32) (local $new_buf i32) (local $len i32)
+  (func $edit_ensure_cap (param $state_w ptr<EditState>) (param $need_cap i32) (param $plain i32)
+    (local $cap i32) (local $new_cap i32) (local $old_buf i32) (local $new_buf i32) (local $len i32) (local $modified i32)
     (local.set $cap (load.field.memarg EditState text_cap (local.get $state_w)))
     (if (i32.le_u (local.get $need_cap) (local.get $cap)) (then (return)))
     (local.set $new_cap (i32.shl (local.get $cap) (i32.const 1)))
@@ -232,7 +239,8 @@
       (then (local.set $new_cap (local.get $need_cap))))
     (if (i32.lt_u (local.get $new_cap) (i32.const 32))
       (then (local.set $new_cap (i32.const 32))))
-    (local.set $new_buf (call $heap_alloc (i32.add (local.get $new_cap) (i32.const 1))))
+    (local.set $new_buf (call $heap_alloc
+      (i32.add (i32.add (local.get $new_cap) (i32.const 1)) (local.get $plain))))
     (local.set $old_buf (load.field EditState text_buf_ptr (local.get $state_w)))
     (local.set $len (load.field.memarg EditState text_len (local.get $state_w)))
     (if (local.get $old_buf)
@@ -241,6 +249,15 @@
                                   (call $g2w (local.get $old_buf))
                                   (local.get $len))))))
     (i32.store8 (i32.add (call $g2w (local.get $new_buf)) (local.get $len)) (i32.const 0))
+    ;; Plain ANSI owns one private metadata byte beyond capacity and NUL.
+    ;; Text length/capacity and the 40-byte shared EditState remain unchanged.
+    (if (local.get $plain)
+      (then
+        (if (local.get $old_buf)
+          (then (local.set $modified (i32.load8_u
+            (call $edit_modify_byte (local.get $old_buf) (local.get $cap))))))
+        (i32.store8 (call $edit_modify_byte (local.get $new_buf) (local.get $new_cap))
+          (local.get $modified))))
     (if (local.get $old_buf) (then (call $heap_free (local.get $old_buf))))
     (store.field EditState text_buf_ptr (local.get $state_w) (local.get $new_buf))
     (store.field.memarg EditState text_cap (local.get $state_w) (local.get $new_cap))
@@ -259,7 +276,7 @@
     (select (local.get $a) (local.get $b) (i32.gt_u (local.get $a) (local.get $b))))
 
   ;; Delete characters in [lo..hi). Updates text_len, cursor, sel_anchor → lo.
-  (func $edit_delete_range (param $state_w ptr<EditState>) (param $lo i32) (param $hi i32)
+  (func $edit_delete_range (param $hwnd i32) (param $state_w ptr<EditState>) (param $lo i32) (param $hi i32)
     (local $buf_w i32) (local $len i32) (local $tail i32)
     (if (i32.ge_u (local.get $lo) (local.get $hi)) (then (return)))
     (local.set $len (load.field.memarg EditState text_len (local.get $state_w)))
@@ -276,21 +293,29 @@
     (i32.store8 (i32.add (local.get $buf_w) (local.get $len)) (i32.const 0))
     (store.field.memarg EditState cursor (local.get $state_w) (local.get $lo))
     (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $lo))
+    ;; Mark successful plain ANSI mutations before the caller notifies.
+    (if (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+      (then (i32.store8 (call $edit_modify_byte
+        (load.field EditState text_buf_ptr (local.get $state_w))
+        (load.field.memarg EditState text_cap (local.get $state_w))) (i32.const 1))))
   )
 
   ;; Insert one byte at cursor (delete selection first).
-  (func $edit_insert_char (param $state_w ptr<EditState>) (param $ch i32)
+  (func $edit_insert_char (param $hwnd i32) (param $state_w ptr<EditState>) (param $ch i32)
     (local $lo i32) (local $hi i32) (local $cur i32) (local $len i32) (local $buf_w i32) (local $tail i32) (local $maxlen i32)
     (local.set $lo (call $edit_sel_lo (local.get $state_w)))
     (local.set $hi (call $edit_sel_hi (local.get $state_w)))
     (if (i32.ne (local.get $lo) (local.get $hi))
-      (then (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi))))
+      (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi))))
     (local.set $len (load.field.memarg EditState text_len (local.get $state_w)))
     (local.set $maxlen (load.field.memarg EditState max_length (local.get $state_w)))
     (if (local.get $maxlen)
       (then (if (i32.ge_u (local.get $len) (local.get $maxlen))
               (then (return)))))
-    (call $edit_ensure_cap (local.get $state_w) (i32.add (local.get $len) (i32.const 1)))
+    (call $edit_ensure_cap (local.get $state_w) (i32.add (local.get $len) (i32.const 1))
+      (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))))
     (local.set $cur (load.field.memarg EditState cursor (local.get $state_w)))
     (local.set $buf_w (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
     (local.set $tail (i32.sub (local.get $len) (local.get $cur)))
@@ -305,18 +330,24 @@
     (store.field.memarg EditState cursor (local.get $state_w) (local.get $cur))
     (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $cur))
     (i32.store8 (i32.add (local.get $buf_w) (local.get $len)) (i32.const 0))
+    ;; Mark successful plain ANSI mutations before the caller notifies.
+    (if (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+      (then (i32.store8 (call $edit_modify_byte
+        (load.field EditState text_buf_ptr (local.get $state_w))
+        (load.field.memarg EditState text_cap (local.get $state_w))) (i32.const 1))))
   )
 
   ;; Insert $n bytes from guest-ptr $src at cursor (delete selection first).
   ;; Used by WM_PASTE / Ctrl+V to bulk-insert clipboard text in one pass
   ;; (avoids per-char memmove storms on large pastes).
-  (func $edit_insert_bytes (param $state_w ptr<EditState>) (param $src_g i32) (param $n i32)
+  (func $edit_insert_bytes (param $hwnd i32) (param $state_w ptr<EditState>) (param $src_g i32) (param $n i32)
     (local $lo i32) (local $hi i32) (local $cur i32) (local $len i32) (local $buf_w i32) (local $tail i32) (local $maxlen i32) (local $src_w i32) (local $room i32)
     (if (i32.eqz (local.get $n)) (then (return)))
     (local.set $lo (call $edit_sel_lo (local.get $state_w)))
     (local.set $hi (call $edit_sel_hi (local.get $state_w)))
     (if (i32.ne (local.get $lo) (local.get $hi))
-      (then (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi))))
+      (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi))))
     (local.set $len (load.field.memarg EditState text_len (local.get $state_w)))
     (local.set $maxlen (load.field.memarg EditState max_length (local.get $state_w)))
     (if (local.get $maxlen)
@@ -326,7 +357,9 @@
         (if (i32.gt_u (local.get $n) (local.get $room))
           (then (local.set $n (local.get $room))))))
     (if (i32.eqz (local.get $n)) (then (return)))
-    (call $edit_ensure_cap (local.get $state_w) (i32.add (local.get $len) (local.get $n)))
+    (call $edit_ensure_cap (local.get $state_w) (i32.add (local.get $len) (local.get $n))
+      (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))))
     (local.set $cur (load.field.memarg EditState cursor (local.get $state_w)))
     (local.set $buf_w (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
     ;; Shift tail right by $n bytes. The old reverse byte loop is memmove for a
@@ -349,6 +382,12 @@
     (store.field.memarg EditState cursor (local.get $state_w) (local.get $cur))
     (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $cur))
     (i32.store8 (i32.add (local.get $buf_w) (local.get $len)) (i32.const 0))
+    ;; Mark successful plain ANSI mutations before the caller notifies.
+    (if (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+      (then (i32.store8 (call $edit_modify_byte
+        (load.field EditState text_buf_ptr (local.get $state_w))
+        (load.field.memarg EditState text_cap (local.get $state_w))) (i32.const 1))))
   )
 
   ;; Copy [lo..hi) from edit to the global clipboard, reallocating to fit.
@@ -901,7 +940,7 @@
     (local $ch i32) (local $depth i32) (local $skip_depth i32)
     (local $group_start i32) (local $hash i32) (local $word_start i32)
     (local $hi i32) (local $lo i32)
-    (call $edit_ensure_cap (local.get $state_w) (local.get $raw_len))
+    (call $edit_ensure_cap (local.get $state_w) (local.get $raw_len) (i32.const 0))
     (local.set $src (call $g2w (local.get $raw_g)))
     (local.set $dst (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
     (if (i32.eqz (local.get $is_rtf))
@@ -1298,7 +1337,9 @@
             (if (local.get $name_ptr)
               (then
                 (local.set $text_len (call $strlen (call $g2w (local.get $name_ptr))))
-                (call $edit_ensure_cap (local.get $state_w) (local.get $text_len))
+                (call $edit_ensure_cap (local.get $state_w) (local.get $text_len)
+                  (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))))
                 (if (local.get $text_len)
                   (then (call $memcpy (call $g2w (load.field EditState text_buf_ptr (local.get $state_w)))
                                       (call $g2w (local.get $name_ptr))
@@ -1309,6 +1350,9 @@
                 (if (load.field EditState text_buf_ptr (local.get $state_w))
                   (then (i32.store8 (i32.add (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))) (local.get $text_len))
                                     (i32.const 0))))))))
+        (if (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+          (then (call $edit_ensure_cap (local.get $state_w) (i32.const 1) (i32.const 1))))
         ;; Set flags from window style: ES_MULTILINE(0x04)→bit0, ES_PASSWORD(0x20)→bit1, ES_READONLY(0x800)→bit2
         (local.set $flags (call $wnd_get_style (local.get $hwnd)))
         (if (i32.and (local.get $flags) (i32.const 0x04))
@@ -1408,6 +1452,24 @@
             (return (i32.const 1))))
         (return (i32.const 0))))
 
+    ;; ---------- EM_GETMODIFY / EM_SETMODIFY, plain ANSI EDIT ----------
+    ;; Public BOOL only: no text, selection, viewport, caret or notification work.
+    (if (i32.and
+          (i32.or (i32.eq (local.get $msg) (i32.const 0x00B8))
+                  (i32.eq (local.get $msg) (i32.const 0x00B9)))
+          (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))))
+      (then
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $buf (call $edit_modify_byte
+          (load.field EditState text_buf_ptr (local.get $state_w))
+          (load.field.memarg EditState text_cap (local.get $state_w))))
+        (if (i32.eq (local.get $msg) (i32.const 0x00B8))
+          (then (return (i32.load8_u (local.get $buf)))))
+        (i32.store8 (local.get $buf) (i32.ne (local.get $wParam) (i32.const 0)))
+        (return (i32.const 0))))
+
     ;; ---------- WM_SETTEXT (0x000C) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x000C))
       (then
@@ -1422,7 +1484,9 @@
               (if (result i32) (call $wnd_unicode_get (local.get $hwnd))
                 (then (call $strlen_w (call $g2w (local.get $lParam))))
                 (else (call $strlen (call $g2w (local.get $lParam))))))
-            (call $edit_ensure_cap (local.get $state_w) (local.get $text_len))
+            (call $edit_ensure_cap (local.get $state_w) (local.get $text_len)
+                  (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))))
             (if (local.get $text_len)
               (then
                 (if (call $wnd_unicode_get (local.get $hwnd))
@@ -1443,6 +1507,12 @@
         (if (local.get $buf)
           (then (i32.store8 (i32.add (call $g2w (local.get $buf)) (local.get $text_len))
                             (i32.const 0)))) ;; also terminate a NULL replacement
+        ;; Whole-text assignment establishes a clean plain ANSI document.
+        (if (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                   (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+          (then (i32.store8 (call $edit_modify_byte
+            (load.field EditState text_buf_ptr (local.get $state_w))
+            (load.field.memarg EditState text_cap (local.get $state_w))) (i32.const 0))))
         (call $title_table_set (local.get $hwnd) (call $g2w (local.get $buf)) (local.get $text_len))
         (call $host_set_window_text (local.get $hwnd)
           (select (call $g2w (local.get $buf)) (i32.const 0) (local.get $buf)))
@@ -1593,10 +1663,10 @@
             (local.set $lo (call $edit_sel_lo (local.get $state_w)))
             (local.set $hi (call $edit_sel_hi (local.get $state_w)))
             (if (i32.ne (local.get $lo) (local.get $hi))
-              (then (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi)))
+              (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi)))
               (else
                 (if (local.get $lo)
-                  (then (call $edit_delete_range (local.get $state_w)
+                  (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w)
                           (i32.sub (local.get $lo) (i32.const 1))
                           (local.get $lo))))))
             (call $edit_reset_caret_timer (local.get $hwnd) (local.get $state_w))
@@ -1608,7 +1678,7 @@
           (then
             (if (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x01))
               (then
-                (call $edit_insert_char (local.get $state_w) (i32.const 0x0A))
+                (call $edit_insert_char (local.get $hwnd) (local.get $state_w) (i32.const 0x0A))
                 (store.field.memarg EditState flags (local.get $state_w)
                   (i32.or (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x08)))
                 (call $edit_reset_caret_timer (local.get $hwnd) (local.get $state_w))
@@ -1617,7 +1687,7 @@
             (return (i32.const 0))))
         (if (i32.lt_u (local.get $wParam) (i32.const 0x20))
           (then (return (i32.const 0))))
-        (call $edit_insert_char (local.get $state_w) (local.get $wParam))
+        (call $edit_insert_char (local.get $hwnd) (local.get $state_w) (local.get $wParam))
         (store.field.memarg EditState flags (local.get $state_w)
           (i32.or (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x08)))
         (call $edit_reset_caret_timer (local.get $hwnd) (local.get $state_w))
@@ -1665,7 +1735,7 @@
                 (call $edit_copy_range (local.get $state_w) (local.get $lo) (local.get $hi))
                 (if (i32.eqz (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x04)))
                   (then
-                    (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi))
+                    (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi))
                     (call $edit_notify_change (local.get $hwnd))
                     (call $edit_invalidate_caret (local.get $hwnd))))
                 (return (i32.const 0))))
@@ -1675,7 +1745,7 @@
                 (if (i32.eqz (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x04)))
                   (then
                     (if (global.get $clipboard_len)
-                      (then (call $edit_insert_bytes (local.get $state_w)
+                      (then (call $edit_insert_bytes (local.get $hwnd) (local.get $state_w)
                               (global.get $clipboard_ptr) (global.get $clipboard_len))
                             (call $edit_notify_change (local.get $hwnd))))
                     (call $edit_invalidate_caret (local.get $hwnd))))
@@ -1742,10 +1812,10 @@
             (local.set $lo (call $edit_sel_lo (local.get $state_w)))
             (local.set $hi (call $edit_sel_hi (local.get $state_w)))
             (if (i32.ne (local.get $lo) (local.get $hi))
-              (then (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi)))
+              (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi)))
               (else
                 (if (local.get $cur)
-                  (then (call $edit_delete_range (local.get $state_w)
+                  (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w)
                           (i32.sub (local.get $cur) (i32.const 1))
                           (local.get $cur))))))
             (call $edit_notify_change (local.get $hwnd))
@@ -1759,10 +1829,10 @@
             (local.set $lo (call $edit_sel_lo (local.get $state_w)))
             (local.set $hi (call $edit_sel_hi (local.get $state_w)))
             (if (i32.ne (local.get $lo) (local.get $hi))
-              (then (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi)))
+              (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi)))
               (else
                 (if (i32.lt_u (local.get $cur) (local.get $text_len))
-                  (then (call $edit_delete_range (local.get $state_w)
+                  (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w)
                           (local.get $cur)
                           (i32.add (local.get $cur) (i32.const 1)))))))
             (call $edit_notify_change (local.get $hwnd))
@@ -2659,7 +2729,7 @@
         (call $edit_copy_range (local.get $state_w) (local.get $lo) (local.get $hi))
         (if (i32.eqz (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x04)))
           (then
-            (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi))
+            (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi))
             (call $edit_notify_change (local.get $hwnd))
             (call $invalidate_hwnd (local.get $hwnd))))
         (return (i32.const 0))))
@@ -2672,7 +2742,7 @@
         (if (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x04))
           (then (return (i32.const 0))))
         (if (global.get $clipboard_len)
-          (then (call $edit_insert_bytes (local.get $state_w)
+          (then (call $edit_insert_bytes (local.get $hwnd) (local.get $state_w)
                   (global.get $clipboard_ptr) (global.get $clipboard_len))
                 (call $edit_notify_change (local.get $hwnd))))
         (call $invalidate_hwnd (local.get $hwnd))
@@ -2689,7 +2759,7 @@
         (local.set $hi (call $edit_sel_hi (local.get $state_w)))
         (if (i32.ne (local.get $lo) (local.get $hi))
           (then
-            (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi))
+            (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi))
             (call $edit_notify_change (local.get $hwnd))
             (call $invalidate_hwnd (local.get $hwnd))))
         (return (i32.const 0))))
@@ -2731,7 +2801,7 @@
         (local.set $lo (call $edit_sel_lo (local.get $state_w)))
         (local.set $hi (call $edit_sel_hi (local.get $state_w)))
         (if (i32.ne (local.get $lo) (local.get $hi))
-          (then (call $edit_delete_range (local.get $state_w) (local.get $lo) (local.get $hi))))
+          (then (call $edit_delete_range (local.get $hwnd) (local.get $state_w) (local.get $lo) (local.get $hi))))
         ;; Insert replacement text char by char
         (if (local.get $lParam)
           (then
@@ -2739,7 +2809,7 @@
             (block $done (loop $ins
               (local.set $vk (i32.load8_u (local.get $buf)))
               (br_if $done (i32.eqz (local.get $vk)))
-              (call $edit_insert_char (local.get $state_w) (local.get $vk))
+              (call $edit_insert_char (local.get $hwnd) (local.get $state_w) (local.get $vk))
               (local.set $buf (i32.add (local.get $buf) (i32.const 1)))
               (br $ins)))))
         (store.field.memarg EditState flags (local.get $state_w)
