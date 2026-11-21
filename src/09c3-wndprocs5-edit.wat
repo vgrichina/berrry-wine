@@ -2936,6 +2936,40 @@
         (local.set $lo (call $edit_line_start (local.get $state_w) (local.get $wParam)))
         (return (call $edit_line_text_len (local.get $state_w) (local.get $lo)))))
 
+    ;; ---------- EM_SCROLL (0x00B5), native plain ANSI multiline EDIT ----------
+    ;; Microsoft documents four actions, ignored lParam, HIWORD success and
+    ;; LOWORD line count; the count need not equal movement at text boundaries.
+    ;; Reuse the vertical scrollbar's line/page metrics and page-end clamp.
+    ;; Boundary count = actual signed movement, including success with zero
+    ;; movement, is emulatorpolicy, NOT Windows exact (real VM parity unknown).
+    ;; EM_LINESCROLL retains its separate last-line-at-top bound below.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00B5))
+                 (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
+      (then
+        (if (i32.or (i32.gt_u (local.get $wParam) (i32.const 3))
+                     (call $wnd_unicode_get (local.get $hwnd)))
+          (then (return (i32.const 0))))
+        (if (i32.or (i32.eqz (local.get $state))
+                     (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4))))
+          (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $sz (call $edit_view_metrics (local.get $hwnd) (local.get $state_w)))
+        (local.set $total_lines (i32.and (local.get $sz) (i32.const 0xFFFF)))
+        (local.set $visible_lines (i32.shr_u (local.get $sz) (i32.const 16)))
+        (local.set $lo (load.field.memarg EditState scroll_top (local.get $state_w)))
+        (local.set $hi (select (i32.const 1) (local.get $visible_lines)
+          (i32.lt_u (local.get $wParam) (i32.const 2))))
+        (if (i32.eqz (i32.and (local.get $wParam) (i32.const 1)))
+          (then (local.set $hi (i32.sub (i32.const 0) (local.get $hi)))))
+        (if (call $edit_scroll_to (local.get $hwnd) (local.get $state_w)
+              (i32.add (local.get $lo) (local.get $hi))
+              (local.get $total_lines) (local.get $visible_lines))
+          (then (call $invalidate_hwnd (local.get $hwnd))))
+        (return (i32.or (i32.const 0x10000)
+          (i32.and (i32.sub
+            (load.field.memarg EditState scroll_top (local.get $state_w)) (local.get $lo))
+            (i32.const 0xFFFF))))))
+
     ;; ---------- EM_LINESCROLL (0x00B6), plain EDIT, vertical only ----------
     ;; lParam is a signed relative display-line count. Unlike wheel/page
     ;; scrolling, the documented bound is the LAST line at the top. Clamp the
