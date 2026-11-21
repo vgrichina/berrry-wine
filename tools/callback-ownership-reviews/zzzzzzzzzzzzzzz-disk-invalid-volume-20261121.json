@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "f6137cde8e428053b6ae117de055f327065cfccd992226515145acb63c603f82",
+      "sha256": "66283292123f448c8dc05c989660257e14a503c1cc5ae43587ba6cd982d90c23",
+      "reason": "Disk path validation adds a synchronous data-only VFS query returning a Win32 error before disk-space outputs are written. Relative media identity resolves through the existing VFS path resolver. Neither operation calls guest code, yields, retains pointers or callbacks, or changes invocation lifetime; existing ownership remains pending."
+    }
+  ]
+}

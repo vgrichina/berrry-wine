@@ -482,7 +482,7 @@
   ;; sector per cluster, nothing free, and the disc's own block count — because
   ;; era CD checks read exactly these numbers (Diablo XOR-folds BytesPerSector
   ;; with the drive type and the filesystem name and compares the fold against
-  ;; a constant, so 512-byte sectors here read as "not a CD"). Anything else is
+  ;; a constant, so 512-byte sectors here read as "not a CD"). Other valid media use
   ;; the fixed disk: just under 1GB free of just under 2GB at 8 sectors/cluster,
   ;; 512 bytes/sector. Keep both byte products below INT32_MAX: some Win95-era
   ;; installers multiply this legacy geometry with signed 32-bit arithmetic.
@@ -508,10 +508,28 @@
         (if (local.get $free) (then (call $gs32 (local.get $free) (i32.const 262143))))
         (if (local.get $total) (then (call $gs32 (local.get $total) (i32.const 524287)))))))
 
+  (func $disk_path_valid (param $root i32) (param $wide i32) (param $directory i32) (result i32)
+    (local $error i32)
+    (local.set $error (call $host_fs_disk_path_error
+      (if (result i32) (local.get $root)
+        (then (call $g2w (local.get $root))) (else (i32.const 0)))
+      (local.get $wide) (local.get $directory)))
+    (if (local.get $error)
+      (then (global.set $last_error (local.get $error)) (return (i32.const 0))))
+    (i32.const 1))
+
+  (func $disk_free_space_checked (param $root i32) (param $spc i32) (param $bps i32)
+      (param $free i32) (param $total i32) (param $wide i32) (result i32)
+    (if (i32.eqz (call $disk_path_valid (local.get $root) (local.get $wide) (i32.const 0)))
+      (then (return (i32.const 0))))
+    (call $disk_free_space (local.get $root) (local.get $spc) (local.get $bps)
+      (local.get $free) (local.get $total) (local.get $wide))
+    (i32.const 1))
+
   (func $handle_GetDiskFreeSpaceA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $disk_free_space (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (local.get $arg3) (local.get $arg4) (i32.const 0))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=0 (global.get $reg_base) (call $disk_free_space_checked
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))  ;; stdcall, 5 args
   )
 
@@ -525,6 +543,8 @@
   (func $disk_free_space_ex (param $dir i32) (param $avail i32) (param $total_out i32)
                             (param $free_out i32) (param $wide i32) (result i32)
     (local $geo i32) (local $unit i64) (local $free i64) (local $total i64)
+    (if (i32.eqz (call $disk_path_valid (local.get $dir) (local.get $wide) (i32.const 1)))
+      (then (return (i32.const 0))))
     (local.set $geo (call $heap_alloc (i32.const 16)))
     (if (i32.eqz (local.get $geo))
       (then
@@ -2909,9 +2929,9 @@
   ;; returns is a number written through a caller pointer; only the root
   ;; string's encoding differs, and $disk_free_space takes that as a flag.
   (func $handle_GetDiskFreeSpaceW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $disk_free_space (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (local.get $arg3) (local.get $arg4) (i32.const 1))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=0 (global.get $reg_base) (call $disk_free_space_checked
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))  ;; stdcall, 5 args
   )
 

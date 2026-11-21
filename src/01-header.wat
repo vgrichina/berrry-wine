@@ -502,6 +502,8 @@
   (import "host" "fs_file_api_ansi" (func $host_fs_file_api_ansi (param i32) (result i32)))
   (import "host" "fs_logical_drive_mask" (func $host_fs_logical_drive_mask (result i32)))
   (import "host" "fs_drive_type" (func $host_fs_drive_type (param i32 i32) (result i32)))
+  ;; Disk root/directory validation; returns a Win32 error, zero on success.
+  (import "host" "fs_disk_path_error" (func $host_fs_disk_path_error (param i32 i32 i32) (result i32)))
   ;; fs_drive_type(rootWA, isWide) → DRIVE_* value, or 0 when no mount claims
   ;; that letter and the caller should keep its built-in answer.
   (import "host" "fs_volume_label" (func $host_fs_volume_label (param i32 i32 i32 i32) (result i32)))
