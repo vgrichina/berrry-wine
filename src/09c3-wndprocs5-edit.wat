@@ -1323,6 +1323,26 @@
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))
         (return (i32.const 0))))
 
+    ;; ---------- EM_SETREADONLY (0x00CF), plain EDIT ----------
+    ;; Keep USER's public style and the input guards' private flag in sync.
+    ;; RichEdit shares this wndproc but retains its existing message behavior.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00CF))
+                 (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
+      (then
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $flags
+          (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const -5)))
+        (local.set $a (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const -2049)))
+        (if (local.get $wParam)
+          (then
+            (local.set $flags (i32.or (local.get $flags) (i32.const 0x04)))
+            (local.set $a (i32.or (local.get $a) (i32.const 0x0800)))))
+        (store.field.memarg EditState flags (local.get $state_w) (local.get $flags))
+        (drop (call $wnd_set_style (local.get $hwnd) (local.get $a)))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 1))))
+
     ;; ---------- WM_SETFONT (0x0030) / WM_GETFONT (0x0031) ----------
     ;; MFC's CWnd::SetFont sends these through the application's EDIT
     ;; subclass. Keep the handle in native EditState so Paint's font toolbar
