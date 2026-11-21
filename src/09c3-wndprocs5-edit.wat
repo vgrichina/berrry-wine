@@ -1249,6 +1249,19 @@
       (then (global.set $edit_layout_valid (i32.const 0))))
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
+    ;; Captioned EDITs use USER's native frame painter. A hidden caption's
+    ;; deferred damage may have been consumed by the NC scan before exposure.
+    (if (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                        (i32.const 0x00C00000)) (i32.const 0x00C00000))
+      (then
+        (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0018))
+                     (i32.ne (local.get $wParam) (i32.const 0)))
+          (then (call $nc_flags_set (local.get $hwnd) (i32.const 1))))
+        (if (i32.eq (local.get $msg) (i32.const 0x0085))
+          (then
+            (call $defwndproc_do_ncpaint (local.get $hwnd))
+            (return (i32.const 0))))))
+
     ;; ---------- WM_CREATE (0x0001) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0001))
       (then
@@ -1403,10 +1416,22 @@
                                   (local.get $text_len))))))
             (store.field.memarg EditState text_len (local.get $state_w) (local.get $text_len))
             (store.field.memarg EditState cursor (local.get $state_w) (local.get $text_len))
-            (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $text_len))
-            (if (load.field EditState text_buf_ptr (local.get $state_w))
-              (then (i32.store8 (i32.add (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))) (local.get $text_len))
-                                (i32.const 0))))))
+            (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $text_len))))
+        ;; WM_SETTEXT owns both the client text and any standard caption,
+        ;; including direct sends through an application's CallWindowProc.
+        (local.set $buf (load.field EditState text_buf_ptr (local.get $state_w)))
+        (if (local.get $buf)
+          (then (i32.store8 (i32.add (call $g2w (local.get $buf)) (local.get $text_len))
+                            (i32.const 0)))) ;; also terminate a NULL replacement
+        (call $title_table_set (local.get $hwnd) (call $g2w (local.get $buf)) (local.get $text_len))
+        (call $host_set_window_text (local.get $hwnd)
+          (select (call $g2w (local.get $buf)) (i32.const 0) (local.get $buf)))
+        (if (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                            (i32.const 0x00C00000)) (i32.const 0x00C00000))
+          (then
+            (call $nc_flags_set (local.get $hwnd) (i32.const 1))
+            (if (call $wnd_is_effectively_visible (local.get $hwnd))
+              (then (call $defwndproc_do_ncpaint (local.get $hwnd))))))
         (if (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x08))
           (then
             (call $edit_reset_caret_timer (local.get $hwnd) (local.get $state_w))))
