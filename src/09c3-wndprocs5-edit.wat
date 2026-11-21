@@ -2219,6 +2219,11 @@
             (local.set $max_scroll (i32.sub (local.get $total_lines) (local.get $visible_lines)))
             (if (i32.lt_s (local.get $max_scroll) (i32.const 0))
               (then (local.set $max_scroll (i32.const 0))))
+            ;; EM_LINESCROLL permits the last display line at the top, even
+            ;; with blank rows below it. Other viewport movers still apply
+            ;; their existing page clamp; RichEdit keeps its previous clamp.
+            (if (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+              (then (local.set $max_scroll (i32.sub (local.get $total_lines) (i32.const 1)))))
             (if (i32.gt_s (load.field.memarg EditState scroll_top (local.get $state_w)) (local.get $max_scroll))
               (then (store.field.memarg EditState scroll_top (local.get $state_w) (local.get $max_scroll))))
             (local.set $lo (load.field.memarg EditState scroll_top (local.get $state_w)))
@@ -2786,6 +2791,39 @@
         (local.set $state_w (call $g2w (local.get $state)))
         (local.set $lo (call $edit_line_start (local.get $state_w) (local.get $wParam)))
         (return (call $edit_line_text_len (local.get $state_w) (local.get $lo)))))
+
+    ;; ---------- EM_LINESCROLL (0x00B6), plain EDIT, vertical only ----------
+    ;; lParam is a signed relative display-line count. Unlike wheel/page
+    ;; scrolling, the documented bound is the LAST line at the top. Clamp the
+    ;; delta before adding, so INT_MIN/INT_MAX cannot wrap the position.
+    ;; Neither text nor selection/caret character indexes are changed.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00B6))
+                 (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
+      (then
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)))
+          (then (return (i32.const 0))))
+        ;; Horizontal semantics are outside this bounded implementation.
+        (if (i32.ne (local.get $wParam) (i32.const 0)) (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $sz (call $edit_view_metrics (local.get $hwnd) (local.get $state_w)))
+        (local.set $total_lines (i32.and (local.get $sz) (i32.const 0xFFFF)))
+        (local.set $visible_lines (i32.shr_u (local.get $sz) (i32.const 16)))
+        (local.set $max_scroll (i32.sub (local.get $total_lines) (i32.const 1)))
+        (local.set $lo (load.field.memarg EditState scroll_top (local.get $state_w)))
+        (local.set $hi (local.get $lParam))
+        (if (i32.gt_s (local.get $hi) (i32.sub (local.get $max_scroll) (local.get $lo)))
+          (then (local.set $hi (i32.sub (local.get $max_scroll) (local.get $lo)))))
+        (if (i32.lt_s (local.get $hi) (i32.sub (i32.const 0) (local.get $lo)))
+          (then (local.set $hi (i32.sub (i32.const 0) (local.get $lo)))))
+        (local.set $hi (i32.add (local.get $lo) (local.get $hi)))
+        (call $edit_publish_scroll_info (local.get $hwnd)
+          (local.get $hi) (local.get $total_lines) (local.get $visible_lines))
+        (if (i32.ne (local.get $hi) (local.get $lo))
+          (then
+            (store.field.memarg EditState scroll_top (local.get $state_w) (local.get $hi))
+            (call $invalidate_hwnd (local.get $hwnd))))
+        (return (i32.const 1))))
 
     ;; ---------- EM_SCROLLCARET (0x00B7) ----------
     ;; The EM_SETSEL + EM_SCROLLCARET pair is how an app (notepad's Find, for
