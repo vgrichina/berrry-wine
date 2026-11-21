@@ -416,11 +416,15 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0407))
       (then
         (call $trk_set_min (local.get $sw) (local.get $lParam))
+        (if (i32.lt_s (call $trk_pos (local.get $sw)) (local.get $lParam))
+          (then (call $trk_set_pos (local.get $sw) (local.get $lParam))))
         (if (local.get $wParam) (then (call $invalidate_hwnd (local.get $hwnd))))
         (return (i32.const 0))))
     (if (i32.eq (local.get $msg) (i32.const 0x0408))
       (then
         (call $trk_set_max (local.get $sw) (local.get $lParam))
+        (if (i32.gt_s (call $trk_pos (local.get $sw)) (local.get $lParam))
+          (then (call $trk_set_pos (local.get $sw) (local.get $lParam))))
         (if (local.get $wParam) (then (call $invalidate_hwnd (local.get $hwnd))))
         (return (i32.const 0))))
     ;; TBM_SETPAGESIZE / GETPAGESIZE / SETLINESIZE / GETLINESIZE
