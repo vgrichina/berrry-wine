@@ -2608,6 +2608,7 @@
 
   (func $progress_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $sum i64)
+    (local $range64 i64) (local $inner_h i32) (local $fill_h i32)
     (local $hdc i32) (local $sz i32) (local $w i32) (local $h i32)
     (local $state i32) (local $sw i32) (local $old i32)
     (local $min i32) (local $max i32) (local $pos i32) (local $range i32) (local $inner_w i32) (local $fill_w i32)
@@ -2747,6 +2748,35 @@
             (local.set $min (call $prog_min (local.get $sw)))
             (local.set $max (call $prog_max (local.get $sw)))
             (local.set $pos (call $prog_clamp (local.get $sw) (call $prog_pos (local.get $sw))))
+            ;; PBS_VERTICAL: bottom-to-top, using the existing emulator well,
+            ;; highlight and 2px inset (not a Windows pixel oracle).
+            (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0004))
+              (then
+                ;; Widen BEFORE subtracting: signed32 limits can span 2^32-1.
+                ;; Packed dimensions are at most 65535, so the product fits i64.
+                (local.set $range64 (i64.sub
+                  (i64.extend_i32_s (local.get $max))
+                  (i64.extend_i32_s (local.get $min))))
+                (local.set $inner_h (i32.sub (local.get $h) (i32.const 4)))
+                (if (i32.and (i64.gt_s (local.get $range64) (i64.const 0))
+                      (i32.and (i32.gt_s (local.get $w) (i32.const 4))
+                        (i32.gt_s (local.get $inner_h) (i32.const 0))))
+                  (then
+                    (local.set $fill_h (i32.wrap_i64 (i64.div_s
+                      (i64.mul
+                        (i64.sub (i64.extend_i32_s (local.get $pos))
+                          (i64.extend_i32_s (local.get $min)))
+                        (i64.extend_i32_s (local.get $inner_h)))
+                      (local.get $range64))))
+                    (if (i32.gt_s (local.get $fill_h) (i32.const 0))
+                      (then
+                        (drop (call $gdi_native_fill_rect (local.get $hdc)
+                          (i32.const 2)
+                          (i32.sub (i32.sub (local.get $h) (i32.const 2)) (local.get $fill_h))
+                          (i32.sub (local.get $w) (i32.const 2))
+                          (i32.sub (local.get $h) (i32.const 2))
+                          (i32.const 14))))))))
+              (else
             (local.set $range (i32.sub (local.get $max) (local.get $min)))
             (local.set $inner_w (i32.sub (local.get $w) (i32.const 4)))
             (if (i32.and (i32.gt_s (local.get $range) (i32.const 0))
@@ -2763,6 +2793,7 @@
                       (i32.add (i32.const 2) (local.get $fill_w))
                       (i32.sub (local.get $h) (i32.const 2))
                       (i32.const 14))))))) ;; COLOR_HIGHLIGHT
+              ))
             (drop (call $gdi_native_draw_edge (local.get $hdc)
                     (i32.const 0) (i32.const 0)
                     (local.get $w) (local.get $h)
