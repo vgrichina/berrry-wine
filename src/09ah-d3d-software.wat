@@ -1454,13 +1454,21 @@
           (local.set $output (call $d3d_software_output (local.get $ctx)
             (i32.add (i32.add (local.get $vm) (i32.const 32)) (i32.shl (local.get $lane) (i32.const 2)))
             (i32.load (local.get $dst))))
+          ;; The common full mask needs no per-channel state dispatch. Keep
+          ;; the original byte-store order (R,G,B,A), including shared memory
+          ;; access widths; partial masks still use the general path below.
+          (if (i32.eq (i32.and (i32.load offset=108 (local.get $ctx)) (i32.const 15)) (i32.const 15)) (then
+            (i32.store8 offset=2 (local.get $dst) (i32.shr_u (local.get $output) (i32.const 16)))
+            (i32.store8 offset=1 (local.get $dst) (i32.shr_u (local.get $output) (i32.const 8)))
+            (i32.store8 (local.get $dst) (local.get $output))
+            (i32.store8 offset=3 (local.get $dst) (i32.shr_u (local.get $output) (i32.const 24)))) (else
           (local.set $j (i32.const 0))
           (loop $channels
             (if (i32.and (i32.load offset=108 (local.get $ctx)) (i32.shl (i32.const 1) (local.get $j))) (then
               (local.set $offset (select (i32.sub (i32.const 2) (local.get $j)) (i32.const 3) (i32.lt_u (local.get $j) (i32.const 3))))
               (i32.store8 (i32.add (local.get $dst) (local.get $offset))
                 (i32.shr_u (local.get $output) (i32.shl (local.get $offset) (i32.const 3))))))
-            (local.set $j (i32.add (local.get $j) (i32.const 1))) (br_if $channels (i32.lt_u (local.get $j) (i32.const 4))))
+            (local.set $j (i32.add (local.get $j) (i32.const 1))) (br_if $channels (i32.lt_u (local.get $j) (i32.const 4))))))
           (if (i32.and (i32.load offset=224 (local.get $ctx)) (i32.const 0x80000000))
             (then (i32.store8 offset=3 (local.get $dst) (i32.const 255))))
           (if (i32.and (i32.load offset=100 (local.get $ctx)) (i32.const 2)) (then

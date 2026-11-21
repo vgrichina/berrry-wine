@@ -189,4 +189,34 @@ const { bootRenderHarness } = require('./render-helper');
     assert.equal(device.bytes,base,'snapshot allocations released');device.destroy();
   }
   console.log('PASS edge ownership oracle, winding changes, clipped/degenerate geometry, adjacent f32 boundaries, snapshot lifetime and resume');
+
+  // Full-mask dispatch must agree with the general channel path. Distinct
+  // source and destination bytes expose swizzles, missing writes and writes
+  // through disabled channels; high mask bits must not affect the low four.
+  for (const budget of [1, 3, 256]) for (let mask = 0; mask < 16; mask++) {
+    const device = new Device({width:4,height:4,quadBudget:budget,getExports:()=>e,getMemory:()=>memory.buffer});
+    const base = device.bytes, vertices = new Uint8Array(6*20), view = new DataView(vertices.buffer);
+    [[0,0],[4,0],[0,4],[4,0],[4,4],[0,4]].forEach(([x,y],i)=>{
+      [x,y,.5,1].forEach((v,j)=>view.setFloat32(i*20+j*4,v,true));
+      vertices.set([51,102,153,204],i*20+16);
+    });
+    device.clear([17/255,34/255,68/255,136/255],1);
+    const draw=device.prepare({primitive:4,primitiveCount:2,stride:20,vertices,
+      attributes:[{register:0,usage:9,usageIndex:0,type:3,offset:0},{register:1,usage:10,usageIndex:0,type:4,offset:16}],
+      vertexShader:null,pixelShader:new Uint32Array([0xffff0101,1,0x800f0000,0x90e40000,0xffff]),
+      fixedFunction:{lighting:false,specular:false,fog:false,textureFactor:0xffffffff,
+        stages:[{colorOp:2,colorArg1:0,colorArg2:1,alphaOp:2,alphaArg1:0,alphaArg2:1,
+          constant:0xffffffff,texCoordIndex:0,transformFlags:0},{colorOp:1}]},
+      state:{cull:1,zenable:false,colorWriteMask:mask}});
+    // Exercise the raw ABI too: only bits 0..3 select channels.
+    u32[(draw.context+108)/4]=(0xa5a50000|mask)>>>0;
+    let status=1,steps=0;
+    while(status===1) {status=device.step(draw);assert(++steps<100);}
+    assert.equal(status,0);device.completeDraw(draw);device.release(draw);
+    assert.equal(device.lastDrawSamples,16n,'mask does not suppress accepted samples');
+    const pixels=device.readPixels(),source=[153,102,51,204],dest=[68,34,17,136],channel=[2,1,0,3];
+    for(let i=0;i<pixels.length;i++) assert.equal(pixels[i],mask&(1<<channel[i%4])?source[i%4]:dest[i%4],`mask ${mask}, byte ${i}, budget ${budget}`);
+    assert.equal(device.bytes,base);device.destroy();
+  }
+  console.log('PASS all 16 colour masks, high bits, RGBA byte order, samples, budgets and release');
 })().catch(error => { console.error(error); process.exitCode = 1; });
