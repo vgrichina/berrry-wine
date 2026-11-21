@@ -261,6 +261,27 @@ async function main(){
  const savedExchange=a.exchange.bind(a);a.exchange=async(...args)=>{const reply=await savedExchange(...args);reply[4][2]={...reply[4][2],iid:'not-an-iid'};return reply;};
  put(p+48,0xdeadbeef);assert.equal(await checked(derived,4,[0,1033,p+48]),HR.INVALIDOBJREF);assert.equal(read(p+48),0xdeadbeef);a.exchange=savedExchange;await m.drain();
  // A second actual x86 instance has independent memory and displaced heap
+ // The actual iKernel IID's slot 5 is an output SAFEARRAY(BSTR)**. Exercise
+ // it through the registered native type library, never a substituted schema.
+ const arrayIID='ecfed5de5a22d31188aa00c04f72f303',arrayInfo=await a.info(arrayIID);
+ assert.deepEqual(arrayInfo.meta.methods.get(5).params,[{type:{kind:'pointer',child:{kind:'safearray',element:{kind:'bstr'}}},flags:10}]);
+ await m.release(arrayInfo.ti);
+ const arrayObject=m.allocate(16),arrayTable=m.allocate(32);put(arrayObject,arrayTable);put(arrayObject+4,1);
+ for(let i=0;i<3;i++)put(arrayTable+i*4,read(table+i*4));
+ const arrayElement={kind:'bstr'},arrayValue={vt:8,bounds:[[3,7],[2,-3]],values:['410000004200',null,'','ffdf','6c00610073007400',null]};
+ put(p+160,2);put(p+164,-3);put(p+168,3);put(p+172,7);
+ const arrayTemplate=await invoke('SafeArrayCreate',[8,2,p+160]);assert(arrayTemplate);
+ for(let i=0;i<arrayValue.values.length;i++){
+  const x=arrayValue.values[i];if(x===null)continue;const chars=m.allocate(x.length/2+2);m.write(chars,Buffer.from(x,'hex'));
+  const bs=await invoke('SysAllocStringLen',[chars,x.length/4]);m.free(chars);assert(bs);put(read(arrayTemplate+12)+i*4,bs);
+ }
+ const arrayReturn=addCode([0x8b,0x44,0x24,8,0x50,0x68,...d32(arrayTemplate),0xb8,...d32(thunk('SafeArrayCopy')),0xff,0xd0,0xc2,8,0]);
+ put(arrayTable+20,arrayReturn);assert.deepEqual(v.safeArray(arrayElement,arrayTemplate),arrayValue);
+ for(const [at,value,expected]of [[arrayTemplate,0,HR.INVALID],[arrayTemplate,65,HR.INVALID],[arrayTemplate-4,3,HR.INVALID],
+  [arrayTemplate+4,8,HR.INVALID],[arrayTemplate+8,1,0x8002000d],[arrayTemplate+16,16385,HR.INVALID],[arrayTemplate+20,2147483647,HR.INVALID]]){
+  const saved=read(at);put(at,value);assert.throws(()=>v.safeArray(arrayElement,arrayTemplate),x=>x instanceof HResult&&x.value===expected);put(at,saved);
+ }
+ // A second actual x86 instance has independent memory and displaced heap
  // addresses. Only the authenticated byte authority connects the two CPUs.
  const memory2=new WebAssembly.Memory({initial:8192,maximum:8192,shared:true}),vfs2=new VirtualFS();
  vfs2.files.set('c:\\sims.tlb',{data:resource.data,attrs:32});
@@ -287,6 +308,75 @@ async function main(){
  const collection2=await remote2(collection,collectionIID);c2.putWord(scratch2+48,1);
  assert.equal(await c2.call(collection2,8,[0x4003,0,scratch2+48,0,scratch2+24]),0);assert.equal(c2.word(scratch2+48),77);assert.notEqual(read(p+148),scratch2+48);
  const item2=c2.word(scratch2+24);assert(item2&&item2!==item);await m2.release(item2);await m2.release(collection2);
+ const arrayProxy2=await remote2(arrayObject,arrayIID),v2=a2.contracts.v;
+ const owned2=new Set(),allocate2=m2.allocate.bind(m2),free2=m2.free.bind(m2);
+ m2.allocate=n=>{const q=allocate2(n);assert(!owned2.has(q));owned2.add(q);return q;};m2.free=q=>{owned2.delete(q);return free2(q);};
+ const destroy2=async q=>{
+  // Native destruction bypasses the host observer, as SysFreeString above.
+  const data=c2.word(q+12);for(let i=0;i<6;i++){const bs=c2.word(data+i*4);if(bs)assert(owned2.delete(bs-4));}
+  assert(owned2.delete(data));assert(owned2.delete(q-4));await v2.destroySafeArray(q);
+ };
+ const arrayCall=async()=>{
+  c2.putWord(scratch2+24,0xdeadbeef);const before=snapshot();assert.equal(await c2.call(arrayProxy2,5,[scratch2+24]),0);assert.deepEqual(snapshot(),before);
+  const q=c2.word(scratch2+24);assert(q&&q!==arrayTemplate);assert.notEqual(c2.word(q+12),read(arrayTemplate+12));
+  assert.deepEqual(v2.safeArray(arrayElement,q),arrayValue);assert.equal(v2.half(q+2),0x180);assert.equal(c2.word(q+8),0);
+  for(let i=0;i<6;i++)if(c2.word(c2.word(q+12)+i*4))assert.notEqual(c2.word(c2.word(q+12)+i*4),read(read(arrayTemplate+12)+i*4));
+  await destroy2(q);assert.equal(owned2.size,0);
+ };
+ const nullReturn=addCode([0x8b,0x44,0x24,8,0xc7,0,0,0,0,0,0xb8,...d32(0x80004005),0xc2,8,0]);
+ put(arrayTable+20,nullReturn);c2.putWord(scratch2+24,0xdeadbeef);
+ assert.equal(await c2.call(arrayProxy2,5,[scratch2+24]),0x80004005);assert.equal(c2.word(scratch2+24),0);assert.equal(owned2.size,0);
+ put(arrayTable+20,arrayReturn);
+ for(let i=0;i<4;i++)await arrayCall();const arrayHeap=e.get_heap_ptr(),arrayHeap2=e2.get_heap_ptr();
+ for(let i=0;i<32;i++)await arrayCall();
+ assert.equal(e.get_heap_ptr(),arrayHeap,'source output arrays destroyed after serialization');assert.equal(e2.get_heap_ptr(),arrayHeap2,'caller arrays independently destroyed');
+ assert.deepEqual(v.safeArray(arrayElement,arrayTemplate),arrayValue);
+ const exchange2=a2.exchange.bind(a2);
+ const malformed=[x=>{x.vt=3;},x=>{x.bounds=[];},x=>{x.bounds=[[2,2147483647]];},x=>{x.bounds=[[16385,0]];},
+  x=>{x.bounds=[[2,0],[16384,0]];},x=>{x.values.pop();},x=>{x.values[5]='abc';},x=>{x.extra=1;},x=>{x.values[5]={vt:8};}];
+ for(const mutate of malformed){a2.exchange=async(...args)=>{const reply=await exchange2(...args);mutate(reply[4][0]);return reply;};
+  c2.putWord(scratch2+24,0xdeadbeef);assert.equal(await c2.call(arrayProxy2,5,[scratch2+24]),HR.INVALID);
+  assert.equal(c2.word(scratch2+24),0xdeadbeef);assert.equal(owned2.size,0,'malformed reply rollback');}
+ a2.exchange=exchange2;const readArray2=v2.readSafeArray.bind(v2);
+ // A later invalid caller span cannot expose an earlier array whose owner
+ // is about to be rolled back. Use the ordinary generic output publication.
+ const twoOutputs={...arrayInfo.meta.methods.get(5),params:Array(2).fill(arrayInfo.meta.methods.get(5).params[0])};
+ const twoRow={channel:1,meta:{iid:arrayIID,methods:new Map([[5,twoOutputs]])}};
+ a2.exchange=async()=>['WA_AUTOMATION_1',arrayIID,5,0,[arrayValue,arrayValue]];
+ c2.putWord(scratch2+24,0xdeadbeef);
+ await assert.rejects(a2.invoke(twoRow,5,[scratch2+24,0xffffffff]),/invalid guest range/);
+ assert.equal(c2.word(scratch2+24),0xdeadbeef);assert.equal(owned2.size,0);a2.exchange=exchange2;
+ for(const failAt of [1,2,3,5]){v2.readSafeArray=(...args)=>{let calls=0;const alloc=m2.allocate;m2.allocate=n=>{if(++calls===failAt)throw new HResult(HR.OOM);return alloc(n);};
+   try{return readArray2(...args);}finally{m2.allocate=alloc;}};
+  c2.putWord(scratch2+24,0xdeadbeef);assert.equal(await c2.call(arrayProxy2,5,[scratch2+24]),HR.OOM);
+  assert.equal(c2.word(scratch2+24),0xdeadbeef);assert.equal(owned2.size,0,'partial descriptor/data/BSTR rollback');}
+ v2.readSafeArray=readArray2;
+ for(const [vt,size]of [[16,1],[2,2],[3,4],[5,8],[20,8]]){const type={kind:'scalar',vt,size},payload={vt,bounds:[[2,-8]],values:['ff'.repeat(size),'80'.repeat(size)]},owned=[];
+  const q=v2.readSafeArray(type,payload,owned);assert.deepEqual(v2.safeArray(type,q),payload);await a2.cleanup(owned);}
+ for(const bounds of [[[0,-9]],[[0,0],[4,-2]]]){const payload={vt:8,bounds,values:[]},owned=[];
+  const q=v2.readSafeArray(arrayElement,payload,owned);assert.deepEqual(v2.safeArray(arrayElement,q),payload);await a2.cleanup(owned);}
+ for(const element of [{kind:'safearray',element:arrayElement},{kind:'variant',size:16},{kind:'interface'}]){
+  assert.throws(()=>a.validate({params:[{flags:2,type:{kind:'pointer',child:{kind:'safearray',element}}}],result:{kind:'scalar',vt:25,size:4}}),x=>x instanceof HResult&&x.value===HR.NOTIMPL);}
+ // Park the actual native slot 5 frame in ReadFile: nested calls and cancel
+ // must preserve the owning CPU and destroy the newly produced native array.
+ for(const mode of ['nested','cancel']){
+  const file='c:\\array-'+mode+'.bin';let fills=0;
+  vfs.setProviderFile(file,{attrs:32,provider:{size:4,readRange:async()=>{fills++;
+   if(mode==='cancel'){const request=[...authority.requests.values()].find(r=>r.state==='executing'&&r.method===5);assert(request);m2.transport.cancelCall(request.ticket);}
+   else {put(p+64,name);assert.equal(await c.call(rt,10,[p+64,1,p+100]),0);assert.equal(read(p+100),7);}
+   return Uint8Array.of(1,2,3,4);}}});
+  const handle=vfs.createFile(file,0x80000000,3);
+  const wait=addCode([0x68,0,0,0,0,0x68,...d32(p+132),0x68,4,0,0,0,0x68,...d32(p+128),0x68,...d32(handle),0xb8,...d32(thunk('ReadFile')),0xff,0xd0,
+   0xb8,...d32(arrayReturn),0xff,0xe0]);put(arrayTable+20,wait);
+  c2.putWord(scratch2+24,0xdeadbeef);const before=snapshot();assert.equal(await c2.call(arrayProxy2,5,[scratch2+24]),mode==='cancel'?HR.DISCONNECTED:0);
+  if(mode==='cancel')assert.equal(c2.word(scratch2+24),0xdeadbeef);else await destroy2(c2.word(scratch2+24));
+  await m2.drain();if(pumping)await pumping;await m.drain();assert.equal(fills,1);assert.deepEqual(snapshot(),before);assert.equal(owned2.size,0);vfs.closeHandle(handle);
+ }
+ put(arrayTable+20,arrayReturn);transport.complete=(ticket,response)=>{const result=complete(ticket,response);m2.transport.cancelCall(ticket);return result;};
+ c2.putWord(scratch2+24,0xdeadbeef);assert.equal(await c2.call(arrayProxy2,5,[scratch2+24]),HR.DISCONNECTED);assert.equal(c2.word(scratch2+24),0xdeadbeef);
+ transport.complete=complete;await m2.drain();if(pumping)await pumping;await m.drain();assert.equal(owned2.size,0);
+ await arrayCall();await m2.release(arrayProxy2);await m2.drain();if(pumping)await pumping;await m.drain();assert.equal(read(arrayObject+4),1);
+ assert.equal(await invoke('SafeArrayDestroy',[arrayTemplate]),0);m.free(arrayObject);m.free(arrayTable);
  await m2.release(derived2);await m2.release(ti2);await m2.drain();if(pumping)await pumping;await m.drain();assert.ifError(pumpError);
  assert.equal(a2.objects.size,0);assert.equal(proxy2.objects.size,0);assert.equal(a2.contracts.leases.size,0);assert.equal(c2.frames.length,0);m2.free(scratch2);e2.guest_free(displacement);
  // Metadata leases keep their proxy alive after the external Release.
@@ -296,7 +386,7 @@ async function main(){
  assert.equal(read(item+4),1);assert.equal(read(collection+4),1);
  await m.release(ti);await m.release(lib);for(const q of codes)m.free(q);for(const q of [p,original,table,server,text,name,dp,result,media,mediaTable,collection,collectionTable,item,itemTable])m.free(q);
  assert.equal(allocations.size,0,'all owned codec/factory/proxy/graph storage retired');
- console.log(JSON.stringify({status:'PASS',nativeTypeInfoNames:true,memberAndParameterIDs:true,malformedNameAndLateID:true,nestedNames:true,cancelledNamesReply:true,independentNativeOwners:true,nativeByValueVariant:true,nestedCollectionItem:true,cancelExecuting:true,cancelUnpolledReply:true,malformedReference:true,retirement:true,nestedNativeIO:true,finalOwnedAllocations:allocations.size,nativeFactories:true,nativeTypeInfoAndLibRoundtrip:true,ownedDescriptorGraphs:true,inheritedDispatch:true,nativeInvoke:true,customBstrMethod:true,frameRestore:true,resource:resource.metadata,moduleSHA256:sha(wasm),sourcePin:comRuntimeSourcePin()}));
+ console.log(JSON.stringify({status:'PASS',nativeTypedOutputSAFEARRAY:true,arrayIndependentOwners:true,arrayOwnershipCycles:32,arrayMalformedAtomic:true,arrayPartialAllocationRollback:true,arrayNestedNativeIO:true,arrayCancelExecutingAndUnpolled:true,nativeTypeInfoNames:true,memberAndParameterIDs:true,malformedNameAndLateID:true,nestedNames:true,cancelledNamesReply:true,independentNativeOwners:true,nativeByValueVariant:true,nestedCollectionItem:true,cancelExecuting:true,cancelUnpolledReply:true,malformedReference:true,retirement:true,nestedNativeIO:true,finalOwnedAllocations:allocations.size,nativeFactories:true,nativeTypeInfoAndLibRoundtrip:true,ownedDescriptorGraphs:true,inheritedDispatch:true,nativeInvoke:true,customBstrMethod:true,frameRestore:true,resource:resource.metadata,moduleSHA256:sha(wasm),sourcePin:comRuntimeSourcePin()}));
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
 module.exports={main};
