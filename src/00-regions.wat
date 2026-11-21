@@ -207,6 +207,8 @@
     (owner "09a-handlers.wat:$mm_timer_slot"))
   (region.declare $MM_TIMER_NEXT_ID (size 0x00000004)
     (owner "01-header.wat:$MM_TIMER_NEXT_ID"))
+  (region.declare $TIMER_LIFETIME_TRACE (size 0x00028040) (align 0x00000040)
+    (owner "09a-handlers.wat:$timer_lifetime_emit"))
   ;; ACM driver state, one dword per built-in driver (PCM, MS-ADPCM, IMA
   ;; ADPCM): bit 31 disabled, low byte priority (0 = default index + 1).
   ;; Shared because acmDriverPriority on one guest thread changes what
