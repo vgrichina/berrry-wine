@@ -1192,11 +1192,76 @@
     (local $index i32) (local $rec i32) (local $item i32) (local $text i32)
     (local $i i32) (local $len i32) (local $wide i32)
     (local $x i32) (local $y i32) (local $left i32) (local $right i32)
+    (local $hit_dc i32) (local $hit_width i32) (local $hit_height i32) (local $hit_top i32)
     (local $generation i64)
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then (return (call $tab_native_paint (local.get $hwnd)))))
     (if (i32.eq (local.get $msg) (i32.const 0x0082))
       (then (call $tab_native_state_release (local.get $hwnd)) (return (i32.const 0))))
+    ;; TCM_HITTEST: TCHITTESTINFO has signed LONG client x/y and UINT flags.
+    ;; Use the existing mouse cells, including the blank unselected top inset.
+    ;; Bound geometry to the ordinary horizontal painter, as GETITEMRECT does.
+    ;; Microsoft specifies composite ONITEM (6) for padding, LABEL (4) for
+    ;; text; ONITEM is also ICON|LABEL. No icon rectangle is supported here.
+    (if (i32.eq (local.get $msg) (i32.const 0x130D))
+      (then
+        (if (i32.eqz (local.get $lParam)) (then (return (i32.const -1))))
+        (call $gs32 (i32.add (local.get $lParam) (i32.const 8)) (i32.const 1)) ;; NOWHERE
+        (if (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+              (i32.const 0x2782)) (i32.const 0))
+          (then (return (i32.const -1))))
+        (local.set $x (call $gl32 (local.get $lParam)))
+        (local.set $y (call $gl32 (i32.add (local.get $lParam) (i32.const 4))))
+        (local.set $wide (call $ctrl_get_wh_packed (local.get $hwnd)))
+        (if (i32.or
+              (i32.or (i32.lt_s (local.get $x) (i32.const 0))
+                (i32.ge_u (local.get $x) (i32.and (local.get $wide) (i32.const 0xFFFF))))
+              (i32.or (i32.ge_u (local.get $y) (i32.const 20))
+                (i32.ge_u (local.get $y) (i32.shr_u (local.get $wide) (i32.const 16)))))
+          (then (return (i32.const -1))))
+        (local.set $state (call $tab_native_state_get (local.get $hwnd) (i32.const 0)))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const -1))))
+        (local.set $sw (call $g2w (local.get $state)))
+        (local.set $count (i32.load (local.get $sw)))
+        (block $hit_done (loop $hit_test
+          (br_if $hit_done (i32.ge_u (local.get $i) (local.get $count)))
+          (local.set $rec (i32.add (i32.add (local.get $sw) (i32.const 8))
+            (i32.mul (local.get $i) (i32.const 15))))
+          (local.set $len (i32.load8_u (local.get $rec)))
+          (local.set $right (i32.add (local.get $left)
+            (i32.add (i32.mul (local.get $len) (i32.const 5)) (i32.const 16))))
+          (if (i32.lt_s (local.get $x) (local.get $right))
+            (then
+              (local.set $index (i32.const 6)) ;; ONITEM, including empty labels
+              (local.set $hit_top (select (i32.const 3) (i32.const 5)
+                (i32.eq (local.get $i) (i32.load offset=4 (local.get $sw)))))
+              ;; Measure the painter's stock font on a private DC. Do not
+              ;; disturb the window DC's selected objects or draw any pixels.
+              ;; Text can exceed the legacy len*5 cell: the hit remains owned
+              ;; by its mouse cell, rather than inventing overlap precedence.
+              (if (i32.and (i32.ne (local.get $len) (i32.const 0))
+                    (i32.and (i32.ge_s (local.get $x) (i32.add (local.get $left) (i32.const 8)))
+                      (i32.ge_s (local.get $y) (local.get $hit_top))))
+                (then
+                  (local.set $hit_dc (call $gdi_native_create_compat_dc (i32.const 0)))
+                  (if (local.get $hit_dc)
+                    (then
+                      (drop (call $gdi_native_select_object (local.get $hit_dc) (i32.const 0x30021)))
+                      (local.set $hit_width (call $host_measure_text (local.get $hit_dc)
+                        (i32.add (local.get $rec) (i32.const 1)) (local.get $len) (i32.const 0)))
+                      (local.set $hit_height (i32.and
+                        (call $host_get_text_metrics (local.get $hit_dc)) (i32.const 0xFFFF)))
+                      (drop (call $gdi_native_delete_dc (local.get $hit_dc)))
+                      (if (i32.and
+                            (i32.lt_s (local.get $x) (i32.add (i32.add (local.get $left) (i32.const 8)) (local.get $hit_width)))
+                            (i32.lt_s (local.get $y) (i32.add (local.get $hit_top) (local.get $hit_height))))
+                        (then (local.set $index (i32.const 4))))))))
+              (call $gs32 (i32.add (local.get $lParam) (i32.const 8)) (local.get $index))
+              (return (local.get $i))))
+          (local.set $left (local.get $right))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $hit_test)))
+        (return (i32.const -1))))
     ;; TCM_GETITEMRECT: zero-based index, tab-client RECT, TRUE/FALSE.
     ;; Bound this to ordinary horizontal native tabs. These are the existing
     ;; painter's label widths and top inset, not Windows default metrics.
