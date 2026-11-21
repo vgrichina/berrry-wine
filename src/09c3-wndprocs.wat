@@ -1104,6 +1104,73 @@
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $sw (call $g2w (local.get $state)))
 
+    ;; Initialized, non-ownerdata report lists with LVS_SINGLESEL retain
+    ;; arrows in a dialog loop. Tab continues to navigate between controls.
+    (if (i32.eq
+          (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x1007))
+          (i32.const 5))
+      (then
+        (if (i32.eq (local.get $msg) (i32.const 0x0087))
+          (then (return (i32.const 1)))) ;; DLGC_WANTARROWS
+        (if (i32.and
+              (i32.eq (local.get $msg) (i32.const 0x0100))
+              (i32.or
+                (i32.or (i32.eq (local.get $wParam) (i32.const 0x26))
+                        (i32.eq (local.get $wParam) (i32.const 0x28)))
+                (i32.or (i32.eq (local.get $wParam) (i32.const 0x24))
+                        (i32.eq (local.get $wParam) (i32.const 0x23)))))
+          (then
+            ;; This bounded path does not implement modified selection.
+            (if (i32.or
+                  (i32.and (i32.shr_u (call $wnd_get_style (local.get $hwnd)) (i32.const 27)) (i32.const 1))
+                  (i32.or
+                    (i32.and (call $host_get_key_down_state (i32.const 0x10)) (i32.const 0x8000))
+                    (i32.or
+                      (i32.and (call $host_get_key_down_state (i32.const 0x11)) (i32.const 0x8000))
+                      (i32.and (call $host_get_key_down_state (i32.const 0x12)) (i32.const 0x8000)))))
+              (then (return (i32.const 0))))
+            ;; LVN_KEYDOWN has no return value; ITEMCHANGING owns the veto.
+            (local.set $ptr (call $heap_alloc (i32.const 20)))
+            (if (local.get $ptr)
+              (then
+                (local.set $lvi_w (call $g2w (local.get $ptr)))
+                (call $zero_memory (local.get $lvi_w) (i32.const 20))
+                (i32.store (local.get $lvi_w) (local.get $hwnd))
+                (i32.store offset=4 (local.get $lvi_w) (call $ctrl_table_get_id (local.get $hwnd)))
+                (i32.store offset=8 (local.get $lvi_w) (i32.const -155))
+                (i32.store16 offset=12 (local.get $lvi_w) (local.get $wParam))
+                (drop (call $wnd_send_message
+                  (call $wnd_get_parent (local.get $hwnd)) (i32.const 0x004E)
+                  (call $ctrl_table_get_id (local.get $hwnd)) (local.get $ptr)))
+                (call $heap_free (local.get $ptr))))
+            ;; The parent can destroy the control during the synchronous send.
+            (if (i32.ne (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state))
+              (then (return (i32.const 0))))
+            (local.set $count (call $lv_item_count (local.get $sw)))
+            (local.set $idx (call $lv_find_item_with_state
+              (local.get $sw) (i32.const -1) (i32.const 1)))
+            (if (i32.lt_s (local.get $idx) (i32.const 0))
+              (then (return (i32.const 0))))
+            (if (i32.eq (local.get $wParam) (i32.const 0x26))
+              (then (local.set $idx (i32.sub (local.get $idx) (i32.const 1)))))
+            (if (i32.eq (local.get $wParam) (i32.const 0x28))
+              (then (local.set $idx (i32.add (local.get $idx) (i32.const 1)))))
+            (if (i32.eq (local.get $wParam) (i32.const 0x24))
+              (then (local.set $idx (i32.const 0))))
+            (if (i32.eq (local.get $wParam) (i32.const 0x23))
+              (then (local.set $idx (i32.sub (local.get $count) (i32.const 1)))))
+            (if (i32.lt_s (local.get $idx) (i32.const 0))
+              (then (local.set $idx (i32.const 0))))
+            (if (i32.ge_s (local.get $idx) (local.get $count))
+              (then (local.set $idx (i32.sub (local.get $count) (i32.const 1)))))
+            (if (call $lv_change_item_state
+                  (local.get $hwnd) (local.get $sw) (local.get $idx)
+                  (i32.const 3) (i32.const 3) (i32.const 1) (i32.const 0))
+              (then
+                (drop (call $listview_wndproc
+                  (local.get $hwnd) (i32.const 0x1013) (local.get $idx) (i32.const 0)))))
+            (return (i32.const 0))))))
+
     (if (call $lv_msg_repaints (local.get $msg))
       (then (call $invalidate_hwnd (local.get $hwnd))))
 
