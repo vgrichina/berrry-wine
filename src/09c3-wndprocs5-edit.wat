@@ -2843,6 +2843,26 @@
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
+        ;; Plain, unwrapped EDIT: -1 counts the unselected portions of the
+        ;; selection's lines. With no selection this is the caret line length.
+        ;; Keep shared helpers, nonnegative requests and RichEdit unchanged.
+        (if (i32.and (i32.eq (local.get $wParam) (i32.const -1))
+                     (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
+          (then
+            (if (i32.eqz (i32.and
+                  (load.field.memarg EditState flags (local.get $state_w)) (i32.const 1)))
+              (then (return (load.field.memarg EditState text_len (local.get $state_w)))))
+            (if (i32.eqz (call $edit_wraps (local.get $hwnd)))
+              (then
+                (local.set $lo (call $edit_sel_lo (local.get $state_w)))
+                (local.set $hi (call $edit_sel_hi (local.get $state_w)))
+                (local.set $cur (call $edit_line_start (local.get $state_w) (local.get $lo)))
+                (local.set $a (i32.sub (local.get $lo) (local.get $cur)))
+                (local.set $cur (call $edit_line_start (local.get $state_w) (local.get $hi)))
+                (return (i32.add (local.get $a)
+                  (i32.sub (i32.add (local.get $cur)
+                    (call $edit_line_text_len (local.get $state_w) (local.get $cur)))
+                    (local.get $hi))))))))
         (local.set $lo (call $edit_line_start (local.get $state_w) (local.get $wParam)))
         (return (call $edit_line_text_len (local.get $state_w) (local.get $lo)))))
 
