@@ -132,7 +132,7 @@ test('capture routing, repeated downs and cancellation are balanced exactly once
   f.key('keydown', 65, 'KeyA'); f.key('keydown', 65, 'KeyA', { repeat: true });
   assert.deepEqual(order, [1, 2]); f.hidden(); f.blur(); f.hidden();
   f.key('keyup', 65, 'KeyA'); f.key('keyup', 66, 'KeyB');
-  assert.deepEqual(ups(f), [['up', 65, { code: 'KeyA', location: 0, repeat: false }]]);
+  assert.deepEqual(ups(f), [['up', 65, { code: 'KeyA', location: 0, repeat: false, browserInputCancellation: 'hidden' }]]);
   assert.equal(f.held.size, 0);
 });
 test('both modifier sides preserve first metadata across shifted layout keyup', () => {
@@ -160,7 +160,7 @@ test('proxy focus and composition retain independent physical ownership', () => 
   f.proxy.focus(); f.dispatch(f.proxy, 'compositionstart');
   f.dispatch(f.proxy, 'compositionupdate', { data: '文' });
   assert.equal(ups(f).length, 0); f.hidden();
-  assert.deepEqual(ups(f), [['up', 17, { code: 'ControlLeft', location: 1, repeat: false }]]);
+  assert.deepEqual(ups(f), [['up', 17, { code: 'ControlLeft', location: 1, repeat: false, browserInputCancellation: 'hidden' }]]);
   assert.equal(f.calls.filter(c => c[0] === 'compositionend').length, 0);
   f.dispatch(f.proxy, 'compositionend', { data: '文' });
   f.proxy.value = '文'; f.dispatch(f.proxy, 'input');

@@ -165,7 +165,7 @@ test('throw after actual down delivery retains original ownership for later canc
   assert.equal(r.peekKeyDownState(16),32768);
   r._inputPendingPublishers.clear(); f.blur(); f.key('keyup',16,'ShiftRight');
   assert.equal(r.peekKeyDownState(16),0); assert.equal(ups(f).length,1);
-  assert.deepEqual(ups(f)[0].slice(1),[16,{code:'ShiftRight',location:2,repeat:false}]);
+  assert.deepEqual(ups(f)[0].slice(1),[16,{code:'ShiftRight',location:2,repeat:false,browserInputCancellation:'blur'}]);
 });
 test('throw during actual release still releases other held keys and propagates first error', () => {
   const f = fixture(); const r = actualRenderer(f);
@@ -185,6 +185,41 @@ test('canceled printable down cannot resume stale char delivery or swallow later
   f.renderer.handleKeyDown = down; f.hidden(false);
   f.key('keydown',66,'KeyB',{key:'b'}); f.key('keyup',66,'KeyB');
   assert.deepEqual(f.calls.filter(c => c[0] === 'char'),[['char',98]]);
+});
+test('only fullscreen exit cancels, prefixed duplicate and late UP preserve other producer', () => {
+  const f = fixture(); const r = actualRenderer(f);
+  const fullscreen = value => {
+    f.document.fullscreenElement = value;
+    f.dispatch(f.document, 'fullscreenchange');
+  };
+  f.key('keydown',27,'Escape');
+  fullscreen(f.canvas); assert.equal(r.peekKeyDownState(27),32768);
+  fullscreen(null); assert.equal(r.peekKeyDownState(27),0);
+  assert.equal(ups(f).length,1);
+  assert.equal(ups(f)[0][2].browserInputCancellation,'fullscreen-exit');
+  // A separate producer takes the key after cancellation. Old DOM UP has no
+  // bridge ownership and cannot release that producer's renderer state.
+  r.handleKeyDown(27,{code:'Escape'});
+  f.dispatch(f.document,'webkitfullscreenchange');
+  f.blur(); f.key('keyup',27,'Escape');
+  assert.equal(r.peekKeyDownState(27),32768); assert.equal(ups(f).length,1);
+  r.handleKeyUp(27,{code:'Escape'});
+  f.key('keydown',27,'Escape'); f.key('keyup',27,'Escape');
+  assert.equal(r.peekKeyDownState(27),0); assert.equal(ups(f).length,3);
+});
+test('fullscreen cancellation reentrancy preserves replacement ownership', () => {
+  const f = fixture(); f.document.fullscreenElement=f.canvas;
+  f.dispatch(f.document,'fullscreenchange');
+  f.key('keydown'); f.key('keydown',66,'KeyB');
+  const up=f.renderer.handleKeyUp; let once=true;
+  f.renderer.handleKeyUp=function(vk,info){
+    up.call(this,vk,info);
+    if(once){once=false;f.blur();f.key('keydown',66,'KeyB');}
+  };
+  f.document.fullscreenElement=null;f.dispatch(f.document,'fullscreenchange');
+  assert.equal(f.held.size,1);assert.equal(ups(f).length,2);
+  f.dispatch(f.document,'webkitfullscreenchange');assert.equal(f.held.size,1);
+  f.key('keyup',66,'KeyB');assert.equal(f.held.size,0);assert.equal(ups(f).length,3);
 });
 let failed = 0;
 for (const [name,fn] of tests) {
