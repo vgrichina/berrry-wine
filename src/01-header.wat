@@ -564,6 +564,7 @@
   (import "host" "com_get_pending_dll" (func $host_com_get_pending_dll (param i32 i32) (result i32)))
   (import "host" "com_initialize_thread" (func $host_com_initialize_thread (param i32 i32 i32) (result i32)))
   (import "host" "com_uninitialize_thread" (func $host_com_uninitialize_thread (param i32) (result i32)))
+  (import "host" "com_is_initialized" (func $host_com_is_initialized (param i32) (result i32)))
   ;; Thread/event host imports
   ;; create_thread(start, param, stackSize, flags, lpThreadIdWA, creatorTid)
   ;; returns the

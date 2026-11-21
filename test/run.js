@@ -5053,6 +5053,7 @@ async function main() {
   h.com_initialize_thread = (reserved, flags, tid) =>
     threadManager.initializeComApartment(reserved, flags, tid);
   h.com_uninitialize_thread = (tid) => threadManager.uninitializeComApartment(tid);
+  h.com_is_initialized = (tid) => threadManager.isComApartmentInitialized(tid);
   h.exit_thread = (exitCode) => threadManager.exitThread(exitCode);
   h.get_exit_code_thread = (handle) => threadManager.getExitCodeThread(handle);
   h.terminate_thread = (handle, exitCode) => threadManager.terminateThread(handle, exitCode);

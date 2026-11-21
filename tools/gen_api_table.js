@@ -111,6 +111,7 @@ const extra = [
   { name: 'CoMarshalHresult', nargs: 2 },
   { name: 'CoUnmarshalHresult', nargs: 2 },
   { name: 'CoMarshalInterface', nargs: 6 },
+  { name: 'CoGetMarshalSizeMax', nargs: 6 },
   { name: 'CoUnmarshalInterface', nargs: 3 },
   { name: 'CoReleaseMarshalData', nargs: 1 },
   { name: 'CoGetPSClsid', nargs: 2 },

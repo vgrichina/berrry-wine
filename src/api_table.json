@@ -39861,5 +39861,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3256346330
+  },
+  {
+    "id": 4716,
+    "name": "CoGetMarshalSizeMax",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 211763470
   }
 ]

@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 306,
+  "count": 307,
   "sigs": {
     "log": {
       "params": [
@@ -2285,6 +2285,14 @@
       ]
     },
     "com_uninitialize_thread": {
+      "params": [
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "com_is_initialized": {
       "params": [
         "i32"
       ],

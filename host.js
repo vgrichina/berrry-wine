@@ -3007,6 +3007,8 @@ class WineAssembly {
       ? self.threadManager.initializeComApartment(reserved, flags, tid) : 0x8000FFFF;
     h.com_uninitialize_thread = (tid) => self.threadManager
       ? self.threadManager.uninitializeComApartment(tid) : 0;
+    h.com_is_initialized = (tid) => self.threadManager
+      ? self.threadManager.isComApartmentInitialized(tid) : 0;
     h.exit_thread = (c) => self.threadManager && self.threadManager.exitThread(c);
     h.get_exit_code_thread = (handle) => self.threadManager ? self.threadManager.getExitCodeThread(handle) : 0x103;
     h.terminate_thread = (handle, exitCode) => self.threadManager

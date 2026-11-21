@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/com-interface-runtime.js",
+      "name": "host-file",
+      "baseSHA256": "a5e01c792d18ee3e666d699a8cad8cdc84f32456466606cf8e05c996e837a61b",
+      "sha256": "f2d8b5d1ad35be27399be52503b1f6637294953a1f17ec649f07b9ca8164f826",
+      "reason": "Operation 28 uses the existing generation/thread/frame-owned yield23 COM bridge with six stdcall arguments. Its callback QI and custom IMarshal size run in the real owner continuation. Sizing retains no transport export or public reference; all temporary native interface references are released before completion. Existing pending-frame retirement, nested callback and caller-state fences remain enforced."
+    },
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "da2413f4834cbdd96df1715dbc3afad4484a590353673cacdcec14cc1bfc90fd",
+      "sha256": "b8c39d87fd89472fde90c499ca69b2d41f672b3d42bdd35424b8f1640a13161c",
+      "reason": "CoGetMarshalSizeMax queries the existing owning ThreadManager COM initialization count synchronously by actual current Win32 thread ID. No initialization is fabricated, no callbacks are retained, and the Worker import uses the existing synchronous broker to query the durable owner record. The bridge itself still owns all guest callbacks and cleanup."
+    },
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "89d5e12d42dbc2229f9ecf731bee88239cbdc29fd0e780dcab755b815bd115d9",
+      "sha256": "cc67e7e1aa3491a2ee61a0cae2f6da5d844e1dedbfc74892e3353d6a358ab408",
+      "reason": "CoGetMarshalSizeMax queries the existing owning ThreadManager COM initialization count synchronously by actual current Win32 thread ID. No initialization is fabricated, no callbacks are retained, and the Worker import uses the existing synchronous broker to query the durable owner record. The bridge itself still owns all guest callbacks and cleanup."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "dc4a67326f3f622cdc3e820d6d738034d84e34dd112a5f41dd3b8b202255664b",
+      "sha256": "a1c6ca8d01169b20e103b01cd1dada005c65337f5fd6f7bf1018784bf9ac9e08",
+      "reason": "CoGetMarshalSizeMax queries the existing owning ThreadManager COM initialization count synchronously by actual current Win32 thread ID. No initialization is fabricated, no callbacks are retained, and the Worker import uses the existing synchronous broker to query the durable owner record. The bridge itself still owns all guest callbacks and cleanup."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "084887a7eff7a51a0d7b7030c57b239542221ab62db4abe993c35ffc244a4ae8",
+      "sha256": "caf31452a7c222a7c99e0913331f71642d940d0d26b75b7c0ab824d1c3aaee2f",
+      "reason": "Add synchronous COM apartment initialization query to the authoritative thread primitive import list. Current Win32 thread identity remains an explicit argument; the broker reads the existing durable ThreadManager record. No guest callbacks, initialization or retained state are introduced."
+    }
+  ]
+}
