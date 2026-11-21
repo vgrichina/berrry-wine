@@ -23,7 +23,7 @@ assert.throws(()=>createReviewedContexts().capture(()=>s,()=>{encodes++;},()=>{w
 });
 assert.equal(encodes,0);assert.equal(writes,0,'refusal writes no replacement capture');
 const changed=scene();changed.focusTopLevel='0x2';
-assert(captureFailures(changed,true).context.includes('focus.mainTopLevel'));
+assert(captureFailures(changed,true).context.includes('focus.selectedTopLevel'));
 assert.deepEqual(captureFailures(changed,true).contextDetails,
   {mainHwnd:'0x1',modalHwnd:'0x0',focus:'0x1',focusTopLevel:'0x2'});
 const privateRow=scene();Object.assign(privateRow.windows[0],{
