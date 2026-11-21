@@ -1524,16 +1524,6 @@
   (local $border i32) (local $format i32) (local $p i32)
   (local.set $x (call $d3d_shader_vm_address (local.get $x) (i32.load offset=4 (local.get $desc)) (i32.load offset=20 (local.get $desc))))
   (local.set $y (call $d3d_shader_vm_address (local.get $y) (i32.load offset=8 (local.get $desc)) (i32.load offset=24 (local.get $desc))))
-  (d3d-shader-texel4-decode))
-
-;; Integer coordinates have already passed through address(), including its
-;; negative border sentinel. Linear sampling shares each resolved axis between
-;; two taps; decoding and normalization remain identical to the point path.
-(func $d3d_shader_vm_texel4_addressed (param $desc i32) (param $x i32) (param $y i32) (result v128)
-  (local $border i32) (local $format i32) (local $p i32)
-  (d3d-shader-texel4-decode))
-
-(defmacro (d3d-shader-texel4-decode)
   (if (i32.or (i32.lt_s (local.get $x) (i32.const 0)) (i32.lt_s (local.get $y) (i32.const 0)))
     (then
       ;; ARGB border: comp0..2 read bytes 2,1,0, comp3 reads byte 3.
@@ -1571,17 +1561,8 @@
   (f32x4.div (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $border)))))
     (f32x4.splat (f32.const 255))))
 
-;; A negative addressed axis denotes border; no row pointer is dereferenced
-;; in that case. XRGB opacity applies only to real texels, never to the border.
-(func $d3d_shader_vm_texel_word (param $row i32) (param $x i32) (param $y i32) (param $border i32) (param $opaque i32) (result i32)
-  (if (i32.or (i32.lt_s (local.get $x) (i32.const 0)) (i32.lt_s (local.get $y) (i32.const 0))) (then (return (local.get $border))))
-  (i32.or (i32.load (i32.add (local.get $row) (i32.shl (local.get $x) (i32.const 2)))) (local.get $opaque)))
-
-(func $d3d_shader_vm_rgba_word (param $value i32) (result v128)
-  (f32x4.div (f32x4.convert_i32x4_u (i32x4.extend_low_i16x8_u (i16x8.extend_low_i8x16_u (i32x4.splat (local.get $value)))))
-    (f32x4.splat (f32.const 255))))
-
 (func $d3d_shader_vm_sample4 (param $desc i32) (param $u f32) (param $v f32) (result v128)
+  (local $x i32) (local $y i32) (local $fx v128) (local $fy v128) (local $top v128) (local $bottom v128)
   (if (i32.or (f32.ne (local.get $u) (local.get $u)) (i32.or (f32.ne (local.get $v) (local.get $v))
         (i32.or (f32.eq (f32.abs (local.get $u)) (f32.const inf)) (f32.eq (f32.abs (local.get $v)) (f32.const inf)))))
     (then (return (f32x4.splat (f32.const 0)))))
@@ -1592,57 +1573,16 @@
   (if (i32.eq (i32.load offset=28 (local.get $desc)) (i32.const 1))
     (then (return (call $d3d_shader_vm_texel4 (local.get $desc)
       (i32.trunc_sat_f32_s (f32.floor (local.get $u))) (i32.trunc_sat_f32_s (f32.floor (local.get $v)))))))
-  (return_call $d3d_shader_vm_bilinear4 (local.get $desc) (local.get $u) (local.get $v)))
-
-(func $d3d_shader_vm_bilinear4 (param $desc i32) (param $u f32) (param $v f32) (result v128)
-  (local $x i32) (local $y i32) (local $fx v128) (local $fy v128) (local $top v128) (local $bottom v128)
-  (local $x1 i32) (local $y1 i32)
-  (local $format i32) (local $border i32) (local $opaque i32) (local $row i32) (local $row1 i32) (local $packed v128)
   (local.set $u (f32.sub (local.get $u) (f32.const 0.5))) (local.set $v (f32.sub (local.get $v) (f32.const 0.5)))
   (local.set $x (i32.trunc_sat_f32_s (f32.floor (local.get $u)))) (local.set $y (i32.trunc_sat_f32_s (f32.floor (local.get $v))))
   (local.set $fx (f32x4.splat (f32.sub (local.get $u) (f32.floor (local.get $u)))))
   (local.set $fy (f32x4.splat (f32.sub (local.get $v) (f32.floor (local.get $v)))))
-  ;; Resolve the four unique axis positions once, rather than twice each in
-  ;; four texel4 calls. Compute neighbors before replacing the original taps:
-  ;; a wrapped/clamped/border result is not the input to its neighbor's address.
-  (local.set $x1 (call $d3d_shader_vm_address (i32.add (local.get $x) (i32.const 1)) (i32.load offset=4 (local.get $desc)) (i32.load offset=20 (local.get $desc))))
-  (local.set $y1 (call $d3d_shader_vm_address (i32.add (local.get $y) (i32.const 1)) (i32.load offset=8 (local.get $desc)) (i32.load offset=24 (local.get $desc))))
-  (local.set $x (call $d3d_shader_vm_address (local.get $x) (i32.load offset=4 (local.get $desc)) (i32.load offset=20 (local.get $desc))))
-  (local.set $y (call $d3d_shader_vm_address (local.get $y) (i32.load offset=8 (local.get $desc)) (i32.load offset=24 (local.get $desc))))
-  ;; Ordinary four-byte formats share descriptor loads and each row address.
-  ;; Keep all four words packed through the format swizzle, then normalize
-  ;; each tap exactly as texel4 does before the unchanged interpolation.
-  (local.set $format (i32.load offset=16 (local.get $desc)))
-  (if (i32.or (i32.eqz (local.get $format)) (i32.or
-    (i32.eq (local.get $format) (i32.const 21)) (i32.eq (local.get $format) (i32.const 22)))) (then
-    (local.set $border (i32.load offset=32 (local.get $desc)))
-    (if (i32.eqz (local.get $format)) (then
-      (local.set $border (i32.or (i32.or (i32.and (local.get $border) (i32.const 0xff00ff00))
-        (i32.and (i32.shr_u (local.get $border) (i32.const 16)) (i32.const 255)))
-        (i32.shl (i32.and (local.get $border) (i32.const 255)) (i32.const 16))))))
-    (local.set $opaque (select (i32.const 0xff000000) (i32.const 0) (i32.eq (local.get $format) (i32.const 22))))
-    (local.set $row (i32.add (i32.load (local.get $desc)) (i32.mul (local.get $y) (i32.load offset=12 (local.get $desc)))))
-    (local.set $row1 (i32.add (i32.load (local.get $desc)) (i32.mul (local.get $y1) (i32.load offset=12 (local.get $desc)))))
-    (local.set $packed (i32x4.replace_lane 3 (i32x4.replace_lane 2 (i32x4.replace_lane 1
-      (i32x4.splat (call $d3d_shader_vm_texel_word (local.get $row) (local.get $x) (local.get $y) (local.get $border) (local.get $opaque)))
-      (call $d3d_shader_vm_texel_word (local.get $row) (local.get $x1) (local.get $y) (local.get $border) (local.get $opaque)))
-      (call $d3d_shader_vm_texel_word (local.get $row1) (local.get $x) (local.get $y1) (local.get $border) (local.get $opaque)))
-      (call $d3d_shader_vm_texel_word (local.get $row1) (local.get $x1) (local.get $y1) (local.get $border) (local.get $opaque))))
-    (if (i32.ne (local.get $format) (i32.const 0)) (then
-      (local.set $packed (i8x16.shuffle 2 1 0 3 6 5 4 7 10 9 8 11 14 13 12 15 (local.get $packed) (local.get $packed)))))
-    (local.set $top (f32x4.add
-      (f32x4.mul (call $d3d_shader_vm_rgba_word (i32x4.extract_lane 0 (local.get $packed))) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
-      (f32x4.mul (call $d3d_shader_vm_rgba_word (i32x4.extract_lane 1 (local.get $packed))) (local.get $fx))))
-    (local.set $bottom (f32x4.add
-      (f32x4.mul (call $d3d_shader_vm_rgba_word (i32x4.extract_lane 2 (local.get $packed))) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
-      (f32x4.mul (call $d3d_shader_vm_rgba_word (i32x4.extract_lane 3 (local.get $packed))) (local.get $fx))))
-    (return (f32x4.add (f32x4.mul (local.get $top) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fy))) (f32x4.mul (local.get $bottom) (local.get $fy))))))
   (local.set $top (f32x4.add
-    (f32x4.mul (call $d3d_shader_vm_texel4_addressed (local.get $desc) (local.get $x) (local.get $y)) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
-    (f32x4.mul (call $d3d_shader_vm_texel4_addressed (local.get $desc) (local.get $x1) (local.get $y)) (local.get $fx))))
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (local.get $x) (local.get $y)) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (i32.add (local.get $x) (i32.const 1)) (local.get $y)) (local.get $fx))))
   (local.set $bottom (f32x4.add
-    (f32x4.mul (call $d3d_shader_vm_texel4_addressed (local.get $desc) (local.get $x) (local.get $y1)) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
-    (f32x4.mul (call $d3d_shader_vm_texel4_addressed (local.get $desc) (local.get $x1) (local.get $y1)) (local.get $fx))))
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (local.get $x) (i32.add (local.get $y) (i32.const 1))) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fx)))
+    (f32x4.mul (call $d3d_shader_vm_texel4 (local.get $desc) (i32.add (local.get $x) (i32.const 1)) (i32.add (local.get $y) (i32.const 1))) (local.get $fx))))
   (f32x4.add (f32x4.mul (local.get $top) (f32x4.sub (f32x4.splat (f32.const 1)) (local.get $fy))) (f32x4.mul (local.get $bottom) (local.get $fy))))
 
 (func $d3d_shader_vm_sample_level4 (param $old i32) (param $mip i32) (param $level i32)

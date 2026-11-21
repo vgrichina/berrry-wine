@@ -87,8 +87,8 @@ const { bootRenderHarness } = require('./render-helper');
     }
     cases++;
   }
-  // Bilinear taps share resolved X/Y axes. Check the vector footprint against
-  // the unchanged scalar sampler, especially when a neighbor wraps, mirrors,
+  // Check point and bilinear vector footprints against the scalar sampler,
+  // especially when a neighbor wraps, mirrors,
   // clamps or becomes border. NPOT, singleton axes and padded rows expose
   // accidentally deriving a neighbor from an already resolved coordinate.
   {
