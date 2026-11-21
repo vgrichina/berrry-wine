@@ -88,17 +88,16 @@ const extraWat = String.raw`
   assert.strictEqual(wat.has_pending_message(), 0,
     'no stale quit marker keeps every message wait returning at once');
 
-  // The last visible window dying keeps the synthetic launcher loop-exit
-  // marker, and adopting a replacement main window retires it at once --
-  // not only when a GetMessage happens to run (a PeekMessage pump never does).
+  // Destroying the last visible window must not invent WM_QUIT during the
+  // interval before the guest creates its replacement.
   retireAll();
   wat.test_seed_window(0x10040, WS_VISIBLE, 0, 0);
   wat.test_seed_window(0x10031, 0, 0, 0);                     // hidden only
   wat.test_set_main(0x10040);
   assert.strictEqual(wat.test_retire_main_window(0x10040) >>> 0, 0,
     'no visible top-level survives: main_hwnd is cleared');
-  assert.strictEqual(wat.get_quit_flag(), 1,
-    'the last visible main window leaves the synthetic loop-exit marker');
+  assert.strictEqual(wat.get_quit_flag(), 0,
+    'the last visible main window posts no synthetic quit');
   wat.test_adopt_main(0x10031);
   assert.strictEqual(wat.get_quit_flag(), 0,
     'adopting a replacement main window retires the synthetic marker');

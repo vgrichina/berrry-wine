@@ -116,11 +116,11 @@
   ;; PeekMessage, which ignores that marker, but has_pending_message and
   ;; MsgWaitForMultipleObjects count it, so every idle wait returned at once.
   ;;
-  ;; Only when no top-level survives at all does the old synthetic marker
-  ;; (flag 1) remain -- the loop-exit shape GetMessageA gives a launcher whose
-  ;; last window just died -- and $main_hwnd_adopt retires it the moment a
-  ;; replacement main window appears. An explicit PostQuitMessage (flag 2)
-  ;; is never downgraded.
+  ;; A windowless interval is legal too: modeless wizards can destroy one page
+  ;; before retrieving the thread message that creates the next. Inventing a
+  ;; quit here makes GetMessage return zero before that message is delivered.
+  ;; Leave all termination decisions to the guest (including its WM_DESTROY
+  ;; callback); an explicit PostQuitMessage must survive this bookkeeping.
   (func $destroy_main_window_lifecycle (param $hwnd i32)
     (local $repl i32)
     (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
@@ -137,10 +137,6 @@
         (if (local.get $repl)
           (then (call $main_hwnd_adopt (local.get $repl)))
           (else
-            (if (i32.and
-                  (i32.eqz (global.get $quit_flag))
-                  (call $wnd_is_effectively_visible (local.get $hwnd)))
-              (then (global.set $quit_flag (i32.const 1))))
             ;; The slot is removed next. Leave no stale main handle behind so
             ;; a replacement top-level created during an SDL video-mode reset
             ;; becomes the new input/paint target.

@@ -4,6 +4,7 @@
 const fs=require('node:fs'),path=require('node:path');
 const {threadId}=require('node:worker_threads');
 const APIS=new Set(['EndDialog','DestroyWindow','PostQuitMessage','ExitProcess','CreateProcessA','CreateProcessW','WinExec','ShellExecuteA','ShellExecuteExA','CreateWindowExA','CreateWindowExW','CreateDialogParamA','CreateDialogIndirectParamA','DialogBoxParamA','DialogBoxIndirectParamA','SendMessageA','SendMessageW','PostMessageA','PostMessageW','DispatchMessageA','DispatchMessageW']);
+for (const name of ['GetMessageA', 'GetMessageW']) APIS.add(name);
 function observer({write,limit=4096,clock=()=>process.hrtime.bigint().toString()}){
  let e,memory,sequence=0,lastState='',lastButton='',saturated=false;
  const emit=(kind,data={})=>{
@@ -24,6 +25,9 @@ function observer({write,limit=4096,clock=()=>process.hrtime.bigint().toString()
   if(!e||saturated)return;
   const name=Buffer.from(memory.buffer,ptr,Math.min(len,256)).toString('latin1').split('\0')[0];
   if(!APIS.has(name))return;
+  // Message pumps can run millions of times before the transition of interest.
+  // Retain raw quit/windowless retrievals without saturating on ordinary idle.
+  if(name.startsWith('GetMessage')&&!e.get_quit_flag?.()&&e.get_main_hwnd?.())return;
   if(name.startsWith('DispatchMessage')){const p=read((e.get_esp()>>>0)+4),msg=read(p+4);if(![1,2,0x10,0x12,0x82,0x100,0x101,0x110,0x111,0x201,0x202].includes(msg))return;}
   sample('before:'+name);
   const esp=e.get_esp()>>>0,args=Array.from({length:12},(_,i)=>read(esp+4+i*4));
