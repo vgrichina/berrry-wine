@@ -1382,6 +1382,24 @@
                 (call $static_set_text_ptr (local.get $state_w)
                   (call $ctrl_text_dup (local.get $lParam) (local.get $text_len)))
                 (call $static_set_text_len (local.get $state_w) (local.get $text_len))))
+            ;; STATIC can be a captioned window (including a top-level wizard).
+            ;; Its client text and USER's nonclient title must change together:
+            ;; invalidating only the client leaves subsequent frame paints reading
+            ;; the creation-time title. Use the owned copy, also for empty text.
+            (call $title_table_set (local.get $hwnd)
+              (call $g2w (call $static_text_ptr (local.get $state_w)))
+              (call $static_text_len (local.get $state_w)))
+            (call $host_set_window_text (local.get $hwnd)
+              (select (call $g2w (call $static_text_ptr (local.get $state_w)))
+                (i32.const 0) (call $static_text_ptr (local.get $state_w))))
+            (if (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                                (i32.const 0x00C00000)) (i32.const 0x00C00000))
+              (then
+                (call $nc_flags_set (local.get $hwnd) (i32.const 1))
+                ;; Hidden children share their parent's surface. Keep their NC
+                ;; damage pending until exposure instead of stamping hidden pixels.
+                (if (call $wnd_is_effectively_visible (local.get $hwnd))
+                  (then (call $defwndproc_do_ncpaint (local.get $hwnd))))))
             (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000))
               (then (call $invalidate_hwnd (local.get $hwnd))))
             (return (i32.const 1))))
