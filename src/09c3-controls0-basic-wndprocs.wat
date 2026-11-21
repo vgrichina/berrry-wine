@@ -500,15 +500,27 @@
           (then (drop (call $capture_replace (i32.const 0)))))
         (return (i32.const 0))))
 
-    ;; EDIT scrollbars are standard non-client strips. Messages sent through
+    ;; Hidden NC work is consumed by the message scan. Re-arm the caption at
+    ;; exposure so text changed while hidden is painted on its first show.
+    (if (i32.and
+          (i32.and (i32.eq (local.get $msg) (i32.const 0x0018))
+                   (i32.ne (local.get $wParam) (i32.const 0)))
+          (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                           (i32.const 0x00C00000)) (i32.const 0x00C00000)))
+      (then (call $nc_flags_set (local.get $hwnd) (i32.const 1))))
+
+    ;; BUTTON captions and scrollbars are standard non-client areas. Messages sent through
     ;; the control dispatcher do not pass through DefWindowProc automatically,
     ;; so paint the border and both scrollbar styles here instead of leaving
     ;; their backing-surface pixels black.
     (if (i32.and
           (i32.eq (local.get $msg) (i32.const 0x0085)) ;; WM_NCPAINT
-          (i32.ne
-            (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x00300000))
-            (i32.const 0)))
+          (i32.or
+            (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                             (i32.const 0x00C00000)) (i32.const 0x00C00000))
+            (i32.ne
+              (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x00300000))
+              (i32.const 0))))
       (then
         (call $defwndproc_do_ncpaint (local.get $hwnd))
         (return (i32.const 0))))
@@ -689,6 +701,23 @@
                 (call $btn_set_text_ptr (local.get $state_w)
                   (call $ctrl_text_dup (local.get $lParam) (local.get $text_len)))
                 (call $btn_set_text_len (local.get $state_w) (local.get $text_len))))
+            ;; A BUTTON may also have a standard nonclient caption. Keep its
+            ;; title store and host publication in sync with the owned text,
+            ;; including direct WM_SETTEXT / CallWindowProc and empty strings.
+            (call $title_table_set (local.get $hwnd)
+              (call $g2w (call $btn_text_ptr (local.get $state_w)))
+              (call $btn_text_len (local.get $state_w)))
+            (call $host_set_window_text (local.get $hwnd)
+              (select (call $g2w (call $btn_text_ptr (local.get $state_w)))
+                (i32.const 0) (call $btn_text_ptr (local.get $state_w))))
+            (if (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                                (i32.const 0x00C00000)) (i32.const 0x00C00000))
+              (then
+                (call $nc_flags_set (local.get $hwnd) (i32.const 1))
+                ;; Hidden children share the parent's surface; retain damage
+                ;; for exposure without painting their hidden caption now.
+                (if (call $wnd_is_effectively_visible (local.get $hwnd))
+                  (then (call $defwndproc_do_ncpaint (local.get $hwnd))))))
             (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000))
               (then (call $invalidate_hwnd (local.get $hwnd))))
             (return (i32.const 1)))) ;; TRUE

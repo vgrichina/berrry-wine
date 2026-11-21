@@ -105,6 +105,9 @@ function u32(value) {
   // message; renderer-side focus calls run on an idle ownership instance.
   // BUTTON must therefore perform USER's focus transfer from its own live
   // wndproc before it handles the press.
+  // A manually sent WM_KILLFOCUS above tests the notification handler; it
+  // does not move USER's focus. Make this a real focus transfer before down.
+  e.set_focus(0);
   clearCaptured();
   e.test_button_message(notifyButton, 0x0201);
   assert.strictEqual(e.get_focus_hwnd() >>> 0, notifyButton,
