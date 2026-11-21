@@ -2777,15 +2777,22 @@
                           (i32.sub (local.get $h) (i32.const 2))
                           (i32.const 14))))))))
               (else
-            (local.set $range (i32.sub (local.get $max) (local.get $min)))
+            ;; Signed32 limits span up to 2^32-1. Widen each operand before
+            ;; subtraction and multiplication; packed widths keep the product in i64.
+            (local.set $range64 (i64.sub
+              (i64.extend_i32_s (local.get $max))
+              (i64.extend_i32_s (local.get $min))))
             (local.set $inner_w (i32.sub (local.get $w) (i32.const 4)))
-            (if (i32.and (i32.gt_s (local.get $range) (i32.const 0))
-                         (i32.gt_s (local.get $inner_w) (i32.const 0)))
+            (if (i32.and (i64.gt_s (local.get $range64) (i64.const 0))
+                  (i32.and (i32.gt_s (local.get $inner_w) (i32.const 0))
+                    (i32.gt_s (local.get $h) (i32.const 4))))
               (then
-                (local.set $fill_w
-                  (i32.div_s
-                    (i32.mul (i32.sub (local.get $pos) (local.get $min)) (local.get $inner_w))
-                    (local.get $range)))
+                (local.set $fill_w (i32.wrap_i64 (i64.div_s
+                  (i64.mul
+                    (i64.sub (i64.extend_i32_s (local.get $pos))
+                      (i64.extend_i32_s (local.get $min)))
+                    (i64.extend_i32_s (local.get $inner_w)))
+                  (local.get $range64))))
                 (if (i32.gt_s (local.get $fill_w) (i32.const 0))
                   (then
                     (drop (call $gdi_native_fill_rect (local.get $hdc)
