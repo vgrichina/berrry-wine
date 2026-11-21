@@ -396,3 +396,29 @@ or later endpoint requests. All three gestures retained independently prearmed
 trusted UP and release acknowledgments. The original inner supervisor and outer
 actual wait/both-EOF receipts are retained; exit 1 records that review timeout,
 not a native input receipt failure. No sandbox box was created.
+
+### 2026-11-21 play and capture after normal Game/New
+
+Run `20261121-pawn-after-reset` used one fresh immutable original on published
+`d7a39d3faacd66610eee086534ea756a07378791`, reusing the accepted authored menu
+proof and unchanged requester/input path. Actual Worker bytecode matched
+`2c37a26bd614bc2b2529d3921185bc111aa11547c1454135b9a01fca2a3a03f2`;
+all six original media files matched before and after execution.
+
+The reviewed full frames show initial human e2–e4 and AI e7–e6, followed by
+ordinary mouse Game/New command 1. The board reset and reversed, with Black
+below and files running h through a from left to right. White's AI opened
+e2–e4. Human Black then played d7–d5; White captured e4×d5. Black legally
+captured that pawn with Qd8×d5, and White replied Nb1–c3. The final frame shows
+the black queen on d5, the captured white pawn absent, and yellow b1/c3
+outlines. No dialog appeared and no concrete emulator defect was found.
+
+All five physical DOWN gestures had independently prearmed trusted UP and
+release-dispatch acknowledgments. The two menu receipts remain MENU_HANDLED,
+client consumed=false and token=0. Native 500 ms, independent UP 1800 ms,
+review 5000 ms and consent 20000 ms bounds were unchanged. The original
+finished normally without UNKNOWN, cancellation or replay; actual inner and
+outer supervisor waits exited 0, outer stdout/stderr both reached EOF and
+the inner supervisor reported no leaked children. No runtime source change,
+guest-state manipulation, forced focus, clock/pump change or test box was used.
+This proves the bounded post-reset move/reply/capture sequence, not a full game.
