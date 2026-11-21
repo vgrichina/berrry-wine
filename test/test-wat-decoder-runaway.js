@@ -26,7 +26,7 @@ const extraWat = String.raw`
 `;
 
 (async () => {
-  const { exports: e } = await bootRenderHarness({ extraWat, width: 64, height: 48 });
+  const { exports: e, memory } = await bootRenderHarness({ extraWat, width: 64, height: 48 });
 
   // A lone RET is a complete block: one instruction and a terminator.
   const RET = 0x00030000;
@@ -35,17 +35,20 @@ const extraWat = String.raw`
   assert.ok(tstart, 'a RET should decode into a block');
   console.log('PASS  an ordinary block still decodes');
 
-  // Untouched guest memory is zeroes, which never terminate a block.
-  let trapped = null;
-  try {
-    e.test_decode_block(0x00040000);
-  } catch (err) {
-    trapped = err;
-  }
-  assert.ok(trapped, 'decoding a region with no terminator should trap, not spin');
-  assert.ok(/unreachable/.test(String(trapped.message)),
-    `expected an explicit trap, got: ${trapped && trapped.message}`);
-  console.log('PASS  a region with no terminator fails fast instead of filling the arena');
+  // Untouched guest memory is zeroes, which never terminate a block. 32-bit
+  // code no longer traps while decoding them: the decoder emits one
+  // $th_zero_entry op (te 469) and stops, and that op decides at run time --
+  // an access violation for an unmapped EAX (Moorhuhn 3's packer falls into
+  // its own wiped stub on purpose and continues from its SEH handler), the
+  // explicit "execution entered zeros" trap otherwise. Either way the block
+  // is one op, so it cannot run on and fill the arena.
+  const ZEROS = 0x00040000;
+  const zstart = e.test_decode_block(ZEROS) >>> 0;
+  assert.ok(zstart, 'zeros should decode into a block, not spin');
+  const words = new Uint32Array(memory.buffer, zstart, 2);
+  assert.strictEqual(words[0], 469, 'the zeros block is $th_zero_entry');
+  assert.strictEqual(words[1], ZEROS, '$th_zero_entry carries the entry EIP');
+  console.log('PASS  a region with no terminator decodes to one $th_zero_entry op instead of filling the arena');
 
   console.log('\n2/2 decoder runaway checks passed');
 })();
