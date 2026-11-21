@@ -16,6 +16,13 @@ const { bootRenderHarness } = require('./render-helper');
       (call $g2w (call $heap_alloc (local.get $n))))
     (func (export "shader_test_address") (param $x i32) (param $n i32) (param $mode i32) (result i32)
       (call $d3d_shader_vm_address (local.get $x) (local.get $n) (local.get $mode)))
+    (func (export "shader_test_sample4") (param $desc i32) (param $u f32) (param $v f32) (param $out i32)
+      (v128.store (local.get $out) (call $d3d_shader_vm_sample4 (local.get $desc) (local.get $u) (local.get $v))))
+    (func (export "shader_test_sample_scalar") (param $desc i32) (param $u f32) (param $v f32) (param $out i32)
+      (f32.store (local.get $out) (call $d3d_shader_vm_sample (local.get $desc) (local.get $u) (local.get $v) (i32.const 0)))
+      (f32.store offset=4 (local.get $out) (call $d3d_shader_vm_sample (local.get $desc) (local.get $u) (local.get $v) (i32.const 1)))
+      (f32.store offset=8 (local.get $out) (call $d3d_shader_vm_sample (local.get $desc) (local.get $u) (local.get $v) (i32.const 2)))
+      (f32.store offset=12 (local.get $out) (call $d3d_shader_vm_sample (local.get $desc) (local.get $u) (local.get $v) (i32.const 3))))
     (func (export "shader_test_quad_lod") (param $ctx i32) (param $u0 f32) (param $u1 f32) (param $u2 f32) (param $u3 f32)
       (param $v0 f32) (param $v1 f32) (param $v2 f32) (param $v3 f32) (param $lane i32) (result f32)
       (call $d3d_shader_vm_lane (call $d3d_shader_vm_quad_lod
@@ -79,6 +86,38 @@ const { bootRenderHarness } = require('./render-helper');
       assert.strictEqual(e.shader_test_address(x,n,mode), expected, `address ${x}/${n} mode${mode}`);
     }
     cases++;
+  }
+  // Bilinear taps share resolved X/Y axes. Check the vector footprint against
+  // the unchanged scalar sampler, especially when a neighbor wraps, mirrors,
+  // clamps or becomes border. NPOT, singleton axes and padded rows expose
+  // accidentally deriving a neighbor from an already resolved coordinate.
+  {
+    const desc=e.shader_test_alloc(36),out=e.shader_test_alloc(32);
+    for (const [width,height] of [[1,1],[3,7],[7,3]]) {
+      const pitch=width*4+8,pixels=e.shader_test_alloc(pitch*height);
+      const bytes=new Uint8Array(mem.buffer,pixels,pitch*height);
+      bytes.forEach((_,i)=>{bytes[i]=(i*73+19)&255;});
+      for (const format of [0,21,22,62,63]) for (const filter of [1,2])
+      for (const modeU of [1,2,3,4]) for (const modeV of [1,2,3,4]) {
+        u32.set([pixels,width,height,pitch,format,modeU,modeV,filter,0x9347b12d],desc/4);
+        const metadata=Array.from(u32.slice(desc/4,desc/4+9)),before=Array.from(bytes);
+        const uv=[[0,-0],[-0,0],[1,1],[-1,-1],[2,2],[-.25,1.25],
+          [.5/width,.5/height],[1-.5/width,1-.5/height],
+          [1-2**-24,2**-24],[NaN,.5],[.5,Infinity],[-Infinity,.5]];
+        for (const [u,v] of uv) {
+          e.shader_test_sample4(desc,u,v,out);
+          e.shader_test_sample_scalar(desc,u,v,out+16);
+          assert.deepStrictEqual(Array.from(u32.slice(out/4,out/4+4)),
+            Array.from(u32.slice(out/4+4,out/4+8)),
+            `exact footprint ${width}x${height} format${format} filter${filter} modes${modeU}/${modeV} uv${u}/${v}`);
+        }
+        assert.deepStrictEqual(Array.from(u32.slice(desc/4,desc/4+9)),metadata,'sampling preserves descriptor');
+        assert.deepStrictEqual(Array.from(bytes),before,'sampling preserves padded pixels');
+        cases++;
+      }
+      e.d3d_shader_vm_free(pixels);
+    }
+    e.d3d_shader_vm_free(out);e.d3d_shader_vm_free(desc);
   }
   // LOG and LOGP use a finite negative sentinel for both signs of zero.
   // Keep log2's internal -Infinity policy separate (texture LOD relies on it).
