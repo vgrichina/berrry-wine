@@ -1508,7 +1508,11 @@
           (then
             (if (i32.eq (local.get $wParam) (i32.const -1))
               (then (i32.store offset=4 (local.get $sw) (i32.const -1))
-                    (call $paint_flag_set_inv (local.get $hwnd))))
+                    (call $paint_flag_set_inv (local.get $hwnd))
+                    ;; Deselecting succeeds: return the previous selection,
+                    ;; just as selecting an existing item does. Other invalid
+                    ;; indices still fail without changing the selection.
+                    (return (local.get $old))))
             (return (i32.const -1))))
         (call $tab_native_note_message (local.get $hwnd) (local.get $msg) (local.get $wParam) (local.get $lParam))
         (return (local.get $old))))
