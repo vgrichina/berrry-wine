@@ -263,7 +263,17 @@
       (then (unreachable)))
     (if (i32.ne (local.get $expected_depth) (global.get $sync_msg_depth))
       (then (unreachable)))
-    ;; A completed stdcall must consume the four arguments and return word.
+    ;; USER also accepts a legacy cdecl window/dialog procedure. Its genuine
+    ;; return through sync_msg_ret_thunk consumes only the return word, leaving
+    ;; exactly four arguments. Match the modal pump's cdecl cleanup here too:
+    ;; showing that dialog sends activation/focus messages synchronously.
+    ;; Only a completed return with the same invocation may consume these args;
+    ;; partial RET n cleanup still fails the exact-stack check below.
+    (if (i32.and (i32.eqz (global.get $eip))
+          (i32.eq (i32.sub (local.get $old_esp) (i32.const 16))
+            (i32.load offset=16 (global.get $reg_base))))
+      (then (i32.store offset=16 (global.get $reg_base) (local.get $old_esp))))
+    ;; A completed callback must now have consumed its full frame.
     ;; An incomplete bounded send retains its historical abandonment result.
     (if (i32.and (i32.eqz (global.get $eip))
           (i32.ne (local.get $old_esp) (i32.load offset=16 (global.get $reg_base))))
@@ -1690,6 +1700,14 @@
     ;; fallback here would focus a reused owner HWND after that check refused.
     (if (i32.and (local.get $live) (i32.ne (local.get $class) (i32.const 12)))
       (then (call $focus_restore_after_modal (local.get $owner))))
+    ;; Owner focus may open and complete another modal. Its return restores
+    ;; this frame's HWND from ModalContinuation even though teardown above
+    ;; already destroyed it. Republish completion after that callback, or the
+    ;; outer pump treats its dead HWND as cancellation and replaces result
+    ;; (and the shared result) with zero before resuming the guest caller.
+    (global.set $modal_dlg_hwnd (i32.const 0))
+    (i32.atomic.store (global.get $SHARED_MODAL_DLG_HWND) (i32.const 0))
+    (i32.atomic.store (global.get $SHARED_MODAL_DONE) (i32.const 0))
     ;; A completed nested dialog may have published a different shared result.
     (i32.atomic.store (global.get $SHARED_MODAL_RESULT) (local.get $result))
     (global.set $modal_result (local.get $result))

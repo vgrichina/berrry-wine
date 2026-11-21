@@ -33,7 +33,8 @@ async function main() {
   let hook = () => {}; imports.host.get_ticks = () => { hook(); return 17; };
   const { instance } = await WebAssembly.instantiate(wasm, imports);
   const x = ctx.exports = instance.exports, dv = new DataView(memory.buffer);
-  const callback = ret => [0xb9, ...u32(30), 0x49, 0x75, 0xfd, 0xff, 0x15, ...u32(BASE + 0x1900), 0xb8, ...u32(73), 0xc2, ret, 0];
+  const callback = ret => [0xb9, ...u32(30), 0x49, 0x75, 0xfd, 0xff, 0x15, ...u32(BASE + 0x1900), 0xb8, ...u32(73),
+    ...(ret === 0 ? [0xc3] : [0xc2, ret, 0])];
   let sp, root;
   function begin(ret = 16) {
     hook = () => {};
@@ -68,9 +69,27 @@ async function main() {
   assert.equal(new Set(children).size, 4, 'sibling and nested callbacks have distinct identities');
   hook = () => { throw new Error('must not enter missing window'); };
   assert.equal(x.send_message(0x777, 0, 0, 0), 0); assert.equal(x.t_token(), root);
-  // Completed but malformed stdcall must not silently restore the old ESP.
-  begin(12); assert.throws(send, WebAssembly.RuntimeError);
-  assert.equal(x.t_depth(), 1); assert.equal(x.t_sync(), 1); assert.equal(x.get_esp() >>> 0, sp - 4);
+  // USER's legacy cdecl compatibility consumes exactly four unpopped args.
+  // Nested sends still get a separate invocation and restore the outer frame.
+  begin(0); let cdeclNested = false;
+  hook = () => {
+    if (cdeclNested) return;
+    cdeclNested = true;
+    const outer = x.t_token();
+    assert.equal(x.send_message(0x702, 0x402, 5, 6), 73);
+    assert.equal(x.t_token(), outer);
+  };
+  assert.equal(send(), 73); assert(cdeclNested);
+  assert.equal(x.t_token(), root); assert.equal(x.t_depth(), 0);
+  assert.equal(x.t_sync(), 0); assert.equal(x.t_completed(), 1);
+  assert.equal(x.get_esp() >>> 0, sp); assert.equal(x.get_eip(), BASE + 0x2000);
+  // Partial or excess stdcall cleanup is not cdecl and must still trap,
+  // preserving the faulting invocation and its actual ESP for recovery.
+  for (const ret of [4, 8, 12, 20]) {
+    begin(ret); assert.throws(send, WebAssembly.RuntimeError);
+    assert.equal(x.t_depth(), 1); assert.equal(x.t_sync(), 1);
+    assert.equal(x.get_esp() >>> 0, sp + ret - 16);
+  }
   // Ordinary bounded timeout still reports incomplete and restores its parent.
   begin(); x.guest_write32(BASE + 0x2100, 0xfeeb); x.t_clear();
   send(); assert.equal(x.t_completed(), 0); assert.equal(x.t_token(), root);

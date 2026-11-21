@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09c3a-dialog-runtime.wat",
+      "name": "$wnd_send_message_inner",
+      "baseSHA256": "d59d4ea09fa9bcb30dd0045279a946eaacfc7f1199a650615976fb2abc250583",
+      "sha256": "490542202a7a0e7c3f9b3a873859db62f047b3e0ebf0c6d14d7673a7354854fb",
+      "reason": "Completed USER cdecl return consumes exactly four retained arguments after existing child/root/depth verification, matching modal-pump legacy callback compatibility. The original full-frame guard still rejects partial or excess RET n; no ownership bypass or new continuation. Real nested x86 cdecl, malformed RET 4/8/12/20, leaked/replaced invocation and threaded modal subclass tests cover the boundary."
+    }
+  ]
+}

@@ -351,6 +351,7 @@ function u32(value) {
   assert.strictEqual(view.getUint32(toWasm(nestedSeen + 4), true), 1, 'nested MessageBox returns IDOK');
   assert.strictEqual(e.test_window_exists(accepted), 0);
   assert.strictEqual(e.test_window_exists(commonOuter), 0);
+  assert.strictEqual(e.modal_dialog_hwnd(), 0, 'nested focus callback cannot resurrect the completed outer pump');
   assert.strictEqual(e.get_eax(), 42);
   assert.strictEqual(e.get_eip(), 0x405678);
   assert.strictEqual(e.get_esp(), completionStack + 20);

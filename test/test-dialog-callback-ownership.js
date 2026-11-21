@@ -150,6 +150,14 @@ let cases = 0;
   assert.notEqual(f.seen.at(-1), first, 'siblings get fresh identities'); cases++;
 }
 {
+  const f = fixture(), before = f.snap();
+  f.hook(() => { f.complete(); f.m.set(16, f.m.get(16) - 16); });
+  let result;
+  assert.doesNotThrow(() => { result = f.call(); }, 'complete legacy cdecl return consumes its four arguments');
+  assert.equal(result, 77); restored(f, before);
+  assert.equal(f.snap().leaves, 1); cases++;
+}
+{
   const f = fixture(), before = f.snap(); let nested = false;
   f.hook(() => {
     if (!nested) {
@@ -278,9 +286,15 @@ assert.throws(suite, assert.AssertionError, 'late acquisition must fail before-w
 negatives++;
 fn = clone();
 const espGuard = fn.findIndex(n => Array.isArray(n) && n[1] === 'if' &&
-  JSON.stringify(n).includes('$old_esp'));
+  JSON.stringify(n).includes('$old_esp') && JSON.stringify(n).includes('unreachable'));
 assert(espGuard > 0); fn.splice(espGuard, 1);
 assert.throws(suite, assert.AssertionError, 'missing completed ESP guard must fail');
+negatives++;
+fn = clone();
+const cdeclCleanup = fn.findIndex(n => Array.isArray(n) && n[1] === 'if' &&
+  JSON.stringify(n).includes('$old_esp') && !JSON.stringify(n).includes('unreachable'));
+assert(cdeclCleanup > 0); fn.splice(cdeclCleanup, 1);
+assert.throws(suite, assert.AssertionError, 'missing cdecl cleanup must fail');
 negatives++;
 fn = good;
 console.log(`Dialog source ownership PASS: ${cases} cases, ${negatives} mutation negatives; modeled boundaries, no fullVM qualification`);
