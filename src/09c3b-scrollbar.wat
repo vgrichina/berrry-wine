@@ -426,6 +426,52 @@
     (local $is_pressed i32) (local $coord i32) (local $new_pos i32)
     (local $disabled i32) (local $changed i32)
 
+    ;; Retain arrow keys in an IsDialogMessage loop; Tab remains navigation.
+    (if (i32.eq (local.get $msg) (i32.const 0x0087))
+      (then (return (i32.const 1)))) ;; DLGC_WANTARROWS
+
+    ;; Standalone controls provide the keyboard interface described in
+    ;; Microsoft's "About Scroll Bars". Both axes accept all four arrows;
+    ;; orientation selects only WM_HSCROLL versus WM_VSCROLL. The application
+    ;; owns the position, including line/page sizes and endpoint clamping.
+    (if (i32.and
+          (i32.or (i32.eq (local.get $msg) (i32.const 0x0100))
+                  (i32.eq (local.get $msg) (i32.const 0x0101)))
+          (i32.and (i32.ge_u (local.get $wParam) (i32.const 0x21))
+                   (i32.le_u (local.get $wParam) (i32.const 0x28))))
+      (then
+        (local.set $style (call $wnd_get_style (local.get $hwnd)))
+        (if (i32.and (i32.shr_u (local.get $style) (i32.const 27)) (i32.const 1))
+          (then (return (i32.const 0)))) ;; WS_DISABLED
+        (local.set $is_vert (i32.and (local.get $style) (i32.const 1)))
+        (local.set $sb_code (i32.const 8)) ;; SB_ENDSCROLL on key release
+        (if (i32.eq (local.get $msg) (i32.const 0x0100))
+          (then
+            (if (i32.le_u (local.get $wParam) (i32.const 0x22))
+              (then ;; PageUp / PageDown
+                (local.set $sb_code (i32.sub (local.get $wParam) (i32.const 0x1f))))
+              (else
+                (if (i32.le_u (local.get $wParam) (i32.const 0x24))
+                  (then ;; End / Home
+                    (local.set $sb_code
+                      (select (i32.const 6) (i32.const 7)
+                        (i32.eq (local.get $wParam) (i32.const 0x24)))))
+                  (else ;; Left / Up / Right / Down
+                    (local.set $sb_code
+                      (select (i32.const 0) (i32.const 1)
+                        (i32.le_u (local.get $wParam) (i32.const 0x26))))
+                    (if (i32.eqz (call $scroll_arrow_filter_hit
+                          (local.get $hwnd) (local.get $is_vert)
+                          (i32.add (local.get $sb_code) (i32.const 1))))
+                      (then (return (i32.const 0))))))))))
+        ;; Only thumb notifications carry position in HIWORD. A parent may
+        ;; synchronously query or change SB_CTL here, or ignore the request.
+        (drop (call $wnd_send_message
+          (call $wnd_get_parent (local.get $hwnd))
+          (select (i32.const 0x0115) (i32.const 0x0114) (local.get $is_vert))
+          (local.get $sb_code) (local.get $hwnd)))
+        (return (i32.const 0))))
+
     ;; SBM_ENABLE_ARROWS (0x00E4): the message form reports success for every
     ;; valid ESB_* request, while EnableScrollBar itself reports only a state
     ;; transition. Both write the same per-window state.
