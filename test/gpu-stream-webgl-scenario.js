@@ -1074,9 +1074,143 @@
     } catch (e) {
       failures.push(`scenario threw: ${e && e.stack || e}`);
     }
+    try {
+      for (const step of cubeSamplerCases({ GS, p, check, negative: !!(backend && backend.gl) })) {
+        let error;
+        try { drain(); } catch (e) { error = e; }
+        if (step.error) check('stale cube binding refused', /texture 103 was released/.test(String(error)), String(error));
+        else if (error) throw error;
+      }
+    } catch (e) { failures.push(`cube sampler scenario threw: ${e.stack || e}`); }
     ex.close();
     return { checks, failures, stats: ex.stats ? ex.stats() : null };
   }
 
-  return { run, runD1, run94a, W, H, irShader, TEX_IR };
+  // Yield after publishing each readback, before examining its bytes. The
+  // synchronous executor and the production RenderWorker run identical inputs;
+  // the latter awaits its real kick reply at each yield. No scratch dependency.
+  function* cubeSamplerCases({ GS, p, check, capture = () => {}, negative = false }) {
+    const C = GS.CONST, size = 16, rt = 100, layout = 101, ps = 102, image = 103, copy = 104;
+    const emit = (...args) => p.emit(...args);
+    const put = (b) => { const at = p.arenaAlloc(b.length); p.arenaView(at, b.length).set(b); return at; };
+    const words = (...v) => new Uint8Array(new Uint32Array(v).buffer);
+    emit('CREATE', { id: rt, kind: C.KIND_RT, fmt: C.FMT_A8B8G8R8, levels: 1, width: size, height: size });
+    emit('TARGETS', { color: rt });
+    const elems = new Uint8Array(24), dv = new DataView(elems.buffer);
+    [C.USAGE_POSITIONT, C.USAGE_TEXCOORD, C.USAGE_TEXCOORD].forEach((usage, i) => {
+      elems[i * 8 + 1] = C.VTYPE_FLOAT4; elems[i * 8 + 2] = usage; elems[i * 8 + 3] = i === 2 ? 1 : 0;
+      dv.setUint16(i * 8 + 4, i * 16, true);
+    });
+    emit('LAYOUT', { id: layout, count: 3, stride: 48 }, elems);
+    const ir = irShader([[OPC.TEXLD, R0, 0xB0E40000], [OPC.TEXLD, R1, 0xB0E40001], [OPC.MUL, R0S, SRC_R0, SRC_R1]]);
+    emit('SHADER', { id: ps, stage: 1, ir_bytes: ir.length }, ir);
+    emit('RASTER', { depth_mode: 0, zfunc: 8, cull: 1, src_rgb: 2, dst_rgb: 1, src_alpha: 2, dst_alpha: 1,
+      blend_op: 1, blend_op_alpha: 1, alpha_func: 8, colormask: 15, fill: 3, linear: 1,
+      scissor_right: size, scissor_bottom: size });
+    const sampler = (id, min, mag, mip = 0) => emit('SAMPLER', { id, address_u: 3, address_v: 3, min, mag, mip });
+    sampler(105, 1, 1); sampler(106, 2, 2); sampler(107, 2, 1); sampler(108, 1, 2);
+    sampler(109, 1, 1, 1); sampler(110, 2, 2, 2);
+    const create = (id, levels = 3) => emit('CREATE', { id, kind: C.KIND_CUBE, fmt: C.FMT_A8B8G8R8, levels, width: 4, height: 4 });
+    const upload = (id, green = false, levels = 3) => {
+      for (let face = 0; face < 6; face++) for (let level = 0; level < levels; level++) {
+        const w = 4 >> level, b = new Uint8Array(w * w * 4);
+        for (let y = 0; y < w; y++) for (let x = 0; x < w; x++) b.set(green ? [0, 255, 0, 255]
+          : level ? [20 + face * 30, level * 90, 255 - level * 70, 255]
+            : (x + y) % 2 ? [0, 255, 255, 255] : [255, 0, 0, 255], (y * w + x) * 4);
+        emit('UPLOAD', { id, face, level, w, h: w, pitch: w * 4, bytes: b.length, src: put(b) });
+      }
+    };
+    create(image); create(copy); upload(image); upload(copy);
+    const draw = (a, b, distinct, direction, rebind = true) => {
+      emit('CLEAR', { mask: 1, colormask: 15, rgba: 0xff223344, right: size, bottom: size });
+      if (rebind) emit('BIND', { count: 2 }, words(0, image, a, 1, distinct ? copy : image, b));
+      const v = [];
+      for (const [x, y] of [[0, 0], [size, 0], [0, size], [size, 0], [size, size], [0, size]]) {
+        const d = direction(x, y); v.push(x - 0.5, y - 0.5, 0.5, 1, ...d, 1, ...d, 1);
+      }
+      emit('DRAW_UP', { prim: C.PRIM_TRIANGLELIST, ps, layout, stride: 48, count: 6, vcount: 6,
+        voff: put(new Uint8Array(new Float32Array(v).buffer)) });
+    };
+    let stamp = 2000;
+    function* read(name) {
+      const dst = p.arenaAlloc(size * size * 4 + 8); p.arenaView(dst, size * size * 4 + 8).fill(0xa7);
+      emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: size, h: size, pitch: size * 4, dst });
+      emit('PRESENT', { rt, w: size, h: size, surface: 94, stamp: ++stamp });
+      yield { name, stamp, dst, size };
+      const pixels = p.arenaView(dst, size * size * 4).slice();
+      check(name + ' canary', p.arenaView(dst + pixels.length, 8).every(v => v === 0xa7));
+      check(name + ' ring retired', p.load('read_pos') === p.load('write_pos') && p.load('error_code') === 0);
+      capture(name, pixels); p.store('arena_tail', p.load('arena_head'));
+      return pixels;
+    }
+    const center = (d) => () => d;
+    const cases = [];
+    for (const [face, d] of [[0, [1, 0, 0]], [1, [-1, 0, 0]], [2, [0, 1, 0]], [3, [0, -1, 0]], [4, [0, 0, 1]], [5, [0, 0, -1]]]) {
+      cases.push([`face-${face}-point-linear`, 105, 106, center(d), [128, 0, 0, 255]]);
+    }
+    cases.push(['reverse-linear-point', 106, 105, center([1, 0, 0]), [128, 0, 0, 255]],
+      ['same-point', 105, 105, center([1, 0, 0]), [255, 0, 0, 255]],
+      ['same-linear', 106, 106, center([1, 0, 0]), [64, 64, 64, 255]],
+      ['min-mag', 107, 108, (x, y) => [1, (y - 8) * 0.8, (x - 8) * 0.8]],
+      ['mip-none-point', 105, 109, (x, y) => [1, (y - 8) * 0.8, (x - 8) * 0.8]],
+      ['mip-point-linear', 109, 110, (x, y) => [1, (y - 8) * 0.8, (x - 8) * 0.8]],
+      ['mip-linear-none', 110, 105, (x, y) => [1, (y - 8) * 0.8, (x - 8) * 0.8]],
+      ['seam-xz', 105, 106, (x, y) => [1, (y - 8) * 0.02, 1 + (x - 8) * 0.02]],
+      ['corner-xyz', 106, 105, (x, y) => [1, 1 + (y - 8) * 0.02, 1 + (x - 8) * 0.02]],
+      ['scaled-direction', 105, 106, center([7, 0, 0]), [128, 0, 0, 255]]);
+    for (const [name, a, b, dir, want] of cases) {
+      draw(a, b, true, dir); const reference = yield* read(name + '-distinct');
+      draw(a, b, false, dir); const aliased = yield* read(name + '-alias');
+      check(name + ' independent slots equal distinct images', aliased.every((v, i) => Math.abs(v - reference[i]) <= 1));
+      if (want) check(name + ' independent reference', want.every((v, i) => Math.abs(v - aliased[(8 * size + 8) * 4 + i]) <= 2));
+    }
+    // Repeated sampler changes, explicit unbind/rebind, mutation and ID reuse
+    // exercise cached copies as well as first allocation.
+    emit('BIND', { count: 1 }, words(1, 0, 0));
+    sampler(111, 2, 2); draw(105, 111, false, center([1, 0, 0]));
+    const changed = yield* read('unbind-rebind-new-sampler');
+    check('unbind/rebind state', Math.abs(changed[(8 * size + 8) * 4] - 128) <= 2);
+    emit('RELEASE', { id: 111 }); sampler(111, 1, 1);
+    draw(105, 111, false, center([1, 0, 0])); const reused = yield* read('sampler-id-reuse');
+    check('sampler ID reuse state', reused[(8 * size + 8) * 4] === 255);
+    // COPY writes must invalidate the same shadow as UPLOAD, including
+    // subrects, cube faces/mips and the opaque-alpha conversion path.
+    for (const [name, face, level, opaque] of [['copy-subrect', 0, 0, 0], ['copy-opaque-mip', 1, 1, 1]]) {
+      emit('CLEAR', { mask: 1, colormask: 15, rgba: 0x4000ff00, right: size, bottom: size });
+      for (const dst of [image, copy]) emit('COPY', { src: rt, dst, sw: 2, sh: 2, dx: level ? 0 : 1, dy: level ? 0 : 1,
+        dw: 2, dh: 2, filter: 1 | (level << 8) | (face << 16) | (opaque << 24) });
+      const direction = level ? (x, y) => [-1, (y - 8) * 0.8, (x - 8) * 0.8] : center([1, 0, 0]);
+      draw(105, level ? 110 : 106, true, direction); const reference = yield* read(name + '-distinct');
+      draw(105, level ? 110 : 106, false, direction); const aliased = yield* read(name + '-alias');
+      check(name + ' refreshes cube alias', aliased.every((v, i) => Math.abs(v - reference[i]) <= 1));
+    }
+    upload(image, true); upload(copy, true);
+    draw(105, 106, false, center([1, 0, 0])); const updated = yield* read('updated-face-levels');
+    check('upload refreshes alias', updated[(8 * size + 8) * 4 + 1] === 255 && updated[(8 * size + 8) * 4] === 0);
+    emit('RELEASE', { id: image }); create(image); upload(image, true);
+    draw(105, 106, false, center([-1, 0, 0])); const replaced = yield* read('image-id-reuse-rebind');
+    check('image ID reuse rebind', replaced[(8 * size + 8) * 4 + 1] === 255);
+    // A partial real chain still needs the same completeness tail and level
+    // limit as the distinct native cube on this GL version.
+    for (const id of [image, copy]) { emit('RELEASE', { id }); create(id, 2); upload(id, false, 2); }
+    const minified = (x, y) => [1, (y - 8) * 1.5, (x - 8) * 1.5];
+    draw(105, 110, true, minified); const truncated = yield* read('truncated-mips-distinct');
+    draw(105, 110, false, minified); const aliasTail = yield* read('truncated-mips-alias');
+    check('truncated cube mip chain preserved', aliasTail.every((v, i) => Math.abs(v - truncated[i]) <= 1));
+    if (negative) {
+      emit('RELEASE', { id: image }); create(image);
+      draw(105, 106, false, center([1, 0, 0]), false);
+      const dst = p.arenaAlloc(8); p.arenaView(dst, 8).fill(0x9b);
+      emit('READBACK', { rt, fmt: C.FMT_A8B8G8R8, w: 1, h: 1, pitch: 4, dst });
+      emit('PRESENT', { rt, w: size, h: size, surface: 94, stamp: ++stamp });
+      yield { name: 'stale-cube-negative', error: true, stamp };
+      check('invalid cube draw stops readback', p.arenaView(dst, 8).every(v => v === 0x9b));
+      check('invalid cube draw records error', p.load('error_code') !== 0);
+      return;
+    }
+    for (const id of [rt, layout, ps, image, copy, 105, 106, 107, 108, 109, 110, 111]) emit('RELEASE', { id });
+    yield { name: 'release-all' };
+  }
+
+  return { run, runD1, run94a, cubeSamplerCases, W, H, irShader, TEX_IR };
 });
