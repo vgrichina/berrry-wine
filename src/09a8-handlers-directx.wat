@@ -585,8 +585,11 @@
   (global $di_mouse_last_y (mut i32) (i32.const 0))
   (global $di_mouse_initialized (mut i32) (i32.const 0))
   ;; DirectInput buffered mouse data tracking for GetDeviceData.
-  (global $di_mouse_data_last_x (mut i32) (i32.const 0))
-  (global $di_mouse_data_last_y (mut i32) (i32.const 0))
+  ;; Buffered absolute positions follow the event FIFO independently of the
+  ;; immediate-state accumulators. Both feeds contain the same physical motion;
+  ;; sharing their position would count it twice when an app reads both APIs.
+  (global $di_mouse_data_abs_x (mut i32) (i32.const 0))
+  (global $di_mouse_data_abs_y (mut i32) (i32.const 0))
   (global $di_mouse_data_last_buttons (mut i32) (i32.const 0))
   (global $di_mouse_data_initialized (mut i32) (i32.const 0))
   (global $di_mouse_data_sequence (mut i32) (i32.const 0))
@@ -11730,8 +11733,8 @@
     ;; a peek (DIGDD_PEEK) leaves the accumulated position untouched.
     (local.set $abs (i32.ne (i32.and (load.field DxObject flags (local.get $entry))
                                      (global.get $DIDEV_AXIS_ABSOLUTE)) (i32.const 0)))
-    (local.set $ax (global.get $di_mouse_abs_x))
-    (local.set $ay (global.get $di_mouse_abs_y))
+    (local.set $ax (global.get $di_mouse_data_abs_x))
+    (local.set $ay (global.get $di_mouse_data_abs_y))
     (if (i32.or
           (i32.eqz (local.get $arg3))
           (i32.lt_u (local.get $arg1) (i32.const 16)))
@@ -11916,8 +11919,8 @@
           (br $buttons_loop)))
         (if (i32.and (local.get $abs) (i32.ne (local.get $commit) (i32.const 0)))
           (then
-            (global.set $di_mouse_abs_x (local.get $ax))
-            (global.set $di_mouse_abs_y (local.get $ay))))
+            (global.set $di_mouse_data_abs_x (local.get $ax))
+            (global.set $di_mouse_data_abs_y (local.get $ay))))
 
         ;; Hosts without the shared browser queue still get live-state edges.
         (if (i32.and

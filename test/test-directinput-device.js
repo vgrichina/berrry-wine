@@ -624,6 +624,44 @@ const extraWat = `
   assert.deepStrictEqual([wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0],
     [absBefore[0] + 7, absBefore[1] - 2],
     'absolute axis mode accumulates the deltas into a position');
+
+  // Immediate state and buffered history can be read together. Each feed
+  // receives the physical motion once; reading one must not move the other.
+  // Earlier state-only seeded deltas deliberately give these two feeds
+  // different baselines, so copying one accumulator into the other also fails.
+  const statePosition = () => [wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0];
+  const readRecords = (limit, flags = 0) => {
+    wat.guest_write32(count, limit);
+    assert.strictEqual(wat.test_di_mouse_get_data(mouse, data, count, flags) >>> 0, 0);
+    return Array.from({length: wat.guest_read32(count)}, (_, i) =>
+      [wat.guest_read32(data + i * 16), wat.guest_read32(data + i * 16 + 4) | 0,
+        wat.guest_read32(data + i * 16 + 12)]);
+  };
+  renderer.handleRelativeMouseMove(10, -6);
+  wat.test_di_mouse_get_state(mouse, data);
+  const firstPosition = [absBefore[0] + 17, absBefore[1] - 8];
+  assert.deepStrictEqual(statePosition(), firstPosition);
+  const peeked = readRecords(2, 1);
+  assert.deepStrictEqual(peeked.map(r => r.slice(0, 2)), [[0, 10], [4, -6]],
+    'absolute buffered events retain their own baseline after a state read');
+  assert.deepStrictEqual(readRecords(2, 1), peeked, 'PEEK preserves position and sequence');
+  assert.deepStrictEqual(readRecords(1), peeked.slice(0, 1), 'partial drain consumes only X');
+  wat.test_di_mouse_get_state(mouse, data);
+  assert.deepStrictEqual(statePosition(), firstPosition, 'partial buffered drain cannot create state motion');
+  assert.deepStrictEqual(readRecords(2, 1), peeked.slice(1), 'remaining Y keeps its position and sequence');
+  assert.deepStrictEqual(readRecords(2), peeked.slice(1));
+  assert.deepStrictEqual(readRecords(2), [], 'drained FIFO stays empty');
+  wat.test_di_mouse_get_state(mouse, data);
+  assert.deepStrictEqual(statePosition(), firstPosition, 'state stays stable after the complete drain');
+  renderer.handleRelativeMouseMove(-4, 3);
+  assert.deepStrictEqual(readRecords(2).map(r => r.slice(0, 2)), [[0, 6], [4, -3]],
+    'buffer-first reads accumulate signed physical events exactly once');
+  wat.test_di_mouse_get_state(mouse, data);
+  assert.deepStrictEqual(statePosition(), [firstPosition[0] - 4, firstPosition[1] + 3],
+    'buffer-first consumption preserves the pending state motion');
+  wat.test_di_mouse_get_state(mouse, data);
+  assert.deepStrictEqual(statePosition(), [firstPosition[0] - 4, firstPosition[1] + 3],
+    'buffer-first state also stays stable at idle');
   wat.guest_write32(property + 16, 1); // DIPROPAXISMODE_REL
   assert.strictEqual(wat.test_di_set_buffer_size(mouse, 2, property) >>> 0, 0,
     'SetProperty accepts relative DIPROP_AXISMODE');
