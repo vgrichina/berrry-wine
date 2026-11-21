@@ -302,7 +302,7 @@
   (func $trackbar_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $state i32) (local $sw i32) (local $min i32) (local $max i32) (local $pos i32)
     (local $old i32) (local $hdc i32) (local $sz i32) (local $w i32) (local $h i32)
-    (local $style i32) (local $vert i32) (local $range i32) (local $track_len i32)
+    (local $style i32) (local $vert i32) (local $range i64) (local $track_len i32)
     (local $thumb_len i32) (local $thumb_pos i32) (local $cx i32) (local $cy i32)
     (local $coord i32) (local $long_dim i32) (local $parent i32) (local $scroll_msg i32)
     (local $i i32) (local $code i32) (local $step i32) (local $next_pos i64)
@@ -480,11 +480,13 @@
         (if (i32.gt_s (local.get $coord) (local.get $track_len)) (then (local.set $coord (local.get $track_len))))
         (local.set $min (call $trk_min (local.get $sw)))
         (local.set $max (call $trk_max (local.get $sw)))
-        (local.set $range (i32.sub (local.get $max) (local.get $min)))
-        (if (i32.le_s (local.get $range) (i32.const 0)) (then (local.set $range (i32.const 1))))
+        ;; Full signed32 endpoints need 33 bits even before the pixel product.
+        (local.set $range (i64.sub (i64.extend_i32_s (local.get $max)) (i64.extend_i32_s (local.get $min))))
+        (if (i64.le_s (local.get $range) (i64.const 0)) (then (local.set $range (i64.const 1))))
         (local.set $pos
-          (i32.add (local.get $min)
-            (i32.div_s (i32.mul (local.get $coord) (local.get $range)) (local.get $track_len))))
+          (i32.wrap_i64 (i64.add (i64.extend_i32_s (local.get $min))
+            (i64.div_s (i64.mul (i64.extend_i32_s (local.get $coord)) (local.get $range))
+              (i64.extend_i32_s (local.get $track_len))))))
         (call $trk_set_pos (local.get $sw) (local.get $pos))
         (if (i32.eq (local.get $msg) (i32.const 0x0201))
           (then (call $capture_store (local.get $hwnd))))
@@ -529,8 +531,8 @@
         (local.set $min (call $trk_min (local.get $sw)))
         (local.set $max (call $trk_max (local.get $sw)))
         (local.set $pos (call $trk_pos (local.get $sw)))
-        (local.set $range (i32.sub (local.get $max) (local.get $min)))
-        (if (i32.le_s (local.get $range) (i32.const 0)) (then (local.set $range (i32.const 1))))
+        (local.set $range (i64.sub (i64.extend_i32_s (local.get $max)) (i64.extend_i32_s (local.get $min))))
+        (if (i64.le_s (local.get $range) (i64.const 0)) (then (local.set $range (i64.const 1))))
         (local.set $thumb_len (call $trk_thumb_len (local.get $sw)))
         (if (i32.lt_s (local.get $thumb_len) (i32.const 8)) (then (local.set $thumb_len (i32.const 8))))
         (if (local.get $vert)
@@ -538,9 +540,10 @@
             (local.set $track_len (i32.sub (local.get $h) (local.get $thumb_len)))
             (if (i32.lt_s (local.get $track_len) (i32.const 1)) (then (local.set $track_len (i32.const 1))))
             (local.set $thumb_pos
-              (i32.div_s
-                (i32.mul (i32.sub (local.get $pos) (local.get $min)) (local.get $track_len))
-                (local.get $range)))
+              (i32.wrap_i64 (i64.div_s
+                (i64.mul (i64.sub (i64.extend_i32_s (local.get $pos)) (i64.extend_i32_s (local.get $min)))
+                  (i64.extend_i32_s (local.get $track_len)))
+                (local.get $range))))
             (local.set $cx (i32.div_s (local.get $w) (i32.const 2)))
             (drop (call $gdi_native_draw_edge (local.get $hdc)
                     (i32.sub (local.get $cx) (i32.const 2)) (i32.const 4)
@@ -586,9 +589,10 @@
             (local.set $track_len (i32.sub (local.get $w) (local.get $thumb_len)))
             (if (i32.lt_s (local.get $track_len) (i32.const 1)) (then (local.set $track_len (i32.const 1))))
             (local.set $thumb_pos
-              (i32.div_s
-                (i32.mul (i32.sub (local.get $pos) (local.get $min)) (local.get $track_len))
-                (local.get $range)))
+              (i32.wrap_i64 (i64.div_s
+                (i64.mul (i64.sub (i64.extend_i32_s (local.get $pos)) (i64.extend_i32_s (local.get $min)))
+                  (i64.extend_i32_s (local.get $track_len)))
+                (local.get $range))))
             (local.set $cy (i32.div_s (local.get $h) (i32.const 2)))
             (drop (call $gdi_native_draw_edge (local.get $hdc)
                     (i32.const 4) (i32.sub (local.get $cy) (i32.const 2))
