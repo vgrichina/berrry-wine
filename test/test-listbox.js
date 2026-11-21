@@ -95,6 +95,12 @@ async function main() {
   check('create added 2 slots (parent + listbox)', slotsAfterCreate === baselineSlots + 2,
     `${slotsAfterCreate} vs ${baselineSlots}+2`);
 
+  // IsDialogMessage must leave arrows for the list's selection/scroll path,
+  // while Tab, Enter and Escape still belong to the dialog manager.
+  check('WM_GETDLGCODE requests arrows without claiming Tab or all keys',
+    e.send_message(lb, 0x0087, 0, 0) === 0x0001 &&
+    e.send_message(lb, 0x0087, 0x28, 0) === 0x0001);
+
   // Insert items
   const items = ['readme.txt', 'WINDOWS', 'config.ini', 'autoexec.bat'];
   let lastIdx = -99;
@@ -201,6 +207,18 @@ async function main() {
   e.send_message(lb, 0x0115, 6, 0); // SB_TOP
   check('WM_VSCROLL SB_TOP returns to row zero', e.send_message(lb, 0x018E, 0, 0) === 0);
 
+  e.send_message(lb, 0x0186, 0, 0);
+  for (const [key, selection, top] of [
+    [0x23, 11, 6], [0x24, 0, 0], [0x22, 6, 1],
+    [0x28, 7, 2], [0x26, 6, 2], [0x21, 0, 0],
+  ]) {
+    e.send_message(lb, 0x0100, key, 0);
+    check(`keyboard 0x${key.toString(16)} selects ${selection} at top ${top}`,
+      e.send_message(lb, 0x0188, 0, 0) === selection &&
+      e.send_message(lb, 0x018E, 0, 0) === top &&
+      e.send_message(lb, 0x0187, selection, 0) === 1);
+  }
+
   // LB_RESETCONTENT
   e.send_message(lb, 0x0184, 0, 0);
   check('LB_RESETCONTENT zeros count', e.send_message(lb, 0x018B, 0, 0) === 0);
@@ -230,6 +248,8 @@ async function main() {
   // lParam as item data. Unreal's installer uses this for component objects.
   const dataLb = e.test_create_listbox(0, 0, 200, 100);
   e.wnd_set_style_export(dataLb, 0x50000020);
+  check('owner-draw list also requests dialog arrows',
+    e.send_message(dataLb, 0x0087, 0x28, 0) === 0x0001);
   const objectData = 0x4f9ce1f0;
   check('owner-draw LB_ADDSTRING accepts null item data',
     e.send_message(dataLb, 0x0180, 0, 0) === 0);

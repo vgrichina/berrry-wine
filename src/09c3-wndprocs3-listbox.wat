@@ -59,6 +59,13 @@
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
+    ;; Keep arrows in the list when a setup/menu loop uses IsDialogMessage.
+    ;; Otherwise the dialog manager consumes them as group-focus navigation
+    ;; before WM_KEYDOWN can select a row and scroll it into view. Tab and
+    ;; the dialog command keys retain their normal dialog handling.
+    (if (i32.eq (local.get $msg) (i32.const 0x0087)) ;; WM_GETDLGCODE
+      (then (return (i32.const 0x0001)))) ;; DLGC_WANTARROWS
+
     ;; ---------- WM_SETFOCUS (0x0007) / WM_KILLFOCUS (0x0008) ----------
     ;; LBN_SETFOCUS(4) / LBN_KILLFOCUS(5) to the parent. A combobox's dropdown
     ;; list is one of these, and its parent combo turns the pair back into
