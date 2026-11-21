@@ -30,9 +30,13 @@ const SRC = path.join(ROOT, 'src');
 // heap on this closure — see `watxSourceTextFromBytes` in
 // tools/watx-src/compiler-parser.js for why one non-ASCII character in a banner
 // comment doubles a whole file's cost.
-function readSourceText(file) {
+function readSourceText(file, inputs) {
   const { sourceTextFromBytes } = require(path.join(__dirname, 'watx.js'));
-  return sourceTextFromBytes(fs.readFileSync(file));
+  const bytes = fs.readFileSync(file);
+  // The SHA-256 of the bytes actually compiled, so a consumer of the build's
+  // facts (tools/watx-facts.js) can tell whether they describe today's tree.
+  if (inputs) inputs[path.basename(file)] = require('crypto').createHash('sha256').update(bytes).digest('hex');
+  return sourceTextFromBytes(bytes);
 }
 
 function watxSourceClosure() {
@@ -46,14 +50,15 @@ function watxSourceClosure() {
   // Only the includes actually reached are parsed, so listing a file here does
   // not put it in the module — main.watx does.
   const vfs = new Map();
+  const inputs = {};
   for (const f of fs.readdirSync(SRC)) {
     if (!/\.(wat|watx)$/.test(f)) continue;
-    const text = readSourceText(path.join(SRC, f));
+    const text = readSourceText(path.join(SRC, f), inputs);
     vfs.set(f, text);
     vfs.set(`src/${f}`, text);
     vfs.set(`./${f}`, text);
   }
-  return { source: readSourceText(mainFile), vfs, entry: 'src/main.watx' };
+  return { source: readSourceText(mainFile, inputs), vfs, entry: 'src/main.watx', inputs };
 }
 
 // The compile options are part of the closure contract, not a caller's choice:
@@ -65,9 +70,11 @@ function watxSourceClosure() {
 // deliberate NON-canonical build (docs/watx-region-safety-design.md §8) whose
 // whole purpose is to move the memory map and see what breaks, and it reaches
 // the region allocator and nothing else. Absent, it is not passed at all.
-function compileClosure(closure, { tailCalls, regionShake, nameSection, frontendReuse } = {}) {
-  const { isRuntimeClosure, protectClosure } = require('./protected-writer-entries.js');
-  if (isRuntimeClosure(closure)) closure = protectClosure(closure);
+// A closure protectClosure() already produced (or deriveProtectedClosure()
+// derived from one) is compiled as is — see prepareClosure below. Anything else
+// that is the runtime is protected here, on every call.
+function compileClosure(closure, { tailCalls, regionShake, nameSection, frontendReuse, facts } = {}) {
+  closure = prepareClosure(closure);
   const { compile } = require(path.join(__dirname, 'watx.js'));
   const options = {
     mode: 'production',
@@ -95,7 +102,29 @@ function compileClosure(closure, { tailCalls, regionShake, nameSection, frontend
   // every compiler change here is proved with.
   if (nameSection) options.nameSection = nameSection;
   if (frontendReuse) options.frontendReuse = frontendReuse;
+  // Pass-1 facts (docs/watx-facts.md) are read-only and never change the bytes.
+  if (facts) options.facts = true;
   return compile(closure.source, closure.vfs, options);
 }
 
-module.exports = { watxSourceClosure, compileClosure };
+// Protect a runtime closure ONCE so several compiles (the tail and compat
+// artifacts, the named build) can share the result and its unchanged source
+// strings. Idempotent: a closure that is still exactly what protection sealed
+// comes back unchanged; a non-runtime closure comes back unchanged too.
+function prepareClosure(closure) {
+  const { isRuntimeClosure, isProtectedClosure, protectClosure } = require('./protected-writer-entries.js');
+  if (isProtectedClosure(closure)) return closure;
+  return isRuntimeClosure(closure) ? protectClosure(closure) : closure;
+}
+
+// A source overlay (lib/dispatch-trampoline.js's compat edit) on a prepared
+// closure. A protected closure stays protected without a second protection
+// pass, provided the overlay leaves every export-bearing form untouched — which
+// deriveProtectedClosure checks and refuses otherwise.
+function overlayClosure(closure, transform) {
+  const { isProtectedClosure, deriveProtectedClosure } = require('./protected-writer-entries.js');
+  if (isProtectedClosure(closure)) return deriveProtectedClosure(closure, transform);
+  return Object.assign({}, closure, { vfs: transform(new Map(closure.vfs)) });
+}
+
+module.exports = { watxSourceClosure, compileClosure, prepareClosure, overlayClosure };

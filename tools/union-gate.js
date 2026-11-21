@@ -255,14 +255,26 @@ function loadCompilerContext() {
   return ctx;
 }
 
+// The build's compile already lowered these and wrote them to
+// build/watx-facts.json; when that file provably describes today's src/ and
+// compiler (tools/watx-facts.js) it is the same lowerIR output, so it is read
+// instead of parsing and expanding the whole closure again. Otherwise — or with
+// WINE_WATX_FACTS=0 — the original computation runs.
 function loweredDeclarations() {
-  const ctx = loadCompilerContext();
-  const { watxSourceClosure } = require(path.join(ROOT, 'tools', 'watx-closure.js'));
-  const closure = watxSourceClosure();
-  let forms = ctx.parseSource(closure.source, closure.entry);
-  forms = ctx.resolveIncludes(forms, closure.vfs, new Set(), closure.entry);
-  forms = ctx.expandMacros(forms);
-  const lowered = ctx.lowerIR(forms, { layouts: new Map() }, { layoutsOnly: true });
+  const factsTool = require(path.join(ROOT, 'tools', 'watx-facts.js'));
+  const facts = factsTool.loadFreshFacts();
+  let lowered;
+  if (facts) {
+    lowered = factsTool.loweredDeclarations(facts);
+  } else {
+    const ctx = loadCompilerContext();
+    const { watxSourceClosure } = require(path.join(ROOT, 'tools', 'watx-closure.js'));
+    const closure = watxSourceClosure();
+    let forms = ctx.parseSource(closure.source, closure.entry);
+    forms = ctx.resolveIncludes(forms, closure.vfs, new Set(), closure.entry);
+    forms = ctx.expandMacros(forms);
+    lowered = ctx.lowerIR(forms, { layouts: new Map() }, { layoutsOnly: true });
+  }
 
   const layouts = new Map(), unions = new Map(), views = new Map();
   for (const rec of lowered) {
