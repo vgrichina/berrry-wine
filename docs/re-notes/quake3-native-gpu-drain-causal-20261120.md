@@ -147,3 +147,47 @@ reviewed complete main menu, with299 presents and396974 triangles. No input was
 sent. Browser responsiveness, movement/combat and ordinary Quit remain
 unproved. The supervised original exited0, with leaked:false. No remote box,
 Wine, Python, guard changes, or closed runtime replay was used.
+
+## Absolute source vector load, 2026-11-21
+
+Evidence: `scratch/runs/20261121-quake3-source-direct/`, recovering the
+unpublished seven-line operand shortcut from `20261121-quake3-play-recover`.
+The predecessor exited by SIGTERM with launcher status1; its closed original
+and cleanup receipts were inspected without contacting its endpoint. Its
+guest-worker profile has1862 samples in `waitDrained`, while the software
+render worker is executing shader/raster functions. This is a rendering cost
+problem, not evidence for relaxing native-input freshness requirements.
+
+For an absolute operand whose flags word is exactly zero, the source helper
+now loads the selected component vector directly. The address and swizzle
+calculation are the same as row0 in the existing helper; no floating-point
+operation touches the raw loaded bits. All nonzero flags retain the full row
+path, including modifiers, relative gathers and extended constant remapping.
+Decoder bounds, matrix row access, worker budgets and input guards are unchanged.
+The matched frozen Git modules differ in exactly one code body, the source
+helper. A native regression compares5483008 raw lanes across all byte swizzles,
+register storage, signed zeros/subnormals/infinities, signed quiet/signaling NaN
+payloads, modifiers, relative selectors and bounds. Existing shader331,
+address37, loop33, call38, temp-span11 and interpolation16896-lane checks pass.
+The literal locked build passes with shared foreign WIP preserved.
+
+Six fresh alternating-order default Node24.18.1/V8 13.6.233.17-node.50 process
+pairs replay the retained actual51-record/seven-draw input through the ordinary
+JS software Executor. All color/depth hashes and nontiming state match after
+each draw. Median paired reduction is7.987%; individual pairs range from
+-0.536% to15.212%. All pairs, including the slower pair and the predecessor's
+six pairs, are retained. This establishes a default executor computation gain,
+not a browser latency guarantee. Matching x64 V8 15.7.57 TurboFan and
+SpiderMonkey C158 Ion disassembly shows a direct vector load without the row
+helper call on the common path; sizes128→192 and59→112bytes respectively.
+Those shell tiers differ from measured Node automatic tiering. No ARM64 claim.
+
+One fresh original loaded the exact candidate module, reached the personally
+reviewed full main menu, and accepted Enter with a native USER consumption
+receipt and independent key-UP. The next reviewed screen was Choose Level
+with Q3DM1 selected. One FIGHT click also has native USER consumption and an
+independent mouse-UP receipt. The subsequent capture failed with EEXIST on
+`undefined.png`: the worker omitted the post-input image label. This adapter
+mistake permanently closed the scope; no later endpoint request or replay
+followed. Match entry, movement/firing and ordinary Quit are unproved. This
+failure is not a shader regression or proof of a remaining GPU drain stall.

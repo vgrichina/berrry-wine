@@ -1182,6 +1182,13 @@
   (local.get $v))
 
 (func $d3d_shader_vm_source (param $regs i32) (param $src i32) (param $component i32) (result v128)
+  ;; Unmodified absolute operands are a direct register vector load. Keep the
+  ;; full row path for modifiers, relative addressing and pixel constants.
+  (if (i32.eqz (i32.load offset=8 (local.get $src))) (then
+    (return (v128.load (i32.add
+      (i32.add (local.get $regs) (i32.shl (i32.load (local.get $src)) (i32.const 6)))
+      (i32.shl (i32.and (i32.shr_u (i32.load offset=4 (local.get $src))
+        (i32.shl (local.get $component) (i32.const 1))) (i32.const 3)) (i32.const 4)))))))
   (call $d3d_shader_vm_source_row (local.get $regs) (local.get $src) (local.get $component) (i32.const 0)))
 
 (func $d3d_shader_vm_bind_texture (export "d3d_shader_vm_bind_texture") (param $ctx i32) (param $stage i32) (param $desc i32) (result i32)
