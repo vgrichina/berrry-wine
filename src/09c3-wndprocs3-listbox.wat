@@ -169,7 +169,7 @@
     ;; before WM_KEYDOWN can select a row and scroll it into view. Tab and
     ;; the dialog command keys retain their normal dialog handling.
     (if (i32.eq (local.get $msg) (i32.const 0x0087)) ;; WM_GETDLGCODE
-      (then (return (i32.const 0x0001)))) ;; DLGC_WANTARROWS
+      (then (return (i32.const 0x0081)))) ;; DLGC_WANTARROWS | DLGC_WANTCHARS (WIN32.HLP listbox default)
 
     ;; ---------- WM_SETFOCUS (0x0007) / WM_KILLFOCUS (0x0008) ----------
     ;; LBN_SETFOCUS(4) / LBN_KILLFOCUS(5) to the parent. A combobox's dropdown
