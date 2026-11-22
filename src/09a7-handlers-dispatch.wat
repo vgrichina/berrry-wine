@@ -5043,7 +5043,18 @@
           (br $done)
         )
       )
-      ;; Type 3: scan code -> vkey (with left/right) — return 0
+      ;; Type 3: ordinary US modifiers, preserving the side of the key.
+      ;; Right Shift has its own scan code; right Ctrl/Alt use an E0 prefix
+      ;; in the high byte. Compare the full code so the prefix is not lost.
+      (if (i32.eq (local.get $uMapType) (i32.const 3))
+        (then
+          (if (i32.eq (local.get $uCode) (i32.const 0x002A)) (then (local.set $result (i32.const 0xA0)))) ;; VK_LSHIFT
+          (if (i32.eq (local.get $uCode) (i32.const 0x0036)) (then (local.set $result (i32.const 0xA1)))) ;; VK_RSHIFT
+          (if (i32.eq (local.get $uCode) (i32.const 0x001D)) (then (local.set $result (i32.const 0xA2)))) ;; VK_LCONTROL
+          (if (i32.eq (local.get $uCode) (i32.const 0xE01D)) (then (local.set $result (i32.const 0xA3)))) ;; VK_RCONTROL
+          (if (i32.eq (local.get $uCode) (i32.const 0x0038)) (then (local.set $result (i32.const 0xA4)))) ;; VK_LMENU
+          (if (i32.eq (local.get $uCode) (i32.const 0xE038)) (then (local.set $result (i32.const 0xA5)))) ;; VK_RMENU
+        ))
     )
     (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
