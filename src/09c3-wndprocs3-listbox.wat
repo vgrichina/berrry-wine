@@ -76,6 +76,7 @@
     (local $last i32) (local $tmp_g i32) (local $tmp_w i32)
     (local $ownerdraw i32) (local $code i32) (local $delta i32)
     (local $saved_dc i32) (local $x i32) (local $page i32)
+    (local $simple_multi i32)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
@@ -998,14 +999,21 @@
         (return (i32.const 0))))
 
     ;; ---------- WM_KEYDOWN (0x0100) ----------
-    ;; VK_UP/DOWN/HOME/END/PRIOR/NEXT navigate the listbox; each fires
-    ;; LBN_SELCHANGE to the parent. Used by the combobox popup to drive
-    ;; the inner listbox via keyboard.
+    ;; Microsoft Windows 98 Keyboard Guide (1998-07-07), dialog controls:
+    ;; simple multiple-selection navigation moves without selecting; Space
+    ;; toggles only the caret item. LBN_SELCHANGE still accompanies arrow
+    ;; navigation even when selection is unchanged (Microsoft LBN_SELCHANGE),
+    ;; with LBS_NOTIFY required. Other selection/style paths retain their
+    ;; existing behavior, including the combobox popup's inner listbox.
     (if (i32.eq (local.get $msg) (i32.const 0x0100))
       (then
         (local.set $count (call $lb_count (local.get $sw)))
         (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
         (local.set $sel (call $lb_cur_sel (local.get $sw)))
+        (local.set $simple_multi (i32.and
+          (call $lb_caret_supported (local.get $hwnd))
+          (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                    (i32.const 0x0C08)) (i32.const 0x0008))))
         ;; Compute visible rows for PGUP/PGDN
         (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
         (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
@@ -1013,6 +1021,14 @@
         (if (i32.lt_s (local.get $visible) (i32.const 1))
           (then (local.set $visible (i32.const 1))))
         (local.set $row (local.get $sel))
+        (block $key_target
+          (if (i32.and (local.get $simple_multi)
+                       (i32.eq (local.get $wParam) (i32.const 0x20))) ;; VK_SPACE
+            (then
+              ;; No caret means there is no item to toggle.
+              (if (i32.ge_u (local.get $row) (local.get $count))
+                (then (return (i32.const 0))))
+              (br $key_target)))
         (if (i32.eq (local.get $wParam) (i32.const 0x24)) ;; VK_HOME
           (then (local.set $row (i32.const 0)))
           (else (if (i32.eq (local.get $wParam) (i32.const 0x23)) ;; VK_END
@@ -1046,16 +1062,24 @@
                           (local.set $row (i32.add (local.get $row) (local.get $visible)))
                           (if (i32.ge_s (local.get $row) (local.get $count))
                             (then (local.set $row (i32.sub (local.get $count) (i32.const 1))))))))
-                    (else (return (i32.const 0))))))))))))))
+                    (else (return (i32.const 0)))))))))))))))
         (call $lb_set_cur_sel (local.get $sw) (local.get $row))
-        (local.set $i (i32.const 0))
-        (block $key_sel_done (loop $key_sel
-          (br_if $key_sel_done (i32.ge_u (local.get $i) (local.get $count)))
-          (i32.store8
-            (i32.add (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $i))
-            (i32.eq (local.get $i) (local.get $row)))
-          (local.set $i (i32.add (local.get $i) (i32.const 1)))
-          (br $key_sel)))
+        (if (local.get $simple_multi)
+          (then
+            (if (i32.eq (local.get $wParam) (i32.const 0x20))
+              (then
+                (local.set $p (i32.add
+                  (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $row)))
+                (i32.store8 (local.get $p) (i32.eqz (i32.load8_u (local.get $p)))))))
+          (else
+            (local.set $i (i32.const 0))
+            (block $key_sel_done (loop $key_sel
+              (br_if $key_sel_done (i32.ge_u (local.get $i) (local.get $count)))
+              (i32.store8
+                (i32.add (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $i))
+                (i32.eq (local.get $i) (local.get $row)))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br $key_sel)))))
         ;; Adjust top_index so $row stays visible.
         (local.set $top (call $lb_top_index (local.get $sw)))
         (if (i32.lt_s (local.get $row) (local.get $top))
@@ -1065,7 +1089,10 @@
               (then (call $lb_set_top_index (local.get $sw)
                       (i32.add (i32.sub (local.get $row) (local.get $visible)) (i32.const 1)))))))
         (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
-        (if (local.get $parent)
+        (if (i32.and (i32.ne (local.get $parent) (i32.const 0))
+              (i32.or (i32.eqz (local.get $simple_multi))
+                (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                          (i32.const 1)) (i32.const 0))))
           (then (drop (call $wnd_send_message (local.get $parent) (i32.const 0x0111)
                   (i32.or (call $ctrl_table_get_id (local.get $hwnd))
                           (i32.shl (i32.const 1) (i32.const 16)))  ;; LBN_SELCHANGE
