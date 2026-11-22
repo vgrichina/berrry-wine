@@ -5085,6 +5085,12 @@
           (if (i32.eq (local.get $uCode) (i32.const 0xE01D)) (then (local.set $result (i32.const 0xA3)))) ;; VK_RCONTROL
           (if (i32.eq (local.get $uCode) (i32.const 0x0038)) (then (local.set $result (i32.const 0xA4)))) ;; VK_LMENU
           (if (i32.eq (local.get $uCode) (i32.const 0xE038)) (then (local.set $result (i32.const 0xA5)))) ;; VK_RMENU
+          ;; Type 3 special keys require the complete documented E0 Scan 1 Make code.
+          (if (i32.eq (local.get $uCode) (i32.const 0xE037)) (then (local.set $result (i32.const 0x2C)))) ;; VK_SNAPSHOT
+          (if (i32.eq (local.get $uCode) (i32.const 0xE05B)) (then (local.set $result (i32.const 0x5B)))) ;; VK_LWIN
+          (if (i32.eq (local.get $uCode) (i32.const 0xE05C)) (then (local.set $result (i32.const 0x5C)))) ;; VK_RWIN
+          (if (i32.eq (local.get $uCode) (i32.const 0xE05D)) (then (local.set $result (i32.const 0x5D)))) ;; VK_APPS
+          (if (i32.eq (local.get $uCode) (i32.const 0xE035)) (then (local.set $result (i32.const 0x6F)))) ;; VK_DIVIDE
           ;; Type 3 E0 navigation keys retain their dedicated VK identities.
           ;; Keep full-code comparisons distinct from the ordinary keypad twins.
           (if (i32.eq (local.get $uCode) (i32.const 0xE047)) (then (local.set $result (i32.const 0x24)))) ;; VK_HOME

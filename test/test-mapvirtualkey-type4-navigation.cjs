@@ -83,7 +83,8 @@ for (const [vk,scan] of [
   [0x2c,0xe037], [0x5b,0xe05b], [0x5c,0xe05c], [0x5d,0xe05d], [0x6f,0xe035],
 ]) check(vk,4,scan,'documented special E0 scan');
 for (const scan of [0xe01e,0xe11d,0xe11e,0xe053]) check(scan,4,0,'type4 takes VK, not scan');
-for (const scan of [0xe037,0xe035,0xe11d,0xe11e]) check(scan,3,0,'unsupported type3 retained');
+for (const [scan,vk] of [[0xe037,0x2c],[0xe035,0x6f]]) check(scan,3,vk,'documented special type3');
+for (const scan of [0xe11d,0xe11e]) check(scan,3,0,'unsupported type3 retained');
 console.log(JSON.stringify({checked,navigationChecks:30,failures}));
 assert.deepEqual(failures, [], 'type4 navigation and retained controls');
 console.log('PASS type4 ten navigation VKs: A/W/ExA E0 scans, retained mappings and ABI (' + checked + ' cases)');

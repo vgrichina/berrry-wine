@@ -62,7 +62,7 @@ for (const [vk, scan] of [
 for (const vk of [0x03,0x13,0x2a,0x90,0,0xff]) cases.push([vk,4,0,'retained unsupported E0/E1/VK']);
 for (const [vk,scan] of special) {
   cases.push([vk,0,0,'retained type 0 special']);
-  cases.push([scan,3,0,'retained type 3 special']);
+  cases.push([scan,3,vk,'documented type 3 special']);
 }
 for (const [vk,scan] of [[0x24,0xe047],[0x26,0xe048],[0x21,0xe049],[0x25,0xe04b],[0x27,0xe04d],[0x23,0xe04f],[0x28,0xe050],[0x22,0xe051],[0x2d,0xe052],[0x2e,0xe053]]) cases.push([vk,4,scan,'retained navigation']);
 for (const scan of [0xe11d,0xe11e,0xe01e]) cases.push([scan,3,0,'retained unsupported E0/E1']);
