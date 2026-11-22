@@ -8,6 +8,15 @@
 // out-of-range or empty setter behavior. Empty/reset reads and lifetime/focus
 // preservation are bounded emulator invariants. No Windows pixel claim.
 // Visible references contain literal item slices, never the observed top index.
+// Microsoft Visual C++ 4 (September 1995), vol. 3, CComboBox, p. 163:
+// SIMPLE has an always-visible list AND an edit selection field.
+// https://bitsavers.trailing-edge.com/pdf/microsoft/visual_c%2B%2B/Visual_C%2B%2B_4.0_Sep95/Visual_C%2B%2B_Version_4_Volume_3_1995.pdf
+// Authored geometry below: combo=(15,40,180,89), reference list=(285,61,180,68).
+// Thus the existing 21px field ends at client y=61, not y=40. Frame insets
+// (6,26) and the list's 2px inset put BOTH list payloads at frame y=89.
+// The old SIMPLE crop y=68 sampled the field and incorrectly rewarded a list
+// occupying the entire combo rectangle. Keep the exact 156x62 comparison;
+// separately compare the field against a literal "Option 02" EDIT reference.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),http=require('node:http'),assert=require('node:assert/strict'),crypto=require('node:crypto'),zlib=require('node:zlib');
 const root=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
 const tops=[0,3,3,5,5,1,1,4,4,4,0,0,3,0,3,3,5,5,0,3,0,4];
@@ -41,7 +50,7 @@ void operate(void){notifications=0;ret=99;guard=1;switch(stage){case 0:break;cas
 long __stdcall proc(P h,U m,U w,long l){if(m==0x111&&(w&65535)==10){++notifications;return 0;}if(m==0x111&&(w&65535)==20&&!ready){SetFocus(button);ready=1;operate();return 0;}return DefWindowProcA(h,m,w,l);}
 void start(void){instance=GetModuleHandleA(0);struct WC wc={0,proc,0,0,0,0,0,(P)16,0,"ComboTopMenu"};wc.instance=instance;RegisterClassA(&wc);frame=CreateWindowExA(0,"ComboTopMenu","Authored combo top index",0x10cf0000,30,30,570,280,0,0,instance,0);
  combo=make();other=CreateWindowExA(0,"COMBOBOX","",0x40000003,15,300,180,89,frame,(P)11,instance,0);add(other,12);
- ref=CreateWindowExA(0,"LISTBOX","",0x50000000,285,61,180,68,frame,(P)30,instance,0);reference();button=CreateWindowExA(0,"BUTTON","Ready",0x50010000,15,170,100,26,frame,(P)20,instance,0);status=CreateWindowExA(0,"STATIC","starting",0x50000000,15,215,540,24,frame,(P)21,instance,0);
+ ref=CreateWindowExA(0,"LISTBOX","",0x50000000,285,61,180,68,frame,(P)30,instance,0);reference();CreateWindowExA(0,"EDIT","Option 02",0x50000080,287,42,176,17,frame,(P)31,instance,0);button=CreateWindowExA(0,"BUTTON","Ready",0x50010000,15,170,100,26,frame,(P)20,instance,0);status=CreateWindowExA(0,"STATIC","starting",0x50000000,15,215,540,24,frame,(P)21,instance,0);
  U msg[12];while(GetMessageA(msg,0,0,0)>0){if(ready&&msg[1]==0x100&&msg[2]=='N'&&stage<21){++stage;operate();}TranslateMessage(msg);DispatchMessageA(msg);}}
 `;
 function fixture(out){
@@ -79,7 +88,15 @@ async function main(out,{expectOld=false}={}){
  const text=parts.slice(11).join(' '),expectedText=sel<0?'':'Option '+String(sel).padStart(2,'0');s.publicPass=got.length===want.length&&want.every((v,i)=>got[i]===v)&&text===expectedText;if(!s.publicPass)failures.push({stage,got,want,text,expectedText});
  s.stage=stage;s.got=got;s.want=want;s.text=text;const surfaces=[];for(const name of ['frame','popup'])if(s[name]){const p=s[name];assert(p.gdi?.shared);assert(Buffer.from(p.gdi.pixels).equals(Buffer.from(p.pixels)),'shared GDI matches backing canvas');p.shared=true;delete p.gdi;}
  const crop=(p,x,y,w,h)=>{const b=Buffer.alloc(w*h*4),pix=Buffer.from(p.pixels);for(let row=0;row<h;++row)pix.copy(b,row*w*4,((y+row)*p.w+x)*4,((y+row)*p.w+x+w)*4);return {x:p.x+x,y:p.y+y,w,h,bytes:b};};
- const reference=crop(s.frame,293,89,156,62);surfaces.push(reference);let actual=null;if(s.popup)actual=crop(s.popup,4,4,156,62);else if(stage>=18&&stage<=20)actual=crop(s.frame,23,68,156,62);s.visiblePair=actual?actual.bytes.equals(reference.bytes):null;if(actual)surfaces.push(actual);
+ const reference=crop(s.frame,293,89,156,62);surfaces.push(reference);let actual=null;if(s.popup)actual=crop(s.popup,4,4,156,62);else if(stage>=18&&stage<=20)actual=crop(s.frame,23,89,156,62);s.visiblePair=actual?actual.bytes.equals(reference.bytes):null;if(actual)surfaces.push(actual);
+ s.fieldPair=null;if(stage>=18&&stage<=20){
+ assert.equal(s.popup,null,'SIMPLE keeps its list in the authored rectangle');
+ const field=crop(s.frame,23,68,172,13),referenceField=crop(s.frame,293,68,172,13);
+ s.fieldPair=field.bytes.equals(referenceField.bytes);surfaces.push(field,referenceField);
+ assert.deepEqual([...referenceField.bytes.subarray(160*4,161*4)],[255,255,255,255],'literal EDIT background');
+ let ink=0;for(let y=0;y<13;++y)for(let x=0;x<70;++x){const i=(y*172+x)*4;if(referenceField.bytes[i]===0&&referenceField.bytes[i+1]===0&&referenceField.bytes[i+2]===0)++ink;}assert(ink>5,'literal Option 02 EDIT glyphs');
+ s.authoredGeometry={field:{x:23,y:68,w:172,h:13},list:{x:23,y:89,w:156,h:62},referenceField:{x:293,y:68,w:172,h:13},referenceList:{x:293,y:89,w:156,h:62},fieldInk:ink};
+ }
  s.referenceProbes=[];for(let row=0;row<4;++row){const item=tops[stage]+row,selected=item===sel&&item<count,bg=selected?[0,0,128,255]:[255,255,255,255],at=(row*16*156+140)*4,rgba=[...reference.bytes.subarray(at,at+4)];assert.deepEqual(rgba,bg);const ink=selected?[255,255,255]:[0,0,0];let glyphs=0;for(let y=0;y<Math.min(16,62-row*16);++y)for(let x=0;x<70;++x){const i=((row*16+y)*156+x)*4;if(ink.every((v,j)=>reference.bytes[i+j]===v))glyphs++;}if(item<count)assert(glyphs>5);s.referenceProbes.push({row,item:item<count?item:null,selected,rgba,glyphs});}
  const compositeBytes=await page.screenshot();require(root+'/tools/browser-transients.cjs').captureWhole(out,'stage-'+stage+'-desktop',display.env);const desktopPath=out+'/stage-'+stage+'-desktop.png';const {PNG}=require(root+'/node_modules/pngjs'),composite=PNG.sync.read(compositeBytes),desktop=PNG.sync.read(fs.readFileSync(desktopPath)),g=await page.evaluate(()=>topHost.renderer.canvas.getBoundingClientRect().toJSON());
  const match=(png,v,ox,oy)=>{const x=Math.round(ox+v.x),y=Math.round(oy+v.y);if(x<0||y<0||x+v.w>png.width||y+v.h>png.height)return false;for(let row=0;row<v.h;++row)if(!png.data.subarray(((y+row)*png.width+x)*4,((y+row)*png.width+x+v.w)*4).equals(v.bytes.subarray(row*v.w*4,(row+1)*v.w*4)))return false;return true;};
@@ -87,10 +104,11 @@ async function main(out,{expectOld=false}={}){
  if([3,16,19,21].includes(stage)){fs.writeFileSync(out+'/stage-'+stage+'-composited.png',compositeBytes);}else fs.unlinkSync(desktopPath);
  s.surfaces=surfaces.map(({bytes,...v})=>({...v,sha256:sha(bytes)}));for(const name of ['frame','popup'])if(s[name])delete s[name].pixels;states.push(s);save('states.json',states);
  }
- await sample(0);for(let stage=1;stage<tops.length;++stage){await page.keyboard.press('n');await page.waitForFunction(stage=>Object.values(topHost.renderer.windows).some(w=>w.title?.startsWith(stage+' ')),{timeout:5000},stage);await sample(stage);}
+ const native=args=>cp.execFileSync('xdotool',args,{env:display.env,timeout:5000}),wins=native(['search','--onlyvisible','--pid',String(browser.process().pid),'--class','chrome']).toString().trim().split(/\s+/);assert.equal(wins.length,1);native(['windowactivate','--sync',wins[0]]);save('native-input.json',{route:'XTEST n key to activated owned Chrome window',window:wins[0],browserPID:browser.process().pid});
+ await sample(0);for(let stage=1;stage<tops.length;++stage){native(['key','--clearmodifiers','n']);await page.waitForFunction(stage=>Object.values(topHost.renderer.windows).some(w=>w.title?.startsWith(stage+' ')),{timeout:5000},stage);await sample(stage);}
  const cpu=page.workers().find(w=>/\/guest-worker\.js(?:\?|$)/.test(w.url()));assert(cpu);const cpuState=await cpu.evaluate(()=>{const names=['get_eip','get_esp','get_ebp','get_eax','get_ebx','get_ecx','get_edx','get_esi','get_edi','get_flag_op','get_flag_a','get_flag_b','get_flag_res','get_flag_sign_shift','get_sreg_ds','get_sreg_es','get_sreg_ss','get_sreg_cs','get_fs_base'];return {memoryBytes:memory.buffer.byteLength,registers:Object.fromEntries(names.map(n=>[n,instance.exports[n]()>>>0]))};});save('cpu-state.json',cpuState);assert.equal(cpuState.memoryBytes,536870912);assert.equal(Object.keys(cpuState.registers).length,19);assert(cpuState.registers.get_eip&&cpuState.registers.get_esp);
- await Promise.all(pending);save('workers.json',workers);assert(workers.some(w=>w.modules.includes(sha(wasm))));assert(workers.every(w=>w.modules.every(h=>h===sha(wasm))));save('assertions.json',{expectOld,failures,states:states.length,productionBrowserCPU:true,visiblePairs:states.filter(s=>s.visiblePair!==null).map(s=>({stage:s.stage,equal:s.visiblePair})),fourPlanes:states.every(s=>s.fourPlanes.nativeDesktop)});
- if(expectOld){assert(failures.some(v=>v.stage===1&&v.got[3]!==v.want[3]),'interior top readback must fail before edit');console.log('PASS oldFAIL reproduced',failures.length);}else{assert(states.every(s=>s.visiblePair!==false),'independent literal row references');assert.deepEqual(failures,[]);console.log('PASS COMBOBOX TOP INDEX public state/canaries/lifetimes and four paint planes',states.length);}
+ await Promise.all(pending);save('workers.json',workers);assert(workers.some(w=>w.modules.includes(sha(wasm))));assert(workers.every(w=>w.modules.every(h=>h===sha(wasm))));save('assertions.json',{expectOld,failures,states:states.length,productionBrowserCPU:true,visiblePairs:states.filter(s=>s.visiblePair!==null).map(s=>({stage:s.stage,equal:s.visiblePair})),fieldPairs:states.filter(s=>s.fieldPair!==null).map(s=>({stage:s.stage,equal:s.fieldPair})),fourPlanes:states.every(s=>s.fourPlanes.nativeDesktop)});
+ if(expectOld){assert(failures.some(v=>v.stage===1&&v.got[3]!==v.want[3]),'interior top readback must fail before edit');console.log('PASS oldFAIL reproduced',failures.length);}else{assert(states.every(s=>s.visiblePair!==false&&s.fieldPair!==false),'independent literal field and row references');assert.deepEqual(failures,[]);console.log('PASS COMBOBOX TOP INDEX public state/canaries/lifetimes and four paint planes',states.length);}
  }finally{save('browser.log.json',logs);await Promise.allSettled(pending);if(browser){await browser.close();save('browser-wait.json',await wait);}if(server)await new Promise(r=>server.close(r));save('transients.json',await transient.cleanup(out));if(display)await display.close();}
 }
 if(require.main===module)main(process.argv[2]?path.resolve(process.argv[2]):fs.mkdtempSync(require('node:os').tmpdir()+'/combobox-top-index-'),{expectOld:process.argv.includes('--expect-old')}).catch(e=>{console.error(e.stack);process.exitCode=1;});module.exports={fixture,main,tops,opened};
