@@ -71,7 +71,7 @@ async function main(out,{expectOld=false}={}){
  assert.equal(s.kind,4,'public LISTBOX routes to native class4');assert.equal(s.memoryBytes,536870912);
  const got=s.report.trim().split(/\s+/).map(Number),spec=scenarios[stage];
  const charCodes=[0,98,66,98,98,97,97,65,97,63,8,27,13,32,122,122,0,97,0,98,98,0,97,0];
- const want=[stage,charCodes[stage],spec.target,spec.target===2?0:12,spec.sel,spec.top,spec.sel<0?0:1<<spec.sel,spec.notify,0,1,1,1,spec.sel<0?-1:0,0,spec.sel<0?0:(spec.sel-spec.top)*16,spec.sel<0?0:180,spec.sel<0?0:(spec.sel-spec.top+1)*16,1];
+ const want=[stage,charCodes[stage],spec.target,spec.target===2?0:12,spec.sel,spec.top,spec.sel<0?0:1<<spec.sel,spec.notify,0,1,1,1,spec.sel<0?-1:0,0,spec.sel<0?0:(spec.sel-spec.top)*16,spec.sel<0?0:180,spec.sel<0?0:(spec.sel-spec.top+1)*16,expectOld?1:129];
  s.publicPass=got.length===want.length&&want.every((v,i)=>got[i]===v);if(!s.publicPass)failures.push({stage,got,want});
  s.stage=stage;s.got=got;s.want=want;const surfaces=[];const p=s.frame;assert(p.gdi?.shared);assert(Buffer.from(p.gdi.pixels).equals(Buffer.from(p.pixels)),'shared GDI matches backing canvas');p.shared=true;delete p.gdi;
  const crop=(p,x,y,w,h)=>{const b=Buffer.alloc(w*h*4),pix=Buffer.from(p.pixels);for(let row=0;row<h;++row)pix.copy(b,row*w*4,((y+row)*p.w+x)*4,((y+row)*p.w+x+w)*4);return {x:p.x+x,y:p.y+y,w,h,bytes:b};};
