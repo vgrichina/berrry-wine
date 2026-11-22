@@ -1997,8 +1997,15 @@
               (if (i32.or
                     (i32.le_u (local.get $style) (i32.const 2))
                     (i32.eq (local.get $style) (i32.const 0x0C)))
-                (then (local.set $fmt
-                  (i32.or (local.get $fmt) (i32.const 0x40))))) ;; DT_EXPANDTABS
+                (then
+                  (local.set $fmt
+                    (i32.or (local.get $fmt) (i32.const 0x40))) ;; DT_EXPANDTABS
+                  ;; Ordinary text labels preserve every ampersand when
+                  ;; SS_NOPREFIX is set. Leave SS_SIMPLE and other subtypes
+                  ;; on their existing path; only DrawText's flag changes.
+                  (if (i32.and (local.get $full_style) (i32.const 0x80))
+                    (then (local.set $fmt
+                      (i32.or (local.get $fmt) (i32.const 0x800))))))) ;; DT_NOPREFIX
               (drop (call $gdi_native_draw_text (local.get $hdc)
                       (call $g2w (call $static_text_ptr (local.get $state_w)))
                       (call $static_text_len (local.get $state_w))
