@@ -147,13 +147,13 @@
   ;; pane from dialog-control placements), so a fixed 640x480 rect produces
   ;; negative child dimensions.
   (func $handle_GetWindowPlacement (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32) (local $x i32) (local $y i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
+    (local $x i32) (local $y i32) (local $right i32) (local $bottom i32)
+    (local $rect_guest i32) (local $rect i32)
     ;; length = 44
-    (i32.store (local.get $wa) (i32.const 44))
+    (call $gs32 (local.get $arg1) (i32.const 44))
     ;; flags: WPF_RESTORETOMAXIMIZED (0x0002) when this icon will come back
     ;; maximized. That is the one thing an app cannot work out from showCmd.
-    (i32.store offset=4 (local.get $wa)
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
       (select (i32.const 2) (i32.const 0)
         (i32.and (call $wnd_min_get (local.get $arg0))
                  (call $wnd_max_get (local.get $arg0)))))
@@ -161,16 +161,16 @@
     ;; It was the constant 1, so an app restoring its own window from its saved
     ;; placement — how Win9x apps persist "start maximized" — always came back
     ;; normal no matter what it had been.
-    (i32.store offset=8 (local.get $wa)
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 8))
       (select (i32.const 2)
         (select (i32.const 3) (i32.const 1) (call $wnd_max_get (local.get $arg0)))
         (call $wnd_min_get (local.get $arg0))))
     ;; ptMinPosition = (0,0)
-    (i32.store offset=12 (local.get $wa) (i32.const 0))
-    (i32.store offset=16 (local.get $wa) (i32.const 0))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 12)) (i32.const 0))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 16)) (i32.const 0))
     ;; ptMaxPosition = (-1,-1)
-    (i32.store offset=20 (local.get $wa) (i32.const -1))
-    (i32.store offset=24 (local.get $wa) (i32.const -1))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 20)) (i32.const -1))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 24)) (i32.const -1))
     ;; rcNormalPosition = current window rectangle. Child placement uses
     ;; parent-client coordinates; top-level placement uses screen coordinates.
     ;;
@@ -189,15 +189,33 @@
       (then
         (local.set $x (call $ctrl_get_x_s (local.get $arg0)))
         (local.set $y (call $ctrl_get_y_s (local.get $arg0)))
-        (i32.store offset=28 (local.get $wa) (local.get $x))
-        (i32.store offset=32 (local.get $wa) (local.get $y))
-        (i32.store offset=36 (local.get $wa)
-          (i32.add (local.get $x) (call $wnd_screen_w (local.get $arg0))))
-        (i32.store offset=40 (local.get $wa)
-          (i32.add (local.get $y) (call $wnd_screen_h (local.get $arg0)))))
+        (local.set $right (i32.add (local.get $x) (call $wnd_screen_w (local.get $arg0))))
+        (local.set $bottom (i32.add (local.get $y) (call $wnd_screen_h (local.get $arg0)))))
       (else
-        (call $host_get_window_rect (local.get $arg0)
-          (i32.add (local.get $wa) (i32.const 28)))))
+        ;; The host writes a contiguous RECT. Align sixteen bytes within this
+        ;; invocation's live allocation: the slot cannot cross a guest page,
+        ;; even when heap pages have unrelated backing. A nested host/guest
+        ;; callback owns another allocation, never a shared scratch rectangle.
+        (local.set $rect_guest (call $heap_alloc (i32.const 31)))
+        (if (i32.eqz (local.get $rect_guest))
+          (then
+            (global.set $last_error (i32.const 8))
+            (i32.store (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+            (return)))
+        (local.set $rect (call $g2w
+          (i32.and (i32.add (local.get $rect_guest) (i32.const 15)) (i32.const -16))))
+        (call $host_get_window_rect (local.get $arg0) (local.get $rect))
+        (local.set $x (i32.load (local.get $rect)))
+        (local.set $y (i32.load offset=4 (local.get $rect)))
+        (local.set $right (i32.load offset=8 (local.get $rect)))
+        (local.set $bottom (i32.load offset=12 (local.get $rect)))
+        (call $heap_free (local.get $rect_guest))))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 28)) (local.get $x))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 32)) (local.get $y))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 36)) (local.get $right))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 40)) (local.get $bottom))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))  ;; stdcall, 2 args
   )
@@ -913,17 +931,16 @@
   ;; 618: SetWindowPlacement(hWnd, lpwndpl) — 2 args stdcall
   ;; WINDOWPLACEMENT: length(0), flags(4), showCmd(8), ptMin(12,16), ptMax(20,24), rcNormal(28: left,top,right,bottom)
   (func $handle_SetWindowPlacement (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32) (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
+    (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
     (local $show i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
     ;; Snapshot every consumed WINDOWPLACEMENT field in this invocation's
     ;; Wasm locals BEFORE the position transaction enters guest code. The
     ;; caller may overwrite/free its structure or nest another placement.
-    (local.set $show (i32.load offset=8 (local.get $wa)))
-    (local.set $left   (i32.load offset=28 (local.get $wa)))
-    (local.set $top    (i32.load offset=32 (local.get $wa)))
-    (local.set $right  (i32.load offset=36 (local.get $wa)))
-    (local.set $bottom (i32.load offset=40 (local.get $wa)))
+    (local.set $show (call $gl32 (i32.add (local.get $arg1) (i32.const 8))))
+    (local.set $left   (call $gl32 (i32.add (local.get $arg1) (i32.const 28))))
+    (local.set $top    (call $gl32 (i32.add (local.get $arg1) (i32.const 32))))
+    (local.set $right  (call $gl32 (i32.add (local.get $arg1) (i32.const 36))))
+    (local.set $bottom (call $gl32 (i32.add (local.get $arg1) (i32.const 40))))
     ;; Use USER's changing -> commit -> changed transaction. It retains the
     ;; CLIENT_RECT/host mirror repair and lets DefWindowProc derive WM_SIZE
     ;; from the committed client, including ordinary already-visible moves.

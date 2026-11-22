@@ -13,7 +13,15 @@ compiler.compileSrcWasm = (transform, options) => compile((file, source) => {
   if (base && ['09a5b-handlers-window-late.wat', '09a5-handlers-window.wat', '09b-dispatch.wat', '13-exports.wat'].includes(file))
     source = fs.readFileSync(path.join(base, 'src', file), 'utf8');
   if (process.env.PLACEMENT_CONTROL === 'late-snapshot' && file === '09a5b-handlers-window-late.wat') {
-    const read = '(local.set $show (i32.load offset=8 (local.get $wa)))';
+    const reads = [
+      '(local.set $show (call $gl32 (i32.add (local.get $arg1) (i32.const 8))))',
+      '(local.set $show (i32.load offset=8 (local.get $wa)))',
+    ];
+    const matches = reads.filter(read => source.includes(read));
+    assert.equal(matches.length, 1, 'late-snapshot control must match current or historical read');
+    const [read] = matches;
+    assert.equal(source.split(read).length, 2, 'exactly one early snapshot must be moved');
+    assert(source.includes(';; showCmd used to be read'), 'late-snapshot insertion point must match');
     source = source.replace(read, '').replace(';; showCmd used to be read', read + '\n    ;; showCmd used to be read');
   }
   if (process.env.PLACEMENT_CONTROL === 'stale-startup' && file === '09b-dispatch.wat') {
@@ -122,7 +130,16 @@ function procedure(obs, placement, def, destroy, p, opts) {
 }
 
 (async () => {
-  const h = await bootRenderHarness({ extraWat, fonts: 'none' });
+  // The sealed render-artifact compiler has its own CommonJS graph. A control
+  // must compile through the adapter above explicitly; replacing the shared
+  // compile-src export cannot mutate that private graph.
+  const options = { fonts: 'none', extraWat };
+  if (process.env.PLACEMENT_CONTROL || process.env.PLACEMENT_BASELINE) {
+    options.prebuiltModule = new WebAssembly.Module(compiler.compileSrcWasm((file, source) =>
+      file === '13-exports.wat' ? source + '\n' + extraWat + '\n' : source));
+    delete options.extraWat;
+  }
+  const h = await bootRenderHarness(options);
   const { exports: e, renderer, memory, instance } = h;
   // A PE is loaded only to initialize guest/thunk memory; none of its code
   // runs. Remote asset-minimal checkouts may name an already-preserved PE.
