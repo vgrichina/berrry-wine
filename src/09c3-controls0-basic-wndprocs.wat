@@ -1490,6 +1490,17 @@
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
+    ;; Microsoft WIN32.HLP (1992-94), Static / Default Message Processing:
+    ;; WM_GETDLGCODE returns DLGC_STATIC, with no additional input flags.
+    ;; Bound this response to ordinary ANSI Win32 SS_LEFT text labels.
+    (if (i32.and
+          (i32.eq (local.get $msg) (i32.const 0x0087))
+          (i32.and (i32.eqz (global.get $is_win16))
+            (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+              (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd))
+                                (i32.const 0xFFFF))))))
+      (then (return (i32.const 0x0100)))) ;; DLGC_STATIC
+
     ;; ---------- WM_SETFOCUS (0x0007) / WM_KILLFOCUS (0x0008) ----------
     ;; Statics aren't tabstops, but if focus lands here (e.g. an app calls
     ;; SetFocus on a label) keep the global $focus_hwnd consistent.
