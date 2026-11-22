@@ -171,6 +171,13 @@
         (i32.or (i32.load8_u offset=0x11 (local.get $ks)) (i32.load8_u offset=0x12 (local.get $ks)))
         (i32.const 0x80))))
       (then (local.set $ch (select (i32.const 0x7C) (i32.const 0x5C) (local.get $shift)))))
+    ;; US unshifted Ctrl+OEM_102 is FS (literal US sample column 2).
+    (if (i32.and (i32.eq (local.get $vk) (i32.const 0xE2))
+      (i32.and (i32.eqz (local.get $shift))
+        (i32.and
+          (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0))
+          (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80))))))
+      (then (local.set $ch (i32.const 0x1C))))
     ;; US unshifted Ctrl+[ / Ctrl+backslash / Ctrl+] are ESC / FS / GS.
     ;; Preserve Shift+Ctrl and Ctrl+Alt compatibility; only down bits count.
     (if (i32.and

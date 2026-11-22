@@ -10,18 +10,18 @@ const { bootRenderHarness } = require('./render-helper');
 // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-toasciiex
 // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-tounicode
 // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-tounicodeex
-// VK_OEM_102 has attributes=0 and literal plain/Shift columns 5C/7C.
-// Caps Lock does not affect this row. Ctrl/Alt down cases preserve existing
-// no-output behavior only; they make no Windows behavior claim in this test.
+// VK_OEM_102 has attributes=0 and literal plain/Shift/Ctrl columns 5C/7C/001C.
+// Caps Lock does not affect this row. Shift+Ctrl and Alt down cases preserve
+// existing no-output compatibility only, without a Windows behavior claim.
 const cases = [];
 for (const ctrl of [0, 1, 0x7F, 0x80, 0x81])
   for (const shift of [0, 1, 0x80, 0x81])
     for (const alt of [0, 1, 0x7F, 0x80, 0x81])
       for (const caps of [0, 1, 0x80, 0x81]) {
-        const compatibility = !!((ctrl | alt) & 0x80);
+        const compatibility = !!(alt & 0x80) || !!((ctrl & shift) & 0x80);
         cases.push({vk:0xE2, ctrl, shift, alt, caps,
-          want: compatibility ? null : (shift & 0x80 ? 0x7C : 0x5C),
-          kind: compatibility ? 'existing-Ctrl-or-Alt-compatibility' : 'documented-US'});
+          want: compatibility ? null : (ctrl & 0x80 ? 0x1C : shift & 0x80 ? 0x7C : 0x5C),
+          kind: compatibility ? 'existing-ShiftCtrl-or-Alt-compatibility' : 'documented-US'});
       }
 
 const names = ['ToAscii', 'ToAsciiEx', 'ToUnicode', 'ToUnicodeEx'];
