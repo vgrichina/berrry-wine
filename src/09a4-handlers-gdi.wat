@@ -1454,15 +1454,40 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   (func $handle_GetBitmapBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_bitmap_bits (local.get $arg0) (local.get $arg1)
-      (if (result i32) (local.get $arg2)
-        (then (call $g2w (local.get $arg2))) (else (i32.const 0))) (i32.const 0)))
+    (local $len i32) (local $buffer i32)
+    ;; Reuse canonical BITMAP metadata to clamp the guest span to stored bytes.
+    (if (i32.gt_s (local.get $arg1) (i32.const 0))
+      (then
+        (if (call $gdi_bitmap_write_object (call $gdi_object_record (local.get $arg0))
+              (global.get $GDI_BITMAP_PLAN) (i32.const 24))
+          (then
+            (local.set $len (i32.mul (i32.load offset=12 (global.get $GDI_BITMAP_PLAN))
+              (i32.load offset=8 (global.get $GDI_BITMAP_PLAN))))
+            (if (i32.gt_u (local.get $len) (local.get $arg1))
+              (then (local.set $len (local.get $arg1))))))))
+    (local.set $buffer (call $guest_span_in (local.get $arg2) (local.get $len)))
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_bitmap_bits
+      (local.get $arg0) (local.get $arg1) (local.get $buffer) (i32.const 0)))
+    (if (local.get $buffer)
+      (then (call $guest_span_writeback (local.get $arg2) (local.get $buffer) (local.get $len))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_SetBitmapBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_bitmap_bits (local.get $arg0) (local.get $arg1)
-      (if (result i32) (local.get $arg2)
-        (then (call $g2w (local.get $arg2))) (else (i32.const 0))) (i32.const 1)))
+    (local $len i32) (local $buffer i32)
+    ;; Reuse canonical BITMAP metadata to clamp the guest span to stored bytes.
+    (if (i32.gt_s (local.get $arg1) (i32.const 0))
+      (then
+        (if (call $gdi_bitmap_write_object (call $gdi_object_record (local.get $arg0))
+              (global.get $GDI_BITMAP_PLAN) (i32.const 24))
+          (then
+            (local.set $len (i32.mul (i32.load offset=12 (global.get $GDI_BITMAP_PLAN))
+              (i32.load offset=8 (global.get $GDI_BITMAP_PLAN))))
+            (if (i32.gt_u (local.get $len) (local.get $arg1))
+              (then (local.set $len (local.get $arg1))))))))
+    (local.set $buffer (call $guest_span_in (local.get $arg2) (local.get $len)))
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_bitmap_bits
+      (local.get $arg0) (local.get $arg1) (local.get $buffer) (i32.const 1)))
+    (call $guest_span_release (local.get $buffer) (local.get $len))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_GetBitmapDimensionEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
