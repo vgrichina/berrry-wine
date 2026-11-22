@@ -950,11 +950,22 @@
               (i32.shr_s (local.get $lParam) (i32.const 16))))
             (return (i32.const 1))))
         (if (i32.ne (local.get $variant) (i32.const 3))
-          (then (return (call $wnd_send_message
+          (then
+            ;; Microsoft VC++ 4 (Sep 1995), CComboBox::SetEditSel p184:
+            ;; -1 removes selection / selects through the end; success is
+            ;; nonzero. EM_SETSEL has no success result to forward.
+            ;; Translate only the documented sentinel, preserving other
+            ;; unsigned packed positions in the existing DROPDOWN path.
+            (local.set $px (i32.and (local.get $lParam) (i32.const 0xFFFF)))
+            (local.set $py (i32.shr_u (local.get $lParam) (i32.const 16)))
+            (drop (call $wnd_send_message
                           (call $cb_edit_hwnd (local.get $state_w))
                           (i32.const 0x00B1)
-                          (i32.and (local.get $lParam) (i32.const 0xFFFF))
-                          (i32.shr_u (local.get $lParam) (i32.const 16))))))
+                          (select (i32.const -1) (local.get $px)
+                            (i32.eq (local.get $px) (i32.const 0xFFFF)))
+                          (select (i32.const -1) (local.get $py)
+                            (i32.eq (local.get $py) (i32.const 0xFFFF)))))
+            (return (i32.const 1))))
         (return (i32.const 0))))
 
     ;; ---------- CB_SETEXTENDEDUI / CB_GETEXTENDEDUI ----------
