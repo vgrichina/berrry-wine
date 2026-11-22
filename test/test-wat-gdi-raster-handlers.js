@@ -348,11 +348,50 @@ const drawDibLifetimeWat = String.raw`
     wat.test_gdi_fast_reset();
     assert.strictEqual(wat.test_call_BitBlt(
       clipped.hdc, 0, 0, 4, 4, source.hdc, 0, 0, 0x00CC0020), 1);
-    assert.strictEqual(wat.test_gdi_fast_count(1), 0,
-      'complex clipping must retain the region-aware generic path');
+    // Region bands may reuse fast row copies. Assert exact pixels rather than
+    // requiring the per-pixel fallback that predates the band optimization.
+    for (let y = 0; y < 4; y++) {
+      for (let x = 0; x < 4; x++) {
+        const expected = x === 0 || x === 3 ? 0xFF0000 : 0;
+        assert.strictEqual(packed(clipped, x, y), expected, `complex clip DIB ${x},${y}`);
+        assert.strictEqual(canvasRgb(clipped, x, y), expected, `complex clip canvas ${x},${y}`);
+      }
+    }
     assert.strictEqual(packed(clipped, 0, 2), 0xFF0000);
     assert.strictEqual(packed(clipped, 1, 2), 0);
     assert.strictEqual(packed(clipped, 3, 2), 0xFF0000);
+
+    // Distinct source and destination pixels expose writes into the hole or
+    // outside the region bounds, as well as wrong source offsets inside it.
+    const bordered = makeDib(8, 6);
+    const patterned = makeDib(8, 6);
+    const before = (x, y) => 0x908070 + y * 0x100 + x;
+    const sample = (x, y) => 0x302010 + y * 0x10000 + x * 0x100;
+    const colorref = rgb => ((rgb & 0xFF) << 16) | (rgb & 0xFF00) | (rgb >>> 16);
+    for (let y = 0; y < 6; y++) {
+      for (let x = 0; x < 8; x++) {
+        assert.strictEqual(wat.test_call_SetPixel(bordered.hdc, x, y, colorref(before(x, y))),
+          colorref(before(x, y)));
+        assert.strictEqual(wat.test_call_SetPixel(patterned.hdc, x, y, colorref(sample(x, y))),
+          colorref(sample(x, y)));
+      }
+    }
+    const a = wat.test_gdi_rgn_alloc_rect(1, 1, 2, 5) >>> 0;
+    const b = wat.test_gdi_rgn_alloc_rect(5, 1, 6, 5) >>> 0;
+    assert(a && b);
+    assert.strictEqual(wat.test_gdi_rgn_combine(a, a, b, 2), 3);
+    assert.strictEqual(wat.test_gdi_dc_clip_select(bordered.hdc, a), 3);
+    assert.strictEqual(wat.test_call_BitBlt(
+      bordered.hdc, 0, 0, 8, 6, patterned.hdc, 0, 0, 0x00CC0020), 1);
+    for (let y = 0; y < 6; y++) {
+      for (let x = 0; x < 8; x++) {
+        const inside = y >= 1 && y < 5 && (x === 1 || x === 5);
+        const expected = inside ? sample(x, y) : before(x, y);
+        assert.strictEqual(packed(bordered, x, y), expected, `bordered DIB ${x},${y}`);
+        assert.strictEqual(canvasRgb(bordered, x, y), expected, `bordered canvas ${x},${y}`);
+        assert.strictEqual(bytes[bordered.bits + y * bordered.stride + x * 4 + 3], 0);
+      }
+    }
   });
 
   check('StretchBlt expands pixels with deterministic nearest-neighbor sampling', () => {
