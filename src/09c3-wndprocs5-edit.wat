@@ -1468,6 +1468,27 @@
     (local $col_font i32) (local $col_buf i32) (local $col_len i32) (local $col_i i32) (local $col_ch i32)
     (local $col_hdc i32) (local $col_old_font i32) (local $col_cell i32) (local $col_max i32) (local $col_x i64)
 
+    ;; Microsoft WIN32.HLP, Edit / Default Message Processing (1992-94):
+    ;; single-line EDIT wants arrows, characters and EM_SETSEL. Bound this
+    ;; response to ordinary ANSI EDIT queries and non-Alt KEYDOWN/CHAR input;
+    ;; multiline, RichEdit and the separate Alt+Backspace WANTMESSAGE behavior
+    ;; keep their existing path. In particular, this does not request Tab or
+    ;; Return from the dialog manager.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0087))
+          (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+            (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+              (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4))))))
+      (then
+        (if (i32.eqz (local.get $lParam)) (then (return (i32.const 0x0089))))
+        (local.set $vk (call $gl32 (i32.add (local.get $lParam) (i32.const 4))))
+        (if (i32.and
+              (i32.or (i32.eq (local.get $vk) (i32.const 0x0100))
+                      (i32.eq (local.get $vk) (i32.const 0x0102)))
+              (i32.eqz (i32.and
+                (call $gl32 (i32.add (local.get $lParam) (i32.const 12)))
+                (i32.const 536870912))))
+          (then (return (i32.const 0x0089))))))
+
     ;; Every paint reselects the native font/DC and refreshes layout. Text,
     ;; width and font changes also fail the exact cache key independently.
     (if (i32.or (i32.eq (local.get $msg) (i32.const 15))
