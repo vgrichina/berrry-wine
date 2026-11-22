@@ -4849,44 +4849,13 @@
   ;; rect's top-left at wasm $bits.
   (func $d9g_rb (param $id i32) (param $x i32) (param $y0 i32) (param $w i32) (param $hgt i32)
       (param $bits i32) (param $pitch i32) (param $fmt i32) (param $site i32)
-    (local $pix i32) (local $band i32) (local $y i32) (local $n i32)
-    (local $pos i32) (local $p i32) (local $seq i32) (local $src i32) (local $k i32) (local $h i32)
-    (local.set $h (global.get $d9g_h))
+    (local $pix i32)
     (local.set $pix (call $d9g_pix (local.get $fmt)))
     (if (i32.eqz (local.get $pix)) (then (return)))
-    (local.set $band (i32.div_u (i32.const 0x200000) (i32.shl (local.get $w) (i32.const 2))))
-    (if (i32.eqz (local.get $band)) (then (local.set $band (i32.const 1))))
-    (block $done (loop $bands
-      (br_if $done (i32.ge_u (local.get $y) (local.get $hgt)))
-      (local.set $n (i32.sub (local.get $hgt) (local.get $y)))
-      (if (i32.gt_u (local.get $n) (local.get $band)) (then (local.set $n (local.get $band))))
-      (local.set $pos (call $d9g_arena (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n))))
-      (call $gps_slot_arm (local.get $h) (i32.const 0))
-      (local.set $p (call $d9g_begin (global.get $GPS_OP_READBACK) (size-of GpsReadback)))
-      (store.field GpsReadback rt (local.get $p) (local.get $id))
-      (store.field GpsReadback x (local.get $p) (local.get $x))
-      (store.field GpsReadback y (local.get $p) (i32.add (local.get $y0) (local.get $y)))
-      (store.field GpsReadback w (local.get $p) (local.get $w))
-      (store.field GpsReadback h (local.get $p) (local.get $n))
-      (store.field GpsReadback fmt (local.get $p) (global.get $GPS_FMT_A8B8G8R8))
-      (store.field GpsReadback dst (local.get $p) (local.get $pos))
-      (store.field GpsReadback pitch (local.get $p) (i32.shl (local.get $w) (i32.const 2)))
-      (store.field GpsReadback slot (local.get $p) (i32.const 0))
-      (local.set $seq (call $d9g_end (local.get $p)))
-      (call $d9g_stat (i32.const 11) (i32.const 1))
-      (call $gps_slot_wait (local.get $h) (i32.const 0) (local.get $seq))
-      (local.set $src (call $d9g_aptr (local.get $pos)))
-      (local.set $k (i32.const 0))
-      (block $rd (loop $rows
-        (br_if $rd (i32.ge_u (local.get $k) (local.get $n)))
-        (call $d3g_rgba_to_row
-          (i32.add (local.get $src) (i32.mul (local.get $k) (i32.shl (local.get $w) (i32.const 2))))
-          (i32.add (local.get $bits) (i32.mul (i32.add (local.get $y) (local.get $k)) (local.get $pitch)))
-          (local.get $w) (i32.and (local.get $pix) (i32.const 255)) (i32.shr_u (local.get $pix) (i32.const 8)))
-        (local.set $k (i32.add (local.get $k) (i32.const 1)))
-        (br $rows)))
-      (local.set $y (i32.add (local.get $y) (local.get $n)))
-      (br $bands)))
+    (call $d9g_stat (i32.const 11)
+      (call $gps_readback_rect (global.get $d9g_h) (local.get $id) (local.get $x) (local.get $y0)
+        (local.get $w) (local.get $hgt) (local.get $bits) (local.get $pitch)
+        (i32.and (local.get $pix) (i32.const 255)) (i32.shr_u (local.get $pix) (i32.const 8))))
     (call $page_watch_write (local.get $bits) (i32.mul (local.get $hgt) (local.get $pitch)))
     (call $d9g_stat (i32.const 6) (i32.const 1))
     (call $d9g_stat (i32.add (i32.const 48) (local.get $site)) (i32.const 1)))
@@ -4979,10 +4948,13 @@
   ;; the DIB is the back buffer (the RT, once made, starts from it) and
   ;; nothing moves. After: a Lock lands the RT in the DIB (readback, sites
   ;; 0/1) unless the DIB already holds it ($d9g_cpu); what the CPU wrote goes
-  ;; back up before the executor next uses its RT.
+  ;; back up before the executor next uses its RT. A DIB-window back buffer
+  ;; is not read at the Lock: a lazy entry (09a8gv) reads it back at the
+  ;; guest's first translation of it ($d9g_lazy_settle), and an Unlock that
+  ;; finds the entry still armed has nothing to upload.
   (func $d9g_bb_sync (param $device i32) (param $upload i32)
     (local $rt i32) (local $state i32) (local $flags i32) (local $bits i32) (local $pitch i32)
-    (local $x i32) (local $y i32) (local $w i32) (local $hgt i32)
+    (local $x i32) (local $y i32) (local $w i32) (local $hgt i32) (local $site i32)
     (if (i32.eqz (call $d9g_coherent (local.get $device))) (then (return)))
     (local.set $rt (call $d3ddev_rt_entry (local.get $device)))
     (local.set $flags (load.field DxObject flags (local.get $rt)))
@@ -4996,6 +4968,8 @@
         (global.set $d9g_cpu (i32.const 0))))
     (if (local.get $upload)
       (then
+        ;; Never translated since the Lock: the guest wrote nothing.
+        (if (call $gps_lazy_disarm (global.get $GPS_API_D3D9) (local.get $bits)) (then (return)))
         (local.set $w (global.get $d9g_rt_w))
         (local.set $hgt (global.get $d9g_rt_h))
         (if (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 26)))
@@ -5034,9 +5008,34 @@
             (then (call $d9g_stat (i32.const 76) (i32.const 1)) (br $have)))
           (if (i32.eq (global.get $d9g_cpu) (i32.const 3)) (then
             (br_if $have (call $d9g_fill (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (global.get $d9g_cpu_rgba)))))
-          (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt)
-            (select (i32.const 0) (i32.const 1) (i32.ne (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 29))) (i32.const 0)))))
+          (local.set $site (select (i32.const 0) (i32.const 1)
+            (i32.ne (i32.and (local.get $flags) (i32.shl (i32.const 1) (i32.const 29))) (i32.const 0))))
+          (if (call $gps_lazy_range_ok (local.get $bits) (i32.mul (global.get $d9g_rt_h) (local.get $pitch))) (then
+            (call $gps_lazy_arm (global.get $GPS_API_D3D9) (local.get $bits) (local.get $bits)
+              (i32.mul (global.get $d9g_rt_h) (local.get $pitch))
+              (global.get $d9g_rt) (global.get $d9g_rt_w) (global.get $d9g_rt_h) (local.get $pitch)
+              (global.get $d9g_rt_fmt) (local.get $site))
+            (global.set $d9g_cpu (i32.const 0))
+            (return)))
+          (call $d9g_readback (local.get $bits) (local.get $pitch) (global.get $d9g_rt_fmt) (local.get $site)))
         (if (i32.ne (global.get $d9g_cpu) (i32.const 2)) (then (global.set $d9g_cpu (i32.const 1)))))))
+
+  ;; 09a8gv, with the process-state lock (globals loaded) and the lazy mutex
+  ;; held: the guest's first translation of a lazily locked back buffer
+  ;; (entry $e: key = bits, +20 RT id, +24 w, +28 h, +32 pitch, +36 format,
+  ;; +40 site). $discard: a REP MOVS/STOS overwrites all of it, so nothing is
+  ;; read; either way the DIB then holds the newest pixels. An RT or DIB
+  ;; changed since the Lock leaves nothing of this one to read.
+  (func $d9g_lazy_settle (param $e i32) (param $discard i32)
+    (if (i32.or (global.get $d9g_dead) (i32.eqz (global.get $d9g_h))) (then (return)))
+    (if (i32.or (i32.ne (global.get $d9g_rt) (i32.load offset=20 (local.get $e)))
+          (i32.ne (global.get $d9g_cpu_bits) (i32.load offset=12 (local.get $e)))) (then (return)))
+    (if (i32.eqz (local.get $discard)) (then
+      (call $d9g_rb (i32.load offset=20 (local.get $e)) (i32.const 0) (i32.const 0)
+        (i32.load offset=24 (local.get $e)) (i32.load offset=28 (local.get $e))
+        (i32.load offset=12 (local.get $e)) (i32.load offset=32 (local.get $e))
+        (i32.load offset=36 (local.get $e)) (i32.load offset=40 (local.get $e)))))
+    (global.set $d9g_cpu (i32.const 1)))
 
   ;; Occlusion bracket (09ae IDirect3DQuery9::Issue). $kind
   ;; $GPS_FENCEK_OCCLUSION_BEGIN opens the executor's sample count and

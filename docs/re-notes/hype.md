@@ -553,3 +553,16 @@ has a no-render loop `0x420925..0x42097d` polling literal Action_Key until
 its command state becomes positive. The readme maps Action to Space. Other
 callers exist, so this is a hidden Action-prompt hypothesis, not proof of
 the active stack. Later observations above remain authoritative.
+
+## LFB lock coherence (2026-11-21)
+
+With the shared GPS lazy table (`src/09a8gv-gps-coherence.wat`), a Glide
+`grLfbLock` miss arms a lazy entry over the stage instead of reading the
+executor back. On the headless software Glide run to batch 3000
+(`--app=hype_glide_demo --glide-renderer=software`), all 233 armed write
+locks are touched by the guest before `grLfbUnlock` (lazy armed=233
+touched=233 untouched=0). Hype draws into every LFB lock it takes, so the
+lazy path saves no readbacks here (0.94/frame before and after). Frames at
+1000/2000/3000 and the GPU-stream sha256 are unchanged. The 16
+`lfb-no-readback` hits are the clear-colour stage shortcut, which existed
+before this change. Run: `scratch/runs/20261121-gps-coherence`.

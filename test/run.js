@@ -12100,7 +12100,8 @@ if (VERBOSE) {
       if (![0, 1, 2, 4].some(i => st(i))) continue;
       const f = st(0), per = n => f ? (n / f).toFixed(2) : 'n/a';
       console.log(`[gps] ${name} ${SHARED.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
-        ` readbacks/frame=${per(st(2))} uploads/frame=${per(st(4))}`);
+        ` readbacks/frame=${per(st(2))} uploads/frame=${per(st(4))}`
+        + (st(8) ? ` lazy armed=${st(8)} touched=${st(9)} untouched=${st(10)} overwritten=${st(11)}` : ''));
       if (GPS_TEX_DIAG) console.log(`[gps] ${name} tex-diag ` +
         Object.entries(DIAG).map(([i, n]) => `${n}=${st(Number(i))}`).join(' '));
     }

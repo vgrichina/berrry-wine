@@ -31,7 +31,7 @@ let source = names.map(form).join('\n').replaceAll('(region.addr $WIN16_PROCESS_
   // Fixture placement keeps the expanded lifetime counters clear of the
   // deliberately adjacent lazy-map and lock controls used by this tiny test.
   .replaceAll('(region.addr $WIN16_PROCESS_ARENA 8)', '(i32.const 1024)')
-  .replaceAll('(region.addr $D3DIM_LAZY_SHARED 4)', '(i32.const 272)')
+  .replaceAll('(region.addr $GPS_LAZY 4)', '(i32.const 272)')
   .replaceAll('(region.end $DIRECT_WINDOW)', '(i32.const 1048576)');
 const globals = { WIN16_ARENA: 0x100000, WIN16_SEG_MAX: 943, DLL_LOAD_LOCK: 512,
   image_base: 0x400000, GUEST_BASE: RegionMap.BASE.GUEST_BASE, NULL_SENTINEL: 0xf0,
@@ -50,7 +50,7 @@ source = `
 (import "host" "translate" (func $g2w (param i32) (result i32)))
 (import "host" "watch" (func $page_watch_write (param i32 i32)))
 (func $host_log_i32 (param i32) (nop))
-(func $d3dim_lazy_access (param i32 i32) (unreachable))
+(func $gps_lazy_access (param i32 i32) (unreachable))
 (func $uwc_bulk_note (param i32 i32) (unreachable))
 ${Object.entries(globals).map(([n,v]) => `(global $${n} i32 (i32.const ${v}))`).join('\n')}
 ${source}
