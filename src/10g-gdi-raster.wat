@@ -3666,6 +3666,13 @@
           (select (i32.eqz (local.get $count)) (i32.lt_u (local.get $count) (i32.const 2))
             (local.get $from_current)))
       (then (return (i32.const 0))))
+    (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
+    (if (i32.eqz (local.get $dc)) (then (return (i32.const 0))))
+    ;; An invisible pen still completes the call: Polyline preserves the
+    ;; current position and PolylineTo's handler advances it to the last point.
+    (if (i32.eq (call $gdi_object_style
+          (load.field.memarg GdiDcState pen (local.get $dc))) (i32.const 5))
+      (then (return (i32.const 1))))
     (if (local.get $from_current)
       (then
         (local.set $from_x (call $gdi_dc_get_field
@@ -3691,7 +3698,6 @@
     (local.set $desc (global.get $GDI_LINE_DESC))
     (local.set $rop2 (call $gdi_dc_get_rop2 (local.get $hdc)))
     (local.set $width (i32.load offset=28 (local.get $desc)))
-    (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
     (if (local.get $dc)
       (then
         (local.set $pen (i32.load offset=4 (local.get $dc)))
