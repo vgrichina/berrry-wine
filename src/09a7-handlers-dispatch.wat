@@ -4825,9 +4825,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
-  ;; Six-argument Win9x connection. Keep the original frame parked while the
-  ;; owning host resolves and inspects the real companion. Never claim attach
-  ;; success before a relay and its lifetime have actually been published.
+  ;; LS32 native pairing owns a parked six-argument connection request.
   (func $handle_ThunkConnect32 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (call $handle_ne_guest_request (i32.const 5) (local.get $arg0) (i32.load offset=16 (global.get $reg_base)))
   )
