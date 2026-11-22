@@ -903,6 +903,10 @@
     ;; Stash in a high bit of the stored style word — see $cb_set_extended_ui.
     (if (i32.eq (local.get $msg) (i32.const 0x0155))
       (then
+        ;; Microsoft desktop supports only DROPDOWN/DROPDOWNLIST here.
+        ;; SIMPLE keeps its always-visible list and default keyboard behavior.
+        (if (i32.eq (local.get $variant) (i32.const 1))
+          (then (return (i32.const -1)))) ;; CB_ERR
         (call $cb_set_extended_ui (local.get $state_w) (local.get $wParam))
         (return (i32.const 0))))
     (if (i32.eq (local.get $msg) (i32.const 0x0156))
@@ -1011,8 +1015,9 @@
         (return (i32.const 0))))
 
     ;; ---------- WM_KEYDOWN (0x0100) ----------
-    ;; F4 (0x73) or Alt+Down (we approximate by VK_F4 since we don't have
-    ;; modifier key state cleanly here): toggle dropdown.
+    ;; Default F4 toggles the dropdown. Extended UI disables F4 and makes
+    ;; Down open a closed dropdown without changing selection. Once open,
+    ;; navigation and the existing accept/cancel notifications are unchanged.
     ;; Esc (0x1B): cancel-close. Enter (0x0D): accept-close (if dropped).
     ;; Arrow/PgUp/PgDn/Home/End: forward to listbox (which fires LBN_SELCHANGE
     ;; back to us via WM_COMMAND, where we'll sync_text + relay CBN_SELCHANGE).
@@ -1020,9 +1025,18 @@
       (then
         (if (i32.eq (local.get $wParam) (i32.const 0x73))  ;; VK_F4
           (then
+            (if (call $cb_extended_ui (local.get $state_w))
+              (then (return (i32.const 0))))
             (if (call $cb_is_dropped (local.get $state_w))
               (then (call $combobox_close_dropdown (local.get $hwnd) (i32.const 1)))
               (else (call $combobox_open_dropdown  (local.get $hwnd))))
+            (return (i32.const 0))))
+        (if (i32.and
+              (i32.eq (local.get $wParam) (i32.const 0x28)) ;; VK_DOWN
+              (i32.and (call $cb_extended_ui (local.get $state_w))
+                       (i32.eqz (call $cb_is_dropped (local.get $state_w)))))
+          (then
+            (call $combobox_open_dropdown (local.get $hwnd))
             (return (i32.const 0))))
         (if (i32.eq (local.get $wParam) (i32.const 0x1B))  ;; VK_ESCAPE
           (then
