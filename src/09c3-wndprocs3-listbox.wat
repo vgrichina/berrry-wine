@@ -936,6 +936,67 @@
                 (call $invalidate_hwnd (local.get $hwnd))))))
         (return (i32.const 0))))
 
+    ;; ---------- WM_CHAR (0x0102) ----------
+    ;; Microsoft Windows 98 Keyboard Guide (1998-07-07), section 1.2:
+    ;; an initial selects an item; repeating it selects the next match.
+    ;; Keep this first-character search stateless. Do not infer a later
+    ;; platform's incremental-search buffer or timeout policy.
+    (if (i32.eq (local.get $msg) (i32.const 0x0102))
+      (then
+        ;; Ordinary single-selection ANSI string lists only. Owner-draw,
+        ;; multi-selection and unsupported geometries keep their old path;
+        ;; WANTKEYBOARDINPUT requires the owner's WM_CHARTOITEM callback.
+        (if (i32.or
+              (i32.eqz (call $lb_caret_supported (local.get $hwnd)))
+              (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                        (i32.const 0x0C08)) (i32.const 0)))
+          (then (return (i32.const 0))))
+        (if (i32.or
+              (i32.or (i32.lt_u (local.get $wParam) (i32.const 0x20))
+                      (i32.gt_u (local.get $wParam) (i32.const 0xFF)))
+              (i32.eq (local.get $wParam) (i32.const 0x7F)))
+          (then (return (i32.const 0))))
+        (local.set $count (call $lb_count (local.get $sw)))
+        (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
+        (local.set $sel (call $lb_cur_sel (local.get $sw)))
+        (local.set $code (call $tolower (local.get $wParam)))
+        (local.set $p (call $g2w (call $lb_items_ptr (local.get $sw))))
+        (local.set $idx (i32.const -1))
+        (local.set $i (i32.const 0))
+        ;; One walk: save the first wraparound match, but prefer the first
+        ;; match strictly after the current selection. No selection starts
+        ;; at row zero; the current row is considered last when cycling.
+        (block $char_found (loop $char_search
+          (br_if $char_found (i32.ge_u (local.get $i) (local.get $count)))
+          (if (i32.eq (call $tolower (i32.load8_u (local.get $p))) (local.get $code))
+            (then
+              (if (i32.gt_s (local.get $i) (local.get $sel))
+                (then (local.set $idx (local.get $i)) (br $char_found)))
+              (if (i32.lt_s (local.get $idx) (i32.const 0))
+                (then (local.set $idx (local.get $i))))))
+          (local.set $p (i32.add (local.get $p)
+            (i32.add (call $strlen (local.get $p)) (i32.const 1))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $char_search)))
+        (if (i32.lt_s (local.get $idx) (i32.const 0))
+          (then (return (i32.const 0))))
+        ;; Reuse selection flags, viewport reveal and invalidation. Complete
+        ;; all state changes before the synchronous parent notification.
+        (drop (call $listbox_wndproc (local.get $hwnd) (i32.const 0x0186)
+          (local.get $idx) (i32.const 0)))
+        (if (i32.and
+              (i32.ne (local.get $idx) (local.get $sel))
+              (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                        (i32.const 1)) (i32.const 0))) ;; LBS_NOTIFY
+          (then
+            (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
+            (if (local.get $parent)
+              (then (drop (call $wnd_send_message (local.get $parent) (i32.const 0x0111)
+                (i32.or (call $ctrl_table_get_id (local.get $hwnd))
+                        (i32.const 0x00010000)) ;; LBN_SELCHANGE
+                (local.get $hwnd)))))))
+        (return (i32.const 0))))
+
     ;; ---------- WM_KEYDOWN (0x0100) ----------
     ;; VK_UP/DOWN/HOME/END/PRIOR/NEXT navigate the listbox; each fires
     ;; LBN_SELCHANGE to the parent. Used by the combobox popup to drive
