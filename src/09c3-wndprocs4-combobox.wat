@@ -916,13 +916,25 @@
       (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x019A) (local.get $wParam) (local.get $lParam)))))
 
     ;; ---------- CB_SETITEMHEIGHT / CB_GETITEMHEIGHT ----------
-    ;; WordPad's MFC toolbar combo setup adjusts the editable field/item
-    ;; height once the CComboBox wrapper is attached. We keep a fixed Win98-ish
-    ;; field height for now, but report success/height so setup can continue.
+    ;; Microsoft desktop: wParam=0 sets/gets the common fixed list-row height.
+    ;; Reuse the inner list's height so paint, hit tests, reveal, scrolling and
+    ;; public queries share one value. Keep the previous selection-field and
+    ;; variable-owner-draw paths; per-item variable heights are not supported.
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/cb-setitemheight
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/cb-getitemheight
     (if (i32.eq (local.get $msg) (i32.const 0x0153))
-      (then (return (i32.const 0))))
+      (then
+        (if (i32.and (i32.eqz (local.get $wParam))
+              (i32.eqz (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x0020))))
+          (then (return (call $wnd_send_message (local.get $lb)
+            (i32.const 0x01A0) (i32.const 0) (local.get $lParam)))))
+        (return (i32.const 0))))
     (if (i32.eq (local.get $msg) (i32.const 0x0154))
       (then
+        (if (i32.and (i32.eqz (local.get $wParam))
+              (i32.eqz (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x0020))))
+          (then (return (call $wnd_send_message (local.get $lb)
+            (i32.const 0x01A1) (i32.const 0) (i32.const 0)))))
         (return
           (select
             (local.get $field_h)
