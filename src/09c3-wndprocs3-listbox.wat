@@ -686,6 +686,11 @@
         (return (i32.eq (local.get $idx) (call $lb_cur_sel (local.get $sw))))))
 
     ;; ---------- LB_GETSELCOUNT (0x0190) / LB_GETSELITEMS (0x0191) ----------
+    ;; Microsoft WIN32.HLP (1992-1994), LB_GETSELCOUNT: a single-selection
+    ;; list box returns LB_ERR. Both multiple-selection styles remain valid.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0190))
+          (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808))))
+      (then (return (i32.const -1))))
     (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0190))
                 (i32.eq (local.get $msg) (i32.const 0x0191)))
       (then
