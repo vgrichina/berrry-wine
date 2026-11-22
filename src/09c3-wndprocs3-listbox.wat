@@ -1128,6 +1128,12 @@
         (call $lb_set_items_used (local.get $sw) (i32.sub (local.get $used) (local.get $slen)))
         (call $lb_set_count (local.get $sw) (i32.sub (local.get $count) (i32.const 1)))
         (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
+        ;; Keep ordinary string-list queries valid before the next paint.
+        ;; Reuse the top-index/reveal clamp after count and scrollbar geometry
+        ;; change; preserve a valid top, and reset an empty viewport to zero.
+        (if (call $lb_caret_supported (local.get $hwnd))
+          (then (drop (call $listbox_scroll_to
+            (local.get $hwnd) (local.get $sw) (call $lb_top_index (local.get $sw))))))
         ;; Shift parallel data array down by one slot at $idx.
         (if (call $lb_data_ptr (local.get $sw))
           (then
