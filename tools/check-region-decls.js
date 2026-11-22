@@ -347,6 +347,18 @@ function resolveOwnerFile(fileText) {
   return { relative, resolved };
 }
 
+// ~290 owners name ~40 files, several of them megabytes; splitting the same
+// file into forms once per owner was ~3 s of this gate. The forms are a pure
+// function of the text, so reuse them while the text read is identical.
+const ownerFormsCache = new Map();
+function ownerFileForms(file, source) {
+  const hit = ownerFormsCache.get(file);
+  if (hit && hit.source === source) return hit.forms;
+  const forms = watTopLevelForms(source);
+  ownerFormsCache.set(file, { source, forms });
+  return forms;
+}
+
 function ownerVerdict(d) {
   if (!d.owner) return { state: 'missing' };
   // The clause value arrives with its quotes still on.
@@ -372,7 +384,7 @@ function ownerVerdict(d) {
       : { state: 'stale', why: `${target.relative} mentions ${m[2]} but not $${d.name}` };
   }
 
-  const forms = watTopLevelForms(source);
+  const forms = ownerFileForms(target.resolved, source);
   const definitions = forms.filter(f => f.symbol === m[2]);
   if (!definitions.length) {
     return { state: 'stale', why: `${target.relative} does not define top-level ${m[2]}` };

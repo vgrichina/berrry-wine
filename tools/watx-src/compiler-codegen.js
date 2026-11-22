@@ -1744,6 +1744,7 @@ function* generateWasmSteps(forms, loweredForms, checkResult, options = {}) {
   const regions = new Map();
   let regionConstValue = null;   // shared by compileExpr and the data scan
   let regionLayoutReport = null; // surfaced on the compile result for the banner
+  let emittedExports = null;     // the export section's entries, for options.facts
   {
     const memoryBytes = memoryDecl.min * 65536;
     const located = (form, message) => {
@@ -5794,7 +5795,8 @@ function* generateWasmSteps(forms, loweredForms, checkResult, options = {}) {
   {
     const content = new BinaryWriter();
     const exports = [];
-    
+    emittedExports = exports;
+
     // Historical WATX modules export their implicit memory. Explicit-memory
     // modules use explicit exports, matching standard WAT.
     const hasExplicitMemoryForm = forms.some(f => Array.isArray(f) &&
@@ -6157,7 +6159,87 @@ function* generateWasmSteps(forms, loweredForms, checkResult, options = {}) {
   }
 
   const binary = allBytes.finish();
+
+  // ── options.facts: what this compile resolved, as plain data ───────────────
+  // Read-only over state every section above already built; it emits nothing
+  // and cannot change a byte. The schema is versioned by the caller's document
+  // (see compile()'s `facts` result and docs/watx-facts.md in the vendoring
+  // tree). Index spaces are the ones the binary uses.
+  let facts;
+  if (options.facts) {
+    const typeName = (t) => (typeof t === 'number' ? valtypeName(t) : t);
+    const funcSig = new Map();
+    for (const imp of importDecls) {
+      funcSig.set(imp.funcName, { params: imp.params.map(typeName), results: imp.results.map(typeName) });
+    }
+    for (const fd of funcDecls) {
+      funcSig.set(fd.name, {
+        params: fd.params.map(p => (p && typeof p === 'object' ? p.type : typeName(p))),
+        results: fd.results.map(typeName),
+      });
+    }
+    const funcByIndex = new Map();
+    for (const [name, index] of funcIndexMap) if (typeof index === 'number') funcByIndex.set(index, name);
+    const globalByIndex = new Map();
+    for (const [name, index] of globalIndexMap) globalByIndex.set(index, name);
+    const kindName = { 0: 'func', 1: 'table', 2: 'memory', 3: 'global' };
+    const globalInit = (g) => {
+      const where = `initializer of global ${g.name || '(anonymous)'}`;
+      if (g.runtime === 'bump' || g.runtime === 'save') return { kind: 'runtime', runtime: g.runtime };
+      if (g.init && Array.isArray(g.init) && REGION_CONST_HEADS.has(V(g.init[1]))) {
+        return { kind: 'region', op: V(g.init[1]), region: V(g.init[2]), value: regionConstValue(g.init, 0, where) };
+      }
+      const raw = g.init ? watxConstFormToken(g.init, where) : '0';
+      if (g.type === 'i32') return { kind: 'const', value: watxParseIntLiteral(raw, where) };
+      if (g.type === 'i64') return { kind: 'const', value: String(parseI64Literal(raw)) };
+      return { kind: 'const', literal: raw };
+    };
+    facts = {
+      memory: memoryDecl ? {
+        imported: !!memoryDecl.imported, module: memoryDecl.module || null, name: memoryDecl.importName || null,
+        min: memoryDecl.min, max: memoryDecl.max === undefined ? null : memoryDecl.max, shared: !!memoryDecl.shared,
+      } : null,
+      imports: moduleImports.map(imp => imp.kind === 'func'
+        ? { kind: 'func', module: imp.module, name: imp.name, target: imp.funcName, index: funcIndexMap.get(imp.funcName),
+            params: imp.params.map(typeName), results: imp.results.map(typeName) }
+        : imp.kind === 'global'
+          ? { kind: 'global', module: imp.module, name: imp.name, target: imp.globalName,
+              index: globalIndexMap.get(imp.globalName), type: imp.type, mutable: !!imp.mutable }
+          : { kind: imp.kind, module: imp.module, name: imp.importName || imp.name }),
+      exports: (emittedExports || []).map(exp => {
+        const kind = kindName[exp.kind];
+        const out = { name: exp.name, kind, index: exp.idx };
+        if (kind === 'func') {
+          out.target = funcByIndex.get(exp.idx) || null;
+          const sig = out.target ? funcSig.get(out.target) : null;
+          if (sig) { out.params = sig.params; out.results = sig.results; }
+        } else if (kind === 'global') {
+          out.target = globalByIndex.get(exp.idx) || null;
+        }
+        return out;
+      }),
+      functions: funcDecls.map(fd => ({
+        name: fd.name, index: funcIndexMap.get(fd.name),
+        params: funcSig.get(fd.name).params,
+        paramNames: fd.params.map(p => (p && typeof p === 'object' ? p.name || null : null)),
+        results: funcSig.get(fd.name).results,
+      })),
+      globals: [
+        ...globalImportDecls.map(g => ({ name: g.globalName, index: globalIndexMap.get(g.globalName), type: g.type,
+          mutable: !!g.mutable, imported: true })),
+        ...globalDecls.map(g => ({ name: g.name, index: globalIndexMap.get(g.name), type: g.type,
+          mutable: !!g.mutable, imported: false, init: globalInit(g) })),
+      ],
+      data: [
+        ...fixedDataSegments.map(seg => ({ offset: seg.offset, size: seg.bytes.length })),
+        ...(dataPool.bytes.length ? [{ offset: DATA_BASE, size: dataPool.bytes.length, stringPool: true }] : []),
+      ],
+      regions: regionLayoutReport,
+    };
+  }
+
   return {
+    facts,
     binary,
     importDecls,
     moduleImports,

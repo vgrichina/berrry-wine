@@ -52,6 +52,13 @@ const COMPAT_OUT = path.resolve(ROOT, getArg('compat-out', `${OUTPUT_STEM}.compa
 // so the two canonical files above are byte-for-byte what they were.
 const WANT_NAMES = process.argv.includes('--names') || process.env.WINE_WAT_NAMES === '1';
 const NAMED_OUT = path.resolve(ROOT, getArg('named-out', `${OUTPUT_STEM}.named.wasm`));
+// Pass-1 facts of the tail compile (docs/watx-facts.md): build/watx-facts.json
+// for the canonical output, `<stem>.watx-facts.json` beside a custom --out.
+// They do not touch the artifacts' bytes; --no-facts skips them.
+const WANT_FACTS = !process.argv.includes('--no-facts');
+const FACTS_OUT = path.resolve(ROOT, getArg('facts-out',
+  OUT === path.join(ROOT, 'build', 'wine-assembly.wasm')
+    ? path.join('build', 'watx-facts.json') : `${OUTPUT_STEM}.watx-facts.json`));
 if (new Set([OUT, COMPAT_OUT, NAMED_OUT]).size !== 3) {
   throw new Error('build-compile-wat: primary, compatibility and named outputs must be distinct');
 }
@@ -151,8 +158,13 @@ function compileWatx(replicatedDispatch) {
       'and does not exist in the WATX path (legacy is retired); drop it.');
     process.exit(1);
   }
-  const { watxSourceClosure, compileClosure } = require(path.join(__dirname, 'watx-closure.js'));
-  const closure = watxSourceClosure();
+  const { watxSourceClosure, compileClosure, prepareClosure, overlayClosure } =
+    require(path.join(__dirname, 'watx-closure.js'));
+  const sourceClosure = watxSourceClosure();
+  // Protected ONCE (tools/protected-writer-entries.js) and shared by every
+  // artifact below; the compat overlay is applied on top of the protected
+  // sources and checked not to touch an export-bearing form.
+  const closure = prepareClosure(sourceClosure);
   // This invocation owns the cache; semantic state and artifacts remain fresh.
   // The opt-out provides a no-reuse control for byte-equivalence checks.
   const frontendReuse = process.env.WINE_WAT_FRONTEND_REUSE === '0' ? null
@@ -167,16 +179,18 @@ function compileWatx(replicatedDispatch) {
   // hosts refuse to run a pair that disagrees — see tools/region-layout-hash.js
   // for why a mismatch is otherwise silent rather than loud.
   const { layoutHash, appendSection } = require(path.join(__dirname, 'region-layout-hash.js'));
+  const { buildFactsDocument } = require(path.join(__dirname, 'watx-facts.js'));
   let stamp = null;
   // The compat artifact dispatches through a flat trampoline, not nested
   // call;return chains — see lib/dispatch-trampoline.js. Overlay on a copy of
   // the vfs, so the tail artifact still compiles the sources as written.
   const { applyToVfs } = require(path.join(ROOT, 'lib', 'dispatch-trampoline.js'));
-  const compatClosure = Object.assign({}, closure, { vfs: applyToVfs(new Map(closure.vfs)) });
+  const compatClosure = overlayClosure(closure, applyToVfs);
   for (const [key, tailCalls] of [['bytes', true], ['compatBytes', false]]) {
     const r = compileClosure(tailCalls ? closure : compatClosure,
-      { tailCalls, regionShake: shake ? shake.value : null, frontendReuse });
+      { tailCalls, regionShake: shake ? shake.value : null, frontendReuse, facts: tailCalls && WANT_FACTS });
     if (tailCalls && r && r.success) reportRegionLayout(r.regions, shake);
+    if (tailCalls && r && r.success && r.facts) out.facts = buildFactsDocument(r.facts, sourceClosure, shake);
     if (r && r.success && r.regions && !stamp) {
       stamp = layoutHash(r.regions.regions);
       console.log(`Region layout hash: ${stamp}`);
@@ -242,7 +256,7 @@ async function publishArtifact(output, bytes) {
   const replicatedDispatch = parseReplicatedDispatch();
   const compiler = selectedCompiler();
   console.log(`Compiler: ${compiler.name} (from ${compiler.source})`);
-  const { bytes, compatBytes, namedBytes } = compileWatx(replicatedDispatch);
+  const { bytes, compatBytes, namedBytes, facts } = compileWatx(replicatedDispatch);
   // compileWat emits bytes without validating operand stacks, so a WAT edit
   // that leaves a function's result value unproduced — one paren too few, and
   // an (if) that should yield i32 yields nothing — used to "build" fine and
@@ -270,6 +284,12 @@ async function publishArtifact(output, bytes) {
   const compatSt = await fs.promises.stat(COMPAT_OUT);
   console.log(`Build complete: ${path.relative(ROOT, OUT)} (${st.size} bytes)`);
   console.log(`Build complete: ${path.relative(ROOT, COMPAT_OUT)} (${compatSt.size} bytes)`);
+  // Written only after both artifacts validated and published, so a fresh
+  // facts file never describes a build that failed.
+  if (facts) {
+    require(path.join(__dirname, 'watx-facts.js')).writeFacts(facts, FACTS_OUT);
+    console.log(`Facts: ${path.relative(ROOT, FACTS_OUT)}`);
+  }
   if (namedBytes) {
     // Validated like the other two, and for the same reason: a custom section
     // the decoder refuses would otherwise only surface wherever it is loaded.
