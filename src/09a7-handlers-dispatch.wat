@@ -4937,6 +4937,7 @@
         )
       )
       ;; OEM punctuation
+      (if (i32.eq (local.get $uCode) (i32.const 0xE2)) (then (local.set $result (i32.const 0x56)) (br $vk0_done))) ;; VK_OEM_102
       (if (i32.eq (local.get $uCode) (i32.const 0xBA)) (then (local.set $result (i32.const 0x27)) (br $vk0_done))) ;; ;:
       (if (i32.eq (local.get $uCode) (i32.const 0xBB)) (then (local.set $result (i32.const 0x0D)) (br $vk0_done))) ;; =+
       (if (i32.eq (local.get $uCode) (i32.const 0xBC)) (then (local.set $result (i32.const 0x33)) (br $vk0_done))) ;; ,<
@@ -5079,6 +5080,7 @@
           )
           (if (i32.eq (local.get $uCode) (i32.const 0x20)) (then (local.set $result (i32.const 0x20))))
           ;; OEM punctuation (US layout, unshifted glyph)
+          (if (i32.eq (local.get $uCode) (i32.const 0xE2)) (then (local.set $result (i32.const 0x5C)))) ;; VK_OEM_102
           (if (i32.eq (local.get $uCode) (i32.const 0xBA)) (then (local.set $result (i32.const 0x3B)))) ;; ;
           (if (i32.eq (local.get $uCode) (i32.const 0xBB)) (then (local.set $result (i32.const 0x3D)))) ;; =
           (if (i32.eq (local.get $uCode) (i32.const 0xBC)) (then (local.set $result (i32.const 0x2C)))) ;; ,
