@@ -2527,7 +2527,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; Reads the child Edit control's WAT-side text buffer directly (via
   ;; state_ptr offsets that match $handle_edit_wndproc WM_GETTEXT) and
   ;; parses a decimal integer. bSigned lets a leading '-' flip the sign.
-  ;; *lpTranslated receives TRUE iff at least one digit was consumed.
+  ;; *lpTranslated receives TRUE iff digits were consumed without positive overflow.
   (func $handle_GetDlgItemInt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $child i32) (local $state i32) (local $state_w ptr<ControlTextState>)
     (local $buf_wa i32) (local $text_len i32)
@@ -2571,6 +2571,22 @@ GetTopWindow(hWnd) — 1 arg stdcall
                   (local.set $c (i32.load8_u (i32.add (local.get $buf_wa) (local.get $i))))
                   (br_if $parse_done (i32.lt_u (local.get $c) (i32.const 0x30)))
                   (br_if $parse_done (i32.gt_u (local.get $c) (i32.const 0x39)))
+                  ;; Check the next positive digit before multiply/add can wrap.
+                  ;; Preserve the existing negative-input arithmetic unchanged.
+                  (if (i32.eqz (local.get $neg))
+                    (then
+                      (if (i32.or
+                            (i32.gt_u (local.get $val)
+                              (select (i32.const 214748364) (i32.const 429496729) (local.get $arg3)))
+                            (i32.and
+                              (i32.eq (local.get $val)
+                                (select (i32.const 214748364) (i32.const 429496729) (local.get $arg3)))
+                              (i32.gt_u (local.get $c)
+                                (select (i32.const 0x37) (i32.const 0x35) (local.get $arg3)))))
+                        (then
+                          (local.set $val (i32.const 0))
+                          (local.set $ok (i32.const 0))
+                          (br $parse_done)))))
                   (local.set $val (i32.add
                     (i32.mul (local.get $val) (i32.const 10))
                     (i32.sub (local.get $c) (i32.const 0x30))))
