@@ -26,15 +26,6 @@ const extraWat = String.raw`
       (i32.const 0) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (local.get $saved_esp))
     (i32.load offset=0 (global.get $reg_base)))
-  (func (export "test_call_GetTextExtentPoint32W")
-        (param i32 i32 i32 i32) (result i32)
-    (local $saved_esp i32)
-    (local.set $saved_esp (i32.load offset=16 (global.get $reg_base)))
-    (call $handle_GetTextExtentPoint32W
-      (local.get 0) (local.get 1) (local.get 2) (local.get 3)
-      (i32.const 0) (i32.const 0))
-    (i32.store offset=16 (global.get $reg_base) (local.get $saved_esp))
-    (i32.load offset=0 (global.get $reg_base)))
 `;
 
 const source = fs.readFileSync(

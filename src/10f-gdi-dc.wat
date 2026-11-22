@@ -1885,7 +1885,7 @@
         (param $dx i32) (param $size i32) (param $wide i32) (result i32)
     (local $metrics i32) (local $height i32) (local $i i32)
     (local $width i32) (local $fit_count i32) (local $decode_cp i32)
-    (local $dec i32) (local $clen i32) (local $k i32)
+    (local $dec i32) (local $clen i32) (local $k i32) (local $char_extra i32)
     (if (i32.or (i32.eqz (local.get $size))
           (i32.or (i32.lt_s (local.get $count) (i32.const 0))
             (i32.or (i32.gt_u (local.get $count) (i32.const 65536))
@@ -1895,6 +1895,10 @@
     (local.set $metrics (call $host_get_text_metrics (local.get $hdc)))
     (if (i32.eqz (local.get $metrics)) (then (return (i32.const 0))))
     (local.set $height (i32.and (local.get $metrics) (i32.const 0xFFFF)))
+    ;; WIN32.HLP: string extents include extra for each character, including
+    ;; break characters. Raw glyph widths remain independent of DC spacing.
+    (local.set $char_extra (call $gdi_dc_aux_get
+      (local.get $hdc) (i32.const 20) (i32.const 0)))
     ;; Stage-2 decode, the extent contract: the A surface reports what
     ;; Win32 defines for a byte string — one dx entry PER BYTE (both bytes
     ;; of a DBCS character carry the cumulative width through that
@@ -1916,8 +1920,9 @@
           (local.set $clen
             (i32.shr_u (i32.and (local.get $dec) (i32.const 0xFF0000)) (i32.const 16)))
           (local.set $width (i32.add (local.get $width)
-            (call $gdi_font_character_width (local.get $hdc)
-              (i32.and (local.get $dec) (i32.const 0xFFFF)) (i32.const 1))))
+            (i32.add (local.get $char_extra)
+              (call $gdi_font_character_width (local.get $hdc)
+                (i32.and (local.get $dec) (i32.const 0xFFFF)) (i32.const 1)))))
           (local.set $k (i32.const 0))
           (block $kdone (loop $kwalk
             (br_if $kdone (i32.ge_u (local.get $k) (local.get $clen)))
@@ -1937,19 +1942,19 @@
         (i32.store (local.get $size) (local.get $width))
         (i32.store offset=4 (local.get $size) (local.get $height))
         (return (i32.const 1))))
-    ;; One advance per character, accumulated — the same arithmetic Windows 98
-    ;; does, and the same arithmetic GetCharWidth reports one entry at a time.
+    ;; Accumulate each raw advance plus the DC's character extra.
     ;; Measuring each prefix from scratch instead would ask the font provider
     ;; n(n+1)/2 questions to answer n of them.
     (block $done (loop $prefix
       (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
       (local.set $width (i32.add (local.get $width)
-        (call $gdi_font_character_width (local.get $hdc)
+        (i32.add (local.get $char_extra)
+          (call $gdi_font_character_width (local.get $hdc)
           (if (result i32) (local.get $wide)
             (then (i32.load16_u (i32.add (local.get $text)
               (i32.shl (local.get $i) (i32.const 1)))))
             (else (i32.load8_u (i32.add (local.get $text) (local.get $i)))))
-          (local.get $wide))))
+            (local.get $wide)))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (if (local.get $dx)
         (then (i32.store (i32.add (local.get $dx)

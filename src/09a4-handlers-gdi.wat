@@ -2331,14 +2331,11 @@
 
   ;; 254: GetTextExtentPoint32A — font-aware via host
   (func $handle_GetTextExtentPoint32A (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $packed i32)
-    (local.set $packed (call $host_get_text_metrics (local.get $arg0)))
-    (call $gs32 (local.get $arg3)
-      (call $host_measure_text (local.get $arg0) (call $g2w (local.get $arg1))
-        (local.get $arg2) (i32.const 0)))
-    (call $gs32 (i32.add (local.get $arg3) (i32.const 4))
-      (i32.and (local.get $packed) (i32.const 0xFFFF)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    ;; ExPoint with no fit/dx outputs shares the same string extent contract.
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_text_extent_ex
+      (local.get $arg0) (call $g2w (local.get $arg1)) (local.get $arg2)
+      (i32.const 0) (i32.const 0) (i32.const 0)
+      (call $g2w (local.get $arg3)) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 
@@ -3867,14 +3864,10 @@
 
   ;; 604: GetTextExtentPoint32W — font-aware wide text measurement
   (func $handle_GetTextExtentPoint32W (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $packed i32)
-    (local.set $packed (call $host_get_text_metrics (local.get $arg0)))
-    (call $gs32 (local.get $arg3)
-      (call $host_measure_text (local.get $arg0) (call $g2w (local.get $arg1))
-        (local.get $arg2) (i32.const 1)))
-    (call $gs32 (i32.add (local.get $arg3) (i32.const 4))
-      (i32.and (local.get $packed) (i32.const 0xFFFF)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_text_extent_ex
+      (local.get $arg0) (call $g2w (local.get $arg1)) (local.get $arg2)
+      (i32.const 0) (i32.const 0) (i32.const 0)
+      (call $g2w (local.get $arg3)) (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 
