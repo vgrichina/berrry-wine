@@ -164,6 +164,15 @@
     (if (i32.eq (local.get $vk) (i32.const 0xDC)) (then (local.set $ch (select (i32.const 0x7C) (i32.const 0x5C) (local.get $shift))))) ;; backslash |
     (if (i32.eq (local.get $vk) (i32.const 0xDD)) (then (local.set $ch (select (i32.const 0x7D) (i32.const 0x5D) (local.get $shift))))) ;; ] }
     (if (i32.eq (local.get $vk) (i32.const 0xDE)) (then (local.set $ch (select (i32.const 0x22) (i32.const 0x27) (local.get $shift))))) ;; ' "
+    ;; US unshifted Ctrl+[ / Ctrl+backslash / Ctrl+] are ESC / FS / GS.
+    ;; Preserve Shift+Ctrl and Ctrl+Alt compatibility; only down bits count.
+    (if (i32.and
+      (i32.and (i32.ge_u (local.get $vk) (i32.const 0xDB)) (i32.le_u (local.get $vk) (i32.const 0xDD)))
+      (i32.and (i32.eqz (local.get $shift))
+        (i32.and
+          (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0))
+          (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80))))))
+      (then (local.set $ch (i32.sub (local.get $vk) (i32.const 0xC0)))))
     ;; Space=0x20, Enter=0x0D, Esc=0x1B, Tab=0x09, Back=0x08
     (if (i32.eqz (local.get $ch))
       (then
