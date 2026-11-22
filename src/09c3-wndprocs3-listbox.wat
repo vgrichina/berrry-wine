@@ -430,6 +430,54 @@
         (call $invalidate_hwnd (local.get $hwnd))
         (return (i32.const 0))))
 
+    ;; ---------- LB_SELITEMRANGE (0x019B) / LB_SELITEMRANGEEX (0x0183) ----------
+    ;; Microsoft desktop contracts:
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/lb-selitemrange
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/lb-selitemrangeex
+    ;; Both endpoints are included. RANGE packs unsigned WORD indices and
+    ;; uses a BOOL; EX uses separate indices and selects only when first<last.
+    ;; EX reversed OR equal endpoints deselect. Only ordinary string multi-
+    ;; selection lists are supported here; refuse other selection models.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x019B))
+                (i32.eq (local.get $msg) (i32.const 0x0183)))
+      (then
+        (if (i32.or (i32.eqz (call $lb_caret_supported (local.get $hwnd)))
+              (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808))))
+          (then (return (i32.const -1))))
+        (if (i32.eq (local.get $msg) (i32.const 0x019B))
+          (then
+            (local.set $idx (i32.and (local.get $lParam) (i32.const 0xFFFF)))
+            (local.set $last (i32.shr_u (local.get $lParam) (i32.const 16)))
+            (local.set $sel (i32.ne (local.get $wParam) (i32.const 0))))
+          (else
+            (local.set $idx (local.get $wParam))
+            (local.set $last (local.get $lParam))
+            (local.set $sel (i32.lt_s (local.get $idx) (local.get $last)))))
+        ;; Validate the complete range before changing a flag. Unsigned
+        ;; comparisons also reject negative EX indices and empty lists.
+        (local.set $count (call $lb_count (local.get $sw)))
+        (if (i32.or
+              (i32.or (i32.ge_u (local.get $idx) (local.get $count))
+                      (i32.ge_u (local.get $last) (local.get $count)))
+              (i32.or (i32.gt_u (local.get $idx) (i32.const 0xFFFF))
+                      (i32.gt_u (local.get $last) (i32.const 0xFFFF))))
+          (then (return (i32.const -1))))
+        (if (i32.gt_u (local.get $idx) (local.get $last))
+          (then
+            (local.set $i (local.get $idx))
+            (local.set $idx (local.get $last))
+            (local.set $last (local.get $i))))
+        (local.set $p (call $g2w (call $lb_sel_ptr (local.get $sw))))
+        (local.set $i (local.get $idx))
+        (loop $select_range
+          (i32.store8 (i32.add (local.get $p) (local.get $i)) (local.get $sel))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $select_range (i32.le_u (local.get $i) (local.get $last))))
+        ;; Paint and public selection queries already read sel_buf. Keep the
+        ;; input caret, viewports, focus and parent notifications unchanged.
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 0))))
+
     ;; ---------- LB_SETSEL (0x0185) / LB_GETSEL (0x0187) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0185))
       (then
