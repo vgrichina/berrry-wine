@@ -443,7 +443,7 @@
 
 rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
   (func $handle_SetBrushOrgEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32) (local $old_x i32) (local $old_y i32) (local $aux i32)
+    (local $old_x i32) (local $old_y i32) (local $aux i32)
     (local.set $aux (call $gdi_dc_aux_entry (local.get $arg0) (i32.const 1)))
     (if (i32.eqz (local.get $aux))
       (then
@@ -454,9 +454,8 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
     (local.set $old_y (call $gdi_dc_aux_get (local.get $arg0) (i32.const 12) (i32.const 0)))
     (if (local.get $arg3)
       (then
-        (local.set $wa (call $g2w (local.get $arg3)))
-        (store.field Point x (local.get $wa) (local.get $old_x))
-        (store.field Point y (local.get $wa) (local.get $old_y))
+        (call $gs32 (local.get $arg3) (local.get $old_x))
+        (call $gs32 (i32.add (local.get $arg3) (i32.const 4)) (local.get $old_y))
       )
     )
     (drop (call $gdi_dc_aux_set (local.get $arg0) (i32.const 8)
