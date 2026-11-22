@@ -4908,6 +4908,22 @@
     (if (i32.eq (local.get $uCode) (i32.const 0x08)) (then (return (i32.const 0x0E)))) ;; Backspace
     (if (i32.eq (local.get $uCode) (i32.const 0x03)) (then (return (i32.const 0x46)))) ;; Cancel
     (block $vk0_done
+      ;; Nonextended US keypad keys: literal Scan 1 Make.
+      (if (i32.eq (local.get $uCode) (i32.const 0x60)) (then (local.set $result (i32.const 0x52)) (br $vk0_done))) ;; VK_NUMPAD0
+      (if (i32.eq (local.get $uCode) (i32.const 0x61)) (then (local.set $result (i32.const 0x4F)) (br $vk0_done))) ;; VK_NUMPAD1
+      (if (i32.eq (local.get $uCode) (i32.const 0x62)) (then (local.set $result (i32.const 0x50)) (br $vk0_done))) ;; VK_NUMPAD2
+      (if (i32.eq (local.get $uCode) (i32.const 0x63)) (then (local.set $result (i32.const 0x51)) (br $vk0_done))) ;; VK_NUMPAD3
+      (if (i32.eq (local.get $uCode) (i32.const 0x64)) (then (local.set $result (i32.const 0x4B)) (br $vk0_done))) ;; VK_NUMPAD4
+      (if (i32.eq (local.get $uCode) (i32.const 0x65)) (then (local.set $result (i32.const 0x4C)) (br $vk0_done))) ;; VK_NUMPAD5
+      (if (i32.eq (local.get $uCode) (i32.const 0x66)) (then (local.set $result (i32.const 0x4D)) (br $vk0_done))) ;; VK_NUMPAD6
+      (if (i32.eq (local.get $uCode) (i32.const 0x67)) (then (local.set $result (i32.const 0x47)) (br $vk0_done))) ;; VK_NUMPAD7
+      (if (i32.eq (local.get $uCode) (i32.const 0x68)) (then (local.set $result (i32.const 0x48)) (br $vk0_done))) ;; VK_NUMPAD8
+      (if (i32.eq (local.get $uCode) (i32.const 0x69)) (then (local.set $result (i32.const 0x49)) (br $vk0_done))) ;; VK_NUMPAD9
+      (if (i32.eq (local.get $uCode) (i32.const 0x6A)) (then (local.set $result (i32.const 0x37)) (br $vk0_done))) ;; VK_MULTIPLY
+      (if (i32.eq (local.get $uCode) (i32.const 0x6B)) (then (local.set $result (i32.const 0x4E)) (br $vk0_done))) ;; VK_ADD
+      (if (i32.eq (local.get $uCode) (i32.const 0x6D)) (then (local.set $result (i32.const 0x4A)) (br $vk0_done))) ;; VK_SUBTRACT
+      (if (i32.eq (local.get $uCode) (i32.const 0x6E)) (then (local.set $result (i32.const 0x53)) (br $vk0_done))) ;; VK_DECIMAL
+      ;; End nonextended US keypad keys.
       ;; Letters A-Z: vkeys 0x41-0x5A -> real PS/2 set-1 scancodes via table
       (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x41)) (i32.le_u (local.get $uCode) (i32.const 0x5A)))
         (then
