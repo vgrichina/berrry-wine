@@ -474,7 +474,8 @@
     ;; BM_CLICK (Microsoft): deliver mouse DOWN/UP through the public window
     ;; procedure so subclasses and the existing native activation path see
     ;; the same transitions and parent BN_CLICKED. Bounded to native enabled
-    ;; push/default-push, checkbox/autocheckbox and radio/autoradio controls.
+    ;; push/default-push, checkbox/autocheckbox, three-state/auto-three-state
+    ;; and radio/autoradio controls (Microsoft WIN32.HLP, 1992-1994).
     ;; No inactive-dialog policy: callers activate their dialog as documented.
     (if (i32.eq (local.get $msg) (i32.const 0x00F5))
       (then
@@ -484,7 +485,7 @@
         (local.set $kind (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 15)))
         (if (i32.or
               (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 134217728)) (i32.const 0))
-              (i32.and (i32.gt_u (local.get $kind) (i32.const 4))
+              (i32.and (i32.gt_u (local.get $kind) (i32.const 6))
                        (i32.ne (local.get $kind) (i32.const 9))))
           (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
