@@ -785,6 +785,8 @@
 
   ;; 93: GetWindowRect
   (func $handle_GetWindowRect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $allocation i32) (local $stage i32)
+    (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
     ;; GetWindowRect(hwnd, lpRect) — fills RECT with screen coords
     (if (i32.eqz (call $window_handle_valid (local.get $arg0)))
       (then
@@ -792,7 +794,29 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
         (return)))
-    (call $host_get_window_rect (local.get $arg0) (call $g2w (local.get $arg1)))
+    ;; The host writes contiguous physical bytes and may reenter Wasm for
+    ;; child geometry. Own the staging allocation until its result is saved.
+    ;; Aligning 16 bytes within 31 keeps the RECT inside one guest page even
+    ;; when the allocator's backing pages are not physically adjacent.
+    (local.set $allocation (call $heap_alloc (i32.const 31)))
+    (if (i32.eqz (local.get $allocation))
+      (then
+        (global.set $last_error (i32.const 8)) ;; ERROR_NOT_ENOUGH_MEMORY
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
+    (local.set $stage (call $g2w
+      (i32.and (i32.add (local.get $allocation) (i32.const 15)) (i32.const -16))))
+    (call $host_get_window_rect (local.get $arg0) (local.get $stage))
+    (local.set $left (i32.load (local.get $stage)))
+    (local.set $top (i32.load offset=4 (local.get $stage)))
+    (local.set $right (i32.load offset=8 (local.get $stage)))
+    (local.set $bottom (i32.load offset=12 (local.get $stage)))
+    (call $heap_free (local.get $allocation))
+    (call $gs32 (local.get $arg1) (local.get $left))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 4)) (local.get $top))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 8)) (local.get $right))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 12)) (local.get $bottom))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
   )
