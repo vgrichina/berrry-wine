@@ -1814,13 +1814,15 @@
             ;; rect and do not render label text.
             (local.set $brush (i32.const 0))
             (if (i32.eq (local.get $style) (i32.const 4))
-              (then (local.set $brush (i32.const 0x30014)))) ;; BLACK_BRUSH
+              ;; Microsoft Q125684 (1995-09-29): Windows95 COLOR_3DDKSHADOW.
+              (then (local.set $brush (call $gdi_system_brush (i32.const 21)))))
             (if (i32.eq (local.get $style) (i32.const 5))
               ;; Microsoft Q125684 (1995-09-29): Windows95 SS_GRAYRECT
               ;; fills with COLOR_3DSHADOW (16), not the prior screen color.
               (then (local.set $brush (call $gdi_system_brush (i32.const 16)))))
             (if (i32.eq (local.get $style) (i32.const 6))
-              (then (local.set $brush (i32.const 0x30010)))) ;; WHITE_BRUSH
+              ;; Microsoft Q125684 (1995-09-29): Windows95 COLOR_3DHILIGHT.
+              (then (local.set $brush (call $gdi_system_brush (i32.const 20)))))
             (if (local.get $brush)
               (then
                 (drop (call $gdi_native_fill_rect (local.get $hdc)
