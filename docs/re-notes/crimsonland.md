@@ -2,6 +2,67 @@
 
 Historical source last updated, 2026-10-12. Runtime and implementation claims below describe that dated source; see current app notes and source for subsequent changes.
 
+## 2026-11-22: current state -- plays headless again (start here)
+
+**Startup stall, root cause.** `STUCK at EIP=0x07500468 after 11 batches` on
+main 609abf538 is not a dialog wait for Play: it is the
+`DirectX8.1 or newer not detected` **MessageBoxA** (type 0x23, Yes/No/Cancel),
+sitting in the thunk. The detector (EXE `0x41cf90`, the DirectX SDK
+GetDXVersion sample) gets `REGDB_E_CLASSNOTREG` from the DxDiag
+CoCreateInstance, then reads file versions under `C:\WINDOWS\SYSTEM`; every
+`GetFileVersionInfoSizeA` returned 0. The 8.1 tier is decided by `d3d8.dll`
+alone (>= 4.08.01.0881). Commit `1fdd9a64c` (2026-10-06) gave our
+`staticModule` D3D8.DLL placeholder that version and the game played;
+`58e90870a` (2026-10-22) stripped RT_VERSION from all DirectX placeholders,
+which re-broke it. The sections below dated 2026-10-31 / 11-07 chase an
+"authentic DX81 install / Win98 USER.EXE" instead -- not needed.
+
+**Fix** (branch `fix/crimsonland-startup`): `DIRECTX_MODULE_VERSIONS` in
+`lib/process-boot.js` lists `D3D8.DLL: 4.8.1.881` again, the same footing as
+OPENGL32/COMCTL32 there (we implement Direct3D 8; the file stands for that
+module). DDRAW/DSOUND/DPLAYX/D3DRM stay versionless, dpnet/d3d9 stay absent,
+the `HKLM\SOFTWARE\Microsoft\DirectX` key stays absent (the detector never
+reads it). `test/test-directx-system-files.js` checks the version.
+
+**Second blocker (macOS CLI only):** after Play, the first DLL thread detach
+reaches a Win98 shared-heap call; `lib/thread-manager.js` read
+`/proc/self/stat` for the process key and threw ENOENT on macOS (then EINVAL
+for a non-numeric key). Now `cliProcessBirthKey()` falls back to `ps -o lstart`
+as epoch seconds; `test/test-cli-process-birth-key.js`.
+
+**Load bases (this run):** EXE 0x400000; grim.dll 0x5df000, ogg 0x771000,
+vorbis 0x87e000, vorbisfile 0xa70000, msvcrt 0xb77000, oleaut32 0xcbb000
+(all orig 0x10000000 except msvcrt 0x78000000, oleaut32 0x65340000).
+Launcher = DialogBoxParamA(hInst grim.dll, template 0x74, proc 0x5e10b0);
+Play is control 1000 at screen (311,134). The top banner static (id -1 at
+4,5 388x68) paints blank -- cosmetic, not investigated.
+
+**Headless route to Survival gameplay** (~65 s wall, `--headless-gl`, run
+`caffeinate -u -t 2` first):
+
+```sh
+node test/run.js --app=crimsonland --quiet-api --headless-gl --no-close --stuck-after=0 \
+  --batch-size=200000 --tick-ms-per-batch=20 --max-batches=3000 --max-seconds=115 \
+  --input=100:mousedown:311:134,103:mouseup:311:134,500:keydown:27,502:keyup:27,\
+900:keydown:27,902:keyup:27,1800:relmousemove:-55:110:10,1830:di-mousedown,1833:di-mouseup,\
+1960:relmousemove:-30:70:8,1990:di-mousedown,1996:di-mouseup,2300:png:/tmp/cl.png
+```
+
+Launcher ~batch 62; the two Esc skip the 10tons/Reflexive splashes; main
+menu by 2000 without them; Play Game panel ~1950; Survival in play by 2300.
+Without `--no-close` the harness WM_CLOSEs the launcher; without
+`--stuck-after=0` the run ends while idle. The old `-30:57` Survival move
+lands between Rush and Survival -- use `-30:70` and hold the button 6 batches.
+
+**GPU readbacks (D3D9 backend).** Zero, eager or lazy. Crimsonland never
+locks the back buffer: in a traced 2600-batch run its only LockRects are 71
+`IDirect3DSurface8_LockRect` on texture surfaces (flags 0x800) at load, plus 6
+SetRenderTarget (ground decal texture); no GetBackBuffer/CopyRects/
+GetFrontBuffer. Gameplay run: `[gps] d3d9 frames=14453 readbacks=0
+uploads/frame=22.42`, no lazy counters armed; pre-#38 f59d86b0a with the same
+two fixes prints identical counters. It cannot demonstrate the #38 lazy
+LockRect saving. Evidence: `scratch/runs/20261122-crimsonland/`.
+
 ## 2026-10-31: complete INF review; host installation replay prerequisite
 
 Run `scratch/runs/20261031T2334Z-crimsonland-authentic-install/` reviews
