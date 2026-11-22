@@ -28,6 +28,81 @@
     (global.set $lb_add_unsorted (i32.const 0))
     (local.get $r))
 
+  ;; Per-window tab records, independent of the shared ListBoxState layout.
+  ;; Each heap record is {next, hwnd, count, pixel_stops_guest_ptr} (16 bytes).
+  ;; Only explicitly configured windows need one. RESETCONTENT keeps tabs;
+  ;; WM_DESTROY unlinks the record before USER can reuse the window handle.
+  (global $lb_tabs_head (mut i32) (i32.const 0))
+  (func $lb_tabs_find (param $hwnd i32) (result i32)
+    (local $entry i32) (local $node i32)
+    (local.set $entry (global.get $lb_tabs_head))
+    (block $done (loop $find
+      (br_if $done (i32.eqz (local.get $entry)))
+      (local.set $node (call $g2w (local.get $entry)))
+      (if (i32.eq (i32.load offset=4 (local.get $node)) (local.get $hwnd))
+        (then (return (local.get $entry))))
+      (local.set $entry (i32.load (local.get $node)))
+      (br $find)))
+    (i32.const 0))
+  (func $lb_tabs_remove (param $hwnd i32)
+    (local $entry i32) (local $prev i32) (local $node i32)
+    (local.set $entry (global.get $lb_tabs_head))
+    (block $done (loop $find
+      (br_if $done (i32.eqz (local.get $entry)))
+      (local.set $node (call $g2w (local.get $entry)))
+      (if (i32.eq (i32.load offset=4 (local.get $node)) (local.get $hwnd))
+        (then
+          (if (local.get $prev)
+            (then (i32.store (call $g2w (local.get $prev)) (i32.load (local.get $node))))
+            (else (global.set $lb_tabs_head (i32.load (local.get $node)))))
+          (call $heap_free (i32.load offset=12 (local.get $node)))
+          (call $heap_free (local.get $entry))
+          (br $done)))
+      (local.set $prev (local.get $entry))
+      (local.set $entry (i32.load (local.get $node)))
+      (br $find))))
+  (func $lb_tabs_replace (param $hwnd i32) (param $count i32)
+                        (param $stops i32) (result i32)
+    (local $entry i32) (local $node i32)
+    (if (i32.eqz (local.get $count))
+      (then (call $lb_tabs_remove (local.get $hwnd)) (return (i32.const 1))))
+    (local.set $entry (call $lb_tabs_find (local.get $hwnd)))
+    (if (i32.eqz (local.get $entry))
+      (then
+        (local.set $entry (call $heap_alloc (i32.const 16)))
+        (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
+        (local.set $node (call $g2w (local.get $entry)))
+        (i32.store (local.get $node) (global.get $lb_tabs_head))
+        (i32.store offset=4 (local.get $node) (local.get $hwnd))
+        (i32.store offset=12 (local.get $node) (i32.const 0))
+        (global.set $lb_tabs_head (local.get $entry))))
+    (local.set $node (call $g2w (local.get $entry)))
+    (call $heap_free (i32.load offset=12 (local.get $node)))
+    (i32.store offset=8 (local.get $node) (local.get $count))
+    (i32.store offset=12 (local.get $node) (local.get $stops))
+    (i32.const 1))
+  (func $lb_draw_string (param $hwnd i32) (param $sw i32) (param $hdc i32)
+                       (param $x i32) (param $y i32) (param $text i32)
+                       (param $count i32) (result i32)
+    (local $entry i32) (local $tab_count i32) (local $stops i32)
+    (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0080))
+      (then
+        (local.set $entry (call $lb_tabs_find (local.get $hwnd)))
+        (if (local.get $entry)
+          (then
+            (local.set $entry (call $g2w (local.get $entry)))
+            (local.set $tab_count (i32.load offset=8 (local.get $entry)))
+            (local.set $stops (i32.load offset=12 (local.get $entry)))))
+        ;; The origin scrolls with the text, so tabs remain content columns
+        ;; even when the row starts left of the clipped viewport.
+        (return (call $gdi_tabbed_text (local.get $hdc)
+          (local.get $x) (local.get $y) (call $w2g (local.get $text))
+          (local.get $count) (local.get $tab_count)
+          (local.get $stops) (local.get $x)
+          (i32.const 0) (i32.const 1)))))
+    (call $gdi_native_text_out (local.get $hdc) (local.get $x)
+      (local.get $y) (local.get $text) (local.get $count) (i32.const 0)))
+
   ;; ============================================================
   ;; ListBox WndProc  (control class 4)
   ;; ============================================================
@@ -149,12 +224,54 @@
             (call $heap_free (call $lb_items_ptr (local.get $sw)))
             (call $heap_free (call $lb_data_ptr (local.get $sw)))
             (call $heap_free (call $lb_sel_ptr (local.get $sw)))
+            (call $lb_tabs_remove (local.get $hwnd))
             (call $heap_free (local.get $state))
             (call $wnd_set_state_ptr (local.get $hwnd) (i32.const 0))))
         (return (i32.const 0))))
 
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $sw (call $g2w (local.get $state)))
+
+    ;; LB_SETTABSTOPS. Microsoft, List Box Controls (1992-03-23): zero
+    ;; restores 32 dialog units; one repeats the supplied interval; multiple
+    ;; gives ascending positions. Units use the list's font and setting tabs
+    ;; redraws. Ordinary rows below select DEFAULT_GUI_FONT for painting.
+    (if (i32.eq (local.get $msg) (i32.const 0x0192))
+      (then
+        (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0080)))
+          (then (return (i32.const 0))))
+        ;; Check allocation multiplication before calling the heap. Failure
+        ;; leaves the previous array intact rather than losing window state.
+        (if (i32.gt_u (local.get $wParam) (i32.const 0x1FFFFFFC))
+          (then (return (i32.const 0))))
+        (local.set $new_buf (i32.const 0))
+        (if (local.get $wParam)
+          (then
+            (local.set $new_buf (call $heap_alloc (i32.shl (local.get $wParam) (i32.const 2))))
+            (if (i32.eqz (local.get $new_buf)) (then (return (i32.const 0))))
+            (local.set $new_w (call $g2w (local.get $new_buf)))
+            (local.set $src_w (call $g2w (local.get $lParam)))
+            (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+            (local.set $saved_dc (call $gdi_dc_save (local.get $hdc)))
+            (drop (call $gdi_native_select_object (local.get $hdc) (i32.const 0x30021)))
+            (local.set $sz (i32.shr_u (call $host_get_text_metrics (local.get $hdc)) (i32.const 16)))
+            (if (i32.eqz (local.get $sz)) (then (local.set $sz (i32.const 8))))
+            (drop (call $gdi_dc_restore (local.get $hdc) (local.get $saved_dc)))
+            (local.set $i (i32.const 0))
+            (block $tabs_done (loop $tabs_copy
+              (br_if $tabs_done (i32.ge_u (local.get $i) (local.get $wParam)))
+              (local.set $idx (i32.shl (local.get $i) (i32.const 2)))
+              (i32.store (i32.add (local.get $new_w) (local.get $idx))
+                (i32.wrap_i64 (i64.div_s
+                  (i64.add (i64.mul
+                    (i64.extend_i32_s (i32.load (i32.add (local.get $src_w) (local.get $idx))))
+                    (i64.extend_i32_u (local.get $sz))) (i64.const 2)) (i64.const 4))))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br $tabs_copy)))))
+        (if (i32.eqz (call $lb_tabs_replace (local.get $hwnd) (local.get $wParam) (local.get $new_buf)))
+          (then (call $heap_free (local.get $new_buf)) (return (i32.const 0))))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 1))))
 
     ;; LB_GETHORIZONTALEXTENT / LB_SETHORIZONTALEXTENT. The documented
     ;; setter has no result; lParam is unused. Multiple-column lists ignore it.
@@ -1508,15 +1625,15 @@
               (drop (call $gdi_native_delete_object (local.get $brush)))
               (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00FFFFFF)))
               (if (local.get $slen)
-                (then (drop (call $gdi_native_text_out (local.get $hdc)
+                (then (drop (call $lb_draw_string (local.get $hwnd) (local.get $sw) (local.get $hdc)
                               (i32.sub (i32.const 4) (call $lb_scroll_x (local.get $sw))) (i32.add (local.get $row_y) (i32.const 2))
-                              (local.get $p) (local.get $slen) (i32.const 0)))))
+                              (local.get $p) (local.get $slen)))))
               (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00000000))))
             (else
               (if (local.get $slen)
-                (then (drop (call $gdi_native_text_out (local.get $hdc)
+                (then (drop (call $lb_draw_string (local.get $hwnd) (local.get $sw) (local.get $hdc)
                               (i32.sub (i32.const 4) (call $lb_scroll_x (local.get $sw))) (i32.add (local.get $row_y) (i32.const 2))
-                              (local.get $p) (local.get $slen) (i32.const 0)))))))
+                              (local.get $p) (local.get $slen)))))))
           (local.set $p (i32.add (local.get $p) (i32.add (local.get $slen) (i32.const 1))))
           (local.set $row (i32.add (local.get $row) (i32.const 1)))
           (br $rows)))
