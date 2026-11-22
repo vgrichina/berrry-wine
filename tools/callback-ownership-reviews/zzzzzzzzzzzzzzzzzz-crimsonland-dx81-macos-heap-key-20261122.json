@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/process-boot.js",
+      "name": "host-file",
+      "baseSHA256": "a9bb737744fc93f5d4c5b8aed3bd648615f968c2175ad49b2e4006a7e92a9bba",
+      "sha256": "0dd4b7d3a67d5e43aeea307015cde31b9dbc21d870f18fccdf0a968149341d57",
+      "reason": "Crimsonland DX8.1 review 20261122: DIRECTX_MODULE_VERSIONS gains D3D8.DLL 4.08.01.0881, so the staticModule C:\\WINDOWS\\SYSTEM\\D3D8.DLL placeholder carries an RT_VERSION like OPENGL32/COMCTL32. Data-only change to the boot-time VFS file bytes; no callback, guest entry, asynchronous boundary, context restoration or lifetime change. test-directx-system-files.js covers it; broader invocation ownership remains pending."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "a1c6ca8d01169b20e103b01cd1dada005c65337f5fd6f7bf1018784bf9ac9e08",
+      "sha256": "f65ea01ca918e5eab42c89820a3efff303603b0debcf9fafcad981f2fa5a0615",
+      "reason": "macOS shared-heap process key review 20261122: the CLI shared-heap process birth token moves into cliProcessBirthKey(), which keeps /proc/self/stat on Linux and reads ps lstart (whole epoch seconds) where /proc is absent, instead of throwing ENOENT at the first shared-heap call. Same pid:birth key shape and same once-per-process caching; no callback, guest entry, scheduling, context restoration or lifetime change. test-cli-process-birth-key.js covers it; broader invocation ownership remains pending."
+    }
+  ]
+}

@@ -3,8 +3,11 @@
 
 // The DirectX DLLs we dispatch statically must also exist as files in
 // C:\WINDOWS\SYSTEM: installers look for the file before they read its
-// version. File presence keeps those lookups working; it supplies no version
-// provenance and must not satisfy an installer's version requirement alone.
+// version. File presence keeps those lookups working. Only the modules listed
+// in DIRECTX_MODULE_VERSIONS carry a version resource: each is the version of
+// the API set the emulator implements (D3D8 = DirectX 8.1's 4.08.01.0881,
+// which the DirectX SDK's GetDXVersion reads; OPENGL32/COMCTL32 = Win98 SE's).
+// The others report no version.
 //
 // Checks the shared boot helper mounts each one, that a version read through
 // the file reports no invented DirectX version, that a shipped file is kept, and that
@@ -78,7 +81,8 @@ async function main() {
 
     const wide = writeStr(full, true);
     const size = e.test_call_GetFileVersionInfoSizeW(wide, 0) >>> 0;
-    if (file !== 'OPENGL32.DLL') {
+    const versionFields = boot.DIRECTX_MODULE_VERSIONS[file];
+    if (!versionFields) {
       assert.strictEqual(size, 0, `${file} has no invented version resource`);
       for (const isWide of [false, true]) assert.strictEqual(
         e['test_call_GetFileVersionInfoSize' + (isWide ? 'W' : 'A')](writeStr(file, isWide), 0),
@@ -107,8 +111,8 @@ async function main() {
       `${file} root query`);
     const fixed = wa(dv.getUint32(wa(outPtr), true));
     assert.strictEqual(dv.getUint32(fixed, true), 0xFEEF04BD, `${file} signature`);
-    // Preserve unrelated OpenGL placeholder behavior in this narrow repair.
-    const expected = [0x0004000a, 0x000008ae];
+    const [major, minor, build, priv] = versionFields;
+    const expected = [((major << 16) | minor) >>> 0, ((build << 16) | priv) >>> 0];
     assert.deepStrictEqual([dv.getUint32(fixed + 8, true), dv.getUint32(fixed + 12, true)],
       expected, `${file} file version`);
   }
@@ -116,7 +120,7 @@ async function main() {
   const realDll = { data: new Uint8Array([0x4d, 0x5a]), attrs: 0x20 };
   ctx.vfs.files.set('c:\\plugins\\real.dll', realDll);
   assert.strictEqual(boot.findVfsDllBytes(ctx.vfs, 'real.dll', 'real.dll'), realDll.data);
-  console.log('PASS  DirectX file presence preserves static loading without invented versions');
+  console.log('PASS  DirectX file presence preserves static loading; only implemented modules carry versions');
 }
 
 main().catch(err => { console.error(err); process.exit(1); });
