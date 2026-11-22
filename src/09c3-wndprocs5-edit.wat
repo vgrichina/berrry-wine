@@ -3087,12 +3087,45 @@
         (return (local.get $hi))))
 
     ;; ---------- EM_LINEFROMCHAR (0x00C9) ----------
-    ;; wParam = char index (-1 = cursor). Returns 0-based line number.
+    ;; Microsoft: -1 uses the beginning of the selection, or the caret when
+    ;; there is no selection. Plain ANSI EDIT uses the same visual layout as
+    ;; paint/scroll/caret for wrapping; RichEdit/Unicode retain their old path.
     (if (i32.eq (local.get $msg) (i32.const 0x00C9))
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         (local.set $cur (local.get $wParam))
+        (if (i32.and
+              (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+              (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+          (then
+            (if (i32.eq (local.get $cur) (i32.const -1))
+              (then (local.set $cur (call $edit_sel_lo (local.get $state_w)))))
+            ;; Oversized indices have no specified desktop result. Bound the
+            ;; lookup to our document (including its end insertion point),
+            ;; never scan arbitrary memory or loop to an untrusted wParam.
+            ;; Unsigned comparison also bounds other negative bit patterns.
+            (if (i32.gt_u (local.get $cur)
+                  (load.field.memarg EditState text_len (local.get $state_w)))
+              (then (local.set $cur
+                (load.field.memarg EditState text_len (local.get $state_w)))))
+            (if (i32.eqz (i32.and
+                  (load.field.memarg EditState flags (local.get $state_w)) (i32.const 1)))
+              (then (return (i32.const 0))))
+            (if (call $edit_wraps (local.get $hwnd))
+              (then
+                ;; Select paint's font even when queried before the next
+                ;; paint following WM_SETFONT. View metrics owns width/bar
+                ;; accounting and refreshes the exact document/layout cache.
+                (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+                (local.set $brush (call $gdi_native_select_object (local.get $hdc)
+                  (select (load.field.memarg EditState font (local.get $state_w))
+                    (i32.const 0x30021)
+                    (i32.ne (load.field.memarg EditState font (local.get $state_w)) (i32.const 0)))))
+                (local.set $sz (call $edit_view_metrics (local.get $hwnd) (local.get $state_w)))
+                (drop (call $gdi_native_select_object (local.get $hdc) (local.get $brush)))
+                (return (call $edit_layout_line_for_char
+                  (i32.and (local.get $sz) (i32.const 0xFFFF)) (local.get $cur)))))))
         (if (i32.eq (local.get $cur) (i32.const -1))
           (then (local.set $cur (load.field.memarg EditState cursor (local.get $state_w)))))
         (return (call $edit_line_from_char (local.get $state_w) (local.get $cur)))))
