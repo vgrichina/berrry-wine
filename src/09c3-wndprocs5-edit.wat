@@ -2790,10 +2790,32 @@
                                   (i32.add (local.get $line_buf_w) (local.get $b))
                                   (i32.sub (local.get $hi) (local.get $b)) (i32.const 0))))))
                 (else
-                  (if (local.get $hi)
-                    (then (drop (call $gdi_native_text_out (local.get $hdc)
-                                  (local.get $tx) (local.get $line_y)
-                                  (local.get $line_buf_w) (local.get $hi) (i32.const 0)))))))
+                  ;; Microsoft WIN32.HLP topics 215/2539: disabled single-line
+                  ;; EDIT redraws gray, using system COLOR_GRAYTEXT.
+                  ;; Scope this to plain ANSI unselected text and restore the DC
+                  ;; color so later paints retain their existing behavior.
+                  (if (i32.and
+                        (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                        (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                          (i32.and
+                            (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd))
+                              (i32.const 0x0827)))
+                            (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                              (i32.const 134217728)) (i32.const 0))))) ;; WS_DISABLED
+                    (then
+                      (local.set $brush (call $gdi_native_set_text_color
+                        (local.get $hdc) (call $win98_sys_color (i32.const 17))))
+                      (if (local.get $hi)
+                        (then (drop (call $gdi_native_text_out (local.get $hdc)
+                          (local.get $tx) (local.get $line_y)
+                          (local.get $line_buf_w) (local.get $hi) (i32.const 0)))))
+                      (drop (call $gdi_native_set_text_color
+                        (local.get $hdc) (local.get $brush))))
+                    (else
+                      (if (local.get $hi)
+                        (then (drop (call $gdi_native_text_out (local.get $hdc)
+                          (local.get $tx) (local.get $line_y)
+                          (local.get $line_buf_w) (local.get $hi) (i32.const 0)))))))))
               (if (local.get $password_display)
                 (then (call $heap_free (local.get $password_display))
                       (local.set $password_display (i32.const 0))))
