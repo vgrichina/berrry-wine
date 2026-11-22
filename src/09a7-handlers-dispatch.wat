@@ -5069,6 +5069,11 @@
       ;; punctuation slot in the dialog would silently skip.
       (if (i32.eq (local.get $uMapType) (i32.const 2))
         (then
+          ;; US keyboard driver's unshifted control characters.
+          (if (i32.eq (local.get $uCode) (i32.const 0x08)) (then (local.set $result (i32.const 0x08)))) ;; VK_BACK
+          (if (i32.eq (local.get $uCode) (i32.const 0x09)) (then (local.set $result (i32.const 0x09)))) ;; VK_TAB
+          (if (i32.eq (local.get $uCode) (i32.const 0x0D)) (then (local.set $result (i32.const 0x0D)))) ;; VK_RETURN
+          (if (i32.eq (local.get $uCode) (i32.const 0x1B)) (then (local.set $result (i32.const 0x1B)))) ;; VK_ESCAPE
           ;; Letters: return uppercase ASCII (real Windows returns uppercase
           ;; for type 2; Pinball's compare uses the low byte either way).
           (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x41)) (i32.le_u (local.get $uCode) (i32.const 0x5A)))
