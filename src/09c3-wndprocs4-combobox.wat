@@ -1130,6 +1130,27 @@
       (then (return (call $wnd_send_message (call $cb_edit_hwnd (local.get $state_w))
         (local.get $msg) (local.get $wParam) (local.get $lParam)))))
 
+    ;; DROPDOWNLIST has no EDIT: initial-character navigation belongs to the
+    ;; backing LISTBOX (Microsoft Visual C++ 4, Sep 1995, vol3 p163).
+    ;; Treat its selection notification like arrow navigation so an open
+    ;; popup remains available for the next character.
+    (if (i32.and (i32.eq (local.get $variant) (i32.const 3))
+                 (i32.eq (local.get $msg) (i32.const 0x0102))) ;; WM_CHAR
+      (then
+        (global.set $combo_kbd_nav_active (i32.const 1))
+        (drop (call $wnd_send_message (local.get $lb) (local.get $msg)
+          (local.get $wParam) (local.get $lParam)))
+        ;; The internal list has no LBS_NOTIFY. Relay a changed selection
+        ;; through the same text-sync and parent-notification path as arrows.
+        (if (i32.ne (call $cb_cur_sel (local.get $state_w))
+              (call $wnd_send_message (local.get $lb) (i32.const 0x0188)
+                (i32.const 0) (i32.const 0)))
+          (then (drop (call $combobox_wndproc (local.get $hwnd) (i32.const 0x0111)
+            (i32.or (call $ctrl_table_get_id (local.get $lb)) (i32.const 0x00010000))
+            (local.get $lb)))))
+        (global.set $combo_kbd_nav_active (i32.const 0))
+        (return (i32.const 0))))
+
     ;; ---------- WM_KEYDOWN (0x0100) ----------
     ;; Default F4 toggles the dropdown. Extended UI disables F4 and makes
     ;; Down open a closed dropdown without changing selection. Once open,
