@@ -5072,6 +5072,18 @@
           (if (i32.eq (local.get $uCode) (i32.const 0xE01D)) (then (local.set $result (i32.const 0xA3)))) ;; VK_RCONTROL
           (if (i32.eq (local.get $uCode) (i32.const 0x0038)) (then (local.set $result (i32.const 0xA4)))) ;; VK_LMENU
           (if (i32.eq (local.get $uCode) (i32.const 0xE038)) (then (local.set $result (i32.const 0xA5)))) ;; VK_RMENU
+          ;; Type 3 E0 navigation keys retain their dedicated VK identities.
+          ;; Keep full-code comparisons distinct from the ordinary keypad twins.
+          (if (i32.eq (local.get $uCode) (i32.const 0xE047)) (then (local.set $result (i32.const 0x24)))) ;; VK_HOME
+          (if (i32.eq (local.get $uCode) (i32.const 0xE048)) (then (local.set $result (i32.const 0x26)))) ;; VK_UP
+          (if (i32.eq (local.get $uCode) (i32.const 0xE049)) (then (local.set $result (i32.const 0x21)))) ;; VK_PRIOR
+          (if (i32.eq (local.get $uCode) (i32.const 0xE04B)) (then (local.set $result (i32.const 0x25)))) ;; VK_LEFT
+          (if (i32.eq (local.get $uCode) (i32.const 0xE04D)) (then (local.set $result (i32.const 0x27)))) ;; VK_RIGHT
+          (if (i32.eq (local.get $uCode) (i32.const 0xE04F)) (then (local.set $result (i32.const 0x23)))) ;; VK_END
+          (if (i32.eq (local.get $uCode) (i32.const 0xE050)) (then (local.set $result (i32.const 0x28)))) ;; VK_DOWN
+          (if (i32.eq (local.get $uCode) (i32.const 0xE051)) (then (local.set $result (i32.const 0x22)))) ;; VK_NEXT
+          (if (i32.eq (local.get $uCode) (i32.const 0xE052)) (then (local.set $result (i32.const 0x2D)))) ;; VK_INSERT
+          (if (i32.eq (local.get $uCode) (i32.const 0xE053)) (then (local.set $result (i32.const 0x2E)))) ;; VK_DELETE
         ))
     )
     (i32.store offset=0 (global.get $reg_base) (local.get $result))

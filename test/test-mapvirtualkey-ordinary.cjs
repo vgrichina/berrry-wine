@@ -88,7 +88,9 @@ for (const [scan, vk, label] of [
   [0xe01d,0xa3,'RCtrl'], [0x38,0xa4,'LAlt'], [0xe038,0xa5,'RAlt'],
 ]) check(scan, 3, vk, label);
 // Scope guards, preserving existing behavior; these are not new layout claims.
-for (const scan of [0,0x54,0x55,0x56,0x59,0xff,0xe01e,0xe041,0xe11e,0xe048,0xe11d])
+for (const scan of [0,0x54,0x55,0x56,0x59,0xff,0xe01e,0xe041,0xe11e,0xe11d])
   check(scan, 3, 0, 'outside ordinary table / unsupported prefix');
+// Microsoft Scan 1 Make Keyboard UpArrow = E048; Virtual-Key Codes VK_UP = 26.
+check(0xe048, 3, 0x26, 'documented E0 Up arrow');
 console.log(JSON.stringify({checks, ordinaryKeys: ordinary.length, failures}));
 assert.equal(failures.length, 0, 'ordinary scan/VK failures');
