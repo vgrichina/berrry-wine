@@ -1706,11 +1706,6 @@
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
-        ;; NSIS installer branding label. It is decorative, and with the
-        ;; emulator's current font metrics it collides with the wizard
-        ;; buttons; suppress it instead of painting unreadable overlap.
-        (if (i32.eq (call $ctrl_table_get_id (local.get $hwnd)) (i32.const 1028))
-          (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
         ;; Geometry from CONTROL_GEOM (parent has already painted the
