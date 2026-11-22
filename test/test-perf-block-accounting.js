@@ -68,14 +68,26 @@ async function glGpsHud() {
   // A Worker guest is read through its readExports RPC, one at a time.
   let pending = null, rpc = 0;
   box.wineShell.runningApps[0].wine = { guestWorker: { readExports: names => {
-    rpc++; assert.deepStrictEqual([...names], Object.keys(values));
+    rpc++; assert.deepStrictEqual([...names].slice(0, 5), Object.keys(values));
+    assert.ok(names.includes('gps_stat_uploads'), 'shared GPS stats ride the same RPC');
     return new Promise(r => { pending = () => r({ ...values, gl_gps_decline_seq: 9 }); }); } } };
   gps._sampleGlGps(clock += 600);
   gps._sampleGlGps(clock += 600);
   assert.strictEqual(rpc, 1, 'never two RPCs in flight');
   pending(); await settle();
   assert.strictEqual(gps.snapshot().glGps.declines, 9);
-  console.log('PASS GL GPS HUD readout: rate-limited poll, badge only after a fallback, names, worker RPC');
+  // Shared GPS line: per-frame readbacks/uploads of the API that presented last.
+  Object.assign(exports, { gps_stat_active: () => 2, gps_stat_frames: () => values.f,
+    gps_stat_readbacks: () => values.rb, gps_stat_uploads: () => values.up });
+  box.wineShell.runningApps[0].wine = { instance: { exports } };
+  Object.assign(values, { f: 10, rb: 4, up: 100 });
+  gps._sampleGlGps(clock += 600); await settle();
+  assert.strictEqual(gps.snapshot().gps.uploadsPerFrame, null, 'no rate before two polls');
+  Object.assign(values, { f: 14, rb: 6, up: 140 });
+  gps._sampleGlGps(clock += 600); await settle();
+  texts.length = 0; gps._draw();
+  assert.ok(texts.includes('D3DIM GPS/frame: rb 0.5 up 10.0'), JSON.stringify(texts));
+  console.log('PASS GL GPS HUD readout: rate-limited poll, badge only after a fallback, names, worker RPC, shared GPS line');
 }
 
 async function main() {

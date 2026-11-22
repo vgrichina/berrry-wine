@@ -223,6 +223,10 @@ if (!['software', 'webgl', 'null'].includes(GLIDE_RENDERER))
 // (with its arena inputs) into a lib/gpu-stream.js DumpWriter at FILE, for
 // tools/gpu-stream.js list|stats|replay.
 const GPU_STREAM_DUMP = getArg('gpu-stream-dump', null);
+// --gps-tex-diag: count the Glide/D3DIM texture caches' evictions, causes
+// and content repeats (gps_stat 16..31, src/09a8gs-gpu-stream.wat). Hashes
+// every decoded texture, so it costs CPU; the [gps] line prints them.
+const GPS_TEX_DIAG = args.includes('--gps-tex-diag');
 if (GL_RENDERER !== 'software') {
   throw new Error('--gl-renderer must be software (the JS webgl renderer is retired; --headless-gl puts GL on the WebGL executor)');
 }
@@ -11163,6 +11167,7 @@ async function main() {
       continue;
     }
 
+    if (GPS_TEX_DIAG && batch === 0 && instance.exports.gps_tex_diag) instance.exports.gps_tex_diag(1);
     // WASM-level breakpoint: set once
     if (breakAddrs.length === 1 && batch === 0 && instance.exports.set_bp) {
       instance.exports.set_bp(breakAddrs[0]);
@@ -12082,6 +12087,24 @@ if (VERBOSE) {
   await childObservation.drainRelease();
   closeControl();
   if (cpuProf && cpuProf.session) await cpuProf.stop(MAX_BATCHES);
+  // Shared GPU-stream accounting, same indices for every API (gps_stat).
+  if (instance.exports.gps_stat) {
+    const GPS_APIS = { 1: 'glide', 2: 'd3dim', 3: 'gl', 4: 'd3d9' };
+    const SHARED = ['frames', 'draws', 'readbacks', 'readbackBytes', 'uploads', 'uploadBytes', 'declines', 'syncs'];
+    const DIAG = { 16: 'fills', 17: 'distinctPerFrameSum', 18: 'evictUsedThisFrame', 19: 'dropRelease', 20: 'dropEvict',
+      21: 'dropWrite', 22: 'dropPalette', 23: 'dropDescriptor', 24: 'dropUntracked', 25: 'repeatRelease',
+      26: 'repeatEvict', 27: 'repeatWrite', 28: 'repeatPalette', 29: 'repeatDescriptor', 30: 'repeatUntracked',
+      31: 'repeatLive' };
+    for (const [api, name] of Object.entries(GPS_APIS)) {
+      const st = i => instance.exports.gps_stat(Number(api), i) >>> 0;
+      if (![0, 1, 2, 4].some(i => st(i))) continue;
+      const f = st(0), per = n => f ? (n / f).toFixed(2) : 'n/a';
+      console.log(`[gps] ${name} ${SHARED.map((n, i) => `${n}=${st(i)}`).join(' ')}` +
+        ` readbacks/frame=${per(st(2))} uploads/frame=${per(st(4))}`);
+      if (GPS_TEX_DIAG) console.log(`[gps] ${name} tex-diag ` +
+        Object.entries(DIAG).map(([i, n]) => `${n}=${st(Number(i))}`).join(' '));
+    }
+  }
   // Once D3DIM opened its ring (an app that never drew prints nothing).
   if (instance.exports.d3dim_gps_stat
       && [0, 6, 7, 9, 10, 13].some(i => instance.exports.d3dim_gps_stat(i))) {

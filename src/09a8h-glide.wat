@@ -58,7 +58,6 @@
   (global $GLIDE_TMU_BYTES i32 (i32.const 4194304))
   (global $GLIDE_RING_BYTES i32 (i32.const 1048576))
   (global $GLIDE_ARENA_BYTES i32 (i32.const 4194304))
-  (global $GLIDE_TEX_CACHE i32 (i32.const 64))
   (global $GLIDE_SHADER_CACHE i32 (i32.const 64))
   (global $GLIDE_SAMPLER_CACHE i32 (i32.const 32))
   (global $GLIDE_DRAW_MAX i32 (i32.const 65535))
@@ -82,8 +81,6 @@
     (field draw_prim i32)
     (field draw_end i32)         ;; arena position after its last vertex
     (field draw_count i32)
-    (field kick_pos i32)         ;; write_pos at the last kick
-    (field kick_arena i32)       ;; arena_head at the last kick
     (field present_seq i32 2)    ;; seqs of the two newest PRESENTs (pacing)
     (field frame i32)
     (field gamma_id i32)
@@ -95,7 +92,8 @@
     (field tmu_guest i32 2)
     (field ir i32)               ;; IR scratch, wasm
     (field ir_guest i32)
-    (field tex_next i32)         ;; round-robin eviction cursor
+    (field tex_cache i32)        ;; $gtc texture cache (wasm), 0 = not created
+    (field pal_key i32)          ;; low word of the palette's content hash
     (field shader_next i32)
     (field sampler_next i32)
     ;; Vertex conversion parameters of the emitted pipeline.
@@ -106,7 +104,6 @@
     (field vtx i32 45)           ;; three GrVertex for Glide 2 draws
     (field fog i32 16)
     (field gamma i32 192)        ;; R[256] G[256] B[256] bytes
-    (field tex i32 768)
     (field shader i32 1664)
     (field sampler i32 128)
     (field key i32 24)           ;; shader key being looked up
@@ -148,8 +145,7 @@
     (local $h i32)
     (local.set $h (call $glide_ring))
     (call $glide_close_draw (local.get $pb))
-    (store.field GlideGps kick_pos (local.get $pb) (load.field.memarg GpsRing write_pos (local.get $h)))
-    (store.field GlideGps kick_arena (local.get $pb) (load.field.memarg GpsRing arena_head (local.get $h)))
+    (call $gps_kick_mark (local.get $h))
     (if (i32.eq (local.get $mode) (global.get $GPS_KICK_SYNC)) (then (call $glide_stat (i32.const 8) (i32.const 1))))
     (call $gps_kick (local.get $h) (local.get $mode)))
 
@@ -241,21 +237,13 @@
   ;; here, after the last stage tag: tagging closes the draw). A CLEAR's
   ;; effect on the stage is $glide_lfb_cleared's.
   (func $glide_begin (param $pb i32) (param $op i32) (param $n i32) (result i32)
-    (local $h i32)
-    (local.set $h (call $glide_ring))
     (call $glide_close_draw (local.get $pb))
     (if (i32.eq (local.get $op) (global.get $GPS_OP_DRAW_UP)) (then
       (call $glide_stat (i32.const 1) (i32.const 1))
       (call $glide_lfb_forget (local.get $pb) (load.field GlideGps target (local.get $pb)))))
     (if (i32.eq (local.get $op) (global.get $GPS_OP_CLEAR))
       (then (call $glide_stat (i32.const 2) (i32.const 1))))
-    (if (i32.or
-          (i32.ge_u (i32.sub (load.field.memarg GpsRing write_pos (local.get $h))
-            (load.field GlideGps kick_pos (local.get $pb))) (i32.shr_u (global.get $GLIDE_RING_BYTES) (i32.const 2)))
-          (i32.ge_u (i32.sub (load.field.memarg GpsRing arena_head (local.get $h))
-            (load.field GlideGps kick_arena (local.get $pb))) (i32.shr_u (global.get $GLIDE_ARENA_BYTES) (i32.const 2))))
-      (then (drop (call $glide_kick (local.get $pb) (global.get $GPS_KICK_ASYNC)))))
-    (call $gps_begin (local.get $h) (local.get $op) (local.get $n)))
+    (call $gps_begin_auto (call $glide_ring) (local.get $op) (local.get $n)))
 
   (func $glide_end (param $p i32) (result i32)
     (call $gps_end (call $glide_ring) (local.get $p) (i32.const 0)))
@@ -283,7 +271,6 @@
   ;; UPLOAD rows [y, y+hgt) of level $level from arena position $src.
   (func $glide_upload (param $pb i32) (param $id i32) (param $level i32)
       (param $y i32) (param $w i32) (param $hgt i32) (param $pitch i32) (param $src i32)
-    (local $p i32)
     (if (i32.or (i32.eq (local.get $id) (i32.load (elem-addr GlideGps color (local.get $pb) (i32.const 0))))
           (i32.eq (local.get $id) (i32.load (elem-addr GlideGps color (local.get $pb) (i32.const 1)))))
       (then
@@ -291,18 +278,10 @@
         (call $glide_stat (i32.const 6) (local.get $hgt)))
       (else (call $glide_stat (i32.const 7) (i32.const 1))))
     (call $glide_lfb_forget (local.get $pb) (local.get $id))
-    (local.set $p (call $glide_begin (local.get $pb) (global.get $GPS_OP_UPLOAD) (size-of GpsUpload)))
-    (store.field GpsUpload id (local.get $p) (local.get $id))
-    (store.field GpsUpload level (local.get $p) (local.get $level))
-    (store.field GpsUpload face (local.get $p) (i32.const 0))
-    (store.field GpsUpload x (local.get $p) (i32.const 0))
-    (store.field GpsUpload y (local.get $p) (local.get $y))
-    (store.field GpsUpload w (local.get $p) (local.get $w))
-    (store.field GpsUpload h (local.get $p) (local.get $hgt))
-    (store.field GpsUpload pitch (local.get $p) (local.get $pitch))
-    (store.field GpsUpload src (local.get $p) (local.get $src))
-    (store.field GpsUpload bytes (local.get $p) (i32.mul (local.get $pitch) (local.get $hgt)))
-    (drop (call $glide_end (local.get $p))))
+    (call $glide_close_draw (local.get $pb))
+    (call $gps_upload (call $glide_ring) (local.get $id) (local.get $level) (i32.const 0)
+      (i32.const 0) (local.get $y) (local.get $w) (local.get $hgt) (local.get $pitch)
+      (local.get $src) (i32.mul (local.get $pitch) (local.get $hgt))))
 
   (func $glide_arena (param $pb i32) (param $n i32) (result i32)
     (call $glide_close_draw (local.get $pb))
@@ -407,7 +386,7 @@
           (i32.ne (i32.load offset=244 (call $glide_state)) (i32.const 0)))
       (then (call $glide_present (local.get $pb))))
     (if (i32.ne (load.field.memarg GpsRing write_pos (call $glide_ring))
-          (load.field GlideGps kick_pos (local.get $pb)))
+          (load.field.memarg GpsRing kick_wp (call $glide_ring)))
       (then (drop (call $glide_kick (local.get $pb) (global.get $GPS_KICK_ASYNC))))))
 
   ;; grFinish / status reads: everything issued has executed.
@@ -520,6 +499,10 @@
     (if (i32.ne (call $glide_kick (local.get $pb) (global.get $GPS_KICK_CLOSE)) (i32.const 1))
       (then (call $glide_fail)))
     (call $gps_ring_reset (call $glide_ring))
+    (call $gps_td_forget (call $glide_ring))
+    ;; The CLOSE kick dropped every executor resource: no cached id survives.
+    (if (load.field GlideGps tex_cache (local.get $pb))
+      (then (call $gtc_reset (load.field GlideGps tex_cache (local.get $pb)))))
     (i32.store offset=12 (global.get $GLIDE_STATE) (i32.const 0)))
 
   ;; grGlideShutdown: return the ring, producer block, texture RAM and IR.
@@ -738,16 +721,23 @@
   (func $glide_texture (param $pb i32) (param $unit i32) (param $start i32) (param $small i32)
       (param $large i32) (param $aspect i32) (param $format i32) (param $mask i32) (result i32)
     (local $e i32) (local $at i32) (local $id i32) (local $total i32) (local $lod i32)
-    (local $w i32) (local $hgt i32) (local $off i32) (local $pos i32) (local $ram i32) (local $tries i32)
+    (local $w i32) (local $hgt i32) (local $off i32) (local $pos i32) (local $ram i32)
+    (local $diag i32) (local $hash i64) (local $c i32) (local $key i32) (local $bytes i32) (local $v i32)
     (if (i32.ne (local.get $mask) (i32.const 3)) (then (call $glide_fail)))   ;; split even/odd chains
     (if (i32.eqz (call $glide_format_ok (local.get $format))) (then (call $glide_fail)))
     (local.set $total (call $glide_tex_bytes (local.get $small) (local.get $large)
       (local.get $aspect) (local.get $format) (local.get $mask)))
     (if (i64.gt_u (i64.add (i64.extend_i32_u (local.get $start)) (i64.extend_i32_u (local.get $total)))
           (i64.extend_i32_u (global.get $GLIDE_TMU_BYTES))) (then (call $glide_fail)))
+    ;; Palette formats decode through the current palette: it is part of the key.
+    (local.set $key (select (load.field GlideGps pal_key (local.get $pb)) (i32.const 0)
+      (i32.or (i32.eq (local.get $format) (i32.const 5)) (i32.eq (local.get $format) (i32.const 14)))))
+    (local.set $c (call $glide_tex_cache (local.get $pb)))
     (block $miss (loop $scan
-      (local.set $at (elem-addr GlideGps tex (local.get $pb) (i32.mul (local.get $e) (i32.const 12))))
-      (if (i32.and (i32.ne (i32.load (local.get $at)) (i32.const 0))
+      (br_if $miss (i32.ge_u (local.get $e) (call $gtc_slots (local.get $c))))
+      (local.set $at (call $gtc_entry (local.get $c) (local.get $e)))
+      (if (i32.and (i32.and (i32.ne (call $gtc_live (local.get $c) (local.get $e)) (i32.const 0))
+                            (i32.eq (i32.load offset=40 (local.get $at)) (local.get $key)))
           (i32.and (i32.and (i32.eq (i32.load offset=4 (local.get $at)) (local.get $unit))
                             (i32.eq (i32.load offset=8 (local.get $at)) (local.get $start)))
             (i32.and (i32.and (i32.eq (i32.load offset=12 (local.get $at)) (local.get $small))
@@ -755,15 +745,20 @@
               (i32.and (i32.eq (i32.load offset=20 (local.get $at)) (local.get $aspect))
                        (i32.eq (i32.load offset=24 (local.get $at)) (local.get $format))))))
         (then
-          (i32.store offset=44 (local.get $at) (i32.const 1))   ;; pinned for this pipeline
+          (call $gtc_use (local.get $c) (local.get $e))   ;; pinned for this pipeline
+          (call $gps_td_use (call $glide_ring) (local.get $e))
           (return (i32.load offset=32 (local.get $at)))))
       (local.set $e (i32.add (local.get $e) (i32.const 1)))
-      (br_if $scan (i32.lt_u (local.get $e) (global.get $GLIDE_TEX_CACHE)))))
+      (br $scan)))
     (local.set $ram (i32.add (call $glide_tmu_ram (local.get $pb) (local.get $unit)) (local.get $start)))
     (local.set $id (call $glide_new_id (local.get $pb)))
     (call $glide_create (local.get $pb) (local.get $id) (global.get $GPS_KIND_TEX2D)
       (global.get $GPS_FMT_A8B8G8R8) (i32.add (i32.sub (local.get $small) (local.get $large)) (i32.const 1))
       (call $glide_dim_w (local.get $large) (local.get $aspect)) (call $glide_dim_h (local.get $large) (local.get $aspect)))
+    (local.set $diag (call $gps_td (call $glide_ring)))
+    (if (local.get $diag) (then (local.set $hash (call $gps_td_seed
+      (call $glide_dim_w (local.get $large) (local.get $aspect)) (call $glide_dim_h (local.get $large) (local.get $aspect))
+      (i32.add (i32.sub (local.get $small) (local.get $large)) (i32.const 1))))))
     (local.set $lod (local.get $large))
     (loop $levels
       (local.set $w (call $glide_dim_w (local.get $lod) (local.get $aspect)))
@@ -771,23 +766,28 @@
       (local.set $pos (call $glide_arena (local.get $pb) (i32.shl (i32.mul (local.get $w) (local.get $hgt)) (i32.const 2))))
       (call $glide_decode (call $glide_arena_ptr (local.get $pos)) (i32.add (local.get $ram) (local.get $off))
         (i32.mul (local.get $w) (local.get $hgt)) (local.get $format) (i32.add (call $glide3_ext) (i32.const 128)))
+      (if (local.get $diag) (then (local.set $hash (call $d3g_hash_bytes (call $glide_arena_ptr (local.get $pos))
+        (i32.shl (i32.mul (local.get $w) (local.get $hgt)) (i32.const 2)) (local.get $hash)))))
       (call $glide_upload (local.get $pb) (local.get $id) (i32.sub (local.get $lod) (local.get $large)) (i32.const 0)
         (local.get $w) (local.get $hgt) (i32.shl (local.get $w) (i32.const 2)) (local.get $pos))
+      (local.set $bytes (i32.add (local.get $bytes) (i32.shl (i32.mul (local.get $w) (local.get $hgt)) (i32.const 2))))
       (local.set $off (i32.add (local.get $off) (i32.shl (i32.mul (local.get $w) (local.get $hgt))
         (i32.ge_u (local.get $format) (i32.const 8)))))
       (local.set $lod (i32.add (local.get $lod) (i32.const 1)))
       (br_if $levels (i32.le_u (local.get $lod) (local.get $small))))
-    ;; Round-robin slot; never evict a texture the pipeline being built binds.
-    (loop $slot
-      (local.set $e (load.field GlideGps tex_next (local.get $pb)))
-      (store.field GlideGps tex_next (local.get $pb)
-        (i32.rem_u (i32.add (local.get $e) (i32.const 1)) (global.get $GLIDE_TEX_CACHE)))
-      (local.set $at (elem-addr GlideGps tex (local.get $pb) (i32.mul (local.get $e) (i32.const 12))))
-      (local.set $tries (i32.add (local.get $tries) (i32.const 1)))
-      (br_if $slot (i32.and (i32.ne (i32.load (local.get $at)) (i32.const 0))
-        (i32.and (i32.eq (i32.load offset=44 (local.get $at)) (i32.const 1))
-          (i32.lt_u (local.get $tries) (i32.const 3))))))
-    (if (i32.load (local.get $at)) (then (call $glide_release (local.get $pb) (i32.load offset=32 (local.get $at)))))
+    ;; Evict least recently used textures until this one fits; the cache
+    ;; never names one the pipeline being built binds (pinned).
+    (block $fits (loop $evict
+      (local.set $v (call $gtc_victim (local.get $c) (local.get $bytes) (i32.const 1)))
+      (br_if $fits (i32.lt_s (local.get $v) (i32.const 0)))
+      (call $glide_tex_drop (local.get $pb) (local.get $v) (global.get $GPS_TD_EVICT))
+      (br $evict)))
+    (local.set $e (call $gtc_free_slot (local.get $c)))
+    (local.set $at (call $gtc_entry (local.get $c) (local.get $e)))
+    (call $gtc_claim (local.get $c) (local.get $e) (local.get $bytes))   ;; pinned until the pipeline is emitted
+    (if (local.get $diag) (then
+      (call $gps_td_fill (call $glide_ring) (local.get $e) (local.get $hash))
+      (call $gps_td_use (call $glide_ring) (local.get $e))))
     (i32.store (local.get $at) (i32.const 1))
     (i32.store offset=4 (local.get $at) (local.get $unit))
     (i32.store offset=8 (local.get $at) (local.get $start))
@@ -798,28 +798,41 @@
     (i32.store offset=28 (local.get $at) (local.get $mask))
     (i32.store offset=32 (local.get $at) (local.get $id))
     (i32.store offset=36 (local.get $at) (i32.add (local.get $start) (local.get $total)))
-    (i32.store offset=44 (local.get $at) (i32.const 1))   ;; pinned until the pipeline is emitted
+    (i32.store offset=40 (local.get $at) (local.get $key))
     (local.get $id))
 
-  ;; Release every cached texture of $unit overlapping [start, end), or with
-  ;; a palette format when $palette is set.
+  ;; The texture cache (payload: valid, unit, start, small, large, aspect,
+  ;; format, mask, id, end, palette key, spare), created on first use.
+  (func $glide_tex_cache (param $pb i32) (result i32)
+    (local $c i32)
+    (local.set $c (load.field GlideGps tex_cache (local.get $pb)))
+    (if (local.get $c) (then (return (local.get $c))))
+    (local.set $c (call $gtc_create (global.get $GTC_SLOTS) (i32.const 48) (global.get $GTC_BUDGET)))
+    (store.field GlideGps tex_cache (local.get $pb) (local.get $c))
+    (local.get $c))
+
+  ;; Release cached texture $e for $cause ($GPS_TD_*).
+  (func $glide_tex_drop (param $pb i32) (param $e i32) (param $cause i32)
+    (local $c i32)
+    (local.set $c (call $glide_tex_cache (local.get $pb)))
+    (call $gps_td_drop (call $glide_ring) (local.get $e) (local.get $cause))
+    (call $gtc_drop (local.get $c) (local.get $e))
+    (call $glide_release (local.get $pb) (i32.load offset=32 (call $gtc_entry (local.get $c) (local.get $e)))))
+
+  ;; Release every cached texture of $unit overlapping [start, end).
   (func $glide_tex_invalidate (param $pb i32) (param $unit i32) (param $start i32) (param $end i32)
-      (param $palette i32)
-    (local $e i32) (local $at i32) (local $f i32) (local $hit i32)
-    (loop $scan
-      (local.set $at (elem-addr GlideGps tex (local.get $pb) (i32.mul (local.get $e) (i32.const 12))))
-      (if (i32.load (local.get $at)) (then
-        (local.set $f (i32.load offset=24 (local.get $at)))
-        (local.set $hit (if (result i32) (local.get $palette)
-          (then (i32.or (i32.eq (local.get $f) (i32.const 5)) (i32.eq (local.get $f) (i32.const 14))))
-          (else (i32.and (i32.eq (i32.load offset=4 (local.get $at)) (local.get $unit))
-            (i32.and (i32.lt_u (local.get $start) (i32.load offset=36 (local.get $at)))
-              (i32.gt_u (local.get $end) (i32.load offset=8 (local.get $at))))))))
-        (if (local.get $hit) (then
-          (i32.store (local.get $at) (i32.const 0))
-          (call $glide_release (local.get $pb) (i32.load offset=32 (local.get $at)))))))
+    (local $c i32) (local $e i32) (local $at i32)
+    (local.set $c (call $glide_tex_cache (local.get $pb)))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $e) (call $gtc_slots (local.get $c))))
+      (local.set $at (call $gtc_entry (local.get $c) (local.get $e)))
+      (if (i32.and (i32.ne (call $gtc_live (local.get $c) (local.get $e)) (i32.const 0))
+            (i32.and (i32.eq (i32.load offset=4 (local.get $at)) (local.get $unit))
+              (i32.and (i32.lt_u (local.get $start) (i32.load offset=36 (local.get $at)))
+                (i32.gt_u (local.get $end) (i32.load offset=8 (local.get $at))))))
+        (then (call $glide_tex_drop (local.get $pb) (local.get $e) (global.get $GPS_TD_WRITE))))
       (local.set $e (i32.add (local.get $e) (i32.const 1)))
-      (br_if $scan (i32.lt_u (local.get $e) (global.get $GLIDE_TEX_CACHE)))))
+      (br $scan))))
 
   ;; Copy $n guest bytes into TMU RAM at $addr (bounds checked by callers).
   (func $glide_tmu_write (param $pb i32) (param $unit i32) (param $addr i32) (param $guest i32) (param $n i32)
@@ -827,13 +840,23 @@
     (call $glide_copy_guest (i32.add (call $glide_tmu_ram (local.get $pb) (local.get $unit)) (local.get $addr))
       (local.get $guest) (local.get $n))
     (call $glide_tex_invalidate (local.get $pb) (local.get $unit) (local.get $addr)
-      (i32.add (local.get $addr) (local.get $n)) (i32.const 0)))
+      (i32.add (local.get $addr) (local.get $n))))
 
-  ;; The palette lives at glide3_ext+128 (0x00RRGGBB entries) for both ABIs;
-  ;; a change releases every decoded palette-format texture.
+  ;; The palette lives at glide3_ext+128 (0x00RRGGBB entries) for both ABIs.
+  ;; Palette-format textures are keyed by its content hash, so a palette
+  ;; load that repeats an earlier one (or changes nothing) re-uses what was
+  ;; decoded under it; entries of other palettes age out of the LRU.
+  ;; A new key rebuilds the pipeline (its texture lookup includes the key);
+  ;; a reload of identical bytes changes nothing.
   (func $glide_palette_changed
+    (local $pb i32) (local $key i32)
     (if (i32.eqz (i32.load offset=12 (global.get $GLIDE_STATE))) (then (return)))
-    (call $glide_tex_invalidate (call $glide_pb) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 1)))
+    (local.set $pb (call $glide_pb))
+    (local.set $key (i32.wrap_i64 (call $d3g_hash_bytes
+      (i32.add (call $glide3_ext) (i32.const 128)) (i32.const 1024) (i64.const 0xcbf29ce484222325))))
+    (if (i32.eq (local.get $key) (load.field GlideGps pal_key (local.get $pb))) (then (return)))
+    (store.field GlideGps pal_key (local.get $pb) (local.get $key))
+    (store.field GlideGps pipe_valid (local.get $pb) (i32.const 0)))
 
   ;; ---- Samplers -----------------------------------------------------------
   (func $glide_sampler (param $pb i32) (param $clamp_s i32) (param $clamp_t i32) (param $minf i32)
@@ -1191,11 +1214,7 @@
 
   ;; Clear every texture-cache pin (pipeline emitted).
   (func $glide_unpin (param $pb i32)
-    (local $e i32)
-    (loop $all
-      (i32.store offset=44 (elem-addr GlideGps tex (local.get $pb) (i32.mul (local.get $e) (i32.const 12))) (i32.const 0))
-      (local.set $e (i32.add (local.get $e) (i32.const 1)))
-      (br_if $all (i32.lt_u (local.get $e) (global.get $GLIDE_TEX_CACHE)))))
+    (call $gtc_unpin (call $glide_tex_cache (local.get $pb))))
 
   ;; Emit the $n-byte payload built in pb.stage as an $op record unless it
   ;; equals $last (the previous one of that op); then remember it.
@@ -1792,8 +1811,7 @@
 
   (func $glide_kick_wait_slot (param $pb i32) (param $seq i32)
     (call $glide_close_draw (local.get $pb))
-    (store.field GlideGps kick_pos (local.get $pb) (load.field.memarg GpsRing write_pos (call $glide_ring)))
-    (store.field GlideGps kick_arena (local.get $pb) (load.field.memarg GpsRing arena_head (call $glide_ring)))
+    (call $gps_kick_mark (call $glide_ring))
     (call $gps_slot_wait (call $glide_ring) (i32.const 0) (local.get $seq)))
 
   ;; Write the whole stage back: RGB565 -> R,G,B,255 UPLOADs in bands.
