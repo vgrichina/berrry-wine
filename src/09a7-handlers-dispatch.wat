@@ -5005,6 +5005,12 @@
       ;; Dedicated navigation keys return the documented Scan 1 Make prefix.
       (if (i32.eq (local.get $uMapType) (i32.const 4))
         (then
+          ;; Special US keys retain their documented E0 Scan 1 Make prefix.
+          (if (i32.eq (local.get $uCode) (i32.const 0x2C)) (then (local.set $result (i32.const 0xE037)) (br $done))) ;; Snapshot
+          (if (i32.eq (local.get $uCode) (i32.const 0x5B)) (then (local.set $result (i32.const 0xE05B)) (br $done))) ;; Left Windows
+          (if (i32.eq (local.get $uCode) (i32.const 0x5C)) (then (local.set $result (i32.const 0xE05C)) (br $done))) ;; Right Windows
+          (if (i32.eq (local.get $uCode) (i32.const 0x5D)) (then (local.set $result (i32.const 0xE05D)) (br $done))) ;; Applications
+          (if (i32.eq (local.get $uCode) (i32.const 0x6F)) (then (local.set $result (i32.const 0xE035)) (br $done))) ;; Keypad Divide
           (if (i32.eq (local.get $uCode) (i32.const 0x24)) (then (local.set $result (i32.const 0xE047)) (br $done))) ;; Home
           (if (i32.eq (local.get $uCode) (i32.const 0x26)) (then (local.set $result (i32.const 0xE048)) (br $done))) ;; Up
           (if (i32.eq (local.get $uCode) (i32.const 0x21)) (then (local.set $result (i32.const 0xE049)) (br $done))) ;; PageUp

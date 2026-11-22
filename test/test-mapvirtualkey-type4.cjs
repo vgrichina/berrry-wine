@@ -84,7 +84,10 @@ for (const [vk, scan] of [
 ]) expect(vk, 4, scan);
 // Other nonmodifier E0/E1 translations remain unsupported. In type 4,
 // 0x2A means VK_PRINT, not the left Shift scan code, and remains unsupported.
-for (const vk of [0x03,0x13,0x2a,0x2c,0x5b,0x5c,0x5d,0x6f,0x90,0,0xff]) expect(vk, 4, 0);
+for (const vk of [0x03,0x13,0x2a,0x90,0,0xff]) expect(vk, 4, 0);
+for (const [vk, scan] of [
+  [0x2c,0xe037], [0x5b,0xe05b], [0x5c,0xe05c], [0x5d,0xe05d], [0x6f,0xe035],
+]) expect(vk, 4, scan);
 // Existing map types keep their established behavior.
 for (const [code,type,expected] of [
   [0x41,0,0x1e], [0x25,0,0x4b], [0x03,0,0x46],
