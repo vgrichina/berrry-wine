@@ -6277,6 +6277,7 @@
     (local $record i32) (local $base i32) (local $count i32) (local $desc i32)
     (local $x i32) (local $y i32) (local $left i32) (local $top i32)
     (local $right i32) (local $bottom i32) (local $device_x i32) (local $device_y i32)
+    (local $cell_left i32) (local $cell_right i32) (local $cell_bottom i32)
     (local $color i32)
     (local.set $record (call $gdi_rgn_record (local.get $hrgn)))
     (if (i32.or (i32.eqz (local.get $record))
@@ -6330,12 +6331,34 @@
           (then
             (local.set $device_x (call $gdi_line_map_x (local.get $desc) (local.get $x)))
             (local.set $device_y (call $gdi_line_map_y (local.get $desc) (local.get $y)))
-            (local.set $color (call $gdi_brush_sample
-              (local.get $hdc) (local.get $brush) (local.get $device_x) (local.get $device_y)))
-            (if (i32.le_u (local.get $color) (i32.const 0xFFFFFF))
-              (then (drop (call $gdi_raster_write (local.get $desc)
-                (local.get $device_x) (local.get $device_y)
-                (call $gdi_raster_swap_rb (local.get $color))))))))
+            (local.set $cell_left (local.get $device_x))
+            (local.set $cell_right (call $gdi_line_map_x (local.get $desc)
+              (i32.add (local.get $x) (i32.const 1))))
+            (local.set $cell_bottom (call $gdi_line_map_y (local.get $desc)
+              (i32.add (local.get $y) (i32.const 1))))
+            ;; Cover the whole positively mapped logical cell. Keep the
+            ;; existing single-pixel behavior for collapsed or reversed cells.
+            (if (i32.eqz (i32.and
+                  (i32.gt_s (local.get $cell_right) (local.get $device_x))
+                  (i32.gt_s (local.get $cell_bottom) (local.get $device_y))))
+              (then
+                (local.set $cell_right (i32.add (local.get $device_x) (i32.const 1)))
+                (local.set $cell_bottom (i32.add (local.get $device_y) (i32.const 1)))))
+            (block $cell_rows_done (loop $cell_rows
+              (br_if $cell_rows_done (i32.ge_s (local.get $device_y) (local.get $cell_bottom)))
+              (local.set $device_x (local.get $cell_left))
+              (block $cell_cols_done (loop $cell_cols
+                (br_if $cell_cols_done (i32.ge_s (local.get $device_x) (local.get $cell_right)))
+                (local.set $color (call $gdi_brush_sample
+                  (local.get $hdc) (local.get $brush) (local.get $device_x) (local.get $device_y)))
+                (if (i32.le_u (local.get $color) (i32.const 0xFFFFFF))
+                  (then (drop (call $gdi_raster_write (local.get $desc)
+                    (local.get $device_x) (local.get $device_y)
+                    (call $gdi_raster_swap_rb (local.get $color))))))
+                (local.set $device_x (i32.add (local.get $device_x) (i32.const 1)))
+                (br $cell_cols)))
+              (local.set $device_y (i32.add (local.get $device_y) (i32.const 1)))
+              (br $cell_rows)))))
         (local.set $x (i32.add (local.get $x) (i32.const 1)))
         (br $cols)))
       (local.set $y (i32.add (local.get $y) (i32.const 1)))
