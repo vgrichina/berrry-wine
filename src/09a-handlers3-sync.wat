@@ -118,15 +118,41 @@
     (local.set $out (call $g2w (local.get $arg3)))
     (local.set $shift (i32.and (i32.load8_u (i32.add (local.get $ks) (i32.const 0x10))) (i32.const 0x80)))
     (local.set $ch (i32.const 0))
-    ;; A-Z (0x41-0x5A): lowercase unless Shift held
+    ;; US A-Z: Shift XOR the Caps Lock toggle bit selects uppercase.
     (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0x41)) (i32.le_u (local.get $vk) (i32.const 0x5A)))
       (then (local.set $ch
-        (select (local.get $vk) (i32.add (local.get $vk) (i32.const 0x20)) (local.get $shift)))))
-    ;; 0-9 (0x30-0x39): direct ASCII when no Shift; ignored with Shift here.
+        (select (local.get $vk) (i32.add (local.get $vk) (i32.const 0x20))
+          (i32.xor (i32.ne (local.get $shift) (i32.const 0))
+            (i32.and (i32.load8_u offset=0x14 (local.get $ks)) (i32.const 1)))))))
+    ;; US number row: 0..9 shift to )!@#$%^&*(; Caps Lock has no effect.
     (if (i32.eqz (local.get $ch))
       (then (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0x30)) (i32.le_u (local.get $vk) (i32.const 0x39)))
-        (then (if (i32.eqz (local.get $shift))
-          (then (local.set $ch (local.get $vk))))))))
+        (then
+          (local.set $ch (local.get $vk))
+          (if (local.get $shift)
+            (then
+              (if (i32.eq (local.get $vk) (i32.const 0x30)) (then (local.set $ch (i32.const 0x29)))) ;; )
+              (if (i32.eq (local.get $vk) (i32.const 0x31)) (then (local.set $ch (i32.const 0x21)))) ;; !
+              (if (i32.eq (local.get $vk) (i32.const 0x32)) (then (local.set $ch (i32.const 0x40)))) ;; @
+              (if (i32.eq (local.get $vk) (i32.const 0x33)) (then (local.set $ch (i32.const 0x23)))) ;; #
+              (if (i32.eq (local.get $vk) (i32.const 0x34)) (then (local.set $ch (i32.const 0x24)))) ;; $
+              (if (i32.eq (local.get $vk) (i32.const 0x35)) (then (local.set $ch (i32.const 0x25)))) ;; %
+              (if (i32.eq (local.get $vk) (i32.const 0x36)) (then (local.set $ch (i32.const 0x5E)))) ;; ^
+              (if (i32.eq (local.get $vk) (i32.const 0x37)) (then (local.set $ch (i32.const 0x26)))) ;; &
+              (if (i32.eq (local.get $vk) (i32.const 0x38)) (then (local.set $ch (i32.const 0x2A)))) ;; *
+              (if (i32.eq (local.get $vk) (i32.const 0x39)) (then (local.set $ch (i32.const 0x28)))))))))) ;; (
+    ;; US ANSI OEM punctuation, unshifted/shifted. No dead keys in this layout.
+    (if (i32.eq (local.get $vk) (i32.const 0xBA)) (then (local.set $ch (select (i32.const 0x3A) (i32.const 0x3B) (local.get $shift))))) ;; ; :
+    (if (i32.eq (local.get $vk) (i32.const 0xBB)) (then (local.set $ch (select (i32.const 0x2B) (i32.const 0x3D) (local.get $shift))))) ;; = +
+    (if (i32.eq (local.get $vk) (i32.const 0xBC)) (then (local.set $ch (select (i32.const 0x3C) (i32.const 0x2C) (local.get $shift))))) ;; , <
+    (if (i32.eq (local.get $vk) (i32.const 0xBD)) (then (local.set $ch (select (i32.const 0x5F) (i32.const 0x2D) (local.get $shift))))) ;; - _
+    (if (i32.eq (local.get $vk) (i32.const 0xBE)) (then (local.set $ch (select (i32.const 0x3E) (i32.const 0x2E) (local.get $shift))))) ;; . >
+    (if (i32.eq (local.get $vk) (i32.const 0xBF)) (then (local.set $ch (select (i32.const 0x3F) (i32.const 0x2F) (local.get $shift))))) ;; / ?
+    (if (i32.eq (local.get $vk) (i32.const 0xC0)) (then (local.set $ch (select (i32.const 0x7E) (i32.const 0x60) (local.get $shift))))) ;; ` ~
+    (if (i32.eq (local.get $vk) (i32.const 0xDB)) (then (local.set $ch (select (i32.const 0x7B) (i32.const 0x5B) (local.get $shift))))) ;; [ {
+    (if (i32.eq (local.get $vk) (i32.const 0xDC)) (then (local.set $ch (select (i32.const 0x7C) (i32.const 0x5C) (local.get $shift))))) ;; backslash |
+    (if (i32.eq (local.get $vk) (i32.const 0xDD)) (then (local.set $ch (select (i32.const 0x7D) (i32.const 0x5D) (local.get $shift))))) ;; ] }
+    (if (i32.eq (local.get $vk) (i32.const 0xDE)) (then (local.set $ch (select (i32.const 0x22) (i32.const 0x27) (local.get $shift))))) ;; ' "
     ;; Space=0x20, Enter=0x0D, Esc=0x1B, Tab=0x09, Back=0x08
     (if (i32.eqz (local.get $ch))
       (then
