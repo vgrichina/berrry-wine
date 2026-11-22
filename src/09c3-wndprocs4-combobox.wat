@@ -873,10 +873,12 @@
     ;; ---------- CB_SETCURSEL (0x014E) → LB_SETCURSEL + sync text ----------
     (if (i32.eq (local.get $msg) (i32.const 0x014E))
       (then
-        (drop (call $wnd_send_message (local.get $lb) (i32.const 0x0186) (local.get $wParam) (i32.const 0)))
+        (local.set $idx (call $wnd_send_message (local.get $lb) (i32.const 0x0186) (local.get $wParam) (i32.const 0)))
         (call $combobox_sync_text (local.get $state_w))
         (call $invalidate_hwnd (local.get $hwnd))
-        (return (local.get $wParam))))
+        ;; The list returns CB_ERR for a rejected index or the -1 clear.
+        ;; Keep text synchronized with its resulting selection in both cases.
+        (return (local.get $idx))))
 
     ;; ---------- CB_GETDROPPEDWIDTH / CB_SETDROPPEDWIDTH ----------
     ;; Microsoft: minimum defaults to zero; the list uses the larger of that
