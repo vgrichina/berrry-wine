@@ -49,6 +49,44 @@
         (i32.const 0))
       (i32.eqz (call $edit_wraps (local.get $hwnd)))))
 
+  ;; Proven single-line geometry: plain ANSI, printable ASCII, left aligned,
+  ;; fixed stock font. Return its actual paint cell width, or zero to retain
+  ;; the old behavior for RichEdit/Unicode/custom fonts/password/RTL layouts.
+  ;; The length bound is local support policy, not a Windows text limit.
+  ;; Callers retain ownership of EditState; this helper only measures the
+  ;; supplied font/text values and never dereferences a control-state pointer.
+  (func $edit_single_cell (param $hwnd i32) (param $font i32)
+        (param $buf i32) (param $n i32) (result i32)
+    (local $i i32)
+    (local $ch i32) (local $dc i32) (local $old i32) (local $cell i32)
+    (if (i32.or
+          (i32.ne (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+          (i32.or (call $wnd_unicode_get (local.get $hwnd))
+            (i32.or
+              (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                               (i32.const 0x00200027)) (i32.const 0))
+              (i32.ne (i32.and (call $ctrl_get_ex_style (local.get $hwnd))
+                               (i32.const 0x00707000)) (i32.const 0)))))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.lt_u (local.get $font) (i32.const 0x3001A))
+          (i32.and (i32.gt_u (local.get $font) (i32.const 0x3001B))
+                   (i32.ne (local.get $font) (i32.const 0x30020))))
+      (then (return (i32.const 0))))
+    (if (i32.gt_u (local.get $n) (i32.const 65535)) (then (return (i32.const 0))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $ch (i32.load8_u (i32.add (local.get $buf) (local.get $i))))
+      (if (i32.or (i32.lt_u (local.get $ch) (i32.const 32))
+                   (i32.gt_u (local.get $ch) (i32.const 126)))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (local.set $dc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+    (local.set $old (call $gdi_native_select_object (local.get $dc) (local.get $font)))
+    (local.set $cell (i32.shr_u (call $host_get_text_metrics (local.get $dc)) (i32.const 16)))
+    (drop (call $gdi_native_select_object (local.get $dc) (local.get $old)))
+    (local.get $cell))
+
   ;; Keep the caret inside the viewport, which is what USER's EM_SCROLLCARET
   ;; does and what every EDIT operation that moves the caret ends with. Without
   ;; it, typing past the last visible line keeps editing text nobody can see:
@@ -60,14 +98,33 @@
     (local $sz i32) (local $w i32) (local $h i32)
     (local $visible i32) (local $line i32) (local $top i32)
     (local $total i32) (local $max i32)
+    (local $cell i32) (local $dc i32) (local $old i32) (local $x i32) (local $px i32)
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $state_w (call $g2w (local.get $state)))
     (local.set $style (call $wnd_get_style (local.get $hwnd)))
-    ;; ES_MULTILINE only: a single-line edit scrolls horizontally, and that is
-    ;; handled by the painter's own left-clamp.
+    ;; Single-line caret movement changes the same horizontal offset paint uses.
     (if (i32.eqz (i32.and (local.get $style) (i32.const 0x00000004)))
-      (then (return (i32.const 0))))
+      (then
+        (local.set $cell (call $edit_single_cell (local.get $hwnd)
+          (load.field.memarg EditState font (local.get $state_w))
+          (call $g2w (load.field EditState text_buf_ptr (local.get $state_w)))
+          (load.field.memarg EditState text_len (local.get $state_w))))
+        (if (i32.eqz (local.get $cell)) (then (return (i32.const 0))))
+        (local.set $w (i32.and (call $ctrl_get_wh_packed (local.get $hwnd)) (i32.const 0xFFFF)))
+        (if (i32.le_u (local.get $w) (i32.const 8)) (then (return (i32.const 0))))
+        (local.set $dc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+        (local.set $old (call $gdi_native_select_object (local.get $dc)
+          (load.field.memarg EditState font (local.get $state_w))))
+        (local.set $max (call $edit_max_hscroll (local.get $state_w) (local.get $dc) (local.get $w)))
+        (drop (call $gdi_native_select_object (local.get $dc) (local.get $old)))
+        (local.set $x (load.field.memarg EditState scroll_x (local.get $state_w)))
+        (local.set $px (i32.mul (load.field.memarg EditState cursor (local.get $state_w)) (local.get $cell)))
+        (if (i32.lt_s (local.get $px) (local.get $x))
+          (then (local.set $x (local.get $px))))
+        (if (i32.gt_s (local.get $px) (i32.add (local.get $x) (i32.sub (local.get $w) (i32.const 8))))
+          (then (local.set $x (i32.sub (local.get $px) (i32.sub (local.get $w) (i32.const 8))))))
+        (return (call $edit_hscroll_to (local.get $state_w) (local.get $x) (local.get $max)))))
     (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
     (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
     (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
@@ -1634,7 +1691,10 @@
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x00000004)))
-          (then (return (i32.const 0))))
+          (then
+            (if (call $edit_scroll_caret_into_view (local.get $hwnd))
+              (then (call $invalidate_hwnd (local.get $hwnd))))
+            (return (i32.const 0))))
         ;; $edit_view_metrics is the one place that knows a WS_HSCROLL edit
         ;; loses 16px of height to its own scrollbar. This site used to
         ;; re-derive the viewport inline and omit exactly that, so a horizontal
@@ -2248,8 +2308,6 @@
         ;; before the app turned word wrap on.
         (if (call $edit_wraps (local.get $hwnd))
           (then (store.field.memarg EditState scroll_x (local.get $state_w) (i32.const 0))))
-        (local.set $tx (i32.sub (i32.const 4)
-          (load.field.memarg EditState scroll_x (local.get $state_w))))
         ;; Use the font installed with WM_SETFONT, falling back to the default
         ;; GUI font. Paint relies on this when committing its text object into
         ;; the picture memory DC.
@@ -2259,6 +2317,17 @@
             (load.field.memarg EditState font (local.get $state_w))
             (i32.const 0x30021)
             (i32.ne (load.field.memarg EditState font (local.get $state_w)) (i32.const 0)))))
+        ;; Text replacement/resize can leave an offset past the document end.
+        ;; Clamp before deriving the origin; a getter never changes this state.
+        (if (call $edit_single_cell (local.get $hwnd)
+              (load.field.memarg EditState font (local.get $state_w))
+              (call $g2w (load.field EditState text_buf_ptr (local.get $state_w)))
+              (load.field.memarg EditState text_len (local.get $state_w)))
+          (then (drop (call $edit_hscroll_to (local.get $state_w)
+            (load.field.memarg EditState scroll_x (local.get $state_w))
+            (call $edit_max_hscroll (local.get $state_w) (local.get $hdc) (local.get $w))))))
+        (local.set $tx (i32.sub (i32.const 4)
+          (load.field.memarg EditState scroll_x (local.get $state_w))))
         (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 1)))
         ;; 1) White background (WHITE_BRUSH stock obj 0 = 0x30010)
         (drop (call $gdi_native_fill_rect (local.get $hdc)
@@ -3236,9 +3305,20 @@
         (return (i32.const 0))))
 
     ;; ---------- EM_GETFIRSTVISIBLELINE (0x00CE) ----------
+    ;; Microsoft desktop: single-line plain EDIT returns the first visible
+    ;; CHARACTER, multiline the first visual ROW. Derive from the real paint
+    ;; viewport; this query must not scroll. Keep unsupported/RichEdit paths.
     (if (i32.eq (local.get $msg) (i32.const 0x00CE))
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $col_cell (call $edit_single_cell (local.get $hwnd)
+          (load.field.memarg EditState font (local.get $state_w))
+          (call $g2w (load.field EditState text_buf_ptr (local.get $state_w)))
+          (load.field.memarg EditState text_len (local.get $state_w))))
+        (if (local.get $col_cell)
+          (then (return (i32.div_u
+            (load.field.memarg EditState scroll_x (local.get $state_w)) (local.get $col_cell)))))
         (return (load.field.memarg EditState scroll_top (call $g2w (local.get $state))))))
 
     ;; ---------- WM_MOUSEWHEEL (0x020A) ----------
