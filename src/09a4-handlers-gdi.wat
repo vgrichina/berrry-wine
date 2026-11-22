@@ -3919,16 +3919,18 @@
 
   ;; 588: GetCurrentPositionEx(hdc, lpPoint) -> BOOL
   (func $handle_GetCurrentPositionEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (i32.eqz (local.get $arg1))
+    (local $dc i32) (local $ok i32)
+    (if (local.get $arg1)
       (then
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-        (return)))
-    (call $gs32 (local.get $arg1)
-      (call $gdi_dc_get_field (local.get $arg0) (i32.const 12) (i32.const 0)))
-    (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
-      (call $gdi_dc_get_field (local.get $arg0) (i32.const 16) (i32.const 0)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        ;; Canonical lookup retains supported lazy window DC adoption.
+        (local.set $dc (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
+        (if (local.get $dc)
+          (then
+            (call $gs32 (local.get $arg1) (i32.load offset=12 (local.get $dc)))
+            (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
+              (i32.load offset=16 (local.get $dc)))
+            (local.set $ok (i32.const 1))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
