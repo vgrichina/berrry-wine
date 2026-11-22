@@ -2113,6 +2113,8 @@
           (local.get $pen) (local.get $rop2)))
       (then (return (i32.const 0))))
     (if (i32.eq (local.get $pen) (i32.const 0x30018)) (then (return (i32.const 1))))
+    (if (i32.eq (call $gdi_object_style (local.get $pen)) (i32.const 5))
+      (then (return (i32.const 1))))
     (local.set $x0 (call $gdi_line_map_x (local.get $desc) (local.get $from_x)))
     (local.set $y0 (call $gdi_line_map_y (local.get $desc) (local.get $from_y)))
     (local.set $x1 (call $gdi_line_map_x (local.get $desc) (local.get $to_x)))
