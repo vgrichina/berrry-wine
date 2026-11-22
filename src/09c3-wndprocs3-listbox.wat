@@ -691,6 +691,11 @@
     (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0190))
           (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808))))
       (then (return (i32.const -1))))
+    ;; Microsoft WIN32.HLP (1992-1994), LB_GETSELITEMS: a single-selection
+    ;; list box returns LB_ERR. No output-buffer behavior is asserted here.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0191))
+          (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808))))
+      (then (return (i32.const -1))))
     (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0190))
                 (i32.eq (local.get $msg) (i32.const 0x0191)))
       (then
