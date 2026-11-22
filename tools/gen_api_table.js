@@ -1517,6 +1517,7 @@ const extra = [
   { name: 'MapVirtualKeyExW', nargs: 3 },
   { name: 'VkKeyScanExW', nargs: 2 },
   { name: 'ToUnicodeEx', nargs: 7 },
+  { name: 'GetKeyboardLayoutNameW', nargs: 1 },
 ];
 for (const api of extra) {
   const ownsHandler = Object.prototype.hasOwnProperty.call(api, 'handler');

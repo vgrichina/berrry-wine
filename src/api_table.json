@@ -39896,5 +39896,12 @@
     "nargs": 7,
     "convention": "stdcall",
     "hash": 3960360426
+  },
+  {
+    "id": 4721,
+    "name": "GetKeyboardLayoutNameW",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2091654716
   }
 ]

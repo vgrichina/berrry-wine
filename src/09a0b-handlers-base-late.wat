@@ -794,6 +794,22 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
+  ;; GetKeyboardLayoutNameW(pwszKLID) — widen the existing US KLID including NUL.
+  (func $handle_GetKeyboardLayoutNameW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $i i32)
+    (call $handle_GetKeyboardLayoutNameA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    ;; A owns the BOOL result, NULL compatibility and one-argument stack cleanup.
+    (if (i32.load (global.get $reg_base))
+      (then
+        ;; Work backwards so expansion never overwrites an unread ANSI byte.
+        (local.set $i (i32.const 9))
+        (loop $widen_klid
+          (local.set $i (i32.sub (local.get $i) (i32.const 1)))
+          (call $gs16 (i32.add (local.get $arg0) (i32.shl (local.get $i) (i32.const 1)))
+            (call $gl8 (i32.add (local.get $arg0) (local.get $i))))
+          (br_if $widen_klid (local.get $i)))))
+  )
+
   ;; GetKeyboardLayoutList(nBuff, lpList) — report one layout (US English).
   ;; If lpList non-NULL and nBuff>=1, write HKL 0x04090409. Return total count (1).
   (func $handle_GetKeyboardLayoutList (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
