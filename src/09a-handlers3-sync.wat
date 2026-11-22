@@ -141,6 +141,11 @@
               (if (i32.eq (local.get $vk) (i32.const 0x37)) (then (local.set $ch (i32.const 0x26)))) ;; &
               (if (i32.eq (local.get $vk) (i32.const 0x38)) (then (local.set $ch (i32.const 0x2A)))) ;; *
               (if (i32.eq (local.get $vk) (i32.const 0x39)) (then (local.set $ch (i32.const 0x28)))))))))) ;; (
+    ;; US keypad operators are literal under both Shift and Caps Lock.
+    (if (i32.eq (local.get $vk) (i32.const 0x6A)) (then (local.set $ch (i32.const 0x2A)))) ;; *
+    (if (i32.eq (local.get $vk) (i32.const 0x6B)) (then (local.set $ch (i32.const 0x2B)))) ;; +
+    (if (i32.eq (local.get $vk) (i32.const 0x6D)) (then (local.set $ch (i32.const 0x2D)))) ;; -
+    (if (i32.eq (local.get $vk) (i32.const 0x6F)) (then (local.set $ch (i32.const 0x2F)))) ;; /
     ;; US ANSI OEM punctuation, unshifted/shifted. No dead keys in this layout.
     (if (i32.eq (local.get $vk) (i32.const 0xBA)) (then (local.set $ch (select (i32.const 0x3A) (i32.const 0x3B) (local.get $shift))))) ;; ; :
     (if (i32.eq (local.get $vk) (i32.const 0xBB)) (then (local.set $ch (select (i32.const 0x2B) (i32.const 0x3D) (local.get $shift))))) ;; = +
