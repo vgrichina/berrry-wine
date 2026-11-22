@@ -3740,6 +3740,13 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
+  ;; GetArcDirection(hdc) -> the existing per-DC arc direction, default AD_COUNTERCLOCKWISE.
+  (func $handle_GetArcDirection (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_dc_aux_get
+      (local.get $arg0) (i32.const 4) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+  )
+
   ;; 573: ArcTo — connect current position to the projected arc start and update it.
   (func $handle_ArcTo (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (if (call $gdi_dc_path_is_open (local.get $arg0))

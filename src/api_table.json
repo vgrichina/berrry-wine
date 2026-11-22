@@ -39903,5 +39903,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 2091654716
+  },
+  {
+    "id": 4722,
+    "name": "GetArcDirection",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3263732878
   }
 ]
