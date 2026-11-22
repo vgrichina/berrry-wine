@@ -123,7 +123,13 @@
       (then (local.set $ch
         (select (local.get $vk) (i32.add (local.get $vk) (i32.const 0x20))
           (i32.xor (i32.ne (local.get $shift) (i32.const 0))
-            (i32.and (i32.load8_u offset=0x14 (local.get $ks)) (i32.const 1)))))))
+            (i32.and (i32.load8_u offset=0x14 (local.get $ks)) (i32.const 1)))))
+        ;; US Ctrl+A..Z are 0x01..0x1A regardless of Shift/Caps.
+        ;; Only the down bit counts; leave Ctrl+Alt/AltGr unchanged.
+        (if (i32.and
+          (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0))
+          (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80))))
+          (then (local.set $ch (i32.sub (local.get $vk) (i32.const 0x40)))))))
     ;; US number row: 0..9 shift to )!@#$%^&*(; Caps Lock has no effect.
     (if (i32.eqz (local.get $ch))
       (then (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0x30)) (i32.le_u (local.get $vk) (i32.const 0x39)))
