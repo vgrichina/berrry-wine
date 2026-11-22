@@ -1566,14 +1566,16 @@
 
   ;; 116: FillRect(hdc, lprc, hbr)
   (func $handle_FillRect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $desc i32) (local $rc i32)
+    (local $desc i32)
     (local.set $desc (global.get $GDI_LINE_DESC))
-    (local.set $rc (call $g2w (local.get $arg1)))
     (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $desc))
       (then (i32.store offset=0 (global.get $reg_base) (call $gdi_fill_rect_desc
         (local.get $arg0) (local.get $desc)
-        (load.field Rect left (local.get $rc)) (load.field.memarg Rect top (local.get $rc))
-        (load.field.memarg Rect right (local.get $rc)) (load.field.memarg Rect bottom (local.get $rc))
+        ;; RECT fields, including unaligned scalars, may cross sparse guest pages.
+        (call $gl32 (i32.add (local.get $arg1) (offset-of Rect left)))
+        (call $gl32 (i32.add (local.get $arg1) (offset-of Rect top)))
+        (call $gl32 (i32.add (local.get $arg1) (offset-of Rect right)))
+        (call $gl32 (i32.add (local.get $arg1) (offset-of Rect bottom)))
         (local.get $arg2))))
       (else (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
