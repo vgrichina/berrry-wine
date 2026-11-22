@@ -6629,10 +6629,25 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))) (return)
   )
 
-  ;; GetDoubleClickTime() → UINT. Win32 default is 500 ms unless customized.
+  ;; GetDoubleClickTime() → UINT. Current process/session interval, initially 500 ms.
+  (global $double_click_time (mut i32) (i32.const 500))
   (func $handle_GetDoubleClickTime (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 500))
+    (i32.store offset=0 (global.get $reg_base) (global.get $double_click_time))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+  )
+
+  ;; SetDoubleClickTime(UINT milliseconds) → BOOL. Zero restores the default;
+  ;; Microsoft documents that values above 5000 ms are clamped to 5000 ms.
+  (func $handle_SetDoubleClickTime (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (global.set $double_click_time
+      (if (result i32) (i32.eqz (local.get $arg0))
+        (then (i32.const 500))
+        (else
+          (if (result i32) (i32.gt_u (local.get $arg0) (i32.const 5000))
+            (then (i32.const 5000))
+            (else (local.get $arg0))))))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
   ;; 59: FindResourceA

@@ -1513,6 +1513,7 @@ const extra = [
   { name: 'fputc', nargs: 2, convention: 'cdecl' },
   { name: 'DirectSoundCreate8', nargs: 3 },
   { name: 'IDirectSound8_VerifyCertification', nargs: 2 },
+  { name: 'SetDoubleClickTime', nargs: 1 },
 ];
 for (const api of extra) {
   const ownsHandler = Object.prototype.hasOwnProperty.call(api, 'handler');

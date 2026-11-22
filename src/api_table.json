@@ -39868,5 +39868,12 @@
     "nargs": 6,
     "convention": "stdcall",
     "hash": 211763470
+  },
+  {
+    "id": 4717,
+    "name": "SetDoubleClickTime",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 628350711
   }
 ]
