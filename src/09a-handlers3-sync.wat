@@ -187,6 +187,13 @@
           (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0))
           (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80))))))
       (then (local.set $ch (i32.sub (local.get $vk) (i32.const 0xC0)))))
+    ;; US VK_CANCEL is ETX in plain/Shift/unshifted Ctrl columns; Caps invariant.
+    (if (i32.and (i32.eq (local.get $vk) (i32.const 0x03))
+      (i32.and
+        (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80)))
+        (i32.or (i32.eqz (local.get $shift))
+          (i32.eqz (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80))))))
+      (then (local.set $ch (i32.const 0x03))))
     ;; Space=0x20, Enter=0x0D, Esc=0x1B, Tab=0x09, Back=0x08
     (if (i32.eqz (local.get $ch))
       (then
