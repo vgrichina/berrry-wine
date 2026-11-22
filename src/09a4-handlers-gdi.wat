@@ -3257,16 +3257,50 @@
 
   ;; 449: CreateDIBitmap(hdc, lpbmih, fdwInit, lpbInit, lpbmi, fuUsage) — 6 args
   (func $handle_CreateDIBitmap (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $info i32) (local $pixels i32) (local $init i32) (local $usage i32)
+    (local $len i32) (local $copy_g i32) (local $i i32) (local $result i32)
     ;; CBM_INIT=4. lpbmi carries the RGBQUAD table; lpbmih is sufficient for
     ;; true-color callers that omit the duplicate BITMAPINFO pointer.
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_bitmap_create_dibitmap
-      (local.get $arg0)
-      (call $gdi_bitmap_info_wa (select (local.get $arg4) (local.get $arg1)
-        (i32.ne (local.get $arg4) (i32.const 0))))
-      (if (result i32) (local.get $arg3)
-        (then (call $g2w (local.get $arg3))) (else (i32.const 0)))
-      (i32.ne (i32.and (local.get $arg2) (i32.const 4)) (i32.const 0))
-      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))))
+    (local.set $info (call $gdi_bitmap_info_wa
+      (select (local.get $arg4) (local.get $arg1)
+        (i32.ne (local.get $arg4) (i32.const 0)))))
+    (local.set $init (i32.ne (i32.and (local.get $arg2) (i32.const 4)) (i32.const 0)))
+    (local.set $usage (call $gl32
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+    (local.set $pixels (if (result i32) (local.get $arg3)
+      (then (call $g2w (local.get $arg3))) (else (i32.const 0))))
+    (block $done
+      ;; The canonical plan supplies the exact input size, including padded
+      ;; rows (or the encoded byte count for RLE). Only CBM_INIT reads pixels.
+      (if (i32.and (local.get $init)
+            (i32.and (i32.ne (local.get $arg3) (i32.const 0))
+              (i32.le_u (local.get $usage) (i32.const 1))))
+        (then
+          (br_if $done (i32.eqz (call $gdi_bitmap_plan_info
+            (local.get $info) (global.get $GDI_BITMAP_PLAN))))
+          (local.set $len (i32.load offset=32 (global.get $GDI_BITMAP_PLAN)))
+          (if (i32.ne (i32.load offset=44 (global.get $GDI_BITMAP_PLAN)) (i32.const 0))
+            (then (local.set $len (i32.load offset=44 (global.get $GDI_BITMAP_PLAN)))))
+          (local.set $pixels (call $g2w_affine_span (local.get $arg3) (local.get $len)))
+          (if (i32.eq (local.get $pixels) (global.get $NULL_SENTINEL))
+            (then
+              ;; A heap temporary also covers legitimate inputs above the
+              ;; 16KB guest-span arena; never copy across physical page gaps.
+              (local.set $copy_g (call $heap_alloc (local.get $len)))
+              (br_if $done (i32.eqz (local.get $copy_g)))
+              (local.set $pixels (call $g2w_affine_span (local.get $copy_g) (local.get $len)))
+              (br_if $done (i32.eq (local.get $pixels) (global.get $NULL_SENTINEL)))
+              (block $copy_done (loop $copy
+                (br_if $copy_done (i32.ge_u (local.get $i) (local.get $len)))
+                (i32.store8 (i32.add (local.get $pixels) (local.get $i))
+                  (call $gl8 (i32.add (local.get $arg3) (local.get $i))))
+                (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                (br $copy)))))))
+      (local.set $result (call $gdi_bitmap_create_dibitmap
+        (local.get $arg0) (local.get $info) (local.get $pixels)
+        (local.get $init) (local.get $usage))))
+    (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))) ;; 6 args + ret
   )
 
