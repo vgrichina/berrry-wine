@@ -4905,7 +4905,7 @@
     "\4d\bc\be\bf\10\6a\12\20\14\70"   ;; 0x32..0x3b
     "\71\72\73\74\75\76\77\78\79\90"   ;; 0x3c..0x45
     "\91\67\26\69\6d\25\65\27\6b\61"   ;; 0x46..0x4f (4B/4D/48 favor arrow VKs)
-    "\28\63\60\6e\00\00\00\7a\7b")     ;; 0x50..0x58 (50 favors VK_DOWN over NP2)
+    "\28\63\60\6e\00\00\e2\7a\7b")     ;; 0x50..0x58 (50 favors VK_DOWN over NP2)
 
   ;; Shared MAPVK_VK_TO_VSC mapping for MapVirtualKey and OemKeyScan.
   (func $vk_to_scan (param $uCode i32) (result i32)

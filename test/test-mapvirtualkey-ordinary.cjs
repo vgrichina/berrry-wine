@@ -88,8 +88,15 @@ for (const [scan, vk, label] of [
   [0xe01d,0xa3,'RCtrl'], [0x38,0xa4,'LAlt'], [0xe038,0xa5,'RAlt'],
 ]) check(scan, 3, vk, label);
 // Scope guards, preserving existing behavior; these are not new layout claims.
-for (const scan of [0,0x54,0x55,0x56,0x59,0xff,0xe01e,0xe041,0xe11e,0xe11d])
+for (const scan of [0,0x54,0x55,0x59,0xff,0xe01e,0xe041,0xe11e,0xe11d])
   check(scan, 3, 0, 'outside ordinary table / unsupported prefix');
+// Independent Microsoft US sample: ausVK[0x56] = T56, KBD_TYPE 4 selects
+// OEM_102 in kbd.h; Virtual-Key Codes assigns VK_OEM_102 = 0xE2.
+// https://github.com/microsoft/Windows-driver-samples/blob/main/input/layout/kbdus/kbdus.c
+// https://github.com/microsoft/Windows-driver-samples/blob/main/input/layout/kbdus/kbdus.h
+// https://github.com/microsoft/win32metadata/blob/main/generation/WinSDK/RecompiledIdlHeaders/um/kbd.h
+check(0x56, 1, 0xE2, 'documented US OEM102 reverse');
+check(0x56, 3, 0xE2, 'documented US OEM102 reverse with sides');
 // Microsoft Scan 1 Make Keyboard UpArrow = E048; Virtual-Key Codes VK_UP = 26.
 check(0xe048, 3, 0x26, 'documented E0 Up arrow');
 console.log(JSON.stringify({checks, ordinaryKeys: ordinary.length, failures}));
