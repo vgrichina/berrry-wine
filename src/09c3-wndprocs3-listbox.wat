@@ -834,6 +834,16 @@
         (local.set $row (i32.add (local.get $row) (call $lb_top_index (local.get $sw))))
         (if (i32.ge_s (local.get $row) (local.get $count))
           (then (return (i32.const 0))))
+        ;; Microsoft Visual C++ v4 (Sep 1995), List-Box Styles p2273:
+        ;; LBS_MULTIPLESEL clicks toggle each item independently. Limit this
+        ;; path to an ordinary supported simple list and WM_LBUTTONDOWN;
+        ;; retain the existing double-click and unsupported-style behavior.
+        (local.set $simple_multi (i32.and
+          (i32.eq (local.get $msg) (i32.const 0x0201))
+          (i32.and
+            (call $lb_caret_supported (local.get $hwnd))
+            (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                      (i32.const 0x0C08)) (i32.const 0x0008)))))
         (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x00000800))
           (then
             ;; LBS_EXTENDEDSEL: Ctrl toggles a row; Shift selects the range
@@ -865,21 +875,35 @@
                   (local.set $i (i32.add (local.get $i) (i32.const 1)))
                   (br $click_sel))))))
           (else
-            (local.set $i (i32.const 0))
-            (block $click_single_done (loop $click_single
-              (br_if $click_single_done (i32.ge_u (local.get $i) (local.get $count)))
-              (i32.store8
-                (i32.add (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $i))
-                (i32.eq (local.get $i) (local.get $row)))
-              (local.set $i (i32.add (local.get $i) (i32.const 1)))
-              (br $click_single)))))
+            (if (local.get $simple_multi)
+              (then
+                ;; Ctrl/Shift do not turn simple selection into an extended
+                ;; range or replacement. Preserve every other selection.
+                (local.set $p (i32.add
+                  (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $row)))
+                (i32.store8 (local.get $p) (i32.eqz (i32.load8_u (local.get $p)))))
+              (else
+                (local.set $i (i32.const 0))
+                (block $click_single_done (loop $click_single
+                  (br_if $click_single_done (i32.ge_u (local.get $i) (local.get $count)))
+                  (i32.store8
+                    (i32.add (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $i))
+                    (i32.eq (local.get $i) (local.get $row)))
+                  (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                  (br $click_single)))))))
         (call $lb_set_cur_sel (local.get $sw) (local.get $row))
         ;; Post WM_COMMAND to parent: HIWORD = notification, LOWORD = ctrl_id.
         (local.set $notif (i32.const 1))  ;; LBN_SELCHANGE
         (if (i32.eq (local.get $msg) (i32.const 0x0203))
           (then (local.set $notif (i32.const 2))))  ;; LBN_DBLCLK
         (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
-        (if (local.get $parent)
+        ;; CListBox p781: LBN_SELCHANGE requires LBS_NOTIFY. All selection
+        ;; flags and the caret are public before the synchronous callback.
+        ;; Gate only this new simple-click path; retain other notifications.
+        (if (i32.and (i32.ne (local.get $parent) (i32.const 0))
+              (i32.or (i32.eqz (local.get $simple_multi))
+                (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                          (i32.const 1)) (i32.const 0))))
           (then
             (drop (call $wnd_send_message (local.get $parent) (i32.const 0x0111)
                     (i32.or (call $ctrl_table_get_id (local.get $hwnd))
