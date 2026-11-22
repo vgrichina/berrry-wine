@@ -5326,9 +5326,10 @@
     (i32.store offset=0 (global.get $reg_base) (local.get $length)))
 
   (func $handle_GetKeyNameTextA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; arg0=lParam (scan code in bits 16-23), arg1=lpString, arg2=cchSize
-    (local $scan i32) (local $buf i32) (local $len i32) (local $ch i32)
+    ;; arg0=lParam (scan code in bits 16-23, extended flag in bit 24), arg1=lpString, arg2=cchSize
+    (local $scan i32) (local $extended i32) (local $buf i32) (local $len i32) (local $ch i32)
     (local.set $scan (i32.and (i32.shr_u (local.get $arg0) (i32.const 16)) (i32.const 0xFF)))
+    (local.set $extended (i32.and (local.get $arg0) (i32.const 0x01000000)))
     (local.set $buf (call $g2w (local.get $arg1)))
     (local.set $len (i32.const 0))
     (block $done
@@ -5366,15 +5367,16 @@
       (local.set $ch (i32.const 0))
       (if (i32.eq (local.get $scan) (i32.const 0x37)) (then (local.set $ch (i32.const 0x2A)))) ;; *
       (if (i32.eq (local.get $scan) (i32.const 0x47)) (then (local.set $ch (i32.const 0x37)))) ;; 7
-      (if (i32.eq (local.get $scan) (i32.const 0x48)) (then (local.set $ch (i32.const 0x38)))) ;; 8
+      ;; Extended arrow scans fall through to the existing directional names below.
+      (if (i32.and (i32.eqz (local.get $extended)) (i32.eq (local.get $scan) (i32.const 0x48))) (then (local.set $ch (i32.const 0x38)))) ;; 8
       (if (i32.eq (local.get $scan) (i32.const 0x49)) (then (local.set $ch (i32.const 0x39)))) ;; 9
       (if (i32.eq (local.get $scan) (i32.const 0x4A)) (then (local.set $ch (i32.const 0x2D)))) ;; -
-      (if (i32.eq (local.get $scan) (i32.const 0x4B)) (then (local.set $ch (i32.const 0x34)))) ;; 4
+      (if (i32.and (i32.eqz (local.get $extended)) (i32.eq (local.get $scan) (i32.const 0x4B))) (then (local.set $ch (i32.const 0x34)))) ;; 4
       (if (i32.eq (local.get $scan) (i32.const 0x4C)) (then (local.set $ch (i32.const 0x35)))) ;; 5
-      (if (i32.eq (local.get $scan) (i32.const 0x4D)) (then (local.set $ch (i32.const 0x36)))) ;; 6
+      (if (i32.and (i32.eqz (local.get $extended)) (i32.eq (local.get $scan) (i32.const 0x4D))) (then (local.set $ch (i32.const 0x36)))) ;; 6
       (if (i32.eq (local.get $scan) (i32.const 0x4E)) (then (local.set $ch (i32.const 0x2B)))) ;; +
       (if (i32.eq (local.get $scan) (i32.const 0x4F)) (then (local.set $ch (i32.const 0x31)))) ;; 1
-      (if (i32.eq (local.get $scan) (i32.const 0x50)) (then (local.set $ch (i32.const 0x32)))) ;; 2  (overrides arrow Down)
+      (if (i32.and (i32.eqz (local.get $extended)) (i32.eq (local.get $scan) (i32.const 0x50))) (then (local.set $ch (i32.const 0x32)))) ;; 2
       (if (i32.eq (local.get $scan) (i32.const 0x51)) (then (local.set $ch (i32.const 0x33)))) ;; 3
       (if (i32.eq (local.get $scan) (i32.const 0x52)) (then (local.set $ch (i32.const 0x30)))) ;; 0
       (if (i32.eq (local.get $scan) (i32.const 0x53)) (then (local.set $ch (i32.const 0x2E)))) ;; .
