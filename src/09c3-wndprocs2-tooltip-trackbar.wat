@@ -299,6 +299,7 @@
   ;;
   ;; Minimal common-control trackbar for Funpack dialogs. State:
   ;; +0 min, +4 max, +8 pos, +12 line, +16 page, +20 thumb length.
+  ;; Page -1 is private default state; explicit nonnegative sizes include zero.
   (func $trackbar_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $state i32) (local $sw i32) (local $min i32) (local $max i32) (local $pos i32)
     (local $old i32) (local $hdc i32) (local $sz i32) (local $w i32) (local $h i32)
@@ -306,7 +307,7 @@
     (local $thumb_len i32) (local $thumb_pos i32) (local $cx i32) (local $cy i32)
     (local $coord i32) (local $long_dim i32) (local $parent i32) (local $scroll_msg i32)
     (local $i i32) (local $code i32) (local $step i32) (local $next_pos i64)
-    (local $rect i32)
+    (local $rect i32) (local $page i32)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
     (if (i32.eqz (local.get $state))
@@ -314,8 +315,26 @@
         (local.set $state (call $heap_alloc (i32.const 24)))
         (local.set $sw (call $g2w (local.get $state)))
         (call $trk_state_init (local.get $sw))
+        (call $trk_set_page (local.get $sw) (i32.const -1))
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))))
     (local.set $sw (call $g2w (local.get $state)))
+
+    ;; Microsoft Press, Programming the Windows 95 User Interface, p.46:
+    ;; default page = (maximum - minimum) / 5. Keep it derived across range
+    ;; changes until TBM_SETPAGESIZE supplies an explicit value. Widen each
+    ;; signed endpoint before subtracting: INT_MIN..INT_MAX spans 33 bits.
+    ;; Tiny/equal/inverted ranges and negative explicit pages are outside this
+    ;; documented subset; preserve the existing size-10 fallback for spans <5.
+    (local.set $page (call $trk_page (local.get $sw)))
+    (if (i32.eq (local.get $page) (i32.const -1))
+      (then
+        (local.set $range
+          (i64.sub (i64.extend_i32_s (call $trk_max (local.get $sw)))
+                   (i64.extend_i32_s (call $trk_min (local.get $sw)))))
+        (local.set $page (i32.const 10))
+        (if (i64.ge_s (local.get $range) (i64.const 5))
+          (then (local.set $page
+            (i32.wrap_i64 (i64.div_s (local.get $range) (i64.const 5))))))))
 
     ;; WM_CREATE
     (if (i32.eq (local.get $msg) (i32.const 0x0001))
@@ -347,7 +366,7 @@
             (local.set $pos (call $trk_pos (local.get $sw)))
             (if (i32.le_u (local.get $wParam) (i32.const 0x22))
               (then
-                (local.set $step (call $trk_page (local.get $sw)))
+                (local.set $step (local.get $page))
                 (local.set $code (i32.sub (local.get $wParam) (i32.const 0x1f))))
               (else
                 (if (i32.le_u (local.get $wParam) (i32.const 0x24))
@@ -431,11 +450,11 @@
     ;; TBM_SETPAGESIZE / GETPAGESIZE / SETLINESIZE / GETLINESIZE
     (if (i32.eq (local.get $msg) (i32.const 0x0415))
       (then
-        (local.set $old (call $trk_page (local.get $sw)))
+        (local.set $old (local.get $page))
         (call $trk_set_page (local.get $sw) (local.get $lParam))
         (return (local.get $old))))
     (if (i32.eq (local.get $msg) (i32.const 0x0416))
-      (then (return (call $trk_page (local.get $sw)))))
+      (then (return (local.get $page))))
     (if (i32.eq (local.get $msg) (i32.const 0x0417))
       (then
         (local.set $old (call $trk_line (local.get $sw)))
