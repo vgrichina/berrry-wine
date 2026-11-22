@@ -2076,11 +2076,28 @@
                   (local.set $fmt
                     (i32.or (local.get $fmt) (i32.const 0x40))) ;; DT_EXPANDTABS
                   ;; Ordinary text labels preserve every ampersand when
-                  ;; SS_NOPREFIX is set. Leave SS_SIMPLE and other subtypes
-                  ;; on their existing path; only DrawText's flag changes.
+                  ;; SS_NOPREFIX is set. SS_SIMPLE is qualified separately
+                  ;; below; only DrawText's flag changes.
                   (if (i32.and (local.get $full_style) (i32.const 0x80))
                     (then (local.set $fmt
                       (i32.or (local.get $fmt) (i32.const 0x800))))))) ;; DT_NOPREFIX
+              ;; Microsoft Visual C++ 4, Sep1995, vol4 p2277: ampersands
+              ;; are prefixes unless SS_NOPREFIX is specified, which may
+              ;; accompany any static style. SS_SIMPLE has no intrinsic
+              ;; no-prefix exception. Qualify only enabled visible ANSI
+              ;; Win32 SIMPLE|NOPREFIX without other low-word styles or exstyle.
+              ;; Preserve its existing layout, tabs, colors and erase path.
+              (if (i32.and
+                    (i32.eq (i32.and (local.get $full_style) (i32.const 0x0800FFFF))
+                            (i32.const 0x008B))
+                    (i32.and
+                      (i32.eq (call $wnd_get_style (local.get $hwnd)) (local.get $full_style))
+                      (i32.and (i32.eqz (global.get $is_win16))
+                        (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                          (i32.and (i32.eqz (local.get $ex))
+                            (call $wnd_is_effectively_visible (local.get $hwnd)))))))
+                (then (local.set $fmt
+                  (i32.or (local.get $fmt) (i32.const 0x800))))) ;; DT_NOPREFIX
               (drop (call $gdi_native_draw_text (local.get $hdc)
                       (call $g2w (call $static_text_ptr (local.get $state_w)))
                       (call $static_text_len (local.get $state_w))
