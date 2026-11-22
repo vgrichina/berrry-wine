@@ -112,7 +112,7 @@
   ;; that SDL apps rely on (Space, Enter, Esc, Tab).
   (func $handle_ToAsciiEx
     (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $vk i32) (local $ks i32) (local $out i32) (local $shift i32) (local $ch i32)
+    (local $vk i32) (local $ks i32) (local $out i32) (local $shift i32) (local $ch i32) (local $nul_success i32)
     (local.set $vk (local.get $arg0))
     (local.set $ks (call $g2w (local.get $arg2)))
     (local.set $out (call $g2w (local.get $arg3)))
@@ -211,7 +211,19 @@
                 (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0))
                 (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80)))))
               (then (local.set $ch (i32.const 0x7F))))))))
-    (if (local.get $ch)
+    ;; US aVkToWch4 column 3: Ctrl+Shift+2/6/minus are NUL/RS/US.
+    ;; NUL is one translated character, distinct from absent translation.
+    (if (i32.and
+      (i32.and
+        (i32.ne (local.get $shift) (i32.const 0))
+        (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0)))
+      (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80))))
+      (then
+        (if (i32.eq (local.get $vk) (i32.const 0x32))
+          (then (local.set $ch (i32.const 0)) (local.set $nul_success (i32.const 1))))
+        (if (i32.eq (local.get $vk) (i32.const 0x36)) (then (local.set $ch (i32.const 0x1E))))
+        (if (i32.eq (local.get $vk) (i32.const 0xBD)) (then (local.set $ch (i32.const 0x1F))))))
+    (if (i32.or (i32.ne (local.get $ch) (i32.const 0)) (local.get $nul_success))
       (then
         (i32.store16 (local.get $out) (local.get $ch))
         (i32.store offset=0 (global.get $reg_base) (i32.const 1)))
