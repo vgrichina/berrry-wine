@@ -3,59 +3,88 @@ set -e
 
 cd "$(dirname "$0")/.."
 
-node tools/check-claude-size.js
+mkdir -p build
+
+# HOW THIS FILE RUNS. Each `step` below only DECLARES a gate; nothing runs
+# until tools/build-run-steps.js at the bottom takes the whole list and runs it
+# concurrently, bounded by CPU count. So the order here is the order failures
+# are REPORTED in (every failed step's output, in this order), not the order
+# things run in. Where one gate must pass before another may run, the second
+# says `after=<id>`; the WATX compile is after only the gates whose failure
+# would mean it is compiling the wrong inputs, so it starts within a second or
+# two and the slow gates run beside it. `quiet` is the old `> /dev/null || {
+# rerun; exit 1; }` shape: output only on failure. `kill`: terminated, not
+# awaited, once another step has failed. WINE_BUILD_JOBS=1 runs the list
+# serially in exactly this order.
+#
+#   step <id> [after=<id>,...] [quiet] [kill] [early] [last] -- <command...>
+#
+# After the run, tools/check-build-budget.js holds the build's own cost to
+# tools/build-budget.json (node processes, compiler peak RSS, src/ bytes read,
+# compile CPU in calibration units). A new check is a compiler lint rule or
+# reads compiler facts; it does not re-read and re-parse src/ in a new process.
+STEPS_LIST=build/build-steps.list
+: > "$STEPS_LIST"
+step() {
+  local id=$1
+  shift
+  local opts=()
+  while [ "$1" != "--" ]; do opts+=("$1"); shift; done
+  shift
+  printf '%s\0' "@step" "$id" "${opts[@]}" "--" "$@" >> "$STEPS_LIST"
+}
+
+step claude-size -- node tools/check-claude-size.js
 # Scripts are JavaScript only: no new .py and no new python3 spawn. Legacy
 # ones live in tools/no-python-allowlist.json, which only shrinks.
-node tools/check-no-python.js
+step no-python -- node tools/check-no-python.js
 # Tracked tests must not read scratch/runs evidence (per-machine, pruned).
-node tools/check-test-scratch-deps.js
-
-mkdir -p build
+step scratch-deps -- node tools/check-test-scratch-deps.js
 
 # The shipped wasm IS src/main.watx's (include ...) closure, so an include that
 # names a missing file is already a located compile error. What the compiler
 # CANNOT see is the other direction: a part that lands in src/ and is included
 # by nobody is silently absent from the build while still appearing in
 # build/combined.wat. That, plus filename order, is what this gate is for.
-node tools/check-wat-manifest.js
+step manifest -- node tools/check-wat-manifest.js
 # Every src/*.wat fragment must balance its own parentheses. check-parens.js only
 # proves the CONCATENATION balances, so a stray closer in one file cancelled by a
 # missing one in another passes it — that is exactly how the surplus close in
 # 10d-gdi-region-path.wat survived. Since the (module ...) wrapper moved into
 # tools/concat-wat.js there are no exceptions: any nonzero net is a bug.
-node tools/check-wat-fragments.js
+step fragments -- node tools/check-wat-fragments.js
 # Inventory known context producers before nonlocal jumps are implemented.
 # This is a temporary prerequisite review lock, not runtime ownership proof.
-node tools/callback-ownership-census.js
-# Fixed WAT tables share one flat linear-memory address space. A collision is
-# valid WAT and compiles cleanly, then silently cross-corrupts unrelated state
-# at runtime, so the sized-region/data-segment map is a shipping gate.
-node test/test-wat-memory-map.js
+step callback-census -- node tools/callback-ownership-census.js
+# (test/test-wat-memory-map.js, the hand-asserted region/data-segment overlap
+# map, left the build 2026-11-21 for the unit tier: the compiler allocates the
+# region map and itself refuses an overlap, out-of-bounds or misaligned region,
+# and wasm-data.js --overlaps below checks the compiled data segments.)
 # src/00-regions.wat declares that same map to the compiler, which then enforces
 # overlap-freedom, alignment and memory bounds itself. A declaration set that
 # has drifted from the globals the code actually reads is a second opinion, not
 # a safety net — hold the two together here. --strict because the declaration
 # set is complete: a new sized region without a mirror declaration is an error.
-node tools/check-region-decls.js --strict
+step region-decls -- node tools/check-region-decls.js --strict
 # Each declaration's (owner "file:$symbol") is documentation the compiler
 # ignores, so validate it separately. A WAT owner must resolve to a stable
 # top-level form that still references the exact region; test-only non-WAT
 # owners must contain both exact symbols. Line-number owners are rejected.
-node tools/check-region-decls.js --check-owners
-node tools/aw-census.js --check
+step region-owners -- node tools/check-region-decls.js --check-owners
+step aw-census -- node tools/aw-census.js --check
 # Exact WAT clones are a ratchet just like independent A/W implementations:
 # an existing duplicate may disappear, but a new handler/helper must share the
 # old body rather than copying it under another name. Params and locals are
 # alpha-renamed, so cosmetic identifier changes cannot evade the census.
-node tools/wat-dup-census.js --check
+step dup-census -- node tools/wat-dup-census.js --check
 # Raw address literals inside declared regions are a RATCHET: the count per file
 # may fall (bank it with --record), never rise, and a region marked converted
 # must stay at zero. This is what keeps the symbolization wave from regressing.
-node tools/region-census.js --gate
+step region-gate -- node tools/region-census.js --gate
 # lib/region-map.generated.js is the JS mirror of the declarations — the one
 # copy Node, workers and the browser all read. A stale mirror is a silent
 # re-fork of the map into two truths, so hold it fresh here.
-node tools/gen-region-map.js --check
+step region-map after=region-gate -- node tools/gen-region-map.js --check
 # ...and nothing but that mirror may spell an ALLOCATED base. The ratchet above
 # cannot ask this: it ignores allocated bases on purpose, because an address the
 # allocator picked this morning cannot be "written down twice". But it is exactly
@@ -64,7 +93,9 @@ node tools/gen-region-map.js --check
 # $PE_STAGING per worker spawn. Hard gate, not a ratchet: the answer is zero.
 # Run these four read-only gates in one process, in the order documented below.
 # --gate stays BEFORE gen-region-map.js --check; neither belongs in this group.
-node tools/region-census.js --build-gates
+# (Concurrent now, so "before" is spelled after=: region-map waits for
+# region-gate to pass, and this group waits for region-map.)
+step region-build-gates after=region-map -- node tools/region-census.js --build-gates
 # ...and neither may a WAT fragment a JS test splices into our sources. That
 # fragment is compiled by our own compiler, so region.addr resolves inside it,
 # which makes a bare (i32.const N) in a MEMORY-OPERAND position a copy of the
@@ -94,69 +125,69 @@ node tools/region-census.js --build-gates
 # the budget is real but finite. Five modes, one compile of 00-regions.wat each,
 # no wasm built — cheap enough to run every time, which is the point: the
 # alternative is discovering the shake is unusable on the day you need it.
-node tools/region-alloc.js --shake-all
-# JS host-side guest-pointer translation must use the same DIB/RPC boundary as
-# WAT. A stale extra megabyte maps guest DIB addresses onto worker RPC slots.
-node test/test-wat-rpc-region.js
+step region-shake -- node tools/region-alloc.js --shake-all
+# (test/test-wat-rpc-region.js — JS host-side guest-pointer translation uses the
+# same DIB/RPC boundary as WAT — left the build 2026-11-21 for the unit tier;
+# the JS mirror freshness it leans on is gen-region-map.js --check above.)
 # Constants copied across the WAT/JS boundary form an ABI even though both
 # languages compile independently. Check the guest base, fixed-table bases and
 # strides, Win16 module ids, process-handle tag, and GPU opcode word counts.
-node tools/check-wat-js-constants.js
+step wat-js-constants -- node tools/check-wat-js-constants.js
 # A test that is not named in a run-all tier never executes. Keep suite
 # membership complete as a cheap build gate, before spending time compiling.
-bash tools/check-test-manifest.sh
+step test-manifest -- bash tools/check-test-manifest.sh
 # api_ids are array positions baked into the compiled hash table and generated
 # dispatch/COM thunks. Hand-written fast paths use generated named IDs, while a
 # mid-array insert still renumbers the broader ABI; these gates catch both
 # forms of drift before they become a runtime mystery.
-node tools/check-api-table.js
+step api-table -- node tools/check-api-table.js
 # The table is regenerated from specs (gen_api_table.js's extra list and the
 # d3d9/d3d8/d3dim method specs), and rows are also appended by hand. A row
 # whose metadata lives only in the table -- a handler alias the spec does not
 # know -- is silently reverted by the next regeneration, and the build then
 # fails far away as an unknown $handle_* function. Refuse that drift here.
-node tools/gen_api_table.js --check
-node tools/gen_big5_table.js --check
-node tools/gen_dispatch.js --check
+step api-table-gen -- node tools/gen_api_table.js --check
+step big5-gen -- node tools/gen_big5_table.js --check
+step dispatch-gen -- node tools/gen_dispatch.js --check
 # GPU stream v2 wire format: lib/gpu-stream.generated.js mirrors the $GPS_*
 # globals and Gps* layouts of src/09a8gs-gpu-stream.wat, and op ids are
 # append-only against tools/gpu-stream-ops.json (docs/gpu-stream-v2.md).
-node tools/gen-gpu-stream.js --check
+step gpu-stream-gen -- node tools/gen-gpu-stream.js --check
 # GL GPS fallback reason names + diagnostics contract for hosts and the HUD:
 # lib/gl-gps-declines.generated.{json,js} from the table in 09a8gt-gl-gps.wat.
-node tools/gen-gl-gps-declines.js --check
-node tools/gen-kernel32-image.js --check
-node tools/check-hash-table.js > /dev/null || { node tools/check-hash-table.js; exit 1; }
+step gl-declines-gen -- node tools/gen-gl-gps-declines.js --check
+step kernel32-gen -- node tools/gen-kernel32-image.js --check
+step hash-table quiet -- node tools/check-hash-table.js
 # lib/app-file-sizes.generated.js declares the size of every large inline app
 # file, and a streamed (httpRange) read rejects a response whose length
 # disagrees, so a file replaced on disk without regenerating fails to launch
 # (Quake II/III and Moorhuhn, 2026-11-12). Only files present here are judged;
 # absent corpus files keep their recorded size.
-node tools/gen-app-file-sizes.js --check
+step app-file-sizes -- node tools/gen-app-file-sizes.js --check
 # Hardcoded data-segment offsets in the ordinal-import tables vs. what those
 # addresses actually hold.
-node tools/check-data-strings.js
-node tools/check-handler-count.js
+step data-strings -- node tools/check-data-strings.js
+step handler-count -- node tools/check-handler-count.js
 # A handler that never pops its stdcall frame corrupts the guest stack, and the
 # wild jump only shows up thousands of instructions later. The compiler accepts
 # a surplus ')' that closes a function early and orphans its cleanup line, so
 # this gate is the thing that catches it — keep it in the build, not on demand.
-node tools/check-handler-esp.js
+step handler-esp -- node tools/check-handler-esp.js
 # WAT has no boolean type and i32.and is bitwise, so combining an address,
 # count, class id or non-bit-0 mask with a predicate can make a true condition
 # false based on unrelated low bits. Keep the reviewed Win32-layer sites and
 # the general pointer-shaped pattern normalized to explicit 0/1 values.
-node tools/check-wat-logical-and.js
+step logical-and -- node tools/check-wat-logical-and.js
 # A handler that returns success while leaving callbacks/output pointers
 # untouched fails much later under an unrelated API name. Pin the legacy
 # inventory so it can only change deliberately, and forbid dangerous D3D9
 # resource/output methods from returning D3D_OK without implementation.
-node tools/check-silent-stubs.js
+step silent-stubs -- node tools/check-silent-stubs.js
 # A GL call whose answer the guest reads on the next instruction has to be a
 # command-stream barrier. Buffered, it is not wrong so much as late: the guest
 # reads the destination before the batch is submitted and sees what was there
 # before. Warcraft III's whole scene drew untextured for exactly this reason.
-node tools/check-gl-barriers.js
+step gl-barriers -- node tools/check-gl-barriers.js
 # Adding a host import to 01-header.wat without regenerating the signature table
 # does not break the build or the normal page — it breaks WORKER mode only, and
 # it breaks it QUIETLY: the worker's broker builds its import object from this
@@ -164,32 +195,32 @@ node tools/check-gl-barriers.js
 # "requires a callable", and host.js falls back to single-threaded. Launching an
 # app then looks merely slower. Gate it here, where whoever added the import is
 # already standing.
-node tools/gen-host-import-sigs.js --check
+step host-import-sigs -- node tools/gen-host-import-sigs.js --check
 # Browser scripts and Workers share modules but cache them independently. A
 # version drift is valid JavaScript and usually boots, leaving two generations
 # of an ABI in one process. Normalize page/Worker URLs, require cache keys on
 # shipped script/importScripts edges, and hold host.js's source-artifact key to
 # the version that fetched host.js itself. --self-test plants every failure
 # class, so broadening the scanner cannot quietly turn it into a no-op.
-node tools/check-browser-cache-versions.js --self-test
+step cache-versions -- node tools/check-browser-cache-versions.js --self-test
 # The committed browser bundle of the toy VM must be reproducible from source.
 # It inlines every tools/toyvm module verbatim, so a source edit that skips
 # regeneration ships old code to the page while every test stays green on the
 # committed bytes — that drift went unnoticed across whole commit windows twice.
-node tools/toyvm/bundle-browser.js --check
-# The toy VM has independent JS and WAT decoders. A deterministic byte-level
-# differential catches a wrong opcode/ModRM/immediate claim before either
-# backend's execution tests can disguise it behind the same final state.
-node tools/toyvm/decode-diff.js --random=20000 --seed=12345
+step toyvm-bundle -- node tools/toyvm/bundle-browser.js --check
+# (The toy VM JS-vs-WAT decoder differential, decode-diff.js --random=20000
+# --seed=12345, left the build 2026-11-21 for the unit tier as
+# test/test-toyvm-decode-diff-random.js: it reads no src/ and gates nothing in
+# the shipped wasm.)
 # Every handler's stdcall epilogue, checked against api_table.json's nargs —
 # the values are derived from the table now, not typed. `--sync` rewrites any
 # that drift.
-node tools/esp-epilogue.js --check
+step esp-epilogue -- node tools/esp-epilogue.js --check
 # The WATX compiler under tools/watx-src/ is a vendored copy of ../android-emu,
 # and a vendored copy is only trustworthy while somebody can say what it is a
 # copy OF. Fail if any imported file's bytes no longer match the SHA-256 the
 # import recorded, so a silent edit or an unlogged re-sync cannot ship.
-node tools/check-watx-provenance.js
+step watx-provenance -- node tools/check-watx-provenance.js
 # A struct that has been migrated to a (layout ...) must STAY migrated. Without
 # this the tree quietly re-grows hand-spelled field offsets against a record
 # whose offsets now live in one place, and the migration undoes itself over
@@ -197,10 +228,8 @@ node tools/check-watx-provenance.js
 # The gate keys on the BASE SYMBOL, not on the offset literals: grepping for
 # `(i32.const 56)` would fire on every unrelated 56 in the file, and a gate that
 # cries wolf gets deleted.
-node tools/layout-migrate.js --file=src/09d-winsock.wat --layout=VSock \
-  --base-local=rec,prec,lrec,crec --base-call='$vsock_rec' --gate > /dev/null || {
-  node tools/layout-migrate.js --file=src/09d-winsock.wat --layout=VSock \
-    --base-local=rec,prec,lrec,crec --base-call='$vsock_rec' --gate; exit 1; }
+step layout-vsock quiet -- node tools/layout-migrate.js --file=src/09d-winsock.wat --layout=VSock \
+  --base-local=rec,prec,lrec,crec --base-call='$vsock_rec' --gate
 # DxObject (wave 4) — the 32-byte DX_OBJECTS entry, reached through
 # $dx_from_this from five files. --skip-func names the functions where a local
 # called `$entry` is NOT this record (12-byte D3DIM_STATEBLOCKS records, a
@@ -255,8 +284,7 @@ DX_LAYOUT_ARGS=(--file=src/09a8-handlers-directx.wat,src/09aa-handlers-d3dim.wat
   --base-call='$dx_from_this'
   --skip-func='$d3dim_stateblock_create,$d3dim_stateblock_apply,$d3dim_stateblock_capture,$d3dim_stateblock_delete,$d3dim_lights_refresh,$message_table_lookup'
   --memarg)
-node tools/layout-migrate.js "${DX_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${DX_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-dxobject quiet -- node tools/layout-migrate.js "${DX_LAYOUT_ARGS[@]}" --gate
 # WndRecord (wave 2) — the 24-byte per-window record. Deliberately NO
 # --base-local: 09c0-window-table.wat owns ~20 PARALLEL per-slot tables, and its
 # $addr locals also hold MENU_DATA_TABLE, class-long and WND_OWN_DC_TABLE
@@ -280,8 +308,7 @@ node tools/layout-migrate.js "${DX_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 WND_LAYOUT_ARGS=(--file=src/09c0-window-table.wat,src/09c3-controls.wat,src/09c5-menu.wat
   --layout=WndRecord --layout-from=src/09c0-window-table.wat
   --base-call='$wnd_record_addr' --base-local-from-call=rec,addr,ptr --memarg)
-node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-wndrecord quiet -- node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate
 
 # GdiObject (wave 5) — the 48-byte GDI object record, which is a DISCRIMINATED
 # UNION and is now DECLARED as one: a single (layout-union GdiObject) with a
@@ -348,7 +375,7 @@ node tools/layout-migrate.js "${WND_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 # Verified to exit 1 on each of four plants: a raw memarg site, the same site in
 # the add form, a ButtonState field respelled ListBoxState, and a converted site
 # added to an unattributed function. A gate that cannot fail is not a gate.
-node tools/control-variant-gate.js > /dev/null || { node tools/control-variant-gate.js; exit 1; }
+step control-variant-gate quiet -- node tools/control-variant-gate.js
 
 # TthPoint (the first MEMARG wave) — the 28-byte hinted-point record. --memarg
 # is what makes this family convertible at all: 53 of its 72 sites spell the
@@ -365,8 +392,7 @@ node tools/control-variant-gate.js > /dev/null || { node tools/control-variant-g
 # EVERY assignment to it is the base call.
 TTH_LAYOUT_ARGS=(--file=src/10c1-truetype-hint.wat --layout=TthPoint
   --base-call='$tth_point' --base-local-from-call=p,point,pt,a,b,pa0,pa1,pb0,pb1 --memarg)
-node tools/layout-migrate.js "${TTH_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${TTH_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-tthpoint quiet -- node tools/layout-migrate.js "${TTH_LAYOUT_ARGS[@]}" --gate
 
 # GdiDcState — the 96-byte per-HDC state slot, reached through
 # $gdi_dc_state_entry. --memarg: every one of its 38 convertible sites spells
@@ -386,8 +412,7 @@ node tools/layout-migrate.js "${TTH_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 GDI_DC_LAYOUT_ARGS=(--file=src/10f-gdi-dc.wat,src/10b-gdi-font.wat,src/10c-truetype.wat
   --layout=GdiDcState --layout-from=src/10f-gdi-dc.wat
   --base-call='$gdi_dc_state_entry' --base-local-from-call=dc,entry --memarg)
-node tools/layout-migrate.js "${GDI_DC_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${GDI_DC_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-gdidcstate quiet -- node tools/layout-migrate.js "${GDI_DC_LAYOUT_ARGS[@]}" --gate
 
 # LoopOp — the 8-byte threaded-code op HEADER, as $te writes it, read at decode
 # time through $loop_op_at. --memarg because 85 of the 167 convertible sites
@@ -405,8 +430,7 @@ node tools/layout-migrate.js "${GDI_DC_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 # neither fail the build nor get silently attributed to a field they are not.
 LOOPOP_LAYOUT_ARGS=(--file=src/07b-loop-match.wat --layout=LoopOp
   --base-call='$loop_op_at' --base-local-from-call=p,x --memarg)
-node tools/layout-migrate.js "${LOOPOP_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${LOOPOP_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-loopop quiet -- node tools/layout-migrate.js "${LOOPOP_LAYOUT_ARGS[@]}" --gate
 
 # PaintRect — the 16-byte slot of the PAINT_SCRATCH ring, handed out by
 # $paint_scratch_take. A plain Win32 RECT: $paint_rect writes l/t/r/b in that
@@ -434,8 +458,7 @@ node tools/layout-migrate.js "${LOOPOP_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 PAINT_RECT_LAYOUT_ARGS=(--file=src/10-helpers.wat,src/09a-handlers.wat,src/09c4-defwndproc.wat,src/09b-dispatch.wat,src/09c3-controls.wat,src/09c3-controls3-color-dialog.wat,src/09c5-menu.wat,src/09a8-handlers-directx.wat,src/13-exports.wat
   --layout=PaintRect --layout-from=src/10-helpers.wat
   --base-call='$paint_scratch_take' --base-local-from-call=rect,p,box,brect --memarg)
-node tools/layout-migrate.js "${PAINT_RECT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${PAINT_RECT_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-paintrect quiet -- node tools/layout-migrate.js "${PAINT_RECT_LAYOUT_ARGS[@]}" --gate
 
 # GdiDcPath — the 16-byte GDI_DC_PATH_TABLE slot, one per HDC with a path open
 # or closed, reached through $gdi_dc_path_entry. All four fields are i32, so the
@@ -454,8 +477,7 @@ node tools/layout-migrate.js "${PAINT_RECT_LAYOUT_ARGS[@]}" --gate > /dev/null |
 # good candidate for a later wave.
 GDI_PATH_LAYOUT_ARGS=(--file=src/10d-gdi-region-path.wat --layout=GdiDcPath
   --base-call='$gdi_dc_path_entry' --base-local-from-call=entry --memarg)
-node tools/layout-migrate.js "${GDI_PATH_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${GDI_PATH_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-gdidcpath quiet -- node tools/layout-migrate.js "${GDI_PATH_LAYOUT_ARGS[@]}" --gate
 
 # Rect (wave 6, the FIRST CLASS-C family) — the Win32 RECT, in GUEST memory.
 # Everything above this line describes a record the emulator itself owns. This
@@ -505,8 +527,7 @@ RECT_LAYOUT_ARGS=(--file=src/09a-handlers.wat,src/09a5d-handlers-windowpos.wat -
   --base-call='$g2w' --base-local-from-call=rc,wa,rect,rect_w,r,dst,src,s1,s2,a,b,p
   --only-func='$handle_InvalidateRect,$handle_ValidateRect,$handle_GetUpdateRect,$handle_RedrawWindow,$handle_FillRect,$handle_FrameRect,$handle_InvertRect,$handle_DrawEdge,$handle_DrawFocusRect,$handle_DrawFrameControl,$handle_DrawCaptionTempA,$draw_text_ex,$handle_OffsetRect,$handle_InflateRect,$handle_CopyRect,$handle_IntersectRect,$handle_UnionRect,$handle_SubtractRect,$handle_IsRectEmpty,$handle_EqualRect,$handle_PtInRect,$handle_AdjustWindowRectEx,$handle_MapDialogRect,$handle_ScrollWindowEx,$handle_ClipCursor,$handle_MonitorFromRect'
   --memarg)
-node tools/layout-migrate.js "${RECT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${RECT_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-rect quiet -- node tools/layout-migrate.js "${RECT_LAYOUT_ARGS[@]}" --gate
 
 # Point (wave 6, the SECOND CLASS-C family) — the Win32 POINT, in GUEST memory.
 # Same two gates as Rect above: (a) gen-layout-offsets.js --check refuses any
@@ -546,8 +567,7 @@ POINT_LAYOUT_ARGS=(--file=src/09a-handlers.wat,src/09a4-handlers-gdi.wat,src/09a
   --base-call='$g2w' --base-local-from-call=pt,wa --base-local=p,last
   --only-func='$handle_ClientToScreen,$handle_ScreenToClient,$handle_SetBrushOrgEx,$handle_MapWindowPoints,$handle_GetDCOrgEx,$handle_PolylineTo'
   --memarg)
-node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
-  node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate; exit 1; }
+step layout-point quiet -- node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate
 
 # The offsets a (layout ...) declares, checked against the committed record in
 # tools/layout-offsets.json — docs/watx-layout-migration-design.md §6.2/§7.
@@ -567,15 +587,16 @@ node tools/layout-migrate.js "${POINT_LAYOUT_ARGS[@]}" --gate > /dev/null || {
 # (Runs after the compile, below: it reads the lowered layouts from
 # build/watx-facts.json.)
 
-echo "Concatenating WAT parts..."
 # From the src/main.watx include list, not a shell glob: combined.wat must be
 # the same sequence the real compile resolves, or every function index in it
-# names the wrong function.
-node tools/concat-wat.js
-# Keep the lightweight structural checker honest and useful. The compiler is
-# authoritative for syntax; this gate adds targeted diagnostics for unmatched
-# parentheses and out-of-scope branch labels before a WAT edit ships.
-node tools/check-parens.js build/combined.wat --no-diff --quiet
+# names the wrong function. Nothing in the build reads it any more; it is still
+# written because tools grep it and func-index names functions from it.
+step concat-wat -- node tools/concat-wat.js
+# (check-parens.js over build/combined.wat left the build 2026-11-21: the
+# compiler is authoritative for syntax and labels and names the file and line,
+# and check-wat-fragments.js above already holds per-file paren balance. Run it
+# by hand for its targeted diagnostics: node tools/check-parens.js
+# build/combined.wat.)
 
 # build/wine-assembly.wasm is compiled by the vendored WATX compiler. The
 # legacy lib/compile-wat.js rollback is RETIRED (2026-08-31, the M6
@@ -585,22 +606,48 @@ node tools/check-parens.js build/combined.wat --no-diff --quiet
 #
 # build/combined.wat is still written from the same include list: it is the grep
 # / check-parens / func-index surface and is never itself compiled.
-echo "Compiling (WATX)..."
-node tools/build-compile-wat.js
+#
+# after= lists the gates whose failure means this compile would be building the
+# wrong inputs: the include list and per-file balance, the compiler's own
+# provenance, the region declaration set, and the generated sources it
+# compiles (api table, dispatch table, hash table, KERNEL32 image, Big5 table).
+# Every other gate runs BESIDE it; a failure there kills it.
+COMPILE_AFTER=manifest,fragments,watx-provenance,region-decls,api-table,api-table-gen,dispatch-gen,hash-table,kernel32-gen,big5-gen
+step compile after=$COMPILE_AFTER early kill -- node tools/build-compile-wat.js
+# The budget gate's yardstick: a fixed CPU workload measured in the same minute
+# as the compile, so compile CPU can be judged in units that a loaded box does
+# not move. `last`: it waits for every gate and runs beside the compile's
+# tail, when the two share the box with nothing else of ours. Started with
+# the gates it measured the gates, not the box (they push it onto the
+# efficiency cores), and the units swung 254-337 while compile CPU held 22 s.
+step calibrate last -- node tools/build-calibrate.js
 
 # Declaration-only gates, moved here from above because they read what the
 # compile already resolved (build/watx-facts.json, docs/watx-facts.md) instead
 # of re-parsing the tree. Each falls back to computing the answer itself when
 # the facts do not match src/ and the compiler byte for byte, so the ORDER is
 # about speed, never about correctness. See their comment blocks above.
-node tools/union-gate.js > /dev/null || { node tools/union-gate.js; exit 1; }
-node tools/gen-layout-offsets.js --check
+step union-gate after=compile quiet -- node tools/union-gate.js
+step layout-offsets after=compile -- node tools/gen-layout-offsets.js --check
 
 # Two (data ...) segments that cover the same byte: the later one wins at
 # instantiation and eats the earlier one's NUL terminator, which turns a
 # string compare into a compare against the concatenation of both strings.
 # check-data-strings.js reads the source, so it cannot see this -- only the
 # compiled module can.
-node tools/wasm-data.js build/wine-assembly.wasm --overlaps
+step wasm-data-overlaps after=compile -- node tools/wasm-data.js build/wine-assembly.wasm --overlaps
+
+# Run everything declared above. The preload counts src/ bytes read and records
+# per-process CPU/RSS; NODE_OPTIONS carries it to every node the steps start,
+# and is set here only, for this one command.
+BUILD_RECORDS="$PWD/build/build-records.jsonl"
+: > "$BUILD_RECORDS"
+WINE_BUILD_RECORDS="$BUILD_RECORDS" \
+  NODE_OPTIONS="${NODE_OPTIONS:+$NODE_OPTIONS }--require=\"$PWD/tools/build-read-counter.js\"" \
+  node tools/build-run-steps.js "$STEPS_LIST"
+
+# The build's own cost, against tools/build-budget.json (see that tool's head).
+# Over budget = fix the build, don't raise the baseline.
+node tools/check-build-budget.js
 
 ls -la build/wine-assembly.wasm
