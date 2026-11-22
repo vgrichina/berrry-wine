@@ -3369,7 +3369,12 @@
     (if (i32.and (i32.ne (i32.and (local.get $align) (i32.const 1)) (i32.const 0))
           (i32.eqz (local.get $dx_array)))
       (then (local.set $update_x (i32.add (local.get $update_x)
-        (call $gdi_bitmap_text_device_x_delta (local.get $desc) (local.get $width))))))
+        ;; Character extra belongs to every character, including the last.
+        ;; Layout width excludes that trailing space; the next run must not.
+        (call $gdi_bitmap_text_device_x_delta (local.get $desc)
+          (i32.add (local.get $width)
+            (select (local.get $char_extra) (i32.const 0)
+              (i32.gt_s (local.get $count) (i32.const 0)))))))))
     (if (i32.ne (i32.and (local.get $align) (i32.const 1)) (i32.const 0))
       (then
         (drop (call $gdi_dc_set_field (local.get $hdc) (i32.const 12)
