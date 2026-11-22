@@ -5363,6 +5363,35 @@
         (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x4C206C6C)) ;; "ll L"
         (i32.store (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006B636F)) ;; "ock\0"
         (local.set $len (i32.const 11)) (br $done)))
+      ;; US extended navigation names; bit 24 separates the numpad scan twins.
+      (if (local.get $extended) (then
+        (if (i32.eq (local.get $scan) (i32.const 0x47)) (then
+          (i32.store (local.get $buf) (i32.const 0x656D6F48)) ;; "Home"
+          (i32.store8 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0))
+          (local.set $len (i32.const 4)) (br $done)))
+        (if (i32.eq (local.get $scan) (i32.const 0x49)) (then
+          (i32.store (local.get $buf) (i32.const 0x65676150)) ;; "Page"
+          (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x00705520)) ;; " Up\0"
+          (local.set $len (i32.const 7)) (br $done)))
+        (if (i32.eq (local.get $scan) (i32.const 0x4F)) (then
+          (i32.store (local.get $buf) (i32.const 0x00646E45)) ;; "End\0"
+          (local.set $len (i32.const 3)) (br $done)))
+        (if (i32.eq (local.get $scan) (i32.const 0x51)) (then
+          (i32.store (local.get $buf) (i32.const 0x65676150)) ;; "Page"
+          (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x776F4420)) ;; " Dow"
+          (i32.store16 (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006E)) ;; "n\0"
+          (local.set $len (i32.const 9)) (br $done)))
+        (if (i32.eq (local.get $scan) (i32.const 0x52)) (then
+          (i32.store (local.get $buf) (i32.const 0x65736E49)) ;; "Inse"
+          (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x7472)) ;; "rt"
+          (i32.store8 (i32.add (local.get $buf) (i32.const 6)) (i32.const 0))
+          (local.set $len (i32.const 6)) (br $done)))
+        (if (i32.eq (local.get $scan) (i32.const 0x53)) (then
+          (i32.store (local.get $buf) (i32.const 0x656C6544)) ;; "Dele"
+          (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x6574)) ;; "te"
+          (i32.store8 (i32.add (local.get $buf) (i32.const 6)) (i32.const 0))
+          (local.set $len (i32.const 6)) (br $done)))
+      ))
       ;; Numpad scancodes 0x37 (*), 0x47..0x53. Render as "Num <glyph>".
       ;; 0x47-0x49=NP7-9, 0x4A=-, 0x4B-0x4D=NP4-6, 0x4E=+, 0x4F-0x51=NP1-3,
       ;; 0x52=NP0, 0x53=. — match Windows' "Num 7" / "Num *" naming.

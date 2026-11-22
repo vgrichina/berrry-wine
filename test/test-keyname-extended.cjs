@@ -65,10 +65,17 @@ const extraWat = String.raw`
   // the do-not-care flag varied independently of bit 24.
   for (const [lp, name] of [...arrows, ...unchanged])
     for (const flags of [0, 1, 0xE0000001, 0x02000000]) check(lp | flags, name);
-  // Preserve unrelated extended labels, including other numpad/navigation scans.
+  // Microsoft US aKeyNamesExt literals for the six navigation scan twins:
+  // https://github.com/microsoft/Windows-driver-samples/blob/main/input/layout/kbdus/kbdus.c
+  const extendedNavigation = {
+    0x00470000: 'Home', 0x00490000: 'Page Up',
+    0x004F0000: 'End', 0x00510000: 'Page Down',
+    0x00520000: 'Insert', 0x00530000: 'Delete',
+  };
+  // Preserve every other unrelated extended-label fixture.
   for (const [lp, name] of unchanged)
     if (![0x00480000, 0x004B0000, 0x004D0000, 0x00500000].includes(lp))
-      check(lp | 0x01000000, name);
+      check(lp | 0x01000000, extendedNavigation[lp] || name);
   console.log(JSON.stringify({ cases, failed: failures.length, failures }));
   assert.equal(failures.length, 0, 'extended arrow labels and existing ordinary names');
   console.log(`PASS ${cases} literal GetKeyNameTextA cases`);
