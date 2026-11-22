@@ -1,6 +1,76 @@
   ;; ============================================================
   ;; Edit WndProc
   ;; ============================================================
+  ;; Password state is separate from the frozen EditState layout. Each live
+  ;; override owns a heap node {next guest pointer, hwnd, ANSI character}.
+  ;; No override means the creation style supplies '*' or zero. Destroy
+  ;; unlinks the node, so a reused HWND cannot inherit another control's mask.
+  (global $edit_password_head (mut i32) (i32.const 0))
+  (func $edit_password_node (param $hwnd i32) (result i32)
+    (local $node i32)
+    (local.set $node (global.get $edit_password_head))
+    (block $done (loop $scan
+      (br_if $done (i32.eqz (local.get $node)))
+      (if (i32.eq (i32.load offset=4 (call $g2w (local.get $node))) (local.get $hwnd))
+        (then (return (local.get $node))))
+      (local.set $node (i32.load (call $g2w (local.get $node))))
+      (br $scan)))
+    (i32.const 0))
+
+  (func $edit_password_char (param $hwnd i32) (result i32)
+    (local $node i32)
+    (if (i32.or
+          (i32.ne (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+          (i32.or (call $wnd_unicode_get (local.get $hwnd))
+            (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)) (i32.const 0))))
+      (then (return (i32.const 0))))
+    (local.set $node (call $edit_password_node (local.get $hwnd)))
+    (if (local.get $node)
+      (then (return (i32.load offset=8 (call $g2w (local.get $node))))))
+    (select (i32.const 42) (i32.const 0)
+      (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 32)) (i32.const 0))))
+
+  (func $edit_password_release (param $hwnd i32)
+    (local $node i32) (local $previous i32) (local $next i32)
+    (local.set $node (global.get $edit_password_head))
+    (block $done (loop $scan
+      (br_if $done (i32.eqz (local.get $node)))
+      (local.set $next (i32.load (call $g2w (local.get $node))))
+      (if (i32.eq (i32.load offset=4 (call $g2w (local.get $node))) (local.get $hwnd))
+        (then
+          (if (local.get $previous)
+            (then (i32.store (call $g2w (local.get $previous)) (local.get $next)))
+            (else (global.set $edit_password_head (local.get $next))))
+          (call $heap_free (local.get $node))
+          (return)))
+      (local.set $previous (local.get $node))
+      (local.set $node (local.get $next))
+      (br $scan))))
+
+  ;; A temporary display string, never the public document buffer. The same
+  ;; projection supplies glyphs and measured prefixes (selection, hit tests,
+  ;; caret and scrolling). Bounded printable ANSI and supported stock fonts;
+  ;; RichEdit, Unicode, multiline and custom fonts retain their prior path.
+  (func $edit_password_display (param $hwnd i32) (param $font i32)
+        (param $count i32) (result i32)
+    (local $ch i32) (local $buf i32)
+    (if (i32.or (i32.eqz (local.get $count)) (i32.gt_u (local.get $count) (i32.const 65535)))
+      (then (return (i32.const 0))))
+    (if (i32.and (i32.ne (local.get $font) (i32.const 0))
+          (i32.and (i32.ne (local.get $font) (i32.const 0x3001A))
+            (i32.and (i32.ne (local.get $font) (i32.const 0x3001B))
+              (i32.and (i32.ne (local.get $font) (i32.const 0x30020))
+                       (i32.ne (local.get $font) (i32.const 0x30021))))))
+      (then (return (i32.const 0))))
+    (local.set $ch (call $edit_password_char (local.get $hwnd)))
+    (if (i32.or (i32.lt_u (local.get $ch) (i32.const 32))
+                 (i32.gt_u (local.get $ch) (i32.const 126)))
+      (then (return (i32.const 0))))
+    (local.set $buf (call $heap_alloc (local.get $count)))
+    (if (local.get $buf)
+      (then (memory.fill (call $g2w (local.get $buf)) (local.get $ch) (local.get $count))))
+    (local.get $buf))
+
   ;; WM_SETFONT can precede input before the next EDIT paint. Layout's
   ;; temporary font selection also ends before a hit-test measures its
   ;; prefixes against that DC's old font. Each plain ANSI measurement therefore
@@ -9,7 +79,7 @@
   ;; existing measurement path.
   (func $edit_measure_text (param $font i32) (param $hdc i32) (param $text i32)
         (param $count i32) (param $wide i32) (result i32)
-    (local $hwnd i32) (local $plain i32) (local $old i32) (local $width i32)
+    (local $hwnd i32) (local $plain i32) (local $old i32) (local $width i32) (local $masked i32)
     (local.set $hwnd (i32.sub (local.get $hdc) (i32.const 0x40000)))
     (if (i32.and
           (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
@@ -21,8 +91,14 @@
           (select (local.get $font)
             (i32.const 0x30021)
             (i32.ne (local.get $font) (i32.const 0)))))))
+    (if (i32.and (local.get $plain) (i32.eqz (local.get $wide)))
+      (then
+        (local.set $masked (call $edit_password_display
+          (local.get $hwnd) (local.get $font) (local.get $count)))
+        (if (local.get $masked) (then (local.set $text (call $g2w (local.get $masked)))))))
     (local.set $width (call $host_measure_text
       (local.get $hdc) (local.get $text) (local.get $count) (local.get $wide)))
+    (if (local.get $masked) (then (call $heap_free (local.get $masked))))
     (if (local.get $plain)
       (then (drop (call $gdi_native_select_object (local.get $hdc) (local.get $old)))))
     (local.get $width))
@@ -77,7 +153,7 @@
 
   ;; Proven single-line geometry: plain ANSI, printable ASCII, left aligned,
   ;; fixed stock font. Return its actual paint cell width, or zero to retain
-  ;; the old behavior for RichEdit/Unicode/custom fonts/password/RTL layouts.
+  ;; the old behavior for RichEdit/Unicode/custom fonts/RTL layouts.
   ;; The length bound is local support policy, not a Windows text limit.
   ;; Callers retain ownership of EditState; this helper only measures the
   ;; supplied font/text values and never dereferences a control-state pointer.
@@ -90,7 +166,7 @@
           (i32.or (call $wnd_unicode_get (local.get $hwnd))
             (i32.or
               (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
-                               (i32.const 0x00200027)) (i32.const 0))
+                               (i32.const 0x00200007)) (i32.const 0))
               (i32.ne (i32.and (call $ctrl_get_ex_style (local.get $hwnd))
                                (i32.const 0x00707000)) (i32.const 0)))))
       (then (return (i32.const 0))))
@@ -1387,6 +1463,7 @@
     (local $full_w i32) (local $total_lines i32) (local $visible_lines i32) (local $max_scroll i32)
     (local $full_h i32) (local $tx i32) (local $max_hscroll i32)
     (local $cx i32) (local $cy i32)
+    (local $password_display i32)
 
     (local $col_font i32) (local $col_buf i32) (local $col_len i32) (local $col_i i32) (local $col_ch i32)
     (local $col_hdc i32) (local $col_old_font i32) (local $col_cell i32) (local $col_max i32) (local $col_x i64)
@@ -1477,6 +1554,41 @@
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))
         (return (i32.const 0))))
 
+    ;; Microsoft SDK 1992 pp46,55-56: default '*', public getter, custom
+    ;; character, zero reveals/removes ES_PASSWORD, redraw visible characters.
+    ;; Only ordinary single-line ANSI EDIT participates here.
+    (if (i32.and
+          (i32.or (i32.eq (local.get $msg) (i32.const 0x00CC))
+                  (i32.eq (local.get $msg) (i32.const 0x00D2)))
+          (i32.and (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+            (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+              (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4))))))
+      (then
+        (if (i32.eq (local.get $msg) (i32.const 0x00D2))
+          (then (return (call $edit_password_char (local.get $hwnd)))))
+        (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        (local.set $a (call $edit_password_node (local.get $hwnd)))
+        (if (i32.eqz (local.get $a))
+          (then
+            (local.set $a (call $heap_alloc (i32.const 12)))
+            (if (i32.eqz (local.get $a)) (then (return (i32.const 0))))
+            (i32.store (call $g2w (local.get $a)) (global.get $edit_password_head))
+            (i32.store offset=4 (call $g2w (local.get $a)) (local.get $hwnd))
+            (global.set $edit_password_head (local.get $a))))
+        (local.set $b (i32.and (local.get $wParam) (i32.const 255)))
+        (i32.store offset=8 (call $g2w (local.get $a)) (local.get $b))
+        (local.set $state_w (call $g2w (local.get $state)))
+        (local.set $flags (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const -3)))
+        (local.set $a (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const -33)))
+        (if (local.get $b)
+          (then
+            (local.set $flags (i32.or (local.get $flags) (i32.const 2)))
+            (local.set $a (i32.or (local.get $a) (i32.const 32)))))
+        (store.field.memarg EditState flags (local.get $state_w) (local.get $flags))
+        (drop (call $wnd_set_style (local.get $hwnd) (local.get $a)))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 1))))
+
     ;; ---------- EM_SETREADONLY (0x00CF), plain EDIT ----------
     ;; Keep USER's public style and the input guards' private flag in sync.
     ;; RichEdit shares this wndproc but retains its existing message behavior.
@@ -1518,6 +1630,7 @@
     ;; ---------- WM_DESTROY (0x0002) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0002))
       (then
+        (call $edit_password_release (local.get $hwnd))
         (if (local.get $state)
           (then
             (drop (call $timer_kill (local.get $hwnd) (i32.const 0xCA47)))
@@ -2570,6 +2683,10 @@
               ;; line_end (the \n) steps the loop; only the text is drawn.
               (local.set $hi (call $edit_line_text_len (local.get $state_w) (local.get $lo)))
               (local.set $line_buf_w (i32.add (call $g2w (local.get $buf)) (local.get $lo)))
+              (local.set $password_display (call $edit_password_display (local.get $hwnd)
+                (load.field.memarg EditState font (local.get $state_w)) (local.get $hi)))
+              (if (local.get $password_display)
+                (then (local.set $line_buf_w (call $g2w (local.get $password_display)))))
               ;; Selection intersection within this line (relative to line start).
               (local.set $a (i32.const 0))
               (local.set $b (i32.const 0))
@@ -2640,6 +2757,9 @@
                     (then (drop (call $gdi_native_text_out (local.get $hdc)
                                   (local.get $tx) (local.get $line_y)
                                   (local.get $line_buf_w) (local.get $hi) (i32.const 0)))))))
+              (if (local.get $password_display)
+                (then (call $heap_free (local.get $password_display))
+                      (local.set $password_display (i32.const 0))))
               (local.set $lo (i32.add (local.get $line_end) (i32.const 1)))
               (local.set $line_y (i32.add (local.get $line_y) (i32.const 16)))
               (br $line_loop)))))
