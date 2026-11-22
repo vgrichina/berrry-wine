@@ -630,6 +630,17 @@
     (local.set $variant (call $cb_variant (local.get $state_w)))
     (local.set $lb      (call $cb_lb_hwnd (local.get $state_w)))
 
+    ;; WIN32.HLP (Microsoft 1992-1994), WM_CUT/COPY/PASTE/CLEAR:
+    ;; Messages addressed to an editable combo are handled by its EDIT.
+    ;; Keep the child as the sole text, selection and clipboard owner.
+    (if (i32.and
+          (i32.or (i32.eq (local.get $variant) (i32.const 1))
+                  (i32.eq (local.get $variant) (i32.const 2)))
+          (i32.le_u (i32.sub (local.get $msg) (i32.const 0x0300)) (i32.const 3)))
+      (then (return (call $wnd_send_message
+        (call $cb_edit_hwnd (local.get $state_w))
+        (local.get $msg) (local.get $wParam) (local.get $lParam)))))
+
     ;; SIMPLE occupies the application's full rectangle. Its children share
     ;; the fixed selection field and the remaining visible list area, even
     ;; after MoveWindow. Keep USER geometry, host geometry and viewports equal.
