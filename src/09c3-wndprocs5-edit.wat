@@ -1966,6 +1966,14 @@
             ;; Ctrl+C (0x43) — copy
             (if (i32.eq (local.get $vk) (i32.const 0x43))
               (then
+                ;; Microsoft Marsh (1992) / WIN32.HLP topic 215: password
+                ;; EDIT text cannot be copied. Keep the separate cut path intact.
+                (if (i32.and
+                      (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                      (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                        (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x24))
+                                (i32.const 0x20))))
+                  (then (return (i32.const 0))))
                 (call $edit_copy_range (local.get $state_w)
                   (call $edit_sel_lo (local.get $state_w))
                   (call $edit_sel_hi (local.get $state_w)))
@@ -2990,6 +2998,13 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0301))
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
+        ;; Same documented prohibition as Ctrl+C, single-line ANSI EDIT only.
+        (if (i32.and
+              (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+              (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x24))
+                        (i32.const 0x20))))
+          (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         (call $edit_copy_range (local.get $state_w)
           (call $edit_sel_lo (local.get $state_w))
