@@ -6890,6 +6890,8 @@
         (if (i32.eqz (local.get $core))
           (then (i32.store offset=32 (local.get $bmi) (local.get $palette_count))))
         (local.set $table (i32.add (local.get $bmi) (local.get $header_size)))
+        ;; Preserve the source color table only for a matching indexed depth.
+        ;; A conversion synthesizes the requested format's table (1 bpp is black/white).
         (if (i32.eqz (local.get $color_use))
           (then
             (local.set $x (i32.const 0))
@@ -6897,7 +6899,7 @@
               (br_if $rgb_done (i32.ge_u (local.get $x) (local.get $palette_count)))
               (local.set $desired
                 (if (result i32) (i32.and
-                      (i32.le_u (i32.load offset=16 (local.get $src)) (i32.const 8))
+                      (i32.eq (i32.load offset=16 (local.get $src)) (local.get $bpp))
                       (i32.lt_u (local.get $x) (i32.load offset=28 (local.get $src))))
                   (then (call $gdi_raster_palette_color (local.get $src) (local.get $x)))
                   (else (call $gdi_raster_default_palette
@@ -6925,7 +6927,7 @@
               (br_if $pal_done (i32.ge_u (local.get $x) (local.get $palette_count)))
               (local.set $desired
                 (if (result i32) (i32.and
-                      (i32.le_u (i32.load offset=16 (local.get $src)) (i32.const 8))
+                      (i32.eq (i32.load offset=16 (local.get $src)) (local.get $bpp))
                       (i32.lt_u (local.get $x) (i32.load offset=28 (local.get $src))))
                   (then (call $gdi_raster_palette_color (local.get $src) (local.get $x)))
                   (else (call $gdi_raster_default_palette
