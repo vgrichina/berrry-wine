@@ -284,7 +284,46 @@
   ;; The host still uses the non-consuming physical/down-state view, preserving
   ;; GetAsyncKeyState's separate one-shot low press bit.
   (func $handle_GetKeyboardState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $host_get_keyboard_state (call $g2w (local.get $arg0))))
+    (local $allocation i32) (local $stage i32) (local $result i32) (local $i i32)
+    (if (local.get $arg0)
+      (then
+        ;; Keep this allocation live through the host RPC and scatter. Locals
+        ;; survive host reentry; heap arenas/free lists belong to each instance,
+        ;; with distinct chunks claimed by heap_low_reserve's shared CAS.
+        (local.set $allocation (call $heap_alloc (i32.const 511)))
+        (if (i32.eqz (local.get $allocation))
+          (then
+            (global.set $last_error (i32.const 8)) ;; ERROR_NOT_ENOUGH_MEMORY
+            (i32.store (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+            (return)))
+        ;; A 256-aligned 256-byte span lies wholly in one guest page, even
+        ;; when the allocation itself crosses separately backed sparse pages.
+        (local.set $stage (call $g2w
+          (i32.and (i32.add (local.get $allocation) (i32.const 255)) (i32.const -256))))
+        ;; The current host can fail after writing a prefix. Seed the stage
+        ;; so copying it back also preserves the untouched destination suffix.
+        (block $gathered (loop $gather
+          (br_if $gathered (i32.ge_u (local.get $i) (i32.const 256)))
+          (i32.store8 (i32.add (local.get $stage) (local.get $i))
+            (call $gl8 (i32.add (local.get $arg0) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $gather))))
+      ;; Preserve the existing NULL translation/host behavior.
+      (else (local.set $stage (call $g2w (local.get $arg0)))))
+    (local.set $result (call $host_get_keyboard_state (local.get $stage)))
+    (if (local.get $allocation)
+      (then
+        (local.set $i (i32.const 0))
+        (block $scattered (loop $scatter
+          (br_if $scattered (i32.ge_u (local.get $i) (i32.const 256)))
+          (call $gs8 (i32.add (local.get $arg0) (local.get $i))
+            (i32.load8_u (i32.add (local.get $stage) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $scatter)))
+        (call $heap_free (local.get $allocation))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 

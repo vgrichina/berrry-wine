@@ -135,7 +135,8 @@ async function workerGuestMessages() {
   const { createHostImports } = require('../lib/host-imports');
   const { inputEventHwnd } = require('../lib/host-window');
   const root = path.resolve(__dirname, '..');
-  const context = { console, createHostImports, inputEventHwnd };
+  const context = { console, createHostImports, inputEventHwnd,
+    require: require('node:module').createRequire(path.join(root, 'host.js')) };
   vm.runInNewContext(fs.readFileSync(path.join(root, 'host.js'), 'utf8') +
     '\n;globalThis.WineAssembly=WineAssembly;', context);
   const wine = new context.WineAssembly();

@@ -433,10 +433,34 @@ const begin = wat.indexOf('(func $handle_GetKeyboardState');
 const end = wat.indexOf('\n  (func ', begin + 1);
 assert(begin >= 0 && end > begin, 'GetKeyboardState handler is present');
 const handler = wat.slice(begin, end);
-assert(handler.includes('(call $host_get_keyboard_state'),
-  'GetKeyboardState uses the batched host snapshot');
-assert(!handler.includes('$host_get_key_down_state') && !handler.includes('(loop'),
-  'GetKeyboardState no longer performs 256 scalar host calls');
+// Guest-memory gather/scatter loops are allowed; the host snapshot itself
+// must occur exactly once, outside every loop, with no scalar key queries.
+function checkKeyboardSnapshot(text) {
+  let snapshots = 0;
+  function visit(node, inLoop = false) {
+    if (!Array.isArray(node)) return;
+    const loop = inLoop || node[1] === 'loop';
+    if (node[1] === 'call') {
+      assert(!['$host_get_key_down_state', '$host_get_key_state',
+        '$host_get_async_key_state'].includes(node[2]), 'no scalar keyboard host calls');
+      if (node[2] === '$host_get_keyboard_state') {
+        snapshots++;
+        assert(!loop, 'snapshot host call must be outside loops');
+      }
+    }
+    for (const child of node) if (Array.isArray(child)) visit(child, loop);
+  }
+  for (const form of parseSource(text)) visit(form);
+  assert.strictEqual(snapshots, 1, 'exactly one batched keyboard host snapshot');
+}
+checkKeyboardSnapshot(handler);
+checkKeyboardSnapshot('(func $fixture (loop $copy (nop)) (call $host_get_keyboard_state))');
+for (const fixture of [
+  '(func $fixture (call $host_get_key_down_state))',
+  '(func $fixture (call $host_get_keyboard_state) (call $host_get_async_key_state))',
+  '(func $fixture (call $host_get_keyboard_state) (call $host_get_keyboard_state))',
+  '(func $fixture (loop $bad (call $host_get_keyboard_state)))',
+]) assert.throws(() => checkKeyboardSnapshot(fixture), /scalar keyboard|exactly one|outside loops/);
 
 const generated = require('../lib/host-import-sigs.generated.json');
 assert.deepStrictEqual(generated.sigs.get_keyboard_state,
