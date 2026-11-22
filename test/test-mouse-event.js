@@ -50,7 +50,8 @@ const extraWat = `
   assert.strictEqual(xbutton.mouseButtons, 64);
   e.test_mouse_event(0x100, 0, 0, 2, 0);
   r._activeInputEvent = xbutton;
-  assert.strictEqual(r.peekAsyncKeyState(6), 0x8000, 'dequeued X-button state precedes later release');
+  assert.strictEqual(r.getMouseButtons(), 64, 'dequeued X-button snapshot precedes later release');
+  assert.strictEqual(r.peekAsyncKeyState(6), 0, 'async X-button state includes later physical release');
   assert.strictEqual(r.peekKeyDownState(6), 0, 'physical X-button state includes release');
   r.inputQueue.length = 0;
   assert.strictEqual(r.queueMouseInput(0x880, 0, 0, 1, 0), 0);

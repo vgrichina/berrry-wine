@@ -91,7 +91,10 @@ const extraWat = String.raw`
     (i32.load offset=0 (global.get $reg_base)))
 
   (func (export "test_set_thread") (param $tid i32)
-    (global.set $current_thread_id (local.get $tid)))
+    ;; Synthetic switches occur only after synchronous callbacks finish.
+    ;; Start the selected caller's invocation lifetime as init_thread does.
+    (global.set $current_thread_id (local.get $tid))
+    (call $invocation_thread_begin (i32.sub (local.get $tid) (i32.const 1))))
   (func (export "test_capture_raw") (result i32)
     (global.get $capture_hwnd))
   (func (export "test_destroy") (param $hwnd i32)

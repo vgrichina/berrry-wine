@@ -14,6 +14,7 @@ const { Win98Renderer } = require('../lib/renderer');
 const { createCanvas } = require('../lib/raster-canvas');
 const { ThreadManager } = require('../lib/thread-manager');
 const context = { console, createHostImports, inputEventHwnd, performance,
+  require: require('node:module').createRequire(require.resolve('../host.js')),
   setTimeout, clearTimeout, setInterval, clearInterval, WebAssembly };
 vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
   '\n;globalThis.WineAssembly = WineAssembly;', context);

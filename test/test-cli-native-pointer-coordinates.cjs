@@ -85,7 +85,8 @@ function contextUnits(){
  }
  assert.throws(()=>registry.verify(s,review,event,'two'),/another finite intent/);
  assert.throws(()=>registry.verify(s,{...review,pointerMapping:{canvas:{w:1,h:1}}},{...event,x:1024},'one'),/outside/);
- clock=31000;assert.throws(()=>registry.verify(s,review,event,'one'),/stale/);
+ clock=90999;registry.verify(s,review,event,'one');
+ clock=91000;assert.throws(()=>registry.verify(s,review,event,'one'),/stale/);
  console.log('PASS retained mapping, window/owner/generation/focus/actor changes, nonce, forged transform and stale refusal');
 }
 async function native(out){
