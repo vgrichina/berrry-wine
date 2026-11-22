@@ -2103,6 +2103,70 @@
             (call $edit_notify_change (local.get $hwnd))
             (call $edit_invalidate_caret (local.get $hwnd))
             (return (i32.const 0))))
+        ;; Ordinary wrapped ANSI EDIT: move one display row at the current
+        ;; measured horizontal position. Use paint/caret's font and viewport,
+        ;; including their CRLF and wrap-separator-free row lengths. There is
+        ;; deliberately no persistent preferred-x state; Ctrl and other control
+        ;; shapes retain the physical-line path below.
+        (if (i32.and
+              (i32.or (i32.eq (local.get $vk) (i32.const 0x26))
+                      (i32.eq (local.get $vk) (i32.const 0x28)))
+              (i32.and (i32.eqz (local.get $b))
+                (i32.and
+                  (i32.and
+                    (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                    (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+                  (i32.and
+                    (i32.eq (i32.and (load.field.memarg EditState flags (local.get $state_w))
+                      (i32.const 3)) (i32.const 1))
+                    (i32.and
+                      (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x23)))
+                      (call $edit_wraps (local.get $hwnd)))))))
+          (then
+            (local.set $total_lines (i32.and
+              (call $edit_view_metrics (local.get $hwnd) (local.get $state_w)) (i32.const 0xFFFF)))
+            (local.set $lo (call $edit_layout_line_for_char (local.get $total_lines) (local.get $cur)))
+            (if (select (i32.eqz (local.get $lo))
+                  (i32.ge_u (i32.add (local.get $lo) (i32.const 1)) (local.get $total_lines))
+                  (i32.eq (local.get $vk) (i32.const 0x26)))
+              (then (return (i32.const 0))))
+            (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+            (local.set $buf (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
+            (local.set $hi (i32.sub (local.get $cur) (call $edit_layout_start (local.get $lo))))
+            (local.set $cx (i32.const 0))
+            (if (local.get $hi)
+              (then
+                (local.set $cx (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w))
+                  (local.get $hdc) (i32.add (local.get $buf) (call $edit_layout_start (local.get $lo)))
+                  (local.get $hi) (i32.const 0)))
+                (if (i32.eqz (local.get $cx))
+                  (then (local.set $cx (i32.mul (local.get $hi) (i32.const 8)))))))
+            (local.set $lo (i32.add (local.get $lo)
+              (select (i32.const -1) (i32.const 1) (i32.eq (local.get $vk) (i32.const 0x26)))))
+            (local.set $hi (call $edit_layout_len (local.get $lo)))
+            (local.set $lo (call $edit_layout_start (local.get $lo)))
+            (local.set $line_end (i32.const 0))
+            (local.set $pre_w (i32.const 0))
+            ;; Same prefix-midpoint policy as the existing native hit test;
+            ;; exhausting a shorter target row clamps to its visible end.
+            (block $vertical_done (loop $vertical_scan
+              (br_if $vertical_done (i32.ge_u (local.get $line_end) (local.get $hi)))
+              (local.set $px (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w))
+                (local.get $hdc) (i32.add (local.get $buf) (local.get $lo))
+                (i32.add (local.get $line_end) (i32.const 1)) (i32.const 0)))
+              (if (i32.eqz (local.get $px))
+                (then (local.set $px (i32.mul (i32.add (local.get $line_end) (i32.const 1)) (i32.const 8)))))
+              (br_if $vertical_done (i32.gt_s
+                (i32.shr_s (i32.add (local.get $pre_w) (local.get $px)) (i32.const 1)) (local.get $cx)))
+              (local.set $pre_w (local.get $px))
+              (local.set $line_end (i32.add (local.get $line_end) (i32.const 1)))
+              (br $vertical_scan)))
+            (local.set $cur (i32.add (local.get $lo) (local.get $line_end)))
+            (store.field.memarg EditState cursor (local.get $state_w) (local.get $cur))
+            (if (i32.eqz (local.get $a))
+              (then (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $cur))))
+            (call $edit_invalidate_caret (local.get $hwnd))
+            (return (i32.const 0))))
         ;; VK_UP 0x26
         (if (i32.eq (local.get $vk) (i32.const 0x26))
           (then
@@ -2544,6 +2608,18 @@
         (local.set $text_len (load.field.memarg EditState text_len (local.get $state_w)))
         (local.set $sel_lo (call $edit_sel_lo (local.get $state_w)))
         (local.set $sel_hi (call $edit_sel_hi (local.get $state_w)))
+        ;; Plain single-line ANSI EDIT hides the highlight on focus loss
+        ;; unless ES_NOHIDESEL is set. Only collapse the paint range: the
+        ;; stored selection survives and is highlighted again on focus gain.
+        (if (i32.and
+              (i32.and
+                (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+              (i32.and
+                (i32.eqz (i32.and (load.field.memarg EditState flags (local.get $state_w))
+                  (i32.const 0x0B)))
+                (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0100)))))
+          (then (local.set $sel_hi (local.get $sel_lo))))
         ;; Multiline edits with a vertical scrollbar and no ES_AUTOHSCROLL
         ;; behave like RichEdit license viewers: word-wrap text inside the
         ;; client rect.
@@ -3429,9 +3505,32 @@
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
+        ;; Plain ANSI wrapped EDIT uses display rows, as GETLINE/LINEINDEX
+        ;; do. Refresh paint's layout/font/cache even before the next paint
+        ;; after resizing or WM_SETFONT; row lengths exclude CRLF and the
+        ;; skipped wrap separator. Leave -1 and unsupported indices/shapes
+        ;; on their existing paths: selection endpoints need a separate
+        ;; established contract at soft breaks.
+        (if (i32.and
+              (i32.and (i32.ge_s (local.get $wParam) (i32.const 0))
+                (i32.le_u (local.get $wParam)
+                  (load.field.memarg EditState text_len (local.get $state_w))))
+              (i32.and
+                (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                  (i32.and
+                    (i32.ne (i32.and (load.field.memarg EditState flags (local.get $state_w))
+                      (i32.const 1)) (i32.const 0))
+                    (call $edit_wraps (local.get $hwnd))))))
+          (then
+            (local.set $sz (i32.and
+              (call $edit_view_metrics (local.get $hwnd) (local.get $state_w))
+              (i32.const 0xFFFF)))
+            (return (call $edit_layout_len
+              (call $edit_layout_line_for_char (local.get $sz) (local.get $wParam))))))
         ;; Plain, unwrapped EDIT: -1 counts the unselected portions of the
         ;; selection's lines. With no selection this is the caret line length.
-        ;; Keep shared helpers, nonnegative requests and RichEdit unchanged.
+        ;; Keep shared helpers and other control shapes unchanged.
         (if (i32.and (i32.eq (local.get $wParam) (i32.const -1))
                      (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
           (then
