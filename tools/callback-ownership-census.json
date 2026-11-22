@@ -5207,7 +5207,7 @@
     },
     {
       "file": "src/09a9-comctl32.wat",
-      "name": "$propsheet_page_callback",
+      "name": "$sync_stdcall3",
       "writes": 2,
       "boundaryCalls": [
         "$sync_depth_enter",
@@ -5220,14 +5220,14 @@
       "targets": [
         [
           "local.get",
-          "$callback"
+          "$fn"
         ],
         [
           "local.get",
           "$old_eip"
         ]
       ],
-      "sha256": "d16bdf814462af381f811f1786c295d6f3293c1dfd06d80d4f99a6fefbe160fc",
+      "sha256": "4436e99b841608f4f2ceffa6e8a39f1eb37ea0a0dc562ff1ece052ee63df0516",
       "kind": "mixed-dispatch",
       "reason": "Potential callback entry, completion, redirect or park; each listed EIP target remains pending retained-context ownership review.",
       "ownership": "pending"

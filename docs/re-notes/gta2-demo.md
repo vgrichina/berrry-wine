@@ -91,3 +91,56 @@ surface touches, so this is coexistence coverage, not a real-game test of
 foreign-thread pixel access. This initially remained opt-in; the subsequent
 shared-WebGL default rollout provides `?no-lazy-sync` and the live **Lazy sync**
 debug checkbox as opt-outs. The retained-GDI-pointer limitation still applies.
+
+## GTA2 Demo Manager property sheet (2026-11-21)
+
+`Program_Executable_Files/gta2 manager.exe` is a statically linked MFC
+`CPropertySheet` wizard (Back / Next / Cancel). Its pages are 264x282 DLU
+dialogs (language + text speed, video, audio...). It comes up at startup, so
+no clicks are needed:
+
+```sh
+E="test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2 manager.exe"
+node test/run.js --app=gta2_demo --exe="$E" --screen=1024x768 \
+  --quiet-api --max-seconds=30 --no-close --png=/tmp/mgr.png
+```
+
+**CLI vs browser:** the browser never loads a real `comctl32.dll` (no default
+path in `lib/dll-registry.js`), but the CLI loads
+`test/binaries/dlls/comctl32.dll` when that file exists, and the bug does not
+reproduce there. To see what the browser sees, remove that file from your
+worktree's `test/binaries/dlls/`.
+
+With the builtin WAT `PropertySheetA` the sheet showed only the three buttons
+over an empty gray area. That was three separate gaps, all fixed in
+`fix/gta2-options-page`:
+
+1. **No COMCTL32 dialog resources.**
+   - MFC's `AfxGetPropSheetFont` (inlined near VA `0x439e97`) calls
+     `FindResourceA(GetModuleHandle("COMCTL32.DLL"), 1006 IDD_PROPSHEET or
+     1020 IDD_WIZARD, RT_DIALOG)`. It then copies that template's face and
+     point size onto every page template.
+   - The builtin COMCTL32 image was header-only, so the lookup returned 0. The
+     uninitialized point-size WORD then made `dlg_load` measure huge base
+     units, with controls placed at e.g. `16167,9728 -32251x14336`.
+   - Fix: `$comctl32_install_resources` (08-pe-loader.wat) copies both stock
+     templates (8pt MS Sans Serif) into the image at RVA 0x400. `$push_rsrc_ctx`
+     now honours a static system module's own resource directory.
+2. **No WH_CBT HCBT_CREATEWND for the frame and pages.**
+   - MFC arms `AfxHookWindowCreate` (`SetWindowsHookExA(5, 0x42e546)`) before
+     `PropertySheetA`, and again in each page's PSPCB_CREATE. It attaches the
+     CWnd from the hook.
+   - Without the hook, `AfxDlgProc` never reaches `OnInitDialog`. The app's
+     setup never ran: it hides buttons 1125-1129, sets "Language" and
+     "Text Speed: 3", fills the trackbars, and so on.
+   - Fix: `$propsheet_cbt_create` (09c3a-dialog-runtime.wat) runs the CBT
+     chain for the builtin frame and each page.
+3. **Fixed 420x228 page area.**
+   - A 282 DLU page lost its lower half under the buttons.
+   - Fix: `$propsheet_measure_pages` sizes the page area to the largest page
+     template, never smaller than the old frame.
+
+The builtin sheet is still wizard-style even for tabbed (non-`PSH_WIZARD`)
+headers; tabbed mode is not implemented. Regression test:
+`test/test-property-sheet-mfc-host.js`. Evidence:
+`scratch/runs/20261121-gta2-options/` (before, after, Next/Next/Back).

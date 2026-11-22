@@ -702,6 +702,122 @@
     (call $gs32 (i32.add (local.get $base) (i32.const 212)) (i32.const 4096))
     (call $gs32 (i32.add (local.get $base) (i32.const 244)) (i32.const 16)))
 
+  ;; Win98 COMCTL32 carries the property-sheet frame templates IDD_PROPSHEET
+  ;; (1006) and IDD_WIZARD (1020), and applications read them through the
+  ;; module handle: MFC's AfxGetPropSheetFont does
+  ;; FindResource(GetModuleHandle("COMCTL32.DLL"), 1006 or 1020, RT_DIALOG)
+  ;; and copies that template's font onto every CPropertyPage before handing
+  ;; it to PropertySheet. With no resource it keeps an uninitialized WORD as
+  ;; the point size and an empty face, so each page was created in a font
+  ;; hundreds of points tall: the page measured its dialog units in it and
+  ;; every control landed tens of thousands of pixels away (GTA2 Demo
+  ;; Manager's sheet came up as an empty frame). The builtin module image
+  ;; therefore carries the same two templates -- Win98's geometry, styles,
+  ;; control ids and 8pt MS Sans Serif -- as an ordinary .rsrc directory at
+  ;; RVA 0x400 (see $comctl32_install_resources). Offsets in the directory are
+  ;; relative to the section; the data entries hold module RVAs.
+  (data (region.addr $COMCTL32_DIALOG_RSRC 0)
+    ;; root directory: 1 id entry
+    "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\01\00"
+    ;; RT_DIALOG (5) -> type directory at +0x18
+    "\05\00\00\00\18\00\00\80"
+    ;; type directory: 2 id entries
+    "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\02\00"
+    ;; 1006 IDD_PROPSHEET -> name directory at +0x38
+    "\ee\03\00\00\38\00\00\80"
+    ;; 1020 IDD_WIZARD -> name directory at +0x50
+    "\fc\03\00\00\50\00\00\80"
+    ;; 1006 language directory: 1 id entry
+    "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\01\00"
+    ;; en-US (0x409) -> data entry at +0x70
+    "\09\04\00\00\70\00\00\00"
+    ;; 1020 language directory: 1 id entry
+    "\00\00\00\00\00\00\00\00\00\00\00\00\00\00\01\00"
+    ;; en-US (0x409) -> data entry at +0x80
+    "\09\04\00\00\80\00\00\00"
+    ;; pad to +0x70
+    "\00\00\00\00\00\00\00\00"
+    ;; data entry 1006: RVA 0x490, 258 bytes
+    "\90\04\00\00\02\01\00\00\00\00\00\00\00\00\00\00"
+    ;; data entry 1020: RVA 0x594, 362 bytes
+    "\94\05\00\00\6a\01\00\00\00\00\00\00\00\00\00\00"
+    ;; --- IDD_PROPSHEET (1006) ---
+    ;; DLGTEMPLATE style=0x90c820c4 5 items 20,20 220x140, no menu/class/caption, 8pt "MS Sans Serif"
+    "\c4\20\c8\90\00\00\00\00\05\00\14\00\14\00\dc\00\8c\00\00\00\00\00\00\00"
+    "\08\00\4d\00\53\00\20\00\53\00\61\00\6e\00\73\00\20\00\53\00\65\00\72\00"
+    "\69\00\66\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x1 "OK" 4,122 50x14 style=0x50030001
+    "\01\00\03\50\00\00\00\00\04\00\7a\00\32\00\0e\00\01\00\ff\ff\80\00\4f\00"
+    "\4b\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x2 "Cancel" 58,122 50x14 style=0x50010000
+    "\00\00\01\50\00\00\00\00\3a\00\7a\00\32\00\0e\00\02\00\ff\ff\80\00\43\00"
+    "\61\00\6e\00\63\00\65\00\6c\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x3021 "&Apply" 112,122 50x14 style=0x58010000
+    "\00\00\01\58\00\00\00\00\70\00\7a\00\32\00\0e\00\21\30\ff\ff\80\00\26\00"
+    "\41\00\70\00\70\00\6c\00\79\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x9 "Help" 166,122 50x14 style=0x50030000
+    "\00\00\03\50\00\00\00\00\a6\00\7a\00\32\00\0e\00\09\00\ff\ff\80\00\48\00"
+    "\65\00\6c\00\70\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; SysTabControl32 id=0x3020 "" 4,4 212x114 style=0x50030200
+    "\00\02\03\50\00\00\00\00\04\00\04\00\d4\00\72\00\20\30\53\00\79\00\73\00"
+    "\54\00\61\00\62\00\43\00\6f\00\6e\00\74\00\72\00\6f\00\6c\00\33\00\32\00"
+    "\00\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; --- IDD_WIZARD (1020) ---
+    ;; DLGTEMPLATE style=0x90c800c4 8 items 20,20 290x46, no menu/class/caption, 8pt "MS Sans Serif"
+    "\c4\00\c8\90\00\00\00\00\08\00\14\00\14\00\22\01\2e\00\00\00\00\00\00\00"
+    "\08\00\4d\00\53\00\20\00\53\00\61\00\6e\00\73\00\20\00\53\00\65\00\72\00"
+    "\69\00\66\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; SysTabControl32 id=0x3020 "" 7,7 276x3 style=0x58020000
+    "\00\00\02\58\00\00\00\00\07\00\07\00\14\01\03\00\20\30\53\00\79\00\73\00"
+    "\54\00\61\00\62\00\43\00\6f\00\6e\00\74\00\72\00\6f\00\6c\00\33\00\32\00"
+    "\00\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Static id=0x3026 "" 7,17 276x1 style=0x50001000
+    "\00\10\00\50\00\00\00\00\07\00\11\00\14\01\01\00\26\30\ff\ff\82\00\00\00"
+    "\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x3023 "< &Back" 12,26 50x14 style=0x50010000
+    "\00\00\01\50\00\00\00\00\0c\00\1a\00\32\00\0e\00\23\30\ff\ff\80\00\3c\00"
+    "\20\00\26\00\42\00\61\00\63\00\6b\00\00\00\00\00"
+    ;; Button id=0x3024 "&Next >" 62,26 50x14 style=0x50010001
+    "\01\00\01\50\00\00\00\00\3e\00\1a\00\32\00\0e\00\24\30\ff\ff\80\00\26\00"
+    "\4e\00\65\00\78\00\74\00\20\00\3e\00\00\00\00\00"
+    ;; Button id=0x3025 "Finish" 119,26 50x14 style=0x50010000
+    "\00\00\01\50\00\00\00\00\77\00\1a\00\32\00\0e\00\25\30\ff\ff\80\00\46\00"
+    "\69\00\6e\00\69\00\73\00\68\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x2 "Cancel" 176,26 50x14 style=0x50010000
+    "\00\00\01\50\00\00\00\00\b0\00\1a\00\32\00\0e\00\02\00\ff\ff\80\00\43\00"
+    "\61\00\6e\00\63\00\65\00\6c\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Button id=0x9 "Help" 233,26 50x14 style=0x50030000
+    "\00\00\03\50\00\00\00\00\e9\00\1a\00\32\00\0e\00\09\00\ff\ff\80\00\48\00"
+    "\65\00\6c\00\70\00\00\00\00\00"
+    ;; DWORD align
+    "\00\00"
+    ;; Static id=0x3027 "" 0,35 290x1 style=0x50001000
+    "\00\10\00\50\00\00\00\00\00\00\23\00\22\01\01\00\27\30\ff\ff\82\00\00\00"
+    "\00\00"
+  )
+
   ;; Called under DLL_LOAD_LOCK. Publish after the image is entirely written;
   ;; workers share the same identities and a failed allocation publishes none.
   (func $static_sys_dll_ensure_locked (param $index i32) (result i32)
@@ -717,8 +833,24 @@
     (if (i32.eqz (local.get $base))
       (then (global.set $last_error (i32.const 8)) (return (i32.const 0))))
     (call $native_module_headers (local.get $base) (i32.const 4096))
+    (if (call $str_eq (call $static_sys_dll_name_at (local.get $index)) "comctl32")
+      (then (call $comctl32_install_resources (local.get $base))))
     (i32.atomic.store (local.get $cell) (local.get $base))
     (local.get $base))
+
+  ;; Copy the RT_DIALOG section to RVA 0x400 of the header-only COMCTL32
+  ;; image and publish it as IMAGE_DIRECTORY_ENTRY_RESOURCE, so the module
+  ;; handle answers FindResource/LoadResource like any mapped PE.
+  (func $comctl32_install_resources (param $base i32)
+    (local $i i32)
+    (loop $copy
+      (call $gs8 (i32.add (local.get $base) (i32.add (i32.const 0x400) (local.get $i)))
+        (i32.load8_u (i32.add (global.get $COMCTL32_DIALOG_RSRC) (local.get $i))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $copy (i32.lt_u (local.get $i) (global.get $COMCTL32_DIALOG_RSRC_SIZE))))
+    (call $gs32 (i32.add (local.get $base) (i32.const 264)) (i32.const 0x400))
+    (call $gs32 (i32.add (local.get $base) (i32.const 268))
+      (global.get $COMCTL32_DIALOG_RSRC_SIZE)))
 
   (func $kernel32_ensure_locked (result i32)
     (local $base i32)

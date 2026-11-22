@@ -456,6 +456,9 @@
     (owner "08-pe-loader.wat:$kernel32_ensure_locked"))
   (region.declare $STATIC_SYS_DLL_IMAGES (size 0x00000100) (align 0x00000100)
     (owner "08-pe-loader.wat:$static_sys_dll_ensure_locked"))
+  ;; RT_DIALOG section copied into the builtin COMCTL32 module image.
+  (region.declare $COMCTL32_DIALOG_RSRC (size 0x00000300) (align 0x00000010)
+    (owner "08-pe-loader.wat:$comctl32_install_resources"))
   (region.declare $DLL_SYNTHETIC_REFS (size 0x00000100) (align 0x00000100)
     (owner "09a0-handlers-base.wat:$dll_synthetic_reference"))
   (region.declare $DLL_LIFECYCLE_TABLE (size 0x00001000) (align 0x00000100)
