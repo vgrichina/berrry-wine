@@ -28,6 +28,8 @@ if (!fs.existsSync(EXE)) {
 fs.mkdirSync(OUT_DIR, { recursive: true });
 
 const seq = [
+  // Establish a visible editing viewport before testing caret painting.
+  '68:main-resize:640:480',
   '70:click:40:150',
   '72:dump-focus-state:clicked',
 ];

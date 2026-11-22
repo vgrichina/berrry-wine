@@ -1458,12 +1458,10 @@
 
   ;; 459: GetCaretPos(lpPoint) — report the last USER caret coordinates.
   (func $handle_GetCaretPos (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
     (if (local.get $arg0)
       (then
-        (local.set $wa (call $g2w (local.get $arg0)))
-        (i32.store (local.get $wa) (global.get $caret_x))
-        (i32.store offset=4 (local.get $wa) (global.get $caret_y))))
+        (call $gs32 (local.get $arg0) (global.get $caret_x))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (global.get $caret_y))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) ;; 1 arg stdcall
   )
