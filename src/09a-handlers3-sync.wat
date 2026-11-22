@@ -293,14 +293,8 @@
   ;; toggle bits remain intentionally unmodeled. The host setter updates the
   ;; same async-key backing consumed by subsequent keyboard-state queries.
   (func $handle_SetKeyboardState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $state i32) (local $i i32)
+    (local $i i32)
     (if (i32.eqz (local.get $arg0))
-      (then
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-        (return)))
-    (local.set $state (call $g2w_affine_span (local.get $arg0) (i32.const 256)))
-    (if (i32.eq (local.get $state) (global.get $NULL_SENTINEL))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
@@ -308,7 +302,7 @@
     (block $done (loop $keys
       (br_if $done (i32.ge_u (local.get $i) (i32.const 256)))
       (call $host_set_key_down_state (local.get $i)
-        (i32.and (i32.load8_u (i32.add (local.get $state) (local.get $i)))
+        (i32.and (call $gl8 (i32.add (local.get $arg0) (local.get $i)))
                  (i32.const 0x80)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $keys)))
