@@ -1514,6 +1514,7 @@ const extra = [
   { name: 'DirectSoundCreate8', nargs: 3 },
   { name: 'IDirectSound8_VerifyCertification', nargs: 2 },
   { name: 'SetDoubleClickTime', nargs: 1 },
+  { name: 'MapVirtualKeyExW', nargs: 3 },
 ];
 for (const api of extra) {
   const ownsHandler = Object.prototype.hasOwnProperty.call(api, 'handler');

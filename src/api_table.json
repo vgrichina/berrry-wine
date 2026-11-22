@@ -39875,5 +39875,12 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 628350711
+  },
+  {
+    "id": 4718,
+    "name": "MapVirtualKeyExW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3034926847
   }
 ]

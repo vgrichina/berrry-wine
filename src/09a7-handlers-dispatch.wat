@@ -5138,6 +5138,10 @@
     (call $handle_MapVirtualKeyA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
 
+  ;; MapVirtualKeyExW shares ExA's supported US mapping and three-argument ABI.
+  (func $handle_MapVirtualKeyExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_MapVirtualKeyExA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
+
   ;; 786: DisableThreadLibraryCalls(hModule) — suppress this loaded DLL's
   ;; DLL_THREAD_ATTACH/DETACH notifications. Static-TLS and invalid modules
   ;; fail with ERROR_INVALID_PARAMETER rather than reporting fake success.
