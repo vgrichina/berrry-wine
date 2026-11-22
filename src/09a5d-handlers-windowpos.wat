@@ -18,7 +18,7 @@
   ;; signed 16-bit halves, matching the Win32 contract.
   (func $handle_MapWindowPoints (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dx i32) (local $dy i32)
-    (local $i i32) (local $p i32)
+    (local $i i32) (local $p i32) (local $ga i32)
     (local.set $dx (i32.sub
       (call $wnd_client_screen_x (local.get $arg0))
       (call $wnd_client_screen_x (local.get $arg1))))
@@ -27,14 +27,18 @@
       (call $wnd_client_screen_y (local.get $arg1))))
     ;; Apply to each POINT (or RECT = 2 POINTs, caller picks cPoints)
     (local.set $i (i32.const 0))
-    (local.set $p (call $g2w (local.get $arg2)))
+    (local.set $ga (local.get $arg2))
     (block $apply_done (loop $apply
       (br_if $apply_done (i32.ge_u (local.get $i) (local.get $arg3)))
+      ;; Adjacent guest pages can have separate backing, even within a scalar.
+      ;; Gather one POINT at a time to keep scratch use bounded for any count.
+      (local.set $p (call $guest_span_in (local.get $ga) (i32.const 8)))
       (store.field Point x (local.get $p)
         (i32.add (load.field Point x (local.get $p)) (local.get $dx)))
       (store.field.memarg Point y (local.get $p)
         (i32.add (load.field.memarg Point y (local.get $p)) (local.get $dy)))
-      (local.set $p (i32.add (local.get $p) (i32.const 8)))
+      (call $guest_span_writeback (local.get $ga) (local.get $p) (i32.const 8))
+      (local.set $ga (i32.add (local.get $ga) (i32.const 8)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $apply)))
     (i32.store offset=0 (global.get $reg_base) (i32.or (i32.and (local.get $dx) (i32.const 0xFFFF))
