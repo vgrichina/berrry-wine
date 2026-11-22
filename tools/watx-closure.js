@@ -70,11 +70,13 @@ function watxSourceClosure() {
 // deliberate NON-canonical build (docs/watx-region-safety-design.md §8) whose
 // whole purpose is to move the memory map and see what breaks, and it reaches
 // the region allocator and nothing else. Absent, it is not passed at all.
-// A closure protectClosure() already produced (or deriveProtectedClosure()
-// derived from one) is compiled as is — see prepareClosure below. Anything else
-// that is the runtime is protected here, on every call.
-function compileClosure(closure, { tailCalls, regionShake, nameSection, frontendReuse, facts } = {}) {
-  closure = prepareClosure(closure);
+// The closure is compiled exactly as given. What used to be two source-text
+// rewrites applied here is now WATX source: the export guards are an
+// (export-wrap ...) declaration in src/13a-export-guards.wat, and the compat
+// artifact's trampoline dispatch is `(if-const (target tail-calls) ...)` in
+// src/04-cache.wat, chosen by `tailCalls` below. `define` sets (defoption ...)
+// values; the shipped artifacts use every option's default.
+function compileClosure(closure, { tailCalls, regionShake, nameSection, frontendReuse, facts, define } = {}) {
   const { compile } = require(path.join(__dirname, 'watx.js'));
   const options = {
     mode: 'production',
@@ -104,27 +106,8 @@ function compileClosure(closure, { tailCalls, regionShake, nameSection, frontend
   if (frontendReuse) options.frontendReuse = frontendReuse;
   // Pass-1 facts (docs/watx-facts.md) are read-only and never change the bytes.
   if (facts) options.facts = true;
+  if (define && Object.keys(define).length) options.define = define;
   return compile(closure.source, closure.vfs, options);
 }
 
-// Protect a runtime closure ONCE so several compiles (the tail and compat
-// artifacts, the named build) can share the result and its unchanged source
-// strings. Idempotent: a closure that is still exactly what protection sealed
-// comes back unchanged; a non-runtime closure comes back unchanged too.
-function prepareClosure(closure) {
-  const { isRuntimeClosure, isProtectedClosure, protectClosure } = require('./protected-writer-entries.js');
-  if (isProtectedClosure(closure)) return closure;
-  return isRuntimeClosure(closure) ? protectClosure(closure) : closure;
-}
-
-// A source overlay (lib/dispatch-trampoline.js's compat edit) on a prepared
-// closure. A protected closure stays protected without a second protection
-// pass, provided the overlay leaves every export-bearing form untouched — which
-// deriveProtectedClosure checks and refuses otherwise.
-function overlayClosure(closure, transform) {
-  const { isProtectedClosure, deriveProtectedClosure } = require('./protected-writer-entries.js');
-  if (isProtectedClosure(closure)) return deriveProtectedClosure(closure, transform);
-  return Object.assign({}, closure, { vfs: transform(new Map(closure.vfs)) });
-}
-
-module.exports = { watxSourceClosure, compileClosure, prepareClosure, overlayClosure };
+module.exports = { watxSourceClosure, compileClosure };

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/07c-block-exec.wat",
+      "name": "$th_block_exec",
+      "baseSHA256": "63ba349e778e3f303b95a315e4125f5b10bc3287e438ea2c0c47b8bd38fba7ac",
+      "sha256": "b14523493295afac59f33bc30e9fff2afc1f6b6ce5573264cd471b04f3e6dd17",
+      "reason": "Review 20261121 WATX compile-time dispatch: a (dispatch-drain) macro follows each of the two fallback call_indirect handler entries. It expands to (call $tramp_drive) only in a no-tail-call TRAMPOLINE_DISPATCH build and to nothing otherwise; it is the same driver call lib/dispatch-trampoline.js used to insert as text into the compat source, at the same two sites. Tail and compat artifacts compiled without the export guards are byte-identical to the previous overlay builds. No callback producer, EIP write, boundary call or lifetime changed."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "47a412c8028db6238f732af81747e22a5875ea0a4b360d67f7dea0438aa971e7",
+      "sha256": "41a4a939d1115ad5d270efafbe487f126c5b9071037db23fb3640c545c829db8",
+      "reason": "Review 20261121 WATX compile-time dispatch: (dispatch-drain) follows each of $run's two (call $next). It expands to (call $tramp_drive) only in a no-tail-call TRAMPOLINE_DISPATCH build and to nothing otherwise; it replaces the identical text edit lib/dispatch-trampoline.js applied to the compat source. Tail and compat artifacts compiled without the export guards are byte-identical to the previous overlay builds. No callback producer, EIP write, boundary call or lifetime changed."
+    }
+  ]
+}

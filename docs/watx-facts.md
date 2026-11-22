@@ -32,8 +32,9 @@ exactly as correct as it was — only slower.
   "version": 1,
   "generator": "tools/build-compile-wat.js",
   "entry": "src/main.watx",
-  "canonical": true,            // false for a WINE_REGION_SHAKE build — readers reject it
+  "canonical": true,            // false for a WINE_REGION_SHAKE or --define build — readers reject it
   "regionShake": null,
+  "defines": {},                // --define NAME=VALUE given to the build; non-empty => not canonical
   "compiler": "<sha256>",       // over tools/watx-src/compiler-{parser,stages,codegen}.js + compiler.js
   "inputs": { "01-header.wat": "<sha256 of the bytes compiled>", ... },  // every src/*.wat(x)
   "module": { ...compiler facts, below... }
@@ -46,9 +47,13 @@ compiler sources on disk, and `inputs` equals the SHA-256 of every
 `src/*.wat`/`src/*.watx` file on disk (same names, same bytes, nothing added or
 removed).
 
-The facts describe the **tail-call artifact as compiled** — i.e. after
-`tools/protected-writer-entries.js` wrapped the exports, so `exports[].target`
-of a protected export names its wrapper, not the implementation.
+The facts describe the **tail-call artifact as compiled**. The store-step
+export guards are source (`src/13a-export-guards.wat`, a WATX `export-wrap`),
+so a guarded export's `target` names its generated wrapper and
+`implementation` names the function that finally runs; `wrappers` lists the
+export-wrap declarations applied, outermost first (indices into
+`exportWraps`). An unguarded export has `wrappers: []`; `pure: true` marks
+one the compiler inferred cannot write anything (docs/watx-language-compile-time.md).
 
 ## Compiler facts (`module`)
 
@@ -58,7 +63,9 @@ of a protected export names its wrapper, not the implementation.
 | `regions` | the allocator's report — exactly `compile().regions`: `{shake, shaken, shakeScaledDown, allocated, floor, imageBase, regions[{name,kind,base,size,align,owner}]}` |
 | `memory` | `{imported, module, name, min, max, shared}` |
 | `imports` | `{kind:'func', module, name, target, index, params[], results[]}`, `{kind:'global', module, name, target, index, type, mutable}`, `{kind:'memory', module, name}` |
-| `exports` | export-section order: `{name, kind, index}`, plus `target` (function/global name) and, for functions, `params[]`/`results[]` |
+| `exports` | export-section order: `{name, kind, index}`, plus `target` (function/global name) and, for functions, `params[]`/`results[]`; when the program declares an `export-wrap`, each function export also has `wrappers[]`, `implementation` and (if a selector asked) `pure` |
+| `exportWraps` | present when the program declares one: `{index, file, line, match, prologueForms}` per `export-wrap`, in declaration order |
+| `compileTime` | `{options[{name, type, members?, default, value, source:'default'|'define', doc, file, line}], constants[{name, value, reads[], file, line}], targets{feature: bool}, reads{file: ['option X'|'target Y', ...]}}` — i64 values as decimal strings; `reads` is transitive through constants and is exactly what a per-file cache must key on |
 | `functions` | defined functions in index order: `{name, index, params[], paramNames[], results[]}` (`params` are the declared types, so `ptr<L>` stays visible) |
 | `globals` | global index space: imported `{name, index, type, mutable, imported:true}`, defined `{..., imported:false, init}` where `init` is `{kind:'const', value}` (i64 as a decimal string; floats as `{kind:'const', literal}`), `{kind:'region', op, region, value}` with the resolved address, or `{kind:'runtime', runtime}` |
 | `data` | active segments: `{offset, size}`, the string pool as `{offset, size, stringPool:true}` |

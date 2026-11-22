@@ -622,7 +622,7 @@
           (global.set $ip (global.get $resume_ip))
           (global.set $resume_ip (i32.const 0))
           (global.set $steps (i32.const 256))
-          (call $next)
+          (call $next) (dispatch-drain)
           (if (global.get $page_chunk_deferred)
             (then (call $page_chunk_reclaim_deferred)))
           (br $main)))
@@ -895,7 +895,7 @@
       (global.set $steps (i32.const 256))
       (if (global.get $native_store_on)
         (then (call $native_store_set_pc (global.get $eip))))
-      (call $next)
+      (call $next) (dispatch-drain)
       (if (global.get $native_store_on)
         (then (call $native_store_set_pc (i32.const 0))))
       (if (global.get $page_chunk_deferred)
@@ -4389,12 +4389,25 @@
   ;; Write guest memory (guest addr)
   (func (export "guest_write32") (param $ga i32) (param $val i32)
     (call $gs32 (local.get $ga) (local.get $val)))
+  ;; guest_read8/32 stay callable while store stepping is armed (13a-export-
+  ;; guards.wat allows them by name), so an armed observation must never enter
+  ;; g2w's fault/SEH paths: it reads the direct window only, with the bound
+  ;; checked before the load, including wrap and the whole word, and traps
+  ;; outside it. Disarmed, they are the ordinary $gl32/$gl8 reads.
   (func (export "guest_read32") (param $ga i32) (result i32)
+    (if (global.get $rep_store_step) (then
+      (if (i32.gt_u (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE))
+                    (i32.sub (region.end $DIRECT_WINDOW) (i32.const 4))) (then (unreachable)))
+      (return (i32.load (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE))))))
     (call $gl32 (local.get $ga)))
 
   (func (export "guest_write8") (param $ga i32) (param $val i32)
     (call $gs8 (local.get $ga) (local.get $val)))
   (func (export "guest_read8") (param $ga i32) (result i32)
+    (if (global.get $rep_store_step) (then
+      (if (i32.gt_u (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE))
+                    (i32.sub (region.end $DIRECT_WINDOW) (i32.const 1))) (then (unreachable)))
+      (return (i32.load8_u (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE))))))
     (call $gl8 (local.get $ga)))
 
   ;; Decoded-code arena bounds and the spill slot, exercised by

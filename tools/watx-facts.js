@@ -61,7 +61,7 @@ function sourceHashes(dir = SRC) {
 
 // The document tools/build-compile-wat.js writes: the compiler's facts plus the
 // build-side provenance needed to prove them current.
-function buildFactsDocument(compilerFacts, closure, shake) {
+function buildFactsDocument(compilerFacts, closure, shake, defines = {}) {
   const inputs = {};
   for (const name of Object.keys(closure.inputs || {}).sort()) inputs[name] = closure.inputs[name];
   return {
@@ -69,8 +69,11 @@ function buildFactsDocument(compilerFacts, closure, shake) {
     version: VERSION,
     generator: 'tools/build-compile-wat.js',
     entry: closure.entry || null,
-    canonical: !shake,
+    // A `--define` build compiled different source choices than the shipped
+    // artifacts, so its facts are not the canonical ones either.
+    canonical: !shake && !Object.keys(defines).length,
     regionShake: shake ? shake.value : null,
+    defines: Object.assign({}, defines),
     compiler: compilerFingerprint(),
     inputs,
     module: compilerFacts,

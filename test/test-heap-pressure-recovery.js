@@ -7,7 +7,6 @@ const fs=require('node:fs'),path=require('node:path');
 const ROOT=process.cwd();
 const baseline=process.env.WA_PRESSURE_EXPECT_BASELINE==='1';
 const {watxSourceClosure,compileClosure}=require(ROOT+'/tools/watx-closure');
-const {applyToVfs}=require(ROOT+'/lib/dispatch-trampoline');
 const sigs=require(ROOT+'/lib/host-import-sigs.generated.json').sigs;
 const regions=require(ROOT+'/lib/region-map.generated');
 const extra=`
@@ -35,7 +34,7 @@ function compile(mode){
  let testExports=extra;
  if(baseline)testExports=testExports.replace('(call $heap_compact_free_list_bounded (local.get $budget))','(call $heap_compact_free_list)').replace('(global.get $heap_compact_work)','(i32.const 0)');
  const c=watxSourceClosure();for(const k of ['13-exports.wat','src/13-exports.wat','./13-exports.wat'])c.vfs.set(k,c.vfs.get(k)+'\n'+testExports);
- const r=compileClosure({...c,vfs:mode==='compat'?applyToVfs(new Map(c.vfs)):c.vfs},{tailCalls:mode!=='compat'});
+ const r=compileClosure(c,{tailCalls:mode!=='compat'});
  assert(r.success,r.error||r.message);return Buffer.from(r.wasmBinary);
 }
 (async()=>{

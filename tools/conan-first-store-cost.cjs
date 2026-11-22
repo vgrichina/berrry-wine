@@ -141,17 +141,20 @@ function compile(mode, out, compat = false, mapOnly = false) {
   }
   const sourcePatch = Buffer.from(require('./unified-diff.js').patchOf(changes));
   fs.writeFileSync(path.join(out, 'observer.patch'), sourcePatch);
-  let vfs = closure.vfs;
-  if (compat) vfs = require('../lib/dispatch-trampoline').applyToVfs(new Map(vfs));
-  const {protectClosure,parse} = require('./protected-writer-entries');
-  const protectedSource = protectClosure({...closure,vfs});
+  // One closure for both artifacts: the compat dispatch is chosen in source by
+  // (if-const (target tail-calls) ...), the export guards are an export-wrap.
+  // The index map is source order; export-wrap wrappers are appended after
+  // every written function, so they never shift a written function's index.
+  const vfs = closure.vfs;
+  const {parseSource} = require('./watx');
   const imports = [], functions = [];
   for (const file of require('../lib/wat-manifest').WAT_FILES) {
-    for (const form of parse(protectedSource.vfs.get(file))) {
-      const head = form.items?.[0]?.atom;
-      if (head === 'import' && form.items[3]?.items?.[0]?.atom === 'func')
-        imports.push({name:form.items[3].items[1].atom,file});
-      if (head === 'func') functions.push({name:form.items[1].atom,file});
+    for (const form of parseSource(vfs.get(file), file)) {
+      if (!Array.isArray(form)) continue;
+      const head = form[1];
+      if (head === 'import' && Array.isArray(form[4]) && form[4][1] === 'func')
+        imports.push({name:form[4][2],file});
+      if (head === 'func') functions.push({name:form[2],file});
     }
   }
   const functionMap = [...imports,...functions].map((f,index)=>({...f,index}));

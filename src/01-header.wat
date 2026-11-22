@@ -12,6 +12,23 @@
   ;; Forth-style threaded code x86 interpreter — full i486 ISA
   ;; ============================================================
 
+  ;; ---- Compile-time options (WATX defoption/defconst) ----
+  ;; Declared here, ahead of every form, because a condition sees only what is
+  ;; declared EARLIER in include order, and the macros that read these expand
+  ;; in functions all over the tree. Values: build/watx-facts.json
+  ;; (module.compileTime); set with `node tools/build-compile-wat.js --define
+  ;; NAME=VALUE` (a defined build is not canonical).
+  ;;
+  ;; How a build WITHOUT wasm tail calls dispatches (04-cache.wat, the tail of
+  ;; (dispatch-next)). `trampoline` is what build/wine-assembly.compat.wasm
+  ;; ships; `nested` is the pre-2026-09-22 shape, kept as a measured A/B arm
+  ;; (tools/build-dispatch-variant.js --variant=nested). A tail-call build
+  ;; ignores it.
+  (defoption COMPAT_DISPATCH (enum trampoline nested) trampoline
+    "Dispatch shape when the target has no tail calls: a flat driver loop, or call;return chains")
+  (defconst TRAMPOLINE_DISPATCH
+    (and (not (target tail-calls)) (eq (option COMPAT_DISPATCH) trampoline)))
+
   ;; ---- Host imports ----
   (import "host" "log" (func $host_log (param i32 i32)))
   (import "host" "log_i32" (func $host_log_i32 (param i32)))

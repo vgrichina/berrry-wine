@@ -3,7 +3,6 @@ const fs = require('fs'), path = require('path'), assert = require('assert');
 const ROOT = path.resolve(__dirname, '..');
 const watx = require('../tools/watx.js');
 const {compileClosure} = require('../tools/watx-closure.js');
-const {applyToVfs} = require('../lib/dispatch-trampoline.js');
 const evidenceArg = process.argv.find(x => x.startsWith('--evidence='));
 const fixtureArg = process.argv.find(x => x.startsWith('--frontend-fixture='));
 // Preload the actual production entry point with a portable SMALL source closure.
@@ -53,8 +52,9 @@ if (require.main !== module && fixtureArg) {
   for(const suffix of ['.wasm','.compat.wasm','.named.wasm']) assert.deepStrictEqual(fs.readFileSync(path.join(out,'baseline'+suffix)),fs.readFileSync(path.join(out,'candidate'+suffix)));
   const ea=cli('baseline-error',true,'\n(include "missing.wat")'),eb=cli('candidate-error',false,'\n(include "missing.wat")');
   assert.strictEqual(ea.status,1);assert.strictEqual(eb.status,1);assert.strictEqual(ea.stderr,eb.stderr);
-  const compat={...closure,vfs:applyToVfs(new Map(closure.vfs))};
-  assert.notStrictEqual(compat.vfs.get('04-cache.wat'),closure.vfs.get('04-cache.wat'));
+  // The compat artifact compiles the same closure: (if-const (target tail-calls) ...)
+  // in src/04-cache.wat chooses its trampoline dispatch from tailCalls alone.
+  const compat=closure;
   const reuse=watx.createFrontendReuse();
   let checks=0;
   function compare(c,options={}) {

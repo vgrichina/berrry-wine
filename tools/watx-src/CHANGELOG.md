@@ -1,3 +1,68 @@
+## 2026-11-21 — compile-time configuration and export wrappers
+
+Two language features, so a host no longer rewrites source text before
+compiling it. Reference: docs/watx-language-compile-time.md.
+
+1. Compile-time configuration. `(defoption NAME TYPE DEFAULT "doc")` with TYPE
+   `bool`, `i32`, `i64` or `(enum a b ...)`; `(defconst NAME EXPR)`; reads
+   `(option NAME)`, `(const NAME)`, `(target FEATURE)` (`tail-calls` and
+   `production` follow `tailCalls`/`mode`; `simd`, `threads`, `multi-memory`
+   only from `options.targets`, and reading one the build did not state is an
+   error); operators `and or not eq ne lt le gt ge add sub mul shl shr and-bits
+   or-bits`; `(if-const C (then ...) [(else ...)])` and `(cond-const (C ...)
+   ... [(else ...)])` at module level, in function bodies and in macro bodies.
+   The chosen arm splices like `begin`; the other is parsed but never expanded
+   or checked. A condition sees only declarations EARLIER in include order.
+   `(const NAME)` is also an immediate: `(i32.const (const N))`. Values come
+   from `options.define` (`{NAME: value}`); an unknown name, a defconst name, or
+   a value of the wrong type or range is an error. New in
+   `compiler-stages.js`: the environment (`createWatxCompileEnv`), evaluator and
+   the `expandForm` hooks; `expandMacros(forms, env)` takes the environment.
+   `compiler-parser.js`: `scanWatxFunctionHeader` passes it to header macros.
+   `compiler.js`: the streaming front end gives each form the declarations
+   visible at its position (pass 2 re-expands with the same view), and expands
+   in pass 1 any function that spells a conditional or uses a macro whose
+   conditional arms hold indirect-call types, so an unchosen arm never
+   registers a type or a header clause.
+
+2. `(export-wrap (match SELECTOR) (prologue FORMS...))`, SELECTOR `(all)`
+   `(name "a" ...)` `(prefix "p" ...)` `(pure)` `(not S)` `(and S...)` `(or S...)`.
+   Each matching function export moves to a generated function with the same
+   signature whose body is the prologue (params are locals 0..n-1; it may
+   `return`) followed by a call to the original. Several declarations nest in
+   declaration order, the first outermost. Internal calls keep their targets;
+   wrappers are appended after every other form, so no existing function index
+   moves; every export keeps its place in the export section (a moved inline
+   clause is registered at its home function). `(pure)` is inferred,
+   conservatively, from the expanded body: only folded reads, constants,
+   loads, non-store non-atomic numeric ops, `select` and region/layout
+   constants; any `(effects ...)` clause, import, empty body, control flow,
+   `local.set`, call, store, `memory.*` or atomic is impure.
+   `applyWatxExportWraps` in `compiler-stages.js`, run once after expansion in
+   both front ends; `compiler-codegen.js`'s fallback export collector honours
+   the home registration.
+
+Facts (`facts: true`) gain `compileTime` (options with value and source,
+constants with what they read, targets, and per file the options/targets its
+forms read, transitively through constants: the key a per-file cache needs),
+`exportWraps`, and on each function export `wrappers` (outermost first),
+`implementation` and `pure`. A module with no `export-wrap` and no
+compile-time form compiles exactly as before: the front-end reuse cache keys
+lexical ranges only, which no option changes.
+
+Evidence: `test/watx-compiler-cfg.test.js` (64 checks) and
+`test/watx-compiler-export-wrap.test.js` (32 checks) compile AND call every
+case through both front ends. On this tree, the canonical build with the
+export-wrap include dropped is byte-identical to the previous compiler's
+unprotected build (tail `c4521cdcc3a767731b491e84c3569de5deaf343037f506b34d4113631ef7bf9f`,
+compat `a0d9092fb5a3cdbb719c73757c7fb9c7310736731f43738c9bbb8a7c05e05ed3`,
+nested `--define COMPAT_DISPATCH=nested` compat
+`653bb3a168e232814ac8cf04ccc4641364ad2141198b1ee3acb3ff9552c5b9f8` = the old overlay-free compat), and the wrapped export set
+equals the previous source-rewrite inventory export for export (1766 wrapped,
+660 inferred pure, same signatures).
+
+Manifest-sha256: c84cf803c24cfe919e0479866c0a8befdbd1e7d1a4dd6bd130e3f96e7d982b22
+
 ## 2026-11-21 — opt-in pass-1 facts (`compile(..., { facts: true })`)
 
 `compile()` takes a new option, `facts`, and when it is set returns

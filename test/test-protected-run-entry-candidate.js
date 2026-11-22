@@ -12,12 +12,13 @@ const crypto = require('crypto');
 const { createHostImports } = require('../lib/host-imports');
 const { compileSrcWasm } = require('./compile-src');
 const { WAT_FILES } = require('../lib/wat-manifest');
-const { parse } = require('../tools/protected-writer-entries');
+const { parseSource } = require('../tools/watx');
 const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const globals = [];
-for (const file of WAT_FILES) for (const form of parse(fs.readFileSync(path.join(__dirname, '../src', file), 'utf8'))) {
-  if (form.items?.[0].atom === 'global' && form.items[2]?.items?.[0].atom === 'mut') {
-    globals.push({ name: form.items[1].atom, type: form.items[2].items[1].atom });
+// Every module-level mutable global (WATX AST: [loc, head, ...items]).
+for (const file of WAT_FILES) for (const form of parseSource(fs.readFileSync(path.join(__dirname, '../src', file), 'utf8'), file)) {
+  if (Array.isArray(form) && form[1] === 'global' && Array.isArray(form[3]) && form[3][1] === 'mut') {
+    globals.push({ name: form[2], type: form[3][2] });
   }
 }
 const fixture = `

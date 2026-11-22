@@ -28,7 +28,7 @@ try {
   const real = path.join(temp, 'real-closure');
   function realPut(file, bytes) { put(path.join('real-closure', file), bytes); }
   for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js',
-    'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'lib/wat-manifest.js'])
+    'tools/watx-closure.js', 'lib/wat-manifest.js'])
     realPut(file, fs.readFileSync(path.join(root, file)));
   realPut('src/main.watx', '(module (include "13-exports.wat"))');
   realPut('src/13-exports.wat', '(global $rep_store_step (mut i32) (i32.const 0))');
@@ -69,7 +69,7 @@ exports.compile=(source,vfs,options)=>{
       } finally { realPut('tools/watx.js', compilerDouble); }
     });
   }
-  for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js', 'lib/wat-manifest.js', 'tools/protected-writer-entries.js']) copy(file);
+  for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js', 'lib/wat-manifest.js']) copy(file);
   put('src/main.watx', '(include "13-exports.wat")\n');
   put('src/13-exports.wat', ';; fixture exports\n');
   put('tools/watx.js', 'throw new Error("full compiler must never load in protocol tests");');
@@ -142,7 +142,7 @@ process.on('beforeExit',()=>{throw Error('prepare failed to exit before test bod
   }
   ok('changed extraWat rejects', () => assert.throws(() => protocol.consumeArtifact(artifact, { ...options, extraWat: options.extraWat + ' ' }), /provenance/));
   ok('changed tailCalls rejects', () => assert.throws(() => protocol.consumeArtifact(artifact, { ...options, tailCalls: false }), /provenance/));
-  for (const file of ['src/13-exports.wat', 'src/main.watx', 'tools/watx-src/compiler.js', 'tools/watx.js', 'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'test/compile-src.js', 'test/render-helper.js']) {
+  for (const file of ['src/13-exports.wat', 'src/main.watx', 'tools/watx-src/compiler.js', 'tools/watx.js', 'tools/watx-closure.js', 'test/compile-src.js', 'test/render-helper.js']) {
     const good = fs.readFileSync(path.join(temp, file));
     reject(`changed ${file} rejects without cached identity`, () => put(file, Buffer.concat([good, Buffer.from('\n;;change')])), () => put(file, good), /provenance/);
   }

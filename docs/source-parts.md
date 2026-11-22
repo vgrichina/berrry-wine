@@ -117,3 +117,4 @@
 | `11-seh.wat` | Win32 Structured Exception Handling |
 | `12-wsprintf.wat` | wsprintf/sprintf implementation |
 | `13-exports.wat` | WASM exports (run, get_eip, register accessors, etc.) |
+| `13a-export-guards.wat` | Store-step export guard: one WATX `export-wrap` (default-deny, pure exports and four named exceptions exempt); see docs/watx-language-compile-time.md |

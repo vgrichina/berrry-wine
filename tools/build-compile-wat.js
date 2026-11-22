@@ -2,8 +2,15 @@
 'use strict';
 
 // Compiles the two canonical artifacts, build/wine-assembly.wasm (tail calls)
-// and build/wine-assembly.compat.wasm (no tail calls; trampoline dispatch,
-// lib/dispatch-trampoline.js).
+// and build/wine-assembly.compat.wasm (no tail calls; the trampoline dispatch
+// that src/04-cache.wat selects with `(if-const (target tail-calls) ...)`).
+// Both compile the same closure; only the compiler's `tailCalls` differs.
+//
+// `--define NAME=VALUE` (repeatable; also `--define=NAME=VALUE`) sets a WATX
+// `(defoption NAME ...)` for every artifact this run emits. An unknown NAME or a
+// value of the wrong type fails the compile. A defined build is not canonical
+// unless every value equals the option's default -- the facts record each
+// option's value and whether it came from a define.
 //
 // The compiler is the vendored WATX compiler (tools/watx.js over
 // src/main.watx's include closure) — Milestone 5 of docs/watx-migration-plan.md
@@ -32,6 +39,28 @@ function getArg(name, fallback = null) {
 function hasFlag(name) {
   return process.argv.includes(`--${name}`);
 }
+
+function parseDefines() {
+  const define = {};
+  const argv = process.argv;
+  for (let i = 2; i < argv.length; i++) {
+    let spec = null;
+    if (argv[i] === '--define') {
+      spec = argv[++i];
+      if (spec === undefined) throw new Error('build-compile-wat: --define needs NAME=VALUE');
+    } else if (argv[i].startsWith('--define=')) {
+      spec = argv[i].slice('--define='.length);
+    }
+    if (spec === null) continue;
+    const eq = spec.indexOf('=');
+    if (eq <= 0) throw new Error(`build-compile-wat: --define ${spec}: expected NAME=VALUE`);
+    const name = spec.slice(0, eq);
+    if (Object.prototype.hasOwnProperty.call(define, name)) throw new Error(`build-compile-wat: --define ${name} given twice`);
+    define[name] = spec.slice(eq + 1);
+  }
+  return define;
+}
+const DEFINES = parseDefines();
 
 function parseReplicatedDispatch() {
   if (hasFlag('replicated-dispatch')) return true;
@@ -158,13 +187,10 @@ function compileWatx(replicatedDispatch) {
       'and does not exist in the WATX path (legacy is retired); drop it.');
     process.exit(1);
   }
-  const { watxSourceClosure, compileClosure, prepareClosure, overlayClosure } =
-    require(path.join(__dirname, 'watx-closure.js'));
-  const sourceClosure = watxSourceClosure();
-  // Protected ONCE (tools/protected-writer-entries.js) and shared by every
-  // artifact below; the compat overlay is applied on top of the protected
-  // sources and checked not to touch an export-bearing form.
-  const closure = prepareClosure(sourceClosure);
+  const { watxSourceClosure, compileClosure } = require(path.join(__dirname, 'watx-closure.js'));
+  const closure = watxSourceClosure();
+  const define = DEFINES;
+  if (Object.keys(define).length) console.log(`WATX defines: ${JSON.stringify(define)}`);
   // This invocation owns the cache; semantic state and artifacts remain fresh.
   // The opt-out provides a no-reuse control for byte-equivalence checks.
   const frontendReuse = process.env.WINE_WAT_FRONTEND_REUSE === '0' ? null
@@ -182,15 +208,13 @@ function compileWatx(replicatedDispatch) {
   const { buildFactsDocument } = require(path.join(__dirname, 'watx-facts.js'));
   let stamp = null;
   // The compat artifact dispatches through a flat trampoline, not nested
-  // call;return chains — see lib/dispatch-trampoline.js. Overlay on a copy of
-  // the vfs, so the tail artifact still compiles the sources as written.
-  const { applyToVfs } = require(path.join(ROOT, 'lib', 'dispatch-trampoline.js'));
-  const compatClosure = overlayClosure(closure, applyToVfs);
+  // call;return chains: the source chooses it by (target tail-calls), so both
+  // artifacts compile the same closure.
   for (const [key, tailCalls] of [['bytes', true], ['compatBytes', false]]) {
-    const r = compileClosure(tailCalls ? closure : compatClosure,
-      { tailCalls, regionShake: shake ? shake.value : null, frontendReuse, facts: tailCalls && WANT_FACTS });
+    const r = compileClosure(closure,
+      { tailCalls, regionShake: shake ? shake.value : null, frontendReuse, facts: tailCalls && WANT_FACTS, define });
     if (tailCalls && r && r.success) reportRegionLayout(r.regions, shake);
-    if (tailCalls && r && r.success && r.facts) out.facts = buildFactsDocument(r.facts, sourceClosure, shake);
+    if (tailCalls && r && r.success && r.facts) out.facts = buildFactsDocument(r.facts, closure, shake, define);
     if (r && r.success && r.regions && !stamp) {
       stamp = layoutHash(r.regions.regions);
       console.log(`Region layout hash: ${stamp}`);
@@ -221,7 +245,7 @@ function compileWatx(replicatedDispatch) {
   // canonical files are compiled without the option and are unaffected.
   if (WANT_NAMES) {
     const r = compileClosure(closure, {
-      tailCalls: true, regionShake: shake ? shake.value : null, nameSection: 'wine-assembly', frontendReuse,
+      tailCalls: true, regionShake: shake ? shake.value : null, nameSection: 'wine-assembly', frontendReuse, define,
     });
     if (!r || !r.success || !r.wasmBinary) {
       console.error('WATX name-section compile failed: ' +

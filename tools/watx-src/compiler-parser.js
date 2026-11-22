@@ -659,7 +659,7 @@ function scanWatxListHeads(source, start = 0, end = source.length) {
   return heads;
 }
 
-function scanWatxFunctionHeader(source, filename, start, end, parseContext = null, macroForms = [], macroNames = null) {
+function scanWatxFunctionHeader(source, filename, start, end, parseContext = null, macroForms = [], macroNames = null, env = null) {
   const fileBase = watxFileId(filename, source) * WATX_LOC_FILE_BASE;
   const header = [packWatxLocBase(fileBase, start), 'func'];
   let i = start + 1;
@@ -717,7 +717,7 @@ function scanWatxFunctionHeader(source, filename, start, end, parseContext = nul
         // Header clauses may themselves come from a forward-defined macro.
         // Parse only the immediate invocation, then retain only header output.
         const child = parseSource(source, filename, parseContext, childStart, childEnd)[0];
-        for (const expanded of expandMacros([...macroForms, child])) {
+        for (const expanded of expandMacros([...macroForms, child], env)) {
           const expandedHead = Array.isArray(expanded) ? watxValue(expanded[1]) : null;
           if (expandedHead === 'param' || expandedHead === 'result' ||
               expandedHead === 'effects' || expandedHead === 'export') header.push(expanded);

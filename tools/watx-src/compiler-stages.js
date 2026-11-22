@@ -30,8 +30,332 @@ function resolveIncludes(forms, vfs, included = new Set(), filename = '<main>', 
   return result;
 }
 
+// --- Compile-time options, constants and conditionals ---------------------
+//
+//   (defoption NAME TYPE DEFAULT "doc")   TYPE: bool | i32 | i64 | (enum a b ...)
+//   (defconst NAME EXPR)
+//   (option NAME) (target FEATURE) (const NAME)          -- in EXPR / conditions
+//   (if-const COND (then FORMS...) (else FORMS...))
+//   (cond-const (COND FORMS...) ... (else FORMS...))
+//
+// Values come from the build (`options.define`, `options.tailCalls`, `mode`,
+// `options.targets`), never from the program text after the point of use: a
+// name is visible only after its declaration in include order, so a file can
+// be compiled knowing the build options and the files before it. The chosen
+// branch splices like `begin`; the other branch is parsed (it is part of the
+// source text) but never expanded, so it may name things that only exist in
+// the other configuration. See docs/watx-language-compile-time.md in the
+// vendoring tree.
+var WATX_CFG_TARGETS = ['tail-calls', 'simd', 'threads', 'multi-memory', 'production'];
+
+function watxCfgError(message, node) {
+  var e = new Error(message);
+  var loc = typeof node === 'number' ? node : watxFormLoc(node);
+  if (loc !== undefined) { e.line = watxNodeLine(loc); e.col = watxNodeCol(loc); e.file = watxNodeFile(loc); }
+  return e;
+}
+
+function createWatxCompileEnv(options) {
+  options = options || {};
+  var targets = new Map();
+  targets.set('tail-calls', options.tailCalls !== false);
+  targets.set('production', options.mode === 'production');
+  var given = options.targets || {};
+  for (var k of Object.keys(given)) {
+    if (WATX_CFG_TARGETS.indexOf(k) < 0) {
+      throw new Error("options.targets: unknown target feature '" + k + "' (known: " + WATX_CFG_TARGETS.join(', ') + ')');
+    }
+    if ((k === 'tail-calls' || k === 'production') && !!given[k] !== targets.get(k)) {
+      throw new Error("options.targets['" + k + "'] contradicts " + (k === 'tail-calls' ? 'options.tailCalls' : 'options.mode'));
+    }
+    targets.set(k, !!given[k]);
+  }
+  var defines = new Map();
+  var raw = options.define || {};
+  for (var d of Object.keys(raw)) defines.set(d, raw[d]);
+  return {
+    targets: targets,
+    defines: defines,
+    decls: new Map(),   // name -> { kind:'option'|'const', seq, value, type, deps, file, doc, loc }
+    byLoc: new Map(),   // packed form location -> decl, so a re-expansion never redeclares
+    seq: 0,             // declarations so far, in include order
+    limit: Infinity,    // pass 2: only declarations with seq < limit are visible
+    phase: 'header',    // 'header' (pass 1, in order) | 'body' (re-expanding one form)
+    file: '<main>',     // the file whose forms are being expanded (cache-key attribution)
+    reads: new Map(),   // file -> Set of 'option NAME' / 'target FEATURE'
+    fileFixed: false,   // true when the caller sets `file` per form (streaming)
+  };
+}
+
+function watxCfgNoteReads(env, keys) {
+  if (!keys.size) return;
+  var set = env.reads.get(env.file);
+  if (!set) { set = new Set(); env.reads.set(env.file, set); }
+  for (var k of keys) set.add(k);
+}
+
+// An integer literal as a BigInt: decimal or 0x hex, optional sign, `_` digit
+// separators. Floats and NaN/inf payloads are refused.
+function watxCfgParseInt(text, where) {
+  var s = String(text).replace(/_/g, '');
+  var neg = false;
+  if (s[0] === '-' || s[0] === '+') { neg = s[0] === '-'; s = s.slice(1); }
+  if (!/^(0[xX][0-9a-fA-F]+|[0-9]+)$/.test(s)) {
+    throw watxCfgError("'" + text + "' is not an integer literal (compile-time values are integers and booleans)", where);
+  }
+  var v = BigInt(s);
+  return neg ? -v : v;
+}
+
+function watxCfgTypeName(type) {
+  return type.t === 'enum' ? '(enum ' + type.members.join(' ') + ')' : type.t === 'int' ? type.w : type.t;
+}
+
+var WATX_CFG_I32_MIN = -(1n << 31n), WATX_CFG_I32_LIM = 1n << 32n;
+var WATX_CFG_I64_MIN = -(1n << 63n), WATX_CFG_I64_LIM = 1n << 64n;
+function watxCfgFits(v, w) {
+  return w === 'i32' ? (v >= WATX_CFG_I32_MIN && v < WATX_CFG_I32_LIM) : (v >= WATX_CFG_I64_MIN && v < WATX_CFG_I64_LIM);
+}
+
+// A build-supplied define, coerced to the option's declared type. Strings are
+// what a command line gives; JS booleans/numbers/BigInts what an API caller does.
+function watxCfgCoerceDefine(name, raw, type, where, role) {
+  role = role || 'define';
+  var bad = function () {
+    return watxCfgError(role + " " + name + "=" + String(raw) + ": expected " + watxCfgTypeName(type), where);
+  };
+  if (type.t === 'bool') {
+    if (raw === true || raw === 'true') return { t: 'bool', v: true };
+    if (raw === false || raw === 'false') return { t: 'bool', v: false };
+    throw bad();
+  }
+  if (type.t === 'int') {
+    var v;
+    if (typeof raw === 'bigint') v = raw;
+    else if (typeof raw === 'number' && Number.isInteger(raw)) v = BigInt(raw);
+    else if (typeof raw === 'string') { try { v = watxCfgParseInt(raw, where); } catch (e) { throw bad(); } }
+    else throw bad();
+    if (!watxCfgFits(v, type.w)) throw watxCfgError(role + " " + name + "=" + String(raw) + " does not fit " + type.w, where);
+    return { t: 'int', v: v, w: type.w };
+  }
+  if (typeof raw !== 'string' || type.members.indexOf(raw) < 0) throw bad();
+  return { t: 'enum', v: raw, members: type.members, owner: name };
+}
+
+function watxCfgLookup(env, name, kind, where, acc) {
+  var d = env.decls.get(name);
+  if (!d || d.seq >= env.limit) {
+    throw watxCfgError("(" + kind + " " + name + "): no " + (kind === 'option' ? 'defoption' : 'defconst') +
+      " for '" + name + "' earlier in include order", where);
+  }
+  if (d.kind !== kind) throw watxCfgError("'" + name + "' is a " + (d.kind === 'option' ? 'defoption' : 'defconst') +
+    "; read it with (" + d.kind + " " + name + ")", where);
+  if (kind === 'option') acc.add('option ' + name);
+  else for (var k of d.deps) acc.add(k);
+  return d.value;
+}
+
+// Evaluate a compile-time expression. `acc` collects the options and targets
+// read (transitively through constants). Every operand is evaluated -- no
+// short circuit -- so a misspelled name fails even on the branch not taken.
+function watxCfgEval(node, env, acc, where) {
+  if (!Array.isArray(node)) {
+    var a = watxValue(node), ty = watxType(node);
+    if (ty === 'number') return { t: 'int', v: watxCfgParseInt(a, where) };
+    if (a === 'true' || a === 'false') return { t: 'bool', v: a === 'true' };
+    if (ty === 'string') throw watxCfgError('a string is not a compile-time value: ' + a, where);
+    return { t: 'sym', v: a };
+  }
+  var head = watxValue(node[1]);
+  var args = node.slice(2);
+  var self = node;
+  var ev = function (n) { return watxCfgEval(n, env, acc, self); };
+  var arity = function (min, max) {
+    if (args.length < min || (max !== undefined && args.length > max)) {
+      throw watxCfgError('(' + head + ') takes ' + (max === min ? min : max === undefined ? 'at least ' + min : min + '-' + max) +
+        ' operand(s), got ' + args.length, self);
+    }
+  };
+  var want = function (v, t, what) {
+    if (v.t !== t) throw watxCfgError('(' + head + ') ' + what + ': expected ' + (t === 'int' ? 'an integer' : 'a boolean') +
+      ', got ' + (v.t === 'sym' ? "the bare name '" + v.v + "'" : v.t === 'enum' ? 'an enum value' : v.t === 'int' ? 'an integer' : 'a boolean'), self);
+    return v.v;
+  };
+  var name = function () {
+    var n = watxValue(args[0]);
+    if (args.length !== 1 || Array.isArray(args[0]) || watxType(args[0]) !== 'symbol') {
+      throw watxCfgError('(' + head + ' NAME) takes one name', self);
+    }
+    return n;
+  };
+  switch (head) {
+    case 'option': return watxCfgLookup(env, name(), 'option', self, acc);
+    case 'const': return watxCfgLookup(env, name(), 'const', self, acc);
+    case 'target': {
+      var f = name();
+      if (WATX_CFG_TARGETS.indexOf(f) < 0) throw watxCfgError("(target " + f + "): unknown feature (known: " + WATX_CFG_TARGETS.join(', ') + ')', self);
+      if (!env.targets.has(f)) throw watxCfgError("(target " + f + "): this build does not say whether it targets " + f +
+        " (pass options.targets['" + f + "'])", self);
+      acc.add('target ' + f);
+      return { t: 'bool', v: env.targets.get(f) };
+    }
+    case 'not': arity(1, 1); return { t: 'bool', v: !want(ev(args[0]), 'bool', 'operand') };
+    case 'and': case 'or': {
+      arity(1);
+      var vals = args.map(function (x) { return want(ev(x), 'bool', 'operand'); });
+      return { t: 'bool', v: head === 'and' ? vals.every(Boolean) : vals.some(Boolean) };
+    }
+    case 'eq': case 'ne': {
+      arity(2, 2);
+      var x = ev(args[0]), y = ev(args[1]), same;
+      if (x.t === 'sym' && y.t === 'enum') { var tmp = x; x = y; y = tmp; }
+      if (x.t === 'enum' && y.t === 'sym') {
+        if (x.members.indexOf(y.v) < 0) throw watxCfgError("'" + y.v + "' is not a member of " + x.owner + "'s (enum " + x.members.join(' ') + ')', self);
+        same = x.v === y.v;
+      } else if (x.t === 'enum' && y.t === 'enum') {
+        if (x.members.join(' ') !== y.members.join(' ')) throw watxCfgError('(' + head + ') compares values of two different enums', self);
+        same = x.v === y.v;
+      } else if (x.t === y.t && (x.t === 'int' || x.t === 'bool')) {
+        same = x.v === y.v;
+      } else {
+        throw watxCfgError('(' + head + ') operands have different types (' + x.t + ', ' + y.t + ')', self);
+      }
+      return { t: 'bool', v: head === 'eq' ? same : !same };
+    }
+    case 'lt': case 'le': case 'gt': case 'ge': {
+      arity(2, 2);
+      var l = want(ev(args[0]), 'int', 'left operand'), r = want(ev(args[1]), 'int', 'right operand');
+      return { t: 'bool', v: head === 'lt' ? l < r : head === 'le' ? l <= r : head === 'gt' ? l > r : l >= r };
+    }
+    case 'add': case 'mul': case 'and-bits': case 'or-bits': {
+      arity(1);
+      var ns = args.map(function (x) { return want(ev(x), 'int', 'operand'); });
+      var acc0 = ns[0];
+      for (var i = 1; i < ns.length; i++) {
+        acc0 = head === 'add' ? acc0 + ns[i] : head === 'mul' ? acc0 * ns[i] : head === 'and-bits' ? (acc0 & ns[i]) : (acc0 | ns[i]);
+      }
+      return { t: 'int', v: acc0 };
+    }
+    case 'sub': {
+      arity(1, 2);
+      var s0 = want(ev(args[0]), 'int', 'operand');
+      return { t: 'int', v: args.length === 1 ? -s0 : s0 - want(ev(args[1]), 'int', 'operand') };
+    }
+    case 'shl': case 'shr': {
+      arity(2, 2);
+      var b = want(ev(args[0]), 'int', 'value'), c = want(ev(args[1]), 'int', 'shift count');
+      if (c < 0n || c > 63n) throw watxCfgError('(' + head + ') shift count must be 0..63, got ' + c, self);
+      return { t: 'int', v: head === 'shl' ? b << c : b >> c };
+    }
+    default:
+      throw watxCfgError("'" + head + "' is not a compile-time operator (option target const not and or eq ne lt le gt ge add sub mul shl shr and-bits or-bits)", self);
+  }
+}
+
+// A declaration form, registered in include order. Returns true when it was
+// registered now, false when this exact form was registered before (a pass-2
+// re-expansion of the same text), in which case it only becomes visible.
+function watxCfgDeclare(form, env) {
+  var loc = watxFormLoc(form);
+  var prior = loc !== undefined ? env.byLoc.get(loc) : undefined;
+  if (prior) { if (prior.seq + 1 > env.limit) env.limit = prior.seq + 1; return false; }
+  if (env.phase === 'body') throw watxCfgError('internal: a compile-time declaration first seen while re-expanding a body', form);
+  var head = watxValue(form[1]);
+  var name = watxValue(form[2]);
+  if (Array.isArray(form[2]) || watxType(form[2]) !== 'symbol') throw watxCfgError('(' + head + ' NAME ...) needs a name', form);
+  if (env.decls.has(name)) {
+    var was = env.decls.get(name);
+    throw watxCfgError("'" + name + "' is already declared (" + (was.kind === 'option' ? 'defoption' : 'defconst') +
+      (was.file ? ' in ' + was.file + ':' + was.line : '') + ')', form);
+  }
+  var decl;
+  if (head === 'defoption') {
+    if (form.length !== 6) throw watxCfgError('(defoption NAME TYPE DEFAULT "doc") takes four operands, got ' + (form.length - 2), form);
+    var tn = form[3], type;
+    if (Array.isArray(tn)) {
+      if (watxValue(tn[1]) !== 'enum' || tn.length < 3) throw watxCfgError('(defoption ' + name + '): an enum type is (enum a b ...)', form);
+      var members = tn.slice(2).map(function (m) {
+        if (Array.isArray(m) || watxType(m) !== 'symbol') throw watxCfgError('(enum ...) members are names', form);
+        return watxValue(m);
+      });
+      if (new Set(members).size !== members.length) throw watxCfgError('(defoption ' + name + '): duplicate enum member', form);
+      type = { t: 'enum', members: members };
+    } else {
+      var tv = watxValue(tn);
+      if (tv === 'bool') type = { t: 'bool' };
+      else if (tv === 'i32' || tv === 'i64') type = { t: 'int', w: tv };
+      else throw watxCfgError("(defoption " + name + "): type must be bool, i32, i64 or (enum ...), got '" + tv + "'", form);
+    }
+    if (Array.isArray(form[4])) throw watxCfgError('(defoption ' + name + '): the default is a literal', form);
+    var dflt = watxCfgCoerceDefine(name, watxValue(form[4]), type, form, 'default');
+    if (watxType(form[5]) !== 'string') throw watxCfgError('(defoption ' + name + '): the last operand is its description string', form);
+    var value = env.defines.has(name) ? watxCfgCoerceDefine(name, env.defines.get(name), type, form) : dflt;
+    decl = { kind: 'option', name: name, type: type, value: value, defaultValue: dflt, defined: env.defines.has(name),
+             doc: JSON.parse(watxValue(form[5])), deps: new Set(['option ' + name]) };
+  } else {
+    if (form.length !== 4) throw watxCfgError('(defconst NAME EXPR) takes two operands', form);
+    var deps = new Set();
+    var cv = watxCfgEval(form[3], env, deps, form);
+    if (cv.t !== 'int' && cv.t !== 'bool') throw watxCfgError('(defconst ' + name + '): a constant is an integer or a boolean', form);
+    watxCfgNoteReads(env, deps);
+    decl = { kind: 'const', name: name, value: cv, deps: deps };
+  }
+  decl.seq = env.seq++;
+  decl.file = loc !== undefined ? watxNodeFile(loc) : null;
+  decl.line = loc !== undefined ? watxNodeLine(loc) : 0;
+  env.decls.set(name, decl);
+  if (loc !== undefined) env.byLoc.set(loc, decl);
+  return true;
+}
+
+// The forms of the branch a conditional selects, unexpanded.
+function watxCfgChoose(form, env) {
+  var head = watxValue(form[1]);
+  var cond = function (c, where) {
+    var acc = new Set();
+    var r = watxCfgEval(c, env, acc, where);
+    watxCfgNoteReads(env, acc);
+    if (r.t !== 'bool') throw watxCfgError('(' + head + ') condition must be a boolean', where);
+    return r.v;
+  };
+  var arm = function (n, want) {
+    return Array.isArray(n) && watxValue(n[1]) === want;
+  };
+  if (head === 'if-const') {
+    if (form.length < 4 || form.length > 5 || !arm(form[3], 'then') || (form.length === 5 && !arm(form[4], 'else'))) {
+      throw watxCfgError('(if-const COND (then FORMS...) (else FORMS...)) -- the else arm is optional', form);
+    }
+    return cond(form[2], form) ? form[3].slice(2) : form.length === 5 ? form[4].slice(2) : [];
+  }
+  var chosen = null;
+  for (var i = 2; i < form.length; i++) {
+    var clause = form[i];
+    if (!Array.isArray(clause) || clause.length < 2) throw watxCfgError('(cond-const (COND FORMS...) ... (else FORMS...))', form);
+    if (watxValue(clause[1]) === 'else') {
+      if (i !== form.length - 1) throw watxCfgError('(cond-const): (else ...) must be the last clause', clause);
+      if (!chosen) chosen = clause.slice(2);
+      continue;
+    }
+    if (cond(clause[1], clause) && !chosen) chosen = clause.slice(2);
+  }
+  return chosen || [];
+}
+
+// `(const NAME)` as an instruction operand: the literal, range-checked for the
+// instruction it feeds.
+function watxCfgConstLiteral(form, env, parentHead) {
+  var acc = new Set();
+  var v = watxCfgEval(form, env, acc, form);
+  watxCfgNoteReads(env, acc);
+  var n = v.t === 'bool' ? (v.v ? 1n : 0n) : v.v;
+  var w = parentHead === 'i32.const' ? 'i32' : 'i64';
+  if (!watxCfgFits(n, w)) throw watxCfgError('(const ' + watxValue(form[2]) + ') = ' + n + ' does not fit ' + w, form);
+  return String(n);
+}
+
 // --- Stage 3: Macro Expander ---
-function expandMacros(forms) {
+function expandMacros(forms, env) {
+  if (!env) env = createWatxCompileEnv({});
   const macros = new Map();
   let gensymCounter = 0;
 
@@ -102,9 +426,38 @@ function expandMacros(forms) {
     return template;
   }
 
-  function expandForm(form) {
+  // `top` is true only for a module-level position (a top-level form, or what
+  // a top-level macro call or conditional splices there); declarations are
+  // refused anywhere else.
+  function expandForm(form, top = false, parentHead = null) {
     if (!Array.isArray(form)) return form;
     const head = watxValue(form[1]);
+    if (head === 'if-const' || head === 'cond-const') {
+      const out = [];
+      for (const item of watxCfgChoose(form, env)) {
+        const itemHead = Array.isArray(item) ? watxValue(item[1]) : null;
+        if (itemHead === 'include' || itemHead === 'defmacro') {
+          throw watxCfgError(`(${itemHead} ...) inside a compile-time conditional is not supported in v1 ` +
+            '(includes and macros are resolved before any condition is evaluated)', item);
+        }
+        const r = expandForm(item, top, parentHead);
+        if (Array.isArray(r) && r._isBegin) out.push(...r); else out.push(r);
+      }
+      out._isBegin = true;
+      return out;
+    }
+    if (head === 'defoption' || head === 'defconst') {
+      if (!top) throw watxCfgError(`(${head} ...) is a module-level declaration`, form);
+      watxCfgDeclare(form, env);
+      const none = [];
+      none._isBegin = true;
+      return none;
+    }
+    if (head === 'const') return watxCfgConstLiteral(form, env, parentHead);
+    if (head === 'option' || head === 'target') {
+      throw watxCfgError(`(${head} ...) is only valid in a compile-time condition or defconst; ` +
+        'bind a value with (defconst NAME EXPR) and use (const NAME)', form);
+    }
     if (head && macros.has(head)) {
       const macro = macros.get(head);
       const args = form.slice(2);
@@ -134,7 +487,7 @@ function expandMacros(forms) {
       const result = [];
       for (const e of macro.body.map(b => substitute(b, bindings))) {
         for (const item of (Array.isArray(e) && e._isBegin ? e : [e])) {
-          const r = expandForm(item);
+          const r = expandForm(item, top, parentHead);
           if (Array.isArray(r) && r._isBegin) result.push(...r); else result.push(r);
         }
       }
@@ -145,7 +498,7 @@ function expandMacros(forms) {
     let result = null;
     for (let i = 1; i < form.length; i++) {
       const child = form[i];
-      const expandedChild = expandForm(child);
+      const expandedChild = expandForm(child, false, head);
       // A multi-form macro expansion is an `_isBegin` array of forms, and it
       // must be SPLICED into the parent, one child per form. Until 2026-09-19
       // it was pushed as a single child here, and a macro with more than one
@@ -169,10 +522,311 @@ function expandMacros(forms) {
 
   let expanded = collectMacros(forms);
   expanded = expanded.flatMap(f => {
-    const r = expandForm(f);
+    // Pass-1 attribution of compile-time reads to the file being expanded;
+    // a streaming caller (one descriptor at a time) has already set it.
+    if (env.phase === 'header' && !env.fileFixed) {
+      const loc = watxFormLoc(f);
+      if (loc !== undefined) env.file = watxNodeFile(loc);
+    }
+    const r = expandForm(f, true);
     return Array.isArray(r) && r._isBegin ? r : [r];
   });
   return expanded;
+}
+
+// --- Export wrappers -------------------------------------------------------
+//
+//   (export-wrap (match SELECTOR) (prologue FORMS...))
+//   SELECTOR: (all) (name "a" ...) (prefix "p" ...) (pure) (not S) (and S...) (or S...)
+//
+// Runs once, after pass 1 has seen every module-level form, on the expanded
+// module-level forms (function HEADERS in the streaming compiler). Each
+// function export a declaration matches is moved onto a generated function
+// with the same signature whose body is the prologue followed by a call to the
+// original; several matching declarations nest in declaration order, the
+// first outermost. Internal calls keep their targets. Generated wrappers are
+// appended after every other form, so existing function indices do not move,
+// and each moved export keeps its position in the export section.
+//
+// `(pure)` is INFERRED, conservatively, from the macro-expanded body: true only
+// when the function has no `(effects ...)` clause, is not an import, has a
+// non-empty body written as folded expressions, and every instruction in it is
+// a read: local.get, global.get, a *.const, a load (including layout
+// load.field/load.elem/load.field-elem), a numeric/SIMD operator that is not a
+// store or an atomic, select, or a region/layout constant (region.addr/end/
+// size, size-of, offset-of, elem-addr). Anything else -- a store, local.set,
+// global.set, any call, control flow, memory.*/table.* instructions,
+// unreachable -- makes it impure. A trap (a load out of bounds, a division by
+// zero) is not a side effect.
+var WATX_PURE_HEADS = new Set([
+  'local.get', 'global.get', 'select',
+  'load.field', 'load.elem', 'load.field-elem',
+  'region.addr', 'region.end', 'region.size', 'size-of', 'offset-of', 'elem-addr',
+]);
+var WATX_PURE_PREFIX = /^(i32|i64|f32|f64|v128|i8x16|i16x8|i32x4|i64x2|f32x4|f64x2)\./;
+var WATX_DECL_HEADS = { param: 1, result: 1, local: 1, type: 1, export: 1, effects: 1 };
+
+function watxHeadIsPure(head) {
+  if (typeof head !== 'string') return false;
+  head = watxLayoutMemargHead(head).head;
+  if (WATX_PURE_HEADS.has(head)) return true;
+  return WATX_PURE_PREFIX.test(head) && head.indexOf('store') < 0 && head.indexOf('atomic') < 0;
+}
+
+function watxExprIsPure(node) {
+  if (!Array.isArray(node)) return true;            // an operand atom
+  if (!watxHeadIsPure(watxValue(node[1]))) return false;
+  for (var i = 2; i < node.length; i++) if (!watxExprIsPure(node[i])) return false;
+  return true;
+}
+
+// body: the function's forms after its name (header clauses included or not).
+function watxBodyIsPure(body) {
+  var any = false;
+  for (var i = 0; i < body.length; i++) {
+    var n = body[i];
+    if (!Array.isArray(n)) return false;              // flat (unfolded) instruction: not analyzed
+    var h = watxValue(n[1]);
+    if (h === 'effects') return false;
+    if (WATX_DECL_HEADS[h]) continue;
+    if (!watxExprIsPure(n)) return false;
+    any = true;
+  }
+  return any;
+}
+
+function watxParseExportSelector(node) {
+  if (!Array.isArray(node)) throw watxCfgError('export-wrap selector: expected (all) (name ...) (prefix ...) (pure) (not S) (and S...) (or S...)', node);
+  var op = watxValue(node[1]);
+  var args = node.slice(2);
+  var strings = function () {
+    if (!args.length || args.some(function (a) { return Array.isArray(a) || watxType(a) !== 'string'; })) {
+      throw watxCfgError('(' + op + ' "..." ...) takes one or more strings', node);
+    }
+    return args.map(function (a) { return JSON.parse(watxValue(a)); });
+  };
+  switch (op) {
+    case 'all': case 'pure':
+      if (args.length) throw watxCfgError('(' + op + ') takes no operands', node);
+      return { op: op };
+    case 'name': return { op: op, names: new Set(strings()) };
+    case 'prefix': return { op: op, prefixes: strings() };
+    case 'not':
+      if (args.length !== 1) throw watxCfgError('(not S) takes one selector', node);
+      return { op: op, args: [watxParseExportSelector(args[0])] };
+    case 'and': case 'or':
+      if (!args.length) throw watxCfgError('(' + op + ' S...) takes one or more selectors', node);
+      return { op: op, args: args.map(watxParseExportSelector) };
+    default:
+      throw watxCfgError("export-wrap: unknown selector '" + op + "'", node);
+  }
+}
+
+function watxSelectorText(s) {
+  if (s.op === 'all' || s.op === 'pure') return '(' + s.op + ')';
+  if (s.op === 'name') return '(name ' + Array.from(s.names).map(function (n) { return JSON.stringify(n); }).join(' ') + ')';
+  if (s.op === 'prefix') return '(prefix ' + s.prefixes.map(function (n) { return JSON.stringify(n); }).join(' ') + ')';
+  return '(' + s.op + ' ' + s.args.map(watxSelectorText).join(' ') + ')';
+}
+
+function watxSelectorUsesPure(s) {
+  return s.op === 'pure' || (!!s.args && s.args.some(watxSelectorUsesPure));
+}
+
+// `pure()` is lazy: purity costs a body parse in the streaming compiler, so
+// cheaper operands of and/or are decided first (selectors have no effects, so
+// the order cannot change the answer).
+function watxSelectorMatch(s, name, pure) {
+  switch (s.op) {
+    case 'all': return true;
+    case 'pure': return pure();
+    case 'name': return s.names.has(name);
+    case 'prefix': return s.prefixes.some(function (p) { return name.indexOf(p) === 0; });
+    case 'not': return !watxSelectorMatch(s.args[0], name, pure);
+    default: {
+      var ordered = s.args.filter(function (a) { return !watxSelectorUsesPure(a); })
+        .concat(s.args.filter(watxSelectorUsesPure));
+      for (var i = 0; i < ordered.length; i++) {
+        var m = watxSelectorMatch(ordered[i], name, pure);
+        if (s.op === 'and' && !m) return false;
+        if (s.op === 'or' && m) return true;
+      }
+      return s.op === 'and';
+    }
+  }
+}
+
+// Inline export registration for a function form at index fi. A function
+// export-wrap touched lists every clause it had, moved or not, in written
+// order; it registers them all here (a moved one under its wrapper's name), so
+// the export section's insertion order is the same as without the wrap. Returns
+// true when it did, and the caller then skips export clauses in the form; a
+// moved clause met on its wrapper is skipped too (clause._watxMoved).
+function watxHomeExports(form, name, fi, out) {
+  var list = form._watxExportClauses;
+  if (!list) return false;
+  for (var i = 0; i < list.length; i++) {
+    out.push({ exportName: (watxValue(list[i].clause[2]) || '').replace(/"/g, ''), kind: 'func', ref: list[i].ref || name, formIndex: fi });
+  }
+  return true;
+}
+
+function watxCloneTree(n) {
+  return Array.isArray(n) ? n.map(watxCloneTree) : n;
+}
+
+// forms: expanded module-level forms. bodyOf(funcForm) returns that function's
+// expanded body forms (or null if unavailable). Returns { forms, report }; a
+// module with no export-wrap declaration comes back as the same array.
+function applyWatxExportWraps(forms, bodyOf) {
+  var V = watxValue;
+  var isWrap = function (f) { return Array.isArray(f) && V(f[1]) === 'export-wrap'; };
+  if (!forms.some(isWrap)) return { forms: forms, report: null };
+  var decls = [], rest = [];
+  for (var fi = 0; fi < forms.length; fi++) {
+    var f = forms[fi];
+    if (!isWrap(f)) { rest.push(f); continue; }
+    var m = f[2], p = f[3];
+    if (f.length !== 4 || !Array.isArray(m) || V(m[1]) !== 'match' || m.length !== 3 ||
+        !Array.isArray(p) || V(p[1]) !== 'prologue') {
+      throw watxCfgError('(export-wrap (match SELECTOR) (prologue FORMS...))', f);
+    }
+    var loc = watxFormLoc(f);
+    decls.push({ index: decls.length, selector: watxParseExportSelector(m[2]), prologue: p.slice(2), loc: loc,
+                 file: loc !== undefined ? watxNodeFile(loc) : null, line: loc !== undefined ? watxNodeLine(loc) : 0 });
+  }
+
+  // Signatures of everything an export can name.
+  var funcs = new Map();
+  var sigOf = function (parts, from) {
+    var params = [], results = [], effects = false;
+    for (var i = from; i < parts.length; i++) {
+      var part = parts[i];
+      if (!Array.isArray(part)) continue;
+      var k = V(part[1]);
+      if (k === 'param') for (var j = 2; j < part.length; j++) { var t = V(part[j]); if (t && t.charAt(0) !== '$') params.push(t); }
+      else if (k === 'result') for (var r = 2; r < part.length; r++) results.push(V(part[r]));
+      else if (k === 'effects') effects = true;
+      else if (k === 'type') throw watxCfgError('export-wrap: a (type ...) function signature is not supported; spell (param ...)/(result ...)', part);
+    }
+    return { params: params, results: results, effects: effects };
+  };
+  for (var ri = 0; ri < rest.length; ri++) {
+    var g = rest[ri];
+    if (!Array.isArray(g)) continue;
+    var h = V(g[1]);
+    if (h === 'func') {
+      var fname = typeof g[2] === 'string' && g[2].charAt(0) === '$' ? g[2] : null;
+      var info = Object.assign({ form: g, name: fname, imported: false }, sigOf(g, 2));
+      if (fname) funcs.set(fname, info);
+      g._watxWrapInfo = info;
+    } else if ((h === 'import' || h === 'wasm-import') && Array.isArray(g[4]) && V(g[4][1]) === 'func' &&
+               typeof g[4][2] === 'string' && g[4][2].charAt(0) === '$') {
+      funcs.set(g[4][2], Object.assign({ form: null, name: g[4][2], imported: true }, sigOf(g[4], 3)));
+    }
+  }
+
+  var purity = new Map();
+  var pureOf = function (info) {
+    if (purity.has(info)) return purity.get(info);
+    var v = false;
+    if (!info.imported && !info.effects) {
+      var body = bodyOf(info.form);
+      v = !!body && watxBodyIsPure(body);
+    }
+    purity.set(info, v);
+    return v;
+  };
+
+  var report = {
+    declarations: decls.map(function (d) {
+      return { index: d.index, file: d.file, line: d.line, match: watxSelectorText(d.selector), prologueForms: d.prologue.length };
+    }),
+    exports: [],
+  };
+  var wrappers = [];
+  var serial = 0;
+  var sanitize = function (s) { return s.replace(/[^A-Za-z0-9_]/g, '_'); };
+  var wrapExport = function (exportName, info, at, moveExport) {
+    var matched = decls.filter(function (d) {
+      return watxSelectorMatch(d.selector, exportName, function () { return pureOf(info); });
+    });
+    var row = { name: exportName, target: info.name, wrappers: matched.map(function (d) { return d.index; }),
+                pure: purity.has(info) ? purity.get(info) : null };
+    report.exports.push(row);
+    if (!matched.length) return;
+    if (!info.name) {
+      // An anonymous exported function needs a name for the wrapper to call.
+      info.name = '$__xw_impl_' + (serial++);
+      info.form.splice(2, 0, info.name);
+      row.target = info.name;
+    }
+    var id = serial++;
+    var next = info.name;
+    var made = [];
+    for (var j = matched.length - 1; j >= 0; j--) {
+      var d = matched[j];
+      var wloc = d.loc;
+      var wname = '$__xw' + d.index + '_' + id + '_' + sanitize(exportName);
+      var w = [wloc, 'func', wname];
+      if (j === 0) w.push(moveExport(wname, wloc));
+      for (var pi = 0; pi < info.params.length; pi++) w.push([wloc, 'param', info.params[pi]]);
+      for (var qi = 0; qi < info.results.length; qi++) w.push([wloc, 'result', info.results[qi]]);
+      for (var fi2 = 0; fi2 < d.prologue.length; fi2++) w.push(watxCloneTree(d.prologue[fi2]));
+      var call = [wloc, 'call', next];
+      for (var li = 0; li < info.params.length; li++) call.push([wloc, 'local.get', String(li)]);
+      w.push(call);
+      made.push(w);
+      next = wname;
+    }
+    row.wrapperFunctions = made.map(function (w) { return w[2]; }).reverse();
+    for (var mi = made.length - 1; mi >= 0; mi--) wrappers.push(made[mi]);
+    report.wrapped = (report.wrapped || 0) + 1;
+  };
+
+  for (var ei = 0; ei < rest.length; ei++) {
+    var e = rest[ei];
+    if (!Array.isArray(e)) continue;
+    var eh = V(e[1]);
+    if (eh === 'func') {
+      var clauses = [];
+      for (var ci = 2; ci < e.length; ci++) if (Array.isArray(e[ci]) && V(e[ci][1]) === 'export') clauses.push(e[ci]);
+      if (!clauses.length) continue;
+      // Every export clause of this form keeps its written place in the
+      // export section, whether it stays here or moves to a wrapper: the
+      // export collectors register all of them HERE, in written order, from
+      // this list (watxHomeExports), and skip a moved clause on its wrapper.
+      var homeList = clauses.map(function (c) { return { clause: c, ref: null }; });
+      e._watxExportClauses = homeList;
+      homeList.forEach(function (entry) {
+        wrapExport(JSON.parse(V(entry.clause[2])), e._watxWrapInfo, ei, function (wname) {
+          e.splice(e.indexOf(entry.clause), 1);
+          entry.ref = wname;
+          entry.clause._watxMoved = true;
+          return entry.clause;
+        });
+      });
+    } else if (eh === 'export' && Array.isArray(e[3]) && V(e[3][1]) === 'func') {
+      var ref = V(e[3][2]);
+      var tinfo = funcs.get(ref);
+      if (!tinfo) throw watxCfgError("export-wrap: export " + V(e[2]) + " names '" + ref + "', which is not a named function", e);
+      var desc = e[3];
+      wrapExport(JSON.parse(V(e[2])), tinfo, ei, function (wname) { desc[2] = wname; return null; });
+    } else if (eh === 'wasm-export') {
+      var wref = V(e[3]);
+      var winfo = funcs.get(wref);
+      if (!winfo) throw watxCfgError("export-wrap: export " + V(e[2]) + " names '" + wref + "', which is not a named function", e);
+      var wform = e;
+      wrapExport(JSON.parse(V(e[2])), winfo, ei, function (wname) { wform[3] = wname; return null; });
+    }
+  }
+  for (var wi = 0; wi < wrappers.length; wi++) {
+    // A wrapper whose export moved out of line carries no clause.
+    var wf = wrappers[wi];
+    for (var z = wf.length - 1; z >= 2; z--) if (wf[z] === null) wf.splice(z, 1);
+  }
+  for (var ri2 = 0; ri2 < rest.length; ri2++) if (Array.isArray(rest[ri2])) delete rest[ri2]._watxWrapInfo;
+  return { forms: rest.concat(wrappers), report: report };
 }
 
 // --- Stage 4: Bidirectional Type/Region Checker ---
@@ -308,6 +962,7 @@ function checkTypes(forms, options = {}) {
       var explicitName = V(A(form,cursor)) && V(A(form,cursor)).charAt(0) === "$" ? V(A(form,cursor++)) : null;
       var name = explicitName || "$__anonymous_" + (anonymousFuncId++);
       var params = [], results = [], body = [], effectsClause = null;
+      var homeExports = watxHomeExports(form, name, fi, inlineExportDecls);
       for (var i = cursor; i < N(form); i++) {
         var part=A(form,i);
         if (Array.isArray(part)) {
@@ -324,7 +979,7 @@ function checkTypes(forms, options = {}) {
           } else if (kind === "effects") {
             effectsClause = part;
           } else if (kind === "export") {
-            inlineExportDecls.push({exportName:(V(A(part,1)) || "").replace(/"/g, ""),kind:"func",ref:name,formIndex:fi});
+            if (!homeExports && !part._watxMoved) inlineExportDecls.push({exportName:(V(A(part,1)) || "").replace(/"/g, ""),kind:"func",ref:name,formIndex:fi});
           } else {
             body.push(part);
           }
