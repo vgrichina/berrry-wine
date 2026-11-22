@@ -3115,16 +3115,16 @@
         (return (i32.or (local.get $cur)
           (i32.shl (call $edit_line_from_char (local.get $state_w) (local.get $cur)) (i32.const 16))))))
 
-    ;; ---------- EM_GETLINE (0x00C4), ANSI unwrapped plain EDIT ----------
+    ;; ---------- EM_GETLINE (0x00C4), ANSI plain EDIT ----------
     ;; The caller's initial WORD is a character capacity, not a byte offset
     ;; or room for a terminator. Copy line text only; return its copied count
     ;; without appending NUL. Single-line EDIT ignores the requested index.
     (if (i32.and (i32.eq (local.get $msg) (i32.const 0x00C4))
                  (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2)))
       (then
-        ;; Keep Unicode and display-wrap semantics outside this bounded path.
-        (if (i32.or (call $wnd_unicode_get (local.get $hwnd))
-                     (call $edit_wraps (local.get $hwnd)))
+        ;; Preserve the Unicode path; plain ANSI multiline queries address
+        ;; display rows, including soft wraps, rather than hard paragraphs.
+        (if (call $wnd_unicode_get (local.get $hwnd))
           (then (return (i32.const 0))))
         (if (i32.or (i32.eqz (local.get $state)) (i32.eqz (local.get $lParam)))
           (then (return (i32.const 0))))
@@ -3136,8 +3136,22 @@
         (local.set $hi (load.field.memarg EditState text_len (local.get $state_w)))
         (if (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)) (i32.const 0))
           (then
-            (local.set $lo (call $edit_line_index (local.get $state_w) (local.get $wParam)))
-            (local.set $hi (call $edit_line_text_len (local.get $state_w) (local.get $lo)))))
+            (if (call $edit_wraps (local.get $hwnd))
+              (then
+                ;; View metrics uses paint's exact layout/cache and selects
+                ;; the current font even before paint after resize/SETFONT.
+                (local.set $hi (i32.and
+                  (call $edit_view_metrics (local.get $hwnd) (local.get $state_w))
+                  (i32.const 0xFFFF)))
+                ;; No current-line sentinel for GETLINE. Reject negative and
+                ;; oversized indices before looking up either row field.
+                (if (i32.ge_u (local.get $wParam) (local.get $hi))
+                  (then (return (i32.const 0))))
+                (local.set $lo (call $edit_layout_start (local.get $wParam)))
+                (local.set $hi (call $edit_layout_len (local.get $wParam))))
+              (else
+                (local.set $lo (call $edit_line_index (local.get $state_w) (local.get $wParam)))
+                (local.set $hi (call $edit_line_text_len (local.get $state_w) (local.get $lo)))))))
         (if (i32.gt_u (local.get $hi) (local.get $sz))
           (then (local.set $hi (local.get $sz))))
         (if (local.get $hi)
