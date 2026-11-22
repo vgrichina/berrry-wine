@@ -936,8 +936,8 @@
     (local.set $back (select (i32.sub (local.get $bw) (local.get $wd)) (i32.const 0) (global.get $df)))
     (local.set $dlo (i32.sub (i32.load (i32.load offset=4 (local.get $pc))) (local.get $back)))
     ;; Before the re-guards below translate (and so first-touch) the span.
-    (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))
-      (then (call $d3dim_lazy_overwrite (local.get $dlo) (local.get $bw)
+    (if (i32.atomic.load (region.addr $GPS_LAZY 4))
+      (then (call $gps_lazy_overwrite (local.get $dlo) (local.get $bw)
         (if (result i32) (local.get $copy)
           (then (i32.sub (i32.load (i32.load offset=8 (local.get $pc))) (local.get $back)))
           (else (i32.const 0)))

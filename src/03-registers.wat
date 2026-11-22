@@ -377,6 +377,11 @@
 
   (func $g2w_slow (param $ga i32) (result i32)
     (local $wa i32)
+    ;; The armed-lazy call sits after the sparse lookup (block $lazy) on
+    ;; purpose: V8's inliner visits a function's calls in order under one
+    ;; budget, and the cold 09a8gv closure ahead of $guest_page_translate
+    ;; would leave the VirtualAlloc lookup out of line.
+    (block $lazy
     (if (call $shared_heap_address (local.get $ga)) (then
       (drop (call $host_shared_heap (i32.const 12) (local.get $ga) (i32.const 0) (i32.const 0) (i32.const 0))) (unreachable)))
     ;; CreateDIBSection pointers live in a dedicated high guest range backed by
@@ -386,10 +391,7 @@
           (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE))
           (global.get $DIB_GUEST_CAPACITY))
       (then
-        (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (then
-          (call $d3dim_lazy_access
-            (i32.add (global.get $DIB_BACKING_BASE)
-              (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE))) (i32.const 1))))
+        (br_if $lazy (i32.atomic.load (region.addr $GPS_LAZY 4)))
         (return (i32.add
           (global.get $DIB_BACKING_BASE)
           (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE))))))
@@ -399,8 +401,13 @@
     (local.set $wa (call $guest_page_translate (local.get $ga)))
     (if (i32.ne (local.get $wa) (global.get $NULL_SENTINEL))
       (then (return (local.get $wa))))
-    (call $g2w_miss (local.get $ga))
-  )
+    (return (call $g2w_miss (local.get $ga))))
+    ;; A lazy GPU-surface entry is armed (09a8gv): settle what this touches.
+    (call $gps_lazy_access
+      (i32.add (global.get $DIB_BACKING_BASE)
+        (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE))) (i32.const 1))
+    (i32.add (global.get $DIB_BACKING_BASE)
+      (i32.sub (local.get $ga) (global.get $DIB_GUEST_BASE))))
 
   ;; Would $g2w resolve $ga? The same three lookups with no miss side effect,
   ;; for a handler that has to decide whether an access faults before making it.
@@ -473,8 +480,8 @@
           (i32.le_u (local.get $len)
             (i32.sub (global.get $DIB_GUEST_CAPACITY) (local.get $off))))
       (then
-        (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (then
-          (call $d3dim_lazy_access
+        (if (i32.atomic.load (region.addr $GPS_LAZY 4)) (then
+          (call $gps_lazy_access
             (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)) (local.get $len))))
         (return (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)))))
 

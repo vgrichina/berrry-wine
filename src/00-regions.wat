@@ -1063,9 +1063,14 @@
   ;; arenas and diagnostic tables are heap memory.
   (region.declare $GPU_STREAM (size 0x00000A40) (align 0x00000040)
     (owner "09a8gs-gpu-stream.wat:$GPU_STREAM"))
-  ;; Lazy surface barriers shared by guest instances, never initialized by data.
+  ;; D3DIM deferred-GPU-work and GPU-present words shared by guest instances,
+  ;; never initialized by data (+0..+12, the old lazy-Lock words, unused).
   (region.declare $D3DIM_LAZY_SHARED (size 0x00000020) (align 0x00000010)
     (owner "09ab-handlers-d3dim-core.wat:$D3DIM_LAZY_SHARED"))
+  ;; GPU-stream lazy CPU-access table (mutex, armed count, eight entries)
+  ;; shared by guest instances and every GPS producer, never initialized by data.
+  (region.declare $GPS_LAZY (size 0x00000200) (align 0x00000040)
+    (owner "09a8gv-gps-coherence.wat:$GPS_LAZY"))
   ;; D3DIM GPU stream v2 producer: recursive lock, producer block and ring
   ;; handle, shared by every guest thread. The block itself is heap memory.
   (region.declare $D3DIM_GPS (size 0x00000040) (align 0x00000010)

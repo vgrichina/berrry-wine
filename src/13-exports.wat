@@ -4378,11 +4378,11 @@
   ;; would overwrite the bytes just written anyway.
   (func (export "invalidate_code_range") (param $ga i32) (param $len i32)
     (local $bypass i32)
-    (local.set $bypass (global.get $d3dim_lazy_bypass))
-    (global.set $d3dim_lazy_bypass (i32.const 1))
+    (local.set $bypass (global.get $gps_lazy_bypass))
+    (global.set $gps_lazy_bypass (i32.const 1))
     (call $page_watch_write_guest (local.get $ga) (local.get $len))
     (call $invalidate_code_range (local.get $ga) (local.get $len))
-    (global.set $d3dim_lazy_bypass (local.get $bypass)))
+    (global.set $gps_lazy_bypass (local.get $bypass)))
 
   ;; Write guest memory (guest addr)
   (func (export "guest_write32") (param $ga i32) (param $val i32)

@@ -451,43 +451,12 @@
   ;; Read RT $id's rect (x, y, w, hgt) back into DIB $dib at (dx, dy).
   (func $d3g_read_rect (param $pb i32) (param $id i32) (param $x i32) (param $y i32) (param $w i32) (param $hgt i32)
       (param $dib i32) (param $pitch i32) (param $bpp i32) (param $fmt i32) (param $dx i32) (param $dy i32)
-    (local $h i32) (local $k i32) (local $n i32) (local $pos i32) (local $p i32) (local $seq i32)
-    (local $band i32) (local $src i32)
-    (local.set $h (call $d3g_h))
-    (local.set $band (call $d3g_band_rows (local.get $w)))
-    (block $done (loop $bands
-      (br_if $done (i32.ge_u (local.get $k) (local.get $hgt)))
-      (local.set $n (i32.sub (local.get $hgt) (local.get $k)))
-      (if (i32.gt_u (local.get $n) (local.get $band)) (then (local.set $n (local.get $band))))
-      (local.set $pos (call $d3g_arena (i32.mul (i32.shl (local.get $w) (i32.const 2)) (local.get $n))))
-      (call $gps_slot_arm (local.get $h) (i32.const 0))
-      (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_READBACK) (size-of GpsReadback)))
-      (store.field GpsReadback rt (local.get $p) (local.get $id))
-      (store.field GpsReadback x (local.get $p) (local.get $x))
-      (store.field GpsReadback y (local.get $p) (i32.add (local.get $y) (local.get $k)))
-      (store.field GpsReadback w (local.get $p) (local.get $w))
-      (store.field GpsReadback h (local.get $p) (local.get $n))
-      (store.field GpsReadback fmt (local.get $p) (global.get $GPS_FMT_A8B8G8R8))
-      (store.field GpsReadback dst (local.get $p) (local.get $pos))
-      (store.field GpsReadback pitch (local.get $p) (i32.shl (local.get $w) (i32.const 2)))
-      (store.field GpsReadback slot (local.get $p) (i32.const 0))
-      (local.set $seq (call $d3g_end (local.get $p)))
-      (call $d3g_stat (local.get $pb) (i32.const 7) (i32.const 1))
-      (call $gps_slot_wait (local.get $h) (i32.const 0) (local.get $seq))
-      (local.set $src (call $d3g_aptr (local.get $pos)))
-      (local.set $seq (i32.const 0))
-      (block $rows_done (loop $rows
-        (br_if $rows_done (i32.ge_u (local.get $seq) (local.get $n)))
-        (call $d3g_rgba_to_row
-          (i32.add (local.get $src) (i32.mul (local.get $seq) (i32.shl (local.get $w) (i32.const 2))))
-          (i32.add (i32.add (local.get $dib)
-              (i32.mul (i32.add (i32.add (local.get $dy) (local.get $k)) (local.get $seq)) (local.get $pitch)))
-            (i32.mul (local.get $dx) (i32.shr_u (local.get $bpp) (i32.const 3))))
-          (local.get $w) (local.get $fmt) (local.get $bpp))
-        (local.set $seq (i32.add (local.get $seq) (i32.const 1)))
-        (br $rows)))
-      (local.set $k (i32.add (local.get $k) (local.get $n)))
-      (br $bands)))
+    ;; One READBACK per 2 MB band ($gps_readback_rect).
+    (call $d3g_stat (local.get $pb) (i32.const 7)
+      (call $gps_readback_rect (call $d3g_h) (local.get $id) (local.get $x) (local.get $y) (local.get $w) (local.get $hgt)
+        (i32.add (i32.add (local.get $dib) (i32.mul (local.get $dy) (local.get $pitch)))
+          (i32.mul (local.get $dx) (i32.shr_u (local.get $bpp) (i32.const 3))))
+        (local.get $pitch) (local.get $fmt) (local.get $bpp)))
     (call $page_watch_write
       (i32.add (i32.add (local.get $dib) (i32.mul (local.get $dy) (local.get $pitch)))
         (i32.mul (local.get $dx) (i32.shr_u (local.get $bpp) (i32.const 3))))
@@ -2926,7 +2895,7 @@
       (then (i32.store offset=23344 (local.get $pb) (i32.add (i32.load offset=23344 (local.get $pb)) (i32.const 1)))))
     (i32.const 1))
 
-  ;; 09ab $d3dim_lazy_overwrite: [wa, wa+len) is about to be overwritten
+  ;; $gps_lazy_overwrite (09a8gv): [wa, wa+len) is about to be overwritten
   ;; whole. 1 = nothing there needs reading back any more.
   (func $d3dim_gps_discard (param $wa i32) (param $len i32) (result i32)
     (local $pb i32) (local $r i32)
