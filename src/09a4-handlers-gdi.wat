@@ -1288,6 +1288,16 @@
     ;; Both extents have to be non-zero, and each is tested on its own: a raw
     ;; `i32.and` of the two is a bit mask, so SetWindowExtEx(hdc, 1, 2) — or any
     ;; other pair with no bit in common — used to be rejected as if it were zero.
+    ;; Fixed mapping modes ignore extent requests, including zero values.
+    ;; Keep the optional previous-size output and stdcall result unchanged.
+    (if (i32.le_u
+          (call $gdi_dc_get_field (local.get $arg0) (i32.const 36) (i32.const 1))
+          (i32.const 6))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     (if (i32.and (i32.ne (local.get $arg1) (i32.const 0))
                  (i32.ne (local.get $arg2) (i32.const 0)))
       (then
@@ -2438,6 +2448,16 @@
           (call $gdi_dc_get_field (local.get $arg0) (i32.const 68) (i32.const 1)))))
     ;; Each extent is tested on its own — see $handle_SetWindowExtEx. A raw
     ;; `i32.and` here is a bit mask, and rejected (1, 2) as if it were zero.
+    ;; Fixed mapping modes ignore extent requests, including zero values.
+    ;; Keep the optional previous-size output and stdcall result unchanged.
+    (if (i32.le_u
+          (call $gdi_dc_get_field (local.get $arg0) (i32.const 36) (i32.const 1))
+          (i32.const 6))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     (if (i32.and (i32.ne (local.get $arg1) (i32.const 0))
                  (i32.ne (local.get $arg2) (i32.const 0)))
       (then
