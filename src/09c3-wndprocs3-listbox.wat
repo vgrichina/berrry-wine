@@ -465,14 +465,32 @@
             (return (i32.const -1))))
         (block $lbdir_done (loop $lbdir_loop
           (local.set $attrs (i32.load (local.get $fd_w)))
+          ;; Microsoft WIN32.HLP (1992-1994), LB_DIR: the directory-only
+          ;; exclusive request omits the default read/write file fallback.
+          ;; Keep requests for other file attributes on their existing route.
           (if (i32.or
-                (i32.eqz (i32.and (local.get $attrs) (i32.const 0x10)))
-                (i32.and (local.get $wParam) (i32.const 0x10)))
+                (i32.and
+                  (i32.eqz (i32.and (local.get $attrs) (i32.const 0x10)))
+                  (i32.ne (local.get $wParam) (i32.const 0x8010)))
+                (i32.and
+                  (i32.ne (i32.and (local.get $attrs) (i32.const 0x10)) (i32.const 0))
+                  (i32.ne (i32.and (local.get $wParam) (i32.const 0x10)) (i32.const 0))))
             (then
               (local.set $slen (call $strlen (i32.add (local.get $fd_w) (i32.const 44))))
-              (call $memcpy (local.get $tmp_w)
-                            (i32.add (local.get $fd_w) (i32.const 44))
-                            (local.get $slen))
+              ;; Subdirectory names, including exact-path matches, use [].
+              (if (i32.and (local.get $attrs) (i32.const 0x10))
+                (then
+                  (i32.store8 (local.get $tmp_w) (i32.const 91))
+                  (call $memcpy (i32.add (local.get $tmp_w) (i32.const 1))
+                                (i32.add (local.get $fd_w) (i32.const 44))
+                                (local.get $slen))
+                  (local.set $slen (i32.add (local.get $slen) (i32.const 1)))
+                  (i32.store8 (i32.add (local.get $tmp_w) (local.get $slen)) (i32.const 93))
+                  (local.set $slen (i32.add (local.get $slen) (i32.const 1))))
+                (else
+                  (call $memcpy (local.get $tmp_w)
+                                (i32.add (local.get $fd_w) (i32.const 44))
+                                (local.get $slen))))
               (i32.store8 (i32.add (local.get $tmp_w) (local.get $slen)) (i32.const 0))
               (local.set $last (call $listbox_wndproc (local.get $hwnd)
                 (i32.const 0x0180) (i32.const 0)
