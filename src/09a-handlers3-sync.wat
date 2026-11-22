@@ -180,7 +180,15 @@
         (if (i32.eq (local.get $vk) (i32.const 0x0D)) (then (local.set $ch (i32.const 0x0D))))
         (if (i32.eq (local.get $vk) (i32.const 0x1B)) (then (local.set $ch (i32.const 0x1B))))
         (if (i32.eq (local.get $vk) (i32.const 0x09)) (then (local.set $ch (i32.const 0x09))))
-        (if (i32.eq (local.get $vk) (i32.const 0x08)) (then (local.set $ch (i32.const 0x08))))))
+        (if (i32.eq (local.get $vk) (i32.const 0x08))
+          (then
+            (local.set $ch (i32.const 0x08))
+            ;; US unshifted Ctrl+Backspace is DEL; preserve Shift/Alt compatibility.
+            (if (i32.and (i32.eqz (local.get $shift))
+              (i32.and
+                (i32.ne (i32.and (i32.load8_u offset=0x11 (local.get $ks)) (i32.const 0x80)) (i32.const 0))
+                (i32.eqz (i32.and (i32.load8_u offset=0x12 (local.get $ks)) (i32.const 0x80)))))
+              (then (local.set $ch (i32.const 0x7F))))))))
     (if (local.get $ch)
       (then
         (i32.store16 (local.get $out) (local.get $ch))
