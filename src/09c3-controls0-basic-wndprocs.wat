@@ -1491,6 +1491,21 @@
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
     ;; Microsoft WIN32.HLP (1992-94), Static / Default Message Processing:
+    ;; WM_ERASEBKGND returns TRUE. The existing WM_PAINT path fills the
+    ;; label background; acknowledge here without drawing or scheduling paint.
+    ;; Qualified only for live, enabled, visible ANSI Win32 SS_LEFT labels
+    ;; with a supplied DC. Other static styles and ABIs keep their old path.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0014))
+          (i32.and (i32.ne (local.get $state) (i32.const 0))
+            (i32.and (i32.ne (local.get $wParam) (i32.const 0))
+              (i32.and (i32.eqz (global.get $is_win16))
+                (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                  (i32.and (call $wnd_is_effectively_visible (local.get $hwnd))
+                    (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd))
+                                      (i32.const 0x0800FFFF)))))))))
+      (then (return (i32.const 1))))
+
+    ;; Microsoft WIN32.HLP (1992-94), Static / Default Message Processing:
     ;; WM_GETDLGCODE returns DLGC_STATIC, with no additional input flags.
     ;; Bound this response to ordinary ANSI Win32 SS_LEFT text labels.
     (if (i32.and
