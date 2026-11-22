@@ -1,0 +1,96 @@
+'use strict';
+// Microsoft primary: https://learn.microsoft.com/en-us/windows/win32/controls/lb-setitemheight
+// Fixed-height domain wParam=0, positive 1..255 pixels; no claim for zero,
+// nonzero fixed index, variable-height or multicolumn semantics.
+// Public APIs, physical browser input, and literal RGBA geometry are independent.
+const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),http=require('node:http'),assert=require('node:assert/strict'),crypto=require('node:crypto'),zlib=require('node:zlib');
+const root=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const heights=[16,24,32,32,8,8,255,1,1,24,24,24,24,24,24,24];
+const tops=[0,0,0,10,2,0,0,0,0,3,3,3,9,8,8,0];
+const sels=[2,2,2,11,11,11,11,11,11,11,4,5,11,11,11,11];
+const source=String.raw`
+typedef unsigned long U;typedef void* P;
+#define API __declspec(dllimport) __stdcall
+P API GetModuleHandleA(const char*);P API CreateWindowExA(U,const char*,const char*,U,int,int,int,int,P,P,P,P);
+unsigned short API RegisterClassA(const void*);long API DefWindowProcA(P,U,U,long);P API SetFocus(P);P API GetFocus(void);int API GetDlgCtrlID(P);int API SetWindowTextA(P,const char*);int API MoveWindow(P,int,int,int,int,int);
+long API SendMessageA(P,U,U,long);int API GetMessageA(P,P,U,U);int API TranslateMessage(P);long API DispatchMessageA(P);int API GetScrollInfo(P,int,P);
+P API CreateSolidBrush(U);int API DeleteObject(P);int API FillRect(P,P,P);
+struct WC{U style;P proc;int cex,wex;P instance,icon,cursor,brush;const char* menu;const char* name;};
+struct SI{U cb,mask;int min,max;U page;int pos,track;};
+struct DI{U type,id,item,action,state;P hwnd,dc;int rect[4];U data;};
+static P frame,lb,owner,variable,empty,status,button,instance;static int stage,ready,notifications,guard,result=99,measures,draws,badDraw;static char report[500];
+static const char* items[12]={"Row 00","Row 01","Row 02","Row 03","Row 04","Row 05","Row 06","Row 07","Row 08","Row 09","Row 10","Row 11"};
+void number(int n,int* at){char d[12];int k=0;if(n<0){report[(*at)++]='-';n=-n;}do{d[k++]='0'+n%10;n/=10;}while(n);while(k)report[(*at)++]=d[--k];report[(*at)++]=' ';}
+void add(P h){for(int j=0;j<12;++j){SendMessageA(h,0x180,0,(long)items[j]);SendMessageA(h,0x19a,j,0x12340000+j);}SendMessageA(h,0x186,2,0);}
+void height(P h,int n){P f=GetFocus();int nc=notifications;result=SendMessageA(h,0x1a0,0,n);guard=guard&&f==GetFocus()&&nc==notifications;}
+void publish(void){int at=0,ok=1,rc[6]={123,0,0,0,0,456};struct SI si={28,23,0,0,0,0,0};GetScrollInfo(lb,0,&si);for(int j=0;j<12;++j){char b[32];SendMessageA(lb,0x189,j,(long)b);int k=0;while(items[j][k]&&items[j][k]==b[k])++k;ok=ok&&items[j][k]==b[k]&&(U)SendMessageA(lb,0x199,j,0)==0x12340000+j;}
+ int rr=SendMessageA(lb,0x198,4,(long)(rc+1));
+ number(stage,&at);number(SendMessageA(lb,0x1a1,0,0),&at);number(SendMessageA(lb,0x188,0,0),&at);number(SendMessageA(lb,0x18e,0,0),&at);number(result,&at);number(rr,&at);for(int j=0;j<6;++j)number(rc[j],&at);number(SendMessageA(lb,0x1a9,0,10|(49<<16)),&at);number(SendMessageA(lb,0x193,0,0),&at);number(si.pos,&at);number(si.max,&at);number(si.page,&at);number(guard,&at);number(ok,&at);number(notifications,&at);number(SendMessageA(owner,0x1a1,0,0),&at);number(SendMessageA(variable,0x1a1,0,0),&at);number(SendMessageA(empty,0x1a1,0,0),&at);number(measures,&at);number(badDraw,&at);report[at]=0;SetWindowTextA(status,report);}
+void operate(void){guard=1;result=99;switch(stage){case 1:height(lb,24);height(owner,24);height(empty,24);SendMessageA(variable,0x1a0,0,24);break;case 2:height(lb,32);height(owner,32);break;case 3:SendMessageA(lb,0x186,11,0);break;case 4:height(lb,8);height(owner,8);break;case 5:MoveWindow(lb,15,40,180,180,1);break;case 6:height(lb,255);height(owner,255);break;case 7:height(lb,1);height(owner,1);break;case 8:height(lb,256);break;case 9:MoveWindow(lb,15,40,180,100,1);height(lb,24);height(owner,24);SendMessageA(lb,0x197,3,0);SetFocus(lb);break;case 12:break;case 13:MoveWindow(lb,15,40,180,116,1);break;case 14:MoveWindow(lb,15,40,180,132,1);break;case 15:height(lb,24);SendMessageA(lb,0x197,0,0);break;}publish();}
+long __stdcall proc(P h,U m,U w,long l){if(m==0x2c){U* q=(U*)l;q[4]=18;++measures;return 1;}if(m==0x2b){struct DI* d=(struct DI*)l;int ht=SendMessageA(d->hwnd,0x1a1,0,0);if(d->rect[3]-d->rect[1]!=ht)badDraw=1;P b=CreateSolidBrush(d->item&1?0x0000ff00:0x00ffff00);FillRect(d->dc,d->rect,b);DeleteObject(b);++draws;return 1;}if(m==0x111&&(w&65535)==10&&(w>>16)==1){++notifications;return 0;}if(m==0x111&&(w&65535)==20&&!ready){SetFocus(button);ready=1;operate();return 0;}return DefWindowProcA(h,m,w,l);}
+void start(void){instance=GetModuleHandleA(0);struct WC wc={0,proc,0,0,0,0,0,(P)16,0,"ListHeight"};wc.instance=instance;RegisterClassA(&wc);frame=CreateWindowExA(0,"ListHeight","Authored fixed list height",0x10cf0000,30,30,820,350,0,0,instance,0);
+ lb=CreateWindowExA(0,"LISTBOX","",0x50310001,15,40,180,100,frame,(P)10,instance,0);add(lb);SendMessageA(lb,0x194,320,0);SendMessageA(lb,0x114,4|(32<<16),0);
+ owner=CreateWindowExA(0,"LISTBOX","",0x50000050,250,40,180,100,frame,(P)11,instance,0);add(owner);
+ variable=CreateWindowExA(0,"LISTBOX","",0x50000060,480,40,180,100,frame,(P)12,instance,0);add(variable);
+ empty=CreateWindowExA(0,"LISTBOX","",0x40000000,15,400,180,100,frame,(P)13,instance,0);
+ button=CreateWindowExA(0,"BUTTON","Ready",0x50010000,15,245,100,26,frame,(P)20,instance,0);status=CreateWindowExA(0,"STATIC","starting",0x50000000,15,285,780,50,frame,(P)21,instance,0);
+ U msg[12];while(GetMessageA(msg,0,0,0)>0){if(ready&&msg[1]==0x100&&msg[2]=='N'&&stage<15){++stage;operate();}else if(ready&&stage>=9&&stage<12&&(msg[1]==0x100||msg[1]==0x202)){int advance=(stage==9&&msg[1]==0x202)||(stage==10&&msg[1]==0x100&&msg[2]==0x28)||(stage==11&&msg[1]==0x100&&msg[2]==0x23);TranslateMessage(msg);DispatchMessageA(msg);if(advance){++stage;result=99;publish();}continue;}TranslateMessage(msg);DispatchMessageA(msg);}}
+`;
+function fixture(out){
+ fs.writeFileSync(out+'/fixture.c',source);
+ for(const [dll,names]of Object.entries({kernel32:['GetModuleHandleA@4'],user32:['CreateWindowExA@48','RegisterClassA@4','DefWindowProcA@16','SetFocus@4','GetFocus@0','GetDlgCtrlID@4','SetWindowTextA@8','MoveWindow@24','GetScrollInfo@12','SendMessageA@16','GetMessageA@16','TranslateMessage@4','DispatchMessageA@4','FillRect@12'],gdi32:['CreateSolidBrush@4','DeleteObject@4']})){
+ fs.writeFileSync(out+'/'+dll+'.def','LIBRARY '+dll+'.dll\nEXPORTS\n'+names.join('\n')+'\n');cp.execFileSync('llvm-dlltool',['-m','i386','-k','-d',out+'/'+dll+'.def','-l',out+'/'+dll+'.lib']);}
+ cp.execFileSync('clang',['--target=i686-pc-windows-msvc','-ffreestanding','-fno-stack-protector','-fno-builtin','-O1','-c',out+'/fixture.c','-o',out+'/fixture.obj']);
+ cp.execFileSync('ld',['-mi386pe','--entry','_start','--subsystem','windows','--disable-dynamicbase','--no-insert-timestamp','-o',out+'/list-height.exe',out+'/fixture.obj',out+'/kernel32.lib',out+'/user32.lib',out+'/gdi32.lib']);return fs.readFileSync(out+'/list-height.exe');
+}
+async function main(out,{expectOld=false}={}){
+ fs.mkdirSync(out,{recursive:true});const save=(n,v)=>fs.writeFileSync(out+'/'+n,JSON.stringify(v,null,2)+'\n'),pause=ms=>new Promise(r=>setTimeout(r,ms));
+ const runtime=require(root+'/tools/boids-current-runtime.cjs'),commit=process.env.LIST_HEIGHT_COMMIT||cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),files=runtime.gitFiles(commit);
+ if(process.env.LIST_HEIGHT_WORKING_RUNTIME)for(const n of files.keys())if(fs.existsSync(root+'/'+n))files.set(n,fs.readFileSync(root+'/'+n));
+ files.set('src/09c3-wndprocs3-listbox.wat',fs.readFileSync(root+'/src/09c3-wndprocs3-listbox.wat'));
+ for(const n of cp.execFileSync('git',['ls-tree','-r','--name-only',commit,'--','fonts','icons','images','style.css'],{encoding:'utf8'}).trim().split('\n').filter(Boolean))files.set(n,cp.execFileSync('git',['show',commit+':'+n],{maxBuffer:8e6}));
+ const wasm=process.env.LIST_HEIGHT_WASM?fs.readFileSync(process.env.LIST_HEIGHT_WASM):runtime.compile(files),pe=fixture(out);fs.writeFileSync(out+'/tested.wasm.gz',zlib.gzipSync(wasm));files.set('build/wine-assembly.wasm',wasm);files.set('list-height.exe',pe);
+ save('runtime.json',{commit,moduleSHA256:sha(wasm),peSHA256:sha(pe),testSHA256:sha(fs.readFileSync(__filename)),files:[...files].map(([name,b])=>({name,size:b.length,sha256:sha(b)}))});
+ const controlBase=Number(/CONTROL_TABLE: \{[^}]*base: (0x[0-9a-fA-F_]+)/.exec(files.get('lib/region-map.generated.js').toString())[1].replaceAll('_',''));
+ const transient=require(root+'/tools/browser-transients.cjs').create(),logs=[],pending=[],workers=[],states=[],failures=[];let display,browser,wait,server;
+ try{
+ server=http.createServer((req,res)=>{const n=new URL(req.url,'http://local').pathname.slice(1)||'index.html',b=files.get(n);res.setHeader('Cross-Origin-Opener-Policy','same-origin');res.setHeader('Cross-Origin-Embedder-Policy','require-corp');res.setHeader('Content-Type',n.endsWith('.js')?'text/javascript':n.endsWith('.html')?'text/html':n.endsWith('.css')?'text/css':n.endsWith('.wasm')?'application/wasm':'application/octet-stream');res.statusCode=b?200:404;res.end(b||'missing');});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ display=await require(root+'/tools/gltron-headful-display.cjs').start(out);
+ browser=await require(root+'/node_modules/puppeteer').launch({headless:false,defaultViewport:{width:1050,height:800},env:transient.env(display.env),userDataDir:transient.profile,executablePath:'/opt/google/chrome/chrome',args:[...transient.args,'--no-sandbox','--disable-dev-shm-usage','--disable-component-update','--disable-background-networking'],protocolTimeout:45000});wait=transient.watch(browser.process());browser.process().stdout?.resume();browser.process().stderr?.resume();save('browser-version.json',{version:await browser.version()});
+ const page=await browser.newPage();page.on('console',m=>logs.push(m.text()));page.on('pageerror',e=>logs.push(String(e)));
+ page.on('workercreated',w=>{const row={url:w.url(),modules:[]};workers.push(row);const c=w.client;c.on('Debugger.scriptParsed',v=>{if(v.scriptLanguage==='WebAssembly'||v.url.startsWith('wasm://'))pending.push(c.send('Debugger.getScriptSource',{scriptId:v.scriptId}).then(r=>row.modules.push(sha(Buffer.from(r.bytecode,'base64')))));});pending.push(c.send('Debugger.enable'));});
+ await page.evaluateOnNewDocument(()=>localStorage.setItem('wine-assembly.threads','1'));await page.goto('http://127.0.0.1:'+server.address().port+'/?debug&threads&no-log');await page.waitForFunction(()=>typeof WineAssembly==='function');
+ await page.evaluate(async()=>{const c=document.createElement('canvas');c.width=1000;c.height=650;c.style='position:fixed;left:0;top:0;z-index:99999;width:1000px;height:650px;max-width:none;max-height:none;border:0;padding:0';document.body.append(c);window.topHost=new WineAssembly();topHost.renderer=new Win98Renderer(c);await topHost.init(c);if(!topHost.guestWorker)throw Error('production Worker required');await topHost.loadExe('/list-height.exe');topHost.run();});
+ await page.waitForFunction(()=>Object.values(topHost.renderer.windows).some(w=>w.title==='Ready'),{timeout:15000});await page.evaluate(()=>{browserInput.wireCanvasInput(topHost.renderer.canvas,topHost.renderer,{runningApps:[{wine:topHost}],debugMode:true});topHost.renderer.canvas.focus();});
+ await page.mouse.click(30+6+15+30,30+26+245+12);await page.waitForFunction(()=>Object.values(topHost.renderer.windows).some(w=>/^0 16 2 /.test(w.title)),{timeout:15000});
+ async function sample(stage){await pause(130);const s=await page.evaluate(base=>{const h=topHost,r=h.renderer,frame=Object.values(r.windows).find(w=>w.title==='Authored fixed list height'),popup=Object.values(r.windows).find(w=>w.isPopup&&w.visible),v=new DataView(h.memory.buffer);let kind=null;for(let i=0;i<256;i++)if(v.getUint32(base+i*16+4,true)===10)kind=v.getUint32(base+i*16,true);
+ const extract=w=>{const p=w._backCanvas._waCanonicalPresentation;return {hwnd:w.hwnd,x:w.x,y:w.y,w:w.w,h:w.h,pixels:Array.from(w._backCanvas.getContext('2d').getImageData(0,0,w.w,w.h).data),gdi:p?{shared:p.surface.storage.buffer===h.memory.buffer,pixels:Array.from(p.surface.rgbaRect(0,0,w.w,w.h))}:null};};return {kind,frame:extract(frame),popup:popup?extract(popup):null,report:Object.values(r.windows).find(w=>w.isChild&&w.x===15&&w.y===285)?.title,memoryBytes:h.memory.buffer.byteLength};},controlBase);
+ assert.equal(s.kind,4,'public LISTBOX routes to native class4');assert.equal(s.memoryBytes,536870912);
+ const got=s.report.trim().split(/\s+/).map(Number),rh=heights[stage],top=tops[stage],sel=sels[stage],pageSize=[5,7,8].includes(stage)?176:160;
+ const setter=[1,2,4,6,7,8,9,15].includes(stage),ret=stage===8?-1:setter?0:99;
+ const want=[stage,rh,sel,top,ret,0,123,0,(4-top)*rh,180,(5-top)*rh,456,Math.min(11,top+Math.floor(49/rh)),320,32,319,pageSize,1,1,stage<10?0:stage===10?1:stage===11?2:3,stage===0?18:stage===1?24:stage<=3?32:stage<=5?8:stage===6?255:stage<=8?1:24,18,stage?24:16,2,0];
+ s.publicPass=got.length===want.length&&want.every((v,i)=>got[i]===v);if(!s.publicPass)failures.push({stage,got,want});
+ s.stage=stage;s.got=got;s.want=want;const surfaces=[];const p=s.frame;assert(p.gdi?.shared);assert(Buffer.from(p.gdi.pixels).equals(Buffer.from(p.pixels)),'shared GDI matches backing canvas');p.shared=true;delete p.gdi;
+ const crop=(p,x,y,w,h)=>{const b=Buffer.alloc(w*h*4),pix=Buffer.from(p.pixels);for(let row=0;row<h;++row)pix.copy(b,row*w*4,((y+row)*p.w+x)*4,((y+row)*p.w+x+w)*4);return {x:p.x+x,y:p.y+y,w,h,bytes:b};};
+ // Fixed coordinates and colors; expected height/top/selection are literal
+ // scenario inputs above, never read from the control or copied from its pixels.
+ const actual=crop(p,130,66,16,64),owned=crop(p,370,66,16,64);surfaces.push(actual,owned);
+ const expected=Buffer.alloc(16*64*4),ownerExpected=Buffer.alloc(16*64*4);
+ const ownerH=want[20];let vis=Math.max(1,Math.floor(96/ownerH));
+ for(let y=0;y<64;++y)for(let x=0;x<16;++x){const row=Math.floor(y/rh),selected=top+row===sel,rowDrawn=row<Math.max(1,Math.floor(((stage===5||stage===6||stage===7||stage===8)?160:stage===13?96:stage===14?112:80)/rh));const color=selected&&rowDrawn?[0,0,128,255]:[255,255,255,255];expected.set(color,(y*16+x)*4);const j=Math.floor(y/ownerH);ownerExpected.set(j<Math.min(12,vis)?(j%2?[0,255,0,255]:[0,255,255,255]):[255,255,255,255],(y*16+x)*4);}
+ s.visiblePair=actual.bytes.equals(expected);s.ownerPair=owned.bytes.equals(ownerExpected);s.expectedGeometry={rh,top,sel,ownerH,rgbaSHA256:sha(expected),ownerSHA256:sha(ownerExpected)};
+ const bar=crop(p,185,70,1,1);surfaces.push(bar);s.scrollbarProbe={rgba:[...bar.bytes],expected:[5,7,8].includes(stage)?[255,255,255,255]:[192,192,192,255]};s.scrollbarProbe.pass=bar.bytes.equals(Buffer.from(s.scrollbarProbe.expected));
+ const compositeBytes=await page.screenshot();require(root+'/tools/browser-transients.cjs').captureWhole(out,'stage-'+stage+'-desktop',display.env);const desktopPath=out+'/stage-'+stage+'-desktop.png';const {PNG}=require(root+'/node_modules/pngjs'),composite=PNG.sync.read(compositeBytes),desktop=PNG.sync.read(fs.readFileSync(desktopPath)),g=await page.evaluate(()=>topHost.renderer.canvas.getBoundingClientRect().toJSON());
+ const match=(png,v,ox,oy)=>{const x=Math.round(ox+v.x),y=Math.round(oy+v.y);if(x<0||y<0||x+v.w>png.width||y+v.h>png.height)return false;for(let row=0;row<v.h;++row)if(!png.data.subarray(((y+row)*png.width+x)*4,((y+row)*png.width+x+v.w)*4).equals(v.bytes.subarray(row*v.w*4,(row+1)*v.w*4)))return false;return true;};
+ assert(surfaces.every(v=>match(composite,v,g.x,g.y)),'compositor exact rows');const first=surfaces[1],needle=first.bytes.subarray(5*16*4,6*16*4);let origin=null;for(let at=desktop.data.indexOf(needle);at>=0;at=desktop.data.indexOf(needle,at+1)){if(at%4)continue;const ox=at/4%desktop.width-first.x,oy=Math.floor(at/4/desktop.width)-first.y-5;if(surfaces.every(v=>match(desktop,v,ox,oy))){origin={x:ox,y:oy};break;}}assert(origin,'native desktop exact rows at one origin');s.fourPlanes={sharedGDI:true,backing:true,compositor:true,nativeDesktop:true,origin};
+ if([1,3,4,6,10,12,14].includes(stage)){fs.writeFileSync(out+'/stage-'+stage+'-composited.png',compositeBytes);}else fs.unlinkSync(desktopPath);
+ s.surfaces=surfaces.map(({bytes,...v})=>({...v,sha256:sha(bytes)}));for(const name of ['frame','popup'])if(s[name])delete s[name].pixels;states.push(s);save('states.json',states);
+ }
+ await sample(0);for(let stage=1;stage<heights.length;++stage){if(stage===10)await page.mouse.click(30+6+15+40,30+26+40+32);else await page.keyboard.press(stage===11?'ArrowDown':stage===12?'End':'n');await page.waitForFunction(stage=>Object.values(topHost.renderer.windows).some(w=>w.title?.startsWith(stage+' ')),{timeout:5000},stage);await sample(stage);}
+ const cpu=page.workers().find(w=>/\/guest-worker\.js(?:\?|$)/.test(w.url()));assert(cpu);const cpuState=await cpu.evaluate(()=>{const names=['get_eip','get_esp','get_ebp','get_eax','get_ebx','get_ecx','get_edx','get_esi','get_edi','get_flag_op','get_flag_a','get_flag_b','get_flag_res','get_flag_sign_shift','get_sreg_ds','get_sreg_es','get_sreg_ss','get_sreg_cs','get_fs_base'];return {memoryBytes:memory.buffer.byteLength,registers:Object.fromEntries(names.map(n=>[n,instance.exports[n]()>>>0]))};});save('cpu-state.json',cpuState);assert.equal(cpuState.memoryBytes,536870912);assert.equal(Object.keys(cpuState.registers).length,19);assert(cpuState.registers.get_eip&&cpuState.registers.get_esp);
+ await Promise.all(pending);save('workers.json',workers);assert(workers.some(w=>w.modules.includes(sha(wasm))));assert(workers.every(w=>w.modules.every(h=>h===sha(wasm))));save('assertions.json',{expectOld,failures,states:states.length,productionBrowserCPU:true,visiblePairs:states.filter(s=>s.visiblePair!==null).map(s=>({stage:s.stage,equal:s.visiblePair})),fourPlanes:states.every(s=>s.fourPlanes.nativeDesktop)});
+ assert(states[0].publicPass&&states[0].visiblePair&&states[0].ownerPair,'unchanged initial public state and fixed geometry');
+ if(expectOld){assert(failures.some(v=>v.stage===1&&v.got[1]!==v.want[1]),'physical preedit getter failure');assert(states.some(s=>s.stage===1&&!s.ownerPair),'physical preedit row geometry failure');console.log('PASS expected physical old FAIL',failures.length);}else{assert(states.every(s=>s.visiblePair&&s.ownerPair),'independent literal row geometry for ordinary and fixed owner-draw');assert(states.every(s=>s.scrollbarProbe.pass),'scrollbar fixed pixel references');assert.deepEqual(failures,[]);console.log('PASS listbox fixed item height public state and four planes',states.length);}
+ }finally{save('browser.log.json',logs);await Promise.allSettled(pending);if(browser){await browser.close();save('browser-wait.json',await wait);}if(server)await new Promise(r=>server.close(r));save('transients.json',await transient.cleanup(out));if(display)await display.close();}
+}
+if(require.main===module)main(process.argv[2]?path.resolve(process.argv[2]):fs.mkdtempSync('/dev/shm/listbox-item-height-'),{expectOld:process.argv.includes('--expect-old')}).catch(e=>{console.error(e.stack);process.exitCode=1;});module.exports={fixture,main,heights,tops,sels};

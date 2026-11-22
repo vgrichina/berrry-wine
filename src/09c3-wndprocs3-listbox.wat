@@ -27,7 +27,7 @@
   ;;   +36  data_cap         capacity of data array, in u32 slots
   ;;   +40  sel_buf_ptr      guest ptr to u8[] multi-selection flags
   ;;   +44  sel_cap          capacity of selection array, in bytes
-  ;;   +48  item_h           owner-draw row height, 0 = default
+  ;;   +48  item_h           shared row height, 0 = default/unmeasured
   ;;   +52  horizontal_extent configured width, independent of text/scroll offset
   ;;   +56  scroll_x         content offset in pixels
   ;; The control id is NOT in the record: $ctrl_table_get_id($hwnd).
@@ -39,7 +39,7 @@
   ;; the count is small enough that linear walks are cheap.
   ;;
   ;; Click → set cur_sel + post WM_COMMAND (HIWORD=LBN_SELCHANGE=1, LOWORD=ctrl_id).
-  ;; Double-click → post WM_COMMAND (HIWORD=LBN_DBLCLK=2). Item height = 16px.
+  ;; Double-click → post WM_COMMAND (HIWORD=LBN_DBLCLK=2). Default height = 16px.
   ;;
   ;; WM_PAINT draws rows and both scrollbar strips through the native GDI path.
   (func $listbox_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
@@ -420,9 +420,33 @@
           (br $get_sels)))
         (return (local.get $sel))))
 
+    ;; ---------- LB_SETITEMHEIGHT (0x01A0) ----------
+    ;; Microsoft: outside LBS_OWNERDRAWVARIABLE, wParam=0 changes all rows;
+    ;; the maximum height is 255 pixels, and an invalid height returns LB_ERR.
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/lb-setitemheight
+    ;; Support positive fixed heights only. Preserve the previous no-op path
+    ;; for variable-height/multicolumn lists, nonzero fixed indices, and the
+    ;; undocumented zero-height case; do not invent their Windows semantics.
+    (if (i32.eq (local.get $msg) (i32.const 0x01A0))
+      (then
+        (if (i32.or
+              (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0220)) (i32.const 0))
+              (i32.ne (local.get $wParam) (i32.const 0)))
+          (then (return (i32.const 0))))
+        (if (i32.eqz (local.get $lParam)) (then (return (i32.const 0))))
+        (if (i32.gt_u (local.get $lParam) (i32.const 255))
+          (then (return (i32.const -1))))
+        (call $lb_set_item_h (local.get $sw) (local.get $lParam))
+        ;; The existing row accessor drives paint, public geometry, hit tests,
+        ;; reveal and resize. Refresh the viewport without changing selection,
+        ;; item data, explicit horizontal extent, focus, or notifications.
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
+        (drop (call $listbox_scroll_to (local.get $hwnd) (local.get $sw) (call $lb_top_index (local.get $sw))))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 0))))
+
     ;; ---------- LB_GETITEMHEIGHT (0x01A1) ----------
-    ;; The Win98 default 16px row, or whatever an owner-draw listbox's owner
-    ;; asked for in WM_MEASUREITEM.
+    ;; The default 16px row, WM_MEASUREITEM, or LB_SETITEMHEIGHT's shared height.
     (if (i32.eq (local.get $msg) (i32.const 0x01A1))
       (then (return (call $lb_row_height (local.get $sw)))))
 
