@@ -1448,9 +1448,12 @@
   )
 
   (func $handle_CreateBitmapIndirect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $bitmap i32)
+    ;; The complete BITMAP can cross physically separate guest mappings.
+    (local.set $bitmap (call $guest_span_in (local.get $arg0) (i32.const 24)))
     (i32.store offset=0 (global.get $reg_base) (call $gdi_bitmap_create_indirect
-      (if (result i32) (local.get $arg0)
-        (then (call $g2w (local.get $arg0))) (else (i32.const 0)))))
+      (local.get $bitmap)))
+    (call $guest_span_release (local.get $bitmap) (i32.const 24))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   (func $handle_GetBitmapBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

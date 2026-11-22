@@ -738,17 +738,27 @@
       (i32.const 0) (i32.const 0) (i32.const 0)))
 
   (func $gdi_bitmap_create_indirect (param $bitmap i32) (result i32)
+    (local $pixels i32) (local $len i32) (local $handle i32)
     (if (i32.eqz (local.get $bitmap)) (then (return (i32.const 0))))
     (if (i32.ne (i32.load (local.get $bitmap)) (i32.const 0))
       (then (return (i32.const 0))))
-    (call $gdi_bitmap_create_bitmap
-      (i32.load offset=4 (local.get $bitmap))
-      (i32.load offset=8 (local.get $bitmap))
-      (i32.load16_u offset=16 (local.get $bitmap))
-      (i32.load16_u offset=18 (local.get $bitmap))
-      (if (result i32) (i32.load offset=20 (local.get $bitmap))
-        (then (call $g2w (i32.load offset=20 (local.get $bitmap))))
-        (else (i32.const 0)))))
+    ;; Use the same WORD-aligned layout and owned-copy path as CreateBitmap,
+    ;; gathering bmBits independently of the caller's gathered BITMAP.
+    (if (i32.eqz (call $gdi_bitmap_plan_create_bitmap
+          (i32.load offset=4 (local.get $bitmap))
+          (i32.load offset=8 (local.get $bitmap))
+          (i32.load16_u offset=16 (local.get $bitmap))
+          (i32.load16_u offset=18 (local.get $bitmap)) (global.get $GDI_BITMAP_PLAN)))
+      (then (return (i32.const 0))))
+    (local.set $len (i32.load offset=32 (global.get $GDI_BITMAP_PLAN)))
+    (local.set $pixels (call $guest_span_in
+      (i32.load offset=20 (local.get $bitmap)) (local.get $len)))
+    (local.set $handle (call $gdi_bitmap_create_owned
+      (global.get $GDI_BITMAP_PLAN) (local.get $pixels)
+      (i32.ne (local.get $pixels) (i32.const 0)) (i32.const 0)
+      (i32.const 0) (i32.const 0) (i32.const 0)))
+    (call $guest_span_release (local.get $pixels) (local.get $len))
+    (local.get $handle))
 
   (func $gdi_bitmap_bits (param $bitmap i32) (param $count i32)
         (param $buffer i32) (param $write i32) (result i32)
