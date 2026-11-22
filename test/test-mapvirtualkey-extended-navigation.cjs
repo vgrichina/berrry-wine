@@ -80,8 +80,11 @@ function check(code,type,expected,label) {
 for(const [extended,vk,label] of oracle) check(extended,3,vk,label);
 for(const [scan,vk,label] of ordinaryTwins) check(scan,3,vk,label+' retained ordinary twin');
 for(const [code,vk,label] of [[0x2a,0xa0,'LShift'],[0x36,0xa1,'RShift'],[0x1d,0xa2,'LCtrl'],[0xe01d,0xa3,'RCtrl'],[0x38,0xa4,'LAlt'],[0xe038,0xa5,'RAlt'],[0x1e,0x41,'A'],[0x41,0x76,'F7']]) check(code,3,vk,label+' published control');
-// Published type4 behavior remains unchanged; navigation VKs are unsupported.
-for(const [,vk] of oracle) check(vk,4,0,'published type4 navigation negative');
+// Type4 returns the literal documented E0-prefixed US Scan 1 Make.
+for(const [vk,scan] of [
+  [0x24,0xe047], [0x26,0xe048], [0x21,0xe049], [0x25,0xe04b], [0x27,0xe04d],
+  [0x23,0xe04f], [0x28,0xe050], [0x22,0xe051], [0x2d,0xe052], [0x2e,0xe053],
+]) check(vk,4,scan,'documented type4 navigation');
 for(const code of [0xe01e,0xe041]) check(code,3,0,'published ordinary prefix negative');
 for(const [vk,scan] of [[0x41,0x1e],[0x10,0x2a],[0xa3,0xe01d],[0xa5,0xe038]]) check(vk,4,scan,'published type4 control');
 console.log(JSON.stringify({checks,failures}));

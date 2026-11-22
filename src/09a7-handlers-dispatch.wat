@@ -5001,14 +5001,21 @@
         (then
           (local.set $result (call $vk_to_scan (local.get $uCode)))
           (br $done)))
-      ;; Type 4: ordinary US vkey -> scan code, preserving modifier sides.
-      ;; Nonmodifier E0/E1 keys are not implemented here. In particular, the
-      ;; legacy type-0 Cancel/arrow mappings lack the required prefix.
+      ;; Type 4: US vkey -> scan code, preserving modifier sides and E0 navigation.
+      ;; Dedicated navigation keys return the documented Scan 1 Make prefix.
       (if (i32.eq (local.get $uMapType) (i32.const 4))
         (then
+          (if (i32.eq (local.get $uCode) (i32.const 0x24)) (then (local.set $result (i32.const 0xE047)) (br $done))) ;; Home
+          (if (i32.eq (local.get $uCode) (i32.const 0x26)) (then (local.set $result (i32.const 0xE048)) (br $done))) ;; Up
+          (if (i32.eq (local.get $uCode) (i32.const 0x21)) (then (local.set $result (i32.const 0xE049)) (br $done))) ;; PageUp
+          (if (i32.eq (local.get $uCode) (i32.const 0x25)) (then (local.set $result (i32.const 0xE04B)) (br $done))) ;; Left
+          (if (i32.eq (local.get $uCode) (i32.const 0x27)) (then (local.set $result (i32.const 0xE04D)) (br $done))) ;; Right
+          (if (i32.eq (local.get $uCode) (i32.const 0x23)) (then (local.set $result (i32.const 0xE04F)) (br $done))) ;; End
+          (if (i32.eq (local.get $uCode) (i32.const 0x28)) (then (local.set $result (i32.const 0xE050)) (br $done))) ;; Down
+          (if (i32.eq (local.get $uCode) (i32.const 0x22)) (then (local.set $result (i32.const 0xE051)) (br $done))) ;; PageDown
+          (if (i32.eq (local.get $uCode) (i32.const 0x2D)) (then (local.set $result (i32.const 0xE052)) (br $done))) ;; Insert
+          (if (i32.eq (local.get $uCode) (i32.const 0x2E)) (then (local.set $result (i32.const 0xE053)) (br $done))) ;; Delete
           (if (i32.eq (local.get $uCode) (i32.const 0x03)) (then (br $done)))
-          (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x25)) (i32.le_u (local.get $uCode) (i32.const 0x28)))
-            (then (br $done)))
           (local.set $result (call $vk_to_scan (local.get $uCode)))
           (if (i32.eq (local.get $uCode) (i32.const 0xA0)) (then (local.set $result (i32.const 0x002A)))) ;; VK_LSHIFT
           (if (i32.eq (local.get $uCode) (i32.const 0xA1)) (then (local.set $result (i32.const 0x0036)))) ;; VK_RSHIFT
