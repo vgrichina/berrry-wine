@@ -6043,6 +6043,13 @@
       (then (return (i32.const 0))))
     (local.set $dx (call $gdi_line_map_x (local.get $dst) (local.get $dx_logical)))
     (local.set $dy (call $gdi_line_map_y (local.get $dst) (local.get $dy_logical)))
+    ;; Destination dimensions are logical; share mapped extents with presentation.
+    (local.set $w (i32.sub
+      (call $gdi_line_map_x (local.get $dst) (i32.add (local.get $dx_logical) (local.get $w)))
+      (local.get $dx)))
+    (local.set $h (i32.sub
+      (call $gdi_line_map_y (local.get $dst) (i32.add (local.get $dy_logical) (local.get $h)))
+      (local.get $dy)))
     (if (local.get $src_hdc)
       (then
         (if (i32.eqz (call $gdi_surface_descriptor (local.get $src_hdc) (local.get $src)))
