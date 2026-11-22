@@ -7466,6 +7466,21 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
+    ;; Ordinary ANSI captions: capacity includes NUL; the read result and
+    ;; length exclude it (Microsoft WIN32.HLP topics 3783/3784). Reuse the
+    ;; GetWindowTextA copy path; native controls keep their class procedures.
+    (if (i32.and (i32.eqz (call $ctrl_table_get_class (local.get $arg0)))
+          (i32.or (i32.eq (local.get $arg1) (i32.const 0x000D))
+                  (i32.eq (local.get $arg1) (i32.const 0x000E))))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (if (result i32) (i32.eq (local.get $arg1) (i32.const 0x000D))
+            (then (call $window_text_ansi
+              (local.get $arg0) (local.get $arg3) (local.get $arg2)))
+            (else (call $title_table_get_len (local.get $arg0)))))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     ;; WM_CLOSE (0x10): default close destroys the target. Only closing the
     ;; main window should end the message loop; modeless dialogs are ordinary
     ;; owned windows and closing them must not terminate the app.
