@@ -7355,6 +7355,23 @@
   ;; 78: DefWindowProcA
   (func $handle_DefWindowProcA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $text_wa i32) (local $text_len i32)
+    ;; WM_NOTIFYFORMAT NF_QUERY: the Windows95 SDK specifies NFR_ANSI for
+    ;; an ANSI parent. Keep native controls, Unicode windows and NF_REQUERY
+    ;; on their existing paths (DefDlgProcW also reaches this handler).
+    (if (i32.and
+          (i32.and (i32.eq (local.get $arg1) (i32.const 0x0055))
+                   (i32.eq (local.get $arg3) (i32.const 3)))
+          (i32.and
+            (i32.and
+              (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+                       (i32.ge_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))
+                     (i32.eqz (call $wnd_unicode_get (local.get $arg0))))
+            (i32.eqz (call $ctrl_table_get_class (local.get $arg0)))))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     ;; WM_CHARTOITEM: Microsoft WIN32.HLP topic 3734 specifies -1.
     (if (i32.eq (local.get $arg1) (i32.const 0x002F))
       (then
