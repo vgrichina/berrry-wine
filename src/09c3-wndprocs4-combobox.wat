@@ -841,21 +841,31 @@
         (return (i32.const 1))))
 
     ;; ---------- CB_GETDROPPEDCONTROLRECT (0x0152) ----------
-    ;; lParam = guest RECT* (filled with screen coords of dropped popup area).
-    ;; Our dropdown is in-rect: report the listbox's rect translated to screen coords.
-    ;; For simplicity, compute (0, FIELD_H, w, full_h) in window-local coords; caller
-    ;; can translate via ClientToScreen. (Real Win32 returns screen coords; many apps
-    ;; only check w/h though.)
+    ;; Microsoft: screen coordinates of the combo in its expanded state, not
+    ;; just the popup. Include the selection field even while the list is hidden.
+    ;; The retained list height survives the field's collapse to 21px; its width
+    ;; is max(combo width, requested dropped minimum), as on the next open.
+    ;; SIMPLE already occupies its full expanded window rectangle.
     (if (i32.eq (local.get $msg) (i32.const 0x0152))
       (then
         (if (i32.eqz (local.get $lParam)) (then (return (i32.const 0))))
-        (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
-        (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
-        (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
-        (i32.store          (call $g2w (local.get $lParam)) (i32.const 0))
-        (i32.store offset=4 (call $g2w (local.get $lParam)) (local.get $field_h))
-        (i32.store offset=8 (call $g2w (local.get $lParam)) (local.get $w))
-        (i32.store offset=12 (call $g2w (local.get $lParam)) (local.get $h))
+        (local.set $cs_w (call $paint_scratch_take))
+        (call $host_get_window_rect (local.get $hwnd) (local.get $cs_w))
+        (local.set $px (load.field PaintRect left (local.get $cs_w)))
+        (local.set $py (load.field.memarg PaintRect top (local.get $cs_w)))
+        (local.set $w (i32.sub (load.field.memarg PaintRect right (local.get $cs_w)) (local.get $px)))
+        (local.set $h (i32.sub (load.field.memarg PaintRect bottom (local.get $cs_w)) (local.get $py)))
+        (if (i32.ne (local.get $variant) (i32.const 1))
+          (then
+            (if (i32.gt_u (call $cb_dropped_width (local.get $state_w)) (local.get $w))
+              (then (local.set $w (call $cb_dropped_width (local.get $state_w)))))
+            (if (local.get $lb)
+              (then (local.set $h (i32.add (local.get $h)
+                (i32.shr_u (call $ctrl_get_wh_packed (local.get $lb)) (i32.const 16))))))))
+        (i32.store          (call $g2w (local.get $lParam)) (local.get $px))
+        (i32.store offset=4 (call $g2w (local.get $lParam)) (local.get $py))
+        (i32.store offset=8 (call $g2w (local.get $lParam)) (i32.add (local.get $px) (local.get $w)))
+        (i32.store offset=12 (call $g2w (local.get $lParam)) (i32.add (local.get $py) (local.get $h)))
         (return (i32.const 1))))
 
     ;; ---------- CB_LIMITTEXT (0x0141) → EM_SETLIMITTEXT (0x00C5) ----------
