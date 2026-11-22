@@ -1071,10 +1071,21 @@
             (i32.const 16)
             (i32.eq (local.get $wParam) (i32.const -1))))))
 
-    ;; ---------- CB_DIR / ownerdraw paths ----------
-    ;; Fail-fast (memory: feedback_fail_fast_stubs).
+    ;; ---------- CB_DIR: ordinary ANSI, unsorted CBS_SIMPLE strings ----------
+    ;; Microsoft Visual C++ 4 (September 1995), Vol3 p172; WIN32.HLP
+    ;; topics 3503/3607: matching file names append; return the last index.
+    ;; Reuse LB_DIR for flags=0. Keep unqualified styles/attributes fail-fast.
     (if (i32.eq (local.get $msg) (i32.const 0x0145))   ;; CB_DIR
-      (then (call $crash_unimplemented (i32.const 0x100))))
+      (then
+        (if (i32.and
+              (i32.and (i32.eq (local.get $variant) (i32.const 1))
+                (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+              (i32.and (i32.eqz (local.get $wParam))
+                (i32.eqz (i32.and (call $cb_style (local.get $state_w))
+                  (i32.const 0x6130))))) ;; owner-draw, sort, upper/lowercase
+          (then (return (call $wnd_send_message (local.get $lb)
+            (i32.const 0x018D) (local.get $wParam) (local.get $lParam)))))
+        (call $crash_unimplemented (i32.const 0x100))))
 
     ;; The container router deliberately stops at COMBOBOX. SIMPLE therefore
     ;; forwards field clicks to its EDIT, using the child's inset coordinates.
