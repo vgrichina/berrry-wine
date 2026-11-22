@@ -6836,6 +6836,21 @@
       (br_if $done (i32.lt_s (local.get $slot) (i32.const 0)))
       (local.set $ch (call $wnd_slot_hwnd (local.get $slot)))
       (local.set $style (call $wnd_get_style (local.get $ch)))
+      ;; A visible enabled non-tab child is still a search starting point.
+      (if (i32.and
+            (i32.eq (local.get $ch) (local.get $focus))
+            (i32.eqz (i32.and (local.get $style) (i32.const 0x00010000))))
+        (then
+          (if (i32.and
+                (i32.ne (call $wnd_is_effectively_visible (local.get $ch)) (i32.const 0))
+                (i32.eqz (i32.and (local.get $style)
+                           (i32.shl (i32.const 1) (i32.const 27)))))
+            (then
+              (if (i32.and
+                    (i32.lt_s (local.get $dir) (i32.const 0))
+                    (i32.ne (local.get $prev) (i32.const 0)))
+                (then (return (local.get $prev))))
+              (local.set $seen (i32.const 1))))))
       (if (i32.and
             (i32.and
               (i32.ne (call $wnd_is_effectively_visible (local.get $ch)) (i32.const 0))
