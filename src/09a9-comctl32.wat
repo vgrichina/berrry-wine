@@ -2021,18 +2021,26 @@
   ;; return thunk, and restore the caller after the callback reaches it.
   (func $propsheet_page_callback
       (param $page i32) (param $psp_w i32) (param $message i32) (result i32)
-    (local $callback i32) (local $result i32) (local $rounds i32)
+    (local $callback i32)
+    (if (i32.eqz
+          (i32.and (i32.load offset=4 (local.get $psp_w)) (i32.const 0x80)))
+      (then (return (i32.const 1))))
+    (local.set $callback (i32.load offset=32 (local.get $psp_w)))
+    (if (i32.eqz (local.get $callback)) (then (return (i32.const 1))))
+    (call $sync_stdcall3
+      (local.get $callback) (i32.const 0) (local.get $message) (local.get $page)))
+
+  ;; Call guest $fn(a0, a1, a2) as a three-argument stdcall and return its EAX,
+  ;; or zero when the bounded run does not reach the return thunk.
+  (func $sync_stdcall3
+      (param $fn i32) (param $a0 i32) (param $a1 i32) (param $a2 i32) (result i32)
+    (local $result i32) (local $rounds i32)
     (local $expected_child i64) (local $expected_root i64) (local $expected_depth i32)
     (local $old_eip i32) (local $old_esp i32) (local $old_eax i32)
     (local $old_ecx i32) (local $old_edx i32) (local $old_ebx i32)
     (local $old_esi i32) (local $old_edi i32) (local $old_ebp i32)
     (local $old_handler_set_eip i32) (local $old_steps i32)
     (local $old_yield_reason i32) (local $old_yield_flag i32)
-    (if (i32.eqz
-          (i32.and (i32.load offset=4 (local.get $psp_w)) (i32.const 0x80)))
-      (then (return (i32.const 1))))
-    (local.set $callback (i32.load offset=32 (local.get $psp_w)))
-    (if (i32.eqz (local.get $callback)) (then (return (i32.const 1))))
     (local.set $old_eip (global.get $eip))
     (local.set $old_esp (i32.load offset=16 (global.get $reg_base)))
     (local.set $old_eax (i32.load offset=0 (global.get $reg_base)))
@@ -2052,16 +2060,16 @@
     (local.set $expected_child (call $invocation_current))
     (local.set $expected_root (global.get $invocation_root))
     (local.set $expected_depth (global.get $sync_msg_depth))
-    ;; Push right-to-left: ppsp, PSPCB_*, NULL hwnd, return thunk.
+    ;; Push right-to-left: a2, a1, a0, return thunk.
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $page))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a2))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $message))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a1))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $a0))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
     (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $sync_msg_ret_thunk))
-    (global.set $eip (local.get $callback))
+    (global.set $eip (local.get $fn))
     (global.set $steps (i32.const 0))
     (global.set $yield_reason (i32.const 0))
     (global.set $yield_flag (i32.const 0))

@@ -3051,6 +3051,8 @@
   (global $KERNEL32_MODULE_SIZE i32 (region.size $KERNEL32_MODULE))
   (global $STATIC_SYS_DLL_IMAGES i32 (region.addr $STATIC_SYS_DLL_IMAGES 0))
   (global $STATIC_SYS_DLL_IMAGES_SIZE i32 (region.size $STATIC_SYS_DLL_IMAGES))
+  (global $COMCTL32_DIALOG_RSRC i32 (region.addr $COMCTL32_DIALOG_RSRC 0))
+  (global $COMCTL32_DIALOG_RSRC_SIZE i32 (region.size $COMCTL32_DIALOG_RSRC))
   (global $DLL_SYNTHETIC_REFS_SIZE i32 (region.size $DLL_SYNTHETIC_REFS))
   (global $DLL_LIFECYCLE_TABLE i32 (region.addr $DLL_LIFECYCLE_TABLE 0))
   (global $DLL_LIFECYCLE_TABLE_SIZE i32 (region.size $DLL_LIFECYCLE_TABLE))
@@ -3728,6 +3730,9 @@
   ;; dialog so its controls and application-owned state survive tab switches.
   (global $propsheet_page_hwnds (mut i32) (i32.const 0))
   (global $propsheet_frame_hwnd (mut i32) (i32.const 0))
+  ;; Client-pixel page area of the live sheet: the largest page template.
+  (global $propsheet_page_w (mut i32) (i32.const 420))
+  (global $propsheet_page_h (mut i32) (i32.const 228))
   (global $propsheet_finish_page (mut i32) (i32.const 0))
   (global $propsheet_finish_nmhdr (mut i32) (i32.const 0))
   (global $ddenum_ret_thunk (mut i32) (i32.const 0)) ;; CACA0007 DDEnumerate callback return
