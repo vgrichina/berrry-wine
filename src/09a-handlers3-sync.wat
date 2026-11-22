@@ -164,6 +164,13 @@
     (if (i32.eq (local.get $vk) (i32.const 0xDC)) (then (local.set $ch (select (i32.const 0x7C) (i32.const 0x5C) (local.get $shift))))) ;; backslash |
     (if (i32.eq (local.get $vk) (i32.const 0xDD)) (then (local.set $ch (select (i32.const 0x7D) (i32.const 0x5D) (local.get $shift))))) ;; ] }
     (if (i32.eq (local.get $vk) (i32.const 0xDE)) (then (local.set $ch (select (i32.const 0x22) (i32.const 0x27) (local.get $shift))))) ;; ' "
+    ;; US OEM_102 ordinary backslash/pipe; Caps Lock has no effect.
+    ;; Preserve existing Ctrl/Alt compatibility; only down bits count.
+    (if (i32.and (i32.eq (local.get $vk) (i32.const 0xE2))
+      (i32.eqz (i32.and
+        (i32.or (i32.load8_u offset=0x11 (local.get $ks)) (i32.load8_u offset=0x12 (local.get $ks)))
+        (i32.const 0x80))))
+      (then (local.set $ch (select (i32.const 0x7C) (i32.const 0x5C) (local.get $shift)))))
     ;; US unshifted Ctrl+[ / Ctrl+backslash / Ctrl+] are ESC / FS / GS.
     ;; Preserve Shift+Ctrl and Ctrl+Alt compatibility; only down bits count.
     (if (i32.and
