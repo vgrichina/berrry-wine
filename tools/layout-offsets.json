@@ -526,11 +526,19 @@
           "stride": 4
         },
         {
-          "name": "reserved",
+          "name": "kick_wp",
           "type": "i32",
           "offset": 184,
-          "size": 8,
-          "count": 2,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "kick_ah",
+          "type": "i32",
+          "offset": 188,
+          "size": 4,
+          "count": 1,
           "stride": 4
         }
       ]
@@ -2059,7 +2067,7 @@
       "file": "src/09a8h-glide.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 12196,
+      "size": 9120,
       "fields": [
         {
           "name": "next_id",
@@ -2206,25 +2214,9 @@
           "stride": 4
         },
         {
-          "name": "kick_pos",
-          "type": "i32",
-          "offset": 76,
-          "size": 4,
-          "count": 1,
-          "stride": 4
-        },
-        {
-          "name": "kick_arena",
-          "type": "i32",
-          "offset": 80,
-          "size": 4,
-          "count": 1,
-          "stride": 4
-        },
-        {
           "name": "present_seq",
           "type": "i32",
-          "offset": 84,
+          "offset": 76,
           "size": 8,
           "count": 2,
           "stride": 4
@@ -2232,7 +2224,7 @@
         {
           "name": "frame",
           "type": "i32",
-          "offset": 92,
+          "offset": 84,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2240,7 +2232,7 @@
         {
           "name": "gamma_id",
           "type": "i32",
-          "offset": 96,
+          "offset": 88,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2248,7 +2240,7 @@
         {
           "name": "gamma_bits",
           "type": "i32",
-          "offset": 100,
+          "offset": 92,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2256,7 +2248,7 @@
         {
           "name": "gamma_table",
           "type": "i32",
-          "offset": 104,
+          "offset": 96,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2264,7 +2256,7 @@
         {
           "name": "gamma_dirty",
           "type": "i32",
-          "offset": 108,
+          "offset": 100,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2272,7 +2264,7 @@
         {
           "name": "fog_id",
           "type": "i32",
-          "offset": 112,
+          "offset": 104,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2280,7 +2272,7 @@
         {
           "name": "tmu_ram",
           "type": "i32",
-          "offset": 116,
+          "offset": 108,
           "size": 8,
           "count": 2,
           "stride": 4
@@ -2288,7 +2280,7 @@
         {
           "name": "tmu_guest",
           "type": "i32",
-          "offset": 124,
+          "offset": 116,
           "size": 8,
           "count": 2,
           "stride": 4
@@ -2296,7 +2288,7 @@
         {
           "name": "ir",
           "type": "i32",
-          "offset": 132,
+          "offset": 124,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2304,15 +2296,23 @@
         {
           "name": "ir_guest",
           "type": "i32",
-          "offset": 136,
+          "offset": 128,
           "size": 4,
           "count": 1,
           "stride": 4
         },
         {
-          "name": "tex_next",
+          "name": "tex_cache",
           "type": "i32",
-          "offset": 140,
+          "offset": 132,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "pal_key",
+          "type": "i32",
+          "offset": 136,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2320,7 +2320,7 @@
         {
           "name": "shader_next",
           "type": "i32",
-          "offset": 144,
+          "offset": 140,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2328,7 +2328,7 @@
         {
           "name": "sampler_next",
           "type": "i32",
-          "offset": 148,
+          "offset": 144,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2336,7 +2336,7 @@
         {
           "name": "vx_origin",
           "type": "i32",
-          "offset": 152,
+          "offset": 148,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2344,7 +2344,7 @@
         {
           "name": "vx_height",
           "type": "f32",
-          "offset": 156,
+          "offset": 152,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2352,7 +2352,7 @@
         {
           "name": "vx_s0",
           "type": "f32",
-          "offset": 160,
+          "offset": 156,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2360,7 +2360,7 @@
         {
           "name": "vx_t0",
           "type": "f32",
-          "offset": 164,
+          "offset": 160,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2368,7 +2368,7 @@
         {
           "name": "vx_s1",
           "type": "f32",
-          "offset": 168,
+          "offset": 164,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2376,7 +2376,7 @@
         {
           "name": "vx_t1",
           "type": "f32",
-          "offset": 172,
+          "offset": 168,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2384,7 +2384,7 @@
         {
           "name": "vx_hint_q0",
           "type": "i32",
-          "offset": 176,
+          "offset": 172,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2392,7 +2392,7 @@
         {
           "name": "vx_needs_z",
           "type": "i32",
-          "offset": 180,
+          "offset": 176,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2400,7 +2400,7 @@
         {
           "name": "vx_bias",
           "type": "f64",
-          "offset": 184,
+          "offset": 180,
           "size": 8,
           "count": 1,
           "stride": 8
@@ -2408,7 +2408,7 @@
         {
           "name": "vx_dual",
           "type": "i32",
-          "offset": 192,
+          "offset": 188,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2416,7 +2416,7 @@
         {
           "name": "snap",
           "type": "i32",
-          "offset": 196,
+          "offset": 192,
           "size": 336,
           "count": 84,
           "stride": 4
@@ -2424,7 +2424,7 @@
         {
           "name": "vtx",
           "type": "i32",
-          "offset": 532,
+          "offset": 528,
           "size": 180,
           "count": 45,
           "stride": 4
@@ -2432,7 +2432,7 @@
         {
           "name": "fog",
           "type": "i32",
-          "offset": 712,
+          "offset": 708,
           "size": 64,
           "count": 16,
           "stride": 4
@@ -2440,23 +2440,15 @@
         {
           "name": "gamma",
           "type": "i32",
-          "offset": 776,
+          "offset": 772,
           "size": 768,
           "count": 192,
           "stride": 4
         },
         {
-          "name": "tex",
-          "type": "i32",
-          "offset": 1544,
-          "size": 3072,
-          "count": 768,
-          "stride": 4
-        },
-        {
           "name": "shader",
           "type": "i32",
-          "offset": 4616,
+          "offset": 1540,
           "size": 6656,
           "count": 1664,
           "stride": 4
@@ -2464,7 +2456,7 @@
         {
           "name": "sampler",
           "type": "i32",
-          "offset": 11272,
+          "offset": 8196,
           "size": 512,
           "count": 128,
           "stride": 4
@@ -2472,7 +2464,7 @@
         {
           "name": "key",
           "type": "i32",
-          "offset": 11784,
+          "offset": 8708,
           "size": 96,
           "count": 24,
           "stride": 4
@@ -2480,7 +2472,7 @@
         {
           "name": "last_raster",
           "type": "i32",
-          "offset": 11880,
+          "offset": 8804,
           "size": 96,
           "count": 24,
           "stride": 4
@@ -2488,7 +2480,7 @@
         {
           "name": "last_consts",
           "type": "i32",
-          "offset": 11976,
+          "offset": 8900,
           "size": 88,
           "count": 22,
           "stride": 4
@@ -2496,7 +2488,7 @@
         {
           "name": "last_bind",
           "type": "i32",
-          "offset": 12064,
+          "offset": 8988,
           "size": 28,
           "count": 7,
           "stride": 4
@@ -2504,7 +2496,7 @@
         {
           "name": "stage",
           "type": "i32",
-          "offset": 12092,
+          "offset": 9016,
           "size": 96,
           "count": 24,
           "stride": 4
@@ -2512,7 +2504,7 @@
         {
           "name": "lfb_tag",
           "type": "i32",
-          "offset": 12188,
+          "offset": 9112,
           "size": 8,
           "count": 2,
           "stride": 4
@@ -2523,7 +2515,7 @@
       "file": "src/09akg-d3d9-gps.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 328,
+      "size": 320,
       "fields": [
         {
           "name": "d9g_dead",
@@ -2550,7 +2542,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_kick_wp",
+          "name": "d9g_next_id",
           "type": "i32",
           "offset": 12,
           "size": 4,
@@ -2558,7 +2550,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_kick_ah",
+          "name": "d9g_dev",
           "type": "i32",
           "offset": 16,
           "size": 4,
@@ -2566,7 +2558,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_next_id",
+          "name": "d9g_rt",
           "type": "i32",
           "offset": 20,
           "size": 4,
@@ -2574,7 +2566,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_dev",
+          "name": "d9g_rt_w",
           "type": "i32",
           "offset": 24,
           "size": 4,
@@ -2582,7 +2574,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rt",
+          "name": "d9g_rt_h",
           "type": "i32",
           "offset": 28,
           "size": 4,
@@ -2590,7 +2582,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rt_w",
+          "name": "d9g_rt_fmt",
           "type": "i32",
           "offset": 32,
           "size": 4,
@@ -2598,7 +2590,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rt_h",
+          "name": "d9g_ds",
           "type": "i32",
           "offset": 36,
           "size": 4,
@@ -2606,7 +2598,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rt_fmt",
+          "name": "d9g_ds_ptr",
           "type": "i32",
           "offset": 40,
           "size": 4,
@@ -2614,7 +2606,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_ds",
+          "name": "d9g_ds_d24",
           "type": "i32",
           "offset": 44,
           "size": 4,
@@ -2622,7 +2614,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_ds_ptr",
+          "name": "d9g_ds_bad",
           "type": "i32",
           "offset": 48,
           "size": 4,
@@ -2630,7 +2622,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_ds_d24",
+          "name": "d9g_frame",
           "type": "i32",
           "offset": 52,
           "size": 4,
@@ -2638,7 +2630,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_ds_bad",
+          "name": "d9g_pseq0",
           "type": "i32",
           "offset": 56,
           "size": 4,
@@ -2646,7 +2638,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_frame",
+          "name": "d9g_pseq1",
           "type": "i32",
           "offset": 60,
           "size": 4,
@@ -2654,7 +2646,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_pseq0",
+          "name": "d9g_c_color",
           "type": "i32",
           "offset": 64,
           "size": 4,
@@ -2662,7 +2654,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_pseq1",
+          "name": "d9g_c_depth",
           "type": "i32",
           "offset": 68,
           "size": 4,
@@ -2670,7 +2662,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_c_color",
+          "name": "d9g_rr_shader",
           "type": "i32",
           "offset": 72,
           "size": 4,
@@ -2678,7 +2670,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_c_depth",
+          "name": "d9g_rr_gps",
           "type": "i32",
           "offset": 76,
           "size": 4,
@@ -2686,7 +2678,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_shader",
+          "name": "d9g_rr_layout",
           "type": "i32",
           "offset": 80,
           "size": 4,
@@ -2694,7 +2686,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_gps",
+          "name": "d9g_rr_sampler",
           "type": "i32",
           "offset": 84,
           "size": 4,
@@ -2702,7 +2694,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_layout",
+          "name": "d9g_rr_buffer",
           "type": "i32",
           "offset": 88,
           "size": 4,
@@ -2710,7 +2702,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_sampler",
+          "name": "d9g_rr_vs",
           "type": "i32",
           "offset": 92,
           "size": 4,
@@ -2718,7 +2710,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_buffer",
+          "name": "d9g_rr_tl",
           "type": "i32",
           "offset": 96,
           "size": 4,
@@ -2726,7 +2718,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_vs",
+          "name": "d9g_tl_ps",
           "type": "i32",
           "offset": 100,
           "size": 4,
@@ -2734,7 +2726,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rr_tl",
+          "name": "d9g_tl_lit",
           "type": "i32",
           "offset": 104,
           "size": 4,
@@ -2742,7 +2734,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_tl_ps",
+          "name": "d9g_tl_tex",
           "type": "i32",
           "offset": 108,
           "size": 4,
@@ -2750,7 +2742,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_tl_lit",
+          "name": "d9g_tl_nrm",
           "type": "i32",
           "offset": 112,
           "size": 4,
@@ -2758,7 +2750,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_tl_tex",
+          "name": "d9g_pw",
           "type": "i32",
           "offset": 116,
           "size": 4,
@@ -2766,7 +2758,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_tl_nrm",
+          "name": "d9g_rsw",
           "type": "i32",
           "offset": 120,
           "size": 4,
@@ -2774,7 +2766,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_pw",
+          "name": "d9g_cpu",
           "type": "i32",
           "offset": 124,
           "size": 4,
@@ -2782,7 +2774,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_rsw",
+          "name": "d9g_cpu_bits",
           "type": "i32",
           "offset": 128,
           "size": 4,
@@ -2790,7 +2782,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_cpu",
+          "name": "d9g_cpu_pitch",
           "type": "i32",
           "offset": 132,
           "size": 4,
@@ -2798,7 +2790,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_cpu_bits",
+          "name": "d9g_cpu_rgba",
           "type": "i32",
           "offset": 136,
           "size": 4,
@@ -2806,7 +2798,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_cpu_pitch",
+          "name": "d9g_px0",
           "type": "i32",
           "offset": 140,
           "size": 4,
@@ -2814,7 +2806,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_cpu_rgba",
+          "name": "d9g_py0",
           "type": "i32",
           "offset": 144,
           "size": 4,
@@ -2822,7 +2814,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_px0",
+          "name": "d9g_px1",
           "type": "i32",
           "offset": 148,
           "size": 4,
@@ -2830,7 +2822,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_py0",
+          "name": "d9g_py1",
           "type": "i32",
           "offset": 152,
           "size": 4,
@@ -2838,7 +2830,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_px1",
+          "name": "d3d9_profile",
           "type": "i32",
           "offset": 156,
           "size": 4,
@@ -2846,7 +2838,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_py1",
+          "name": "d9g_caps",
           "type": "i32",
           "offset": 160,
           "size": 4,
@@ -2854,7 +2846,7 @@
           "stride": 4
         },
         {
-          "name": "d3d9_profile",
+          "name": "d9cl_mem",
           "type": "i32",
           "offset": 164,
           "size": 4,
@@ -2862,7 +2854,7 @@
           "stride": 4
         },
         {
-          "name": "d9g_caps",
+          "name": "d9cl_proj",
           "type": "i32",
           "offset": 168,
           "size": 4,
@@ -2870,25 +2862,9 @@
           "stride": 4
         },
         {
-          "name": "d9cl_mem",
-          "type": "i32",
-          "offset": 172,
-          "size": 4,
-          "count": 1,
-          "stride": 4
-        },
-        {
-          "name": "d9cl_proj",
-          "type": "i32",
-          "offset": 176,
-          "size": 4,
-          "count": 1,
-          "stride": 4
-        },
-        {
           "name": "d9wb_far",
           "type": "f32",
-          "offset": 180,
+          "offset": 172,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2896,7 +2872,7 @@
         {
           "name": "d9ms_mem",
           "type": "i32",
-          "offset": 184,
+          "offset": 176,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2904,7 +2880,7 @@
         {
           "name": "d9ms_n",
           "type": "i32",
-          "offset": 188,
+          "offset": 180,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2912,7 +2888,7 @@
         {
           "name": "d9ms_stride",
           "type": "i32",
-          "offset": 192,
+          "offset": 184,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2920,7 +2896,7 @@
         {
           "name": "d9ms_vsmode",
           "type": "i32",
-          "offset": 196,
+          "offset": 188,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2928,7 +2904,7 @@
         {
           "name": "d9ms_fvf",
           "type": "i32",
-          "offset": 200,
+          "offset": 192,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2936,7 +2912,7 @@
         {
           "name": "d9ms_types",
           "type": "i32",
-          "offset": 204,
+          "offset": 196,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2944,7 +2920,7 @@
         {
           "name": "d9ms_blend",
           "type": "i32",
-          "offset": 208,
+          "offset": 200,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2952,7 +2928,7 @@
         {
           "name": "d9ms_bi",
           "type": "i32",
-          "offset": 212,
+          "offset": 204,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2960,7 +2936,7 @@
         {
           "name": "d9ms_bcount",
           "type": "i32",
-          "offset": 216,
+          "offset": 208,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2968,7 +2944,7 @@
         {
           "name": "d9cpu_mem",
           "type": "i32",
-          "offset": 220,
+          "offset": 212,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2976,7 +2952,7 @@
         {
           "name": "d9cpu_blend",
           "type": "i32",
-          "offset": 224,
+          "offset": 216,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2984,7 +2960,7 @@
         {
           "name": "d9cpu_nrm",
           "type": "i32",
-          "offset": 228,
+          "offset": 220,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -2992,7 +2968,7 @@
         {
           "name": "d9cpu_nrm4",
           "type": "i32",
-          "offset": 232,
+          "offset": 224,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3000,7 +2976,7 @@
         {
           "name": "d9cpu_bw",
           "type": "i32",
-          "offset": 236,
+          "offset": 228,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3008,7 +2984,7 @@
         {
           "name": "d9cpu_bwc",
           "type": "i32",
-          "offset": 240,
+          "offset": 232,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3016,7 +2992,7 @@
         {
           "name": "d9cpu_bi",
           "type": "i32",
-          "offset": 244,
+          "offset": 236,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3024,7 +3000,7 @@
         {
           "name": "d9cpu_bic",
           "type": "i32",
-          "offset": 248,
+          "offset": 240,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3032,7 +3008,7 @@
         {
           "name": "d9fv_force",
           "type": "i32",
-          "offset": 252,
+          "offset": 244,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3040,7 +3016,7 @@
         {
           "name": "d9fv_mem",
           "type": "i32",
-          "offset": 256,
+          "offset": 248,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3048,7 +3024,7 @@
         {
           "name": "d9fv_rr",
           "type": "i32",
-          "offset": 260,
+          "offset": 252,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3056,7 +3032,7 @@
         {
           "name": "d9fv_lrr",
           "type": "i32",
-          "offset": 264,
+          "offset": 256,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3064,7 +3040,7 @@
         {
           "name": "d9fv_on",
           "type": "i32",
-          "offset": 268,
+          "offset": 260,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3072,7 +3048,7 @@
         {
           "name": "d9fv_prog",
           "type": "i32",
-          "offset": 272,
+          "offset": 264,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3080,7 +3056,7 @@
         {
           "name": "d9fv_ctx",
           "type": "i32",
-          "offset": 276,
+          "offset": 268,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3088,7 +3064,7 @@
         {
           "name": "d9fv_nin",
           "type": "i32",
-          "offset": 280,
+          "offset": 272,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3096,7 +3072,7 @@
         {
           "name": "d9fv_olayout",
           "type": "i32",
-          "offset": 284,
+          "offset": 276,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3104,7 +3080,7 @@
         {
           "name": "d9r_tgt",
           "type": "i32",
-          "offset": 288,
+          "offset": 280,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3112,7 +3088,7 @@
         {
           "name": "d9r_dse",
           "type": "i32",
-          "offset": 292,
+          "offset": 284,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3120,7 +3096,7 @@
         {
           "name": "d9g_tw",
           "type": "i32",
-          "offset": 296,
+          "offset": 288,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3128,7 +3104,7 @@
         {
           "name": "d9g_th",
           "type": "i32",
-          "offset": 300,
+          "offset": 292,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3136,7 +3112,7 @@
         {
           "name": "d9g_tfmt",
           "type": "i32",
-          "offset": 304,
+          "offset": 296,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3144,7 +3120,7 @@
         {
           "name": "d9r_gen",
           "type": "i32",
-          "offset": 308,
+          "offset": 300,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3152,7 +3128,7 @@
         {
           "name": "d9r_sid",
           "type": "i32",
-          "offset": 312,
+          "offset": 304,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3160,7 +3136,7 @@
         {
           "name": "d9r_sw",
           "type": "i32",
-          "offset": 316,
+          "offset": 308,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3168,7 +3144,7 @@
         {
           "name": "d9r_sh",
           "type": "i32",
-          "offset": 320,
+          "offset": 312,
           "size": 4,
           "count": 1,
           "stride": 4
@@ -3176,7 +3152,7 @@
         {
           "name": "d9r_sfmt",
           "type": "i32",
-          "offset": 324,
+          "offset": 316,
           "size": 4,
           "count": 1,
           "stride": 4

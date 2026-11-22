@@ -1058,8 +1058,10 @@
   (region.declare $GLIDE_STATE (size 0x000002A0) (align 0x00000010)
     (owner "09a8h-glide.wat:$GLIDE_STATE"))
   ;; GPU stream v2 ring directory: 8 x 192-byte GpsRing entries (header,
-  ;; completion slots, producer words). Ring bytes and arenas are heap memory.
-  (region.declare $GPU_STREAM (size 0x00000600) (align 0x00000040)
+  ;; completion slots, producer words), then 8 x 128 bytes of per-API stats
+  ;; (gps_stat) and 64 bytes of texture-diagnostic control. Ring bytes,
+  ;; arenas and diagnostic tables are heap memory.
+  (region.declare $GPU_STREAM (size 0x00000A40) (align 0x00000040)
     (owner "09a8gs-gpu-stream.wat:$GPU_STREAM"))
   ;; Lazy surface barriers shared by guest instances, never initialized by data.
   (region.declare $D3DIM_LAZY_SHARED (size 0x00000020) (align 0x00000010)

@@ -91,10 +91,42 @@ u32 fields shared with the consumer are accessed with Atomics.
 | 64–127 | 16 completion slots: FENCE/READBACK store their seq here | consumer |
 | 160 | u32 consumer (non-zero = a render Worker armed this ring; WAT never reads it) | consumer |
 | 164 | caps: u32 flags, max_texture, max_samplers, max_aniso, formats | consumer |
-| 184 | 2 reserved words | — |
+| 184 | u32 kick_wp, u32 kick_ah: write_pos / arena_head at the producer's last own kick (`$gps_kick_mark`) | producer |
 | 128–159 | producer-private: seq storage, last_present, owner, producer_lock, handoffs, guest block pointers | producer |
 
 `lib/gpu-stream.generated.js` is the authoritative offset list.
+
+**Producer helpers.** Every frontend begins records through
+`$gps_begin_auto(h, op, n)` after closing its own open batch: once a quarter
+of the ring (`ring_bytes >> 2`) or of the arena has been published since
+`kick_wp`/`kick_ah`, it marks and ASYNC-kicks first. Every UPLOAD record is
+written by `$gps_upload(h, id, level, face, x, y, w, h, pitch, src, bytes)`.
+
+**Shared accounting.** After the directory, `$GPU_STREAM` holds 32 u32
+counters per api (`gps_stat(api, i)`, never reset), counted where records
+are published so every producer counts the same way: 0 PRESENTs, 1 DRAW and
+DRAW_UP, 2 READBACKs, 3 readback bytes, 4 UPLOADs, 5 upload bytes, 6 declines,
+7 SYNC kicks. 16..31 are opt-in texture-cache diagnostics
+(`gps_tex_diag(1)`, `test/run.js --gps-tex-diag`; Glide and D3DIM): fills,
+distinct textures summed per frame, evictions of an entry used this frame,
+drops by cause (release, capacity, write, palette, descriptor, untracked),
+fills whose decoded bytes equal a dropped entry of each cause, and fills
+equal to another live entry. `test/run.js` prints them as `[gps]` lines;
+the page HUD reads `gps_stat_active/frames/readbacks/uploads` and shows
+readbacks and uploads per frame for the API that presented last.
+
+**Texture cache.** Glide and D3DIM keep decoded textures in one shared
+`$gtc_*` slot cache (`09a8gu-gps-tex-cache.wat`): 512 slots per producer,
+least-recently-used eviction under a 32 MB byte budget, and pinning — an
+entry looked up since the producer's last `$gtc_unpin` (Glide: the pipeline
+being built; D3DIM: the draw's texture) is never named a victim. The cache
+only does bookkeeping: each producer keeps its own key and validity in its
+slot payload (Glide: TMU range, descriptor and the palette content key for
+P8/AP88, released on an overlapping TMU write; D3DIM: surface identity,
+signature and page-watch generations) and evicts through its own RELEASE
+path, so GPU-side ids stay per ring. Diablo II's town (~200 textures per
+frame) went from ~198 uploads per frame on the old 64-slot round robin to
+~12 (run 20261121-gps-plumbing).
 
 **Capability block.** `drain()` writes the executor's `caps()` into the
 header before it executes the first record, and sets `CAP_VALID` (1) last.
