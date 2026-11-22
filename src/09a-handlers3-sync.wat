@@ -518,7 +518,7 @@
   ;; caller passed, and is echoed back as lpszClassName.
   (func $system_class_describe (param $name_key i32) (param $name_guest i32)
         (param $out_guest i32) (param $hinstance i32) (result i32)
-    (local $class i32) (local $out i32)
+    (local $class i32)
     ;; Both spellings resolve here. USER classes also accept atoms, while the
     ;; implemented common-control classes registered by InitCommonControls are
     ;; string-only; both expose the existing WAT wndproc markers.
@@ -549,34 +549,38 @@
       (then
         (local.set $class (call $comctl_class_ctrl_id (local.get $name_key)))))
     (if (i32.eqz (local.get $class)) (then (return (i32.const 0))))
-    (local.set $out (call $g2w (local.get $out_guest)))
     ;; CS_VREDRAW|CS_HREDRAW|CS_DBLCLKS|CS_GLOBALCLASS, as USER registers these.
     ;; VCL masks the DC bits off and forces CS_PARENTDC regardless of what it is
     ;; told. CS_GLOBALCLASS is what makes them visible to every process, which
     ;; is precisely the property an app is confirming when it asks.
-    (i32.store (local.get $out) (i32.const 0x400B))
-    (i32.store offset=4 (local.get $out)
+    ;; Guest fields may straddle pages with nonadjacent physical backing.
+    (call $gs32 (local.get $out_guest) (i32.const 0x400B))
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 4))
       (i32.or (global.get $WNDPROC_SYSCLASS) (local.get $class)))
-    (i32.store offset=8 (local.get $out) (i32.const 0))   ;; cbClsExtra
-    (i32.store offset=12 (local.get $out) (i32.const 0))  ;; cbWndExtra
-    (i32.store offset=16 (local.get $out) (local.get $hinstance))
-    (i32.store offset=20 (local.get $out) (i32.const 0))  ;; hIcon
-    (i32.store offset=24 (local.get $out) (i32.const 0))  ;; hCursor
-    (i32.store offset=28 (local.get $out) (i32.const 0))  ;; hbrBackground
-    (i32.store offset=32 (local.get $out) (i32.const 0))  ;; lpszMenuName
-    (i32.store offset=36 (local.get $out) (local.get $name_guest))
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 8)) (i32.const 0))   ;; cbClsExtra
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 12)) (i32.const 0))  ;; cbWndExtra
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 16)) (local.get $hinstance))
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 20)) (i32.const 0))  ;; hIcon
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 24)) (i32.const 0))  ;; hCursor
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 28)) (i32.const 0))  ;; hbrBackground
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 32)) (i32.const 0))  ;; lpszMenuName
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 36)) (local.get $name_guest))
     (i32.const 1))
 
   (func $handle_GetClassInfoA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; GetClassInfoA(hInstance, lpClassName, lpWndClass) → BOOL
     ;; Look up class in our class table; if found, copy saved WNDCLASS to output
-    (local $slot i32) (local $src i32)
+    (local $slot i32) (local $src i32) (local $i i32)
     (local.set $slot (call $class_find_slot (call $g2w (local.get $arg1))))
     (if (i32.ge_s (local.get $slot) (i32.const 0))
       (then
-        ;; Found — copy 40-byte WNDCLASS from class record to output buffer
+        ;; Class records are internal; the guest output need not be affine.
         (local.set $src (call $class_wndclass_addr (local.get $slot)))
-        (call $memcpy (call $g2w (local.get $arg2)) (local.get $src) (i32.const 40))
+        (loop $copy_class
+          (call $gs32 (i32.add (local.get $arg2) (local.get $i))
+            (i32.load (i32.add (local.get $src) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 4)))
+          (br_if $copy_class (i32.lt_u (local.get $i) (i32.const 40))))
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
@@ -595,13 +599,17 @@
 
   ;; 306: GetClassInfoW(hInstance, lpClassName, lpWndClass)
   (func $handle_GetClassInfoW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $slot i32) (local $src i32) (local $key i32)
+    (local $slot i32) (local $src i32) (local $i i32) (local $key i32)
     (local.set $key (call $class_wide_name_key (local.get $arg1)))
     (local.set $slot (call $class_find_slot (local.get $key)))
     (if (i32.ge_s (local.get $slot) (i32.const 0))
       (then
         (local.set $src (call $class_wndclass_addr (local.get $slot)))
-        (call $memcpy (call $g2w (local.get $arg2)) (local.get $src) (i32.const 40))
+        (loop $copy_class
+          (call $gs32 (i32.add (local.get $arg2) (local.get $i))
+            (i32.load (i32.add (local.get $src) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 4)))
+          (br_if $copy_class (i32.lt_u (local.get $i) (i32.const 40))))
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
@@ -623,7 +631,7 @@
   ;; and hIconSm appended. $wide selects the class-name lookup spelling.
   (func $get_class_info_ex (param $hinstance i32) (param $name_guest i32)
                            (param $out_guest i32) (param $wide i32) (result i32)
-    (local $key i32) (local $slot i32) (local $src i32) (local $out i32)
+    (local $key i32) (local $slot i32) (local $src i32) (local $i i32)
     (if (i32.or (i32.eqz (local.get $name_guest)) (i32.eqz (local.get $out_guest)))
       (then (return (i32.const 0))))
     (local.set $key
@@ -631,20 +639,23 @@
         (then (call $class_wide_name_key (local.get $name_guest)))
         (else (call $class_name_key (local.get $name_guest)))))
     (local.set $slot (call $class_find_slot (local.get $key)))
-    (local.set $out (call $g2w (local.get $out_guest)))
     (if (i32.ge_s (local.get $slot) (i32.const 0))
       (then
         (local.set $src (call $class_wndclass_addr (local.get $slot)))
-        (call $memcpy (i32.add (local.get $out) (i32.const 4))
-          (local.get $src) (i32.const 40)))
+        (loop $copy_class
+          (call $gs32 (i32.add (i32.add (local.get $out_guest) (i32.const 4)) (local.get $i))
+            (i32.load (i32.add (local.get $src) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 4)))
+          (br_if $copy_class (i32.lt_u (local.get $i) (i32.const 40)))))
       (else
         (if (i32.eqz (call $system_class_describe
               (local.get $key) (local.get $name_guest)
               (i32.add (local.get $out_guest) (i32.const 4)) (local.get $hinstance)))
           (then (return (i32.const 0))))))
-    (i32.store (local.get $out) (i32.const 48))
+    (call $gs32 (local.get $out_guest) (i32.const 48))
     ;; WNDCLASSEX.hIcon is at +24 after the four-byte cbSize prefix.
-    (i32.store offset=44 (local.get $out) (i32.load offset=24 (local.get $out)))
+    (call $gs32 (i32.add (local.get $out_guest) (i32.const 44))
+      (call $gl32 (i32.add (local.get $out_guest) (i32.const 24))))
     (i32.const 1))
 
   (func $handle_GetClassInfoExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
