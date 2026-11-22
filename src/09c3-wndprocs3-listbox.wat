@@ -107,7 +107,7 @@
   ;; ListBox WndProc  (control class 4)
   ;; ============================================================
   ;;
-  ;; ListBoxState (60 bytes, allocated in WM_CREATE)
+  ;; ListBoxState (64 bytes, allocated in WM_CREATE)
   ;;   +0   items_buf_ptr    guest ptr to flat NUL-separated string buffer
   ;;                         ("item1\0item2\0item3\0", or 0 if empty)
   ;;   +4   items_used       bytes in items_buf actually used (incl. NULs)
@@ -124,6 +124,7 @@
   ;;   +48  item_h           shared row height, 0 = default/unmeasured
   ;;   +52  horizontal_extent configured width, independent of text/scroll offset
   ;;   +56  scroll_x         content offset in pixels
+  ;;   +60  font             WM_SETFONT handle, 0 = default GUI font
   ;; The control id is NOT in the record: $ctrl_table_get_id($hwnd).
   ;;
   ;; Items are stored as concatenated NUL-terminated strings. LB_ADDSTRING
@@ -193,7 +194,7 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0001))
       (then
         (local.set $cs_w (call $g2w (local.get $lParam)))
-        (local.set $state (call $heap_alloc (i32.const 60)))
+        (local.set $state (call $heap_alloc (size-of ListBoxState)))
         (local.set $sw (call $g2w (local.get $state)))
         (call $lb_set_item_h (local.get $sw) (i32.const 0))
         (call $lb_set_items_ptr (local.get $sw) (i32.const 0))
@@ -211,6 +212,7 @@
         (call $lb_set_sel_cap (local.get $sw) (i32.const 0))
         (call $lb_set_horizontal_extent (local.get $sw) (i32.const 0))
         (call $lb_set_scroll_x (local.get $sw) (i32.const 0))
+        (store.field.memarg ListBoxState font (local.get $sw) (i32.const 0))
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))
         (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (i32.const 0))
         (return (i32.const 0))))
@@ -231,6 +233,19 @@
 
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $sw (call $g2w (local.get $state)))
+
+    ;; Microsoft Windows 3.1 Programmer's Reference (1992), pp128/190-191:
+    ;; retain the caller's font, NULL selects the default, LOWORD requests
+    ;; redraw. The caller owns the font. Keep explicit row geometry separate;
+    ;; no automatic font-to-item-height formula is established here.
+    (if (i32.eq (local.get $msg) (i32.const 0x0030)) ;; WM_SETFONT
+      (then
+        (store.field.memarg ListBoxState font (local.get $sw) (local.get $wParam))
+        (if (i32.and (local.get $lParam) (i32.const 0xFFFF))
+          (then (call $invalidate_hwnd (local.get $hwnd))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $msg) (i32.const 0x0031)) ;; WM_GETFONT
+      (then (return (load.field.memarg ListBoxState font (local.get $sw)))))
 
     ;; LB_SETTABSTOPS. Microsoft, List Box Controls (1992-03-23): zero
     ;; restores 32 dialog units; one repeats the supplied interval; multiple
@@ -1561,7 +1576,10 @@
         (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
         (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
         (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
-        (drop (call $gdi_native_select_object (local.get $hdc) (i32.const 0x30021)))
+        (drop (call $gdi_native_select_object (local.get $hdc)
+          (select (load.field.memarg ListBoxState font (local.get $sw))
+            (i32.const 0x30021)
+            (i32.ne (load.field.memarg ListBoxState font (local.get $sw)) (i32.const 0)))))
         (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 1)))
         ;; Reserve the right strip only while USER would make it visible.
         (if (call $listbox_vscroll_visible (local.get $hwnd) (local.get $sw))

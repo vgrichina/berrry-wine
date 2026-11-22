@@ -136,7 +136,7 @@
     (field page       i32)         ;; +16  TBM_SETPAGESIZE
     (field thumb_len  i32))        ;; +20  TBM_SETTHUMBLENGTH; ends at +24
 
-  ;; ListBox (ctrl_class 4). 60 bytes — $listbox_wndproc heap_alloc 60.
+  ;; ListBox (ctrl_class 4). 64 bytes — allocated with size-of ListBoxState.
   ;; Three of the four buffers are a pointer and a capacity that must be read
   ;; together, and items_used belongs to the first of them; +4/+8, +32/+36 and
   ;; +40/+44 look alike as bare offsets and the one that is NOT a capacity
@@ -161,7 +161,8 @@
     (field sel_cap         i32)    ;; +44  capacity in BYTES
     (field item_h          i32)    ;; +48  owner-draw row height, 0 = default
     (field horizontal_extent i32) ;; +52  configured pixel width, independent of items
-    (field scroll_x        i32))   ;; +56  content offset, distinct from SetScrollPos
+    (field scroll_x        i32)    ;; +56  content offset, distinct from SetScrollPos
+    (field font            i32))   ;; +60  WM_SETFONT handle, 0 = default GUI font
 
   ;; ComboBox (ctrl_class 5). 44 bytes — $combobox_wndproc heap_alloc 44.
   ;; The notification id is NOT here: see ButtonState above — one copy, in

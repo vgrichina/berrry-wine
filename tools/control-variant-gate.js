@@ -104,6 +104,9 @@ const add = (variant, names, why) => {
   }
 };
 
+add('ListBoxState', ['$listbox_wndproc'],
+  'class 4 WM_CREATE allocates ListBoxState; font messages and painting use that same window state');
+
 add('OpenFileFocusState', ['$opendlg_focus_begin','$opendlg_focus_end'],
   'class 12 create_open_dialog owns the shared focus lease; WM_DESTROY detaches it before notifications');
 // Accessor layers. Each function's NAME is the field name, so the mapping is
