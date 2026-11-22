@@ -1,6 +1,32 @@
   ;; ============================================================
   ;; Edit WndProc
   ;; ============================================================
+  ;; WM_SETFONT can precede input before the next EDIT paint. Layout's
+  ;; temporary font selection also ends before a hit-test measures its
+  ;; prefixes against that DC's old font. Each plain ANSI measurement therefore
+  ;; selects the control font for its entire extent calculation and restores
+  ;; the caller's selection. Memory DCs, RichEdit and Unicode keep their
+  ;; existing measurement path.
+  (func $edit_measure_text (param $font i32) (param $hdc i32) (param $text i32)
+        (param $count i32) (param $wide i32) (result i32)
+    (local $hwnd i32) (local $plain i32) (local $old i32) (local $width i32)
+    (local.set $hwnd (i32.sub (local.get $hdc) (i32.const 0x40000)))
+    (if (i32.and
+          (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+          (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+      (then (local.set $plain (i32.const 1))))
+    (if (local.get $plain)
+      (then
+        (local.set $old (call $gdi_native_select_object (local.get $hdc)
+          (select (local.get $font)
+            (i32.const 0x30021)
+            (i32.ne (local.get $font) (i32.const 0)))))))
+    (local.set $width (call $host_measure_text
+      (local.get $hdc) (local.get $text) (local.get $count) (local.get $wide)))
+    (if (local.get $plain)
+      (then (drop (call $gdi_native_select_object (local.get $hdc) (local.get $old)))))
+    (local.get $width))
+
   ;; Status: STEP 4 — dormant. No path delivers WM_CREATE to an EDIT
   ;; class hwnd today; the new code is unreachable until STEP 5 wires
   ;; WAT-side dialog creation through $create_findreplace_dialog.
@@ -509,7 +535,7 @@
         (call $edit_line_len (local.get $state_w) (local.get $pos))) (i32.const 1)))
       (br $scan)))
     (if (i32.eqz (local.get $best_len)) (then (return (i32.const 0))))
-    (local.set $w (call $host_measure_text (local.get $hdc)
+    (local.set $w (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w)) (local.get $hdc)
       (i32.add (call $g2w (local.get $buf_g)) (local.get $best_start))
       (local.get $best_len) (i32.const 0)))
     (if (i32.eqz (local.get $w))
@@ -570,7 +596,7 @@
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (local.get $line_len)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (local.set $w (call $host_measure_text
+      (local.set $w (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w))
         (local.get $hdc) (local.get $line_w) (local.get $i) (i32.const 0)))
       (local.set $mid (i32.shr_s (i32.add (local.get $prev_w) (local.get $w)) (i32.const 1)))
       (if (i32.gt_s (local.get $mid) (local.get $x))
@@ -837,7 +863,7 @@
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (local.get $line_len)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (local.set $w (call $host_measure_text
+      (local.set $w (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w))
         (local.get $hdc) (i32.add (local.get $buf_w) (local.get $line_start))
         (local.get $i) (i32.const 0)))
       (if (i32.eqz (local.get $w))
@@ -2420,10 +2446,10 @@
                   (local.set $pre_w (i32.const 0))
                   (if (local.get $a)
                     (then (local.set $pre_w
-                      (call $host_measure_text (local.get $hdc) (local.get $line_buf_w)
+                      (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w)) (local.get $hdc) (local.get $line_buf_w)
                         (local.get $a) (i32.const 0)))))
                   (local.set $sel_w (i32.sub
-                    (call $host_measure_text (local.get $hdc) (local.get $line_buf_w)
+                    (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w)) (local.get $hdc) (local.get $line_buf_w)
                       (local.get $b) (i32.const 0))
                     (local.get $pre_w)))
                   (if (i32.eqz (local.get $sel_w))
@@ -2475,7 +2501,7 @@
                 (local.set $line_end (call $edit_layout_start (local.get $lo)))
                 (if (i32.gt_u (local.get $cur) (local.get $line_end))
                   (then
-                    (local.set $px (call $host_measure_text
+                    (local.set $px (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w))
                       (local.get $hdc)
                       (i32.add (call $g2w (local.get $buf)) (local.get $line_end))
                       (i32.sub (local.get $cur) (local.get $line_end))
@@ -2557,11 +2583,11 @@
                   ;; Highlight rect: measure widths up to $a and up to $b.
                   (local.set $pre_w (i32.const 0))
                   (if (local.get $a)
-                    (then (local.set $pre_w (call $host_measure_text
+                    (then (local.set $pre_w (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w))
                             (local.get $hdc) (local.get $line_buf_w)
                             (local.get $a) (i32.const 0)))))
                   (local.set $sel_w (i32.sub
-                    (call $host_measure_text (local.get $hdc) (local.get $line_buf_w)
+                    (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w)) (local.get $hdc) (local.get $line_buf_w)
                       (local.get $b) (i32.const 0))
                     (local.get $pre_w)))
                   ;; If sel extends past the \n (to the next line), pad to right edge.
@@ -2622,7 +2648,7 @@
             (local.set $hi (i32.mul (local.get $a) (i32.const 16)))
             (local.set $px (i32.const 0))
             (if (i32.and (i32.ne (local.get $buf) (i32.const 0)) (i32.gt_u (local.get $cur) (local.get $lo)))
-              (then (local.set $px (call $host_measure_text (local.get $hdc)
+              (then (local.set $px (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w)) (local.get $hdc)
                                         (i32.add (call $g2w (local.get $buf)) (local.get $lo))
                                         (i32.sub (local.get $cur) (local.get $lo))
                                         (i32.const 0)))))
@@ -2984,7 +3010,7 @@
         (local.set $px (i32.const 0))
         (if (local.get $hi)
           (then
-            (local.set $px (call $host_measure_text (local.get $hdc)
+            (local.set $px (call $edit_measure_text (load.field.memarg EditState font (local.get $state_w)) (local.get $hdc)
               (i32.add (local.get $buf) (local.get $lo)) (local.get $hi) (i32.const 0)))
             (if (i32.eqz (local.get $px))
               (then (local.set $px (i32.mul (local.get $hi) (i32.const 8)))))))
