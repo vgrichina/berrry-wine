@@ -1,6 +1,25 @@
   ;; Set while LB_INSERTSTRING appends through LB_ADDSTRING, so an LBS_SORT
   ;; listbox does not move the row it is about to rotate into place.
   (global $lb_add_unsorted (mut i32) (i32.const 0))
+  ;; Caret messages currently support ordinary fixed-height string lists.
+  ;; Reject owner-draw, multicolumn, no-data and no-selection styles instead
+  ;; of assigning their unimplemented geometry/selection models new semantics.
+  (func $lb_caret_supported (param $hwnd i32) (result i32)
+    (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x6230))))
+
+  (func $lb_caret_visible_rows (param $hwnd i32) (param $sw i32)
+                              (param $partial i32) (result i32)
+    (local $h i32) (local $row_h i32)
+    (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
+    (if (i32.and (i32.ne (local.get $partial) (i32.const 0))
+                 (i32.gt_s (local.get $h) (i32.const 4)))
+      (then
+        (local.set $row_h (call $lb_row_height (local.get $sw)))
+        (return (i32.div_u
+          (i32.add (i32.sub (local.get $h) (i32.const 4))
+                   (i32.sub (local.get $row_h) (i32.const 1)))
+          (local.get $row_h)))))
+    (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
   (func $lb_append_unsorted (param $hwnd i32) (param $str i32) (result i32)
     (local $r i32)
     (global.set $lb_add_unsorted (i32.const 1))
@@ -19,7 +38,7 @@
   ;;   +4   items_used       bytes in items_buf actually used (incl. NULs)
   ;;   +8   items_cap        bytes allocated for items_buf
   ;;   +12  count            number of items
-  ;;   +16  cur_sel          current selection (-1 = none)
+  ;;   +16  cur_sel          keyboard caret (-1 = none); selection is in sel_buf
   ;;   +20  top_index        first visible row (vertical scroll)
   ;;   +24  drag_anchor_y
   ;;   +28  drag_anchor_top
@@ -356,7 +375,60 @@
 
     ;; ---------- LB_GETCURSEL (0x0188) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0188))
-      (then (return (call $lb_cur_sel (local.get $sw)))))
+      (then
+        (local.set $sel (call $lb_cur_sel (local.get $sw)))
+        ;; A single-select list can have a programmatic caret without a
+        ;; selection. Paint and input already use the parallel selection flags;
+        ;; do not report the caret-only row as selected to callers/comboboxes.
+        (if (i32.and (call $lb_caret_supported (local.get $hwnd))
+              (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808))))
+          (then
+            (if (i32.lt_u (local.get $sel) (call $lb_count (local.get $sw)))
+              (then
+                (if (i32.eqz (i32.load8_u
+                      (i32.add (call $g2w (call $lb_sel_ptr (local.get $sw))) (local.get $sel))))
+                  (then (return (i32.const -1))))))))
+        (return (local.get $sel))))
+
+    ;; ---------- LB_SETCARETINDEX (0x019E) / LB_GETCARETINDEX (0x019F) ----------
+    ;; Microsoft desktop contracts:
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/lb-setcaretindex
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/lb-getcaretindex
+    ;; lParam FALSE reveals a full row; TRUE permits a partial row. Neither
+    ;; changes selection, input focus, or sends LBN_SELCHANGE. A single-select
+    ;; list accepts SET only while it has no selected item. GET returns 0 when
+    ;; no item has the caret. Invalid indices and unsupported styles: LB_ERR.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x019E))
+                (i32.eq (local.get $msg) (i32.const 0x019F)))
+      (then
+        (if (i32.eqz (call $lb_caret_supported (local.get $hwnd)))
+          (then (return (i32.const -1))))
+        (if (i32.eq (local.get $msg) (i32.const 0x019F))
+          (then
+            (local.set $sel (call $lb_cur_sel (local.get $sw)))
+            (return (select (local.get $sel) (i32.const 0)
+              (i32.ge_s (local.get $sel) (i32.const 0))))))
+        (local.set $idx (local.get $wParam))
+        (if (i32.ge_u (local.get $idx) (call $lb_count (local.get $sw)))
+          (then (return (i32.const -1))))
+        (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808)))
+          (then
+            (if (i32.ge_s (call $listbox_wndproc (local.get $hwnd)
+                  (i32.const 0x0188) (i32.const 0) (i32.const 0)) (i32.const 0))
+              (then (return (i32.const -1))))))
+        (call $lb_set_cur_sel (local.get $sw) (local.get $idx))
+        (local.set $top (call $lb_top_index (local.get $sw)))
+        (local.set $visible (call $lb_caret_visible_rows
+          (local.get $hwnd) (local.get $sw) (local.get $lParam)))
+        (if (i32.lt_s (local.get $idx) (local.get $top))
+          (then (drop (call $listbox_scroll_to
+            (local.get $hwnd) (local.get $sw) (local.get $idx))))
+          (else
+            (if (i32.ge_s (local.get $idx) (i32.add (local.get $top) (local.get $visible)))
+              (then (drop (call $listbox_scroll_to (local.get $hwnd) (local.get $sw)
+                (i32.sub (i32.add (local.get $idx) (i32.const 1)) (local.get $visible))))))))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 0))))
 
     ;; ---------- LB_SETSEL (0x0185) / LB_GETSEL (0x0187) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0185))
@@ -1214,6 +1286,12 @@
                   (call $lb_measure_item (local.get $hwnd) (local.get $sw)))))
         (local.set $row_h (call $lb_row_height (local.get $sw)))
         (local.set $visible (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
+        ;; Ordinary string rows include the clipped bottom row. Otherwise a
+        ;; successful partial reveal could leave the requested item unpainted.
+        ;; Owner-draw keeps its existing callback domain.
+        (if (call $lb_caret_supported (local.get $hwnd))
+          (then (local.set $visible (call $lb_caret_visible_rows
+            (local.get $hwnd) (local.get $sw) (i32.const 1)))))
         ;; Native controls do not call BeginPaint. Clip rows to the inset
         ;; content rectangle, preserving the caller's clip and restoring it
         ;; before drawing either strip. This also contains negative text x.
