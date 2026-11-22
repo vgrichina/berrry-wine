@@ -2435,7 +2435,10 @@
   (func $handle_GetPixel (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $desc i32)
     (local.set $desc (global.get $GDI_BLIT_DST_DESC))
-    (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $desc))
+    (if (i32.and
+          (call $gdi_surface_descriptor (local.get $arg0) (local.get $desc))
+          (call $gdi_dc_clip_point_visible
+            (local.get $arg0) (local.get $arg1) (local.get $arg2)))
       (then (i32.store offset=0 (global.get $reg_base) (call $gdi_raster_get_pixel
         (local.get $desc)
         (call $gdi_line_map_x (local.get $desc) (local.get $arg1))
