@@ -423,6 +423,13 @@
       (then
         (local.set $dx (call $gdi_line_map_x (local.get $desc) (local.get $arg1)))
         (local.set $dy (call $gdi_line_map_y (local.get $desc) (local.get $arg2)))
+        ;; PatBlt dimensions are logical units, just like the origin.
+        (local.set $w (i32.sub
+          (call $gdi_line_map_x (local.get $desc) (i32.add (local.get $arg1) (local.get $w)))
+          (local.get $dx)))
+        (local.set $h (i32.sub
+          (call $gdi_line_map_y (local.get $desc) (i32.add (local.get $arg2) (local.get $h)))
+          (local.get $dy)))
         (if (i32.ne (i32.and
               (i32.xor (local.get $rop3) (i32.shr_u (local.get $rop3) (i32.const 2)))
               (i32.const 0x33)) (i32.const 0))
