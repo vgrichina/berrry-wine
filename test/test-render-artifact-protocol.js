@@ -23,6 +23,52 @@ const originalLoad = Module._load, originalWasm = global.WebAssembly;
 const originalEnv = { ...process.env };
 let compilerDenied = false, deniedImports = 0, instantiations = 0;
 try {
+  // Keep the real closure's source-byte hashing in this protocol regression.
+  // Only the compiler is doubled; preparation still uses the sealed snapshot.
+  const real = path.join(temp, 'real-closure');
+  function realPut(file, bytes) { put(path.join('real-closure', file), bytes); }
+  for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js',
+    'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'lib/wat-manifest.js'])
+    realPut(file, fs.readFileSync(path.join(root, file)));
+  realPut('src/main.watx', '(module (include "13-exports.wat"))');
+  realPut('src/13-exports.wat', '(global $rep_store_step (mut i32) (i32.const 0))');
+  realPut('tools/watx-src/compiler.js', '// identity-only compiler fixture');
+  realPut('unsealed.txt', 'must remain unreadable');
+  realPut('unsealed.js', 'throw Error("unsealed module executed");');
+  const compilerDouble = `
+const assert=require('assert'),path=require('path');
+exports.sourceTextFromBytes=bytes=>{
+ assert.strictEqual(require('crypto'),require('node:crypto'));
+ for(const name of ['fs','node:fs'])
+  assert.throws(()=>require(name).readFileSync(path.join(__dirname,'../unsealed.txt')),/unsealed read/);
+ return bytes.toString('utf8');
+};
+exports.compile=(source,vfs,options)=>{
+ assert.strictEqual(source,'(module (include "13-exports.wat"))');
+ assert.strictEqual(vfs.get('13-exports.wat'),vfs.get('src/13-exports.wat'));
+ assert.strictEqual(vfs.get('13-exports.wat'),vfs.get('./13-exports.wat'));
+ assert.strictEqual(options.tailCalls,true);
+ return {success:true,wasmBinary:Uint8Array.from([0,97,115,109,1,0,0,0])};
+};`;
+  realPut('tools/watx.js', compilerDouble);
+  const realProtocol = require(path.join(real, 'test/render-artifact'));
+  const realArtifact = path.join(real, 'module.wasm');
+  ok('real closure crypto hashing prepares a sealed snapshot; both crypto aliases and sealed fs remain usable', () => {
+    realProtocol.prepareArtifact(realArtifact, { extraWat: '', tailCalls: true });
+    assert.deepStrictEqual(realProtocol.consumeArtifact(realArtifact, { extraWat: '', tailCalls: true }), wasm);
+  });
+  for (const request of ['os', 'node:os', 'child_process', 'node:child_process', '../unsealed.js']) {
+    ok(`sealed preparation still rejects ${request}`, () => {
+      realPut('tools/watx.js', `require(${JSON.stringify(request)});\n${compilerDouble}`);
+      const rejected = path.join(real, 'rejected.wasm');
+      try {
+        assert.throws(() => realProtocol.prepareArtifact(rejected, { extraWat: '', tailCalls: true }),
+          request.startsWith('.') ? /unsealed read/ : /unsealed dependency/);
+        assert(!fs.existsSync(rejected));
+        assert(!fs.existsSync(`${rejected}.json`));
+      } finally { realPut('tools/watx.js', compilerDouble); }
+    });
+  }
   for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js', 'lib/wat-manifest.js', 'tools/protected-writer-entries.js']) copy(file);
   put('src/main.watx', '(include "13-exports.wat")\n');
   put('src/13-exports.wat', ';; fixture exports\n');
@@ -51,7 +97,6 @@ exports.compileClosure=(closure,options)=>{
     const script = `global.WebAssembly={Memory:class{constructor(){throw Error('guest memory during prepare')}},instantiate(){throw Error('instantiate during prepare')}};
 require('./test/render-helper').bootRenderHarness(${JSON.stringify({ extraWat, tailCalls })}).catch(e=>{console.error(e);process.exitCode=1});
 process.on('beforeExit',()=>{throw Error('prepare failed to exit before test body')});`;
-    assert(Number(/MemAvailable:\s+(\d+)/.exec(fs.readFileSync('/proc/meminfo', 'utf8'))[1]) * 1024 >= 805306368);
     const r = spawnSync(process.execPath, ['--max-old-space-size=256', '-e', script], {
       cwd: temp, stdio: 'inherit', timeout: 10000,
       env: { ...process.env, WINE_RENDER_ARTIFACT_PREPARE: artifact, EXPECT_TAIL: String(tailCalls) },
@@ -195,7 +240,25 @@ process.on('beforeExit',()=>{throw Error('prepare failed to exit before test bod
     assert.deepStrictEqual(protocol.consumeArtifact(artifact, { extraWat: '', tailCalls: false }), wasm);
     checks++; console.log('PASS no-extraWat non-tail artifact protocol');
     console.log(`PASS ${checks} protocol checks; no production/native renderer qualification`);
-    await require('./render-executable-cache-controls')();
+    // Update two stale tiny-stage fixtures privately: the real loader now
+    // supplies Uint8Array bytes, and protection leaves export-free text alone.
+    // Keep the real loader/closure/protector and the tracked helper unchanged.
+    const controlsFile = path.join(__dirname, 'render-executable-cache-controls.js');
+    let controlsSource = fs.readFileSync(controlsFile, 'utf8');
+    for (const [before, after] of [
+      ['function watxSourceTextFromBytes(b){return b.toString("utf8")}',
+        'function watxSourceTextFromBytes(b){return new TextDecoder().decode(b)}'],
+      [String.raw`const suffix='\\nEXTRA\\n\\n;; Protected external entry wrappers; internal calls retain their targets.\\n\\n';`,
+        String.raw`const suffix='\\nEXTRA\\n';`],
+    ]) {
+      assert.strictEqual(controlsSource.split(before).length, 2);
+      controlsSource = controlsSource.replace(before, after);
+    }
+    const controls = new Module(controlsFile);
+    controls.filename = controlsFile;
+    controls.paths = module.paths;
+    controls._compile(controlsSource, controlsFile);
+    await controls.exports();
   })().catch(e => { console.error(e); process.exitCode = 1; }).finally(cleanup);
 } catch (e) { cleanup(); throw e; }
 

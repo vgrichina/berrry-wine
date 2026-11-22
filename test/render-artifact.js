@@ -149,7 +149,7 @@ function compileSnapshot({ receipt, contents }, options) {
     function localRequire(request) {
       const builtin = request.replace(/^node:/, '');
       if (builtin === 'fs') return sealedFs;
-      if (['path', 'vm', 'assert'].includes(builtin)) return require(builtin);
+      if (['path', 'vm', 'assert', 'crypto'].includes(builtin)) return require(builtin);
       if (!request.startsWith('.') && !path.isAbsolute(request))
         throw new Error(`render artifact unsealed dependency: ${request}`);
       let target = path.resolve(path.dirname(file), request);
