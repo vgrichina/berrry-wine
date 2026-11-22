@@ -1891,26 +1891,40 @@
                   (then (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $cur))))
                 (call $edit_invalidate_caret (local.get $hwnd))))
             (return (i32.const 0))))
-        ;; VK_HOME 0x24 — start of line (or start of text with Ctrl)
-        (if (i32.eq (local.get $vk) (i32.const 0x24))
+        ;; HOME/END use display rows in a wrapped plain ANSI multiline EDIT.
+        ;; Ctrl keeps document bounds; Shift keeps the existing anchor.
+        (if (i32.or (i32.eq (local.get $vk) (i32.const 0x24))
+                    (i32.eq (local.get $vk) (i32.const 0x23)))
           (then
             (if (local.get $b)
-              (then (local.set $cur (i32.const 0)))
-              (else (local.set $cur (call $edit_line_start (local.get $state_w) (local.get $cur)))))
-            (store.field.memarg EditState cursor (local.get $state_w) (local.get $cur))
-            (if (i32.eqz (local.get $a))
-              (then (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $cur))))
-            (call $edit_invalidate_caret (local.get $hwnd))
-            (return (i32.const 0))))
-        ;; VK_END 0x23 — end of line (or end of text with Ctrl)
-        (if (i32.eq (local.get $vk) (i32.const 0x23))
-          (then
-            (if (local.get $b)
-              (then (local.set $cur (local.get $text_len)))
+              (then (local.set $cur (select (i32.const 0) (local.get $text_len)
+                (i32.eq (local.get $vk) (i32.const 0x24)))))
               (else
-                (local.set $lo (call $edit_line_start (local.get $state_w) (local.get $cur)))
-                (local.set $cur (i32.add (local.get $lo)
-                  (call $edit_line_text_len (local.get $state_w) (local.get $lo))))))
+                (if (i32.and
+                      (i32.and
+                        (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+                        (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+                      (i32.and
+                        (i32.eq (i32.and (load.field.memarg EditState flags (local.get $state_w))
+                          (i32.const 3)) (i32.const 1))
+                        (call $edit_wraps (local.get $hwnd))))
+                  (then
+                    ;; Refresh the same font/viewport layout used by paint,
+                    ;; caret placement and public EM_LINEINDEX. Its lengths
+                    ;; exclude hard CRLFs and the wrap separator space.
+                    (local.set $sz (i32.and
+                      (call $edit_view_metrics (local.get $hwnd) (local.get $state_w))
+                      (i32.const 0xFFFF)))
+                    (local.set $lo (call $edit_layout_line_for_char (local.get $sz) (local.get $cur)))
+                    (local.set $cur (call $edit_layout_start (local.get $lo)))
+                    (if (i32.eq (local.get $vk) (i32.const 0x23))
+                      (then (local.set $cur (i32.add (local.get $cur)
+                        (call $edit_layout_len (local.get $lo)))))))
+                  (else
+                    (local.set $cur (call $edit_line_start (local.get $state_w) (local.get $cur)))
+                    (if (i32.eq (local.get $vk) (i32.const 0x23))
+                      (then (local.set $cur (i32.add (local.get $cur)
+                        (call $edit_line_text_len (local.get $state_w) (local.get $cur))))))))))
             (store.field.memarg EditState cursor (local.get $state_w) (local.get $cur))
             (if (i32.eqz (local.get $a))
               (then (store.field.memarg EditState sel_anchor (local.get $state_w) (local.get $cur))))
