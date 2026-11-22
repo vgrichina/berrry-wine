@@ -1487,6 +1487,7 @@
     (local $full_style i32) (local $bitmap i32) (local $bitmap_w i32)
     (local $bitmap_h i32) (local $bitmap_dc i32) (local $bitmap_owned i32)
     (local $bitmap_x i32) (local $bitmap_y i32)
+    (local $parent_color_brush i32) (local $color_parent i32)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
@@ -1742,6 +1743,47 @@
             (call $static_send_drawitem (local.get $hwnd) (local.get $hdc)
               (local.get $ctrl_id) (local.get $w) (local.get $h))
             (return (i32.const 0))))
+        ;; WIN32.HLP (1992-94), topics 170/493/3753 (Chicago: Yes):
+        ;; before drawing, the parent receives the STATIC's HDC and HWND,
+        ;; can set its text/background colors, and returns the background brush.
+        ;; Qualified here for ordinary enabled visible ANSI Win32 SS_LEFT.
+        ;; Never enter guest code from the idle host shadow or another thread.
+        (local.set $color_parent (call $wnd_get_parent (local.get $hwnd)))
+        (if (i32.and
+              (i32.eqz (i32.or (global.get $is_win16) (global.get $host_shadow)))
+              (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                (i32.and
+                  (i32.and
+                    (i32.eq (call $wnd_get_style (local.get $hwnd)) (local.get $full_style))
+                    (i32.eqz (i32.and (local.get $full_style) (i32.const 0x0800FFFF))))
+                  (i32.and (i32.eqz (local.get $ex))
+                    (i32.and (call $wnd_is_effectively_visible (local.get $hwnd))
+                      (i32.and (i32.ne (local.get $color_parent) (i32.const 0))
+                        (i32.and
+                          (i32.eq (call $wnd_get_thread (local.get $hwnd)) (global.get $current_thread_id))
+                          (i32.eq (call $wnd_get_thread (local.get $color_parent)) (global.get $current_thread_id)))))))))
+          (then
+            (drop (call $gdi_native_select_object (local.get $hdc)
+              (select (call $static_font (local.get $state_w)) (i32.const 0x30021)
+                (i32.ne (call $static_font (local.get $state_w)) (i32.const 0)))))
+            (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 2)))
+            (local.set $parent_color_brush (call $wnd_send_message
+              (local.get $color_parent) (i32.const 0x0138)
+              (local.get $hdc) (local.get $hwnd)))
+            ;; The callback may destroy/recreate or alter the control. Reject
+            ;; incomplete sends and stale state before dereferencing it again.
+            (if (i32.or (i32.eqz (global.get $wnd_send_completed))
+                  (i32.or
+                    (i32.ne (call $wnd_get_state_ptr (local.get $hwnd)) (local.get $state))
+                    (i32.or
+                      (i32.ne (call $wnd_get_parent (local.get $hwnd)) (local.get $color_parent))
+                      (i32.or
+                        (i32.ne (call $wnd_get_style (local.get $hwnd)) (local.get $full_style))
+                        (i32.or
+                          (i32.ne (call $ctrl_get_wh_packed (local.get $hwnd)) (local.get $sz))
+                          (i32.eqz (call $wnd_is_effectively_visible (local.get $hwnd))))))))
+              (then (return (i32.const 0))))
+            (local.set $state_w (call $g2w (call $wnd_get_state_ptr (local.get $hwnd))))))
         ;; Default text rect = full client.
         (local.set $tx_l (i32.const 0))
         (local.set $tx_t (i32.const 0))
@@ -1821,9 +1863,12 @@
                 ;; VB's bordered ThunderLabel fields use a white BackColor;
                 ;; plain captions inherit the form face.
                 (local.set $brush
-                  (select (i32.const 0x30010) (i32.const 0x30011)
-                    (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
-                      (i32.const 0x00800000)) (i32.const 0))))
+                  (if (result i32) (local.get $parent_color_brush)
+                    (then (local.get $parent_color_brush))
+                    (else
+                      (select (i32.const 0x30010) (i32.const 0x30011)
+                        (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                          (i32.const 0x00800000)) (i32.const 0))))))
                 (drop (call $gdi_native_fill_rect (local.get $hdc)
                         (i32.const 0) (i32.const 0)
                         (local.get $w) (local.get $h)
@@ -1835,7 +1880,11 @@
         (drop (call $gdi_native_select_object (local.get $hdc)
           (select (call $static_font (local.get $state_w)) (i32.const 0x30021)
             (i32.ne (call $static_font (local.get $state_w)) (i32.const 0)))))
-        (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 1)))
+        ;; A processed parent-color callback owns the DC's text colors and
+        ;; background mode. Preserve them through DrawText (including OPAQUE
+        ;; text background); the existing unhandled path stays transparent.
+        (if (i32.eqz (local.get $parent_color_brush))
+          (then (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 1)))))
         ;; SS_BITMAP accepts either a dialog-template RT_BITMAP ordinal or an
         ;; HBITMAP installed with STM_SETIMAGE. Resource bitmaps are temporary
         ;; WAT GDI objects: release them after the blit so repainting a static
