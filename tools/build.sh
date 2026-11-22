@@ -613,7 +613,11 @@ step concat-wat -- node tools/concat-wat.js
 # compiles (api table, dispatch table, hash table, KERNEL32 image, Big5 table).
 # Every other gate runs BESIDE it; a failure there kills it.
 COMPILE_AFTER=manifest,fragments,watx-provenance,region-decls,api-table,api-table-gen,dispatch-gen,hash-table,kernel32-gen,big5-gen
-step compile after=$COMPILE_AFTER early kill -- node tools/build-compile-wat.js
+# Keep V8 from retaining dead compiler objects until its host-sized default
+# heap limit. The two artifact passes fit in 384 MiB; collecting within that
+# heap keeps Linux RSS within the unchanged cross-host build budget. This
+# applies only to the compiler, and still fails on genuine live-heap growth.
+step compile after=$COMPILE_AFTER early kill -- node --max-old-space-size=384 tools/build-compile-wat.js
 # The budget gate's yardstick: a fixed CPU workload measured in the same minute
 # as the compile, so compile CPU can be judged in units that a loaded box does
 # not move. `last`: it waits for every gate and runs beside the compile's
