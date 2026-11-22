@@ -2531,7 +2531,9 @@
   ;; DrawEdge(hdc, qrc, edge, grfFlags) — 4 args stdcall
   (func $handle_DrawEdge (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $rc i32) (local $desc i32)
-    (local.set $rc (call $g2w (local.get $arg1)))
+    ;; The helper reads and optionally adjusts one packed RECT. Adjacent guest
+    ;; pages can have separate backing, including a split inside an i32 field.
+    (local.set $rc (call $guest_span_in (local.get $arg1) (size-of Rect)))
     (local.set $desc (global.get $GDI_LINE_DESC))
     (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $desc))
       (then (i32.store offset=0 (global.get $reg_base) (call $gdi_draw_edge_desc
@@ -2540,6 +2542,9 @@
         (load.field.memarg Rect right (local.get $rc)) (load.field.memarg Rect bottom (local.get $rc))
         (local.get $arg2) (local.get $arg3) (local.get $rc))))
       (else (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
+    (if (i32.and (local.get $arg3) (i32.const 0x2000))
+      (then (call $guest_span_writeback (local.get $arg1) (local.get $rc) (size-of Rect)))
+      (else (call $guest_span_release (local.get $rc) (size-of Rect))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 
