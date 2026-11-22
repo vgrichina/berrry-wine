@@ -156,14 +156,20 @@
 
   ;; 152: GetViewportOrgEx(hdc, lpPoint)
   (func $handle_GetViewportOrgEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (i32.ne (local.get $arg1) (i32.const 0)) (then
-      (call $gs32 (local.get $arg1)
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 56) (i32.const 0)))
-      (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 60) (i32.const 0)))
-    ))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
+    (local $dc i32) (local $ok i32)
+    ;; Canonical lookup preserves supported live legacy window DC adoption
+    ;; without requesting allocation for an unrecognized handle.
+    (if (local.get $arg1)
+      (then
+        (local.set $dc (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
+        (if (local.get $dc)
+          (then
+            (call $gs32 (local.get $arg1) (i32.load offset=56 (local.get $dc)))
+            (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
+              (i32.load offset=60 (local.get $dc)))
+            (local.set $ok (i32.const 1))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
   ;; 153: Rectangle
@@ -3880,14 +3886,20 @@
 
   ;; 586: GetWindowOrgEx(hdc, lpPoint) → BOOL
   (func $handle_GetWindowOrgEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (local.get $arg1) (then
-      (call $gs32 (local.get $arg1)
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 40) (i32.const 0)))
-      (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 44) (i32.const 0)))
-    ))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)
+    (local $dc i32) (local $ok i32)
+    ;; Canonical lookup preserves supported live legacy window DC adoption
+    ;; without requesting allocation for an unrecognized handle.
+    (if (local.get $arg1)
+      (then
+        (local.set $dc (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
+        (if (local.get $dc)
+          (then
+            (call $gs32 (local.get $arg1) (i32.load offset=40 (local.get $dc)))
+            (call $gs32 (i32.add (local.get $arg1) (i32.const 4))
+              (i32.load offset=44 (local.get $dc)))
+            (local.set $ok (i32.const 1))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
   ;; 587: SetWindowOrgEx(hdc, X, Y, lpPoint) → BOOL. Stores new logical origin; subsequent GDI
