@@ -1959,6 +1959,8 @@
       (then (return (i32.const 0))))
     (if (i32.gt_u (call $gdi_object_style (local.get $pen)) (i32.const 6))
       (then (return (i32.const 0))))
+    (if (i32.eq (call $gdi_object_style (local.get $pen)) (i32.const 5))
+      (then (return (i32.const 1))))
     (local.set $width (call $gdi_object_width (local.get $pen)))
     (local.set $record (call $gdi_object_record (local.get $pen)))
     (if (local.get $record)
