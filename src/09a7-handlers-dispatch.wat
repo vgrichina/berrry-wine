@@ -5079,6 +5079,14 @@
             (then (local.set $result (local.get $uCode)))
           )
           (if (i32.eq (local.get $uCode) (i32.const 0x20)) (then (local.set $result (i32.const 0x20))))
+          ;; US keyboard driver's unshifted keypad characters (MapVirtualKey type 2).
+          (if (i32.and (i32.ge_u (local.get $uCode) (i32.const 0x60)) (i32.le_u (local.get $uCode) (i32.const 0x69)))
+            (then (local.set $result (i32.sub (local.get $uCode) (i32.const 0x30))))) ;; VK_NUMPAD0..9
+          (if (i32.eq (local.get $uCode) (i32.const 0x6A)) (then (local.set $result (i32.const 0x2A)))) ;; VK_MULTIPLY
+          (if (i32.eq (local.get $uCode) (i32.const 0x6B)) (then (local.set $result (i32.const 0x2B)))) ;; VK_ADD
+          (if (i32.eq (local.get $uCode) (i32.const 0x6D)) (then (local.set $result (i32.const 0x2D)))) ;; VK_SUBTRACT
+          (if (i32.eq (local.get $uCode) (i32.const 0x6E)) (then (local.set $result (i32.const 0x2E)))) ;; VK_DECIMAL
+          (if (i32.eq (local.get $uCode) (i32.const 0x6F)) (then (local.set $result (i32.const 0x2F)))) ;; VK_DIVIDE
           ;; OEM punctuation (US layout, unshifted glyph)
           (if (i32.eq (local.get $uCode) (i32.const 0xE2)) (then (local.set $result (i32.const 0x5C)))) ;; VK_OEM_102
           (if (i32.eq (local.get $uCode) (i32.const 0xBA)) (then (local.set $result (i32.const 0x3B)))) ;; ;
