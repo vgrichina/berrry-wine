@@ -495,6 +495,9 @@
         ;; + WS_VISIBLE(0x10000000) only for CBS_SIMPLE.
         (local.set $style (i32.or (i32.const 0x40A00000)
           (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x00100000))))
+        ;; CBS_SORT uses the backing list's sorted-add path (LBS_SORT).
+        (if (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x0100))
+          (then (local.set $style (i32.or (local.get $style) (i32.const 0x0002)))))
         ;; CBS_DISABLENOSCROLL maps to the inner list's LBS equivalent.
         (if (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x0800))
           (then (local.set $style (i32.or (local.get $style) (i32.const 0x1000)))))
@@ -808,17 +811,35 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0147))
       (then (return (call $cb_cur_sel (local.get $state_w)))))
 
-    ;; ---------- CB_ADDSTRING (0x0143) → LB_ADDSTRING (0x0180) ----------
-    (if (i32.eq (local.get $msg) (i32.const 0x0143))
-      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0180) (i32.const 0) (local.get $lParam)))))
-
-    ;; ---------- CB_INSERTSTRING (0x014A) → LB_INSERTSTRING (0x0181) ----------
-    (if (i32.eq (local.get $msg) (i32.const 0x014A))
-      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0181) (local.get $wParam) (local.get $lParam)))))
+    ;; Insertion moves a surviving selection's index, including sorted ADD.
+    ;; Its text and EDIT selection already name that same item: retain them
+    ;; rather than rewriting the field (especially arbitrary unselected text).
+    ;; The returned insertion index, not wParam, determines which rows moved.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0143))
+                (i32.eq (local.get $msg) (i32.const 0x014A)))
+      (then
+        (local.set $idx (call $wnd_send_message (local.get $lb)
+          (select (i32.const 0x0180) (i32.const 0x0181)
+                  (i32.eq (local.get $msg) (i32.const 0x0143)))
+          (local.get $wParam) (local.get $lParam)))
+        (if (i32.and (i32.ge_s (local.get $idx) (i32.const 0))
+                    (i32.ge_s (call $cb_cur_sel (local.get $state_w)) (local.get $idx)))
+          (then (call $cb_set_cur_sel (local.get $state_w)
+            (i32.add (call $cb_cur_sel (local.get $state_w)) (i32.const 1)))))
+        (return (local.get $idx))))
 
     ;; ---------- CB_DELETESTRING (0x0144) → LB_DELETESTRING (0x0182) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0144))
-      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0182) (local.get $wParam) (i32.const 0)))))
+      (then
+        (local.set $idx (call $wnd_send_message (local.get $lb)
+          (i32.const 0x0182) (local.get $wParam) (i32.const 0)))
+        ;; Only preceding deletions move the surviving selected item. Leave
+        ;; selected-item deletion's existing field behavior unchanged here.
+        (if (i32.and (i32.ge_s (local.get $idx) (i32.const 0))
+                    (i32.gt_s (call $cb_cur_sel (local.get $state_w)) (local.get $wParam)))
+          (then (call $cb_set_cur_sel (local.get $state_w)
+            (i32.sub (call $cb_cur_sel (local.get $state_w)) (i32.const 1)))))
+        (return (local.get $idx))))
 
     ;; ---------- CB_FINDSTRING (0x014C) / CB_FINDSTRINGEXACT (0x0158) ----------
     ;; Extent belongs to the list, not the combo field or its current text.
