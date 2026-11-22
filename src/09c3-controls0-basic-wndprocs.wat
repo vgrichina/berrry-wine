@@ -1741,8 +1741,9 @@
         ;; WIN32.HLP (1992-94), topics 170/493/3753 (Chicago: Yes):
         ;; before drawing, the parent receives the STATIC's HDC and HWND,
         ;; can set its text/background colors, and returns the background brush.
-        ;; Topics 490/492/493 cover all ordinary text alignments. Qualified
-        ;; here for enabled visible ANSI Win32 SS_LEFT/SS_CENTER/SS_RIGHT.
+        ;; Topics 490/492/493 include SS_LEFTNOWORDWRAP text statics; 492/1954
+        ;; restrict SS_SIMPLE, which remains excluded. Qualified here for
+        ;; enabled visible ANSI Win32 SS_LEFT/SS_CENTER/SS_RIGHT/LEFTNOWORDWRAP.
         ;; Never enter guest code from the idle host shadow or another thread.
         (local.set $color_parent (call $wnd_get_parent (local.get $hwnd)))
         (if (i32.and
@@ -1752,7 +1753,9 @@
                   (i32.and
                     (i32.eq (call $wnd_get_style (local.get $hwnd)) (local.get $full_style))
                     (i32.and
-                      (i32.le_u (local.get $style) (i32.const 2))
+                      (i32.or
+                        (i32.le_u (local.get $style) (i32.const 2))
+                        (i32.eq (local.get $style) (i32.const 0x0C)))
                       (i32.eqz (i32.and (local.get $full_style) (i32.const 0x0800FFE0)))))
                   (i32.and (i32.eqz (local.get $ex))
                     (i32.and (call $wnd_is_effectively_visible (local.get $hwnd))
