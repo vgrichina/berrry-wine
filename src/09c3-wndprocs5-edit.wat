@@ -1913,6 +1913,23 @@
             (return (i32.const 0))))
         (if (i32.lt_u (local.get $wParam) (i32.const 0x20))
           (then (return (i32.const 0))))
+        ;; ES_UPPERCASE / ES_LOWERCASE convert characters as they are typed
+        ;; (Microsoft Windows 3.1 Programmer's Reference vol4, pp168-169).
+        ;; Ordinary ANSI EDIT, ASCII letters only; leave conflicting styles
+        ;; and other insertion paths outside this documented input scope.
+        (if (i32.and
+              (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+              (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
+          (then
+            (local.set $a (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x18)))
+            (if (i32.and (i32.eq (local.get $a) (i32.const 0x08))
+                  (i32.and (i32.ge_u (local.get $wParam) (i32.const 0x61))
+                           (i32.le_u (local.get $wParam) (i32.const 0x7A))))
+              (then (local.set $wParam (i32.sub (local.get $wParam) (i32.const 0x20)))))
+            (if (i32.and (i32.eq (local.get $a) (i32.const 0x10))
+                  (i32.and (i32.ge_u (local.get $wParam) (i32.const 0x41))
+                           (i32.le_u (local.get $wParam) (i32.const 0x5A))))
+              (then (local.set $wParam (i32.add (local.get $wParam) (i32.const 0x20)))))))
         (call $edit_insert_char (local.get $hwnd) (local.get $state_w) (local.get $wParam))
         (store.field.memarg EditState flags (local.get $state_w)
           (i32.or (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x08)))
