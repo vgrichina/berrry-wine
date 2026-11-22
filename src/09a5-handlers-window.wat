@@ -7441,6 +7441,14 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
+    ;; WM_QUERYENDSESSION: the default permits the session to end (Microsoft
+    ;; WIN32.HLP topic 3845). The query itself does not end the session.
+    (if (i32.eq (local.get $arg1) (i32.const 0x0011))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     ;; WM_QUERYOPEN (0x13): default processing permits an iconic window to be
     ;; restored. OpenIcon uses the result as a real application veto.
     (if (i32.eq (local.get $arg1) (i32.const 0x0013))
