@@ -122,7 +122,7 @@ for (const ch of [0x100, 0x141, 0x17f, 0x180, 0xff41, 0xffff, 0x10041, -1])
 // MapVirtualKey still delegates type 0 to the same mapping; its ABI differs.
 for (const [key, type, expected] of [[0x41, 0, 0x1e], [8, 0, 0x0e],
   [0x70, 0, 0x3b], [0x7b, 0, 0x58], [0xff, 0, 0],
-  [0x1e, 1, 0x41], [0xbf, 2, 0x2f], [0x41, 3, 0]]) {
+  [0x1e, 1, 0x41], [0xbf, 2, 0x2f], [0x41, 3, 0x76]]) {
   regs.setUint32(16, 100, true);
   wasm.map(key, type, 0, 0, 0, 0);
   assert.equal(regs.getUint32(0, true), expected);

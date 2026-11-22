@@ -4825,7 +4825,9 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
-  ;; LS32 native pairing owns a parked six-argument connection request.
+  ;; Six-argument Win9x connection. Keep the original frame parked while the
+  ;; owning host resolves and inspects the real companion. Never claim attach
+  ;; success before a relay and its lifetime have actually been published.
   (func $handle_ThunkConnect32 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (call $handle_ne_guest_request (i32.const 5) (local.get $arg0) (i32.load offset=16 (global.get $reg_base)))
   )
@@ -5043,11 +5045,13 @@
           (br $done)
         )
       )
-      ;; Type 3: ordinary US modifiers, preserving the side of the key.
+      ;; Type 3: reuse the ordinary scan-to-VK table, preserving modifier sides.
       ;; Right Shift has its own scan code; right Ctrl/Alt use an E0 prefix
       ;; in the high byte. Compare the full code so the prefix is not lost.
       (if (i32.eq (local.get $uMapType) (i32.const 3))
         (then
+          (if (i32.le_u (local.get $uCode) (i32.const 0x58))
+            (then (local.set $result (i32.load8_u (i32.add (region.addr $VK_SCAN_TABLES 0x20) (local.get $uCode))))))
           (if (i32.eq (local.get $uCode) (i32.const 0x002A)) (then (local.set $result (i32.const 0xA0)))) ;; VK_LSHIFT
           (if (i32.eq (local.get $uCode) (i32.const 0x0036)) (then (local.set $result (i32.const 0xA1)))) ;; VK_RSHIFT
           (if (i32.eq (local.get $uCode) (i32.const 0x001D)) (then (local.set $result (i32.const 0xA2)))) ;; VK_LCONTROL
