@@ -25,7 +25,7 @@ place.
 
 | Guarantee | Who provides it | What it cannot see |
 |---|---|---|
-| Regions do not overlap | `test/test-wat-memory-map.js` (build gate) | anything not spelled `(global $X i32 ...)` + `(global $X_SIZE i32 ...)` |
+| Regions do not overlap | `test/test-wat-memory-map.js` (unit tier; left the build 2026-11-21) | anything not spelled `(global $X i32 ...)` + `(global $X_SIZE i32 ...)` |
 | Free-space / collision queries | `tools/wat-memory-map.js` (on demand) | same |
 | WAT↔JS constant agreement | `tools/check-wat-js-constants.js` (build gate) | a JS copy whose surrounding code was reshaped until the regex stopped matching |
 | An address is inside its region | **nobody** | — |

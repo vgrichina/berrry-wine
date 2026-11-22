@@ -1,0 +1,25 @@
+{
+  "note": "Build budget ratchet, checked by tools/check-build-budget.js after every tools/build.sh. Over budget = fix the build, do not raise these. Lower them with: node tools/check-build-budget.js --update",
+  "procs": 55,
+  "compilerPeakRssMb": 486.9,
+  "srcReadPasses": 50.207,
+  "compileCpuUnits": 308.29,
+  "wallMs": 18085,
+  "recorded": {
+    "when": "2026-11-22T10:06:48.370Z",
+    "platform": "darwin-arm64",
+    "node": "v24.21.0",
+    "cpus": 8,
+    "jobs": 4,
+    "loadavgStart": [
+      7.44,
+      5.38,
+      4.71
+    ],
+    "compileCpuMs": 18080,
+    "calibrationMs": 59.71,
+    "srcBytes": 1305729668,
+    "srcTreeBytes": 26006855
+  },
+  "basis": "M1 (4P+4E), 16 GB, shared box. Re-recorded 2026-11-22 on the PR #35 merge with main 562a22e15 (includes PR #34, one-pass protectClosure + build/watx-facts.json), default 4 jobs, calibration in the compile's tail: compile units 309.74/308.29/302.80 at load 6.4-7.4 (median 308.29 recorded); compiler peak RSS 469.5/486.9/472.3 MB (highest, 486.9, recorded: maxRSS reads LOW under memory pressure). 55 node processes and 50.207 src/ read passes on every run. Previous baseline (e83c6221c + PR #35, before #34): 1240 MB / 446.35 units / 50.156 passes / 55 procs / wall 16.5 s, runs in scratch/runs/20261121-build-budget. This one: scratch/runs/20261122-merge-35."
+}
