@@ -7355,6 +7355,13 @@
   ;; 78: DefWindowProcA
   (func $handle_DefWindowProcA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $text_wa i32) (local $text_len i32)
+    ;; WM_CHARTOITEM: Microsoft WIN32.HLP topic 3734 specifies -1.
+    (if (i32.eq (local.get $arg1) (i32.const 0x002F))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const -1))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     ;; WM_VKEYTOITEM: declining custom keyboard handling asks the list box
     ;; to perform its default action (Microsoft WIN32.HLP topic 3876).
     (if (i32.eq (local.get $arg1) (i32.const 0x002E))
@@ -7434,6 +7441,14 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
+    ;; WM_QUERYENDSESSION: the default permits the session to end (Microsoft
+    ;; WIN32.HLP topic 3845). The query itself does not end the session.
+    (if (i32.eq (local.get $arg1) (i32.const 0x0011))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
     ;; WM_QUERYOPEN (0x13): default processing permits an iconic window to be
     ;; restored. OpenIcon uses the result as a real application veto.
     (if (i32.eq (local.get $arg1) (i32.const 0x0013))
@@ -7458,6 +7473,21 @@
         (call $host_set_window_text (local.get $arg0) (local.get $text_wa))
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    ;; Ordinary ANSI captions: capacity includes NUL; the read result and
+    ;; length exclude it (Microsoft WIN32.HLP topics 3783/3784). Reuse the
+    ;; GetWindowTextA copy path; native controls keep their class procedures.
+    (if (i32.and (i32.eqz (call $ctrl_table_get_class (local.get $arg0)))
+          (i32.or (i32.eq (local.get $arg1) (i32.const 0x000D))
+                  (i32.eq (local.get $arg1) (i32.const 0x000E))))
+      (then
+        (i32.store offset=0 (global.get $reg_base)
+          (if (result i32) (i32.eq (local.get $arg1) (i32.const 0x000D))
+            (then (call $window_text_ansi
+              (local.get $arg0) (local.get $arg3) (local.get $arg2)))
+            (else (call $title_table_get_len (local.get $arg0)))))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
     ;; WM_CLOSE (0x10): default close destroys the target. Only closing the
     ;; main window should end the message loop; modeless dialogs are ordinary

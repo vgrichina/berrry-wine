@@ -1706,11 +1706,6 @@
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
-        ;; NSIS installer branding label. It is decorative, and with the
-        ;; emulator's current font metrics it collides with the wizard
-        ;; buttons; suppress it instead of painting unreadable overlap.
-        (if (i32.eq (call $ctrl_table_get_id (local.get $hwnd)) (i32.const 1028))
-          (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
         ;; Geometry from CONTROL_GEOM (parent has already painted the
@@ -1746,7 +1741,8 @@
         ;; WIN32.HLP (1992-94), topics 170/493/3753 (Chicago: Yes):
         ;; before drawing, the parent receives the STATIC's HDC and HWND,
         ;; can set its text/background colors, and returns the background brush.
-        ;; Qualified here for ordinary enabled visible ANSI Win32 SS_LEFT.
+        ;; Topics 490/492/493 cover all ordinary text alignments. Qualified
+        ;; here for enabled visible ANSI Win32 SS_LEFT/SS_CENTER/SS_RIGHT.
         ;; Never enter guest code from the idle host shadow or another thread.
         (local.set $color_parent (call $wnd_get_parent (local.get $hwnd)))
         (if (i32.and
@@ -1755,7 +1751,9 @@
                 (i32.and
                   (i32.and
                     (i32.eq (call $wnd_get_style (local.get $hwnd)) (local.get $full_style))
-                    (i32.eqz (i32.and (local.get $full_style) (i32.const 0x0800FFFF))))
+                    (i32.and
+                      (i32.le_u (local.get $style) (i32.const 2))
+                      (i32.eqz (i32.and (local.get $full_style) (i32.const 0x0800FFE0)))))
                   (i32.and (i32.eqz (local.get $ex))
                     (i32.and (call $wnd_is_effectively_visible (local.get $hwnd))
                       (i32.and (i32.ne (local.get $color_parent) (i32.const 0))
@@ -2076,11 +2074,28 @@
                   (local.set $fmt
                     (i32.or (local.get $fmt) (i32.const 0x40))) ;; DT_EXPANDTABS
                   ;; Ordinary text labels preserve every ampersand when
-                  ;; SS_NOPREFIX is set. Leave SS_SIMPLE and other subtypes
-                  ;; on their existing path; only DrawText's flag changes.
+                  ;; SS_NOPREFIX is set. SS_SIMPLE is qualified separately
+                  ;; below; only DrawText's flag changes.
                   (if (i32.and (local.get $full_style) (i32.const 0x80))
                     (then (local.set $fmt
                       (i32.or (local.get $fmt) (i32.const 0x800))))))) ;; DT_NOPREFIX
+              ;; Microsoft Visual C++ 4, Sep1995, vol4 p2277: ampersands
+              ;; are prefixes unless SS_NOPREFIX is specified, which may
+              ;; accompany any static style. SS_SIMPLE has no intrinsic
+              ;; no-prefix exception. Qualify only enabled visible ANSI
+              ;; Win32 SIMPLE|NOPREFIX without other low-word styles or exstyle.
+              ;; Preserve its existing layout, tabs, colors and erase path.
+              (if (i32.and
+                    (i32.eq (i32.and (local.get $full_style) (i32.const 0x0800FFFF))
+                            (i32.const 0x008B))
+                    (i32.and
+                      (i32.eq (call $wnd_get_style (local.get $hwnd)) (local.get $full_style))
+                      (i32.and (i32.eqz (global.get $is_win16))
+                        (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                          (i32.and (i32.eqz (local.get $ex))
+                            (call $wnd_is_effectively_visible (local.get $hwnd)))))))
+                (then (local.set $fmt
+                  (i32.or (local.get $fmt) (i32.const 0x800))))) ;; DT_NOPREFIX
               (drop (call $gdi_native_draw_text (local.get $hdc)
                       (call $g2w (call $static_text_ptr (local.get $state_w)))
                       (call $static_text_len (local.get $state_w))

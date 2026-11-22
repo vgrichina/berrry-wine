@@ -153,8 +153,16 @@
     (local $ownerdraw i32) (local $code i32) (local $delta i32)
     (local $saved_dc i32) (local $x i32) (local $page i32)
     (local $simple_multi i32)
+    (local $notify_single i32)
+    (local $vkey_generation i64)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
+    ;; WIN32.HLP (1992-1994), LBN_SELCHANGE: LBS_NOTIFY is required.
+    ;; Restrict this guard addition to enabled ordinary single-selection
+    ;; string lists; retain owner-draw, keyboard-owner and multiple routes.
+    (local.set $notify_single
+      (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd))
+        (i32.const 0x08006E38))))
 
     ;; Keep arrows in the list when a setup/menu loop uses IsDialogMessage.
     ;; Otherwise the dialog manager consumes them as group-focus navigation
@@ -678,6 +686,11 @@
         (return (i32.eq (local.get $idx) (call $lb_cur_sel (local.get $sw))))))
 
     ;; ---------- LB_GETSELCOUNT (0x0190) / LB_GETSELITEMS (0x0191) ----------
+    ;; Microsoft WIN32.HLP (1992-1994), LB_GETSELCOUNT: a single-selection
+    ;; list box returns LB_ERR. Both multiple-selection styles remain valid.
+    (if (i32.and (i32.eq (local.get $msg) (i32.const 0x0190))
+          (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0808))))
+      (then (return (i32.const -1))))
     (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0190))
                 (i32.eq (local.get $msg) (i32.const 0x0191)))
       (then
@@ -1058,11 +1071,12 @@
         (if (i32.eq (local.get $msg) (i32.const 0x0203))
           (then (local.set $notif (i32.const 2))))  ;; LBN_DBLCLK
         (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
-        ;; CListBox p781: LBN_SELCHANGE requires LBS_NOTIFY. All selection
-        ;; flags and the caret are public before the synchronous callback.
-        ;; Gate only this new simple-click path; retain other notifications.
+        ;; WIN32.HLP topic3646 requires LBS_NOTIFY for LBN_SELCHANGE.
+        ;; Add ordinary single clicks to the guard, retaining double-clicks.
         (if (i32.and (i32.ne (local.get $parent) (i32.const 0))
-              (i32.or (i32.eqz (local.get $simple_multi))
+              (i32.or (i32.eqz (i32.or (local.get $simple_multi)
+                  (i32.and (local.get $notify_single)
+                    (i32.eq (local.get $msg) (i32.const 0x0201)))))
                 (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
                           (i32.const 1)) (i32.const 0))))
           (then
@@ -1192,6 +1206,46 @@
     ;; existing behavior, including the combobox popup's inner listbox.
     (if (i32.eq (local.get $msg) (i32.const 0x0100))
       (then
+        ;; Q108941 (reviewed 1995-11-02), regular Windows95 lists:
+        ;; -2 suppresses noncharacter arrow processing; WIN32.HLP 3876
+        ;; defines -1 as default and packs key/caret with the list HWND.
+        ;; This qualified path covers Up/Down, ordinary enabled ANSI lists
+        ;; and synchronous Win32 guest owners only. Nonnegative returned
+        ;; indices, character input and notification-entry timing are not
+        ;; implemented or inferred here.
+        (if (i32.and
+              (i32.eq (i32.and (call $wnd_get_style (local.get $hwnd))
+                        (i32.const 0x08006E38)) (i32.const 0x0400))
+              (i32.and
+                (i32.eqz (i32.or (global.get $code16) (global.get $host_shadow)))
+                (i32.or (i32.eq (local.get $wParam) (i32.const 0x26))
+                        (i32.eq (local.get $wParam) (i32.const 0x28)))))
+          (then
+            (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
+            (local.set $notif (call $wnd_table_get (local.get $parent)))
+            ;; Exclude missing, native and dialog procedure sentinels.
+            (if (i32.and (i32.ne (local.get $notif) (i32.const 0))
+                         (i32.lt_u (local.get $notif) (i32.const 0xFFFE0000)))
+              (then
+                (local.set $vkey_generation (call $wnd_lookup_generation (local.get $hwnd)))
+                (local.set $notif (call $wnd_send_message (local.get $parent) (i32.const 0x002E)
+                  (i32.or (i32.and (local.get $wParam) (i32.const 0xFFFF))
+                    (i32.shl (call $lb_cur_sel (local.get $sw)) (i32.const 16)))
+                  (local.get $hwnd)))
+                ;; Only a completed callback supplies an LRESULT. Never
+                ;; continue with state freed/replaced by a nested callback.
+                (if (i32.eqz (global.get $wnd_send_completed))
+                  (then (return (i32.const 0))))
+                (if (i32.eq (local.get $notif) (i32.const -2))
+                  (then (return (i32.const 0))))
+                (if (i32.or
+                      (i64.ne (local.get $vkey_generation) (call $wnd_lookup_generation (local.get $hwnd)))
+                      (i32.ne (local.get $state) (call $wnd_get_state_ptr (local.get $hwnd))))
+                  (then (return (i32.const 0))))
+                ;; Re-read count/selection below: callbacks may synchronously
+                ;; send list messages. Keep the old fallback for other results;
+                ;; this change claims only the documented negative returns.
+                (local.set $sw (call $g2w (local.get $state)))))))
         (local.set $count (call $lb_count (local.get $sw)))
         (if (i32.eqz (local.get $count)) (then (return (i32.const 0))))
         (local.set $sel (call $lb_cur_sel (local.get $sw)))
@@ -1275,7 +1329,7 @@
                       (i32.add (i32.sub (local.get $row) (local.get $visible)) (i32.const 1)))))))
         (local.set $parent (call $wnd_get_parent (local.get $hwnd)))
         (if (i32.and (i32.ne (local.get $parent) (i32.const 0))
-              (i32.or (i32.eqz (local.get $simple_multi))
+              (i32.or (i32.eqz (i32.or (local.get $simple_multi) (local.get $notify_single)))
                 (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
                           (i32.const 1)) (i32.const 0))))
           (then (drop (call $wnd_send_message (local.get $parent) (i32.const 0x0111)
