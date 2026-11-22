@@ -656,8 +656,26 @@
   ;; hit testing. Reuse only an exact byte-for-byte document/layout match.
   (func $edit_layout_build (param $state_w ptr<EditState>) (param $hdc i32) (param $text_w i32) (result i32)
     (local $len i32) (local $buf i32)
+    (local $hwnd i32) (local $plain i32) (local $old i32)
+    ;; Native window DCs are hwnd+0x40000. Plain ANSI callers can build a
+    ;; layout before paint after WM_SETFONT (including caret/hit-test paths).
+    ;; Select paint's font before consulting or filling the shared cache, so
+    ;; no such caller can cache old-font measurements under the new-font key.
+    ;; A supplied memory DC and RichEdit/Unicode retain the caller's selection.
+    (local.set $hwnd (i32.sub (local.get $hdc) (i32.const 0x40000)))
+    (local.set $plain (i32.and
+      (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+      (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))))
+    (if (local.get $plain)
+      (then (local.set $old (call $gdi_native_select_object (local.get $hdc)
+        (select (load.field.memarg EditState font (local.get $state_w))
+          (i32.const 0x30021)
+          (i32.ne (load.field.memarg EditState font (local.get $state_w)) (i32.const 0)))))))
     (if (call $edit_layout_matches (local.get $state_w) (local.get $hdc) (local.get $text_w))
-      (then (return (global.get $edit_layout_count))))
+      (then
+        (if (local.get $plain)
+          (then (drop (call $gdi_native_select_object (local.get $hdc) (local.get $old)))))
+        (return (global.get $edit_layout_count))))
     (global.set $edit_layout_valid (i32.const 0))
     (global.set $edit_layout_count (call $edit_layout_build_page (local.get $state_w) (local.get $hdc) (local.get $text_w)))
     (local.set $len (load.field EditState text_len (local.get $state_w)))
@@ -677,6 +695,8 @@
     (global.set $edit_layout_font (load.field EditState font (local.get $state_w)))
     (global.set $edit_layout_text_len (local.get $len))
     (global.set $edit_layout_valid (i32.const 1))
+    (if (local.get $plain)
+      (then (drop (call $gdi_native_select_object (local.get $hdc) (local.get $old)))))
     (global.get $edit_layout_count))
 
   (func $edit_layout_build_page (param $state_w ptr<EditState>) (param $hdc i32) (param $text_w i32) (result i32)
@@ -3137,13 +3157,34 @@
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
         (local.set $lo (local.get $wParam))
+        (if (i32.and
+              (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
+              (i32.and (i32.eqz (call $wnd_unicode_get (local.get $hwnd)))
+                (i32.and
+                  (i32.ne (i32.and (load.field.memarg EditState flags (local.get $state_w))
+                    (i32.const 1)) (i32.const 0))
+                  (call $edit_wraps (local.get $hwnd)))))
+          (then
+            (local.set $sz (i32.and
+              (call $edit_view_metrics (local.get $hwnd) (local.get $state_w))
+              (i32.const 0xFFFF)))
+            ;; Unlike LINEFROMCHAR(-1), LINEINDEX(-1) uses the active caret,
+            ;; not the lower selection endpoint. Never change that caret.
+            (if (i32.eq (local.get $lo) (i32.const -1))
+              (then (local.set $lo (call $edit_layout_line_for_char (local.get $sz)
+                (load.field.memarg EditState cursor (local.get $state_w))))))
+            ;; Unsigned bounds reject every nonexistent row, including other
+            ;; negative bit patterns, before reading the shared layout table.
+            (if (i32.ge_u (local.get $lo) (local.get $sz))
+              (then (return (i32.const -1))))
+            (return (call $edit_layout_start (local.get $lo)))))
         (if (i32.eq (local.get $lo) (i32.const -1))
           (then (local.set $lo (call $edit_line_from_char (local.get $state_w)
                                  (load.field.memarg EditState cursor (local.get $state_w))))))
         ;; Plain EDIT does not process this message for single-line controls.
         ;; For unwrapped multiline EDIT, a nonexistent line returns -1, not
         ;; text_len. Keep the helper's end clamp for GETLINE/internal callers,
-        ;; and leave wrapped and RichEdit behavior outside this bounded fix.
+        ;; and retain the fallback for RichEdit and Unicode controls.
         (if (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 2))
           (then
             (if (i32.eqz (i32.and
