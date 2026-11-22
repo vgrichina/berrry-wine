@@ -474,7 +474,8 @@
     ;; BM_CLICK (Microsoft): deliver mouse DOWN/UP through the public window
     ;; procedure so subclasses and the existing native activation path see
     ;; the same transitions and parent BN_CLICKED. Bounded to native enabled
-    ;; push/default-push, checkbox/autocheckbox and radio/autoradio controls.
+    ;; push/default-push, checkbox/autocheckbox, three-state/auto-three-state
+    ;; and radio/autoradio controls (Microsoft WIN32.HLP, 1992-1994).
     ;; No inactive-dialog policy: callers activate their dialog as documented.
     (if (i32.eq (local.get $msg) (i32.const 0x00F5))
       (then
@@ -484,7 +485,7 @@
         (local.set $kind (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 15)))
         (if (i32.or
               (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 134217728)) (i32.const 0))
-              (i32.and (i32.gt_u (local.get $kind) (i32.const 4))
+              (i32.and (i32.gt_u (local.get $kind) (i32.const 6))
                        (i32.ne (local.get $kind) (i32.const 9))))
           (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
@@ -1059,6 +1060,56 @@
                             (i32.sub (local.get $h) (i32.const 2))))))
                 (return (i32.const 0))))))
 
+        ;; ---- Icon button (BS_ICON 0x40, IMAGE_ICON 1) ----
+        ;; Microsoft KB Q131500 (Windows95) and MFC 1997 pp143-144:
+        ;; the associated icon is centered, clipped if oversized, and moves
+        ;; down/right when pressed. Keep the stored handle borrowed, just as
+        ;; BM_SETIMAGE already does for bitmaps; no copy or destruction here.
+        (if (i32.and
+              (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                        (i32.const 0x0040)) (i32.const 0))
+              (i32.eq (call $btn_image_type (local.get $state_w)) (i32.const 1)))
+          (then
+            (local.set $img (call $btn_image_handle (local.get $state_w)))
+            (if (local.get $img)
+              (then
+                (drop (call $gdi_native_fill_rect (local.get $hdc)
+                  (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)
+                  (i32.const 0x30011)))
+                (drop (call $gdi_native_draw_edge (local.get $hdc)
+                  (i32.const 0) (i32.const 0) (local.get $w) (local.get $h)
+                  (select (i32.const 0x0A) (i32.const 0x05)
+                    (i32.and (local.get $flags) (i32.const 1))) (i32.const 0x0F)))
+                ;; Resource handles use DrawIcon's 32px metric; constructed
+                ;; ICONINFO handles retain their actual bitmap dimensions.
+                (local.set $img_w (i32.const 32))
+                (local.set $img_h (i32.const 32))
+                (local.set $brush (call $cursor_record (local.get $img)))
+                (if (local.get $brush)
+                  (then
+                    (local.set $img_w (call $cursor_width (local.get $brush)))
+                    (local.set $img_h (call $cursor_height (local.get $brush)))))
+                ;; Signed origins preserve both sides of an oversized icon;
+                ;; the control DC clips rather than scaling or pinning it.
+                (local.set $img_x (i32.div_s
+                  (i32.sub (local.get $w) (local.get $img_w)) (i32.const 2)))
+                (local.set $img_y (i32.div_s
+                  (i32.sub (local.get $h) (local.get $img_h)) (i32.const 2)))
+                (if (i32.and (local.get $flags) (i32.const 1))
+                  (then
+                    (local.set $img_x (i32.add (local.get $img_x) (i32.const 1)))
+                    (local.set $img_y (i32.add (local.get $img_y) (i32.const 1)))))
+                (drop (call $icon_draw_handle (local.get $img) (local.get $hdc)
+                  (local.get $img_x) (local.get $img_y)
+                  (local.get $img_w) (local.get $img_h) (global.get $DI_NORMAL)))
+                (if (i32.and (local.get $flags) (i32.const 0x08))
+                  (then
+                    (drop (call $gdi_native_draw_focus_rect (local.get $hdc)
+                      (i32.const 4) (i32.const 4)
+                      (i32.sub (local.get $w) (i32.const 4))
+                      (i32.sub (local.get $h) (i32.const 4))))))
+                (return (i32.const 0))))))
+
         ;; ---- Push button (kinds 0, 1) ----
         (if (i32.lt_u (local.get $kind) (i32.const 2))
           (then
@@ -1350,14 +1401,23 @@
         (return (i32.const 0))))
 
     ;; ---------- BM_SETIMAGE (0x00F7) ----------
-    ;; wParam=image type (IMAGE_BITMAP=0), lParam=image handle. Return previous.
+    ;; wParam=image type, lParam=image handle. Return previous.
+    ;; Add only documented nonNULL IMAGE_ICON associations. NULL and other
+    ;; unsupported cases retain their existing behavior and lifetime logic.
     (if (i32.eq (local.get $msg) (i32.const 0x00F7))
       (then
         (if (local.get $state)
           (then
             (local.set $state_w (call $g2w (local.get $state)))
             (local.set $img (call $btn_image_handle (local.get $state_w)))
-            (if (i32.eq (local.get $wParam) (i32.const 0))
+            (if (i32.or (i32.eq (local.get $wParam) (i32.const 0))
+                  (i32.and
+                    (i32.and (i32.eq (local.get $wParam) (i32.const 1))
+                      (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                        (i32.const 0x0040)) (i32.const 0)))
+                    (i32.or
+                      (i32.ne (call $cursor_record (local.get $lParam)) (i32.const 0))
+                      (i32.ne (call $icon_table_record (local.get $lParam)) (i32.const 0)))))
               (then
                 (call $btn_set_image (local.get $state_w) (local.get $wParam) (local.get $lParam))
                 (call $invalidate_hwnd (local.get $hwnd))))
