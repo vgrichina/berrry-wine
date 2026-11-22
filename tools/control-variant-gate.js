@@ -140,6 +140,7 @@ add('ListBoxState', [
   '$lb_drag_anchor_top', '$lb_set_drag_anchor_top', '$lb_data_ptr', '$lb_set_data_ptr',
   '$lb_data_cap', '$lb_set_data_cap', '$lb_sel_ptr', '$lb_set_sel_ptr',
   '$lb_sel_cap', '$lb_set_sel_cap', '$lb_item_h', '$lb_set_item_h',
+  '$lb_horizontal_extent', '$lb_set_horizontal_extent', '$lb_scroll_x', '$lb_set_scroll_x',
 ], 'accessor layer');
 
 add('ComboBoxState', [

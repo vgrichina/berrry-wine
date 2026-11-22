@@ -136,7 +136,7 @@
     (field page       i32)         ;; +16  TBM_SETPAGESIZE
     (field thumb_len  i32))        ;; +20  TBM_SETTHUMBLENGTH; ends at +24
 
-  ;; ListBox (ctrl_class 4). 52 bytes — $listbox_wndproc heap_alloc 52.
+  ;; ListBox (ctrl_class 4). 60 bytes — $listbox_wndproc heap_alloc 60.
   ;; Three of the four buffers are a pointer and a capacity that must be read
   ;; together, and items_used belongs to the first of them; +4/+8, +32/+36 and
   ;; +40/+44 look alike as bare offsets and the one that is NOT a capacity
@@ -159,7 +159,9 @@
     (field data_cap        i32)    ;; +36  capacity in u32 SLOTS
     (field sel_buf_ptr     i32)    ;; +40  guest ptr to u8[] multi-selection flags
     (field sel_cap         i32)    ;; +44  capacity in BYTES
-    (field item_h          i32))   ;; +48  owner-draw row height, 0 = default; ends at +52
+    (field item_h          i32)    ;; +48  owner-draw row height, 0 = default
+    (field horizontal_extent i32) ;; +52  configured pixel width, independent of items
+    (field scroll_x        i32))   ;; +56  content offset, distinct from SetScrollPos
 
   ;; ComboBox (ctrl_class 5). 40 bytes — $combobox_wndproc heap_alloc 40.
   ;; The notification id is NOT here: see ButtonState above — one copy, in
@@ -561,27 +563,99 @@
   (func $lb_set_sel_cap (param $sw ptr<ListBoxState>) (param $v i32)
     (store.field.memarg ListBoxState sel_cap (local.get $sw) (local.get $v)))
 
-  ;; USER hides a listbox's WS_VSCROLL strip while every item fits, unless
-  ;; LBS_DISABLENOSCROLL explicitly asks for a disabled strip. Paint and
-  ;; hit-test share this decision so a hidden strip cannot steal clicks.
-  (func $listbox_vscroll_visible (param $hwnd i32) (param $sw i32) (result i32)
-    (local $style i32) (local $sz i32) (local $h i32) (local $visible i32)
+  ;; Explicit LB_SETHORIZONTALEXTENT state is not inferred from row text.
+  (func $lb_horizontal_extent (param $sw ptr<ListBoxState>) (result i32)
+    (load.field.memarg ListBoxState horizontal_extent (local.get $sw)))
+  (func $lb_set_horizontal_extent (param $sw ptr<ListBoxState>) (param $v i32)
+    (store.field.memarg ListBoxState horizontal_extent (local.get $sw) (local.get $v)))
+  (func $lb_scroll_x (param $sw ptr<ListBoxState>) (result i32)
+    (load.field.memarg ListBoxState scroll_x (local.get $sw)))
+  (func $lb_set_scroll_x (param $sw ptr<ListBoxState>) (param $v i32)
+    (store.field.memarg ListBoxState scroll_x (local.get $sw) (local.get $v)))
+  (func $listbox_hscroll_supported (param $hwnd i32) (result i32)
+    (i32.and
+      (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x00100000)) (i32.const 0))
+      (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x0200)))))
+
+  ;; Bit 0 = horizontal, bit 1 = vertical. Start with neither overflow bar,
+  ;; then grow to the fixed point: either strip can make the other necessary.
+  ;; LBS_DISABLENOSCROLL keeps the requested strips even without overflow.
+  (func $listbox_scrollbar_mask (param $hwnd i32) (param $sw i32) (result i32)
+    (local $style i32) (local $w i32) (local $h i32) (local $mask i32)
+    (local $i i32) (local $rows i32) (local $width i32)
     (local.set $style (call $wnd_get_style (local.get $hwnd)))
-    (if (i32.eqz (i32.and (local.get $style) (i32.const 0x00200000)))
-      (then (return (i32.const 0))))
-    (if (i32.and (local.get $style) (i32.const 0x00001000)) ;; LBS_DISABLENOSCROLL
-      (then (return (i32.const 1))))
-    (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
-    (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
-    (if (i32.le_s (local.get $h) (i32.const 4))
-      (then (return (i32.const 1))))
-    (local.set $visible
-      (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (call $lb_row_height (local.get $sw))))
-    (i32.gt_s (call $lb_count (local.get $sw)) (local.get $visible)))
+    (local.set $w (i32.and (call $ctrl_get_wh_packed (local.get $hwnd)) (i32.const 0xFFFF)))
+    (local.set $h (call $ctrl_get_h (local.get $hwnd)))
+    (if (i32.and (local.get $style) (i32.const 0x1000))
+      (then
+        (if (call $listbox_hscroll_supported (local.get $hwnd))
+          (then (local.set $mask (i32.const 1))))
+        (if (i32.and (local.get $style) (i32.const 0x00200000))
+          (then (local.set $mask (i32.or (local.get $mask) (i32.const 2)))))))
+    (loop $grow
+      (local.set $rows (i32.sub (local.get $h) (i32.const 4)))
+      (if (i32.and (local.get $mask) (i32.const 1))
+        (then (local.set $rows (i32.sub (local.get $rows) (i32.const 16)))))
+      (if (i32.lt_s (local.get $rows) (i32.const 0)) (then (local.set $rows (i32.const 0))))
+      (local.set $rows (i32.div_u (local.get $rows) (call $lb_row_height (local.get $sw))))
+      (if (i32.and
+            (i32.ne (i32.and (local.get $style) (i32.const 0x00200000)) (i32.const 0))
+            (i32.gt_s (call $lb_count (local.get $sw)) (local.get $rows)))
+        (then (local.set $mask (i32.or (local.get $mask) (i32.const 2)))))
+      (local.set $width (i32.sub (local.get $w) (i32.const 4)))
+      (if (i32.and (local.get $mask) (i32.const 2))
+        (then (local.set $width (i32.sub (local.get $width) (i32.const 16)))))
+      (if (i32.and (i32.ne (call $listbox_hscroll_supported (local.get $hwnd)) (i32.const 0))
+            (i32.gt_s (call $lb_horizontal_extent (local.get $sw)) (local.get $width)))
+        (then (local.set $mask (i32.or (local.get $mask) (i32.const 1)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $grow (i32.lt_u (local.get $i) (i32.const 3))))
+    (local.get $mask))
+  (func $listbox_hscroll_visible (param $hwnd i32) (param $sw i32) (result i32)
+    (i32.and (call $listbox_scrollbar_mask (local.get $hwnd) (local.get $sw)) (i32.const 1)))
+  (func $listbox_vscroll_visible (param $hwnd i32) (param $sw i32) (result i32)
+    (i32.ne (i32.and (call $listbox_scrollbar_mask (local.get $hwnd) (local.get $sw)) (i32.const 2)) (i32.const 0)))
+  (func $listbox_content_h (param $hwnd i32) (param $sw i32) (result i32)
+    (i32.sub (call $ctrl_get_h (local.get $hwnd))
+      (select (i32.const 16) (i32.const 0) (call $listbox_hscroll_visible (local.get $hwnd) (local.get $sw)))))
+  (func $listbox_content_w (param $hwnd i32) (param $sw i32) (result i32)
+    (i32.sub (i32.and (call $ctrl_get_wh_packed (local.get $hwnd)) (i32.const 0xFFFF))
+      (select (i32.const 16) (i32.const 0) (call $listbox_vscroll_visible (local.get $hwnd) (local.get $sw)))))
+  (func $listbox_hscroll_page (param $hwnd i32) (param $sw i32) (result i32)
+    (local $w i32)
+    (local.set $w (i32.sub (call $listbox_content_w (local.get $hwnd) (local.get $sw)) (i32.const 4)))
+    (select (local.get $w) (i32.const 1) (i32.gt_s (local.get $w) (i32.const 0))))
+  (func $listbox_hscroll_max (param $hwnd i32) (param $sw i32) (result i32)
+    (local $max i32)
+    (local.set $max (i32.sub (call $lb_horizontal_extent (local.get $sw))
+      (call $listbox_hscroll_page (local.get $hwnd) (local.get $sw))))
+    (select (local.get $max) (i32.const 0) (i32.gt_s (local.get $max) (i32.const 0))))
+  ;; Like the vertical common-control projection, SetScrollPos itself only
+  ;; changes the public thumb. The content offset changes on actual scrolling.
+  (func $listbox_hscroll_to (param $hwnd i32) (param $sw i32) (param $x i32)
+    (local $max i32) (local $slot i32) (local $base i32) (local $aux i32)
+    (if (i32.eqz (call $listbox_hscroll_supported (local.get $hwnd))) (then (return)))
+    (local.set $max (call $listbox_hscroll_max (local.get $hwnd) (local.get $sw)))
+    (if (i32.lt_s (local.get $x) (i32.const 0)) (then (local.set $x (i32.const 0))))
+    (if (i32.gt_s (local.get $x) (local.get $max)) (then (local.set $x (local.get $max))))
+    (if (i32.ne (local.get $x) (call $lb_scroll_x (local.get $sw)))
+      (then (call $lb_set_scroll_x (local.get $sw) (local.get $x))
+        (call $invalidate_hwnd (local.get $hwnd))))
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0)) (then (return)))
+    (local.set $base (call $scroll_bar_addr (local.get $slot) (i32.const 0)))
+    (local.set $aux (call $scroll_aux_bar_addr (local.get $slot) (i32.const 0)))
+    (i32.store (local.get $base) (local.get $x))
+    (i32.store offset=4 (local.get $base) (i32.const 0))
+    (i32.store offset=8 (local.get $base)
+      (select (i32.sub (call $lb_horizontal_extent (local.get $sw)) (i32.const 1)) (i32.const 0)
+        (i32.gt_s (call $lb_horizontal_extent (local.get $sw)) (i32.const 0))))
+    (i32.store (local.get $aux) (call $listbox_hscroll_page (local.get $hwnd) (local.get $sw)))
+    (i32.store offset=4 (local.get $aux) (local.get $x)))
 
   (func $listbox_visible_rows (param $hwnd i32) (param $sw i32) (result i32)
     (local $h i32) (local $visible i32)
-    (local.set $h (call $ctrl_get_h (local.get $hwnd)))
+    (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
     (if (i32.le_s (local.get $h) (i32.const 4)) (then (return (i32.const 1))))
     (local.set $visible
       (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (call $lb_row_height (local.get $sw))))

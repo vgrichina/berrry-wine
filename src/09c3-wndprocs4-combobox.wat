@@ -475,7 +475,11 @@
           (then (local.set $h (i32.const 64)))) ;; minimum sensible dropdown
         ;; Listbox style: WS_CHILD(0x40000000) | WS_VSCROLL(0x00200000) | WS_BORDER(0x00800000)
         ;; + WS_VISIBLE(0x10000000) only for CBS_SIMPLE.
-        (local.set $style (i32.const 0x40A00000))
+        (local.set $style (i32.or (i32.const 0x40A00000)
+          (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x00100000))))
+        ;; CBS_DISABLENOSCROLL maps to the inner list's LBS equivalent.
+        (if (i32.and (call $cb_style (local.get $state_w)) (i32.const 0x0800))
+          (then (local.set $style (i32.or (local.get $style) (i32.const 0x1000)))))
         (if (i32.eq (local.get $variant) (i32.const 1))
           (then (local.set $style (i32.or (local.get $style) (i32.const 0x10000000)))))
         (if (local.get $prev_lb)
@@ -754,6 +758,12 @@
       (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0182) (local.get $wParam) (i32.const 0)))))
 
     ;; ---------- CB_FINDSTRING (0x014C) / CB_FINDSTRINGEXACT (0x0158) ----------
+    ;; Extent belongs to the list, not the combo field or its current text.
+    (if (i32.eq (local.get $msg) (i32.const 0x015D))
+      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0193) (i32.const 0) (i32.const 0)))))
+    (if (i32.eq (local.get $msg) (i32.const 0x015E))
+      (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x0194) (local.get $wParam) (i32.const 0)))))
+
     (if (i32.eq (local.get $msg) (i32.const 0x014C))
       (then (return (call $wnd_send_message (local.get $lb) (i32.const 0x018F) (local.get $wParam) (local.get $lParam)))))
     (if (i32.eq (local.get $msg) (i32.const 0x0158))

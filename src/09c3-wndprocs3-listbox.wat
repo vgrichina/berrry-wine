@@ -13,7 +13,7 @@
   ;; ListBox WndProc  (control class 4)
   ;; ============================================================
   ;;
-  ;; ListBoxState (52 bytes, allocated in WM_CREATE)
+  ;; ListBoxState (60 bytes, allocated in WM_CREATE)
   ;;   +0   items_buf_ptr    guest ptr to flat NUL-separated string buffer
   ;;                         ("item1\0item2\0item3\0", or 0 if empty)
   ;;   +4   items_used       bytes in items_buf actually used (incl. NULs)
@@ -28,6 +28,8 @@
   ;;   +40  sel_buf_ptr      guest ptr to u8[] multi-selection flags
   ;;   +44  sel_cap          capacity of selection array, in bytes
   ;;   +48  item_h           owner-draw row height, 0 = default
+  ;;   +52  horizontal_extent configured width, independent of text/scroll offset
+  ;;   +56  scroll_x         content offset in pixels
   ;; The control id is NOT in the record: $ctrl_table_get_id($hwnd).
   ;;
   ;; Items are stored as concatenated NUL-terminated strings. LB_ADDSTRING
@@ -39,9 +41,7 @@
   ;; Click → set cur_sel + post WM_COMMAND (HIWORD=LBN_SELCHANGE=1, LOWORD=ctrl_id).
   ;; Double-click → post WM_COMMAND (HIWORD=LBN_DBLCLK=2). Item height = 16px.
   ;;
-  ;; Drawing is done by the renderer (lib/renderer.js _drawWatChildren) via
-  ;; the listbox_get_* exports. WM_PAINT here is a no-op (the WAT control
-  ;; pipeline doesn't go through WM_PAINT — drawing is GDI-bypass).
+  ;; WM_PAINT draws rows and both scrollbar strips through the native GDI path.
   (func $listbox_wndproc (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
     (local $state i32) (local $sw i32) (local $cs_w i32)
     (local $items i32) (local $items_w i32) (local $used i32) (local $cap i32)
@@ -56,6 +56,7 @@
     (local $find_handle i32) (local $fd_g i32) (local $fd_w i32) (local $attrs i32)
     (local $last i32) (local $tmp_g i32) (local $tmp_w i32)
     (local $ownerdraw i32) (local $code i32) (local $delta i32)
+    (local $saved_dc i32) (local $x i32) (local $page i32)
 
     (local.set $state (call $wnd_get_state_ptr (local.get $hwnd)))
 
@@ -97,7 +98,7 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0001))
       (then
         (local.set $cs_w (call $g2w (local.get $lParam)))
-        (local.set $state (call $heap_alloc (i32.const 52)))
+        (local.set $state (call $heap_alloc (i32.const 60)))
         (local.set $sw (call $g2w (local.get $state)))
         (call $lb_set_item_h (local.get $sw) (i32.const 0))
         (call $lb_set_items_ptr (local.get $sw) (i32.const 0))
@@ -113,7 +114,10 @@
         (call $lb_set_data_cap (local.get $sw) (i32.const 0))
         (call $lb_set_sel_ptr (local.get $sw) (i32.const 0))
         (call $lb_set_sel_cap (local.get $sw) (i32.const 0))
+        (call $lb_set_horizontal_extent (local.get $sw) (i32.const 0))
+        (call $lb_set_scroll_x (local.get $sw) (i32.const 0))
         (call $wnd_set_state_ptr (local.get $hwnd) (local.get $state))
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (i32.const 0))
         (return (i32.const 0))))
 
     ;; ---------- WM_DESTROY (0x0002) ----------
@@ -131,6 +135,46 @@
 
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $sw (call $g2w (local.get $state)))
+
+    ;; LB_GETHORIZONTALEXTENT / LB_SETHORIZONTALEXTENT. The documented
+    ;; setter has no result; lParam is unused. Multiple-column lists ignore it.
+    ;; No row insertion/deletion measures text or replaces this explicit width.
+    (if (i32.eq (local.get $msg) (i32.const 0x0193))
+      (then (return (call $lb_horizontal_extent (local.get $sw)))))
+    (if (i32.eq (local.get $msg) (i32.const 0x0194))
+      (then
+        (if (call $listbox_hscroll_supported (local.get $hwnd))
+          (then
+            (call $lb_set_horizontal_extent (local.get $sw)
+              (select (local.get $wParam) (i32.const 0) (i32.ge_s (local.get $wParam) (i32.const 0))))
+            (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
+            (drop (call $listbox_scroll_to (local.get $hwnd) (local.get $sw) (call $lb_top_index (local.get $sw))))
+            (call $invalidate_hwnd (local.get $hwnd))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $msg) (i32.const 0x0005)) ;; WM_SIZE
+      (then
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
+        (drop (call $listbox_scroll_to (local.get $hwnd) (local.get $sw) (call $lb_top_index (local.get $sw))))
+        (call $invalidate_hwnd (local.get $hwnd))
+        (return (i32.const 0))))
+
+    ;; WM_HSCROLL: the private pixel viewport, not SetScrollPos's thumb.
+    (if (i32.eq (local.get $msg) (i32.const 0x0114))
+      (then
+        (if (i32.eqz (call $listbox_hscroll_supported (local.get $hwnd))) (then (return (i32.const 0))))
+        (local.set $code (i32.and (local.get $wParam) (i32.const 0xFFFF)))
+        (local.set $x (call $lb_scroll_x (local.get $sw)))
+        (local.set $page (call $listbox_hscroll_page (local.get $hwnd) (local.get $sw)))
+        (if (i32.eq (local.get $code) (i32.const 0)) (then (local.set $x (i32.sub (local.get $x) (i32.const 8)))))
+        (if (i32.eq (local.get $code) (i32.const 1)) (then (local.set $x (i32.add (local.get $x) (i32.const 8)))))
+        (if (i32.eq (local.get $code) (i32.const 2)) (then (local.set $x (i32.sub (local.get $x) (local.get $page)))))
+        (if (i32.eq (local.get $code) (i32.const 3)) (then (local.set $x (i32.add (local.get $x) (local.get $page)))))
+        (if (i32.or (i32.eq (local.get $code) (i32.const 4)) (i32.eq (local.get $code) (i32.const 5)))
+          (then (local.set $x (i32.shr_u (local.get $wParam) (i32.const 16)))))
+        (if (i32.eq (local.get $code) (i32.const 6)) (then (local.set $x (i32.const 0))))
+        (if (i32.eq (local.get $code) (i32.const 7)) (then (local.set $x (call $listbox_hscroll_max (local.get $hwnd) (local.get $sw)))))
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (local.get $x))
+        (return (i32.const 0))))
 
     ;; ---------- LB_ADDSTRING (0x0180) ----------
     ;; Without LBS_HASSTRINGS, owner-draw lists receive item data rather than text.
@@ -202,6 +246,7 @@
         (call $lb_set_items_used (local.get $sw)
           (i32.add (local.get $used) (i32.add (local.get $slen) (i32.const 1))))
         (call $lb_set_count (local.get $sw) (i32.add (local.get $count) (i32.const 1)))
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
         ;; Grow parallel data array; no-string owner-draw items start with lParam.
         (local.set $cap (call $lb_data_cap (local.get $sw)))
         (if (i32.ge_u (local.get $count) (local.get $cap))
@@ -249,6 +294,7 @@
       (then
         (call $lb_set_items_used (local.get $sw) (i32.const 0))
         (call $lb_set_count (local.get $sw) (i32.const 0))
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (i32.const 0))
         (call $lb_set_cur_sel (local.get $sw) (i32.const -1))
         (call $lb_set_top_index (local.get $sw) (i32.const 0))
         (local.set $p (call $g2w (call $lb_sel_ptr (local.get $sw))))
@@ -532,6 +578,40 @@
                 (i32.eq (local.get $msg) (i32.const 0x0203)))
       (then
         (local.set $count (call $lb_count (local.get $sw)))
+        ;; Horizontal strip owns its whole rectangle, including the corner.
+        ;; Reuse the SCROLLINFO painter's page/thumb geometry for input.
+        (if (call $listbox_hscroll_visible (local.get $hwnd) (local.get $sw))
+          (then
+            (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
+            (local.set $row_y (i32.shr_s (local.get $lParam) (i32.const 16)))
+            (if (i32.ge_s (local.get $row_y) (local.get $h))
+              (then
+                (local.set $w (call $listbox_content_w (local.get $hwnd) (local.get $sw)))
+                (local.set $x (i32.extend16_s (local.get $lParam)))
+                (if (i32.or (i32.lt_s (local.get $x) (i32.const 0)) (i32.ge_s (local.get $x) (local.get $w)))
+                  (then (return (i32.const 0))))
+                (if (i32.eqz (call $listbox_hscroll_max (local.get $hwnd) (local.get $sw)))
+                  (then (return (i32.const 0))))
+                (local.set $code (call $scroll_arrow_filter_hit (local.get $hwnd) (i32.const 0)
+                  (call $sb_page_hit_part (local.get $w) (local.get $x) (call $lb_scroll_x (local.get $sw))
+                    (i32.const 0) (i32.sub (call $lb_horizontal_extent (local.get $sw)) (i32.const 1))
+                    (call $listbox_hscroll_page (local.get $hwnd) (local.get $sw)))))
+                (if (i32.eqz (local.get $code)) (then (return (i32.const 0))))
+                (global.set $sb_pressed_hwnd (local.get $hwnd))
+                (if (i32.eq (local.get $code) (i32.const 5))
+                  (then
+                    (call $lb_set_drag_anchor_y (local.get $sw) (local.get $x))
+                    (call $lb_set_drag_anchor_top (local.get $sw) (call $lb_scroll_x (local.get $sw)))
+                    (global.set $sb_pressed_part (i32.const 6))
+                    (call $capture_store (local.get $hwnd)))
+                  (else
+                    (global.set $sb_pressed_part
+                      (select (i32.add (local.get $code) (i32.const 2)) (i32.const 0)
+                        (i32.le_u (local.get $code) (i32.const 2))))
+                    (drop (call $listbox_wndproc (local.get $hwnd) (i32.const 0x0114)
+                      (i32.sub (local.get $code) (i32.const 1)) (i32.const 0)))))
+                (call $invalidate_hwnd (local.get $hwnd))
+                (return (i32.const 0))))))
         ;; --- visible WS_VSCROLL strip hit-test (arrows only) ---
         ;; If the click lands in the right-edge 16px scrollbar strip, adjust
         ;; top_index and short-circuit before the row-select path.
@@ -539,13 +619,13 @@
           (then
             (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
             (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
-            (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
+            (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
             (local.set $row (i32.shr_s (i32.shl (local.get $lParam) (i32.const 16)) (i32.const 16)))
             (local.set $row_y (i32.shr_s (local.get $lParam) (i32.const 16)))
             (if (i32.ge_s (local.get $row) (i32.sub (local.get $w) (i32.const 16)))
               (then
                 ;; visible rows based on strip-reduced client
-                (local.set $visible (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (call $lb_row_height (local.get $sw))))
+                (local.set $visible (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
                 (local.set $top (call $lb_top_index (local.get $sw)))
                 (local.set $max (i32.sub (local.get $count) (local.get $visible)))
                 (if (i32.lt_s (local.get $max) (i32.const 0))
@@ -684,13 +764,24 @@
     (if (i32.eq (local.get $msg) (i32.const 0x0200))
       (then
         (if (i32.and (i32.eq (global.get $sb_pressed_hwnd) (local.get $hwnd))
+                     (i32.eq (global.get $sb_pressed_part) (i32.const 6)))
+          (then
+            (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw)
+              (call $sb_page_drag_pos
+                (call $listbox_content_w (local.get $hwnd) (local.get $sw))
+                (i32.extend16_s (local.get $lParam))
+                (call $lb_drag_anchor_y (local.get $sw)) (call $lb_drag_anchor_top (local.get $sw))
+                (i32.const 0) (i32.sub (call $lb_horizontal_extent (local.get $sw)) (i32.const 1))
+                (call $listbox_hscroll_page (local.get $hwnd) (local.get $sw))))
+            (return (i32.const 0))))
+        (if (i32.and (i32.eq (global.get $sb_pressed_hwnd) (local.get $hwnd))
                      (i32.eq (global.get $sb_pressed_part) (i32.const 5)))
           (then
             (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
-            (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
+            (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
             (local.set $row_y (i32.shr_s (local.get $lParam) (i32.const 16)))
             (local.set $count (call $lb_count (local.get $sw)))
-            (local.set $visible (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (call $lb_row_height (local.get $sw))))
+            (local.set $visible (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
             (local.set $max (i32.sub (local.get $count) (local.get $visible)))
             (if (i32.lt_s (local.get $max) (i32.const 0))
               (then (local.set $max (i32.const 0))))
@@ -712,8 +803,8 @@
         (local.set $sel (call $lb_cur_sel (local.get $sw)))
         ;; Compute visible rows for PGUP/PGDN
         (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
-        (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
-        (local.set $visible (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (call $lb_row_height (local.get $sw))))
+        (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
+        (local.set $visible (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
         (if (i32.lt_s (local.get $visible) (i32.const 1))
           (then (local.set $visible (i32.const 1))))
         (local.set $row (local.get $sel))
@@ -892,6 +983,7 @@
                       (i32.sub (local.get $used) (i32.add (local.get $i) (local.get $slen))))
         (call $lb_set_items_used (local.get $sw) (i32.sub (local.get $used) (local.get $slen)))
         (call $lb_set_count (local.get $sw) (i32.sub (local.get $count) (i32.const 1)))
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
         ;; Shift parallel data array down by one slot at $idx.
         (if (call $lb_data_ptr (local.get $sw))
           (then
@@ -1065,10 +1157,13 @@
         ;; the combobox is populated.
         (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 0x10000000)))
           (then (return (i32.const 0))))
+        (call $host_paint_begin (local.get $hwnd))
+        (call $listbox_hscroll_to (local.get $hwnd) (local.get $sw) (call $lb_scroll_x (local.get $sw)))
+        (drop (call $listbox_scroll_to (local.get $hwnd) (local.get $sw) (call $lb_top_index (local.get $sw))))
         (local.set $hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
         (local.set $sz (call $ctrl_get_wh_packed (local.get $hwnd)))
         (local.set $w (i32.and (local.get $sz) (i32.const 0xFFFF)))
-        (local.set $h (i32.shr_u (local.get $sz) (i32.const 16)))
+        (local.set $h (call $listbox_content_h (local.get $hwnd) (local.get $sw)))
         (drop (call $gdi_native_select_object (local.get $hdc) (i32.const 0x30021)))
         (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 1)))
         ;; Reserve the right strip only while USER would make it visible.
@@ -1094,7 +1189,13 @@
           (then (call $lb_set_item_h (local.get $sw)
                   (call $lb_measure_item (local.get $hwnd) (local.get $sw)))))
         (local.set $row_h (call $lb_row_height (local.get $sw)))
-        (local.set $visible (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (local.get $row_h)))
+        (local.set $visible (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
+        ;; Native controls do not call BeginPaint. Clip rows to the inset
+        ;; content rectangle, preserving the caller's clip and restoring it
+        ;; before drawing either strip. This also contains negative text x.
+        (local.set $saved_dc (call $gdi_dc_save (local.get $hdc)))
+        (drop (call $gdi_native_intersect_clip_rect (local.get $hdc)
+          (i32.const 2) (i32.const 2) (i32.sub (local.get $w) (i32.const 2)) (i32.sub (local.get $h) (i32.const 2))))
         ;; Walk to the first visible item.
         (local.set $items_w (call $g2w (call $lb_items_ptr (local.get $sw))))
         (local.set $p (local.get $items_w))
@@ -1140,21 +1241,38 @@
               (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00FFFFFF)))
               (if (local.get $slen)
                 (then (drop (call $gdi_native_text_out (local.get $hdc)
-                              (i32.const 4) (i32.add (local.get $row_y) (i32.const 2))
+                              (i32.sub (i32.const 4) (call $lb_scroll_x (local.get $sw))) (i32.add (local.get $row_y) (i32.const 2))
                               (local.get $p) (local.get $slen) (i32.const 0)))))
               (drop (call $gdi_native_set_text_color (local.get $hdc) (i32.const 0x00000000))))
             (else
               (if (local.get $slen)
                 (then (drop (call $gdi_native_text_out (local.get $hdc)
-                              (i32.const 4) (i32.add (local.get $row_y) (i32.const 2))
+                              (i32.sub (i32.const 4) (call $lb_scroll_x (local.get $sw))) (i32.add (local.get $row_y) (i32.const 2))
                               (local.get $p) (local.get $slen) (i32.const 0)))))))
           (local.set $p (i32.add (local.get $p) (i32.add (local.get $slen) (i32.const 1))))
           (local.set $row (i32.add (local.get $row) (i32.const 1)))
           (br $rows)))
+        (drop (call $gdi_dc_restore (local.get $hdc) (local.get $saved_dc)))
+        (if (call $listbox_hscroll_visible (local.get $hwnd) (local.get $sw))
+          (then
+            (local.set $page (call $listbox_hscroll_page (local.get $hwnd) (local.get $sw)))
+            (local.set $max (call $lb_horizontal_extent (local.get $sw)))
+            (call $defwndproc_paint_standard_scrollbar (local.get $hdc)
+              (i32.const 0) (local.get $h) (local.get $w) (i32.const 16) (i32.const 0)
+              (call $lb_scroll_x (local.get $sw)) (i32.const 0)
+              (select (i32.sub (local.get $max) (i32.const 1)) (i32.const 0) (i32.gt_s (local.get $max) (i32.const 0)))
+              (local.get $page)
+              (select (global.get $sb_pressed_part) (i32.const 0) (i32.eq (global.get $sb_pressed_hwnd) (local.get $hwnd)))
+              (select (i32.const 3) (call $scroll_arrow_mask (local.get $hwnd) (i32.const 0))
+                (i32.le_s (local.get $max) (local.get $page))))
+            (if (call $listbox_vscroll_visible (local.get $hwnd) (local.get $sw))
+              (then (drop (call $gdi_native_fill_rect (local.get $hdc)
+                (local.get $w) (local.get $h) (i32.add (local.get $w) (i32.const 16))
+                (i32.add (local.get $h) (i32.const 16)) (i32.const 0x30011)))))))
         ;; Visible WS_VSCROLL strip. $w here is already reduced; full width is via sz.
         (if (call $listbox_vscroll_visible (local.get $hwnd) (local.get $sw))
           (then
-            (local.set $visible (i32.div_u (i32.sub (local.get $h) (i32.const 4)) (call $lb_row_height (local.get $sw))))
+            (local.set $visible (call $listbox_visible_rows (local.get $hwnd) (local.get $sw)))
             (local.set $max (i32.sub (local.get $count) (local.get $visible)))
             (if (i32.lt_s (local.get $max) (i32.const 0))
               (then (local.set $max (i32.const 0))))
@@ -1164,6 +1282,7 @@
               (select (global.get $sb_pressed_part) (i32.const 0)
                       (i32.eq (global.get $sb_pressed_hwnd) (local.get $hwnd)))
               (call $scroll_arrow_mask (local.get $hwnd) (i32.const 1)))))
+        (call $host_paint_end (local.get $hwnd))
         (return (i32.const 0))))
 
     ;; Default
