@@ -13,7 +13,7 @@
   ;;   2=CBS_DROPDOWN     listbox toggled by click/F4/Alt+Down; field is editable
   ;;   3=CBS_DROPDOWNLIST listbox toggled, field shows selection (read-only)
   ;;
-  ;; ComboBoxState (44 bytes, allocated in WM_CREATE)
+  ;; ComboBoxState (48 bytes, allocated in WM_CREATE)
   ;;   +0   text_buf_ptr   guest ptr to selected/typed item text
   ;;   +4   text_len
   ;;   +8   style          full window style
@@ -25,6 +25,7 @@
   ;;   +32  variant        1=SIMPLE 2=DROPDOWN 3=DROPDOWNLIST
   ;;   +36  suppress_edit_notify — combo-originated edit WM_SETTEXT nesting
   ;;   +40  dropped_width — requested minimum popup width (default zero)
+  ;;   +44  font — caller WM_SETFONT handle (default zero)
   ;; The control id is NOT in the record: $ctrl_table_get_id($hwnd).
   ;;
   ;; FIELD_H = 21 px; arrow box = 16 px wide on right edge.
@@ -391,6 +392,7 @@
     (local $paint_state_w ptr<ControlTextState>) (local $edit_text_w ptr<ControlTextState>)
     (local $paint_state_g i32)
     (local $prev_lb i32) (local $prev_edit i32) (local $prev_popup i32)
+    (local $prev_font i32)
 
     ;; Dialog navigation must leave selection arrows to WM_KEYDOWN below.
     ;; Keep Tab with the dialog manager; character input belongs to the combo.
@@ -450,14 +452,16 @@
         ;; had room for.
         (if (local.get $state)
           (then
+            (local.set $prev_font (call $cb_font (call $g2w (local.get $state))))
             (local.set $prev_lb
               (call $cb_lb_hwnd (call $g2w (local.get $state))))
             (local.set $prev_popup
               (call $cb_popup_hwnd (call $g2w (local.get $state))))
             (local.set $prev_edit
               (call $cb_edit_hwnd (call $g2w (local.get $state))))))
-        (local.set $state (call $heap_alloc (i32.const 44)))
+        (local.set $state (call $heap_alloc (i32.const 48)))
         (local.set $state_w (call $g2w (local.get $state)))
+        (call $cb_set_font (local.get $state_w) (local.get $prev_font))
         (call $cb_set_text_ptr (local.get $state_w) (i32.const 0))
         (call $cb_set_text_len (local.get $state_w) (i32.const 0))
         (call $cb_set_style (local.get $state_w) (local.get $style))
@@ -629,6 +633,25 @@
     (local.set $state_w (call $g2w (local.get $state)))
     (local.set $variant (call $cb_variant (local.get $state_w)))
     (local.set $lb      (call $cb_lb_hwnd (local.get $state_w)))
+
+    ;; Microsoft 1992 Vol3 pp128/190-191 and WIN32.HLP 1992-94 topic82:
+    ;; COMBOBOX retains the caller's font and uses it for field and list text.
+    ;; Keep child text/selection ownership intact. Geometry remains caller set;
+    ;; no automatic font-to-field/row-height formula is established here.
+    (if (i32.eq (local.get $msg) (i32.const 0x0030)) ;; WM_SETFONT
+      (then
+        (call $cb_set_font (local.get $state_w) (local.get $wParam))
+        (if (local.get $lb)
+          (then (drop (call $wnd_send_message (local.get $lb)
+            (local.get $msg) (local.get $wParam) (local.get $lParam)))))
+        (if (call $cb_edit_hwnd (local.get $state_w))
+          (then (drop (call $wnd_send_message (call $cb_edit_hwnd (local.get $state_w))
+            (local.get $msg) (local.get $wParam) (local.get $lParam)))))
+        (if (i32.and (local.get $lParam) (i32.const 0xFFFF))
+          (then (call $invalidate_hwnd (local.get $hwnd))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $msg) (i32.const 0x0031)) ;; WM_GETFONT
+      (then (return (call $cb_font (local.get $state_w)))))
 
     ;; WIN32.HLP (Microsoft 1992-1994), WM_CUT/COPY/PASTE/CLEAR:
     ;; Messages addressed to an editable combo are handled by its EDIT.
@@ -1419,7 +1442,9 @@
                     (i32.add (local.get $arrow_x) (i32.const 7)) (i32.const 12)
                     (i32.add (local.get $arrow_x) (i32.const 8)) (i32.const 13)
                     (i32.const 0x30014)))
-            (drop (call $gdi_native_select_object (local.get $hdc) (i32.const 0x30021)))
+            (drop (call $gdi_native_select_object (local.get $hdc)
+              (select (call $cb_font (local.get $state_w)) (i32.const 0x30021)
+                (i32.ne (call $cb_font (local.get $state_w)) (i32.const 0)))))
             (drop (call $gdi_native_set_bk_mode (local.get $hdc) (i32.const 1)))
             ;; CBS_DROPDOWN delegates text ownership to its inner EDIT. Paint
             ;; from that same state so WM_PAINT agrees with WM_GETTEXT.

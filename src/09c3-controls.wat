@@ -164,7 +164,7 @@
     (field scroll_x        i32)    ;; +56  content offset, distinct from SetScrollPos
     (field font            i32))   ;; +60  WM_SETFONT handle, 0 = default GUI font
 
-  ;; ComboBox (ctrl_class 5). 44 bytes — $combobox_wndproc heap_alloc 44.
+  ;; ComboBox (ctrl_class 5). 48 bytes — $combobox_wndproc heap_alloc 48.
   ;; The notification id is NOT here: see ButtonState above — one copy, in
   ;; CONTROL_TABLE+4, read with $ctrl_table_get_id($hwnd).
   (layout ComboBoxState
@@ -178,7 +178,8 @@
     (field is_dropped           i32) ;; +28  0/1 — CB_GETDROPPEDSTATE
     (field variant              i32) ;; +32  1=SIMPLE 2=DROPDOWN 3=DROPDOWNLIST
     (field suppress_edit_notify i32) ;; +36 combo-originated edit WM_SETTEXT nesting
-    (field dropped_width        i32)) ;; +40 requested minimum; independent of horizontal extent
+    (field dropped_width        i32)  ;; +40 requested minimum; independent of horizontal extent
+    (field font                 i32)) ;; +44 caller HFONT; 0 selects the default GUI font
 
   ;; ListView (ctrl_class 18). 76 bytes — $listview_wndproc heap_alloc 76.
   ;; item_count/item_cap and col_count/col_cap are two count+capacity pairs at
@@ -680,7 +681,7 @@
         (call $invalidate_hwnd (local.get $hwnd))))
     (local.get $top))
 
-  ;; ---- ComboBoxState accessors (44 bytes) ----
+  ;; ---- ComboBoxState accessors (48 bytes) ----
   ;;
   ;; A combobox is three windows: itself, an inner listbox, and (for
   ;; CBS_DROPDOWN) an inner edit, plus a popup shell that hosts the listbox
@@ -732,6 +733,10 @@
     (load.field.memarg ComboBoxState dropped_width (local.get $sw)))
   (func $cb_set_dropped_width (param $sw ptr<ComboBoxState>) (param $v i32)
     (store.field.memarg ComboBoxState dropped_width (local.get $sw) (local.get $v)))
+  (func $cb_font (param $sw ptr<ComboBoxState>) (result i32)
+    (load.field.memarg ComboBoxState font (local.get $sw)))
+  (func $cb_set_font (param $sw ptr<ComboBoxState>) (param $v i32)
+    (store.field.memarg ComboBoxState font (local.get $sw) (local.get $v)))
   ;; CB_SETEXTENDEDUI has no field of its own: it rides the unused top bit of
   ;; the stored style word, which is why a plain read of +8 is not the window
   ;; style an app would recognise. Both halves of that trick live here.

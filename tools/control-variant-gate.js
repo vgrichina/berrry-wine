@@ -154,6 +154,7 @@ add('ComboBoxState', [
   '$cb_is_dropped', '$cb_set_is_dropped', '$cb_variant', '$cb_set_variant',
   '$cb_suppress_edit_notify', '$cb_set_suppress_edit_notify',
   '$cb_dropped_width', '$cb_set_dropped_width',
+  '$cb_font', '$cb_set_font',
 ], 'accessor layer');
 
 add('ListViewState', [
