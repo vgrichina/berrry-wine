@@ -14,6 +14,7 @@
   ;;   +20  scroll_top     reserved for multi-line (0 in single-line)
   ;;   +24  flags          bit0=multiline bit1=password bit2=readonly bit3=focused
   ;;                       bit4=dragging selection bit5=caret visible
+  ;;                       bit6=explicit EM_LINESCROLL horizontal viewport
   ;;   +28  max_length     0 = unlimited
   ;;   +32  font           HFONT from WM_SETFONT (0 = default GUI font)
   ;;   +36  scroll_x       horizontal scroll offset in pixels (WS_HSCROLL)
@@ -470,6 +471,9 @@
 
   ;; Clamp and store scroll_x. Returns 1 when the viewport actually moved.
   (func $edit_hscroll_to (param $state_w ptr<EditState>) (param $x i32) (param $max i32) (result i32)
+    ;; An ordinary scrollbar/caret request resumes the document-width bound.
+    (store.field.memarg EditState flags (local.get $state_w)
+      (i32.and (load.field.memarg EditState flags (local.get $state_w)) (i32.const -65)))
     (if (i32.gt_s (local.get $x) (local.get $max)) (then (local.set $x (local.get $max))))
     (if (i32.lt_s (local.get $x) (i32.const 0)) (then (local.set $x (i32.const 0))))
     (if (i32.eq (local.get $x) (load.field.memarg EditState scroll_x (local.get $state_w)))
@@ -1280,6 +1284,9 @@
     (local $full_w i32) (local $total_lines i32) (local $visible_lines i32) (local $max_scroll i32)
     (local $full_h i32) (local $tx i32) (local $max_hscroll i32)
     (local $cx i32) (local $cy i32)
+
+    (local $col_font i32) (local $col_buf i32) (local $col_len i32) (local $col_i i32) (local $col_ch i32)
+    (local $col_hdc i32) (local $col_old_font i32) (local $col_cell i32) (local $col_max i32) (local $col_x i64)
 
     ;; Every paint reselects the native font/DC and refreshes layout. Text,
     ;; width and font changes also fail the exact cache key independently.
@@ -2582,8 +2589,12 @@
               (local.get $state_w) (local.get $hdc) (local.get $w)))
             ;; Text shrinking (or the window growing) can leave the stored
             ;; offset past the new end of the document.
-            (drop (call $edit_hscroll_to (local.get $state_w)
-              (load.field.memarg EditState scroll_x (local.get $state_w)) (local.get $max_hscroll)))
+            ;; Explicit line scrolling may pass the last character. Painting
+            ;; must not undo that viewport; ordinary scroll requests clear bit6.
+            (if (i32.eqz (i32.and (load.field.memarg EditState flags (local.get $state_w))
+                                 (i32.const 0x40)))
+              (then (drop (call $edit_hscroll_to (local.get $state_w)
+                (load.field.memarg EditState scroll_x (local.get $state_w)) (local.get $max_hscroll)))))
             ;; Same page model as the vertical strip, with pixels for units:
             ;; the document is max_hscroll + one visible width wide, and the
             ;; page is that visible width.
@@ -3126,7 +3137,7 @@
             (load.field.memarg EditState scroll_top (local.get $state_w)) (local.get $lo))
             (i32.const 0xFFFF))))))
 
-    ;; ---------- EM_LINESCROLL (0x00B6), plain EDIT, vertical only ----------
+    ;; ---------- EM_LINESCROLL (0x00B6), plain EDIT ----------
     ;; lParam is a signed relative display-line count. Unlike wheel/page
     ;; scrolling, the documented bound is the LAST line at the top. Clamp the
     ;; delta before adding, so INT_MIN/INT_MAX cannot wrap the position.
@@ -3137,9 +3148,64 @@
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (if (i32.eqz (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4)))
           (then (return (i32.const 0))))
-        ;; Horizontal semantics are outside this bounded implementation.
-        (if (i32.ne (local.get $wParam) (i32.const 0)) (then (return (i32.const 0))))
         (local.set $state_w (call $g2w (local.get $state)))
+        ;; Signed character columns have an unambiguous pixel unit for these native
+        ;; fixed stock fonts. Preserve the old fallback for proportional/custom fonts,
+        ;; Unicode, tabs, wrapping and other unestablished text geometry. Microsoft
+        ;; permits scrolling past the last character: do not use edit_max_hscroll.
+        ;; 32760 pixels is our safe signed-coordinate support bound, NOT a Windows
+        ;; limit. Widen before multiplying/adding so either signed INT extreme works.
+        (if (i32.ne (local.get $wParam) (i32.const 0))
+          (then
+            (if (i32.or (call $wnd_unicode_get (local.get $hwnd))
+                  (i32.or (call $edit_wraps (local.get $hwnd))
+                    (i32.or (i32.ne (i32.and (call $wnd_get_style (local.get $hwnd))
+                                           (i32.const 0x23)) (i32.const 0))
+                      (i32.ne (i32.and (call $ctrl_get_ex_style (local.get $hwnd))
+                                           (i32.const 0x00707000)) (i32.const 0)))))
+              (then (return (i32.const 0))))
+            (local.set $col_font (load.field.memarg EditState font (local.get $state_w)))
+            (if (i32.or (i32.lt_u (local.get $col_font) (i32.const 0x3001A))
+                  (i32.and (i32.gt_u (local.get $col_font) (i32.const 0x3001B))
+                           (i32.ne (local.get $col_font) (i32.const 0x30020))))
+              (then (return (i32.const 0))))
+            (local.set $col_len (load.field.memarg EditState text_len (local.get $state_w)))
+            (if (i32.gt_u (local.get $col_len) (i32.const 65535)) (then (return (i32.const 0))))
+            (local.set $col_buf (call $g2w (load.field EditState text_buf_ptr (local.get $state_w))))
+            (block $done (loop $scan
+              (br_if $done (i32.ge_u (local.get $col_i) (local.get $col_len)))
+              (local.set $col_ch (i32.load8_u (i32.add (local.get $col_buf) (local.get $col_i))))
+              (if (i32.eq (local.get $col_ch) (i32.const 13))
+                (then
+                  (local.set $col_i (i32.add (local.get $col_i) (i32.const 1)))
+                  (if (i32.ge_u (local.get $col_i) (local.get $col_len)) (then (return (i32.const 0))))
+                  (if (i32.ne (i32.load8_u (i32.add (local.get $col_buf) (local.get $col_i))) (i32.const 10))
+                    (then (return (i32.const 0)))))
+                (else
+                  (if (i32.or (i32.lt_u (local.get $col_ch) (i32.const 32))
+                               (i32.gt_u (local.get $col_ch) (i32.const 126)))
+                    (then (return (i32.const 0))))))
+              (local.set $col_i (i32.add (local.get $col_i) (i32.const 1)))
+              (br $scan)))
+            (local.set $col_hdc (i32.add (local.get $hwnd) (i32.const 0x40000)))
+            (local.set $col_old_font (call $gdi_native_select_object (local.get $col_hdc) (local.get $col_font)))
+            (local.set $col_cell (i32.shr_u (call $host_get_text_metrics (local.get $col_hdc)) (i32.const 16)))
+            (drop (call $gdi_native_select_object (local.get $col_hdc) (local.get $col_old_font)))
+            (if (i32.eqz (local.get $col_cell)) (then (return (i32.const 0))))
+            (local.set $col_max (i32.mul (i32.div_u (i32.const 32760) (local.get $col_cell)) (local.get $col_cell)))
+            (local.set $col_x (i64.add
+              (i64.extend_i32_u (load.field.memarg EditState scroll_x (local.get $state_w)))
+              (i64.mul (i64.extend_i32_s (local.get $wParam)) (i64.extend_i32_u (local.get $col_cell)))))
+            (if (i64.lt_s (local.get $col_x) (i64.const 0)) (then (local.set $col_x (i64.const 0))))
+            (if (i64.gt_s (local.get $col_x) (i64.extend_i32_u (local.get $col_max)))
+              (then (local.set $col_x (i64.extend_i32_u (local.get $col_max)))))
+            (store.field.memarg EditState flags (local.get $state_w)
+              (i32.or (load.field.memarg EditState flags (local.get $state_w)) (i32.const 0x40)))
+            (if (i32.ne (i32.wrap_i64 (local.get $col_x))
+                       (load.field.memarg EditState scroll_x (local.get $state_w)))
+              (then
+                (store.field.memarg EditState scroll_x (local.get $state_w) (i32.wrap_i64 (local.get $col_x)))
+                (call $invalidate_hwnd (local.get $hwnd))))))
         (local.set $sz (call $edit_view_metrics (local.get $hwnd) (local.get $state_w)))
         (local.set $total_lines (i32.and (local.get $sz) (i32.const 0xFFFF)))
         (local.set $visible_lines (i32.shr_u (local.get $sz) (i32.const 16)))
