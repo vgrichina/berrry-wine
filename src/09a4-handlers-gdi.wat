@@ -2863,8 +2863,15 @@
 
   ;; 439: GetDIBColorTable(hdc, startIndex, numEntries, pColors) → count
   (func $handle_GetDIBColorTable (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_get_dib_color_table
-      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
+    (local $dest i32) (local $len i32)
+    ;; Preserve bytes beyond the retrieved entries when the output is gathered.
+    (if (local.get $arg3)
+      (then
+        (local.set $len (call $gdi_palette_span_bytes (local.get $arg2)))
+        (local.set $dest (call $guest_span_in (local.get $arg3) (local.get $len)))))
+    (i32.store offset=0 (global.get $reg_base) (call $gdi_get_dib_color_table
+      (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $dest)))
+    (call $guest_span_writeback (local.get $arg3) (local.get $dest) (local.get $len))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   ;; 440: SetDIBColorTable(hdc, startIndex, numEntries, pColors) → count
