@@ -344,7 +344,8 @@
   ;; page. The primary's DIB is then stale: the executor parks a GPU copy of
   ;; the presented pixels and writes them into the DIB only when a CPU reader
   ;; asks for that surface ($d3dim_gpu_unpark, from the surface's ranged fence
-  ;; sites). Shared slots in $D3DIM_LAZY_SHARED, beside the lazy-Lock words:
+  ;; sites). Shared slots in $D3DIM_LAZY_SHARED (its +0..+12 lazy-Lock words moved
+  ;; to the shared $GPS_LAZY table, 09a8gv):
   ;; +20 parked primary entry (0 = none), +24 CPU present sequence (bumped by
   ;; every $dx_present, so the page drops a GPU layer a later CPU frame
   ;; replaced), +28 the DIB the parked frame belongs to.
@@ -704,7 +705,7 @@
   ;; hands this instance a non-overlapping arena on its first guest_alloc.
   (func (export "d3dim_worker_init") (param $img_base i32)
     ;; The renderer materializes these very pixels; never wait on its client.
-    (global.set $d3dim_lazy_bypass (i32.const 1))
+    (global.set $gps_lazy_bypass (i32.const 1))
     ;; Not a guest thread: take a lock identity no guest thread can have, or
     ;; every shared-table lock recurses with the main thread's (see
     ;; $lock_identity). One render worker per process hosts all endpoints.
@@ -747,25 +748,14 @@
   (global $d3dim_lazy_touched (mut i32) (i32.const 0))
   (global $d3dim_lazy_untouched (mut i32) (i32.const 0))
   ;; No active data segment: instantiating another guest must not reset this.
-  ;; +0 mutex, +4 armed length, +8 start, +12 entry, +16 deferred GPU work.
+  ;; +16 deferred GPU work, +20.. the GPU-present words above. The lazy Lock
+  ;; itself is one entry of the shared table ($GPS_LAZY, 09a8gv: api D3DIM,
+  ;; key = the DxObject entry); its mutex and bypass are $gps_lazy_*.
   (global $D3DIM_LAZY_SHARED i32 (region.addr $D3DIM_LAZY_SHARED 0))
   (global $D3DIM_LAZY_SHARED_SIZE i32 (i32.const 32))
-  (global $d3dim_lazy_bypass (mut i32) (i32.const 0))
-  (func $d3dim_lazy_enter
-    (loop $retry
-      (if (i32.atomic.rmw.cmpxchg (region.addr $D3DIM_LAZY_SHARED 0) (i32.const 0) (i32.const 1)) (then
-        ;; A failed renderer must not leave another guest waiting forever.
-        (if (i32.eq (memory.atomic.wait32 (region.addr $D3DIM_LAZY_SHARED 0)
-              (i32.const 1) (i64.const 30000000000)) (i32.const 2)) (then (unreachable)))
-        (br $retry))))
-    (global.set $d3dim_lazy_bypass (i32.const 1)))
-  (func $d3dim_lazy_leave
-    (global.set $d3dim_lazy_bypass (i32.const 0))
-    (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 0) (i32.const 0))
-    (drop (memory.atomic.notify (region.addr $D3DIM_LAZY_SHARED 0) (i32.const 2147483647))))
   ;; Called with the mutex held. Keep the range visible until readback ends.
   (func $d3dim_lazy_materialize (param $wa i32) (param $len i32)
-    (local $result i32) (local $site i32)
+    (local $result i32) (local $site i32) (local $e i32)
     (local.set $site (global.get $d3dim_fence_site))
     (global.set $d3dim_fence_site (i32.const 14))
     (local.set $result (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
@@ -774,24 +764,20 @@
     (if (i32.eq (local.get $result) (i32.const 1)) (then
       (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 16) (i32.const 0))
       (global.set $d3dim_worker_pending (i32.const 0))))
-    (if (i32.or (i32.eq (local.get $result) (i32.const 1))
-          (i32.or (i32.eqz (local.get $len)) (call $d3dim_lazy_overlaps (local.get $wa) (local.get $len)))) (then
-      (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 4) (i32.const 0)))))
-  (func $d3dim_lazy_overlaps (param $wa i32) (param $len i32) (result i32)
-    (i32.and (i32.ne (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (i32.const 0))
-      (i32.and (i32.lt_u (local.get $wa) (i32.add
-          (i32.load (region.addr $D3DIM_LAZY_SHARED 8)) (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))))
-        (i64.gt_u (i64.add (i64.extend_i32_u (local.get $wa)) (i64.extend_i32_u (local.get $len)))
-          (i64.extend_i32_u (i32.load (region.addr $D3DIM_LAZY_SHARED 8)))))))
+    (local.set $e (call $gps_lazy_find_key (global.get $GPS_API_D3DIM) (i32.const 0)))
+    (if (i32.and (i32.ne (local.get $e) (i32.const 0))
+          (i32.or (i32.eq (local.get $result) (i32.const 1))
+            (i32.or (i32.eqz (local.get $len)) (call $gps_lazy_hits (local.get $e) (local.get $wa) (local.get $len))))) (then
+      (call $gps_lazy_free_locked (local.get $e)))))
   (func $d3dim_lazy_fence (param $wa i32) (param $len i32) (result i32)
     (local $synchronized i32)
-    (if (global.get $d3dim_lazy_bypass) (then (return (i32.const 0))))
+    (if (global.get $gps_lazy_bypass) (then (return (i32.const 0))))
     (if (i32.eqz (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 16))) (then (return (i32.const 0))))
-    (call $d3dim_lazy_enter)
+    (call $gps_lazy_enter)
     (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 16)) (then
       (call $d3dim_lazy_materialize (local.get $wa) (local.get $len))
       (local.set $synchronized (i32.const 1))))
-    (call $d3dim_lazy_leave)
+    (call $gps_lazy_leave)
     (local.get $synchronized))
   (func (export "d3dim_lazy_enable") (param $on i32)
     (call $d3dim_worker_fence)
@@ -799,134 +785,43 @@
   (func (export "get_d3dim_lazy_armed") (result i32) (global.get $d3dim_lazy_armed))
   (func (export "get_d3dim_lazy_touched") (result i32) (global.get $d3dim_lazy_touched))
   (func (export "get_d3dim_lazy_untouched") (result i32) (global.get $d3dim_lazy_untouched))
-  (func $d3dim_lazy_access (param $wa i32) (param $len i32)
-    (if (global.get $d3dim_lazy_bypass) (then (return)))
-    (call $d3dim_lazy_enter)
-    (if (i32.and (i32.ne (local.get $len) (i32.const 0))
-          (call $d3dim_lazy_overlaps (local.get $wa) (local.get $len))) (then
-      (global.set $d3dim_lazy_touched (i32.add (global.get $d3dim_lazy_touched) (i32.const 1)))
-      (call $d3dim_lazy_materialize (i32.load (region.addr $D3DIM_LAZY_SHARED 8))
-        (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)))))
-    (call $d3dim_lazy_leave))
-  ;; A REP MOVS / STOS ($rep_movs_mem, $rep_stos_mem, the micro-op tier's
-  ;; COPY/FILL slow path) is about to write guest [dst, dst+bytes), reading
-  ;; [src, src+sbytes) (0 for STOS). When that write covers the whole armed
-  ;; Lock range and the read does not touch it, the first-touch readback
-  ;; would be overwritten before anything reads it: the GPU producer drops
-  ;; those pixels ($d3dim_gps_discard) and the Lock is disarmed with nothing
-  ;; read back. MechWarrior 3 copies its whole menu background into the
-  ;; locked back buffer every frame (one 640x480 readback per Flip before).
-  ;; The source must be one proven mapping so the copy cannot stop part way.
-  (func $d3dim_lazy_overwrite (param $dst i32) (param $bytes i32) (param $src i32) (param $sbytes i32)
-    (local $off i32) (local $wa i32) (local $start i32) (local $len i32)
-    (if (i32.eqz (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))) (then (return)))
-    (if (global.get $d3dim_lazy_bypass) (then (return)))
-    (if (global.get $d3dim_gpu_cooperative) (then (return)))
-    (local.set $off (i32.sub (local.get $dst) (global.get $DIB_GUEST_BASE)))
-    (if (i32.ge_u (local.get $off) (global.get $DIB_GUEST_CAPACITY)) (then (return)))
-    (if (i32.gt_u (local.get $bytes) (i32.sub (global.get $DIB_GUEST_CAPACITY) (local.get $off))) (then (return)))
-    (local.set $wa (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)))
-    (call $d3dim_lazy_enter)
-    (block $out
-      (local.set $len (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)))
-      (local.set $start (i32.load (region.addr $D3DIM_LAZY_SHARED 8)))
-      (br_if $out (i32.eqz (local.get $len)))
-      (br_if $out (i32.gt_u (local.get $wa) (local.get $start)))
-      (br_if $out (i64.lt_u (i64.add (i64.extend_i32_u (local.get $wa)) (i64.extend_i32_u (local.get $bytes)))
-        (i64.add (i64.extend_i32_u (local.get $start)) (i64.extend_i32_u (local.get $len)))))
-      (if (local.get $sbytes) (then
-        (local.set $off (i32.sub (local.get $src) (global.get $DIB_GUEST_BASE)))
-        (if (i32.lt_u (local.get $off) (global.get $DIB_GUEST_CAPACITY)) (then
-          (br_if $out (call $d3dim_lazy_overlaps
-            (i32.add (global.get $DIB_BACKING_BASE) (local.get $off)) (local.get $sbytes)))
-          ;; The span may run past the window: then it is not one mapping.
-          (br_if $out (i32.gt_u (local.get $sbytes) (i32.sub (global.get $DIB_GUEST_CAPACITY) (local.get $off))))))
-        (br_if $out (i32.eqz (call $string_guest_range_contiguous (local.get $src) (local.get $sbytes))))))
-      (br_if $out (i32.ne (call $d3dim_gps_discard (local.get $start) (local.get $len)) (i32.const 1)))
-      (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 4) (i32.const 0)))
-    (call $d3dim_lazy_leave))
-  ;; Host file reads scatter directly through JS views, bypassing g2w stores.
-  ;; Run on the owning instance BEFORE its host import, never on the page
-  ;; shadow after copying. Lock only arms backing wholly inside this DIB
-  ;; window; other mappings need no lazy-surface materialization here.
-  (func $d3dim_host_write_interval (param $start i64) (param $end i64)
-    (local $lo i64) (local $hi i64) (local $window_end i64)
-    (local.set $lo (i64.extend_i32_u (global.get $DIB_GUEST_BASE)))
-    (local.set $window_end (i64.add (local.get $lo)
-      (i64.extend_i32_u (global.get $DIB_GUEST_CAPACITY))))
-    (if (i64.gt_u (local.get $start) (local.get $lo))
-      (then (local.set $lo (local.get $start))))
-    (local.set $hi (select (local.get $end) (local.get $window_end)
-      (i64.lt_u (local.get $end) (local.get $window_end))))
-    (if (i64.lt_u (local.get $lo) (local.get $hi)) (then
-      (call $d3dim_lazy_access
-        (i32.add (global.get $DIB_BACKING_BASE)
-          (i32.sub (i32.wrap_i64 (local.get $lo)) (global.get $DIB_GUEST_BASE)))
-        (i32.wrap_i64 (i64.sub (local.get $hi) (local.get $lo)))))))
-  (func $d3dim_host_write_fence (param $ga i32) (param $len i32)
-    (local $end i64)
-    (if (i32.eqz (local.get $len)) (then (return)))
-    (if (i32.eqz (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))) (then (return)))
-    ;; Match filesystem guestChunk((bufGA + moved) >>> 0), without changing
-    ;; its mapping validation or errors. Widen before adding; do not mistake
-    ;; a wrapping interval for an empty/nonoverlapping one.
-    (local.set $end (i64.add (i64.extend_i32_u (local.get $ga))
-      (i64.extend_i32_u (local.get $len))))
-    (call $d3dim_host_write_interval (i64.extend_i32_u (local.get $ga))
-      (select (local.get $end) (i64.const 4294967296)
-        (i64.lt_u (local.get $end) (i64.const 4294967296))))
-    (if (i64.gt_u (local.get $end) (i64.const 4294967296)) (then
-      (call $d3dim_host_write_interval (i64.const 0)
-        (i64.sub (local.get $end) (i64.const 4294967296))))))
+  ;; Touches ($gps_lazy_access), whole-range overwrites ($gps_lazy_overwrite)
+  ;; and host writes ($gps_lazy_host_write_fence) are the shared table's.
   (func $d3dim_lock_fence (param $entry i32)
     (local $dib i32) (local $len i32)
     ;; Nested locks take the conservative barrier before replacing the range.
-    (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (then (call $d3dim_worker_fence)))
+    (if (call $gps_lazy_find_key (global.get $GPS_API_D3DIM) (i32.const 0)) (then (call $d3dim_worker_fence)))
     (if (i32.and (global.get $d3dim_lazy_on)
           (i32.and (global.get $d3dim_worker_pending)
             (i32.eqz (global.get $d3dim_present_pending)))) (then
       (local.set $dib (load.field DxObject misc1 (local.get $entry)))
       (local.set $len (i32.mul (load.field DxObject pitch (local.get $entry))
                               (load.field DxObject height (local.get $entry))))
-      ;; Scalar helpers may translate only the first byte unless crossing a
-      ;; page. Keep unaligned surface starts eager so straddling reads/writes
-      ;; cannot enter the range without triggering a second translation.
+      ;; Unaligned surface starts stay eager ($gps_lazy_range_ok).
       (if (i32.and (local.get $dib) (i32.const 4095)) (then
         (call $d3dim_surface_fence (local.get $entry)) (return)))
       (if (i32.and (i32.eqz (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 1)))
-            (i32.and (i32.ne (local.get $len) (i32.const 0))
-              (i32.and (i32.lt_u (i32.sub (local.get $dib) (global.get $DIB_BACKING_BASE)) (global.get $DIB_GUEST_CAPACITY))
-                (i32.le_u (local.get $len) (i32.sub (global.get $DIB_GUEST_CAPACITY)
-                  (i32.sub (local.get $dib) (global.get $DIB_BACKING_BASE))))))) (then
+            (call $gps_lazy_range_ok (local.get $dib) (local.get $len))) (then
         ;; Publish queued snapshots to the independent renderer before another
         ;; guest can request readback. No pixel readback at this boundary.
         ;; A private executor cannot synchronize another guest: keep it eager.
         (if (i32.ne (call $d3dim_gpu_call (i32.const 0x20007) (i32.const 0) (i32.const 0)) (i32.const 1)) (then
           (call $d3dim_surface_fence (local.get $entry)) (return)))
-        (call $d3dim_lazy_enter)
-        (if (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (then
+        (call $gps_lazy_enter)
+        (if (call $gps_lazy_find_key (global.get $GPS_API_D3DIM) (i32.const 0)) (then
           (call $d3dim_lazy_materialize (i32.const 0) (i32.const 0))))
-        (i32.store (region.addr $D3DIM_LAZY_SHARED 8) (local.get $dib))
-        (i32.store (region.addr $D3DIM_LAZY_SHARED 12) (local.get $entry))
         (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 16) (i32.const 1))
-        (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 4) (local.get $len))
+        (call $gps_lazy_arm_locked (global.get $GPS_API_D3DIM) (local.get $entry) (local.get $dib) (local.get $len)
+          (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 14))
         (global.set $d3dim_lazy_armed (i32.add (global.get $d3dim_lazy_armed) (i32.const 1)))
-        ;; Cached read windows must re-prove their DIB span before use.
-        (call $uop_win_bump)
-        (call $d3dim_lazy_leave)
+        (call $gps_lazy_leave)
         (return)))))
     (call $d3dim_surface_fence (local.get $entry)))
   (func $d3dim_lazy_unlock (param $entry i32) (result i32)
-    (local $untouched i32)
-    (if (i32.eqz (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4))) (then (return (i32.const 0))))
-    (call $d3dim_lazy_enter)
-    (if (i32.and (i32.ne (i32.atomic.load (region.addr $D3DIM_LAZY_SHARED 4)) (i32.const 0))
-          (i32.eq (local.get $entry) (i32.load (region.addr $D3DIM_LAZY_SHARED 12)))) (then
-      (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 4) (i32.const 0))
+    (if (call $gps_lazy_disarm (global.get $GPS_API_D3DIM) (local.get $entry)) (then
       (global.set $d3dim_lazy_untouched (i32.add (global.get $d3dim_lazy_untouched) (i32.const 1)))
-      (local.set $untouched (i32.const 1))))
-    (call $d3dim_lazy_leave)
-    (local.get $untouched))
+      (return (i32.const 1))))
+    (i32.const 0))
   (global $d3dim_gpu_desc (mut i32) (i32.const 0))
   (global $d3dim_gpu_scratch (mut i32) (i32.const 0))
   (global $d3dim_gpu_scratch_cap (mut i32) (i32.const 0))

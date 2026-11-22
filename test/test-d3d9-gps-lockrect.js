@@ -28,14 +28,18 @@ const GREEN = 0xff00ff00;
     await s.evaluate('ctx.d9g.bb=exports.guest_read32(ctx.d9g.surface)>>>0');
     // Writable lock of the whole buffer: executor pixels land in the bits.
     assert.strictEqual(await s.call('IDirect3DSurface9_LockRect', '[ctx.d9g.bb,ctx.d9g.lr,0,0]'), 0);
+    // The Lock arms a lazy entry (09a8gv); the guest's first translation of
+    // the bits (guest_to_wasm below) is what reads the executor back.
     let st = await s.stats();
-    assert.deepStrictEqual(st.sites, { 0: 1 }, `one LockRect readback ${JSON.stringify(st)}`);
+    assert.deepStrictEqual(st.sites, {}, `LockRect itself reads nothing back ${JSON.stringify(st)}`);
     const px = await s.evaluate(`(()=>{const p=ctx.d9g;p.pitch=exports.guest_read32(p.lr)|0;
       p.bits=exports.guest_read32(p.lr+4)>>>0;const wa=exports.guest_to_wasm(p.bits),v=new DataView(memory.buffer);
       const at=(x,y)=>v.getUint32(wa+y*p.pitch+x*4,true)>>>0;const r={tl:at(1,1),br:at(7,7)};
       v.setUint32(wa+6*p.pitch+6*4,${GREEN},true);return r})()`);
     assert.strictEqual(px.tl >>> 0, RED, `locked bits show the executor frame ${px.tl.toString(16)}`);
     assert.strictEqual(px.br >>> 0, BLUE);
+    st = await s.stats();
+    assert.deepStrictEqual(st.sites, { 0: 1 }, `one readback, at the first touch ${JSON.stringify(st)}`);
     assert.strictEqual(await s.call('IDirect3DSurface9_UnlockRect', '[ctx.d9g.bb]'), 0);
     st = await s.stats();
     assert.strictEqual(st.rtUploads, 0, 'UnlockRect holds its upload until the executor needs the RT');

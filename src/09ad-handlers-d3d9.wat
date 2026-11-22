@@ -54,6 +54,15 @@
             (i32.const 0) (i32.const 1)) (then (return (i32.const 0))))))
     (call $d3d_state_acquired)
     (i32.const 1))
+  ;; A lazy back-buffer settle (09a8gv) from a guest memory access: no API
+  ;; frame to retry, so wait for a foreign holder instead of io_block.
+  (func $d3d_state_enter_blocking
+    (if (i32.eqz (global.get $d3d_state_depth)) (then
+      (loop $retry
+        (if (i32.atomic.rmw.cmpxchg offset=36 (global.get $DX_PROCESS_STATE) (i32.const 0) (i32.const 1)) (then
+          (drop (memory.atomic.wait32 (region.addr $DX_PROCESS_STATE 36) (i32.const 1) (i64.const 1000000)))
+          (br $retry))))))
+    (call $d3d_state_acquired))
   (func $d3d_state_acquired
     (if (i32.eqz (global.get $d3d_state_depth)) (then (call $d9g_state_load)))
     (global.set $d3d_state_depth (i32.add (global.get $d3d_state_depth) (i32.const 1))))

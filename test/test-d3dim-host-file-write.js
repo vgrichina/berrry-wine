@@ -65,7 +65,7 @@ const extraWat = `
   (call $heap_free (local.get $ga))
   (local.get $r))
 (func (export "file_range") (param $a i32) (param $n i32)
-  (call $d3dim_host_write_fence (local.get $a) (local.get $n)))
+  (call $gps_lazy_host_write_fence (local.get $a) (local.get $n)))
 (func (export "file_read") (param $kind i32) (param $thread i32)
   (param $h i32) (param $buf i32) (param $n i32) (param $out i32)
   (param $off i32) (result i32)

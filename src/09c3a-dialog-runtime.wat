@@ -1992,11 +1992,16 @@
         (i32.and (call $wnd_get_style (local.get $page)) (i32.const 0xF7FFFFFF))
         (i32.const 0x50000000))))
     (call $ctrl_geom_set (call $wnd_table_find (local.get $page))
-      (i32.const 10) (i32.const 10) (i32.const 420) (i32.const 228))
+      (i32.const 10) (i32.const 10)
+      (global.get $propsheet_page_w) (global.get $propsheet_page_h))
+    (call $propsheet_cbt_create (local.get $page) (global.get $propsheet_frame_hwnd)
+      (i32.const 10) (i32.const 10)
+      (global.get $propsheet_page_w) (global.get $propsheet_page_h))
     (call $host_dialog_loaded (local.get $page) (global.get $propsheet_frame_hwnd))
     (call $host_set_parent (local.get $page) (global.get $propsheet_frame_hwnd))
     (call $host_move_window (local.get $page)
-      (i32.const 10) (i32.const 10) (i32.const 420) (i32.const 228) (i32.const 1))
+      (i32.const 10) (i32.const 10)
+      (global.get $propsheet_page_w) (global.get $propsheet_page_h) (i32.const 1))
     (call $host_show_window (local.get $page) (i32.const 5))
     (call $propsheet_page_hwnd_set (local.get $index) (local.get $page))
     (global.set $propsheet_page_index (local.get $index))
@@ -2009,6 +2014,91 @@
     (call $dlg_fill_bkgnd (local.get $page))
     (call $paint_flag_set_inv (local.get $page))
     (local.get $page))
+
+  ;; WH_CBT/HCBT_CREATEWND for a sheet frame or page. Win98 COMCTL32 creates
+  ;; both through CreateDialogIndirectParam, so USER fires the thread's CBT
+  ;; hook for each before any WM_INITDIALOG. MFC depends on it twice:
+  ;; CPropertySheet::DoModal hooks creation before calling PropertySheet to
+  ;; attach the frame, and each CPropertyPage's PSPCB_CREATE callback arms the
+  ;; same hook to attach its page. A page that misses it has no CWnd, so
+  ;; AfxDlgProc skips OnInitDialog and the page stays an uninitialized template
+  ;; (GTA2 Demo Manager's owner-drawn menu buttons and language selection).
+  ;; Win98 sizes the sheet's page area to its largest page, measured in the
+  ;; sheet's own dialog units (8pt MS Sans Serif, 6x13 here), never smaller
+  ;; than the stock frame. A fixed area clipped tall pages: GTA2 Demo
+  ;; Manager's 264x282 DLU pages lost their lower half below the buttons.
+  (func $propsheet_measure_pages
+    (local $i i32) (local $dlu i32) (local $w i32) (local $h i32)
+    (global.set $propsheet_page_w (i32.const 420))
+    (global.set $propsheet_page_h (i32.const 228))
+    (block $done (loop $pages
+      (br_if $done (i32.ge_u (local.get $i) (global.get $propsheet_page_count)))
+      (local.set $dlu (call $propsheet_page_template_dlu (local.get $i)))
+      (local.set $w (i32.div_u (i32.mul (i32.and (local.get $dlu) (i32.const 0x7FFF)) (i32.const 6)) (i32.const 4)))
+      (local.set $h (i32.div_u (i32.add (i32.mul
+        (i32.and (i32.shr_u (local.get $dlu) (i32.const 16)) (i32.const 0x7FFF)) (i32.const 13)) (i32.const 4)) (i32.const 8)))
+      (if (i32.gt_u (local.get $w) (global.get $propsheet_page_w))
+        (then (global.set $propsheet_page_w (local.get $w))))
+      (if (i32.gt_u (local.get $h) (global.get $propsheet_page_h))
+        (then (global.set $propsheet_page_h (local.get $h))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $pages))))
+
+  ;; The cx | cy << 16 of page $index's DLGTEMPLATE(EX), or 0 if unresolved.
+  (func $propsheet_page_template_dlu (param $index i32) (result i32)
+    (local $psp_g i32) (local $psp_w i32) (local $template i32) (local $entry i32)
+    (local $wa i32) (local $wide i32)
+    (local.set $psp_g (call $propsheet_resolve_page (local.get $index)))
+    (if (i32.eqz (local.get $psp_g)) (then (return (i32.const 0))))
+    (local.set $psp_w (call $g2w (local.get $psp_g)))
+    (local.set $template (i32.load offset=12 (local.get $psp_w)))
+    (if (i32.eqz (local.get $template)) (then (return (i32.const 0))))
+    (if (i32.and (i32.load offset=4 (local.get $psp_w)) (i32.const 1)) ;; PSP_DLGINDIRECT
+      (then (local.set $wa (call $g2w (local.get $template))))
+      (else
+        (local.set $wide (select
+          (call $propsheet_page_is_wide (local.get $psp_g))
+          (global.get $propsheet_pages_wide)
+          (global.get $propsheet_pages_are_handles)))
+        (call $push_rsrc_ctx (i32.load offset=8 (local.get $psp_w)))
+        (local.set $entry (select
+          (call $find_resource_w (i32.const 5) (local.get $template))
+          (call $find_resource (i32.const 5) (local.get $template))
+          (local.get $wide)))
+        (if (local.get $entry)
+          (then (local.set $wa (call $g2w (i32.add (call $r_base)
+            (call $gl32 (i32.add (call $r_base) (local.get $entry))))))))
+        (call $pop_rsrc_ctx)))
+    (if (i32.eqz (local.get $wa)) (then (return (i32.const 0))))
+    ;; DLGTEMPLATEEX (dlgVer 1, signature 0xFFFF) keeps cx/cy 8 bytes later.
+    (if (i32.eq (i32.load (local.get $wa)) (i32.const 0xFFFF0001))
+      (then (local.set $wa (i32.add (local.get $wa) (i32.const 8)))))
+    (i32.load offset=14 (local.get $wa)))
+
+  (func $propsheet_cbt_create (param $hwnd i32) (param $parent i32)
+      (param $x i32) (param $y i32) (param $cx i32) (param $cy i32)
+    (local $prev i32) (local $proc i32) (local $cs i32)
+    (if (i32.eqz (call $hook_head_get (i32.const 5))) (then (return)))
+    (local.set $cs (call $wnd_scratch))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x00)) (i32.const 0))  ;; lpCreateParams
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x04)) (i32.const 0))  ;; hInstance
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x08)) (i32.const 0))  ;; hMenu
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x0c)) (local.get $parent))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x10)) (local.get $cy))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x14)) (local.get $cx))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x18)) (local.get $y))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x1c)) (local.get $x))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x20)) (call $wnd_get_style (local.get $hwnd)))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x24)) (i32.const 0))  ;; lpszName
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x28)) (i32.const 0x8002)) ;; WC_DIALOG
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x2c)) (i32.const 0))  ;; dwExStyle
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x40)) (local.get $cs))
+    (call $gs32 (i32.add (local.get $cs) (i32.const 0x44)) (i32.const 0))
+    (local.set $prev (global.get $hook_active_node))
+    (local.set $proc (call $hook_dispatch_enter (i32.const 5)))
+    (drop (call $sync_stdcall3 (local.get $proc)
+      (i32.const 3) (local.get $hwnd) (i32.add (local.get $cs) (i32.const 0x40))))
+    (call $hook_dispatch_leave (local.get $prev)))
 
   (func $propsheet_change_page (param $delta i32)
     (local $old i32) (local $old_index i32) (local $next i32)
@@ -2140,11 +2230,13 @@
           (else
             (local.set $caption_w (call $g2w (local.get $caption_g)))
             (local.set $caption_len (call $strlen (local.get $caption_w)))))))
+    (call $propsheet_measure_pages)
     (local.set $dlg (global.get $next_hwnd))
     (global.set $next_hwnd (i32.add (global.get $next_hwnd) (i32.const 1)))
     (call $host_register_dialog_frame
       (local.get $dlg) (local.get $owner) (local.get $caption_w)
-      (i32.const 440) (i32.const 310) (i32.const 1))
+      (i32.add (global.get $propsheet_page_w) (i32.const 20))
+      (i32.add (global.get $propsheet_page_h) (i32.const 82)) (i32.const 1))
     (call $wnd_table_set (local.get $dlg) (global.get $WNDPROC_CTRL_NATIVE))
     (call $wnd_unicode_set (local.get $dlg) (local.get $wide))
     (call $wnd_set_owner (local.get $dlg) (local.get $owner))
@@ -2159,16 +2251,23 @@
     (call $nc_flags_set (local.get $dlg) (i32.const 3))
     (call $dlg_fill_bkgnd (local.get $dlg))
     (global.set $propsheet_frame_hwnd (local.get $dlg))
+    (call $propsheet_cbt_create (local.get $dlg) (local.get $owner)
+      (i32.const 0) (i32.const 0)
+      (i32.add (global.get $propsheet_page_w) (i32.const 20))
+      (i32.add (global.get $propsheet_page_h) (i32.const 82)))
     (global.set $propsheet_page_hwnd (i32.const 0))
     ;; Standard Win98 wizard navigation controls.
     (drop (call $ctrl_create_child (local.get $dlg) (i32.const 1) (i32.const 0x3023)
-      (i32.const 188) (i32.const 250) (i32.const 74) (i32.const 24) (i32.const 0x50010000)
+      (i32.sub (global.get $propsheet_page_w) (i32.const 232))
+      (i32.add (global.get $propsheet_page_h) (i32.const 22)) (i32.const 74) (i32.const 24) (i32.const 0x50010000)
       (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x215) (i32.const 4))))
     (drop (call $ctrl_create_child (local.get $dlg) (i32.const 1) (i32.const 0x3024)
-      (i32.const 266) (i32.const 250) (i32.const 74) (i32.const 24) (i32.const 0x50010001)
+      (i32.sub (global.get $propsheet_page_w) (i32.const 154))
+      (i32.add (global.get $propsheet_page_h) (i32.const 22)) (i32.const 74) (i32.const 24) (i32.const 0x50010001)
       (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x21A) (i32.const 4))))
     (drop (call $ctrl_create_child (local.get $dlg) (i32.const 1) (i32.const 2)
-      (i32.const 350) (i32.const 250) (i32.const 74) (i32.const 24) (i32.const 0x50010000)
+      (i32.sub (global.get $propsheet_page_w) (i32.const 70))
+      (i32.add (global.get $propsheet_page_h) (i32.const 22)) (i32.const 74) (i32.const 24) (i32.const 0x50010000)
       (call $wat_str_to_heap (region.addr $USER_DIALOG_STRINGS 0x3) (i32.const 6))))
     (local.set $start (i32.load offset=28 (local.get $header_w)))
     (if (i32.ge_u (local.get $start) (global.get $propsheet_page_count))

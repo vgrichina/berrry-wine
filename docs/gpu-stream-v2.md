@@ -128,6 +128,22 @@ path, so GPU-side ids stay per ring. Diablo II's town (~200 textures per
 frame) went from ~198 uploads per frame on the old 64-slot round robin to
 ~12 (run 20261121-gps-plumbing).
 
+**Coherence.** `09a8gv-gps-coherence.wat` holds the readback loop and the
+lazy CPU-access table that every producer shares. `$gps_readback_rect` reads
+an RT rect back in bands of at most 2 MB, with a signed pitch for Glide's
+lower-left origin. D3DIM, GL, D3D9 and Glide LFB all call it. `$GPS_LAZY`
+holds a mutex, the armed count (the one word `$g2w_slow` and
+`$g2w_affine_span` read) and eight entries. When a Lock of a DIB-window
+surface would read the GPU back, it arms an entry instead. The first guest
+translation of that range settles the entry: D3DIM materializes it, while
+Glide and D3D9 drop the mutex, take their own producer lock and read back.
+A whole-range REP MOVS/STOS discards the entry. An Unlock that finds its
+entry still armed skips both the readback and the upload. Glide
+`grLfbLock` and D3D9 back-buffer LockRect arm unconditionally; D3DIM still
+arms only when the host enables `d3dim_lazy_enable`. The counters are
+`gps_stat(api, 8..11)`: armed, touched, untouched and overwritten. Run
+20261121-gps-coherence has the measurements.
+
 **Capability block.** `drain()` writes the executor's `caps()` into the
 header before it executes the first record, and sets `CAP_VALID` (1) last.
 WAT reads it to decide what the guest is told; nothing else negotiates

@@ -33,7 +33,7 @@ byName.set('$uwc_on','(global $uwc_on (mut i32) (i32.const 0))');
 byName.set('$fault_sync_epoch','(global $fault_sync_epoch (mut i32) (i32.const 0))');
 const stubSigs={ '$code_write_hit':'(param i32 i32)', '$page_watch_write_one':'(param i32)', '$invalidate_code_write':'(param i32 i32)', '$page_watch_write_span':'(param i32 i32)' };
 stubSigs.$page_watch_write='(param i32 i32)';
-stubSigs.$d3dim_lazy_access='(param i32 i32)';
+stubSigs.$gps_lazy_access='(param i32 i32)';
 stubSigs.$uwc_bulk_note='(param i32 i32)';
 function stub(name){
  let f=byName.get(name),sig;

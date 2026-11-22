@@ -666,7 +666,7 @@ test('two real Workers preserve I/O ownership through compiled adapters and the 
     ;; This isolated adapter fixture has no GPU resources. The actual fence
     ;; behavior is covered by test-d3dim-host-file-write.js; retain that
     ;; dependency here so the real adapters still compile for the RPC test.
-    (func $d3dim_host_write_fence (param i32 i32))
+    (func $gps_lazy_host_write_fence (param i32 i32))
     ${adapters}
     (func (export "tid") (param i32) (global.set $current_thread_id (local.get 0)))
     (func (export "read") (param i32 i32) (result i32)

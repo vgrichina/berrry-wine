@@ -100,6 +100,7 @@
 (include "09a8gs-gpu-stream.wat")
 (include "09a8gt-gl-gps.wat")
 (include "09a8gu-gps-tex-cache.wat")
+(include "09a8gv-gps-coherence.wat")
 (include "09a8h-glide.wat")
 (include "09a8t-gl-texture.wat")
 (include "09a9-comctl32.wat")

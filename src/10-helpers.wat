@@ -3538,7 +3538,15 @@
     ;; after retirement or when the image has no resource directory.
     (global.set $rsrc_ctx_base (local.get $hInstance))
     (global.set $rsrc_ctx_dll_pin (call $dll_pin_module (local.get $hInstance)))
-    (if (i32.eqz (global.get $rsrc_ctx_dll_pin)) (then (return)))
+    (if (i32.eqz (global.get $rsrc_ctx_dll_pin))
+      (then
+        ;; A statically dispatched system module is a header-only image that
+        ;; is never retired; its own optional header names any resource
+        ;; section it carries (COMCTL32's property-sheet templates).
+        (if (call $static_sys_dll_from_handle (local.get $hInstance))
+          (then (global.set $rsrc_ctx_rva (call $gl32
+            (i32.add (local.get $hInstance) (i32.const 264))))))
+        (return)))
     (local.set $idx (i32.sub (global.get $rsrc_ctx_dll_pin) (i32.const 1)))
     (local.set $rva (i32.load (i32.add (global.get $DLL_RSRC_TABLE)
       (i32.mul (local.get $idx) (i32.const 8)))))
