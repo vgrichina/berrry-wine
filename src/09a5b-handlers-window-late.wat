@@ -1301,7 +1301,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (local.set $base (call $scroll_bar_addr (local.get $slot)
           (call $scroll_bar_is_vert (local.get $arg0) (local.get $arg1))))
         (local.set $aux (call $scroll_aux_bar_addr (local.get $slot)
-          (i32.ne (local.get $arg1) (i32.const 0))))
+          (call $scroll_bar_is_vert (local.get $arg0) (local.get $arg1))))
         ;; SIF_RANGE = 0x01
         (if (i32.and (local.get $fMask) (i32.const 1))
           (then

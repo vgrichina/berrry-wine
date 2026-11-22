@@ -22,7 +22,7 @@ static int selections[12]=SELECTIONS,tops[12]=TOPS;
 void expected(void){int s=stage<12?stage:11;SendMessageA(reference,0x184,0,0);
  for(int j=0;j<4;++j)SendMessageA(reference,0x180,0,(long)items[tops[s]+j]);
  SendMessageA(reference,0x186,selections[s]-tops[s],0);}
-void number(int n,int* at){if(n<0){report[(*at)++]='-';n=-n;}if(n>=10)report[(*at)++]='0'+n/10;report[(*at)++]='0'+n%10;report[(*at)++]=' ';}
+void number(int n,int* at){char digits[12];int count=0;if(n<0){report[(*at)++]='-';n=-n;}do{digits[count++]='0'+n%10;n/=10;}while(n);while(count)report[(*at)++]=digits[--count];report[(*at)++]=' ';}
 void publish(void){int at=0;number(stage,&at);number(SendMessageA(list,0x188,0,0),&at);number(SendMessageA(list,0x18e,0,0),&at);number(notifications,&at);number(GetDlgCtrlID(GetFocus()),&at);number(SendMessageA(list,0x87,0,0),&at);report[at]=0;SetWindowTextA(status,report);}
 long __stdcall proc(P h,U m,U w,long l){
  if(m==0x111&&(w&65535)==10&&(w>>16)==1){++notifications;return 0;}
