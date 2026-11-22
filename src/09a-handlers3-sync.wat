@@ -571,7 +571,7 @@
     ;; GetClassInfoA(hInstance, lpClassName, lpWndClass) → BOOL
     ;; Look up class in our class table; if found, copy saved WNDCLASS to output
     (local $slot i32) (local $src i32) (local $i i32)
-    (local.set $slot (call $class_find_slot (call $g2w (local.get $arg1))))
+    (local.set $slot (call $class_find_slot (call $class_name_key (local.get $arg1))))
     (if (i32.ge_s (local.get $slot) (i32.const 0))
       (then
         ;; Class records are internal; the guest output need not be affine.
