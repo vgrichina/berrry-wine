@@ -3948,6 +3948,16 @@
     (if (i32.and (i32.ne (local.get $arg2) (i32.const 0))
                  (i32.ne (local.get $arg4) (i32.const 0)))
       (then
+        ;; The system fixes extents in modes 1..6. Preserve the previous SIZE
+        ;; and existing denominator validation before ignoring the request.
+        (if (i32.le_u
+              (call $gdi_dc_get_field (local.get $arg0) (i32.const 36) (i32.const 1))
+              (i32.const 6))
+          (then
+            (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+            (return)))
         (local.set $new_x
           (i32.wrap_i64 (i64.div_s (i64.mul (i64.extend_i32_s (local.get $old_x))
             (i64.extend_i32_s (local.get $arg1))) (i64.extend_i32_s (local.get $arg2)))))
@@ -3988,6 +3998,16 @@
     (if (i32.and (i32.ne (local.get $arg2) (i32.const 0))
                  (i32.ne (local.get $arg4) (i32.const 0)))
       (then
+        ;; The system fixes extents in modes 1..6. Preserve the previous SIZE
+        ;; and existing denominator validation before ignoring the request.
+        (if (i32.le_u
+              (call $gdi_dc_get_field (local.get $arg0) (i32.const 36) (i32.const 1))
+              (i32.const 6))
+          (then
+            (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+            (i32.store offset=16 (global.get $reg_base)
+              (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+            (return)))
         (local.set $new_x
           (i32.wrap_i64 (i64.div_s (i64.mul (i64.extend_i32_s (local.get $old_x))
             (i64.extend_i32_s (local.get $arg1))) (i64.extend_i32_s (local.get $arg2)))))
