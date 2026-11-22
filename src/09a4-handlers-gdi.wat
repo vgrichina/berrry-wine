@@ -469,10 +469,37 @@
 
   ;; 161: TextOutA — hdc(arg0), x(arg1), y(arg2), lpString(arg3), nCount(arg4)
   (func $handle_TextOutA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_text_out
-      (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (call $g2w (local.get $arg3)) (local.get $arg4) (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)
+    (local $text i32) (local $len i32) (local $copy_g i32) (local $i i32) (local $result i32)
+    (local.set $text (call $g2w (local.get $arg3)))
+    (block $done
+      ;; Preserve canonical count validation; copy only a valid counted input.
+      (if (i32.and (i32.ne (local.get $arg3) (i32.const 0))
+            (i32.and (i32.gt_s (local.get $arg4) (i32.const 0))
+              (i32.le_u (local.get $arg4) (i32.const 65536))))
+        (then
+          (local.set $len (local.get $arg4))
+          (local.set $text (call $g2w_affine_span (local.get $arg3) (local.get $len)))
+          (if (i32.eq (local.get $text) (global.get $NULL_SENTINEL))
+            (then
+              ;; A heap block also covers counts larger than the span arena.
+              (local.set $copy_g (call $heap_alloc (local.get $len)))
+              (br_if $done (i32.eqz (local.get $copy_g)))
+              (local.set $text (call $g2w_affine_span (local.get $copy_g) (local.get $len)))
+              (br_if $done (i32.eq (local.get $text) (global.get $NULL_SENTINEL)))
+      (local.set $i (i32.const 0))
+      (block $copy_text_done (loop $copy_text
+        (br_if $copy_text_done (i32.ge_u (local.get $i) (local.get $len)))
+        (i32.store8 (i32.add (local.get $text) (local.get $i))
+          (call $gl8 (i32.add (local.get $arg3) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_text)))
+            ))))
+      (local.set $result (call $gdi_native_text_out
+        (local.get $arg0) (local.get $arg1) (local.get $arg2)
+        (local.get $text) (local.get $arg4) (i32.const 0))))
+    (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
   )
 
   ;; 162: GetStockObject(index) → stock object handle (0x30010 + index).
@@ -2615,23 +2642,74 @@
   ;; 364: ExtTextOutW(hdc, x, y, options, lprect, lpString, c, lpDx) — 8 args stdcall
   ;; Selected FNT strikes consume lpDx in WAT; the generic host path ignores it.
   (func $handle_ExtTextOutW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $lpString i32) (local $count i32) (local $rect_wa i32) (local $text_wa i32)
-    (local $dx_wa i32) (local $lpDx i32)
-    (local.set $lpString (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))) ;; arg5
-    (local.set $count    (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))) ;; arg6 (wchar count)
-    (if (local.get $arg4)
-      (then (local.set $rect_wa (call $g2w (local.get $arg4)))))
-    (if (local.get $lpString)
-      (then (local.set $text_wa (call $g2w (local.get $lpString)))))
+    (local $lpString i32) (local $count i32) (local $lpDx i32)
+    (local $text i32) (local $dx i32) (local $rect i32)
+    (local $text_len i32) (local $dx_len i32) (local $rect_len i32)
+    (local $total i32) (local $copy_g i32) (local $copy i32) (local $i i32) (local $result i32)
+    (local.set $lpString (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+    (local.set $count (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     (local.set $lpDx (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
-    (if (local.get $lpDx)
-      (then (local.set $dx_wa (call $g2w (local.get $lpDx)))))
-    ;; Printable low/high bytes are also valid UCS-2 (e.g. U+4E46).
-    ;; Never infer an ANSI stream from the contents of a W API buffer.
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_ext_text_out
-      (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (local.get $arg3) (local.get $rect_wa)
-      (local.get $text_wa) (local.get $count) (local.get $dx_wa) (i32.const 1)))
+    (if (local.get $lpString) (then (local.set $text (call $g2w (local.get $lpString)))))
+    (if (local.get $lpDx) (then (local.set $dx (call $g2w (local.get $lpDx)))))
+    ;; The public rectangle is consumed only for clipping or opaque fill.
+    (if (i32.and (i32.ne (local.get $arg4) (i32.const 0))
+          (i32.ne (i32.and (local.get $arg3) (i32.const 6)) (i32.const 0)))
+      (then (local.set $rect_len (i32.const 16))
+        (local.set $rect (call $g2w (local.get $arg4)))))
+    (block $done
+      (if (i32.and (i32.le_u (local.get $count) (i32.const 65536))
+            (i32.or (i32.eqz (local.get $count)) (i32.ne (local.get $lpString) (i32.const 0))))
+        (then
+          (local.set $text_len (i32.shl (local.get $count) (i32.const 1)))
+          (if (local.get $lpDx)
+            (then (local.set $dx_len (i32.shl (local.get $count)
+              (i32.add (i32.const 2) (i32.ne (i32.and (local.get $arg3) (i32.const 0x2000)) (i32.const 0)))))))
+          (if (local.get $text_len) (then (local.set $text (call $g2w_affine_span (local.get $lpString) (local.get $text_len)))))
+          (if (local.get $dx_len) (then (local.set $dx (call $g2w_affine_span (local.get $lpDx) (local.get $dx_len)))))
+          (if (local.get $rect_len) (then (local.set $rect (call $g2w_affine_span (local.get $arg4) (local.get $rect_len)))))
+          (if (i32.or (i32.eq (local.get $text) (global.get $NULL_SENTINEL))
+                (i32.or (i32.eq (local.get $dx) (global.get $NULL_SENTINEL))
+                  (i32.eq (local.get $rect) (global.get $NULL_SENTINEL))))
+            (then
+              ;; One contiguous temporary retains all counted bytes, including
+              ;; long runs, WORD glyph indices and ETO_PDY spacing pairs.
+              (local.set $total (i32.add (local.get $text_len) (i32.add (local.get $dx_len) (local.get $rect_len))))
+              (local.set $copy_g (call $heap_alloc (local.get $total)))
+              (br_if $done (i32.eqz (local.get $copy_g)))
+              (local.set $copy (call $g2w_affine_span (local.get $copy_g) (local.get $total)))
+              (br_if $done (i32.eq (local.get $copy) (global.get $NULL_SENTINEL)))
+              (local.set $text (local.get $copy))
+      (local.set $i (i32.const 0))
+      (block $copy_text_done (loop $copy_text
+        (br_if $copy_text_done (i32.ge_u (local.get $i) (local.get $text_len)))
+        (i32.store8 (i32.add (local.get $text) (local.get $i))
+          (call $gl8 (i32.add (local.get $lpString) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_text)))
+              (local.set $dx (if (result i32) (local.get $dx_len)
+                (then (i32.add (local.get $copy) (local.get $text_len))) (else (i32.const 0))))
+      (local.set $i (i32.const 0))
+      (block $copy_dx_done (loop $copy_dx
+        (br_if $copy_dx_done (i32.ge_u (local.get $i) (local.get $dx_len)))
+        (i32.store8 (i32.add (local.get $dx) (local.get $i))
+          (call $gl8 (i32.add (local.get $lpDx) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_dx)))
+              (local.set $rect (if (result i32) (local.get $rect_len)
+                (then (i32.add (local.get $copy) (i32.add (local.get $text_len) (local.get $dx_len)))) (else (i32.const 0))))
+      (local.set $i (i32.const 0))
+      (block $copy_rect_done (loop $copy_rect
+        (br_if $copy_rect_done (i32.ge_u (local.get $i) (local.get $rect_len)))
+        (i32.store8 (i32.add (local.get $rect) (local.get $i))
+          (call $gl8 (i32.add (local.get $arg4) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_rect)))
+            ))))
+      (local.set $result (call $gdi_native_ext_text_out
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)
+        (local.get $rect) (local.get $text) (local.get $count) (local.get $dx) (i32.const 1))))
+    (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
   )
 
@@ -2758,9 +2836,36 @@
 
   ;; 375: TextOutW(hdc, x, y, lpString, c) — 5 args stdcall, host reads UTF-16 LE.
   (func $handle_TextOutW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_text_out
-      (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (call $g2w (local.get $arg3)) (local.get $arg4) (i32.const 1)))
+    (local $text i32) (local $len i32) (local $copy_g i32) (local $i i32) (local $result i32)
+    (local.set $text (call $g2w (local.get $arg3)))
+    (block $done
+      ;; Preserve canonical count validation; copy only a valid counted input.
+      (if (i32.and (i32.ne (local.get $arg3) (i32.const 0))
+            (i32.and (i32.gt_s (local.get $arg4) (i32.const 0))
+              (i32.le_u (local.get $arg4) (i32.const 65536))))
+        (then
+          (local.set $len (i32.shl (local.get $arg4) (i32.const 1)))
+          (local.set $text (call $g2w_affine_span (local.get $arg3) (local.get $len)))
+          (if (i32.eq (local.get $text) (global.get $NULL_SENTINEL))
+            (then
+              ;; A heap block also covers counts larger than the span arena.
+              (local.set $copy_g (call $heap_alloc (local.get $len)))
+              (br_if $done (i32.eqz (local.get $copy_g)))
+              (local.set $text (call $g2w_affine_span (local.get $copy_g) (local.get $len)))
+              (br_if $done (i32.eq (local.get $text) (global.get $NULL_SENTINEL)))
+      (local.set $i (i32.const 0))
+      (block $copy_text_done (loop $copy_text
+        (br_if $copy_text_done (i32.ge_u (local.get $i) (local.get $len)))
+        (i32.store8 (i32.add (local.get $text) (local.get $i))
+          (call $gl8 (i32.add (local.get $arg3) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_text)))
+            ))))
+      (local.set $result (call $gdi_native_text_out
+        (local.get $arg0) (local.get $arg1) (local.get $arg2)
+        (local.get $text) (local.get $arg4) (i32.const 1))))
+    (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
   )
 
@@ -3943,22 +4048,75 @@
   ;; 949: ExtTextOutA(hdc, x, y, options, lprect, lpString, c, lpDx) — 8 args stdcall
   ;; Selected FNT strikes consume lpDx in WAT; the generic host path ignores it.
   (func $handle_ExtTextOutA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $lpString i32) (local $count i32) (local $rect_wa i32) (local $text_wa i32)
-    (local $lpDx i32) (local $dx_wa i32)
-    (local.set $lpString (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))) ;; arg5
-    (local.set $count (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))    ;; arg6
-    (if (local.get $arg4)
-      (then (local.set $rect_wa (call $g2w (local.get $arg4)))))
-    (if (local.get $lpString)
-      (then (local.set $text_wa (call $g2w (local.get $lpString)))))
+    (local $lpString i32) (local $count i32) (local $lpDx i32)
+    (local $text i32) (local $dx i32) (local $rect i32)
+    (local $text_len i32) (local $dx_len i32) (local $rect_len i32)
+    (local $total i32) (local $copy_g i32) (local $copy i32) (local $i i32) (local $result i32)
+    (local.set $lpString (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+    (local.set $count (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     (local.set $lpDx (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
-    (if (local.get $lpDx)
-      (then (local.set $dx_wa (call $g2w (local.get $lpDx)))))
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_ext_text_out
-      (local.get $arg0) (local.get $arg1) (local.get $arg2)
-      (local.get $arg3) (local.get $rect_wa)
-      (local.get $text_wa) (local.get $count) (local.get $dx_wa) (i32.const 0)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))) ;; 8 args + ret
+    (if (local.get $lpString) (then (local.set $text (call $g2w (local.get $lpString)))))
+    (if (local.get $lpDx) (then (local.set $dx (call $g2w (local.get $lpDx)))))
+    ;; The public rectangle is consumed only for clipping or opaque fill.
+    (if (i32.and (i32.ne (local.get $arg4) (i32.const 0))
+          (i32.ne (i32.and (local.get $arg3) (i32.const 6)) (i32.const 0)))
+      (then (local.set $rect_len (i32.const 16))
+        (local.set $rect (call $g2w (local.get $arg4)))))
+    (block $done
+      (if (i32.and (i32.le_u (local.get $count) (i32.const 65536))
+            (i32.or (i32.eqz (local.get $count)) (i32.ne (local.get $lpString) (i32.const 0))))
+        (then
+          (local.set $text_len (i32.shl (local.get $count) (i32.ne (i32.and (local.get $arg3) (i32.const 16)) (i32.const 0))))
+          (if (local.get $lpDx)
+            (then (local.set $dx_len (i32.shl (local.get $count)
+              (i32.add (i32.const 2) (i32.ne (i32.and (local.get $arg3) (i32.const 0x2000)) (i32.const 0)))))))
+          (if (local.get $text_len) (then (local.set $text (call $g2w_affine_span (local.get $lpString) (local.get $text_len)))))
+          (if (local.get $dx_len) (then (local.set $dx (call $g2w_affine_span (local.get $lpDx) (local.get $dx_len)))))
+          (if (local.get $rect_len) (then (local.set $rect (call $g2w_affine_span (local.get $arg4) (local.get $rect_len)))))
+          (if (i32.or (i32.eq (local.get $text) (global.get $NULL_SENTINEL))
+                (i32.or (i32.eq (local.get $dx) (global.get $NULL_SENTINEL))
+                  (i32.eq (local.get $rect) (global.get $NULL_SENTINEL))))
+            (then
+              ;; One contiguous temporary retains all counted bytes, including
+              ;; long runs, WORD glyph indices and ETO_PDY spacing pairs.
+              (local.set $total (i32.add (local.get $text_len) (i32.add (local.get $dx_len) (local.get $rect_len))))
+              (local.set $copy_g (call $heap_alloc (local.get $total)))
+              (br_if $done (i32.eqz (local.get $copy_g)))
+              (local.set $copy (call $g2w_affine_span (local.get $copy_g) (local.get $total)))
+              (br_if $done (i32.eq (local.get $copy) (global.get $NULL_SENTINEL)))
+              (local.set $text (local.get $copy))
+      (local.set $i (i32.const 0))
+      (block $copy_text_done (loop $copy_text
+        (br_if $copy_text_done (i32.ge_u (local.get $i) (local.get $text_len)))
+        (i32.store8 (i32.add (local.get $text) (local.get $i))
+          (call $gl8 (i32.add (local.get $lpString) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_text)))
+              (local.set $dx (if (result i32) (local.get $dx_len)
+                (then (i32.add (local.get $copy) (local.get $text_len))) (else (i32.const 0))))
+      (local.set $i (i32.const 0))
+      (block $copy_dx_done (loop $copy_dx
+        (br_if $copy_dx_done (i32.ge_u (local.get $i) (local.get $dx_len)))
+        (i32.store8 (i32.add (local.get $dx) (local.get $i))
+          (call $gl8 (i32.add (local.get $lpDx) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_dx)))
+              (local.set $rect (if (result i32) (local.get $rect_len)
+                (then (i32.add (local.get $copy) (i32.add (local.get $text_len) (local.get $dx_len)))) (else (i32.const 0))))
+      (local.set $i (i32.const 0))
+      (block $copy_rect_done (loop $copy_rect
+        (br_if $copy_rect_done (i32.ge_u (local.get $i) (local.get $rect_len)))
+        (i32.store8 (i32.add (local.get $rect) (local.get $i))
+          (call $gl8 (i32.add (local.get $arg4) (local.get $i))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $copy_rect)))
+            ))))
+      (local.set $result (call $gdi_native_ext_text_out
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3)
+        (local.get $rect) (local.get $text) (local.get $count) (local.get $dx) (i32.const 0))))
+    (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
   )
 
   ;; 947: SetPixelV(hdc, x, y, color) — 4 args stdcall, like SetPixel but returns BOOL
