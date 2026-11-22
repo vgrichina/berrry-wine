@@ -234,6 +234,17 @@
     (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
     (local.set $sw (call $g2w (local.get $state)))
 
+    ;; Microsoft WIN32.HLP (1992-1994), LISTBOX processing/WM_SETREDRAW,
+    ;; and KB Q66479: suppress drawing during bulk model changes. The list
+    ;; owns LBS_NOREDRAW; reenabling permits the caller's explicit repaint.
+    (if (i32.eq (local.get $msg) (i32.const 0x000B))
+      (then
+        (call $wnd_set_style (local.get $hwnd)
+          (i32.or
+            (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const -5))
+            (select (i32.const 0) (i32.const 4) (local.get $wParam))))
+        (return (i32.const 0))))
+
     ;; Microsoft Windows 3.1 Programmer's Reference (1992), pp128/190-191:
     ;; retain the caller's font, NULL selects the default, LOWORD requests
     ;; redraw. The caller owns the font. Keep explicit row geometry separate;
@@ -1562,6 +1573,8 @@
     ;; a 16px scrollbar strip is reserved at the right edge.
     (if (i32.eq (local.get $msg) (i32.const 0x000F))
       (then
+        (if (i32.and (call $wnd_get_style (local.get $hwnd)) (i32.const 4))
+          (then (return (i32.const 0))))
         ;; Skip paint when not WS_VISIBLE — combobox dropdowns rely on this:
         ;; their inner listbox child is invisible until $combobox_open_dropdown
         ;; sets WS_VISIBLE. Without this guard, LB_ADDSTRING's invalidate path
