@@ -39882,5 +39882,12 @@
     "nargs": 3,
     "convention": "stdcall",
     "hash": 3034926847
+  },
+  {
+    "id": 4719,
+    "name": "VkKeyScanExW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1850189542
   }
 ]

@@ -4872,6 +4872,11 @@
     (i32.store offset=0 (global.get $reg_base) (call $vk_key_scan (i32.and (local.get $arg0) (i32.const 0xFFFF))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))  ;; stdcall, 1 arg
 
+  ;; VkKeyScanExW(WCHAR ch, HKL dwhkl) uses the supported US layout.
+  (func $handle_VkKeyScanExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $vk_key_scan (i32.and (local.get $arg0) (i32.const 0xFFFF))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))  ;; stdcall, 2 args
+
   ;; VK->scancode lookup table for letters A..Z (vk 0x41..0x5A → table[vk-0x41]).
   ;; Real PS/2 set-1 scancodes; the previous (uCode-0x20) approximation produced
   ;; bogus values (e.g. Z=0x3A) that GetKeyNameTextA couldn't decode, so the
