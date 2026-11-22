@@ -1516,6 +1516,7 @@ const extra = [
   { name: 'SetDoubleClickTime', nargs: 1 },
   { name: 'MapVirtualKeyExW', nargs: 3 },
   { name: 'VkKeyScanExW', nargs: 2 },
+  { name: 'ToUnicodeEx', nargs: 7 },
 ];
 for (const api of extra) {
   const ownsHandler = Object.prototype.hasOwnProperty.call(api, 'handler');

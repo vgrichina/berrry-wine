@@ -206,6 +206,19 @@
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 
+  ;; ToUnicodeEx adds an explicit layout to ToUnicode's supported US subset.
+  ;; No additional layout or state model: share translation and no-output paths,
+  ;; then restore the entry frame and apply seven-argument cleanup (32 bytes).
+  (func $handle_ToUnicodeEx
+    (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $entry_esp i32)
+    (local.set $entry_esp (i32.load offset=16 (global.get $reg_base)))
+    (call $handle_ToUnicode
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (i32.store offset=16 (global.get $reg_base) (local.get $entry_esp))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+
   ;; GetKeyboardState(LPBYTE lpKeyState[256]) → BOOL — 1 arg stdcall.
   ;; SDL polls this every frame to build its keyboard snapshot. Snapshot the
   ;; complete table in one host call: in a guest Worker, calling the scalar
