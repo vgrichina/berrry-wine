@@ -163,7 +163,7 @@
     (field horizontal_extent i32) ;; +52  configured pixel width, independent of items
     (field scroll_x        i32))   ;; +56  content offset, distinct from SetScrollPos
 
-  ;; ComboBox (ctrl_class 5). 40 bytes — $combobox_wndproc heap_alloc 40.
+  ;; ComboBox (ctrl_class 5). 44 bytes — $combobox_wndproc heap_alloc 44.
   ;; The notification id is NOT here: see ButtonState above — one copy, in
   ;; CONTROL_TABLE+4, read with $ctrl_table_get_id($hwnd).
   (layout ComboBoxState
@@ -176,7 +176,8 @@
     (field edit_hwnd            i32) ;; +24  CBS_DROPDOWN inner edit; 0 for SIMPLE/DROPDOWNLIST
     (field is_dropped           i32) ;; +28  0/1 — CB_GETDROPPEDSTATE
     (field variant              i32) ;; +32  1=SIMPLE 2=DROPDOWN 3=DROPDOWNLIST
-    (field suppress_edit_notify i32)) ;; +36 combo-originated edit WM_SETTEXT nesting; ends at +40
+    (field suppress_edit_notify i32) ;; +36 combo-originated edit WM_SETTEXT nesting
+    (field dropped_width        i32)) ;; +40 requested minimum; independent of horizontal extent
 
   ;; ListView (ctrl_class 18). 76 bytes — $listview_wndproc heap_alloc 76.
   ;; item_count/item_cap and col_count/col_cap are two count+capacity pairs at
@@ -726,6 +727,10 @@
     (load.field.memarg ComboBoxState suppress_edit_notify (local.get $sw)))
   (func $cb_set_suppress_edit_notify (param $sw ptr<ComboBoxState>) (param $v i32)
     (store.field.memarg ComboBoxState suppress_edit_notify (local.get $sw) (local.get $v)))
+  (func $cb_dropped_width (param $sw ptr<ComboBoxState>) (result i32)
+    (load.field.memarg ComboBoxState dropped_width (local.get $sw)))
+  (func $cb_set_dropped_width (param $sw ptr<ComboBoxState>) (param $v i32)
+    (store.field.memarg ComboBoxState dropped_width (local.get $sw) (local.get $v)))
   ;; CB_SETEXTENDEDUI has no field of its own: it rides the unused top bit of
   ;; the stored style word, which is why a plain read of +8 is not the window
   ;; style an app would recognise. Both halves of that trick live here.

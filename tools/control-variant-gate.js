@@ -150,6 +150,7 @@ add('ComboBoxState', [
   '$cb_popup_hwnd', '$cb_set_popup_hwnd', '$cb_edit_hwnd', '$cb_set_edit_hwnd',
   '$cb_is_dropped', '$cb_set_is_dropped', '$cb_variant', '$cb_set_variant',
   '$cb_suppress_edit_notify', '$cb_set_suppress_edit_notify',
+  '$cb_dropped_width', '$cb_set_dropped_width',
 ], 'accessor layer');
 
 add('ListViewState', [

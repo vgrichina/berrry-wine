@@ -3587,7 +3587,7 @@
       "file": "src/09c3-controls.wat",
       "frozen": null,
       "frozenNote": null,
-      "size": 40,
+      "size": 44,
       "fields": [
         {
           "name": "text_buf_ptr",
@@ -3665,6 +3665,14 @@
           "name": "suppress_edit_notify",
           "type": "i32",
           "offset": 36,
+          "size": 4,
+          "count": 1,
+          "stride": 4
+        },
+        {
+          "name": "dropped_width",
+          "type": "i32",
+          "offset": 40,
           "size": 4,
           "count": 1,
           "stride": 4

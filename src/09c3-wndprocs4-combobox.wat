@@ -13,7 +13,7 @@
   ;;   2=CBS_DROPDOWN     listbox toggled by click/F4/Alt+Down; field is editable
   ;;   3=CBS_DROPDOWNLIST listbox toggled, field shows selection (read-only)
   ;;
-  ;; ComboBoxState (40 bytes, allocated in WM_CREATE)
+  ;; ComboBoxState (44 bytes, allocated in WM_CREATE)
   ;;   +0   text_buf_ptr   guest ptr to selected/typed item text
   ;;   +4   text_len
   ;;   +8   style          full window style
@@ -24,6 +24,7 @@
   ;;   +28  is_dropped     0/1 — CB_GETDROPPEDSTATE
   ;;   +32  variant        1=SIMPLE 2=DROPDOWN 3=DROPDOWNLIST
   ;;   +36  suppress_edit_notify — combo-originated edit WM_SETTEXT nesting
+  ;;   +40  dropped_width — requested minimum popup width (default zero)
   ;; The control id is NOT in the record: $ctrl_table_get_id($hwnd).
   ;;
   ;; FIELD_H = 21 px; arrow box = 16 px wide on right edge.
@@ -180,12 +181,22 @@
         (local.set $lb_wh (call $ctrl_get_wh_packed (local.get $lb)))
         (local.set $lb_w (i32.and (local.get $lb_wh) (i32.const 0xFFFF)))
         (local.set $lb_h (i32.shr_u (local.get $lb_wh) (i32.const 16)))
+        ;; Recompute from the field and the retained minimum, not the last
+        ;; list width. This permits shrinking and honors a resized combo on
+        ;; the next drop without changing its field or horizontal extent.
+        (local.set $lb_w (i32.and (call $ctrl_get_wh_packed (local.get $hwnd)) (i32.const 0xFFFF)))
+        (if (i32.gt_u (call $cb_dropped_width (local.get $sw)) (local.get $lb_w))
+          (then (local.set $lb_w (call $cb_dropped_width (local.get $sw)))))
         ;; Reparent listbox under popup (WAT side + renderer side).
         (call $wnd_set_parent (local.get $lb) (local.get $popup))
         (call $host_set_parent (local.get $lb) (local.get $popup))
         ;; Listbox is now top-left of popup interior.
         (call $ctrl_geom_set (call $wnd_table_find (local.get $lb))
           (i32.const 0) (i32.const 0) (local.get $lb_w) (local.get $lb_h))
+        ;; Let the existing list resize path refresh viewport/ranges while
+        ;; retaining its independent content extent and clamping scroll.
+        (drop (call $wnd_send_message (local.get $lb) (i32.const 0x0005) (i32.const 0)
+          (i32.or (local.get $lb_w) (i32.shl (local.get $lb_h) (i32.const 16)))))
         ;; Position popup directly below combo's field area in screen coords.
         (local.set $rect (call $paint_scratch_take))
         (call $host_get_window_rect (local.get $hwnd) (local.get $rect))
@@ -443,7 +454,7 @@
               (call $cb_popup_hwnd (call $g2w (local.get $state))))
             (local.set $prev_edit
               (call $cb_edit_hwnd (call $g2w (local.get $state))))))
-        (local.set $state (call $heap_alloc (i32.const 40)))
+        (local.set $state (call $heap_alloc (i32.const 44)))
         (local.set $state_w (call $g2w (local.get $state)))
         (call $cb_set_text_ptr (local.get $state_w) (i32.const 0))
         (call $cb_set_text_len (local.get $state_w) (i32.const 0))
@@ -456,6 +467,7 @@
         (call $cb_set_popup_hwnd (local.get $state_w) (local.get $prev_popup))
         (call $cb_set_edit_hwnd (local.get $state_w) (local.get $prev_edit))
         (call $cb_set_is_dropped (local.get $state_w) (i32.const 0))
+        (call $cb_set_dropped_width (local.get $state_w) (i32.const 0))
         (call $cb_set_variant (local.get $state_w) (local.get $variant))
         (call $cb_set_suppress_edit_notify (local.get $state_w) (i32.const 0))
         (if (local.get $name_ptr)
@@ -793,6 +805,28 @@
         (call $combobox_sync_text (local.get $state_w))
         (call $invalidate_hwnd (local.get $hwnd))
         (return (local.get $wParam))))
+
+    ;; ---------- CB_GETDROPPEDWIDTH / CB_SETDROPPEDWIDTH ----------
+    ;; Microsoft: minimum defaults to zero; the list uses the larger of that
+    ;; minimum and the combo width. Keep the request even when below the field
+    ;; width, so a later resize does not replace application state. SET only
+    ;; changes this minimum; geometry is applied on the next drop. lParam is
+    ;; unused, and neither message selects, edits, scrolls or notifies.
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x015F))
+                (i32.eq (local.get $msg) (i32.const 0x0160)))
+      (then
+        (if (i32.eq (local.get $variant) (i32.const 1))
+          (then (return (i32.const -1)))) ;; CBS_SIMPLE has no dropdown
+        (if (i32.eq (local.get $msg) (i32.const 0x0160))
+          (then
+            ;; Control geometry is represented by unsigned 16-bit dimensions.
+            ;; Reject unrepresentable requests rather than wrapping on open.
+            (if (i32.gt_u (local.get $wParam) (i32.const 65535))
+              (then (return (i32.const -1))))
+            (call $cb_set_dropped_width (local.get $state_w) (local.get $wParam))))
+        (local.set $w (i32.and (call $ctrl_get_wh_packed (local.get $hwnd)) (i32.const 0xFFFF)))
+        (local.set $idx (call $cb_dropped_width (local.get $state_w)))
+        (return (select (local.get $idx) (local.get $w) (i32.gt_u (local.get $idx) (local.get $w))))))
 
     ;; ---------- CB_GETDROPPEDSTATE (0x0157) ----------
     (if (i32.eq (local.get $msg) (i32.const 0x0157))
