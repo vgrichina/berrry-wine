@@ -60,17 +60,46 @@ for(const [key,vk] of Object.entries(controller.KEYS)){
 }
 async function main(){
  const root=process.env.GLTRON_TEST_OUT;assert(root&&path.isAbsolute(root),'unique run-local GLTRON_TEST_OUT required');fs.mkdirSync(root,{recursive:true});
- const server=http.createServer(),sockets=new Set(),events=[];let failUp=false,lateCapture=false,wrongSession=false,closeRequest=false;
+ const server=http.createServer(),sockets=new Set(),events=[];let failUp=false,lateCapture=false,wrongSession=false,closeRequest=false,attachDelay=0;
  server.on('upgrade',(req,socket)=>{
   sockets.add(socket);socket.on('close',()=>sockets.delete(socket));let buffer=Buffer.alloc(0);
   const accept=crypto.createHash('sha1').update(req.headers['sec-websocket-key']+'258EAFA5-E914-47DA-95CA-C5AB0DC85B11').digest('base64');
   socket.write('HTTP/1.1 101 Switching Protocols\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Accept: '+accept+'\r\n\r\n');
-  const response=v=>{const b=Buffer.from(JSON.stringify(v)),head=Buffer.alloc(b.length<126?2:4);head[0]=0x81;if(b.length<126)head[1]=b.length;else{head[1]=126;head.writeUInt16BE(b.length,2);}socket.write(Buffer.concat([head,b]));};
+  const response=v=>{const write=()=>{if(socket.destroyed)return;const b=Buffer.from(JSON.stringify(v)),head=Buffer.alloc(b.length<126?2:4);head[0]=0x81;if(b.length<126)head[1]=b.length;else{head[1]=126;head.writeUInt16BE(b.length,2);}socket.write(Buffer.concat([head,b]));};if(v.result?.sessionId==='fixture-page'&&attachDelay)setTimeout(write,attachDelay);else write();};
   socket.on('data',chunk=>{buffer=Buffer.concat([buffer,chunk]);while(buffer.length>=2){const opcode=buffer[0]&15;let size=buffer[1]&127,offset=2;if(size===126){if(buffer.length<4)return;size=buffer.readUInt16BE(2);offset=4;}assert(size<65536);if(buffer.length<offset+4+size)return;const mask=buffer.subarray(offset,offset+4);offset+=4;const b=Buffer.from(buffer.subarray(offset,offset+size));for(let i=0;i<b.length;i++)b[i]^=mask[i%4];buffer=buffer.subarray(offset+size);if(opcode===8){socket.end(Buffer.from([0x88,0]));continue;}const v=JSON.parse(b);events.push({at:Date.now(),...v});if(failUp&&v.method==='Input.dispatchKeyEvent')continue;if(closeRequest){socket.end();continue;}if(lateCapture&&v.method==='Page.captureScreenshot'){setTimeout(()=>{if(!socket.destroyed)response({id:v.id,sessionId:v.sessionId,result:{data:'late'}});},3150);continue;}if(wrongSession){response({id:v.id,sessionId:'replacement',result:{}});continue;}response({id:v.id,...(v.sessionId?{sessionId:v.sessionId}:{}),result:v.method==='Target.attachToTarget'?{sessionId:'fixture-page'}:v.method==='Runtime.evaluate'?{result:{value:{apps:[{name:'gltron',processId:1}]}}}:{}});}});
  });
  server.listen(0,'127.0.0.1');await once(server,'listening');
  const stat=fs.readFileSync('/proc/'+process.pid+'/stat','utf8'),startToken=stat.slice(stat.lastIndexOf(')')+2).split(' ')[19];
  try {
+  // Exercise the same lifecycle used by production host, guest and controls.
+  // Each case owns a fresh finite child and protocol scope, never a retry.
+  for(const kind of ['slowarm','slowarm-down','earlyexit','malformedoutput','timeout','stalelease','expired-after-arm']){
+   const out=path.join(root,'prearm-'+kind);fs.mkdirSync(out);const start=events.length,at=Date.now();
+   attachDelay=kind.startsWith('slowarm')?1250:kind==='timeout'||kind==='stalelease'?250:0;
+   const file=out+'/config.json';fs.writeFileSync(file,JSON.stringify({pid:process.pid,startToken,url:'ws://127.0.0.1:'+server.address().port,targetId:'exact-page',keys:['Enter'],name:'pulse'}));
+   const synthetic=kind==='earlyexit'||kind==='malformedoutput';
+   const args=synthetic?['-e',kind==='earlyexit'?"process.stderr.write('finite early exit\\n');process.exitCode=7;":"process.stdout.write('{broken\\n');process.stderr.write('finite malformed output\\n');setTimeout(()=>{},50);"]:[path.resolve(__dirname,'../tools/gltron-browser-controller.cjs'),'release',out,file];
+   const child=cp.spawn(process.execPath,args,{detached:true,stdio:['pipe','pipe','pipe']});let receipt,armedAt,down=false;
+   const run=()=>controller.releasePrearm({child,deadline:at+(kind==='stalelease'?125:kind==='expired-after-arm'?300:6000),attachMs:kind==='timeout'?100:controller.RELEASE_ATTACH_MS,record:r=>{receipt=r;},action:async(armed,markDown)=>{
+    armedAt=armed.at;
+    if(kind==='expired-after-arm'){await pause(325);markDown();}
+    if(kind==='slowarm-down'){
+     const c=controller.connection('ws://127.0.0.1:'+server.address().port);await c.ready;
+     try{markDown();down=true;await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:'Enter'},'fixture-page');child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,Date.now()+100)})+'\n');}finally{c.ws.close();}
+    }
+   }});
+   if(kind.startsWith('slowarm'))await run();else await assert.rejects(run(),e=>e.inputState==='NOT_SENT');
+   assert(receipt.actualWait&&receipt.stdoutEOF&&receipt.stderrEOF);
+   assert(receipt.watchdog.actualWait&&receipt.watchdog.stderrEOF);assert.equal(receipt.watchdog.code,0);
+   assert.throws(()=>process.kill(child.pid,0),e=>e.code==='ESRCH','child actually reaped');
+   const requests=events.slice(start),downs=requests.filter(e=>e.params?.type==='keyDown'),ups=requests.filter(e=>e.params?.type==='keyUp');
+   assert.equal(downs.length,kind==='slowarm-down'?1:0);assert.equal(ups.length,kind==='slowarm-down'?1:0);
+   assert.equal(receipt.state,down?'ACK':'NOT_SENT');
+   if(kind.startsWith('slowarm'))assert(armedAt-at>1000&&armedAt-at<controller.RELEASE_ATTACH_MS);
+   if(!down)assert(!fs.existsSync(out+'/pulse-up.json'));
+   fs.writeFileSync(out+'/wait.json',JSON.stringify({...receipt,elapsedMs:Date.now()-at,requests,armedAt}));
+  }
+  attachDelay=0;
   for(const kind of ['scheduled','parent-eof','pair','late-eof','mouse-scheduled','mouse-parent-eof']){
    const out=path.join(root,kind);fs.mkdirSync(out);const keys=kind==='pair'?['a','s']:['Enter'];
    const mouse=kind.startsWith('mouse-')?{button:'left',x:490,y:17}:null;

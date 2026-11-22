@@ -74,6 +74,57 @@ function connection(url) {
   return api;
 }
 function save(out,n,v){const p=path.join(out,n);assert(!fs.existsSync(p),n);fs.writeFileSync(p+'.pending',JSON.stringify(v,null,2)+'\n',{flag:'wx'});fs.renameSync(p+'.pending',p);}
+// Attachment has its own finite budget; it never refreshes input authority.
+const RELEASE_ATTACH_MS=10000;
+async function releasePrearm({child,deadline,action,record,attachMs=RELEASE_ATTACH_MS}) {
+  assert(Number.isFinite(deadline)&&attachMs>0&&attachMs<=RELEASE_ATTACH_MS);
+  let stdout='',stderr='',spawnError,attempted=false,error,value,timer,armed;
+  child.stdin.on('error',e=>{spawnError??=e;});
+  child.stderr.on('data',b=>stderr+=b);
+  const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
+  // A separate process bounds cleanup even if this controller stops servicing
+  // timers. Release children own a process group; join the watchdog as well.
+  const watchdog=cp.spawn(process.execPath,['-e',`const t=setTimeout(()=>{try{process.kill(-Number(process.argv[1]),'SIGKILL');}catch(e){if(e.code!=='ESRCH')throw e;}process.stdin.destroy();},Number(process.argv[2]));process.stdin.on('data',()=>{clearTimeout(t);process.stdin.destroy();});`,String(child.pid),String(attachMs+12000)],{stdio:['pipe','ignore','pipe']});
+  watchdog.stdin.on('error',e=>{spawnError??=e;});
+  let watchdogStderr='';watchdog.stderr.on('data',b=>watchdogStderr+=b);
+  const watchdogWait=new Promise(r=>watchdog.once('close',(code,signal)=>r({code,signal,actualWait:true,stderrEOF:watchdog.stderr.readableEnded,stderr:watchdogStderr})));
+  const prearm=new Promise((resolve,reject)=>{
+    timer=setTimeout(()=>reject(Error('release prearm deadline')),Math.max(0,Math.min(attachMs,deadline-Date.now())));
+    child.once('error',e=>{spawnError=e;reject(e);});
+    child.once('exit',(code,signal)=>reject(Error('release child exited before use '+code+' '+signal)));
+    child.stdout.on('data',b=>{
+      stdout+=b;if(armed||!stdout.includes('\n'))return;
+      try{
+        const v=JSON.parse(stdout.split('\n')[0]);
+        assert.equal(v.armed,true);assert.equal(v.pid,child.pid);
+        assert(Number.isFinite(v.at)&&v.fallback===v.at+1750&&typeof v.session==='string');
+        assert(v.at<=Date.now()&&Date.now()<v.fallback-250,'expired independent release arm');
+        armed=v;resolve(v);
+      }catch(e){reject(e);}
+    });
+  });
+  try {
+    await prearm;clearTimeout(timer);
+    const markDown=()=>{
+      assert(!spawnError&&child.exitCode===null&&child.signalCode===null,'release child unavailable');
+      assert(Date.now()<deadline&&Date.now()<armed.fallback-250,'expired input lease before DOWN');
+      attempted=true;
+    };
+    assert(Date.now()<deadline,'expired input lease after prearm');
+    value=await action(armed,markDown);
+  }catch(e){error=e;}
+  finally {
+    clearTimeout(timer);
+    if(!child.stdin.destroyed)child.stdin.end(!attempted?JSON.stringify({cancelNoDown:true})+'\n':undefined);
+    const result=await joined;
+    if(!watchdog.stdin.destroyed)watchdog.stdin.end('joined\n');
+    const watchdogResult=await watchdogWait;
+    if(result.code!==0||spawnError||watchdogResult.code!==0)error??=spawnError||Error('independent release failed');
+    record({...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr,watchdog:watchdogResult,attempted,state:attempted?(error?'UNKNOWN':'ACK'):'NOT_SENT'});
+  }
+  if(error){error.inputState=attempted?'UNKNOWN':'NOT_SENT';throw error;}
+  return value;
+}
 async function release(out,file) {
   const cfg=JSON.parse(fs.readFileSync(file));
   const s=fs.readFileSync('/proc/'+cfg.pid+'/stat','utf8');assert.equal(s.slice(s.lastIndexOf(')')+2).split(' ')[19],cfg.startToken);
@@ -91,10 +142,11 @@ async function release(out,file) {
   }}
   await checkOwner();
   await checkHost();
-  const armed=Date.now(),fallback=armed+1750;let due=fallback,pending='';
-  process.stdin.on('data',b=>{pending+=b;let i;while((i=pending.indexOf('\n'))>=0){const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
+  const armed=Date.now(),fallback=armed+1750;let due=fallback,pending='',cancelNoDown=false;
+  process.stdin.on('data',b=>{pending+=b;let i;while((i=pending.indexOf('\n'))>=0){const v=JSON.parse(pending.slice(0,i));pending=pending.slice(i+1);if(v.cancelNoDown===true){cancelNoDown=true;continue;}assert(v.at>=armed&&v.at<=fallback);due=Math.min(due,v.at);}});
   process.stdout.write(JSON.stringify({armed:true,at:armed,fallback,session,pid:process.pid})+'\n');
-  while(Date.now()<due)await wait(Math.min(5,due-Date.now()));
+  while(!cancelNoDown&&Date.now()<due)await wait(Math.min(5,due-Date.now()));
+  if(cancelNoDown){save(out,cfg.name+'-cancelled.json',{armed,fallback,cancelNoDown:true,inputDispatches:0,independent:true});await c.send('Target.detachFromTarget',{sessionId:session});return;}
   await checkOwner();
   await checkHost();
   const fired=Date.now(),receipts=[];
@@ -123,17 +175,13 @@ async function hostBootstrap({out,evaluate,send,session,owner,browserIdentity,de
   checkBrowser();const point=binding.reviewHostBootstrap(scene,review,await evaluate(binding.HOST_READ));
   record('host-bootstrap-used.json',{nonce:scene.nonce,at:Date.now(),noReplay:true,guestClickAuthorized:false,review});
   const config={...browserIdentity,name:'host-consent',mouse:{...point,button:'left'},hostOwner:owner};record('host-release-config.json',config);
-  const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/host-release-config.json'],{stdio:['pipe','pipe','pipe']});
-  let stdout='',stderr='',error,down;
-  child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
-  try{
-    const armed=await new Promise((r,j)=>{const timer=setTimeout(()=>j(Error('host independent release arm timeout')),1000);child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(timer);r(JSON.parse(stdout.split('\n')[0]));}});child.once('exit',code=>{if(!stdout){clearTimeout(timer);j(Error('host release child exit '+code));}});});assert(armed.armed);
+  const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/host-release-config.json'],{detached:true,stdio:['pipe','pipe','pipe']});
+  let error,down;
+  try{await releasePrearm({child,deadline:Math.min(deadline,scene.at+30000),record:r=>record('host-release-wait.json',r),action:async(armed,markDown)=>{
     checkBrowser();binding.reviewHostBootstrap(scene,review,await evaluate(binding.HOST_READ));
-    assert(Date.now()<deadline&&Date.now()<armed.fallback-250,'finite host DOWN window');
-    down=Date.now();await send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',buttons:1,x:point.x,y:point.y,clickCount:1},session);
+    markDown();down=Date.now();await send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',buttons:1,x:point.x,y:point.y,clickCount:1},session);
     child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,down+120)})+'\n');
-  }catch(e){error=e;}
-  finally{child.stdin.end();const result=await joined;record('host-release-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});if(result.code!==0)error??=Error('independent host UP failed');}
+  }});}catch(e){error=e;}
   record('host-down.json',{at:down??null,error:error?String(error):null,hostOnly:true});if(error)throw error;
   const up=JSON.parse(fs.readFileSync(out+'/host-consent-up.json'));assert(up.ack-down<=2000,'bounded independent host UP');
   const events=await evaluate('__gltronHostUIEvents');record('host-events.json',{events,canvasMouseEventObserved:events.some(e=>e.canvas)});
@@ -176,9 +224,10 @@ async function browser(out,backend) {
     }
     return latest;
   }
-  async function close(reason){
+  async function close(reason,noCDP=false){
     if(closing)return;closing=true;clearTimeout(cutoffTimer);record('close-reason.json',{reason,at:Date.now(),hostOnly:true});
-    if(c)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
+    if(noCDP){c?.ws.close();browser?.kill('SIGTERM');}
+    else if(c)try{await c.send('Browser.close');}catch(e){record('browser-close-error.json',{error:String(e)});}
     if(browser){let timer;try{await Promise.race([chromeWait,new Promise((_,j)=>{timer=setTimeout(()=>j(Error('browser close timeout')),5000);})]);}catch(e){browser.kill('SIGTERM');await chromeWait;}finally{clearTimeout(timer);}}
     c?.ws.close();server?.closeAllConnections();if(server)await new Promise(r=>server.close(r));if(transient)record('transient-cleanup.json',await transient.cleanup(out));record('closed.json',{at:Date.now(),nativeQuitClaim:false});
   }
@@ -220,19 +269,21 @@ async function browser(out,backend) {
       const cases=[...Object.keys(KEYS).map(key=>({key,ms:120})),{key:'a',ms:1500},{key:'s',ms:null}];
       for(const [i,{key,ms}] of cases.entries()){
         const name='control-'+i,config={url,pid:browser.pid,startToken,targetId,keys:[key],name};record(name+'-release-config.json',config);
-        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
-        const armed=await new Promise((r,j)=>{const t=setTimeout(()=>j(Error('native release arm timeout')),1500);child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(t);r(JSON.parse(stdout.trim()));}});});assert(armed.armed);
-        const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session);child.stdin.end(ms===null?'':JSON.stringify({at:before+ms})+'\n');
-        const result=await joined;record(name+'-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});assert.equal(result.code,0,stderr);
+        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{detached:true,stdio:['pipe','pipe','pipe']});
+        await releasePrearm({child,deadline:launch.deadline*1000,record:r=>record(name+'-wait.json',r),action:async(armed,markDown)=>{
+          markDown();const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session);
+          if(ms!==null)child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,before+ms)})+'\n');
+        }});
       }
       const proof=await evaluate('keyProof');assert.equal(proof.length,cases.length*2);assert(proof.every(e=>e.trusted));for(let i=0;i<proof.length;i+=2){assert.equal(proof[i].type,'keydown');assert.equal(proof[i+1].type,'keyup');assert.equal(proof[i].key,proof[i+1].key);assert(proof[i+1].at-proof[i].at<=2000);}
       await evaluate(`globalThis.mouseProof=[];for(const type of ['mousedown','mouseup'])addEventListener(type,e=>mouseProof.push({type,trusted:e.isTrusted,at:Date.now()}));`);
       for(const [i,ms] of [1500,null].entries()){
         const name='mouse-control-'+i,config={url,pid:browser.pid,startToken,targetId,mouse:{button:'left',x:20,y:20},name};record(name+'-release-config.json',config);
-        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});let stdout='',stderr='';child.stderr.on('data',b=>stderr+=b);const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));
-        const armed=await new Promise((r,j)=>{const t=setTimeout(()=>j(Error('native mouse release arm timeout')),1500);child.stdout.on('data',b=>{stdout+=b;if(stdout.includes('\n')){clearTimeout(t);r(JSON.parse(stdout.trim()));}});});assert(armed.armed);
-        const before=Date.now();await c.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',buttons:1,x:20,y:20,clickCount:1},session);child.stdin.end(ms===null?'':JSON.stringify({at:before+ms})+'\n');
-        const result=await joined;record(name+'-wait.json',{...result,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout,stderr});assert.equal(result.code,0,stderr);
+        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+name+'-release-config.json'],{detached:true,stdio:['pipe','pipe','pipe']});
+        await releasePrearm({child,deadline:launch.deadline*1000,record:r=>record(name+'-wait.json',r),action:async(armed,markDown)=>{
+          markDown();const before=Date.now();await c.send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',buttons:1,x:20,y:20,clickCount:1},session);
+          if(ms!==null)child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,before+ms)})+'\n');
+        }});
       }
       const mouseProof=await evaluate('mouseProof');assert.equal(mouseProof.length,4);assert(mouseProof.every(e=>e.trusted));for(let i=0;i<4;i+=2){assert.equal(mouseProof[i].type,'mousedown');assert.equal(mouseProof[i+1].type,'mouseup');assert(mouseProof[i+1].at-mouseProof[i].at<=2000);}
       record('native-controls.json',{passed:true,proof,mouseProof,originalLaunched:false});await close('blank-page native input controls complete');return;
@@ -316,18 +367,16 @@ async function browser(out,backend) {
       await chain.admit({...review,maxAgeMs:maxAge},async admission=>{
         require(ROOT+'/'+HELPER).same(bound,admission.live.identity);policy(cmd,launch,phase&&cmd.mode!=='quit');
         const config={...JSON.parse(fs.readFileSync(out+'/endpoint.json')),name:cmd.name,targetId,keys:cmd.keys,owner:bound};record(cmd.name+'-release-config.json',config);
-        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+cmd.name+'-release-config.json'],{stdio:['pipe','pipe','pipe']});
-        let output='',errors='';const joined=new Promise(r=>child.once('close',(code,signal)=>r({code,signal})));child.stderr.on('data',b=>errors+=b);
-        const armed=await new Promise((r,j)=>{let timer=setTimeout(()=>j(Error('release prearm timeout')),1000);child.stdout.on('data',b=>{output+=b;if(output.includes('\n')){clearTimeout(timer);r(JSON.parse(output.split('\n')[0]));}});child.once('exit',code=>{if(!output)j(Error('release child exit '+code));});});assert(armed.armed);
+        const child=cp.spawn(process.execPath,[__filename,'release',out,out+'/'+cmd.name+'-release-config.json'],{detached:true,stdio:['pipe','pipe','pipe']});
         const events=[];let error;
-        try {
+        try {await releasePrearm({child,deadline:Math.min(Date.parse(latest.at)+maxAge,launch.deadline*1000,cmd.mode==='quit'?Infinity:gameplayCutoff(launch)-3000),record:r=>record(cmd.name+'-release-wait.json',r),action:async(armed,markDown)=>{
           const ready=await evaluate(require(ROOT+'/'+HELPER).readinessExpression(bound,false,true));
           assert(ready.ready,'input current display not ready after prearm: '+ready.pending?.join(', '));
-          if(Date.now()-Date.parse(latest.at)>=maxAge){record(cmd.name+'-unsent.json',{downEffects:0,state:'CLOSED_BEFORE_DOWN',reason:'expired after prearm; independent UP remains armed'});throw Error('expired after release prearm; permanently close input');}
-          for(const key of cmd.keys){assert(Date.now()<armed.fallback-250);attempted=true;const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session);events.push({key,before,ack:Date.now()});}
+          policy(cmd,launch,phase&&cmd.mode!=='quit');
+          assert(Date.now()-Date.parse(latest.at)<maxAge,'expired after release prearm; permanently close input');
+          for(const key of cmd.keys){markDown();attempted=true;const before=Date.now();await c.send('Input.dispatchKeyEvent',{type:'keyDown',key:key==='Space'?' ':key,code:key==='a'?'KeyA':key==='s'?'KeyS':key,windowsVirtualKeyCode:KEYS[key]},session);events.push({key,before,ack:Date.now()});}
           child.stdin.write(JSON.stringify({at:Math.min(armed.fallback,events[0].before+cmd.ms)})+'\n');
-        }catch(e){error=e;}
-        finally {child.stdin.end();const joinedValue=await joined;record(cmd.name+'-release-wait.json',{...joinedValue,actualWait:true,stdoutEOF:child.stdout.readableEnded,stderrEOF:child.stderr.readableEnded,stdout:output,stderr:errors});assert.equal(joinedValue.code,0);}
+        }});}catch(e){error=e;}
         record(cmd.name+'-delivery.json',{events,admission,attempted,error:error?String(error):null});if(error)throw error;
         const up=JSON.parse(fs.readFileSync(out+'/'+cmd.name+'-up.json'));assert(events.every(e=>up.ack-e.before<=2000),'UP acknowledgement exceeded maximum hold');
         const physical=await evaluate(`runningApps.map(a=>({name:a.name,keys:${JSON.stringify(cmd.keys.map(k=>KEYS[k]))}.map(k=>({key:k,down:a.wine?.renderer?.peekKeyDownState(k)}))}))`);record(cmd.name+'-physical.json',{physical,at:Date.now()});assert(physical.every(a=>a.keys.every(k=>k.down===false||k.down===0)),'released physical key state');
@@ -336,9 +385,10 @@ async function browser(out,backend) {
     }
   }catch(e){
     record('failure.json',{error:e.stack,code:e.code??null,inputState:e.inputState??null,ticketObservation:e.ticketObservation??null,captureNonce:e.captureNonce??null,noReplay:true,at:Date.now()});process.exitCode=1;
-    if(c&&session)try{const shot=await c.send('Page.captureScreenshot',{format:'png'},session);fs.writeFileSync(out+'/first-failure.png',Buffer.from(shot.data,'base64'),{flag:'wx'});record('first-failure-state.json',await state());}catch(captureError){record('failure-capture-error.json',{error:String(captureError)});}
-    await close('first causal failure');
+    const unknown=e.inputState==='UNKNOWN'||c?.closed||/UNKNOWN/.test(String(e));
+    if(!unknown&&c&&session)try{const shot=await c.send('Page.captureScreenshot',{format:'png'},session);fs.writeFileSync(out+'/first-failure.png',Buffer.from(shot.data,'base64'),{flag:'wx'});record('first-failure-state.json',await state());}catch(captureError){record('failure-capture-error.json',{error:String(captureError)});}
+    await close('first causal failure',unknown);
   }
 }
 if(require.main===module){const [mode,out,arg]=process.argv.slice(2);(mode==='release'?release(out,arg):browser(out,arg)).catch(e=>{console.error(e);process.exitCode=1;});}
-module.exports={policy,gameplayCutoff,KEYS,HELPER,sha,connection,release,GL_OBSERVER,hostBootstrap};
+module.exports={policy,gameplayCutoff,KEYS,HELPER,sha,connection,release,GL_OBSERVER,hostBootstrap,releasePrearm,RELEASE_ATTACH_MS};
