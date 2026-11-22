@@ -7140,6 +7140,7 @@
         (param $sx i32) (param $sy i32) (param $sw i32) (param $sh i32)
         (param $bits i32) (param $bmi i32) (param $usage i32) (param $rop i32) (result i32)
     (local $dst i32) (local $src i32) (local $mdx i32) (local $mdy i32)
+    (local $mdw i32) (local $mdh i32)
     (local $msy i32) (local $pattern i32) (local $ok i32)
     (local $compression i32) (local $decoded i32)
     (if (i32.gt_u (local.get $usage) (i32.const 1)) (then (return (i32.const 0))))
@@ -7173,6 +7174,13 @@
         (return (i32.const 0))))
     (local.set $mdx (call $gdi_line_map_x (local.get $dst) (local.get $dx)))
     (local.set $mdy (call $gdi_line_map_y (local.get $dst) (local.get $dy)))
+    ;; Destination dimensions are logical units; source dimensions are pixels.
+    (local.set $mdw (i32.sub
+      (call $gdi_line_map_x (local.get $dst) (i32.add (local.get $dx) (local.get $dw)))
+      (local.get $mdx)))
+    (local.set $mdh (i32.sub
+      (call $gdi_line_map_y (local.get $dst) (i32.add (local.get $dy) (local.get $dh)))
+      (local.get $mdy)))
     (local.set $msy (local.get $sy))
     ;; StretchDIBits measures ySrc upward from the DIB's lower-left corner,
     ;; and does so for a top-down DIB as well: biHeight's sign says which way
@@ -7195,7 +7203,7 @@
           (i32.load offset=8 (local.get $src)) (local.get $sy)))))
     (local.set $ok (call $gdi_raster_stretch_blt
       (local.get $hdc) (i32.const 0) (local.get $dst) (local.get $mdx) (local.get $mdy)
-      (local.get $dw) (local.get $dh) (local.get $src)
+      (local.get $mdw) (local.get $mdh) (local.get $src)
       (local.get $sx) (local.get $msy) (local.get $sw) (local.get $sh)
       (local.get $pattern) (local.get $rop)))
     (if (local.get $decoded)
@@ -7203,8 +7211,8 @@
     (if (i32.eqz (local.get $ok)) (then (return (i32.const 0))))
     (call $gdi_geometry_present (local.get $hdc) (local.get $dst)
       (local.get $mdx) (local.get $mdy)
-      (i32.add (local.get $mdx) (local.get $dw))
-      (i32.add (local.get $mdy) (local.get $dh)))
+      (i32.add (local.get $mdx) (local.get $mdw))
+      (i32.add (local.get $mdy) (local.get $mdh)))
     (local.get $sh))
 
   ;; SetDIBitsToDevice is a source decode plus SRCCOPY into the selected
