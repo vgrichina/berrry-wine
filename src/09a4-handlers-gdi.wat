@@ -254,11 +254,59 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   (func $handle_GetPath (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_dc_path_get
-      (local.get $arg0)
-      (if (result i32) (local.get $arg1) (then (call $g2w (local.get $arg1))) (else (i32.const 0)))
-      (if (result i32) (local.get $arg2) (then (call $g2w (local.get $arg2))) (else (i32.const 0)))
-      (local.get $arg3)))
+    (local $count i32) (local $points i32) (local $types i32)
+    (local $temporary i32) (local $result i32) (local $i i32) (local $bytes i32)
+    (local.set $points (if (result i32) (local.get $arg1)
+      (then (call $g2w (local.get $arg1))) (else (i32.const 0))))
+    (local.set $types (if (result i32) (local.get $arg2)
+      (then (call $g2w (local.get $arg2))) (else (i32.const 0))))
+    (block $done
+      ;; Query the retained count without touching either output. Capacity is
+      ;; an upper bound, so only the actual points may be scattered back.
+      (if (i32.and (i32.ne (local.get $arg3) (i32.const 0))
+            (i32.and (i32.ne (local.get $arg1) (i32.const 0))
+              (i32.ne (local.get $arg2) (i32.const 0))))
+        (then
+          (local.set $count (call $gdi_dc_path_get
+            (local.get $arg0) (i32.const 0) (i32.const 0) (i32.const 0)))
+          (if (i32.and (i32.gt_s (local.get $count) (i32.const 0))
+                (i32.ge_u (local.get $arg3) (local.get $count)))
+            (then
+              (local.set $bytes (i32.shl (local.get $count) (i32.const 3)))
+              (local.set $points (call $g2w_affine_span (local.get $arg1) (local.get $bytes)))
+              (local.set $types (call $g2w_affine_span (local.get $arg2) (local.get $count)))
+              (if (i32.or (i32.eq (local.get $points) (global.get $NULL_SENTINEL))
+                    (i32.eq (local.get $types) (global.get $NULL_SENTINEL)))
+                (then
+                  ;; Recorded paths can exceed the bounded span arena. Own a
+                  ;; heap buffer for both arrays, leaving the canonical helper
+                  ;; and its current inverse-transform calculation unchanged.
+                  (local.set $temporary (call $heap_alloc
+                    (i32.add (local.get $bytes) (local.get $count))))
+                  (if (i32.eqz (local.get $temporary))
+                    (then (local.set $result (i32.const -1)) (br $done)))
+                  (local.set $points (call $g2w (local.get $temporary)))
+                  (local.set $types (i32.add (local.get $points) (local.get $bytes)))))))))
+      (local.set $result (call $gdi_dc_path_get
+        (local.get $arg0) (local.get $points) (local.get $types) (local.get $arg3)))
+      (if (i32.and (i32.ne (local.get $temporary) (i32.const 0))
+            (i32.gt_s (local.get $result) (i32.const 0)))
+        (then
+          (block $points_done (loop $copy_points
+            (br_if $points_done (i32.ge_u (local.get $i) (local.get $bytes)))
+            (call $gs8 (i32.add (local.get $arg1) (local.get $i))
+              (i32.load8_u (i32.add (local.get $points) (local.get $i))))
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br $copy_points)))
+          (local.set $i (i32.const 0))
+          (block $types_done (loop $copy_types
+            (br_if $types_done (i32.ge_u (local.get $i) (local.get $result)))
+            (call $gs8 (i32.add (local.get $arg2) (local.get $i))
+              (i32.load8_u (i32.add (local.get $types) (local.get $i))))
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br $copy_types))))))
+    (if (local.get $temporary) (then (call $heap_free (local.get $temporary))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   (func $handle_PathToRegion (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
