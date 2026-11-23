@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "06bc6a4b4c641d40b3459f031a183d7b74e25a5a04eb802a48a91d9279dfe64a",
+      "sha256": "b6cfcf000190c9adf565a457201f9c107403a418f4d96bb6b893bee6a0c1c073",
+      "reason": "2026-11-23 mouse release state: handleMouseUp snapshots the remaining physical mouse-button mask plus Ctrl/Shift via the existing nonmutating peekKeyDownState accessor after removing the released button. Existing queued, captured, direct-control and dialog release calls receive that wParam. No new callback, guest entry, timer, continuation, retained reference or invocation ownership; release cleanup, DirectInput edges, coordinates, capture routing and synchronous versus queued delivery stay in their existing order. Native EDIT can return before legacy modifier flags update, and queued key-up delivery must not override current physical state. NEW test-renderer-mouse-up-modifiers.cjs covers 254 release cases; unchanged drag, capture, modal and browser-key regressions pass. Ownership remains pending."
+    }
+  ]
+}
