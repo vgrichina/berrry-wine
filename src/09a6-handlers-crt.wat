@@ -996,11 +996,17 @@
   )
 
   (func $handle_ldexp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $x f64)
+    (local.set $x (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))))
+    (if (f64.eq (local.get $x) (f64.const 0))
+      (then (call $fpu_push (local.get $x)))
+      (else
     (call $fpu_push
       (f64.mul
         (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
         (call $host_math_pow2
           (f64.convert_i32_s (i32.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))))))
+      ))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
