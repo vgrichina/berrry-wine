@@ -3224,6 +3224,7 @@ Layout(hdc) -> DWORD — return 0 (LTR layout)
   ;; JS clamps subsequent mouse input to this rect so apps that watch for the
   ;; cursor reaching a clipped edge (Bricks/Klotski) see Win32-like coords.
   (func $handle_ClipCursor (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $pos i32) (local $x i32) (local $y i32)
     (if (i32.eqz (local.get $arg0))
       (then
         (global.set $clip_cursor_active (i32.const 0))
@@ -3239,6 +3240,26 @@ Layout(hdc) -> DWORD — return 0 (LTR layout)
       (i32.and
         (i32.lt_s (global.get $clip_cursor_l) (global.get $clip_cursor_r))
         (i32.lt_s (global.get $clip_cursor_t) (global.get $clip_cursor_b))))
+    ;; Establish confinement immediately, before any later mouse input.
+    ;; Use the existing packed signed-coordinate read and cursor-warp import;
+    ;; Worker RPC flushes that warp before the following GetCursorPos read.
+    (if (global.get $clip_cursor_active)
+      (then
+        (local.set $pos (call $host_get_mouse_position))
+        (local.set $x (i32.shr_s (i32.shl (local.get $pos) (i32.const 16)) (i32.const 16)))
+        (local.set $y (i32.shr_s (local.get $pos) (i32.const 16)))
+        (if (i32.lt_s (local.get $x) (global.get $clip_cursor_l))
+          (then (local.set $x (global.get $clip_cursor_l))))
+        (if (i32.ge_s (local.get $x) (global.get $clip_cursor_r))
+          (then (local.set $x (i32.sub (global.get $clip_cursor_r) (i32.const 1)))))
+        (if (i32.lt_s (local.get $y) (global.get $clip_cursor_t))
+          (then (local.set $y (global.get $clip_cursor_t))))
+        (if (i32.ge_s (local.get $y) (global.get $clip_cursor_b))
+          (then (local.set $y (i32.sub (global.get $clip_cursor_b) (i32.const 1)))))
+        (if (i32.or
+              (i32.ne (local.get $x) (i32.shr_s (i32.shl (local.get $pos) (i32.const 16)) (i32.const 16)))
+              (i32.ne (local.get $y) (i32.shr_s (local.get $pos) (i32.const 16))))
+          (then (call $host_set_mouse_position (local.get $x) (local.get $y))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
