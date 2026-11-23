@@ -254,19 +254,18 @@
   ;; the caller already put a WAVEFORMATEX in pwfx and wants it named. Both
   ;; write szFormat, which is the part an app puts in front of a user.
   (func $acm_format_details (param $pafd i32) (param $fdw i32) (param $wide i32) (result i32)
-    (local $wa i32) (local $query i32) (local $index i32)
+    (local $query i32) (local $index i32)
     (local $pwfx i32) (local $cbwfx i32) (local $rate i32) (local $bits i32) (local $ch i32)
     (if (i32.eqz (local.get $pafd))
       (then (return (i32.const 0x00000057))))     ;; MMSYSERR_INVALPARAM
-    (local.set $wa (call $g2w (local.get $pafd)))
     (local.set $query (i32.and (local.get $fdw) (i32.const 0x0000000F)))
-    (local.set $index (i32.load offset=4 (local.get $wa)))
-    (local.set $pwfx (i32.load offset=16 (local.get $wa)))
-    (local.set $cbwfx (i32.load offset=20 (local.get $wa)))
+    (local.set $index (call $gl32 (i32.add (local.get $pafd) (i32.const 4))))
+    (local.set $pwfx (call $gl32 (i32.add (local.get $pafd) (i32.const 16))))
+    (local.set $cbwfx (call $gl32 (i32.add (local.get $pafd) (i32.const 20))))
     ;; PCM is the only tag; tag 0 (WAVE_FORMAT_UNKNOWN) means "any".
     (if (i32.and
-          (i32.ne (i32.load offset=8 (local.get $wa)) (i32.const 1))
-          (i32.ne (i32.load offset=8 (local.get $wa)) (i32.const 0)))
+          (i32.ne (call $gl32 (i32.add (local.get $pafd) (i32.const 8))) (i32.const 1))
+          (i32.ne (call $gl32 (i32.add (local.get $pafd) (i32.const 8))) (i32.const 0)))
       (then (return (i32.const 512))))            ;; ACMERR_NOTPOSSIBLE
     (if (i32.eqz (local.get $query))
       (then
@@ -278,28 +277,26 @@
         (if (i32.and (i32.ne (local.get $pwfx) (i32.const 0))
               (i32.ge_u (local.get $cbwfx) (i32.const 16)))
           (then
-            (local.set $pwfx (call $g2w (local.get $pwfx)))
-            (i32.store16 (local.get $pwfx) (i32.const 1))              ;; WAVE_FORMAT_PCM
-            (i32.store16 offset=2 (local.get $pwfx) (local.get $ch))
-            (i32.store offset=4 (local.get $pwfx) (local.get $rate))
-            (i32.store offset=8 (local.get $pwfx)                       ;; nAvgBytesPerSec
+            (call $gs16 (local.get $pwfx) (i32.const 1))              ;; WAVE_FORMAT_PCM
+            (call $gs16 (i32.add (local.get $pwfx) (i32.const 2)) (local.get $ch))
+            (call $gs32 (i32.add (local.get $pwfx) (i32.const 4)) (local.get $rate))
+            (call $gs32 (i32.add (local.get $pwfx) (i32.const 8))                       ;; nAvgBytesPerSec
               (i32.mul (local.get $rate)
                 (i32.mul (local.get $ch) (i32.shr_u (local.get $bits) (i32.const 3)))))
-            (i32.store16 offset=12 (local.get $pwfx)                    ;; nBlockAlign
+            (call $gs16 (i32.add (local.get $pwfx) (i32.const 12))                    ;; nBlockAlign
               (i32.mul (local.get $ch) (i32.shr_u (local.get $bits) (i32.const 3))))
-            (i32.store16 offset=14 (local.get $pwfx) (local.get $bits))
+            (call $gs16 (i32.add (local.get $pwfx) (i32.const 14)) (local.get $bits))
             (if (i32.ge_u (local.get $cbwfx) (i32.const 18))
-              (then (i32.store16 offset=16 (local.get $pwfx) (i32.const 0))))))
-        (i32.store offset=8 (local.get $wa) (i32.const 1)))
+              (then (call $gs16 (i32.add (local.get $pwfx) (i32.const 16)) (i32.const 0))))))
+        (call $gs32 (i32.add (local.get $pafd) (i32.const 8)) (i32.const 1)))
       (else
         ;; Name the caller's own format. Read it back rather than trusting the
         ;; index, and find the matching standard entry for the name.
         (if (i32.eqz (local.get $pwfx))
           (then (return (i32.const 0x00000057))))
-        (local.set $pwfx (call $g2w (local.get $pwfx)))
-        (local.set $rate (i32.load offset=4 (local.get $pwfx)))
-        (local.set $bits (i32.load16_u offset=14 (local.get $pwfx)))
-        (local.set $ch   (i32.load16_u offset=2 (local.get $pwfx)))
+        (local.set $rate (call $gl32 (i32.add (local.get $pwfx) (i32.const 4))))
+        (local.set $bits (call $gl16 (i32.add (local.get $pwfx) (i32.const 14))))
+        (local.set $ch   (call $gl16 (i32.add (local.get $pwfx) (i32.const 2))))
         (local.set $index
           (i32.or
             (i32.shl
@@ -315,7 +312,7 @@
                 (i32.ge_u (local.get $bits) (i32.const 16))) (i32.const 1))
               (select (i32.const 1) (i32.const 0)
                 (i32.ge_u (local.get $ch) (i32.const 2))))))))
-    (i32.store offset=12 (local.get $wa) (i32.const 0x04))   ;; SUPPORTF_CONVERTER
+    (call $gs32 (i32.add (local.get $pafd) (i32.const 12)) (i32.const 0x04))   ;; SUPPORTF_CONVERTER
     (local.set $index (call $acm_pcm_format_name
       (i32.add (local.get $pafd) (i32.const 24)) (local.get $index)))
     (if (local.get $wide)
