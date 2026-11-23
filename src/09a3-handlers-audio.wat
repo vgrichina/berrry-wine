@@ -3737,19 +3737,15 @@
 
   ;; 858: waveInPrepareHeader — set WHDR_PREPARED
   (func $handle_waveInPrepareHeader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
-    (i32.store offset=16 (local.get $wa)
-      (i32.or (i32.load offset=16 (local.get $wa)) (i32.const 2)))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 16))
+      (i32.or (call $gl32 (i32.add (local.get $arg1) (i32.const 16))) (i32.const 2)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; 859: waveInUnprepareHeader — clear PREPARED/INQUEUE, retain DONE
   (func $handle_waveInUnprepareHeader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
-    (i32.store offset=16 (local.get $wa)
-      (i32.and (i32.load offset=16 (local.get $wa)) (i32.const 0xFFFFFFED)))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 16))
+      (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 16))) (i32.const 0xFFFFFFED)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
