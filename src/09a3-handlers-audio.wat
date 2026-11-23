@@ -3385,7 +3385,6 @@
   ;; midiOutGetDevCapsA(uDeviceID, lpMidiOutCaps, cbMidiOutCaps) — 3 args
   ;; Fill MIDIOUTCAPSA struct with basic info, return MMSYSERR_NOERROR (0)
   (func $handle_midiOutGetDevCapsA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $caps i32)
     (local $n i32)
     (local.set $n (call $host_midi_num_devs))
     (if (i32.or
@@ -3397,16 +3396,15 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 2)) ;; MMSYSERR_BADDEVICEID
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
-    (local.set $caps (call $g2w (local.get $arg1)))
     ;; Zero out the struct
-    (memory.fill (local.get $caps) (i32.const 0) (local.get $arg2))
+    (call $guest_memset (local.get $arg1) (i32.const 0) (local.get $arg2))
     ;; wMid (manufacturer ID) = 1 (MM_MICROSOFT)
-    (i32.store16 (local.get $caps) (i32.const 1))
+    (call $gs16 (local.get $arg1) (i32.const 1))
     ;; wPid = 1
-    (i32.store16 (i32.add (local.get $caps) (i32.const 2)) (i32.const 1))
+    (call $gs16 (i32.add (local.get $arg1) (i32.const 2)) (i32.const 1))
     ;; wTechnology at offset 40 = MOD_MIDIPORT (1)
     ;; (szPname[MAXPNAMELEN=32] runs from +8 through +39)
-    (i32.store16 (i32.add (local.get $caps) (i32.const 40)) (i32.const 1))
+    (call $gs16 (i32.add (local.get $arg1) (i32.const 40)) (i32.const 1))
     ;; dwSupport at offset 48 = 0
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))  ;; MMSYSERR_NOERROR
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))  ;; stdcall, 3 args
