@@ -11,31 +11,33 @@ const { bootRenderHarness } = require('./render-helper');
 const extraWat = String.raw`
   (func (export "test_joy_get_pos_ex")
       (param $id i32) (param $info i32) (result i32)
-    (i32.store offset=16 (global.get $reg_base) (global.get $GUEST_STACK))
+    (i32.store offset=16 (global.get $reg_base) (call $w2g (global.get $GUEST_STACK)))
     (call $handle_joyGetPosEx
       (local.get $id) (local.get $info)
       (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
     (i32.load offset=0 (global.get $reg_base)))
   (func (export "test_stack") (result i32)
-    (global.get $GUEST_STACK))
-  (func (export "test_info") (result i32)
-    (region.addr $TEST_SCRATCH 0))
+    (call $w2g (global.get $GUEST_STACK)))
 `;
 
 (async () => {
   const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  e.init_thread(1, 0x400000, 0, 0, 0, 0, 0);
+  e.heap_init(0x800000);
   const stack = e.test_stack() >>> 0;
-  const info = e.test_info() >>> 0;
+  const info = e.guest_alloc(52) >>> 0;
+  assert.ok(info, 'the public allocator supplies a guest JOYINFOEX pointer');
+  const infoWa = e.guest_to_wasm(info) >>> 0;
   const view = new DataView(memory.buffer);
 
   const initialize = (size = 52, flags = 0xff) => {
     for (let offset = 0; offset < 52; offset += 4) {
-      view.setUint32(info + offset, 0xc3c30000 + offset, true);
+      view.setUint32(infoWa + offset, 0xc3c30000 + offset, true);
     }
-    view.setUint32(info, size, true);
-    view.setUint32(info + 4, flags, true);
+    view.setUint32(infoWa, size, true);
+    view.setUint32(infoWa + 4, flags, true);
   };
-  const snapshot = () => new Uint8Array(memory.buffer.slice(info, info + 52));
+  const snapshot = () => new Uint8Array(memory.buffer.slice(infoWa, infoWa + 52));
 
   initialize();
   const validBefore = snapshot();
