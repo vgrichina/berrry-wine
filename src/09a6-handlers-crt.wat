@@ -957,15 +957,18 @@
   )
 
   (func $handle_fmod (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $x f64) (local $y f64)
+    (local $x f64) (local $y f64) (local $r f64)
     (local.set $x (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))))
     (local.set $y (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))))
-    (call $fpu_push
+    (local.set $r
       (f64.sub
         (local.get $x)
         (f64.mul
           (f64.trunc (f64.div (local.get $x) (local.get $y)))
           (local.get $y))))
+    (if (f64.eq (local.get $r) (f64.const 0))
+      (then (local.set $r (f64.copysign (local.get $r) (local.get $x)))))
+    (call $fpu_push (local.get $r))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
