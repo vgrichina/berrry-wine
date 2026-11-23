@@ -158,7 +158,7 @@
   ;; 919: GetMonitorInfoA(hMonitor, lpmi) — 2 args stdcall
   ;; Fill MONITORINFO/MONITORINFOEXA for the one live primary monitor.
   (func $handle_GetMonitorInfoA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32) (local $width i32) (local $height i32) (local $size i32)
+    (local $width i32) (local $height i32) (local $size i32)
     (if (i32.ne (local.get $arg0) (i32.const 0x00010000))
       (then
         (global.set $last_error (i32.const 1461)) ;; ERROR_INVALID_MONITOR_HANDLE
@@ -171,8 +171,7 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
         (return)))
-    (local.set $wa (call $g2w (local.get $arg1)))
-    (local.set $size (i32.load (local.get $wa)))
+    (local.set $size (call $gl32 (local.get $arg1)))
     (if (i32.and (i32.ne (local.get $size) (i32.const 40))
                  (i32.ne (local.get $size) (i32.const 72)))
       (then
@@ -184,25 +183,25 @@
     (local.set $height (call $screen_metric_h))
     ;; MONITORINFO: cbSize(4), rcMonitor(16), rcWork(16), dwFlags(4) = 40 bytes
     ;; rcMonitor: left=0, top=0, right=screenW, bottom=screenH
-    (i32.store (i32.add (local.get $wa) (i32.const 4)) (i32.const 0))   ;; left
-    (i32.store (i32.add (local.get $wa) (i32.const 8)) (i32.const 0))   ;; top
-    (i32.store (i32.add (local.get $wa) (i32.const 12)) (local.get $width)) ;; right
-    (i32.store (i32.add (local.get $wa) (i32.const 16)) (local.get $height)) ;; bottom
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 4)) (i32.const 0))   ;; left
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 8)) (i32.const 0))   ;; top
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 12)) (local.get $width)) ;; right
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 16)) (local.get $height)) ;; bottom
     ;; rcWork excludes the classic 28px taskbar already reported by
     ;; SHAppBarMessage and therefore agrees with SPI_GETWORKAREA.
-    (i32.store (i32.add (local.get $wa) (i32.const 20)) (i32.const 0))
-    (i32.store (i32.add (local.get $wa) (i32.const 24)) (i32.const 0))
-    (i32.store (i32.add (local.get $wa) (i32.const 28)) (local.get $width))
-    (i32.store (i32.add (local.get $wa) (i32.const 32)) (call $screen_work_bottom))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 20)) (i32.const 0))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 24)) (i32.const 0))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 28)) (local.get $width))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 32)) (call $screen_work_bottom))
     ;; dwFlags: MONITORINFOF_PRIMARY = 1
-    (i32.store (i32.add (local.get $wa) (i32.const 36)) (i32.const 1))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 36)) (i32.const 1))
     (if (i32.eq (local.get $size) (i32.const 72))
       (then
         ;; MONITORINFOEXA.szDevice = "\\\\.\\DISPLAY1".
-        (memory.fill (i32.add (local.get $wa) (i32.const 40)) (i32.const 0) (i32.const 32))
-        (i32.store offset=40 (local.get $wa) (i32.const 0x5C2E5C5C))
-        (i32.store offset=44 (local.get $wa) (i32.const 0x50534944))
-        (i32.store offset=48 (local.get $wa) (i32.const 0x3159414C))))
+        (call $guest_memset (i32.add (local.get $arg1) (i32.const 40)) (i32.const 0) (i32.const 32))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 40)) (i32.const 0x5C2E5C5C))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 44)) (i32.const 0x50534944))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 48)) (i32.const 0x3159414C))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))  ;; success
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
