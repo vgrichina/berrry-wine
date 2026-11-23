@@ -970,7 +970,7 @@
                 (drop (call $fpu_pop)) (return)))
             (if (i32.eq (local.get $rm) (i32.const 5))
               (then ;; FPREM1: IEEE remainder ST(0) mod ST(1); C2 clear, Q bits
-                (local.set $v (call $fpu_round (f64.div (local.get $st0) (call $fpu_get (i32.const 1)))))
+                (local.set $v (f64.nearest (f64.div (local.get $st0) (call $fpu_get (i32.const 1)))))
                 (call $fpu_set (i32.const 0)
                   (f64.sub (local.get $st0)
                     (f64.mul (local.get $v) (call $fpu_get (i32.const 1)))))
