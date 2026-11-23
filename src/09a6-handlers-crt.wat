@@ -808,6 +808,7 @@
         (if (result i32) (local.get $digits)
           (then (i32.add (local.get $nptr) (i32.sub (local.get $s) (local.get $start))))
           (else (local.get $nptr))))))
+    (if (i32.eqz (local.get $digits)) (then (return (f64.const 0))))
     (if (local.get $neg) (then (return (f64.neg (local.get $fval)))))
     (local.get $fval))
 
