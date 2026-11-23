@@ -6271,17 +6271,33 @@
 
   ;; 862: GlobalMemoryStatus(lpBuffer) — fill MEMORYSTATUS struct
   (func $handle_GlobalMemoryStatus (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
-    (local.set $wa (call $g2w (local.get $arg0)))
-    (call $zero_memory (local.get $wa) (i32.const 32))
-    (i32.store (local.get $wa) (i32.const 32))             ;; dwLength
-    (i32.store offset=4 (local.get $wa) (i32.const 50))    ;; dwMemoryLoad = 50%
-    (i32.store offset=8 (local.get $wa) (i32.const 0x04000000))  ;; dwTotalPhys = 64MB
-    (i32.store offset=12 (local.get $wa) (i32.const 0x02000000)) ;; dwAvailPhys = 32MB
-    (i32.store offset=16 (local.get $wa) (i32.const 0x10000000)) ;; dwTotalPageFile = 256MB
-    (i32.store offset=20 (local.get $wa) (i32.const 0x08000000)) ;; dwAvailPageFile = 128MB
-    (i32.store offset=24 (local.get $wa) (i32.const 0x7FFE0000)) ;; dwTotalVirtual
-    (i32.store offset=28 (local.get $wa) (i32.const 0x7FFC0000)) ;; dwAvailVirtual
+    (local $wa i32) (local $avail_page_file i32)
+    (local.set $avail_page_file (i32.const 0x08000000))
+    (if (i32.eqz (local.get $arg0))
+      (then
+        ;; Preserve the existing physical NULL sentinel writes exactly.
+        (local.set $wa (call $g2w (local.get $arg0)))
+        (call $zero_memory (local.get $wa) (i32.const 32))
+        (i32.store (local.get $wa) (i32.const 32))             ;; dwLength
+        (i32.store offset=4 (local.get $wa) (i32.const 50))    ;; dwMemoryLoad = 50%
+        (i32.store offset=8 (local.get $wa) (i32.const 0x04000000))  ;; dwTotalPhys = 64MB
+        (i32.store offset=12 (local.get $wa) (i32.const 0x02000000)) ;; dwAvailPhys = 32MB
+        (i32.store offset=16 (local.get $wa) (i32.const 0x10000000)) ;; dwTotalPageFile = 256MB
+        (i32.store offset=20 (local.get $wa) (local.get $avail_page_file)) ;; dwAvailPageFile = 128MB
+        (i32.store offset=24 (local.get $wa) (i32.const 0x7FFE0000)) ;; dwTotalVirtual
+        (i32.store offset=28 (local.get $wa) (i32.const 0x7FFC0000)) ;; dwAvailVirtual
+      )
+      (else
+        ;; Guest DWORDs may cross pages with nonadjacent physical backing.
+        (call $gs32 (local.get $arg0) (i32.const 32))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 50))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 8)) (i32.const 0x04000000))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 12)) (i32.const 0x02000000))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 16)) (i32.const 0x10000000))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 20)) (local.get $avail_page_file))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 24)) (i32.const 0x7FFE0000))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 28)) (i32.const 0x7FFC0000))
+      ))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; 852: RemovePropA(hwnd, lpString) → HANDLE (removed value)
