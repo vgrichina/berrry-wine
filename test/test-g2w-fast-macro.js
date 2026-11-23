@@ -19,6 +19,20 @@ const fs = require('fs');
 const path = require('path');
 const { bootRenderHarness } = require('./render-helper');
 const RegionMap = require('../lib/region-map.generated.js');
+const SharedHeap = require('../lib/shared-heap.js');
+
+// Public heap APIs, with the same stdcall/ESP checks as test-shared-heap.cjs.
+// Explicitly choose a private heap for assertions about affine linear bytes.
+const heapProbes = Object.entries({ HeapCreate: 3, HeapAlloc: 3, HeapFree: 3, HeapDestroy: 1 })
+  .map(([api, count]) => `
+  (func (export "probe_${api}") (param $a i32) (param $b i32) (param $c i32) (result i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $handle_${api} (local.get $a) (local.get $b) (local.get $c) (i32.const 0) (i32.const 0) (i32.const 0))
+    (if (i32.ne (i32.load offset=16 (global.get $reg_base)) (i32.add (local.get $esp) (i32.const ${(count + 1) * 4}))) (then (unreachable)))
+    (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+    (i32.load (global.get $reg_base)))`).join('\n');
+const isShared = ga => ((ga - SharedHeap.BASE) >>> 0) < SharedHeap.CAPACITY;
 
 const NULL_SENTINEL = 0xF0;
 const DIB_GUEST_BASE = 0x50000000;
@@ -57,7 +71,7 @@ for (const wa of edges) {
 checks++;
 
 (async () => {
-  const { exports: e, memory } = await bootRenderHarness();
+  const { exports: e, memory } = await bootRenderHarness({ extraWat: heapProbes });
   const imageBase = e.get_image_base() >>> 0;
   const GUEST_BASE = RegionMap.GUEST_BASE;
   const waOf = (ga) => ((ga >>> 0) - imageBase + GUEST_BASE) >>> 0;
@@ -120,11 +134,42 @@ checks++;
   e.guest_write8(base + 0x2FFF, 0x5A);
   ok(e.guest_read8(base + 0x2FFF) === 0x5A, 'gs8/gl8 round trip at the end of a sparse run');
 
-  const heapGa = e.guest_alloc(16) >>> 0;
+  const privateHeap = e.probe_HeapCreate(0, 4096, 0) >>> 0;
+  ok(privateHeap !== 0, 'private HeapCreate should succeed');
+  const heapGa = e.probe_HeapAlloc(privateHeap, 0, 16) >>> 0;
+  ok(heapGa !== 0 && !isShared(heapGa) && newDirect(waOf(heapGa)),
+    'private HeapAlloc fixture must lie in the direct window');
+  ok(g2w(heapGa) === waOf(heapGa), 'private heap translation is affine');
   e.guest_write32(heapGa, 0x01020304);
   ok(new DataView(memory.buffer).getUint32(waOf(heapGa), true) === 0x01020304,
     'gs32 on a direct-window heap address lands at the affine address');
   ok(e.guest_read8(heapGa + 3) === 0x01, 'gl8 on a direct-window address');
+  ok(e.probe_HeapFree(privateHeap, 0, heapGa) === 1, 'private fixture is freed');
+  ok(e.probe_HeapDestroy(privateHeap, 0, 0) === 1, 'private fixture heap is destroyed');
+
+  // Shared bytes belong to the authority, never a process-private affine alias.
+  // Exercise the public HEAP_SHARED path used by test-shared-heap.cjs.
+  const sharedHeap = e.probe_HeapCreate(0x04000000, 4096, 0) >>> 0;
+  ok(sharedHeap !== 0, 'shared HeapCreate should succeed');
+  const sharedGa = e.probe_HeapAlloc(sharedHeap, 8, 16) >>> 0;
+  ok(sharedGa !== 0 && isShared(sharedGa), 'shared allocation belongs to the authority range');
+  e.guest_write32(sharedGa, 0x01020304);
+  ok((e.guest_read32(sharedGa) >>> 0) === 0x01020304, 'authority gs32/gl32 round trip');
+  ok(e.guest_read8(sharedGa + 3) === 0x01, 'authority gl8 reads the dword high byte');
+  e.guest_write8(sharedGa + 1, 0xA5);
+  ok((e.guest_read32(sharedGa) >>> 0) === 0x0102A504, 'authority gs8 updates the dword');
+  for (const ga of [SharedHeap.BASE, sharedGa, sharedGa + 15,
+    SharedHeap.BASE + SharedHeap.CAPACITY - 1]) {
+    assert.throws(() => g2w(ga), /ESHAREDHEAP_LINEAR_ACCESS/,
+      `shared ${hex(ga)} refuses raw translation`);
+    assert.throws(() => oldG2w(ga), /ESHAREDHEAP_LINEAR_ACCESS/,
+      `shared ${hex(ga)} also refuses the old slow-chain translation`);
+    checks += 2;
+  }
+  ok(e.probe_HeapFree(sharedHeap, 0, sharedGa) === 1, 'shared fixture is freed');
+  assert.throws(() => e.guest_read32(sharedGa), /ESHAREDHEAP_ACCESS/,
+    'freed authority bytes cannot become a private alias');
+  checks++;
 
   // Dwords wholly inside the direct window may cross a guest page without
   // another translation. Partial spans at either window edge must instead
@@ -166,9 +211,14 @@ checks++;
   // 9. A sweep of guest addresses: the compiled macro equals the old model.
   for (let i = 0; i < 20000; i++) {
     const ga = rnd();
-    const got = g2w(ga);
-    const want = oldG2w(ga);
-    if (got !== want) assert.fail(`sweep ${hex(ga)}: macro ${hex(got)} vs old ${hex(want)}`);
+    if (isShared(ga)) {
+      assert.throws(() => g2w(ga), /ESHAREDHEAP_LINEAR_ACCESS/, `sweep macro ${hex(ga)}`);
+      assert.throws(() => oldG2w(ga), /ESHAREDHEAP_LINEAR_ACCESS/, `sweep old chain ${hex(ga)}`);
+    } else {
+      const got = g2w(ga);
+      const want = oldG2w(ga);
+      if (got !== want) assert.fail(`sweep ${hex(ga)}: macro ${hex(got)} vs old ${hex(want)}`);
+    }
   }
   checks++;
 
