@@ -1032,15 +1032,18 @@
   ;; _CIfmod is the corresponding MSVC x87-stack remainder helper:
   ;; ST(1)=dividend, ST(0)=divisor, with one result left in ST(0).
   (func $handle__CIfmod (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $divisor f64) (local $dividend f64)
+    (local $divisor f64) (local $dividend f64) (local $result f64)
     (local.set $divisor (call $fpu_pop))
     (local.set $dividend (call $fpu_pop))
-    (call $fpu_push
+    (local.set $result
       (f64.sub
         (local.get $dividend)
         (f64.mul
           (f64.trunc (f64.div (local.get $dividend) (local.get $divisor)))
           (local.get $divisor))))
+    (if (f64.eq (local.get $result) (f64.const 0))
+      (then (local.set $result (f64.copysign (local.get $result) (local.get $dividend)))))
+    (call $fpu_push (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
