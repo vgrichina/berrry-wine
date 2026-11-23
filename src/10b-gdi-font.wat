@@ -1980,7 +1980,7 @@
       (i32.add (i32.sub (local.get $last) (local.get $first)) (i32.const 1)))
     (block $done (loop $characters
       (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
-      (i32.store (i32.add (local.get $output) (i32.shl (local.get $i) (i32.const 2)))
+      (call $gs32 (i32.add (local.get $output) (i32.shl (local.get $i) (i32.const 2)))
         (call $gdi_font_character_width (local.get $hdc)
           (i32.add (local.get $first) (local.get $i)) (local.get $wide)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
