@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "12fc95687efe09fe713c9c4fc36c1d3bee6b88b6b4b1c645800c41c3d7237b55",
+      "sha256": "dfd417177cc4f15684f2b1853ce3ea6955850b114f12401d1da3a299fb4c4341",
+      "reason": "2026-11-23 handleMouseDown payload only: retain already held mouse buttons in the incoming DOWN/left DBLCLK mask and read physical Ctrl/Shift with nonmutating peekKeyDownState, preserving additive explicit options. No callback, guest entry, continuation, timer, retained reference, routing or invocation ownership changes. Existing target selection, capture, modal/native dispatch and coordinates remain unchanged. NEW test-renderer-mouse-down-mask.cjs independently checks literal Microsoft contract masks across 2288 cases using real prior button presses, generic/sided key down/up and native EDIT early returns; all pass after the minimal repair. Existing mouseUP254, mouseMOVE271 and six unchanged drag/capture/modal/browser-key groups pass. Broader invocation ownership remains pending."
+    }
+  ]
+}
