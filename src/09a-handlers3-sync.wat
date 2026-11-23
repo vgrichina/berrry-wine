@@ -147,6 +147,16 @@
               (if (i32.eq (local.get $vk) (i32.const 0x37)) (then (local.set $ch (i32.const 0x26)))) ;; &
               (if (i32.eq (local.get $vk) (i32.const 0x38)) (then (local.set $ch (i32.const 0x2A)))) ;; *
               (if (i32.eq (local.get $vk) (i32.const 0x39)) (then (local.set $ch (i32.const 0x28)))))))))) ;; (
+    ;; Supplied US keypad VKs: digits plain only; decimal plain/Shift.
+    ;; Caps/NumLock do not alter literals. Preserve Ctrl/Alt no-translation.
+    (if (i32.eqz (i32.and
+      (i32.or (i32.load8_u offset=0x11 (local.get $ks)) (i32.load8_u offset=0x12 (local.get $ks)))
+      (i32.const 0x80)))
+      (then
+        (if (i32.and (i32.eqz (local.get $shift))
+          (i32.and (i32.ge_u (local.get $vk) (i32.const 0x60)) (i32.le_u (local.get $vk) (i32.const 0x69))))
+          (then (local.set $ch (i32.sub (local.get $vk) (i32.const 0x30)))))
+        (if (i32.eq (local.get $vk) (i32.const 0x6E)) (then (local.set $ch (i32.const 0x2E))))))
     ;; US keypad operators are literal under both Shift and Caps Lock.
     (if (i32.eq (local.get $vk) (i32.const 0x6A)) (then (local.set $ch (i32.const 0x2A)))) ;; *
     (if (i32.eq (local.get $vk) (i32.const 0x6B)) (then (local.set $ch (i32.const 0x2B)))) ;; +
