@@ -18,6 +18,7 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
+const { createRequire } = require('node:module');
 
 const hostSource = fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8');
 
@@ -62,6 +63,7 @@ class FakeAudioContext {
 const documentStub = { hidden: false, addEventListener() {}, removeEventListener() {} };
 
 const context = {
+  require: createRequire(path.join(__dirname, '..', 'host.js')),
   MessageChannel: FakeMessageChannel,
   AudioContext: FakeAudioContext,
   URLSearchParams,

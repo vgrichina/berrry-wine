@@ -43,6 +43,7 @@
 const path = require('path');
 const fs = require('fs');
 const vm = require('vm');
+const { createRequire } = require('node:module');
 
 const IMAGE_BASE = 0x400000;
 const WASM = path.join(__dirname, '..', 'build', 'wine-assembly.wasm');
@@ -335,6 +336,7 @@ async function main() {
   // we got wrong must degrade to 20 Hz polling, never to a hang.
   const hostSource = fs.readFileSync(path.join(__dirname, '..', 'host.js'), 'utf8');
   const context = {
+    require: createRequire(path.join(__dirname, '..', 'host.js')),
     MessageChannel: class { constructor() { this.port1 = {}; this.port2 = { postMessage() {} }; } },
     URLSearchParams,
     console,
