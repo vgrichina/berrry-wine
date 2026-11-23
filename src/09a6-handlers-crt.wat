@@ -1237,6 +1237,39 @@
         (f64.mul
           (f64.trunc (f64.div (local.get $dividend) (local.get $divisor)))
           (local.get $divisor))))
+    ;; Recompute only a finite cancellation to zero. Scaling by powers of
+    ;; two is exact; each selected subtraction has scale <= r < 2*scale.
+    ;; Preserve the existing nonzero, nonfinite and quotient-overflow paths.
+    (if (i32.and
+          (f64.eq (local.get $result) (f64.const 0))
+          (i32.and
+            (i32.and
+              (f64.ne (local.get $dividend) (f64.const 0))
+              (f64.lt (f64.abs (local.get $dividend)) (f64.const inf)))
+            (i32.and
+              (f64.ne (local.get $divisor) (f64.const 0))
+              (f64.lt (f64.abs (local.get $divisor)) (f64.const inf)))))
+      (then
+        (local.set $result (f64.abs (local.get $dividend)))
+        (local.set $scale (f64.abs (local.get $divisor)))
+        (block $zero_scaled
+          (loop $zero_scale_up
+            (br_if $zero_scaled
+              (i32.or
+                (i32.ge_u (local.get $steps) (i32.const 2098))
+                (f64.gt (local.get $scale) (f64.mul (local.get $result) (f64.const 0.5)))))
+            (local.set $scale (f64.mul (local.get $scale) (f64.const 2)))
+            (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
+            (br $zero_scale_up)))
+        (block $zero_reduced
+          (loop $zero_reduce
+            (if (f64.ge (local.get $result) (local.get $scale))
+              (then (local.set $result (f64.sub (local.get $result) (local.get $scale)))))
+            (br_if $zero_reduced (i32.eqz (local.get $steps)))
+            (local.set $scale (f64.mul (local.get $scale) (f64.const 0.5)))
+            (local.set $steps (i32.sub (local.get $steps) (i32.const 1)))
+            (br $zero_reduce)))
+        (local.set $result (f64.copysign (local.get $result) (local.get $dividend)))))
     (if (f64.eq (local.get $result) (f64.const 0))
       (then (local.set $result (f64.copysign (local.get $result) (local.get $dividend)))))
     (call $fpu_push (local.get $result))
