@@ -2187,15 +2187,42 @@
       (i32.const 1) (i32.const 0xFF)))
 
   (func $handle_SetMetaFileBitsEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $data i32)
-    (if (local.get $arg1) (then (local.set $data (call $g2w (local.get $arg1)))))
-    (i32.store offset=0 (global.get $reg_base) (if (result i32) (call $gdi_metafile_valid_wmf (local.get $data) (local.get $arg0))
-        (then (call $gdi_metafile_create
-          ;; The input allocation may have trailing padding. METAHEADER's
-          ;; bounded size is the actual metafile extent, in 16-bit words.
-          (i32.const 6) (local.get $data)
-          (i32.shl (i32.load offset=6 (local.get $data)) (i32.const 1))))
-        (else (i32.const 0))))
+    (local $header i32) (local $valid i32) (local $size i32)
+    (local $data i32) (local $temporary i32) (local $result i32)
+    (local $offset i32) (local $guest i32) (local $chunk i32)
+    (block $done
+      (br_if $done (i32.or (i32.eqz (local.get $arg1))
+        (i32.lt_u (local.get $arg0) (i32.const 18))))
+      ;; Validate only the bounded header before choosing the retained extent.
+      (local.set $header (call $guest_span_in (local.get $arg1) (i32.const 18)))
+      (local.set $valid (call $gdi_metafile_valid_wmf (local.get $header) (local.get $arg0)))
+      (local.set $size (i32.shl (i32.load offset=6 (local.get $header)) (i32.const 1)))
+      (call $guest_span_release (local.get $header) (i32.const 18))
+      (br_if $done (i32.eqz (local.get $valid)))
+      ;; WMF's declared words exclude allocation padding; EMF keeps nSize.
+      (br_if $done (i32.gt_u (local.get $size) (global.get $DIB_BACKING_BASE_SIZE)))
+      (local.set $data (call $g2w_affine_span (local.get $arg1) (local.get $size)))
+      (if (i32.eq (local.get $data) (global.get $NULL_SENTINEL)) (then
+        ;; The DIB allocator supplies contiguous, length-bounded storage.
+        ;; Never feed a long stream into the fixed guest-span arena.
+        (local.set $temporary (call $dib_alloc (local.get $size)))
+        (br_if $done (i32.eqz (local.get $temporary)))
+        (local.set $data (call $g2w (local.get $temporary)))
+        (block $copied (loop $gather
+          (br_if $copied (i32.ge_u (local.get $offset) (local.get $size)))
+          (local.set $guest (i32.add (local.get $arg1) (local.get $offset)))
+          (local.set $chunk (i32.sub (i32.const 4096)
+            (i32.and (local.get $guest) (i32.const 4095))))
+          (if (i32.gt_u (local.get $chunk) (i32.sub (local.get $size) (local.get $offset)))
+            (then (local.set $chunk (i32.sub (local.get $size) (local.get $offset)))))
+          (memory.copy (i32.add (local.get $data) (local.get $offset))
+            (call $g2w (local.get $guest)) (local.get $chunk))
+          (local.set $offset (i32.add (local.get $offset) (local.get $chunk)))
+          (br $gather)))))
+      (local.set $result (call $gdi_metafile_create
+        (i32.const 6) (local.get $data) (local.get $size)))
+      (if (local.get $temporary) (then (call $dib_free_wasm (local.get $data)))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   (func $handle_GetMetaFileBitsEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -2228,12 +2255,42 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_SetEnhMetaFileBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $data i32)
-    (if (local.get $arg1) (then (local.set $data (call $g2w (local.get $arg1)))))
-    (i32.store offset=0 (global.get $reg_base) (if (result i32) (call $gdi_metafile_valid_emf (local.get $data) (local.get $arg0))
-        (then (call $gdi_metafile_create
-          (i32.const 7) (local.get $data) (local.get $arg0)))
-        (else (i32.const 0))))
+    (local $header i32) (local $valid i32) (local $size i32)
+    (local $data i32) (local $temporary i32) (local $result i32)
+    (local $offset i32) (local $guest i32) (local $chunk i32)
+    (block $done
+      (br_if $done (i32.or (i32.eqz (local.get $arg1))
+        (i32.lt_u (local.get $arg0) (i32.const 88))))
+      ;; Validate only the bounded header before choosing the retained extent.
+      (local.set $header (call $guest_span_in (local.get $arg1) (i32.const 88)))
+      (local.set $valid (call $gdi_metafile_valid_emf (local.get $header) (local.get $arg0)))
+      (local.set $size (local.get $arg0))
+      (call $guest_span_release (local.get $header) (i32.const 88))
+      (br_if $done (i32.eqz (local.get $valid)))
+      ;; WMF's declared words exclude allocation padding; EMF keeps nSize.
+      (br_if $done (i32.gt_u (local.get $size) (global.get $DIB_BACKING_BASE_SIZE)))
+      (local.set $data (call $g2w_affine_span (local.get $arg1) (local.get $size)))
+      (if (i32.eq (local.get $data) (global.get $NULL_SENTINEL)) (then
+        ;; The DIB allocator supplies contiguous, length-bounded storage.
+        ;; Never feed a long stream into the fixed guest-span arena.
+        (local.set $temporary (call $dib_alloc (local.get $size)))
+        (br_if $done (i32.eqz (local.get $temporary)))
+        (local.set $data (call $g2w (local.get $temporary)))
+        (block $copied (loop $gather
+          (br_if $copied (i32.ge_u (local.get $offset) (local.get $size)))
+          (local.set $guest (i32.add (local.get $arg1) (local.get $offset)))
+          (local.set $chunk (i32.sub (i32.const 4096)
+            (i32.and (local.get $guest) (i32.const 4095))))
+          (if (i32.gt_u (local.get $chunk) (i32.sub (local.get $size) (local.get $offset)))
+            (then (local.set $chunk (i32.sub (local.get $size) (local.get $offset)))))
+          (memory.copy (i32.add (local.get $data) (local.get $offset))
+            (call $g2w (local.get $guest)) (local.get $chunk))
+          (local.set $offset (i32.add (local.get $offset) (local.get $chunk)))
+          (br $gather)))))
+      (local.set $result (call $gdi_metafile_create
+        (i32.const 7) (local.get $data) (local.get $size)))
+      (if (local.get $temporary) (then (call $dib_free_wasm (local.get $data)))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   (func $handle_GetEnhMetaFileBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
