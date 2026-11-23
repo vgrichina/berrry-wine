@@ -343,36 +343,34 @@
   ;;   WFORMATTAG 0x10000  NCHANNELS 0x20000  NSAMPLESPERSEC 0x40000
   ;;   WBITSPERSAMPLE 0x80000
   (func $acm_format_suggest (param $src i32) (param $dst i32) (param $cb i32) (param $fdw i32) (result i32)
-    (local $sw i32) (local $dw i32) (local $ch i32) (local $rate i32) (local $bits i32)
+    (local $ch i32) (local $rate i32) (local $bits i32)
     (if (i32.or (i32.eqz (local.get $src)) (i32.eqz (local.get $dst)))
       (then (return (i32.const 11))))                       ;; MMSYSERR_INVALPARAM
     (if (i32.lt_u (local.get $cb) (i32.const 16))
       (then (return (i32.const 11))))
-    (local.set $sw (call $g2w (local.get $src)))
-    (local.set $dw (call $g2w (local.get $dst)))
     ;; An ADPCM source: the codecs decode to 16-bit (or, pinned, 8-bit) PCM
     ;; at the source's rate and channel count, and nothing else (they do not
     ;; resample or remix). Every field the caller pins must agree with that.
     (if (call $acm_adpcm_samples_per_block (local.get $src))
       (then
-        (local.set $ch (i32.load16_u offset=2 (local.get $sw)))
-        (local.set $rate (i32.load offset=4 (local.get $sw)))
+        (local.set $ch (call $gl16 (i32.add (local.get $src) (i32.const 2))))
+        (local.set $rate (call $gl32 (i32.add (local.get $src) (i32.const 4))))
         (if (i32.or
               (i32.or
                 (i32.and (i32.ne (i32.and (local.get $fdw) (i32.const 0x10000)) (i32.const 0))
-                         (i32.ne (i32.load16_u (local.get $dw)) (i32.const 1)))
+                         (i32.ne (call $gl16 (local.get $dst)) (i32.const 1)))
                 (i32.and (i32.ne (i32.and (local.get $fdw) (i32.const 0x20000)) (i32.const 0))
-                         (i32.ne (i32.load16_u offset=2 (local.get $dw)) (local.get $ch))))
+                         (i32.ne (call $gl16 (i32.add (local.get $dst) (i32.const 2))) (local.get $ch))))
               (i32.or
                 (i32.and (i32.ne (i32.and (local.get $fdw) (i32.const 0x40000)) (i32.const 0))
-                         (i32.ne (i32.load offset=4 (local.get $dw)) (local.get $rate)))
+                         (i32.ne (call $gl32 (i32.add (local.get $dst) (i32.const 4))) (local.get $rate)))
                 (i32.and (i32.ne (i32.and (local.get $fdw) (i32.const 0x80000)) (i32.const 0))
-                         (i32.and (i32.ne (i32.load16_u offset=14 (local.get $dw)) (i32.const 16))
-                                  (i32.ne (i32.load16_u offset=14 (local.get $dw)) (i32.const 8))))))
+                         (i32.and (i32.ne (call $gl16 (i32.add (local.get $dst) (i32.const 14))) (i32.const 16))
+                                  (i32.ne (call $gl16 (i32.add (local.get $dst) (i32.const 14))) (i32.const 8))))))
           (then (return (i32.const 512))))                  ;; ACMERR_NOTPOSSIBLE
         (local.set $bits (select (i32.const 8) (i32.const 16)
           (i32.and (i32.ne (i32.and (local.get $fdw) (i32.const 0x80000)) (i32.const 0))
-                   (i32.eq (i32.load16_u offset=14 (local.get $dw)) (i32.const 8)))))
+                   (i32.eq (call $gl16 (i32.add (local.get $dst) (i32.const 14))) (i32.const 8)))))
         (call $acm_write_pcm16_format (local.get $dst) (local.get $cb)
           (local.get $ch) (local.get $rate))
         (if (i32.eq (local.get $bits) (i32.const 8))
@@ -381,19 +379,19 @@
             (call $gs16 (i32.add (local.get $dst) (i32.const 12)) (local.get $ch))
             (call $gs16 (i32.add (local.get $dst) (i32.const 14)) (i32.const 8))))
         (return (i32.const 0))))
-    (if (i32.ne (i32.load16_u (local.get $sw)) (i32.const 1))
+    (if (i32.ne (call $gl16 (local.get $src)) (i32.const 1))
       (then (return (i32.const 512))))                      ;; ACMERR_NOTPOSSIBLE
     (if (i32.and (i32.ne (i32.and (local.get $fdw) (i32.const 0x10000)) (i32.const 0))
-                 (i32.ne (i32.load16_u (local.get $dw)) (i32.const 1)))
+                 (i32.ne (call $gl16 (local.get $dst)) (i32.const 1)))
       (then (return (i32.const 512))))
-    (local.set $ch (select (i32.load16_u offset=2 (local.get $dw))
-                           (i32.load16_u offset=2 (local.get $sw))
+    (local.set $ch (select (call $gl16 (i32.add (local.get $dst) (i32.const 2)))
+                           (call $gl16 (i32.add (local.get $src) (i32.const 2)))
                            (i32.ne (i32.and (local.get $fdw) (i32.const 0x20000)) (i32.const 0))))
-    (local.set $rate (select (i32.load offset=4 (local.get $dw))
-                             (i32.load offset=4 (local.get $sw))
+    (local.set $rate (select (call $gl32 (i32.add (local.get $dst) (i32.const 4)))
+                             (call $gl32 (i32.add (local.get $src) (i32.const 4)))
                              (i32.ne (i32.and (local.get $fdw) (i32.const 0x40000)) (i32.const 0))))
-    (local.set $bits (select (i32.load16_u offset=14 (local.get $dw))
-                             (i32.load16_u offset=14 (local.get $sw))
+    (local.set $bits (select (call $gl16 (i32.add (local.get $dst) (i32.const 14)))
+                             (call $gl16 (i32.add (local.get $src) (i32.const 14)))
                              (i32.ne (i32.and (local.get $fdw) (i32.const 0x80000)) (i32.const 0))))
     (if (i32.and (i32.ne (local.get $bits) (i32.const 8)) (i32.ne (local.get $bits) (i32.const 16)))
       (then (return (i32.const 512))))
@@ -401,17 +399,17 @@
       (then (return (i32.const 512))))
     (if (i32.eqz (local.get $rate))
       (then (return (i32.const 512))))
-    (i32.store16 (local.get $dw) (i32.const 1))                 ;; WAVE_FORMAT_PCM
-    (i32.store16 offset=2 (local.get $dw) (local.get $ch))
-    (i32.store offset=4 (local.get $dw) (local.get $rate))
-    (i32.store offset=8 (local.get $dw)                          ;; nAvgBytesPerSec
+    (call $gs16 (local.get $dst) (i32.const 1))                 ;; WAVE_FORMAT_PCM
+    (call $gs16 (i32.add (local.get $dst) (i32.const 2)) (local.get $ch))
+    (call $gs32 (i32.add (local.get $dst) (i32.const 4)) (local.get $rate))
+    (call $gs32 (i32.add (local.get $dst) (i32.const 8))                          ;; nAvgBytesPerSec
       (i32.mul (local.get $rate)
         (i32.mul (local.get $ch) (i32.shr_u (local.get $bits) (i32.const 3)))))
-    (i32.store16 offset=12 (local.get $dw)                       ;; nBlockAlign
+    (call $gs16 (i32.add (local.get $dst) (i32.const 12))                       ;; nBlockAlign
       (i32.mul (local.get $ch) (i32.shr_u (local.get $bits) (i32.const 3))))
-    (i32.store16 offset=14 (local.get $dw) (local.get $bits))
+    (call $gs16 (i32.add (local.get $dst) (i32.const 14)) (local.get $bits))
     (if (i32.ge_u (local.get $cb) (i32.const 18))
-      (then (i32.store16 offset=16 (local.get $dw) (i32.const 0))))
+      (then (call $gs16 (i32.add (local.get $dst) (i32.const 16)) (i32.const 0))))
     (i32.const 0))
 
   (func $handle_acmFormatSuggest (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
