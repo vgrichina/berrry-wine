@@ -2696,10 +2696,10 @@
     (local.set $end (call $dll_retired_reservation_end (local.get $page)))
     (if (local.get $end)
       (then
-        (memory.fill (local.get $buf) (i32.const 0) (i32.const 28))
-        (i32.store (local.get $buf) (local.get $page))
-        (i32.store offset=12 (local.get $buf) (i32.sub (local.get $end) (local.get $page)))
-        (i32.store offset=16 (local.get $buf) (i32.const 0x10000))
+        (call $guest_memset (local.get $arg1) (i32.const 0) (i32.const 28))
+        (call $gs32 (local.get $arg1) (local.get $page))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 12)) (i32.sub (local.get $end) (local.get $page)))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 16)) (i32.const 0x10000))
         (i32.store (global.get $reg_base) (i32.const 28))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
@@ -2726,7 +2726,7 @@
         ;; section-specific current protection.
         (local.set $allocation_protect (i32.const 0x80)) ;; PAGE_EXECUTE_WRITECOPY
         (local.set $state (i32.const 0x1000)) ;; MEM_COMMIT
-        (i32.store offset=24 (local.get $buf) (i32.const 0x01000000))) ;; MEM_IMAGE
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 24)) (i32.const 0x01000000))) ;; MEM_IMAGE
       (else
         (local.set $allocation_base
           (call $virtual_query_sparse_base (local.get $page)))
@@ -2771,7 +2771,7 @@
               (br $sparse_pages)))
             (local.set $end (select (local.get $next) (local.get $end)
               (i32.lt_u (local.get $next) (local.get $end))))
-            (i32.store offset=24 (local.get $buf) (i32.const 0x00020000))) ;; MEM_PRIVATE
+            (call $gs32 (i32.add (local.get $arg1) (i32.const 24)) (i32.const 0x00020000))) ;; MEM_PRIVATE
           (else
             (local.set $direct_start
               (i32.sub (global.get $image_base) (global.get $GUEST_BASE)))
@@ -2789,7 +2789,7 @@
                 (local.set $allocation_protect (i32.const 0x04))
                 (local.set $state (i32.const 0x1000))
                 (local.set $end (local.get $direct_end))
-                (i32.store offset=24 (local.get $buf) (i32.const 0x00020000)))
+                (call $gs32 (i32.add (local.get $arg1) (i32.const 24)) (i32.const 0x00020000)))
               (else
                 (local.set $end
                   (call $virtual_query_next_allocation (local.get $page)))
@@ -2799,13 +2799,13 @@
                 (local.set $allocation_protect (i32.const 0))
                 (local.set $state (i32.const 0x10000)) ;; MEM_FREE
                 (local.set $protect (i32.const 0))
-                (i32.store offset=24 (local.get $buf) (i32.const 0))))))))
-    (i32.store (local.get $buf) (local.get $page))
-    (i32.store offset=4 (local.get $buf) (local.get $allocation_base))
-    (i32.store offset=8 (local.get $buf) (local.get $allocation_protect))
-    (i32.store offset=12 (local.get $buf) (i32.sub (local.get $end) (local.get $page)))
-    (i32.store offset=16 (local.get $buf) (local.get $state))
-    (i32.store offset=20 (local.get $buf) (local.get $protect))
+                (call $gs32 (i32.add (local.get $arg1) (i32.const 24)) (i32.const 0))))))))
+    (call $gs32 (local.get $arg1) (local.get $page))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 4)) (local.get $allocation_base))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 8)) (local.get $allocation_protect))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 12)) (i32.sub (local.get $end) (local.get $page)))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 16)) (local.get $state))
+    (call $gs32 (i32.add (local.get $arg1) (i32.const 20)) (local.get $protect))
     (i32.store offset=0 (global.get $reg_base) (i32.const 28))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
