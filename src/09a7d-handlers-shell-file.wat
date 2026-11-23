@@ -1273,10 +1273,10 @@
   (func $handle_RegCreateKeyExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; RegCreateKeyExW(hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttrs, phkResult, lpdwDisposition)
     ;; 9 args stdcall
-    (local $wa_esp i32) (local $phkResult i32) (local $lpdwDisposition i32)
-    (local.set $wa_esp (call $g2w (i32.load offset=16 (global.get $reg_base))))
-    (local.set $phkResult (i32.load (i32.add (local.get $wa_esp) (i32.const 32))))
-    (local.set $lpdwDisposition (i32.load (i32.add (local.get $wa_esp) (i32.const 36))))
+    (local $esp i32) (local $phkResult i32) (local $lpdwDisposition i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $phkResult (call $gl32 (i32.add (local.get $esp) (i32.const 32))))
+    (local.set $lpdwDisposition (call $gl32 (i32.add (local.get $esp) (i32.const 36))))
     (i32.store offset=0 (global.get $reg_base) (call $host_reg_create_key
       (local.get $arg0) (call $g2w (local.get $arg1)) (local.get $phkResult)
       (i32.const 1) (local.get $lpdwDisposition)))
@@ -1285,10 +1285,10 @@
 
   ;; RegCreateKeyExA — same as ExW, 9 args stdcall
   (func $handle_RegCreateKeyExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa_esp i32) (local $phkResult i32) (local $lpdwDisposition i32)
-    (local.set $wa_esp (call $g2w (i32.load offset=16 (global.get $reg_base))))
-    (local.set $phkResult (i32.load (i32.add (local.get $wa_esp) (i32.const 32))))
-    (local.set $lpdwDisposition (i32.load (i32.add (local.get $wa_esp) (i32.const 36))))
+    (local $esp i32) (local $phkResult i32) (local $lpdwDisposition i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $phkResult (call $gl32 (i32.add (local.get $esp) (i32.const 32))))
+    (local.set $lpdwDisposition (call $gl32 (i32.add (local.get $esp) (i32.const 36))))
     (i32.store offset=0 (global.get $reg_base) (call $host_reg_create_key
       (local.get $arg0) (call $g2w (local.get $arg1)) (local.get $phkResult)
       (i32.const 0) (local.get $lpdwDisposition)))
