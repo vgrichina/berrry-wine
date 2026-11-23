@@ -4914,6 +4914,7 @@
   ;; Shared MAPVK_VK_TO_VSC mapping for MapVirtualKey and OemKeyScan.
   (func $vk_to_scan (param $uCode i32) (result i32)
     (local $result i32)
+    (if (i32.eq (local.get $uCode) (i32.const 0x14)) (then (return (i32.const 0x3A)))) ;; CapsLock
     (if (i32.eq (local.get $uCode) (i32.const 0x08)) (then (return (i32.const 0x0E)))) ;; Backspace
     (if (i32.eq (local.get $uCode) (i32.const 0x03)) (then (return (i32.const 0x46)))) ;; Cancel
     (block $vk0_done
