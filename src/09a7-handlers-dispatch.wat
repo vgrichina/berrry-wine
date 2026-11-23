@@ -4914,6 +4914,12 @@
   ;; Shared MAPVK_VK_TO_VSC mapping for MapVirtualKey and OemKeyScan.
   (func $vk_to_scan (param $uCode i32) (result i32)
     (local $result i32)
+    (if (i32.eq (local.get $uCode) (i32.const 0x21)) (then (return (i32.const 0x49)))) ;; PageUp
+    (if (i32.eq (local.get $uCode) (i32.const 0x22)) (then (return (i32.const 0x51)))) ;; PageDown
+    (if (i32.eq (local.get $uCode) (i32.const 0x23)) (then (return (i32.const 0x4F)))) ;; End
+    (if (i32.eq (local.get $uCode) (i32.const 0x24)) (then (return (i32.const 0x47)))) ;; Home
+    (if (i32.eq (local.get $uCode) (i32.const 0x2D)) (then (return (i32.const 0x52)))) ;; Insert
+    (if (i32.eq (local.get $uCode) (i32.const 0x2E)) (then (return (i32.const 0x53)))) ;; Delete
     (if (i32.eq (local.get $uCode) (i32.const 0x90)) (then (return (i32.const 0x45)))) ;; NumLock
     (if (i32.eq (local.get $uCode) (i32.const 0x91)) (then (return (i32.const 0x46)))) ;; ScrollLock
     (if (i32.eq (local.get $uCode) (i32.const 0x14)) (then (return (i32.const 0x3A)))) ;; CapsLock
