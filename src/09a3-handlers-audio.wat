@@ -3468,14 +3468,22 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; stdcall, 1 arg
   )
 
-  ;; midiOutGetVolume(hmo, lpdwVolume) — 2 args; report max volume both channels
+  ;; midiOutGetVolume(hmo, lpdwVolume) — 2 args; retrieve host volume state
   (func $handle_midiOutGetVolume (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $out i32) (local $result i32)
     (if (i32.eqz (local.get $arg1))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 11)) ;; MMSYSERR_INVALPARAM
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
         (return)))
-    (i32.store offset=0 (global.get $reg_base) (call $host_midi_out_get_volume (local.get $arg0) (call $g2w (local.get $arg1))))
+    ;; The host ABI takes a contiguous physical DWORD. Borrow an invocation
+    ;; span for page-crossing output and scatter only after host success.
+    (local.set $out (call $guest_span_in (local.get $arg1) (i32.const 4)))
+    (local.set $result (call $host_midi_out_get_volume (local.get $arg0) (local.get $out)))
+    (if (i32.eqz (local.get $result))
+      (then (call $guest_span_writeback (local.get $arg1) (local.get $out) (i32.const 4)))
+      (else (call $guest_span_release (local.get $out) (i32.const 4))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))  ;; stdcall, 2 args
   )
 
