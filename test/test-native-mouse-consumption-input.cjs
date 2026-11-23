@@ -132,6 +132,9 @@ test('USER motion requires exact native WM_MOUSEMOVE return, point, buttons and 
     let wall=Date.now(),mono=performance.now(),moves=0;
     const f=fixture({clock:{now:()=>wall,monotonic:()=>mono},configure(wine){
       const r=wine.renderer;r._mouseButtonsMask=1;r._shiftDown=true;
+      // This motion setup holds Shift independently of mouse-button VKs.
+      const mousePeek=r.peekKeyDownState.bind(r),physicalModifiers=new Set([16]);
+      r.peekKeyDownState=c=>c===16||c===17?(physicalModifiers.has(c)?0x8000:0):mousePeek(c);
       r.handleMouseMove=function(x,y){moves++;this.inputQueue.push({hwnd:10,msg:0x200,
         wParam:this._mouseButtonsMask|4,lParam:((y-20)<<16)|(x-10)});};
     }});
