@@ -1048,6 +1048,12 @@
     (local $exponent f64) (local $base f64)
     (local.set $exponent (call $fpu_pop))
     (local.set $base (call $fpu_pop))
+    ;; A positive unit base is one for every exponent, including a quiet NaN.
+    (if (f64.eq (local.get $base) (f64.const 1))
+      (then
+        (call $fpu_push (f64.const 1))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (return)))
     (call $fpu_push (call $host_math_pow (local.get $base) (local.get $exponent)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
