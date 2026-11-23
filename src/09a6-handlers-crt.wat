@@ -645,7 +645,7 @@
     ;; skip whitespace
     (block $d (loop $l
       (local.set $ch (i32.load8_u (local.get $wa)))
-      (br_if $d (i32.gt_u (local.get $ch) (i32.const 0x20)))
+      (br_if $d (i32.eqz (call $crt_is_space (local.get $ch))))
       (local.set $wa (i32.add (local.get $wa) (i32.const 1))) (br $l)))
     ;; sign
     (if (i32.eq (local.get $ch) (i32.const 0x2D)) ;; '-'
