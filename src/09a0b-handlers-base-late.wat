@@ -78,26 +78,25 @@
   ;; winver uses GetVersion format: high word = build (bit 31: set=Win9x, clear=NT)
   ;; low word = (minor<<8)|major
   (func $version_info (param $out_g i32)
-    (local $w0 i32)
-    (local.set $w0 (call $g2w (local.get $out_g)))
+    ;; Translate each guest field, including DWORDs split across backing pages.
     ;; dwMajorVersion at +4
-    (i32.store (i32.add (local.get $w0) (i32.const 4))
+    (call $gs32 (i32.add (local.get $out_g) (i32.const 4))
       (i32.and (global.get $winver) (i32.const 0xFF)))
     ;; dwMinorVersion at +8
-    (i32.store (i32.add (local.get $w0) (i32.const 8))
+    (call $gs32 (i32.add (local.get $out_g) (i32.const 8))
       (i32.and (i32.shr_u (global.get $winver) (i32.const 8)) (i32.const 0xFF)))
     ;; dwBuildNumber at +12 (bits 16-30, mask off platform bit)
-    (i32.store (i32.add (local.get $w0) (i32.const 12))
+    (call $gs32 (i32.add (local.get $out_g) (i32.const 12))
       (i32.and (i32.shr_u (global.get $winver) (i32.const 16)) (i32.const 0x7FFF)))
     ;; dwPlatformId at +16: bit 31 set = Win9x (1), clear = NT (2)
-    (i32.store (i32.add (local.get $w0) (i32.const 16))
+    (call $gs32 (i32.add (local.get $out_g) (i32.const 16))
       (if (result i32) (i32.and (global.get $winver) (i32.const 0x80000000))
         (then (i32.const 1))    ;; VER_PLATFORM_WIN32_WINDOWS
         (else (i32.const 2))))  ;; VER_PLATFORM_WIN32_NT
     ;; szCSDVersion at +20: empty string. Two zero bytes terminate it whether
     ;; the caller reads it as CHAR or WCHAR.
-    (i32.store8 (i32.add (local.get $w0) (i32.const 20)) (i32.const 0))
-    (i32.store8 (i32.add (local.get $w0) (i32.const 21)) (i32.const 0)))
+    (call $gs8 (i32.add (local.get $out_g) (i32.const 20)) (i32.const 0))
+    (call $gs8 (i32.add (local.get $out_g) (i32.const 21)) (i32.const 0)))
 
   ;; 472: GetVersionExA — fill OSVERSIONINFOA (148 bytes min) from $winver
   (func $handle_GetVersionExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
