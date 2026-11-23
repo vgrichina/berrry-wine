@@ -610,26 +610,21 @@
 
   ;; 729: strcat(dest, src) — cdecl
   (func $handle_strcat (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $dst i32) (local $src i32) (local $ch i32) (local $i i32)
+    (local $dst i32) (local $src i32) (local $ch i32)
     (local.set $dst (call $g2w (local.get $arg0)))
     ;; find end of dest
     (block $d (loop $l
-      (br_if $d (i32.ge_u (local.get $i) (i32.const 65536)))
       (br_if $d (i32.eqz (i32.load8_u (local.get $dst))))
       (local.set $dst (i32.add (local.get $dst) (i32.const 1)))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $l)))
     ;; copy src
     (local.set $src (call $g2w (local.get $arg1)))
-    (local.set $i (i32.const 0))
     (block $d2 (loop $l2
-      (br_if $d2 (i32.ge_u (local.get $i) (i32.const 65536)))
       (local.set $ch (i32.load8_u (local.get $src)))
       (i32.store8 (local.get $dst) (local.get $ch))
       (br_if $d2 (i32.eqz (local.get $ch)))
       (local.set $dst (i32.add (local.get $dst) (i32.const 1)))
       (local.set $src (i32.add (local.get $src) (i32.const 1)))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $l2)))
     (i32.store8 (local.get $dst) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
