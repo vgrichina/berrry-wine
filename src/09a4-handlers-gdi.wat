@@ -1118,6 +1118,8 @@
   ;; 168: CreateFontA — 14 params on stack
   (func $handle_CreateFontA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $handle i32) (local $weight i32) (local $italic i32) (local $face i32)
+    (local $input i32) (local $source i32) (local $length i32) (local $unit i32)
+    (local $copy i32) (local $i i32)
     ;; CreateFontA takes fourteen arguments, so argument n sits at esp+4n:
     ;; nHeight is arg0, fnWeight is the 5th at esp+20, fdwItalic the 6th at
     ;; esp+24, and lpszFace the 14th at esp+56. These offsets used to be one
@@ -1127,8 +1129,39 @@
     ;; 30-point headline is drawn with this call.
     (local.set $weight (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
     (local.set $italic (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
-    (local.set $face (call $g2w (call $gl32
-      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 56)))))
+
+    ;; Gather only the bytes the raw-pointer consumers can inspect. ANSI
+    ;; copying/binding reads at most 32 bytes; sfnt family records have a
+    ;; uint16 byte length and can compare 65535 WCHARs plus the terminator.
+    (local.set $input (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 56))))
+    (local.set $source (call $g2w (local.get $input)))
+    (if (local.get $input) (then
+      (block $face_end (loop $face_length
+        (local.set $unit (call $gl8 (i32.add (local.get $input) (local.get $length))))
+        (local.set $length (i32.add (local.get $length) (i32.const 1)))
+        (br_if $face_end (i32.eqz (local.get $unit)))
+        (br_if $face_length (i32.lt_u (local.get $length) (i32.const 32)))))
+      (local.set $source (call $g2w_affine_span (local.get $input) (local.get $length)))
+      (if (i32.eq (local.get $source) (global.get $NULL_SENTINEL)) (then
+        (if (i32.le_u (local.get $length)
+              (i32.sub (global.get $GUEST_SPAN_SCRATCH_SIZE) (global.get $guest_span_cursor)))
+          (then (local.set $source (call $guest_span_in (local.get $input) (local.get $length))))
+          (else
+            ;; An existing span lease or a long sfnt name must not overflow
+            ;; the arena. This temporary never becomes the font's owned face.
+            (local.set $copy (call $heap_alloc (local.get $length)))
+            (if (i32.eqz (local.get $copy)) (then
+              (i32.store (global.get $reg_base) (i32.const 0))
+              (i32.store offset=16 (global.get $reg_base)
+                (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 60)))
+              (return)))
+            (local.set $source (call $g2w (local.get $copy)))
+            (loop $face_copy
+              (i32.store8 (i32.add (local.get $source) (local.get $i))
+                (call $gl8 (i32.add (local.get $input) (local.get $i))))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br_if $face_copy (i32.lt_u (local.get $i) (local.get $length))))))))))
+    (local.set $face (local.get $source))
     (local.set $handle (call $gdi_font_create
       (local.get $arg0)                                              ;; height
       (local.get $weight)                                            ;; weight
@@ -1142,6 +1175,10 @@
     (call $gdi_font_set_charset (local.get $handle)
       (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
     (call $gdi_bitmap_font_bind (local.get $handle) (local.get $face))
+
+    (if (local.get $copy)
+      (then (call $heap_free (local.get $copy)))
+      (else (call $guest_span_release (local.get $source) (local.get $length))))
     (i32.store offset=0 (global.get $reg_base) (local.get $handle))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 60))) (return)
   )
@@ -4306,6 +4343,8 @@
   ;; 602: CreateFontW — convert the face name, then share the font-provider policy.
   (func $handle_CreateFontW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $face i32) (local $weight i32) (local $italic i32) (local $handle i32) (local $face_wa i32)
+    (local $input i32) (local $source i32) (local $length i32) (local $unit i32)
+    (local $copy i32) (local $i i32) (local $matched i32)
     ;; Fourteen arguments, so argument n is at esp+4n: fnWeight is the 5th,
     ;; fdwItalic the 6th, lpszFace the 14th. See $handle_CreateFontA.
     (local.set $weight (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
@@ -4316,9 +4355,45 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 60)))
         (return)))
-    (if (i32.eqz (call $tt_wide_family
-          (call $g2w (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 56))))
-          (call $g2w (local.get $face))))
+
+    ;; Gather only the bytes the raw-pointer consumers can inspect. ANSI
+    ;; copying/binding reads at most 32 bytes; sfnt family records have a
+    ;; uint16 byte length and can compare 65535 WCHARs plus the terminator.
+    (local.set $input (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 56))))
+    (local.set $source (call $g2w (local.get $input)))
+    (if (local.get $input) (then
+      (block $face_end (loop $face_length
+        (local.set $unit (call $gl16 (i32.add (local.get $input) (local.get $length))))
+        (local.set $length (i32.add (local.get $length) (i32.const 2)))
+        (br_if $face_end (i32.eqz (local.get $unit)))
+        (br_if $face_length (i32.lt_u (local.get $length) (i32.const 131072)))))
+      (local.set $source (call $g2w_affine_span (local.get $input) (local.get $length)))
+      (if (i32.eq (local.get $source) (global.get $NULL_SENTINEL)) (then
+        (if (i32.le_u (local.get $length)
+              (i32.sub (global.get $GUEST_SPAN_SCRATCH_SIZE) (global.get $guest_span_cursor)))
+          (then (local.set $source (call $guest_span_in (local.get $input) (local.get $length))))
+          (else
+            ;; An existing span lease or a long sfnt name must not overflow
+            ;; the arena. This temporary never becomes the font's owned face.
+            (local.set $copy (call $heap_alloc (local.get $length)))
+            (if (i32.eqz (local.get $copy)) (then
+              (call $heap_free (local.get $face))
+              (i32.store (global.get $reg_base) (i32.const 0))
+              (i32.store offset=16 (global.get $reg_base)
+                (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 60)))
+              (return)))
+            (local.set $source (call $g2w (local.get $copy)))
+            (loop $face_copy
+              (i32.store8 (i32.add (local.get $source) (local.get $i))
+                (call $gl8 (i32.add (local.get $input) (local.get $i))))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br_if $face_copy (i32.lt_u (local.get $i) (local.get $length))))))))))
+    (local.set $matched (call $tt_wide_family
+      (local.get $source) (call $g2w (local.get $face))))
+    (if (local.get $copy)
+      (then (call $heap_free (local.get $copy)))
+      (else (call $guest_span_release (local.get $source) (local.get $length))))
+    (if (i32.eqz (local.get $matched))
       (then (drop (call $wide_to_ansi
         (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 56)))
         (local.get $face) (i32.const 64)))))
