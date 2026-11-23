@@ -963,6 +963,9 @@
               (then (global.set $fpu_top (i32.and (i32.add (global.get $fpu_top) (i32.const 1)) (i32.const 7))) (return)))
             (if (i32.eq (local.get $rm) (i32.const 0))
               (then ;; F2XM1: ST(0) = 2^ST(0) - 1
+                ;; Intel's zero results retain the input sign; 2^(-0) - 1 loses it.
+                (if (f64.eq (local.get $st0) (f64.const 0))
+                  (then (call $fpu_set (i32.const 0) (local.get $st0)) (return)))
                 (call $fpu_set (i32.const 0) (f64.sub (call $host_math_pow2 (local.get $st0)) (f64.const 1.0))) (return)))
             (if (i32.eq (local.get $rm) (i32.const 1))
               (then ;; FYL2X: ST(1) = ST(1) * log2(ST(0)), pop
