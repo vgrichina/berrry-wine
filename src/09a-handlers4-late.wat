@@ -1659,18 +1659,29 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
 
 SetColorAdjustment — validate and copy complete per-DC state.
   (func $handle_SetColorAdjustment (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_color_adjustment_set
-      (local.get $arg0)
-      (if (result i32) (local.get $arg1)
-        (then (call $g2w (local.get $arg1))) (else (i32.const 0)))))
+    (local $buffer i32) (local $result i32)
+    ;; Transport exactly one COLORADJUSTMENT; the helper keeps its physical ABI.
+    (if (local.get $arg1)
+      (then (local.set $buffer (call $guest_span_in (local.get $arg1) (i32.const 24)))))
+    (local.set $result (call $gdi_color_adjustment_set
+      (local.get $arg0) (local.get $buffer)))
+    (call $guest_span_release (local.get $buffer) (i32.const 24))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
   (func $handle_GetColorAdjustment (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_color_adjustment_get
-      (local.get $arg0)
-      (if (result i32) (local.get $arg1)
-        (then (call $g2w (local.get $arg1))) (else (i32.const 0)))))
+    (local $buffer i32) (local $result i32)
+    ;; Transport exactly one COLORADJUSTMENT; the helper keeps its physical ABI.
+    (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+          (i32.ne (local.get $arg1) (i32.const 0)))
+      (then (local.set $buffer (call $guest_span_in (local.get $arg1) (i32.const 24)))))
+    (local.set $result (call $gdi_color_adjustment_get
+      (local.get $arg0) (local.get $buffer)))
+    (if (local.get $result)
+      (then (call $guest_span_writeback (local.get $arg1) (local.get $buffer) (i32.const 24)))
+      (else (call $guest_span_release (local.get $buffer) (i32.const 24))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
