@@ -37,7 +37,7 @@ for (const suffix of ['A', 'W']) {
             (param i32 i32 i32 i32 i32) (result i32)
         (call $gdi_font_char_widths
           (local.get 0) (local.get 1) (local.get 2)
-          (call $g2w (local.get 3)) (local.get 4)))
+          (local.get 3) (local.get 4)))
       (func (export "test_public_character_placement_w")
             (param i32 i32 i32 i32 i32 i32) (result i32)
         (call $gdi_character_placement_w

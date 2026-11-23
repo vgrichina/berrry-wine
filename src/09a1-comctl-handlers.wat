@@ -1280,14 +1280,49 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
   (func $handle_GetCharacterPlacementW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_character_placement_w
-      (local.get $arg0)
-      (if (result i32) (local.get $arg1)
-        (then (call $g2w (local.get $arg1))) (else (i32.const 0)))
-      (local.get $arg2) (local.get $arg3)
-      (if (result i32) (local.get $arg4)
-        (then (call $g2w (local.get $arg4))) (else (i32.const 0)))
-      (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))))
+    (local $text i32) (local $results i32) (local $copy_g i32)
+    (local $i i32) (local $placed i32)
+    (if (i32.or (i32.eqz (local.get $arg4))
+          (i32.or (i32.lt_s (local.get $arg2) (i32.const 0))
+            (i32.or (i32.gt_u (local.get $arg2) (i32.const 65536))
+              (i32.and (i32.gt_u (local.get $arg2) (i32.const 0))
+                (i32.eqz (local.get $arg1))))))
+      (then (i32.store (global.get $reg_base) (i32.const 0)))
+      (else
+        (if (i32.ge_u (call $gl32 (local.get $arg4)) (i32.const 36))
+          (then
+            (if (local.get $arg2)
+              (then
+                (local.set $text (call $g2w_affine_span (local.get $arg1)
+                  (i32.shl (local.get $arg2) (i32.const 1))))
+                (if (i32.eq (local.get $text) (global.get $NULL_SENTINEL))
+                  (then
+                    ;; The full valid input may be 128 KiB, larger than the
+                    ;; struct gather arena. Stage only nonaffine input here.
+                    (local.set $copy_g (call $heap_alloc
+                      (i32.shl (local.get $arg2) (i32.const 1))))
+                    (local.set $text (i32.const 0))
+                    (if (local.get $copy_g)
+                      (then
+                        (local.set $text (call $g2w (local.get $copy_g)))
+                        (block $copied (loop $copy
+                          (br_if $copied (i32.ge_u (local.get $i) (local.get $arg2)))
+                          (i32.store16 (i32.add (local.get $text)
+                              (i32.shl (local.get $i) (i32.const 1)))
+                            (call $gl16 (i32.add (local.get $arg1)
+                              (i32.shl (local.get $i) (i32.const 1)))))
+                          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                          (br $copy)))))))))
+            (if (i32.or (i32.eqz (local.get $arg2)) (i32.ne (local.get $text) (i32.const 0)))
+              (then
+                (local.set $results (call $guest_span_in (local.get $arg4) (i32.const 36)))
+                (local.set $placed (call $gdi_character_placement_w
+                  (local.get $arg0) (local.get $text) (local.get $arg2)
+                  (local.get $arg3) (local.get $results)
+                  (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))))
+                (call $guest_span_writeback (local.get $arg4) (local.get $results) (i32.const 36))))
+            (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))))
+        (i32.store (global.get $reg_base) (local.get $placed))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
 
   ;; Join an ANSI directory and leaf name and ask the VFS whether the result

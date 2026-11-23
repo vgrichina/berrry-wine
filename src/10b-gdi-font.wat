@@ -2017,12 +2017,8 @@
     (local.set $caret (i32.load offset=16 (local.get $results)))
     (local.set $class (i32.load offset=20 (local.get $results)))
     (local.set $glyphs (i32.load offset=24 (local.get $results)))
-    (if (local.get $out_string) (then (local.set $out_string (call $g2w (local.get $out_string)))))
-    (if (local.get $order) (then (local.set $order (call $g2w (local.get $order)))))
-    (if (local.get $dx) (then (local.set $dx (call $g2w (local.get $dx)))))
-    (if (local.get $caret) (then (local.set $caret (call $g2w (local.get $caret)))))
-    (if (local.get $class) (then (local.set $class (call $g2w (local.get $class)))))
-    (if (local.get $glyphs) (then (local.set $glyphs (call $g2w (local.get $glyphs)))))
+    ;; Text/results retain the physical helper ABI. Nested pointers are guest
+    ;; addresses: translate each access, including split WORDs and DWORDs.
     (block $done (loop $characters
       (br_if $done (i32.ge_u (local.get $i) (local.get $limit)))
       (local.set $character
@@ -2049,19 +2045,19 @@
               (local.get $max_extent)))
         (then (br $done)))
       (if (local.get $out_string)
-        (then (i32.store16
+        (then (call $gs16
           (i32.add (local.get $out_string) (i32.shl (local.get $included) (i32.const 1)))
           (local.get $character))))
       (if (local.get $order)
-        (then (i32.store
+        (then (call $gs32
           (i32.add (local.get $order) (i32.shl (local.get $included) (i32.const 2)))
           (local.get $i))))
       (if (local.get $dx)
-        (then (i32.store
+        (then (call $gs32
           (i32.add (local.get $dx) (i32.shl (local.get $included) (i32.const 2)))
           (local.get $width))))
       (if (local.get $caret)
-        (then (i32.store
+        (then (call $gs32
           (i32.add (local.get $caret) (i32.shl (local.get $included) (i32.const 2)))
           (local.get $extent))))
       ;; GCP_CLASSIN preserves nonzero caller classifications. Otherwise Latin
@@ -2070,11 +2066,11 @@
         (then
           (if (i32.or
                 (i32.eqz (i32.and (local.get $flags) (i32.const 0x00080000)))
-                (i32.eqz (i32.load8_u (i32.add (local.get $class) (local.get $included)))))
-            (then (i32.store8
+                (i32.eqz (call $gl8 (i32.add (local.get $class) (local.get $included)))))
+            (then (call $gs8
               (i32.add (local.get $class) (local.get $included)) (i32.const 1))))))
       (if (local.get $glyphs)
-        (then (i32.store16
+        (then (call $gs16
           (i32.add (local.get $glyphs) (i32.shl (local.get $included) (i32.const 1)))
           (local.get $character))))
       (local.set $extent (i32.add (local.get $extent) (local.get $width)))
@@ -2097,9 +2093,9 @@
         (local.set $i (i32.const 0))
         (block $justify_done (loop $justify
           (br_if $justify_done (i32.ge_u (local.get $i) (local.get $included)))
-          (i32.store (i32.add (local.get $dx) (i32.shl (local.get $i) (i32.const 2)))
+          (call $gs32 (i32.add (local.get $dx) (i32.shl (local.get $i) (i32.const 2)))
             (i32.add
-              (i32.load (i32.add (local.get $dx) (i32.shl (local.get $i) (i32.const 2))))
+              (call $gl32 (i32.add (local.get $dx) (i32.shl (local.get $i) (i32.const 2))))
               (i32.add (local.get $share)
                 (i32.lt_u (local.get $i) (local.get $remainder)))))
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
