@@ -84,7 +84,10 @@ for (const [vk, scan] of [
 ]) expect(vk, 4, scan);
 // Other nonmodifier E0/E1 translations remain unsupported. In type 4,
 // 0x2A means VK_PRINT, not the left Shift scan code, and remains unsupported.
-for (const vk of [0x03,0x13,0x2a,0x90,0,0xff]) expect(vk, 4, 0);
+for (const vk of [0x03,0x13,0x2a,0,0xff]) expect(vk, 4, 0);
+// Microsoft kbdus.c marks ausVK[0x45] (T45 = VK_NUMLOCK) KBDEXT;
+// MAPVK_VK_TO_VSC_EX includes the extended prefix in the high byte.
+expect(0x90, 4, 0xe045);
 for (const [vk, scan] of [
   [0x2c,0xe037], [0x5b,0xe05b], [0x5c,0xe05c], [0x5d,0xe05d], [0x6f,0xe035],
 ]) expect(vk, 4, scan);

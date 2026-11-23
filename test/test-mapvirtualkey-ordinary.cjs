@@ -88,8 +88,10 @@ for (const [scan, vk, label] of [
   [0xe01d,0xa3,'RCtrl'], [0x38,0xa4,'LAlt'], [0xe038,0xa5,'RAlt'],
 ]) check(scan, 3, vk, label);
 // Scope guards, preserving existing behavior; these are not new layout claims.
-for (const scan of [0,0x54,0x55,0x59,0xff,0xe01e,0xe041,0xe11e,0xe11d])
+for (const scan of [0,0x54,0x55,0x59,0xff,0xe01e,0xe041,0xe11e])
   check(scan, 3, 0, 'outside ordinary table / unsupported prefix');
+// Microsoft kbdus.c aE1VscToVk maps 0x1D to Y1D = VK_PAUSE.
+check(0xe11d, 3, 0x13, 'documented E1 Pause');
 // Independent Microsoft US sample: ausVK[0x56] = T56, KBD_TYPE 4 selects
 // OEM_102 in kbd.h; Virtual-Key Codes assigns VK_OEM_102 = 0xE2.
 // https://github.com/microsoft/Windows-driver-samples/blob/main/input/layout/kbdus/kbdus.c
