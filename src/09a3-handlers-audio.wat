@@ -99,17 +99,16 @@
   ;; (the two codecs, decode only). The ADPCM tags list no standard formats
   ;; because acmFormatDetails describes PCM only.
   (func $acm_format_tag_details (param $paftd i32) (param $fdw i32) (param $wide i32) (result i32)
-    (local $wa i32) (local $query i32) (local $index i32) (local $tag i32) (local $len i32)
+    (local $query i32) (local $index i32) (local $tag i32) (local $len i32)
     (if (i32.eqz (local.get $paftd))
       (then (return (i32.const 0x00000057))))     ;; MMSYSERR_INVALPARAM
-    (local.set $wa (call $g2w (local.get $paftd)))
     (local.set $query (i32.and (local.get $fdw) (i32.const 0x0000000F)))
     (local.set $index (i32.const -1))
     (if (i32.eqz (local.get $query))              ;; ACM_FORMATTAGDETAILSF_INDEX
-      (then (local.set $index (i32.load offset=4 (local.get $wa)))))
+      (then (local.set $index (call $gl32 (i32.add (local.get $paftd) (i32.const 4))))))
     (if (i32.eq (local.get $query) (i32.const 1)) ;; ACM_FORMATTAGDETAILSF_FORMATTAG
       (then
-        (local.set $tag (i32.load offset=8 (local.get $wa)))
+        (local.set $tag (call $gl32 (i32.add (local.get $paftd) (i32.const 8))))
         (if (i32.eq (local.get $tag) (i32.const 1)) (then (local.set $index (i32.const 0))))
         (if (i32.eq (local.get $tag) (i32.const 2)) (then (local.set $index (i32.const 1))))
         (if (i32.eq (local.get $tag) (i32.const 0x11)) (then (local.set $index (i32.const 2))))))
@@ -117,37 +116,37 @@
       (then (return (i32.const 512))))            ;; ACMERR_NOTPOSSIBLE
     ;; Keep the caller's cbStruct — it declares the size it allocated. The
     ;; name field is 48 chars, so a wide one runs to +24+96.
-    (call $zero_memory (i32.add (local.get $wa) (i32.const 4))
+    (call $guest_memset (i32.add (local.get $paftd) (i32.const 4)) (i32.const 0)
       (select (i32.const 116) (i32.const 68) (local.get $wide)))
-    (i32.store offset=4 (local.get $wa) (local.get $index))
+    (call $gs32 (i32.add (local.get $paftd) (i32.const 4)) (local.get $index))
     (if (i32.eqz (local.get $index))
       (then
-        (i32.store offset=8  (local.get $wa) (i32.const 1))    ;; WAVE_FORMAT_PCM
-        (i32.store offset=12 (local.get $wa) (i32.const 16))   ;; PCM WAVEFORMATEX
-        (i32.store offset=16 (local.get $wa) (i32.const 0x04)) ;; SUPPORTF_CONVERTER
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 8)) (i32.const 1))    ;; WAVE_FORMAT_PCM
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 12)) (i32.const 16))   ;; PCM WAVEFORMATEX
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 16)) (i32.const 0x04)) ;; SUPPORTF_CONVERTER
         ;; 4 sample rates x 8/16 bit x mono/stereo, the set waveOutGetDevCaps
         ;; below reports as supported.
-        (i32.store offset=20 (local.get $wa) (i32.const 16))
-        (i32.store offset=24 (local.get $wa) (i32.const 0x004D4350))  ;; "PCM\0"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 20)) (i32.const 16))
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 24)) (i32.const 0x004D4350))  ;; "PCM\0"
         (local.set $len (i32.const 3))))
     (if (i32.eq (local.get $index) (i32.const 1))
       (then
-        (i32.store offset=8  (local.get $wa) (i32.const 2))    ;; WAVE_FORMAT_ADPCM
-        (i32.store offset=12 (local.get $wa) (i32.const 50))   ;; with 7 coefficient pairs
-        (i32.store offset=16 (local.get $wa) (i32.const 0x01)) ;; SUPPORTF_CODEC
-        (i32.store offset=24 (local.get $wa) (i32.const 0x7263694D))  ;; "Micr"
-        (i32.store offset=28 (local.get $wa) (i32.const 0x666F736F))  ;; "osof"
-        (i32.store offset=32 (local.get $wa) (i32.const 0x44412074))  ;; "t AD"
-        (i32.store offset=36 (local.get $wa) (i32.const 0x004D4350))  ;; "PCM\0"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 8)) (i32.const 2))    ;; WAVE_FORMAT_ADPCM
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 12)) (i32.const 50))   ;; with 7 coefficient pairs
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 16)) (i32.const 0x01)) ;; SUPPORTF_CODEC
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 24)) (i32.const 0x7263694D))  ;; "Micr"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 28)) (i32.const 0x666F736F))  ;; "osof"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 32)) (i32.const 0x44412074))  ;; "t AD"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 36)) (i32.const 0x004D4350))  ;; "PCM\0"
         (local.set $len (i32.const 15))))
     (if (i32.eq (local.get $index) (i32.const 2))
       (then
-        (i32.store offset=8  (local.get $wa) (i32.const 0x11)) ;; WAVE_FORMAT_IMA_ADPCM
-        (i32.store offset=12 (local.get $wa) (i32.const 20))   ;; + wSamplesPerBlock
-        (i32.store offset=16 (local.get $wa) (i32.const 0x01)) ;; SUPPORTF_CODEC
-        (i32.store offset=24 (local.get $wa) (i32.const 0x20414D49))  ;; "IMA "
-        (i32.store offset=28 (local.get $wa) (i32.const 0x43504441))  ;; "ADPC"
-        (i32.store offset=32 (local.get $wa) (i32.const 0x0000004D))  ;; "M\0"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 8)) (i32.const 0x11)) ;; WAVE_FORMAT_IMA_ADPCM
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 12)) (i32.const 20))   ;; + wSamplesPerBlock
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 16)) (i32.const 0x01)) ;; SUPPORTF_CODEC
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 24)) (i32.const 0x20414D49))  ;; "IMA "
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 28)) (i32.const 0x43504441))  ;; "ADPC"
+        (call $gs32 (i32.add (local.get $paftd) (i32.const 32)) (i32.const 0x0000004D))  ;; "M\0"
         (local.set $len (i32.const 9))))
     (if (local.get $wide)
       (then (call $acm_widen_in_place
