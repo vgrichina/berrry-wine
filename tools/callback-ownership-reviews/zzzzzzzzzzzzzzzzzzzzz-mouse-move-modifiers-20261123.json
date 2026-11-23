@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "b6cfcf000190c9adf565a457201f9c107403a418f4d96bb6b893bee6a0c1c073",
+      "sha256": "12fc95687efe09fe713c9c4fc36c1d3bee6b88b6b4b1c645800c41c3d7237b55",
+      "reason": "2026-11-23 mouse movement payload: handleMouseMove snapshots existing physical Ctrl/Shift state with nonmutating peekKeyDownState and combines it with held mouse buttons for ordinary, cached-child, captured queued and captured synchronous WM_MOUSEMOVE dispatch. No new callback, guest entry, timer, continuation, retained reference or invocation ownership. Existing routing, coordinates, capture resolution, dispatch order and coalescing predicate are preserved; differing modifier masks now form the intended coalescing barrier. NEW test-renderer-mouse-move-modifiers.cjs independently checks documented masks across 271 cases, including sided modifiers and native EDIT early returns. Unchanged drag test passes; both untracked TrackMouseEvent originals retain their independently observed baseline failures. Broader invocation ownership remains pending."
+    }
+  ]
+}
