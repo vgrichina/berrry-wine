@@ -1006,7 +1006,37 @@
 
   (func $handle_ldexp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $x f64)
+    (local $exp i32)
     (local.set $x (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))))
+    ;; Scale finite nonzero inputs before a separately evaluated 2^exp overflows.
+    (if (i32.gt_s
+          (local.tee $exp (i32.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))))
+          (i32.const 1023))
+      (then
+        (if (i32.and
+              (f64.ne (local.get $x) (f64.const 0))
+              (f64.lt (f64.abs (local.get $x)) (f64.const inf)))
+          (then
+            ;; Even 2^-1074 * 2^2098 overflows; bound work for every int exponent.
+            (if (i32.ge_s (local.get $exp) (i32.const 2098))
+              (then (local.set $x (f64.copysign (f64.const inf) (local.get $x))))
+              (else
+                ;; Growing by exact powers cannot underflow or lose significand bits.
+                (local.set $x (f64.mul (local.get $x) (f64.const 0x1p1023)))
+                (local.set $exp (i32.sub (local.get $exp) (i32.const 1023)))
+                (if (i32.gt_s (local.get $exp) (i32.const 1023))
+                  (then
+                    (local.set $x (f64.mul (local.get $x) (f64.const 0x1p1023)))
+                    (local.set $exp (i32.sub (local.get $exp) (i32.const 1023)))))
+                (local.set $x
+                  (f64.mul (local.get $x)
+                    (f64.reinterpret_i64
+                      (i64.shl
+                        (i64.extend_i32_u (i32.add (local.get $exp) (i32.const 1023)))
+                        (i64.const 52)))))))
+            (call $fpu_push (local.get $x))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+            (return)))))
     (if (f64.eq (local.get $x) (f64.const 0))
       (then (call $fpu_push (local.get $x)))
       (else
