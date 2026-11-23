@@ -1,6 +1,7 @@
 'use strict';
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
-const context={console,setTimeout,clearTimeout};vm.runInNewContext(fs.readFileSync(__dirname+'/../host.js','utf8')+'\n;globalThis.WineAssembly=WineAssembly;',context);
+const context={console,setTimeout,clearTimeout,
+ require:require('module').createRequire(require.resolve('../host'))};vm.runInNewContext(fs.readFileSync(__dirname+'/../host.js','utf8')+'\n;globalThis.WineAssembly=WineAssembly;',context);
 (async()=>{
  const wine=new context.WineAssembly(),stream={handle:17,generation:1,callback:0x401000,instance:123};let offers=0;
  const link={worker:{},waveRegistrations:new Map([[17,stream]]),offerWaveCallback:async()=>{offers++;return {status:'accepted'};}};

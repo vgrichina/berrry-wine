@@ -1,7 +1,7 @@
 'use strict';
 // Runs the actual host _runThreaded step, replacing only transport/environment.
-// The control uses the immutable host snapshot immediately before this guard.
 const fs=require('fs'),vm=require('vm'),assert=require('assert');
+const {ThreadManager}=require('../lib/thread-manager');
 const source='../host.js';
 const context={console,setTimeout,clearTimeout,performance,
  require:require('module').createRequire(require.resolve('../host'))};
@@ -10,10 +10,15 @@ async function oneStep(pending,yieldReason) {
  const wine=new context.WineAssembly(), calls={slice:0,resolve:0,complete:0,load:0};
  let finish;const completed=new Promise(resolve=>{finish=resolve;});
  const timer=setTimeout(()=>finish(new Error('actual step failed to finish within 1000ms')),1000);
- const result={eip:0x401000,yield:yieldReason,blocks:0,ms:0,waitHandle:0xe0001,waitStackBytes:12};
- wine._workerLastSlice=result;
+ // No sibling threads: only the main Worker transport and sync-table export
+ // need stand-ins; host-step lifetime and wait resolution use the real manager.
+ const memory={buffer:new SharedArrayBuffer(65536)};
  wine.guestWorker={link:{_waveOffer:pending?{token:1}:null,completeWait:async()=>{calls.complete++;}},slice:async()=>{calls.slice++;return result;}};
- wine.threadManager={backend:'worker',startPendingWorkers:async()=>0,runWorkerSlices:async()=>0,workerSyncState:()=>({}),publishWorkerThunkState:()=>{},resolveMainWorkerWait:()=>{calls.resolve++;return {result:0,waitStackBytes:12};}};
+ const manager=wine.threadManager=new ThreadManager(null,memory,{exports:{get_sync_table:()=>0}},null,{workerBackend:wine.guestWorker});
+ const resolveMainWorkerWait=manager.resolveMainWorkerWait.bind(manager);
+ manager.resolveMainWorkerWait=(...args)=>{calls.resolve++;return resolveMainWorkerWait(...args);};
+ const result={eip:0x401000,yield:yieldReason,blocks:0,ms:0,waitHandle:manager.createEvent(false,true),waitStackBytes:12};
+ wine._workerLastSlice=result;
  for(const name of ['_frozenRegister','_installVisibilityPause','_installInputWake','_beginGuestTickBatch','_presentAtBoundary']) wine[name]=()=>{};
  wine._maybePauseForHidden=()=>false;
  wine._pumpWaveCallbacksAtBoundary=async()=>{};
