@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "9c427b282c25eb76cc9af8a9afaa84c15d0097be8018f9211bf01be4d286d4ba",
+      "sha256": "20d139e4d06a2b327c2e2f328fc3e7ae7b20ed753558c41af6f58a477c4e0abb",
+      "reason": "2026-11-23 queueMouseInput modifier payload only: replace historical Shift/Ctrl booleans with nonmutating generic physical peekKeyDownState reads. One expression preserves callbacks, invocation ownership, capture/routing, button transitions, wheel high word, coordinates, DirectInput delivery, queue order and guest entry. New independent 542-case test retains predecessor behavioral cases and mask oracle; EDIT legacy bookkeeping assertion corrected from actual DOWN early return and UP stillDown contract. No callback, continuation, timer, retained-reference or guest-entry changes; broader ownership remains pending."
+    }
+  ]
+}

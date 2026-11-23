@@ -61,12 +61,14 @@ assert(idle());
 // Execute the production host input imports against the constructed objects.
 // No guest module or controller assignment replaces the event lifecycle.
 const hostSource = fs.readFileSync(hostPath,'utf8');
-const begin = hostSource.indexOf('    h.check_input = () => {');
+const begin = hostSource.indexOf('    h.check_input = (...nativeContext) => {');
 const end = hostSource.indexOf('    // One `_lastInputEvent`',begin);
 assert(begin > 0 && end > begin);
 const h = {};
 host.logToUI = () => {};
-vm.runInNewContext(hostSource.slice(begin,end),{h,self:host,ctx:{}});
+vm.runInNewContext(hostSource.slice(begin,end),{
+  h,self:host,ctx:{windowLookupLifetime:host._processObject},
+});
 r.queueMouseInput(2,0,0,0,0);
 h.check_input();
 assert.equal(host._lastInputEvent,r._activeInputEvent);
