@@ -5697,13 +5697,11 @@
   ;; timeGetDevCaps(lptc, cbtc) — fills TIMECAPS { wPeriodMin, wPeriodMax }.
   ;; We claim 1 ms min resolution and ~1000 s max, matching what real NT returns.
   (func $handle_timeGetDevCaps (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $ptr i32)
     (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
                  (i32.ge_u (local.get $arg1) (i32.const 8)))
       (then
-        (local.set $ptr (call $g2w (local.get $arg0)))
-        (i32.store (local.get $ptr) (i32.const 1))
-        (i32.store offset=4 (local.get $ptr) (i32.const 1000000))))
+        (call $gs32 (local.get $arg0) (i32.const 1))
+        (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.const 1000000))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
