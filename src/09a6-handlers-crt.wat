@@ -961,6 +961,14 @@
     (local $x f64) (local $y f64) (local $r f64)
     (local.set $x (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))))
     (local.set $y (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))))
+    ;; A finite dividend is unchanged by either infinite divisor.
+    (if (i32.and
+          (f64.lt (f64.abs (local.get $x)) (f64.const inf))
+          (f64.eq (f64.abs (local.get $y)) (f64.const inf)))
+      (then
+        (call $fpu_push (local.get $x))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (return)))
     (local.set $r
       (f64.sub
         (local.get $x)
