@@ -2199,10 +2199,32 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   (func $handle_GetMetaFileBitsEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_metafile_bits
-      (local.get $arg0) (i32.const 6) (local.get $arg1)
-      (if (result i32) (local.get $arg2)
-        (then (call $g2w (local.get $arg2))) (else (i32.const 0)))))
+    (local $copy i32) (local $source i32) (local $dest i32)
+    (local $offset i32) (local $chunk i32) (local $physical i32)
+    ;; The shared helper retains its physical-destination ABI. Query the size
+    ;; first, then scatter only the unsigned bounded prefix to guest pages.
+    (local.set $copy (call $gdi_metafile_bits
+      (local.get $arg0) (i32.const 6) (local.get $arg1) (i32.const 0)))
+    (if (local.get $arg2) (then
+      (if (i32.gt_u (local.get $copy) (local.get $arg1))
+        (then (local.set $copy (local.get $arg1))))
+      (if (local.get $copy) (then
+        (local.set $source (i32.load offset=24
+          (call $gdi_metafile_record (local.get $arg0) (i32.const 6))))
+        (block $done (loop $scatter
+          (br_if $done (i32.ge_u (local.get $offset) (local.get $copy)))
+          (local.set $dest (i32.add (local.get $arg2) (local.get $offset)))
+          (local.set $chunk (i32.sub (i32.const 4096)
+            (i32.and (local.get $dest) (i32.const 4095))))
+          (if (i32.gt_u (local.get $chunk) (i32.sub (local.get $copy) (local.get $offset)))
+            (then (local.set $chunk (i32.sub (local.get $copy) (local.get $offset)))))
+          (local.set $physical (call $g2w (local.get $dest)))
+          (memory.copy (local.get $physical)
+            (i32.add (local.get $source) (local.get $offset)) (local.get $chunk))
+          (call $page_watch_write (local.get $physical) (local.get $chunk))
+          (local.set $offset (i32.add (local.get $offset) (local.get $chunk)))
+          (br $scatter)))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $copy))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_SetEnhMetaFileBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -2215,10 +2237,32 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   (func $handle_GetEnhMetaFileBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_metafile_bits
-      (local.get $arg0) (i32.const 7) (local.get $arg1)
-      (if (result i32) (local.get $arg2)
-        (then (call $g2w (local.get $arg2))) (else (i32.const 0)))))
+    (local $copy i32) (local $source i32) (local $dest i32)
+    (local $offset i32) (local $chunk i32) (local $physical i32)
+    ;; The shared helper retains its physical-destination ABI. Query the size
+    ;; first, then scatter only the unsigned bounded prefix to guest pages.
+    (local.set $copy (call $gdi_metafile_bits
+      (local.get $arg0) (i32.const 7) (local.get $arg1) (i32.const 0)))
+    (if (local.get $arg2) (then
+      (if (i32.gt_u (local.get $copy) (local.get $arg1))
+        (then (local.set $copy (local.get $arg1))))
+      (if (local.get $copy) (then
+        (local.set $source (i32.load offset=24
+          (call $gdi_metafile_record (local.get $arg0) (i32.const 7))))
+        (block $done (loop $scatter
+          (br_if $done (i32.ge_u (local.get $offset) (local.get $copy)))
+          (local.set $dest (i32.add (local.get $arg2) (local.get $offset)))
+          (local.set $chunk (i32.sub (i32.const 4096)
+            (i32.and (local.get $dest) (i32.const 4095))))
+          (if (i32.gt_u (local.get $chunk) (i32.sub (local.get $copy) (local.get $offset)))
+            (then (local.set $chunk (i32.sub (local.get $copy) (local.get $offset)))))
+          (local.set $physical (call $g2w (local.get $dest)))
+          (memory.copy (local.get $physical)
+            (i32.add (local.get $source) (local.get $offset)) (local.get $chunk))
+          (call $page_watch_write (local.get $physical) (local.get $chunk))
+          (local.set $offset (i32.add (local.get $offset) (local.get $chunk)))
+          (br $scatter)))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $copy))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_CopyEnhMetaFileA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
