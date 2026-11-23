@@ -1090,7 +1090,11 @@
   ;; 167: CreateFontIndirectA — LOGFONT at arg0
   (func $handle_CreateFontIndirectA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $lf i32) (local $handle i32)
-    (local.set $lf (call $g2w (local.get $arg0)))
+    ;; Keep fields and the inline face together across sparse guest pages.
+    ;; Preserve the existing null-input sentinel behavior.
+    (local.set $lf (if (result i32) (local.get $arg0)
+      (then (call $guest_span_in (local.get $arg0) (i32.const 60)))
+      (else (call $g2w (local.get $arg0)))))
     ;; LOGFONT: lfHeight(+0), lfWeight(+16), lfItalic(+20), lfFaceName(+28)
     (local.set $handle (call $gdi_font_create
       (i32.load (local.get $lf))                              ;; height
@@ -1106,6 +1110,7 @@
       (i32.load8_u offset=23 (local.get $lf)))
     (call $gdi_bitmap_font_bind (local.get $handle)
       (i32.add (local.get $lf) (i32.const 28)))
+    (call $guest_span_release (local.get $lf) (i32.const 60))
     (i32.store offset=0 (global.get $reg_base) (local.get $handle))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) (return)
   )
@@ -2666,16 +2671,37 @@
   ;; 315: CreateFontIndirectW — LOGFONTW at arg0
   (func $handle_CreateFontIndirectW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $lf i32) (local $face i32) (local $handle i32) (local $face_wa i32)
-    (local.set $lf (call $g2w (local.get $arg0)))
+    (local $chars i32) (local $bytes i32)
+    (local.set $lf (if (result i32) (local.get $arg0)
+      (then (call $guest_span_in (local.get $arg0) (i32.const 92)))
+      (else (call $g2w (local.get $arg0)))))
     (local.set $face (call $heap_alloc (i32.const 64)))
     (if (i32.eqz (local.get $face))
       (then
+        (call $guest_span_release (local.get $lf) (i32.const 92))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
     ;; LOGFONTW: lfHeight(+0), lfWeight(+16), lfItalic(+20), lfFaceName(+28 wchar[32])
     (if (i32.eqz (call $tt_wide_family (i32.add (local.get $lf) (i32.const 28)) (call $g2w (local.get $face))))
-      (then (drop (call $wide_to_ansi (i32.add (local.get $arg0) (i32.const 28)) (local.get $face) (i32.const 64)))))
+      (then
+        (if (local.get $arg0)
+          (then
+            ;; The gathered span is linear, not a guest address. Use the
+            ;; same ANSI encoder with the inline WCHAR count and reserve
+            ;; one byte of the existing 64-byte conversion for its NUL.
+            (block $face_end (loop $face_length
+              (br_if $face_end (i32.ge_u (local.get $chars) (i32.const 32)))
+              (br_if $face_end (i32.eqz (i32.load16_u
+                (i32.add (local.get $lf)
+                  (i32.add (i32.const 28) (i32.shl (local.get $chars) (i32.const 1)))))))
+              (local.set $chars (i32.add (local.get $chars) (i32.const 1)))
+              (br $face_length)))
+            (local.set $bytes (call $wide_wa_to_ansi_wa
+              (i32.add (local.get $lf) (i32.const 28)) (local.get $chars)
+              (call $g2w (local.get $face)) (i32.const 63)))
+            (i32.store8 (i32.add (call $g2w (local.get $face)) (local.get $bytes)) (i32.const 0)))
+          (else (drop (call $wide_to_ansi (i32.add (local.get $arg0) (i32.const 28)) (local.get $face) (i32.const 64)))))))
     (local.set $face_wa (call $g2w (local.get $face))) (local.set $handle (call $gdi_font_create
       (i32.load (local.get $lf))                              ;; height
       (i32.load (i32.add (local.get $lf) (i32.const 16)))    ;; weight
@@ -2690,6 +2716,7 @@
       (i32.load8_u offset=23 (local.get $lf)))
     (call $gdi_bitmap_font_bind (local.get $handle) (local.get $face_wa))
     (if (local.get $face) (then (call $heap_free (local.get $face))))
+    (call $guest_span_release (local.get $lf) (i32.const 92))
     (i32.store offset=0 (global.get $reg_base) (local.get $handle))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) (return)
   )
