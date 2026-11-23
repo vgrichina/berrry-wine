@@ -3,11 +3,12 @@
 
 const assert = require('assert');
 const apis = require('../src/api_table.json').filter(api => api.test_call);
-const compiler = require('./compile-src');
-const compile = compiler.compileSrcWasm;
+const { compileSrcWasm } = require('./compile-src');
+const { bootRenderHarness } = require('./render-helper');
 // Keep the generated wrappers intact; replace only their called endpoint with
 // an ABI recorder. Real-handler behavior is covered by the GDI/Winsock suites.
-compiler.compileSrcWasm = (transform, options) => compile((file, source) => {
+const substituted = new Set();
+function transformWrapperEndpoints(file, source) {
   if (file === '09b2-dispatch-table.generated.wat') {
     for (const api of apis) {
       const start = source.indexOf(`  (func (export "test_call_${api.name}")`);
@@ -18,21 +19,24 @@ compiler.compileSrcWasm = (transform, options) => compile((file, source) => {
       const target = `(call $handle_${api.handler || api.name}`;
       assert.strictEqual(body.split(target).length, 2, `${api.name}: one endpoint`);
       source = source.slice(0, start) + body.replace(target, '(call $test_stack_capture') + source.slice(end);
+      substituted.add(api.name);
     }
   }
-  return transform ? transform(file, source) : source;
-}, options);
-const { bootRenderHarness } = require('./render-helper');
+  return file === '13-exports.wat' ? `${source}\n${extraWat}\n` : source;
+}
 
 const extraWat = String.raw`
   (global $test_stack_output (mut i32) (i32.const 0))
   (global $test_stack_count (mut i32) (i32.const 0))
+  (global $test_stack_invocations (mut i32) (i32.const 0))
+  (func (export "test_stack_invocations") (result i32) (global.get $test_stack_invocations))
   (func (export "test_stack_setup") (param $out i32) (param $count i32)
     (global.set $test_stack_output (local.get $out))
     (global.set $test_stack_count (local.get $count)))
   (func $test_stack_capture (param $a i32) (param $b i32) (param $c i32)
       (param $d i32) (param $e i32) (param $name i32)
     (local $i i32) (local $sp i32)
+    (global.set $test_stack_invocations (i32.add (global.get $test_stack_invocations) (i32.const 1)))
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (call $gs32 (global.get $test_stack_output) (local.get $a))
     (call $gs32 (i32.add (global.get $test_stack_output) (i32.const 4)) (local.get $b))
@@ -56,7 +60,14 @@ const extraWat = String.raw`
   assert(apis.some(api => api.nargs === 0), 'include zero-argument wrappers');
   assert(apis.some(api => api.nargs > 0 && api.nargs <= 5), 'include direct-argument wrappers');
   assert(apis.some(api => api.nargs > 5), 'include stack-argument wrappers');
-  const { exports: e } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  assert(apis.some(api => api.args?.some(arg => arg.type === 'FLOAT')), 'include FLOAT arguments');
+  // Use the supported transform directly: render-helper's sealed compiler has
+  // its own module graph, so monkeypatching compile-src cannot affect it.
+  // Appending extraWat above keeps its exports in the canonical compile options.
+  const bytes = compileSrcWasm(transformWrapperEndpoints, { tailCalls: true });
+  assert.deepStrictEqual([...substituted], apis.map(api => api.name), 'substitute every wrapper endpoint');
+  const prebuiltModule = await WebAssembly.compile(bytes);
+  const { exports: e } = await bootRenderHarness({ prebuiltModule, fonts: 'none' });
   const stack = e.guest_alloc(256) >>> 0;
   const out = e.guest_alloc(128) >>> 0;
   const read = ptr => e.guest_read32(ptr) >>> 0;
@@ -77,7 +88,10 @@ const extraWat = String.raw`
       for (let i = 0; i < 128; i++) e.guest_write8(out + i, 0xdd);
       e.test_stack_setup(out, api.nargs);
       e.set_esp(sp);
-      assert.strictEqual(e[`test_call_${api.name}`](...args) >>> 0, 0x76543210, api.name);
+      const result = e[`test_call_${api.name}`](...args) >>> 0;
+      assert.strictEqual(e.test_stack_invocations(), count + 1,
+        `${api.name}: recorder invoked exactly once at alignment ${alignment}`);
+      assert.strictEqual(result, 0x76543210, api.name);
       assert.strictEqual(e.get_esp() >>> 0, sp, `${api.name}: restore ESP`);
       assert.deepStrictEqual(Array.from({ length: 5 }, (_, i) => read(out + i * 4)),
         Array.from({ length: 5 }, (_, i) => i < words.length ? words[i] : 0),
@@ -92,7 +106,7 @@ const extraWat = String.raw`
       count++;
     }
   }
-  console.log(`PASS ${count} generated wrapper calls: signatures, arguments, alignment, guards, result and ESP`);
+  console.log(`PASS ${count} generated wrapper calls (${apis.length} wrappers, recorder invoked for every call): signatures, arguments, FLOAT, alignment, guards, result and ESP`);
 })().catch(error => {
   console.error(error.stack || error);
   process.exit(1);
