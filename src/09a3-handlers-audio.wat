@@ -1583,16 +1583,15 @@
   ;; WAVEFORMATEX: +0 wFormatTag(2), +2 nChannels(2), +4 nSamplesPerSec(4),
   ;;   +8 nAvgBytesPerSec(4), +12 nBlockAlign(2), +14 wBitsPerSample(2)
   (func $handle_waveOutOpen (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $fmt_wa i32) (local $rate i32) (local $ch i32) (local $bits i32)
+    (local $rate i32) (local $ch i32) (local $bits i32)
     (local $handle i32) (local $fdwOpen i32) (local $cbType i32)
     ;; arg0=phwo, arg1=uDeviceID, arg2=lpFormat, arg3=dwCallback, arg4=dwInstance
     ;; fdwOpen is 6th arg at [esp+24]
     (local.set $fdwOpen (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
-    ;; Read WAVEFORMATEX
-    (local.set $fmt_wa (call $g2w (local.get $arg2)))
-    (local.set $rate (i32.load (i32.add (local.get $fmt_wa) (i32.const 4))))
-    (local.set $ch (i32.load16_u (i32.add (local.get $fmt_wa) (i32.const 2))))
-    (local.set $bits (i32.load16_u (i32.add (local.get $fmt_wa) (i32.const 14))))
+    ;; Read each field through guest memory; backing pages may be separate.
+    (local.set $rate (call $gl32 (i32.add (local.get $arg2) (i32.const 4))))
+    (local.set $ch (call $gl16 (i32.add (local.get $arg2) (i32.const 2))))
+    (local.set $bits (call $gl16 (i32.add (local.get $arg2) (i32.const 14))))
     ;; Callback type from fdwOpen bits 16-18:
     ;; 0=none, 1=window, 2=thread, 3=function, 5=event
     (local.set $cbType (i32.and (i32.shr_u (local.get $fdwOpen) (i32.const 16)) (i32.const 7)))
