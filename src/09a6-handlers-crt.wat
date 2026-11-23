@@ -1154,6 +1154,7 @@
   ;; ST(1)=dividend, ST(0)=divisor, with one result left in ST(0).
   (func $handle__CIfmod (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $divisor f64) (local $dividend f64) (local $result f64)
+    (local $scale f64) (local $steps i32)
     (local.set $divisor (call $fpu_pop))
     (local.set $dividend (call $fpu_pop))
     ;; A finite dividend is unchanged by either infinite divisor.
@@ -1162,6 +1163,39 @@
           (f64.eq (f64.abs (local.get $divisor)) (f64.const inf)))
       (then
         (call $fpu_push (local.get $dividend))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (return)))
+    ;; Only finite operands with a nonzero divisor and overflowing quotient.
+    ;; maxfinite / minsubnormal spans fewer than 2098 binary exponents.
+    (if (i32.and
+          (i32.and
+            (f64.lt (f64.abs (local.get $dividend)) (f64.const inf))
+            (f64.lt (f64.abs (local.get $divisor)) (f64.const inf)))
+          (i32.and
+            (f64.ne (local.get $divisor) (f64.const 0))
+            (f64.eq (f64.abs (f64.div (local.get $dividend) (local.get $divisor))) (f64.const inf))))
+      (then
+        (local.set $result (f64.abs (local.get $dividend)))
+        (local.set $scale (f64.abs (local.get $divisor)))
+        (block $scaled
+          (loop $scale_up
+            (br_if $scaled
+              (i32.or
+                (i32.ge_u (local.get $steps) (i32.const 2098))
+                (f64.gt (local.get $scale) (f64.mul (local.get $result) (f64.const 0.5)))))
+            (local.set $scale (f64.mul (local.get $scale) (f64.const 2)))
+            (local.set $steps (i32.add (local.get $steps) (i32.const 1)))
+            (br $scale_up)))
+        (block $reduced
+          (loop $reduce
+            ;; result < 2*scale: every selected subtraction is exact.
+            (if (f64.ge (local.get $result) (local.get $scale))
+              (then (local.set $result (f64.sub (local.get $result) (local.get $scale)))))
+            (br_if $reduced (i32.eqz (local.get $steps)))
+            (local.set $scale (f64.mul (local.get $scale) (f64.const 0.5)))
+            (local.set $steps (i32.sub (local.get $steps) (i32.const 1)))
+            (br $reduce)))
+        (call $fpu_push (f64.copysign (local.get $result) (local.get $dividend)))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (return)))
     (local.set $result
