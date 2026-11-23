@@ -815,9 +815,22 @@
     ;; first write so invalid and short calls leave caller canaries untouched.
     (if (i32.lt_u (local.get $cb) (local.get $required))
       (then (return (i32.const 0))))
-    (local.set $out (call $g2w_affine_span (local.get $buffer) (local.get $required)))
-    (if (i32.eq (local.get $out) (global.get $NULL_SENTINEL))
+    ;; Preflight every byte before acquiring a gathered span. An affine-span
+    ;; miss can mean valid nonadjacent pages, so it alone cannot reject output.
+    (if (i64.gt_u
+          (i64.add (i64.extend_i32_u (local.get $buffer))
+            (i64.extend_i32_u (local.get $required)))
+          (i64.const 0x100000000))
       (then (return (i32.const 0))))
+    (local.set $i (i32.const 0))
+    (block $output_valid (loop $validate_output
+      (br_if $output_valid (i32.ge_u (local.get $i) (local.get $required)))
+      (if (i32.eqz (call $guest_addr_mapped
+            (i32.add (local.get $buffer) (local.get $i))))
+        (then (return (i32.const 0))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $validate_output)))
+    (local.set $out (call $guest_span_in (local.get $buffer) (local.get $required)))
     (memory.fill (local.get $out) (i32.const 0) (local.get $required))
 
     ;; otmSize describes the fixed OUTLINETEXTMETRIC structure itself; the
@@ -1008,6 +1021,7 @@
         (i32.add (i32.const 204) (local.get $shift))) (local.get $style_off))
     (i32.store (i32.add (local.get $out)
         (i32.add (i32.const 208) (local.get $shift))) (local.get $full_off))
+    (call $guest_span_writeback (local.get $buffer) (local.get $out) (local.get $required))
     (local.get $required))
 
   (func $handle_GetOutlineTextMetricsA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
