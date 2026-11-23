@@ -3170,8 +3170,14 @@
 
   ;; 374: RectVisible(hdc, lprc) — query the WAT-owned explicit clip.
   (func $handle_RectVisible (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $rect i32)
+    ;; The helper reads a linear RECT; gather valid separately backed pages.
+    (local.set $rect (call $g2w (local.get $arg1)))
+    (if (local.get $arg1)
+      (then (local.set $rect (call $guest_span_in (local.get $arg1) (i32.const 16)))))
     (i32.store offset=0 (global.get $reg_base) (call $gdi_dc_clip_rect_visible
-      (local.get $arg0) (call $g2w (local.get $arg1))))
+      (local.get $arg0) (local.get $rect)))
+    (call $guest_span_release (local.get $rect) (i32.const 16))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
