@@ -675,7 +675,7 @@
     (i32.const -1))
 
   (func $crt_strto32 (param $nptr i32) (param $endptr i32) (param $base_arg i32) (result i32)
-    (local $start_wa i32) (local $wa i32) (local $digits_start i32)
+    (local $start_wa i32) (local $wa i32)
     (local $base i32) (local $ch i32) (local $digit i32)
     (local $neg i32) (local $any i32) (local $value i32)
     (local.set $start_wa (call $g2w (local.get $nptr)))
@@ -702,14 +702,18 @@
               (i32.eq (i32.load8_u (i32.add (local.get $wa) (i32.const 1))) (i32.const 0x78))
               (i32.eq (i32.load8_u (i32.add (local.get $wa) (i32.const 1))) (i32.const 0x58)))))
       (then
-        (local.set $base (i32.const 16))
-        (local.set $wa (i32.add (local.get $wa) (i32.const 2)))))
+        ;; A prefix requires a following hex digit; otherwise parse the initial 0.
+        (if (i32.lt_u
+              (call $crt_digit_value (i32.load8_u (i32.add (local.get $wa) (i32.const 2))))
+              (i32.const 16))
+          (then
+            (local.set $base (i32.const 16))
+            (local.set $wa (i32.add (local.get $wa) (i32.const 2)))))))
     (if (i32.eqz (local.get $base))
       (then
         (local.set $base (i32.const 10))
         (if (i32.eq (i32.load8_u (local.get $wa)) (i32.const 0x30))
           (then (local.set $base (i32.const 8))))))
-    (local.set $digits_start (local.get $wa))
     (block $done (loop $digits
       (local.set $digit (call $crt_digit_value (i32.load8_u (local.get $wa))))
       (br_if $done (i32.lt_s (local.get $digit) (i32.const 0)))
@@ -718,7 +722,7 @@
       (local.set $any (i32.const 1))
       (local.set $wa (i32.add (local.get $wa) (i32.const 1)))
       (br $digits)))
-    (if (i32.eqz (local.get $any)) (then (local.set $wa (local.get $digits_start))))
+    (if (i32.eqz (local.get $any)) (then (local.set $wa (local.get $start_wa))))
     (if (local.get $endptr)
       (then (call $gs32 (local.get $endptr)
         (i32.add (local.get $nptr) (i32.sub (local.get $wa) (local.get $start_wa))))))
