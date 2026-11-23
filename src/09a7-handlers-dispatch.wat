@@ -4914,6 +4914,13 @@
   ;; Shared MAPVK_VK_TO_VSC mapping for MapVirtualKey and OemKeyScan.
   (func $vk_to_scan (param $uCode i32) (result i32)
     (local $result i32)
+    ;; Sided modifiers use the scan byte; type 4 adds E0 separately.
+    (if (i32.eq (local.get $uCode) (i32.const 0xA0)) (then (return (i32.const 0x2A)))) ;; LShift
+    (if (i32.eq (local.get $uCode) (i32.const 0xA1)) (then (return (i32.const 0x36)))) ;; RShift
+    (if (i32.eq (local.get $uCode) (i32.const 0xA2)) (then (return (i32.const 0x1D)))) ;; LCtrl
+    (if (i32.eq (local.get $uCode) (i32.const 0xA3)) (then (return (i32.const 0x1D)))) ;; RCtrl
+    (if (i32.eq (local.get $uCode) (i32.const 0xA4)) (then (return (i32.const 0x38)))) ;; LAlt
+    (if (i32.eq (local.get $uCode) (i32.const 0xA5)) (then (return (i32.const 0x38)))) ;; RAlt
     (if (i32.eq (local.get $uCode) (i32.const 0x21)) (then (return (i32.const 0x49)))) ;; PageUp
     (if (i32.eq (local.get $uCode) (i32.const 0x22)) (then (return (i32.const 0x51)))) ;; PageDown
     (if (i32.eq (local.get $uCode) (i32.const 0x23)) (then (return (i32.const 0x4F)))) ;; End
