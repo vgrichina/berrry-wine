@@ -1041,8 +1041,13 @@
   ;; GetTextCharsetInfo(hdc, lpSig, flags). Raster fonts have no Unicode range
   ;; signature; preserve the selected font's charset rather than forcing ANSI.
   (func $handle_GetTextCharsetInfo (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $i i32)
     (if (local.get $arg1)
-      (then (call $zero_memory (call $g2w (local.get $arg1)) (i32.const 24))))
+      (then
+        (loop $zero_signature
+          (call $gs8 (i32.add (local.get $arg1) (local.get $i)) (i32.const 0))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $zero_signature (i32.lt_u (local.get $i) (i32.const 24))))))
     (i32.store offset=0 (global.get $reg_base) (call $gdi_dc_text_charset (local.get $arg0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )

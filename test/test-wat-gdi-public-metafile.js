@@ -6,8 +6,6 @@ const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
 const { bootRenderHarness } = require('./render-helper');
-// $GUEST_BASE, from the map declared in src/00-regions.wat.
-const RegionMap = require('../lib/region-map.generated.js');
 
 (async () => {
   const canvasTextCalls = { bind: 0, mask: 0 };
@@ -81,8 +79,9 @@ const RegionMap = require('../lib/region-map.generated.js');
   assert(wat.load_pe(exe.length), 'PE load must initialize callback continuation thunks');
   wat.init_dx_com_thunks();
   const bytes = new Uint8Array(memory.buffer);
-  const imageBase = wat.get_image_base() >>> 0;
-  const wa = guest => RegionMap.g2w(guest, imageBase);
+  // Large recording streams can use allocated guest backing outside the
+  // direct window; inspect them through the runtime's address translation.
+  const wa = guest => wat.guest_to_wasm(guest) >>> 0;
   let passed = 0;
 
   const check = (name, fn) => {
@@ -467,8 +466,28 @@ const RegionMap = require('../lib/region-map.generated.js');
       assert.strictEqual(wat.test_ole_draw_public(object, 1, hdc, bounds, view), 0);
       assert.deepStrictEqual(Buffer.from(bytes.subarray(dc, dc + 96)), before);
       assert.strictEqual(wat.test_call_GetPixel(hdc, 20, 20) >>> 0, 0x00ff0000);
-      assert.strictEqual(wat.test_call_GetPixel(hdc, 12, 20) >>> 0, 0, 'caller clip is retained');
+      // GetPixel returns CLR_INVALID outside the current clipping region.
+      // https://learn.microsoft.com/windows/win32/api/wingdi/nf-wingdi-getpixel
+      assert.strictEqual(wat.test_call_GetPixel(hdc, 12, 20) >>> 0, 0xffffffff,
+        'caller clip rejects the query');
       assert.strictEqual(wat.test_call_GetPixel(hdc, 32, 20) >>> 0, 0, 'requested bounds constrain drawing');
+      // Inspect physical pixels without the caller mapping or clip. Deselect
+      // the bitmap first so it is never selected into two DCs simultaneously.
+      const inspectDc = wat.test_call_CreateCompatibleDC(0) >>> 0;
+      const replacement = wat.test_call_CreateCompatibleBitmap(0, 1, 1) >>> 0;
+      wat.test_call_SelectObject(hdc, replacement);
+      wat.test_call_SelectObject(inspectDc, bitmap);
+      assert.strictEqual(wat.test_call_GetPixel(inspectDc, 31, 49) >>> 0, 0,
+        'caller clip leaves the mapped target pixel black');
+      assert.strictEqual(wat.test_call_GetPixel(inspectDc, 47, 49) >>> 0, 0x00ff0000,
+        'the mapped target contains the blue drawing');
+      assert.strictEqual(wat.test_call_GetPixel(inspectDc, 71, 49) >>> 0, 0,
+        'drawing stops beyond the mapped target bounds within the caller clip');
+      wat.test_call_DeleteDC(inspectDc);
+      wat.test_call_SelectObject(hdc, bitmap);
+      wat.test_call_DeleteObject(replacement);
+      assert.deepStrictEqual(Buffer.from(bytes.subarray(dc, dc + 96)), before,
+        'independent bitmap inspection preserves all caller DC fields');
       assert.strictEqual(wat.test_ole_draw_public(object, 2, hdc, bounds, view) >>> 0, 0x80040007);
       assert.strictEqual(wat.test_ole_draw_public(object, 1, 0, bounds, view) >>> 0, 0x80040140);
       assert.strictEqual(wat.test_call_GetObjectType(metafile), 13, 'drawing borrows the EMF handle');
