@@ -1955,6 +1955,7 @@
     (local $dc i32) (local $handle i32) (local $face i32) (local $object i32)
     (local $data i32) (local $size i32) (local $tag i32)
     (local $off i32) (local $len i32) (local $avail i32) (local $n i32) (local $record i32)
+    (local $dst i32) (local $src i32) (local $left i32) (local $chunk i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
     (i32.store offset=0 (global.get $reg_base) (i32.const -1))
     (local.set $dc (call $gdi_dc_state_entry (local.get $arg0) (i32.const 0)))
@@ -2015,11 +2016,23 @@
       (i32.lt_u (local.get $arg4) (local.get $avail))))
     (if (local.get $n)
       (then
-        (memory.copy
-          (call $g2w (local.get $arg3))
-          (i32.add (local.get $data)
-            (i32.add (local.get $off) (local.get $arg2)))
-          (local.get $n))))
+        ;; sfnt table offsets address physical font storage. Only the output
+        ;; is guest memory: translate each destination page separately.
+        (local.set $dst (local.get $arg3))
+        (local.set $src (i32.add (local.get $data)
+          (i32.add (local.get $off) (local.get $arg2))))
+        (local.set $left (local.get $n))
+        (loop $copy_pages
+          (local.set $chunk (i32.sub (i32.const 4096)
+            (i32.and (local.get $dst) (i32.const 4095))))
+          (if (i32.gt_u (local.get $chunk) (local.get $left))
+            (then (local.set $chunk (local.get $left))))
+          (memory.copy (call $g2w (local.get $dst))
+            (local.get $src) (local.get $chunk))
+          (local.set $dst (i32.add (local.get $dst) (local.get $chunk)))
+          (local.set $src (i32.add (local.get $src) (local.get $chunk)))
+          (local.set $left (i32.sub (local.get $left) (local.get $chunk)))
+          (br_if $copy_pages (local.get $left)))))
     (i32.store offset=0 (global.get $reg_base) (local.get $n)))
 
   ;; CreateScalableFontResource writes a .FOT wrapper which AddFontResource
