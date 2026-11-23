@@ -3743,13 +3743,22 @@
   (func $handle_waveInAddBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $wa i32) (local $data_ga i32) (local $length i32)
     (local.set $wa (call $g2w (local.get $arg1)))
-    (local.set $data_ga (i32.load (local.get $wa)))
-    (local.set $length (i32.load offset=4 (local.get $wa)))
-    (i32.store offset=8 (local.get $wa) (i32.const 0))
-    (i32.store offset=16 (local.get $wa)
-      (i32.or
-        (i32.and (i32.load offset=16 (local.get $wa)) (i32.const 0xFFFFFFFE))
-        (i32.const 0x12))) ;; PREPARED | INQUEUE
+    (if (local.get $arg1)
+      (then
+        (local.set $data_ga (call $gl32 (local.get $arg1)))
+        (local.set $length (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 8)) (i32.const 0))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 16))
+          (i32.or
+            (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 16))) (i32.const 0xFFFFFFFE))
+            (i32.const 0x12)))) ;; PREPARED | INQUEUE
+      (else
+        ;; Preserve the existing NULL-sentinel field side effects and host call.
+        (local.set $data_ga (i32.load (local.get $wa)))
+        (local.set $length (i32.load offset=4 (local.get $wa)))
+        (i32.store offset=8 (local.get $wa) (i32.const 0))
+        (i32.store offset=16 (local.get $wa)
+          (i32.or (i32.and (i32.load offset=16 (local.get $wa)) (i32.const 0xFFFFFFFE)) (i32.const 0x12)))))
     (i32.store offset=0 (global.get $reg_base) (call $host_wave_in_add_buffer
       (local.get $arg0) (local.get $wa) (local.get $arg1)
       (call $g2w (local.get $data_ga)) (local.get $length)))

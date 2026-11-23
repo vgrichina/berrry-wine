@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "5ea1ca4964943695fdaa3bdfafa7caa147a055e1950101d7a5e113d729d5a3bd",
+      "sha256": "e822baa6bcf7fa0d0d3e55ef2a36968099dce63e5b95cfa27520256e8040afc8",
+      "reason": "Review 20261123 WaveIn mapped headers: inspected complete host delta against published parent 019e767b0a714f6de814bd7d9d623f80c7aca777. Queue retains submitting guest read/write exports, or context per-byte g2w access, and resolves current guest backing at completion; direct standalone physical ABI remains. Recorded bytes and DONE/clear INQUEUE are written before the same callback in the existing try/catch. No queue, feed, stop/reset/close ordering, callback entry, ownership, scheduler or guest restoration changes. Only header fields change; PCM remains contiguous. Public WINMM PE/export/thunk/x86 and production queue/feed/completion mapping evidence 20261123-wavein-header-pipeline-root."
+    }
+  ]
+}
