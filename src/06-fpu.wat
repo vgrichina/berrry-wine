@@ -1032,6 +1032,11 @@
                 (return)))
             (if (i32.eq (local.get $rm) (i32.const 1))
               (then ;; FYL2XP1: ST(1) = ST(1) * log2(ST(0) + 1), pop
+                ;; Preserve the input zero sign (Intel SDM Table 3-49).
+                (if (f64.eq (local.get $st0) (f64.const 0))
+                  (then
+                    (call $fpu_set (i32.const 1) (f64.mul (call $fpu_get (i32.const 1)) (local.get $st0)))
+                    (drop (call $fpu_pop)) (return)))
                 (call $fpu_set (i32.const 1) (f64.mul (call $fpu_get (i32.const 1)) (call $host_math_log2 (f64.add (local.get $st0) (f64.const 1.0)))))
                 (drop (call $fpu_pop)) (return)))
             (if (i32.eq (local.get $rm) (i32.const 5))
