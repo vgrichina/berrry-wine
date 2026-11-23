@@ -247,14 +247,15 @@
   ;; loop is the C-locale fold; bound over a real MSVCRT/MSVCR7x it defers to
   ;; the authentic export once setlocale has left "C", like _wcsicmp.
   (func $handle__stricmp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa1 i32) (local $wa2 i32) (local $c1 i32) (local $c2 i32)
+    (local $p1 i32) (local $p2 i32) (local $c1 i32) (local $c2 i32)
     (if (call $crt_locale_changed)
       (then (if (call $crt_fallback) (then (return)))))
-    (local.set $wa1 (call $g2w (local.get $arg0)))
-    (local.set $wa2 (call $g2w (local.get $arg1)))
+    ;; Adjacent guest pages need not have adjacent physical backing.
+    (local.set $p1 (local.get $arg0))
+    (local.set $p2 (local.get $arg1))
     (block $d (loop $l
-      (local.set $c1 (i32.load8_u (local.get $wa1)))
-      (local.set $c2 (i32.load8_u (local.get $wa2)))
+      (local.set $c1 (call $gl8 (local.get $p1)))
+      (local.set $c2 (call $gl8 (local.get $p2)))
       ;; tolower
       (if (i32.and (i32.ge_u (local.get $c1) (i32.const 0x41)) (i32.le_u (local.get $c1) (i32.const 0x5A)))
         (then (local.set $c1 (i32.or (local.get $c1) (i32.const 0x20)))))
@@ -262,8 +263,8 @@
         (then (local.set $c2 (i32.or (local.get $c2) (i32.const 0x20)))))
       (br_if $d (i32.ne (local.get $c1) (local.get $c2)))
       (br_if $d (i32.eqz (local.get $c1)))
-      (local.set $wa1 (i32.add (local.get $wa1) (i32.const 1)))
-      (local.set $wa2 (i32.add (local.get $wa2) (i32.const 1)))
+      (local.set $p1 (i32.add (local.get $p1) (i32.const 1)))
+      (local.set $p2 (i32.add (local.get $p2) (i32.const 1)))
       (br $l)))
     ;; -1/0/1, not the byte difference: the C-locale path of VC6 msvcrt,
     ;; msvcr70 and msvcr71 alike ends in sbb eax,eax / sbb eax,-1
@@ -276,18 +277,17 @@
 
   ;; _strnicmp(s1, s2, count) — cdecl, ASCII case-insensitive bounded compare.
   (func $handle__strnicmp (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa1 i32) (local $wa2 i32) (local $i i32)
+    (local $i i32)
     (local $c1 i32) (local $c2 i32)
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (if (i32.eqz (local.get $arg2))
       (then
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
         (return)))
-    (local.set $wa1 (call $g2w (local.get $arg0)))
-    (local.set $wa2 (call $g2w (local.get $arg1)))
+    ;; Translate the guest byte at each position, including page crossings.
     (block $done (loop $compare
-      (local.set $c1 (i32.load8_u (i32.add (local.get $wa1) (local.get $i))))
-      (local.set $c2 (i32.load8_u (i32.add (local.get $wa2) (local.get $i))))
+      (local.set $c1 (call $gl8 (i32.add (local.get $arg0) (local.get $i))))
+      (local.set $c2 (call $gl8 (i32.add (local.get $arg1) (local.get $i))))
       (if (i32.and (i32.ge_u (local.get $c1) (i32.const 0x41))
                    (i32.le_u (local.get $c1) (i32.const 0x5a)))
         (then (local.set $c1 (i32.or (local.get $c1) (i32.const 0x20)))))
