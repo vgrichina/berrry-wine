@@ -1969,6 +1969,8 @@
   (func $handle_GetGlyphOutlineA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $buffer_g i32) (local $mat2_g i32) (local $result i32)
     (local $metrics_wa i32) (local $buffer_wa i32) (local $mat2_wa i32)
+    (local $size i32) (local $sizing i32) (local $needed i32)
+    (local $copy_g i32) (local $copy_wa i32) (local $cursor i32) (local $chunk i32) (local $i i32)
     (local.set $buffer_g (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $mat2_g (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     ;; These fixed-size structs may cross nonadjacent sparse backing pages.
@@ -1976,21 +1978,85 @@
     (if (local.get $arg3) (then (local.set $metrics_wa (call $guest_span_in (local.get $arg3) (i32.const 20)))))
     (if (local.get $buffer_g) (then (local.set $buffer_wa (call $g2w (local.get $buffer_g)))))
     (if (local.get $mat2_g) (then (local.set $mat2_wa (call $guest_span_in (local.get $mat2_g) (i32.const 16)))))
+    ;; Size through the selected backend before considering any output copy.
+    ;; cjBuffer is a capacity, not an allocation size. Keep query/short-buffer
+    ;; policy in the helpers, including zero-sized glyphs and unsupported modes.
+    (local.set $size (local.get $arg4))
+    (if (i32.and (i32.ne (local.get $buffer_g) (i32.const 0))
+          (i32.and (i32.ne (local.get $arg4) (i32.const 0))
+            (i32.ne (i32.and (local.get $arg2) (i32.const 127)) (i32.const 0))))
+      (then (local.set $size (i32.const 0)) (local.set $sizing (i32.const 1))))
+    (block $output_done (loop $output_pass
     (local.set $result (call $tt_gdi_glyph_outline_a
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $metrics_wa)
-      (local.get $arg4)
+      (local.get $size)
       (local.get $buffer_wa) (local.get $mat2_wa)))
     (if (i32.eq (local.get $result) (i32.const -2))
       (then (local.set $result (call $gdi_bitmap_glyph_outline_a
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
         (local.get $metrics_wa)
-        (local.get $arg4)
+        (local.get $size)
         (local.get $buffer_wa) (local.get $mat2_wa)))))
     (if (i32.eq (local.get $result) (i32.const -2))
       (then (local.set $result (call $gdi_glyph_metrics_a
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
         (local.get $metrics_wa)))))
+
+      (br_if $output_done (i32.eqz (local.get $sizing)))
+      (br_if $output_done (i32.lt_s (local.get $result) (i32.const 0)))
+      (if (i32.and (i32.gt_s (local.get $result) (i32.const 0))
+            (i32.le_u (local.get $result) (local.get $arg4)))
+        (then
+          (local.set $needed (local.get $result))
+          (block $output_ready
+            ;; Preserve the legacy raw-pointer path for invalid/wrapping spans.
+            ;; Only valid nonadjacent pages need different buffer transport.
+            (br_if $output_ready (i64.gt_u
+              (i64.add (i64.extend_i32_u (local.get $buffer_g))
+                (i64.extend_i32_u (local.get $needed))) (i64.const 4294967296)))
+            (local.set $copy_wa (call $g2w_affine_span (local.get $buffer_g) (local.get $needed)))
+            (if (i32.ne (local.get $copy_wa) (global.get $NULL_SENTINEL))
+              (then (local.set $buffer_wa (local.get $copy_wa)) (br $output_ready)))
+            (local.set $cursor (i32.const 0))
+            (loop $validate_output
+              (br_if $output_ready (i32.eq
+                (call $g2w (i32.add (local.get $buffer_g) (local.get $cursor)))
+                (global.get $NULL_SENTINEL)))
+              (local.set $chunk (i32.sub (i32.const 4096)
+                (i32.and (i32.add (local.get $buffer_g) (local.get $cursor)) (i32.const 4095))))
+              (local.set $cursor (i32.add (local.get $cursor) (local.get $chunk)))
+              (br_if $validate_output (i32.lt_u (local.get $cursor) (local.get $needed))))
+            (local.set $copy_g (call $heap_alloc (local.get $needed)))
+            (if (i32.eqz (local.get $copy_g))
+              (then (local.set $result (i32.const -1)) (br $output_done)))
+            (local.set $copy_wa (call $g2w_affine_span (local.get $copy_g) (local.get $needed)))
+            (if (i32.eq (local.get $copy_wa) (global.get $NULL_SENTINEL))
+              (then
+                (call $heap_free (local.get $copy_g))
+                (local.set $copy_g (i32.const 0))
+                (local.set $result (i32.const -1)) (br $output_done)))
+            ;; Retain initialized bytes: a helper failure may leave all or part
+            ;; of the output untouched. Scatter that same span on every result.
+            (local.set $i (i32.const 0))
+            (loop $gather_output
+              (i32.store8 (i32.add (local.get $copy_wa) (local.get $i))
+                (call $gl8 (i32.add (local.get $buffer_g) (local.get $i))))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br_if $gather_output (i32.lt_u (local.get $i) (local.get $needed))))
+            (local.set $buffer_wa (local.get $copy_wa)))))
+      (local.set $sizing (i32.const 0))
+      (local.set $size (local.get $arg4))
+      (br $output_pass)))
+    (if (local.get $copy_g)
+      (then
+        (local.set $i (i32.const 0))
+        (loop $scatter_output
+          (call $gs8 (i32.add (local.get $buffer_g) (local.get $i))
+            (i32.load8_u (i32.add (local.get $copy_wa) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br_if $scatter_output (i32.lt_u (local.get $i) (local.get $needed))))
+        (call $heap_free (local.get $copy_g))))
     ;; Release the read-only matrix before scattering metrics (LIFO arena).
     (call $guest_span_release (local.get $mat2_wa) (i32.const 16))
     (if (local.get $arg3)
