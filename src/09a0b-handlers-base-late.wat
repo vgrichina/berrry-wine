@@ -591,7 +591,7 @@
   (func $logical_drive_strings
         (param $length i32) (param $buffer_g i32) (param $wide i32) (result i32)
     (local $mask i32) (local $letter i32) (local $count i32)
-    (local $required i32) (local $buf i32) (local $out i32) (local $stride i32)
+    (local $required i32) (local $out i32) (local $stride i32)
     (local.set $mask (call $host_fs_logical_drive_mask))
     (local.set $letter (i32.const 0))
     (block $count_done (loop $count_loop
@@ -607,7 +607,6 @@
       (then
         (global.set $last_error (i32.const 87)) ;; ERROR_INVALID_PARAMETER
         (return (i32.const 0))))
-    (local.set $buf (call $g2w (local.get $buffer_g)))
     (local.set $stride (select (i32.const 2) (i32.const 1) (local.get $wide)))
     (local.set $letter (i32.const 0))
     (block $write_done (loop $write_loop
@@ -616,23 +615,23 @@
         (then
           (if (local.get $wide)
             (then
-              (i32.store16 (i32.add (local.get $buf) (local.get $out))
+              (call $gs16 (i32.add (local.get $buffer_g) (local.get $out))
                 (i32.add (i32.const 0x41) (local.get $letter)))
-              (i32.store16 (i32.add (local.get $buf) (i32.add (local.get $out) (i32.const 2))) (i32.const 0x3A))
-              (i32.store16 (i32.add (local.get $buf) (i32.add (local.get $out) (i32.const 4))) (i32.const 0x5C))
-              (i32.store16 (i32.add (local.get $buf) (i32.add (local.get $out) (i32.const 6))) (i32.const 0)))
+              (call $gs16 (i32.add (local.get $buffer_g) (i32.add (local.get $out) (i32.const 2))) (i32.const 0x3A))
+              (call $gs16 (i32.add (local.get $buffer_g) (i32.add (local.get $out) (i32.const 4))) (i32.const 0x5C))
+              (call $gs16 (i32.add (local.get $buffer_g) (i32.add (local.get $out) (i32.const 6))) (i32.const 0)))
             (else
-              (i32.store8 (i32.add (local.get $buf) (local.get $out))
+              (call $gs8 (i32.add (local.get $buffer_g) (local.get $out))
                 (i32.add (i32.const 0x41) (local.get $letter)))
-              (i32.store8 (i32.add (local.get $buf) (i32.add (local.get $out) (i32.const 1))) (i32.const 0x3A))
-              (i32.store8 (i32.add (local.get $buf) (i32.add (local.get $out) (i32.const 2))) (i32.const 0x5C))
-              (i32.store8 (i32.add (local.get $buf) (i32.add (local.get $out) (i32.const 3))) (i32.const 0))))
+              (call $gs8 (i32.add (local.get $buffer_g) (i32.add (local.get $out) (i32.const 1))) (i32.const 0x3A))
+              (call $gs8 (i32.add (local.get $buffer_g) (i32.add (local.get $out) (i32.const 2))) (i32.const 0x5C))
+              (call $gs8 (i32.add (local.get $buffer_g) (i32.add (local.get $out) (i32.const 3))) (i32.const 0))))
           (local.set $out (i32.add (local.get $out) (i32.mul (i32.const 4) (local.get $stride))))))
       (local.set $letter (i32.add (local.get $letter) (i32.const 1)))
       (br $write_loop)))
     (if (local.get $wide)
-      (then (i32.store16 (i32.add (local.get $buf) (local.get $out)) (i32.const 0)))
-      (else (i32.store8 (i32.add (local.get $buf) (local.get $out)) (i32.const 0))))
+      (then (call $gs16 (i32.add (local.get $buffer_g) (local.get $out)) (i32.const 0)))
+      (else (call $gs8 (i32.add (local.get $buffer_g) (local.get $out)) (i32.const 0))))
     (i32.sub (local.get $required) (i32.const 1)))
 
   (func $handle_GetLogicalDriveStringsA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
