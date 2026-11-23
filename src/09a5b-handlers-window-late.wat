@@ -2481,6 +2481,8 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; 663: MapDialogRect(hDlg, lpRect) — convert dialog units to pixels.
   (func $handle_MapDialogRect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $p i32) (local $base_x i32) (local $base_y i32)
+    (local $index i32) (local $offset i32)
+    (local $product i64) (local $divisor i64) (local $rounded i64)
     (if (i32.eqz (local.get $arg1))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -2492,16 +2494,35 @@ GetTopWindow(hWnd) — 1 arg stdcall
       (i32.and (call $dialog_base_units (local.get $arg0)) (i32.const 0xFFFF)))
     (local.set $base_y
       (i32.shr_u (call $dialog_base_units (local.get $arg0)) (i32.const 16)))
-    ;; x pixels = MulDiv(dialogX, baseX, 4)
-    (store.field.memarg Rect left (local.get $p)
-      (i32.div_s (i32.mul (load.field.memarg Rect left (local.get $p)) (local.get $base_x)) (i32.const 4)))
-    (store.field.memarg Rect right (local.get $p)
-      (i32.div_s (i32.mul (load.field.memarg Rect right (local.get $p)) (local.get $base_x)) (i32.const 4)))
-    ;; y pixels = MulDiv(dialogY, baseY, 8)
-    (store.field.memarg Rect top (local.get $p)
-      (i32.div_s (i32.mul (load.field.memarg Rect top (local.get $p)) (local.get $base_y)) (i32.const 8)))
-    (store.field.memarg Rect bottom (local.get $p)
-      (i32.div_s (i32.mul (load.field.memarg Rect bottom (local.get $p)) (local.get $base_y)) (i32.const 8)))
+    ;; MapDialogRect specifies MulDiv: signed 64-bit product, nearest integer,
+    ;; ties away from zero, and -1 if the rounded result is outside signed i32.
+    ;; Base units are unsigned 16-bit, so product plus half-divisor fits i64.
+    ;; Visit left/right/top/bottom, retaining the existing load/store order.
+    (loop $coordinates
+      (local.set $offset
+        (i32.or (i32.shl (i32.and (local.get $index) (i32.const 1)) (i32.const 3))
+          (i32.shl (i32.and (local.get $index) (i32.const 2)) (i32.const 1))))
+      (local.set $divisor
+        (select (i64.const 4) (i64.const 8) (i32.lt_u (local.get $index) (i32.const 2))))
+      (local.set $product
+        (i64.mul (i64.extend_i32_s (load.field.memarg Rect left (i32.add (local.get $p) (local.get $offset))))
+          (i64.extend_i32_u
+            (select (local.get $base_x) (local.get $base_y)
+              (i32.lt_u (local.get $index) (i32.const 2))))))
+      (local.set $rounded
+        (i64.div_s
+          (i64.add (local.get $product)
+            (select
+              (i64.sub (i64.const 0) (i64.div_u (local.get $divisor) (i64.const 2)))
+              (i64.div_u (local.get $divisor) (i64.const 2))
+              (i64.lt_s (local.get $product) (i64.const 0))))
+          (local.get $divisor)))
+      (store.field.memarg Rect left (i32.add (local.get $p) (local.get $offset))
+        (select (i32.const -1) (i32.wrap_i64 (local.get $rounded))
+          (i32.or (i64.lt_s (local.get $rounded) (i64.const -2147483648))
+            (i64.gt_s (local.get $rounded) (i64.const 2147483647)))))
+      (local.set $index (i32.add (local.get $index) (i32.const 1)))
+      (br_if $coordinates (i32.lt_u (local.get $index) (i32.const 4))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
