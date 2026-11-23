@@ -3528,10 +3528,11 @@
 
   ;; 448: GetDIBits(hdc, hbmp, uStartScan, cScanLines, lpvBits, lpbmi, uUsage) — 7 args stdcall
   (func $handle_GetDIBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa_esp i32) (local $lpbmi i32) (local $uUsage i32) (local $bmi_wa i32)
-    (local.set $wa_esp (call $g2w (i32.load offset=16 (global.get $reg_base))))
-    (local.set $lpbmi (i32.load (i32.add (local.get $wa_esp) (i32.const 24))))
-    (local.set $uUsage (i32.load (i32.add (local.get $wa_esp) (i32.const 28))))
+    (local $esp i32) (local $lpbmi i32) (local $uUsage i32) (local $bmi_wa i32)
+    ;; Stack DWORDs may cross guest pages with nonadjacent backing.
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $lpbmi (call $gl32 (i32.add (local.get $esp) (i32.const 24))))
+    (local.set $uUsage (call $gl32 (i32.add (local.get $esp) (i32.const 28))))
     ;; This one is an output buffer as well: GetDIBits describes the bitmap in
     ;; the caller's header. A straddling BITMAPINFO is read through a gathered
     ;; copy, so what the call wrote there has to be put back afterwards.
