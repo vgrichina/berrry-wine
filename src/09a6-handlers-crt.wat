@@ -1050,6 +1050,14 @@
     (local $divisor f64) (local $dividend f64) (local $result f64)
     (local.set $divisor (call $fpu_pop))
     (local.set $dividend (call $fpu_pop))
+    ;; A finite dividend is unchanged by either infinite divisor.
+    (if (i32.and
+          (f64.lt (f64.abs (local.get $dividend)) (f64.const inf))
+          (f64.eq (f64.abs (local.get $divisor)) (f64.const inf)))
+      (then
+        (call $fpu_push (local.get $dividend))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (return)))
     (local.set $result
       (f64.sub
         (local.get $dividend)
