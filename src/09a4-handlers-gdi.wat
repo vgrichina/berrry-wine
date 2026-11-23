@@ -1934,9 +1934,11 @@
     (local $metrics_wa i32) (local $buffer_wa i32) (local $mat2_wa i32)
     (local.set $buffer_g (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $mat2_g (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
-    (if (local.get $arg3) (then (local.set $metrics_wa (call $g2w (local.get $arg3)))))
+    ;; These fixed-size structs may cross nonadjacent sparse backing pages.
+    ;; Gather initialized metrics too: a helper may fail or write only part.
+    (if (local.get $arg3) (then (local.set $metrics_wa (call $guest_span_in (local.get $arg3) (i32.const 20)))))
     (if (local.get $buffer_g) (then (local.set $buffer_wa (call $g2w (local.get $buffer_g)))))
-    (if (local.get $mat2_g) (then (local.set $mat2_wa (call $g2w (local.get $mat2_g)))))
+    (if (local.get $mat2_g) (then (local.set $mat2_wa (call $guest_span_in (local.get $mat2_g) (i32.const 16)))))
     (local.set $result (call $tt_gdi_glyph_outline_a
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $metrics_wa)
@@ -1952,6 +1954,10 @@
       (then (local.set $result (call $gdi_glyph_metrics_a
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
         (local.get $metrics_wa)))))
+    ;; Release the read-only matrix before scattering metrics (LIFO arena).
+    (call $guest_span_release (local.get $mat2_wa) (i32.const 16))
+    (if (local.get $arg3)
+      (then (call $guest_span_writeback (local.get $arg3) (local.get $metrics_wa) (i32.const 20))))
     (i32.store offset=0 (global.get $reg_base) (local.get $result))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
 
