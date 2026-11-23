@@ -3688,7 +3688,7 @@
 
   ;; 853: waveInOpen(lphWaveIn, device, format, callback, instance, flags)
   (func $handle_waveInOpen (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $fmt_wa i32) (local $rate i32) (local $ch i32) (local $bits i32)
+    (local $rate i32) (local $ch i32) (local $bits i32)
     (local $flags i32) (local $cbType i32) (local $handle i32)
     (local.set $flags (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     ;; WAVE_FORMAT_QUERY validates only and must not acquire microphone access.
@@ -3697,10 +3697,9 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
         (return)))
-    (local.set $fmt_wa (call $g2w (local.get $arg2)))
-    (local.set $rate (i32.load offset=4 (local.get $fmt_wa)))
-    (local.set $ch (i32.load16_u offset=2 (local.get $fmt_wa)))
-    (local.set $bits (i32.load16_u offset=14 (local.get $fmt_wa)))
+    (local.set $rate (call $gl32 (i32.add (local.get $arg2) (i32.const 4))))
+    (local.set $ch (call $gl16 (i32.add (local.get $arg2) (i32.const 2))))
+    (local.set $bits (call $gl16 (i32.add (local.get $arg2) (i32.const 14))))
     (local.set $cbType (i32.and (i32.shr_u (local.get $flags) (i32.const 16)) (i32.const 7)))
     (local.set $handle (call $host_wave_in_open
       (local.get $rate) (local.get $ch) (local.get $bits)
