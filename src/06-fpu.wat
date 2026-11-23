@@ -974,6 +974,10 @@
                 (call $fpu_set (i32.const 0)
                   (f64.sub (local.get $st0)
                     (f64.mul (local.get $v) (call $fpu_get (i32.const 1)))))
+                ;; An exact zero keeps the original dividend sign (Intel SDM).
+                (if (f64.eq (call $fpu_get (i32.const 0)) (f64.const 0))
+                  (then (call $fpu_set (i32.const 0)
+                    (f64.copysign (f64.const 0) (local.get $st0)))))
                 (call $fpu_prem_quotient (local.get $v))
                 (return)))
             (call $fpu_crash_op (local.get $group) (local.get $reg) (local.get $rm)) (return)))
@@ -985,6 +989,10 @@
                 (call $fpu_set (i32.const 0)
                   (f64.sub (local.get $st0)
                     (f64.mul (local.get $v) (call $fpu_get (i32.const 1)))))
+                ;; An exact zero keeps the original dividend sign (Intel SDM).
+                (if (f64.eq (call $fpu_get (i32.const 0)) (f64.const 0))
+                  (then (call $fpu_set (i32.const 0)
+                    (f64.copysign (f64.const 0) (local.get $st0)))))
                 (call $fpu_prem_quotient (local.get $v))
                 (return)))
             (if (i32.eq (local.get $rm) (i32.const 2))
