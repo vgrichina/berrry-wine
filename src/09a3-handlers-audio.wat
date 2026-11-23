@@ -1657,22 +1657,22 @@
   ;; 797: waveOutPrepareHeader — return MMSYSERR_NOERROR, set WHDR_PREPARED flag
   (func $handle_waveOutPrepareHeader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; Set dwFlags |= WHDR_PREPARED (0x02) in WAVEHDR at arg1+16
-    (local $wa i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
-    (i32.store (i32.add (local.get $wa) (i32.const 16))
-      (i32.or (i32.load (i32.add (local.get $wa) (i32.const 16))) (i32.const 2)))
+    (local $flags_ga i32)
+    (local.set $flags_ga (i32.add (local.get $arg1) (i32.const 16)))
+    (call $gs32 (local.get $flags_ga)
+      (i32.or (call $gl32 (local.get $flags_ga)) (i32.const 2)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
   ;; 798: waveOutUnprepareHeader — return MMSYSERR_NOERROR, clear WHDR_PREPARED/INQUEUE and mark DONE
   (func $handle_waveOutUnprepareHeader (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
-    (i32.store (i32.add (local.get $wa) (i32.const 16))
+    (local $flags_ga i32)
+    (local.set $flags_ga (i32.add (local.get $arg1) (i32.const 16)))
+    (call $gs32 (local.get $flags_ga)
       (i32.and
         (i32.or
-          (i32.and (i32.load (i32.add (local.get $wa) (i32.const 16))) (i32.const 0xFFFFFFFD))
+          (i32.and (call $gl32 (local.get $flags_ga)) (i32.const 0xFFFFFFFD))
           (i32.const 1))
         (i32.const 0xFFFFFFEF)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
