@@ -882,8 +882,6 @@
     (local.set $pos (call $host_get_mouse_position))
     (local.set $x (i32.extend16_s (local.get $pos)))
     (local.set $y (i32.shr_s (local.get $pos) (i32.const 16)))
-    (global.set $last_msg_pos_x (local.get $x))
-    (global.set $last_msg_pos_y (local.get $y))
     (call $gs32 (local.get $arg0) (local.get $x))
     (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (local.get $y))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))

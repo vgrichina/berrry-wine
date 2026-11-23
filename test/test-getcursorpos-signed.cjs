@@ -56,6 +56,7 @@ for (const [packed, x, y] of cases) {
   e.guest_write32(out, 0x55555555);
   e.guest_write32(out + 4, 0x55555555);
   e.guest_write32(out + 8, 0x76543210);
+  const lastBefore = [e.test_last_x(), e.test_last_y()];
   e.set_esp(0x7401000);
   assert.equal(e.test_cursor(out), 1, 'BOOL success');
   assert.equal(e.get_esp(), 0x7401008, 'stdcall pops return address and pointer');
@@ -66,7 +67,7 @@ for (const [packed, x, y] of cases) {
   console.log(JSON.stringify({ packed: packed.toString(16), expected: [x, y], actual, last }));
   try {
     assert.deepEqual(actual, [x, y], 'POINT stores signed screen coordinates');
-    assert.deepEqual(last, [x, y], 'last position keeps signed coordinates');
+    assert.deepEqual(last, lastBefore, 'cursor query preserves last dequeued message position');
   } catch (error) { failures.push(error.message); }
 }
 assert.equal(failures.length, 0, failures.join('\n'));
