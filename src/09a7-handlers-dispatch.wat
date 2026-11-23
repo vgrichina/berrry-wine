@@ -4914,6 +4914,7 @@
   ;; Shared MAPVK_VK_TO_VSC mapping for MapVirtualKey and OemKeyScan.
   (func $vk_to_scan (param $uCode i32) (result i32)
     (local $result i32)
+    (if (i32.eq (local.get $uCode) (i32.const 0x90)) (then (return (i32.const 0x45)))) ;; NumLock
     (if (i32.eq (local.get $uCode) (i32.const 0x91)) (then (return (i32.const 0x46)))) ;; ScrollLock
     (if (i32.eq (local.get $uCode) (i32.const 0x14)) (then (return (i32.const 0x3A)))) ;; CapsLock
     (if (i32.eq (local.get $uCode) (i32.const 0x08)) (then (return (i32.const 0x0E)))) ;; Backspace
@@ -5034,6 +5035,7 @@
       (if (i32.eq (local.get $uMapType) (i32.const 4))
         (then
           ;; Special US keys retain their documented E0 Scan 1 Make prefix.
+          (if (i32.eq (local.get $uCode) (i32.const 0x90)) (then (local.set $result (i32.const 0xE045)) (br $done))) ;; NumLock
           (if (i32.eq (local.get $uCode) (i32.const 0x2C)) (then (local.set $result (i32.const 0xE037)) (br $done))) ;; Snapshot
           (if (i32.eq (local.get $uCode) (i32.const 0x5B)) (then (local.set $result (i32.const 0xE05B)) (br $done))) ;; Left Windows
           (if (i32.eq (local.get $uCode) (i32.const 0x5C)) (then (local.set $result (i32.const 0xE05C)) (br $done))) ;; Right Windows
