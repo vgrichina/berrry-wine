@@ -1841,19 +1841,17 @@
   ;; mmioStringToFOURCCA(sz, uFlags) — pack four bytes, padding with spaces.
   ;; MMIO_TOUPPER (0x10) applies ASCII case folding before packing.
   (func $handle_mmioStringToFOURCCA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $src i32) (local $i i32) (local $ch i32)
+    (local $i i32) (local $ch i32)
     (local $fourcc i32) (local $ended i32)
-    (if (local.get $arg0)
-      (then (local.set $src (call $g2w (local.get $arg0))))
-      (else (local.set $ended (i32.const 1))))
+    (local.set $ended (i32.eqz (local.get $arg0)))
     (block $done
       (loop $pack
         (br_if $done (i32.ge_u (local.get $i) (i32.const 4)))
         (local.set $ch (i32.const 0x20))
         (if (i32.eqz (local.get $ended))
           (then
-            (local.set $ch (i32.load8_u
-              (i32.add (local.get $src) (local.get $i))))
+            (local.set $ch (call $gl8
+              (i32.add (local.get $arg0) (local.get $i))))
             (if (i32.eqz (local.get $ch))
               (then
                 (local.set $ended (i32.const 1))
