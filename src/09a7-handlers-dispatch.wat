@@ -579,15 +579,19 @@
     ;; Skip whitespace
     (block $ws_done (loop $ws
       (local.set $ch (i32.load8_u (local.get $ptr)))
-      (br_if $ws_done (i32.ne (local.get $ch) (i32.const 32)))
+      (br_if $ws_done (i32.eqz
+        (i32.or (i32.eq (local.get $ch) (i32.const 32))
+          (i32.and (i32.ge_u (local.get $ch) (i32.const 9))
+                   (i32.le_u (local.get $ch) (i32.const 13))))))
       (local.set $ptr (i32.add (local.get $ptr) (i32.const 1)))
       (br $ws)))
     ;; Check sign
     (if (i32.eq (i32.load8_u (local.get $ptr)) (i32.const 45))  ;; '-'
       (then (local.set $neg (i32.const 1))
-            (local.set $ptr (i32.add (local.get $ptr) (i32.const 1)))))
-    (if (i32.eq (i32.load8_u (local.get $ptr)) (i32.const 43))  ;; '+'
-      (then (local.set $ptr (i32.add (local.get $ptr) (i32.const 1)))))
+            (local.set $ptr (i32.add (local.get $ptr) (i32.const 1))))
+      (else
+        (if (i32.eq (i32.load8_u (local.get $ptr)) (i32.const 43))  ;; '+'
+          (then (local.set $ptr (i32.add (local.get $ptr) (i32.const 1)))))))
     ;; Parse digits
     (block $done (loop $digits
       (local.set $ch (i32.load8_u (local.get $ptr)))
