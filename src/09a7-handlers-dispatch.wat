@@ -5416,67 +5416,72 @@
 
   (func $handle_GetKeyNameTextA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; arg0=lParam (scan code in bits 16-23, extended flag in bit 24), arg1=lpString, arg2=cchSize
-    (local $scan i32) (local $extended i32) (local $buf i32) (local $len i32) (local $ch i32)
+    (local $end i32) (local $scan i32) (local $extended i32) (local $buf i32) (local $len i32) (local $ch i32)
     (local.set $scan (i32.and (i32.shr_u (local.get $arg0) (i32.const 16)) (i32.const 0xFF)))
     (local.set $extended (i32.and (local.get $arg0) (i32.const 0x01000000)))
     (local.set $buf (call $g2w (local.get $arg1)))
+    ;; Reserve NUL for positive capacities. Twelve bytes cover every full name.
+    (local.set $end (i32.add (local.get $buf)
+      (if (result i32) (i32.gt_s (local.get $arg2) (i32.const 0))
+        (then (i32.sub (local.get $arg2) (i32.const 1)))
+        (else (i32.const 12)))))
     (local.set $len (i32.const 0))
     (block $done
       ;; Esc (0x01)
       (if (i32.eq (local.get $scan) (i32.const 0x01)) (then
-        (i32.store (local.get $buf) (i32.const 0x00637345)) ;; "Esc\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x00637345) (i32.const 4) (local.get $end)) ;; "Esc\0"
         (local.set $len (i32.const 3)) (br $done)))
       ;; Backspace (0x0E)
       (if (i32.eq (local.get $scan) (i32.const 0x0E)) (then
-        (i32.store (local.get $buf) (i32.const 0x6B636142)) ;; "Back"
-        (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x63617073)) ;; "spac"
-        (i32.store16 (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x0065)) ;; "e\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x6B636142) (i32.const 4) (local.get $end)) ;; "Back"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x63617073) (i32.const 4) (local.get $end)) ;; "spac"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x0065) (i32.const 2) (local.get $end)) ;; "e\0"
         (local.set $len (i32.const 9)) (br $done)))
       ;; Caps Lock (0x3A)
       (if (i32.eq (local.get $scan) (i32.const 0x3A)) (then
-        (i32.store (local.get $buf) (i32.const 0x73706143)) ;; "Caps"
-        (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x636F4C20)) ;; " Loc"
-        (i32.store16 (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006B)) ;; "k\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x73706143) (i32.const 4) (local.get $end)) ;; "Caps"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x636F4C20) (i32.const 4) (local.get $end)) ;; " Loc"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006B) (i32.const 2) (local.get $end)) ;; "k\0"
         (local.set $len (i32.const 9)) (br $done)))
       ;; Num Lock (0x45)
       (if (i32.eq (local.get $scan) (i32.const 0x45)) (then
-        (i32.store (local.get $buf) (i32.const 0x206D754E)) ;; "Num "
-        (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x6B636F4C)) ;; "Lock"
-        (i32.store8 (i32.add (local.get $buf) (i32.const 8)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x206D754E) (i32.const 4) (local.get $end)) ;; "Num "
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x6B636F4C) (i32.const 4) (local.get $end)) ;; "Lock"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 8)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 8)) (br $done)))
       ;; Scroll Lock (0x46)
       (if (i32.eq (local.get $scan) (i32.const 0x46)) (then
-        (i32.store (local.get $buf) (i32.const 0x6F726353)) ;; "Scro"
-        (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x4C206C6C)) ;; "ll L"
-        (i32.store (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006B636F)) ;; "ock\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x6F726353) (i32.const 4) (local.get $end)) ;; "Scro"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x4C206C6C) (i32.const 4) (local.get $end)) ;; "ll L"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006B636F) (i32.const 4) (local.get $end)) ;; "ock\0"
         (local.set $len (i32.const 11)) (br $done)))
       ;; US extended navigation names; bit 24 separates the numpad scan twins.
       (if (local.get $extended) (then
         (if (i32.eq (local.get $scan) (i32.const 0x47)) (then
-          (i32.store (local.get $buf) (i32.const 0x656D6F48)) ;; "Home"
-          (i32.store8 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0))
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x656D6F48) (i32.const 4) (local.get $end)) ;; "Home"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0) (i32.const 1) (local.get $end))
           (local.set $len (i32.const 4)) (br $done)))
         (if (i32.eq (local.get $scan) (i32.const 0x49)) (then
-          (i32.store (local.get $buf) (i32.const 0x65676150)) ;; "Page"
-          (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x00705520)) ;; " Up\0"
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x65676150) (i32.const 4) (local.get $end)) ;; "Page"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x00705520) (i32.const 4) (local.get $end)) ;; " Up\0"
           (local.set $len (i32.const 7)) (br $done)))
         (if (i32.eq (local.get $scan) (i32.const 0x4F)) (then
-          (i32.store (local.get $buf) (i32.const 0x00646E45)) ;; "End\0"
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x00646E45) (i32.const 4) (local.get $end)) ;; "End\0"
           (local.set $len (i32.const 3)) (br $done)))
         (if (i32.eq (local.get $scan) (i32.const 0x51)) (then
-          (i32.store (local.get $buf) (i32.const 0x65676150)) ;; "Page"
-          (i32.store (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x776F4420)) ;; " Dow"
-          (i32.store16 (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006E)) ;; "n\0"
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x65676150) (i32.const 4) (local.get $end)) ;; "Page"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x776F4420) (i32.const 4) (local.get $end)) ;; " Dow"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 8)) (i32.const 0x006E) (i32.const 2) (local.get $end)) ;; "n\0"
           (local.set $len (i32.const 9)) (br $done)))
         (if (i32.eq (local.get $scan) (i32.const 0x52)) (then
-          (i32.store (local.get $buf) (i32.const 0x65736E49)) ;; "Inse"
-          (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x7472)) ;; "rt"
-          (i32.store8 (i32.add (local.get $buf) (i32.const 6)) (i32.const 0))
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x65736E49) (i32.const 4) (local.get $end)) ;; "Inse"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x7472) (i32.const 2) (local.get $end)) ;; "rt"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 6)) (i32.const 0) (i32.const 1) (local.get $end))
           (local.set $len (i32.const 6)) (br $done)))
         (if (i32.eq (local.get $scan) (i32.const 0x53)) (then
-          (i32.store (local.get $buf) (i32.const 0x656C6544)) ;; "Dele"
-          (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x6574)) ;; "te"
-          (i32.store8 (i32.add (local.get $buf) (i32.const 6)) (i32.const 0))
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x656C6544) (i32.const 4) (local.get $end)) ;; "Dele"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x6574) (i32.const 2) (local.get $end)) ;; "te"
+          (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 6)) (i32.const 0) (i32.const 1) (local.get $end))
           (local.set $len (i32.const 6)) (br $done)))
       ))
       ;; Numpad scancodes 0x37 (*), 0x47..0x53. Render as "Num <glyph>".
@@ -5499,19 +5504,19 @@
       (if (i32.eq (local.get $scan) (i32.const 0x52)) (then (local.set $ch (i32.const 0x30)))) ;; 0
       (if (i32.eq (local.get $scan) (i32.const 0x53)) (then (local.set $ch (i32.const 0x2E)))) ;; .
       (if (local.get $ch) (then
-        (i32.store (local.get $buf) (i32.const 0x206D754E)) ;; "Num "
-        (i32.store8 (i32.add (local.get $buf) (i32.const 4)) (local.get $ch))
-        (i32.store8 (i32.add (local.get $buf) (i32.const 5)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x206D754E) (i32.const 4) (local.get $end)) ;; "Num "
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (local.get $ch) (i32.const 1) (local.get $end))
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 5)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 5)) (br $done)))
       ;; Number row: 0x02-0x0A = '1'-'9', 0x0B = '0'
       (if (i32.and (i32.ge_u (local.get $scan) (i32.const 0x02)) (i32.le_u (local.get $scan) (i32.const 0x0A)))
-        (then (i32.store16 (local.get $buf) (i32.add (i32.const 0x30) (i32.sub (local.get $scan) (i32.const 1))))
+        (then (call $keyname_store_prefix (local.get $buf) (i32.add (i32.const 0x30) (i32.sub (local.get $scan) (i32.const 1))) (i32.const 2) (local.get $end))
               (local.set $len (i32.const 1)) (br $done)))
       (if (i32.eq (local.get $scan) (i32.const 0x0B)) (then
-        (i32.store16 (local.get $buf) (i32.const 0x30)) (local.set $len (i32.const 1)) (br $done)))
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x30) (i32.const 2) (local.get $end)) (local.set $len (i32.const 1)) (br $done)))
       ;; Tab (0x0F)
       (if (i32.eq (local.get $scan) (i32.const 0x0F)) (then
-        (i32.store (local.get $buf) (i32.const 0x00626154)) ;; "Tab\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x00626154) (i32.const 4) (local.get $end)) ;; "Tab\0"
         (local.set $len (i32.const 3)) (br $done)))
       ;; QWERTYUIOP: scancodes 0x10-0x19
       (local.set $ch (i32.const 0))
@@ -5527,13 +5532,13 @@
       (if (i32.eq (local.get $scan) (i32.const 0x19)) (then (local.set $ch (i32.const 0x50))))
       ;; Enter (0x1C)
       (if (i32.eq (local.get $scan) (i32.const 0x1C)) (then
-        (i32.store (local.get $buf) (i32.const 0x65746E45)) ;; "Ente"
-        (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0072)) ;; "r\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x65746E45) (i32.const 4) (local.get $end)) ;; "Ente"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0072) (i32.const 2) (local.get $end)) ;; "r\0"
         (local.set $len (i32.const 5)) (br $done)))
       ;; Ctrl (0x1D)
       (if (i32.eq (local.get $scan) (i32.const 0x1D)) (then
-        (i32.store (local.get $buf) (i32.const 0x6C727443)) ;; "Ctrl"
-        (i32.store8 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x6C727443) (i32.const 4) (local.get $end)) ;; "Ctrl"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 4)) (br $done)))
       ;; ASDFGHJKL: scancodes 0x1E-0x26
       (if (i32.eq (local.get $scan) (i32.const 0x1E)) (then (local.set $ch (i32.const 0x41))))
@@ -5547,8 +5552,8 @@
       (if (i32.eq (local.get $scan) (i32.const 0x26)) (then (local.set $ch (i32.const 0x4C))))
       ;; Shift (0x2A, 0x36)
       (if (i32.or (i32.eq (local.get $scan) (i32.const 0x2A)) (i32.eq (local.get $scan) (i32.const 0x36))) (then
-        (i32.store (local.get $buf) (i32.const 0x66696853)) ;; "Shif"
-        (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0074)) ;; "t\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x66696853) (i32.const 4) (local.get $end)) ;; "Shif"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0074) (i32.const 2) (local.get $end)) ;; "t\0"
         (local.set $len (i32.const 5)) (br $done)))
       ;; ZXCVBNM: scancodes 0x2C-0x32
       (if (i32.eq (local.get $scan) (i32.const 0x2C)) (then (local.set $ch (i32.const 0x5A))))
@@ -5560,54 +5565,54 @@
       (if (i32.eq (local.get $scan) (i32.const 0x32)) (then (local.set $ch (i32.const 0x4D))))
       ;; If a letter was matched, write it
       (if (local.get $ch) (then
-        (i32.store8 (local.get $buf) (local.get $ch))
-        (i32.store8 (i32.add (local.get $buf) (i32.const 1)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (local.get $ch) (i32.const 1) (local.get $end))
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 1)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 1)) (br $done)))
       ;; Alt (0x38)
       (if (i32.eq (local.get $scan) (i32.const 0x38)) (then
-        (i32.store (local.get $buf) (i32.const 0x00746C41)) ;; "Alt\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x00746C41) (i32.const 4) (local.get $end)) ;; "Alt\0"
         (local.set $len (i32.const 3)) (br $done)))
       ;; Space (0x39)
       (if (i32.eq (local.get $scan) (i32.const 0x39)) (then
-        (i32.store (local.get $buf) (i32.const 0x63617053)) ;; "Spac"
-        (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0065)) ;; "e\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x63617053) (i32.const 4) (local.get $end)) ;; "Spac"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0065) (i32.const 2) (local.get $end)) ;; "e\0"
         (local.set $len (i32.const 5)) (br $done)))
       ;; F1-F10: scan 0x3B-0x44
       (if (i32.and (i32.ge_u (local.get $scan) (i32.const 0x3B)) (i32.le_u (local.get $scan) (i32.const 0x44)))
         (then
-          (i32.store8 (local.get $buf) (i32.const 0x46))  ;; 'F'
+          (call $keyname_store_prefix (local.get $buf) (i32.const 0x46) (i32.const 1) (local.get $end))  ;; 'F'
           (local.set $ch (i32.sub (local.get $scan) (i32.const 0x3A)))
           (if (i32.le_u (local.get $ch) (i32.const 9))
-            (then (i32.store8 (i32.add (local.get $buf) (i32.const 1)) (i32.add (i32.const 0x30) (local.get $ch)))
-                  (i32.store8 (i32.add (local.get $buf) (i32.const 2)) (i32.const 0))
+            (then (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 1)) (i32.add (i32.const 0x30) (local.get $ch)) (i32.const 1) (local.get $end))
+                  (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 2)) (i32.const 0) (i32.const 1) (local.get $end))
                   (local.set $len (i32.const 2)))
-            (else (i32.store8 (i32.add (local.get $buf) (i32.const 1)) (i32.const 0x31))
-                  (i32.store8 (i32.add (local.get $buf) (i32.const 2)) (i32.const 0x30))
-                  (i32.store8 (i32.add (local.get $buf) (i32.const 3)) (i32.const 0))
+            (else (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 1)) (i32.const 0x31) (i32.const 1) (local.get $end))
+                  (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 2)) (i32.const 0x30) (i32.const 1) (local.get $end))
+                  (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 3)) (i32.const 0) (i32.const 1) (local.get $end))
                   (local.set $len (i32.const 3))))
           (br $done)))
       ;; Arrow keys: Up=0x48, Left=0x4B, Right=0x4D, Down=0x50
       (if (i32.eq (local.get $scan) (i32.const 0x48)) (then
-        (i32.store (local.get $buf) (i32.const 0x00007055)) ;; "Up\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x00007055) (i32.const 4) (local.get $end)) ;; "Up\0"
         (local.set $len (i32.const 2)) (br $done)))
       (if (i32.eq (local.get $scan) (i32.const 0x4B)) (then
-        (i32.store (local.get $buf) (i32.const 0x7466654C)) ;; "Left"
-        (i32.store8 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x7466654C) (i32.const 4) (local.get $end)) ;; "Left"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 4)) (br $done)))
       (if (i32.eq (local.get $scan) (i32.const 0x4D)) (then
-        (i32.store (local.get $buf) (i32.const 0x68676952)) ;; "Righ"
-        (i32.store16 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0074)) ;; "t\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x68676952) (i32.const 4) (local.get $end)) ;; "Righ"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0x0074) (i32.const 2) (local.get $end)) ;; "t\0"
         (local.set $len (i32.const 5)) (br $done)))
       (if (i32.eq (local.get $scan) (i32.const 0x50)) (then
-        (i32.store (local.get $buf) (i32.const 0x6E776F44)) ;; "Down"
-        (i32.store8 (i32.add (local.get $buf) (i32.const 4)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x6E776F44) (i32.const 4) (local.get $end)) ;; "Down"
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 4)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 4)) (br $done)))
       ;; F11-F12
       (if (i32.eq (local.get $scan) (i32.const 0x57)) (then
-        (i32.store (local.get $buf) (i32.const 0x00313146)) ;; "F11\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x00313146) (i32.const 4) (local.get $end)) ;; "F11\0"
         (local.set $len (i32.const 3)) (br $done)))
       (if (i32.eq (local.get $scan) (i32.const 0x58)) (then
-        (i32.store (local.get $buf) (i32.const 0x00323146)) ;; "F12\0"
+        (call $keyname_store_prefix (local.get $buf) (i32.const 0x00323146) (i32.const 4) (local.get $end)) ;; "F12\0"
         (local.set $len (i32.const 3)) (br $done)))
       ;; OEM punctuation — render the unshifted glyph as a 1-char name.
       (local.set $ch (i32.const 0))
@@ -5623,16 +5628,33 @@
       (if (i32.eq (local.get $scan) (i32.const 0x34)) (then (local.set $ch (i32.const 0x2E)))) ;; .
       (if (i32.eq (local.get $scan) (i32.const 0x35)) (then (local.set $ch (i32.const 0x2F)))) ;; /
       (if (local.get $ch) (then
-        (i32.store8 (local.get $buf) (local.get $ch))
-        (i32.store8 (i32.add (local.get $buf) (i32.const 1)) (i32.const 0))
+        (call $keyname_store_prefix (local.get $buf) (local.get $ch) (i32.const 1) (local.get $end))
+        (call $keyname_store_prefix (i32.add (local.get $buf) (i32.const 1)) (i32.const 0) (i32.const 1) (local.get $end))
         (local.set $len (i32.const 1)) (br $done)))
       ;; Unknown: write "?"
-      (i32.store16 (local.get $buf) (i32.const 0x003F))
+      (call $keyname_store_prefix (local.get $buf) (i32.const 0x003F) (i32.const 2) (local.get $end))
       (local.set $len (i32.const 1))
     )
+    (if (i32.gt_s (local.get $arg2) (i32.const 0))
+      (then (if (i32.ge_u (local.get $len) (local.get $arg2))
+        (then (local.set $len (i32.sub (local.get $arg2) (i32.const 1)))))))
+    (i32.store8 (i32.add (local.get $buf) (local.get $len)) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (local.get $len))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
+  ;; Copy only non-NUL bytes from an existing little-endian name chunk.
+  ;; The handler emits exactly one terminator after clamping the final length.
+  (func $keyname_store_prefix (param $dst i32) (param $value i32)
+    (param $width i32) (param $end i32)
+    (block $done (loop $copy
+      (br_if $done (i32.eqz (local.get $width)))
+      (br_if $done (i32.ge_u (local.get $dst) (local.get $end)))
+      (br_if $done (i32.eqz (i32.and (local.get $value) (i32.const 255))))
+      (i32.store8 (local.get $dst) (local.get $value))
+      (local.set $dst (i32.add (local.get $dst) (i32.const 1)))
+      (local.set $value (i32.shr_u (local.get $value) (i32.const 8)))
+      (local.set $width (i32.sub (local.get $width) (i32.const 1)))
+      (br $copy))))
 
   ;; 789: SetObjectOwner — obsolete GDI function, no-op
   (func $handle_SetObjectOwner (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
