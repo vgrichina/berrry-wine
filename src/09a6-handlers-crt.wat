@@ -1037,6 +1037,33 @@
             (call $fpu_push (local.get $x))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (return)))))
+    ;; Keep each scale representable; defer relevant underflow to the final multiply.
+    (if (i32.and
+          (i32.lt_s (local.get $exp) (i32.const -1074))
+          (i32.and
+            (f64.ne (local.get $x) (f64.const 0))
+            (f64.lt (f64.abs (local.get $x)) (f64.const inf))))
+      (then
+        (if (i32.le_s (local.get $exp) (i32.const -2099))
+          (then (local.set $x (f64.copysign (f64.const 0) (local.get $x))))
+          (else
+            ;; Exact 2^-1022; potentially nonzero results start with |x| > 1.
+            (local.set $x (f64.mul (local.get $x) (f64.const 0x1p-1022)))
+            (if (i32.lt_s (local.get $exp) (i32.const -2044))
+              (then
+                ;; Exact 2^-54 keeps the remaining power normal, with no
+                ;; intermediate rounding for any potentially nonzero result.
+                (local.set $x (f64.mul (local.get $x) (f64.const 0x1p-54)))
+                (local.set $exp (i32.add (local.get $exp) (i32.const 54)))))
+            (local.set $x
+              (f64.mul (local.get $x)
+                (f64.reinterpret_i64
+                  (i64.shl
+                    (i64.extend_i32_u (i32.add (local.get $exp) (i32.const 2045)))
+                    (i64.const 52)))))))
+        (call $fpu_push (local.get $x))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (return)))
     (if (f64.eq (local.get $x) (f64.const 0))
       (then (call $fpu_push (local.get $x)))
       (else
