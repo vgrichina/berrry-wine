@@ -1,11 +1,12 @@
 'use strict';
 // Generated NE caller; no application/media bytes.
 const assert=require('assert/strict'),fs=require('fs'),path=require('path'),vm=require('vm');
+const {createRequire}=require('node:module');
 const root=process.env.WINE_TEST_ROOT||path.resolve(__dirname,'..');
 const {neLifecycleImage}=require(root+'/test/helpers/ne-lifecycle-image');
 const {createHostImports}=require(root+'/lib/host-imports');
 const {VirtualFS}=require(root+'/lib/filesystem');
-const ctx={createHostImports,console:{log(){},error(){}}};
+const ctx={createHostImports,require:createRequire(path.join(root,'host.js')),console:{log(){},error(){}}};
 vm.runInNewContext(fs.readFileSync(root+'/host.js','utf8')+'\n;globalThis.Host=WineAssembly;',ctx);
 function fixture(){
  const b=Buffer.alloc(0x1500),n=0x80,w=(p,v)=>b.writeUInt16LE(v,p);
