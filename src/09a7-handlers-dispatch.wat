@@ -5777,27 +5777,30 @@
   (func $handle_StrStrIA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $hay_base i32) (local $hay i32) (local $ndl i32) (local $hi i32) (local $ni i32)
     (local $hc i32) (local $nc i32) (local $ndl_len i32)
-    ;; Get needle length
-    (local.set $ndl (call $g2w (local.get $arg1)))
-    (local.set $ndl_len (call $strlen (local.get $ndl)))
+    ;; Keep string cursors in guest space across independently backed pages.
+    (local.set $ndl (local.get $arg1))
+    (block $length_done (loop $length
+      (br_if $length_done (i32.eqz (call $gl8 (i32.add (local.get $ndl) (local.get $ndl_len)))))
+      (local.set $ndl_len (i32.add (local.get $ndl_len) (i32.const 1)))
+      (br $length)))
     (if (i32.eqz (local.get $ndl_len))
       (then (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
              (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)))
-    (local.set $hay_base (call $g2w (local.get $arg0)))
+    (local.set $hay_base (local.get $arg0))
     (local.set $hay (local.get $hay_base))
     ;; Outer loop: try each position in haystack
     (block $not_found (loop $outer
-      (br_if $not_found (i32.eqz (i32.load8_u (local.get $hay))))
+      (br_if $not_found (i32.eqz (call $gl8 (local.get $hay))))
       ;; Inner loop: compare needle at current position
       (local.set $hi (local.get $hay))
       (local.set $ni (local.get $ndl))
       (block $mismatch (loop $inner
-        (local.set $nc (i32.load8_u (local.get $ni)))
+        (local.set $nc (call $gl8 (local.get $ni)))
         (if (i32.eqz (local.get $nc))
           (then ;; needle exhausted = match found
             (i32.store offset=0 (global.get $reg_base) (i32.add (i32.sub (local.get $hay) (local.get $hay_base)) (local.get $arg0)))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))) (return)))
-        (local.set $hc (i32.load8_u (local.get $hi)))
+        (local.set $hc (call $gl8 (local.get $hi)))
         (br_if $mismatch (i32.eqz (local.get $hc)))
         ;; Lowercase both chars for comparison (ASCII a-z/A-Z only)
         (if (i32.and (i32.ge_u (local.get $hc) (i32.const 0x41)) (i32.le_u (local.get $hc) (i32.const 0x5A)))
