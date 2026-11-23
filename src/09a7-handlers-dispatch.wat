@@ -5442,14 +5442,15 @@
   (func $handle_GetKeyNameTextA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; arg0=lParam (scan code in bits 16-23, extended flag in bit 24), arg1=lpString, arg2=cchSize
     (local $end i32) (local $scan i32) (local $extended i32) (local $buf i32) (local $len i32) (local $ch i32)
+    ;; cchSize includes NUL; no caller bytes are available at nonpositive sizes.
+    (if (i32.le_s (local.get $arg2) (i32.const 0))
+      (then (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
     (local.set $scan (i32.and (i32.shr_u (local.get $arg0) (i32.const 16)) (i32.const 0xFF)))
     (local.set $extended (i32.and (local.get $arg0) (i32.const 0x01000000)))
     (local.set $buf (call $g2w (local.get $arg1)))
-    ;; Reserve NUL for positive capacities. Twelve bytes cover every full name.
-    (local.set $end (i32.add (local.get $buf)
-      (if (result i32) (i32.gt_s (local.get $arg2) (i32.const 0))
-        (then (i32.sub (local.get $arg2) (i32.const 1)))
-        (else (i32.const 12)))))
+    ;; Reserve one byte for NUL.
+    (local.set $end (i32.add (local.get $buf) (i32.sub (local.get $arg2) (i32.const 1))))
     (local.set $len (i32.const 0))
     (block $done
       ;; Esc (0x01)
