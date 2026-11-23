@@ -928,7 +928,7 @@
     (local.get $required))
 
   (func $gdi_font_write_text_face (param $hdc i32) (param $count i32)
-        (param $dest i32) (param $wide i32) (result i32)
+        (param $dest i32) (param $wide i32) (result i32) ;; Guest output; gs16 handles a split WCHAR.
     (local $handle i32) (local $face i32) (local $length i32)
     (local $copy_count i32) (local $i i32) (local $ch i32)
     (local.set $handle (call $gdi_dc_get_field
@@ -952,16 +952,16 @@
       (br_if $copy_done (i32.ge_u (local.get $i) (local.get $copy_count)))
       (local.set $ch (i32.load8_u (i32.add (local.get $face) (local.get $i))))
       (if (local.get $wide)
-        (then (i32.store16 (i32.add (local.get $dest)
+        (then (call $gs16 (i32.add (local.get $dest)
           (i32.shl (local.get $i) (i32.const 1))) (local.get $ch)))
-        (else (i32.store8 (i32.add (local.get $dest) (local.get $i))
+        (else (call $gs8 (i32.add (local.get $dest) (local.get $i))
           (local.get $ch))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $copy)))
     (if (local.get $wide)
-      (then (i32.store16 (i32.add (local.get $dest)
+      (then (call $gs16 (i32.add (local.get $dest)
         (i32.shl (local.get $copy_count) (i32.const 1))) (i32.const 0)))
-      (else (i32.store8 (i32.add (local.get $dest) (local.get $copy_count))
+      (else (call $gs8 (i32.add (local.get $dest) (local.get $copy_count))
         (i32.const 0))))
     (local.get $copy_count))
 
