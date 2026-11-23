@@ -5127,6 +5127,7 @@
           (if (i32.eq (local.get $uCode) (i32.const 0x0038)) (then (local.set $result (i32.const 0xA4)))) ;; VK_LMENU
           (if (i32.eq (local.get $uCode) (i32.const 0xE038)) (then (local.set $result (i32.const 0xA5)))) ;; VK_RMENU
           ;; Type 3 special keys require the complete documented E0 Scan 1 Make code.
+          (if (i32.eq (local.get $uCode) (i32.const 0xE046)) (then (local.set $result (i32.const 0x03)))) ;; VK_CANCEL (Break)
           (if (i32.eq (local.get $uCode) (i32.const 0xE01C)) (then (local.set $result (i32.const 0x0D)))) ;; VK_RETURN (Numpad Enter)
           (if (i32.eq (local.get $uCode) (i32.const 0xE037)) (then (local.set $result (i32.const 0x2C)))) ;; VK_SNAPSHOT
           (if (i32.eq (local.get $uCode) (i32.const 0xE05B)) (then (local.set $result (i32.const 0x5B)))) ;; VK_LWIN
