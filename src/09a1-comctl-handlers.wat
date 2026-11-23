@@ -145,12 +145,13 @@
         (i32.store offset=0 (global.get $reg_base) (call $single_monitor_fallback (local.get $arg1)))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
         (return)))
-    (local.set $rect (call $g2w (local.get $arg0)))
+    ;; Keep the guest address: each LONG may cross sparse backing pages.
+    (local.set $rect (local.get $arg0))
     (i32.store offset=0 (global.get $reg_base) (call $single_monitor_rect
-      (load.field Rect left (local.get $rect))
-      (load.field.memarg Rect top (local.get $rect))
-      (load.field.memarg Rect right (local.get $rect))
-      (load.field.memarg Rect bottom (local.get $rect))
+      (call $gl32 (local.get $rect))
+      (call $gl32 (i32.add (local.get $rect) (i32.const 4)))
+      (call $gl32 (i32.add (local.get $rect) (i32.const 8)))
+      (call $gl32 (i32.add (local.get $rect) (i32.const 12)))
       (local.get $arg1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
