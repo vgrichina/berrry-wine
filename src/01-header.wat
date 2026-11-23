@@ -3070,7 +3070,7 @@
   ;; imports — Warcraft III's Game.dll imports 460 ordinals from War3Demo.exe.
   (global $exe_export_rva (mut i32) (i32.const 0))
   ;; rand() state
-  (global $rand_seed (mut i32) (i32.const 12345))
+  (global $rand_seed (mut i32) (i32.const 1))
   ;; Native Win98 reference exposes 80 slots. Each instance registers its vector
   ;; so releasing an index clears existing threads, including direct FS reads.
   (global $TLS_SLOT_COUNT i32 (i32.const 80))
