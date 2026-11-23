@@ -5070,6 +5070,7 @@
       (if (i32.eq (local.get $uMapType) (i32.const 2))
         (then
           ;; US keyboard driver's unshifted control characters.
+          (if (i32.eq (local.get $uCode) (i32.const 0x03)) (then (local.set $result (i32.const 0x03)))) ;; VK_CANCEL
           (if (i32.eq (local.get $uCode) (i32.const 0x08)) (then (local.set $result (i32.const 0x08)))) ;; VK_BACK
           (if (i32.eq (local.get $uCode) (i32.const 0x09)) (then (local.set $result (i32.const 0x09)))) ;; VK_TAB
           (if (i32.eq (local.get $uCode) (i32.const 0x0D)) (then (local.set $result (i32.const 0x0D)))) ;; VK_RETURN
