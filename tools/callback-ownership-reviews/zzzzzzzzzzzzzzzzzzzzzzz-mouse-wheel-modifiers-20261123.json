@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "dfd417177cc4f15684f2b1853ce3ea6955850b114f12401d1da3a299fb4c4341",
+      "sha256": "9c427b282c25eb76cc9af8a9afaa84c15d0097be8018f9211bf01be4d286d4ba",
+      "reason": "2026-11-23 handleWheel modifier payload only: read current physical generic Shift/Ctrl with nonmutating peekKeyDownState instead of stale legacy booleans. The one-line change preserves focus routing, callbacks, invocation ownership, DirectInput delivery, deltas, coordinates, capture and queues. Accepted independent 864-case test remains unchanged; corrected native wheel fixture presses/releases real generic modifiers with sided metadata, independently verifies physical state, drains keyboard messages, and preserves all existing wheel assertions including flags15. No callback, continuation, timer, retained-reference or guest-entry changes; broader ownership remains pending."
+    }
+  ]
+}

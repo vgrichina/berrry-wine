@@ -186,11 +186,33 @@ try {
     assert.equal(p.instance.exports.get_capture_hwnd(), capture, 'wheel preserves capture lifetime');
   }
   check('negative', -71, -29, 1, -71, -29);
-  f.renderer._shiftDown = true; f.renderer._ctrlDown = true;
+  const modifiers = [[16, { code: 'ShiftLeft', location: 1, repeat: false }],
+    [17, { code: 'ControlRight', location: 2, repeat: false }]];
+  function drainModifierKeys(message) {
+    for (const [vk] of modifiers) {
+      assert.equal(p.h.check_input() >>> 0, ((vk << 16) | message) >>> 0,
+        'physical modifier keyboard message drained before wheel');
+    }
+    assert.equal(f.renderer.inputQueue.length, 0, 'modifier keyboard queue drained');
+    assert.deepEqual(f.drain(p), [], 'no wheel during modifier setup/release');
+    assert.deepEqual(f.drain(other), [], 'no sibling wheel during modifier setup/release');
+  }
+  for (const [vk, info] of modifiers) f.renderer.handleKeyDown(vk, info);
+  for (const vk of [16, 17, 160, 163])
+    assert.equal(!!f.renderer.peekKeyDownState(vk), true, 'physical modifier pressed');
+  for (const vk of [161, 162])
+    assert.equal(!!f.renderer.peekKeyDownState(vk), false, 'opposite modifier side released');
+  drainModifierKeys(0x100);
   f.renderer._mouseButtonsMask = 3;
   check('flags', -71, -29, -1, -71, -29, 15);
   assert.equal(f.renderer._mouseButtonsMask, 3, 'physical buttons preserved');
-  f.renderer._shiftDown = false; f.renderer._ctrlDown = false; f.renderer._mouseButtonsMask = 0;
+  for (const [vk, info] of modifiers) f.renderer.handleKeyUp(vk, info);
+  for (const vk of [16, 17, 160, 161, 162, 163])
+    assert.equal(!!f.renderer.peekKeyDownState(vk), false, 'physical modifier released');
+  drainModifierKeys(0x101);
+  for (const vk of [16, 17, 160, 161, 162, 163])
+    assert.equal(!!f.renderer.peekKeyDownState(vk), false, 'draining preserves physical release');
+  f.renderer._mouseButtonsMask = 0;
   // Same crop used by production exclusive presentation, with negative
   // native screen origin and a 2x destination. No guest/client offset applies.
   f.renderer.refreshInputPresentation = () => {};
