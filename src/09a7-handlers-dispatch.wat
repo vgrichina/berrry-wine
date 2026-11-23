@@ -5124,6 +5124,7 @@
           (if (i32.eq (local.get $uCode) (i32.const 0x0036)) (then (local.set $result (i32.const 0xA1)))) ;; VK_RSHIFT
           (if (i32.eq (local.get $uCode) (i32.const 0x001D)) (then (local.set $result (i32.const 0xA2)))) ;; VK_LCONTROL
           (if (i32.eq (local.get $uCode) (i32.const 0xE01D)) (then (local.set $result (i32.const 0xA3)))) ;; VK_RCONTROL
+          (if (i32.eq (local.get $uCode) (i32.const 0xE11D)) (then (local.set $result (i32.const 0x13)))) ;; VK_PAUSE
           (if (i32.eq (local.get $uCode) (i32.const 0x0038)) (then (local.set $result (i32.const 0xA4)))) ;; VK_LMENU
           (if (i32.eq (local.get $uCode) (i32.const 0xE038)) (then (local.set $result (i32.const 0xA5)))) ;; VK_RMENU
           ;; Type 3 special keys require the complete documented E0 Scan 1 Make code.
