@@ -1028,6 +1028,14 @@
   )
 
   (func $handle_pow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    ;; A positive unit base is one for every exponent, including a quiet NaN.
+    (if (f64.eq
+          (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+          (f64.const 1))
+      (then
+        (call $fpu_push (f64.const 1))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+        (return)))
     (call $fpu_push
       (call $host_math_pow
         (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
