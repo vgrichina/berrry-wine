@@ -3866,6 +3866,7 @@
 
   ;; 17: MulDiv
   (func $handle_MulDiv (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $quotient i64)
     ;; RichEdit uses 32767 twips as an internal "effectively infinite" size
     ;; sentinel. Letting the generic pixel conversion through turns that into
     ;; a thousands-pixel document/font metric and WordPad scrolls typed text
@@ -3882,9 +3883,17 @@
         (return)))
     (if (i32.eqz (local.get $arg2))
     (then (i32.store offset=0 (global.get $reg_base) (i32.const -1)))
-    (else (i32.store offset=0 (global.get $reg_base) (i32.wrap_i64 (i64.div_s
-    (i64.mul (i64.extend_i32_s (local.get $arg0)) (i64.extend_i32_s (local.get $arg1)))
-    (i64.extend_i32_s (local.get $arg2)))))))
+    (else
+      (local.set $quotient (i64.div_s
+        (i64.mul (i64.extend_i32_s (local.get $arg0)) (i64.extend_i32_s (local.get $arg1)))
+        (i64.extend_i32_s (local.get $arg2))))
+      ;; Check the signed result before narrowing; wrapping hides overflow.
+      (i32.store offset=0 (global.get $reg_base)
+        (if (result i32) (i32.or
+              (i64.lt_s (local.get $quotient) (i64.const -2147483648))
+              (i64.gt_s (local.get $quotient) (i64.const 2147483647)))
+          (then (i32.const -1))
+          (else (i32.wrap_i64 (local.get $quotient)))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
 
