@@ -2297,19 +2297,19 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   (func $handle_GetWinMetaFileBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $temporary i32)
-    (if (i32.eqz (call $gdi_metafile_record (local.get $arg0) (i32.const 7)))
-      (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
-      (else
-        (local.set $temporary (call $gdi_metafile_convert_emf_to_wmf (local.get $arg0)))
-        (if (i32.eqz (local.get $temporary))
-          (then (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
-          (else
-            (i32.store offset=0 (global.get $reg_base) (call $gdi_metafile_bits
-              (local.get $temporary) (i32.const 6) (local.get $arg1)
-              (if (result i32) (local.get $arg2)
-                (then (call $g2w (local.get $arg2))) (else (i32.const 0)))))
-            (drop (call $gdi_object_delete_full (local.get $temporary)))))))
+    (local $temporary i32) (local $n i32) (local $src i32) (local $dst i32) (local $left i32) (local $chunk i32)
+    (if (i32.eqz (call $gdi_metafile_record (local.get $arg0) (i32.const 7))) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0))) (else
+      (local.set $temporary (call $gdi_metafile_convert_emf_to_wmf (local.get $arg0)))
+      (if (i32.eqz (local.get $temporary)) (then (i32.store offset=0 (global.get $reg_base) (i32.const 0))) (else
+        ;; Query the physical helper, then scatter only the bounded prefix; keep the temporary alive through the final partial page.
+        (local.set $n (call $gdi_metafile_bits (local.get $temporary) (i32.const 6) (local.get $arg1) (i32.const 0)))
+        (if (local.get $arg2) (then (local.set $n (select (local.get $arg1) (local.get $n) (i32.lt_u (local.get $arg1) (local.get $n))))
+          (local.set $src (i32.load offset=24 (call $gdi_metafile_record (local.get $temporary) (i32.const 6)))) (local.set $dst (local.get $arg2)) (local.set $left (local.get $n))
+          (block $done (loop $copy_pages (br_if $done (i32.eqz (local.get $left)))
+            (local.set $chunk (i32.sub (i32.const 4096) (i32.and (local.get $dst) (i32.const 4095))))
+            (if (i32.gt_u (local.get $chunk) (local.get $left)) (then (local.set $chunk (local.get $left)))) (memory.copy (call $g2w (local.get $dst)) (local.get $src) (local.get $chunk))
+            (local.set $src (i32.add (local.get $src) (local.get $chunk))) (local.set $dst (i32.add (local.get $dst) (local.get $chunk))) (local.set $left (i32.sub (local.get $left) (local.get $chunk))) (br $copy_pages)))))
+        (i32.store offset=0 (global.get $reg_base) (local.get $n)) (drop (call $gdi_object_delete_full (local.get $temporary)))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
 
   (func $handle_SetWinMetaFileBits (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
