@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "71888ea52749325cf13e70051aab2aa13c7b6bfde06cf9143905abda4ba48618",
+      "sha256": "5ea1ca4964943695fdaa3bdfafa7caa147a055e1950101d7a5e113d729d5a3bd",
+      "reason": "Review 20261123 waveOut mapped headers: complete waveOut host delta reviewed. Submission retains originating guest read/write accessors when available, otherwise context byte translation; delayed DONE resolves current guest header backing, while standalone physical-address ABI remains. Guest-header keys distinguish aliased submissions; existing registration identity/retirement and submission replacement guards precede completion and unchanged callback delivery. Reset drains the same tracked submissions. No new callback entry, scheduler, guest context restoration or ownership assertion; existing ownership remains pending. Public WINMM x86/production-host mapping and lifecycle evidence: 20261123-waveout-header-pipeline-root."
+    }
+  ]
+}

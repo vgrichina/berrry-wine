@@ -1681,11 +1681,10 @@
   ;; finishes playing. The host schedules that completion against the audio
   ;; clock; 0xAD98 keeps the last WAVEHDR available for Reset/Close flushes.
   (func $handle_waveOutWrite (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $wa i32) (local $data_ga i32) (local $data_len i32)
-    (local.set $wa (call $g2w (local.get $arg1)))
+    (local $data_ga i32) (local $data_len i32)
     ;; Read lpData and dwBufferLength from WAVEHDR
-    (local.set $data_ga (i32.load (local.get $wa)))
-    (local.set $data_len (i32.load (i32.add (local.get $wa) (i32.const 4))))
+    (local.set $data_ga (call $gl32 (local.get $arg1)))
+    (local.set $data_len (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
     ;; Send PCM data to host for playback. Use logical-and (coerce both to 0/1)
     ;; — bare i32.and is BITWISE and silently drops calls where data_ga and
     ;; data_len happen not to share any 1-bits (e.g. lpData=0x78521c & len=0x2d00 = 0).
@@ -1694,9 +1693,9 @@
       (then
         ;; Submitted buffers are no longer DONE and remain INQUEUE until the
         ;; scheduled audio-clock completion fires.
-        (i32.store (i32.add (local.get $wa) (i32.const 16))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 16))
           (i32.or
-            (i32.and (i32.load (i32.add (local.get $wa) (i32.const 16))) (i32.const 0xFFFFFFFE))
+            (i32.and (call $gl32 (i32.add (local.get $arg1) (i32.const 16))) (i32.const 0xFFFFFFFE))
             (i32.const 0x10)))
         (drop (call $host_wave_out_write
           (local.get $arg0)
@@ -1704,7 +1703,7 @@
           (local.get $data_len)))
         (drop (call $host_wave_out_schedule_done
           (local.get $arg0)
-          (local.get $wa)
+          (call $g2w (local.get $arg1))
           (local.get $arg1)
           (local.get $data_len)))))
     ;; Save this buffer's guest address so Reset/Close can flush if needed.
