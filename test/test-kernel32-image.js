@@ -30,6 +30,7 @@ const selected = [
   'handle_GetProcAddress_pinned', 'handle_GetProcAddress',
   'handle_LoadLibraryA', 'loadlib_normalize_name', 'loadlib_path_in_dir',
   'loadlib_path_in_system_dirs', 'loadlib_absent_on_win98',
+  'loadlib_builtin_only', 'loadlib_name_is_qualified',
   'dll_synthetic_reference', 'freelib_mark_loaded',
   'guest_name_tail_is_dll', 'guest_name_has_dll_ext',
   'guest_name_is_static_system_dll', 'static_sys_dll_name_at', 'static_sys_dll_from_handle',
@@ -64,10 +65,15 @@ const fixture = { image_base: 0x40000, GUEST_BASE: 0x40000, THUNK_BASE: 0x30000,
   STATIC_SYS_DIR: regionBases.RESERVED_PAGE_STRINGS + 0x25c,
   STATIC_SYS_DLL_EXT: regionBases.RESERVED_PAGE_STRINGS + 0x274,
   THUNK_NEXT_SHARED: 0x29000, thunk_guest_base: 0x30000 };
+// Interned loader strings need their own page, outside the resource data.
+const stringPoolBase = 0x10000 + regions.length * 0x1000;
+assert(stringPoolBase + 0x1000 <= fixture.reg_base, 'region pages and string pool fit below fixture registers');
 const globals = [...new Set([...code.matchAll(/\(global\.(?:get|set) \$([^\s()]+)/g)].map(m => m[1]))];
 const exportsWat = selected.filter(n => n.startsWith('handle_')).map(n => `(export "${n}" (func $${n}))`).join('\n');
 const source = `(import "mock" "memory" (memory 32 32 shared))\n${declarations.join('\n')}
   ${regions.map(n => `(region.declare-fixed $${n} (base ${regionBases[n]}) (size 4096) (align 4096) (owner "fixture"))`).join('\n')}
+  (region.declare-fixed $FIXTURE_STRING_POOL (base ${stringPoolBase}) (size 4096) (align 4096) (owner "fixture"))
+  (string.pool $FIXTURE_STRING_POOL)
   ${globals.map(n => `(global $${n} (mut i32) (i32.const ${fixture[n] || regionBases[n] || 0}))`).join('\n')}
   ${code} ${exportsWat}
   (export "ensure" (func $kernel32_ensure_locked))
@@ -99,6 +105,7 @@ Object.assign(mock, {
   find_loaded_dll: () => loaded, dll_pin_module: () => 0, dll_unpin_module_index: () => {},
   dll_row_init_pending: () => 0, dll_retain_locked: () => 1,
   host_has_dll_file: () => 0,
+  host_fs_get_file_attributes: p => /^c:[\\/]windows[\\/](?:system[\\/])?kernel32\.dll$/i.test(string(p)) ? 0x20 : -1,
 });
 (async () => {
   const module = await WebAssembly.compile(compiled.wasmBinary);
