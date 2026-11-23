@@ -1148,13 +1148,13 @@
   ;; large. Case-insensitive compare of "display" as two dwords; byte 7 must be
   ;; the terminator, so its OR mask is zero.
   (func $gdi_driver_is_display (param $name i32) (result i32)
-    (local $wa i32)
+    ;; Keep each DWORD address in guest space.
     (if (i32.eqz (local.get $name)) (then (return (i32.const 0))))
-    (local.set $wa (call $g2w (local.get $name)))
+    ;; gl32 also gathers a DWORD crossing nonadjacent backing.
     (i32.and
-      (i32.eq (i32.or (i32.load (local.get $wa)) (i32.const 0x20202020))
+      (i32.eq (i32.or (call $gl32 (local.get $name)) (i32.const 0x20202020))
               (i32.const 0x70736964))                      ;; "disp"
-      (i32.eq (i32.or (i32.load offset=4 (local.get $wa)) (i32.const 0x00202020))
+      (i32.eq (i32.or (call $gl32 (i32.add (local.get $name) (i32.const 4))) (i32.const 0x00202020))
               (i32.const 0x0079616C))))                    ;; "lay\0"
 
   ;; CreateDCA(lpszDriver, lpszDevice, lpszOutput, lpInitData) — 4 args stdcall.
@@ -2998,19 +2998,19 @@
 
   ;; UTF-16 twin of $gdi_driver_is_display.
   (func $gdi_driver_is_display_w (param $name i32) (result i32)
-    (local $wa i32)
+    ;; Keep each DWORD address in guest space.
     (if (i32.eqz (local.get $name)) (then (return (i32.const 0))))
-    (local.set $wa (call $g2w (local.get $name)))
+    ;; gl32 also gathers a DWORD crossing nonadjacent backing.
     (i32.and
       (i32.and
-        (i32.eq (i32.or (i32.load (local.get $wa)) (i32.const 0x00200020))
+        (i32.eq (i32.or (call $gl32 (local.get $name)) (i32.const 0x00200020))
                 (i32.const 0x00690064))                    ;; "di"
-        (i32.eq (i32.or (i32.load offset=4 (local.get $wa)) (i32.const 0x00200020))
+        (i32.eq (i32.or (call $gl32 (i32.add (local.get $name) (i32.const 4))) (i32.const 0x00200020))
                 (i32.const 0x00700073)))                   ;; "sp"
       (i32.and
-        (i32.eq (i32.or (i32.load offset=8 (local.get $wa)) (i32.const 0x00200020))
+        (i32.eq (i32.or (call $gl32 (i32.add (local.get $name) (i32.const 8))) (i32.const 0x00200020))
                 (i32.const 0x0061006C))                    ;; "la"
-        (i32.eq (i32.or (i32.load offset=12 (local.get $wa)) (i32.const 0x00000020))
+        (i32.eq (i32.or (call $gl32 (i32.add (local.get $name) (i32.const 12))) (i32.const 0x00000020))
                 (i32.const 0x00000079)))))                 ;; "y\0"
 
   ;; 372: CreateDCW — wide printer/display DC owns a canonical page surface.
