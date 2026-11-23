@@ -1959,9 +1959,9 @@
           (local.set $b (call $gdi_bitmap_font_scaled_ink_value (local.get $hdc) (local.get $strike)
             (call $tt_entry_width (local.get $entry)) (local.get $height)))))
       (local.set $dest (i32.add (local.get $out) (i32.mul (local.get $i) (i32.const 12))))
-      (i32.store (local.get $dest) (local.get $a))
-      (i32.store offset=4 (local.get $dest) (local.get $b))
-      (i32.store offset=8 (local.get $dest) (i32.sub (i32.sub (local.get $advance) (local.get $a)) (local.get $b)))
+      (call $gs32 (local.get $dest) (local.get $a))
+      (call $gs32 (i32.add (local.get $dest) (i32.const 4)) (local.get $b))
+      (call $gs32 (i32.add (local.get $dest) (i32.const 8)) (i32.sub (i32.sub (local.get $advance) (local.get $a)) (local.get $b)))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $characters)))
     (i32.const 1))
 
