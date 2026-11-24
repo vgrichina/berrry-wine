@@ -235,6 +235,7 @@
   ;;   33 MOVNTPS store (instruction offset within block in op bits16..31)
   ;;   46/47 MINSS/MAXSS (source bits on equality or unordered, m32 only)
   ;;   48 CMPSS (SSE1 predicate in op bits 16..23, m32 only)
+  ;;   49 UNPCKHPS (m128 instruction offset in op bits 16..31)
   ;; Scalar forms preserve the destination's upper 96 bits. RSQRT*/RCP* are
   ;; exact here where silicon gives ~12 bits -- the safe direction, and callers
   ;; that care refine with Newton-Raphson (B&W2's normalizer at 0x00962cb6).
@@ -253,6 +254,12 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.eq (local.get $sub) (i32.const 49)) (then
+      ;; Snapshot both sources before writing, including self aliases. Raw bits.
+      (call $xmm_set (local.get $dst)
+        (i8x16.shuffle 8 9 10 11 24 25 26 27 12 13 14 15 28 29 30 31
+          (local.get $d) (local.get $s)))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 48)) (then
       (call $xmm_set (local.get $dst) (i32x4.replace_lane 0 (local.get $d)
         (call $sse_cmp_lane (f32x4.extract_lane 0 (local.get $d))
@@ -476,15 +483,21 @@
       (call $xmm_set (local.get $dst) (i32x4.replace_lane 0
         (v128.const i32x4 0 0 0 0) (call $gl32 (local.get $addr))))
       (dispatch-next)))
-    (if (i32.or (i32.eq (local.get $sub) (i32.const 36))
-                (i32.eq (local.get $sub) (i32.const 44))) (then
-      ;; Legacy packed conversions require m128 alignment (#GP on x86).
+    (if (i32.or (i32.eq (local.get $sub) (i32.const 49))
+          (i32.or (i32.eq (local.get $sub) (i32.const 36))
+                  (i32.eq (local.get $sub) (i32.const 44)))) (then
+      ;; Legacy packed conversions and UNPCKHPS require m128 alignment.
       (if (i32.ne (i32.and (local.get $addr) (i32.const 15)) (i32.const 0)) (then
         (global.set $fault_address (local.get $addr))
         (global.set $eip (i32.add (global.get $eip) (i32.shr_u (local.get $op) (i32.const 16))))
         (call $raise_exception (i32.const 0xC0000005))
         (return)))
       (local.set $s (call $gl128 (local.get $addr)))
+      (if (i32.eq (local.get $sub) (i32.const 49)) (then
+        (call $xmm_set (local.get $dst)
+          (i8x16.shuffle 8 9 10 11 24 25 26 27 12 13 14 15 28 29 30 31
+            (local.get $d) (local.get $s)))
+        (dispatch-next)))
       (call $xmm_set (local.get $dst)
         (if (result v128) (i32.eq (local.get $sub) (i32.const 36))
           (then (f32x4.convert_i32x4_s (local.get $s)))

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "5f742ebb15f798b26275db3041fc201eabb134ea2254c0d799224954a339fde9",
+      "sha256": "61e1137443be3db1a2ea2f58360112c9100e39053beebd84aef29f5bba294d5c",
+      "reason": "UNPCKHPS sub49 joins the existing aligned m128 read and fault path, then writes a raw high-lane shuffle to the per-thread XMM destination and dispatches. The existing single EIP write, its instruction-offset target, exception boundary, and return stay unchanged. No retained pointers, invocation state, direct guest calls, or new callback boundaries are added. The full m128 read uses existing gl128 translation, after ordinary decoded segment addressing; full protected-mode segment limit emulation is not claimed. This is a narrow handler lifetime review anchored after the released CMPSS review, not general invocation ownership acceptance. Existing scalar predicates, minmax, and conversion branches retain their behavior."
+    }
+  ]
+}
