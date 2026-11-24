@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "20d139e4d06a2b327c2e2f328fc3e7ae7b20ed753558c41af6f58a477c4e0abb",
+      "sha256": "58a3bf78af922c059ff56d26dd23cdf0175b588e5f0aa7931331be9aba756c21",
+      "reason": "2026-11-24 handleWheel zero vertical delta only: return before keyboard/process ownership restoration when deltaY === 0, including negative zero and horizontal-only DOM events. These events no longer publish DirectInput state or enter USER callbacks. DOM cancellation remains in the unchanged browser producer. Nonzero routing, synchronous send_message, exception paths, retained references, timers, continuations and invocation lifetime are unchanged. Prepared independent oracle reproduced 138 original failures and 494 passing assertions across 29 rows with the actual applied one-line candidate; complete memory and owner guards included. No invocation ownership assertion; broader ownership remains pending."
+    }
+  ]
+}
