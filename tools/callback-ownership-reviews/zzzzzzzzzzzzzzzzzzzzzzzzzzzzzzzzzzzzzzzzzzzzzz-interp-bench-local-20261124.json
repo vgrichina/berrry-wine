@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "e18b9653c96abe9be26edc85bb9df0b1c86abeb7c79db37de95ccf623cddc4da",
+      "sha256": "9bc1cd7d308e92a33bffe9052a703268694caff9f5328ebffd2cffb9ca9596fc",
+      "reason": "Review 20261124 interpreter-benchmark local candidates: two experimental LOCAL_CANDIDATE_APPS labels (rude_awakening_ags, simcity_2001_vb), one root constant and two APPS data entries pointing at unchanged archive.org downloads (an AGS 2.70 exe with its generated tree manifest; a VB6 p-code exe with the MSVBVM60.DLL its CAB ships). requiredFiles uses ordinary launcher behavior. No launch arguments, config overlays, registry seeds, callback producer, boundary, export, owner, continuation, EIP/stack/clock write, rendering or input fence change. No gameplay compatibility assertion. General callback ownership remains pending."
+    }
+  ]
+}

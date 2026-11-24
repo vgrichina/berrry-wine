@@ -89,3 +89,14 @@ to the primary (`0x080e2010`) from one SDL.dll site (return `0x9851db`,
 `sdl+0x100181db`): one per ScummVM `updateScreen`. ScummVM pushes the screen
 every engine loop, so only 243 of them (5.9%) change the picture — read the
 present count as the engine update rate and the changed count as animation.
+
+## Script loop check (2026-11-24): not interpreter-bound
+
+Queen has no bytecode VM (its logic runs command lists from `queen.1` tables;
+the `Logic::script`/`fetchItem` strings in the binary belong to the Sky
+engine). Hotel room, `--batch-size=25000`, `--handler-hist` over batches
+8200..9000 (run reaches 9000 batches in ~84 s): the top blocks are the
+msvcrt `memcpy` import thunk `jmp [0x8694c8]` at `0x6ddd60` (6%) called from
+row copies at `0x591156` (320-byte rows) and `0x4035b4`, a sprite blit loop at
+`0x591a38`, and a state switch at `0x6bf36d`. No fetch/dispatch loop appears;
+use COMI for SCUMM. Evidence: `scratch/runs/20261124-interp-bench/scummvm_fotaq/`.
