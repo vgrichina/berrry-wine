@@ -2,7 +2,8 @@
 
 App id `spelunky_classic` (local-only, `lib/apps.js`). Download, hashes and
 licence terms: `test/binaries/SOURCES.md`, section "Spelunky Classic v1.1".
-Evidence: `scratch/runs/20261124-spelunky/`.
+Evidence: `scratch/runs/20261124-spelunky/` and
+`scratch/runs/20261124-spelunky-route/` (title → level 1).
 
 ## What the binary is
 
@@ -86,9 +87,50 @@ Evidence: `scratch/runs/20261124-spelunky/`.
    (`test/test-d3d8-render-target-texture-format.js`).
 8. **Title**: with the fix the intro and title room render (run 15: 5180
    presents, 1.2M draws, no exit by the 280 s limit; `title-intro.png`).
-   Input reaches the title room (`title-room-after-input.png`). **Not yet
-   done:** the route from the title room into a level (Spelunky's own
-   controls: arrows / Z jump / X whip by default per `keys.cfg`).
+   Input reaches the title room (`title-room-after-input.png`).
+9. **Window scale and Present rects** (fixed 2026-11-24). `CreateDevice` is
+   windowed with an explicit **640x480** X8R8G8B8 back buffer. `settings.cfg`
+   (`0,1,0,1,3,15,15`; the `3` is the window scale) then resizes the window to
+   966x747 (client 960x720). The runner tries `SetViewport(0,0,960,720)`,
+   which returns `D3DERR_INVALIDCALL` (0x8876086c). That is correct: d3d8 and
+   Wine validate the viewport against the render target, and the game keeps
+   going. Every frame is then `Present(src=(0,0,960,720),
+   dst=(0,0,960,720), hwnd=0x10005)`. Windows clips the source to the back
+   buffer (640x480) and stretches it onto the 960x720 destination. The ring
+   path ignored both rects, so the picture filled only the top-left 640x480 of
+   the window with black around it. `$d9g_present` (09akg) now clips the
+   source rect, takes the destination rect (or the client area when the rect
+   is NULL), and stretches through a GPU COPY (LINEAR) into a present target
+   (stats 88/89). The WebGL executor's RT→RT COPY is now a shader draw instead
+   of readPixels + a JS resample, so the per-frame stretch never leaves the
+   GPU (`test/test-d3d9-gps-present-stretch.js`, `--webgl` compares
+   executors).
+10. **Into a level** (2026-11-24): a 640x480 screen clamps the 966x747
+   window, which reads as a cropped frame (Win98 does the same at that
+   resolution), so drive the route with `--screen=1024x768`.
+
+## Title → level 1 route (control mode)
+
+```sh
+caffeinate -u -t 2
+node test/run.js --app=spelunky_classic --headless-gl --quiet-api --screen=1024x768 \
+  --max-seconds=3000 --max-batches=10000000 --batch-size=100000 --stuck-after=0 \
+  --no-close --control=8241 --frozen
+# then, with c(){ node tools/ctl.js --port=8241 "$@"; }
+```
+
+| Step | Batches (approx.) | Keys | Result |
+|---|---|---|---|
+| loading + intro text | `step 21000` | none | "PUTTING THE FADED PHOTO IN MY POCKET" |
+| skip intro | `step 1000` between | Enter (13) down/20/up, twice | desert intro, then the title room |
+| title room | `step 2400` + 600 | none | the player climbs down the rope and lands at the right |
+| walk to START | `step 2500` | hold Left (37) | the player at the START door (x≈235 of 1024) |
+| enter | `step 60` | Up (38) | through the door; 900 batches later the tutorial level |
+| play | 300 / 15 / 8 | Right (39), Z (90) jump, X (88) whip | HUD 4 hearts, 0 bombs, 2 ropes, $0; "PRESS Z TO JUMP." |
+
+If the player overshoots the door, tap Right (about 80 batches) before Up.
+Evidence: `scratch/runs/20261124-spelunky-route/` (`s3-*.png` after the fix;
+`s2-*.png` before it, picture in the top-left 640x480).
 
 ## Reproduction
 

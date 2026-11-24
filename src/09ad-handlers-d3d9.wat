@@ -1387,8 +1387,9 @@
   ;; IDirect3DDevice9_Present(this, pSourceRect, pDestRect,
   ;;                          hDestWindowOverride, pDirtyRegion) — 5 args.
   ;; The render target is the surface the app drew into; push it to the
-  ;; window's back-canvas. Sub-rect presents are not modelled — we always
-  ;; present the whole target.
+  ;; window's back-canvas. On the ring, $d9g_present honours the source and
+  ;; destination rects (stretching a windowed back buffer onto its client
+  ;; area); the DIB-only path below still presents the whole target.
   (func $handle_IDirect3DDevice9_Present (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $rt i32)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
@@ -1398,7 +1399,7 @@
     ;; The ring presents (09akg); a device without program state has only
     ;; its DIB.
     (if (call $d3d9_gpu_descriptor (local.get $arg0)) (then
-      (drop (call $d9g_present (local.get $arg0)))
+      (drop (call $d9g_present (local.get $arg0) (local.get $arg1) (local.get $arg2)))
       (call $present_frame_end)
       (i32.store offset=0 (global.get $reg_base) (i32.const 0))
       (return)))
@@ -2743,7 +2744,7 @@
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0x8876086c)) (return)))
     ;; The ring presents (09akg), as IDirect3DDevice9::Present does.
     (if (call $d3d9_gpu_descriptor (local.get $device)) (then
-      (drop (call $d9g_present (local.get $device)))
+      (drop (call $d9g_present (local.get $device) (local.get $arg1) (local.get $arg2)))
       (call $present_frame_end)
       (i32.store offset=0 (global.get $reg_base) (i32.const 0))
       (return)))
