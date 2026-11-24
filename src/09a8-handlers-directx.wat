@@ -7527,17 +7527,20 @@
     ;; remains the full surface stride. Callers can therefore treat (0,0) as
     ;; the requested rectangle's origin without losing the parent pitch.
     (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
+    ;; Caller-backed guest pages need not be adjacent in WASM memory. Recover
+    ;; the guest base before adding the rectangle offset; translating an
+    ;; offset WASM address can otherwise select an unrelated allocation.
+    (local.set $dib_guest (call $w2g (local.get $dib_wa)))
     (if (local.get $arg1)
       (then
         (local.set $bpp (load.field DxObject bpp (local.get $entry)))
-        (local.set $dib_wa
-          (i32.add (local.get $dib_wa)
+        (local.set $dib_guest
+          (i32.add (local.get $dib_guest)
             (i32.add
               (i32.mul (local.get $top)
                 (load.field DxObject pitch (local.get $entry)))
               (i32.div_u (i32.mul (local.get $left) (local.get $bpp))
                          (i32.const 8)))))))
-    (local.set $dib_guest (call $w2g (local.get $dib_wa)))
     (i32.store (i32.add (local.get $wa) (i32.const 36)) (local.get $dib_guest))
     (call $dx_fill_surface_pixel_format (i32.add (local.get $wa) (i32.const 72)) (local.get $entry))
     (i32.store offset=104 (local.get $wa) (i32.load (call $dx_surf_meta_ptr (local.get $entry))))
