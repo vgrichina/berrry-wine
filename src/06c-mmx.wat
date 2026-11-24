@@ -19,6 +19,9 @@
   ;; mark the FPU tag word full. We keep the two files separate: no guest mixes
   ;; MMX and x87 without an EMMS between them (that is the whole point of
   ;; EMMS), and $th_emms already clears the tag word.
+  ;; CVTPS2PI below explicitly sets TOP=0 and all occupancy bits valid as
+  ;; required by Intel SDM vol.2A 3-288. The separate value files still do not
+  ;; model MMX/x87 mantissa aliasing or the MMX destination's x87 exponent.
 
   ;; ---- Register file ----
   ;; MMn is the i64 at $mmx_base + n*8 in this thread's $MMX_FILE slice. The
@@ -237,6 +240,7 @@
   ;;   48 CMPSS (SSE1 predicate in op bits 16..23, m32 only)
   ;;   49 UNPCKHPS (m128 instruction offset in op bits 16..31)
   ;;   50 MOVHLPS (register source high64 into destination low64)
+  ;;   51 CVTPS2PI (low two singles to MMX, reset nearest/ties-even only)
   ;; Scalar forms preserve the destination's upper 96 bits. RSQRT*/RCP* are
   ;; exact here where silicon gives ~12 bits -- the safe direction, and callers
   ;; that care refine with Newton-Raphson (B&W2's normalizer at 0x00962cb6).
@@ -255,6 +259,18 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.eq (local.get $sub) (i32.const 51)) (then
+      (call $mmx_set (local.get $dst)
+        (i64.or
+          (i64.extend_i32_u (call $sse_cvtt_f32_i32
+            (f32.nearest (f32x4.extract_lane 0 (local.get $s)))))
+          (i64.shl (i64.extend_i32_u (call $sse_cvtt_f32_i32
+            (f32.nearest (f32x4.extract_lane 1 (local.get $s))))) (i64.const 32))))
+      ;; fpu_tag is one occupied bit per physical register, not Intel's
+      ;; two-bit tag encoding: 255 packs to the architectural valid word 0.
+      (global.set $fpu_top (i32.const 0))
+      (global.set $fpu_tag (i32.const 255))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 50)) (then
       ;; Both snapshots predate the write, including a self-alias. Copy raw bits.
       (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
@@ -470,6 +486,19 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     ;; Read exactly the architectural operand width before writing XMM state.
+    (if (i32.eq (local.get $sub) (i32.const 51)) (then
+      ;; m64 permits unaligned operands. Both dword reads finish before any
+      ;; destination or x87 transition is committed; no m128 over-read.
+      (call $mmx_set (local.get $dst)
+        (i64.or
+          (i64.extend_i32_u (call $sse_cvtt_f32_i32
+            (f32.nearest (f32.reinterpret_i32 (call $gl32 (local.get $addr))))))
+          (i64.shl (i64.extend_i32_u (call $sse_cvtt_f32_i32
+            (f32.nearest (f32.reinterpret_i32
+              (call $gl32 (i32.add (local.get $addr) (i32.const 4))))))) (i64.const 32))))
+      (global.set $fpu_top (i32.const 0))
+      (global.set $fpu_tag (i32.const 255))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 48)) (then
       (call $xmm_set (local.get $dst) (i32x4.replace_lane 0 (local.get $d)
         (call $sse_cmp_lane (f32x4.extract_lane 0 (local.get $d))

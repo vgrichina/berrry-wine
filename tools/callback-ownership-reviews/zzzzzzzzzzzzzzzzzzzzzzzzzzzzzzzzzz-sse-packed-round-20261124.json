@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "61e1137443be3db1a2ea2f58360112c9100e39053beebd84aef29f5bba294d5c",
+      "sha256": "8b5385ffd73eb983423a1faf39136a292136a22818a0ce120063e58241446b3e",
+      "reason": "CVTPS2PI sub51 reads exactly two guest dwords through existing gl32 helpers after normal decoded segment addressing, then commits only the MMX destination and representable x87 TOP/occupancy transition and dispatches. Both reads complete before these writes. No new guest callback, retained pointer, invocation state, exception boundary, EIP write or target is introduced; the existing single aligned-m128 fault EIP write and target are unchanged. Separate MMX/x87 value files still do not alias; MXCSR runtime/status, unmasked exceptions and pending x87 exception delivery are outside this conversion subset. This review covers only the changed handler hash after the released UNPCKHPS review and does not claim general invocation ownership acceptance. Existing scalar, truncation and other SSE branches are unchanged."
+    }
+  ]
+}

@@ -5353,6 +5353,23 @@
                             (i32.shl (global.get $mr_reg) (i32.const 4))))
                   (call $te_raw (local.get $a))
                   (br $decode)))))
+          ;; CVTPS2PI mm,xmm/m64 (NP 0F2D). Keep scalar F3 and other
+          ;; mandatory-prefix families separate; LOCK is invalid here.
+          (if (i32.and (i32.eq (local.get $op) (i32.const 0x2d))
+            (i32.and (i32.eqz (local.get $prefix_66))
+              (i32.and (i32.eqz (local.get $prefix_rep))
+                       (i32.eqz (local.get $prefix_lock))))) (then
+            (call $decode_modrm)
+            (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+              (call $te_sse (i32.const 432) (i32.or (i32.const 0x3300)
+                (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))
+            (else
+              (call $apply_seg_override)
+              (local.set $a (call $emit_sib_or_abs))
+              (call $te_sse (i32.const 433) (i32.or (i32.const 0x3300)
+                (i32.shl (global.get $mr_reg) (i32.const 4))))
+              (call $te_raw (local.get $a))))
+            (br $decode)))
           ;; CVTSS2SI r32,xmm/m32 (default MXCSR nearest-even rounding).
           (if (i32.and (i32.eq (local.get $op) (i32.const 0x2d))
             (i32.and (i32.eqz (local.get $prefix_66))
