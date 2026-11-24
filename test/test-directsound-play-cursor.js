@@ -245,12 +245,14 @@ try {
   const fn = wat.split('(func $handle_IDirectSoundBuffer_GetCurrentPosition')[1];
   assert(fn, 'GetCurrentPosition handler not found');
   const body = fn.split('\n  (func ')[0];
-  assert(/local\.get \$lead/.test(body),
-    'the write cursor must be offset from the play cursor by a lead');
-  assert(/i32\.rem_u/.test(body),
-    'the write cursor must wrap inside the ring rather than run past its end');
-  assert(/i32\.const 15/.test(body),
-    'the lead should be the ~15ms a Win98 driver keeps committed');
+  const cursor = wat.split('(func $dsbuf_cursor')[1].split('\n  (func ')[0];
+  const write = wat.split('(func $dsbuf_write_cursor')[1].split('\n  (func ')[0];
+  assert(/call \$dsbuf_cursor/.test(body), 'GetCurrentPosition uses the shared cursor');
+  assert(/call \$dsbuf_write_cursor/.test(body), 'GetCurrentPosition uses the shared write lead');
+  assert(/local\.get \$lead/.test(write), 'the write cursor leads the play cursor');
+  assert(/i32\.rem_u/.test(cursor) && /i32\.rem_u/.test(write),
+    'play and write cursors wrap inside the ring');
+  assert(/i32\.const 15/.test(write), 'the write lead is 15ms');
 }
 
 // A clock between two PCM frames must never expose bytes from the next

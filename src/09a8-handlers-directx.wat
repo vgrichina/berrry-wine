@@ -9842,6 +9842,24 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
+    ;; Other live transitions also continue at the current byte. A one-shot
+    ;; may have finished without a GetStatus poll, so first check the host.
+    ;; Unchanged one-shot flags need no new snapshot; changed flags need a
+    ;; snapshot whose origin is the live cursor, not the previous Play origin.
+    (if (i32.ne (i32.and (load.field DxObject flags (local.get $entry))
+                  (i32.const 1)) (i32.const 0))
+      (then
+        (if (call $host_voice_is_playing (local.get $handle))
+          (then
+            (if (i32.eq (i32.and (load.field DxObject flags (local.get $entry))
+                          (i32.const 4)) (i32.shl (local.get $loop) (i32.const 2)))
+              (then
+                (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+                (i32.store offset=16 (global.get $reg_base)
+                  (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+                (return)))
+            (local.set $start (call $dsbuf_cursor (local.get $entry) (i32.const 0)))
+            (i32.store offset=12 (local.get $state) (local.get $start))))))
     ;; Bitwise i32.and on (ptr, size) silently drops the play call whenever
     ;; their bits don't happen to overlap. Coerce both to 0/1 for logical AND.
     (if (i32.and (i32.ne (local.get $dib_wa) (i32.const 0))
