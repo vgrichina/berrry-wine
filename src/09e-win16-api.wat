@@ -15183,6 +15183,21 @@
     (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
     (call $win16_api_return (i32.const 10)))
 
+  ;; GDI.42 InvertRgn(hDC, hRgn) -> BOOL. Tetris (WEP1 and Best of WEP) flashes
+  ;; a completed row by inverting a region over it, so before this entry existed
+  ;; the first line clear stopped the task in $crash_unimplemented (issue #32).
+  ;; Forwards to the 32-bit InvertRgn, which XORs each region band on the DC.
+  (func $win16_InvertRgn
+    (local $hdc i32) (local $rgn i32)
+    (local.set $hdc (call $win16_h32 (call $win16_arg16 (i32.const 1))))
+    (local.set $rgn (call $win16_h32 (call $win16_arg16 (i32.const 0))))
+    (call $win16_call32_begin (i32.const 2))
+    (call $handle_InvertRgn (local.get $hdc) (local.get $rgn)
+      (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))
+    (call $win16_call32_end)
+    (i32.store offset=0 (global.get $reg_base) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (call $win16_api_return (i32.const 4)))
+
   ;; GDI.47 CombineRgn(hrgnDest, hrgnSrc1, hrgnSrc2, fnCombineMode).
   ;; The other half of the same clip: Hearts builds the rectangle it is about to
   ;; redraw with SetRectRgn and folds it into the region it keeps.
@@ -17350,6 +17365,8 @@
       (then (call $win16_PtInRegion) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 41))
       (then (call $win16_FrameRgn) (return (i32.const 1))))
+    (if (i32.eq (local.get $ordinal) (i32.const 42))
+      (then (call $win16_InvertRgn) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 47))
       (then (call $win16_CombineRgn) (return (i32.const 1))))
     (if (i32.eq (local.get $ordinal) (i32.const 51))

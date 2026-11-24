@@ -106,6 +106,27 @@ which is a DOS program. For reference:
 - Individual volumes: `https://archive.org/details/000777-WindowsEntertainmentPack1` (1-4)
 - Best of WEP floppy: `https://archive.org/details/wep_best-of`
 
+### Best of WEP floppy, in `candidates/bowep/` (local only)
+
+Archive.org item `wep_best-of`, file `wep_best-of.img` (1,474,560 bytes,
+SHA-256 `e9d34d3aa61364167d7bb7f85caa8c26a7804b7ac71f57b1148401f38cfe91fe`,
+SHA-1 `50fc84b9d58ad9c2e01bb4ad666e3dbd8deb58c0`), a 1.44 MB FAT image of the
+1994 "Best of Microsoft Entertainment Pack" setup disk. Unlike the WEP 1-4
+floppies its files are plain SZDD (`COMPRESS.EXE`), not `WEPBINXZ`:
+
+```bash
+7z x -ocandidates/bowep/floppy candidates/bowep/wep_best-of.img
+# each *.EX_/*.DL_/*.HL_/*.WA_/... through tools/szdd.js, '_' -> the real
+# extension (EXE, DLL, HLP, WAV, MID, DAT, VBX, MST, INF), into candidates/bowep/game/
+node tools/szdd.js candidates/bowep/floppy/TETRIS.EX_ candidates/bowep/game/TETRIS.EXE
+```
+
+Executables on it: BLAKJAK, CHIPS, FREECELL, GOLF, JEZZBALL, PIPE, RODENT, SKI,
+TETRAVEX, TETRIS, TP, TRIPEAKS, TUTSTOMB (plus SETUP and `_MSTEST`). `TETRIS.EXE` (SHA-256 `7f240d18e2c52cea58c14cfc83fb4fdc176cfb77c3827e671c705d0146848e2b`)
+and `ABOUTTET.DLL` (`8342f654f023e587bc00c13037142b3ddf817327f33e15f4a772f0be53aab756`)
+are byte-identical to `wep16/WEP1`, so `wep16_tetris` covers it (GitHub
+issue #32, docs/re-notes/wep16-tetris.md).
+
 Two runtimes have to be staged beside them and are not part of the pack —
 `VBRUN100.DLL` for the five Visual Basic 1 games and `WIN87EM.DLL` for the four
 that link the 80x87 emulator. Both are recorded in `dlls/SOURCES.md`.
