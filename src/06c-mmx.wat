@@ -1214,12 +1214,38 @@
     (global.set $fpu_top (i32.const 0))
     (global.set $fpu_tag (i32.const 255)))
 
+  ;; SSE1 PSHUFW uses all four immediate selectors. The source is a value
+  ;; snapshot, so an aliased destination cannot affect a later selected word.
+  ;; Subops 256..511 carry the entire imm8 without changing the handler table.
+  (func $mmx_pshufw (param $dst i32) (param $source i64) (param $imm i32)
+    (local $lane i32) (local $value i64)
+    (loop $words
+      (local.set $value (i64.or (local.get $value)
+        (i64.shl
+          (i64.and (i64.shr_u (local.get $source)
+            (i64.extend_i32_u (i32.shl
+              (i32.and (i32.shr_u (local.get $imm)
+                (i32.shl (local.get $lane) (i32.const 1))) (i32.const 3))
+              (i32.const 4)))) (i64.const 65535))
+          (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))))
+      (local.set $lane (i32.add (local.get $lane) (i32.const 1)))
+      (br_if $words (i32.lt_u (local.get $lane) (i32.const 4))))
+    (call $mmx_set (local.get $dst) (local.get $value))
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_tag (i32.const 255)))
+
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
     (global.set $mmx_exec_count (i32.add (global.get $mmx_exec_count) (i32.const 1)))
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $src (i32.and (local.get $op) (i32.const 0xF)))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 256))
+                 (i32.le_u (local.get $sub) (i32.const 511)))
+      (then
+        (call $mmx_pshufw (local.get $dst) (call $mmx_get (local.get $src))
+          (i32.sub (local.get $sub) (i32.const 256)))
+        (dispatch-next)))
     ;; PEXTRW subops 164..167 hold imm8[1:0]; dst is GPR, src is MMX.
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 164))
                  (i32.le_u (local.get $sub) (i32.const 167)))
@@ -1262,6 +1288,13 @@
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $addr (call $read_addr))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 256))
+                 (i32.le_u (local.get $sub) (i32.const 511)))
+      (then
+        ;; Finish exactly the m64 read before changing MMX or x87 state.
+        (call $mmx_pshufw (local.get $dst) (call $mmx_load64 (local.get $addr))
+          (i32.sub (local.get $sub) (i32.const 256)))
+        (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 160))
                  (i32.le_u (local.get $sub) (i32.const 163)))
       (then

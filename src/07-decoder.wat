@@ -3315,6 +3315,34 @@
               (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val))))
           (br $decode)))))
 
+      ;; SSE1 PSHUFW mm,mm/m64,imm8 (NP 0F70). This new gate precedes the
+      ;; coarse 67 guard so the existing address16 decoder remains usable.
+      ;; Compare against the code16 default inversion to reject actual 66;
+      ;; F2/F3 and LOCK stay unsupported, including the SSE2 XMM variants.
+      (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
+        (if (i32.and (i32.eq (call $gl8 (global.get $d_pc)) (i32.const 0x70))
+          (i32.and (i32.eq (local.get $prefix_66)
+            (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                     (i32.eqz (global.get $cs_big))))
+            (i32.and (i32.eqz (local.get $prefix_rep))
+                     (i32.eqz (local.get $prefix_lock))))) (then
+          (drop (call $d_fetch8))
+          (call $decode_modrm)
+          (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+            (local.set $imm (call $d_fetch8))
+            (call $te (i32.const 422)
+              (i32.or (i32.shl (i32.add (i32.const 256) (local.get $imm)) (i32.const 8))
+                (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))
+          (else
+            (call $apply_seg_override)
+            (local.set $imm (call $d_fetch8))
+            (local.set $a (call $emit_sib_or_abs))
+            (call $te (i32.const 423)
+              (i32.or (i32.shl (i32.add (i32.const 256) (local.get $imm)) (i32.const 8))
+                (i32.shl (global.get $mr_reg) (i32.const 4))))
+            (call $te_raw (local.get $a))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
