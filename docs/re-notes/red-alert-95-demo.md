@@ -116,3 +116,20 @@ back black on this 640x400 mode, which is a capture-path gap, not the game.
 Evidence:
 - `scratch/runs/20261006T005200Z-red-alert-95-demo-claude202b4b39-mission1`
 - `scratch/runs/20261124-red-alert-win`: mission 1 won, with a 1280x800 video
+
+## Crash: "invalid shared heap memory access" (berrry.wine report, 2026-11-24)
+
+- Guest state at the throw: EIP `0x5a3033` (`mov [ebx], al` in a vertical
+  pixel-line loop, step `[ebp-0x1c]` = pitch), EBX `0x80000182`,
+  ECX `0xffecd558`, EDX `0xfffffffd`. The line length was -3, so the
+  `dec ecx / jnz` loop ran ~1.25M rows down the 640x400 surface until it hit
+  the Win98 shared arena at `0x80000000`, where the host refuses an access
+  outside a live `HEAP_SHARED` block. RA never calls `HeapCreate`.
+- Cause: GetCursorPos returned the raw browser pointer, which can be outside
+  the DirectDraw mode (drag a selection box past the picture). Windows never
+  puts the cursor off screen, and RA sizes the selection box from it
+  unchecked.
+- Fix: `$handle_GetCursorPos` clamps to `SM_CXSCREEN`x`SM_CYSCREEN` (the mode
+  while one is set) and to an active ClipCursor rect.
+  `test/test-get-cursor-pos-screen-clamp.js`.
+- Evidence: `scratch/runs/20261124-ra-sharedheap`.
