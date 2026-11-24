@@ -3329,7 +3329,19 @@
       (if (call $guid_words_equal (local.get $clsid_wa)
             (i32.const 0x8856F961) (i32.const 0x11D0340A)
             (i32.const 0xC0006BA9) (i32.const 0xA205D74F))
-        (then (local.set $local_class (i32.const 12))))))
+        (then (local.set $local_class (i32.const 12))))
+      ;; CLSID_DirectMusicPerformance {D2AC2881-...} / CLSID_DirectMusicLoader
+      ;; {D2AC2892-...} (09a7m-directmusic.wat), activated only for the
+      ;; DirectX 8 interfaces that file implements; a DirectX 6/7 caller keeps
+      ;; REGDB_E_CLASSNOTREG and its own no-music path.
+      (if (i32.ne (local.get $iid_wa) (i32.const 0))
+        (then
+          (if (i32.and (call $dm_is_d2ac (local.get $clsid_wa) (i32.const 0xD2AC2881))
+                (call $dm_is_perf8_iid (local.get $iid_wa)))
+            (then (local.set $local_class (i32.const 13))))
+          (if (i32.and (call $dm_is_d2ac (local.get $clsid_wa) (i32.const 0xD2AC2892))
+                (call $dm_is_loader8_iid (local.get $iid_wa)))
+            (then (local.set $local_class (i32.const 14))))))))
 
     (if (local.get $local_class) (then
       (if (i32.eqz (local.get $arg4))
@@ -3388,6 +3400,10 @@
           (i32.const 6) (global.get $DX_VTBL_DINPUT)))))
       (if (i32.eq (local.get $local_class) (i32.const 12))
         (then (local.set $obj_guest (call $webbrowser_create))))
+      (if (i32.eq (local.get $local_class) (i32.const 13))
+        (then (local.set $obj_guest (call $dmusic_perf_create))))
+      (if (i32.eq (local.get $local_class) (i32.const 14))
+        (then (local.set $obj_guest (call $dmusic_loader_create))))
       (if (i32.eqz (local.get $obj_guest))
         (then
           (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000E)) ;; E_OUTOFMEMORY
@@ -3447,7 +3463,15 @@
       (if (i32.eq (local.get $local_class) (i32.const 12))
         (then (local.set $hr (call $webbrowser_query_interface_wa
           (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
-      (drop (call $dx_com_release_basic (local.get $obj_guest)))
+      (if (i32.eq (local.get $local_class) (i32.const 13))
+        (then (local.set $hr (call $dm_perf_qi_wa
+          (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
+      (if (i32.eq (local.get $local_class) (i32.const 14))
+        (then (local.set $hr (call $dm_loader_qi_wa
+          (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
+      (if (i32.ge_u (local.get $local_class) (i32.const 13))
+        (then (drop (call $dmusic_release (local.get $obj_guest))))
+        (else (drop (call $dx_com_release_basic (local.get $obj_guest)))))
       (i32.store offset=0 (global.get $reg_base) (local.get $hr))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
       (return)))

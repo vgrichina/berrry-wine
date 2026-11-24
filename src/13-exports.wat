@@ -576,6 +576,8 @@
       (then (call $win16_task_boot)))
     ;; Animate controls playing on comctl32's "thread" (09c3-wndprocs6).
     (call $anim_service)
+    ;; DirectMusic segments playing on the performance (09a7m-directmusic).
+    (call $dmusic_service)
     ;; Resuming from an alertable SleepEx with an APC queued: run it first.
     (call $apc_resume_alert_sleep)
     ;; FlushInstructionCache broadcasts through shared memory because decoded

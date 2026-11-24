@@ -40953,5 +40953,910 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 4842,
+    "name": "IDirectMusicPerformance8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 53727124
+  },
+  {
+    "id": 4843,
+    "name": "IDirectMusicPerformance8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3191877967,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4844,
+    "name": "IDirectMusicPerformance8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1327366680
+  },
+  {
+    "id": 4845,
+    "name": "IDirectMusicPerformance8_Init",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2318754997,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4846,
+    "name": "IDirectMusicPerformance8_PlaySegment",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2868017722,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4847,
+    "name": "IDirectMusicPerformance8_Stop",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3603323299,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4848,
+    "name": "IDirectMusicPerformance8_GetSegmentState",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1670599963,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4849,
+    "name": "IDirectMusicPerformance8_SetPrepareTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1016459825,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4850,
+    "name": "IDirectMusicPerformance8_GetPrepareTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3377467453,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4851,
+    "name": "IDirectMusicPerformance8_SetBumperLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1841072790,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4852,
+    "name": "IDirectMusicPerformance8_GetBumperLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2635063826,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4853,
+    "name": "IDirectMusicPerformance8_SendPMsg",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2298537104,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4854,
+    "name": "IDirectMusicPerformance8_MusicToReferenceTime",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 43035113,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4855,
+    "name": "IDirectMusicPerformance8_ReferenceToMusicTime",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 202949801,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4856,
+    "name": "IDirectMusicPerformance8_IsPlaying",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2515419619
+  },
+  {
+    "id": 4857,
+    "name": "IDirectMusicPerformance8_GetTime",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2427063268,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4858,
+    "name": "IDirectMusicPerformance8_AllocPMsg",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2260893265,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4859,
+    "name": "IDirectMusicPerformance8_FreePMsg",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1827249348,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4860,
+    "name": "IDirectMusicPerformance8_GetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2931775047,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4861,
+    "name": "IDirectMusicPerformance8_SetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2167828091,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4862,
+    "name": "IDirectMusicPerformance8_SetNotificationHandle",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1833747212,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4863,
+    "name": "IDirectMusicPerformance8_GetNotificationPMsg",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 237890647,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4864,
+    "name": "IDirectMusicPerformance8_AddNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 628389757,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4865,
+    "name": "IDirectMusicPerformance8_RemoveNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 458963616,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4866,
+    "name": "IDirectMusicPerformance8_AddPort",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 190408153,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4867,
+    "name": "IDirectMusicPerformance8_RemovePort",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3263763184,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4868,
+    "name": "IDirectMusicPerformance8_AssignPChannelBlock",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 287125910,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4869,
+    "name": "IDirectMusicPerformance8_AssignPChannel",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1706856513,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4870,
+    "name": "IDirectMusicPerformance8_PChannelInfo",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1090277140,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4871,
+    "name": "IDirectMusicPerformance8_DownloadInstrument",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3280202050,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4872,
+    "name": "IDirectMusicPerformance8_Invalidate",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 600642126,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4873,
+    "name": "IDirectMusicPerformance8_GetParam",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 1129678386,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4874,
+    "name": "IDirectMusicPerformance8_SetParam",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2475531318,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4875,
+    "name": "IDirectMusicPerformance8_GetGlobalParam",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2665185839
+  },
+  {
+    "id": 4876,
+    "name": "IDirectMusicPerformance8_SetGlobalParam",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 58948867
+  },
+  {
+    "id": 4877,
+    "name": "IDirectMusicPerformance8_GetLatencyTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2580521136,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4878,
+    "name": "IDirectMusicPerformance8_GetQueueTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1290739313,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4879,
+    "name": "IDirectMusicPerformance8_AdjustTime",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3993421285,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4880,
+    "name": "IDirectMusicPerformance8_CloseDown",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2729576097
+  },
+  {
+    "id": 4881,
+    "name": "IDirectMusicPerformance8_GetResolvedTime",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 750442820,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4882,
+    "name": "IDirectMusicPerformance8_MIDIToMusic",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2265541194,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4883,
+    "name": "IDirectMusicPerformance8_MusicToMIDI",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 1741901282,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4884,
+    "name": "IDirectMusicPerformance8_TimeToRhythm",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3330644799,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4885,
+    "name": "IDirectMusicPerformance8_RhythmToTime",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 2387156023,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4886,
+    "name": "IDirectMusicPerformance8_InitAudio",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 3840283497
+  },
+  {
+    "id": 4887,
+    "name": "IDirectMusicPerformance8_PlaySegmentEx",
+    "nargs": 10,
+    "convention": "stdcall",
+    "hash": 584202639
+  },
+  {
+    "id": 4888,
+    "name": "IDirectMusicPerformance8_StopEx",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3456042462
+  },
+  {
+    "id": 4889,
+    "name": "IDirectMusicPerformance8_ClonePMsg",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1008719137,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4890,
+    "name": "IDirectMusicPerformance8_CreateAudioPath",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1480125408,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4891,
+    "name": "IDirectMusicPerformance8_CreateStandardAudioPath",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 394571555
+  },
+  {
+    "id": 4892,
+    "name": "IDirectMusicPerformance8_SetDefaultAudioPath",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3844360243
+  },
+  {
+    "id": 4893,
+    "name": "IDirectMusicPerformance8_GetDefaultAudioPath",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3996316191
+  },
+  {
+    "id": 4894,
+    "name": "IDirectMusicPerformance8_GetParamEx",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 4011236823,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4895,
+    "name": "IDirectMusicPerformance8_SetParamEx",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3028983011,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4896,
+    "name": "IDirectMusicLoader8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1981458673
+  },
+  {
+    "id": 4897,
+    "name": "IDirectMusicLoader8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2499317522,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4898,
+    "name": "IDirectMusicLoader8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1764464783
+  },
+  {
+    "id": 4899,
+    "name": "IDirectMusicLoader8_GetObject",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1941202681
+  },
+  {
+    "id": 4900,
+    "name": "IDirectMusicLoader8_SetObject",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1021067229,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4901,
+    "name": "IDirectMusicLoader8_SetSearchDirectory",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 997564149,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4902,
+    "name": "IDirectMusicLoader8_ScanDirectory",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2064393474,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4903,
+    "name": "IDirectMusicLoader8_CacheObject",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3877212531,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4904,
+    "name": "IDirectMusicLoader8_ReleaseObject",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2040914124,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4905,
+    "name": "IDirectMusicLoader8_ClearCache",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2337615819,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4906,
+    "name": "IDirectMusicLoader8_EnableCache",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3042425413,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4907,
+    "name": "IDirectMusicLoader8_EnumObject",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3336023732,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4908,
+    "name": "IDirectMusicLoader8_CollectGarbage",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3826427483
+  },
+  {
+    "id": 4909,
+    "name": "IDirectMusicLoader8_ReleaseObjectByUnknown",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4071998373
+  },
+  {
+    "id": 4910,
+    "name": "IDirectMusicLoader8_LoadObjectFromFile",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1623841907
+  },
+  {
+    "id": 4911,
+    "name": "IDirectMusicSegment8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1431088687
+  },
+  {
+    "id": 4912,
+    "name": "IDirectMusicSegment8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 4241344964,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4913,
+    "name": "IDirectMusicSegment8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 919109989
+  },
+  {
+    "id": 4914,
+    "name": "IDirectMusicSegment8_GetLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1275608504
+  },
+  {
+    "id": 4915,
+    "name": "IDirectMusicSegment8_SetLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 764885492,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4916,
+    "name": "IDirectMusicSegment8_GetRepeats",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3075225320
+  },
+  {
+    "id": 4917,
+    "name": "IDirectMusicSegment8_SetRepeats",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3105450156
+  },
+  {
+    "id": 4918,
+    "name": "IDirectMusicSegment8_GetDefaultResolution",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1486389243,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4919,
+    "name": "IDirectMusicSegment8_SetDefaultResolution",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 519163823,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4920,
+    "name": "IDirectMusicSegment8_GetTrack",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1062428107,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4921,
+    "name": "IDirectMusicSegment8_GetTrackGroup",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 522567842,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4922,
+    "name": "IDirectMusicSegment8_InsertTrack",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3616069476,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4923,
+    "name": "IDirectMusicSegment8_RemoveTrack",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 780836247,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4924,
+    "name": "IDirectMusicSegment8_InitPlay",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3533018820,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4925,
+    "name": "IDirectMusicSegment8_GetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2356701672,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4926,
+    "name": "IDirectMusicSegment8_SetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3521068012,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4927,
+    "name": "IDirectMusicSegment8_AddNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 204080172,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4928,
+    "name": "IDirectMusicSegment8_RemoveNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2503670999,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4929,
+    "name": "IDirectMusicSegment8_GetParam",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3266705621,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4930,
+    "name": "IDirectMusicSegment8_SetParam",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3480996121
+  },
+  {
+    "id": 4931,
+    "name": "IDirectMusicSegment8_Clone",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1435795237,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4932,
+    "name": "IDirectMusicSegment8_SetStartPoint",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2654095434,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4933,
+    "name": "IDirectMusicSegment8_GetStartPoint",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 106083662,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4934,
+    "name": "IDirectMusicSegment8_SetLoopPoints",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3523795681,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4935,
+    "name": "IDirectMusicSegment8_GetLoopPoints",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2621325757,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4936,
+    "name": "IDirectMusicSegment8_SetPChannelsUsed",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 937415093,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4937,
+    "name": "IDirectMusicSegment8_SetTrackConfig",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 162111901,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4938,
+    "name": "IDirectMusicSegment8_GetAudioPathConfig",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1027734279,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4939,
+    "name": "IDirectMusicSegment8_Compose",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 2809480436,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4940,
+    "name": "IDirectMusicSegment8_Download",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3904428696
+  },
+  {
+    "id": 4941,
+    "name": "IDirectMusicSegment8_Unload",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 828443531
+  },
+  {
+    "id": 4942,
+    "name": "IDirectMusicAudioPath8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2486317799
+  },
+  {
+    "id": 4943,
+    "name": "IDirectMusicAudioPath8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 630196588,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4944,
+    "name": "IDirectMusicAudioPath8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2757905101
+  },
+  {
+    "id": 4945,
+    "name": "IDirectMusicAudioPath8_GetObjectInPath",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 112756255,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4946,
+    "name": "IDirectMusicAudioPath8_Activate",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3281006289
+  },
+  {
+    "id": 4947,
+    "name": "IDirectMusicAudioPath8_SetVolume",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3298971666
+  },
+  {
+    "id": 4948,
+    "name": "IDirectMusicAudioPath8_ConvertPChannel",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1183516428,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4949,
+    "name": "IDirectMusicSegmentState8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 109078752
+  },
+  {
+    "id": 4950,
+    "name": "IDirectMusicSegmentState8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 807005539,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4951,
+    "name": "IDirectMusicSegmentState8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 4237366180,
+    "handler": "dx_com_release_basic"
+  },
+  {
+    "id": 4952,
+    "name": "IDirectMusicSegmentState8_GetRepeats",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1721965759,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4953,
+    "name": "IDirectMusicSegmentState8_GetSegment",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 62208082,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4954,
+    "name": "IDirectMusicSegmentState8_GetStartTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2281302306,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4955,
+    "name": "IDirectMusicSegmentState8_GetSeek",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 26196565,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4956,
+    "name": "IDirectMusicSegmentState8_GetStartPoint",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2602810227,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4957,
+    "name": "IDirectMusicSegmentState8_SetTrackConfig",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 1105006170,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4958,
+    "name": "IDirectMusicSegmentState8_GetObjectInPath",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 2584528050,
+    "handler": "ftm_unimplemented"
   }
 ]

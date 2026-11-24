@@ -47,8 +47,26 @@ Evidence: `scratch/runs/20261124-spelunky/`.
    check at `~0x004852cf` calls the `CoCreateInstance` thunk at `0x00409054`
    with the IID at `0x004853c0` (`IDirectMusicPerformance8`,
    `{679C4137-C62E-4147-B2B4-9D569ACB254C}`); message text at `0x004853d8`.
-   DirectMusic Performance is not implemented here (a whole subsystem), so the
-   box appears; OK continues. supersound's DirectSound path is unaffected.
+   Fixed 2026-11-24 by `09a7m-directmusic.wat` (DirectMusic 8 Performance /
+   Loader / Segment / AudioPath / SegmentState, Standard MIDI Files sequenced
+   in WAT onto the host MIDI-out device): both CoCreateInstance calls return
+   S_OK, `InitAudio(NULL, NULL, hwnd, DMUS_APATH_DYNAMIC_STEREO, 64,
+   DMUS_AUDIOF_ALL, NULL)` returns S_OK, and no box appears.
+   The GM8 sound unit (`0x00485100..0x00486500`): probe `0x00485280`;
+   add-sound `0x00485110` (one CreateStandardAudioPath per sound, kind 2 =
+   3D gets type 6); load-from-file `0x00485530` (LoadObjectFromFile, then
+   SetParam(GUID_StandardMIDIFile), Download); load-from-memory `0x00485684`
+   (GetObject with DMUS_OBJ_CLASS|DMUS_OBJ_MEMORY); delete `0x00485820`;
+   master volume `0x004858e0` / tempo `0x0048594c` (SetGlobalParam);
+   play `0x004859bc` (SetRepeats, PlaySegmentEx DEFAULT for background music
+   or SECONDARY, 10 stack dwords); stop `0x00485bfc`; IsPlaying
+   `0x00485c90`; volume `0x00485d2c` (AudioPath SetVolume); pan
+   `0x00485d8c+` (AudioPath GetObjectInPath for an IDirectSoundBuffer8 —
+   still a crash stub). **Spelunky itself never adds a GM built-in sound**
+   (`0x00485110` hit count 0): all its music and effects are `.ogg`/`.wav`
+   through supersound/DirectSound, so after the probe it only calls master
+   volume. MIDI events reach the host only for GM games that use built-in
+   MIDI sounds.
 5. **Direct3D 8 init**. Without `--headless-gl` the runner shows "Failed to
    initialize drawing surfaces"; with it the device, textures and LockRect all
    succeed and the first frame is presented.
@@ -81,9 +99,9 @@ node test/run.js --app=spelunky_classic --headless-gl --quiet-api \
   --no-close --input=20500:keydown:13,20510:keyup:13 --png=OUT.png
 ```
 
-- `--stuck-after=0`: the stuck detector otherwise ends the run during the
-  modal sound message box.
-- Enter at batch 20500/20510 dismisses the sound box.
+- `--stuck-after=0`: before 2026-11-24 the stuck detector otherwise ended
+  the run during the modal sound message box; with DirectMusic there is no
+  box and the Enter input is no longer needed.
 - Browser: dev server, `?app=spelunky_classic`.
 
 A fresh worktree lacks the gitignored `test/binaries/dlls/` (`ole32.dll`,
