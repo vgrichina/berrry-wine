@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "f55058f5e6adb0e0f0cb7e28d2356e8c82db2df50d19d4fb58e68cd7265ae793",
+      "sha256": "1b6d6b0fa8d4f528b29c6e6d7f0ce94ebc0dbb4f15df7a6621121d0873636c83",
+      "reason": "2026-11-24 red_alert_95_demo moves from LOCAL_CANDIDATE_APPS to DESKTOP_APPS (registry list membership only). Its app config, manifest, touch controls and every callback, listener, timer and retained reference are unchanged. No invocation ownership claim."
+    }
+  ]
+}

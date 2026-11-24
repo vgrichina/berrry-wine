@@ -461,6 +461,20 @@ ship; Moorhuhn 2, Winter-Edition, 3, Tennis, the puzzles, the Best Of extras and
 Gallinelle remain local-only candidates, and the files are still ignored by
 git.
 
+## Command & Conquer: Red Alert demo (`win98-games-a-d/CnC-Red Alert Demo-SW/`)
+
+From the Win98 Games A-D archive above. Westwood's 1997 Win95 demo, v1.19:
+the CD's `INSTALL\` directory is the game and runs without an installer.
+`RA95.EXE` SHA-256
+`52d282523555cba978a1d90ec739abb5035fdb32e5bc1f63e8225914599f2580`. The app
+`red_alert_95_demo` mounts the files its `.wine-assembly-browser.json` names.
+
+**Terms and the publishing decision.** Westwood gave the demo away free on
+magazine CDs and online; its `README.WRI` carries only a copyright line and
+states no redistribution terms either way. On 2026-11-24 the project owner
+decided to publish it on the desktop on that footing, unmodified. The files
+are still ignored by git.
+
 ## Hexen II demo (`candidates/hexen-2-demo/`)
 
 Source: archive.org `win-98-games-e-j.-7z`, member

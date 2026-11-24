@@ -315,6 +315,13 @@ const PUBLISHABLE_OUTSIDE_BINARIES = [
   // download sites. Their packaging grants no redistribution right either
   // way; publishing them as promotional demos is the owner's decision
   // (2026-09-30, test/binaries/SOURCES.md). Only each manifest's files ship.
+  // Command & Conquer: Red Alert Win95 demo v1.19: Westwood's own February
+  // 1997 promotional demo, given away free on its site and magazine discs.
+  // Its README states copyright and no redistribution terms either way;
+  // publishing it is the owner's decision (2026-11-24, test/binaries/SOURCES.md).
+  // Only the CD's INSTALL\ tree ships (RA95.EXE plus its manifest's files);
+  // the rest of the Win98 Games A-D archive stays local.
+  'test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/',
   'test/binaries/candidates/need-for-speed-2-demo/',
   'test/binaries/candidates/need-for-speed-3-demo/',
   'build/nfs2se-browser.json',
