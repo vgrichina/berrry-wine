@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "8b5385ffd73eb983423a1faf39136a292136a22818a0ce120063e58241446b3e",
+      "sha256": "eac27446dc148ae42bf4d9f6f8a10ef0d6b302dac8f490ab72abdacea4339a8b",
+      "reason": "CVTPI2PS sub52 reads exactly two guest dwords through existing gl32 helpers after normal decoded segment addressing. Both reads finish before committing the low64 XMM result; upper64 raw bits and x87 TOP/occupancy remain unchanged for the memory form, as explicitly specified by Intel 243191-002 3-122. No new callback, retained pointer, invocation state, exception boundary, EIP write or target is introduced. The existing single aligned-m128 fault EIP write and target are unchanged. The separate MMX/x87 value files still do not alias; runtime MXCSR/status and pending or unmasked exceptions are outside this subset. This review covers only the changed handler hash after the released CVTPS2PI review and does not claim general invocation ownership acceptance. Existing SSE branches are unchanged."
+    }
+  ]
+}

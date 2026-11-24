@@ -241,6 +241,12 @@
   ;;   49 UNPCKHPS (m128 instruction offset in op bits 16..31)
   ;;   50 MOVHLPS (register source high64 into destination low64)
   ;;   51 CVTPS2PI (low two singles to MMX, reset nearest/ties-even only)
+  ;;   52 CVTPI2PS (two signed MMX/m64 dwords to low singles, nearest-even)
+  ;; Intel 243191-002 3-122 refines SDM 3-281's general MMX-transition text:
+  ;; CVTPI2PS rr sets TOP=0/all tags valid; its memory form does not transition.
+  ;; Only that representable TOP/occupancy state is modeled. Separate MMX/x87
+  ;; value files still cannot model mantissa aliasing or x87 exponent patterns;
+  ;; runtime MXCSR/status and pending/unmasked exceptions are not implemented.
   ;; Scalar forms preserve the destination's upper 96 bits. RSQRT*/RCP* are
   ;; exact here where silicon gives ~12 bits -- the safe direction, and callers
   ;; that care refine with Newton-Raphson (B&W2's normalizer at 0x00962cb6).
@@ -259,6 +265,14 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.eq (local.get $sub) (i32.const 52)) (then
+      ;; The ModRM source is MMX, independent of XMM/GPR with the same number.
+      (local.set $s (i64x2.splat (call $mmx_get (local.get $src))))
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
+        (i64x2.extract_lane 0 (f32x4.convert_i32x4_s (local.get $s)))))
+      (global.set $fpu_top (i32.const 0))
+      (global.set $fpu_tag (i32.const 255))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 51)) (then
       (call $mmx_set (local.get $dst)
         (i64.or
@@ -486,6 +500,15 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     ;; Read exactly the architectural operand width before writing XMM state.
+    (if (i32.eq (local.get $sub) (i32.const 52)) (then
+      ;; Unaligned m64: finish both translated dword reads before committing
+      ;; the low64 result. Upper64 raw bits and x87 TOP/tags stay unchanged.
+      (local.set $s (i32x4.replace_lane 1
+        (i32x4.splat (call $gl32 (local.get $addr)))
+        (call $gl32 (i32.add (local.get $addr) (i32.const 4)))))
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
+        (i64x2.extract_lane 0 (f32x4.convert_i32x4_s (local.get $s)))))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 51)) (then
       ;; m64 permits unaligned operands. Both dword reads finish before any
       ;; destination or x87 transition is committed; no m128 over-read.

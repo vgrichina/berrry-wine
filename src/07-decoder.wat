@@ -5385,6 +5385,26 @@
                 (i32.shl (global.get $mr_reg) (i32.const 4))))
               (call $te_raw (local.get $a))))
             (br $decode)))
+          ;; CVTPI2PS xmm,mm/m64 (NP 0F2A) is a separate SSE1 family.
+          ;; prefix_66 already encodes the default operand size here. Undo
+          ;; the code16 inversion only in this gate to test the actual prefix.
+          (if (i32.and (i32.eq (local.get $op) (i32.const 0x2a))
+            (i32.and (i32.eq (local.get $prefix_66)
+              (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                       (i32.eqz (global.get $cs_big))))
+              (i32.and (i32.eqz (local.get $prefix_rep))
+                       (i32.eqz (local.get $prefix_lock))))) (then
+            (call $decode_modrm)
+            (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+              (call $te_sse (i32.const 432) (i32.or (i32.const 0x3400)
+                (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))
+            (else
+              (call $apply_seg_override)
+              (local.set $a (call $emit_sib_or_abs))
+              (call $te_sse (i32.const 433) (i32.or (i32.const 0x3400)
+                (i32.shl (global.get $mr_reg) (i32.const 4))))
+              (call $te_raw (local.get $a))))
+            (br $decode)))
           ;; CVTSI2SS xmm, r/m32. Source register is a GPR, not XMM.
           (if (i32.and (i32.eq (local.get $op) (i32.const 0x2a))
             (i32.and (i32.eqz (local.get $prefix_66))
