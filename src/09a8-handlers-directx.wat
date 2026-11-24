@@ -11852,6 +11852,8 @@
   (func $di_mouse_data_write (param $base i32) (param $cb i32) (param $index i32)
                              (param $ofs i32) (param $data i32) (param $stamp i32)
     (local $rec i32)
+    ;; NULL output discards records through the same consumer as a normal read.
+    (if (i32.eqz (local.get $base)) (then (return)))
     (local.set $rec (i32.add (local.get $base)
       (i32.mul (local.get $index) (local.get $cb))))
     ;; DIDEVICEOBJECTDATA (DX5): dwOfs, dwData, dwTimeStamp, dwSequence.
@@ -12008,7 +12010,8 @@
         (if (i32.and (i32.ne (local.get $capacity) (i32.const 0))
                      (i32.gt_u (local.get $requested) (local.get $capacity)))
           (then (local.set $requested (local.get $capacity))))
-        (if (i32.eqz (local.get $arg2))
+        (if (i32.and (i32.eqz (local.get $arg2))
+                     (i32.ne (i32.and (local.get $arg4) (i32.const 1)) (i32.const 0)))
           (then
             (if (local.get $arg3)
               (then (call $gs32 (local.get $arg3)
@@ -12102,7 +12105,8 @@
           ;; (and whether) the object is reported.
           (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2)
             (call $di_mouse_object_index (local.get $ofs))))
-          (if (i32.and (i32.lt_s (local.get $ofs) (i32.const 0))
+          (if (i32.and
+                (i32.or (i32.lt_s (local.get $ofs) (i32.const 0)) (i32.eqz (local.get $arg2)))
                 (i32.and (i32.ne (local.get $lineage) (i32.const 0)) (local.get $commit)))
             (then (drop (call $host_di_mouse_receipt (local.get $entry)
               (i32.const 8) (local.get $producer_sequence) (local.get $event) (i32.const 0)))))
@@ -12117,7 +12121,8 @@
                 (call $gs32 (i32.add (local.get $arg2)
                   (i32.add (i32.mul (local.get $delivered) (local.get $arg1)) (i32.const 12)))
                   (local.get $peek_sequence))))
-              (if (i32.gt_s (local.get $lineage) (i32.const 0))
+              (if (i32.and (i32.gt_s (local.get $lineage) (i32.const 0))
+                           (i32.ne (local.get $arg2) (i32.const 0)))
                 (then (drop (call $host_di_mouse_receipt (local.get $entry)
                   (select (i32.const 5) (i32.const 4) (local.get $commit))
                   (local.get $producer_sequence) (local.get $event)
