@@ -4886,7 +4886,10 @@
     (local $r f32) (local $g f32) (local $b f32) (local $da f32)
     (if (i32.eqz (local.get $state_guest))
       (then (return (call $d3dim_vertex_shade_fallback (local.get $state_guest) (local.get $src_wa)))))
-    (if (i32.eqz (global.get $d3dim_light_n))
+    ;; Keep shape-only shading for unconfigured scenes. A bound material still
+    ;; contributes ambient and emissive color when the direct-light loop is empty.
+    (if (i32.and (i32.eqz (global.get $d3dim_light_n))
+                 (i32.eqz (call $d3dim_current_material_ptr (local.get $state_guest))))
       (then (return (call $d3dim_vertex_shade_fallback (local.get $state_guest) (local.get $src_wa)))))
     (local.set $sw (call $g2w (local.get $state_guest)))
     (local.set $m (local.get $sw))   ;; world matrix @ state+0
