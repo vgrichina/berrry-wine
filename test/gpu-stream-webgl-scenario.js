@@ -1071,6 +1071,21 @@
       expectPx('occlusion: right half drawn', f, 12, 44, [0, 255, 0, 255]);
       expectPx('occlusion: logic XOR twice under a query', f, 25, 41, [0, 0, 0, 255]);
       expectPx('occlusion: logic XOR once under a query', f, 33, 41, lop(7, SRCB, [0, 0, 0, 255]));
+
+      // 7b. Large counts. 300 copies of one 16x14 quad in a single draw are 300
+      // count passes: the WebGL executor sums its count target on the GPU in
+      // 16x16 blocks after 255 of them, inside the draw, so this covers the
+      // mid-draw reduction, block sums past one byte (255 * 224 here) and a
+      // quad straddling four blocks. The colour pass must still land after it.
+      raster({ depth_mode: 0 });
+      const big = p.arenaAlloc(4);
+      emit('FENCE', { kind: CONST.FENCEK_OCCLUSION_BEGIN, slot: 1 });
+      quads(ID.FLAT, Array.from({ length: 300 }, () => [37, 49, 53, 63, () => [0xffff0000]]));
+      emit('FENCE', { kind: CONST.FENCEK_OCCLUSION_END, slot: 2, dst: big });
+      f = present();
+      const bigCount = new DataView(p.arenaView(big, 4).slice().buffer).getUint32(0, true);
+      check('occlusion: 300 passes over a block-straddling quad', bigCount === 300 * 16 * 14, `got ${bigCount}, expected ${300 * 16 * 14}`);
+      expectPx('occlusion: colour drawn after a mid-draw count reduction', f, 45, 55, [255, 0, 0, 255]);
     } catch (e) {
       failures.push(`scenario threw: ${e && e.stack || e}`);
     }
