@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "d22cb91da6dc3ac6ab8488b8e7820d7b9cf5d6b535adb67b415b9d434c43872f",
+      "sha256": "436be5b008e342f4bbdcf914318bb99fe46eddbd3f11c409038ccc887773e6ee",
+      "reason": "2026-11-24 suspended stream resume: invalidate only rateClocks.streamAudio together with streamStartTime when discarding the retired scheduling epoch. Numeric origin collisions can no longer reuse retired rate history. Existing source stop, chunk discard, delayed onended closure, source membership, guest callbacks, invocation lifetime, retained references, exception paths and other rate clocks are unchanged. Unchanged independently prepared six-vector regression reproduced six original cursor failures and passes all 111 assertions after application; existing suspended backlog, play cursor, voice worklet, worklet routing and idle MIDI suites pass. No invocation ownership claim; broader ownership remains pending."
+    }
+  ]
+}
