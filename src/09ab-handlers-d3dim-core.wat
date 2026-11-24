@@ -546,8 +546,8 @@
     (param $this i32) (param $primitive i32) (param $vertices i32) (param $count i32)
     ;; The producer consumes POSITIONT and cannot recover geometric clipping
     ;; after lowering. Keep depthless TL's clamp contract, but clip transformed
-    ;; texture inputs and depth-tested lines/triangles before their snapshot.
-    (if (i32.and (i32.and (i32.ge_u (local.get $primitive) (i32.const 2))
+    ;; texture inputs and depth-tested primitives before their snapshot.
+    (if (i32.and (i32.and (i32.ge_u (local.get $primitive) (i32.const 1))
         (i32.le_u (local.get $primitive) (i32.const 6)))
       (i32.or (i32.ne (global.get $d3dim_supplied_projection) (i32.const 0))
         (i32.ne (call $d3dim_d7_rs (call $g2w (call $d3ddev_state (local.get $this))) (i32.const 7)) (i32.const 0))))
@@ -8665,6 +8665,22 @@
         (then (local.set $outside (i32.const 1)) (br $scanned)))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
     (if (i32.eqz (local.get $outside)) (then (return (i32.const 0))))
+    ;; Points have no edges to intersect. Retain each complete accepted TL
+    ;; record; the producer still owns its 2x2 footprint and depth state.
+    (if (i32.eq (local.get $prim) (i32.const 1)) (then
+      (local.set $type (if (result i32) (i32.ge_u (global.get $d3dim_supplied_projection) (i32.const 2))
+        (then (i32.add (global.get $d3dim_supplied_projection) (i32.const 3)))
+        (else (select (i32.const 4) (i32.const 3) (global.get $d3dim_supplied_projection)))))
+      (local.set $i (i32.const 0))
+      (block $points_done (loop $points
+        (br_if $points_done (i32.ge_u (local.get $i) (local.get $count)))
+        (local.set $v (i32.add (local.get $src) (i32.mul (local.get $i) (local.get $stride))))
+        (if (i32.and (f32.ge (call $d3dim_tl_clip_distance (local.get $v) (i32.const 0)) (f32.const 0))
+                    (f32.ge (call $d3dim_tl_clip_distance (local.get $v) (i32.const 1)) (f32.const 0)))
+          (then (call $d3dim_worker_try_draw (local.get $this) (i32.const 1) (local.get $type)
+            (i32.add (local.get $vertices) (i32.mul (local.get $i) (local.get $stride))) (i32.const 1))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $points)))
+      (return (i32.const 1))))
     (local.set $state (call $d3ddev_state (local.get $this)))
     (local.set $scratch (call $heap_alloc (i32.const 760)))
     (if (i32.eqz (local.get $scratch)) (then (unreachable)))
