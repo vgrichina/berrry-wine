@@ -4790,8 +4790,13 @@
     (load.field DxObject misc0 (local.get $entry)))
 
   ;; ── Fixed-function lighting ───────────────────────────────────
-  ;; IDirect3DLight slots are DX_OBJECTS type 24 with their 76-byte D3DLIGHT
-  ;; buffer hanging off entry+8 (see $dx_light_buf). The shared allocation bound
+  ;; IDirect3DLight slots are DX_OBJECTS type 24 with their D3DLIGHT/D3DLIGHT2
+  ;; buffer hanging off entry+8 (see $dx_light_buf). Only full D3DLIGHT2 records
+  ;; (dwSize>=80) have dwFlags@76: ACTIVE (1) must be set, otherwise ignore the
+  ;; light before counting the four slots. Legacy records never read dwFlags.
+  ;; Microsoft DirectX 5 SDK, D3DLIGHT2 dwFlags (preserved reference):
+  ;; https://library.thedatadungeon.com/directx5/html/dire1sxa.content.htm
+  ;; The shared allocation bound
   ;; skips slots that have never held lights. Callers refresh this cache once per
   ;; draw call — every entry point that lights vertices already calls
   ;; $d3ddev_composite_wvp, and the refresh sits next to it.
@@ -4805,7 +4810,7 @@
 
   (func $d3dim_lights_refresh (param $state_guest i32)
     (local $i i32) (local $entry i32) (local $buf i32) (local $n i32) (local $mat i32)
-    (local $limit i32)
+    (local $limit i32) (local $size i32)
     (local.set $limit (i32.atomic.load (global.get $DX_LIGHT_LIMIT)))
     (local.set $n (i32.const 0))
     (local.set $i (i32.const 1))
@@ -4818,12 +4823,17 @@
         (local.set $buf (i32.load (i32.add (local.get $entry) (i32.const 8))))
         ;; dwSize==0 ⇒ CreateLight ran but SetLight never did; nothing to shade with.
         (if (local.get $buf) (then
-          (if (call $gl32 (local.get $buf)) (then
+          (local.set $size (call $gl32 (local.get $buf)))
+          (if (local.get $size) (then (block $inactive
+            (if (i32.ge_u (local.get $size) (i32.const 80)) (then
+              (br_if $inactive (i32.eqz (i32.and
+                (call $gl32 (i32.add (local.get $buf) (i32.const 76)))
+                (i32.const 1))))))
             (if (i32.eq (local.get $n) (i32.const 0)) (then (global.set $d3dim_light0 (local.get $buf))))
             (if (i32.eq (local.get $n) (i32.const 1)) (then (global.set $d3dim_light1 (local.get $buf))))
             (if (i32.eq (local.get $n) (i32.const 2)) (then (global.set $d3dim_light2 (local.get $buf))))
             (if (i32.eq (local.get $n) (i32.const 3)) (then (global.set $d3dim_light3 (local.get $buf))))
-            (local.set $n (i32.add (local.get $n) (i32.const 1)))))))))
+            (local.set $n (i32.add (local.get $n) (i32.const 1))))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
     (global.set $d3dim_light_n (local.get $n))
