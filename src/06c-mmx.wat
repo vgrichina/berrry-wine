@@ -1234,12 +1234,53 @@
     (global.set $fpu_top (i32.const 0))
     (global.set $fpu_tag (i32.const 255)))
 
+  ;; SSE1 MASKMOVQ (Intel SDM vol.2B 4-10/11, vol.3B table 23-8).
+  ;; mode: bit3 selects DI, bits0..2 carry the segment prefix (0 = DS).
+  ;; Snapshot both inputs before writes, including data/mask register aliases.
+  ;; Disabled bytes cause neither a read nor translation/store. In particular,
+  ;; a zero mask still enters MMX state but skips memory: Intel permits this
+  ;; implementation-dependent fault policy. Segment limits/permissions and
+  ;; precise partial faults are not represented by the current memory model.
+  ;; Wasm has no WC/non-temporal store: this implements memory results only.
+  (func $mmx_maskmovq (param $data i64) (param $mask i64) (param $mode i32)
+    (local $addr i32) (local $seg i32) (local $base i32) (local $i i32)
+    (local.set $addr (i32.load offset=28 (global.get $reg_base)))
+    (if (i32.ne (i32.and (local.get $mode) (i32.const 8)) (i32.const 0))
+      (then (local.set $addr (i32.and (local.get $addr) (i32.const 0xFFFF)))))
+    (local.set $seg (i32.and (local.get $mode) (i32.const 7)))
+    (if (global.get $code16) (then
+      (local.set $base (global.get $seg_base_ds))
+      (if (i32.eq (local.get $seg) (i32.const 1)) (then (local.set $base (global.get $seg_base_es))))
+      (if (i32.eq (local.get $seg) (i32.const 2)) (then (local.set $base (global.get $seg_base_cs))))
+      (if (i32.eq (local.get $seg) (i32.const 3)) (then (local.set $base (global.get $seg_base_ss))))))
+    (if (i32.eq (local.get $seg) (i32.const 5)) (then (local.set $base (global.get $fs_base))))
+    (if (i32.eq (local.get $seg) (i32.const 6)) (then (local.set $base (global.get $gs_base))))
+    (local.set $addr (i32.add (local.get $addr) (local.get $base)))
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_tag (i32.const 255))
+    (loop $bytes
+      (if (i64.ne (i64.and (i64.shr_u (local.get $mask)
+              (i64.extend_i32_u (i32.shl (local.get $i) (i32.const 3))))
+            (i64.const 0x80)) (i64.const 0))
+        (then
+          (call $gs8 (i32.add (local.get $addr) (local.get $i))
+            (i32.wrap_i64 (i64.shr_u (local.get $data)
+              (i64.extend_i32_u (i32.shl (local.get $i) (i32.const 3))))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $bytes (i32.lt_u (local.get $i) (i32.const 8)))))
+
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
     (global.set $mmx_exec_count (i32.add (global.get $mmx_exec_count) (i32.const 1)))
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $src (i32.and (local.get $op) (i32.const 0xF)))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 512))
+                 (i32.le_u (local.get $sub) (i32.const 526)))
+      (then
+        (call $mmx_maskmovq (call $mmx_get (local.get $dst))
+          (call $mmx_get (local.get $src)) (i32.sub (local.get $sub) (i32.const 512)))
+        (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 256))
                  (i32.le_u (local.get $sub) (i32.const 511)))
       (then

@@ -3343,6 +3343,29 @@
             (call $te_raw (local.get $a))))
           (br $decode)))))
 
+      ;; SSE1 MASKMOVQ mmData,mmMask (NP 0FF7), register-only ModRM.
+      ;; Before the coarse 67 guard: address size chooses implicit DI/EDI.
+      ;; Refuse mandatory/LOCK prefixes before any EA or operand access; 66
+      ;; is the separate SSE2 XMM instruction and remains unsupported here.
+      (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
+        (if (i32.eq (call $gl8 (global.get $d_pc)) (i32.const 0xF7)) (then
+          (if (i32.or (i32.ne (local.get $prefix_66)
+                (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                         (i32.eqz (global.get $cs_big))))
+                (i32.or (i32.ne (local.get $prefix_rep) (i32.const 0))
+                        (i32.ne (local.get $prefix_lock) (i32.const 0))))
+            (then (unreachable)))
+          (drop (call $d_fetch8))
+          (if (i32.ne (i32.and (call $gl8 (global.get $d_pc)) (i32.const 0xC0)) (i32.const 0xC0))
+            (then (unreachable)))
+          (call $decode_modrm)
+          (call $te (i32.const 422)
+            (i32.or (i32.shl (i32.add (i32.const 512)
+                (i32.or (i32.shl (local.get $prefix_67) (i32.const 3))
+                        (local.get $prefix_seg))) (i32.const 8))
+              (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
