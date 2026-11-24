@@ -101,7 +101,15 @@ back black on this 640x400 mode, which is a capture-path gap, not the game.
 ## Open
 
 - Mouse input is letterbox-mapped as of the 2026-11-24 run; the older note
-  saying it was not is outdated.
+  saying it was not is outdated. The offset was a headless-only gap, closed
+  by b6e18c196 (2026-10-10, four days after the older route): run.js presents
+  lazily, so until a png had been taken the renderer had no exclusive
+  transform and mapped every host point 1:1. `refreshInputPresentation` now
+  derives it before each mapped event. The browser repaints every frame and
+  always had the transform. `test/test-ddraw-letterbox-cursor-pos.js` holds
+  GetCursorPos, WM_MOUSEMOVE/WM_LBUTTONDOWN lParams and SM_CX/CYSCREEN to
+  mode coordinates for 640x400, 640x480 and 320x200 (run
+  `20261124-ra95-mouse`).
 - FPS and the browser path were not evaluated. The CLI recorder captured
   audio, but nobody has listened to it.
 
