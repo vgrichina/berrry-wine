@@ -332,6 +332,14 @@
     (i32.const 0))
 
   (func $fpu_compare (param $a f64) (param $b f64)
+    ;; FCOM / FCOMP / FCOMPP signal IE for any NaN.
+    (if (i32.or (call $fpu_is_nan (local.get $a)) (call $fpu_is_nan (local.get $b)))
+      (then (call $fpu_set_exc (i32.const 0x01))))
+    (call $fpu_compare_unord (local.get $a) (local.get $b)))
+
+  ;; FUCOM / FUCOMP / FUCOMPP: NaNs are quiet in our f64 x87-lite model,
+  ;; as for FUCOMI. Publish unordered without adding IE; preserve sticky flags.
+  (func $fpu_compare_unord (param $a f64) (param $b f64)
     (local $cc i32)
     (if (f64.lt (local.get $a) (local.get $b))
       (then (local.set $cc (i32.const 0x0100)))
@@ -340,11 +348,7 @@
         (else (if (f64.eq (local.get $a) (local.get $b))
           (then (local.set $cc (i32.const 0x4000)))
           (else
-            ;; Unordered (at least one operand is NaN). Real x87 sets C3|C2|C0
-            ;; (encoded here as 0x4500) and signals IE for FCOM (we don't
-            ;; distinguish QNaN vs SNaN, so we always raise IE).
-            (local.set $cc (i32.const 0x4500))
-            (call $fpu_set_exc (i32.const 0x01))))))))
+            (local.set $cc (i32.const 0x4500))))))))
     (global.set $fpu_sw (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xB8FF)) (local.get $cc))))
 
   ;; FCOMI / FCOMIP: ordered compare, sets eflags AND signals IE on NaN.
@@ -1062,7 +1066,7 @@
         ;; DA E9 = FUCOMPP — unordered compare ST(0)<->ST(1), pop both
         (if (i32.and (i32.eq (local.get $reg) (i32.const 5)) (i32.eq (local.get $rm) (i32.const 1)))
           (then
-            (call $fpu_compare (local.get $st0) (call $fpu_get (i32.const 1)))
+            (call $fpu_compare_unord (local.get $st0) (call $fpu_get (i32.const 1)))
             (drop (call $fpu_pop)) (drop (call $fpu_pop))
             (return)))
         ;; reg=3 = FCMOVU (cmov-if-PF) — lazy flag system has no PF, not impl.
@@ -1135,9 +1139,9 @@
         (if (i32.eq (local.get $reg) (i32.const 3))
           (then (call $fpu_set (local.get $rm) (local.get $st0)) (drop (call $fpu_pop)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 4))
-          (then (call $fpu_compare (local.get $st0) (call $fpu_get (local.get $rm))) (return)))
+          (then (call $fpu_compare_unord (local.get $st0) (call $fpu_get (local.get $rm))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 5))
-          (then (call $fpu_compare (local.get $st0) (call $fpu_get (local.get $rm))) (drop (call $fpu_pop)) (return)))
+          (then (call $fpu_compare_unord (local.get $st0) (call $fpu_get (local.get $rm))) (drop (call $fpu_pop)) (return)))
         ;; reg=1 = FXCH alt, reg=6 = reserved, reg=7 = reserved.
         (call $fpu_crash_op (local.get $group) (local.get $reg) (local.get $rm)) (return)))
     ;; Group 6 (DE): FADDP/FMULP/FCOMPP/FSUBRP/FSUBP/FDIVRP/FDIVP

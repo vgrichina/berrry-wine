@@ -1828,9 +1828,9 @@
         (if (i32.eq (local.get $r) (i32.const 2))
           (then (x87i-set-rm (local.get $st0)) (br $next_op)))
         (if (i32.eq (local.get $r) (i32.const 4))
-          (then (call $fpu_compare (local.get $st0) (x87i-get-rm)) (br $next_op)))
+          (then (call $fpu_compare_unord (local.get $st0) (x87i-get-rm)) (br $next_op)))
         (if (i32.eq (local.get $r) (i32.const 5))
-          (then (call $fpu_compare (local.get $st0) (x87i-get-rm)) (drop (x87i-pop)) (br $next_op)))
+          (then (call $fpu_compare_unord (local.get $st0) (x87i-get-rm)) (drop (x87i-pop)) (br $next_op)))
         (if (i32.eqz (local.get $r))
           (then
             (local.set $m (i32.xor (i32.const 0xFF)
