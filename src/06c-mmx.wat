@@ -1203,12 +1203,30 @@
     (global.set $fpu_top (i32.const 0))
     (global.set $fpu_tag (i32.const 255)))
 
+  ;; SSE1 PEXTRW reads one physical MMX word into an entire r32, even in
+  ;; code16. Intel SDM vol.2B PEXTRW and vol.3A MMX state table: reading
+  ;; MMX sets TOP=0/all tags valid, leaving the source bits unchanged.
+  ;; Separate MMX/x87 value storage does not model their mantissa aliasing.
+  (func $mmx_pextrw (param $dst i32) (param $src i32) (param $lane i32)
+    (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $dst) (i32.const 2)))
+      (i32.and (i32.wrap_i64 (i64.shr_u (call $mmx_get (local.get $src))
+        (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))) (i32.const 65535)))
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_tag (i32.const 255)))
+
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
     (global.set $mmx_exec_count (i32.add (global.get $mmx_exec_count) (i32.const 1)))
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $src (i32.and (local.get $op) (i32.const 0xF)))
+    ;; PEXTRW subops 164..167 hold imm8[1:0]; dst is GPR, src is MMX.
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 164))
+                 (i32.le_u (local.get $sub) (i32.const 167)))
+      (then
+        (call $mmx_pextrw (local.get $dst) (local.get $src)
+          (i32.sub (local.get $sub) (i32.const 164)))
+        (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 160))
                  (i32.le_u (local.get $sub) (i32.const 163)))
       (then

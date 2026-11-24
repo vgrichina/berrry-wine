@@ -3293,6 +3293,28 @@
               (call $te_raw (local.get $a))))
             (br $decode)))))
 
+      ;; SSE1 PEXTRW r32,mm,imm8 (NP 0FC5). Before the coarse address-size
+      ;; guard because its register-only form has no effective address.
+      ;; Compare prefix_66 with the code16 default inversion to reject an
+      ;; actual 66 in either mode. Reject memory before decoding any EA.
+      (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
+        (if (i32.and (i32.eq (call $gl8 (global.get $d_pc)) (i32.const 0xC5))
+          (i32.and (i32.eq (local.get $prefix_66)
+            (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                     (i32.eqz (global.get $cs_big))))
+            (i32.and (i32.eqz (local.get $prefix_rep))
+                     (i32.eqz (local.get $prefix_lock))))) (then
+          (drop (call $d_fetch8))
+          (if (i32.ne (i32.and (call $gl8 (global.get $d_pc)) (i32.const 0xC0)) (i32.const 0xC0))
+            (then (unreachable)))
+          (call $decode_modrm)
+          (local.set $imm (call $d_fetch8))
+          (call $te (i32.const 422)
+            (i32.or (i32.shl (i32.add (i32.const 164)
+              (i32.and (local.get $imm) (i32.const 3))) (i32.const 8))
+              (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
