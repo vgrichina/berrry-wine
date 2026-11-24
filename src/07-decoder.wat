@@ -5432,7 +5432,11 @@
                                       (i32.eq (local.get $op) (i32.const 0x59))
                                       (i32.or
                                         (i32.eq (local.get $op) (i32.const 0x5c))
-                                        (i32.eq (local.get $op) (i32.const 0x5e))))))))))))))
+                                        (i32.or
+                                          (i32.eq (local.get $op) (i32.const 0x5e))
+                                          (i32.and (i32.eqz (local.get $prefix_lock))
+                                            (i32.or (i32.eq (local.get $op) (i32.const 0x5d))
+                                                    (i32.eq (local.get $op) (i32.const 0x5f)))))))))))))))))
                 (i32.or
                   (i32.or
                     (i32.or
@@ -5485,6 +5489,10 @@
                     (then (local.set $imm (i32.const 13))))
                   (if (i32.eq (local.get $op) (i32.const 0x5c))
                     (then (local.set $imm (i32.const 14))))
+                  (if (i32.eq (local.get $op) (i32.const 0x5d))
+                    (then (local.set $imm (i32.const 46))))
+                  (if (i32.eq (local.get $op) (i32.const 0x5f))
+                    (then (local.set $imm (i32.const 47))))
                   (if (i32.eq (local.get $op) (i32.const 0x51))
                     (then (local.set $imm (i32.const 27))))
                   (if (i32.eq (local.get $op) (i32.const 0x52))

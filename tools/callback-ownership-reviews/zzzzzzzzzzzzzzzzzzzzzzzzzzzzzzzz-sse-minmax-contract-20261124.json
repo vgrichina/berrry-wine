@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "0a79bd3c457637f587802d4330a744e678868b60f85de6de6d61fc2ee5c1a0f3",
+      "sha256": "a8c2b899ea07534eaabe40100ff04727d8cafa9f23f5ba928ceafb964ea99480",
+      "reason": "MINSS/MAXSS add synchronous m32 reads through existing gl32 and a per-thread XMM low-lane write before ordinary dispatch. The scalar branch does not set EIP, raise SEH, invoke guest callbacks, retain pointers, or introduce invocation state. Existing alignment-fault EIP write and return paths remain unchanged. Full production native and trampoline regressions preserve source/destination upper lanes and EFLAGS, including sparse unaligned and m32 page-end guards. MXCSR status and configurable DAZ/FTZ remain unsupported; general invocation ownership stays pending."
+    }
+  ]
+}
