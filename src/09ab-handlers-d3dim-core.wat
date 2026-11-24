@@ -4878,7 +4878,7 @@
     (local $px f32) (local $py f32) (local $pz f32)
     (local $lx f32) (local $ly f32) (local $lz f32) (local $d f32)
     (local $ndl f32) (local $atten f32) (local $a0 f32) (local $a1 f32) (local $a2 f32)
-    (local $range f32)
+    (local $range f32) (local $q f32)
     (local $dr f32) (local $dg f32) (local $db f32)
     (local $ar f32) (local $ag f32) (local $ab f32)
     (local $r f32) (local $g f32) (local $b f32) (local $da f32)
@@ -5014,12 +5014,28 @@
             (local.set $a0 (f32.load (i32.add (local.get $lw) (i32.const 56))))
             (local.set $a1 (f32.load (i32.add (local.get $lw) (i32.const 60))))
             (local.set $a2 (f32.load (i32.add (local.get $lw) (i32.const 64))))
-            (local.set $len (f32.add (f32.add (local.get $a0)
-              (f32.mul (local.get $a1) (local.get $d)))
-              (f32.mul (f32.mul (local.get $a2) (local.get $d)) (local.get $d))))
-            (if (f32.gt (local.get $len) (f32.const 0.000001)) (then
-              (local.set $atten (f32.mul (local.get $atten)
-                (f32.min (f32.const 1.0) (f32.div (f32.const 1.0) (local.get $len)))))))))
+            ;; DirectX 5 SDK D3DLIGHT2: inverse normalized distance, then a
+            ;; polynomial multiplying light color (not a reciprocal divisor).
+            ;; https://library.thedatadungeon.com/directx5/html/dire1sxa.content.htm
+            ;; Only full80 with positive finite range takes this path. Keep
+            ;; legacy76..79 and invalid-range behavior; zero ranges, coincident
+            ;; positions and negative dark lights are outside this contract.
+            (if (i32.and (i32.eq (i32.load (local.get $lw)) (i32.const 80))
+                  (i32.and (f32.gt (local.get $range) (f32.const 0.0))
+                           (f32.le (local.get $range) (f32.const 3.4028234663852886e38))))
+              (then
+                (if (f32.le (local.get $d) (local.get $range)) (then
+                  (local.set $q (f32.div (f32.sub (local.get $range) (local.get $d)) (local.get $range)))
+                  (local.set $atten (f32.add (f32.add (local.get $a0)
+                    (f32.mul (local.get $a1) (local.get $q)))
+                    (f32.mul (f32.mul (local.get $a2) (local.get $q)) (local.get $q)))))))
+              (else
+                (local.set $len (f32.add (f32.add (local.get $a0)
+                  (f32.mul (local.get $a1) (local.get $d)))
+                  (f32.mul (f32.mul (local.get $a2) (local.get $d)) (local.get $d))))
+                (if (f32.gt (local.get $len) (f32.const 0.000001)) (then
+                  (local.set $atten (f32.mul (local.get $atten)
+                    (f32.min (f32.const 1.0) (f32.div (f32.const 1.0) (local.get $len)))))))))))
           (local.set $ndl (f32.add (f32.add
             (f32.mul (local.get $nx) (local.get $lx))
             (f32.mul (local.get $ny) (local.get $ly)))
