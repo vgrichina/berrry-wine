@@ -68,7 +68,13 @@ const label = n => {
     return resolved;
   }
   const url = (f.url || '').replace(/^file:\/\//, '').split('/').slice(-1)[0];
-  return url ? `${name} @ ${url}:${f.lineNumber + 1}` : name;
+  const labelled = url ? `${name} @ ${url}:${f.lineNumber + 1}` : name;
+  // A module with a name section (build/wine-assembly.named.wasm) reports its
+  // frames by $name under a script url such as `wine-assembly-00b0df8a` or
+  // `wasm://wasm/...`, not as wasm-function[N]; without this the split below
+  // calls every one of them JS and prints "wasm: 0.0%".
+  if (/^wasm:\/\//.test(f.url || '') || /^wine-assembly-[0-9a-f]+$/.test(url)) wasmLabels.add(labelled);
+  return labelled;
 };
 
 const agg = new Map();
