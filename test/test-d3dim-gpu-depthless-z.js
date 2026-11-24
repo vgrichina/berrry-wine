@@ -130,13 +130,13 @@ const extraWat = String.raw`
     [3, 4, [0, 10, 10, 20, 20, 30], [R, R, G, G, B, B]],
     [2, 3, [0, 10], [R, R]],
   ]) {
-    const result = run(1, 1, Array(count).fill(NaN), primitive);
+    const result = run(0, 0, Array(count).fill(NaN), primitive);
     assert.strictEqual(result.accepted, 1, `line primitive ${primitive} x${count} is taken`);
     assert.strictEqual(result.draw.prim, GS.CONST.PRIM_LINELIST);
     assert.strictEqual(result.draw.count, expectedX.length);
     assert.deepStrictEqual(result.xs, expectedX);
     assert.deepStrictEqual(result.colors, expectedColor);
-    assert(result.depths.every(Number.isFinite), 'unused line Z must not clip the segment');
+    assert(result.depths.every(Number.isFinite), 'depth-off line Z must not clip the segment');
   }
   for (const count of [0, 1]) {
     const result = run(0, 0, Array(count).fill(0), 3);

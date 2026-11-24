@@ -1569,12 +1569,12 @@
     (if (i32.and (i32.eqz (local.get $lines)) (i32.ne (i32.load offset=124 (local.get $d)) (i32.const 0)))
       (then (local.set $key (i32.or (local.get $key) (i32.const 0x4000)))))
     ;; Depth, cull, blend, alpha test.
+    (local.set $zen (i32.ne (i32.load offset=64 (local.get $d)) (i32.const 0)))
+    (local.set $zfunc (i32.load offset=68 (local.get $d)))
+    (if (i32.and (local.get $zen) (i32.or (i32.lt_u (local.get $zfunc) (i32.const 1)) (i32.gt_u (local.get $zfunc) (i32.const 8))))
+      (then (call $d3g_decline (local.get $pb) (i32.const 2)) (return (i32.const 0))))
+    (local.set $zwrite (i32.and (local.get $zen) (i32.ne (i32.load offset=72 (local.get $d)) (i32.const 0))))
     (if (i32.eqz (local.get $lines)) (then
-      (local.set $zen (i32.ne (i32.load offset=64 (local.get $d)) (i32.const 0)))
-      (local.set $zfunc (i32.load offset=68 (local.get $d)))
-      (if (i32.and (local.get $zen) (i32.or (i32.lt_u (local.get $zfunc) (i32.const 1)) (i32.gt_u (local.get $zfunc) (i32.const 8))))
-        (then (call $d3g_decline (local.get $pb) (i32.const 2)) (return (i32.const 0))))
-      (local.set $zwrite (i32.and (local.get $zen) (i32.ne (i32.load offset=72 (local.get $d)) (i32.const 0))))
       (local.set $cull (i32.load offset=108 (local.get $d)))
       (local.set $blend (i32.ne (i32.load offset=76 (local.get $d)) (i32.const 0)))
       (local.set $sb (i32.load offset=80 (local.get $d)))
@@ -1613,9 +1613,8 @@
     ;; Vertices: expanded per primitive, so each keeps its provoking colour
     ;; and its own wrap correction.
     (local.set $flat (i32.or (local.get $lines) (i32.eq (i32.load offset=112 (local.get $d)) (i32.const 1))))
-    (local.set $depthless (i32.or (local.get $lines)
-      (i32.and (i32.lt_u (local.get $vtype) (i32.const 4))
-        (i32.and (i32.eqz (i32.load offset=64 (local.get $d))) (i32.eqz (i32.load offset=72 (local.get $d)))))))
+    (local.set $depthless (i32.and (i32.lt_u (local.get $vtype) (i32.const 4))
+      (i32.and (i32.eqz (i32.load offset=64 (local.get $d))) (i32.eqz (i32.load offset=72 (local.get $d))))))
     (local.set $per (select (i32.const 2) (i32.const 3) (local.get $lines)))
     (local.set $nprim
       (if (result i32) (i32.eq (local.get $prim) (i32.const 2)) (then (i32.shr_u (local.get $count) (i32.const 1)))

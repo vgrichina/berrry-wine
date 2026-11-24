@@ -546,8 +546,8 @@
     (param $this i32) (param $primitive i32) (param $vertices i32) (param $count i32)
     ;; The producer consumes POSITIONT and cannot recover geometric clipping
     ;; after lowering. Keep depthless TL's clamp contract, but clip transformed
-    ;; texture inputs and depth-tested triangles before their stream snapshot.
-    (if (i32.and (i32.and (i32.ge_u (local.get $primitive) (i32.const 4))
+    ;; texture inputs and depth-tested lines/triangles before their snapshot.
+    (if (i32.and (i32.and (i32.ge_u (local.get $primitive) (i32.const 2))
         (i32.le_u (local.get $primitive) (i32.const 6)))
       (i32.or (i32.ne (global.get $d3dim_supplied_projection) (i32.const 0))
         (i32.ne (call $d3dim_d7_rs (call $g2w (call $d3ddev_state (local.get $this))) (i32.const 7)) (i32.const 0))))
@@ -8630,6 +8630,22 @@
       (br $lp)))
     (local.get $out_count))
 
+  ;; A line is an ordered pair, not a closed polygon. Replace only the
+  ;; rejected endpoint at each homogeneous plane, retaining segment order.
+  (func $d3dim_clip_tl_segment (param $state i32) (param $a i32) (param $b i32) (result i32)
+    (local $plane i32) (local $da f32) (local $db f32)
+    (loop $planes
+      (local.set $da (call $d3dim_tl_clip_distance (local.get $a) (local.get $plane)))
+      (local.set $db (call $d3dim_tl_clip_distance (local.get $b) (local.get $plane)))
+      (if (i32.and (f32.lt (local.get $da) (f32.const 0)) (f32.lt (local.get $db) (f32.const 0)))
+        (then (return (i32.const 0))))
+      (if (i32.ne (f32.lt (local.get $da) (f32.const 0)) (f32.lt (local.get $db) (f32.const 0)))
+        (then (call $d3dim_interp_tl_clip_vertex (local.get $state) (local.get $a) (local.get $b)
+          (select (local.get $a) (local.get $b) (f32.lt (local.get $da) (f32.const 0))) (local.get $plane))))
+      (local.set $plane (i32.add (local.get $plane) (i32.const 1)))
+      (br_if $planes (i32.lt_u (local.get $plane) (i32.const 2))))
+    (i32.const 1))
+
   ;; Reconnect geometric clipping to the GPU stream route. Most draws need
   ;; only a bounds scan; allocate bounded scratch only for a crossing draw.
   ;; Five polygon vertices per plane and at most three output fan triangles.
@@ -8638,6 +8654,7 @@
     (local $stride i32) (local $src i32) (local $i i32) (local $v i32) (local $outside i32)
     (local $scratch i32) (local $a i32) (local $b i32) (local $out i32) (local $state i32)
     (local $k i32) (local $j i32) (local $nprim i32) (local $n i32) (local $emitted i32) (local $type i32)
+    (local $prov i32)
     (local.set $stride (call $d3dim_tl_stride))
     (local.set $src (call $g2w (local.get $vertices)))
     (block $scanned (loop $scan
@@ -8657,6 +8674,26 @@
     (local.set $type (if (result i32) (i32.ge_u (global.get $d3dim_supplied_projection) (i32.const 2))
       (then (i32.add (global.get $d3dim_supplied_projection) (i32.const 3)))
       (else (select (i32.const 4) (i32.const 3) (global.get $d3dim_supplied_projection)))))
+    (if (i32.le_u (local.get $prim) (i32.const 3)) (then
+      (local.set $nprim (if (result i32) (i32.eq (local.get $prim) (i32.const 2))
+        (then (i32.shr_u (local.get $count) (i32.const 1)))
+        (else (select (i32.sub (local.get $count) (i32.const 1)) (i32.const 0) (i32.ne (local.get $count) (i32.const 0))))))
+      (block $lines_done (loop $lines
+        (br_if $lines_done (i32.ge_u (local.get $k) (local.get $nprim)))
+        (local.set $v (i32.add (local.get $src)
+          (i32.mul (call $d3dim_indexed_slot (local.get $prim) (local.get $k) (i32.const 0)) (local.get $stride))))
+        (call $memcpy (local.get $a) (local.get $v) (i32.mul (local.get $stride) (i32.const 2)))
+        (local.set $prov (i32.load offset=16 (local.get $a)))
+        (if (call $d3dim_clip_tl_segment (local.get $state) (local.get $a) (i32.add (local.get $a) (local.get $stride)))
+          (then
+            ;; The existing line shader uses the original first endpoint's
+            ;; flat diffuse color, even when that endpoint was clipped away.
+            (i32.store offset=16 (local.get $a) (local.get $prov))
+            (call $d3dim_worker_try_draw (local.get $this) (i32.const 2) (local.get $type)
+              (local.get $scratch) (i32.const 2))))
+        (local.set $k (i32.add (local.get $k) (i32.const 1))) (br $lines)))
+      (call $heap_free (local.get $scratch))
+      (return (i32.const 1))))
     (local.set $nprim (if (result i32) (i32.eq (local.get $prim) (i32.const 4))
       (then (i32.div_u (local.get $count) (i32.const 3)))
       (else (select (i32.sub (local.get $count) (i32.const 2)) (i32.const 0) (i32.ge_u (local.get $count) (i32.const 3))))))
