@@ -15362,17 +15362,8 @@
 
   ;; GetTransform(this, dtstTransformStateType, lpD3DMATRIX) — 3 args
   (func $handle_IDirect3DDevice3_GetTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $state i32) (local $slot i32)
-    (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
-    (local.set $state (call $d3ddev_state (local.get $arg0)))
-    (if (i32.and (i32.ne (local.get $state) (i32.const 0)) (i32.ne (local.get $arg2) (i32.const 0))) (then
-      (local.set $slot (call $d3ddev_matrix_slot (local.get $arg1)))
-      (call $memcpy
-        (call $g2w (local.get $arg2))
-        (call $g2w (i32.add (local.get $state) (i32.mul (local.get $slot) (i32.const 64))))
-        (i32.const 64))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
+    ;; Share the canonical getter, including immediate rejection and stdcall cleanup.
+    (call $handle_IDirect3DDevice2_GetTransform (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 
   (func $handle_IDirect3DDevice3_MultiplyTransform (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (if (call $d3dim_immediate_reject (local.get $arg0) (i32.const 16)) (then (return)))
