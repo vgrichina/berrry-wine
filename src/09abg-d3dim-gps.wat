@@ -11,7 +11,8 @@
   ;; in this file; the executor sees only generic records.
   ;;
   ;; Colour targets are keyed by DIB address, so GPU contents follow the DIB
-  ;; through a Flip; depth buffers are keyed by the render-target entry.
+  ;; through a Flip; depth buffers follow the attached Z surface, or the
+  ;; render-target entry for the existing private-depth fallback.
   ;; Pixels come back (READBACK + SYNC) only for CPU access to a GPU-owned
   ;; DIB (D2b): Lock, GetDC, a CPU Blt/BltFast reading a GPU source, a CPU
   ;; present and Texture::Load from a target.
@@ -683,9 +684,14 @@
         (call $d3g_gensum (i32.load (local.get $t)) (i32.load offset=76 (local.get $t))))))
     (i32.store offset=32 (local.get $t) (i32.and (i32.load offset=32 (local.get $t)) (i32.const -3))))
 
-  ;; Depth buffer of render-target entry $entry (fresh DS reads 1.0).
+  ;; Resolve attachment identity on every use: changing an RT's attached Z
+  ;; must select that surface's plane, and moving a Z between RTs keeps it.
+  ;; With no suitable attachment retain the private per-RT plane.
+  ;; Fresh DS reads 1.0; CPU depth import is a separate limitation.
   (func $d3g_depth (param $pb i32) (param $entry i32) (param $w i32) (param $hgt i32) (param $create i32) (result i32)
-    (local $i i32) (local $e i32) (local $free i32) (local $id i32)
+    (local $i i32) (local $e i32) (local $free i32) (local $id i32) (local $z i32)
+    (local.set $z (call $d3dim_attached_zbuffer (local.get $entry)))
+    (if (local.get $z) (then (local.set $entry (local.get $z))))
     (loop $scan
       (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 5376)) (i32.shl (local.get $i) (i32.const 4))))
       (if (i32.eq (i32.load (local.get $e)) (local.get $entry)) (then
@@ -2989,6 +2995,8 @@
     (local.set $i (i32.const 0))
     (local.set $t (call $d3g_find (local.get $pb) (load.field DxObject misc1 (local.get $entry))))
     (if (local.get $t) (then (call $d3g_target_drop (local.get $pb) (local.get $t) (i32.const 0))))
+    ;; Keys are surface identities: releasing an RT drops only its private
+    ;; fallback; releasing an attached Z drops its shared depth resource.
     (loop $depth
       (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 5376)) (i32.shl (local.get $i) (i32.const 4))))
       (if (i32.eq (i32.load (local.get $e)) (local.get $entry)) (then
