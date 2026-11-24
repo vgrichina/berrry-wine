@@ -11620,12 +11620,9 @@
 
   ;; Live host state for one scan code, as 0 or 1.
   (func $di_kbd_live (param $dik i32) (result i32)
-    (local $vk i32)
-    (local.set $vk (call $di_dik_to_vk_strict (local.get $dik)))
-    (if (i32.eqz (local.get $vk)) (then (return (i32.const 0))))
-    (i32.ne
-      (i32.and (call $host_get_key_down_state (local.get $vk)) (i32.const 0x8000))
-      (i32.const 0)))
+    (if (i32.eqz (call $di_dik_to_vk_strict (local.get $dik)))
+      (then (return (i32.const 0))))
+    (call $di_kbd_state (local.get $dik)))
 
   ;; Read the arrival FIFO in order, mapping VK through the existing strict
   ;; DIK table. Skipped/custom-format objects advance only on consuming reads.
@@ -11678,6 +11675,23 @@
     (local.set $vk (call $di_dik_to_vk_strict (local.get $dik)))
     (if (local.get $vk) (then (return (local.get $vk))))
     (local.get $dik))
+
+  ;; Both immediate formats query physical owners for ambiguous keys. The
+  ;; existing synchronous keyboard bridge avoids the aggregate VK bitmap/cache
+  ;; used by Win32 message state. Unknown numeric input retains legacy bytes.
+  (func $di_kbd_state (param $dik i32) (result i32)
+    (local $vk i32) (local $physical i32)
+    (local.set $vk (call $di_dik_to_vk (local.get $dik)))
+    (if (i32.and (i32.ge_u (local.get $vk) (i32.const 13))
+                 (i32.le_u (local.get $vk) (i32.const 18)))
+      (then
+        (local.set $physical (call $host_di_keyboard_buffer
+          (i32.const 0) (i32.const 14) (local.get $dik)))
+        (if (i32.ge_s (local.get $physical) (i32.const 0))
+          (then (return (local.get $physical))))))
+    (i32.ne
+      (i32.and (call $host_get_key_down_state (local.get $vk)) (i32.const 0x8000))
+      (i32.const 0)))
 
   ;; Immediate X/Y coordinates use the same axis mode for every data format.
   ;; The event FIFO has its own position history; a state read only consumes
@@ -11741,7 +11755,7 @@
   ;; For keyboard: fill 256-byte DirectInput DIK array with 0x80 for each pressed key
   ;; For mouse: fill DIMOUSESTATE (dx, dy, dz, rgbButtons[4]) = 16 bytes
   (func $handle_IDirectInputDevice_GetDeviceState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32) (local $dev_type i32) (local $wa i32) (local $i i32) (local $vk i32)
+    (local $entry i32) (local $dev_type i32) (local $wa i32) (local $i i32)
     (local $dx i32) (local $dy i32) (local $buttons i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (if (i32.eqz (call $di_device_is_acquired (local.get $entry)))
@@ -11778,8 +11792,7 @@
         (local.set $i (i32.const 0))
         (block $kbd_done (loop $kbd_lp
           (br_if $kbd_done (i32.ge_u (local.get $i) (i32.const 256)))
-          (local.set $vk (call $di_dik_to_vk (local.get $i)))
-          (if (i32.and (call $host_get_key_down_state (local.get $vk)) (i32.const 0x8000))
+          (if (call $di_kbd_state (local.get $i))
             (then (i32.store8 (i32.add (local.get $wa) (local.get $i)) (i32.const 0x80))))
           (local.set $i (i32.add (local.get $i) (i32.const 1)))
           (br $kbd_lp)))))

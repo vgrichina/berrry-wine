@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "5b26dde2df03216cfdcb24f95e526c395836ea77a134e04a1fc1195b3a4efdb0",
+      "sha256": "4739ee0132337d1d1551c936da6632332174baff9a2dff44216904038ac4cdb8",
+      "reason": "2026-11-24 immediate physical keyboard state repair only. New synchronous operation14 reads existing Enter/modifier owner sets, checks the existing physical-map identity fence, and returns -1 for unknown numeric owners so the production WAT retains legacy VK fallback bytes. It operates without a buffered subscription, mutates no input state or FIFO, and adds no callback, timer, promise, retained renderer/client reference, asynchronous continuation, or publication. All preexisting buffered operations, physical edge tag/filter admission, aggregate WM/GetAsyncKeyState, wake/publication ordering and zero-wheel guard are unchanged. Actual byte-exact compiled SetDataFormat/Acquire/GetDeviceState plus actual createHostImports/createWindowHost and renderer APIs pass 47 cases/1288 assertions in direct and in-process synchronous RPC modes, including zero buffer and buffered nonconsumption; original fails36 of the initial45 cases. Buffered production425+425 and contract tests pass. Run20261124-keyboard-immediate-physical-root preserves evidence. Review scope is only this synchronous keyboard operation; broader host-file callback review remains pending."
+    }
+  ]
+}
