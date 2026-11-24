@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "baseSHA256": "2a23be73ce78561fa4b4d97a6ad67b255b438bb6e8a97f1063b57a102a00b4d9",
+      "sha256": "d41e19336f759d810ab0e15934e91fb2f9961ea020d945d63a40bec4549cba46",
+      "reason": "Review 20261124 bare-EXE session saves: comment-only change in attachDynamicOverlay (a bare EXE import now has a fingerprint, 'exe:v1:<sha256 of its bytes>', from media-import.js exeIdFor, so the session-only fallback comment no longer lists it). No code, lifetime, callback, scheduler or renderer change. Covered by test/test-media-disc-id.js in run 20261124-bare-exe-id. General callback ownership remains pending."
+    }
+  ]
+}

@@ -346,6 +346,79 @@ async function main() {
     assert.ok(!other.vfs.files.has(other.vfs._normPath(SAVE)));
   });
 
+  // A bare EXE has no tree: its identity is its bytes (media-import.js exeIdFor).
+  const peBytes = (salt) => {
+    const b = new Uint8Array(1024);
+    b.set(enc('MZ'), 0);
+    b[0x3c] = 0x80;                      // e_lfanew
+    b.set(enc('PE\0\0'), 0x80);
+    b[0x84] = 0x4c; b[0x85] = 0x01;      // i386
+    b.set(enc(`payload ${salt}`), 0x200);
+    return b;
+  };
+
+  await test('bare EXE: exe:v1 id from its bytes; rename keeps it, other bytes change it', async () => {
+    const p1 = await analyzeBytes(peBytes('a'), 'GAME.EXE');
+    assert.strictEqual(p1.kind, 'exe', `sniffed ${p1.kind}`);
+    assert.match(p1.discId, /^exe:v1:[0-9a-f]{64}$/);
+    const renamed = await analyzeBytes(peBytes('a'), 'game-copy.exe');
+    assert.strictEqual(renamed.discId, p1.discId, 'a rename keeps the journal');
+    const patched = await analyzeBytes(peBytes('b'), 'GAME.EXE');
+    assert.notStrictEqual(patched.discId, p1.discId, 'same name and size, other bytes: new journal');
+    const entry = mediaImport.makeAppEntry(p1, { badge: 'session' });
+    assert.deepStrictEqual(mediaImport.overlayScopeFor(entry), { kind: 'disc', scope: p1.discId });
+  });
+
+  await test('bare EXE: sidecars join by name and size', async () => {
+    const plain = await mediaImport.analyze(peBytes('a'), { name: 'SETUP.EXE' });
+    const withData = await mediaImport.analyze(peBytes('a'),
+      { name: 'SETUP.EXE', sidecars: [new File([enc('cab bytes')], 'DATA1.CAB')] });
+    assert.notStrictEqual(withData.discId, plain.discId);
+    const again = await mediaImport.analyze(peBytes('a'),
+      { name: 'SETUP.EXE', sidecars: [new File([enc('cab BYTES')], 'data1.cab')] });
+    assert.strictEqual(again.discId, withData.discId, 'sidecar case and bytes do not matter, size does');
+  });
+
+  await test('bare EXE: huge programs hash head, tail and size', async () => {
+    const big = new Uint8Array(65 * 1024 * 1024 + 3);
+    const id1 = await mediaImport.exeIdFor(big, []);
+    big[40 * 1024 * 1024] = 1; // middle: not hashed
+    assert.strictEqual(await mediaImport.exeIdFor(big, []), id1);
+    big[big.length - 1] = 1;   // tail: hashed
+    assert.notStrictEqual(await mediaImport.exeIdFor(big, []), id1);
+    assert.notStrictEqual(await mediaImport.exeIdFor(big.subarray(0, big.length - 1), []), id1, 'size is hashed');
+  });
+
+  await test('bare EXE journal: save survives a reload, mount reuses then rereads the bytes', async () => {
+    const root = fakeDir();
+    const SAVE = 'C:\\HISCORE.DAT';
+    async function boot(name) {
+      const plan = await analyzeBytes(peBytes('a'), name);
+      const entry = mediaImport.makeAppEntry(plan, { badge: 'session' });
+      const store = opfsStore(mediaImport.overlayScopeFor(entry).scope, { root, locks });
+      await store.list();
+      const vfs = new VirtualFS();
+      for (const mount of entry.mounts) await mount(vfs);
+      const exe = await vfs.materialize('C:\\' + name.toUpperCase());
+      assert.deepStrictEqual(Array.from(exe.subarray(0, 2)), [0x4d, 0x5a]);
+      const overlay = VfsOverlay.attach(vfs, { store });
+      return { vfs, overlay, hydrated: await overlay.hydrate(), entry };
+    }
+    const first = await boot('GAME.EXE');
+    const handle = first.vfs.createFile(SAVE, 0x40000000, 2);
+    const data = enc('top score 9000');
+    assert.ok(first.vfs.writeFile(handle, data, data.length).ok);
+    first.vfs.closeHandle(handle);
+    assert.strictEqual((await first.overlay.flush()).failed, 0);
+    // A relaunch of the same entry mounts again from the provider.
+    const vfs2 = new VirtualFS();
+    for (const mount of first.entry.mounts) await mount(vfs2);
+    assert.ok(vfs2.files.has(vfs2._normPath('C:\\GAME.EXE')));
+    const second = await boot('GAME.EXE');
+    assert.ok(second.hydrated.files >= 1, JSON.stringify(second.hydrated));
+    assert.strictEqual(Buffer.from(await second.vfs.materialize(SAVE)).toString('latin1'), 'top score 9000');
+  });
+
   if (failures) {
     console.log(`${failures} test(s) failed`);
     process.exit(1);
