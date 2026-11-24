@@ -234,6 +234,7 @@
   ;;   31 CMPPS (predicate in op bits 16..23)  32 MOVMSKPS
   ;;   33 MOVNTPS store (instruction offset within block in op bits16..31)
   ;;   46/47 MINSS/MAXSS (source bits on equality or unordered, m32 only)
+  ;;   48 CMPSS (SSE1 predicate in op bits 16..23, m32 only)
   ;; Scalar forms preserve the destination's upper 96 bits. RSQRT*/RCP* are
   ;; exact here where silicon gives ~12 bits -- the safe direction, and callers
   ;; that care refine with Newton-Raphson (B&W2's normalizer at 0x00962cb6).
@@ -252,6 +253,12 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.eq (local.get $sub) (i32.const 48)) (then
+      (call $xmm_set (local.get $dst) (i32x4.replace_lane 0 (local.get $d)
+        (call $sse_cmp_lane (f32x4.extract_lane 0 (local.get $d))
+          (f32x4.extract_lane 0 (local.get $s))
+          (i32.shr_u (local.get $op) (i32.const 16)))))
+      (dispatch-next)))
     (if (i32.or (i32.eq (local.get $sub) (i32.const 46))
                 (i32.eq (local.get $sub) (i32.const 47))) (then
       ;; Pseudo-min/max select their first operand on equality or NaN.
@@ -450,6 +457,12 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     ;; Read exactly the architectural operand width before writing XMM state.
+    (if (i32.eq (local.get $sub) (i32.const 48)) (then
+      (call $xmm_set (local.get $dst) (i32x4.replace_lane 0 (local.get $d)
+        (call $sse_cmp_lane (f32x4.extract_lane 0 (local.get $d))
+          (f32.reinterpret_i32 (call $gl32 (local.get $addr)))
+          (i32.shr_u (local.get $op) (i32.const 16)))))
+      (dispatch-next)))
     (if (i32.or (i32.eq (local.get $sub) (i32.const 46))
                 (i32.eq (local.get $sub) (i32.const 47))) (then
       (local.set $s (i32x4.splat (call $gl32 (local.get $addr))))

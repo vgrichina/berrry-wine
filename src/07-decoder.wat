@@ -5293,12 +5293,14 @@
                       (i32.or (i32.shl (global.get $mr_reg) (i32.const 4))
                               (global.get $mr_val))))
                   (br $decode)))))
-          ;; CMPPS xmm,xmm/m128,imm8. All eight SSE1 predicates are handled by
-          ;; one subop; preserve the immediate in bits 16..23.
+          ;; CMPPS xmm,xmm/m128,imm8 and F3 CMPSS xmm,xmm/m32,imm8.
+          ;; Legacy SSE1 uses imm8[2:0]; bits 7:3 are reserved, not AVX predicates.
+          ;; Preserve the immediate in bits 16..23; reject 66/F2/LOCK forms.
           (if (i32.and
                 (i32.eq (local.get $op) (i32.const 0xC2))
                 (i32.and (i32.eqz (local.get $prefix_66))
-                         (i32.eqz (local.get $prefix_rep))))
+                  (i32.and (i32.eqz (local.get $prefix_lock))
+                    (i32.le_u (local.get $prefix_rep) (i32.const 1)))))
             (then
               (call $decode_modrm)
               (if (i32.eq (global.get $mr_mod) (i32.const 3))
@@ -5306,7 +5308,8 @@
                   (local.set $imm (call $d_fetch8))
                   (call $te_sse (i32.const 432)
                     (i32.or (i32.shl (local.get $imm) (i32.const 16))
-                      (i32.or (i32.const 0x1F00)
+                      (i32.or (select (i32.const 0x3000) (i32.const 0x1F00)
+                                (i32.eq (local.get $prefix_rep) (i32.const 1)))
                         (i32.or (i32.shl (global.get $mr_reg) (i32.const 4))
                                 (global.get $mr_val)))))
                   (br $decode))
@@ -5316,7 +5319,8 @@
                   (local.set $imm (call $d_fetch8))
                   (call $te_sse (i32.const 433)
                     (i32.or (i32.shl (local.get $imm) (i32.const 16))
-                      (i32.or (i32.const 0x1F00)
+                      (i32.or (select (i32.const 0x3000) (i32.const 0x1F00)
+                                (i32.eq (local.get $prefix_rep) (i32.const 1)))
                               (i32.shl (global.get $mr_reg) (i32.const 4)))))
                   (call $te_raw (local.get $a))
                   (br $decode)))))

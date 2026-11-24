@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "a8c2b899ea07534eaabe40100ff04727d8cafa9f23f5ba928ceafb964ea99480",
+      "sha256": "5f742ebb15f798b26275db3041fc201eabb134ea2254c0d799224954a339fde9",
+      "reason": "CMPSS adds an m32 read through existing gl32 followed by a per-thread XMM low-lane mask write and ordinary dispatch. Its scalar comparison helper has only value parameters and comparisons, no guest entry. The added branch introduces no explicit EIP write, retained pointer, invocation state or direct guest callback. Existing gl32 translation/fault boundaries and handler alignment exception paths remain unchanged; this does not assert general invocation ownership, which remains pending. Frozen public x86 native and actual production trampoline cases pass upper96/source/flags/GPR/memory guards, independently backed split pages and a mapped-page-end m32 with an absent following page. MXCSR exception/status emulation is not asserted."
+    }
+  ]
+}
