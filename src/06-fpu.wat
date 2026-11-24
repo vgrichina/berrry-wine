@@ -107,7 +107,13 @@
   ;; SF=64 (stack fault, paired with IE), ES=128 (error summary).
   (func $fpu_set_exc (param $bits i32)
     (global.set $fpu_sw (i32.or (global.get $fpu_sw)
-      (i32.or (local.get $bits) (i32.const 0x80))))
+      (local.get $bits)))
+    ;; Masked exceptions still set their individual flags, but ES summarizes
+    ;; only unmasked exceptions. In particular a masked FIST overflow must
+    ;; store integer indefinite with IE alone, not report a pending exception.
+    (if (i32.and (i32.and (local.get $bits) (i32.const 0x3F))
+                 (i32.xor (global.get $fpu_cw) (i32.const 0x3F)))
+      (then (global.set $fpu_sw (i32.or (global.get $fpu_sw) (i32.const 0x80)))))
     (call $fpu_trace_exc (local.get $bits) (i32.const 1)))
 
   ;; --trace-fpu. `raised` tells a flag going up from FCLEX/FINIT taking them
