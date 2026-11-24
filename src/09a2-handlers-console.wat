@@ -710,6 +710,18 @@
       (then (global.set $last_error (i32.const 5)))) ;; ERROR_ACCESS_DENIED
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
 
+  ;; GetConsoleWindow() → HWND. NULL for a process with no console (a GUI
+  ;; subsystem exe that never called AllocConsole: GameMaker:Studio asks to
+  ;; decide whether to hide one). An attached console always has a window,
+  ;; so materialize it the way the first console write does.
+  (func $handle_GetConsoleWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $console_ensure_window)
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (call $console_is_attached)
+        (then (call $console_shared_hwnd))
+        (else (i32.const 0))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
   ;; SetConsoleScreenBufferSize(hConsole, dwSize) → BOOL
   ;; dwSize is COORD packed as i32: loword=X, hiword=Y
   (func $handle_SetConsoleScreenBufferSize (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

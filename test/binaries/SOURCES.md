@@ -533,6 +533,68 @@ terms if `COPYING.txt` ships with it, nothing about it is paid for, and the
 app page shows the Derek Yu / Mossmouth copyright line. Publishing remains the project owner's decision; until
 then the files are ignored by git and the app stays local-only.
 
+## Spelunky Classic HD 1.1.7 (`candidates/spelunky-classic-hd/`)
+
+Source: yancharkin's release page `https://yancharkin.itch.io/spelunky-classic-hd`,
+which points at the GitHub release asset
+`https://github.com/yancharkin/SpelunkyClassicHD/releases/download/1.1.7/spelunky_classic_hd-windows.zip`,
+fetched 2026-11-24 and kept as `spelunky_classic_hd-1.1.7-windows.zip`
+(63,544,008 bytes, SHA-256
+`bcf3bfe7fe236e1b59982d1b4ef7dfbfe6a0ccb134503d7b6c7191eb589c2ed0`;
+`SHA256SUMS` sits beside it). 1.1.7 is the last 32-bit Windows build; the
+1.2.2 x86-64 zip beside it is not used. `extracted-1.1.7/` is its unzip (81
+files): `SpelunkyClassicHD.exe` (GameMaker:Studio 1.4 runner, SHA-256
+`7b96f134a88702bb876518190ec7fa512076ac0443043381bcc1ec3677f3752e`),
+`data.win` (the game, SHA-256
+`00dc8b67a6654500bdd963706aa3c7181452588a28f5da62207ee9bd349f8773`),
+`options.ini`, `spelunky.ini`, `locale/`, and the `D3DX9_43.dll` the zip
+itself ships (byte-identical to Microsoft's June 2010 redist copy below).
+One file is added: `D3DCompiler_43.dll` from that redist. The game's licence
+is not in the zip; `LICENSE.repo.txt` is the repository's `LICENSE` as
+fetched. App id `spelunky_classic_hd`, local-only (`LOCAL_CANDIDATE_APPS`),
+mounted through `extracted-1.1.7/.wine-assembly-browser.json`. Details in
+`docs/re-notes/spelunky-classic-hd.md`.
+
+**Terms.** The repository is under the same Spelunky User License v1.1b as
+Spelunky Classic (Copyright (c) 2008, 2009 Derek Yu and Mossmouth, LLC), and
+this remake is a Covered Work under it: non-commercial redistribution is
+allowed if the licence and copyright notices stay intact, nothing is sold, a
+copyright notice is shown at the start of the work and in its documentation
+(the title screen shows "V1.1 COPYRIGHT 2008, 2009 MOSSMOUTH, LLC"), and it is presented
+as a mod, not the official game. Free public hosting fits those terms only
+with `LICENSE.repo.txt` shipped in the mounted tree (the zip omits it), the
+app page naming it as yancharkin's unofficial remake, and the Derek Yu /
+Mossmouth copyright line shown. The bundled fonts under `locale/fonts/` carry
+their own `license.txt` files, which ship unchanged with them. The two
+Microsoft DLLs are covered by the redist terms in the next section.
+Publishing remains the project owner's decision; until then the files are
+ignored by git and the app stays local-only.
+
+## DirectX End-User Runtimes, June 2010 (`candidates/directx-jun2010/`)
+
+Source: Microsoft's
+`https://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe`,
+fetched 2026-11-24 (100,275,120 bytes, SHA-256
+`053f76dcbb28802e23341b6a787e3b0791c0fa5c8d4d011b1044172dbf89c73b`). That is
+the file as Microsoft serves it now, re-signed, and matches the hashes
+Chocolatey, npackd and Winetricks pin; the SHA-1 `f8f1217f…` quoted in 2010
+belongs to the original signing. `redist/` is `7z x` of it; `x86/` is
+`cabextract` of `Jun2010_d3dx9_43_x86.cab` and
+`Jun2010_D3DCompiler_43_x86.cab`: `d3dx9_43.dll` (SHA-256
+`0b28546be22c71834501f7d7185ede5d79742457331c7ee09efc14490dd64f5f`) and
+`D3DCompiler_43.dll` (SHA-256
+`2f23182ec6f4889397ac4bf03d62536136c5bdba825c7d2c4ef08c827f3a8a1c`).
+These go beside the application that needs them through its manifest, never
+into the shared `dlls/` directory.
+
+**Terms.** The DirectX SDK redistributable licence lets a developer
+distribute these files only as part of, and with, their own application, not
+on their own. For public hosting that means the DLLs may be served only
+inside a published app's own tree (as Spelunky Classic HD's zip already does
+with `D3DX9_43.dll`), never as a standalone download or a shared runtime
+directory, and the redist installer itself stays local. The files are
+ignored by git.
+
 ## Age of Empires trial (`shareware/aoe/aoe_ex/`)
 
 Source: `https://archive.org/details/AgeofEmpires_1020` (the Shareware table

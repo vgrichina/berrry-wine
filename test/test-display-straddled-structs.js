@@ -70,7 +70,7 @@ const extraWat = String.raw`
   // --- EnumDisplaySettings, ENUM_CURRENT_SETTINGS --------------------------
   for (const [wide, SIZE, sizeOff, fields] of [
     [0, 156, 36, { bpp: 104, w: 108, h: 112, freq: 120 }],
-    [1, 220, 68, { bpp: 136, w: 140, h: 144, freq: 152 }],
+    [1, 220, 68, { bpp: 168, w: 172, h: 176, freq: 184 }],
   ]) {
     const name = wide ? 'EnumDisplaySettingsW' : 'EnumDisplaySettingsA';
     const prime = ga => { zero(ga, SIZE); e.guest_write8(ga + sizeOff, SIZE & 0xff);

@@ -40,7 +40,7 @@ const { bootRenderHarness } = require('./render-helper');
   for (const wide of [0, 1]) {
     w.guest_write16(mode + (wide ? 68 : 36), wide ? 220 : 156);
     assert.equal(w.test_indexed_mode(mode, wide), 1);
-    assert.equal(w.guest_read32(mode + (wide ? 136 : 104)), 8, 'mode queries agree with GDI');
+    assert.equal(w.guest_read32(mode + (wide ? 168 : 104)), 8, 'mode queries agree with GDI');
   }
   const record = w.test_gdi_window_surface_record(hwnd);
   assert.equal(dv.getUint32(record + 24, true), 8, 'actual backing is indexed');

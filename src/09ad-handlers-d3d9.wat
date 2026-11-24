@@ -659,8 +659,13 @@
 
   ;; ── IDirect3D9 — 17 methods ─────────────
   ;; IDirect3D9_QueryInterface — 3 args (incl. this)
+  ;; IUnknown and IID_IDirect3D9 {81BDCBCA-64D4-426D-AE8D-AD0147F4275C} only:
+  ;; this is not a Direct3D9Ex, so IID_IDirect3D9Ex gets E_NOINTERFACE.
   (func $handle_IDirect3D9_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (i32.store offset=0 (global.get $reg_base) (call $dx_query_interface_single
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (i32.const 0x81BDCBCA) (i32.const 0x426D64D4)
+      (i32.const 0x01AD8DAE) (i32.const 0x5C27F447)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3D9_RegisterSoftwareDevice — 2 args (incl. this)
@@ -1185,8 +1190,16 @@
 
   ;; ── IDirect3DDevice9 — 119 methods ─────────────
   ;; IDirect3DDevice9_QueryInterface — 3 args (incl. this)
+  ;; IUnknown and IID_IDirect3DDevice9 {D0223B96-BF7A-43FD-92BD-A43B0D82B9EB}
+  ;; only. D3DX9_43 asks every device for IID_IDirect3DDevice9Ex
+  ;; {B18B10CE-2649-405A-870F-95F777D4313A} before it creates a texture (to
+  ;; pick D3DPOOL_DEFAULT-with-shared-handle paths); a plain device answers
+  ;; E_NOINTERFACE and D3DX falls back to the ordinary pools.
   (func $handle_IDirect3DDevice9_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr))
+    (i32.store offset=0 (global.get $reg_base) (call $dx_query_interface_single
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (i32.const 0xD0223B96) (i32.const 0x43FDBF7A)
+      (i32.const 0x3BA4BD92) (i32.const 0xEBB9820D)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; IDirect3DDevice9_Release — 1 args (incl. this)

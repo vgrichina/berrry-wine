@@ -40787,5 +40787,171 @@
     "convention": "stdcall",
     "hash": 3198896032,
     "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4834,
+    "name": "ExpandEnvironmentStringsW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 71498497,
+    "args": [
+      {
+        "name": "src",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "dst",
+        "type": "LPWSTR",
+        "out": true
+      },
+      {
+        "name": "size",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4835,
+    "name": "GetConsoleWindow",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2564324880,
+    "args": [],
+    "ret": "HWND"
+  },
+  {
+    "id": 4836,
+    "name": "GetMonitorInfoW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 788589276,
+    "args": [
+      {
+        "name": "hMonitor",
+        "type": "HMONITOR"
+      },
+      {
+        "name": "lpmi",
+        "type": "LPMONITORINFO",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4837,
+    "name": "ChangeDisplaySettingsW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 546891941,
+    "args": [
+      {
+        "name": "lpDevMode",
+        "type": "LPDEVMODEW"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "LONG"
+  },
+  {
+    "id": 4838,
+    "name": "EnumDisplaySettingsExW",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2557598563,
+    "args": [
+      {
+        "name": "lpszDeviceName",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "iModeNum",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpDevMode",
+        "type": "LPDEVMODEW",
+        "out": true
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4839,
+    "name": "CreateWaitableTimerW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2622544754,
+    "args": [
+      {
+        "name": "lpTimerAttributes",
+        "type": "LPVOID"
+      },
+      {
+        "name": "bManualReset",
+        "type": "BOOL"
+      },
+      {
+        "name": "lpTimerName",
+        "type": "LPCWSTR"
+      }
+    ],
+    "ret": "HANDLE"
+  },
+  {
+    "id": 4840,
+    "name": "SetWaitableTimer",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2414140191,
+    "args": [
+      {
+        "name": "hTimer",
+        "type": "HANDLE"
+      },
+      {
+        "name": "pDueTime",
+        "type": "LPVOID"
+      },
+      {
+        "name": "lPeriod",
+        "type": "LONG"
+      },
+      {
+        "name": "pfnCompletionRoutine",
+        "type": "LPVOID"
+      },
+      {
+        "name": "lpArgToCompletionRoutine",
+        "type": "LPVOID"
+      },
+      {
+        "name": "fResume",
+        "type": "BOOL"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4841,
+    "name": "CancelWaitableTimer",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3264337543,
+    "args": [
+      {
+        "name": "hTimer",
+        "type": "HANDLE"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]

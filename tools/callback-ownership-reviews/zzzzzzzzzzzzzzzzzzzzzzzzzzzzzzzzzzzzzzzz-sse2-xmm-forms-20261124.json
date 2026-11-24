@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "eac27446dc148ae42bf4d9f6f8a10ef0d6b302dac8f490ab72abdacea4339a8b",
+      "sha256": "9e4c0b6aed0531a5e7282cec494bc5fedf9dd9345a9567efea5aca0c6bd9e9c1",
+      "reason": "SSE2 subops 53..77 (Spelunky Classic HD runner) read their exact operand width (m32/m64/m128) through the existing gl32/gl64/gl128 helpers after normal decoded segment addressing, then $sse2_exec writes one XMM register, one GPR or the lazy compare flags. The read finishes before any state is committed. No new callback, retained pointer, invocation state, exception boundary, EIP write or target; the existing alignment-fault EIP write is unchanged."
+    }
+  ]
+}

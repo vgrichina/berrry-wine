@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "8c540d1f3c37d167f05a365d8585b24d8f87bf3ab46b4214c7eb80d4ebbae24b",
+      "sha256": "e18b9653c96abe9be26edc85bb9df0b1c86abeb7c79db37de95ccf623cddc4da",
+      "reason": "Review 20261124 Spelunky Classic HD 1.1.7 local candidate registration: add one experimental LOCAL_CANDIDATE_APPS label, one root constant and one APPS data entry pointing at the unchanged downloaded exe, its shipped D3DX9_43.dll and the existing tree manifest. requiredFiles uses ordinary launcher behavior. No launch arguments, config overlays, registry seeds, callback producer, boundary, export, owner, continuation, EIP/stack/clock write, rendering or input fence change. No gameplay compatibility assertion. General callback ownership remains pending."
+    }
+  ]
+}

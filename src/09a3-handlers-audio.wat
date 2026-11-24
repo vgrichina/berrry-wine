@@ -2927,8 +2927,10 @@
   ;; the display state the screen metrics read, then the owning window resized
   ;; to it, then the messages Windows sends. There is deliberately no second
   ;; notion of "the current mode" here — SM_CXSCREEN has to give one answer.
-  (func $change_display_settings_core (param $devmode i32) (param $flags i32)
-    (local $fields i32) (local $w i32) (local $h i32) (local $bpp i32)
+  ;; $wide selects DEVMODEW, whose two doubled CHAR[32] arrays (dmDeviceName,
+  ;; dmFormName) put dmFields 32 bytes and the display fields 64 bytes later.
+  (func $change_display_settings_core (param $devmode i32) (param $flags i32) (param $wide i32)
+    (local $fields i32) (local $fo i32) (local $mo i32) (local $w i32) (local $h i32) (local $bpp i32)
     (local $changed i32) (local $target i32)
     ;; Taking the display is decided by whether a MODE IS APPLIED, not by
     ;; CDS_FULLSCREEN. That flag used to gate this, and reading it as "the app
@@ -2959,14 +2961,16 @@
     ;; down took Pinball's restored menu with it. RestoreDisplayMode is the
     ;; call that ends a DirectDraw mode.
     (if (i32.eqz (local.get $devmode)) (then (return)))
-    (local.set $fields (call $gl32 (i32.add (local.get $devmode) (i32.const 40))))
+    (local.set $fo (select (i32.const 72) (i32.const 40) (local.get $wide)))
+    (local.set $mo (select (i32.const 64) (i32.const 0) (local.get $wide)))
+    (local.set $fields (call $gl32 (i32.add (local.get $devmode) (local.get $fo))))
     ;; DM_PELSWIDTH | DM_PELSHEIGHT. A DEVMODE that names neither is asking for
     ;; something else (a refresh rate, an orientation) and leaves the mode be.
     (if (i32.ne (i32.and (local.get $fields) (i32.const 0x00180000))
                 (i32.const 0x00180000))
       (then (return)))
-    (local.set $w (call $gl32 (i32.add (local.get $devmode) (i32.const 108))))
-    (local.set $h (call $gl32 (i32.add (local.get $devmode) (i32.const 112))))
+    (local.set $w (call $gl32 (i32.add (local.get $devmode) (i32.add (local.get $mo) (i32.const 108)))))
+    (local.set $h (call $gl32 (i32.add (local.get $devmode) (i32.add (local.get $mo) (i32.const 112)))))
     ;; Refuse a mode no display has rather than resizing the window to it.
     (if (i32.or
           (i32.or (i32.lt_u (local.get $w) (i32.const 64))
@@ -2978,7 +2982,7 @@
         (return)))
     (local.set $bpp (call $dx_display_bpp_get))
     (if (i32.ne (i32.and (local.get $fields) (i32.const 0x00040000)) (i32.const 0))
-      (then (local.set $bpp (call $gl32 (i32.add (local.get $devmode) (i32.const 104))))))
+      (then (local.set $bpp (call $gl32 (i32.add (local.get $devmode) (i32.add (local.get $mo) (i32.const 104)))))))
     (if (i32.eqz (local.get $bpp)) (then (local.set $bpp (i32.const 32))))
     (local.set $changed
       (i32.or
@@ -3025,7 +3029,7 @@
     (call $invalidate_hwnd (local.get $target)))
 
   (func $handle_ChangeDisplaySettingsA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $change_display_settings_core (local.get $arg0) (local.get $arg1))
+    (call $change_display_settings_core (local.get $arg0) (local.get $arg1) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
@@ -3034,8 +3038,14 @@
   ;; OpenGL path takes the screen through this spelling rather than the short
   ;; one, so both have to record the same fullscreen intent.
   (func $handle_ChangeDisplaySettingsExA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $change_display_settings_core (local.get $arg1) (local.get $arg3))
+    (call $change_display_settings_core (local.get $arg1) (local.get $arg3) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+  )
+
+  ;; ChangeDisplaySettingsW(lpDevMode, dwFlags) — same policy, DEVMODEW layout.
+  (func $handle_ChangeDisplaySettingsW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $change_display_settings_core (local.get $arg0) (local.get $arg1) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
   ;; EnumDisplaySettingsA(lpszDeviceName, iModeNum, lpDevMode) — 3 args stdcall.
@@ -3125,8 +3135,8 @@
   )
 
   ;; EnumDisplaySettingsW has the same enumeration policy as the ANSI API — the
-  ;; same shared mode table, the same dense index — but the 32-WCHAR device name
-  ;; moves DEVMODEW's display fields 32 bytes.
+  ;; same shared mode table, the same dense index — but DEVMODEW's two WCHAR[32]
+  ;; arrays move dmSize 32 bytes and the display fields 64 bytes.
   (func $handle_EnumDisplaySettingsW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $buf i32) (local $screen i32) (local $size i32)
     (local $legacy i32) (local $w i32) (local $h i32) (local $bpp i32) (local $raw i32)
@@ -3155,14 +3165,19 @@
         (local.set $w (call $enum_mode_res_w (i32.div_u (local.get $raw) (i32.const 3))))
         (local.set $h (call $enum_mode_res_h (i32.div_u (local.get $raw) (i32.const 3))))
         (local.set $bpp (call $enum_mode_raw_bpp (local.get $raw)))))
-    ;; The Win95 DEVMODEW prefix is 156 bytes; later versions grew to 188
-    ;; and 220 bytes. The current-mode fields exist in every one of them.
-    (if (i32.lt_u (local.get $size) (i32.const 156))
+    ;; DEVMODEW doubles both CHAR[32] arrays of DEVMODEA (dmDeviceName and
+    ;; dmFormName), so it is 64 bytes longer: the Win95 prefix is 188 bytes
+    ;; (DEVMODEA's 124 + 64) and today's structure 220 (156 + 64). The
+    ;; current-mode fields exist in both. These used to sit only 32 bytes past
+    ;; the ANSI ones, so dmBitsPerPel landed in dmFormName and a caller read
+    ;; whatever its stack held -- GameMaker:Studio refused to start, reporting
+    ;; an 8-bit desktop.
+    (if (i32.lt_u (local.get $size) (i32.const 188))
       (then (i32.store offset=0 (global.get $reg_base) (i32.const 0))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
-    ;; The fields below end at 156 and the clear covers at most 220.
+    ;; The fields below end at 188 and the clear covers at most 220.
     (local.set $len
-      (select (i32.const 156)
+      (select (i32.const 188)
         (select (local.get $size) (i32.const 220)
           (i32.lt_u (local.get $size) (i32.const 220)))
         (local.get $legacy)))
@@ -3175,14 +3190,25 @@
     (i32.store16 offset=68 (local.get $buf) ;; dmSize
       (select (i32.const 0) (local.get $size) (local.get $legacy)))
     (i32.store offset=72 (local.get $buf) (i32.const 0x5C0000)) ;; dmFields
-    (i32.store offset=136 (local.get $buf) (local.get $bpp))    ;; dmBitsPerPel
-    (i32.store offset=140 (local.get $buf) (local.get $w))      ;; dmPelsWidth
-    (i32.store offset=144 (local.get $buf) (local.get $h))      ;; dmPelsHeight
-    (i32.store offset=152 (local.get $buf) (i32.const 60))      ;; dmDisplayFrequency
+    (i32.store offset=168 (local.get $buf) (local.get $bpp))    ;; dmBitsPerPel
+    (i32.store offset=172 (local.get $buf) (local.get $w))      ;; dmPelsWidth
+    (i32.store offset=176 (local.get $buf) (local.get $h))      ;; dmPelsHeight
+    (i32.store offset=184 (local.get $buf) (i32.const 60))      ;; dmDisplayFrequency
     (call $guest_span_writeback (local.get $arg2) (local.get $buf) (local.get $len))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
+
+  ;; EnumDisplaySettingsExW(lpszDeviceName, iModeNum, lpDevMode, dwFlags) — the
+  ;; flags (EDS_RAWMODE, EDS_ROTATEDMODE) only widen which modes a multi-monitor
+  ;; driver lists; this display has one mode table, so it is the 3-arg call
+  ;; plus one more stack argument.
+  (func $handle_EnumDisplaySettingsExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $esp i32)
+    (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+    (call $handle_EnumDisplaySettingsW (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $esp) (i32.const 20))))
 
   ;; EnumDisplayDevicesW(lpDevice, iDevNum, lpDisplayDevice, dwFlags).
   ;; Expose the fixed host surface as one primary desktop adapter and one
@@ -3837,6 +3863,131 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 11))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
+
+  ;; --- Waitable timers ---------------------------------------------------
+  ;; A waitable timer is an event the system signals at a deadline, and both
+  ;; halves already exist: the event is an ordinary sync object (so every
+  ;; wait path -- single, multiple, alertable, cross-thread -- works on it
+  ;; unchanged), and the deadline is a multimedia-timer slot of the
+  ;; TIME_CALLBACK_EVENT_SET kind, which the winmm timer thread (or, without
+  ;; it, every message pump) signals when due. Slot layout as timeSetEvent's:
+  ;;   +0 id, +4 interval ms, +8 the timer's event handle, +12 lPeriod ms
+  ;;   (0 = one-shot), +16 phase tick, +20 flags 0x10 EVENT_SET | 0x40
+  ;;   waitable timer | 1 one-shot.
+  ;; GameMaker:Studio's runner paces every frame through one of these.
+  (func $waitable_timer_slot (param $h i32) (result i32)
+    (local $i i32) (local $slot i32)
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (global.get $MM_TIMER_MAX)))
+      (local.set $slot (call $mm_timer_slot (local.get $i)))
+      (if (i32.and
+            (i32.ne (i32.load (local.get $slot)) (i32.const 0))
+            (i32.and
+              (i32.ne (i32.and (i32.load offset=20 (local.get $slot)) (i32.const 0x40)) (i32.const 0))
+              (i32.eq (i32.load offset=8 (local.get $slot)) (local.get $h))))
+        (then (return (local.get $slot))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; Disarm timer $h; 1 if it was armed. CloseHandle calls this for every
+  ;; handle, so a periodic timer does not outlive its event.
+  (func $waitable_timer_cancel (param $h i32) (result i32)
+    (local $slot i32)
+    (if (i32.eqz (local.get $h)) (then (return (i32.const 0))))
+    (local.set $slot (call $waitable_timer_slot (local.get $h)))
+    (if (i32.eqz (local.get $slot)) (then (return (i32.const 0))))
+    (i32.store (local.get $slot) (i32.const 0))
+    (i32.const 1))
+
+  ;; CreateWaitableTimerW(lpTimerAttributes, bManualReset, lpTimerName).
+  ;; bManualReset FALSE is a synchronization timer: an auto-reset event.
+  (func $handle_CreateWaitableTimerW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $create_event_core
+      (local.get $arg1) (i32.const 0) (local.get $arg2) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
+
+  ;; SetWaitableTimer(hTimer, pDueTime, lPeriod, pfnCompletionRoutine,
+  ;; lpArgToCompletionRoutine, fResume) — 6 args. *pDueTime is a FILETIME:
+  ;; negative = relative, in 100ns units; positive = absolute UTC. Setting a
+  ;; timer makes it non-signaled and replaces any earlier deadline. fResume
+  ;; (wake a suspended machine) has nothing to act on.
+  (func $handle_SetWaitableTimer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $due i64) (local $ms i64) (local $now i64) (local $buf i32)
+    (local $i i32) (local $slot i32) (local $id i32) (local $tick i32) (local $first i32)
+    ;; A completion routine is an APC queued to the setting thread; not
+    ;; implemented, and silently dropping it would lose the app's callback.
+    (if (local.get $arg3) (then (call $crash_unimplemented (local.get $name_ptr))))
+    (if (i32.or (i32.eqz (local.get $arg1)) (i32.lt_s (local.get $arg2) (i32.const 0)))
+      (then
+        (global.set $last_error (i32.const 87)) ;; ERROR_INVALID_PARAMETER
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (return)))
+    (if (i32.eqz (call $host_reset_event (local.get $arg0)))
+      (then
+        (global.set $last_error (i32.const 6)) ;; ERROR_INVALID_HANDLE
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (return)))
+    (drop (call $waitable_timer_cancel (local.get $arg0)))
+    (local.set $due (i64.or
+      (i64.extend_i32_u (call $gl32 (local.get $arg1)))
+      (i64.shl (i64.extend_i32_u (call $gl32 (i32.add (local.get $arg1) (i32.const 4))))
+               (i64.const 32))))
+    (if (i64.lt_s (local.get $due) (i64.const 0))
+      (then
+        (local.set $ms (i64.div_u
+          (i64.add (i64.sub (i64.const 0) (local.get $due)) (i64.const 9999))
+          (i64.const 10000))))
+      (else
+        ;; Absolute: measure against the same UTC clock GetSystemTimeAsFileTime reads.
+        (local.set $buf (call $heap_alloc (i32.const 8)))
+        (call $wall_clock_to_guest (local.get $buf) (i32.const 2) (i32.const 8))
+        (local.set $now (i64.or
+          (i64.extend_i32_u (call $gl32 (local.get $buf)))
+          (i64.shl (i64.extend_i32_u (call $gl32 (i32.add (local.get $buf) (i32.const 4))))
+                   (i64.const 32))))
+        (call $heap_free (local.get $buf))
+        (if (i64.gt_s (local.get $due) (local.get $now))
+          (then (local.set $ms (i64.div_u
+            (i64.add (i64.sub (local.get $due) (local.get $now)) (i64.const 9999))
+            (i64.const 10000)))))))
+    (if (i64.gt_u (local.get $ms) (i64.const 0x7FFFFFFF))
+      (then (local.set $ms (i64.const 0x7FFFFFFF))))
+    (local.set $first (i32.wrap_i64 (local.get $ms)))
+    (block $found (loop $scan
+      (if (i32.ge_u (local.get $i) (global.get $MM_TIMER_MAX))
+        (then
+          (global.set $last_error (i32.const 8)) ;; ERROR_NOT_ENOUGH_MEMORY
+          (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+          (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+          (return)))
+      (local.set $slot (call $mm_timer_slot (local.get $i)))
+      (br_if $found (i32.eqz (i32.load (local.get $slot))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (local.set $id (i32.load (global.get $MM_TIMER_NEXT_ID)))
+    (if (i32.eqz (local.get $id)) (then (local.set $id (i32.const 1))))
+    (i32.store (global.get $MM_TIMER_NEXT_ID) (i32.add (local.get $id) (i32.const 1)))
+    (local.set $tick (call $host_get_ticks))
+    (i32.store offset=4 (local.get $slot) (local.get $first))
+    (i32.store offset=8 (local.get $slot) (local.get $arg0))
+    (i32.store offset=12 (local.get $slot) (local.get $arg2))
+    (i32.store offset=16 (local.get $slot) (local.get $tick))
+    (i32.store offset=20 (local.get $slot)
+      (i32.or (i32.const 0x50) (i32.eqz (local.get $arg2))))
+    ;; The id last: a slot is live once +0 is non-zero.
+    (i32.store (local.get $slot) (local.get $id))
+    (call $mm_timer_thread_ensure)
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+
+  ;; CancelWaitableTimer(hTimer): disarm without changing the signaled state.
+  (func $handle_CancelWaitableTimer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (drop (call $waitable_timer_cancel (local.get $arg0)))
+    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
 
   ;; --- BASS 2.x PCM compatibility --------------------------------------
   ;; Pocket Tanks 1.6 loads its effects through BASS_SampleLoad and then

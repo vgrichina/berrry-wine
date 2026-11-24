@@ -4545,6 +4545,9 @@
   ;; 26: CloseHandle(hObject) — 1 arg stdcall
   (func $handle_CloseHandle (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $console_result i32)
+    ;; A waitable timer's deadline goes with its last handle; the event itself
+    ;; is closed by the sync-object path below.
+    (drop (call $waitable_timer_cancel (local.get $arg0)))
     (if (i32.or
           (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E60000))
           (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E40000)))

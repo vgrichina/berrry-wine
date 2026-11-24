@@ -9862,6 +9862,45 @@
     (call $heap_free (local.get $scratch))
     (local.get $required))
 
+  ;; ExpandEnvironmentStringsW core: the ANSI expansion of the source taken
+  ;; through the process code page both ways, so %NAME% lookup is the same
+  ;; $env_expand_a path. Returns required WCHARs including the NUL; the
+  ;; destination is written only when $size (WCHARs) holds all of it.
+  (func $env_expand_w (param $src i32) (param $dst i32) (param $size i32) (result i32)
+    (local $wlen i32) (local $asrc i32) (local $areq i32) (local $abuf i32)
+    (local $wtmp i32) (local $required i32)
+    (if (i32.eqz (local.get $src)) (then (return (i32.const 0))))
+    (local.set $wlen (call $guest_wcslen (local.get $src)))
+    (local.set $asrc (call $heap_alloc (i32.add (i32.shl (local.get $wlen) (i32.const 1)) (i32.const 1))))
+    (if (i32.eqz (local.get $asrc)) (then (return (i32.const 0))))
+    (drop (call $wide_to_ansi (local.get $src) (local.get $asrc)
+      (i32.add (i32.shl (local.get $wlen) (i32.const 1)) (i32.const 1))))
+    (local.set $areq (call $env_expand_a (local.get $asrc) (i32.const 0) (i32.const 0)))
+    (local.set $abuf (call $heap_alloc (i32.add (local.get $areq) (i32.const 1))))
+    (local.set $wtmp (call $heap_alloc (i32.shl (i32.add (local.get $areq) (i32.const 1)) (i32.const 1))))
+    (if (i32.or (i32.eqz (local.get $areq))
+          (i32.or (i32.eqz (local.get $abuf)) (i32.eqz (local.get $wtmp)))) (then
+      (call $heap_free (local.get $asrc))
+      (if (local.get $abuf) (then (call $heap_free (local.get $abuf))))
+      (if (local.get $wtmp) (then (call $heap_free (local.get $wtmp))))
+      (return (i32.const 0))))
+    (drop (call $env_expand_a (local.get $asrc) (local.get $abuf) (local.get $areq)))
+    (local.set $required (i32.add (call $ansi_to_wide (local.get $abuf) (local.get $wtmp)
+      (i32.add (local.get $areq) (i32.const 1))) (i32.const 1)))
+    (if (i32.and (i32.ne (local.get $dst) (i32.const 0))
+                 (i32.ge_u (local.get $size) (local.get $required)))
+      (then (drop (call $ansi_to_wide (local.get $abuf) (local.get $dst) (local.get $required)))))
+    (call $heap_free (local.get $wtmp))
+    (call $heap_free (local.get $abuf))
+    (call $heap_free (local.get $asrc))
+    (local.get $required))
+
+  ;; ExpandEnvironmentStrings entry shared by both spellings.
+  (func $env_expand (param $src i32) (param $dst i32) (param $size i32) (param $wide i32) (result i32)
+    (if (result i32) (local.get $wide)
+      (then (call $env_expand_w (local.get $src) (local.get $dst) (local.get $size)))
+      (else (call $env_expand_a (local.get $src) (local.get $dst) (local.get $size)))))
+
   ;; SetEnvironmentVariable: replaces or removes one entry. A NULL value
   ;; deletes. Returns TRUE unless the block has no room left.
   (func $env_set (param $name_g i32) (param $val_g i32) (param $wide i32) (result i32)
