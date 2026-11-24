@@ -3393,6 +3393,26 @@
             (call $te_raw (local.get $a))))
           (br $decode)))))
 
+      ;; SSE1 PMOVMSKB r32,mm (NP 0FD7). Register-only, so address size
+      ;; and segment overrides do not affect it. Compare the code16 default
+      ;; inversion to reject actual 66 (SSE2); reject memory before any EA.
+      (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
+        (if (i32.eq (call $gl8 (global.get $d_pc)) (i32.const 0xD7)) (then
+          (if (i32.or (i32.ne (local.get $prefix_66)
+                (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                         (i32.eqz (global.get $cs_big))))
+                (i32.or (i32.ne (local.get $prefix_rep) (i32.const 0))
+                        (i32.ne (local.get $prefix_lock) (i32.const 0))))
+            (then (unreachable)))
+          (drop (call $d_fetch8))
+          (if (i32.ne (i32.and (call $gl8 (global.get $d_pc)) (i32.const 0xC0)) (i32.const 0xC0))
+            (then (unreachable)))
+          (call $decode_modrm)
+          (call $te (i32.const 422)
+            (i32.or (i32.shl (i32.const 20) (i32.const 8))
+              (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
