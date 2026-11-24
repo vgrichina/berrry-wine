@@ -6359,9 +6359,8 @@
   ;; the old loop's, pixel for pixel (coordinates are pixels, not bytes):
   ;;   * the key is compared against the zero-extended pixel, so an 8/16-bit
   ;;     surface whose key does not fit its width keys nothing;
-  ;;   * a row whose source and destination bytes overlap (a surface blitting
-  ;;     onto itself) runs the old forward scalar loop, because the order in
-  ;;     which one pixel's store feeds a later pixel's load is observable there;
+  ;;   * overlapping rectangles with equal backing and pitch use the ordered
+  ;;     pixel helper so writes cannot replace unread source pixels;
   ;;   * any width other than 1, 2 or 3 bytes is treated as 4, as before.
   ;; 24bpp used to fall into the 4-byte loop too (4-byte stride, past the
   ;; rectangle); it now steps 3 bytes and compares the low 24 bits of the key.
@@ -6402,6 +6401,23 @@
       (then (local.set $ckey (i32.and (local.get $ckey) (i32.const 0xFFFFFF)))))
     (if (i32.eq (local.get $bps) (i32.const 4))
       (then (local.set $kv (i32x4.splat (local.get $ckey)))))
+    ;; Keyed aliases need snapshot-source ordering across rows and columns.
+    ;; The SIMD/forward path below is only safe when these rectangles do not overlap.
+    (if (i32.and
+          (i32.and (i32.eq (local.get $dst_dib) (local.get $src_dib))
+                   (i32.eq (local.get $dst_pitch) (local.get $src_pitch)))
+          (i32.and
+            (i32.and (i32.lt_u (local.get $dx) (i32.add (local.get $sx) (local.get $w)))
+                     (i32.lt_u (local.get $sx) (i32.add (local.get $dx) (local.get $w))))
+            (i32.and (i32.lt_u (local.get $dy) (i32.add (local.get $sy) (local.get $h)))
+                     (i32.lt_u (local.get $sy) (i32.add (local.get $dy) (local.get $h))))))
+      (then
+        (call $dx_blt_overlap_pixels
+          (local.get $dst_dib) (local.get $dst_pitch) (local.get $bps)
+          (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+          (local.get $w) (local.get $h) (i32.const 1) (local.get $ckey)
+          (i32.const 0) (i32.const 0))
+        (return)))
     (block $rows_done (loop $rows
       (br_if $rows_done (i32.ge_u (local.get $row) (local.get $h)))
       (local.set $d (i32.add (local.get $dst)

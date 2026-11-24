@@ -4,14 +4,13 @@
 // IDirectDrawSurface::BltFast and Blt(DDBLT_KEYSRC) copy colour-keyed sprites
 // through $dx_ckey_copy_rect, a width-dispatched, 16-bytes-at-a-time SIMD copy
 // that replaced a per-pixel loop re-testing bytes-per-pixel on every pixel
-// (60% of Moorhuhn 3's gameplay CPU). The rewrite must be pixel-exact against
-// that loop, so this runs randomized surfaces through the real handlers and
-// compares every destination byte with a JS model of the old scalar semantics:
+// (60% of Moorhuhn 3's gameplay CPU). Run randomized surfaces through the real
+// handlers and compare every destination byte with an immutable-source model:
 //
-//   * forward per-pixel order, row by row: `if (src_px != key) dst_px = src_px`
+//   * per-pixel selection: `if (src_px != key) dst_px = src_px`
 //     where src_px is the zero-extended 8/16/32-bit pixel, so an 8/16-bit key
 //     that does not fit the pixel keys nothing;
-//   * a surface blitting onto itself sees its own earlier stores (smearing);
+//   * a surface blitting onto itself reads pixels from before the copy;
 //   * BltFast clamps the source rect to both surfaces and ignores
 //     DDBLTFAST_DESTCOLORKEY (the old code did too);
 //   * 24bpp steps 3 bytes and compares the low 24 bits of the key (the old loop
@@ -82,15 +81,16 @@ function writePx(mem, off, bps, v) {
   for (let i = 0; i < bps; i++) mem[off + i] = (v >>> (8 * i)) & 0xff;
 }
 
-// The old scalar loop, as a model over a JS copy of a span of WASM memory
+// Immutable-source copy, modeled over a JS copy of a span of WASM memory
 // (mem.base is the WASM address of mem[0]).
 function refCopy(mem, d, s, w, h, bps, key, keyed) {
   const cmpKey = bps === 3 ? (key & 0xffffff) : (key >>> 0);
+  const source = mem.slice();
   for (let row = 0; row < h; row++) {
     for (let x = 0; x < w; x++) {
       const so = s.bits - mem.base + (s.y + row) * s.pitch + (s.x + x) * bps;
       const dof = d.bits - mem.base + (d.y + row) * d.pitch + (d.x + x) * bps;
-      const v = readPx(mem, so, bps);
+      const v = readPx(source, so, bps);
       if (!keyed || v !== cmpKey) writePx(mem, dof, bps, v);
     }
   }
@@ -193,7 +193,7 @@ function pixelValue(bps, key) {
         cases++;
       }
       // A surface blitting onto itself: every small offset, both directions,
-      // same row and adjacent rows, so the forward-order smear is exercised.
+      // same row and adjacent rows, preserving all pre-copy source pixels.
       for (let w = 1; w <= 36; w += 5) {
         for (const [ddx, ddy] of [[1, 0], [-1, 0], [3, 0], [-5, 0], [0, 1], [2, 1], [-2, -1], [17, 0], [-16, 0], [0, 0]]) {
           const s = fill(selfS);
