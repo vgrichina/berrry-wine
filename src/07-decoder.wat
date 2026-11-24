@@ -4226,7 +4226,8 @@
               (local.set $done (i32.const 1))
               (br $decode)))
           (call $decode_modrm)
-          (local.set $imm (call $d_fetch8))
+          ;; Mask before encoding: 0xFF is the threaded handler's CL marker.
+          (local.set $imm (i32.and (call $d_fetch8) (i32.const 31)))
           (if (i32.eq (local.get $op) (i32.const 0xC0))
             (then ;; 8-bit shift
               (if (i32.eq (global.get $mr_mod) (i32.const 3))

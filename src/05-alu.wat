@@ -213,8 +213,9 @@
     ;; RCL / RCR rotate through the carry flag, so the cycle is bits+1 long.
     (if (i32.eq (local.get $type) (i32.const 2)) ;; RCL
       (then
-        (local.set $cf (call $get_cf))
         (local.set $count (i32.rem_u (local.get $count) (i32.add (local.get $bits) (i32.const 1))))
+        (if (i32.eqz (local.get $count)) (then (return (local.get $val))))
+        (local.set $cf (call $get_cf))
         (block $done (loop $lp
           (br_if $done (i32.eqz (local.get $count)))
           (local.set $r (i32.or
@@ -232,8 +233,9 @@
 
     (if (i32.eq (local.get $type) (i32.const 3)) ;; RCR
       (then
-        (local.set $cf (call $get_cf))
         (local.set $count (i32.rem_u (local.get $count) (i32.add (local.get $bits) (i32.const 1))))
+        (if (i32.eqz (local.get $count)) (then (return (local.get $val))))
+        (local.set $cf (call $get_cf))
         (block $done (loop $lp
           (br_if $done (i32.eqz (local.get $count)))
           (local.set $r (i32.or (i32.shr_u (local.get $val) (i32.const 1))
@@ -1959,7 +1961,9 @@
     (if (i32.eq (local.get $count) (i32.const 0xFF))
       (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (call $set_reg8 (local.get $reg) (call $do_shift8 (local.get $type) (call $get_reg8 (local.get $reg)) (local.get $count)))
-    (global.set $flag_sign_shift (i32.const 7))
+    ;; Rotates retain SF, including the lazy source's width at count zero.
+    (if (i32.ge_u (local.get $type) (i32.const 4))
+      (then (global.set $flag_sign_shift (i32.const 7))))
     (dispatch-next))
   ;; 192: shift [addr] byte (operand = shift_type<<8 | count<<16, addr in next word)
   (func $th_shift_m8 (param $op i32)
@@ -1970,7 +1974,8 @@
     (if (i32.eq (local.get $count) (i32.const 0xFF))
       (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (call $gs8 (local.get $addr) (call $do_shift8 (local.get $type) (call $gl8 (local.get $addr)) (local.get $count)))
-    (global.set $flag_sign_shift (i32.const 7))
+    (if (i32.ge_u (local.get $type) (i32.const 4))
+      (then (global.set $flag_sign_shift (i32.const 7))))
     (dispatch-next))
   ;; 193: shift reg16 (operand = reg | shift_type<<8 | count<<16)
   (func $th_shift_r16 (param $op i32)
@@ -1982,7 +1987,8 @@
       (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (local.set $r (call $do_shift16 (local.get $type) (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2)))) (local.get $count)))
     (i32.store16 (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2))) (local.get $r))
-    (global.set $flag_sign_shift (i32.const 15))
+    (if (i32.ge_u (local.get $type) (i32.const 4))
+      (then (global.set $flag_sign_shift (i32.const 15))))
     (dispatch-next))
   ;; 194: shift [addr] word (operand = shift_type<<8 | count<<16, addr in next word)
   (func $th_shift_m16 (param $op i32)
@@ -1993,7 +1999,8 @@
     (if (i32.eq (local.get $count) (i32.const 0xFF))
       (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (call $gs16 (local.get $addr) (call $do_shift16 (local.get $type) (call $gl16 (local.get $addr)) (local.get $count)))
-    (global.set $flag_sign_shift (i32.const 15))
+    (if (i32.ge_u (local.get $type) (i32.const 4))
+      (then (global.set $flag_sign_shift (i32.const 15))))
     (dispatch-next))
   ;; 195: CMPXCHG8B [addr] — compare EDX:EAX with 8 bytes at [addr]
   (func $th_cmpxchg8b (param $op i32)
@@ -2974,7 +2981,8 @@
     (local.set $count (i32.and (local.get $info) (i32.const 0xFF)))
     (if (i32.eq (local.get $count) (i32.const 0xFF)) (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (call $gs8 (local.get $addr) (call $do_shift8 (local.get $stype) (call $gl8 (local.get $addr)) (local.get $count)))
-    (global.set $flag_sign_shift (i32.const 7))
+    (if (i32.ge_u (local.get $stype) (i32.const 4))
+      (then (global.set $flag_sign_shift (i32.const 7))))
     (dispatch-next))
   ;; 246: shift [base+disp] 16-bit (op=base, w1=disp, w2=shift_info)
   (func $th_shift_m16_ro (param $op i32)
@@ -2985,7 +2993,8 @@
     (local.set $count (i32.and (local.get $info) (i32.const 0xFF)))
     (if (i32.eq (local.get $count) (i32.const 0xFF)) (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
     (call $gs16 (local.get $addr) (call $do_shift16 (local.get $stype) (call $gl16 (local.get $addr)) (local.get $count)))
-    (global.set $flag_sign_shift (i32.const 15))
+    (if (i32.ge_u (local.get $stype) (i32.const 4))
+      (then (global.set $flag_sign_shift (i32.const 15))))
     (dispatch-next))
 
   ;; 247: CMPSW single
