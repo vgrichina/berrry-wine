@@ -587,6 +587,8 @@ const extraWat = `
   // events accumulated while its startup MessageBox was open used to make a
   // count-only peek report the whole browser FIFO; the following read then
   // overwrote MCM's saved return address with a DIDEVICEOBJECTDATA.dwOfs.
+  assert.strictEqual(wat.test_di_unacquire(mouse) >>> 0, 0,
+    'release the mouse before configuring device properties');
   const property = 0x00410300;
   wat.guest_write32(property, 20);      // DIPROPDWORD.dwSize
   wat.guest_write32(property + 4, 16);  // DIPROPHEADER.dwHeaderSize
@@ -612,6 +614,7 @@ const extraWat = `
     'GetProperty accepts DIPROP_AXISMODE');
   assert.strictEqual(wat.guest_read32(property + 16), 0,
     'GetProperty round-trips absolute axis mode');
+  assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0);
   // An absolute mouse reports the accumulated position, not the last delta.
   const absBefore = [];
   wat.test_di_mouse_seed_delta(0, 0);
@@ -662,6 +665,7 @@ const extraWat = `
   wat.test_di_mouse_get_state(mouse, data);
   assert.deepStrictEqual(statePosition(), [firstPosition[0] - 4, firstPosition[1] + 3],
     'buffer-first state also stays stable at idle');
+  assert.strictEqual(wat.test_di_unacquire(mouse) >>> 0, 0);
   wat.guest_write32(property + 16, 1); // DIPROPAXISMODE_REL
   assert.strictEqual(wat.test_di_set_buffer_size(mouse, 2, property) >>> 0, 0,
     'SetProperty accepts relative DIPROP_AXISMODE');
@@ -669,6 +673,7 @@ const extraWat = `
   assert.strictEqual(wat.test_di_get_property(mouse, 2, property) >>> 0, 0);
   assert.strictEqual(wat.guest_read32(property + 16), 1,
     'GetProperty round-trips relative axis mode');
+  assert.strictEqual(wat.test_di_acquire(mouse) >>> 0, 0);
   wat.test_di_mouse_seed_delta(4, 4);
   assert.strictEqual(wat.test_di_mouse_get_state(mouse, data) >>> 0, 0);
   assert.deepStrictEqual([wat.guest_read32(data) | 0, wat.guest_read32(data + 4) | 0], [4, 4],

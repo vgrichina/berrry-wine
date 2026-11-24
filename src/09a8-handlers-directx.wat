@@ -11184,8 +11184,9 @@
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
     (local.set $entry (call $dx_from_this (local.get $arg0)))
-    (if (i32.and (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
-          (i32.ne (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x400)) (i32.const 0)))
+    ;; Buffer and axis properties cannot change while either device is acquired.
+    (if (i32.ne (i32.and (load.field DxObject flags (local.get $entry))
+                         (i32.const 0x400)) (i32.const 0))
       (then
         (i32.store (global.get $reg_base) (i32.const 0x800700AA)) ;; DIERR_ACQUIRED
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
