@@ -84,6 +84,15 @@ function createWatxCompileEnv(options) {
     file: '<main>',     // the file whose forms are being expanded (cache-key attribution)
     reads: new Map(),   // file -> Set of 'option NAME' / 'target FEATURE'
     fileFixed: false,   // true when the caller sets `file` per form (streaming)
+    // Function advice (see applyWatxAdvice): the conditions enclosing the
+    // form being expanded, the read collectors of the `advise` forms being
+    // expanded, and every advice name written ANYWHERE -- chosen arm,
+    // unchosen arm or macro template -- so `(no-advise "x")` can tell a name
+    // this build switched off from a typo.
+    cfgStack: [],
+    adviceReads: [],
+    adviceNames: new Set(),
+    adviceScanned: new WeakSet(),
   };
 }
 
@@ -92,6 +101,20 @@ function watxCfgNoteReads(env, keys) {
   var set = env.reads.get(env.file);
   if (!set) { set = new Set(); env.reads.set(env.file, set); }
   for (var k of keys) set.add(k);
+  for (var c = 0; c < env.adviceReads.length; c++) for (var k2 of keys) env.adviceReads[c].add(k2);
+}
+
+// Record the name of every `(advise "NAME" ...)` under `node`, expanded or not.
+function watxNoteAdviceNames(node, env) {
+  var pending = [node];
+  while (pending.length) {
+    var n = pending.pop();
+    if (!Array.isArray(n)) continue;
+    if (watxValue(n[1]) === 'advise' && n.length > 2 && !Array.isArray(n[2]) && watxType(n[2]) === 'string') {
+      env.adviceNames.add(JSON.parse(watxValue(n[2])));
+    }
+    for (var i = 2; i < n.length; i++) if (Array.isArray(n[i])) pending.push(n[i]);
+  }
 }
 
 // An integer literal as a BigInt: decimal or 0x hex, optional sign, `_` digit
@@ -309,36 +332,49 @@ function watxCfgDeclare(form, env) {
 }
 
 // The forms of the branch a conditional selects, unexpanded.
+// The returned array carries `reads`: every option/target its conditions read,
+// which the forms of the chosen arm depend on (advice facts report it).
 function watxCfgChoose(form, env) {
   var head = watxValue(form[1]);
+  var reads = new Set();
   var cond = function (c, where) {
     var acc = new Set();
     var r = watxCfgEval(c, env, acc, where);
     watxCfgNoteReads(env, acc);
+    for (var k of acc) reads.add(k);
     if (r.t !== 'bool') throw watxCfgError('(' + head + ') condition must be a boolean', where);
     return r.v;
   };
   var arm = function (n, want) {
     return Array.isArray(n) && watxValue(n[1]) === want;
   };
+  var out;
   if (head === 'if-const') {
     if (form.length < 4 || form.length > 5 || !arm(form[3], 'then') || (form.length === 5 && !arm(form[4], 'else'))) {
       throw watxCfgError('(if-const COND (then FORMS...) (else FORMS...)) -- the else arm is optional', form);
     }
-    return cond(form[2], form) ? form[3].slice(2) : form.length === 5 ? form[4].slice(2) : [];
-  }
-  var chosen = null;
-  for (var i = 2; i < form.length; i++) {
-    var clause = form[i];
-    if (!Array.isArray(clause) || clause.length < 2) throw watxCfgError('(cond-const (COND FORMS...) ... (else FORMS...))', form);
-    if (watxValue(clause[1]) === 'else') {
-      if (i !== form.length - 1) throw watxCfgError('(cond-const): (else ...) must be the last clause', clause);
-      if (!chosen) chosen = clause.slice(2);
-      continue;
+    var taken = cond(form[2], form);
+    out = taken ? form[3].slice(2) : form.length === 5 ? form[4].slice(2) : [];
+    var other = taken ? form[4] : form[3];
+    if (other) watxNoteAdviceNames(other, env);
+  } else {
+    var chosen = null;
+    for (var i = 2; i < form.length; i++) {
+      var clause = form[i];
+      if (!Array.isArray(clause) || clause.length < 2) throw watxCfgError('(cond-const (COND FORMS...) ... (else FORMS...))', form);
+      if (watxValue(clause[1]) === 'else') {
+        if (i !== form.length - 1) throw watxCfgError('(cond-const): (else ...) must be the last clause', clause);
+        if (!chosen) chosen = clause.slice(2);
+        else watxNoteAdviceNames(clause, env);
+        continue;
+      }
+      if (cond(clause[1], clause) && !chosen) chosen = clause.slice(2);
+      else watxNoteAdviceNames(clause, env);
     }
-    if (cond(clause[1], clause) && !chosen) chosen = clause.slice(2);
+    out = chosen ? chosen.slice() : [];
   }
-  return chosen || [];
+  out.reads = reads;
+  return out;
 }
 
 // `(const NAME)` as an instruction operand: the literal, range-checked for the
@@ -371,6 +407,9 @@ function expandMacros(forms, env) {
           const params = sig.slice(2).map(p => watxValue(p) || p);
           const body = form.slice(3);
           macros.set(typeof name === 'string' ? name : name, { params, body });
+          // Once per template object: the streaming compiler hands the same
+          // macro forms to every per-function expansion.
+          if (!env.adviceScanned.has(form)) { env.adviceScanned.add(form); watxNoteAdviceNames(form, env); }
         }
       } else {
         out.push(form);
@@ -426,6 +465,20 @@ function expandMacros(forms, env) {
     return template;
   }
 
+  // An `(advise ...)` form with every child expanded, always as a new list (it
+  // carries its own `_watxAdviceReads`).
+  function expandAdviseChildren(form) {
+    const result = [form[0], form[1]];
+    for (let i = 2; i < form.length; i++) {
+      // A selector is data with its own closed grammar, not code: leave it
+      // unexpanded so (match (option X)) gets the selector's error.
+      if (Array.isArray(form[i]) && watxValue(form[i][1]) === 'match') { result.push(form[i]); continue; }
+      const r = expandForm(form[i], false, 'advise');
+      if (Array.isArray(r) && r._isBegin) result.push(...r); else result.push(r);
+    }
+    return result;
+  }
+
   // `top` is true only for a module-level position (a top-level form, or what
   // a top-level macro call or conditional splices there); declarations are
   // refused anywhere else.
@@ -434,17 +487,39 @@ function expandMacros(forms, env) {
     const head = watxValue(form[1]);
     if (head === 'if-const' || head === 'cond-const') {
       const out = [];
-      for (const item of watxCfgChoose(form, env)) {
-        const itemHead = Array.isArray(item) ? watxValue(item[1]) : null;
-        if (itemHead === 'include' || itemHead === 'defmacro') {
-          throw watxCfgError(`(${itemHead} ...) inside a compile-time conditional is not supported in v1 ` +
-            '(includes and macros are resolved before any condition is evaluated)', item);
+      const chosen = watxCfgChoose(form, env);
+      env.cfgStack.push(chosen.reads);
+      try {
+        for (const item of chosen) {
+          const itemHead = Array.isArray(item) ? watxValue(item[1]) : null;
+          if (itemHead === 'include' || itemHead === 'defmacro') {
+            throw watxCfgError(`(${itemHead} ...) inside a compile-time conditional is not supported in v1 ` +
+              '(includes and macros are resolved before any condition is evaluated)', item);
+          }
+          const r = expandForm(item, top, parentHead);
+          if (Array.isArray(r) && r._isBegin) out.push(...r); else out.push(r);
         }
-        const r = expandForm(item, top, parentHead);
-        if (Array.isArray(r) && r._isBegin) out.push(...r); else out.push(r);
+      } finally {
+        env.cfgStack.pop();
       }
       out._isBegin = true;
       return out;
+    }
+    if (head === 'advise') {
+      // Expand the advice like any form, and remember which options decided
+      // it: the conditions around it plus every read inside it.
+      watxNoteAdviceNames(form, env);
+      const reads = new Set();
+      for (const s of env.cfgStack) for (const k of s) reads.add(k);
+      env.adviceReads.push(reads);
+      let r;
+      try {
+        r = expandAdviseChildren(form);
+      } finally {
+        env.adviceReads.pop();
+      }
+      r._watxAdviceReads = [...reads].sort();
+      return r;
     }
     if (head === 'defoption' || head === 'defconst') {
       if (!top) throw watxCfgError(`(${head} ...) is a module-level declaration`, form);
@@ -534,19 +609,45 @@ function expandMacros(forms, env) {
   return expanded;
 }
 
-// --- Export wrappers -------------------------------------------------------
+// --- Function advice -------------------------------------------------------
 //
-//   (export-wrap (match SELECTOR) (prologue FORMS...))
-//   SELECTOR: (all) (name "a" ...) (prefix "p" ...) (pure) (not S) (and S...) (or S...)
+//   (advise ["NAME"] (match SELECTOR) (at export|entry) [(allow-hot)]
+//           :before FORMS...  |  :before-until FORMS...)        module level
+//   (func $f ... (advise ["NAME"] (at export|entry) [(allow-hot)] :before ...)
+//                (no-advise "NAME" ...) ...)                     function clauses
+//   SELECTOR: (all) (export) (pure) (effects) (name "a" ...) (prefix "p" ...)
+//             (in-table $t) (not S) (and S...) (or S...)
 //
 // Runs once, after pass 1 has seen every module-level form, on the expanded
-// module-level forms (function HEADERS in the streaming compiler). Each
-// function export a declaration matches is moved onto a generated function
-// with the same signature whose body is the prologue followed by a call to the
-// original; several matching declarations nest in declaration order, the
-// first outermost. Internal calls keep their targets. Generated wrappers are
-// appended after every other form, so existing function indices do not move,
-// and each moved export keeps its position in the export section.
+// module-level forms (function HEADERS in the streaming compiler), so the
+// conditionals that decide which advice exists are already settled.
+//
+// A function's chain, per place: the module-level advice whose selector
+// matches, in declaration order, minus those its (no-advise ...) names, then
+// its own (advise ...) clauses, innermost (closest to the body).
+//
+// (at export): each function export with a non-empty chain is moved onto
+// generated functions with the same signature, one per link, outermost first;
+// each runs its forms and then calls the next, the last calls the original.
+// Internal calls keep their targets. Wrappers are appended after every other
+// form, so existing function indices do not move, and each moved export keeps
+// its position in the export section. (name)/(prefix) test the EXPORT name.
+//
+// (at entry): the chain's forms are spliced at the top of the function body
+// (after its locals): no new function, no extra frame, every caller pays --
+// JS, call, call_indirect -- and return_call keeps working. (name)/(prefix)
+// test the FUNCTION name without its `$`. Matching a function placed in the
+// table (a dispatch handler), or more than WATX_ADVICE_HOT_LIMIT functions,
+// needs (allow-hot).
+//
+// :before runs and continues; it may not return. :before-until may
+// (return VALUE) of the function's result type, which skips the rest (at
+// entry: the body; at export: the rest of the chain and the function).
+// :after and :around are refused with what is planned for them.
+//
+// An advice whose forms are empty after if-const is dropped: no wrapper, no
+// prologue. `(no-advise "x")` must name advice written somewhere in the
+// program, chosen arm or not (env.adviceNames), so a typo still fails.
 //
 // `(pure)` is INFERRED, conservatively, from the macro-expanded body: true only
 // when the function has no `(effects ...)` clause, is not an import, has a
@@ -595,8 +696,10 @@ function watxBodyIsPure(body) {
   return any;
 }
 
-function watxParseExportSelector(node) {
-  if (!Array.isArray(node)) throw watxCfgError('export-wrap selector: expected (all) (name ...) (prefix ...) (pure) (not S) (and S...) (or S...)', node);
+var WATX_SELECTOR_USAGE = '(all) (export) (pure) (effects) (name "a" ...) (prefix "p" ...) (in-table $t) (not S) (and S...) (or S...)';
+
+function watxParseAdviceSelector(node, where) {
+  if (!Array.isArray(node)) throw watxCfgError('advise selector: expected ' + WATX_SELECTOR_USAGE, where);
   var op = watxValue(node[1]);
   var args = node.slice(2);
   var strings = function () {
@@ -606,26 +709,33 @@ function watxParseExportSelector(node) {
     return args.map(function (a) { return JSON.parse(watxValue(a)); });
   };
   switch (op) {
-    case 'all': case 'pure':
+    case 'all': case 'export': case 'pure': case 'effects':
       if (args.length) throw watxCfgError('(' + op + ') takes no operands', node);
       return { op: op };
     case 'name': return { op: op, names: new Set(strings()) };
     case 'prefix': return { op: op, prefixes: strings() };
+    case 'in-table':
+      if (args.length !== 1 || Array.isArray(args[0])) throw watxCfgError('(in-table $TABLE) names one table', node);
+      return { op: op, table: watxValue(args[0]), node: node };
     case 'not':
       if (args.length !== 1) throw watxCfgError('(not S) takes one selector', node);
-      return { op: op, args: [watxParseExportSelector(args[0])] };
+      return { op: op, args: [watxParseAdviceSelector(args[0], node)] };
     case 'and': case 'or':
       if (!args.length) throw watxCfgError('(' + op + ' S...) takes one or more selectors', node);
-      return { op: op, args: args.map(watxParseExportSelector) };
+      return { op: op, args: args.map(function (a) { return watxParseAdviceSelector(a, node); }) };
+    case 'option': case 'target': case 'const':
+      throw watxCfgError('advise: a selector never tests the build (' + op + ' ...): it picks functions; ' +
+        'put the advise inside (if-const ...) to make it conditional', node);
     default:
-      throw watxCfgError("export-wrap: unknown selector '" + op + "'", node);
+      throw watxCfgError("advise: unknown selector '" + op + "' (selectors: " + WATX_SELECTOR_USAGE + ')', node);
   }
 }
 
 function watxSelectorText(s) {
-  if (s.op === 'all' || s.op === 'pure') return '(' + s.op + ')';
+  if (s.op === 'all' || s.op === 'export' || s.op === 'pure' || s.op === 'effects') return '(' + s.op + ')';
   if (s.op === 'name') return '(name ' + Array.from(s.names).map(function (n) { return JSON.stringify(n); }).join(' ') + ')';
   if (s.op === 'prefix') return '(prefix ' + s.prefixes.map(function (n) { return JSON.stringify(n); }).join(' ') + ')';
+  if (s.op === 'in-table') return '(in-table ' + s.table + ')';
   return '(' + s.op + ' ' + s.args.map(watxSelectorText).join(' ') + ')';
 }
 
@@ -633,21 +743,30 @@ function watxSelectorUsesPure(s) {
   return s.op === 'pure' || (!!s.args && s.args.some(watxSelectorUsesPure));
 }
 
-// `pure()` is lazy: purity costs a body parse in the streaming compiler, so
-// cheaper operands of and/or are decided first (selectors have no effects, so
-// the order cannot change the answer).
-function watxSelectorMatch(s, name, pure) {
+function watxSelectorEach(s, fn) {
+  fn(s);
+  if (s.args) s.args.forEach(function (a) { watxSelectorEach(a, fn); });
+}
+
+// ctx: { name, exported, effects, inTable, pure() }. `pure()` is lazy: purity
+// costs a body parse in the streaming compiler, so cheaper operands of and/or
+// are decided first (selectors have no effects, so the order cannot change
+// the answer).
+function watxSelectorMatch(s, ctx) {
   switch (s.op) {
     case 'all': return true;
-    case 'pure': return pure();
-    case 'name': return s.names.has(name);
-    case 'prefix': return s.prefixes.some(function (p) { return name.indexOf(p) === 0; });
-    case 'not': return !watxSelectorMatch(s.args[0], name, pure);
+    case 'export': return ctx.exported;
+    case 'pure': return ctx.pure();
+    case 'effects': return ctx.effects;
+    case 'in-table': return ctx.inTable;
+    case 'name': return s.names.has(ctx.name);
+    case 'prefix': return s.prefixes.some(function (p) { return ctx.name.indexOf(p) === 0; });
+    case 'not': return !watxSelectorMatch(s.args[0], ctx);
     default: {
       var ordered = s.args.filter(function (a) { return !watxSelectorUsesPure(a); })
         .concat(s.args.filter(watxSelectorUsesPure));
       for (var i = 0; i < ordered.length; i++) {
-        var m = watxSelectorMatch(ordered[i], name, pure);
+        var m = watxSelectorMatch(ordered[i], ctx);
         if (s.op === 'and' && !m) return false;
         if (s.op === 'or' && m) return true;
       }
@@ -656,10 +775,96 @@ function watxSelectorMatch(s, name, pure) {
   }
 }
 
+var WATX_ADVICE_HOT_LIMIT = 32;
+var WATX_ADVICE_LATER = {
+  ':after': ':after is not in v1. Planned: at (at export), where the wrapper calls the function normally; ' +
+    'at (at entry) only for functions with no return_call exit',
+  ':around': ':around is not in v1. Planned: at (at export) only; at (at entry) there is no separate original to call',
+  ':filter-args': ':filter-args is not planned',
+  ':override': ':override is not planned',
+};
+
+// One `(advise ...)` form, module level (owner null) or a clause of function
+// `owner`.
+function watxParseAdvice(f, owner) {
+  var V = watxValue;
+  var loc = watxFormLoc(f);
+  var d = { name: null, selector: null, at: null, allowHot: false, qualifier: null, forms: [],
+            inline: owner !== null, owner: owner, loc: loc,
+            file: loc !== undefined ? watxNodeFile(loc) : null, line: loc !== undefined ? watxNodeLine(loc) : 0,
+            reads: f._watxAdviceReads || [], matched: [], tableHit: null };
+  var usage = owner !== null
+    ? '(advise ["NAME"] (at export|entry) [(allow-hot)] :before|:before-until FORMS...) on a function'
+    : '(advise ["NAME"] (match SELECTOR) (at export|entry) [(allow-hot)] :before|:before-until FORMS...)';
+  var i = 2;
+  if (i < f.length && !Array.isArray(f[i]) && watxType(f[i]) === 'string') d.name = JSON.parse(V(f[i++]));
+  var seen = {};
+  for (; i < f.length && Array.isArray(f[i]); i++) {
+    var c = f[i], k = V(c[1]);
+    if (k !== 'match' && k !== 'at' && k !== 'allow-hot') break;
+    if (seen[k]) throw watxCfgError('advise: (' + k + ' ...) given twice', c);
+    seen[k] = true;
+    if (k === 'match') {
+      if (owner !== null) throw watxCfgError('advise on a function takes no (match ...): it applies to ' + owner, c);
+      if (c.length !== 3) throw watxCfgError('(match SELECTOR) takes one selector', c);
+      d.selector = watxParseAdviceSelector(c[2], c);
+    } else if (k === 'at') {
+      var w = c.length === 3 && !Array.isArray(c[2]) ? V(c[2]) : null;
+      if (w !== 'export' && w !== 'entry') throw watxCfgError('advise: (at export) or (at entry)', c);
+      d.at = w;
+    } else {
+      if (c.length !== 2) throw watxCfgError('(allow-hot) takes no operands', c);
+      d.allowHot = true;
+    }
+  }
+  if (i >= f.length || Array.isArray(f[i])) {
+    throw watxCfgError(usage + ': expected the qualifier :before or :before-until' +
+      (i < f.length ? ", got (" + V(f[i][1]) + ' ...)' : ''), i < f.length ? f[i] : f);
+  }
+  var q = V(f[i]);
+  if (WATX_ADVICE_LATER[q]) throw watxCfgError('advise: ' + WATX_ADVICE_LATER[q], f);
+  if (q !== ':before' && q !== ':before-until') {
+    throw watxCfgError("advise: unknown qualifier '" + q + "' (v1 has :before and :before-until)", f);
+  }
+  d.qualifier = q;
+  d.forms = f.slice(i + 1);
+  if (!d.at) throw watxCfgError(usage + ': (at export) or (at entry) is required', f);
+  if (owner === null && !d.selector) throw watxCfgError(usage + ': module-level advice needs (match SELECTOR)', f);
+  if (d.allowHot && d.at !== 'entry') throw watxCfgError('advise: (allow-hot) only applies to (at entry) advice', f);
+  var pending = d.forms.slice();
+  while (pending.length) {
+    var n = pending.pop();
+    var h = Array.isArray(n) ? V(n[1]) : V(n);
+    if (typeof h === 'string' && h.charAt(0) === ':') {
+      throw watxCfgError("advise: one qualifier per advise ('" + q + "' already given, then '" + h + "')", Array.isArray(n) ? n : f);
+    }
+    if (h === 'local') throw watxCfgError('advise: an advice body cannot declare (local ...)', n);
+    if (h === 'return_call' || h === 'return_call_indirect' || h === 'return_call_ref') {
+      throw watxCfgError('advise: advice cannot tail-call (' + h + ')', Array.isArray(n) ? n : f);
+    }
+    if (h === 'return' && q === ':before') {
+      throw watxCfgError('advise: :before advice cannot return; use :before-until to (return VALUE) early', Array.isArray(n) ? n : f);
+    }
+    if (Array.isArray(n)) for (var j = 2; j < n.length; j++) pending.push(n[j]);
+  }
+  d.dropped = d.forms.length === 0;
+  return d;
+}
+
+function watxAdviceLabel(d) {
+  return (d.name !== null ? '"' + d.name + '"' : '#' + d.index) + (d.inline ? ' on ' + d.owner : '') +
+    (d.file ? ' (' + d.file + ':' + d.line + ')' : '');
+}
+
+function watxAdviceLink(d) {
+  return { index: d.index, name: d.name, inline: d.inline, qualifier: d.qualifier, file: d.file, line: d.line };
+}
+
 // Inline export registration for a function form at index fi. A function
-// export-wrap touched lists every clause it had, moved or not, in written
-// order; it registers them all here (a moved one under its wrapper's name), so
-// the export section's insertion order is the same as without the wrap. Returns
+// whose exports the advice weaver visited lists every clause it had, moved or
+// not, in written order; it registers them all here (a moved one under its
+// wrapper's name), so the export section's insertion order is the same as
+// without advice. Returns
 // true when it did, and the caller then skips export clauses in the form; a
 // moved clause met on its wrapper is skipped too (clause._watxMoved).
 function watxHomeExports(form, name, fi, out) {
@@ -675,29 +880,41 @@ function watxCloneTree(n) {
   return Array.isArray(n) ? n.map(watxCloneTree) : n;
 }
 
+// Where an entry prologue goes in a list of function parts starting at `from`:
+// after the name and every leading declaration clause (param, result, local,
+// type, export, effects), so the prologue is the first code that runs.
+function watxEntryInsertIndex(parts, from) {
+  var i = from;
+  if (typeof parts[i] === 'string' && parts[i].charAt(0) === '$') i++;
+  while (i < parts.length && Array.isArray(parts[i]) && WATX_DECL_HEADS[watxValue(parts[i][1])]) i++;
+  return i;
+}
+
 // forms: expanded module-level forms. bodyOf(funcForm) returns that function's
-// expanded body forms (or null if unavailable). Returns { forms, report }; a
-// module with no export-wrap declaration comes back as the same array.
-function applyWatxExportWraps(forms, bodyOf) {
+// expanded body forms (or null if unavailable). env: the compile-time
+// environment (for env.adviceNames). headersOnly: the function forms are
+// pass-1 HEADERS (the streaming compiler), so an entry prologue is left on the
+// header as `_watxEntryPrologue` for the body loader to splice. Returns
+// { forms, report }; a module with no advise or no-advise form comes back as
+// the same array with a null report.
+function applyWatxAdvice(forms, bodyOf, env, headersOnly) {
   var V = watxValue;
-  var isWrap = function (f) { return Array.isArray(f) && V(f[1]) === 'export-wrap'; };
-  if (!forms.some(isWrap)) return { forms: forms, report: null };
-  var decls = [], rest = [];
-  for (var fi = 0; fi < forms.length; fi++) {
-    var f = forms[fi];
-    if (!isWrap(f)) { rest.push(f); continue; }
-    var m = f[2], p = f[3];
-    if (f.length !== 4 || !Array.isArray(m) || V(m[1]) !== 'match' || m.length !== 3 ||
-        !Array.isArray(p) || V(p[1]) !== 'prologue') {
-      throw watxCfgError('(export-wrap (match SELECTOR) (prologue FORMS...))', f);
-    }
-    var loc = watxFormLoc(f);
-    decls.push({ index: decls.length, selector: watxParseExportSelector(m[2]), prologue: p.slice(2), loc: loc,
-                 file: loc !== undefined ? watxNodeFile(loc) : null, line: loc !== undefined ? watxNodeLine(loc) : 0 });
+  var clauseKind = function (p) {
+    if (!Array.isArray(p)) return null;
+    var h = V(p[1]);
+    return h === 'advise' || h === 'no-advise' ? h : null;
+  };
+  var any = false;
+  for (var q = 0; q < forms.length && !any; q++) {
+    var f0 = forms[q];
+    if (!Array.isArray(f0)) continue;
+    var h0 = V(f0[1]);
+    if (h0 === 'advise' || h0 === 'no-advise') any = true;
+    else if (h0 === 'func') for (var c0 = 2; c0 < f0.length; c0++) if (clauseKind(f0[c0])) { any = true; break; }
   }
+  if (!any) return { forms: forms, report: null };
 
   // Signatures of everything an export can name.
-  var funcs = new Map();
   var sigOf = function (parts, from) {
     var params = [], results = [], effects = false;
     for (var i = from; i < parts.length; i++) {
@@ -707,24 +924,128 @@ function applyWatxExportWraps(forms, bodyOf) {
       if (k === 'param') for (var j = 2; j < part.length; j++) { var t = V(part[j]); if (t && t.charAt(0) !== '$') params.push(t); }
       else if (k === 'result') for (var r = 2; r < part.length; r++) results.push(V(part[r]));
       else if (k === 'effects') effects = true;
-      else if (k === 'type') throw watxCfgError('export-wrap: a (type ...) function signature is not supported; spell (param ...)/(result ...)', part);
+      else if (k === 'type') throw watxCfgError('advise: a (type ...) function signature is not supported; spell (param ...)/(result ...)', part);
     }
     return { params: params, results: results, effects: effects };
   };
-  for (var ri = 0; ri < rest.length; ri++) {
-    var g = rest[ri];
-    if (!Array.isArray(g)) continue;
-    var h = V(g[1]);
+  var newInfo = function (form, name, imported, sig) {
+    return Object.assign({ form: form, name: name, imported: imported, own: [], noAdvise: new Map(),
+                           exportNames: [], entryChain: [], exportChains: [] }, sig);
+  };
+
+  // Every advice in source order (module-level and function clauses alike);
+  // a declaration's index is its place here.
+  var all = [], rest = [], funcs = new Map(), defined = [], everything = [];
+  var addDecl = function (d) { d.index = all.length; all.push(d); };
+  for (var fi = 0; fi < forms.length; fi++) {
+    var f = forms[fi];
+    if (!Array.isArray(f)) { rest.push(f); continue; }
+    var h = V(f[1]);
+    if (h === 'advise') { addDecl(watxParseAdvice(f, null)); continue; }
+    if (h === 'no-advise') throw watxCfgError('(no-advise "NAME") is a function clause: write it in the (func ...) it exempts', f);
+    rest.push(f);
     if (h === 'func') {
-      var fname = typeof g[2] === 'string' && g[2].charAt(0) === '$' ? g[2] : null;
-      var info = Object.assign({ form: g, name: fname, imported: false }, sigOf(g, 2));
+      var fname = typeof f[2] === 'string' && f[2].charAt(0) === '$' ? f[2] : null;
+      var info = newInfo(f, fname, false, sigOf(f, 2));
+      var clauses = [];
+      for (var ci = 2; ci < f.length; ci++) if (clauseKind(f[ci])) clauses.push(f[ci]);
+      if (clauses.length) {
+        for (ci = f.length - 1; ci >= 2; ci--) if (clauseKind(f[ci])) f.splice(ci, 1);
+        for (var k = 0; k < clauses.length; k++) {
+          var c = clauses[k];
+          if (V(c[1]) === 'advise') {
+            var own = watxParseAdvice(c, fname || '(anonymous function)');
+            info.own.push(own);
+            addDecl(own);
+            continue;
+          }
+          if (c.length < 3) throw watxCfgError('(no-advise "NAME" ...) names one or more advice', c);
+          for (var nj = 2; nj < c.length; nj++) {
+            if (Array.isArray(c[nj]) || watxType(c[nj]) !== 'string') throw watxCfgError('(no-advise "NAME" ...) takes advice names as strings', c);
+            info.noAdvise.set(JSON.parse(V(c[nj])), c);
+          }
+        }
+      }
       if (fname) funcs.set(fname, info);
-      g._watxWrapInfo = info;
-    } else if ((h === 'import' || h === 'wasm-import') && Array.isArray(g[4]) && V(g[4][1]) === 'func' &&
-               typeof g[4][2] === 'string' && g[4][2].charAt(0) === '$') {
-      funcs.set(g[4][2], Object.assign({ form: null, name: g[4][2], imported: true }, sigOf(g[4], 3)));
+      defined.push(info);
+      everything.push(info);
+      f._watxAdviceInfo = info;
+    } else if ((h === 'import' || h === 'wasm-import') && Array.isArray(f[4]) && V(f[4][1]) === 'func' &&
+               typeof f[4][2] === 'string' && f[4][2].charAt(0) === '$') {
+      var imp = newInfo(null, f[4][2], true, sigOf(f[4], 3));
+      funcs.set(f[4][2], imp);
+      everything.push(imp);
     }
   }
+
+  // Names: unique, and every (no-advise "x") names advice that exists in SOME
+  // configuration (env.adviceNames saw every arm), so a typo still fails.
+  var byName = new Map();
+  all.forEach(function (d) {
+    if (d.name === null) return;
+    var was = byName.get(d.name);
+    if (was) throw watxCfgError('advise: "' + d.name + '" is already declared (' + was.file + ':' + was.line + ')', d.loc);
+    byName.set(d.name, d);
+  });
+  defined.forEach(function (info) {
+    info.noAdvise.forEach(function (clause, nm) {
+      if (!byName.has(nm) && !(env && env.adviceNames.has(nm))) {
+        throw watxCfgError('(no-advise "' + nm + '"): no advice is named "' + nm + '" in any configuration of this program', clause);
+      }
+    });
+  });
+
+  // The table: (in-table $t) and the hot-function rule read it.
+  var hasTable = false, tableName = null, inTable = new Set();
+  rest.forEach(function (g) {
+    if (!Array.isArray(g)) return;
+    var gh = V(g[1]), i;
+    if (gh === 'table') {
+      hasTable = true;
+      if (typeof g[2] === 'string' && g[2].charAt(0) === '$') tableName = g[2];
+    } else if (gh === 'func-table') {
+      hasTable = true;
+      for (i = 2; i < g.length; i++) if (typeof g[i] === 'string' && g[i].charAt(0) === '$') inTable.add(g[i]);
+    } else if (gh === 'elem') {
+      i = 2;
+      if (typeof g[i] === 'string' && g[i].charAt(0) === '$') i++;
+      if (Array.isArray(g[i]) && V(g[i][1]) === 'table') i++;
+      i++;                                    // the offset expression
+      for (; i < g.length; i++) if (typeof g[i] === 'string' && g[i].charAt(0) === '$') inTable.add(g[i]);
+    }
+  });
+  all.forEach(function (d) {
+    if (!d.selector) return;
+    watxSelectorEach(d.selector, function (s) {
+      if (s.op !== 'in-table') return;
+      if (!hasTable) throw watxCfgError('(in-table ' + s.table + '): this module declares no table', s.node);
+      if (s.table !== (tableName || '0') && s.table !== '0') {
+        throw watxCfgError('(in-table ' + s.table + '): the module\'s table is ' + (tableName || '0'), s.node);
+      }
+    });
+  });
+
+  // Which functions are exported, for (export) at entry.
+  var exportTarget = function (e) {
+    var eh = V(e[1]), ref = null;
+    if (eh === 'export' && Array.isArray(e[3]) && V(e[3][1]) === 'func') ref = V(e[3][2]);
+    else if (eh === 'wasm-export') ref = V(e[3]);
+    else return null;
+    var t = funcs.get(ref);
+    if (!t) throw watxCfgError('advise: export ' + V(e[2]) + " names '" + ref + "', which is not a named function", e);
+    return t;
+  };
+  rest.forEach(function (e) {
+    if (!Array.isArray(e)) return;
+    if (V(e[1]) === 'func') {
+      for (var ci2 = 2; ci2 < e.length; ci2++) {
+        if (Array.isArray(e[ci2]) && V(e[ci2][1]) === 'export') e._watxAdviceInfo.exportNames.push(JSON.parse(V(e[ci2][2])));
+      }
+    } else {
+      var t = exportTarget(e);
+      if (t) t.exportNames.push(JSON.parse(V(e[2])));
+    }
+  });
 
   var purity = new Map();
   var pureOf = function (info) {
@@ -737,24 +1058,60 @@ function applyWatxExportWraps(forms, bodyOf) {
     purity.set(info, v);
     return v;
   };
+  var outside = all.filter(function (d) { return !d.inline && !d.dropped; });
+  var optedOut = function (info, d) { return d.name !== null && info.noAdvise.has(d.name); };
 
-  var report = {
-    declarations: decls.map(function (d) {
-      return { index: d.index, file: d.file, line: d.line, match: watxSelectorText(d.selector), prologueForms: d.prologue.length };
-    }),
-    exports: [],
+  // (at entry) chains, on the functions as written.
+  defined.forEach(function (info) {
+    var ctx = { name: info.name ? info.name.slice(1) : '', exported: info.exportNames.length > 0,
+                effects: info.effects, inTable: !!info.name && inTable.has(info.name),
+                pure: function () { return pureOf(info); } };
+    outside.forEach(function (d) {
+      if (d.at === 'entry' && !optedOut(info, d) && watxSelectorMatch(d.selector, ctx)) info.entryChain.push(d);
+    });
+    info.own.forEach(function (d) { if (d.at === 'entry' && !d.dropped) info.entryChain.push(d); });
+    info.entryChain.forEach(function (d) {
+      d.matched.push(info.name || '(anonymous function)');
+      if (ctx.inTable && !d.tableHit) d.tableHit = info.name;
+    });
+  });
+  all.forEach(function (d) {
+    if (d.at !== 'entry' || d.dropped || d.allowHot) return;
+    if (d.tableHit) {
+      throw watxCfgError('advise ' + watxAdviceLabel(d) + ' is (at entry) on ' + d.tableHit + ', which is in table ' +
+        (tableName || '0') + ' (a dispatch handler: every dispatch would run it); add (allow-hot) if that is intended', d.loc);
+    }
+    if (d.matched.length > WATX_ADVICE_HOT_LIMIT) {
+      throw watxCfgError('advise ' + watxAdviceLabel(d) + ' is (at entry) on ' + d.matched.length + ' functions, more than ' +
+        WATX_ADVICE_HOT_LIMIT + '; add (allow-hot) if every one of them should pay for it', d.loc);
+    }
+  });
+
+  // (at export) chains. A function's purity, for an export selector, includes
+  // the entry advice it now starts with.
+  var exportPurity = new Map();
+  var exportPureOf = function (info) {
+    if (exportPurity.has(info)) return exportPurity.get(info);
+    var v = pureOf(info) && info.entryChain.every(function (d) { return watxBodyIsPure(d.forms); });
+    exportPurity.set(info, v);
+    return v;
   };
+  var report = { hotLimit: WATX_ADVICE_HOT_LIMIT, declarations: null, chains: [], exports: [], wrapped: 0 };
   var wrappers = [];
   var serial = 0;
   var sanitize = function (s) { return s.replace(/[^A-Za-z0-9_]/g, '_'); };
-  var wrapExport = function (exportName, info, at, moveExport) {
-    var matched = decls.filter(function (d) {
-      return watxSelectorMatch(d.selector, exportName, function () { return pureOf(info); });
-    });
-    var row = { name: exportName, target: info.name, wrappers: matched.map(function (d) { return d.index; }),
-                pure: purity.has(info) ? purity.get(info) : null };
+  var adviseExport = function (exportName, info, moveExport) {
+    var ctx = { name: exportName, exported: true, effects: info.effects, inTable: !!info.name && inTable.has(info.name),
+                pure: function () { return exportPureOf(info); } };
+    var chain = outside.filter(function (d) {
+      return d.at === 'export' && !optedOut(info, d) && watxSelectorMatch(d.selector, ctx);
+    }).concat(info.own.filter(function (d) { return d.at === 'export' && !d.dropped; }));
+    chain.forEach(function (d) { d.matched.push(exportName); });
+    var row = { name: exportName, target: info.name, advice: chain.map(function (d) { return d.index; }),
+                pure: exportPurity.has(info) ? exportPurity.get(info) : null };
     report.exports.push(row);
-    if (!matched.length) return;
+    if (!chain.length) return;
+    info.exportChains.push({ name: exportName, chain: chain });
     if (!info.name) {
       // An anonymous exported function needs a name for the wrapper to call.
       info.name = '$__xw_impl_' + (serial++);
@@ -764,15 +1121,15 @@ function applyWatxExportWraps(forms, bodyOf) {
     var id = serial++;
     var next = info.name;
     var made = [];
-    for (var j = matched.length - 1; j >= 0; j--) {
-      var d = matched[j];
+    for (var j = chain.length - 1; j >= 0; j--) {
+      var d = chain[j];
       var wloc = d.loc;
       var wname = '$__xw' + d.index + '_' + id + '_' + sanitize(exportName);
       var w = [wloc, 'func', wname];
       if (j === 0) w.push(moveExport(wname, wloc));
       for (var pi = 0; pi < info.params.length; pi++) w.push([wloc, 'param', info.params[pi]]);
       for (var qi = 0; qi < info.results.length; qi++) w.push([wloc, 'result', info.results[qi]]);
-      for (var fi2 = 0; fi2 < d.prologue.length; fi2++) w.push(watxCloneTree(d.prologue[fi2]));
+      for (var fi2 = 0; fi2 < d.forms.length; fi2++) w.push(watxCloneTree(d.forms[fi2]));
       var call = [wloc, 'call', next];
       for (var li = 0; li < info.params.length; li++) call.push([wloc, 'local.get', String(li)]);
       w.push(call);
@@ -781,7 +1138,7 @@ function applyWatxExportWraps(forms, bodyOf) {
     }
     row.wrapperFunctions = made.map(function (w) { return w[2]; }).reverse();
     for (var mi = made.length - 1; mi >= 0; mi--) wrappers.push(made[mi]);
-    report.wrapped = (report.wrapped || 0) + 1;
+    report.wrapped++;
   };
 
   for (var ei = 0; ei < rest.length; ei++) {
@@ -789,17 +1146,17 @@ function applyWatxExportWraps(forms, bodyOf) {
     if (!Array.isArray(e)) continue;
     var eh = V(e[1]);
     if (eh === 'func') {
-      var clauses = [];
-      for (var ci = 2; ci < e.length; ci++) if (Array.isArray(e[ci]) && V(e[ci][1]) === 'export') clauses.push(e[ci]);
-      if (!clauses.length) continue;
+      var exportClauses = [];
+      for (var xi = 2; xi < e.length; xi++) if (Array.isArray(e[xi]) && V(e[xi][1]) === 'export') exportClauses.push(e[xi]);
+      if (!exportClauses.length) continue;
       // Every export clause of this form keeps its written place in the
       // export section, whether it stays here or moves to a wrapper: the
       // export collectors register all of them HERE, in written order, from
       // this list (watxHomeExports), and skip a moved clause on its wrapper.
-      var homeList = clauses.map(function (c) { return { clause: c, ref: null }; });
+      var homeList = exportClauses.map(function (cl) { return { clause: cl, ref: null }; });
       e._watxExportClauses = homeList;
       homeList.forEach(function (entry) {
-        wrapExport(JSON.parse(V(entry.clause[2])), e._watxWrapInfo, ei, function (wname) {
+        adviseExport(JSON.parse(V(entry.clause[2])), e._watxAdviceInfo, function (wname) {
           e.splice(e.indexOf(entry.clause), 1);
           entry.ref = wname;
           entry.clause._watxMoved = true;
@@ -807,17 +1164,11 @@ function applyWatxExportWraps(forms, bodyOf) {
         });
       });
     } else if (eh === 'export' && Array.isArray(e[3]) && V(e[3][1]) === 'func') {
-      var ref = V(e[3][2]);
-      var tinfo = funcs.get(ref);
-      if (!tinfo) throw watxCfgError("export-wrap: export " + V(e[2]) + " names '" + ref + "', which is not a named function", e);
       var desc = e[3];
-      wrapExport(JSON.parse(V(e[2])), tinfo, ei, function (wname) { desc[2] = wname; return null; });
+      adviseExport(JSON.parse(V(e[2])), exportTarget(e), function (wname) { desc[2] = wname; return null; });
     } else if (eh === 'wasm-export') {
-      var wref = V(e[3]);
-      var winfo = funcs.get(wref);
-      if (!winfo) throw watxCfgError("export-wrap: export " + V(e[2]) + " names '" + wref + "', which is not a named function", e);
       var wform = e;
-      wrapExport(JSON.parse(V(e[2])), winfo, ei, function (wname) { wform[3] = wname; return null; });
+      adviseExport(JSON.parse(V(e[2])), exportTarget(e), function (wname) { wform[3] = wname; return null; });
     }
   }
   for (var wi = 0; wi < wrappers.length; wi++) {
@@ -825,7 +1176,35 @@ function applyWatxExportWraps(forms, bodyOf) {
     var wf = wrappers[wi];
     for (var z = wf.length - 1; z >= 2; z--) if (wf[z] === null) wf.splice(z, 1);
   }
-  for (var ri2 = 0; ri2 < rest.length; ri2++) if (Array.isArray(rest[ri2])) delete rest[ri2]._watxWrapInfo;
+  all.forEach(function (d) {
+    if (d.inline && d.at === 'export' && !d.dropped && !d.matched.length) {
+      throw watxCfgError('advise ' + watxAdviceLabel(d) + ' is (at export), but ' + d.owner + ' has no export', d.loc);
+    }
+  });
+
+  // (at entry): splice each chain at the top of its function, first link first.
+  defined.forEach(function (info) {
+    if (!info.entryChain.length) return;
+    var prologue = [];
+    info.entryChain.forEach(function (d) { d.forms.forEach(function (x) { prologue.push(watxCloneTree(x)); }); });
+    if (headersOnly) { info.form._watxEntryPrologue = prologue; return; }
+    var at = watxEntryInsertIndex(info.form, 2);
+    info.form.splice.apply(info.form, [at, 0].concat(prologue));
+  });
+
+  report.declarations = all.map(function (d) {
+    return { index: d.index, name: d.name, inline: d.inline, function: d.inline ? d.owner : null, at: d.at,
+             qualifier: d.qualifier, match: d.selector ? watxSelectorText(d.selector) : null, allowHot: d.allowHot,
+             file: d.file, line: d.line, forms: d.forms.length, dropped: d.dropped, dependsOn: d.reads.slice(),
+             matched: d.matched.length };
+  });
+  everything.forEach(function (info) {
+    if (!info.entryChain.length && !info.exportChains.length) return;
+    var exportsChains = {};
+    info.exportChains.forEach(function (x) { exportsChains[x.name] = x.chain.map(watxAdviceLink); });
+    report.chains.push({ function: info.name, entry: info.entryChain.map(watxAdviceLink), exports: exportsChains });
+  });
+  for (var ri2 = 0; ri2 < rest.length; ri2++) if (Array.isArray(rest[ri2])) delete rest[ri2]._watxAdviceInfo;
   return { forms: rest.concat(wrappers), report: report };
 }
 

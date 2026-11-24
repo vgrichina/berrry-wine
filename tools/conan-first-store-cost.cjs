@@ -142,8 +142,8 @@ function compile(mode, out, compat = false, mapOnly = false) {
   const sourcePatch = Buffer.from(require('./unified-diff.js').patchOf(changes));
   fs.writeFileSync(path.join(out, 'observer.patch'), sourcePatch);
   // One closure for both artifacts: the compat dispatch is chosen in source by
-  // (if-const (target tail-calls) ...), the export guards are an export-wrap.
-  // The index map is source order; export-wrap wrappers are appended after
+  // (if-const (target tail-calls) ...), the export guards are an (advise ... (at export)).
+  // The index map is source order; (at export) advice wrappers are appended after
   // every written function, so they never shift a written function's index.
   const vfs = closure.vfs;
   const {parseSource} = require('./watx');

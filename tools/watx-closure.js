@@ -72,7 +72,7 @@ function watxSourceClosure() {
 // the region allocator and nothing else. Absent, it is not passed at all.
 // The closure is compiled exactly as given. What used to be two source-text
 // rewrites applied here is now WATX source: the export guards are an
-// (export-wrap ...) declaration in src/13a-export-guards.wat, and the compat
+// (advise "store-step" ...) declaration in src/13a-export-guards.wat, and the compat
 // artifact's trampoline dispatch is `(if-const (target tail-calls) ...)` in
 // src/04-cache.wat, chosen by `tailCalls` below. `define` sets (defoption ...)
 // values; the shipped artifacts use every option's default.

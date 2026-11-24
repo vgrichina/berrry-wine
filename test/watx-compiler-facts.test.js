@@ -8,9 +8,10 @@
 //      what the module actually contains (declarations as lowered, the export
 //      surface with resolved targets and signatures, function/global index
 //      spaces, data segments, regions as allocated).
-//   2. export-wrap and compile-time facts — every function export with the
-//      wrappers applied to it, its implementation and inferred purity; every
-//      option, constant and target, and per file what its forms read.
+//   2. advise and compile-time facts — every function export with the advice
+//      applied to it, its implementation and inferred purity; every advice
+//      declaration with what it depended on, every function's final chain;
+//      every option, constant and target, and per file what its forms read.
 
 const assert = require('assert/strict');
 const fs = require('fs');
@@ -81,11 +82,11 @@ ok(f.data.some(d => d.offset === 0x2000 && d.size === 5), 'explicit data segment
 eq(f.regions.regions.find(r => r.name === '$TABLE').base, 0x1000);
 eq(f.memory.min, 4);
 
-// ── 2. export-wrap and compile-time facts ──────────────────────────────────
-// The export surface with wrappers applied (outermost first), the function
+// ── 2. advise and compile-time facts ───────────────────────────────────────
+// The export surface with advice applied (outermost first), the function
 // that finally runs, the inferred purity, and the options/targets/consts with
 // the per-file reads a cache must key on. The behaviour itself is
-// test/watx-compiler-export-wrap.test.js and test/watx-compiler-cfg.test.js.
+// test/watx-compiler-advise.test.js and test/watx-compiler-cfg.test.js.
 const runtimeFiles = {
   'state.wat': [
     '(global $rep_store_step (mut i32) (i32.const 0))',
@@ -94,7 +95,7 @@ const runtimeFiles = {
     '(defconst LIMIT (add 2 3))',
   ].join('\n'),
   'api.wat': [
-    '(func (export "set_rep_store_step") (param i32) (global.set $rep_store_step (local.get 0)))',
+    '(func (export "set_rep_store_step") (param i32) (no-advise "store-step") (global.set $rep_store_step (local.get 0)))',
     '(func $read (export "read") (result i32) (global.get $v))',
     '(func $write (param $x i32) (global.set $v (local.get $x)))',
     '(export "write" (func $write))',
@@ -104,8 +105,8 @@ const runtimeFiles = {
   ].join('\n'),
   'guards.wat': [
     '(if-const (option GUARD) (then',
-    '  (export-wrap (match (and (all) (not (pure)) (not (name "set_rep_store_step"))))',
-    '    (prologue (if (global.get $rep_store_step) (then (unreachable)))))))',
+    '  (advise "store-step" (match (and (export) (not (pure)))) (at export)',
+    '    :before (if (global.get $rep_store_step) (then (unreachable))))))',
   ].join('\n'),
 };
 const runtime = { source: Object.keys(runtimeFiles).map(n => `(include "${n}")`).join('\n'), vfs: new Map() };
@@ -114,17 +115,21 @@ const wrappedBuild = compileClosure(runtime, { tailCalls: true, facts: true });
 ok(wrappedBuild.success, wrappedBuild.error);
 const wf = JSON.parse(JSON.stringify(wrappedBuild.facts));
 const wexp = Object.fromEntries(wf.exports.filter(e => e.kind === 'func').map(e => [e.name, e]));
-eq(wexp.read.wrappers, [], 'pure export: no wrapper');
+eq(wexp.read.advice, [], 'pure export: no advice');
 eq(wexp.read.pure, true);
 eq(wexp.limit.pure, true, 'a const immediate is still a constant');
-eq(wexp.set_rep_store_step.wrappers, [], 'excluded by name');
-eq(wexp.write.wrappers, [0]);
+eq(wexp.set_rep_store_step.advice, [], 'opted out with no-advise');
+eq(wexp.write.advice, [0]);
 eq(wexp.write.implementation, '$write', 'the out-of-line export now names a wrapper that calls $write');
-eq(wexp.anon.wrappers, [0]);
+eq(wexp.anon.advice, [0]);
 ok(/^\$__xw_impl_/.test(wexp.anon.implementation), 'an anonymous export is named for its wrapper');
 eq([wexp.anon.params, wexp.anon.results], [['i32', 'i64'], ['i32']], 'wrapper keeps the signature');
-eq(wf.exportWraps.length, 1);
-eq([wf.exportWraps[0].file, wf.exportWraps[0].line], ['guards.wat', 2]);
+const wd = wf.advice.declarations;
+eq(wd.map(d => [d.index, d.name, d.at, d.qualifier, d.match, d.file, d.line, d.dependsOn, d.dropped, d.matched]),
+   [[0, 'store-step', 'export', ':before', '(and (export) (not (pure)))', 'guards.wat', 2, ['option GUARD'], false, 2]]);
+eq(wf.advice.chains.map(c => [c.function, Object.keys(c.exports), c.entry.length]),
+   [['$write', ['write'], 0], [wexp.anon.implementation, ['anon'], 0]]);
+eq(wf.advice.chains[0].exports.write.map(l => [l.name, l.file, l.line]), [['store-step', 'guards.wat', 2]]);
 const ct = wf.compileTime;
 eq(ct.options.map(o => [o.name, o.type, o.value, o.source]), [['GUARD', 'bool', true, 'default']]);
 eq(ct.constants.map(c => [c.name, c.value]), [['LIMIT', 5]]);
@@ -139,7 +144,7 @@ we.set_rep_store_step(0); we.write(5); eq(we.read(), 5);
 const unwrapped = watx.compile(runtime.source, runtime.vfs, { tailCalls: true, facts: true, define: { GUARD: 'false' } });
 ok(unwrapped.success, unwrapped.error);
 const uf = JSON.parse(JSON.stringify(unwrapped.facts));
-ok(!uf.exportWraps, 'no export-wrap chosen');
+ok(!uf.advice, 'no advice chosen');
 eq(uf.compileTime.options[0].source, 'define');
 eq(uf.compileTime.options[0].value, false);
 

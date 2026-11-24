@@ -28,6 +28,7 @@
   ;; No predicate is built in: the controller observes every element and must
   ;; revoke entry on its first loss/error. Zero disarms both stepping modes.
   (func (export "set_rep_store_step") (param $addr i32)
+    (no-advise "store-step")    ;; it is how the controller turns the mode off
     (call $set_instruction_watchpoint (local.get $addr))
     (global.set $rep_store_step (i32.ne (local.get $addr) (i32.const 0))))
 

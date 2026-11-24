@@ -506,6 +506,7 @@
     (call $writer_invalidate (i32.const 3)))
 
   (func $run (export "run") (param $max_blocks i32)
+    (no-advise "store-step")    ;; store stepping IS run: one store per call
     (local $thread i32)
     (local $hc_i i32) (local $hc_slot i32) (local $hc_fp i32)
     (local $prev_eip i32) (local $prev_esp i32)
@@ -4389,12 +4390,13 @@
   ;; Write guest memory (guest addr)
   (func (export "guest_write32") (param $ga i32) (param $val i32)
     (call $gs32 (local.get $ga) (local.get $val)))
-  ;; guest_read8/32 stay callable while store stepping is armed (13a-export-
-  ;; guards.wat allows them by name), so an armed observation must never enter
-  ;; g2w's fault/SEH paths: it reads the direct window only, with the bound
-  ;; checked before the load, including wrap and the whole word, and traps
-  ;; outside it. Disarmed, they are the ordinary $gl32/$gl8 reads.
+  ;; guest_read8/32 stay callable while store stepping is armed (each opts out
+  ;; of 13a-export-guards.wat's "store-step" advice), so an armed observation
+  ;; must never enter g2w's fault/SEH paths: it reads the direct window only,
+  ;; with the bound checked before the load, including wrap and the whole word,
+  ;; and traps outside it. Disarmed, they are the ordinary $gl32/$gl8 reads.
   (func (export "guest_read32") (param $ga i32) (result i32)
+    (no-advise "store-step")    ;; armed: a bounded direct-window read, above
     (if (global.get $rep_store_step) (then
       (if (i32.gt_u (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE))
                     (i32.sub (region.end $DIRECT_WINDOW) (i32.const 4))) (then (unreachable)))
@@ -4404,6 +4406,7 @@
   (func (export "guest_write8") (param $ga i32) (param $val i32)
     (call $gs8 (local.get $ga) (local.get $val)))
   (func (export "guest_read8") (param $ga i32) (result i32)
+    (no-advise "store-step")    ;; armed: a bounded direct-window read, above
     (if (global.get $rep_store_step) (then
       (if (i32.gt_u (i32.add (i32.sub (local.get $ga) (global.get $image_base)) (global.get $GUEST_BASE))
                     (i32.sub (region.end $DIRECT_WINDOW) (i32.const 1))) (then (unreachable)))

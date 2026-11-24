@@ -31,7 +31,7 @@ function watxFunctionHeader(form) {
   for (; i < form.length; i++) {
     const part = form[i];
     const head = Array.isArray(part) ? watxValue(part[1]) : null;
-    if (head === 'param' || head === 'result' || head === 'effects' || head === 'export') header.push(part);
+    if (WATX_HEADER_CLAUSES.has(head)) header.push(part);
   }
   return header;
 }
@@ -43,7 +43,7 @@ function watxFunctionBody(form) {
   for (; i < form.length; i++) {
     const part = form[i];
     const head = Array.isArray(part) ? watxValue(part[1]) : null;
-    if (head !== 'param' && head !== 'result' && head !== 'effects' && head !== 'export') body.push(part);
+    if (!WATX_HEADER_CLAUSES.has(head)) body.push(part);
   }
   return body;
 }
@@ -157,7 +157,7 @@ function prepareStreamingModule(source, vfs, frontendReuse, env) {
   function producesHeaderClause(node) {
     if (!Array.isArray(node)) return false;
     const head = watxValue(node[1]);
-    if (head === 'param' || head === 'result' || head === 'effects' || head === 'export') return true;
+    if (WATX_HEADER_CLAUSES.has(head)) return true;
     if (head === 'begin' || head === 'then' || head === 'else') return node.slice(2).some(producesHeaderClause);
     // Either arm of a conditional may supply the clause.
     if (head === 'if-const') return node.slice(3).some(producesHeaderClause);
@@ -320,7 +320,7 @@ function prepareStreamingModule(source, vfs, frontendReuse, env) {
     return functions[streamInfo.functionOrdinal];
   }
 
-  // The expanded body of a pass-1 header, for export-wrap's (pure) inference.
+  // The expanded body of a pass-1 header, for advice's (pure) inference.
   // Parsed without the body arena: nothing here may be recycled.
   function headerBody(header) {
     const streamInfo = streamByHeader.get(header);
@@ -335,6 +335,8 @@ function prepareStreamingModule(source, vfs, frontendReuse, env) {
       if (!streamInfo) continue;
       fd.streamInfo = streamInfo;
       fd.indirectTypeForms = streamInfo.indirectTypeForms;
+      // (at entry) advice the weaver left on the header for the body loader.
+      if (fd.form._watxEntryPrologue) streamInfo.entryPrologue = fd.form._watxEntryPrologue;
       fd.form = null;
     }
     streamByHeader.clear();
@@ -348,8 +350,13 @@ function prepareStreamingModule(source, vfs, frontendReuse, env) {
     // storage for the next function and do not retain a module-wide atom pool.
     const form = expandStreamedFunction(streamInfo, bodyContext);
     if (!form) throw new Error(`Streaming pass mismatch while loading ${fd.name}`);
+    const body = watxFunctionBody(form);
+    if (streamInfo.entryPrologue) {
+      // Fresh clones each load: the body's lists are recycled after emission.
+      body.splice(watxEntryInsertIndex(body, 0), 0, ...streamInfo.entryPrologue.map(watxCloneTree));
+    }
     return {
-      body: watxFunctionBody(form),
+      body,
       release() { recycleWatxTree(form, bodyContext); },
     };
   }
@@ -409,9 +416,10 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
       if (!d) throw new Error(`define ${name}: no (defoption ${name} ...) in this program`);
       if (d.kind !== 'option') throw new Error(`define ${name}: '${name}' is a defconst, not a defoption`);
     }
-    // Export wrappers, once every module-level form (and so every export) is known.
-    const wrapped = applyWatxExportWraps(expanded,
-      streamingModule ? streamingModule.headerBody : (form) => watxFunctionBody(form));
+    // Function advice, woven once every module-level form (and so every
+    // export, table entry and advice declaration) is known.
+    const wrapped = applyWatxAdvice(expanded,
+      streamingModule ? streamingModule.headerBody : (form) => watxFunctionBody(form), cfgEnv, !!streamingModule);
     expanded = wrapped.forms;
     yield { stage: 'EXPAND' };
     
@@ -535,7 +543,7 @@ function watxCompileTimeFacts(env) {
   return { options, constants, targets: Object.fromEntries(env.targets), reads };
 }
 
-function watxCompileFacts(lowered, moduleFacts, cfgEnv, wrapReport) {
+function watxCompileFacts(lowered, moduleFacts, cfgEnv, adviceReport) {
   const declarations = [];
   for (const rec of lowered) {
     if (!rec || typeof rec.type !== 'string' || !rec.type.endsWith('-lowered')) continue;
@@ -550,18 +558,20 @@ function watxCompileFacts(lowered, moduleFacts, cfgEnv, wrapReport) {
   }
   const facts = { declarations, ...(moduleFacts || {}) };
   if (cfgEnv) facts.compileTime = watxCompileTimeFacts(cfgEnv);
-  if (wrapReport) {
-    // Each function export with the wrappers applied to it (outermost first)
-    // and the function that finally runs.
-    const byName = new Map(wrapReport.exports.map(row => [row.name, row]));
+  if (adviceReport && adviceReport.declarations.length) {
+    // Each function export with its (at export) chain (declaration indices,
+    // outermost first) and the function that finally runs.
+    const byName = new Map(adviceReport.exports.map(row => [row.name, row]));
     for (const exp of facts.exports || []) {
       const row = exp.kind === 'func' ? byName.get(exp.name) : null;
       if (!row) continue;
-      exp.wrappers = row.wrappers.slice();
+      exp.advice = row.advice.slice();
       exp.implementation = row.target;
       if (row.pure !== null) exp.pure = row.pure;
     }
-    facts.exportWraps = wrapReport.declarations;
+    // Every declaration (where, what it matched, the options it depended on)
+    // and every function's final chains with where each link was declared.
+    facts.advice = { hotLimit: adviceReport.hotLimit, declarations: adviceReport.declarations, chains: adviceReport.chains };
   }
   return facts;
 }

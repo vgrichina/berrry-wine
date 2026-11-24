@@ -48,12 +48,15 @@ compiler sources on disk, and `inputs` equals the SHA-256 of every
 removed).
 
 The facts describe the **tail-call artifact as compiled**. The store-step
-export guards are source (`src/13a-export-guards.wat`, a WATX `export-wrap`),
-so a guarded export's `target` names its generated wrapper and
-`implementation` names the function that finally runs; `wrappers` lists the
-export-wrap declarations applied, outermost first (indices into
-`exportWraps`). An unguarded export has `wrappers: []`; `pure: true` marks
-one the compiler inferred cannot write anything (docs/watx-language-compile-time.md).
+export guards are source (`src/13a-export-guards.wat`, a WATX
+`advise ... (at export)`), so a guarded export's `target` names its generated
+wrapper and `implementation` names the function that finally runs; `advice`
+lists the advice applied, outermost first (indices into
+`advice.declarations`). An unguarded export has `advice: []`; `pure: true`
+marks one the compiler inferred cannot write anything. `advice.chains` gives
+every advised function's final chain with file:line per link, and each
+declaration's `dependsOn` the options it was conditional on
+(docs/watx-language-compile-time.md).
 
 ## Compiler facts (`module`)
 
@@ -63,8 +66,8 @@ one the compiler inferred cannot write anything (docs/watx-language-compile-time
 | `regions` | the allocator's report — exactly `compile().regions`: `{shake, shaken, shakeScaledDown, allocated, floor, imageBase, regions[{name,kind,base,size,align,owner}]}` |
 | `memory` | `{imported, module, name, min, max, shared}` |
 | `imports` | `{kind:'func', module, name, target, index, params[], results[]}`, `{kind:'global', module, name, target, index, type, mutable}`, `{kind:'memory', module, name}` |
-| `exports` | export-section order: `{name, kind, index}`, plus `target` (function/global name) and, for functions, `params[]`/`results[]`; when the program declares an `export-wrap`, each function export also has `wrappers[]`, `implementation` and (if a selector asked) `pure` |
-| `exportWraps` | present when the program declares one: `{index, file, line, match, prologueForms}` per `export-wrap`, in declaration order |
+| `exports` | export-section order: `{name, kind, index}`, plus `target` (function/global name) and, for functions, `params[]`/`results[]`; when the program declares any `advise`, each function export also has `advice[]` (declaration indices, outermost first), `implementation` and (if a selector asked) `pure` |
+| `advice` | present when the program declares any `advise`: `{hotLimit, declarations[{index, name, inline, function, at, qualifier, match, allowHot, file, line, forms, dropped, dependsOn[], matched}], chains[{function, entry[link], exports{name: [link]}}]}`, a link being `{index, name, inline, qualifier, file, line}`, outermost first |
 | `compileTime` | `{options[{name, type, members?, default, value, source:'default'|'define', doc, file, line}], constants[{name, value, reads[], file, line}], targets{feature: bool}, reads{file: ['option X'|'target Y', ...]}}` — i64 values as decimal strings; `reads` is transitive through constants and is exactly what a per-file cache must key on |
 | `functions` | defined functions in index order: `{name, index, params[], paramNames[], results[]}` (`params` are the declared types, so `ptr<L>` stays visible) |
 | `globals` | global index space: imported `{name, index, type, mutable, imported:true}`, defined `{..., imported:false, init}` where `init` is `{kind:'const', value}` (i64 as a decimal string; floats as `{kind:'const', literal}`), `{kind:'region', op, region, value}` with the resolved address, or `{kind:'runtime', runtime}` |
