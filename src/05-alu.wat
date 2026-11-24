@@ -1,13 +1,44 @@
   ;; ============================================================
   ;; ALU HELPER — performs operation by index
   ;; ============================================================
+  ;; ADC/SBB require the original source for AF and OF, not source+carry.
+  ;; Materialize all six defined status flags in exact raw mode (9), retaining
+  ;; the width-masked result for ZF. CF includes the incoming carry/borrow even
+  ;; when source+carry wraps at 32 bits. $a and $b are width-masked operands.
+  (func $do_adc_sbb (param $sub i32) (param $a i32) (param $b i32)
+                    (param $mask i32) (param $shift i32) (result i32)
+    (local $c i32) (local $r i32) (local $cf i32) (local $of i32)
+    (local.set $c (call $get_cf))
+    (if (local.get $sub)
+      (then
+        (local.set $r (i32.and (i32.sub (i32.sub (local.get $a) (local.get $b)) (local.get $c)) (local.get $mask)))
+        (local.set $cf (i32.or (i32.lt_u (local.get $a) (local.get $b))
+          (i32.and (local.get $c) (i32.eq (local.get $a) (local.get $b)))))
+        (local.set $of (i32.and (i32.xor (local.get $a) (local.get $b)) (i32.xor (local.get $a) (local.get $r)))))
+      (else
+        (local.set $r (i32.and (i32.add (i32.add (local.get $a) (local.get $b)) (local.get $c)) (local.get $mask)))
+        (local.set $cf (i32.or (i32.lt_u (local.get $r) (local.get $a))
+          (i32.and (local.get $c) (i32.eq (local.get $r) (local.get $a)))))
+        (local.set $of (i32.and (i32.xor (i32.xor (local.get $a) (local.get $b)) (i32.const -1))
+          (i32.xor (local.get $a) (local.get $r))))))
+    (global.set $flag_op (i32.const 9))
+    (global.set $flag_sign_shift (local.get $shift))
+    (global.set $flag_res (local.get $r))
+    ;; Packed CF/PF/AF/SF in flag_a bits 0..3, OF in flag_b.
+    (global.set $flag_a (i32.or (local.get $cf)
+      (i32.or (i32.shl (i32.eqz (i32.and (i32.popcnt (i32.and (local.get $r) (i32.const 255))) (i32.const 1))) (i32.const 1))
+        (i32.or (i32.and (i32.shr_u (i32.xor (i32.xor (local.get $a) (local.get $b)) (local.get $r)) (i32.const 2)) (i32.const 4))
+          (i32.shl (i32.and (i32.shr_u (local.get $r) (local.get $shift)) (i32.const 1)) (i32.const 3))))))
+    (global.set $flag_b (i32.and (i32.shr_u (local.get $of) (local.get $shift)) (i32.const 1)))
+    (local.get $r))
+
   ;; op: 0=ADD,1=OR,2=ADC,3=SBB,4=AND,5=SUB,6=XOR,7=CMP
   ;; br_table rather than eight compares in a row. Every memory-form ALU
   ;; instruction routes through here (the register forms are specialized per
   ;; opcode), and the ops the chain tested last — SUB, XOR, CMP — are among the
   ;; most common instructions there are, so the average walk was long.
   (func $do_alu32 (param $op i32) (param $a i32) (param $b i32) (result i32)
-    (local $r i32) (local $cf_in i32) (local $b_eff i32)
+    (local $r i32)
     (block $cmp (block $xor (block $sub (block $and
       (block $sbb (block $adc (block $or (block $add
         (br_table $add $or $adc $sbb $and $sub $xor $cmp (local.get $op)))
@@ -19,29 +50,10 @@
         (local.set $r (i32.or (local.get $a) (local.get $b)))
         (call $set_flags_logic (local.get $r))
         (return (local.get $r)))
-        ;; 2 = ADC: r = a + b + cf_in
-        (local.set $cf_in (call $get_cf))
-        (local.set $b_eff (i32.add (local.get $b) (local.get $cf_in)))
-        (local.set $r (i32.add (local.get $a) (local.get $b_eff)))
-        ;; Flags as ADD(a, b_eff) for OF/ZF/SF
-        (call $set_flags_add (local.get $a) (local.get $b_eff) (local.get $r))
-        ;; Fix CF: if b+cf_in wrapped (b_eff < b), carry is always 1.
-        ;; Raw mode, so flag_res (which holds ZF/SF) is not clobbered.
-        (if (i32.lt_u (local.get $b_eff) (local.get $b))
-          (then (global.set $flag_op (i32.const 8))
-                (global.set $flag_a (i32.const 1))
-                (global.set $flag_b (i32.const 0))))
-        (return (local.get $r)))
-        ;; 3 = SBB: r = a - b - cf_in
-        (local.set $cf_in (call $get_cf))
-        (local.set $b_eff (i32.add (local.get $b) (local.get $cf_in)))
-        (local.set $r (i32.sub (local.get $a) (local.get $b_eff)))
-        (call $set_flags_sub (local.get $a) (local.get $b_eff) (local.get $r))
-        ;; Fix CF: if b+cf_in wrapped, borrow is always 1
-        (if (i32.lt_u (local.get $b_eff) (local.get $b))
-          (then (global.set $flag_a (i32.const 0))
-                (global.set $flag_b (i32.const 1))))
-        (return (local.get $r)))
+        ;; 2 = ADC
+        (return (call $do_adc_sbb (i32.const 0) (local.get $a) (local.get $b) (i32.const -1) (i32.const 31))))
+        ;; 3 = SBB
+        (return (call $do_adc_sbb (i32.const 1) (local.get $a) (local.get $b) (i32.const -1) (i32.const 31))))
         ;; 4 = AND
         (local.set $r (i32.and (local.get $a) (local.get $b)))
         (call $set_flags_logic (local.get $r))
@@ -70,47 +82,13 @@
   ;; per-op, which is why register and memory forms of the same instruction
   ;; disagreed.
   ;;
-  ;; ADC and SBB need more than a mask. $do_alu32 detects the b+cf wrap with
-  ;; (b_eff < b), a 32-bit test: at eight bits 0xFF+1 = 0x100 does not wrap
-  ;; 32 bits, so `adc al,0xFF` with CF set reported no carry out — and the
-  ;; fixup it does apply switches to raw mode with flag_b = 0, discarding OF.
-  ;; Both are computed against the operand width here instead.
-  ;;
-  ;; $mask is 0xFF or 0xFFFF; $shift is the matching sign-bit position (7/15)
-  ;; and is left in flag_sign_shift, since every $set_flags_* resets it to 31.
+  ;; ADC/SBB share exact status materialization across every operand width.
   (func $do_alu_sized (param $op i32) (param $a i32) (param $b i32)
                       (param $mask i32) (param $shift i32) (result i32)
-    (local $cf_in i32) (local $sum i32) (local $r i32)
-    (local $sa i32) (local $sb i32) (local $sr i32)
-    ;; 2 = ADC, 3 = SBB — handled here; the other six are exact once masked.
+    (local $r i32)
     (if (i32.or (i32.eq (local.get $op) (i32.const 2)) (i32.eq (local.get $op) (i32.const 3)))
-      (then
-        (local.set $cf_in (call $get_cf))
-        (local.set $sum (i32.add (local.get $b) (local.get $cf_in)))
-        (if (i32.eq (local.get $op) (i32.const 2))
-          (then
-            (local.set $sum (i32.add (local.get $a) (local.get $sum)))
-            (local.set $r (i32.and (local.get $sum) (local.get $mask)))
-            ;; carry out of the operand width
-            (global.set $flag_a (i32.gt_u (local.get $sum) (local.get $mask))))
-          (else
-            (local.set $r (i32.and (i32.sub (local.get $a) (local.get $sum)) (local.get $mask)))
-            ;; borrow: b + cf_in exceeds a
-            (global.set $flag_a (i32.gt_u (local.get $sum) (local.get $a)))))
-        (local.set $sa (i32.and (i32.shr_u (local.get $a) (local.get $shift)) (i32.const 1)))
-        (local.set $sb (i32.and (i32.shr_u (local.get $b) (local.get $shift)) (i32.const 1)))
-        (local.set $sr (i32.and (i32.shr_u (local.get $r) (local.get $shift)) (i32.const 1)))
-        ;; Raw mode: CF in flag_a, OF in flag_b. Both have to be eager here —
-        ;; the lazy forms cannot see the operand width.
-        (if (i32.eq (local.get $op) (i32.const 2))
-          (then (global.set $flag_b
-                  (i32.and (i32.eq (local.get $sa) (local.get $sb)) (i32.ne (local.get $sa) (local.get $sr)))))
-          (else (global.set $flag_b
-                  (i32.and (i32.ne (local.get $sa) (local.get $sb)) (i32.eq (local.get $sb) (local.get $sr))))))
-        (global.set $flag_op (i32.const 8))
-        (global.set $flag_res (local.get $r))
-        (global.set $flag_sign_shift (local.get $shift))
-        (return (local.get $r))))
+      (then (return (call $do_adc_sbb (i32.eq (local.get $op) (i32.const 3))
+        (local.get $a) (local.get $b) (local.get $mask) (local.get $shift)))))
     (local.set $r (call $do_alu32 (local.get $op) (local.get $a) (local.get $b)))
     (global.set $flag_res (i32.and (global.get $flag_res) (local.get $mask)))
     (global.set $flag_sign_shift (local.get $shift))
@@ -808,28 +786,16 @@
      (local $nx_fn i32) (local $nx_op i32) (local $r i32) (local.set $r (i32.or (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2)))) (read-thread-word)))
     (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))) (local.get $r)) (call $set_flags_logic (local.get $r)) (dispatch-next))
   (func $th_adc_r_i32 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (local $old i32) (local $imm i32) (local $r i32) (local $b_eff i32)
-    (local.set $old (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))))) (local.set $imm (read-thread-word))
-    (local.set $b_eff (i32.add (local.get $imm) (call $get_cf)))
-    (local.set $r (i32.add (local.get $old) (local.get $b_eff)))
-    (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))) (local.get $r))
-    (call $set_flags_add (local.get $old) (local.get $b_eff) (local.get $r))
-    ;; Fix CF: if imm+cf wrapped, carry is always 1 — use raw mode to preserve ZF/SF
-    (if (i32.lt_u (local.get $b_eff) (local.get $imm))
-      (then (global.set $flag_op (i32.const 8))
-            (global.set $flag_a (i32.const 1))
-            (global.set $flag_b (i32.const 0))))
+     (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
+    (local.set $a (call $get_reg (local.get $op)))
+    (local.set $b (read-thread-word))
+    (call $set_reg (local.get $op) (call $do_adc_sbb (i32.const 0) (local.get $a) (local.get $b) (i32.const -1) (i32.const 31)))
     (dispatch-next))
   (func $th_sbb_r_i32 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (local $old i32) (local $imm i32) (local $r i32) (local $b_eff i32)
-    (local.set $old (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))))) (local.set $imm (read-thread-word))
-    (local.set $b_eff (i32.add (local.get $imm) (call $get_cf)))
-    (local.set $r (i32.sub (local.get $old) (local.get $b_eff)))
-    (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))) (local.get $r))
-    (call $set_flags_sub (local.get $old) (local.get $b_eff) (local.get $r))
-    (if (i32.lt_u (local.get $b_eff) (local.get $imm))
-      (then (global.set $flag_a (i32.const 0))
-            (global.set $flag_b (i32.const 1))))
+     (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
+    (local.set $a (call $get_reg (local.get $op)))
+    (local.set $b (read-thread-word))
+    (call $set_reg (local.get $op) (call $do_adc_sbb (i32.const 1) (local.get $a) (local.get $b) (i32.const -1) (i32.const 31)))
     (dispatch-next))
   (func $th_and_r_i32 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $r i32) (local.set $r (i32.and (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2)))) (read-thread-word)))
@@ -862,30 +828,18 @@
     (local.set $r (i32.or (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2)))) (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2))))))
     (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))) (local.get $r)) (call $set_flags_logic (local.get $r)) (dispatch-next))
   (func $th_adc_r_r (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (local $d i32) (local $a i32) (local $b i32) (local $r i32) (local $b_eff i32)
+     (local $nx_fn i32) (local $nx_op i32) (local $d i32) (local $a i32) (local $b i32)
     (local.set $d (i32.shr_u (local.get $op) (i32.const 4)))
-    (local.set $a (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))))) (local.set $b (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))))
-    (local.set $b_eff (i32.add (local.get $b) (call $get_cf)))
-    (local.set $r (i32.add (local.get $a) (local.get $b_eff)))
-    (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))) (local.get $r))
-    (call $set_flags_add (local.get $a) (local.get $b_eff) (local.get $r))
-    ;; Fix CF: if b+cf wrapped, carry is always 1 — use raw mode to preserve ZF/SF
-    (if (i32.lt_u (local.get $b_eff) (local.get $b))
-      (then (global.set $flag_op (i32.const 8))
-            (global.set $flag_a (i32.const 1))
-            (global.set $flag_b (i32.const 0))))
+    (local.set $a (call $get_reg (local.get $d)))
+    (local.set $b (call $get_reg (i32.and (local.get $op) (i32.const 15))))
+    (call $set_reg (local.get $d) (call $do_adc_sbb (i32.const 0) (local.get $a) (local.get $b) (i32.const -1) (i32.const 31)))
     (dispatch-next))
   (func $th_sbb_r_r (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (local $d i32) (local $a i32) (local $b i32) (local $r i32) (local $b_eff i32)
+     (local $nx_fn i32) (local $nx_op i32) (local $d i32) (local $a i32) (local $b i32)
     (local.set $d (i32.shr_u (local.get $op) (i32.const 4)))
-    (local.set $a (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))))) (local.set $b (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))))
-    (local.set $b_eff (i32.add (local.get $b) (call $get_cf)))
-    (local.set $r (i32.sub (local.get $a) (local.get $b_eff)))
-    (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))) (local.get $r))
-    (call $set_flags_sub (local.get $a) (local.get $b_eff) (local.get $r))
-    (if (i32.lt_u (local.get $b_eff) (local.get $b))
-      (then (global.set $flag_a (i32.const 0))
-            (global.set $flag_b (i32.const 1))))
+    (local.set $a (call $get_reg (local.get $d)))
+    (local.set $b (call $get_reg (i32.and (local.get $op) (i32.const 15))))
+    (call $set_reg (local.get $d) (call $do_adc_sbb (i32.const 1) (local.get $a) (local.get $b) (i32.const -1) (i32.const 31)))
     (dispatch-next))
   (func $th_and_r_r (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $d i32) (local $r i32) (local.set $d (i32.shr_u (local.get $op) (i32.const 4)))
@@ -3359,7 +3313,7 @@
 
   ;; --- Byte register-register ALU (op = alu_op<<8 | dst<<4 | src) ---
   (func $th_alu_r8_r8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (local $alu i32) (local $d i32) (local $s i32) (local $a i32) (local $b i32) (local $r i32) (local $cf_in i32)
+     (local $nx_fn i32) (local $nx_op i32) (local $alu i32) (local $d i32) (local $s i32) (local $a i32) (local $b i32) (local $r i32)
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $d (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $s (i32.and (local.get $op) (i32.const 0xF)))
@@ -3376,28 +3330,12 @@
     (call $set_reg8 (local.get $d) (local.get $r))
     (call $set_flags_logic (local.get $r)) (br $done)
     ) ;; end $adc — ADC case
-    (local.set $cf_in (call $get_cf))
-    (local.set $r (i32.add (i32.add (local.get $a) (local.get $b)) (local.get $cf_in)))
-    (call $set_reg8 (local.get $d) (i32.and (local.get $r) (i32.const 0xFF)))
-    (call $set_flags_add (local.get $a) (i32.add (local.get $b) (local.get $cf_in)) (i32.and (local.get $r) (i32.const 0xFF)))
-    ;; Fix 8-bit CF: carry if full sum >= 0x100 — use raw mode to preserve flag_res
-    (if (i32.ge_u (local.get $r) (i32.const 0x100))
-      (then (global.set $flag_op (i32.const 8))
-            (global.set $flag_a (i32.const 1))
-            (global.set $flag_b (i32.const 0))))
-    (br $done)
-    ) ;; end $sbb — SBB case
-    (local.set $cf_in (call $get_cf))
-    (local.set $r (i32.sub (i32.sub (local.get $a) (local.get $b)) (local.get $cf_in)))
-    (call $set_reg8 (local.get $d) (i32.and (local.get $r) (i32.const 0xFF)))
-    (call $set_flags_sub (local.get $a) (i32.add (local.get $b) (local.get $cf_in)) (i32.and (local.get $r) (i32.const 0xFF)))
-    ;; Fix 8-bit CF: borrow if result went negative (bit 8+ set)
-    (if (i32.and (local.get $r) (i32.const 0xFFFFFF00))
-      (then (global.set $flag_op (i32.const 8))
-            (global.set $flag_a (i32.const 1))
-            (global.set $flag_b (i32.const 0))))
-    (br $done)
-    ) ;; end $and — AND case
+    (call $set_reg8 (local.get $d) (call $do_adc_sbb (i32.const 0)
+      (local.get $a) (local.get $b) (i32.const 255) (i32.const 7)))
+    (br $done)) ;; end $sbb — SBB case
+    (call $set_reg8 (local.get $d) (call $do_adc_sbb (i32.const 1)
+      (local.get $a) (local.get $b) (i32.const 255) (i32.const 7)))
+    (br $done)) ;; end $and — AND case
     (local.set $r (i32.and (local.get $a) (local.get $b)))
     (call $set_reg8 (local.get $d) (local.get $r))
     (call $set_flags_logic (local.get $r)) (br $done)
@@ -3418,7 +3356,7 @@
 
   ;; --- Byte register-immediate ALU (op = alu_op<<8 | reg, imm in next word) ---
   (func $th_alu_r8_i8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (local $alu i32) (local $reg i32) (local $a i32) (local $b i32) (local $r i32) (local $cf_in i32)
+     (local $nx_fn i32) (local $nx_op i32) (local $alu i32) (local $reg i32) (local $a i32) (local $b i32) (local $r i32)
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $reg (i32.and (local.get $op) (i32.const 0xF)))
     (local.set $a (call $get_reg8 (local.get $reg)))
@@ -3434,26 +3372,12 @@
     (call $set_reg8 (local.get $reg) (local.get $r))
     (call $set_flags_logic (local.get $r)) (br $done)
     )
-    (local.set $cf_in (call $get_cf))
-    (local.set $r (i32.add (i32.add (local.get $a) (local.get $b)) (local.get $cf_in)))
-    (call $set_reg8 (local.get $reg) (i32.and (local.get $r) (i32.const 0xFF)))
-    (call $set_flags_add (local.get $a) (i32.add (local.get $b) (local.get $cf_in)) (i32.and (local.get $r) (i32.const 0xFF)))
-    (if (i32.ge_u (local.get $r) (i32.const 0x100))
-      (then (global.set $flag_op (i32.const 8))
-            (global.set $flag_a (i32.const 1))
-            (global.set $flag_b (i32.const 0))))
-    (br $done)
-    )
-    (local.set $cf_in (call $get_cf))
-    (local.set $r (i32.sub (i32.sub (local.get $a) (local.get $b)) (local.get $cf_in)))
-    (call $set_reg8 (local.get $reg) (i32.and (local.get $r) (i32.const 0xFF)))
-    (call $set_flags_sub (local.get $a) (i32.add (local.get $b) (local.get $cf_in)) (i32.and (local.get $r) (i32.const 0xFF)))
-    (if (i32.and (local.get $r) (i32.const 0xFFFFFF00))
-      (then (global.set $flag_op (i32.const 8))
-            (global.set $flag_a (i32.const 1))
-            (global.set $flag_b (i32.const 0))))
-    (br $done)
-    )
+    (call $set_reg8 (local.get $reg) (call $do_adc_sbb (i32.const 0)
+      (local.get $a) (local.get $b) (i32.const 255) (i32.const 7)))
+    (br $done))
+    (call $set_reg8 (local.get $reg) (call $do_adc_sbb (i32.const 1)
+      (local.get $a) (local.get $b) (i32.const 255) (i32.const 7)))
+    (br $done))
     (local.set $r (i32.and (local.get $a) (local.get $b)))
     (call $set_reg8 (local.get $reg) (local.get $r))
     (call $set_flags_logic (local.get $r)) (br $done)
