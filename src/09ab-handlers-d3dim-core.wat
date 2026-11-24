@@ -7862,12 +7862,22 @@
       (br $lp))))
 
   ;; Fill either a private f32 depth plane or an attached 16/32-bit DirectDraw
-  ;; Z surface with `zval`.
+  ;; Z surface with `zval`, only within the viewport rectangle. The private
+  ;; plane uses the full render-target width as its row stride.
   (func $zbuffer_fill (param $zbuf_guest i32) (param $w i32) (param $h i32) (param $zval f32)
-    (local $i i32) (local $n i32) (local $wa i32)
+    (param $vx i32) (param $vy i32) (param $vw i32) (param $vh i32)
+    (local $wa i32) (local $right i32) (local $bottom i32)
     (local $entry i32) (local $dib i32) (local $pitch i32) (local $bpp i32)
     (local $x i32) (local $y i32) (local $raw i32) (local $z f32)
     (if (i32.eqz (local.get $zbuf_guest)) (then (return)))
+    (local.set $right (i32.add (local.get $vx) (local.get $vw)))
+    (local.set $bottom (i32.add (local.get $vy) (local.get $vh)))
+    (if (i32.gt_s (local.get $right) (local.get $w)) (then (local.set $right (local.get $w))))
+    (if (i32.gt_s (local.get $bottom) (local.get $h)) (then (local.set $bottom (local.get $h))))
+    (if (i32.lt_s (local.get $vx) (i32.const 0)) (then (local.set $vx (i32.const 0))))
+    (if (i32.lt_s (local.get $vy) (i32.const 0)) (then (local.set $vy (i32.const 0))))
+    (if (i32.or (i32.le_s (local.get $right) (local.get $vx))
+                (i32.le_s (local.get $bottom) (local.get $vy))) (then (return)))
     (if (i32.and
           (i32.ge_u (local.get $zbuf_guest) (global.get $DX_OBJECTS))
           (i32.lt_u (local.get $zbuf_guest)
@@ -7885,12 +7895,12 @@
           (then (local.set $raw (i32.trunc_sat_f32_u (f32.mul (local.get $z) (f32.const 65535.0)))))
           (else (local.set $raw (i32.trunc_sat_f32_u
             (f32.mul (local.get $z) (f32.const 4294967040.0))))))
-        (local.set $y (i32.const 0))
+        (local.set $y (local.get $vy))
         (block $zdone (loop $zrows
-          (br_if $zdone (i32.ge_u (local.get $y) (local.get $h)))
-          (local.set $x (i32.const 0))
+          (br_if $zdone (i32.ge_s (local.get $y) (local.get $bottom)))
+          (local.set $x (local.get $vx))
           (block $xdone (loop $zcols
-            (br_if $xdone (i32.ge_u (local.get $x) (local.get $w)))
+            (br_if $xdone (i32.ge_s (local.get $x) (local.get $right)))
             (if (i32.eq (local.get $bpp) (i32.const 16))
               (then (i32.store16
                 (i32.add (local.get $dib)
@@ -7908,13 +7918,19 @@
           (br $zrows)))
         (return)))
     (local.set $wa (call $g2w (local.get $zbuf_guest)))
-    (local.set $n (i32.mul (local.get $w) (local.get $h)))
-    (local.set $i (i32.const 0))
-    (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
-      (f32.store (i32.add (local.get $wa) (i32.mul (local.get $i) (i32.const 4))) (local.get $zval))
-      (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $lp))))
+    (local.set $y (local.get $vy))
+    (block $done (loop $rows
+      (br_if $done (i32.ge_s (local.get $y) (local.get $bottom)))
+      (local.set $x (local.get $vx))
+      (block $xdone (loop $cols
+        (br_if $xdone (i32.ge_s (local.get $x) (local.get $right)))
+        (f32.store (i32.add (local.get $wa)
+          (i32.shl (i32.add (i32.mul (local.get $y) (local.get $w)) (local.get $x)) (i32.const 2)))
+          (local.get $zval))
+        (local.set $x (i32.add (local.get $x) (i32.const 1)))
+        (br $cols)))
+      (local.set $y (i32.add (local.get $y) (i32.const 1)))
+      (br $rows))))
 
   ;; The real clear, called from $handle_IDirect3DViewport3_Clear (09a8) with
   ;; an implied D3DCLEAR_TARGET and from $handle_IDirect3DViewport3_Clear2
@@ -7979,7 +7995,8 @@
       (local.set $zbuf (call $d3dim_ensure_zbuffer (local.get $dev_this)))
       (local.set $rtw (i32.and (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 0xFFFF)))
       (local.set $rth (i32.shr_u (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 16)))
-      (call $zbuffer_fill (local.get $zbuf) (local.get $rtw) (local.get $rth) (local.get $zval)))))
+      (call $zbuffer_fill (local.get $zbuf) (local.get $rtw) (local.get $rth) (local.get $zval)
+        (local.get $vx) (local.get $vy) (local.get $vw) (local.get $vh)))))
 
   (func $d3dim_device7_clear
     (param $this i32)
@@ -8014,7 +8031,8 @@
       (local.set $zbuf (call $d3dim_ensure_zbuffer (local.get $this)))
       (local.set $rtw (i32.and (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 0xFFFF)))
       (local.set $rth (i32.shr_u (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 16)))
-      (call $zbuffer_fill (local.get $zbuf) (local.get $rtw) (local.get $rth) (local.get $zval)))))
+      (call $zbuffer_fill (local.get $zbuf) (local.get $rtw) (local.get $rth) (local.get $zval)
+        (local.get $vx) (local.get $vy) (local.get $vw) (local.get $vh)))))
 
   ;; ── DrawPrimitive core (TLVERTEX) ──────────────────────────────
   ;; TLVERTEX layout (32 bytes): +0 sx f32, +4 sy f32, +8 sz f32, +12 rhw f32,
