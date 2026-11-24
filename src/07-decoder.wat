@@ -5106,6 +5106,15 @@
                     (else (local.set $a (call $emit_sib_or_abs)) (call $te (i32.const 173) (global.get $mr_reg)) (call $te_raw (local.get $a))))))
               (br $decode)))
 
+          ;; 0x0F 0xC0: XADD r/m8, r8 (handler 278 byte-width marker).
+          (if (i32.eq (local.get $op) (i32.const 0xC0))
+            (then
+              (call $decode_modrm)
+              (if (i32.eq (global.get $mr_mod) (i32.const 3))
+                (then (call $te (i32.const 278) (i32.or (i32.const 0x180) (i32.or (i32.shl (global.get $mr_val) (i32.const 4)) (global.get $mr_reg)))))
+                (else (local.set $a (call $emit_sib_or_abs)) (call $te (i32.const 278) (i32.or (i32.const 0x100) (global.get $mr_reg))) (call $te_raw (local.get $a))))
+              (br $decode)))
+
           ;; 0x0F 0xC1: XADD r/m32, r32 (or r/m16, r16 with 66h)
           (if (i32.eq (local.get $op) (i32.const 0xC1))
             (then

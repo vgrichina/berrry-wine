@@ -2774,9 +2774,32 @@
             (i32.store16 (global.get $reg_base) (local.get $dst_val))))))
     (dispatch-next))
 
-  ;; 278: XADD r/m16, r16 (same encoding as th_xadd: reg=0x80|dst<<4|src, mem=src_reg+addr)
+  ;; Byte XADD shares handler 278 using bit 8 as a width marker.
+  ;; Read both operands before writing either, including AL/AH aliases.
+  (func $xadd8 (param $op i32)
+    (local $dst i32) (local $src i32) (local $old i32) (local $sum i32) (local $addr i32)
+    (local.set $src (i32.and (local.get $op) (i32.const 7)))
+    (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7)))
+    (if (i32.ge_u (local.get $op) (i32.const 0x80))
+      (then (local.set $old (call $get_reg8 (local.get $dst))))
+      (else
+        (local.set $addr (call $read_addr))
+        (local.set $old (call $gl8 (local.get $addr)))))
+    (local.set $sum (i32.and (i32.add (local.get $old) (call $get_reg8 (local.get $src))) (i32.const 0xFF)))
+    (call $set_flags_add (local.get $old) (call $get_reg8 (local.get $src)) (local.get $sum))
+    (global.set $flag_sign_shift (i32.const 7))
+    (call $set_reg8 (local.get $src) (local.get $old))
+    (if (i32.ge_u (local.get $op) (i32.const 0x80))
+      (then (call $set_reg8 (local.get $dst) (local.get $sum)))
+      (else (call $gs8 (local.get $addr) (local.get $sum)))))
+
+  ;; 278: XADD r/m16, r16 (reg=0x80|dst<<4|src, mem=src_reg+addr); bit 8 selects byte.
   (func $th_xadd16 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $dst_val i32) (local $src_reg i32) (local $sum i32) (local $addr i32)
+    (if (i32.and (local.get $op) (i32.const 0x100))
+      (then
+        (call $xadd8 (i32.and (local.get $op) (i32.const 0xFF)))
+        (dispatch-next)))
     (if (i32.ge_u (local.get $op) (i32.const 0x80))
       (then
         (local.set $op (i32.and (local.get $op) (i32.const 0x7F)))
