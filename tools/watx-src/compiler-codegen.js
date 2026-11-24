@@ -2415,6 +2415,7 @@ function* generateWasmSteps(forms, loweredForms, checkResult, options = {}) {
       const locals = [];
       const body = [];
       let effectsClause = null;
+      const homeExports = watxHomeExports(form, name, formIndex, inlineExportDecls);
       
       for (let i = cursor; i < (form.length - 1); i++) {
         const part=form[i + 1];
@@ -2434,7 +2435,8 @@ function* generateWasmSteps(forms, loweredForms, checkResult, options = {}) {
           } else if (kind === 'effects') {
             effectsClause = part;
           } else if (kind === 'export') {
-            inlineExportDecls.push({ exportName: (V(part[2]) || '').replace(/"/g, ''), kind: 'func', ref: name, formIndex });
+            if (!homeExports && !part._watxMoved) inlineExportDecls.push({ exportName: (V(part[2]) || '').replace(/"/g, ''), kind: 'func', ref: name,
+              formIndex });
           } else {
             body.push(part);
           }

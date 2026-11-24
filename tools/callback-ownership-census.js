@@ -13,6 +13,9 @@ const ROOT = path.resolve(__dirname, '..');
 const CENSUS = path.join(__dirname, 'callback-ownership-census.json');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const head = node => Array.isArray(node) ? node[1] : null;
+// An export clause names a string; a bare `(export)` is a WATX advice
+// selector (src/13a-export-guards.wat), not an export.
+const isExportClause = node => head(node) === 'export' && typeof node[2] === 'string' && node[2].startsWith('"');
 function walk(node, visit) {
   if (!Array.isArray(node)) return;
   visit(node);
@@ -35,7 +38,7 @@ function scanWatForms(forms, file) {
       if (head(node) === 'global.set' && (String(node[2]).startsWith('$invocation_') ||
           ['$qsort_owner', '$qsort_depth', '$bsearch_owner', '$bsearch_depth', '$crt_callback_owner', '$crt_callback_depth', '$mm_callback_owner', '$mm_callback_depth'].includes(node[2]))) ownershipWrites.push(node[2]);
       if (head(node) === 'call') calls.push(node[2]);
-      if (head(node) === 'export') exports.push(JSON.parse(node[2]));
+      if (isExportClause(node)) exports.push(JSON.parse(node[2]));
     });
     const boundaryCalls = calls.filter(name =>
       ['$run', '$sync_depth_enter', '$sync_depth_leave'].includes(name) || name.startsWith('$invocation_') || name.startsWith('$crt_callback_'));
@@ -85,7 +88,7 @@ function scanSources(sources) {
       const calls = [], exports = [];
       walk(form, node => {
         if (head(node) === 'call' || head(node) === 'return_call') calls.push(node[2]);
-        if (head(node) === 'export') exports.push(JSON.parse(node[2]));
+        if (isExportClause(node)) exports.push(JSON.parse(node[2]));
       });
       const name = typeof form[2] === 'string' ? form[2] : `export:${exports[0]}`;
       // Keep the complete graph, but not every parsed file's AST. Seal

@@ -31,7 +31,7 @@ function watxFunctionHeader(form) {
   for (; i < form.length; i++) {
     const part = form[i];
     const head = Array.isArray(part) ? watxValue(part[1]) : null;
-    if (head === 'param' || head === 'result' || head === 'effects' || head === 'export') header.push(part);
+    if (WATX_HEADER_CLAUSES.has(head)) header.push(part);
   }
   return header;
 }
@@ -43,7 +43,7 @@ function watxFunctionBody(form) {
   for (; i < form.length; i++) {
     const part = form[i];
     const head = Array.isArray(part) ? watxValue(part[1]) : null;
-    if (head !== 'param' && head !== 'result' && head !== 'effects' && head !== 'export') body.push(part);
+    if (!WATX_HEADER_CLAUSES.has(head)) body.push(part);
   }
   return body;
 }
@@ -86,7 +86,31 @@ function createFrontendReuse() {
   });
 }
 
-function prepareStreamingModule(source, vfs, frontendReuse) {
+// Offsets of every `if-const`/`cond-const` spelling in a source text, found
+// once per text, so pass 1 can ask cheaply whether one function's range holds
+// a compile-time conditional (which then decides its header and its indirect
+// call types) without parsing the function.
+const WATX_CFG_SPELLINGS = ['if-const', 'cond-const'];
+function watxCfgOffsets(cache, text) {
+  let offsets = cache.get(text);
+  if (offsets) return offsets;
+  offsets = [];
+  for (const word of WATX_CFG_SPELLINGS) {
+    for (let i = text.indexOf(word); i >= 0; i = text.indexOf(word, i + word.length)) offsets.push(i);
+  }
+  offsets.sort((a, b) => a - b);
+  cache.set(text, offsets);
+  return offsets;
+}
+function watxRangeHasOffset(offsets, start, end) {
+  let lo = 0, hi = offsets.length;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (offsets[mid] < start) lo = mid + 1; else hi = mid; }
+  return lo < offsets.length && offsets[lo] < end;
+}
+
+function prepareStreamingModule(source, vfs, frontendReuse, env) {
+  if (!env) env = createWatxCompileEnv({});
+  env.fileFixed = true;
   const descriptors = [];
   const included = new Set();
   let headerContext = createParseContext();
@@ -133,15 +157,30 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
   function producesHeaderClause(node) {
     if (!Array.isArray(node)) return false;
     const head = watxValue(node[1]);
-    if (head === 'param' || head === 'result' || head === 'effects' || head === 'export') return true;
-    return head === 'begin' && node.slice(2).some(producesHeaderClause);
+    if (WATX_HEADER_CLAUSES.has(head)) return true;
+    if (head === 'begin' || head === 'then' || head === 'else') return node.slice(2).some(producesHeaderClause);
+    // Either arm of a conditional may supply the clause.
+    if (head === 'if-const') return node.slice(3).some(producesHeaderClause);
+    if (head === 'cond-const') return node.slice(2).some(c => Array.isArray(c) && c.slice(2).some(producesHeaderClause));
+    return false;
+  }
+  function containsCfg(node) {
+    const pending = [node];
+    while (pending.length) {
+      const n = pending.pop();
+      if (!Array.isArray(n)) continue;
+      const head = watxValue(n[1]);
+      if (head === 'if-const' || head === 'cond-const') return true;
+      for (let i = 1; i < n.length; i++) if (Array.isArray(n[i])) pending.push(n[i]);
+    }
+    return false;
   }
   for (const form of macroForms) {
     const signature = form[2];
     const name = Array.isArray(signature) ? watxValue(signature[1]) : '';
     const producesHeader = form.slice(3).some(producesHeaderClause);
     if (name) macroInfo.set(name, {
-      form, typeForms: watxIndirectTypeForms(form), dependencies: [], producesHeader,
+      form, typeForms: watxIndirectTypeForms(form), dependencies: [], producesHeader, cfg: containsCfg(form),
     });
   }
   for (const info of macroInfo.values()) {
@@ -177,6 +216,32 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
     }
   }
 
+  // A macro whose indirect-call types may sit inside a compile-time
+  // conditional: its type forms cannot be read off the template, because the
+  // arm the build does not choose must not contribute any. A function that
+  // uses one (or spells a conditional itself) is expanded in pass 1 instead.
+  const cfgMacros = new Set([...macroInfo].filter(([, info]) => info.cfg).map(([name]) => name));
+  let addedCfgDependency = cfgMacros.size > 0;
+  while (addedCfgDependency) {
+    addedCfgDependency = false;
+    for (const [name, info] of macroInfo) {
+      if (!cfgMacros.has(name) && info.dependencies.some(dependency => cfgMacros.has(dependency))) {
+        cfgMacros.add(name);
+        addedCfgDependency = true;
+      }
+    }
+  }
+  const routedMacros = new Set([...cfgMacros].filter(name => indirectTypeMacros.has(name)));
+  const cfgOffsets = new Map();
+  function needsPassOneExpansion(descriptor) {
+    if (watxRangeHasOffset(watxCfgOffsets(cfgOffsets, descriptor.source), descriptor.start, descriptor.end)) return true;
+    if (!routedMacros.size) return false;
+    for (const head of scanWatxListHeads(descriptor.source, descriptor.start, descriptor.end)) {
+      if (routedMacros.has(head)) return true;
+    }
+    return false;
+  }
+
   function usedMacroTypeForms(descriptor) {
     if (!indirectTypeMacros.size) return [];
     const used = new Set();
@@ -195,13 +260,18 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
   const streamByHeader = new Map();
   for (const descriptor of descriptors) {
     if (descriptor.head === 'defmacro') continue;
-    if (descriptor.head === 'func') {
+    // Compile-time names visible to this form: everything declared before it
+    // in include order. Pass 2 re-expands the form with exactly this view.
+    env.file = descriptor.filename;
+    const cfgSeq = env.seq;
+    if (descriptor.head === 'func' && !needsPassOneExpansion(descriptor)) {
       const header = scanWatxFunctionHeader(
         descriptor.source, descriptor.filename, descriptor.start, descriptor.end,
-        headerContext, macroForms, headerMacros);
+        headerContext, macroForms, headerMacros, env);
       const streamInfo = {
         descriptor,
         functionOrdinal: 0,
+        cfgSeq,
         indirectTypeForms: [
           ...scanWatxTypeForms(
             descriptor.source, descriptor.filename, descriptor.start, descriptor.end, headerContext),
@@ -213,7 +283,7 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
       continue;
     }
     const raw = parseStreamingDescriptor(descriptor, headerContext);
-    const expandedForms = expandMacros([...macroForms, raw]);
+    const expandedForms = expandMacros([...macroForms, raw], env);
     let functionOrdinal = 0;
     for (const form of expandedForms) {
       if (!Array.isArray(form) || watxValue(form[1]) !== 'func') {
@@ -224,11 +294,39 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
       const streamInfo = {
         descriptor,
         functionOrdinal: functionOrdinal++,
+        cfgSeq,
         indirectTypeForms: watxIndirectTypeForms(form),
       };
       forms.push(header);
       streamByHeader.set(header, streamInfo);
     }
+  }
+
+  // Re-expand one streamed function exactly as pass 1 saw it: same text, same
+  // macros, the compile-time declarations visible at its position.
+  function expandStreamedFunction(streamInfo, context) {
+    const raw = parseStreamingDescriptor(streamInfo.descriptor, context);
+    const saved = { phase: env.phase, limit: env.limit, file: env.file };
+    env.phase = 'body';
+    env.limit = streamInfo.cfgSeq;
+    env.file = streamInfo.descriptor.filename;
+    let expandedForms;
+    try {
+      expandedForms = expandMacros([...macroForms, raw], env);
+    } finally {
+      env.phase = saved.phase; env.limit = saved.limit; env.file = saved.file;
+    }
+    const functions = expandedForms.filter(form => Array.isArray(form) && watxValue(form[1]) === 'func');
+    return functions[streamInfo.functionOrdinal];
+  }
+
+  // The expanded body of a pass-1 header, for advice's (pure) inference.
+  // Parsed without the body arena: nothing here may be recycled.
+  function headerBody(header) {
+    const streamInfo = streamByHeader.get(header);
+    if (!streamInfo) return null;
+    const form = expandStreamedFunction(streamInfo, null);
+    return form ? watxFunctionBody(form) : null;
   }
 
   function bindFunctionDeclarations(checkResult) {
@@ -237,6 +335,8 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
       if (!streamInfo) continue;
       fd.streamInfo = streamInfo;
       fd.indirectTypeForms = streamInfo.indirectTypeForms;
+      // (at entry) advice the weaver left on the header for the body loader.
+      if (fd.form._watxEntryPrologue) streamInfo.entryPrologue = fd.form._watxEntryPrologue;
       fd.form = null;
     }
     streamByHeader.clear();
@@ -248,18 +348,20 @@ function prepareStreamingModule(source, vfs, frontendReuse) {
     if (!streamInfo) return fd.body;
     // The body is discarded immediately after emission. Reuse its dense list
     // storage for the next function and do not retain a module-wide atom pool.
-    const raw = parseStreamingDescriptor(streamInfo.descriptor, bodyContext);
-    const expandedForms = expandMacros([...macroForms, raw]);
-    const functions = expandedForms.filter(form => Array.isArray(form) && watxValue(form[1]) === 'func');
-    const form = functions[streamInfo.functionOrdinal];
+    const form = expandStreamedFunction(streamInfo, bodyContext);
     if (!form) throw new Error(`Streaming pass mismatch while loading ${fd.name}`);
+    const body = watxFunctionBody(form);
+    if (streamInfo.entryPrologue) {
+      // Fresh clones each load: the body's lists are recycled after emission.
+      body.splice(watxEntryInsertIndex(body, 0), 0, ...streamInfo.entryPrologue.map(watxCloneTree));
+    }
     return {
-      body: watxFunctionBody(form),
+      body,
       release() { recycleWatxTree(form, bodyContext); },
     };
   }
 
-  return { forms, bindFunctionDeclarations, loadFunctionBody };
+  return { forms, bindFunctionDeclarations, loadFunctionBody, headerBody };
 }
 
 // --- Full Compiler Pipeline ---
@@ -281,9 +383,11 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
   try {
     let expanded;
     let streamingModule = null;
+    // Compile-time options, targets and constants (defoption/if-const/...).
+    const cfgEnv = createWatxCompileEnv(options);
     if (streaming) {
       currentStage = 'PARSE';
-      streamingModule = prepareStreamingModule(source, vfs, options.frontendReuse);
+      streamingModule = prepareStreamingModule(source, vfs, options.frontendReuse, cfgEnv);
       stages.push({ name: 'PARSE', success: true });
       stages.push({ name: 'INCLUDE', success: true });
       stages.push({ name: 'EXPAND', success: true });
@@ -302,9 +406,21 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
 
       // Stage 3: Expand
       currentStage = 'EXPAND';
-      expanded = expandMacros(included);
+      expanded = expandMacros(included, cfgEnv);
       stages.push({ name: 'EXPAND', success: true });
     }
+    // Every define must name a declared option: a typo on the command line is
+    // an error, not a build that silently used the default.
+    for (const name of cfgEnv.defines.keys()) {
+      const d = cfgEnv.decls.get(name);
+      if (!d) throw new Error(`define ${name}: no (defoption ${name} ...) in this program`);
+      if (d.kind !== 'option') throw new Error(`define ${name}: '${name}' is a defconst, not a defoption`);
+    }
+    // Function advice, woven once every module-level form (and so every
+    // export, table entry and advice declaration) is known.
+    const wrapped = applyWatxAdvice(expanded,
+      streamingModule ? streamingModule.headerBody : (form) => watxFunctionBody(form), cfgEnv, !!streamingModule);
+    expanded = wrapped.forms;
     yield { stage: 'EXPAND' };
     
     // Stage 4: Check
@@ -373,7 +489,7 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
     // JSON-able data. A consumer that needs only declarations (layout offsets,
     // the region map, the export surface) can read these instead of parsing
     // and expanding the whole closure again. Never changes wasmBinary.
-    if (options.facts) result.facts = watxCompileFacts(lowered, wasmResult.facts);
+    if (options.facts) result.facts = watxCompileFacts(lowered, wasmResult.facts, cfgEnv, wrapped.report);
     if (debugArtifacts) {
       result.wasmText = wasmText;
       result.expanded = formatSexpr(expanded);
@@ -397,7 +513,37 @@ function* compileSteps(source, vfs = new Map(), options = {}) {
 // The lowered declaration records (lowerIR) in their own shape, minus the
 // derived lookup maps: a layout's fieldByName is its fields by name, and an
 // enum's members Map becomes an object in declaration order.
-function watxCompileFacts(lowered, moduleFacts) {
+function watxCfgFactValue(v) {
+  if (!v) return null;
+  if (v.t === 'int') {
+    if (v.w !== 'i64' && v.v >= BigInt(Number.MIN_SAFE_INTEGER) && v.v <= BigInt(Number.MAX_SAFE_INTEGER)) return Number(v.v);
+    return String(v.v);
+  }
+  return v.v;
+}
+
+// What the compile-time layer decided: every option with its value and where
+// that value came from, every constant, the targets, and per file the options
+// and targets its forms read -- the exact inputs a per-file cache must key on.
+function watxCompileTimeFacts(env) {
+  const options = [], constants = [];
+  for (const d of env.decls.values()) {
+    if (d.kind === 'option') {
+      const row = { name: d.name, type: d.type.t === 'int' ? d.type.w : d.type.t,
+        default: watxCfgFactValue(d.defaultValue), value: watxCfgFactValue(d.value),
+        source: d.defined ? 'define' : 'default', doc: d.doc, file: d.file, line: d.line };
+      if (d.type.t === 'enum') row.members = d.type.members.slice();
+      options.push(row);
+    } else {
+      constants.push({ name: d.name, value: watxCfgFactValue(d.value), reads: [...d.deps].sort(), file: d.file, line: d.line });
+    }
+  }
+  const reads = {};
+  for (const file of [...env.reads.keys()].sort()) reads[file] = [...env.reads.get(file)].sort();
+  return { options, constants, targets: Object.fromEntries(env.targets), reads };
+}
+
+function watxCompileFacts(lowered, moduleFacts, cfgEnv, adviceReport) {
   const declarations = [];
   for (const rec of lowered) {
     if (!rec || typeof rec.type !== 'string' || !rec.type.endsWith('-lowered')) continue;
@@ -410,7 +556,24 @@ function watxCompileFacts(lowered, moduleFacts) {
       declarations.push(rec);
     }
   }
-  return { declarations, ...(moduleFacts || {}) };
+  const facts = { declarations, ...(moduleFacts || {}) };
+  if (cfgEnv) facts.compileTime = watxCompileTimeFacts(cfgEnv);
+  if (adviceReport && adviceReport.declarations.length) {
+    // Each function export with its (at export) chain (declaration indices,
+    // outermost first) and the function that finally runs.
+    const byName = new Map(adviceReport.exports.map(row => [row.name, row]));
+    for (const exp of facts.exports || []) {
+      const row = exp.kind === 'func' ? byName.get(exp.name) : null;
+      if (!row) continue;
+      exp.advice = row.advice.slice();
+      exp.implementation = row.target;
+      if (row.pure !== null) exp.pure = row.pure;
+    }
+    // Every declaration (where, what it matched, the options it depended on)
+    // and every function's final chains with where each link was declared.
+    facts.advice = { hotLimit: adviceReport.hotLimit, declarations: adviceReport.declarations, chains: adviceReport.chains };
+  }
+  return facts;
 }
 
 function compile(source, vfs = new Map(), options = {}) {

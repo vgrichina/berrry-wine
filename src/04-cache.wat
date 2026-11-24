@@ -2630,6 +2630,9 @@
   ;; tools/watx-src/CHANGELOG.md, 2026-09-19) and
   ;; test/watx-compiler-macro-body.test.js CALLS such a module, so the
   ;; wrapper is gone; the artifact is byte-identical either way.
+  ;;
+  ;; The tail of the macro is chosen at compile time by TRAMPOLINE_DISPATCH
+  ;; (01-header.wat): no tail calls and COMPAT_DISPATCH=trampoline.
   (defmacro (dispatch-next)
     (if (i32.le_s (global.get $steps) (i32.const 0))
       (then
@@ -2664,11 +2667,56 @@
     ;; $jcc_end stopped unwinding at block terminators, $steps is no longer a
     ;; backstop: it *is* the chain length, and the same chain is now ~1000
     ;; frames instead of ~5. See docs/interpreter-dispatch-perf.md.
-    (return_call_indirect (type $handler_t) (local.get $nx_op) (local.get $nx_fn)))
+    ;;
+    ;; Without wasm tail calls (the compat artifact, iOS Safari before 18.2)
+    ;; every `return_call*` lowers to `call*; return`, and one 256-block chain
+    ;; becomes ~1000 nested frames -- deep enough to overflow Node's default
+    ;; stack on Moorhuhn 2. So that build parks the next op in two globals and
+    ;; returns, and $tramp_drive below runs it. Measured 2026-09-22, fixed work,
+    ;; user CPU, against the nested call;return shape: Moorhuhn 2 / StarCraft /
+    ;; Diablo -28/-30/-29% on node 20, -50/-49/-50% on bun 1.3; still +12..+24%
+    ;; against the tail-call artifact, which stays the default wherever the
+    ;; engine has tail calls (tools/build-dispatch-variant.js --variant=nested
+    ;; rebuilds the old shape for that A/B).
+    (if-const (const TRAMPOLINE_DISPATCH)
+      (then
+        (global.set $tramp_op (local.get $nx_op))
+        (global.set $tramp_fn (local.get $nx_fn))
+        (return))
+      (else
+        (return_call_indirect (type $handler_t) (local.get $nx_op) (local.get $nx_fn)))))
+
+  ;; After every NON-tail entry into a handler chain: run whatever op the chain
+  ;; parked. Those entries are exactly $run's two `(call $next)` and
+  ;; 07c-block-exec's two fallback `call_indirect`s; every other entry is a
+  ;; `return_call`, which the compat lowering turns into call;return, so it
+  ;; costs at most one frame before the callee parks the next op and returns.
+  ;; $tramp_fn is -1 whenever no op is parked, so a chain that ends by plain
+  ;; `return` ($steps exhausted, $th_bx_resume, a yield) leaves the driver
+  ;; nothing to run, exactly as the nested shape unwinds. Empty unless
+  ;; TRAMPOLINE_DISPATCH (no tail calls, COMPAT_DISPATCH=trampoline).
+  (defmacro (dispatch-drain)
+    (if-const (const TRAMPOLINE_DISPATCH)
+      (then (call $tramp_drive))))
 
   (func $next
     (local $nx_fn i32) (local $nx_op i32)
     (dispatch-next))
+
+  (if-const (const TRAMPOLINE_DISPATCH)
+    (then
+      ;; ---- compat dispatch trampoline (see dispatch-next above) ----
+      (global $tramp_fn (mut i32) (i32.const -1))
+      (global $tramp_op (mut i32) (i32.const 0))
+      (func $tramp_drive
+        (local $f i32)
+        (loop $again
+          (local.set $f (global.get $tramp_fn))
+          (if (i32.ge_s (local.get $f) (i32.const 0))
+            (then
+              (global.set $tramp_fn (i32.const -1))
+              (call_indirect (type $handler_t) (global.get $tramp_op) (local.get $f))
+              (br $again)))))))
 
   ;; A writing fusion can stop after its first original guest instruction.
   ;; Its ordinary trailing checkpoint consumes this precise interior PC on

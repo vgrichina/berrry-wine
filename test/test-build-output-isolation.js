@@ -20,8 +20,9 @@ try {
   `);
   fs.writeFileSync(path.join(root, 'tools/region-layout-hash.js'),
     'exports.appendSection = bytes => bytes; exports.layoutHash = () => "fixture";');
-  fs.mkdirSync(path.join(root, 'lib'));
-  fs.writeFileSync(path.join(root, 'lib/dispatch-trampoline.js'), 'exports.applyToVfs = vfs => vfs;');
+  // build-compile-wat.js loads the facts writer; this fixture compile emits none.
+  fs.writeFileSync(path.join(root, 'tools/watx-facts.js'),
+    'exports.buildFactsDocument = () => null; exports.writeFacts = () => {};');
   const shared = ['wine-assembly.wasm', 'wine-assembly.compat.wasm', 'wine-assembly.named.wasm'];
   shared.forEach(name => fs.writeFileSync(path.join(root, 'build', name), `shared:${name}`));
   function run(args, ok = true) {

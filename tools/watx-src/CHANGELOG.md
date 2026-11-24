@@ -1,3 +1,130 @@
+## 2026-11-24 — `advise` replaces `export-wrap` (function advice, v2)
+
+Approved design: scratch/build-plan/watx-lang-proposal.html, decisions 1-6
+(2026-11-24). Language reference: docs/watx-language-compile-time.md §2.
+
+- `compiler-stages.js`: `export-wrap` is gone, replaced by **`advise`**:
+  `(advise ["NAME"] (match SELECTOR) (at export|entry) [(allow-hot)] :before|:before-until FORMS...)`
+  at module level; inline `(advise (at ...) QUALIFIER FORMS...)` and
+  `(no-advise "NAME")` as function clauses.
+  - `(at export)` keeps v1's wrapper generation exactly: same names, same
+    append-at-end placement, same export-section order.
+  - `(at entry)` splices the chain at the top of the function's own body
+    (no frame; `call_indirect` and `return_call` keep working).
+  - Entry advice that lands on a table function, or on more than 32
+    functions (`WATX_ADVICE_HOT_LIMIT`), needs `(allow-hot)`.
+  - Chain: matching outside advice in declaration order, minus `no-advise`,
+    then inline advice innermost.
+  - Selectors gain `(export)`, `(effects)` and `(in-table $t)`. They refuse
+    `option`/`const`/`target`. `(match ...)` is not macro-expanded.
+  - `:after`/`:around` are errors naming them as future work.
+    `:filter-args`/`:override` are errors as not planned.
+  - Advice whose forms are empty after `if-const` is dropped.
+  - `if-const`/`cond-const` now report the reads of their conditions, so each
+    declaration records `dependsOn`. Unchosen arms (and macro templates) are
+    scanned for advice names, so `no-advise` may name advice this build
+    switched off, while a name found nowhere is an error.
+- `compiler-parser.js`:
+  - `:` is now a symbol character, so `:before` is one atom (it used to be
+    dropped as punctuation; nothing in src/ spelled it outside comments and
+    strings).
+  - `scanWatxFunctionHeader` keeps `advise`/`no-advise` header clauses
+    (`WATX_HEADER_CLAUSES`).
+- `compiler.js`:
+  - Header/body splitting uses `WATX_HEADER_CLAUSES`.
+  - The streaming body loader splices `(at entry)` prologues the weaver left on
+    the header.
+  - Facts: `exports[].wrappers` becomes `exports[].advice`, and `exportWraps`
+    becomes `advice{hotLimit, declarations, chains}`, with file:line per chain
+    link and `dependsOn` per declaration.
+
+**Canonical bytes did not move.** `src/13a-export-guards.wat` became one
+`(advise "store-step" (match (and (export) (not (pure)))) (at export) :before ...)`,
+and its name list became four `(no-advise "store-step")` clauses (run,
+set_rep_store_step, guest_read8, guest_read32). Both artifacts are
+byte-identical to the v1 `export-wrap` build of the same tree (base `c28402b8b`):
+
+- `build/wine-assembly.wasm`: `32b2509f9fe32bd9360ca306048ef80ab0231036a2b7d4a5bc2e87e239a8eb74`
+- `build/wine-assembly.compat.wasm`: `93dc9e6170170806a7a34a06416c282fbff718b494100f773f025d5936e21154`
+
+The guarded set is identical: 2436 function exports, 1772 guarded, 660 pure,
+4 opted out.
+
+Evidence:
+
+- `test/watx-compiler-advise.test.js` (renamed from
+  `watx-compiler-export-wrap.test.js`): 96 checks. Every behaviour case is
+  called, under both front ends.
+- `test/watx-compiler-facts.test.js` (117 checks) and
+  `test/test-protected-closure-contract.js` were moved to the new fields.
+
+Manifest digest: `37d5b46c67be6575b7f7822b8dbc6734bf2a264d0519e12e704affb21454f236`
+
+## 2026-11-21 — compile-time configuration and export wrappers
+
+Two language features, so a host no longer rewrites source text before
+compiling it. Reference: docs/watx-language-compile-time.md.
+
+1. Compile-time configuration. `(defoption NAME TYPE DEFAULT "doc")` with TYPE
+   `bool`, `i32`, `i64` or `(enum a b ...)`; `(defconst NAME EXPR)`; reads
+   `(option NAME)`, `(const NAME)`, `(target FEATURE)` (`tail-calls` and
+   `production` follow `tailCalls`/`mode`; `simd`, `threads`, `multi-memory`
+   only from `options.targets`, and reading one the build did not state is an
+   error); operators `and or not eq ne lt le gt ge add sub mul shl shr and-bits
+   or-bits`; `(if-const C (then ...) [(else ...)])` and `(cond-const (C ...)
+   ... [(else ...)])` at module level, in function bodies and in macro bodies.
+   The chosen arm splices like `begin`; the other is parsed but never expanded
+   or checked. A condition sees only declarations EARLIER in include order.
+   `(const NAME)` is also an immediate: `(i32.const (const N))`. Values come
+   from `options.define` (`{NAME: value}`); an unknown name, a defconst name, or
+   a value of the wrong type or range is an error. New in
+   `compiler-stages.js`: the environment (`createWatxCompileEnv`), evaluator and
+   the `expandForm` hooks; `expandMacros(forms, env)` takes the environment.
+   `compiler-parser.js`: `scanWatxFunctionHeader` passes it to header macros.
+   `compiler.js`: the streaming front end gives each form the declarations
+   visible at its position (pass 2 re-expands with the same view), and expands
+   in pass 1 any function that spells a conditional or uses a macro whose
+   conditional arms hold indirect-call types, so an unchosen arm never
+   registers a type or a header clause.
+
+2. `(export-wrap (match SELECTOR) (prologue FORMS...))`, SELECTOR `(all)`
+   `(name "a" ...)` `(prefix "p" ...)` `(pure)` `(not S)` `(and S...)` `(or S...)`.
+   Each matching function export moves to a generated function with the same
+   signature whose body is the prologue (params are locals 0..n-1; it may
+   `return`) followed by a call to the original. Several declarations nest in
+   declaration order, the first outermost. Internal calls keep their targets;
+   wrappers are appended after every other form, so no existing function index
+   moves; every export keeps its place in the export section (a moved inline
+   clause is registered at its home function). `(pure)` is inferred,
+   conservatively, from the expanded body: only folded reads, constants,
+   loads, non-store non-atomic numeric ops, `select` and region/layout
+   constants; any `(effects ...)` clause, import, empty body, control flow,
+   `local.set`, call, store, `memory.*` or atomic is impure.
+   `applyWatxExportWraps` in `compiler-stages.js`, run once after expansion in
+   both front ends; `compiler-codegen.js`'s fallback export collector honours
+   the home registration.
+
+Facts (`facts: true`) gain `compileTime` (options with value and source,
+constants with what they read, targets, and per file the options/targets its
+forms read, transitively through constants: the key a per-file cache needs),
+`exportWraps`, and on each function export `wrappers` (outermost first),
+`implementation` and `pure`. A module with no `export-wrap` and no
+compile-time form compiles exactly as before: the front-end reuse cache keys
+lexical ranges only, which no option changes.
+
+Evidence: `test/watx-compiler-cfg.test.js` (64 checks) and
+`test/watx-compiler-export-wrap.test.js` (32 checks) compile AND call every
+case through both front ends. On this tree, the canonical build with the
+export-wrap include dropped is byte-identical to the previous compiler's
+unprotected build (tail `c4521cdcc3a767731b491e84c3569de5deaf343037f506b34d4113631ef7bf9f`,
+compat `a0d9092fb5a3cdbb719c73757c7fb9c7310736731f43738c9bbb8a7c05e05ed3`,
+nested `--define COMPAT_DISPATCH=nested` compat
+`653bb3a168e232814ac8cf04ccc4641364ad2141198b1ee3acb3ff9552c5b9f8` = the old overlay-free compat), and the wrapped export set
+equals the previous source-rewrite inventory export for export (1766 wrapped,
+660 inferred pure, same signatures).
+
+Manifest-sha256: c84cf803c24cfe919e0479866c0a8befdbd1e7d1a4dd6bd130e3f96e7d982b22
+
 ## 2026-11-21 — opt-in pass-1 facts (`compile(..., { facts: true })`)
 
 `compile()` takes a new option, `facts`, and when it is set returns

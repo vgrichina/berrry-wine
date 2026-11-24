@@ -49,9 +49,8 @@ for (const p of reached) {
   const f = path.basename(p);
   for (const k of [f,'src/'+f,'./'+f]) assert.equal(closure.vfs.get(k),closure.vfs.get(f));
 }
-const {applyToVfs} = require(ROOT + '/lib/dispatch-trampoline.js');
 const {layoutHash, appendSection} = require(ROOT + '/tools/region-layout-hash.js');
-const compat = {...closure, vfs:applyToVfs(new Map(closure.vfs))};
+const compat = closure; // compat dispatch is (if-const (target tail-calls) ...) in source
 const seal = {sourceRoot:ROOT, revision:m.candidate, entry:closure.entry, inputSeals, overlays,
   reached:[...reached].map(p=>({path:p,sha256:sha(p===closure.entry?closure.source:closure.vfs.get(path.basename(p)))})),
   compilerDependencies:inputSeals.filter(r=>!r.path.startsWith('src/')), hookSHA256:sha(fs.readFileSync(hookPath)),

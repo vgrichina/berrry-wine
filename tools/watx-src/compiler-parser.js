@@ -19,8 +19,8 @@ const WATX_DIGIT_RE = /[0-9]/;
 // separator's legal POSITION (between digits only) is enforced by the strict
 // literal validators in compiler-codegen.js, not here.
 const WATX_NUMBER_RE = /[0-9._\-xXa-fA-F]/;
-const WATX_SYMBOL_START_RE = /[a-zA-Z_$\-\.{}\+\*\/\<\>\=\!\&\|\^\~\%\?\@\#]/;
-const WATX_SYMBOL_RE = /[a-zA-Z0-9_$\-\.{}\+\*\/\<\>\=\!\&\|\^\~\%\?\@\#]/;
+const WATX_SYMBOL_START_RE = /[a-zA-Z_$\-\.{}\+\*\/\<\>\=\!\&\|\^\~\%\?\@\#:]/;
+const WATX_SYMBOL_RE = /[a-zA-Z0-9_$\-\.{}\+\*\/\<\>\=\!\&\|\^\~\%\?\@\#:]/;
 
 // Production parsing classifies ASCII with one table lookup instead of running
 // a RegExp for nearly every source character.
@@ -34,6 +34,10 @@ for (let code = 65; code <= 90; code++) WATX_CHAR_FLAGS[code] |= WATX_CHAR_SYMBO
 for (let code = 97; code <= 122; code++) WATX_CHAR_FLAGS[code] |= WATX_CHAR_SYMBOL_START | WATX_CHAR_SYMBOL;
 for (const ch of '_$-.{}+*/<>=!&|^~%?@#') WATX_CHAR_FLAGS[ch.charCodeAt(0)] |= WATX_CHAR_SYMBOL_START | WATX_CHAR_SYMBOL;
 for (const ch of '._-xXabcdefABCDEF') WATX_CHAR_FLAGS[ch.charCodeAt(0)] |= WATX_CHAR_NUMBER;
+// `:` is a symbol character, so a keyword such as `:before` (advise
+// qualifiers) is one atom. It used to be dropped as punctuation. `nan:0x...`
+// is still one NUMBER: both readers scan NaN payloads before symbols.
+WATX_CHAR_FLAGS[58] |= WATX_CHAR_SYMBOL_START | WATX_CHAR_SYMBOL;
 
 // ── Float spellings that are not a plain digit run ───────────────────────────
 // WAT's float grammar has shapes whose characters fall outside the number class
@@ -659,7 +663,12 @@ function scanWatxListHeads(source, start = 0, end = source.length) {
   return heads;
 }
 
-function scanWatxFunctionHeader(source, filename, start, end, parseContext = null, macroForms = [], macroNames = null) {
+// The clauses that make up a function's HEADER: pass 1 keeps them, pass 2's
+// body excludes them. `advise`/`no-advise` are header clauses so the advice
+// weaver sees a function's own advice before any body is compiled.
+const WATX_HEADER_CLAUSES = new Set(['param', 'result', 'effects', 'export', 'advise', 'no-advise']);
+
+function scanWatxFunctionHeader(source, filename, start, end, parseContext = null, macroForms = [], macroNames = null, env = null) {
   const fileBase = watxFileId(filename, source) * WATX_LOC_FILE_BASE;
   const header = [packWatxLocBase(fileBase, start), 'func'];
   let i = start + 1;
@@ -710,17 +719,18 @@ function scanWatxFunctionHeader(source, filename, start, end, parseContext = nul
       const childStart = i;
       const childEnd = findListEnd(childStart);
       const childHead = watxTopLevelHead(source, childStart, childEnd);
-      if (childHead === 'param' || childHead === 'result' || childHead === 'effects' || childHead === 'export') {
+      if (childHead === 'param' || childHead === 'result' || childHead === 'effects' || childHead === 'export' ||
+          childHead === 'no-advise') {
         const child = parseSource(source, filename, parseContext, childStart, childEnd)[0];
         header.push(child);
-      } else if (macroNames?.has(childHead)) {
-        // Header clauses may themselves come from a forward-defined macro.
-        // Parse only the immediate invocation, then retain only header output.
+      } else if (childHead === 'advise' || macroNames?.has(childHead)) {
+        // Header clauses may themselves come from a forward-defined macro, and
+        // an advice clause's forms are code: expand either now. Parse only the
+        // immediate form, then retain only header output.
         const child = parseSource(source, filename, parseContext, childStart, childEnd)[0];
-        for (const expanded of expandMacros([...macroForms, child])) {
+        for (const expanded of expandMacros([...macroForms, child], env)) {
           const expandedHead = Array.isArray(expanded) ? watxValue(expanded[1]) : null;
-          if (expandedHead === 'param' || expandedHead === 'result' ||
-              expandedHead === 'effects' || expandedHead === 'export') header.push(expanded);
+          if (WATX_HEADER_CLAUSES.has(expandedHead)) header.push(expanded);
         }
       }
       i = childEnd;

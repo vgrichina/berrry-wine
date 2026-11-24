@@ -17,7 +17,7 @@ module.exports = async function executableCacheControls({ inputRoot, loaderRoot 
   function pass(label) { checks++; console.log(`PASS executable ${label}`); }
   try {
     for (const file of ['test/render-helper.js', 'test/render-artifact.js', 'test/compile-src.js',
-      'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'tools/watx.js', 'lib/wat-manifest.js'])
+      'tools/watx-closure.js', 'tools/watx.js', 'lib/wat-manifest.js'])
       put(file, fs.readFileSync(path.join(file === 'tools/watx.js' && loaderRoot ? loaderRoot : root, file)));
     put('src/main.watx', '(module (include "13-exports.wat"))');
     const armedGlobal = '(global $rep_store_step (mut i32) (i32.const 0))\n';
@@ -94,7 +94,7 @@ module.exports = async function executableCacheControls({ inputRoot, loaderRoot 
     assert.equal(heldCompile.compileSrcWasm(transform)[7], 1);
     pass('changed compile-src and closure execute new code; prepare/consume marker 17 matches');
 
-    for (const file of ['test/compile-src.js', 'tools/watx-closure.js', 'tools/protected-writer-entries.js', 'tools/watx.js', 'tools/watx-src/compiler.js']) {
+    for (const file of ['test/compile-src.js', 'tools/watx-closure.js', 'tools/watx.js', 'tools/watx-src/compiler.js']) {
       const good = get(file), before = hostCalls;
       put(file, 'throw Error("changed executable sentinel")');
       await assert.rejects(async () => boot(opts), /changed executable sentinel/);

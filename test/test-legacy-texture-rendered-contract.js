@@ -536,9 +536,8 @@ async function runtime() {
     const moduleDir=process.env.LEGACY_RENDER_MODULE_DIR;
     assert(!(stateblocks||immediate)||moduleDir,'state-block/immediate rendering requires both existing shipped modules');
     const canonical=moduleDir?fs.readFileSync(path.join(moduleDir,'wine-assembly.wasm')):compileSrcWasm();
-    const compatVfs=moduleDir?null:require('../lib/dispatch-trampoline').applyToVfs(new Map(closure.vfs));
     const compat=moduleDir?fs.readFileSync(path.join(moduleDir,'wine-assembly.compat.wasm'))
-      :compileSrcWasm((file,source)=>compatVfs.get(file)||source,{tailCalls:false});
+      :compileSrcWasm(null,{tailCalls:false});
     for(const [name,bytes] of [['canonical',canonical],['compat',compat]]){
       evidence[name+'Sha256']=sha(bytes);evidence[name+'Path']=moduleDir?path.join(moduleDir,name==='canonical'?'wine-assembly.wasm':'wine-assembly.compat.wasm'):null;
     }

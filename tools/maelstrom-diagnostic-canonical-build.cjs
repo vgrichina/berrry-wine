@@ -55,9 +55,8 @@ function visit(key,text){
 visit(closure.entry,closure.source);
 for(const r of overlays)assert(reached.has(r.path));
 for(const p of reached)for(const k of [path.basename(p),'src/'+path.basename(p),'./'+path.basename(p)])assert.equal(closure.vfs.get(k),closure.vfs.get(path.basename(p)));
-const {applyToVfs}=require(ROOT+'/lib/dispatch-trampoline.js');
 const {layoutHash,appendSection}=require(ROOT+'/tools/region-layout-hash.js');
-const compat={...closure,vfs:applyToVfs(new Map(closure.vfs))};
+const compat=closure; // compat dispatch is (if-const (target tail-calls) ...) in source
 const seal={sourceRoot:ROOT,historicalManifestRevision:m.candidate,canonicalScope:'exact current-main closure',acceptedIntegration:m.candidate,uopNativeBoundaries:true,
  entry:closure.entry,inputSeals,overlays,crtLoadedBase,mappingQualification:'explicit controlled synthetic CRT mapping; authentic PE anchors verified; not original loader mapping',anchors,
  binarySeals:Object.entries(binaries).map(([name,b])=>({name,bytes:b.length,sha256:sha(b)})),

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "41a4a939d1115ad5d270efafbe487f126c5b9071037db23fb3640c545c829db8",
+      "sha256": "e103183cfe80927bfa71f196f7fbbb9f99f28ac1bf49659fe65f8918284076e9",
+      "reason": "Review 20261124 WATX advise v2: $run gains the header clause (no-advise \"store-step\"), which moves its exemption from the store-step export guard's name list (src/13a-export-guards.wat) onto the function. The clause is removed by the compiler's advice weaver before code generation and emits nothing; the canonical tail and compat wasm are byte-identical to the v1 export-wrap build. No callback producer, EIP write, boundary call or lifetime changed."
+    }
+  ]
+}

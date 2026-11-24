@@ -14,7 +14,8 @@
 // calls and no trampoline, so the compiler lowers every `return_call*` to
 // `call*; return` and one handler chain is ~1000+ nested wasm frames. The
 // shipped build/wine-assembly.compat.wasm now dispatches through the flat
-// trampoline in lib/dispatch-trampoline.js; this is the arm that re-measures
+// trampoline (src/04-cache.wat, TRAMPOLINE_DISPATCH); this arm compiles the
+// same closure with `COMPAT_DISPATCH=nested` (a WATX defoption) and re-measures
 // that decision (it was -28..-30% user CPU on V8 and -49..-50% on JSC across
 // Moorhuhn 2, StarCraft and Diablo when it was made). Note that on real games
 // Node needs `--stack-size=60000` to run this variant at all.
@@ -30,7 +31,7 @@ const opt = (name, dflt) => {
 };
 
 const VARIANTS = {
-  nested: { tailCalls: false, overlay: null },
+  nested: { tailCalls: false, define: { COMPAT_DISPATCH: 'nested' } },
 };
 
 function main() {
@@ -42,8 +43,7 @@ function main() {
   const { watxSourceClosure, compileClosure } = require('./watx-closure.js');
   const { layoutHash, appendSection } = require('./region-layout-hash.js');
   const closure = watxSourceClosure();
-  if (variant.overlay) variant.overlay(closure.vfs);
-  const r = compileClosure(closure, { tailCalls: variant.tailCalls });
+  const r = compileClosure(closure, { tailCalls: variant.tailCalls, define: variant.define });
   if (!r || !r.success || !r.wasmBinary) {
     const where = r && r.file ? ` at ${r.file}:${r.line || '?'}:${r.col || '?'}` : '';
     throw new Error(`WATX compile failed${where}: ` +
@@ -53,7 +53,7 @@ function main() {
   fs.mkdirSync(path.dirname(out), { recursive: true });
   fs.writeFileSync(out, bytes);
   console.log(`wrote ${path.relative(ROOT, out)} (${bytes.length} bytes, variant ${name}, ` +
-    `tailCalls=${variant.tailCalls})`);
+    `tailCalls=${variant.tailCalls}, define=${JSON.stringify(variant.define)})`);
 }
 
 main();
