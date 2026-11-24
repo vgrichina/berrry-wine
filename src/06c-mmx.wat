@@ -1269,12 +1269,38 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br_if $bytes (i32.lt_u (local.get $i) (i32.const 8)))))
 
+  ;; SSE1 PSADBW: eight unsigned byte absolute differences, summed into the
+  ;; low word; bits 63:16 are zero. Snapshot both inputs before writing dst.
+  ;; Intel SDM vol.2B PSADBW and vol.3A 12.2: flags unchanged, TOP=0,
+  ;; all x87 tags valid. Existing separate MMX/x87 value storage is retained.
+  (func $mmx_psadbw (param $dst i32) (param $source i64)
+    (local $original i64) (local $lane i32) (local $difference i32) (local $sum i32)
+    (local.set $original (call $mmx_get (local.get $dst)))
+    (loop $bytes
+      (local.set $difference (i32.sub
+        (i32.and (i32.wrap_i64 (i64.shr_u (local.get $original)
+          (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 3))))) (i32.const 255))
+        (i32.and (i32.wrap_i64 (i64.shr_u (local.get $source)
+          (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 3))))) (i32.const 255))))
+      (local.set $sum (i32.add (local.get $sum)
+        (select (i32.sub (i32.const 0) (local.get $difference)) (local.get $difference)
+          (i32.lt_s (local.get $difference) (i32.const 0)))))
+      (local.set $lane (i32.add (local.get $lane) (i32.const 1)))
+      (br_if $bytes (i32.lt_u (local.get $lane) (i32.const 8))))
+    (call $mmx_set (local.get $dst) (i64.extend_i32_u (local.get $sum)))
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_tag (i32.const 255)))
+
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
     (global.set $mmx_exec_count (i32.add (global.get $mmx_exec_count) (i32.const 1)))
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $src (i32.and (local.get $op) (i32.const 0xF)))
+    (if (i32.eq (local.get $sub) (i32.const 168))
+      (then
+        (call $mmx_psadbw (local.get $dst) (call $mmx_get (local.get $src)))
+        (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 512))
                  (i32.le_u (local.get $sub) (i32.const 526)))
       (then
@@ -1329,6 +1355,11 @@
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $addr (call $read_addr))
+    (if (i32.eq (local.get $sub) (i32.const 168))
+      (then
+        ;; Complete the exact m64 read before modifying architectural state.
+        (call $mmx_psadbw (local.get $dst) (call $mmx_load64 (local.get $addr)))
+        (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 256))
                  (i32.le_u (local.get $sub) (i32.const 511)))
       (then
@@ -1442,6 +1473,7 @@
     (if (i32.eq (local.get $op) (i32.const 0xF2)) (then (return (i32.const 130))))
     (if (i32.eq (local.get $op) (i32.const 0xF3)) (then (return (i32.const 131))))
     (if (i32.eq (local.get $op) (i32.const 0xF5)) (then (return (i32.const 16))))  ;; pmaddwd
+    (if (i32.eq (local.get $op) (i32.const 0xF6)) (then (return (i32.const 168)))) ;; psadbw
     (if (i32.eq (local.get $op) (i32.const 0xF8)) (then (return (i32.const 36))))  ;; psubb
     (if (i32.eq (local.get $op) (i32.const 0xF9)) (then (return (i32.const 37))))  ;; psubw
     (if (i32.eq (local.get $op) (i32.const 0xFA)) (then (return (i32.const 38))))  ;; psubd
