@@ -9021,7 +9021,7 @@
   ;; DuplicateSoundBuffer(this, pOriginalBuffer, ppDuplicateBuffer)
   (func $handle_IDirectSound_DuplicateSoundBuffer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $src_entry i32) (local $obj i32) (local $dst_entry i32)
-    (local $buf_size i32) (local $buf_guest i32) (local $buf_wa i32)
+    (local $buf_size i32)
     ;; Look up source buffer entry
     (local.set $src_entry (call $dx_from_this (local.get $arg1)))
     ;; Create new DSBuffer COM object
@@ -9036,7 +9036,7 @@
       (call $dx_surf_state_ptr (local.get $dst_entry))
       (call $dx_surf_state_ptr (local.get $src_entry))
       (i32.const 32))
-    ;; DuplicateSoundBuffer copies the sample data and controls, but the new
+    ;; DuplicateSoundBuffer shares sample memory and copies controls, but the new
     ;; object is stopped at the beginning of its own playback timeline.
     (i32.store offset=12 (call $dx_surf_state_ptr (local.get $dst_entry))
       (i32.const 0))
@@ -9048,14 +9048,10 @@
     (store.field DxObject misc2 (local.get $dst_entry) (load.field DxObject misc2 (local.get $src_entry)))
     ;; A duplicate starts stopped even if its source is currently playing.
     (store.field DxObject flags (local.get $dst_entry) (i32.const 0))
-    ;; Allocate new buffer and copy data
-    (if (i32.gt_u (local.get $buf_size) (i32.const 0)) (then
-      (local.set $buf_guest (call $heap_alloc (local.get $buf_size))) (local.set $buf_wa (call $g2w (local.get $buf_guest)))
-      (memory.copy
-        (local.get $buf_wa)
-        (load.field DxObject misc1 (local.get $src_entry))
-        (local.get $buf_size))
-      (store.field DxObject misc1 (local.get $dst_entry) (local.get $buf_wa))))
+    ;; Each live DSBuffer entry owns a reference to this immutable allocation.
+    ;; Release returns it to the heap only after the last such entry is gone.
+    (store.field DxObject misc1 (local.get $dst_entry)
+      (load.field DxObject misc1 (local.get $src_entry)))
     ;; *ppDuplicateBuffer = obj
     (call $gs32 (local.get $arg2) (local.get $obj))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -9475,6 +9471,7 @@
 
   (func $handle_IDirectSoundBuffer_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $rc i32) (local $handle i32)
+    (local $i i32) (local $candidate i32) (local $shared i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
     (store.field DxObject refcount (local.get $entry) (local.get $rc))
@@ -9482,18 +9479,29 @@
       (then
         (local.set $handle (load.field DxObject misc0 (local.get $entry)))
         (if (local.get $handle) (then (drop (call $host_voice_close (local.get $handle)))))
-        ;; The sample data is this buffer's own guest-heap block: Create and
-        ;; Duplicate each allocate a private copy. Nothing freed it, so a game
-        ;; that rebuilds its sound set leaked every byte each time -- Forsaken's
-        ;; attract loop recreates DirectSound and ~225 buffers per cycle and
-        ;; exhausted the guest heap within a minute (CreateThread then failed to
-        ;; allocate a TLS vector). The voice is closed above, so no host reads
-        ;; this memory any more.
+        ;; A duplicate shares its source's sample allocation, including when
+        ;; the source was itself a duplicate. Drop this entry's reference and
+        ;; free only if no live DSBuffer still names the same allocation. The
+        ;; table is bounded; using its existing ownership avoids a separate
+        ;; refcount record whose lifetime could depend on a reused source slot.
         (local.set $handle (load.field DxObject misc1 (local.get $entry)))
         (if (local.get $handle)
           (then
             (store.field DxObject misc1 (local.get $entry) (i32.const 0))
-            (call $heap_free (call $w2g (local.get $handle)))))
+            (block $sample_scan_done (loop $sample_scan
+              (br_if $sample_scan_done (i32.ge_u (local.get $i) (global.get $DX_MAX)))
+              (local.set $candidate
+                (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $i) (i32.const 5))))
+              (if (i32.and
+                    (i32.eq (load.field DxObject type (local.get $candidate)) (i32.const 5))
+                    (i32.eq (load.field DxObject misc1 (local.get $candidate)) (local.get $handle)))
+                (then
+                  (local.set $shared (i32.const 1))
+                  (br $sample_scan_done)))
+              (local.set $i (i32.add (local.get $i) (i32.const 1)))
+              (br $sample_scan)))
+            (if (i32.eqz (local.get $shared))
+              (then (call $heap_free (call $w2g (local.get $handle)))))))
         (call $dx_free (local.get $entry))))
     (i32.store offset=0 (global.get $reg_base) (select (local.get $rc) (i32.const 0) (i32.gt_s (local.get $rc) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
