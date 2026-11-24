@@ -1143,9 +1143,11 @@
     (dispatch-next))
   (func $th_pushfd (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
-    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (call $build_eflags)) (dispatch-next))
+    ;; The pushed EFLAGS image always clears RF and VM.
+    (call $gs32 (i32.load offset=16 (global.get $reg_base))
+      (i32.and (call $build_eflags) (i32.const 0xFFFCFFFF))) (dispatch-next))
   (func $th_popfd (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $load_eflags (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+     (local $nx_fn i32) (local $nx_op i32) (call $load_user_eflags (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))) (dispatch-next))
 
   ;; --- Control flow ---
@@ -3117,7 +3119,7 @@
     ;; $eflags_extra (RF, VM, AC, VIF, VIP, ID) has to be carried through --
     ;; handing $load_eflags a bare 16-bit word would clear the ID bit that a
     ;; CPUID probe is in the middle of toggling.
-    (call $load_eflags (i32.or
+    (call $load_user_eflags (i32.or
       (i32.and (global.get $eflags_extra) (i32.const 0xFFFF0000))
       (i32.and (call $gl16 (i32.load offset=16 (global.get $reg_base))) (i32.const 0xFFFF))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2))) (dispatch-next))
@@ -4275,23 +4277,13 @@
      (local $nx_fn i32) (local $nx_op i32) (i32.store (i32.add (global.get $reg_base) (i32.shl (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 2))) (call $sign_ext16 (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2))))))
     (dispatch-next))
 
-  ;; Handler 212: SAHF — load SF, ZF, CF from AH into flags (OF preserved)
+  ;; Handler 212: SAHF — load SF/ZF/AF/PF/CF; preserve all other flags.
   (func $th_sahf (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $ah i32)
-    (local $saved_of i32)
-    (local.set $saved_of (call $get_of))
     (local.set $ah (i32.and (i32.shr_u (i32.load offset=0 (global.get $reg_base)) (i32.const 8)) (i32.const 0xFF)))
-    (global.set $flag_op (i32.const 9))
-    (global.set $flag_sign_shift (i32.const 31))
-    (global.set $flag_a (i32.or
-      (i32.and (local.get $ah) (i32.const 1))
-      (i32.and (i32.shr_u (local.get $ah) (i32.const 1)) (i32.const 2)))) ;; CF/PF
-    (global.set $flag_b (local.get $saved_of))  ;; OF preserved
-    (if (i32.and (local.get $ah) (i32.const 0x40))  ;; ZF = bit 6
-      (then (global.set $flag_res (i32.const 0)))
-      (else (if (i32.and (local.get $ah) (i32.const 0x80))  ;; SF = bit 7
-        (then (global.set $flag_res (i32.const 0x80000001)))
-        (else (global.set $flag_res (i32.const 1))))))
+    (call $load_eflags (i32.or
+      (i32.and (call $build_eflags) (i32.const 0xFFFFFF2A))
+      (i32.and (local.get $ah) (i32.const 0xD5))))
     (dispatch-next))
 
   ;; Handler 280: XLAT — AL = byte [EBX + zero-extended AL]. No flags touched.
@@ -4308,6 +4300,7 @@
     (local.set $ah (i32.const 0x02))  ;; bit 1 always set
     (local.set $ah (i32.or (local.get $ah) (call $get_cf)))  ;; CF = bit 0
     (local.set $ah (i32.or (local.get $ah) (i32.shl (call $get_pf) (i32.const 2))))  ;; PF = bit 2
+    (local.set $ah (i32.or (local.get $ah) (i32.shl (call $get_af) (i32.const 4))))  ;; AF = bit 4
     (local.set $ah (i32.or (local.get $ah) (i32.shl (call $get_zf) (i32.const 6))))  ;; ZF = bit 6
     (local.set $ah (i32.or (local.get $ah) (i32.shl (call $get_sf) (i32.const 7))))  ;; SF = bit 7
     (i32.store8 offset=1 (global.get $reg_base) (local.get $ah))
