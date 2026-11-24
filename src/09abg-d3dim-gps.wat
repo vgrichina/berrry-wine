@@ -910,6 +910,10 @@
       (local.set $n (call $gps_ir_ins (local.get $buf) (local.get $n) (i32.const 18) (i32.const 4)
         (call $d3g_dst (i32.const 0) (i32.const 7)) (i32.const 0x90FF0001) (i32.const 0x80E40000) (i32.const 0xA0E40001)))))
     (drop (call $gps_ir_finish (local.get $buf) (local.get $n) (global.get $GPS_STAGE_PS) (i32.const 0xffff0104)))
+    ;; These projected inputs are affine U/w,V/w,Q/w planes. Preserve their
+    ;; fixed-function origin so the native sampler uses quotient derivatives.
+    (if (i32.and (local.get $key) (i32.const 0x8000))
+      (then (i32.store offset=28 (local.get $buf) (i32.const 4))))
     ;; Publish core IR (09af1): every consumer sees one IR; a decline is a bug here.
     (local.set $core (call $d3d_shader_ir_canonicalize (local.get $buf)))
     (if (i32.eqz (local.get $core)) (then (call $d3g_fail)))

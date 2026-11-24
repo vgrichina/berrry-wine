@@ -21,6 +21,7 @@
 ;; DP4 reuses handler6. Native IR enforces profile slots and CMP restrictions.
 ;; flags (bit0 saturation, bit1 a0 floor, bit2 coissued SECOND packet,
 ;; bit4 private VS2 MOVA nearest-even, bit5 private ABS,
+;; bit16 fixed-origin input TEXLD quotient-gradient LOD,
 ;; bit6 private VS2 LRP difference-form arithmetic,
 ;; bit3 fixed-origin TEXBEML clamps luminance and preserves sampled alpha,
 ;; signed result shift byte at bit8); three sources
@@ -533,6 +534,13 @@
           (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $source)))
         (if (i32.eq (local.get $op) (i32.const 66)) (then
           (i32.store offset=12 (local.get $pkt) (i32.const 128))
+          ;; Fixed-origin projected input planes require analytic quotient
+          ;; gradients. Guest/dependent TEXLD retains finite quad differences.
+          (if (i32.and
+              (i32.ne (i32.and (i32.load offset=28 (local.get $ir)) (i32.const 4)) (i32.const 0))
+              (i32.and (i32.eq (i32.load offset=16 (local.get $pkt)) (i32.add (i32.const 384) (i32.load offset=36 (local.get $ins))))
+                (i32.ge_u (i32.load offset=24 (local.get $pkt)) (i32.const 9))))
+            (then (i32.store offset=12 (local.get $pkt) (i32.const 65664))))
           (i32.store offset=28 (local.get $pkt) (i32.load offset=52 (local.get $ins))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $emit)))
     (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
@@ -1885,6 +1893,11 @@
 ;; Exact legacy vendor LOD thresholds/precision remain native-reference gates.
 ;; No shader-visible derivative opcodes or anisotropic filtering are claimed.
 (func $d3d_shader_vm_quad_lod (param $mip i32) (param $u v128) (param $v v128) (result v128)
+  (call $d3d_shader_vm_quad_plane_lod (local.get $mip) (local.get $u) (local.get $v)
+    (i32.const 0) (f32x4.splat (f32.const 1))))
+
+(func $d3d_shader_vm_quad_plane_lod (param $mip i32) (param $u v128) (param $v v128)
+  (param $analytic i32) (param $q v128) (result v128)
   (local $ux v128) (local $uy v128) (local $vx v128) (local $vy v128) (local $rho v128)
   (local $width v128) (local $height v128)
   (local.set $width (f32x4.splat (f32.convert_i32_u (i32.load offset=52 (local.get $mip)))))
@@ -1893,6 +1906,20 @@
   (local.set $vx (f32x4.sub (local.get $v) (i8x16.shuffle 4 5 6 7 0 1 2 3 12 13 14 15 8 9 10 11 (local.get $v) (local.get $v))))
   (local.set $uy (f32x4.sub (local.get $u) (i8x16.shuffle 8 9 10 11 12 13 14 15 0 1 2 3 4 5 6 7 (local.get $u) (local.get $u))))
   (local.set $vy (f32x4.sub (local.get $v) (i8x16.shuffle 8 9 10 11 12 13 14 15 0 1 2 3 4 5 6 7 (local.get $v) (local.get $v))))
+  (if (local.get $analytic) (then
+    ;; For affine N,Q, (uv_i-uv_j)*Q_j/Q_i equals
+    ;; (dN-uv_i*dQ)/Q_i, the quotient derivative at the receiving lane.
+    ;; Keep the paired sign: the footprint squares both axis components.
+    (local.set $width (f32x4.div
+      (i8x16.shuffle 4 5 6 7 0 1 2 3 12 13 14 15 8 9 10 11 (local.get $q) (local.get $q)) (local.get $q)))
+    (local.set $height (f32x4.div
+      (i8x16.shuffle 8 9 10 11 12 13 14 15 0 1 2 3 4 5 6 7 (local.get $q) (local.get $q)) (local.get $q)))
+    (local.set $ux (f32x4.mul (local.get $ux) (local.get $width)))
+    (local.set $vx (f32x4.mul (local.get $vx) (local.get $width)))
+    (local.set $uy (f32x4.mul (local.get $uy) (local.get $height)))
+    (local.set $vy (f32x4.mul (local.get $vy) (local.get $height)))
+    (local.set $width (f32x4.splat (f32.convert_i32_u (i32.load offset=52 (local.get $mip)))))
+    (local.set $height (f32x4.splat (f32.convert_i32_u (i32.load offset=56 (local.get $mip)))))))
   ;; Differentiate before converting to texel units. Identical finite UVs
   ;; (including dependent projections) have zero footprint even when UV*size
   ;; would overflow; scaling endpoints first produces Inf-Inf instead.
@@ -2149,7 +2176,13 @@
     (local.set $cache (i32.add (local.get $regs) (i32.const 74076)))
     (if (i32.ne (i32.load (local.get $cache)) (local.get $pkt)) (then
       (if (i32.load offset=36 (local.get $desc)) (then
-        (local.set $lod (call $d3d_shader_vm_quad_lod (i32.load offset=36 (local.get $desc)) (local.get $u) (local.get $t)))
+        (local.set $q (f32x4.splat (f32.const 1)))
+        (if (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 65536)) (then
+          (local.set $q (v128.load (i32.add (local.get $regs)
+            (i32.add (i32.shl (i32.load offset=16 (local.get $pkt)) (i32.const 6))
+              (select (i32.const 48) (i32.const 32) (i32.eq (i32.load offset=24 (local.get $pkt)) (i32.const 10)))))))))
+        (local.set $lod (call $d3d_shader_vm_quad_plane_lod (i32.load offset=36 (local.get $desc)) (local.get $u) (local.get $t)
+          (i32.and (i32.load offset=12 (local.get $pkt)) (i32.const 65536)) (local.get $q)))
         (local.set $r0 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 0 (local.get $u)) (f32x4.extract_lane 0 (local.get $t)) (f32x4.extract_lane 0 (local.get $lod))))
         (local.set $r1 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 1 (local.get $u)) (f32x4.extract_lane 1 (local.get $t)) (f32x4.extract_lane 1 (local.get $lod))))
         (local.set $r2 (call $d3d_shader_vm_sample_lod4 (i32.sub (local.get $regs) (i32.const 32)) (local.get $stage) (f32x4.extract_lane 2 (local.get $u)) (f32x4.extract_lane 2 (local.get $t)) (f32x4.extract_lane 2 (local.get $lod))))

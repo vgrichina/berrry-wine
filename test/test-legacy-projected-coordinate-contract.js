@@ -2,7 +2,7 @@
 'use strict';
 
 // Public x86 COM fixture. --plan is analytic only; default runs real WASM
-// WAT software and gps (lib/gpu-stream-software.js) pixels, offline.
+// canonical compiled COM/GPS/native renderer pixels, offline.
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const vm=require('node:vm'),crypto=require('node:crypto');
 const previous=require('./test-legacy-projected-webgl');
@@ -90,6 +90,7 @@ function fixtureSource(){
   source=source.replaceAll('4,0x1e2,vertices,3','4,(config.withNormals?0x812:0x8e2),vertices,3');
   replace('close(actual,expected,label);',`if(state.generated)row.boundary='generated-coordinate prerequisite characterization ONLY; no pixel oracle';
       else close(actual,expected,label);`);
+  replace('drawCount-declined-pointDraws,', 'drawCount-declined-pointDraws-(config.generatedOmitted||0),');
   replace('for(const state of config.states){await setState(state);await geometry(state);await draw();',
     `for(const state of config.states){evidence.currentState=state;await setState(state);await geometry(state);
       if(negative==='ignored')await tss(24,0);
@@ -108,13 +109,34 @@ function fixtureSource(){
   return source;
 }
 
+function literalPlan(){
+  const p=plan(),original=p.states.find(s=>s.label==='COUNT4/TEX0/scale8/wtrue');
+  // Frozen independent triangle/checker guard: at (8,8), barycentrics
+  // (1/2,1/4,1/4), N=(2,2), Q=19/16, UV=(32/19,32/19).
+  // POINT mip 2 uses 4x4 texel (2,2). MIP NONE uses 16x16 texel (10,10).
+  const small={...original,label:'literal COUNT4 quotient',geomW:false,
+    matrix:[8,0,0,.5,0,8,0,.25,0,0,1,0,0,0,0,1],
+    sets:Array.from({length:8},()=>[[0,0],[1,0],[0,1]]),samples:[{x:8,y:8}]};
+  const states=[small,{...small,label:'literal COUNT4 base',mip:1},original];
+  const rgba=[[[98,87,84,255]],[[20,25,30,255]],
+    [[98,87,84,255],[98,132,119,255],[138,87,119,255]]];
+  for(let i=0;i<states.length;i++)for(let j=0;j<states[i].samples.length;j++)
+    assert.deepEqual(oracle(p.colors,states[i],states[i].samples[j]),rgba[i][j].slice(0,3));
+  // Former failure: analytic rho=2.8339262284390556 exceeds sqrt(8),
+  // divided-UV quad rho=2.8232332318906637 does not. Mip1's (1,3)
+  // checker texel is [99,101,57]; the contract requires mip2's (0,2).
+  assert.deepEqual(p.colors[1][3][1],[99,101,57]);
+  assert.deepEqual(p.colors[2][2][0],rgba[2][0].slice(0,3));
+  return {states,rgba};
+}
+
 // The production-adapter recording (inspect: lib/d3dim-gpu.js + lib/d3d9-fixed.js
 // compiling each captured draw) and the physical native-queue arm
 // (d3d-command-stream Encoder + d3dim_gpu_state_override + the captured-matrix
-// fault) probed the deleted JS executor and are gone. Pixels still come from
-// public COM through the WAT rasterizer ('software') and the WAT GPU stream
-// producer drained into lib/gpu-stream-software.js ('gps').
-async function run(wasm,options={},negative=null,mode='software'){
+// fault) probed the deleted JS executor and are gone. Pixels come from public
+// COM through the WAT GPU stream producer and the native renderer drained by
+// lib/gpu-stream-software.js ('gps').
+async function run(wasm,options={},negative=null,mode='gps'){
   const bytes=fs.readFileSync(wasm),pe=fs.readFileSync(path.join(ROOT,'test/binaries/calc.exe'));
   const source=fixtureSource(),c={...previous.config(),...plan(),...options};
   let failure;
@@ -136,18 +158,25 @@ async function main(){
   const wasm=process.argv.find(a=>a.startsWith('--wasm='))?.slice(7)||'build/wine-assembly.wasm';
   const results=[];
   const save=()=>{if(out){fs.mkdirSync(out,{recursive:true});fs.writeFileSync(path.join(out,'observed.json'),JSON.stringify(results,null,2)+'\n');}};
-  // GAP (lib/src): lib/d3d9-software-backend.js refuses every D3DTTFF_PROJECTED
-  // draw the producer emits ('shader exceeds native VM implementation'), so the
-  // gps arm keeps only the non-projected transition controls until that lands.
-  // LEGACY_PROJECTED_GPS_ALL=1 runs gps on the full matrix.
-  const projected=s=>[0x102,0x103,0x104].includes(s.flags);
+  // The retired WAT rasterizer no longer consumes D3DIM draws. GPS is the
+  // production path, including every projected state and both index forms.
+  for(const indexed of [false,true]){
+    const literal=literalPlan(),r=await run(path.resolve(ROOT,wasm),{states:literal.states,indexed,tolerance:0});
+    results.push(r);save();assert.equal(r.failure,null);
+    assert.deepEqual(r.observations.map(o=>o.actual),literal.rgba.flat().map(c=>c.slice(0,3)));
+    assert.deepEqual(r.observations.map(o=>o.dibRGBA.slice((o.sample.y*32+o.sample.x)*4,(o.sample.y*32+o.sample.x)*4+4)),literal.rgba.flat());
+    assert.deepEqual(r.observations.map(o=>o.rawPixel),literal.rgba.flat().map(([r,g,b,a])=>
+      ((a<<24)|(r<<16)|(g<<8)|b)>>>0),'exact public Lock pixel words');
+    assert.equal(r.stats.fallbacks,0);assert.equal(r.stats.declined,0);
+    console.log(JSON.stringify({mode:'gps',indexed,literalRGBA:r.observations.length,status:'PASS'}));
+  }
   // PRE-EXISTING (src, also at HEAD b7c07b54f's build): the WAT renderer still
   // applies TEXTURE0 to the invalid flag words 0x101 and 0x203 (rendered
-  // [20,70,65] where the identity oracle wants untransformed UVs), in software
-  // and gps alike. LEGACY_PROJECTED_INVALID_FLAGS=1 keeps those two controls.
+  // [20,70,65] where the identity oracle wants untransformed UVs).
+  // LEGACY_PROJECTED_INVALID_FLAGS=1 keeps those two controls.
   const invalid=s=>process.env.LEGACY_PROJECTED_INVALID_FLAGS!=='1'&&(s.flags===0x101||s.flags===0x203);
-  for(const mode of ['software','gps'])for(const indexed of [false,true]){
-    const states=(mode==='gps'&&process.env.LEGACY_PROJECTED_GPS_ALL!=='1'?plan().states.filter(s=>!projected(s)):plan().states).filter(s=>!invalid(s));
+  for(const mode of ['gps'])for(const indexed of [false,true]){
+    const states=plan().states.filter(s=>!invalid(s));
     const r=await run(path.resolve(ROOT,wasm),{states,indexed},null,mode);results.push(r);
     save();
     assert.equal(r.failure,null);assert.equal(r.status,'PASS');
@@ -164,11 +193,13 @@ async function main(){
   for(const withNormals of [false,true]){
     const states=[1,2,3].map(mode=>({...base,label:'TCI mode '+mode+' normals '+withNormals,
       selector:(mode<<16)|7,generated:true,samples:[{x:8,y:12}]}));
-    const r=await run(path.resolve(ROOT,wasm),{states,withNormals});results.push(r);save();
+    // Normal/reflection TCI without an FVF normal is omitted before emission;
+    // camera position still draws. Characterize this prerequisite explicitly.
+    const r=await run(path.resolve(ROOT,wasm),{states,withNormals,generatedOmitted:withNormals?0:2});results.push(r);save();
     assert.equal(r.failure,null);assert.equal(r.observations.length,3);
     assert(r.observations.every(o=>o.expected===null),'no generated pixel correctness claim');
     console.log(JSON.stringify({withNormals,status:'GENERATED PREREQUISITES CHARACTERIZED; pixels UNQUALIFIED'}));
   }
 }
 if(require.main===module)main().catch(e=>{console.error(e);process.exitCode=1;});
-module.exports={plan,oracle,fixtureSource,run};
+module.exports={plan,literalPlan,oracle,fixtureSource,run};
