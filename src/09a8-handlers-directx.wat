@@ -12320,6 +12320,11 @@
   (func $handle_IDirectInputDevice_SetEventNotification (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $dev_type i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (if (call $di_device_is_acquired (local.get $entry))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x800700AA)) ;; DIERR_ACQUIRED
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
     (local.set $dev_type (load.field DxObject misc0 (local.get $entry)))
     (drop (call $host_di_set_event_notification (local.get $dev_type) (local.get $arg1)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
