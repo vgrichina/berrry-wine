@@ -4423,6 +4423,9 @@
           ;; bit 4 = addr16 (0x67 prefix): use CX instead of ECX as counter
           (if (local.get $prefix_67) (then (local.set $imm (i32.or (local.get $imm) (i32.const 0x10)))))
           (local.set $a (call $branch_target (local.get $disp)))
+          ;; Operand size truncates a taken IP; address size selects CX/ECX.
+          (if (i32.and (local.get $prefix_66) (i32.eqz (global.get $code16)))
+            (then (local.set $a (i32.and (local.get $a) (i32.const 0xFFFF)))))
           ;; A backward LOOP target may be an interior entry of the block being
           ;; emitted, so the post-block self-loop pass never sees it as a head.
           ;; Give the exact XLAT/STOSB suffix a chance to replace itself here.
@@ -4439,9 +4442,12 @@
       (if (i32.eq (local.get $op) (i32.const 0xE3))
         (then
           (local.set $disp (call $sign_ext8 (call $d_fetch8)))
+          (local.set $a (call $branch_target (local.get $disp)))
+          (if (i32.and (local.get $prefix_66) (i32.eqz (global.get $code16)))
+            (then (local.set $a (i32.and (local.get $a) (i32.const 0xFFFF)))))
           ;; bit 0 = addr16 (0x67 prefix → JCXZ tests CX instead of ECX)
           (call $te (i32.const 216) (if (result i32) (local.get $prefix_67) (then (i32.const 1)) (else (i32.const 0))))
-          (call $te_raw (call $branch_target (local.get $disp)))
+          (call $te_raw (local.get $a))
           (call $te_raw (global.get $d_pc))
           (local.set $done (i32.const 1)) (br $decode)))
 
