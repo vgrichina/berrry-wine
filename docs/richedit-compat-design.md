@@ -1093,6 +1093,18 @@ messages, and the 32K/64K/greater-than-64K limit transitions. The real WordPad
 editing regression remains green at 23/23. Exhaustive undocumented DLL-version
 quirks are not part of the non-OLE compatibility target.
 
+**Correction, 2026-11-24.** The 1.0/2.0 split above was wrong for the `EM_EX*`
+messages: `EM_EXGETSEL`, `EM_EXSETSEL` and `EM_EXLIMITTEXT` are RichEdit 1.0
+messages (Riched32 handles them, and the 2.0 headers only kept them), so the
+1.0 fallback now accepts all three too. Delphi's `TRichEdit` relies on them:
+`TRichEditStrings.Insert` places the caret with `EM_EXSETSEL`, replaces, then
+checks the result with `EM_EXGETSEL` and raises "RichEdit line insertion error"
+on a mismatch. Every Game Maker 7/8 runner streams a `TRichEdit` on a
+`RICHEDIT`-class control, so Spelunky Classic died with `EReadError` while its
+forms loaded (`docs/re-notes/spelunky-classic.md`). The version test now
+asserts 1.0 `CHARRANGE` selection, the Delphi insert-caret round trip and
+`EM_EXLIMITTEXT` on 1.0 (13/13).
+
 ### 2026-08-14 browser toolbar revalidation
 
 The browser WordPad gate proves that the native `riched20.dll` is loaded, the

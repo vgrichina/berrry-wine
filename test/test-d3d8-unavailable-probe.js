@@ -270,8 +270,10 @@ const { bootRenderHarness } = require('./render-helper');
   // textures); A2B10G10R10 (31) is still not.
   checkCapability(e.d3d8_check_format, [0, 1, 22, 0, 3, 31], D3DERR_NOTAVAILABLE,
     0x074ff020, 'unsupported texture storage format is unavailable');
-  checkCapability(e.d3d8_check_format, [0, 1, 22, 1, 3, 22], D3DERR_NOTAVAILABLE,
-    0x074ff020, 'unmodeled render-target usage is unavailable');
+  checkCapability(e.d3d8_check_format, [0, 1, 22, 1, 3, 22], D3D_OK,
+    0x074ff020, 'X8R8G8B8 render-target texture is what CreateTexture makes');
+  checkCapability(e.d3d8_check_format, [0, 1, 22, 1, 3, 0x31545844], D3DERR_NOTAVAILABLE,
+    0x074ff020, 'compressed render-target texture is unavailable');
   checkCapability(e.d3d8_check_format, [0, 1, 22, 0, 1, 22], D3DERR_NOTAVAILABLE,
     0x074ff020, 'unimplemented surface resource path is unavailable');
   checkCapability(e.d3d8_check_format, [1, 1, 22, 0, 3, 22], D3DERR_INVALIDCALL,

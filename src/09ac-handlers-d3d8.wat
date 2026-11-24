@@ -209,6 +209,7 @@
     ;; same format gate the matching create path uses, so capability
     ;; negotiation can never promise a resource that create then refuses.
     ;;   Usage 0, RType TEXTURE (3): ordinary 2D textures.
+    ;;   D3DUSAGE_RENDERTARGET (1), RType TEXTURE (3): render-target textures.
     ;;   D3DUSAGE_RENDERTARGET (1), RType SURFACE (1): the colour targets the
     ;;     back buffer and CreateRenderTarget accept.
     ;;   D3DUSAGE_DEPTHSTENCIL (2), RType SURFACE (1): the depth formats the
@@ -224,6 +225,10 @@
             (i32.or (i32.eq (local.get $rtype) (i32.const 3))
                     (i32.eq (local.get $rtype) (i32.const 5))))
         (then (local.set $ok (call $d3d9_texture_format_supported (local.get $format)))))
+      ;; D3DUSAGE_RENDERTARGET (1), RType TEXTURE (3): the render-target
+      ;; textures CreateTexture makes (D3DX / GM8 surface_create walk these).
+      (if (i32.and (i32.eq (local.get $arg4) (i32.const 1)) (i32.eq (local.get $rtype) (i32.const 3)))
+        (then (local.set $ok (i32.ne (call $d3d9_render_target_texture_format (local.get $format)) (i32.const 0)))))
       (if (i32.and (i32.eq (local.get $arg4) (i32.const 1)) (i32.eq (local.get $rtype) (i32.const 1)))
         (then (local.set $ok (i32.or (call $d3d9_color_target_format (local.get $format))
           (i32.and (i32.eq (local.get $arg3) (global.get $D3D8_FMT_R5G6B5))

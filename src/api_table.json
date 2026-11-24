@@ -39910,5 +39910,882 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3263732878
+  },
+  {
+    "id": 4723,
+    "name": "WebBrowserOleObject_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3401490702,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4724,
+    "name": "WebBrowserOleObject_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 832039293,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4725,
+    "name": "WebBrowserOleObject_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3360955098,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4726,
+    "name": "WebBrowserOleObject_SetClientSite",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2256842267
+  },
+  {
+    "id": 4727,
+    "name": "WebBrowserOleObject_GetClientSite",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2157258887
+  },
+  {
+    "id": 4728,
+    "name": "WebBrowserOleObject_SetHostNames",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2973488883
+  },
+  {
+    "id": 4729,
+    "name": "WebBrowserOleObject_Close",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3320152375
+  },
+  {
+    "id": 4730,
+    "name": "WebBrowserOleObject_SetMoniker",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3102057032,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4731,
+    "name": "WebBrowserOleObject_GetMoniker",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1508417916,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4732,
+    "name": "WebBrowserOleObject_InitFromData",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3566474819,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4733,
+    "name": "WebBrowserOleObject_GetClipboardData",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3082090059,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4734,
+    "name": "WebBrowserOleObject_DoVerb",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 2555426381,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4735,
+    "name": "WebBrowserOleObject_EnumVerbs",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2384284606,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4736,
+    "name": "WebBrowserOleObject_Update",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1079089656,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4737,
+    "name": "WebBrowserOleObject_IsUpToDate",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3966268937,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4738,
+    "name": "WebBrowserOleObject_GetUserClassID",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 594748653
+  },
+  {
+    "id": 4739,
+    "name": "WebBrowserOleObject_GetUserType",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2460913712,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4740,
+    "name": "WebBrowserOleObject_SetExtent",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1972558383
+  },
+  {
+    "id": 4741,
+    "name": "WebBrowserOleObject_GetExtent",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1431355587
+  },
+  {
+    "id": 4742,
+    "name": "WebBrowserOleObject_Advise",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2774233869,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4743,
+    "name": "WebBrowserOleObject_Unadvise",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1848729914,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4744,
+    "name": "WebBrowserOleObject_EnumAdvise",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1153654208,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4745,
+    "name": "WebBrowserOleObject_GetMiscStatus",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3141378697
+  },
+  {
+    "id": 4746,
+    "name": "WebBrowserOleObject_SetColorScheme",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 758752645,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4747,
+    "name": "WebBrowserPersistStreamInit_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3809137295,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4748,
+    "name": "WebBrowserPersistStreamInit_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 658814628,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4749,
+    "name": "WebBrowserPersistStreamInit_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 386641413,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4750,
+    "name": "WebBrowserPersistStreamInit_GetClassID",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2623583249,
+    "handler": "WebBrowserOleObject_GetUserClassID"
+  },
+  {
+    "id": 4751,
+    "name": "WebBrowserPersistStreamInit_IsDirty",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2783713760
+  },
+  {
+    "id": 4752,
+    "name": "WebBrowserPersistStreamInit_Load",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1883553444,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4753,
+    "name": "WebBrowserPersistStreamInit_Save",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 313836741,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4754,
+    "name": "WebBrowserPersistStreamInit_GetSizeMax",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3714810033,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4755,
+    "name": "WebBrowserPersistStreamInit_InitNew",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 509887140
+  },
+  {
+    "id": 4756,
+    "name": "WebBrowserOleControl_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4028707290,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4757,
+    "name": "WebBrowserOleControl_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2244685761,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4758,
+    "name": "WebBrowserOleControl_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 4201033910,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4759,
+    "name": "WebBrowserOleControl_GetControlInfo",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3503047436,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4760,
+    "name": "WebBrowserOleControl_OnMnemonic",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2814007680,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4761,
+    "name": "WebBrowserOleControl_OnAmbientPropertyChange",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2653041121
+  },
+  {
+    "id": 4762,
+    "name": "WebBrowserOleControl_FreezeEvents",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 24016111,
+    "handler": "WebBrowserOleControl_OnAmbientPropertyChange"
+  },
+  {
+    "id": 4763,
+    "name": "IWebBrowser2_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3337915710,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4764,
+    "name": "IWebBrowser2_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3634221325,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4765,
+    "name": "IWebBrowser2_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 580343466,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4766,
+    "name": "IWebBrowser2_GetTypeInfoCount",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1971067902,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4767,
+    "name": "IWebBrowser2_GetTypeInfo",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1400917351,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4768,
+    "name": "IWebBrowser2_GetIDsOfNames",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 165806878,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4769,
+    "name": "IWebBrowser2_Invoke",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 1979320673,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4770,
+    "name": "IWebBrowser2_GoBack",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3829127672,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4771,
+    "name": "IWebBrowser2_GoForward",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2530249324,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4772,
+    "name": "IWebBrowser2_GoHome",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1048718548,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4773,
+    "name": "IWebBrowser2_GoSearch",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2482268367,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4774,
+    "name": "IWebBrowser2_Navigate",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 4231761778,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4775,
+    "name": "IWebBrowser2_Refresh",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3981189688,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4776,
+    "name": "IWebBrowser2_Refresh2",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2564396478,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4777,
+    "name": "IWebBrowser2_Stop",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3242836985,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4778,
+    "name": "IWebBrowser2_get_Application",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 110354434,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4779,
+    "name": "IWebBrowser2_get_Parent",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3663907316,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4780,
+    "name": "IWebBrowser2_get_Container",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1501023571,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4781,
+    "name": "IWebBrowser2_get_Document",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2238470861,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4782,
+    "name": "IWebBrowser2_get_TopLevelContainer",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2270666394,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4783,
+    "name": "IWebBrowser2_get_Type",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 814488404,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4784,
+    "name": "IWebBrowser2_get_Left",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2825988653,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4785,
+    "name": "IWebBrowser2_put_Left",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1690145846,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4786,
+    "name": "IWebBrowser2_get_Top",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2877198079,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4787,
+    "name": "IWebBrowser2_put_Top",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2383804670,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4788,
+    "name": "IWebBrowser2_get_Width",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1991451400,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4789,
+    "name": "IWebBrowser2_put_Width",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4168970865,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4790,
+    "name": "IWebBrowser2_get_Height",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3416970527,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4791,
+    "name": "IWebBrowser2_put_Height",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3231400640,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4792,
+    "name": "IWebBrowser2_get_LocationName",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3946198368,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4793,
+    "name": "IWebBrowser2_get_LocationURL",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 386333196,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4794,
+    "name": "IWebBrowser2_get_Busy",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4217073193,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4795,
+    "name": "IWebBrowser2_Quit",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2241455386,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4796,
+    "name": "IWebBrowser2_ClientToWindow",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2981519655,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4797,
+    "name": "IWebBrowser2_PutProperty",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2465009839,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4798,
+    "name": "IWebBrowser2_GetProperty",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2390605202,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4799,
+    "name": "IWebBrowser2_get_Name",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 965047,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4800,
+    "name": "IWebBrowser2_get_HWND",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1344556235,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4801,
+    "name": "IWebBrowser2_get_FullName",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 407792570,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4802,
+    "name": "IWebBrowser2_get_Path",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2136726747,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4803,
+    "name": "IWebBrowser2_get_Visible",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 240894462,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4804,
+    "name": "IWebBrowser2_put_Visible",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2954540643,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4805,
+    "name": "IWebBrowser2_get_StatusBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1595798367,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4806,
+    "name": "IWebBrowser2_put_StatusBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1803366022,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4807,
+    "name": "IWebBrowser2_get_StatusText",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1379344405,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4808,
+    "name": "IWebBrowser2_put_StatusText",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4018635402,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4809,
+    "name": "IWebBrowser2_get_ToolBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3806493119,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4810,
+    "name": "IWebBrowser2_put_ToolBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1210138710,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4811,
+    "name": "IWebBrowser2_get_MenuBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1328646940,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4812,
+    "name": "IWebBrowser2_put_MenuBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 875478949,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4813,
+    "name": "IWebBrowser2_get_FullScreen",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 813957461,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4814,
+    "name": "IWebBrowser2_put_FullScreen",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3762515910,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4815,
+    "name": "IWebBrowser2_Navigate2",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 1371701696,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4816,
+    "name": "IWebBrowser2_QueryStatusWB",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4149399688,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4817,
+    "name": "IWebBrowser2_ExecWB",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 513913013,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4818,
+    "name": "IWebBrowser2_ShowBrowserBar",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2605751165,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4819,
+    "name": "IWebBrowser2_get_ReadyState",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3929134540,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4820,
+    "name": "IWebBrowser2_get_Offline",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1576576411,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4821,
+    "name": "IWebBrowser2_put_Offline",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1247738926,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4822,
+    "name": "IWebBrowser2_get_Silent",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 604783077,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4823,
+    "name": "IWebBrowser2_put_Silent",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2916117558,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4824,
+    "name": "IWebBrowser2_get_RegisterAsBrowser",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 210695111,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4825,
+    "name": "IWebBrowser2_put_RegisterAsBrowser",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2339239170,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4826,
+    "name": "IWebBrowser2_get_RegisterAsDropTarget",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 7173309,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4827,
+    "name": "IWebBrowser2_put_RegisterAsDropTarget",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2960636342,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4828,
+    "name": "IWebBrowser2_get_TheaterMode",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3372061658,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4829,
+    "name": "IWebBrowser2_put_TheaterMode",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 764461735,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4830,
+    "name": "IWebBrowser2_get_AddressBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1202664025,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4831,
+    "name": "IWebBrowser2_put_AddressBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 424143746,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4832,
+    "name": "IWebBrowser2_get_Resizable",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 613041929,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4833,
+    "name": "IWebBrowser2_put_Resizable",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3198896032,
+    "handler": "ftm_unimplemented"
   }
 ]

@@ -3323,7 +3323,13 @@
       (if (call $guid_words_equal (local.get $clsid_wa)
             (i32.const 0x25E609E0) (i32.const 0x11CFB259)
             (i32.const 0x4544C7BF) (i32.const 0x00005453))
-        (then (local.set $local_class (i32.const 11))))))
+        (then (local.set $local_class (i32.const 11))))
+      ;; CLSID_WebBrowser {8856F961-340A-11D0-A96B-00C04FD705A2}: the blank
+      ;; control in 09a7l-webbrowser.wat (Game Maker runners' TWebBrowser).
+      (if (call $guid_words_equal (local.get $clsid_wa)
+            (i32.const 0x8856F961) (i32.const 0x11D0340A)
+            (i32.const 0xC0006BA9) (i32.const 0xA205D74F))
+        (then (local.set $local_class (i32.const 12))))))
 
     (if (local.get $local_class) (then
       (if (i32.eqz (local.get $arg4))
@@ -3380,6 +3386,8 @@
       (if (i32.eq (local.get $local_class) (i32.const 11))
         (then (local.set $obj_guest (call $dx_create_com_obj
           (i32.const 6) (global.get $DX_VTBL_DINPUT)))))
+      (if (i32.eq (local.get $local_class) (i32.const 12))
+        (then (local.set $obj_guest (call $webbrowser_create))))
       (if (i32.eqz (local.get $obj_guest))
         (then
           (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000E)) ;; E_OUTOFMEMORY
@@ -3435,6 +3443,9 @@
           (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
       (if (i32.eq (local.get $local_class) (i32.const 11))
         (then (local.set $hr (call $dinput_cocreate_query_wa
+          (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
+      (if (i32.eq (local.get $local_class) (i32.const 12))
+        (then (local.set $hr (call $webbrowser_query_interface_wa
           (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
       (drop (call $dx_com_release_basic (local.get $obj_guest)))
       (i32.store offset=0 (global.get $reg_base) (local.get $hr))

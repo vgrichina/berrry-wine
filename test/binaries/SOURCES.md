@@ -502,6 +502,37 @@ mission pack) and [Steam](https://store.steampowered.com/app/9060/); the
 compat page
 (`tools/site-compat.json`, slug `hexen-ii`) links both.
 
+## Spelunky Classic v1.1 (`candidates/spelunky-classic/`)
+
+Source: the official page `https://spelunkyworld.com/original.html` links
+`http://www.derekyu.com/games/spelunky_1_1.zip`, Derek Yu's own host, fetched
+2026-11-24 as `spelunky_1_1.zip` (10,012,564 bytes, SHA-256
+`572f0a1976e76ebbd295daae651b8b6f00c6b9cf960d3e1c2cc57128d6437727`, SHA-1
+`a37e92bfbebff5a55531f42f023d28693325f1ec`; `spelunky_1_1.zip.sha256` sits
+beside it). `extracted/` is its unzip (77 files, 13,837,405 bytes):
+`Spelunky.exe` (Game Maker 8 runner with the game appended, SHA-256
+`56b913745d3507104ed851b46d1da1670c8474bc8a85dd576c1f0d1fbb907aa5`), its audio
+extension `supersound.dll` (SHA-256
+`6b58ed998f71dd4b705c357f453607b93b00c157bcb27a826e0c2571655d2007`),
+`config.exe`, the `*.cfg` files, `sound/`, `levels/`, `readme.txt` and the
+licence `COPYING.txt`. The licence is also kept as fetched from
+`https://www.spelunkyworld.com/files/COPYING.txt` (the same v1.1b text with LF
+line endings). App id `spelunky_classic`, local-only
+(`LOCAL_CANDIDATE_APPS`); the registry mounts the tree through
+`extracted/.wine-assembly-browser.json`. Details in
+`docs/re-notes/spelunky-classic.md`.
+
+**Terms.** The bundled Spelunky User License v1.1b (Copyright (c) 2008, 2009
+Derek Yu and Mossmouth, LLC, dated 2009-12-25) lets anyone "modify and
+redistribute the Game and its Source Code" on four conditions: the licence and
+copyright notices stay intact; Covered Works are not sold; an appropriate
+copyright notice is displayed "somewhere in the beginning" of the work and in
+accompanying documentation; and a modified version must not be presented as
+unmodified or official. Free public hosting of the unmodified tree fits those
+terms if `COPYING.txt` ships with it, nothing about it is paid for, and the
+app page shows the Derek Yu / Mossmouth copyright line. Publishing remains the project owner's decision; until
+then the files are ignored by git and the app stays local-only.
+
 ## Age of Empires trial (`shareware/aoe/aoe_ex/`)
 
 Source: `https://archive.org/details/AgeofEmpires_1020` (the Shareware table

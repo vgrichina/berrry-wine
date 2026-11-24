@@ -9129,6 +9129,7 @@
   ;; 36: DoDragDrop source/target modal callback sequence.
   ;; 37: COMCTL32 ImageList_Read through a DLL-private IStream (09a9).
   ;; 38: CoMarshalHresult/CoUnmarshalHresult IStream transfer completion.
+  ;; 39: WebBrowser control client-site AddRef/Release (09a7l-webbrowser).
   (func $ole_guest_callback_continue
     (local $ctx i32) (local $operation i32) (local $stage i32)
     (local $root i32) (local $p1 i32) (local $p2 i32) (local $p3 i32) (local $p4 i32)
@@ -9144,6 +9145,10 @@
     (if (i32.eq (local.get $operation) (i32.const 38))
       (then
         (call $ole_guest_callback_finish (local.get $ctx) (i32.load offset=0 (global.get $reg_base)))
+        (return)))
+    (if (i32.eq (local.get $operation) (i32.const 39))
+      (then
+        (call $webbrowser_site_continue (local.get $ctx))
         (return)))
     (if (i32.eq (local.get $operation) (i32.const 36))
       (then

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "1b6d6b0fa8d4f528b29c6e6d7f0ce94ebc0dbb4f15df7a6621121d0873636c83",
+      "sha256": "8c540d1f3c37d167f05a365d8585b24d8f87bf3ab46b4214c7eb80d4ebbae24b",
+      "reason": "Review 20261124 Spelunky Classic 1.1 local registration: one LOCAL_CANDIDATE_APPS selector row, one root constant and one APPS data entry (exe, dlls, localFileManifest, requiredFiles) pointing at an unchanged downloaded tree. No launch arguments, registry seeds, callback producer, boundary, export, owner, continuation, EIP/stack/clock write, rendering or input change. General callback ownership remains pending."
+    }
+  ]
+}
