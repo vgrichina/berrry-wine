@@ -3145,6 +3145,21 @@
       (then (call $set_reg16 (i32.and (local.get $op) (i32.const 0xF)) (local.get $v))))
     (dispatch-next))
 
+  ;; SHLD/SHRD define SZP at the operand width and OF for count one as
+  ;; the change in the destination sign bit. Raw mode keeps CF and OF
+  ;; independently while deriving SZP from the actual result. Call only for
+  ;; nonzero defined counts; zero must preserve the entire lazy flag record.
+  ;; For counts above one the chosen OF value is architecturally undefined.
+  (func $set_flags_double_shift (param $r i32) (param $dst i32)
+                                (param $cf i32) (param $shift i32)
+    (global.set $flag_op (i32.const 8))
+    (global.set $flag_sign_shift (local.get $shift))
+    (global.set $flag_res (local.get $r))
+    (global.set $flag_a (local.get $cf))
+    (global.set $flag_b
+      (i32.and (i32.shr_u (i32.xor (local.get $dst) (local.get $r))
+                           (local.get $shift)) (i32.const 1))))
+
   ;; 258: SHLD r16, r16, count (op=dst<<4|src, count next word)
   (func $th_shld16 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $count i32) (local $encoded_count i32) (local $dst i32) (local $src i32) (local $d i32) (local $s i32) (local $r i32)
@@ -3161,8 +3176,8 @@
       (local.set $r (i32.and (i32.or (i32.shl (local.get $dst) (local.get $count))
                                      (i32.shr_u (local.get $src) (i32.sub (i32.const 16) (local.get $count)))) (i32.const 0xFFFF)))
       (call $set_reg16 (local.get $d) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 16) (local.get $count))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 16) (local.get $count))) (i32.const 1)) (i32.const 15))))
     (dispatch-next))
   ;; 259: SHRD r16, r16, count
   (func $th_shrd16 (param $op i32)
@@ -3180,8 +3195,8 @@
       (local.set $r (i32.and (i32.or (i32.shr_u (local.get $dst) (local.get $count))
                                      (i32.shl (local.get $src) (i32.sub (i32.const 16) (local.get $count)))) (i32.const 0xFFFF)))
       (call $set_reg16 (local.get $d) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)) (i32.const 15))))
     (dispatch-next))
   ;; 260: SHLD [mem], r16, count (op=src, addr+count in words)
   (func $th_shld16_m (param $op i32)
@@ -3198,8 +3213,8 @@
       (local.set $r (i32.and (i32.or (i32.shl (local.get $dst) (local.get $count))
                                      (i32.shr_u (local.get $src) (i32.sub (i32.const 16) (local.get $count)))) (i32.const 0xFFFF)))
       (call $gs16 (local.get $addr) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 16) (local.get $count))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 16) (local.get $count))) (i32.const 1)) (i32.const 15))))
     (dispatch-next))
   ;; 261: SHRD [mem], r16, count
   (func $th_shrd16_m (param $op i32)
@@ -3216,8 +3231,8 @@
       (local.set $r (i32.and (i32.or (i32.shr_u (local.get $dst) (local.get $count))
                                      (i32.shl (local.get $src) (i32.sub (i32.const 16) (local.get $count)))) (i32.const 0xFFFF)))
       (call $gs16 (local.get $addr) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)) (i32.const 15))))
     (dispatch-next))
 
   ;; 262: BSF r16, r16 (op=dst<<4|src)
@@ -3937,8 +3952,8 @@
       (local.set $r (i32.or (i32.shl (local.get $dst) (local.get $count))
                             (i32.shr_u (local.get $src) (i32.sub (i32.const 32) (local.get $count)))))
       (call $gs32 (local.get $addr) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 32) (local.get $count))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 32) (local.get $count))) (i32.const 1)) (i32.const 31))))
     (dispatch-next))
 
   ;; 224: SHRD [mem], src, count. Same encoding as SHLD_m.
@@ -3956,8 +3971,8 @@
       (local.set $r (i32.or (i32.shr_u (local.get $dst) (local.get $count))
                             (i32.shl (local.get $src) (i32.sub (i32.const 32) (local.get $count)))))
       (call $gs32 (local.get $addr) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)) (i32.const 31))))
     (dispatch-next))
 
   ;; 225: BSF dst, [mem]. op=dst, addr in next word.
@@ -4050,8 +4065,8 @@
       (local.set $r (i32.or (i32.shl (local.get $dst) (local.get $count))
                             (i32.shr_u (local.get $src) (i32.sub (i32.const 32) (local.get $count)))))
       (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 32) (local.get $count))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (i32.const 32) (local.get $count))) (i32.const 1)) (i32.const 31))))
     (dispatch-next))
   (func $th_shrd (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $count i32) (local $encoded_count i32) (local $dst i32) (local $src i32) (local $d i32) (local $s i32) (local $r i32)
@@ -4068,8 +4083,8 @@
       (local.set $r (i32.or (i32.shr_u (local.get $dst) (local.get $count))
                             (i32.shl (local.get $src) (i32.sub (i32.const 32) (local.get $count)))))
       (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $d) (i32.const 2))) (local.get $r))
-      (call $set_flags_shift (local.get $r)
-        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)))))
+      (call $set_flags_double_shift (local.get $r) (local.get $dst)
+        (i32.and (i32.shr_u (local.get $dst) (i32.sub (local.get $count) (i32.const 1))) (i32.const 1)) (i32.const 31))))
     (dispatch-next))
 
   ;; --- Misc ---
