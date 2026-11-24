@@ -11464,7 +11464,8 @@
             (i32.ne (i32.and (call $di_object_type (local.get $kind) (local.get $found)) (i32.const 3))
                     (i32.const 0))))
           (if (i32.or
-                (i32.gt_u (i32.add (local.get $ofs) (local.get $width)) (local.get $data_size))
+                (i32.or (i32.gt_u (local.get $ofs) (local.get $data_size))
+                  (i32.gt_u (i32.add (local.get $ofs) (local.get $width)) (local.get $data_size)))
                 (i32.and (i32.eq (local.get $width) (i32.const 4))
                          (i32.ne (i32.and (local.get $ofs) (i32.const 3)) (i32.const 0))))
             (then (call $heap_free (local.get $map)) (return (i32.const -1))))
@@ -11741,8 +11742,8 @@
 
   ;; GetDeviceState under an application-defined format: each object the
   ;; format names, at its offset ($wa is the zeroed, dwDataSize-long buffer;
-  ;; SetDataFormat already proved every offset fits). Wheel motion is never
-  ;; produced by our hosts, so a mapped lZ stays 0.
+  ;; SetDataFormat already proved every offset fits). Relative axes use the
+  ;; same independent accumulators as the standard mouse state layout.
   (func $di_custom_device_state (param $entry i32) (param $kind i32) (param $wa i32)
     (local $i i32) (local $ofs i32) (local $buttons i32)
     (if (i32.eq (local.get $kind) (i32.const 1))
@@ -11762,14 +11763,19 @@
     (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2) (i32.const 1)))
     (if (i32.ge_s (local.get $ofs) (i32.const 0))
       (then (i32.store (i32.add (local.get $wa) (local.get $ofs)) (call $di_mouse_state_y (local.get $entry)))))
+    (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2) (i32.const 2)))
+    (if (i32.ge_s (local.get $ofs) (i32.const 0))
+      (then (i32.store (i32.add (local.get $wa) (local.get $ofs)) (call $di_mouse_wheel_take))))
     (local.set $buttons (call $host_get_mouse_buttons_live))
     (local.set $i (i32.const 0))
     (block $done (loop $mouse_buttons
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 2)))
+      (br_if $done (i32.ge_u (local.get $i) (i32.const 3)))
       (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 2)
         (i32.add (local.get $i) (i32.const 3))))
       (if (i32.and (i32.ge_s (local.get $ofs) (i32.const 0))
-                   (i32.ne (i32.and (local.get $buttons) (i32.shl (i32.const 1) (local.get $i)))
+                   (i32.ne (i32.and (local.get $buttons)
+                     (select (i32.const 0x10) (i32.shl (i32.const 1) (local.get $i))
+                       (i32.eq (local.get $i) (i32.const 2))))
                            (i32.const 0)))
         (then (i32.store8 (i32.add (local.get $wa) (local.get $ofs)) (i32.const 0x80))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
