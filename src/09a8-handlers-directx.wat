@@ -9515,11 +9515,10 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
-  ;; GetCurrentPosition(this, lpdwCurrentPlayCursor, lpdwCurrentWriteCursor)
-  (func $handle_IDirectSoundBuffer_GetCurrentPosition (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $entry i32) (local $state i32) (local $handle i32) (local $pos i32)
-    (local $size i32) (local $align i32) (local $lead i32)
-    (local.set $entry (call $dx_from_this (local.get $arg0)))
+  ;; Lock(FROMWRITECURSOR) and GetCurrentPosition must use the same cursor.
+  (func $dsbuf_cursor (param $entry i32) (param $write i32) (result i32)
+    (local $state i32) (local $handle i32) (local $pos i32)
+    (local $size i32)
     (local.set $state (call $dx_surf_state_ptr (local.get $entry)))
     (local.set $size (i32.load offset=12 (local.get $entry)))
     (local.set $handle (load.field DxObject misc0 (local.get $entry)))
@@ -9538,15 +9537,19 @@
         (i32.add (i32.load offset=12 (local.get $state)) (local.get $pos)))))
     (if (i32.ne (local.get $size) (i32.const 0))
       (then (local.set $pos (i32.rem_u (local.get $pos) (local.get $size)))))
-    (if (local.get $arg1) (then (call $gs32 (local.get $arg1) (local.get $pos))))
+    (if (result i32) (local.get $write)
+      (then (call $dsbuf_write_cursor (local.get $entry) (local.get $pos)))
+      (else (local.get $pos))))
+
+  (func $dsbuf_write_cursor (param $entry i32) (param $pos i32) (result i32)
+    (local $size i32) (local $align i32) (local $lead i32)
+    (local.set $size (i32.load offset=12 (local.get $entry)))
     ;; The write cursor is not the play cursor. DirectSound guarantees it leads
     ;; by whatever the driver has already committed to the DMA -- on Win98
     ;; hardware about 15ms -- and the bytes between the two are the one region
     ;; an app must never write, because they are already on their way out. We
     ;; reported the same value for both, so an app pacing its refills off the
     ;; write cursor was told that region was free.
-    (if (local.get $arg2)
-      (then
         ;; 15ms of this buffer's own format, truncated to a whole sample frame
         ;; so the lead never lands mid-sample.
         (local.set $align (i32.div_u
@@ -9568,10 +9571,20 @@
             ;; the play cursor and mark the whole ring unsafe; keep it inside.
             (if (i32.ge_u (local.get $lead) (local.get $size))
               (then (local.set $lead (i32.const 0))))))
-        (call $gs32 (local.get $arg2)
+        (local.set $pos
           (if (result i32) (local.get $size)
             (then (i32.rem_u (i32.add (local.get $pos) (local.get $lead)) (local.get $size)))
-            (else (local.get $pos))))))
+            (else (local.get $pos))))
+    (local.get $pos))
+
+  ;; GetCurrentPosition(this, lpdwCurrentPlayCursor, lpdwCurrentWriteCursor)
+  (func $handle_IDirectSoundBuffer_GetCurrentPosition (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $entry i32) (local $pos i32)
+    (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (local.set $pos (call $dsbuf_cursor (local.get $entry) (i32.const 0)))
+    (if (local.get $arg1) (then (call $gs32 (local.get $arg1) (local.get $pos))))
+    (if (local.get $arg2) (then
+      (call $gs32 (local.get $arg2) (call $dsbuf_write_cursor (local.get $entry) (local.get $pos)))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
@@ -9733,6 +9746,7 @@
     (local $entry i32) (local $dib_wa i32) (local $buf_size i32)
     (local $buf_guest i32) (local $ppv2 i32) (local $pdw2 i32)
     (local $offset i32) (local $total i32) (local $len1 i32) (local $len2 i32)
+    (local $lock_flags i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
     (local.set $buf_size (i32.load (i32.add (local.get $entry) (i32.const 12))))
@@ -9746,14 +9760,27 @@
     ;; ppvAudioPtr2 and pdwAudioBytes2 (args 6,7 at ESP+24,ESP+28), flags at +32
     (local.set $ppv2 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $pdw2 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
+    (local.set $lock_flags (call $gl32
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
     (local.set $offset (local.get $arg1))
-    (if (local.get $buf_size)
-      (then (local.set $offset (i32.rem_u (local.get $offset) (local.get $buf_size)))))
+    (if (i32.and (local.get $lock_flags) (i32.const 1))
+      (then (local.set $offset (call $dsbuf_cursor (local.get $entry) (i32.const 1)))))
     ;; DSBLOCK_ENTIREBUFFER (0x2) means "ignore dwBytes, lock all of it".
     (local.set $total (select (local.get $buf_size) (local.get $arg2)
-      (i32.and (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))) (i32.const 2))))
-    (if (i32.gt_u (local.get $total) (local.get $buf_size))
-      (then (local.set $total (local.get $buf_size))))
+      (i32.and (local.get $lock_flags) (i32.const 2))))
+    ;; Reject invalid ranges before touching any caller output. Modulo/clamp
+    ;; silently converted bad requests into successful locks of other bytes.
+    (if (i32.or
+          (i32.or (i32.eqz (local.get $arg3)) (i32.eqz (local.get $arg4)))
+          (i32.or
+            (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 5))
+            (i32.or (i32.ge_u (local.get $offset) (local.get $buf_size))
+                    (i32.gt_u (local.get $total) (local.get $buf_size)))))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0x80070057))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
+        (return)))
     ;; A lock that runs off the end of a ring comes back in TWO pieces: the tail
     ;; and then a second piece wrapped to the start. We used to report piece two
     ;; as a null pointer of length 0, so a streamer wrote only the tail and the
@@ -9766,6 +9793,9 @@
                              (i32.le_u (local.get $total)
                                        (i32.sub (local.get $buf_size) (local.get $offset)))))
     (local.set $len2 (i32.sub (local.get $total) (local.get $len1)))
+    ;; Without a second pointer only the tail is locked, even when a second
+    ;; length output was supplied.
+    (if (i32.eqz (local.get $ppv2)) (then (local.set $len2 (i32.const 0))))
     (call $gs32 (local.get $arg3) (i32.add (local.get $buf_guest) (local.get $offset)))
     (call $gs32 (local.get $arg4) (local.get $len1))
     (if (local.get $ppv2)

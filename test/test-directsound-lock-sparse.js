@@ -12,10 +12,10 @@ const {bootRenderHarness} = require('./render-helper');
 const apis = require('../src/api_table.json');
 const extraWat = String.raw`
   (func (export "ds_call") (param $id i32) (param $a i32) (param $b i32)
-      (param $c i32) (param $d i32) (param $stack i32) (result i32)
+      (param $c i32) (param $d i32) (param $e i32) (param $stack i32) (result i32)
     (i32.store offset=16 (global.get $reg_base) (local.get $stack))
     (call $dispatch_api_table (local.get $id) (local.get $a) (local.get $b)
-      (local.get $c) (local.get $d) (i32.const 0) (i32.const 0))
+      (local.get $c) (local.get $d) (local.get $e) (i32.const 0))
     (i32.load (global.get $reg_base)))
 `;
 (async () => {
@@ -35,7 +35,7 @@ const extraWat = String.raw`
   const stack = e.guest_alloc(64), out = e.guest_alloc(32), desc = e.guest_alloc(20), fmt = e.guest_alloc(20);
   const ptr1 = e.guest_alloc(4), len1 = e.guest_alloc(4), ptr2 = e.guest_alloc(4), len2 = e.guest_alloc(4);
   const call = (name, args, pop) => {
-    const r = e.ds_call(apis.find(a => a.name === name).id, ...Array.from({length: 4}, (_, i) => args[i] || 0), stack) >>> 0;
+    const r = e.ds_call(apis.find(a => a.name === name).id, ...Array.from({length: 5}, (_, i) => args[i] || 0), stack) >>> 0;
     assert.strictEqual(e.get_esp() >>> 0, stack + pop, name);
     return r;
   };
@@ -49,7 +49,7 @@ const extraWat = String.raw`
     const buf = e.guest_read32(out);
     // Lock(offset 0, 4 KB): 8 stdcall args; the last three live on the stack.
     e.guest_write32(stack + 24, ptr2); e.guest_write32(stack + 28, len2); e.guest_write32(stack + 32, 0);
-    assert.strictEqual(call('IDirectSoundBuffer_Lock', [buf, 0, 4096, ptr1], 36), 0, 'Lock');
+    assert.strictEqual(call('IDirectSoundBuffer_Lock', [buf, 0, 4096, ptr1, len1], 36), 0, 'Lock');
     // arg4 (pdwAudioBytes1) arrives through the fifth fast argument slot.
     const p = e.guest_read32(ptr1) >>> 0;
     const pattern = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88];
