@@ -5325,15 +5325,23 @@
                   (call $te_raw (local.get $a))
                   (br $decode)))))
           ;; MOVLPS xmm,m64 / MOVLPS m64,xmm replace or store only the low
-          ;; half. Register encodings of 0F12 are MOVHLPS and are deliberately
-          ;; left unsupported until separately implemented.
+          ;; half. Register 0F12 is MOVHLPS xmm,xmm; register 0F13 is invalid.
           (if (i32.and
                 (i32.and (i32.eqz (local.get $prefix_66))
-                         (i32.eqz (local.get $prefix_rep)))
+                  (i32.and (i32.eqz (local.get $prefix_rep))
+                           (i32.eqz (local.get $prefix_lock))))
                 (i32.or (i32.eq (local.get $op) (i32.const 0x12))
                         (i32.eq (local.get $op) (i32.const 0x13))))
             (then
               (call $decode_modrm)
+              (if (i32.and (i32.eq (global.get $mr_mod) (i32.const 3))
+                           (i32.eq (local.get $op) (i32.const 0x12)))
+                (then
+                  (call $te_sse (i32.const 432)
+                    (i32.or (i32.const 0x3200)
+                      (i32.or (i32.shl (global.get $mr_reg) (i32.const 4))
+                              (global.get $mr_val))))
+                  (br $decode)))
               (if (i32.ne (global.get $mr_mod) (i32.const 3))
                 (then
                   (call $apply_seg_override)

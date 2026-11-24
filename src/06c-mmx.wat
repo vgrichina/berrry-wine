@@ -236,6 +236,7 @@
   ;;   46/47 MINSS/MAXSS (source bits on equality or unordered, m32 only)
   ;;   48 CMPSS (SSE1 predicate in op bits 16..23, m32 only)
   ;;   49 UNPCKHPS (m128 instruction offset in op bits 16..31)
+  ;;   50 MOVHLPS (register source high64 into destination low64)
   ;; Scalar forms preserve the destination's upper 96 bits. RSQRT*/RCP* are
   ;; exact here where silicon gives ~12 bits -- the safe direction, and callers
   ;; that care refine with Newton-Raphson (B&W2's normalizer at 0x00962cb6).
@@ -254,6 +255,11 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.eq (local.get $sub) (i32.const 50)) (then
+      ;; Both snapshots predate the write, including a self-alias. Copy raw bits.
+      (call $xmm_set (local.get $dst) (i64x2.replace_lane 0 (local.get $d)
+        (i64x2.extract_lane 1 (local.get $s))))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 49)) (then
       ;; Snapshot both sources before writing, including self aliases. Raw bits.
       (call $xmm_set (local.get $dst)
