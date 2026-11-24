@@ -3550,6 +3550,32 @@
             (call $te_raw (local.get $a))))
           (br $decode)))))
 
+      ;; MMX PMADDWD mm,mm/m64 (NP 0FF5). Opt in before the coarse 67
+      ;; guard using the existing handlers and segmented/address16 EA decoder.
+      ;; Actual 66 selects unsupported SSE2, including code16 inversion.
+      (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
+        (if (i32.eq (call $gl8 (global.get $d_pc)) (i32.const 0xF5)) (then
+          (if (i32.or (i32.ne (local.get $prefix_66)
+                (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                         (i32.eqz (global.get $cs_big))))
+                (i32.or (i32.ne (local.get $prefix_rep) (i32.const 0))
+                        (i32.ne (local.get $prefix_lock) (i32.const 0))))
+            (then (unreachable)))
+          (drop (call $d_fetch8))
+          (call $decode_modrm)
+          (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+            (call $te (i32.const 422)
+              (i32.or (i32.shl (i32.const 16) (i32.const 8))
+                (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))
+          (else
+            (call $apply_seg_override)
+            (local.set $a (call $emit_sib_or_abs))
+            (call $te (i32.const 423)
+              (i32.or (i32.shl (i32.const 16) (i32.const 8))
+                (i32.shl (global.get $mr_reg) (i32.const 4))))
+            (call $te_raw (local.get $a))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
