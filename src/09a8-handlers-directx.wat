@@ -15610,7 +15610,7 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
 
   ;; ── IDirect3DLight ─────────────────────────────────────────
-  ;; Each Light slot owns a 76-byte D3DLIGHT buffer on the guest heap;
+  ;; Each Light slot owns an 80-byte D3DLIGHT2 buffer on the guest heap;
   ;; its guest pointer lives at DX_OBJECTS entry +8 (misc0). Lazy-allocated
   ;; on first SetLight so CreateLight stays cheap for apps that never
   ;; configure a light.
@@ -15618,9 +15618,9 @@
     (local $g i32)
     (local.set $g (load.field DxObject misc0 (local.get $entry)))
     (if (i32.eqz (local.get $g)) (then
-      (local.set $g (call $heap_alloc (i32.const 76)))
+      (local.set $g (call $heap_alloc (i32.const 80)))
       (if (local.get $g) (then
-        (call $zero_memory (call $g2w (local.get $g)) (i32.const 76))
+        (call $zero_memory (call $g2w (local.get $g)) (i32.const 80))
         (store.field DxObject misc0 (local.get $entry) (local.get $g))))))
     (local.get $g))
 
@@ -15651,8 +15651,9 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; SetLight(this, lpLight) — copy caller's D3DLIGHT (first dword is dwSize) into
-  ;; our per-slot buffer. Clamp to 76 (full D3DLIGHT2) to keep older/shorter
-  ;; D3DLIGHT structs safe.
+  ;; our per-slot buffer. D3DLIGHT is 76 bytes; D3DLIGHT2 adds dwFlags at 76.
+  ;; Clamp to 80, preserving prefix-only writes (including an existing tail).
+  ;; Keep the historical 76-byte fallback for invalid sizes below 4.
   (func $handle_IDirect3DLight_SetLight (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $buf i32) (local $dwSize i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
@@ -15660,7 +15661,7 @@
     (if (local.get $arg1) (then
       (if (local.get $buf) (then
         (local.set $dwSize (call $gl32 (local.get $arg1)))
-        (if (i32.gt_u (local.get $dwSize) (i32.const 76)) (then (local.set $dwSize (i32.const 76))))
+        (if (i32.gt_u (local.get $dwSize) (i32.const 80)) (then (local.set $dwSize (i32.const 80))))
         (if (i32.lt_u (local.get $dwSize) (i32.const 4)) (then (local.set $dwSize (i32.const 76))))
         (call $memcpy
           (call $g2w (local.get $buf))
@@ -15670,7 +15671,8 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; GetLight(this, lpLight) — caller provides D3DLIGHT* with dwSize prefilled.
-  ;; Copy back min(dwSize, 76) bytes from our buffer. If no SetLight ever ran,
+  ;; Copy back min(dwSize, 80) bytes from our buffer (invalid sizes use 76).
+  ;; Older 76-byte callers never access dwFlags. If no SetLight ever ran,
   ;; our buffer stays zeroed except the caller-visible dwSize echo.
   (func $handle_IDirect3DLight_GetLight (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $entry i32) (local $buf i32) (local $dwSize i32) (local $out_wa i32)
@@ -15678,7 +15680,7 @@
     (local.set $buf (load.field DxObject misc0 (local.get $entry)))
     (if (local.get $arg1) (then (local.set $out_wa (call $g2w (local.get $arg1)))
       (local.set $dwSize (i32.load (local.get $out_wa)))
-      (if (i32.gt_u (local.get $dwSize) (i32.const 76)) (then (local.set $dwSize (i32.const 76))))
+      (if (i32.gt_u (local.get $dwSize) (i32.const 80)) (then (local.set $dwSize (i32.const 80))))
       (if (i32.lt_u (local.get $dwSize) (i32.const 4)) (then (local.set $dwSize (i32.const 76))))
       (if (local.get $buf)
         (then
