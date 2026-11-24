@@ -1187,12 +1187,35 @@
   ;; 409: m, mm       op = sub<<8 | src<<4        ; address word follows
   ;; 410: mm, imm8    op = sub<<12 | dst<<8 | imm8
 
+  ;; SSE1 PINSRW is a GPR/m16 insert, never an MMX source register.
+  ;; Subops 160..163 encode imm8[1:0]; all other selector bits are ignored.
+  ;; Intel SDM vol.2B PINSRW and vol.3A 12.2: BOTH forms write MMX, set
+  ;; TOP=0 and mark all tags valid. Separate MMX/x87 value storage still
+  ;; does not model mantissa aliasing or the destination's x87 exponent.
+  (func $mmx_pinsrw (param $dst i32) (param $word i32) (param $lane i32)
+    (local $shift i64) (local $mask i64)
+    (local.set $shift (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))
+    (local.set $mask (i64.shl (i64.const 65535) (local.get $shift)))
+    (call $mmx_set (local.get $dst)
+      (i64.or
+        (i64.and (call $mmx_get (local.get $dst)) (i64.xor (local.get $mask) (i64.const -1)))
+        (i64.shl (i64.extend_i32_u (i32.and (local.get $word) (i32.const 65535))) (local.get $shift))))
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_tag (i32.const 255)))
+
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
     (global.set $mmx_exec_count (i32.add (global.get $mmx_exec_count) (i32.const 1)))
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $src (i32.and (local.get $op) (i32.const 0xF)))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 160))
+                 (i32.le_u (local.get $sub) (i32.const 163)))
+      (then
+        (call $mmx_pinsrw (local.get $dst)
+          (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $src) (i32.const 2))))
+          (i32.sub (local.get $sub) (i32.const 160)))
+        (dispatch-next)))
     ;; movq mm, mm
     (if (i32.eqz (local.get $sub))
       (then (call $mmx_set (local.get $dst) (call $mmx_get (local.get $src))) (dispatch-next)))
@@ -1221,6 +1244,13 @@
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $addr (call $read_addr))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 160))
+                 (i32.le_u (local.get $sub) (i32.const 163)))
+      (then
+        ;; Complete exactly the architectural two-byte read before state changes.
+        (call $mmx_pinsrw (local.get $dst) (call $gl16 (local.get $addr))
+          (i32.sub (local.get $sub) (i32.const 160)))
+        (dispatch-next)))
     (if (i32.eqz (local.get $sub))
       (then (call $mmx_set (local.get $dst) (call $mmx_load64 (local.get $addr)))
             (dispatch-next)))
