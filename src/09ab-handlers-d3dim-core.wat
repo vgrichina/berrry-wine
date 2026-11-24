@@ -7932,8 +7932,40 @@
       (local.set $y (i32.add (local.get $y) (i32.const 1)))
       (br $rows))))
 
+  ;; Legacy viewport clears use screen-coordinate D3DRECTs clipped to the
+  ;; viewport (Microsoft DX6 SDK, IDirect3DViewport3::Clear/Clear2). Keep the
+  ;; existing full-viewport path for zero count/null; the legacy reference
+  ;; does not specify those cases. Do not import Device8's pointer contract.
+  (func $d3dim_viewport_clear_rects
+    (param $vp_this i32) (param $count i32) (param $rects i32)
+    (param $dwFlags i32) (param $color i32) (param $zval f32)
+    (local $i i32) (local $p i32)
+    (if (i32.or (i32.eqz (local.get $count)) (i32.eqz (local.get $rects)))
+      (then
+        (call $d3dim_viewport_clear_full (local.get $vp_this) (local.get $dwFlags)
+          (local.get $color) (local.get $zval))
+        (return)))
+    (loop $rect
+      (local.set $p (i32.add (local.get $rects) (i32.shl (local.get $i) (i32.const 4))))
+      (call $d3dim_viewport_clear_rect (local.get $vp_this) (local.get $dwFlags)
+        (local.get $color) (local.get $zval)
+        (call $gl32 (local.get $p))
+        (call $gl32 (i32.add (local.get $p) (i32.const 4)))
+        (call $gl32 (i32.add (local.get $p) (i32.const 8)))
+        (call $gl32 (i32.add (local.get $p) (i32.const 12))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $rect (i32.lt_u (local.get $i) (local.get $count)))))
+
+  (func $d3dim_viewport_clear_full
+    (param $vp_this i32)
+    (param $dwFlags i32) (param $color i32) (param $zval f32)
+    (call $d3dim_viewport_clear_rect (local.get $vp_this) (local.get $dwFlags)
+      (local.get $color) (local.get $zval)
+      (i32.const -2147483648) (i32.const -2147483648)
+      (i32.const 2147483647) (i32.const 2147483647)))
+
   ;; The real clear, called from $handle_IDirect3DViewport3_Clear (09a8) with
-  ;; an implied D3DCLEAR_TARGET and from $handle_IDirect3DViewport3_Clear2
+  ;; the caller's flags and from $handle_IDirect3DViewport3_Clear2
   ;; (09a8) with the caller's own dwFlags/dwColor/dvZ. Both of those handlers
   ;; paint through here -- this is not a stub, and it honours exactly the bits
   ;; it is handed: D3DCLEAR_TARGET (0x1) fills colour, D3DCLEAR_ZBUFFER (0x2)
@@ -7941,9 +7973,10 @@
   ;; full-screen geometry to cover the colour buffer -- Half-Life does, so a
   ;; stale-looking backdrop under a D3D scene is a coverage bug in the draw
   ;; path, never a missing clear here (docs/re-notes/half-life-uplink.md).
-  (func $d3dim_viewport_clear_full
+  (func $d3dim_viewport_clear_rect
     (param $vp_this i32)
     (param $dwFlags i32) (param $color i32) (param $zval f32)
+    (param $left i32) (param $top i32) (param $right i32) (param $bottom i32)
     (local $rt i32) (local $dev_this i32) (local $vp_entry i32)
     (local $vx i32) (local $vy i32) (local $vw i32) (local $vh i32)
     (local $zbuf i32) (local $rtw i32) (local $rth i32) (local $bgtex i32)
@@ -7964,6 +7997,18 @@
       (local.set $vy (i32.const 0))
       (local.set $vw (i32.and (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 0xFFFF)))
       (local.set $vh (i32.shr_u (i32.load (i32.add (local.get $rt) (i32.const 12))) (i32.const 16)))))
+    ;; Intersect endpoints before subtracting: a valid D3DRECT can span the
+    ;; signed coordinate range, whose un-clipped width would overflow i32.
+    (if (i32.gt_s (local.get $right) (i32.add (local.get $vx) (local.get $vw)))
+      (then (local.set $right (i32.add (local.get $vx) (local.get $vw)))))
+    (if (i32.gt_s (local.get $bottom) (i32.add (local.get $vy) (local.get $vh)))
+      (then (local.set $bottom (i32.add (local.get $vy) (local.get $vh)))))
+    (if (i32.gt_s (local.get $left) (local.get $vx)) (then (local.set $vx (local.get $left))))
+    (if (i32.gt_s (local.get $top) (local.get $vy)) (then (local.set $vy (local.get $top))))
+    (if (i32.or (i32.le_s (local.get $right) (local.get $vx))
+                (i32.le_s (local.get $bottom) (local.get $vy))) (then (return)))
+    (local.set $vw (i32.sub (local.get $right) (local.get $vx)))
+    (local.set $vh (i32.sub (local.get $bottom) (local.get $vy)))
     ;; A background image goes as a textured clear, under the same rule the
     ;; CPU fill below uses (not on an 8bpp target). Architec and SciFi clear
     ;; through one every frame.
