@@ -11495,7 +11495,7 @@
         (return)))
     (if (i32.eq (load.field DxObject misc0 (local.get $entry)) (i32.const 1))
       (then
-        (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 8)
+        (if (call $host_di_keyboard_buffer (local.get $entry) (i32.const 12)
               (i32.load offset=12 (local.get $entry)))
           (then
             (i32.store (global.get $reg_base) (i32.const 0x8007000E)) ;; DIERR_OUTOFMEMORY
@@ -11576,12 +11576,8 @@
       (then (return (i32.const 0))))
     (i32.load8_u (i32.add (global.get $DI_DIK_VK_TABLE) (local.get $dik))))
 
-  ;; Buffered host events carry VK, not physical-side/scan-code identity.
-  ;; Choose the lowest DIK in the acquired format for each shared VK. Thus a
-  ;; right-only format receives the shared modifier, while a format naming
-  ;; both sides receives one event at the left DIK's offset. Return/NumPadEnter
-  ;; follows the same alias rule. Never amplify one arrival into two records.
-  ;; Registration and collection use this same selection, including omissions.
+  ;; Untagged numeric events retain the lowest selected DIK for their VK.
+  ;; Tagged physical events bypass this alias rule and never fall back to it.
   (func $di_kbd_representative (param $entry i32) (param $vk i32) (result i32)
     (local $dik i32)
     (if (i32.eqz (local.get $vk)) (then (return (i32.const -1))))
@@ -11600,7 +11596,7 @@
   ;; can report, before input is admitted to this device's bounded FIFO.
   ;; Keep the mapping here: the host must not duplicate the DIK/format rules.
   (func $di_kbd_buffer_format (param $entry i32)
-    (local $vk i32)
+    (local $vk i32) (local $dik i32)
     (local.set $vk (i32.const 1))
     (block $done (loop $keys
       (br_if $done (i32.ge_u (local.get $vk) (i32.const 256)))
@@ -11609,7 +11605,18 @@
         (then (drop (call $host_di_keyboard_buffer
           (local.get $entry) (i32.const 9) (local.get $vk)))))
       (local.set $vk (i32.add (local.get $vk) (i32.const 1)))
-      (br $keys))))
+      (br $keys)))
+    (local.set $dik (i32.const 1))
+    (block $done (loop $physical
+      (br_if $done (i32.ge_u (local.get $dik) (i32.const 256)))
+      (if (i32.and
+            (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0))
+            (i32.ge_s (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik))
+                      (i32.const 0)))
+        (then (drop (call $host_di_keyboard_buffer
+          (local.get $entry) (i32.const 13) (local.get $dik)))))
+      (local.set $dik (i32.add (local.get $dik) (i32.const 1)))
+      (br $physical))))
 
   ;; Live host state for one scan code, as 0 or 1.
   (func $di_kbd_live (param $dik i32) (result i32)
@@ -11631,8 +11638,17 @@
       (br_if $done (i32.ge_u (local.get $index) (local.get $available)))
       (br_if $done (i32.ge_u (local.get $count) (local.get $max)))
       (local.set $event (call $host_di_keyboard_buffer (local.get $entry) (i32.const 3) (local.get $index)))
-      (local.set $dik (call $di_kbd_representative (local.get $entry)
-        (i32.and (local.get $event) (i32.const 255))))
+      (local.set $dik
+        (if (result i32) (i32.and (local.get $event) (i32.const 0x20000))
+          (then
+            (local.set $dik (i32.and (i32.shr_u (local.get $event) (i32.const 9)) (i32.const 255)))
+            (if (result i32) (i32.and
+                  (i32.ne (local.get $dik) (i32.const 0))
+                  (i32.ne (call $di_dik_to_vk_strict (local.get $dik)) (i32.const 0)))
+              (then (local.get $dik))
+              (else (i32.const -1))))
+          (else (call $di_kbd_representative (local.get $entry)
+            (i32.and (local.get $event) (i32.const 255))))))
         (if (i32.ge_s (local.get $dik) (i32.const 0))
           (then
             (local.set $ofs (call $di_format_offset (local.get $entry) (i32.const 1) (local.get $dik)))

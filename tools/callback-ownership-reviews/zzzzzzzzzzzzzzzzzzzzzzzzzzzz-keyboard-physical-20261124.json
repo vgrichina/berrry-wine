@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "58a3bf78af922c059ff56d26dd23cdf0175b588e5f0aa7931331be9aba756c21",
+      "sha256": "5b26dde2df03216cfdcb24f95e526c395836ea77a134e04a1fc1195b3a4efdb0",
+      "reason": "2026-11-24 physical buffered keyboard repair only. Enter and modifier ownership stays synchronous in pokeKeyDownState and follows the existing physical-map identity reset fence. State and owner mutations finish before weak-client FIFO fan-out; exact DIK selection precedes capacity admission. Op12 stages inactive acquisition, op13 registers exact objects, and existing op10 alone activates it. Foreground invalidation drops selectedDiks with the other queue state. No new callbacks, retained strong renderer/client references, timers, continuations, or asynchronous ownership are introduced. Existing host signal/wake/publication order, aggregate WM/async state, numeric reset semantics, and published zero-wheel guard remain intact. Frozen JS458 and compiled317 assertions pass on the actual applied candidate; production SetDataFormat/Acquire/GetDeviceData425 assertions pass directly and through in-process synchronous RPC, including actual host scan injection. Initial original failures and fixture corrections retained in run 20261124-keyboard-physical-implementation-root. Broader host-file callback ownership remains pending; this review covers only these keyboard changes."
+    }
+  ]
+}
