@@ -4996,9 +4996,17 @@
             (local.set $lz (f32.neg (f32.load (i32.add (local.get $lw) (i32.const 44)))))
             (local.set $d (f32.const 0.0)))
           (else
-            (local.set $lx (f32.sub (f32.load (i32.add (local.get $lw) (i32.const 24))) (local.get $px)))
-            (local.set $ly (f32.sub (f32.load (i32.add (local.get $lw) (i32.const 28))) (local.get $py)))
-            (local.set $lz (f32.sub (f32.load (i32.add (local.get $lw) (i32.const 32))) (local.get $pz)))
+            ;; DX5 D3DLIGHTTYPE: parallel-point travels from light position to
+            ;; geometry origin, so diffuse L points back from that origin.
+            ;; Both are world-space: (0,0,0,1)*world is its translation row.
+            ;; https://library.thedatadungeon.com/directx5/html/dire8c89.content.htm
+            ;; https://library.thedatadungeon.com/directx5/html/dire8l7u.content.htm
+            (local.set $lx (f32.sub (f32.load (i32.add (local.get $lw) (i32.const 24)))
+              (select (f32.load offset=48 (local.get $m)) (local.get $px) (i32.eq (local.get $ltype) (i32.const 4)))))
+            (local.set $ly (f32.sub (f32.load (i32.add (local.get $lw) (i32.const 28)))
+              (select (f32.load offset=52 (local.get $m)) (local.get $py) (i32.eq (local.get $ltype) (i32.const 4)))))
+            (local.set $lz (f32.sub (f32.load (i32.add (local.get $lw) (i32.const 32)))
+              (select (f32.load offset=56 (local.get $m)) (local.get $pz) (i32.eq (local.get $ltype) (i32.const 4)))))
             (local.set $d (f32.sqrt (f32.add (f32.add
               (f32.mul (local.get $lx) (local.get $lx))
               (f32.mul (local.get $ly) (local.get $ly)))
@@ -5011,7 +5019,9 @@
           (local.set $lx (f32.div (local.get $lx) (local.get $len)))
           (local.set $ly (f32.div (local.get $ly) (local.get $len)))
           (local.set $lz (f32.div (local.get $lz) (local.get $len)))
-          (if (i32.ne (local.get $ltype) (i32.const 3)) (then
+          ;; Parallel-point otherwise acts directional: no distance factor.
+          (if (i32.and (i32.ne (local.get $ltype) (i32.const 3))
+                       (i32.ne (local.get $ltype) (i32.const 4))) (then
             (local.set $range (f32.load (i32.add (local.get $lw) (i32.const 48))))
             (if (f32.gt (local.get $range) (f32.const 0.0)) (then
               (if (f32.gt (local.get $d) (local.get $range))
