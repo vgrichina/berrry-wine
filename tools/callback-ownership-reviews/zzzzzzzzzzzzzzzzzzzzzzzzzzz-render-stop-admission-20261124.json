@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/render-worker.js",
+      "name": "host-file",
+      "baseSHA256": "aa7ff924ac8117bbbe1b2691332c794e895d04ad09914f2bf496d790a2702669",
+      "sha256": "1fd9863bde4ebcfe23dc120114d23a6ac417dcb2c0c54e7a7441b616f68ee153",
+      "reason": "20261124 render shutdown admission: Manager.stop publishes its stable promise, marks the manager stopped and synchronously closes all owned endpoint admission before asynchronous transport shutdown. Late render-event frames are released through the existing closed-port path and old D3D9 layers become stale immediately; delayed frames cannot overwrite a replacement publication. Ports remain owned until the existing finalizer rejects requests, notifies error subscribers, clears maps/credits and awaits physical termination. No early heap retirement, new guest callback, context restoration, invocation or native completion authority. Frozen full-production Manager/host-imports/GPU presenter/renderer deterministic regression fails nine of 27 baseline checks and passes all 27 after the minimal fix, including replacement pixels, repaint/publication counts, foreign renderer updates, idempotent stop and independently held acknowledgement/physical termination. Existing renderer boundary, worker lifecycle, manager callback cleanup and display failure suites pass. Broader invocation ownership remains pending."
+    }
+  ]
+}
