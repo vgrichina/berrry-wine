@@ -724,7 +724,7 @@
   ;; RASTER from the stage block (+480), re-emitted only when it changed.
   (func $d3g_raster (param $pb i32) (param $depth i32) (param $zfunc i32) (param $zwrite i32) (param $cull i32)
       (param $blend i32) (param $src i32) (param $dst i32) (param $afunc i32) (param $aref i32)
-      (param $sl i32) (param $st i32) (param $sr i32) (param $sb i32)
+      (param $sl i32) (param $st i32) (param $sr i32) (param $sb i32) (param $linear i32)
     (local $s i32) (local $p i32)
     (local.set $s (i32.add (local.get $pb) (i32.const 480)))
     (memory.fill (local.get $s) (i32.const 0) (i32.const 96))
@@ -741,6 +741,7 @@
     (store.field GpsRaster alpha_ref (local.get $s) (local.get $aref))
     (store.field GpsRaster colormask (local.get $s) (i32.const 15))
     (store.field GpsRaster fill (local.get $s) (i32.const 3))
+    (store.field GpsRaster linear (local.get $s) (local.get $linear))
     (if (i32.lt_s (local.get $sr) (local.get $sl)) (then (local.set $sr (local.get $sl))))
     (if (i32.lt_s (local.get $sb) (local.get $st)) (then (local.set $sb (local.get $st))))
     (store.field GpsRaster scissor_left (local.get $s) (local.get $sl))
@@ -1331,7 +1332,7 @@
     (local $pos i32)
     (call $d3g_raster (local.get $pb) (i32.const 0) (i32.const 8) (i32.const 0) (i32.const 1)
       (i32.const 0) (i32.const 2) (i32.const 1) (local.get $afunc) (i32.const 0)
-      (local.get $sl) (local.get $st) (local.get $sr) (local.get $sb))
+      (local.get $sl) (local.get $st) (local.get $sr) (local.get $sb) (i32.const 0))
     (call $d3g_bind (local.get $pb) (local.get $tex)
       (call $d3g_sampler (local.get $pb) (i32.const 0x01133)))
     (local.set $pos (call $d3g_arena (i32.const 192)))
@@ -1368,15 +1369,15 @@
         (local.get $cl) (local.get $ct) (local.get $cr) (local.get $cb)))))
 
   (func $d3g_scissor_draw (param $pb i32) (param $d i32) (param $depth i32) (param $zfunc i32) (param $zwrite i32)
-      (param $cull i32) (param $blend i32) (param $src i32) (param $dst i32) (param $afunc i32) (param $aref i32)
+      (param $cull i32) (param $blend i32) (param $src i32) (param $dst i32) (param $afunc i32) (param $aref i32) (param $linear i32)
     (if (i32.load offset=136 (local.get $d))
       (then (call $d3g_raster (local.get $pb) (local.get $depth) (local.get $zfunc) (local.get $zwrite) (local.get $cull)
         (local.get $blend) (local.get $src) (local.get $dst) (local.get $afunc) (local.get $aref)
         (i32.load offset=140 (local.get $d)) (i32.load offset=144 (local.get $d))
-        (i32.load offset=148 (local.get $d)) (i32.load offset=152 (local.get $d))))
+        (i32.load offset=148 (local.get $d)) (i32.load offset=152 (local.get $d)) (local.get $linear)))
       (else (call $d3g_raster (local.get $pb) (local.get $depth) (local.get $zfunc) (local.get $zwrite) (local.get $cull)
         (local.get $blend) (local.get $src) (local.get $dst) (local.get $afunc) (local.get $aref)
-        (i32.const 0) (i32.const 0) (i32.load offset=4 (local.get $d)) (i32.load offset=8 (local.get $d))))))
+        (i32.const 0) (i32.const 0) (i32.load offset=4 (local.get $d)) (i32.load offset=8 (local.get $d)) (local.get $linear)))))
 
   ;; POINTLIST as viewport_fill_rect paints it: a rounded 2x2 diffuse
   ;; overwrite, clipped to surface and viewport, depth per ZENABLE.
@@ -1403,7 +1404,7 @@
       (select (i32.load offset=68 (local.get $d)) (i32.const 8) (local.get $zen))
       (i32.and (local.get $zen) (i32.ne (i32.load offset=72 (local.get $d)) (i32.const 0)))
       (i32.const 1) (i32.const 0) (i32.const 2) (i32.const 1) (i32.const 8) (i32.const 0)
-      (i32.const 0) (i32.const 0) (i32.load offset=8 (local.get $t)) (i32.load offset=12 (local.get $t)))
+      (i32.const 0) (i32.const 0) (i32.load offset=8 (local.get $t)) (i32.load offset=12 (local.get $t)) (i32.const 0))
     (call $d3g_bind (local.get $pb) (i32.const 0) (i32.const 0))
     (local.set $cr (i32.load offset=8 (local.get $t)))
     (local.set $cb (i32.load offset=12 (local.get $t)))
@@ -1600,7 +1601,7 @@
     (call $d3g_targets (local.get $pb) (i32.load offset=28 (local.get $t)) (local.get $ds))
     (call $d3g_scissor_draw (local.get $pb) (local.get $d) (local.get $zen) (local.get $zfunc) (local.get $zwrite)
       (local.get $cull) (local.get $blend) (local.get $sb) (local.get $db) (local.get $afunc)
-      (i32.and (i32.load offset=120 (local.get $d)) (i32.const 255)))
+      (i32.and (i32.load offset=120 (local.get $d)) (i32.const 255)) (i32.ne (i32.and (local.get $key) (i32.const 0x8000)) (i32.const 0)))
     (local.set $ps (call $d3g_shader (local.get $pb) (local.get $key)))
     (call $d3g_bind (local.get $pb) (local.get $tex) (local.get $smp))
     (if (i32.and (local.get $key) (i32.const 0x6000))
@@ -1709,6 +1710,16 @@
             (else
               (f32.store offset=24 (local.get $o) (local.get $u))
               (f32.store offset=28 (local.get $o) (local.get $v))))
+          ;; Projected U/Q and V/Q already cancel the geometric perspective
+          ;; denominator. Carry U/w,V/w,Q/w explicitly with linear varyings:
+          ;; the ratios stay rational while diffuse and vertex fog stay affine.
+          (if (i32.and (local.get $key) (i32.const 0x8000)) (then
+            (local.set $c (i32.const 0))
+            (loop $weight
+              (local.set $s (i32.add (local.get $o) (i32.add (i32.const 24) (i32.shl (local.get $c) (i32.const 2)))))
+              (f32.store (local.get $s) (f32.mul (f32.load (local.get $s)) (local.get $rhw)))
+              (local.set $c (i32.add (local.get $c) (i32.const 1)))
+              (br_if $weight (i32.lt_u (local.get $c) (i32.const 4))))))
           (local.set $j (i32.add (local.get $j) (i32.const 1)))
           (br_if $verts_loop (i32.lt_u (local.get $j) (local.get $per))))
         (local.set $k (i32.add (local.get $k) (i32.const 1)))

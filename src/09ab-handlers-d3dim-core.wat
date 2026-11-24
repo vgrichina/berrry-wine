@@ -544,6 +544,15 @@
   ;; state or target, too few vertices) is dropped there too.
   (func $d3dim_worker_route
     (param $this i32) (param $primitive i32) (param $vertices i32) (param $count i32)
+    ;; The producer consumes POSITIONT and cannot recover geometric clipping
+    ;; after lowering. Keep depthless TL's clamp contract, but clip transformed
+    ;; texture inputs and depth-tested triangles before their stream snapshot.
+    (if (i32.and (i32.and (i32.ge_u (local.get $primitive) (i32.const 4))
+        (i32.le_u (local.get $primitive) (i32.const 6)))
+      (i32.or (i32.ne (global.get $d3dim_supplied_projection) (i32.const 0))
+        (i32.ne (call $d3dim_d7_rs (call $g2w (call $d3ddev_state (local.get $this))) (i32.const 7)) (i32.const 0))))
+      (then (if (call $d3dim_route_depth_clipped (local.get $this) (local.get $primitive)
+        (local.get $vertices) (local.get $count)) (then (return)))))
     (call $d3dim_worker_try_draw
       (local.get $this) (local.get $primitive)
       (if (result i32) (i32.ge_u (global.get $d3dim_supplied_projection) (i32.const 2))
@@ -8620,6 +8629,63 @@
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
     (local.get $out_count))
+
+  ;; Reconnect geometric clipping to the GPU stream route. Most draws need
+  ;; only a bounds scan; allocate bounded scratch only for a crossing draw.
+  ;; Five polygon vertices per plane and at most three output fan triangles.
+  (func $d3dim_route_depth_clipped
+    (param $this i32) (param $prim i32) (param $vertices i32) (param $count i32) (result i32)
+    (local $stride i32) (local $src i32) (local $i i32) (local $v i32) (local $outside i32)
+    (local $scratch i32) (local $a i32) (local $b i32) (local $out i32) (local $state i32)
+    (local $k i32) (local $j i32) (local $nprim i32) (local $n i32) (local $emitted i32) (local $type i32)
+    (local.set $stride (call $d3dim_tl_stride))
+    (local.set $src (call $g2w (local.get $vertices)))
+    (block $scanned (loop $scan
+      (br_if $scanned (i32.ge_u (local.get $i) (local.get $count)))
+      (local.set $v (i32.add (local.get $src) (i32.mul (local.get $i) (local.get $stride))))
+      (if (i32.or (f32.lt (call $d3dim_tl_clip_distance (local.get $v) (i32.const 0)) (f32.const 0))
+                  (f32.lt (call $d3dim_tl_clip_distance (local.get $v) (i32.const 1)) (f32.const 0)))
+        (then (local.set $outside (i32.const 1)) (br $scanned)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1))) (br $scan)))
+    (if (i32.eqz (local.get $outside)) (then (return (i32.const 0))))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $scratch (call $heap_alloc (i32.const 760)))
+    (if (i32.eqz (local.get $scratch)) (then (unreachable)))
+    (local.set $a (call $g2w (local.get $scratch)))
+    (local.set $b (i32.add (local.get $a) (i32.const 200)))
+    (local.set $out (i32.add (local.get $a) (i32.const 400)))
+    (local.set $type (if (result i32) (i32.ge_u (global.get $d3dim_supplied_projection) (i32.const 2))
+      (then (i32.add (global.get $d3dim_supplied_projection) (i32.const 3)))
+      (else (select (i32.const 4) (i32.const 3) (global.get $d3dim_supplied_projection)))))
+    (local.set $nprim (if (result i32) (i32.eq (local.get $prim) (i32.const 4))
+      (then (i32.div_u (local.get $count) (i32.const 3)))
+      (else (select (i32.sub (local.get $count) (i32.const 2)) (i32.const 0) (i32.ge_u (local.get $count) (i32.const 3))))))
+    (block $done (loop $primitive
+      (br_if $done (i32.ge_u (local.get $k) (local.get $nprim)))
+      (local.set $j (i32.const 0))
+      (loop $copy
+        (call $memcpy (i32.add (local.get $a) (i32.mul (local.get $j) (local.get $stride)))
+          (i32.add (local.get $src) (i32.mul (call $d3dim_indexed_slot (local.get $prim) (local.get $k) (local.get $j)) (local.get $stride)))
+          (local.get $stride))
+        (local.set $j (i32.add (local.get $j) (i32.const 1))) (br_if $copy (i32.lt_u (local.get $j) (i32.const 3))))
+      (local.set $n (call $d3dim_clip_tl_polygon (local.get $state) (local.get $a) (i32.const 3) (local.get $b) (i32.const 0)))
+      (local.set $n (call $d3dim_clip_tl_polygon (local.get $state) (local.get $b) (local.get $n) (local.get $a) (i32.const 1)))
+      (local.set $j (i32.const 1)) (local.set $emitted (i32.const 0))
+      (block $fanned (loop $fan
+        (br_if $fanned (i32.ge_u (i32.add (local.get $j) (i32.const 1)) (local.get $n)))
+        (local.set $v (i32.add (local.get $out) (i32.mul (local.get $emitted) (local.get $stride))))
+        (call $memcpy (local.get $v) (local.get $a) (local.get $stride))
+        (call $memcpy (i32.add (local.get $v) (local.get $stride)) (i32.add (local.get $a) (i32.mul (local.get $j) (local.get $stride))) (local.get $stride))
+        (call $memcpy (i32.add (local.get $v) (i32.mul (local.get $stride) (i32.const 2)))
+          (i32.add (local.get $a) (i32.mul (i32.add (local.get $j) (i32.const 1)) (local.get $stride))) (local.get $stride))
+        (local.set $emitted (i32.add (local.get $emitted) (i32.const 3)))
+        (local.set $j (i32.add (local.get $j) (i32.const 1))) (br $fan)))
+      (if (local.get $emitted) (then
+        (call $d3dim_worker_try_draw (local.get $this) (i32.const 4) (local.get $type)
+          (i32.add (local.get $scratch) (i32.const 400)) (local.get $emitted))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1))) (br $primitive)))
+    (call $heap_free (local.get $scratch))
+    (i32.const 1))
 
   ;; ── Execute-buffer triangle rasterizer ─────────────────────────
   ;; Walks wCount D3DTRIANGLE records (8 bytes each: u16 v1,v2,v3,flags) and
