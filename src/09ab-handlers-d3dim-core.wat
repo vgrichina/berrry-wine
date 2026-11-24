@@ -4879,6 +4879,8 @@
     (local $lx f32) (local $ly f32) (local $lz f32) (local $d f32)
     (local $ndl f32) (local $atten f32) (local $a0 f32) (local $a1 f32) (local $a2 f32)
     (local $range f32) (local $q f32)
+    (local $sx f32) (local $sy f32) (local $sz f32) (local $slen f32)
+    (local $rho f32) (local $ct f32) (local $cp f32) (local $spot f32) (local $falloff f32)
     (local $dr f32) (local $dg f32) (local $db f32)
     (local $ar f32) (local $ag f32) (local $ab f32)
     (local $r f32) (local $g f32) (local $b f32) (local $da f32)
@@ -5036,6 +5038,43 @@
                 (if (f32.gt (local.get $len) (f32.const 0.000001)) (then
                   (local.set $atten (f32.mul (local.get $atten)
                     (f32.min (f32.const 1.0) (f32.div (f32.const 1.0) (local.get $len)))))))))))
+          ;; Legacy IDirect3DLight uses D3DLIGHT offsets, unlike D3D7's
+          ;; separate light records. Normalize its world-space spotlight axis;
+          ;; L above points vertex-to-light, so negate their dot product.
+          ;; Microsoft imover_04h0: theta/phi are full cone angles. Positive
+          ;; theta<phi<pi and a nonzero direction define this angular factor.
+          ;; Preserve the existing zero-cone records used by callers that
+          ;; never specified angular state; positive phi defines a cone.
+          (if (i32.and (i32.eq (local.get $ltype) (i32.const 2))
+                       (f32.gt (f32.load offset=72 (local.get $lw)) (f32.const 0.0))) (then
+            (local.set $sx (f32.load offset=36 (local.get $lw)))
+            (local.set $sy (f32.load offset=40 (local.get $lw)))
+            (local.set $sz (f32.load offset=44 (local.get $lw)))
+            (local.set $slen (f32.sqrt (f32.add (f32.add
+              (f32.mul (local.get $sx) (local.get $sx))
+              (f32.mul (local.get $sy) (local.get $sy)))
+              (f32.mul (local.get $sz) (local.get $sz)))))
+            (if (f32.gt (local.get $slen) (f32.const 0.0)) (then
+              (local.set $rho (f32.neg (f32.div (f32.add (f32.add
+                (f32.mul (local.get $sx) (local.get $lx))
+                (f32.mul (local.get $sy) (local.get $ly)))
+                (f32.mul (local.get $sz) (local.get $lz))) (local.get $slen))))
+              (local.set $ct (f32.demote_f64 (call $host_math_cos
+                (f64.mul (f64.promote_f32 (f32.load offset=68 (local.get $lw))) (f64.const 0.5)))))
+              (local.set $cp (f32.demote_f64 (call $host_math_cos
+                (f64.mul (f64.promote_f32 (f32.load offset=72 (local.get $lw))) (f64.const 0.5)))))
+              (local.set $spot (f32.const 1.0))
+              (if (f32.le (local.get $rho) (local.get $cp))
+                (then (local.set $spot (f32.const 0.0)))
+                (else (if (f32.lt (local.get $rho) (local.get $ct)) (then
+                  (local.set $spot (f32.div (f32.sub (local.get $rho) (local.get $cp))
+                    (f32.sub (local.get $ct) (local.get $cp))))
+                  (local.set $falloff (f32.load offset=52 (local.get $lw)))
+                  (if (f32.ne (local.get $falloff) (f32.const 1.0)) (then
+                    (local.set $spot (f32.demote_f64 (call $host_math_pow
+                      (f64.promote_f32 (local.get $spot)) (f64.promote_f32 (local.get $falloff)))))))))))
+              ;; Multiply after the size-specific distance branches above.
+              (local.set $atten (f32.mul (local.get $atten) (local.get $spot)))))))
           (local.set $ndl (f32.add (f32.add
             (f32.mul (local.get $nx) (local.get $lx))
             (f32.mul (local.get $ny) (local.get $ly)))
