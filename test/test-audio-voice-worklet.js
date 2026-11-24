@@ -216,3 +216,98 @@ ok(alive === false,
   'a finished one-shot returns false, so process() is never called for it again');
 
 console.log(`\nPASS  ${checks}/${checks} checks passed`);
+// Actual processor lifecycle, including callbacks after release and slot reuse.
+{
+// Frozen before baseline: literal samples; no copied DSP or descriptor writer.
+const assert = require('assert');
+const fs = require('fs');
+const vm = require('vm');
+const { createWorkletRouter } = require(path.join(__dirname, '../lib/audio-worklet-host'));
+let Processor;
+class Port { postMessage() { throw new Error('unexpected processor message'); } }
+const scope = {
+  AudioWorkletProcessor: class { constructor() { this.port = new Port(); } },
+  registerProcessor(name, ctor) { assert.strictEqual(name, 'wine-voice'); Processor = ctor; },
+  sampleRate: 8000,
+};
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../lib/audio-voice-worklet.js'), 'utf8'), scope);
+class Node {
+  constructor(ac, name, opts) { this.processor = new Processor(opts); this.port = new Port(); }
+  connect() {}
+  disconnect() { this.disconnected = true; }
+}
+async function lifecycleRegression() {
+  const saved = globalThis.AudioWorkletNode;
+  globalThis.AudioWorkletNode = Node;
+  let checks = 0;
+  const failures = [];
+  const eq = (actual, expected, label) => {
+    checks++;
+    try { assert.deepStrictEqual(actual, expected, label); }
+    catch (err) { failures.push(err.message); }
+  };
+  const quantum = (node, n) => {
+    const left = new Float32Array(n), right = new Float32Array(n);
+    const alive = node.processor.process([], [[left, right]]);
+    return { left: Array.from(left), right: Array.from(right), alive };
+  };
+  try {
+    const router = createWorkletRouter({ maxVoices: 2, rpc: null });
+    const ac = { audioWorklet: { addModule: () => Promise.resolve() }, destination: {} };
+    router.ensureModule(ac);
+    await Promise.resolve(); await Promise.resolve();
+    const memory = new SharedArrayBuffer(256);
+    const bytes = new Uint8Array(memory);
+    bytes.set([128, 160, 192, 224, 0, 32, 64, 96], 32);
+    // Replacement is stereo16 with independent signed left/right amplitudes.
+    bytes.set([0, 64, 0, 192, 0, 32, 0, 224, 0, 0, 0, 0, 0, 128, 0, 64], 64);
+    bytes.set([144, 112, 176, 80, 208, 48, 240, 16], 128);
+    const beforeMemory = Array.from(bytes);
+    const old = { id: 1, rate: 8000, channels: 1, bits: 8 };
+    const foreign = { id: 2, rate: 8000, channels: 1, bits: 8 };
+    eq(router.route({}, ac, old, memory, 32, 8, 0, 1), true, 'initial route');
+    eq(router.route({}, ac, foreign, memory, 128, 8, 0, 1), true, 'foreign route');
+    const retiredNode = old.workletNode;
+    const oldSlot = old.workletSlot;
+    eq(quantum(retiredNode, 3), { left: [0, .25, .5], right: [0, .25, .5], alive: true }, 'old actual PCM');
+    eq(router.cursorOf(old), 3, 'old cursor');
+    eq(quantum(foreign.workletNode, 2), { left: [.125, -.125], right: [.125, -.125], alive: true }, 'foreign actual PCM');
+    router.release(old);
+    eq(retiredNode.disconnected, true, 'disconnect delivered');
+    eq(quantum(retiredNode, 2), { left: [0, 0], right: [0, 0], alive: false }, 'released processor terminates');
+    const fresh = { id: 3, rate: 8000, channels: 2, bits: 16 };
+    eq(router.route({}, ac, fresh, memory, 64, 16, 4, 1), true, 'reopen with new format');
+    eq(fresh.workletSlot, oldSlot, 'same slot reused');
+    const ctrl = new Int32Array(router.controlBuffer);
+    const snapshot = Array.from(ctrl);
+    const progress = Array.from(fresh.workletProgress);
+    eq(quantum(retiredNode, 3), { left: [0, 0, 0], right: [0, 0, 0], alive: false }, 'retired callback cannot render replacement');
+    eq(Array.from(ctrl), snapshot, 'retired callback cannot publish cursor/ack or touch foreign descriptor');
+    eq(Array.from(fresh.workletProgress), progress, 'replacement progress untouched');
+    eq(quantum(fresh.workletNode, 2), { left: [.25, 0], right: [-.25, 0], alive: true }, 'new stereo16 PCM starts at byte 4');
+    eq(router.cursorOf(fresh), 12, 'new byte cursor');
+    eq(router.progressOf(fresh).bytes, 8, 'new consumed byte count');
+    // Pause and seek are not retirement: this node must remain reusable.
+    router.setPaused(fresh, true);
+    eq(quantum(fresh.workletNode, 2), { left: [0, 0], right: [0, 0], alive: true }, 'pause silence retains node');
+    eq(router.cursorOf(fresh), 12, 'pause does not advance');
+    router.setPaused(fresh, false);
+    eq(router.route({}, ac, fresh, memory, 64, 16, 12, 1), true, 'seek same node');
+    eq(quantum(fresh.workletNode, 3), { left: [-1, .5, .25], right: [.5, -.5, -.25], alive: true }, 'seek and wrap literal PCM');
+    eq(router.cursorOf(fresh), 8, 'seek wrap cursor');
+    eq(router.progressOf(fresh).bytes, 12, 'seek resets progress');
+    eq(quantum(foreign.workletNode, 2), { left: [.375, -.375], right: [.375, -.375], alive: true }, 'foreign voice continues without seek');
+    eq(router.cursorOf(foreign), 4, 'foreign cursor');
+    eq(router.progressOf(foreign).bytes, 4, 'foreign progress');
+    eq(Array.from(bytes), beforeMemory, 'entire guest memory untouched');
+    const freshNode = fresh.workletNode;
+    router.release(fresh); router.release(foreign);
+    eq(quantum(freshNode, 1), { left: [0], right: [0], alive: false }, 'replacement also terminates');
+    eq(router.activeSlots(), 0, 'all slots returned');
+  } finally { globalThis.AudioWorkletNode = saved; }
+  console.log(JSON.stringify({ checks, failures }, null, 2));
+  assert.strictEqual(failures.length, 0, 'worklet lifecycle regressions');
+}
+lifecycleRegression().catch(err => { console.error(err); process.exitCode = 1; });
+
+}
