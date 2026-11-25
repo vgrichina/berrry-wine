@@ -248,9 +248,35 @@ What we know:
   - `$th_sse_rr` is 12 KB in Ion and 15.5 KB in TurboFan.
   - Function indices are from the named build (1152 `th_sse_rr`, 1168–1177 for the new handlers). The names `wasm-native.js` prints are about 43 indices off.
 - **Frames are identical in every arm:** title `28aa1728c441e8b2`, gameplay `30f0eb81f6ec6291`.
-- **Timing: open.** The laptop A/B (M1, load 4–27) is inconclusive.
-  - In the gameplay window, off/off2 user CPU spanned 21.9–54.8 s. The best run per arm was off 21.9, off2 21.9, sse 21.4, fast 23.5, ssefast 21.8 s.
-  - The x86_64 box A/B (arms off, off-null, sse, fast, ssefast) has not been run.
+- **Timing, x86_64 box** (ascii.dev `bx_2dcqdnbs`, AMD EPYC 9455, 4 vCPU, node v24.22.1 / V8 13.6; deleted afterwards).
+  - Same module, `bc165957…`. Load was 0.8–1.4 throughout.
+  - Six alternated rounds per arm, all with the same end frame `f9488982d18e1fa8`. The box's hash differs from the laptop's `30f0eb81…`, so compare frames only within one machine.
+  - User CPU in the gameplay window (batches 213550–237550), median and min:
+
+    | Arm | Median (s) | Min (s) | vs pooled off median 11.08 |
+    |---|---|---|---|
+    | off | 11.20 | 10.77 | |
+    | off2 (null) | 11.03 | 10.87 | |
+    | `--uop-sse` | 10.57 | 10.39 | −4.6% |
+    | `--sse-fast` | 10.63 | 10.45 | −4.1% |
+    | both | 10.52 | 10.33 | −5.0% |
+
+  - The null band (off against off2 medians) is 1.5%. Every ssefast run, including its max of 10.73, is under every off and off2 run.
+  - Whole-run medians: off 74.4 s and off2 74.7 s; sse −3.9%, fast −2.1%, both −4.1%.
+- **Microbench, x86_64 box** (`remote/microbench-x64.log`), ns/iter median:
+
+  | Loop | threaded | `--sse-fast` | `--uop-sse` |
+  |---|---|---|---|
+  | 0x4358b1 | 649 | 596 | 645 |
+  | 0x438468 | 384 | 372 | 431 |
+  | 0x4d3bf5 | 101 | 85 | 96 |
+  | 0x4c78e1 | 153 | 114 | 135 |
+
+  - `--sse-fast` wins on every loop. `--uop-sse` is mixed per loop and wins in the whole game through coverage.
+  - Inside a uop program, kind 34 still calls the generic handler, so ssefast equals sse in these loops.
+- **Native code, x86-64 TurboFan** (d8 16.0.124; node runs V8 13.6, so this is a newer V8 than the one timed): `th_sse_rr` is 14.9 KB; the dedicated handlers are 1.3–1.5 KB.
+- **Verdict: land both, still opt-in.** Each beats the null band in the whole game, and together they are −5%. They are measured on Spelunky Classic HD only, so neither is on by default. `--sse-fast` is a pure handler swap, the low-risk candidate for a default after a second app.
+- The laptop A/B (M1, load 4–27) was inconclusive and is kept only as labelled evidence.
 
 ## Fixed gaps (in order of appearance)
 
