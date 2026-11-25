@@ -35,6 +35,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // an explicit full matrix also covers all retained PC/RC and status seeds.
 // test-x87-sqrt-subnormal.js uses bounded exact subnormal literals by default;
 // explicit full covers all legal PC/RC modes and retained status seeds.
+// test-x87-sqrt-rounded.js uses 13 bounded normal literals in binades 0,1,2,48;
+// explicit full covers 2376 rows across legal PC/RC and nine status seeds.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an
