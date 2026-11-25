@@ -7,9 +7,9 @@
 // VAs in two instances; the memory manager's FreeMem pointer goes to a stub
 // that zeroes the freed block's refcount word so a free is visible. Every call
 // runs once with D off and once with D on, and registers, EIP, flags and the
-// whole working buffer must agree. Native and fallback counts are checked per
-// case, so a case meant to stay native cannot silently fall back (or the
-// reverse). A one-byte patch to a helper body must stop it matching.
+// whole working buffer must agree. Native, partial (native up to the free,
+// then the body resumes at its CALL) and fallback counts are checked per case,
+// so a case meant to stay native cannot silently fall back (or the reverse). A one-byte patch to a helper body must stop it matching.
 //
 // A (1): a loop calling a `rep ret` function compiles and is exact.
 // B (3): the same with the pending CALL/RET seams stepped in the fast loop.
@@ -104,7 +104,7 @@ const CASES = [
   { name: 'LStrClr nil', entry: H.clr, want: 'n', buf: () => {}, regs: { eax: BUF } },
   { name: 'LStrClr literal', entry: H.clr, want: 'n',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, -1, 'lit')); }, regs: { eax: BUF } },
-  { name: 'LStrClr last ref', entry: H.clr, want: 'f',
+  { name: 'LStrClr last ref', entry: H.clr, want: 'p',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 1, 'abc')); }, regs: { eax: BUF } },
   { name: 'LStrAsg shared', entry: H.asg, want: 'n',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 3, 'old')); w(BUF + 4, str(w, BUF + 0x200, 2, 'new!')); },
@@ -115,19 +115,23 @@ const CASES = [
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 2, 'old')); }, regs: { eax: BUF, edx: 0 } },
   { name: 'LStrAsg same', entry: H.asg, want: 'n',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 2, 'xy')); }, regs: { eax: BUF, edx: BUF + 0x108 } },
-  { name: 'LStrAsg frees old', entry: H.asg, want: 'f',
+  { name: 'LStrAsg frees old', entry: H.asg, want: 'p',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 1, 'old')); str(w, BUF + 0x200, 1, 'new'); },
     regs: { eax: BUF, edx: BUF + 0x208 } },
   { name: 'FinalizeArray 0', entry: H.farr, want: 'n', buf: () => {}, regs: { eax: BUF, edx: ANSI, ecx: 0 } },
   { name: 'FinalizeArray 1 str', entry: H.farr, want: 'n',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 5, 's')); }, regs: { eax: BUF, edx: ANSI, ecx: 1 } },
+  { name: 'FinalizeArray 1 str last', entry: H.farr, want: 'p',
+    buf: (w) => { w(BUF, str(w, BUF + 0x100, 1, 's')); }, regs: { eax: BUF, edx: ANSI, ecx: 1 } },
+  { name: 'LStrAsg frees old, nil src', entry: H.asg, want: 'p',
+    buf: (w) => { w(BUF, str(w, BUF + 0x100, 1, 'old')); }, regs: { eax: BUF, edx: 0 } },
   { name: 'FinalizeArray 3 str', entry: H.farr, want: 'f',
     buf: (w) => { w(BUF, str(w, BUF + 0x100, 5, 's')); }, regs: { eax: BUF, edx: ANSI, ecx: 3 } },
   { name: 'FinalizeRecord RValue', entry: H.frec, want: 'n',
     buf: (w) => { w(BUF, 1); w(BUF + 0x10, str(w, BUF + 0x100, 4, 'rv')); }, regs: { eax: BUF, edx: RVALUE } },
   { name: 'FinalizeRecord RValue nil', entry: H.frec, want: 'n',
     buf: (w) => { w(BUF, 1); }, regs: { eax: BUF, edx: RVALUE } },
-  { name: 'FinalizeRecord RValue last', entry: H.frec, want: 'f',
+  { name: 'FinalizeRecord RValue last', entry: H.frec, want: 'p',
     buf: (w) => { w(BUF, 1); w(BUF + 0x10, str(w, BUF + 0x100, 1, 'rv')); }, regs: { eax: BUF, edx: RVALUE } },
   { name: 'FinalizeRecord RToken', entry: H.frec, want: 'f',
     buf: (w) => { w(BUF + 0x20, str(w, BUF + 0x100, 4, 'tk')); }, regs: { eax: BUF, edx: RTOKEN } },
@@ -157,16 +161,18 @@ async function delphiCases() {
   const on = await delphiInstance(img, 8);
   for (const c of CASES) {
     layoutBuf(off, c.buf); layoutBuf(on, c.buf);
-    const n0 = on.e.fold_stat(0), f0 = on.e.fold_stat(1);
+    const n0 = on.e.fold_stat(0), f0 = on.e.fold_stat(1), p0 = on.e.fold_stat(4);
     const a = call(off, c.entry, c.regs), b = call(on, c.entry, c.regs);
-    const dn = on.e.fold_stat(0) - n0, df = on.e.fold_stat(1) - f0;
+    const dn = on.e.fold_stat(0) - n0, df = on.e.fold_stat(1) - f0, dp = on.e.fold_stat(4) - p0;
     const diffs = [];
     if (!a.ok || !b.ok) diffs.push('did not return');
     for (const k of ['eip', 'flags', ...REGS]) if (a[k] !== b[k]) diffs.push(`${k} ${a[k].toString(16)} vs ${b[k].toString(16)}`);
     if (a.mem !== b.mem) diffs.push('memory differs');
     if (c.want === 'n' && (dn < 1 || df)) diffs.push(`want native, got native=${dn} fallback=${df}`);
     if (c.want === 'f' && df < 1) diffs.push(`want fallback, got native=${dn} fallback=${df}`);
-    console.log(`${c.name.padEnd(28)} ${diffs.length ? 'FAIL ' + diffs.join(', ') : 'ok'} (native=${dn} fallback=${df})`);
+    if (c.want === 'p' && (dp < 1 || df)) diffs.push(`want partial, got partial=${dp} fallback=${df}`);
+    if (c.want === 'n' && dp) diffs.push(`want native, got partial=${dp}`);
+    console.log(`${c.name.padEnd(28)} ${diffs.length ? 'FAIL ' + diffs.join(', ') : 'ok'} (native=${dn} partial=${dp} fallback=${df})`);
     if (diffs.length) fails++;
   }
   // A patched body is not the System unit any more: a fresh instance with one

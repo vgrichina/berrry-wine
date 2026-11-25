@@ -3245,6 +3245,7 @@
     (if (i32.eq (local.get $k) (i32.const 1)) (then (return (global.get $fold_d_fallback))))
     ;; 3 race; 11-15 native per helper id, 21-25 fallback per id
     (if (i32.eq (local.get $k) (i32.const 3)) (then (return (global.get $fold_d_race))))
+    (if (i32.eq (local.get $k) (i32.const 4)) (then (return (global.get $fold_d_partial))))
     (if (i32.eq (local.get $k) (i32.const 11)) (then (return (global.get $fold_dn1))))
     (if (i32.eq (local.get $k) (i32.const 12)) (then (return (global.get $fold_dn2))))
     (if (i32.eq (local.get $k) (i32.const 13)) (then (return (global.get $fold_dn3))))

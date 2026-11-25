@@ -3974,6 +3974,7 @@
   (global $fold_d_fallback (mut i32) (i32.const 0)) ;; D: calls handed back to guest code
   (global $fold_c_folds (mut i32) (i32.const 0))
   (global $fold_d_race (mut i32) (i32.const 0))     ;; D: a checked release reached 0
+  (global $fold_d_partial (mut i32) (i32.const 0))  ;; D: native up to a free, then resumed in the body
   (global $fold_dn1 (mut i32) (i32.const 0)) (global $fold_dn2 (mut i32) (i32.const 0))
   (global $fold_dn3 (mut i32) (i32.const 0)) (global $fold_dn4 (mut i32) (i32.const 0))
   (global $fold_dn5 (mut i32) (i32.const 0))

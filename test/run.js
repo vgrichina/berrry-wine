@@ -12985,7 +12985,7 @@ if (VERBOSE) {
   }
   if (instance.exports.get_fold_arms && instance.exports.get_fold_arms()) {
     const f = instance.exports.fold_stat;
-    console.log(`Fold arms ${instance.exports.get_fold_arms()}: d_native=${f(0) >>> 0} d_fallback=${f(1) >>> 0} c_folds=${f(2) >>> 0} d_race=${f(3) >>> 0} by-id(native/fallback: 1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord) ${[1, 2, 3, 4, 5].map(k => `${k}:${f(10 + k) >>> 0}/${f(20 + k) >>> 0}`).join(' ')}`);
+    console.log(`Fold arms ${instance.exports.get_fold_arms()}: d_native=${f(0) >>> 0} d_fallback=${f(1) >>> 0} c_folds=${f(2) >>> 0} d_race=${f(3) >>> 0} d_partial=${f(4) >>> 0} by-id(native/fallback: 1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord) ${[1, 2, 3, 4, 5].map(k => `${k}:${f(10 + k) >>> 0}/${f(20 + k) >>> 0}`).join(' ')}`);
   }
 
   if (DUMP_VFS && ctx.vfs) {

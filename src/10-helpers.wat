@@ -569,6 +569,29 @@
     (if (i32.ne (call $gl8 (call $gl32 (call $gl32 (local.get $fp)))) (i32.const 0xA)) (then (return (i32.const 0))))
     (i32.add (call $gl32 (i32.add (local.get $fp) (i32.const 4))) (i32.const 1)))
 
+  ;; Is s a string this call would free (refcount exactly 1, a word a native
+  ;; atomic RMW may use)? The partial paths below run up to the free.
+  (func $d_last (param $s i32) (result i32)
+    (if (i32.eqz (local.get $s)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.sub (local.get $s) (i32.const 8))) (i32.const 1)) (then (return (i32.const 0))))
+    (call $d_rc_ok (i32.sub (local.get $s) (i32.const 8))))
+  (func $d_push (param $v i32)
+    (local $esp i32)
+    (local.set $esp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (local.get $esp) (local.get $v))
+    (i32.store offset=16 (global.get $reg_base) (local.get $esp)))
+  ;; _LStrClr's last-reference tail up to its CALL FreeMem (body +0x1C):
+  ;; [p] = 0, ECX = 0, LOCK DEC [s-8] 1 -> 0, PUSH EAX, EAX = s-8, EDX = s.
+  (func $d_clr_to_free (param $p i32) (param $s i32)
+    (call $gs32 (local.get $p) (i32.const 0))
+    (i32.store offset=4 (global.get $reg_base) (i32.const 0))
+    (drop (i32.atomic.rmw.sub (call $g2w (i32.sub (local.get $s) (i32.const 8))) (i32.const 1)))
+    (call $set_flags_dec (i32.const 1) (i32.const 0))
+    (global.set $flag_sign_shift (i32.const 31))
+    (call $d_push (local.get $p))
+    (i32.store (global.get $reg_base) (i32.sub (local.get $s) (i32.const 8)))
+    (i32.store offset=8 (global.get $reg_base) (local.get $s)))
+
   ;; 502: one of the five helpers (operand = id, one word = entry EIP),
   ;; followed by RET.
   (func $th_delphi_rtti (param $op i32)
@@ -584,7 +607,14 @@
       ;; 1 _LStrClr(eax = @s)
       (if (i32.eq (local.get $op) (i32.const 1))
         (then
-          (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $eax)) (i32.const 0))))
+          (local.set $s (call $gl32 (local.get $eax)))
+          (if (call $d_last (local.get $s))
+            (then
+              (call $d_clr_to_free (local.get $eax) (local.get $s))
+              (global.set $fold_d_partial (i32.add (global.get $fold_d_partial) (i32.const 1)))
+              (global.set $eip (i32.add (local.get $entry) (i32.const 0x1C)))
+              (return_call $branch_end)))
+          (br_if $fallback (i32.eqz (call $d_rel_ok (local.get $s) (i32.const 0))))
           (call $d_lstrclr (local.get $eax))
           (call $fold_d_tick (local.get $op) (i32.const 0))
           (dispatch-next)))
@@ -595,6 +625,23 @@
           (if (local.get $edx)
             (then (br_if $fallback (i32.lt_s (call $gl32 (i32.sub (local.get $edx) (i32.const 8))) (i32.const 0)))
                   (br_if $fallback (i32.eqz (call $d_rc_ok (i32.sub (local.get $edx) (i32.const 8)))))))
+          ;; the old string's last reference: add s, swap, then the body's
+          ;; release up to its CALL FreeMem (+0x3D): ECX = 0, LOCK DEC 1 -> 0,
+          ;; EAX = old-8, EDX = old
+          (if (i32.and (call $d_last (local.get $d)) (i32.ne (local.get $d) (local.get $edx)))
+            (then
+              (if (local.get $edx)
+                (then (drop (i32.atomic.rmw.add (call $g2w (i32.sub (local.get $edx) (i32.const 8))) (i32.const 1)))))
+              (call $gs32 (local.get $eax) (local.get $edx))
+              (i32.store offset=4 (global.get $reg_base) (i32.const 0))
+              (drop (i32.atomic.rmw.sub (call $g2w (i32.sub (local.get $d) (i32.const 8))) (i32.const 1)))
+              (call $set_flags_dec (i32.const 1) (i32.const 0))
+              (global.set $flag_sign_shift (i32.const 31))
+              (i32.store (global.get $reg_base) (i32.sub (local.get $d) (i32.const 8)))
+              (i32.store offset=8 (global.get $reg_base) (local.get $d))
+              (global.set $fold_d_partial (i32.add (global.get $fold_d_partial) (i32.const 1)))
+              (global.set $eip (i32.add (local.get $entry) (i32.const 0x3D)))
+              (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (local.get $d)
             (i32.and (i32.eq (local.get $d) (local.get $edx)) (i32.ne (local.get $edx) (i32.const 0))))))
           (call $d_lstrasg (local.get $eax) (local.get $edx))
@@ -610,6 +657,24 @@
                   (dispatch-next)))
           (br_if $fallback (i32.ne (local.get $ecx) (i32.const 1)))
           (br_if $fallback (i32.ne (call $gl8 (local.get $edx)) (i32.const 0xA)))
+          ;; the string's last reference: the body up to its CALL _LStrClr
+          ;; (+0x4A): PUSH EAX/EBX/ESI/EDI; EBX = EAX = p, ESI = typeinfo,
+          ;; EDI = 1, EDX = name length; flags of CMP ECX,1
+          (if (call $d_last (call $gl32 (local.get $eax)))
+            (then
+              (call $d_push (local.get $eax))
+              (call $d_push (i32.load offset=12 (global.get $reg_base)))
+              (call $d_push (i32.load offset=24 (global.get $reg_base)))
+              (call $d_push (i32.load offset=28 (global.get $reg_base)))
+              (i32.store offset=12 (global.get $reg_base) (local.get $eax))
+              (i32.store offset=24 (global.get $reg_base) (local.get $edx))
+              (i32.store offset=28 (global.get $reg_base) (i32.const 1))
+              (i32.store offset=8 (global.get $reg_base) (call $gl8 (i32.add (local.get $edx) (i32.const 1))))
+              (call $set_flags_sub (i32.const 1) (i32.const 1) (i32.const 0))
+              (global.set $flag_sign_shift (i32.const 31))
+              (global.set $fold_d_partial (i32.add (global.get $fold_d_partial) (i32.const 1)))
+              (global.set $eip (i32.add (local.get $entry) (i32.const 0x4A)))
+              (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $eax)) (i32.const 0))))
           (call $d_lstrclr (local.get $eax))
           (call $fold_d_tick (local.get $op) (i32.const 0))
@@ -619,7 +684,28 @@
         (then
           (local.set $f (call $d_one_str_field (local.get $edx)))
           (br_if $fallback (i32.eqz (local.get $f)))
-          (local.set $f (i32.add (local.get $eax) (i32.sub (local.get $f) (i32.const 1))))
+          (local.set $off (i32.sub (local.get $f) (i32.const 1)))
+          (local.set $f (i32.add (local.get $eax) (local.get $off)))
+          ;; the field's last reference: the body up to its CALL _FinalizeArray
+          ;; (+0x20): PUSH EBX/ESI/EDI; EBX = p, ESI = the field entry, EDI = 1,
+          ;; EDX = the field's typeinfo, EAX = p+off, ECX = 1; flags of ADD EAX,EBX
+          (if (call $d_last (call $gl32 (local.get $f)))
+            (then
+              (call $d_push (i32.load offset=12 (global.get $reg_base)))
+              (call $d_push (i32.load offset=24 (global.get $reg_base)))
+              (call $d_push (i32.load offset=28 (global.get $reg_base)))
+              (i32.store offset=12 (global.get $reg_base) (local.get $eax))
+              (local.set $s (i32.add (i32.add (local.get $edx) (call $gl8 (i32.add (local.get $edx) (i32.const 1)))) (i32.const 0xA)))
+              (i32.store offset=24 (global.get $reg_base) (local.get $s))
+              (i32.store offset=28 (global.get $reg_base) (i32.const 1))
+              (i32.store offset=8 (global.get $reg_base) (call $gl32 (call $gl32 (local.get $s))))
+              (i32.store (global.get $reg_base) (local.get $f))
+              (i32.store offset=4 (global.get $reg_base) (i32.const 1))
+              (call $set_flags_add (local.get $off) (local.get $eax) (local.get $f))
+              (global.set $flag_sign_shift (i32.const 31))
+              (global.set $fold_d_partial (i32.add (global.get $fold_d_partial) (i32.const 1)))
+              (global.set $eip (i32.add (local.get $entry) (i32.const 0x20)))
+              (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $f)) (i32.const 0))))
           (i32.store offset=4 (global.get $reg_base) (i32.const 1))
           (call $d_lstrclr (local.get $f))
