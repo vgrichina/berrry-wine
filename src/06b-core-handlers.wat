@@ -957,6 +957,45 @@
                   (i32.const 1))) (i32.const 2))))))))
     (dispatch-next))
 
+  ;; Unpacked BCD adjustment, operand 0=AAA, 1=AAS. Intel AX arithmetic
+  ;; includes AL's carry/borrow into AH; EAX[31:16] is never written.
+  ;; OF/SF/ZF/PF are undefined; retain their materialized input values.
+  (func $th_ascii_adjust (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32)
+    (local $ax i32) (local $f i32) (local $adjust i32)
+    (local.set $ax (i32.load16_u (global.get $reg_base)))
+    (local.set $f (call $build_eflags))
+    (local.set $adjust (i32.or
+      (i32.gt_u (i32.and (local.get $ax) (i32.const 15)) (i32.const 9))
+      (i32.ne (i32.and (local.get $f) (i32.const 16)) (i32.const 0))))
+    (if (local.get $adjust)
+      (then (local.set $ax (i32.add (local.get $ax)
+        (select (i32.const -262) (i32.const 262) (local.get $op))))))
+    (i32.store16 (global.get $reg_base)
+      (i32.and (local.get $ax) (i32.const 65295)))
+    (call $load_eflags
+      (i32.or (i32.and (local.get $f) (i32.const -18))
+        (i32.mul (local.get $adjust) (i32.const 17))))
+    (dispatch-next))
+
+  ;; AAD imm8: only AX changes; AF/CF/OF are architecturally undefined.
+  (func $th_aad (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32)
+    (local $r i32) (local $f i32)
+    (local.set $f (call $build_eflags))
+    (local.set $r (i32.and (i32.add
+      (i32.load8_u (global.get $reg_base))
+      (i32.mul (i32.load8_u offset=1 (global.get $reg_base)) (local.get $op)))
+      (i32.const 255)))
+    (i32.store16 (global.get $reg_base) (local.get $r))
+    (call $load_eflags
+      (i32.or (i32.and (local.get $f) (i32.const -197))
+        (i32.or (i32.and (local.get $r) (i32.const 128))
+          (i32.or (i32.shl (i32.eqz (local.get $r)) (i32.const 6))
+            (i32.shl (i32.eqz (i32.and (i32.popcnt (local.get $r))
+              (i32.const 1))) (i32.const 2))))))
+    (dispatch-next))
+
   ;; 397: ASCII adjust after multiply. The immediate is normally decimal 10,
   ;; but 32-bit x86 accepts any non-zero byte base. Only AL participates; AH
   ;; receives the quotient and AL the remainder while EAX[31:16] is preserved.

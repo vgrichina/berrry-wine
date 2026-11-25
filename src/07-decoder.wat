@@ -5163,6 +5163,18 @@
         (then (call $te (i32.const 502)
           (i32.eq (local.get $op) (i32.const 0x2F))) (br $decode)))
 
+      ;; AAA/AAS have fixed AX/AL operands, independent of operand size.
+      ;; LOCK retains the existing invalid-opcode route.
+      (if (i32.and (i32.eqz (local.get $prefix_lock))
+        (i32.or (i32.eq (local.get $op) (i32.const 0x37))
+          (i32.eq (local.get $op) (i32.const 0x3F))))
+        (then (call $te (i32.const 503)
+          (i32.eq (local.get $op) (i32.const 0x3F))) (br $decode)))
+
+      (if (i32.and (i32.eqz (local.get $prefix_lock))
+        (i32.eq (local.get $op) (i32.const 0xD5)))
+        (then (call $te (i32.const 504) (call $d_fetch8)) (br $decode))) ;; AAD imm8
+
       ;; ---- Misc single-byte ----
       (if (i32.eq (local.get $op) (i32.const 0x60)) (then (call $te (i32.const 35) (i32.const 0)) (br $decode))) ;; PUSHAD
       (if (i32.eq (local.get $op) (i32.const 0x61)) (then (call $te (i32.const 36) (i32.const 0)) (br $decode))) ;; POPAD
