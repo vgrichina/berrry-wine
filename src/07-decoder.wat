@@ -3848,6 +3848,46 @@
           (br $decode)))))
 
 
+      ;; MMX packed add/sub: admit NP before the coarse address67 guard.
+      ;; Preserve the existing plain code32 path; reuse arithmetic/EA handlers.
+      (if (i32.and (i32.eq (local.get $op) (i32.const 0x0F))
+          (i32.ne (i32.or (global.get $code16)
+            (i32.or (local.get $prefix_67) (i32.or (local.get $prefix_66)
+              (i32.or (local.get $prefix_rep) (local.get $prefix_lock)))))
+            (i32.const 0))) (then
+        (local.set $mmxsub (call $mmx_opcode_subop (call $gl8 (global.get $d_pc))))
+        (if (i32.or
+              (i32.and (i32.ge_u (local.get $mmxsub) (i32.const 32))
+                       (i32.le_u (local.get $mmxsub) (i32.const 41)))
+              (i32.or
+                (i32.and (i32.ge_u (local.get $mmxsub) (i32.const 44))
+                         (i32.le_u (local.get $mmxsub) (i32.const 45)))
+                (i32.or
+                  (i32.and (i32.ge_u (local.get $mmxsub) (i32.const 48))
+                           (i32.le_u (local.get $mmxsub) (i32.const 49)))
+                  (i32.and (i32.ge_u (local.get $mmxsub) (i32.const 52))
+                           (i32.le_u (local.get $mmxsub) (i32.const 53)))))) (then
+          (if (i32.or (i32.ne (local.get $prefix_66)
+                (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                         (i32.eqz (global.get $cs_big))))
+                (i32.or (i32.ne (local.get $prefix_rep) (i32.const 0))
+                        (i32.ne (local.get $prefix_lock) (i32.const 0))))
+            (then (unreachable)))
+          (drop (call $d_fetch8))
+          (call $decode_modrm)
+          (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+            (call $te (i32.const 422)
+              (i32.or (i32.shl (local.get $mmxsub) (i32.const 8))
+                (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))
+          (else
+            (call $apply_seg_override)
+            (local.set $a (call $emit_sib_or_abs))
+            (call $te (i32.const 423)
+              (i32.or (i32.shl (local.get $mmxsub) (i32.const 8))
+                (i32.shl (global.get $mr_reg) (i32.const 4))))
+            (call $te_raw (local.get $a))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
