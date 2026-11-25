@@ -5279,6 +5279,14 @@
       (if (i32.eq (local.get $op) (i32.const 0x8F))
         (then
           (call $decode_modrm)
+          ;; POP memory addresses ESP after the operand-sized increment.
+          ;; Bias the precomputed flat EA without changing the old stack read.
+          (if (i32.and
+                (i32.and (i32.eqz (global.get $code16)) (i32.eqz (global.get $d_addr16)))
+                (i32.and (i32.ne (global.get $mr_mod) (i32.const 3))
+                         (i32.eq (global.get $mr_base) (i32.const 4))))
+            (then (global.set $mr_disp (i32.add (global.get $mr_disp)
+              (select (i32.const 2) (i32.const 4) (local.get $prefix_66))))))
           (if (i32.eq (global.get $mr_mod) (i32.const 3))
             (then
               (if (local.get $prefix_66)

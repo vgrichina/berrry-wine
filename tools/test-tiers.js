@@ -49,6 +49,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // real flag producers and full state guards on actual cold/cache paths.
 // test-cmps-fs.js covers FS source/ES destination, repeat termination, DF,
 // zero-count state and changed operands at the same cached instruction address.
+// test-pop-memory-stack-address.js covers old stack reads, post-increment ESP
+// destinations and PUSH/POP ESP controls in the default portable unit tier.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // test-decimal-adjust.js uses a bounded embedded matrix in the unit tier;
 // explicit full/excluded/control modes cover the exhaustive qualification.
