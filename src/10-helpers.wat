@@ -622,6 +622,30 @@
     (if (i32.or (i32.lt_s (local.get $n) (i32.const 9)) (i32.gt_s (local.get $n) (i32.const 32)))
       (then (return (i32.const -1))))
     (select (i32.const 4) (i32.const 5) (i32.le_s (local.get $n) (i32.const 16))))
+  ;; Is the Move at $a that form? Its code to the RET, but for the jump
+  ;; table's absolute address (+0x11). Another System unit links another Move
+  ;; (Game Maker 7's is REP MOVSD) with other counts; that caller falls back.
+  ;; The last address that passed is remembered.
+  (global $d_mv_ok (mut i32) (i32.const 0))
+  (func $d_move_form (param $a i32) (result i32)
+    (if (i32.and (i32.eq (local.get $a) (global.get $d_mv_ok)) (i32.ne (local.get $a) (i32.const 0)))
+      (then (return (i32.const 1))))
+    (if (i32.ne (call $gl32 (local.get $a)) (i32.const 0x3174d039)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x04))) (i32.const 0x7720f983)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x08))) (i32.const 0x08e9837c)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x0C))) (i32.const 0x24ff077f)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl8 (i32.add (local.get $a) (i32.const 0x10))) (i32.const 0x8d)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x15))) (i32.const 0xdf012cdf)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x19))) (i32.const 0x08f98328)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x1D))) (i32.const 0x68df117e)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x21))) (i32.const 0x10f98308)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x25))) (i32.const 0x68df067e)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x29))) (i32.const 0x107adf10)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x2D))) (i32.const 0xdf087adf)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl32 (i32.add (local.get $a) (i32.const 0x31))) (i32.const 0x113cdf3a)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl8 (i32.add (local.get $a) (i32.const 0x35))) (i32.const 0xc3)) (then (return (i32.const 0))))
+    (global.set $d_mv_ok (local.get $a))
+    (i32.const 1))
   ;; Pay for a path: it needs $need blocks of budget (the threaded body would
   ;; stop short otherwise) and charges $charge (the exit's own transfer, if it
   ;; has one, charges the rest). 0 = cannot pay; nothing is charged.
@@ -798,6 +822,7 @@
           (local.set $esp (i32.add (call $d_asg_pre (local.get $d) (local.get $s)) (i32.const 7)))
           (if (i32.gt_s (local.get $off) (i32.const 0))
             (then
+              (br_if $fallback (i32.eqz (call $d_move_form (call $d_rel (local.get $entry) (i32.const 0x28)))))
               (local.set $f (call $d_move_pre (i32.eq (local.get $eax) (local.get $edx)) (local.get $off)))
               (br_if $fallback (i32.lt_s (local.get $f) (i32.const 0)))
               (local.set $esp (i32.add (local.get $esp) (i32.add (local.get $f) (i32.const 2))))))

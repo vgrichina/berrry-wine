@@ -210,6 +210,20 @@ async function delphiCases() {
   }
   if (cutBad.length) fail(`D under a short budget: ${cutBad.length} of ${cut} differ; ${cutBad.slice(0, 2).join(' | ')}`);
   else console.log(`${'D every budget'.padEnd(28)} ok (${cut} batches)`);
+  // Another System.Move (one byte of its code changed): CopyRecord with bytes
+  // before its string field cannot pay for that Move's branches, so it runs
+  // the body -- exactly, blocks included.
+  {
+    const mvOff = await delphiInstance(img, 0), mvOn = await delphiInstance(img, 8);
+    for (const inst of [mvOff, mvOn]) inst.mem[inst.g2w(0x4030a8 + 0x1A)] ^= 0x01;
+    const c = CASES.find((x) => x.name === 'CopyRecord RValue');
+    layoutBuf(mvOff, c.buf); layoutBuf(mvOn, c.buf);
+    const f0 = mvOn.e.fold_stat(1);
+    const x = call(mvOff, c.entry, c.regs), y = call(mvOn, c.entry, c.regs);
+    const bad = ['eip', 'flags', 'blocks', 'mem', ...REGS].filter((k) => x[k] !== y[k]);
+    if (bad.length || mvOn.e.fold_stat(1) === f0) fail(`other Move: differs in ${bad.join(' ')} / fallback ${mvOn.e.fold_stat(1) - f0}`);
+    else console.log(`${'CopyRecord, other Move'.padEnd(28)} ok (fallback=${mvOn.e.fold_stat(1) - f0})`);
+  }
   // A patched body is not the System unit any more: a fresh instance with one
   // byte of LStrClr changed (outside the masked rel32) must decode as plain
   // guest code.
