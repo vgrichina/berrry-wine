@@ -217,6 +217,52 @@ async function uopArm(name, arms, want) {
   if (errs.length) fails++;
 }
 
+// The branch clock is exact under A. The program's head is a loop; one path
+// closes it, the other calls f from three sites, so f's RET has three
+// candidate return addresses -- more than the compiler dispatches on -- and A
+// lowers it as an exit at the RET, taken on every call. One batch of every budget 1..80 must stop on the same
+// instruction with the same registers as arm 0 (where that RET is unsupported).
+// A phantom charge shifts where a batch ends. NOTE: this shape does not
+// reproduce the one clock bug found so far (a charged JMP to the deopt stub at
+// A's RET exit, 4.8x the blocks per batch in Heroes II; it passes with that
+// bug put back) -- whole-run equality of API calls, blocks and presents
+// across arms 0/1/3/7 under --branch-clock is what guards that.
+async function armAClock() {
+  const state = async (arms, budget) => {
+    const inst = await bench.newInstance();
+    const { e, mem, g2w } = inst;
+    const a = bench.layout(inst.imageBase, 0x20000);
+    // L:    dec esi; jz done; test esi,3; jnz skip; call f; call f; call f
+    // skip: jmp L      done: ret
+    // f:    add ebx,ecx; inc ecx; ret   (three return addresses: A exits at the RET)
+    const f = a.code + 0x40, c = a.code;
+    mem.set([0x4E, 0x74, 0x19, 0xF7, 0xC6, 3, 0, 0, 0, 0x75, 0x0F,
+      ...relCall(c + 0xB, f), ...relCall(c + 0x10, f), ...relCall(c + 0x15, f), 0xEB, 0xE4, 0xC3], g2w(c));
+    mem.set([0x01, 0xCB, 0x41, 0xC3], g2w(f));
+    e.set_fold_arms(arms); e.set_uop(1); e.set_branch_clock(1);
+    e.uop_compile(c);
+    // warm up: 2000 trips install the program (a compile alone does not)
+    e.set_ebx(0); e.set_ecx(0); e.set_esi(2000);
+    bench.runToCompletion(e, a.code, a.stackTop);
+    const enters0 = e.uop_stats(4);
+    e.set_esp(a.stackTop);
+    new DataView(e.memory.buffer).setUint32(g2w(a.stackTop), 0, true);
+    e.set_ebx(0); e.set_ecx(0); e.set_esi(40); e.set_eip(a.code);
+    e.run(budget);
+    if (arms) entersA += e.uop_stats(4) - enters0;
+    return `eip=${(e.get_eip() >>> 0).toString(16)} ebx=${e.get_ebx()} ecx=${e.get_ecx()} esi=${e.get_esi()} esp=${(e.get_esp() >>> 0).toString(16)}`;
+  };
+  let entersA = 0;
+  const bad = [];
+  for (let b = 1; b <= 80; b++) {
+    const s0 = await state(0, b), s1 = await state(1, b);
+    if (s0 !== s1) bad.push(`budget ${b}: arm0 ${s0} / armA ${s1}`);
+  }
+  if (!entersA) fail('A branch clock: the program was never entered');
+  else if (bad.length) fail(`A branch clock: ${bad.length} budgets differ, ${bad.slice(0, 3).join('; ')}`);
+  else console.log(`${'A branch clock exact'.padEnd(28)} ok (budgets 1..80, A enters=${entersA})`);
+}
+
 async function armC() {
   const inst = await bench.newInstance();
   const { e, mem, g2w } = inst;
@@ -267,6 +313,7 @@ async function main() {
   await uopArm('A rep ret (arm off)', 0, false);
   await uopArm('A rep ret', 1, true);
   await uopArm('B seams in fast loop', 3, true);
+  await armAClock();
   await armC();
   if (fails) { console.log(`FAIL: ${fails}`); process.exit(1); }
   console.log('PASS');

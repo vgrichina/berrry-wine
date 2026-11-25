@@ -4130,9 +4130,12 @@
       (param $m i32) (param $md i32) (param $c i32) (param $cd i32) (result i32)
     (local $t i64) (local $d i64) (local $j i32) (local $n i32) (local $cand i32)
     (local $alt i64) (local $dest i64) (local $err i32)
-    ;; fold-bench arm A: no candidate -- leave at the RET, ESP untouched
+    ;; fold-bench arm A: no candidate -- leave at the RET, ESP untouched. GOTO,
+    ;; not JMP: the deopt stub exits before the RET, which the threaded RET
+    ;; then charges; a JMP here charged a phantom block with no CHK before it,
+    ;; drove an exhausted budget below zero and the batch never stopped.
     (if (i32.eqz (call $uc_nsucc (local.get $R)))
-      (then (call $uc_o1 (i32.const 25) (call $uc_xstub)) (return (i32.const 0))))
+      (then (call $uc_o1 (i32.const 62) (call $uc_xstub)) (return (i32.const 0))))
     (local.set $t (call $uc_scratch))
     (call $uc_load (i32.add (local.get $R) (i32.const 80)) (i32.const 32) (i32.const 0) (local.get $t))
     (local.set $n (call $uc_nsucc (local.get $R)))
