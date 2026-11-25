@@ -216,7 +216,11 @@ Worker with Threads on.
 - Uop is 28–37% and threaded handlers 33–36%. `th_sse_rr` is only about 3%
   here, because the title room does little GML double math.
 - Host costs: WebGL `getError` is 2.5–5.4% of the page with Threads off;
-  `_audioSchedulerNow` 1.4%.
+  `_audioSchedulerNow` 1.4%. The `getError` was the check around each of the
+  two StretchRect COPYs per frame in `lib/gpu-stream-webgl.js`. One check
+  per PRESENT still cost 1.9%, because the price is the GPU sync, not the
+  number of calls. The executor now checks once every 120 presents, and
+  `getError` is 0.0% (run `20261125-webgl-geterror`).
 - Headless Chrome without a GPU falls back to the WAT software D3D9 shader
   VM (`d3d_shader_vm_run`, `d3d_software_step`): about 85% of the page and
   2 presents/s. That number says nothing about the real game.
