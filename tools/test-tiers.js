@@ -38,6 +38,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // test-x87-sqrt-rounded.js uses 13 bounded normal literals in binades 0,1,2,48;
 // explicit full covers 2376 rows across legal PC/RC and nine status seeds.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
+// test-decimal-adjust.js uses a bounded embedded matrix in the unit tier;
+// explicit full/excluded/control modes cover the exhaustive qualification.
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an
 // unmatched test stays in the pre-commit tier instead of silently disappearing

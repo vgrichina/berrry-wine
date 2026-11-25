@@ -5155,6 +5155,14 @@
           (else (if (local.get $prefix_rep) (then (call $te (i32.const 170) (i32.sub (local.get $prefix_rep) (i32.const 1)))) (else (call $te (i32.const 172) (i32.const 0))))))
           (br $decode)))
 
+      ;; DAA/DAS are byte-only in either operand-size mode. LOCK retains
+      ;; the existing invalid-opcode route; no other opcode is admitted.
+      (if (i32.and (i32.eqz (local.get $prefix_lock))
+        (i32.or (i32.eq (local.get $op) (i32.const 0x27))
+          (i32.eq (local.get $op) (i32.const 0x2F))))
+        (then (call $te (i32.const 502)
+          (i32.eq (local.get $op) (i32.const 0x2F))) (br $decode)))
+
       ;; ---- Misc single-byte ----
       (if (i32.eq (local.get $op) (i32.const 0x60)) (then (call $te (i32.const 35) (i32.const 0)) (br $decode))) ;; PUSHAD
       (if (i32.eq (local.get $op) (i32.const 0x61)) (then (call $te (i32.const 36) (i32.const 0)) (br $decode))) ;; POPAD

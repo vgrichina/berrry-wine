@@ -926,6 +926,37 @@
       (else (global.set $eip (local.get $fall))))
     (return_call $branch_end))
 
+  ;; Packed BCD adjustment, operand 0=DAA, 1=DAS. Only AL is written.
+  (func $th_decimal_adjust (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32)
+    (local $old i32) (local $f i32) (local $lo i32) (local $hi i32)
+    (local $cf i32) (local $delta i32) (local $r i32)
+    (local.set $old (i32.load8_u (global.get $reg_base)))
+    (local.set $f (call $build_eflags))
+    (local.set $lo (i32.or
+      (i32.gt_u (i32.and (local.get $old) (i32.const 15)) (i32.const 9))
+      (i32.ne (i32.and (local.get $f) (i32.const 16)) (i32.const 0))))
+    (local.set $hi (i32.or (i32.gt_u (local.get $old) (i32.const 153))
+      (i32.and (local.get $f) (i32.const 1))))
+    (local.set $cf (i32.or (local.get $hi)
+      (i32.and (local.get $op)
+        (i32.and (local.get $lo) (i32.lt_u (local.get $old) (i32.const 6))))))
+    (local.set $delta (i32.add (i32.mul (local.get $lo) (i32.const 6))
+      (i32.mul (local.get $hi) (i32.const 96))))
+    (local.set $r (i32.and (i32.add (local.get $old)
+      (select (i32.sub (i32.const 0) (local.get $delta)) (local.get $delta)
+        (local.get $op))) (i32.const 255)))
+    (i32.store8 (global.get $reg_base) (local.get $r))
+    (call $load_eflags
+      (i32.or (i32.and (local.get $f) (i32.const -214))
+        (i32.or (local.get $cf)
+          (i32.or (i32.shl (local.get $lo) (i32.const 4))
+            (i32.or (i32.and (local.get $r) (i32.const 128))
+              (i32.or (i32.shl (i32.eqz (local.get $r)) (i32.const 6))
+                (i32.shl (i32.eqz (i32.and (i32.popcnt (local.get $r))
+                  (i32.const 1))) (i32.const 2))))))))
+    (dispatch-next))
+
   ;; 397: ASCII adjust after multiply. The immediate is normally decimal 10,
   ;; but 32-bit x86 accepts any non-zero byte base. Only AL participates; AH
   ;; receives the quotient and AL the remainder while EAX[31:16] is preserved.
