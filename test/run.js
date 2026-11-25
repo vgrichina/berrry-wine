@@ -7392,6 +7392,37 @@ async function main() {
     return finish(!(await mainOwner.optionalCall('is_mm_timer_callback_active') | 0),
       'suspend-count-or-mm-timer');
   };
+  // The batch loop's synchronous fast path. With a local main owner every
+  // owner call above is a plain export call and settles at once, yet each
+  // `await` still suspends and resumes this whole closure -- about 0.57 ms of
+  // interpreter time a batch on Spelunky HD across the ~15 settled awaits.
+  // syncMain selects the same calls, in the same order, without the awaits;
+  // it is off whenever an owner can actually be asynchronous (a Worker main,
+  // the --d3dim-render-owner run wrapper) or --trace-main-scheduler wraps it.
+  const syncMain = mainOwner.kind === 'local' && !mainSchedulerObserver && !d3dimExecutionOwner;
+  const mainExecutionSuspendedSync = () => {
+    const ex = instance.exports;
+    if (threadManager.isMainNamedEventWaiting()) return true;
+    let yieldReason = mainOwner.call('get_yield_reason');
+    if (serviceClock && (yieldReason === 13 || yieldReason === 14)) {
+      const deadline = yieldReason === 13 ? ex.get_vblank_deadline_ms() : ex.get_spin_deadline_ms();
+      if (batchClock.batchTicks() <= (deadline >>> 0)) return true;
+      ex.clear_yield();
+      yieldReason = 0;
+    }
+    if (threadManager._renderSendTargets.has(ex)) return true;
+    yieldReason = mainOwner.call('get_yield_reason');
+    if (yieldReason === 10 && (threadManager.backend === 'worker' ||
+        !threadManager.resolveCooperativeThreadSend(ex))) return true;
+    threadManager.noteMainSleepLocal(mainOwner);
+    if (!serviceClock && !REAL_TICK_SLEEPS && threadManager.isMainSleeping() &&
+        !threadManager.hasLiveThreads()) {
+      tickState.pausedMs += threadManager.mainSleepRemaining();
+    }
+    if (threadManager.isMainSleeping()) return true;
+    if (!threadManager.isMainThreadSuspended()) return false;
+    return !(mainOwner.optionalCall('is_mm_timer_callback_active') | 0);
+  };
 
   let lastSchedSig = null;
   let lastSchedAt = 0;
@@ -8375,7 +8406,14 @@ async function main() {
   const executionStartedAt = performance.now();
   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
     processDesktop.poll();
-    if (mainOwner.kind === 'local') await ctx.comInterfaces.drain();
+    // drain() is a no-op until a COM runtime exists. The fast path skips the
+    // settled await but keeps one microtask turn per batch, here, where the
+    // first of the old settled awaits gave it: promise continuations a host
+    // import started during the previous batch still run before this one.
+    if (mainOwner.kind === 'local') {
+      if (!syncMain || ctx.comInterfaces.runtime) await ctx.comInterfaces.drain();
+      else await null;
+    }
     traceGateBatch = batch;
     if (deadlineMs && Date.now() >= deadlineMs) {
       traceGateBatch = -1; // why the run stopped is not per-batch trace output
@@ -8443,7 +8481,7 @@ async function main() {
     tickState.callsInBatch = 0;
     waveCallbackRouting.restoreMainWait();
     if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();
-    if (ctx.pumpWaveCallbacks) await ctx.pumpWaveCallbacks();
+    if (ctx.pumpWaveCallbacks && (!syncMain || !ctx.waveCallbacksIdle?.())) await ctx.pumpWaveCallbacks();
     // --control: give the event loop a turn every batch so the control
     // server's socket callbacks fire and settled replies flush. Without this
     // the loop is synchronous end to end — the same mechanism that keeps
@@ -11298,13 +11336,15 @@ async function main() {
       // first: the [input] markers are buffered, and output the guest prints
       // directly (--trace-host) while handling that input must follow them.
       flushLogs();
-      if (await mainOwner.call('get_yield_reason') === 7) {
+      if (syncMain) {
+        if (mainOwner.call('get_yield_reason') === 7) threadManager.checkMainMessageWaitLocal(mainOwner);
+      } else if (await mainOwner.call('get_yield_reason') === 7) {
         await threadManager.checkMainMessageWaitOwned(mainOwner);
       }
-      if (!await mainExecutionSuspended('ordinary')) {
+      if (syncMain ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended('ordinary')) {
         if (stopped) break;
         try {
-        const slice = mainSchedulerObserver
+        const slice = syncMain ? mainOwner.run(BATCH_SIZE) : mainSchedulerObserver
           ? await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))
           : await mainOwner.run(BATCH_SIZE);
         if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
@@ -11314,7 +11354,7 @@ async function main() {
           if (!nativeFault.capture(error, instance.exports,
             { schedulerSlot: 0, main: true }, 'ordinary')) throw error;
         }
-        await nativeFault.wait();
+        if (nativeFault.isHeld()) await nativeFault.wait();
         if (stopped) break;
       }
     } catch (e) {
@@ -11568,10 +11608,14 @@ async function main() {
     // for a chunk the host has not read yet. ReadFile parked with its stdcall
     // frame restored and EIP on the thunk, so filling the chunk and clearing
     // the yield re-enters the same call, which then takes the cache hit.
-    await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
+    // Fast path: both helpers begin by reading the yield and return false for
+    // any other reason; read it here and await only when one will act.
+    if (!syncMain || mainOwner.call('get_yield_reason') === 12)
+      await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
 
-    await serviceMainTimingWait(mainOwner, {batchClock, tickState, serviceClock,
-      vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
+    if (!syncMain || [13, 14, 15].includes(mainOwner.call('get_yield_reason')))
+      await serviceMainTimingWait(mainOwner, {batchClock, tickState, serviceClock,
+        vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
 
     // Handle the virtual LAN net_wait yield (yield_reason=8). The guest is
     // parked inside a blocking socket call with EIP still on the thunk, so
@@ -11705,13 +11749,14 @@ async function main() {
         // --threads-serial means nothing runs beside a guest thread, main
         // included, or the switch would not answer the question it exists for.
         if (THREADS_SERIAL) await workerSlices;
-        else if (s < THREAD_SLICES - 1 && !stopped && !await mainExecutionSuspended('worker-interleaved')) {
+        else if (s < THREAD_SLICES - 1 && !stopped && (syncMain
+            ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended('worker-interleaved'))) {
           if (stopped) break;
           // Main keeps running WHILE they do — the CLI's version of host.js
           // awaiting the main slice and the thread slices together.
           try {
             try {
-            const slice = mainSchedulerObserver
+            const slice = syncMain ? mainOwner.run(BATCH_SIZE) : mainSchedulerObserver
               ? await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
             if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
@@ -11721,7 +11766,7 @@ async function main() {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'worker-interleaved')) throw error;
             }
-            await nativeFault.wait();
+            if (nativeFault.isHeld()) await nativeFault.wait();
             if (stopped) break;
           } catch (e) { throw e; /* never continue a guest whose handler unwound */ }
         }
@@ -11761,8 +11806,8 @@ async function main() {
       const workerStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
       for (let s = 0; s < slices; s++) {
         const sliceStats = threadManager.runSlice(BATCH_SIZE);
-        await d3dimExecutionOwner?.turn();
-        await nativeFault.wait();
+        if (d3dimExecutionOwner) await d3dimExecutionOwner.turn();
+        if (nativeFault.isHeld()) await nativeFault.wait();
         if (stopped) break;
         if (sliceStats && sliceStats.steps) workerStepsTotal += sliceStats.steps;
         // Re-run main between live worker slices so producer/consumer pairs
@@ -11770,11 +11815,11 @@ async function main() {
         // loop; repeatedly re-entering the main message pump here can drain
         // creation-time paints before an app has finished its first layout.
         if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
-            !await mainExecutionSuspended('cooperative-interleaved')) {
+            (syncMain ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended('cooperative-interleaved'))) {
           if (stopped) break;
           try {
             try {
-            const slice = mainSchedulerObserver
+            const slice = syncMain ? mainOwner.run(BATCH_SIZE) : mainSchedulerObserver
               ? await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
             if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
@@ -11784,7 +11829,7 @@ async function main() {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'cooperative-interleaved')) throw error;
             }
-            await nativeFault.wait();
+            if (nativeFault.isHeld()) await nativeFault.wait();
             if (stopped) break;
           } catch (e) {
             // Never swallow a host error thrown through the guest: the wasm
@@ -11921,8 +11966,12 @@ async function main() {
         batchClock.advanceIdle(Math.ceil(inputDue) - now);
     }
     // Check if main thread is waiting on an event
-    await threadManager.resolveMainThreadSend();
-    if (await mainOwner.call('get_yield_reason') === 7
+    // resolveMainThreadSend() returns false at once without a Worker backend.
+    if (!syncMain || threadManager.workerBackend) await threadManager.resolveMainThreadSend();
+    if (syncMain) {
+      if (mainOwner.call('get_yield_reason') === 7) threadManager.checkMainMessageWaitLocal(mainOwner);
+      else threadManager.checkMainYield();
+    } else if (await mainOwner.call('get_yield_reason') === 7
         ? await threadManager.checkMainMessageWaitOwned(mainOwner)
         : threadManager.checkMainYield()) {
       // Main thread still waiting — don't advance EIP check

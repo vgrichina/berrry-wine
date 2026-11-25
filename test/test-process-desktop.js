@@ -121,7 +121,12 @@ async function child() {
         f.h.set_window_text(args[0], f.wa(p)); value = true;
       } else if (op === 'hide') { f.h.show_window(args[0], 0); value = true; }
       else if (op === 'destroy') { f.h.destroy_window(args[0]); f.e.fixture_remove(args[0]); value = true; }
-      else if (op === 'poll') { desktop?.poll(); value = { posted: [...posted], foreground: f.h.foreground_window(), keyboard: f.renderer._keyboardInputOwner?.hwnd || 0 }; }
+      else if (op === 'poll') {
+        // Every 'poll' here follows a post or activation, so the authority's
+        // queue frame must arrive on its own: poll() asks only once signaled.
+        for (let n = 0; n < 400 && desktop && !desktop.signaled(); n++) await sleep(5);
+        if (desktop && !desktop.signaled()) throw new Error('no queue signal after a foreign post');
+        desktop?.poll(); value = { posted: [...posted], foreground: f.h.foreground_window(), keyboard: f.renderer._keyboardInputOwner?.hwnd || 0 }; }
       else if (op === 'retire') { desktop?.retire(); value = true; }
       else throw new Error('unknown child op ' + op);
       process.send({ id, value });

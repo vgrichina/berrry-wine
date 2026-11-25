@@ -24,7 +24,7 @@ function extract(run, tm) {
     flag: run.match(/^const hasFlag = .*;$/m)[0],
     init: cut(run, '  const mainSchedulerObserver =', '  const inputConsumptionTrace ='),
     gate: cut(run, '  const mainExecutionSuspended =', '\n\n  let lastSchedSig = null;'),
-    ordinary: cut(run, '      if (!await mainExecutionSuspended(', '\n    } catch (e) {'),
+    ordinary: cut(run, '      if (syncMain ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended(', '\n    } catch (e) {'),
     worker: cut(run, '      let ran = 0;', '\n      if (TRACE_BATCH_TIMING)'),
     cooperative: cut(run, '      for (let s = 0; s < slices; s++) {', '\n      if (TRACE_BATCH_TIMING)'),
     input: cut(run, '  let lastInputEvent = null;', '\n  // Default hwnd routing:'),
@@ -54,7 +54,7 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
   callback = null, pending = null, cross = [], buttons = [], installing = false,
   renderEvent = null, sleepFlag = 0, sleepTimeout = 0, stopped = false,
   serial = false, workerRan = 1, active = true, throws = false, baselineMode = false,
-  clockReads = null } = {}) {
+  clockReads = null, wrapOwner = null } = {}) {
   const calls = [], logs = [], dequeues = [], h = {}, wh = {};
   let clock = now, flag = sleepFlag;
   const ex = {
@@ -99,7 +99,11 @@ function harness(parts, { enabled = false, extra = '', mode = 'ordinary', now = 
     console: { error() {}, log() {} },
     require(name) { assert.equal(name, './main-scheduler-observer'); factoryCalls++; return { createMainSchedulerObserver }; },
     nativeFault: { capture: () => false, wait: async () => {}, isHeld: () => false },
-    h, wh, tid: 7, instance: { exports: ex }, mainOwner: createGuestMainOwner({localExports:ex}), threadManager: tm, tickState, logs,
+    // Production's --d3dim-render-owner executor; null unless that flag is set.
+    // Also selects the batch loop's synchronous fast path (syncMain) with the
+    // local owner below whenever --trace-main-scheduler is off.
+    d3dimExecutionOwner: null,
+    h, wh, tid: 7, instance: { exports: ex }, mainOwner: (wrapOwner || (o => o))(createGuestMainOwner({localExports:ex})), threadManager: tm, tickState, logs,
     // Production sets ctx.exports = instance.exports; after an ordinary local
     // slice it reads the yield for the COM interface service (23, since
     // 295182375). Tagged separately so the baseline normalization can name it.
@@ -236,13 +240,16 @@ async function acceptance(parts) {
     }
   }
   for (const mode of ['ordinary','worker','cooperative']) {
-    const h=harness(parts,{mode,now:25025});
-    const owner=h.context.mainOwner;
-    h.context.mainOwner={...owner,call:async(name,...args)=>{
+    // An admission RPC that can settle late is a Worker owner's: a local
+    // owner's calls are synchronous and take the batch loop's syncMain path.
+    // Wrap before the gate is evaluated, so syncMain sees this owner.
+    let context=null;
+    const h=harness(parts,{mode,now:25025,wrapOwner:owner=>({...owner,kind:'worker',call:async(name,...args)=>{
       const value=await owner.call(name,...args);
-      h.context.stopped=true; // Shutdown arrives during owner admission RPC.
+      context.stopped=true; // Shutdown arrives during owner admission RPC.
       return value;
-    }};
+    }})});
+    context=h.context;
     await h.dispatch();
     assert.equal(h.calls.some(x=>Array.isArray(x)&&x[0]==='run'),false,
       mode+': no guest slice after stop during admission');
@@ -267,11 +274,9 @@ async function acceptance(parts) {
     await assert.rejects(h.tm.noteMainSleepOwned(endpoint,{}),/invalid main Worker sleep/);
   }
   for (const mode of ['ordinary','worker','cooperative']) {
-    const h=harness(parts,{mode,now:25025});
-    const owner=h.context.mainOwner;
-    h.context.mainOwner={...owner,kind:'worker',run:async size=>{
+    const h=harness(parts,{mode,now:25025,wrapOwner:owner=>({...owner,kind:'worker',run:async size=>{
       await owner.run(size);return {sleepYielded:true,sleepMs:77};
-    }};
+    }})});
     await h.dispatch();
     assert.equal(h.tm._mainSleepUntil,25102,mode+': slice-returned sleep recorded');
     assert.equal(h.calls.filter(x=>Array.isArray(x)&&x[0]==='run').length,1,
