@@ -225,6 +225,33 @@ Worker with Threads on.
   VM (`d3d_shader_vm_run`, `d3d_software_step`): about 85% of the page and
   2 presents/s. That number says nothing about the real game.
 
+## SSE in the uop tier and dedicated SSE2 handlers (2026-11-25, branch `uop-sse-bench`)
+
+Two opt-in arms, both off by default. Evidence is in `scratch/runs/20261125-uop-sse/`.
+
+- **`--uop-sse` (variant A).** 07e kind 34 keeps SSE instructions inside a uop program.
+  - 07d ops 108–110 call the threaded SSE handler through `call_indirect` with `$steps` at 0, and memory forms are guarded by the window check.
+  - Exact by construction: the `sse-*` cases in `test-uop-compiler.js` cover NaN, -0, denormals, unordered compares and out-of-range cvt, and the EA+4 mutation fails them.
+- **`--sse-fast` (variant C).** Handlers 502–511 in 06c give the GML double-runtime register forms their own threaded handler, cut from `$th_sse_rr`. Forms: cvtss2sd, cvtps2pd, cvtsd2ss, cvtpd2ps, addsd, mulsd, subsd, comisd/ucomisd, cvtsi2ss and cvtsi2sd.
+  - `test-sse-fast-handlers.js` compares each form against `$th_sse_rr` (528 cases) and checks the handler histogram, so a selector that never fires fails.
+  - The table is now 512 entries. The 04-cache dispatch guard must move with it: at 502, every fast handler was treated as cache corruption and looped forever.
+
+What we know:
+- **Coverage.** Over the gameplay route, `--uop-sse` compiles 7,698 SSE sites and logs 587K window-miss services. The uop tier's installed-instruction count rises from 98K to 128K (one pilot pair).
+  - The SSE heads that used to decline are taken: movss had 12.2M declines and cvtsi2ss 3.0M.
+- **Per-op cost.** The microbench runs the real hottest loops (`tools/uop-sse-bench.js`; 0x4358b1, 0x438468, 0x4d3bf5, 0x4c78e1). Variant A is neutral to slightly worse than threaded.
+  - The handler bodies are the cost: `th_sse_rr` is 33% of the threaded profile, and still 22% inside the sse arm.
+  - The call adds about 5 global saves and restores, a sentinel store and a signature check around each SSE op: `$uop_sse_mem` compiles to 400 B in SM Ion and 480 B in V8 TurboFan.
+  - So variant B (XMM lanes in locals) was not built, because A showed no per-op win to build on.
+- **Native code (arm64).**
+  - The dedicated handlers compile to 616–648 B in Ion and 1.5–1.8 KB in TurboFan, including the `(dispatch-next)` expansion.
+  - `$th_sse_rr` is 12 KB in Ion and 15.5 KB in TurboFan.
+  - Function indices are from the named build (1152 `th_sse_rr`, 1168–1177 for the new handlers). The names `wasm-native.js` prints are about 43 indices off.
+- **Frames are identical in every arm:** title `28aa1728c441e8b2`, gameplay `30f0eb81f6ec6291`.
+- **Timing: open.** The laptop A/B (M1, load 4–27) is inconclusive.
+  - In the gameplay window, off/off2 user CPU spanned 21.9–54.8 s. The best run per arm was off 21.9, off2 21.9, sse 21.4, fast 23.5, ssefast 21.8 s.
+  - The x86_64 box A/B (arms off, off-null, sse, fast, ssefast) has not been run.
+
 ## Fixed gaps (in order of appearance)
 
 1. **SSE2 XMM forms** (decoder gate `src/07-decoder.wat`, `$sse2_form` /
