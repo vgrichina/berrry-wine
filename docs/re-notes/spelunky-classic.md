@@ -150,6 +150,39 @@ A fresh worktree lacks the gitignored `test/binaries/dlls/` (`ole32.dll`,
 `shell32.dll`), and the loader says so; copy them in before chasing an
 `<ord>` crash.
 
+## Browser Threads (guest main in a Worker), 2026-11-24
+
+Reported as "hangs on the splash with Threads on, plays the intro by 50 s with
+Threads off". **It does not hang**; it is still loading. Evidence:
+`scratch/runs/20261124-spelunky-threads/`.
+
+- The splash phase is ~2.06 G retired blocks (`get_blocks_now`; the CLI's
+  ~20 557 batches at `--batch-size=100000`) in both modes, with the main
+  thread `runnable` and no wait, CS or parked state the whole time (Thread
+  state: `T1 run`, `S1/T2` = the GM runner's `CreateThread(flags=4)` thread at
+  `0x405880`, which stays suspended in cooperative mode and headless too).
+- On this M1 at load 7–20, the Worker retires 15–25 % fewer blocks per second
+  than the cooperative page thread: CPU profiles of the two are the same
+  functions in the same proportions (worker 92.5 % wasm, ~5 % idle in the
+  slice round trip), but fewer blocks per wasm-millisecond, which is how a
+  Worker thread is scheduled against the page's main thread on a busy box.
+  Raising the Worker slice to 2 M steps (`wine.stepsPerSlice`) did not make
+  slices longer: they still returned after 0.2–0.5 M blocks (5–13 ms), so
+  that is not a lever.
+- Measured with the same probe on the release server: cooperative crossed
+  2.06 G blocks at ~70 s of page time and showed intro line 2 at ~80 s;
+  Threads crossed it at ~80 s and showed "WITH THE DESERT STRETCHING BEHIND
+  ME." at ~83 s (`after-threads-rel-intro.png`, `rel-threads8-c.png`).
+- The original captures were at 50 s *after* the probe's `ready`, i.e. still
+  mid-load in the slower mode. `tools/web-input-probe.js` also used to spend
+  15 s polling for a LAN lobby after every launch, which the step clock did
+  not count; it now stops as soon as a non-LAN app is running.
+
+Watching it: `evalfile:` with `get_blocks_now` through
+`wine.guestWorker.callExport` (Threads) or `wine.instance.exports`
+(cooperative) gives progress against the 2.06 G target; `--ready=0` and a
+single long `wait:` fit the splash into a 90 s probe only on a quiet box.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash

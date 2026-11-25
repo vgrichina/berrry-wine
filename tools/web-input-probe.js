@@ -640,8 +640,16 @@ async function main() {
     // The lobby appears asynchronously (it is awaited inside launchApp), so
     // poll for it rather than assuming it is up on the next tick.
     for (let i = 0; i < 60; i++) {
-      const answered = await page.evaluate(answer => {
+      const answered = await page.evaluate((answer, app) => {
         const overlay = document.querySelector('.vln-lobby');
+        // An app with no `lan` entry never shows a lobby, so once it is
+        // running there is nothing to answer. Without this every non-LAN
+        // launch sat out all 60 polls (15 s of guest time the steps never
+        // saw) before its first step. LAN apps keep polling: an on-demand
+        // lobby (app.lan.onDemand) opens while the app is already running.
+        const lan = typeof apps !== 'undefined' && apps[app] && apps[app].lan;
+        if (!overlay && !lan && typeof runningApps !== 'undefined' &&
+            runningApps.some(r => r && r.name === app)) return 'none (app running)';
         if (!overlay) return null;
         const buttons = [...overlay.querySelectorAll('button')];
         const want = { solo: /play solo/i, local: /both players/i, cancel: /cancel/i }[answer];
@@ -649,7 +657,7 @@ async function main() {
         if (!button) return `no ${answer} button (saw: ${buttons.map(b => b.textContent).join(', ')})`;
         button.click();
         return `clicked "${button.textContent}"`;
-      }, LAN_ANSWER);
+      }, LAN_ANSWER, APP);
       if (answered) { console.log(`lan lobby: ${answered}`); break; }
       await wait(250);
     }
