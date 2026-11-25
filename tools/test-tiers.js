@@ -23,6 +23,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // masked canonical finite literals and production defaults in the unit tier.
 // test-x87-fxam-subnormal.js uses embedded canonical image literals and
 // production defaults in the unit tier.
+// test-x87-extract-zero.js uses embedded canonical image literals and
+// production defaults in the unit tier.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an

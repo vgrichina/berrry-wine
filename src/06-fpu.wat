@@ -324,6 +324,12 @@
             (local.set $mant (i64.load (call $phys80_mant_addr (local.get $p))))
             (local.set $se (i32.load16_u (call $phys80_se_addr (local.get $p))))
             (local.set $e (i32.and (local.get $se) (i32.const 32767)))
+            ;; Canonical masked zero: existing fallback has exact results; clear C1.
+            (if (i32.and
+                  (i32.and (i32.eqz (local.get $e)) (i64.eqz (local.get $mant)))
+                  (i32.eq (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63)))
+              (then
+                (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))))
             ;; Canonical nonzero subnormal only; decline before any state mutation.
             (if (i32.and
                   (i32.and (i32.eqz (local.get $e))
