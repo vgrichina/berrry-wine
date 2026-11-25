@@ -345,8 +345,25 @@
                  (i32.ne (i32.load (global.get $LOCK_MODE)) (i32.const 0)))
         (i32.and (i32.ne (i32.and (local.get $s) (i32.const 2)) (i32.const 0))
                  (i32.ne (global.get $fs_base) (i32.load offset=40 (local.get $op)))))
-      (i32.and (i32.ne (i32.and (local.get $s) (i32.const 4)) (i32.const 0))
-               (i32.ne (i32.load (global.get $UOP_MULTI_INST)) (i32.const 0)))))
+      (i32.or
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 4)) (i32.const 0))
+                 (i32.ne (i32.load (global.get $UOP_MULTI_INST)) (i32.const 0)))
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 8)) (i32.const 0))
+                 (i32.eqz (global.get $branch_clock))))))
+  ;; 0x080: 64 direct-mapped pages a guest store reached since the mask was
+  ;; set (page | 1), process-wide in $UOP_CSCRATCH's free 0x139100..0x139200.
+  ;; F2 runs with one instance only, so a shared table loses nothing; an
+  ;; aliased entry only costs a fold.
+  (global $UOP_FOLD_WRITTEN i32 (region.addr $UOP_CSCRATCH 0x139100))
+  (func $uop_fold_wslot (param $ga i32) (result i32)
+    (i32.add (global.get $UOP_FOLD_WRITTEN)
+             (i32.and (i32.shr_u (local.get $ga) (i32.const 10)) (i32.const 0xFC))))
+  (func $uop_fold_written (param $ga i32)
+    (i32.store (call $uop_fold_wslot (local.get $ga))
+               (i32.or (i32.and (local.get $ga) (i32.const 0xFFFFF000)) (i32.const 1))))
+  (func $uop_fold_was_written (param $ga i32) (result i32)
+    (i32.eq (i32.load (call $uop_fold_wslot (local.get $ga)))
+            (i32.or (i32.and (local.get $ga) (i32.const 0xFFFFF000)) (i32.const 1))))
   ;; 0x001: 256 direct-mapped declined EIPs in the windows area's free
   ;; 0x3C00..0x4000 (the megamorphic table ends at 0x3C00). An aliased entry
   ;; only costs a compile; cleared with the verdicts ($uop_flush_all).
@@ -2848,6 +2865,13 @@
         (global.set $uop_cw_skipped (i32.add (global.get $uop_cw_skipped) (i32.const 1)))
         (return)))
     (global.set $uop_cw_scans (i32.add (global.get $uop_cw_scans) (i32.const 1)))
+    ;; --uop-opt 0x080: a page a guest store reached is written data, and a
+    ;; read-only section's dword in it is not folded again (07e $uc_fold_ok)
+    ;; -- else a loop that writes what it folded recompiles, folds and is
+    ;; killed on every entry.
+    (if (i32.and (global.get $uop_opt) (i32.const 0x80))
+      (then (call $uop_fold_written (local.get $ga))
+            (call $uop_fold_written (i32.sub (local.get $end) (i32.const 1)))))
     (local.set $n0 (global.get $uop_nranges))
     (call $uop_code_write_scan (local.get $ga) (local.get $end))
     (if (i32.ne (global.get $uop_nranges) (local.get $n0))

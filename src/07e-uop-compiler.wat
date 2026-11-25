@@ -1923,11 +1923,11 @@
       ;; $uc_emit_ret lowers it as an exit at the RET itself, which the
       ;; threaded RET then executes -- no stack assumption is made.
       (if (i32.and (i32.eq (call $uc_kind (local.get $R)) (i32.const 24))
-                   (i32.ne (i32.and (global.get $uop_opt) (i32.const 2)) (i32.const 0)))
+                   (call $uc_retx_on))
         (then (if (i32.gt_u (i32.load offset=240 (local.get $R)) (i32.const 2))
                 (then (i32.store offset=240 (local.get $R) (i32.const 0))))))
       (if (i32.and (i32.eq (call $uc_kind (local.get $R)) (i32.const 24))
-                   (i32.eqz (i32.and (global.get $uop_opt) (i32.const 2))))
+                   (i32.eqz (call $uc_retx_on)))
         (then (if (i32.or (i32.eqz (i32.load offset=240 (local.get $R)))
                           (i32.gt_u (i32.load offset=240 (local.get $R)) (i32.const 2)))
                 (then (call $uc_unsup (local.get $R))))))
@@ -3134,6 +3134,17 @@
     (if (i32.eq (local.get $k) (i32.const 5)) (then (return (global.get $uc_t_fs))))
     (if (i32.eq (local.get $k) (i32.const 6)) (then (return (global.get $uc_t_fdw))))
     (i32.const 0))
+  ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
+  ;; deopts to the RET mid-block on every entry, and threaded code resuming
+  ;; there makes a block head at the RET; the block clock charges the cut
+  ;; that head later causes, which tier-off threaded code never makes
+  ;; (test-uop-compiler.js trace-callee under UOP_OPT=0x2). The branch clock
+  ;; charges transfers only, so it is exact there. Stamp 8 drops such a
+  ;; program if the clock is switched off after it compiled.
+  (func $uc_retx_on (result i32)
+    (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 2)) (i32.const 0))
+             (i32.ne (global.get $branch_clock) (i32.const 0))))
+
   (func $uc_opt_reset
     (global.set $uc_nfold (i32.const 0))
     (global.set $uc_lat_on (i32.const 0))
@@ -3180,6 +3191,7 @@
       (then (return (i32.const 0))))
     (local.set $d (i32.and (local.get $a) (i32.const -4)))
     (if (i32.eqz (call $uc_ro_addr (local.get $d))) (then (return (i32.const 0))))
+    (if (call $uop_fold_was_written (local.get $d)) (then (return (i32.const 0))))
     (block $new (loop $l
       (br_if $new (i32.ge_u (local.get $k) (global.get $uc_nfold)))
       (if (i32.eq (i32.load (i32.add (global.get $UC_FOLDS) (i32.shl (local.get $k) (i32.const 2)))) (local.get $d))
@@ -6089,7 +6101,8 @@
         (i32.or (i32.or (select (i32.const 1) (i32.const 0)
                           (i32.or (global.get $uc_st_lock) (i32.ne (global.get $uc_nfold) (i32.const 0))))
                         (select (i32.const 2) (i32.const 0) (global.get $uc_st_fs)))
-                (select (i32.const 4) (i32.const 0) (i32.ne (global.get $uc_nfold) (i32.const 0)))))
+                (i32.or (select (i32.const 4) (i32.const 0) (i32.ne (global.get $uc_nfold) (i32.const 0)))
+                        (select (i32.const 8) (i32.const 0) (i32.ne (global.get $uc_n_retx) (i32.const 0))))))
       (if (global.get $uc_st_fs) (then (i32.store offset=40 (local.get $pc) (global.get $fs_base))))
       (call $uc_encode_write (i32.add (local.get $pc) (global.get $UOP_HDR)))
       ;; the guest byte ranges it was lowered from: a write to any kills it
@@ -6281,8 +6294,13 @@
   (func (export "get_uop_sse") (result i32) (global.get $uc_sse))
   ;; --uop-opt=MASK (07d $uop_opt): every program and verdict goes, since
   ;; the passes change what compiles and what declines.
+  ;; An unchanged mask changes nothing (set_uop_opt(0) on a fresh instance is
+  ;; the tier as it was: test-uop-opt-identity.js).
   (func (export "set_uop_opt") (param $mask i32)
-    (global.set $uop_opt (i32.and (local.get $mask) (i32.const 0x1FF)))
+    (local.set $mask (i32.and (local.get $mask) (i32.const 0x1FF)))
+    (if (i32.eq (local.get $mask) (global.get $uop_opt)) (then (return)))
+    (global.set $uop_opt (local.get $mask))
+    (memory.fill (global.get $UOP_FOLD_WRITTEN) (i32.const 0) (i32.const 256))
     (call $uop_flush_all))
   (func (export "get_uop_opt") (result i32) (global.get $uop_opt))
   ;; --no-uop-mmx: kind 27 off for programs compiled from now on.

@@ -55,6 +55,10 @@ const d32 = (v) => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 
 const cc = { O: 0, NO: 1, B: 2, AE: 3, Z: 4, NZ: 5, BE: 6, A: 7, S: 8, NS: 9, L: 12, GE: 13, LE: 14, G: 15 };
 
 const N = 3000;
+// A dword of notepad's .text (RVA 0x1000; bench.layout puts lut at
+// imageBase + 0x100000): a section without IMAGE_SCN_MEM_WRITE, which the
+// --uop-opt 0x080 fold reads at compile time (07e $uc_ro_addr).
+const RO = (a) => a.lut - 0x100000 + 0x1000;
 const BATCH = +(process.env.UOP_BATCH || 37);
 const CASES = [
   {
@@ -140,7 +144,54 @@ const CASES = [
    code:[L('l'),[0x26,0x8B,0x06],[0x2E,0x03,0x46,0x04],[0x36,0x89,0x07],[0x3E,0x01,0x47,0x04],
          [0x83,0xC6,0x04],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
   // FS keeps its base: still declined.
-  {name:'fs-prefix-declines',regs:{ecx:N},head:'l',declines:true,
+  // --uop-opt cases (07d $uop_opt; test-uop-opt.js runs every arm). Under a
+  // mask without `optCompiles`' bit the head declines as on main; with it,
+  // it compiles and must match threaded code like any other case, and
+  // `optWant` names the uop_opt_stat counters the pass must move
+  // (key@clock: only under that clock).
+  // 0x008: LOCK RMW / memory XCHG as plain RMW (LOCK_MODE 0)
+  {name:'opt-lock-add',regs:{ecx:N},head:'l',declines:true,optCompiles:0x08,optWant:{mask:0x08,want:{optLock:'>0'}},
+   code:[L('l'),[0x8B,0x07],[0xF0,0x01,0x06],[0xF0,0xFF,0x46,0x04],[0x83,0xC6,0x08],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  {name:'opt-xchg-mem',regs:{ecx:N},head:'l',declines:true,optCompiles:0x08,optWant:{mask:0x08,want:{optLock:'>0'}},
+   code:[L('l'),[0x89,0xC8],[0x87,0x06],[0x01,0x07],[0x83,0xC6,0x04],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x010: SAHF, CF/ZF/SF/PF/AF from AH, consumed by ADC and SETcc
+  {name:'opt-sahf',regs:{ecx:N},head:'l',declines:true,optCompiles:0x10,optWant:{mask:0x10,want:{optSahf:'>0'}},
+   code:[L('l'),[0x8B,0x06],0x9E,[0x83,0xD2,0x00],[0x0F,0x94,0xC3],[0x00,0x1F],[0x83,0xC6,0x04],[0x83,0xC7,0x01],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x140: F1 lattice + C1 Jcc fold. The cmp's flags stay live into SETG
+  // after the folded JG, so a budget cut at the JG (BATCH-sized batches)
+  // must materialise them exactly. dynamicEntry: the never-taken arm's
+  // target is an in-loop entry threaded code never splits at, so the block
+  // clock's hot comparison differs on main too (mask 0); the branch clock
+  // checks every batch stop.
+  {name:'opt-c1-fold',regs:{ecx:N},head:'l',dynamicEntry:true,optWant:{mask:0x140,want:{optJcc:'>0'}},
+   code:[L('l'),[0xBB,7,0,0,0],[0x83,0xFB,0x03],J(cc.G,'a'),0x40,L('a'),[0x0F,0x9F,0xC2],[0x01,0x17],
+         [0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  {name:'opt-c1-notaken',regs:{ecx:N},head:'l',dynamicEntry:true,optWant:{mask:0x140,want:{optJcc:'>0'}},
+   code:[L('l'),[0x31,0xDB],[0x83,0xC3,0x02],[0x83,0xFB,0x03],J(cc.GE,'a'),[0x83,0xD0,0x01],L('a'),[0x0F,0x92,0xC2],
+         [0x01,0x17],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x080: a dword of notepad's .text (not IMAGE_SCN_MEM_WRITE) folded to a
+  // constant; setup pins its value so every mode reads the same.
+  {name:'opt-f2-fold',regs:{ecx:N},head:'l',optWant:{mask:0x80,want:{optFold:'>0',optFdw:'>0'}},
+   setup:(mem,g2w,a)=>{new DataView(mem.buffer).setUint32(g2w(RO(a)),0x01020304,true);},
+   code:(a)=>[L('l'),[0x8B,0x05,...d32(RO(a))],[0x01,0x07],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x0C0: the folded dword feeds the lattice (and C1 under 0x1C0)
+  {name:'opt-f2-lattice',regs:{ecx:N},head:'l',optWant:{mask:0xC0,want:{optFold:'>0'}},
+   setup:(mem,g2w,a)=>{new DataView(mem.buffer).setUint32(g2w(RO(a)),0x00000010,true);},
+   code:(a)=>[L('l'),[0x8B,0x1D,...d32(RO(a))],[0x89,0xDA],[0x83,0xE2,0x0F],[0x83,0xFA,0x00],J(cc.Z,'a'),0x40,L('a'),
+              [0x01,0x1F],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x080 SMC: the loop itself rewrites the dword it folded. The store
+  // kills the program ($uop_add_range marked the page), so every trip must
+  // see the new value exactly as threaded code does. Its own page (07d
+  // $uop_fold_written then keeps that page unfolded, process-wide).
+  // dynamicEntry: the kill leaves the program at the store, mid-block, as
+  // any code-write kill on main does, and the block clock charges the cut
+  // threaded code later makes there; the branch clock checks every stop.
+  {name:'opt-f2-smc',regs:{ecx:N},head:'l',dynamicEntry:true,
+   setup:(mem,g2w,a)=>{new DataView(mem.buffer).setUint32(g2w(RO(a)+0x1000),5,true);},
+   code:(a)=>[L('l'),[0x8B,0x05,...d32(RO(a)+0x1000)],[0x01,0x07],[0xFF,0x05,...d32(RO(a)+0x1000)],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // optCompiles: under UOP_OPT with that bit (0x020, the FS: prefix) the
+  // head compiles and must match threaded code like any other case.
+  {name:'fs-prefix-declines',regs:{ecx:N},head:'l',declines:true,optCompiles:0x20,optWant:{mask:0x20,want:{optFs:'>0'}},
    code:[L('l'),[0x64,0x8B,0x06],[0x89,0x07],[0x83,0xC6,0x04],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
   {
     name: 'lut8', regs: { ecx: N },
@@ -1262,8 +1313,12 @@ function runCase(inst, c, a, codeAddr, mode) {
                 sseSites: -37,
                 bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301,
                 // 07d $uop_x87: x87 instructions run through the service path
-                x87svc: 400 };
-  const ctrOf = (i) => (i < 0 ? e.uop_cstat(-i) : i === 400 ? e.uop_x87_ops() >>> 0 : i >= 300 ? e.uop_mcopy_stats(i - 300)
+                x87svc: 400,
+                // 07d uop_opt_stat (the --uop-opt ledger; 0 on a build without it)
+                optStamp: 500, optSeams: 501, optSvc: 502, optDecl: 503, optLock: 504, optSahf: 505,
+                optRetx: 506, optFold: 507, optJcc: 508, optFs: 509, optFdw: 510 };
+  const ctrOf = (i) => (i >= 500 ? (e.uop_opt_stat ? e.uop_opt_stat(i - 500) >>> 0 : 0)
+    : i < 0 ? e.uop_cstat(-i) : i === 400 ? e.uop_x87_ops() >>> 0 : i >= 300 ? e.uop_mcopy_stats(i - 300)
     : i >= 200 ? e.uop_mcopy_cstat(i - 200) : i >= 100 ? e.uop_bulk_stats(i - 100) : e.uop_stats(i));
   const ctr0 = Object.fromEntries(Object.entries(CTR).map(([k, i]) => [k, ctrOf(i)]));
   let sp = null;
@@ -2213,6 +2268,9 @@ async function main() {
   // UOP_CENSUS=1 BENCH_TRACE_LOOP=1: print the --uop-census records these
   // cases produce (a smoke test for tools/uop-census.js / uop-census-diff.js).
   if (process.env.UOP_CENSUS) e.set_uop_census(1);
+  // UOP_OPT=MASK: every case again with the --uop-opt passes on (07d $uop_opt);
+  // each must still match threaded code exactly. test-uop-opt.js runs it.
+  if (process.env.UOP_OPT) e.set_uop_opt(Number(process.env.UOP_OPT) >>> 0);
   let slot = 0;
   let fails = 0;
   const only = process.env.UOP_CASE;
@@ -2220,8 +2278,18 @@ async function main() {
   for (const clock of clocks) {
   e.set_branch_clock(clock);
   console.log(clock ? '-- branch clock (a block = an executed x86 branch)' : '-- block clock (threaded cuts charge)');
-  for (const c of CASES) {
-    if (only && c.name !== only) continue;
+  for (const c0 of CASES) {
+    if (only && c0.name !== only) continue;
+    const optMask = Number(process.env.UOP_OPT || 0) >>> 0;
+    let c = (c0.optCompiles & optMask) ? { ...c0, declines: false } : c0;
+    if (c0.optWant && (optMask & c0.optWant.mask) === c0.optWant.mask) {
+      const want = { ...(c.want || {}) };
+      for (const [kk, v] of Object.entries(c0.optWant.want)) {
+        const [k, ck] = kk.split('@');
+        if (ck === undefined || +ck === clock) want[k] = v;
+      }
+      c = { ...c, want };
+    }
     const at = () => { const x = a.code + 0x1000 * slot; slot += c.pages || 1; return x; };
     const off = runCase(inst, c, a, at(), 'off');
     if (c.foldCheck) {
@@ -2341,6 +2409,14 @@ async function main() {
   const cs = (k) => e.uop_cstat(k);
   const why = WAT_REASONS.map((n, k) => [n, k && e.uop_decline_count(k)]).filter(([, n]) => n).map(([k, n]) => `${k}=${n}`).join(' ');
   if (process.env.UOP_CENSUS) e.uop_census_dump();
+  // UOP_DIGEST=1: the program arena's code area (main's 0xDE000 bytes, 07d
+  // $uop_code_bytes), every program these cases compiled, in compile order
+  // (flushes=0 below). test-uop-opt-identity.js compares it across builds.
+  if (process.env.UOP_DIGEST) {
+    const base = e.uop_arena() >>> 0;
+    const h = require('crypto').createHash('sha256').update(new Uint8Array(e.memory.buffer, base, 0xDE000)).digest('hex');
+    console.log(`arena-digest ${h}`);
+  }
   console.log(`uop compiler: compiled=${cs(0)} declined=${cs(1)} insns=${cs(2)} uops=${cs(3)} flushes=${cs(4)}${why ? '\n  declines: ' + why : ''}`);
   console.log(`reguards=${e.uop_stats(1)} guard-fails=${e.uop_stats(0)} kills=${e.uop_stats(3)}`);
   if (fails) { console.log(`FAIL: ${fails}`); process.exit(1); }
