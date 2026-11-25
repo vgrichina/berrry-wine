@@ -423,6 +423,9 @@ async function main() {
   // docs/uop-tier-design.md section 23) -- every guard kept however it fails.
   ARMS.icallpoly = [...ARMS.icall, '--uop-icg-mega=0'];
   ARMS.iat = [...ARMS.uop, '--uop-iat'];
+  // sse: the uop arm plus the XMM forms (07e kind 34); partner uop.
+  ARMS.sse = [...ARMS.uop, '--uop-sse'];
+  ARMS.ssefast = [...ARMS.sse, '--sse-fast'];
   // Retry ladder (07e $uc_lower_head, docs/uop-tier-design.md section 24):
   // ladder / noladder force it on (mask 7) / off (the pre-24 order) whatever
   // the build's default; icladder / icnoladder are the same over --uop-icall.

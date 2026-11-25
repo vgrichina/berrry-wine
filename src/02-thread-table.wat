@@ -11,7 +11,7 @@
   ;; For byte regs: 0=al,1=cl,2=dl,3=bl,4=ah,5=ch,6=dh,7=bh
 
   (type $handler_t (func (param i32)))
-  (table $handlers 502 funcref)
+  (table $handlers 512 funcref)
 
   (elem (i32.const 0)
     ;; -- Core --
@@ -571,4 +571,14 @@
     $th_lock_rmw               ;; 499: LOCK RMW / memory XCHG as atomic CAS, threaded only (05)
     $th_ftol_native            ;; 500: statically linked MSVC _ftol body, native (06)
     $th_store_continue         ;; 501: instruction-boundary store continuation
+    $th_cvtss2sd_rr            ;; 502: --sse-fast dedicated SSE2 register form (06c)
+    $th_cvtps2pd_rr            ;; 503: --sse-fast (06c)
+    $th_cvtsd2ss_rr            ;; 504: --sse-fast (06c)
+    $th_cvtpd2ps_rr            ;; 505: --sse-fast (06c)
+    $th_addsd_rr               ;; 506: --sse-fast (06c)
+    $th_mulsd_rr               ;; 507: --sse-fast (06c)
+    $th_subsd_rr               ;; 508: --sse-fast (06c)
+    $th_comisd_rr              ;; 509: --sse-fast (06c)
+    $th_cvtsi2ss_rr            ;; 510: --sse-fast (06c)
+    $th_cvtsi2sd_rr            ;; 511: --sse-fast (06c)
   )
