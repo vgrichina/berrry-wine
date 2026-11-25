@@ -14,6 +14,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // normal production defaults and belong to the default unit tier.
 // test-x87-frndint-image.js, test-x87-image-compare.js and
 // test-x87-adjacent-compare.js use embedded literals and production defaults.
+// test-x87-sign-exchange.js and test-x87-scale-image.js use literal images
+// and production defaults, so the normal unit tier includes both.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an
