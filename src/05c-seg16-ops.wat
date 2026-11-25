@@ -183,6 +183,43 @@
   (func $esp_arch (result i32)
     (i32.sub (i32.load offset=16 (global.get $reg_base)) (global.get $seg_base_ss)))
 
+  ;; Aggregate operands follow CS/66; stack addressing follows SS.B. ESP in
+  ;; the register file is linear, but the saved PUSHAD value is an offset.
+  ;; Existing individual push/pop helpers advance the linear pointer without
+  ;; SS wrapping, so aggregates need this narrow offset-based sequence.
+  (func $aggregate_seg16 (param $word i32) (param $pop i32)
+    (local $original i32) (local $sp i32) (local $mask i32)
+    (local $width i32) (local $i i32) (local $reg i32) (local $addr i32) (local $v i32)
+    (local.set $original (call $esp_arch))
+    (local.set $mask (select (i32.const -1) (i32.const 0xFFFF)
+      (call $win16_seg_is_big (global.get $sreg_ss))))
+    (local.set $sp (i32.and (local.get $original) (local.get $mask)))
+    (local.set $width (select (i32.const 2) (i32.const 4) (local.get $word)))
+    (loop $slot
+      (local.set $reg (select (i32.sub (i32.const 7) (local.get $i)) (local.get $i) (local.get $pop)))
+      (if (i32.eqz (local.get $pop)) (then
+        (local.set $sp (i32.and (i32.sub (local.get $sp) (local.get $width)) (local.get $mask)))))
+      (local.set $addr (i32.add (global.get $seg_base_ss) (local.get $sp)))
+      (if (local.get $pop)
+        (then
+          ;; Skip the SP/ESP slot without reading or assigning it.
+          (if (i32.ne (local.get $reg) (i32.const 4)) (then
+            (if (local.get $word)
+              (then (call $set_reg16 (local.get $reg) (call $gl16 (local.get $addr))))
+              (else (call $set_reg (local.get $reg) (call $gl32 (local.get $addr)))))))
+          (local.set $sp (i32.and (i32.add (local.get $sp) (local.get $width)) (local.get $mask))))
+        (else
+          (local.set $v (if (result i32) (i32.eq (local.get $reg) (i32.const 4))
+            (then (local.get $original)) (else (call $get_reg (local.get $reg)))))
+          (if (local.get $word)
+            (then (call $gs16 (local.get $addr) (local.get $v)))
+            (else (call $gs32 (local.get $addr) (local.get $v))))))
+      (i32.store offset=16 (global.get $reg_base)
+        (i32.add (global.get $seg_base_ss)
+          (i32.or (i32.and (local.get $original) (i32.xor (local.get $mask) (i32.const -1))) (local.get $sp))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $slot (i32.lt_u (local.get $i) (i32.const 8)))))
+
   ;; base + index<<scale, the register half of an info word.
   ;; Only a SIB base can name ESP (16-bit addressing has no SP form), and it
   ;; contributes the stack offset, not the linear address ($esp_arch).

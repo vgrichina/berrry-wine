@@ -5177,8 +5177,8 @@
         (then (call $te (i32.const 504) (call $d_fetch8)) (br $decode))) ;; AAD imm8
 
       ;; ---- Misc single-byte ----
-      (if (i32.eq (local.get $op) (i32.const 0x60)) (then (call $te (i32.const 35) (i32.const 0)) (br $decode))) ;; PUSHAD
-      (if (i32.eq (local.get $op) (i32.const 0x61)) (then (call $te (i32.const 36) (i32.const 0)) (br $decode))) ;; POPAD
+      (if (i32.eq (local.get $op) (i32.const 0x60)) (then (call $te (i32.const 35) (local.get $prefix_66)) (br $decode))) ;; PUSHA / PUSHAD
+      (if (i32.eq (local.get $op) (i32.const 0x61)) (then (call $te (i32.const 36) (local.get $prefix_66)) (br $decode))) ;; POPA / POPAD
       (if (i32.eq (local.get $op) (i32.const 0x9C)) ;; PUSHFD / PUSHF with 66h
         (then (if (local.get $prefix_66)
           (then (call $te (i32.const 253) (i32.const 0)))
