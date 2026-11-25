@@ -91,7 +91,7 @@
           "$entry"
         ]
       ],
-      "sha256": "3c2edac826431a590a2514da118e9d13812fab38681c9137c776d06e515632c9",
+      "sha256": "be82bb0ae706e5ce2f1299de02c2cb9cd62f01620af1725b98b775b70678b042",
       "kind": "guest-control",
       "ownership": "pending",
       "reason": "Review 20261125 fold-bench arm D (--fold-arms bit 8, off by default): handler 502 runs a signature-matched Delphi RTTI helper body natively and falls through to the body's own RET op; when the call cannot finish natively it performs the body's first instruction and sets EIP to the next instruction of the same body (its entry, from the op's thread word, plus 1-3), then ends the block through $branch_end like any threaded transfer. No callback, continuation, invocation enter/leave or ownership state is touched. Ownership remains pending. Second EIP write: _CopyRecord with bytes after its string field rebuilds the body's own push frame and registers at its CALL System.Move (entry+0x110, inside the same matched body) and resumes there, so Move returns into the body's pops and RET."

@@ -64,6 +64,9 @@ async function delphiInstance(img, arms) {
   new DataView(e.memory.buffer).setUint32(g2w(0x589730), STUB, true);
   e.set_uop(0);
   e.set_fold_arms(arms);
+  // the guest clock must not see D: a native path charges the blocks the body
+  // would have spent, so both instances retire the same count per call
+  e.set_branch_clock(1);
   return inst;
 }
 
@@ -79,8 +82,13 @@ function layoutBuf(inst, spec) {
 function call(inst, entry, regs) {
   const { e } = inst;
   for (const r of ['eax', 'ecx', 'edx', 'ebx', 'ebp', 'esi', 'edi']) e['set_' + r]((regs[r] || 0) >>> 0);
-  const ok = bench.runToCompletion(e, entry, STACK);
-  const out = { ok, eip: e.get_eip() >>> 0, flags: e.uop_flags() };
+  // bench.runToCompletion, counting the blocks each run() retires
+  e.set_esp(STACK);
+  new DataView(e.memory.buffer).setUint32(inst.g2w(STACK), 0, true);
+  e.set_eip(entry);
+  let ok = false, blocks = 0;
+  for (let i = 0; i < 4096 && !ok; i++) { e.run(0x7FFFFFFF); blocks += e.get_last_run_blocks(); ok = e.get_eip() === 0; }
+  const out = { ok, blocks, eip: e.get_eip() >>> 0, flags: e.uop_flags() };
   for (const r of REGS) out[r] = e['get_' + r]() >>> 0;
   out.mem = Buffer.from(inst.mem.subarray(inst.g2w(BUF), inst.g2w(BUF) + 0x2000)).toString('base64');
   return out;
@@ -166,7 +174,7 @@ async function delphiCases() {
     const dn = on.e.fold_stat(0) - n0, df = on.e.fold_stat(1) - f0, dp = on.e.fold_stat(4) - p0;
     const diffs = [];
     if (!a.ok || !b.ok) diffs.push('did not return');
-    for (const k of ['eip', 'flags', ...REGS]) if (a[k] !== b[k]) diffs.push(`${k} ${a[k].toString(16)} vs ${b[k].toString(16)}`);
+    for (const k of ['eip', 'flags', 'blocks', ...REGS]) if (a[k] !== b[k]) diffs.push(`${k} ${a[k].toString(16)} vs ${b[k].toString(16)}`);
     if (a.mem !== b.mem) diffs.push('memory differs');
     if (c.want === 'n' && (dn < 1 || df)) diffs.push(`want native, got native=${dn} fallback=${df}`);
     if (c.want === 'f' && df < 1) diffs.push(`want fallback, got native=${dn} fallback=${df}`);
@@ -175,6 +183,33 @@ async function delphiCases() {
     console.log(`${c.name.padEnd(28)} ${diffs.length ? 'FAIL ' + diffs.join(', ') : 'ok'} (native=${dn} partial=${dp} fallback=${df})`);
     if (diffs.length) fails++;
   }
+  // Every batch budget from 1 to a call's block count: a batch that runs out
+  // inside a helper must stop on the instruction, with the state, the threaded
+  // body stops at -- D pays for a path only when the budget covers it.
+  let cut = 0, cutBad = [];
+  for (const c of CASES) {
+    layoutBuf(off, c.buf);
+    const full = call(off, c.entry, c.regs).blocks;
+    for (let b = 1; b <= full + 1; b++) {
+      const st = [];
+      for (const inst of [off, on]) {
+        layoutBuf(inst, c.buf);
+        const { e } = inst;
+        for (const r of ['eax', 'ecx', 'edx', 'ebx', 'ebp', 'esi', 'edi']) e['set_' + r]((c.regs[r] || 0) >>> 0);
+        e.set_esp(STACK);
+        new DataView(e.memory.buffer).setUint32(inst.g2w(STACK), 0, true);
+        e.set_eip(c.entry);
+        e.run(b);
+        const o = [e.get_eip() >>> 0, e.get_last_run_blocks(), e.uop_flags(), ...REGS.map((r) => e['get_' + r]() >>> 0)];
+        o.push(Buffer.from(inst.mem.subarray(inst.g2w(BUF), inst.g2w(BUF) + 0x2000)).toString('base64'));
+        st.push(o.join(','));
+      }
+      cut++;
+      if (st[0] !== st[1]) cutBad.push(`${c.name} budget ${b}: ${st[0].slice(0, 90)} / ${st[1].slice(0, 90)}`);
+    }
+  }
+  if (cutBad.length) fail(`D under a short budget: ${cutBad.length} of ${cut} differ; ${cutBad.slice(0, 2).join(' | ')}`);
+  else console.log(`${'D every budget'.padEnd(28)} ok (${cut} batches)`);
   // A patched body is not the System unit any more: a fresh instance with one
   // byte of LStrClr changed (outside the masked rel32) must decode as plain
   // guest code.

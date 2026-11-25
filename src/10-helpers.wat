@@ -592,6 +592,45 @@
     (i32.store (global.get $reg_base) (i32.sub (local.get $s) (i32.const 8)))
     (i32.store offset=8 (global.get $reg_base) (local.get $s)))
 
+  ;; ---- the branch clock under D ----
+  ;; Under --branch-clock a batch is a count of executed x86 branches (every
+  ;; Jcc, JMP, CALL, RET), so a helper run natively must charge what its body
+  ;; would have, or the guest clock -- every timer, every input batch -- moves.
+  ;; Counts below are block ends BEFORE the body's final RET (the RET op the
+  ;; HLE block ends in charges itself), read off the System unit's code (see
+  ;; docs/re-notes) and checked per case against the threaded body by
+  ;; test-fold-arms. The LOCK-prefixed RMWs are not block ends.
+  ;;   _LStrClr: nil 1 (jz), literal 2 (jz jl), shared 3 (jz jl jnz)
+  (func $d_clr_pre (param $s i32) (result i32)
+    (if (i32.eqz (local.get $s)) (then (return (i32.const 1))))
+    (select (i32.const 2) (i32.const 3)
+      (i32.lt_s (i32.sub (call $gl32 (i32.sub (local.get $s) (i32.const 8))) (i32.const 1)) (i32.const 0))))
+  ;;   _LStrAsg: the add half (nil: jz; else jz jg) plus a release of the old
+  ;;   string at its refcount after the add (an _LStrClr count)
+  (func $d_asg_pre (param $d i32) (param $s i32) (result i32)
+    (local $rc i32)
+    (if (i32.eqz (local.get $d)) (then (return (i32.add (select (i32.const 2) (i32.const 1) (i32.ne (local.get $s) (i32.const 0))) (i32.const 1)))))
+    (local.set $rc (i32.add (call $gl32 (i32.sub (local.get $d) (i32.const 8)))
+      (i32.and (i32.eq (local.get $d) (local.get $s)) (i32.ne (local.get $s) (i32.const 0)))))
+    (i32.add (select (i32.const 2) (i32.const 1) (i32.ne (local.get $s) (i32.const 0)))
+      (select (i32.const 2) (i32.const 3) (i32.lt_s (i32.sub (local.get $rc) (i32.const 1)) (i32.const 0)))))
+  ;;   System.Move(n), the 9..32-byte FILD/FISTP form: src = dst 1 (jz);
+  ;;   9..16 4 (jz ja jg jle); 17..32 5. Other sizes run a table or a loop and
+  ;;   are not paid for here (the caller falls back): -1.
+  (func $d_move_pre (param $same i32) (param $n i32) (result i32)
+    (if (local.get $same) (then (return (i32.const 1))))
+    (if (i32.or (i32.lt_s (local.get $n) (i32.const 9)) (i32.gt_s (local.get $n) (i32.const 32)))
+      (then (return (i32.const -1))))
+    (select (i32.const 4) (i32.const 5) (i32.le_s (local.get $n) (i32.const 16))))
+  ;; Pay for a path: it needs $need blocks of budget (the threaded body would
+  ;; stop short otherwise) and charges $charge (the exit's own transfer, if it
+  ;; has one, charges the rest). 0 = cannot pay; nothing is charged.
+  (func $d_pay (param $need i32) (param $charge i32) (result i32)
+    (if (i32.eqz (global.get $branch_clock)) (then (return (i32.const 1))))
+    (if (i32.lt_s (global.get $block_budget) (local.get $need)) (then (return (i32.const 0))))
+    (global.set $block_budget (i32.sub (global.get $block_budget) (local.get $charge)))
+    (i32.const 1))
+
   ;; 502: one of the five helpers (operand = id, one word = entry EIP),
   ;; followed by RET.
   (func $th_delphi_rtti (param $op i32)
@@ -610,11 +649,15 @@
           (local.set $s (call $gl32 (local.get $eax)))
           (if (call $d_last (local.get $s))
             (then
+              ;; jz jl jnz, then the CALL
+              (br_if $fallback (i32.eqz (call $d_pay (i32.const 3) (i32.const 2))))
               (call $d_clr_to_free (local.get $eax) (local.get $s))
               (global.set $fold_d_partial (i32.add (global.get $fold_d_partial) (i32.const 1)))
               (global.set $eip (i32.add (local.get $entry) (i32.const 0x1C)))
               (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (local.get $s) (i32.const 0))))
+          (local.set $f (call $d_clr_pre (local.get $s)))
+          (br_if $fallback (i32.eqz (call $d_pay (local.get $f) (local.get $f))))
           (call $d_lstrclr (local.get $eax))
           (call $fold_d_tick (local.get $op) (i32.const 0))
           (dispatch-next)))
@@ -630,6 +673,9 @@
           ;; EAX = old-8, EDX = old
           (if (i32.and (call $d_last (local.get $d)) (i32.ne (local.get $d) (local.get $edx)))
             (then
+              ;; the add half, then jz jl jnz, then the CALL
+              (local.set $f (i32.add (select (i32.const 2) (i32.const 1) (i32.ne (local.get $edx) (i32.const 0))) (i32.const 3)))
+              (br_if $fallback (i32.eqz (call $d_pay (local.get $f) (i32.sub (local.get $f) (i32.const 1)))))
               (if (local.get $edx)
                 (then (drop (i32.atomic.rmw.add (call $g2w (i32.sub (local.get $edx) (i32.const 8))) (i32.const 1)))))
               (call $gs32 (local.get $eax) (local.get $edx))
@@ -644,6 +690,8 @@
               (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (local.get $d)
             (i32.and (i32.eq (local.get $d) (local.get $edx)) (i32.ne (local.get $edx) (i32.const 0))))))
+          (local.set $f (call $d_asg_pre (local.get $d) (local.get $edx)))
+          (br_if $fallback (i32.eqz (call $d_pay (local.get $f) (local.get $f))))
           (call $d_lstrasg (local.get $eax) (local.get $edx))
           (call $fold_d_tick (local.get $op) (i32.const 0))
           (dispatch-next)))
@@ -651,7 +699,8 @@
       (if (i32.eq (local.get $op) (i32.const 4))
         (then
           (if (i32.eqz (local.get $ecx))
-            (then (call $set_flags_sub (i32.const 0) (i32.const 0) (i32.const 0))
+            (then (br_if $fallback (i32.eqz (call $d_pay (i32.const 1) (i32.const 1))))   ;; jz
+                  (call $set_flags_sub (i32.const 0) (i32.const 0) (i32.const 0))
                   (global.set $flag_sign_shift (i32.const 31))
                   (call $fold_d_tick (local.get $op) (i32.const 0))
                   (dispatch-next)))
@@ -662,6 +711,8 @@
           ;; EDI = 1, EDX = name length; flags of CMP ECX,1
           (if (call $d_last (call $gl32 (local.get $eax)))
             (then
+              ;; jz jz jg, then the CALL
+              (br_if $fallback (i32.eqz (call $d_pay (i32.const 3) (i32.const 2))))
               (call $d_push (local.get $eax))
               (call $d_push (i32.load offset=12 (global.get $reg_base)))
               (call $d_push (i32.load offset=24 (global.get $reg_base)))
@@ -676,6 +727,9 @@
               (global.set $eip (i32.add (local.get $entry) (i32.const 0x4A)))
               (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $eax)) (i32.const 0))))
+          ;; jz jz jg CALL, _LStrClr and its RET, JMP
+          (local.set $f (i32.add (call $d_clr_pre (call $gl32 (local.get $eax))) (i32.const 6)))
+          (br_if $fallback (i32.eqz (call $d_pay (local.get $f) (local.get $f))))
           (call $d_lstrclr (local.get $eax))
           (call $fold_d_tick (local.get $op) (i32.const 0))
           (dispatch-next)))
@@ -691,6 +745,8 @@
           ;; EDX = the field's typeinfo, EAX = p+off, ECX = 1; flags of ADD EAX,EBX
           (if (call $d_last (call $gl32 (local.get $f)))
             (then
+              ;; no branch before the CALL: the resume's own transfer is refunded
+              (br_if $fallback (i32.eqz (call $d_pay (i32.const 0) (i32.const -1))))
               (call $d_push (i32.load offset=12 (global.get $reg_base)))
               (call $d_push (i32.load offset=24 (global.get $reg_base)))
               (call $d_push (i32.load offset=28 (global.get $reg_base)))
@@ -707,6 +763,9 @@
               (global.set $eip (i32.add (local.get $entry) (i32.const 0x20)))
               (return_call $branch_end)))
           (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $f)) (i32.const 0))))
+          ;; CALL, _FinalizeArray (6 + _LStrClr) and its RET, the loop's jg
+          (local.set $s (i32.add (call $d_clr_pre (call $gl32 (local.get $f))) (i32.const 9)))
+          (br_if $fallback (i32.eqz (call $d_pay (local.get $s) (local.get $s))))
           (i32.store offset=4 (global.get $reg_base) (i32.const 1))
           (call $d_lstrclr (local.get $f))
           ;; the loop's DEC EDI, 1 -> 0, is the last flag write
@@ -733,6 +792,18 @@
           (br_if $fallback (i32.and (i32.ne (local.get $eax) (local.get $edx))
             (i32.lt_u (i32.add (i32.sub (local.get $eax) (local.get $edx)) (local.get $size))
                       (i32.shl (local.get $size) (i32.const 1)))))
+          ;; the clock: jle, [CALL Move, Move, its RET], jz, CALL _LStrAsg,
+          ;; _LStrAsg and its RET, JMP, the field loop's jnz, the tail's jle.
+          ;; A tail resumes at its CALL Move (the resume's transfer charges one).
+          (local.set $esp (i32.add (call $d_asg_pre (local.get $d) (local.get $s)) (i32.const 7)))
+          (if (i32.gt_s (local.get $off) (i32.const 0))
+            (then
+              (local.set $f (call $d_move_pre (i32.eq (local.get $eax) (local.get $edx)) (local.get $off)))
+              (br_if $fallback (i32.lt_s (local.get $f) (i32.const 0)))
+              (local.set $esp (i32.add (local.get $esp) (i32.add (local.get $f) (i32.const 2))))))
+          (br_if $fallback (i32.eqz (call $d_pay (local.get $esp)
+            (i32.sub (local.get $esp)
+              (i32.gt_s (local.get $size) (i32.add (local.get $off) (i32.const 4)))))))
           (call $d_move (local.get $eax) (local.get $edx) (local.get $off))
           (call $d_lstrasg (i32.add (local.get $eax) (local.get $off)) (local.get $s))
           (local.set $off (i32.add (local.get $off) (i32.const 4)))
@@ -773,7 +844,9 @@
           (return_call $branch_end)))
       (unreachable))
     ;; Back to the guest body: perform its first instruction, resume after it.
+    ;; That instruction is no branch: the resume's transfer is refunded.
     (call $fold_d_tick (local.get $op) (i32.const 1))
+    (global.set $block_budget (i32.add (global.get $block_budget) (global.get $branch_clock)))
     (if (i32.eq (local.get $op) (i32.const 1))      ;; mov edx,[eax]
       (then (i32.store offset=8 (global.get $reg_base) (call $gl32 (local.get $eax)))
             (local.set $entry (i32.add (local.get $entry) (i32.const 2)))))
