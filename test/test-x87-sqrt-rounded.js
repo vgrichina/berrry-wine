@@ -1,6 +1,7 @@
 'use strict';
-// Bounded default: 792 rows, 13 literals, 33 input/PC combinations in binades 0,1,2,48.
-// Fourth argument full: 2376 rows with all nine seeds; declines observes fallback.
+// Bounded default: 1120 rows (792 original + 328 wide with one status seed).
+// Fourth argument full: 5328 rows, all nine seeds; wide: 2952 wide rows only.
+// selected: 2376 original rows; declines: 880 fallback observations.
 
 const fs=require('fs'),a=require('assert/strict'),crypto=require('crypto'),zlib=require('zlib');
 
@@ -14,6 +15,12 @@ for(const delta of [0n,1n])literals.push(['pc53-mid-square'+delta,(1n<<63n)+(1n<
 for(const delta of [1n,3n])literals.push(['pc64-near-mid'+delta,(1n<<63n)+delta,16383]);
 literals.push(['below-four-carry',0xffffffffffffffffn,16384]);
 const inputs=literals.map(([id,m,se,pcs=[0,2,3]])=>({id,m:hx(m),se,pcs}));
+// Twelve additional normal-input binades only; no general exponent claim.
+const wideLiterals=[-16382,-16381,-1025,-1024,-3,-2,-1,49,1024,1025,16382,16383]
+ .map(e=>['irrational-e'+e,0xc000000000000000n,16383+e]);
+for(const [e,r]of [[-2,16777217n],[1024,16777219n]])wideLiterals.push(['pc24-tie-e'+e,r*r<<15n,16383+e,[0]]);
+wideLiterals.push(['carry-e49',0xffffffffffffffffn,16432]);
+const wideInputs=wideLiterals.map(([id,m,se,pcs=[0,2,3]])=>({id,m:hx(m),se,pcs}));
 const bits=pc=>({0:24,2:53,3:64})[pc];
 function isqrt(n){let lo=0n,hi=1n<<BigInt((n.toString(2).length+1)>>1);while(lo<hi){const mid=(lo+hi+1n)>>1n;if(mid*mid<=n)lo=mid;else hi=mid-1n;}return lo;}
 function rational(m,se){let n=BigInt('0x'+m),d=1n,k=se-16446;if(k>=0)n<<=BigInt(k);else d<<=BigInt(-k);return {n,d};}
@@ -43,7 +50,7 @@ function verify(v,r,pc,rc){
 }
 // Exact binary64 shadow encoding from a rounded physical80 image, using only
 // integer rounding. No JS Number floating arithmetic is used as a value oracle.
-function shadow(m,se){let n=BigInt('0x'+m),q=n>>11n,rem=n&2047n;if(rem>1024n||(rem===1024n&&(q&1n)))q++;let e=se-16383;if(q===1n<<53n){q>>=1n;e++;}a(e>=-1022&&e<=1023);return (BigInt(e+1023)<<52n)|(q&((1n<<52n)-1n));}
+function shadow(m,se){let n=BigInt('0x'+m),q=n>>11n,rem=n&2047n;if(rem>1024n||(rem===1024n&&(q&1n)))q++;let e=se-16383;if(q===1n<<53n){q>>=1n;e++;}if(e>1023)return 0x7ff0000000000000n;if(e < -1075)return 0n;a(e>=-1022);return (BigInt(e+1023)<<52n)|(q&((1n<<52n)-1n));}
 const seeds=[0,1,2,4,8,16,32,0x200,0x477f];
 
 
@@ -94,13 +101,13 @@ async function main(){
    const row={top,vector:v.id,input:[v.m,v.se],expected:mode==='declines'?null:[v.r,v.re],precision,rc,seed,extra,cache,before,after,post,sw,cw:gotCW,cpuFlags,stored,storeBuffer,checks,pass};if(!pass&&!firstFailure)firstFailure=row;lines.push(JSON.stringify(row)+'\n');if(lines.length===512)flush();
  }
  for(const top of [2,5]){
-  if(['bounded','selected','full'].includes(mode))for(const v of vectors)for(const precision of v.pcs)for(let rc=0;rc<4;rc++){
+  if(['bounded','selected','full','wide'].includes(mode))for(const v of mode==='wide'?wideInputs:mode==='selected'?vectors:[...vectors,...wideInputs])for(const precision of v.pcs)for(let rc=0;rc<4;rc++){
    const at=pc;pc+=128;mem.set([217,250,235,0],g(at));
-   for(const seed of mode==='bounded'?[0,0x200,0x477f]:seeds)executeCase(top,v,precision,rc,seed,at);
+   for(const seed of mode==='bounded'?(wideInputs.includes(v)?[0]:[0,0x200,0x477f]):seeds)executeCase(top,v,precision,rc,seed,at);
   }
   else if(mode==='declines'){
    const declined=[
-    ['negative','8000000000000000',49152,{}],
+    ['negative','c000000000000000',49148,{}],
     ['subnormal','0000000000000006',0,{}],
     ['plus-zero','0000000000000000',0,{}],
     ['minus-zero','0000000000000000',32768,{}],
@@ -108,11 +115,12 @@ async function main(){
     ['qnan','c123456789abcdef',32767,{}],
     ['snan','8123456789abcdef',32767,{}],
     ['unsupported','4000000000000000',16384,{}],
-    ['outside-bounded-exponent','8000000000000001',16382,{}],
-    ['reserved','8000000000000000',16384,{pc:1}],
-    ['invalid-image','8000000000000000',16384,{noImage:true}],
-    ['empty','8000000000000000',16384,{empty:true}],
-    ...Array.from({length:6},(_,i)=>['unmask'+i,'8000000000000000',16384,{unmask:1<<i}])];
+    ['outside-low','c000000000000001',16379,{}],
+    ['outside-high','c000000000000001',16433,{}],
+    ['reserved','c000000000000000',16380,{pc:1}],
+    ['invalid-image','c000000000000000',16380,{noImage:true}],
+    ['empty','c000000000000000',16380,{empty:true}],
+    ...Array.from({length:6},(_,i)=>['unmask'+i,'c000000000000000',16380,{unmask:1<<i}])];
    for(const [id,m,se,extra]of declined)for(const precision of extra.pc!==undefined?[extra.pc]:[0,2,3])for(let rc=0;rc<4;rc++){
     const at=pc;pc+=128;mem.set([217,250,235,0],g(at));for(const seed of [0,0x23f])executeCase(top,{id,m,se},precision,rc,seed,at,extra);
    }
