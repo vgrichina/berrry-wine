@@ -313,6 +313,23 @@
             (local.set $mant (i64.load (call $phys80_mant_addr (local.get $p))))
             (local.set $se (i32.load16_u (call $phys80_se_addr (local.get $p))))
             (local.set $e (i32.and (local.get $se) (i32.const 32767)))
+            ;; Canonical nonzero subnormal only; decline before any state mutation.
+            (if (i32.and
+                  (i32.and (i32.eqz (local.get $e))
+                    (i64.gt_s (local.get $mant) (i64.const 0)))
+                  (i32.eq (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63)))
+              (then
+                (local.set $e (i32.wrap_i64 (i64.clz (local.get $mant))))
+                (local.set $mant (i64.shl (local.get $mant) (i64.extend_i32_u (local.get $e))))
+                (call $fpu_set (i32.const 0)
+                  (f64.convert_i32_s (i32.sub (i32.const -16382) (local.get $e))))
+                (local.set $se (i32.or (i32.and (local.get $se) (i32.const 32768))
+                                      (i32.const 16383)))
+                (call $fpu_push (call $phys80_decode (local.get $mant) (local.get $se)))
+                (call $phys80_write (global.get $fpu_top) (local.get $mant) (local.get $se))
+                (call $fpu_set_exc (i32.const 2))
+                (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+                (return)))
             (if (i32.and (i32.and (i32.gt_u (local.get $e) (i32.const 0))
                                   (i32.lt_u (local.get $e) (i32.const 32767)))
                          (i64.lt_s (local.get $mant) (i64.const 0)))
@@ -1605,9 +1622,9 @@
 
   ;; Canonical finite ST(0) versus ST(i), or exact finite f64 memory operand.
   ;; Return -1/0/+1; 2 declines to the unchanged unsupported/NaN fallback.
-  (func $phys80_compare (param $i i32) (param $b f64) (result i32)
+  (func $phys80_compare (param $i i32) (param $b f64) (param $kind i32) (result i32)
     (local $p i32) (local $q i32) (local $s0 i32) (local $s1 i32)
-    (local $e0 i32) (local $e1 i32) (local $less i32)
+    (local $e0 i32) (local $e1 i32) (local $less i32) (local $den i32)
     (local $m0 i64) (local $m1 i64) (local $bits i64) (local $shift i64)
     (local.set $p (global.get $fpu_top))
     (if (i32.eqz (i32.and (i32.shr_u (global.get $fpu_tag) (local.get $p)) (i32.const 1))) (then (return (i32.const 2))))
@@ -1638,15 +1655,26 @@
             (local.set $s1 (i32.or (local.get $s1) (i32.add (local.get $e1) (i32.const 15360))))))))
     (local.set $e0 (i32.and (local.get $s0) (i32.const 32767)))
     (local.set $e1 (i32.and (local.get $s1) (i32.const 32767)))
-    ;; Admit only canonical signed zero or a normalized finite significand.
+    ;; New subnormal admission is limited to masked register status compares.
+    (local.set $den (i32.or
+      (i32.and (i32.eqz (local.get $e0)) (i64.ne (local.get $m0) (i64.const 0)))
+      (i32.and (i32.eqz (local.get $e1)) (i64.ne (local.get $m1) (i64.const 0)))))
+    (if (local.get $den)
+      (then (if (i32.or
+        (i32.or (i32.lt_s (local.get $i) (i32.const 0)) (i32.ge_u (local.get $kind) (i32.const 2)))
+        (i32.ne (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63)))
+        (then (return (i32.const 2))))))
+    ;; Canonical signed zero/subnormal has E=0,J=0; normal finite has E>0,J=1.
     (if (i32.eqz (i32.or
-      (i32.and (i32.eqz (local.get $e0)) (i64.eqz (local.get $m0)))
+      (i32.and (i32.eqz (local.get $e0)) (i64.ge_s (local.get $m0) (i64.const 0)))
       (i32.and (i32.and (i32.gt_u (local.get $e0) (i32.const 0)) (i32.lt_u (local.get $e0) (i32.const 32767)))
         (i64.lt_s (local.get $m0) (i64.const 0))))) (then (return (i32.const 2))))
     (if (i32.eqz (i32.or
-      (i32.and (i32.eqz (local.get $e1)) (i64.eqz (local.get $m1)))
+      (i32.and (i32.eqz (local.get $e1)) (i64.ge_s (local.get $m1) (i64.const 0)))
       (i32.and (i32.and (i32.gt_u (local.get $e1) (i32.const 0)) (i32.lt_u (local.get $e1) (i32.const 32767)))
         (i64.lt_s (local.get $m1) (i64.const 0))))) (then (return (i32.const 2))))
+    ;; Every admission guard precedes new sticky-status mutation.
+    (if (local.get $den) (then (call $fpu_set_exc (i32.const 2))))
     (if (i32.and (i64.eqz (local.get $m0)) (i64.eqz (local.get $m1))) (then (return (i32.const 0))))
     (if (i32.ne (i32.and (local.get $s0) (i32.const 32768)) (i32.and (local.get $s1) (i32.const 32768)))
       (then (return (select (i32.const -1) (i32.const 1) (i32.and (local.get $s0) (i32.const 32768))))))
@@ -1659,7 +1687,7 @@
 
   (func $fpu_image_compare (param $a f64) (param $b f64) (param $i i32) (param $kind i32)
     (local $relation i32)
-    (local.set $relation (call $phys80_compare (local.get $i) (local.get $b)))
+    (local.set $relation (call $phys80_compare (local.get $i) (local.get $b) (local.get $kind)))
     (if (i32.ne (local.get $relation) (i32.const 2))
       (then
         (local.set $a (f64.convert_i32_s (local.get $relation)))
