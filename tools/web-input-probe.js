@@ -143,6 +143,9 @@ const AUTO_LAUNCH = argv.includes('--auto-launch');
 // no compositor or display refresh, so any duration quoted from a run (how
 // long a save takes, how fast a screen advances) needs this.
 const HEADFUL = argv.includes('--headful');
+// --chrome-arg=FLAG (repeatable): one more Chrome command-line flag, e.g.
+// --chrome-arg=--js-flags=--no-wasm-dynamic-tiering for an engine A/B.
+const CHROME_ARGS = argv.filter(a => a.startsWith('--chrome-arg=')).map(a => a.slice('--chrome-arg='.length));
 // iPhone Safari exposes NO element Fullscreen API -- not requestFullscreen,
 // not the webkit spelling, on anything that is not a <video>. Chrome always
 // has it, so the only way to drive the fallback the page uses there is to take
@@ -487,7 +490,7 @@ async function main() {
       HEADFUL ? [`--window-size=${VIEWPORT.width},${VIEWPORT.height + 120}`]
         : GPU
           ? ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader']
-          : ['--disable-gpu']),
+          : ['--disable-gpu']).concat(CHROME_ARGS),
   });
   const problems = [];
   try {

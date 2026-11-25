@@ -306,7 +306,8 @@ on the same box, title room (`headless/title-batchclock-blocks.log`,
 `title-realticks.log`): 49 presents/s with the batch clock (24.5 GM fps),
 41 with `--real-ticks` (20.5 GM fps). The browser runs the same room at
 17.5–25 presents/s, so the browser executes GM steps about 2× slower than
-Node on the same machine.
+Node on the same machine. (Corrected below in "Browser vs Node gap": this CLI
+window was the intro, and the browser gap is guest work per present.)
 - `get_blocks_now` per present is not a comparable unit across hosts (uop
   tier installs change what a block is): 312 k in the CLI, 0.87–1.04 M in
   headful Chrome, 165 k in headless Chrome. Do not use it as "work".
@@ -334,6 +335,89 @@ headful Chrome stays up (it closed 3–29 s into most runs on 2026-11-25).
 - `rate-run.sh OUTDIR [--threads]`: `tools/page-probes/measure-guest-rate.js`
   over 8 s idle and with Left held.
 - CLI `--cpu-window=A:B` now prints `draws` and `blocks` too.
+
+## Browser vs Node gap, 2026-11-25
+
+Evidence: `scratch/runs/20261125-spelunky-browser-gap/`. Chrome 158.0.8127.37
+headful, `?debug&perf`, dev server `--isolate`; Node v24.21.0; box load 2–3.
+
+**Correction to the section above.** The CLI "title room" at 41–49 presents/s
+was the DEREK YU PRESENTS intro (`cli/at24000.png`), not the title room.
+Reaching the title room needs:
+- with the batch clock, Enter at batches 21000 and 22020, and a window from
+  23500;
+- with `--real-ticks`, Enter at 21600 and 22150, and a window from 24000.
+
+Same room on both hosts, 218 draws per present:
+
+| Host | presents/s | blocks/present | Mblocks/s | wasm ms/present | other ms/present |
+|---|---|---|---|---|---|
+| CLI batch clock (`cli/h-*`) | 36.7 | 395 k | 14.5 | 21.1 | 7.4 |
+| CLI `--real-ticks` (`cli/j-*`) | 44.1 | 442 k | 19.5 | 14.7 | 8.0 |
+| browser coop, before (`coop-1`) | 27.3 | 864 k | 23.6 | 30.0 | 9.1 |
+| browser coop, after fix (`coop-fix-1`) | 32.0 | 870 k | 27.8 | 28.5 | 4.8 |
+| browser Threads, before (`threads-2`) | 40.6 | 858 k | 34.8 | 23.4 (Worker) | — |
+| browser Threads, after (`threads-fix-1`) | 40.2 | 847 k | 34.1 | — | — |
+
+**The engine is not slower; the guest does twice the work per present.**
+- Per block, Chrome is as fast as Node or faster: about 33 ns/block on both
+  in coop, and 34.8 Mblocks/s on the Threads Worker.
+- The per-present gap is guest work, confirmed by two counters that agree:
+  - `get_blocks_now`: 860 k vs 395–442 k per present.
+  - Handler hist, threaded ops per present (`hist-compare.js`,
+    `hist-coop-1` vs `cli/f-hist-title.json`): 1.02 M vs 478 k.
+- The section above called blocks/present "not comparable across hosts".
+  That was wrong: the same uop settings apply on both hosts
+  (`test/runner-experiments.js` sets only the WAT defaults).
+- Presents per GM step are 2.0 on both hosts (`count-coop-3`, `cli/g-count.log`).
+
+**Where the extra work goes.** The extra work is not uniform:
+- RTTI blocks `_FinalizeRecord` 0x4064e8 and `_FinalizeArray` 0x406534 run
+  2.7× more.
+- The collision event pass block 0x539df9 runs 2360 vs 28 per present (84×).
+- Blocks 0x40661d (a `_FinalizeArray` arm) and 0x4aeead (nth-instance) run
+  only in the browser.
+- Nth-instance 0x4aee6d is equal on both hosts, so the instance count is
+  about the same.
+
+So the browser's title room fires collision events, and the GML that copies
+values with them, that the CLI room does not. That is a game-state or
+environment difference: player position, the held Enter key, screen size.
+For comparison, headless Chrome measured 165 k blocks/present in the section
+above. This is not fixed. **Next:** dump the instance list and the player's x/y
+in both hosts at the measuring point.
+
+**Coop duty cycle** (`tools/page-probes/measure-host-duty.js`, `coop-1`):
+- Time split: slices 84 %, step glue 12 %, gaps 4 %, 0 sleeps.
+- Step p50 3.1 ms / p95 8.4 ms; gap p50 0.02 ms.
+- The page thread never idles, so scheduling is not a lever.
+
+**Fixed: per-present readback in the coop presenter.**
+- The cause: `GpuStreamHost` `_place` (any frame with a non-zero dst, which
+  is every windowed D3D frame) read `frame.pixels`. That is a lazy
+  `gl.readPixels` (2.9 ms/present) plus a `putImageData`, 9 % of page CPU.
+- The fix: `_place` now `drawImage`s the rect (`srcX`/`srcY`, set by
+  `lib/gpu-stream-webgl.js`) straight from the WebGL canvas.
+- Result: coop 27.3 → 32.0 presents/s (+17 %), non-wasm 9.1 → 4.8 ms/present.
+- Threads already sends an ImageBitmap and is unchanged.
+
+**Ruled out:**
+- Small quanta: CLI `set-batch-size:2048` keeps `$branch_end_at` at
+  0.28 ms/present.
+- Tier-up: `--js-flags=--no-wasm-dynamic-tiering`
+  (`web-input-probe --chrome-arg=`, run `coop-fix-notier`) is slower,
+  25.6 presents/s.
+- Config: the same uop/SSE settings apply on both hosts, and the app entry
+  has no flags.
+
+The browser `$branch_end_at` family is about 2.8 ms/present against 1.0 in
+the CLI. It scales with the extra guest work, which reaches more distinct
+branch targets.
+
+`--names` in `cpuprof-top` and `func-index` mis-name this wasm. Build a named
+copy with `node tools/build-compile-wat.js --out=X.wasm --names --no-facts`
+and read the names with `wasm-objdump -x -j name`. `prof-compare.js` takes that
+listing.
 
 ## Ruled out
 
