@@ -138,6 +138,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // tries after a failed calls-followed attempt (a mask: 1 cut only the
   // icall sites, 2 halve the span first, 4 keep a call head's own call in
   // the nocall retry; 0 the pre-section-24 order). docs/uop-tier-design.md §24.
+  // --uop-opt=MASK: the stacked optimizer passes (07d $uop_opt; bits in
+  // docs/design/uop-optimizer-pipeline.md), each its own bit, default 0.
+  // Hex (0x1ff) or decimal. Compile-time per instance, so inherited.
+  const UOP_OPT = (() => { const v = getArg('uop-opt', null); return v === null || v === 'true' ? null : Number(v) >>> 0; })();
+  const uopOptWanted = () => uopWanted() && UOP_OPT !== null;
   const UOP_RETRY_LADDER = hasFlag('no-uop-retry-ladder') ? 0
     : (() => { const v = getArg('uop-retry-ladder', null); return v === null ? null : v === 'true' ? 7 : Number(v) | 0; })();
   // --uop-census: log every head's verdict (installed / declined + reason),
@@ -427,6 +432,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (UOP_HOT_AGE !== null) inheritWasm('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
     if (UOP_ICG_MEGA !== null) inheritWasm('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
     if (UOP_RETRY_LADDER !== null) inheritWasm('set_uop_retry_ladder', UOP_RETRY_LADDER);
+    if (uopOptWanted()) inheritWasm('set_uop_opt', UOP_OPT);
     if (UOP_REGUARD_SPAN !== null) inheritWasm('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
     if (TREE_FOLD || TRACE_TREE_FOLD) inheritWasm('set_tree_fold', 1);
     if (TRACE_TREE_FOLD) inheritWasm('set_tree_trace', 1);
@@ -459,6 +465,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_HOT_AGE !== null && available('set_uop_hot_age')) set('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
       if (UOP_ICG_MEGA !== null && available('set_uop_icg_mega')) set('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
       if (UOP_RETRY_LADDER !== null && available('set_uop_retry_ladder')) set('set_uop_retry_ladder', UOP_RETRY_LADDER);
+      if (uopOptWanted() && available('set_uop_opt')) set('set_uop_opt', UOP_OPT);
       if (aggrWanted() && available('set_aggressive_stack')) set('set_aggressive_stack', 1);
       for (const [setter, wanted] of WIDEN) if (wanted() && available(setter)) set(setter, 1);
       if (available('set_uop_trace_heads')) set('set_uop_trace_heads', traceWanted() ? 1 : 0);
@@ -654,6 +661,17 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       }
       // $uop_cstat 37: kind-34 sites kept; uop_sse_svcs: window-miss services
       if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} miss-services=${x.uop_sse_svcs() >>> 0}`);
+      // The --uop-opt ledger (07d uop_opt_stat): printed for every arm,
+      // control included, so arms compare line for line. Cut passes (R2 C2
+      // S1 M1 C3 V5) report 0: stores deleted, variants.
+      if (x.uop_opt_stat) {
+        const os = (k) => x.uop_opt_stat(k) >>> 0;
+        log(`uop opt: mask=0x${(x.get_uop_opt ? x.get_uop_opt() >>> 0 : 0).toString(16)} enters=${st(4)} ` +
+          `exits=${st(4)} head-exits=${st(6)} charged-blocks=${st(5)} service-calls=${os(2)} ` +
+          `loads-deleted=${os(7)} stores-deleted=0 folds=${os(7)} fold-dwords=${os(10)} jcc-folded=${os(8)} ` +
+          `variants=0 megamorphic=${st(21)} lock-sites=${os(4)} sahf-sites=${os(5)} ret-exits=${os(6)} ` +
+          `fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
+      }
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
         (x.uop_hot_halvings ? ` halvings=${x.uop_hot_halvings() >>> 0}` : ''));

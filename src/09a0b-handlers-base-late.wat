@@ -2649,7 +2649,12 @@
                 (i32.store offset=0 (global.get $reg_base) (i32.const 0)))
               (else
                 (i32.store (local.get $old_wa) (local.get $old))
-                (i32.store offset=0 (global.get $reg_base) (i32.const 1))))))))
+                (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+                ;; --uop-opt 0x080: a dword folded on the strength of its
+                ;; section's protection may be writable now (07e $uc_fold_ok)
+                (if (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x80)) (i32.const 0))
+                             (i32.ne (global.get $uop_nranges) (i32.const 0)))
+                  (then (call $uop_code_write (local.get $arg0) (local.get $arg1))))))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 

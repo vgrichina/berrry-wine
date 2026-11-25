@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "186cff6e19750a796324846127a06f6fa783ad39d96e288d4b9ac15c30e645d7",
+      "sha256": "7536f3e4779419c0972843d8c8b5d5680b276557f81d8a1883a6f17ab22a28d3",
+      "reason": "Review 20261125 --uop-opt=MASK (opt-in, default 0): the host plumbs set_uop_opt (main instance, guest Worker, inherited for CreateThread instances) exactly like set_uop_sse. A compile-time mask of uop optimizer passes; no EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "572eb8ce1ced16af8e819c15aefad110a908ee60403661660233da0e50ab9039",
+      "sha256": "5af6ca3ce27394b45fc9c15f90ba08b6302cefcf299c19f8b00b5f4dc2f5cf70",
+      "reason": "Review 20261125 --uop-opt=MASK: set_uop_opt joins the inherited setters, a compile-time choice per instance with the same lifetime as set_uop_sse."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "dac6da8926895f070199ba0596bfe90ef3177f56693b6b753829c4413e18f1bd",
+      "sha256": "3167868d99fec53a678c9854594f61e54526c8d59f4e5c77a58788dc29bf9eff",
+      "reason": "Review 20261125 --uop-opt 0x004 (default off): $pc steps over the 79/80/87 pending CALL/RET seams only while $dao_status and $pending_armed are both 0, where $pending_push/$pending_pop/$pending_entry return without effect. No EIP write, target, guest stack or invocation lifetime changes; callback ownership remains pending."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:init_thread",
+      "baseSHA256": "87b3f35370d164c6027e0de5714d54de9b32cfbc8c5c11db81bbe07645664ab7",
+      "sha256": "3b4add94828996bfb98c6dd9be5253b76a77bb5d92760d2f225ef650d4c25402",
+      "reason": "Review 20261125 --uop-opt: a worker tid also atomically sets the shared $UOP_MULTI_INST word, after which uop programs that folded read-only data fall through and drop. No callback, entry, continuation or lifetime change."
+    }
+  ]
+}

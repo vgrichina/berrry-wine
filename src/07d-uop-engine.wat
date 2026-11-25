@@ -300,6 +300,67 @@
   ;; or aliased entry only costs an inline cache, never a wrong answer.
   ;; 0 turns the rule off. Cleared with the verdicts ($uop_flush_all).
   (global $uop_icg_mega (mut i32) (i32.const 32))
+  ;; ===================================================================
+  ;; --uop-opt=MASK / ?uop-opt=MASK (docs/design/uop-optimizer-pipeline.md):
+  ;; the stacked optimizer passes, one bit each, all default off. Mask 0 is
+  ;; byte-identical programs to the tier without them
+  ;; (test/test-uop-opt-identity.js). Compile-time per instance, so it is an
+  ;; inherited global (lib/worker-imports.js); the setter (07e) drops every
+  ;; program and verdict.
+  ;;   0x001 verdict map: a decline is remembered in its own table, never lost
+  ;;         to a set whose two ways are live programs
+  ;;   0x002 RET exit: a RET no call in the region names stays, as an exit
+  ;;         at the RET; REP RET (F3 C3) is RET
+  ;;   0x004 seam elision: the CALL/RET seams 79/80/87 stay in $uop_fast
+  ;;         while neither observer is armed
+  ;;   0x008 LOCK / memory XCHG as plain RMW while LOCK_MODE is 0 (stamp 1)
+  ;;   0x010 SAHF (kind 35) in the tier
+  ;;   0x020 FS: prefixed forms, with the instance's fs_base (stamp 2)
+  ;;   0x040 F1 constant lattice over the loop's registers
+  ;;   0x080 F2 read-only image loads as constants (stamps 1 and 4)
+  ;;   0x100 C1 a Jcc whose flags F1 knows becomes a JMP (needs 0x040)
+  (global $uop_opt (mut i32) (i32.const 0))
+  ;; The ledger (run.js prints it, $uop_opt_stat): enters falling through on
+  ;; a stale stamp, seams stepped over, service exits taken, declines the
+  ;; table answered.
+  (global $uop_opt_stampfail (mut i32) (i32.const 0))
+  (global $uop_opt_seams (mut i32) (i32.const 0))
+  (global $uop_opt_svc (mut i32) (i32.const 0))
+  (global $uop_opt_declhits (mut i32) (i32.const 0))
+  ;; Shared, next to the window epoch: nonzero once any second instance (a
+  ;; Worker or a cooperative thread) has its own arena. A guest store is
+  ;; checked only against the WRITING instance's ranges ($uop_code_write), so
+  ;; a folded read-only dword (0x080) is sound only while one instance runs.
+  (global $UOP_MULTI_INST i32 (region.addr $UOP_CSCRATCH 0x139008))
+  ;; The program header's stamp (+36) names what the program assumed when
+  ;; it was compiled; $th_uop_enter re-checks it and drops every program
+  ;; when it no longer holds (it changes at most a few times per process).
+  ;;   1 LOCK_MODE was 0   2 fs_base was +40   4 one instance ran
+  (func $uop_hdr_bad (param $op i32) (result i32)
+    (local $s i32)
+    (local.set $s (i32.load offset=36 (local.get $op)))
+    (i32.or
+      (i32.or
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 1)) (i32.const 0))
+                 (i32.ne (i32.load (global.get $LOCK_MODE)) (i32.const 0)))
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 2)) (i32.const 0))
+                 (i32.ne (global.get $fs_base) (i32.load offset=40 (local.get $op)))))
+      (i32.and (i32.ne (i32.and (local.get $s) (i32.const 4)) (i32.const 0))
+               (i32.ne (i32.load (global.get $UOP_MULTI_INST)) (i32.const 0)))))
+  ;; 0x001: 256 direct-mapped declined EIPs in the windows area's free
+  ;; 0x3C00..0x4000 (the megamorphic table ends at 0x3C00). An aliased entry
+  ;; only costs a compile; cleared with the verdicts ($uop_flush_all).
+  (func $uop_decl_slot (param $eip i32) (result i32)
+    (i32.add (i32.add (global.get $uop_arena) (global.get $uop_wins_off))
+      (i32.add (i32.const 0x3C00)
+        (i32.shl (i32.shr_u (i32.mul (local.get $eip) (i32.const 0x9E3779B1)) (i32.const 24))
+                 (i32.const 2)))))
+  (func (export "uop_opt_stat") (param $k i32) (result i32)
+    (if (i32.eqz (local.get $k)) (then (return (global.get $uop_opt_stampfail))))
+    (if (i32.eq (local.get $k) (i32.const 1)) (then (return (global.get $uop_opt_seams))))
+    (if (i32.eq (local.get $k) (i32.const 2)) (then (return (global.get $uop_opt_svc))))
+    (if (i32.eq (local.get $k) (i32.const 3)) (then (return (global.get $uop_opt_declhits))))
+    (call $uc_opt_stat (i32.sub (local.get $k) (i32.const 4))))
   (global $uop_icg_retire (mut i32) (i32.const 0))
   (global $uop_icg_megas (mut i32) (i32.const 0))
   (global $uop_icg_mkills (mut i32) (i32.const 0))
@@ -1163,6 +1224,7 @@
       (local.set $pc (call $uop_fast (local.get $pc) (local.get $budget)))
       (local.set $budget (global.get $uop_io_budget))
       (if (i32.eqz (global.get $uop_io_kind)) (then (return (local.get $budget))))
+      (global.set $uop_opt_svc (i32.add (global.get $uop_opt_svc) (i32.const 1)))
       (local.set $op (i32.load (local.get $pc)))
       (if (i32.eq (global.get $uop_io_kind) (i32.const 2))
         (then
@@ -2462,6 +2524,20 @@
       (global.set $uop_io_kind (i32.const 2))
       (global.set $uop_io_budget (local.get $budget))
       (return (local.get $pc)))
+      ;; --uop-opt 0x004: the pending CALL/RET seams 79/80/87 are no-ops
+      ;; while neither observer is armed ($pending_push/$pending_pop/
+      ;; $pending_entry return at once), so step over them here instead of
+      ;; leaving $uop_fast for each.
+      (if (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 4)) (i32.const 0))
+                   (i32.eqz (i32.or (global.get $dao_status) (global.get $pending_armed))))
+        (then
+          (local.set $v (i32.load (local.get $pc)))
+          (if (i32.eq (local.get $v) (i32.const 79))
+            (then (global.set $uop_opt_seams (i32.add (global.get $uop_opt_seams) (i32.const 1)))
+                  (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L)))
+          (if (i32.or (i32.eq (local.get $v) (i32.const 80)) (i32.eq (local.get $v) (i32.const 87)))
+            (then (global.set $uop_opt_seams (i32.add (global.get $uop_opt_seams) (i32.const 1)))
+                  (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L)))))
       ;; An op that needs a call, still at $pc.
       (global.set $uop_io_kind (i32.const 1))
       (global.set $uop_io_budget (local.get $budget))
@@ -2576,6 +2652,10 @@
   (func $uop_try (param $eip i32) (result i32)
     (local $pc i32)
     (if (i32.ne (call $uop_map_get (local.get $eip)) (i32.const 0)) (then (return (i32.const 0))))
+    (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 1)) (i32.const 0))
+      (then (if (i32.eq (i32.load (call $uop_decl_slot (local.get $eip))) (local.get $eip))
+              (then (global.set $uop_opt_declhits (i32.add (global.get $uop_opt_declhits) (i32.const 1)))
+                    (return (i32.const 1))))))
     (local.set $pc (call $uop_map_slot (local.get $eip)))
     (if (i32.ne (local.get $pc) (i32.const 0))
       (then (if (i32.eq (i32.load offset=4 (local.get $pc)) (i32.const 1)) (then (return (i32.const 1))))))
@@ -2599,6 +2679,8 @@
   ;; $uop_flush_all (the code itself may have changed) forgets every marker.
   (func $uop_mark_dead (param $eip i32)
     (local $s i32)
+    (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 1)) (i32.const 0))
+      (then (i32.store (call $uop_decl_slot (local.get $eip)) (local.get $eip))))
     (local.set $s (call $uop_map_free_way (local.get $eip)))
     (if (i32.eqz (local.get $s)) (then (return)))
     (i32.store (local.get $s) (local.get $eip))
@@ -2854,6 +2936,8 @@
                  (i32.const 0) (i32.const 0x8000))
     (memory.fill (call $uop_cut_slot (i32.const 0)) (i32.const 0) (i32.const 1024))
     (memory.fill (call $uop_icg_slot (i32.const 0)) (i32.const 0) (i32.const 2048))
+    (memory.fill (i32.add (i32.add (global.get $uop_arena) (global.get $uop_wins_off)) (i32.const 0x3C00))
+                 (i32.const 0) (i32.const 1024))
     (global.set $uop_icg_retire (i32.const 0)))
 
   ;; Cut-exit landings (docs/uop-tier-design.md section 21.6). A trace's
@@ -2914,6 +2998,14 @@
           ;; must see the tier running (13-exports.wat $dbg_recompute).
           (i32.eqz (i32.or (global.get $dbg_tier_guard) (global.get $code16))))
       (then
+        ;; --uop-opt: what the program assumed when compiled ($uop_hdr_bad).
+        ;; A stale stamp drops every program (they recompile under the new
+        ;; state) and this entry falls through to the threaded block.
+        (if (i32.load offset=36 (local.get $op))
+          (then (if (call $uop_hdr_bad (local.get $op))
+                  (then (global.set $uop_opt_stampfail (i32.add (global.get $uop_opt_stampfail) (i32.const 1)))
+                        (call $uop_flush)
+                        (dispatch-next)))))
         ;; Keep the windows the last run proved unless something they depend
         ;; on changed since; else poison them, so the first access through
         ;; each misses and guards its own page.
