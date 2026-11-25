@@ -85,3 +85,26 @@ not to one hot `jmp [table+reg*4]`. It is a benchmark for call/return-heavy Delp
 code (the uop icall/ret path), not for an interpreter fold. Evidence:
 `scratch/runs/20261124-dmusic-wave/` (`hist-62000-70000.json`, `hot-loop-census.txt`,
 `disasm-hot.txt`, `run6.log`).
+
+### Room size and Present (448x448 room, 640x480 window)
+
+`metrojd_gm7.exe` creates its D3D8 device windowed (`0x4a3a7b`): back buffer = the
+desktop mode (640x480), SwapEffect COPY, `hDeviceWindow` 0 (focus window, the 640x480
+`TRunnerForm` 0x10019). The room is 448x448: `0x4a3f80` stores the view size in
+`[0x587a68]`/`[0x587a6c]` and sets a 448x448 viewport. Each frame `0x4a42d4` presents
+source `(0,0,[0x587a68],[0x587a6c])` onto a destination from `0x49d47c`, which
+aspect-fits the room into the client when the scale double `[0x587a04]` is negative
+(-0.01 here): `(80,0,560,480)`. Read with `--break=0x4a437a` (the instruction after the
+Present call): the rects sit at ESP+0x10 and ESP+0x20.
+
+The live window was already right: the ring stretches the source onto the
+destination (`$d9g_present`). Only the CLI `--png` was wrong. It showed the room in the
+top-left 448x448 and the rest black. `d3d9_gps_sync_front` read the back buffer back and
+re-presented it whole at 0,0, and the capture then picked that raw back-buffer DIB.
+Fixed 2026-11-24: `$d9g_present` records whether a Present was *placed* (source
+sub-rect, destination offset or stretch; `d9g_mem+2956`, export
+`d3d9_gps_present_placed`). A placed capture leaves the ring frame on the window
+(stat 70), and `test/run.js` then captures the screen instead of a DX slot. Test:
+case 5 of `test/test-d3d9-gps-present-stretch.js`. Evidence:
+`scratch/runs/20261124-metrojd-width/` (`before.png` raw DIB, `before-canvas.png`
+raw buffer laid over the left 80 px, `before-mid.png` the live window, `after.png`).

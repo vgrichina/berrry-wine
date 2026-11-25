@@ -124,7 +124,8 @@
   ;; blended on the CPU (d9cpu), 83 draws expanded on the CPU into list
   ;; DRAW_UPs, 84 DRAW_UP chunks those emitted (d9cpu), 88 windowed Presents
   ;; stretched from source to destination rect ($d9g_present), 89 stretched
-  ;; Presents shown unscaled (no COPY cap), 120..125 d9fv (its block).
+  ;; Presents shown unscaled (no COPY cap), 70 CLI captures that left a
+  ;; placed Present on screen (d3d9_gps_sync_front), 120..125 d9fv (its block).
   ;;
   ;; Block $d9g_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +704 viewport cache (24), +768 bind cache {n, 6 x {slot, tex,
@@ -132,7 +133,9 @@
   ;; stride, texmap, id}, +1536 sampler cache 32 x {k0, k1, k2, k3, id, -},
   ;; +2304 guest PS cache 32 x {ptr, len, sum, id}, +2816 clear rect
   ;; scratch, +2848 BIND staging (6 x 12), +2944 Present stretch RT {id,
-  ;; w, h} ($d9g_present_target), +4096 fixed scratch (DFX1 288 +
+  ;; w, h} ($d9g_present_target), +2956 last Present placed (1: the window
+  ;; shows the source rect moved and/or stretched, not the whole back buffer
+  ;; at 0,0 -- d3d9_gps_present_placed), +4096 fixed scratch (DFX1 288 +
   ;; 6 x 192 rows), +5632 fixed PS cache 32 x {id, len, key 1440}, +52224
   ;; texture cache 256 x 80 {t, id, w, h, levels, fmt, seq[13], -},
   ;; +72704 buffer cache 64 x {buf, seq, len, id}, +73728 VS constant
@@ -4889,6 +4892,17 @@
     (if (i32.or (i32.or (i32.le_s (local.get $sw) (i32.const 0)) (i32.le_s (local.get $sh) (i32.const 0)))
           (i32.or (i32.le_s (local.get $dw) (i32.const 0)) (i32.le_s (local.get $dh) (i32.const 0))))
       (then (return (i32.const 0))))
+    ;; What the window now shows is not the back buffer as it stands: a
+    ;; source sub-rect, a destination offset or a stretch. GameMaker 7
+    ;; (Metrojd) draws its 448x448 room into a 640x480 back buffer and
+    ;; presents (0,0,448,448) -> (80,0,560,480), aspect-fit in the client.
+    (i32.store offset=2956 (call $d9g_m)
+      (i32.or
+        (i32.or (i32.ne (i32.or (local.get $sx) (local.get $sy)) (i32.const 0))
+          (i32.ne (i32.or (local.get $dx) (local.get $dy)) (i32.const 0)))
+        (i32.or
+          (i32.or (i32.ne (local.get $sw) (global.get $d9g_rt_w)) (i32.ne (local.get $sh) (global.get $d9g_rt_h)))
+          (i32.or (i32.ne (local.get $dw) (local.get $sw)) (i32.ne (local.get $dh) (local.get $sh))))))
     (local.set $rt (global.get $d9g_rt))
     (if (i32.or (i32.ne (local.get $sw) (local.get $dw)) (i32.ne (local.get $sh) (local.get $dh))) (then
       (if (i32.and (i32.ne (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_COPY)) (i32.const 0))
@@ -5181,7 +5195,13 @@
     (call $d9g_drop_targets))
 
   ;; CLI capture: land the executor's picture in the back buffer DIB (the
-  ;; ring presented it; the DIB is only the CPU's copy) and present that.
+  ;; ring presented it; the DIB is only the CPU's copy) and present that --
+  ;; unless the last Present was placed (moved, cropped or stretched). Then
+  ;; the back buffer is not the picture: re-presenting it whole at 0,0 laid
+  ;; the raw buffer over the window, and a capture of the DIB showed it too
+  ;; (Metrojd's room in the top-left 448x448 of a 640x480 frame). The
+  ;; window keeps the ring's placed frame; the host captures the screen
+  ;; (d3d9_gps_present_placed).
   ;; Skipped (stat 68 + k): 0 executor not coherent, 1 no target entry.
   (func (export "d3d9_gps_sync_front")
     ;; A synchronous host capture cannot return success with stale pixels.
@@ -5201,7 +5221,14 @@
     (global.set $d9g_cpu_bits (load.field DxObject misc1 (local.get $rt)))
     (global.set $d9g_cpu_pitch (load.field DxObject pitch (local.get $rt)))
     (global.set $d9g_cpu (i32.const 1))
-    (call $dx_present (local.get $rt)))
+    (if (i32.load offset=2956 (call $d9g_m))
+      (then (call $d9g_stat (i32.const 70) (i32.const 1)))
+      (else (call $dx_present (local.get $rt)))))
+  ;; 1 when the last ring Present showed something other than the whole back
+  ;; buffer at the window's client origin (see $d9g_present).
+  (func (export "d3d9_gps_present_placed") (result i32)
+    (if (i32.eqz (global.get $d9g_mem)) (then (return (i32.const 0))))
+    (i32.load offset=2956 (global.get $d9g_mem)))
 
   ;; ---- d9rt: render targets and surfaces begin --------------------------------
   ;; Colour surfaces (0xd3d90006 records: CreateRenderTarget, offscreen plain

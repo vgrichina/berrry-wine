@@ -13381,7 +13381,7 @@ if (VERBOSE) {
     if (instance.exports.d3d9_gps_stat && instance.exports.d3d9_gps_stat(14)) {
       instance.exports.d3d9_gps_sync_front();
       const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
-      console.log(`[d3d9-gps] capture: executor-readback=${st(51)}`);
+      console.log(`[d3d9-gps] capture: executor-readback=${st(51)} placed-present-kept=${st(70)}`);
     }
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
@@ -13399,7 +13399,11 @@ if (VERBOSE) {
       && ex.gl_sw_front()) ? (ex.gl_sw_slot() | 0) : null;
     const glFront = glFrontSlot === null ? null
       : (surfaces.find(s => s.slot === glFrontSlot) || null);
-    const surface = (PNG_CANVAS || (glBitmapOnly && wantSlot === null)) ? null
+    // A windowed D3D8/9 Present that moved, cropped or stretched its source
+    // (GameMaker 7 aspect-fits a 448x448 room into a 640x480 client) leaves
+    // the back buffer unlike the window: capture the screen, not the DIB.
+    const d3dPlaced = wantSlot === null && !!(ex.d3d9_gps_present_placed && ex.d3d9_gps_present_placed());
+    const surface = (PNG_CANVAS || d3dPlaced || (glBitmapOnly && wantSlot === null)) ? null
       : (wantSlot === null ? (glFront || chooseDxPresentationSurface(surfaces, mem))
         : (surfaces.find(s => s.slot === wantSlot) || null));
     if (wantSlot !== null && !surface) {

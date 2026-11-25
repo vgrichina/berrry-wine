@@ -95,9 +95,35 @@ async function run(gps, extra) {
     await s.call('IDirect3DSurface9_Release', '[ctx.d9g.big]');
     await s.call('IDirect3DSurface9_Release', '[ctx.d9g.bb]');
 
+    // 5: the CLI capture (d3d9_gps_sync_front) after a placed Present.
+    // GameMaker 7 (Metrojd) draws a 448x448 room into its 640x480 back
+    // buffer and presents (0,0,448,448) -> (80,0,560,480). The capture used
+    // to re-present the whole back buffer at 0,0 over the window, and the
+    // CLI --png read that DIB: the room in the top-left, the rest black.
+    // Here: the 8x8 picture's 4x4 corner onto (4,0,20,16).
+    const placed = () => s.evaluate('exports.d3d9_gps_present_placed?exports.d3d9_gps_present_placed()>>>0:-1');
+    const frameLayer = () => s.evaluate(`(()=>{const w=renderer.windows[exports.get_main_hwnd()];
+      return w&&w._dxFrameLayer?(w._dxFrameLayer===w._gpuFrameLayer?'gpu':'dib'):'none'})()`);
+    await s.evaluate('ctx.d9g.u32(ctx.d9g.rect,[0,0,4,4]);ctx.d9g.u32(ctx.d9g.r2,[4,0,20,16]);true');
+    await ok('IDirect3DDevice9_Present', '[ctx.d9g.device,ctx.d9g.rect,ctx.d9g.r2,0,0]');
+    assert.strictEqual(await placed(), 1, `${gps}: offset+stretched Present is placed`);
+    assert.strictEqual(await frameLayer(), 'gpu', `${gps}: the window shows the ring frame`);
+    await s.evaluate('exports.d3d9_gps_sync_front();true');
+    assert.strictEqual(await frameLayer(), 'gpu',
+      `${gps}: capture keeps the placed frame (no raw back buffer at 0,0)`);
+    assert.strictEqual(await s.evaluate('exports.d3d9_gps_stat(70)>>>0'), 1, `${gps}: stat 70`);
+    // The whole back buffer onto its own size at 0,0 is not placed, and
+    // the capture presents the DIB as before.
+    await s.evaluate('ctx.d9g.u32(ctx.d9g.rect,[0,0,8,8]);ctx.d9g.u32(ctx.d9g.r2,[0,0,8,8]);true');
+    await ok('IDirect3DDevice9_Present', '[ctx.d9g.device,ctx.d9g.rect,ctx.d9g.r2,0,0]');
+    assert.strictEqual(await placed(), 0, `${gps}: 1:1 Present at 0,0 is not placed`);
+    await s.evaluate('exports.d3d9_gps_sync_front();true');
+    assert.strictEqual(await s.evaluate('exports.d3d9_gps_stat(70)>>>0'), 1, `${gps}: unplaced capture re-presents`);
+    lines.push(`${gps} placed capture keeps the ring frame`);
+
     const st = await s.stats();
     assert.strictEqual(st.declines, 0, JSON.stringify(st.reasons));
-    assert.strictEqual(st.presents, 3, JSON.stringify(st));
+    assert.strictEqual(st.presents, 5, JSON.stringify(st));
     await s.call('IDirect3DDevice9_Release', '[ctx.d9g.device]');
     assert.strictEqual(await s.close(), 0, s.output());
     return { lines, big };
