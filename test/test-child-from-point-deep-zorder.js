@@ -71,6 +71,24 @@ const WS_VISIBLE = 0x10000000;
     'closed combo does not claim its hidden dropdown or surrounding group');
 
   console.log('PASS  deep child hit test takes the topmost overlapping sibling');
+
+  // A group box is transparent itself, but not its children. VB6's Frame is a
+  // BS_GROUPBOX superclass that parents the controls drawn in it: SimCity
+  // 2001's tool buttons are children of three such frames, and skipping the
+  // frame sent every click on them to the form.
+  const form = 0x10020, frame = 0x10021, tool = 0x10022, stray = 0x10023;
+  e.test_make_window(form, 0, WS_VISIBLE, 0, 0, 551, 476);
+  e.test_make_window(frame, form, V | 7, 8, 337, 73, 89);
+  e.test_class(frame, 1);
+  e.test_make_window(tool, frame, V, 48, 40, 17, 17);
+  e.test_make_window(stray, frame, V, 100, 10, 17, 17); // outside the frame: clipped away
+  assert.strictEqual(e.wnd_child_from_point_deep(form, 8 + 48 + 5, 337 + 40 + 5) >>> 0, tool,
+    'a click on a control inside a group-box frame reaches the control');
+  assert.strictEqual(e.wnd_child_from_point_deep(form, 8 + 4, 337 + 80) >>> 0, 0,
+    'a click on the bare frame is still transparent');
+  assert.strictEqual(e.wnd_child_from_point_deep(form, 8 + 100 + 5, 337 + 10 + 5) >>> 0, 0,
+    'a frame child outside the frame rect takes no click');
+  console.log('PASS  group-box frames pass clicks to their own children');
 })().catch(error => {
   console.error(error);
   process.exit(1);

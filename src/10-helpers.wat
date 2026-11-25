@@ -6728,15 +6728,14 @@
       ;; Dialog combos must remain eligible: guest-worker input queues the
       ;; selected HWND instead of invoking the synchronous dialog router.
       ;; Skipping the combo there routed Turok's selector click to its frame.
+      ;; Transparent means the decoration's own pixels, not its children: a
+      ;; group box answers HTTRANSPARENT, but USER finds the deepest child
+      ;; under the point before it hit-tests, so a control parented to a
+      ;; group box still takes its click. VB6's Frame is a BS_GROUPBOX
+      ;; superclass that parents its controls -- every SimCity 2001 tool
+      ;; button sits in one, and skipping the frame routed those clicks to
+      ;; the form. Such a decoration competes only when a child is hit.
       (local.set $cls (call $ctrl_table_get_class (local.get $ch)))
-      (if (i32.or
-            (i32.or (i32.eq (local.get $cls) (i32.const 3))
-                    (i32.eq (local.get $cls) (i32.const 6)))
-            (i32.and (i32.eq (local.get $cls) (i32.const 1))
-              (i32.eq (i32.and (local.get $style) (i32.const 15)) (i32.const 7))))
-        (then
-          (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
-          (br $scan)))
       (local.set $x (call $wnd_window_screen_x (local.get $ch)))
       (local.set $y (call $wnd_window_screen_y (local.get $ch)))
       (local.set $w (call $wnd_screen_w (local.get $ch)))
@@ -6745,6 +6744,23 @@
       ;; window it was created with; see $combobox_hit_h.
       (if (i32.eq (local.get $cls) (i32.const 5))
         (then (local.set $h (call $combobox_hit_h (local.get $ch) (local.get $h)))))
+      (if (i32.and
+            (i32.and (i32.ge_s (local.get $sx) (local.get $x))
+                     (i32.lt_s (local.get $sx) (i32.add (local.get $x) (local.get $w))))
+            (i32.and (i32.ge_s (local.get $sy) (local.get $y))
+                     (i32.lt_s (local.get $sy) (i32.add (local.get $y) (local.get $h)))))
+        (then
+          (if (i32.and
+                (i32.or
+                  (i32.or (i32.eq (local.get $cls) (i32.const 3))
+                          (i32.eq (local.get $cls) (i32.const 6)))
+                  (i32.and (i32.eq (local.get $cls) (i32.const 1))
+                    (i32.eq (i32.and (local.get $style) (i32.const 15)) (i32.const 7))))
+                (i32.eqz (call $wnd_child_from_point_deep
+                  (local.get $ch) (local.get $sx) (local.get $sy))))
+            (then
+              (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+              (br $scan)))))
       (if (i32.and
             (i32.and (i32.ge_s (local.get $sx) (local.get $x))
                      (i32.lt_s (local.get $sx) (i32.add (local.get $x) (local.get $w))))

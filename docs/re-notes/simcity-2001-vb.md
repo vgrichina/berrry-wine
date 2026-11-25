@@ -56,7 +56,67 @@ in ENGINE**, 20.7% in the rest of msvbvm60, 0.6% in the exe, 0.8% oleaut32. `--c
 `0x632fbe,0x633cab` gives 0.70M / 0.89M hits by batch 20000. The run reaches 20000 batches in
 ~13 s wall; `--cpu-window=10000:20000` measured 6.3 s user.
 
-Open: the map picture box stays white (a GDI/picture gap, not investigated). The route does
-not depend on it.
-
 Evidence: `scratch/runs/20261124-interp-bench/simcity_2001_vb/`.
+
+## Window tree
+
+Top-level form, client origin screen (48,43) in the headless 640x480 layout. Map picture box `pbSCREEN`
+(`0x10072`, client ~ screen 58,53, 13-px tiles) with a mask box `0x10073` under it. The tool
+buttons are `Selector` control arrays inside three VB6 Frames (BS_GROUPBOX superclass, style
+`0x56010007`): Frame3 "Road $2000" (`0x1004e`), "Buy Small $90,000" (`0x1005a`), "Buy BIG
+$300,000" (`0x10065`). Status/Population/Income panels on the right.
+
+Turf is drawn as random pixels on purpose and changes with the season: spring green/pink,
+summer green, fall orange, winter white. A building is bought and placed whole; population
+moves into what you buy (nothing grows on its own zone the way SimCity's does).
+
+## Bugs fixed (2026-11-24)
+
+1. **White map** (066cf7431). USER links a new WS_CHILD at HWND_BOTTOM; we linked it at the
+   top. The mask box, created after `pbSCREEN`, sat above it and clipped all of the map's
+   painting away. `test/test-create-child-zorder-bottom.js`.
+2. **Tool buttons unclickable.** `$wnd_child_from_point_deep` skipped group boxes as
+   transparent, and with them their children, so every click on a Selector went to the form.
+   A group box is still transparent itself, but a child under the point now wins.
+   `test/test-child-from-point-deep-zorder.js`.
+3. **Quick clicks on tools did nothing.** VB's control proc reads `GetKeyState(VK_LBUTTON)` on
+   WM_LBUTTONDOWN and only captures (and so only raises Click) if it reads down. GetKeyState
+   is queue-synchronous; we returned the device state, already up while the game was busy
+   redrawing. Mouse-button VKs now come from the MK_* flags of the last mouse message removed
+   from the queue. `test/test-getkeystate-queue-sync-mouse.js`.
+4. **A tool click right after a map click became a second map click.** The host routes a mouse
+   event to the capture window when it happens; USER does it when the thread reads it. The game
+   holds capture on the map for a whole slow placement, so the next press, made before the
+   game read the release, was addressed to the map. A client mouse message addressed to the
+   window that last lost capture, with its point outside that window, is resolved again at
+   GetMessage/PeekMessage time (`$input_retarget_stale_capture`).
+   `test/test-mouse-retarget-stale-capture.js`.
+
+## Play route (ctl.js, headless)
+
+```
+node test/run.js --app=simcity_2001_vb --no-build --quiet-api --quiet-blocks \
+  --control=8166 --frozen --stuck-after=0 &
+C(){ node tools/ctl.js -s :8166 "$@"; }
+C step 8000                                   # main window up
+C click 111,428; C step 600                   # Road: horizontal
+for x in 150 163 176 189 202 215 228 241 254; do C click $x,200; C step 600; done
+C click 111,452; C step 1500                  # Road: vertical
+for y in 162 175 188 214 227 240; do C click 267,$y; C step 800; done
+C click 171,404; C step 1500; C click 160,186; C step 1000; C click 186,186   # small Res x2
+C click 170,427; C step 1500; C click 212,186                                 # small Com
+C click 172,452; C step 1500; C click 238,215                                 # small Ind
+C click 318,414; C step 1500; C click 300,150                                 # BIG Res
+C step 10000; C png city.png
+```
+
+Roads cost $2000 a tile, small buildings $90k, BIG $300k. The game redraws in p-code and lags
+input by thousands of batches: a click registers, but the map/title can show it only 2000-6000
+batches later. Judge by funds after waiting, not by the next frame. Result: OCT 1901 pop 33
+-> OCT 1903 pop 501, income 4254 -> DEC 1904 income 9084, funds rising
+(`scratch/runs/20261124-sc2001-white-map/route2/`, contact sheet beside it; an earlier session
+reached OCT 1908, pop 941, $55,822 rising).
+
+Verdict: playable. Roads, small and BIG buildings place, the date advances, population moves in
+and income turns positive. Remaining: input lag from the slow p-code redraw (a CPU cost, not a
+routing bug); File menu save/load not exercised.

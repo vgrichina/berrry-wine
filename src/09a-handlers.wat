@@ -1062,6 +1062,9 @@
     (global.set $user_queue_raw_msg (local.get $msg))
     (global.set $user_queue_input_flags
       (i32.and (local.get $flags) (global.get $USER_QUEUE_FLAG_INPUT)))
+    (if (i32.and (i32.ne (local.get $remove) (i32.const 0))
+                 (i32.ne (global.get $user_queue_input_flags) (i32.const 0)))
+      (then (call $input_sync_note (local.get $msg) (local.get $wparam))))
     ;; A null pointer is an internal USER probe: publish only the four fields
     ;; its caller needs in instance-private globals. Full guest MSG writes also
     ;; synthesize time/pt; they must receive a real 28-byte output buffer.

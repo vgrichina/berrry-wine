@@ -5594,6 +5594,7 @@
   (func $input_route_to_owner (param $packed i32) (result i32)
     (local $hwnd i32) (local $owner i32) (local $msg i32) (local $fg i32)
     (if (i32.eqz (local.get $packed)) (then (return (i32.const 0))))
+    (call $input_retarget_stale_capture (local.get $packed))
     (local.set $hwnd (global.get $pending_input_hwnd))
     (local.set $msg (i32.and (local.get $packed) (i32.const 0xFFFF)))
     (if (i32.and (i32.eqz (local.get $hwnd))
@@ -5622,6 +5623,84 @@
               (i32.or (i32.const 1) (i32.shl (global.get $pending_input_token) (i32.const 2))))))
         (return (i32.const 0))))
     (local.get $packed))
+
+  ;; USER picks a mouse message's window when the thread reads it, not when
+  ;; the hardware event happens: the capture window if one is set then,
+  ;; otherwise the window under the point. The host routes when the event
+  ;; arrives, so a press made while the program is still busy with the
+  ;; previous click goes to that click's capture window although the program
+  ;; releases capture on the queued WM_LBUTTONUP before it ever reads the
+  ;; press. SimCity 2001 holds capture on its map for the whole of a slow
+  ;; placement; a tool click right after one became a second click on the
+  ;; map. A host-routed client mouse message whose point lies outside its
+  ;; window is the only kind capture can have produced, so only that kind is
+  ;; resolved again here: to the capture window if this instance holds one,
+  ;; else by hit test inside the same top-level window.
+  (global $capture_lost_hwnd (mut i32) (i32.const 0)) ;; last window to lose capture
+  (func $input_retarget_stale_capture (param $packed i32)
+    (local $msg i32) (local $h i32) (local $lp i32) (local $sx i32) (local $sy i32)
+    (local $cap i32) (local $root i32) (local $next i32) (local $guard i32)
+    (local $target i32) (local $cx i32) (local $cy i32)
+    (local.set $msg (i32.and (local.get $packed) (i32.const 0xFFFF)))
+    (if (i32.or (i32.lt_u (local.get $msg) (i32.const 0x0200))
+                (i32.gt_u (local.get $msg) (i32.const 0x0209)))
+      (then (return)))
+    (local.set $h (global.get $pending_input_hwnd))
+    (if (i32.or (i32.eqz (local.get $h))
+                (i32.lt_s (call $wnd_table_find (local.get $h)) (i32.const 0)))
+      (then (return)))
+    (local.set $cap (global.get $capture_hwnd))
+    (if (i32.eq (local.get $cap) (local.get $h)) (then (return)))
+    ;; Only the window whose capture has since ended can have been chosen by
+    ;; capture; anything else the host addressed by hit test.
+    (if (i32.ne (local.get $h) (global.get $capture_lost_hwnd)) (then (return)))
+    (local.set $lp (global.get $pending_input_lparam))
+    (local.set $sx (i32.add (call $wnd_mouse_msg_origin_x (local.get $h))
+      (i32.extend16_s (local.get $lp))))
+    (local.set $sy (i32.add (call $wnd_mouse_msg_origin_y (local.get $h))
+      (i32.extend16_s (i32.shr_u (local.get $lp) (i32.const 16)))))
+    (if (i32.and
+          (i32.and (i32.ge_s (local.get $sx) (call $wnd_window_screen_x (local.get $h)))
+                   (i32.lt_s (local.get $sx) (i32.add (call $wnd_window_screen_x (local.get $h))
+                                                      (call $wnd_screen_w (local.get $h)))))
+          (i32.and (i32.ge_s (local.get $sy) (call $wnd_window_screen_y (local.get $h)))
+                   (i32.lt_s (local.get $sy) (i32.add (call $wnd_window_screen_y (local.get $h))
+                                                      (call $wnd_screen_h (local.get $h))))))
+      (then (return)))
+    (if (i32.and (i32.ne (local.get $cap) (i32.const 0))
+                 (i32.ge_s (call $wnd_table_find (local.get $cap)) (i32.const 0)))
+      (then (local.set $target (local.get $cap)))
+      (else
+        (local.set $root (local.get $h))
+        (block $top (loop $up
+          (local.set $next (call $wnd_get_parent (local.get $root)))
+          (br_if $top (i32.eqz (local.get $next)))
+          (local.set $root (local.get $next))
+          (local.set $guard (i32.add (local.get $guard) (i32.const 1)))
+          (br_if $top (i32.ge_u (local.get $guard) (global.get $MAX_WINDOWS)))
+          (br $up)))
+        (local.set $cx (call $wnd_client_screen_x (local.get $root)))
+        (local.set $cy (call $wnd_client_screen_y (local.get $root)))
+        ;; Only the root's client area; elsewhere is not a client message.
+        (if (i32.eqz (i32.and
+              (i32.and (i32.ge_s (local.get $sx) (local.get $cx))
+                       (i32.lt_s (local.get $sx) (i32.add (local.get $cx)
+                         (call $wnd_client_w_for_clip (local.get $root)))))
+              (i32.and (i32.ge_s (local.get $sy) (local.get $cy))
+                       (i32.lt_s (local.get $sy) (i32.add (local.get $cy)
+                         (call $wnd_client_h_for_clip (local.get $root)))))))
+          (then (return)))
+        (local.set $target (call $wnd_child_from_point_deep
+          (local.get $root) (local.get $sx) (local.get $sy)))
+        (if (i32.eqz (local.get $target)) (then (local.set $target (local.get $root))))))
+    (if (i32.eq (local.get $target) (local.get $h)) (then (return)))
+    (global.set $pending_input_hwnd (local.get $target))
+    (global.set $pending_input_lparam
+      (i32.or
+        (i32.and (i32.sub (local.get $sx) (call $wnd_mouse_msg_origin_x (local.get $target)))
+                 (i32.const 0xFFFF))
+        (i32.shl (i32.sub (local.get $sy) (call $wnd_mouse_msg_origin_y (local.get $target)))
+                 (i32.const 16)))))
 
   (func $mouse_message_is_down (param $msg i32) (result i32)
     (i32.or
@@ -5910,6 +5989,7 @@
     (i32.shr_u (local.get $packed) (i32.const 16)))
     (call $gs32 (i32.add (local.get $msg_ptr) (i32.const 12))
     (global.get $pending_input_lparam))
+    (call $input_sync_note (local.get $msg) (i32.shr_u (local.get $packed) (i32.const 16)))
     (call $msg_store_input_tail
       (local.get $msg_ptr)
       (local.get $tmp)
@@ -6269,6 +6349,8 @@
             (global.set $input_return_token (global.get $pending_input_token))
             (if (i32.and (local.get $arg4) (i32.const 1))
               (then (global.set $pending_input_packed (i32.const 0))
+                (call $input_sync_note (local.get $msg)
+                  (i32.shr_u (local.get $packed) (i32.const 16)))
                 (call $native_user_event (i32.const 8) (local.get $packed))))
             (if (local.get $hotkey)
               (then
