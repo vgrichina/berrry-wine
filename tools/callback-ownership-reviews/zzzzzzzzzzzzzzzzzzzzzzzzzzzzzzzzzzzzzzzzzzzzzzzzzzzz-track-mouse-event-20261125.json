@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "f5c418ce7c59d15c49aecc785cadec2ac2b83cc886f35d4f71398c7126fa5b70",
+      "sha256": "97685ac0fb9fc40e88e94f874569ae17a0432da36a5b62249d45d24ae6840dad",
+      "reason": "Review 20261125 TrackMouseEvent: before scanning the queue, $tme_poll checks this thread's tracking record (shared-memory TME_THREAD_STATE, indexed by guest thread id) against the cursor and, when the mouse has left or rested for the hover time, appends WM_MOUSELEAVE/WM_MOUSEHOVER to the tracked live HWND's own post queue through $post_queue_push. No EIP write, callback frame, stack, HWND lifetime, hook or focus changed; the posted message is delivered by the existing queue path, and callback ownership remains pending."
+    }
+  ]
+}

@@ -966,6 +966,17 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
                 (then (i32.const 900))
                 (else (i32.const 0))))))))
         (return (i32.const 1))))
+    ;; SPI_GETMOUSEHOVERWIDTH/HEIGHT/TIME (0x62/0x64/0x66): the rectangle and
+    ;; delay TrackMouseEvent's TME_HOVER uses (09a5 $tme_*), one source.
+    (if (i32.ge_s (call $tme_spi_value (local.get $arg0)) (i32.const 0))
+      (then
+        (if (i32.eqz (local.get $arg2)) (then (return (i32.const 0))))
+        (local.set $buf
+          (call $g2w_affine_span (local.get $arg2) (i32.const 4)))
+        (if (i32.eq (local.get $buf) (global.get $NULL_SENTINEL))
+          (then (return (i32.const 0))))
+        (i32.store (local.get $buf) (call $tme_spi_value (local.get $arg0)))
+        (return (i32.const 1))))
     ;; SPI_GETNONCLIENTMETRICS = 0x29: fill NONCLIENTMETRICS struct
     ;; Win9x applications commonly pass uiParam=0 and declare the versioned
     ;; layout through NONCLIENTMETRICS.cbSize. Newer callers also pass the size
@@ -1386,6 +1397,14 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
   ;; mouse motion; DOSBox therefore left its DOS cursor frozen over every game
   ;; after changing video mode from hwnd 0x10001 to hwnd 0x10005.
   (func $handle_WindowFromPoint (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $wnd_window_from_point (local.get $arg0) (local.get $arg1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+  )
+
+  ;; The window USER finds at screen point (arg0, arg1), or 0. Shared by
+  ;; WindowFromPoint and the TrackMouseEvent leave check (09a5).
+  (func $wnd_window_from_point (param $arg0 i32) (param $arg1 i32) (result i32)
     (local $slot i32) (local $hwnd i32) (local $best i32)
     (local $z i32) (local $best_z i32)
     (local $x i32) (local $y i32) (local $w i32) (local $h i32)
@@ -1424,9 +1443,7 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
       (then
         (local.set $deep (call $wnd_child_from_point_deep
           (local.get $best) (local.get $arg0) (local.get $arg1)))))
-    (i32.store offset=0 (global.get $reg_base) (select (local.get $deep) (local.get $best) (local.get $deep)))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-  )
+    (select (local.get $deep) (local.get $best) (local.get $deep)))
 
   ;; 403: IsRectEmpty — STUB: unimplemented
   ;; IsRectEmpty(lpRect=arg0) → BOOL. Empty iff right<=left OR bottom<=top.

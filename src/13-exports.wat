@@ -2868,6 +2868,8 @@
     (if (call $paint_flag_any) (then (return (i32.const 1))))
     (if (call $timer_check_due (call $paint_scratch_take) (i32.const 0))
       (then (return (i32.const 1))))
+    ;; A WM_MOUSELEAVE/WM_MOUSEHOVER the next GetMessage would post.
+    (if (call $tme_poll (i32.const 0)) (then (return (i32.const 1))))
     (i32.const 0))
 
   ;; next_timer_due_ms() — milliseconds until the soonest timer this thread owns
@@ -2939,6 +2941,8 @@
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $mm_loop)))
     ;; A playing MCI avivideo device wants its next frame.
+    ;; A TrackMouseEvent hover deadline, or the leave check's poll interval.
+    (local.set $best (call $tme_due_ms (local.get $best)))
     (call $mciavi_due_ms (local.get $best)))
 
   (func (export "get_com_dll_name") (result i32) (global.get $com_dll_name))

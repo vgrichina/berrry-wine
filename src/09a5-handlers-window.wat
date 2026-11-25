@@ -5870,6 +5870,9 @@
     ;; up, the peer's connect is answered by nobody, and both ends look idle
     ;; and healthy. $vsock_pump returns immediately when winsock is unused.
     (call $vsock_pump)
+    ;; TrackMouseEvent: USER posts WM_MOUSELEAVE/WM_MOUSEHOVER as the thread
+    ;; reads its mouse input; the posted message is retrieved below.
+    (drop (call $tme_poll (i32.const 1)))
     (local.set $msg_ptr (local.get $arg0))
     ;; A main-window teardown sets flag 1 speculatively. If its replacement is
     ;; already live by the next GetMessage, this was only window recreation and
@@ -6239,6 +6242,7 @@
     ;; Same reason as GetMessageA: an idle message pump is where a
     ;; WSAAsyncSelect server spends its time, so it has to move the wire.
     (call $vsock_pump)
+    (drop (call $tme_poll (i32.const 1)))
     ;; WM_QUIT, before anything else — a game loop pumps with PeekMessage and
     ;; never calls GetMessage at all, so a $quit_flag only GetMessageA consumed
     ;; made PostQuitMessage invisible: RollerCoaster Tycoon's Quit Game > Don't
@@ -8545,3 +8549,322 @@
             ;; ShowWindow must publish that activation again, even for the
             ;; same guest HWND. Do not repeat guest activation callbacks.
             (drop (call $host_activate_window (local.get $hwnd))))))))
+
+  ;; ---- TrackMouseEvent / comctl32 _TrackMouseEvent ----
+  ;; USER keeps one tracking record per thread queue: the window, which of
+  ;; TME_HOVER (1) and TME_LEAVE (2) are still pending, and whether the
+  ;; client or the non-client area (TME_NONCLIENT 0x10) is tracked. The thread
+  ;; learns the outcome as posted messages: WM_MOUSELEAVE (0x2A3) once the
+  ;; mouse no longer reaches that area of the window -- moved off it, onto a
+  ;; child or another window, the window hidden, capture taken elsewhere --
+  ;; and WM_MOUSEHOVER (0x2A1) once it has rested in the hover rectangle for
+  ;; the hover time. Each ends its half of the tracking. Delphi's VCL calls
+  ;; this from every control's CM_MOUSEENTER (Game Maker 8's runner among
+  ;; them); a fail-fast stub killed Spelunky Classic on the first mouse move.
+  ;;
+  ;; Record (stride 0x40, by guest thread id, shared memory):
+  ;;   +0 flags (TME_HOVER|TME_LEAVE|TME_NONCLIENT; 0 = not tracking), plus
+  ;;      the cached hit test: 0x1000 valid, bits 8-9 its $tme_cursor_inside
+  ;;   +4 hwnd  +8 hover time (ms)  +12/+16 hover anchor (screen)
+  ;;   +20 hover start (guest tick)
+  ;;   +24 cursor, +28 tick, +32 capture HWND of the cached hit test
+  (global $TME_HOVER_DEFAULT_MS i32 (i32.const 400))
+  (global $TME_HOVER_RECT i32 (i32.const 4))
+  (global $TME_LEAVE_POLL_MS i32 (i32.const 100))
+  (global $TME_RECHECK_MS i32 (i32.const 50))
+
+  (func $tme_addr (param $tid i32) (result i32)
+    ;; Guest thread IDs are 1..16; slot zero is the unowned/desktop fallback.
+    (if (i32.gt_u (local.get $tid) (global.get $REGFILE_THREADS))
+      (then (unreachable)))
+    (i32.add (global.get $TME_THREAD_STATE) (i32.shl (local.get $tid) (i32.const 6))))
+
+  ;; SPI_GETMOUSEHOVERWIDTH (0x62) / HEIGHT (0x64) / TIME (0x66), or -1.
+  (func $tme_spi_value (param $action i32) (result i32)
+    (if (i32.or (i32.eq (local.get $action) (i32.const 0x62))
+                (i32.eq (local.get $action) (i32.const 0x64)))
+      (then (return (global.get $TME_HOVER_RECT))))
+    (if (i32.eq (local.get $action) (i32.const 0x66))
+      (then (return (global.get $TME_HOVER_DEFAULT_MS))))
+    (i32.const -1))
+
+  ;; Does the mouse at screen (x, y) still reach $hwnd's tracked area?
+  ;; 0 = no; 1 = yes, the point is in that area; 2 = only because $hwnd holds
+  ;; capture (every mouse message is its client message, wherever the point).
+  (func $tme_cursor_inside (param $hwnd i32) (param $nc i32) (param $x i32) (param $y i32) (result i32)
+    (local $cap i32) (local $cx i32) (local $cy i32) (local $in_client i32)
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $wnd_is_effectively_visible (local.get $hwnd))) (then (return (i32.const 0))))
+    (local.set $cx (call $wnd_client_screen_x (local.get $hwnd)))
+    (local.set $cy (call $wnd_client_screen_y (local.get $hwnd)))
+    (local.set $in_client (i32.and
+      (i32.and (i32.ge_s (local.get $x) (local.get $cx))
+               (i32.lt_s (local.get $x) (i32.add (local.get $cx)
+                 (call $wnd_client_w_for_clip (local.get $hwnd)))))
+      (i32.and (i32.ge_s (local.get $y) (local.get $cy))
+               (i32.lt_s (local.get $y) (i32.add (local.get $cy)
+                 (call $wnd_client_h_for_clip (local.get $hwnd)))))))
+    (local.set $cap (call $capture_live))
+    (if (local.get $cap)
+      (then
+        (if (i32.or (i32.ne (local.get $cap) (local.get $hwnd))
+                    (i32.ne (local.get $nc) (i32.const 0)))
+          (then (return (i32.const 0))))
+        (return (select (i32.const 1) (i32.const 2) (local.get $in_client)))))
+    (if (i32.ne (call $wnd_window_from_point (local.get $x) (local.get $y)) (local.get $hwnd))
+      (then (return (i32.const 0))))
+    (if (local.get $nc)
+      (then (return (i32.eqz (local.get $in_client)))))
+    (local.get $in_client))
+
+  (func $tme_post_leave (param $hwnd i32) (param $nc i32)
+    (drop (call $post_queue_push (local.get $hwnd)
+      (select (i32.const 0x02A2) (i32.const 0x02A3) (local.get $nc)) ;; WM_NCMOUSELEAVE / WM_MOUSELEAVE
+      (i32.const 0) (i32.const 0))))
+
+  ;; WM_MOUSEHOVER: MK_* key state, client point. WM_NCMOUSEHOVER: hit-test
+  ;; code, screen point.
+  (func $tme_post_hover (param $hwnd i32) (param $nc i32) (param $x i32) (param $y i32)
+    (if (local.get $nc)
+      (then
+        (drop (call $post_queue_push (local.get $hwnd) (i32.const 0x02A0)
+          (call $defwndproc_do_nchittest (local.get $hwnd) (local.get $x) (local.get $y))
+          (i32.or (i32.and (local.get $x) (i32.const 0xFFFF))
+                  (i32.shl (local.get $y) (i32.const 16)))))
+        (return)))
+    (drop (call $post_queue_push (local.get $hwnd) (i32.const 0x02A1)
+      (i32.or (global.get $input_sync_mk)
+        (i32.or
+          (select (i32.const 0x04) (i32.const 0)   ;; MK_SHIFT
+            (i32.ne (i32.and (call $host_get_key_down_state (i32.const 0x10)) (i32.const 0x8000)) (i32.const 0)))
+          (select (i32.const 0x08) (i32.const 0)   ;; MK_CONTROL
+            (i32.ne (i32.and (call $host_get_key_down_state (i32.const 0x11)) (i32.const 0x8000)) (i32.const 0)))))
+      (i32.or
+        (i32.and (i32.sub (local.get $x) (call $wnd_client_screen_x (local.get $hwnd))) (i32.const 0xFFFF))
+        (i32.shl (i32.sub (local.get $y) (call $wnd_client_screen_y (local.get $hwnd))) (i32.const 16))))))
+
+  (func $tme_clear (param $rec i32)
+    (i32.store (local.get $rec) (i32.const 0))
+    (i32.store offset=4 (local.get $rec) (i32.const 0)))
+
+  ;; Check this thread's tracking against the cursor now. $commit=1 posts
+  ;; what is due and updates the record (GetMessage/PeekMessage); $commit=0
+  ;; only answers whether a message would be posted (has_pending_message).
+  (func $tme_poll (param $commit i32) (result i32)
+    (local $rec i32) (local $flags i32) (local $hwnd i32) (local $nc i32)
+    (local $pos i32) (local $x i32) (local $y i32) (local $in i32) (local $now i32)
+    (local $cap i32)
+    (local.set $rec (call $tme_addr (global.get $current_thread_id)))
+    (local.set $flags (i32.load (local.get $rec)))
+    (if (i32.eqz (i32.and (local.get $flags) (i32.const 3))) (then (return (i32.const 0))))
+    (local.set $hwnd (i32.load offset=4 (local.get $rec)))
+    (local.set $nc (i32.and (local.get $flags) (i32.const 0x10)))
+    ;; A destroyed window ends tracking with nothing left to retrieve.
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd)))
+      (then
+        (if (local.get $commit) (then (call $tme_clear (local.get $rec))))
+        (return (i32.const 0))))
+    (local.set $pos (call $cursor_screen_pos))
+    (local.set $x (i32.extend16_s (local.get $pos)))
+    (local.set $y (i32.shr_s (local.get $pos) (i32.const 16)))
+    (local.set $now (call $host_get_ticks))
+    (local.set $cap (call $capture_live))
+    ;; A game loop can PeekMessage thousands of times a second while a VCL
+    ;; control tracks the mouse, and the hit test asks the host for every
+    ;; top-level rectangle (an RPC from a Worker). Reuse the last answer while
+    ;; the cursor, capture and visibility are unchanged, for TME_RECHECK_MS.
+    (if (i32.and
+          (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 0x1000)) (i32.const 0))
+                   (i32.eq (local.get $pos) (i32.load offset=24 (local.get $rec))))
+          (i32.and
+            (i32.and (i32.eq (local.get $cap) (i32.load offset=32 (local.get $rec)))
+                     (i32.lt_u (i32.sub (local.get $now) (i32.load offset=28 (local.get $rec)))
+                               (global.get $TME_RECHECK_MS)))
+            (call $wnd_is_effectively_visible (local.get $hwnd))))
+      (then (local.set $in (i32.and (i32.shr_u (local.get $flags) (i32.const 8)) (i32.const 3))))
+      (else
+        (local.set $in (call $tme_cursor_inside (local.get $hwnd) (local.get $nc)
+          (local.get $x) (local.get $y)))
+        (if (local.get $commit)
+          (then
+            (local.set $flags (i32.or
+              (i32.and (local.get $flags) (i32.const 0x13))
+              (i32.or (i32.const 0x1000) (i32.shl (local.get $in) (i32.const 8)))))
+            (i32.store (local.get $rec) (local.get $flags))
+            (i32.store offset=24 (local.get $rec) (local.get $pos))
+            (i32.store offset=28 (local.get $rec) (local.get $now))
+            (i32.store offset=32 (local.get $rec) (local.get $cap))))))
+    (if (i32.eqz (local.get $in))
+      (then
+        ;; Leaving ends hover tracking too: USER drops the whole record.
+        (if (local.get $commit)
+          (then
+            (call $tme_clear (local.get $rec))
+            (if (i32.and (local.get $flags) (i32.const 2))
+              (then (call $tme_post_leave (local.get $hwnd) (local.get $nc))))))
+        (return (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0)))))
+    (if (i32.eqz (i32.and (local.get $flags) (i32.const 1))) (then (return (i32.const 0))))
+    ;; Hover: the cursor must rest inside a TME_HOVER_RECT-sized rectangle
+    ;; centred on where the wait began; leaving it starts the wait again there.
+    (if (i32.or (i32.ne (local.get $in) (i32.const 1))
+          (i32.or
+            (call $tme_hover_axis_out (i32.sub (local.get $x) (i32.load offset=12 (local.get $rec))))
+            (call $tme_hover_axis_out (i32.sub (local.get $y) (i32.load offset=16 (local.get $rec))))))
+      (then
+        (if (local.get $commit)
+          (then
+            (i32.store offset=12 (local.get $rec) (local.get $x))
+            (i32.store offset=16 (local.get $rec) (local.get $y))
+            (i32.store offset=20 (local.get $rec) (local.get $now))))
+        (return (i32.const 0))))
+    (if (i32.lt_u (i32.sub (local.get $now) (i32.load offset=20 (local.get $rec)))
+                  (i32.load offset=8 (local.get $rec)))
+      (then (return (i32.const 0))))
+    (if (local.get $commit)
+      (then
+        (local.set $flags (i32.and (local.get $flags) (i32.const -2)))
+        (if (i32.and (local.get $flags) (i32.const 2))
+          (then (i32.store (local.get $rec) (local.get $flags)))
+          (else (call $tme_clear (local.get $rec))))
+        (call $tme_post_hover (local.get $hwnd) (local.get $nc) (local.get $x) (local.get $y))))
+    (i32.const 1))
+
+  ;; Is a cursor offset $d from the hover anchor past half the hover
+  ;; rectangle? -W <= 2d <= W, as one unsigned range test.
+  (func $tme_hover_axis_out (param $d i32) (result i32)
+    (i32.gt_u (i32.add (i32.shl (local.get $d) (i32.const 1)) (global.get $TME_HOVER_RECT))
+              (i32.shl (global.get $TME_HOVER_RECT) (i32.const 1))))
+
+  ;; next_timer_due_ms fold: when this thread's tracking next needs a look.
+  ;; A hover is due at its deadline. Leaving needs no input to this thread
+  ;; (the mouse may move onto another program's window), so it is polled.
+  (func $tme_due_ms (param $best i32) (result i32)
+    (local $rec i32) (local $flags i32) (local $due i32) (local $elapsed i32)
+    (local.set $rec (call $tme_addr (global.get $current_thread_id)))
+    (local.set $flags (i32.load (local.get $rec)))
+    (if (i32.eqz (i32.and (local.get $flags) (i32.const 3))) (then (return (local.get $best))))
+    (local.set $due (global.get $TME_LEAVE_POLL_MS))
+    (if (i32.and (local.get $flags) (i32.const 1))
+      (then
+        (local.set $elapsed (i32.sub (call $host_get_ticks) (i32.load offset=20 (local.get $rec))))
+        (local.set $elapsed
+          (select (i32.const 0)
+            (i32.sub (i32.load offset=8 (local.get $rec)) (local.get $elapsed))
+            (i32.ge_u (local.get $elapsed) (i32.load offset=8 (local.get $rec)))))
+        (if (i32.or (i32.eqz (i32.and (local.get $flags) (i32.const 2)))
+                    (i32.lt_u (local.get $elapsed) (local.get $due)))
+          (then (local.set $due (local.get $elapsed))))))
+    (if (i32.or (i32.lt_s (local.get $best) (i32.const 0))
+                (i32.lt_u (local.get $due) (local.get $best)))
+      (then (return (local.get $due))))
+    (local.get $best))
+
+  ;; A destroyed window's tracking ends on whichever thread held it.
+  (func $tme_window_destroyed (param $hwnd i32)
+    (local $tid i32) (local $rec i32)
+    (if (i32.eqz (local.get $hwnd)) (then (return)))
+    (block $done (loop $scan
+      (br_if $done (i32.gt_u (local.get $tid) (global.get $REGFILE_THREADS)))
+      (local.set $rec (call $tme_addr (local.get $tid)))
+      (if (i32.eq (i32.load offset=4 (local.get $rec)) (local.get $hwnd))
+        (then (call $tme_clear (local.get $rec))))
+      (local.set $tid (i32.add (local.get $tid) (i32.const 1)))
+      (br $scan))))
+
+  ;; TrackMouseEvent(LPTRACKMOUSEEVENT) -> BOOL. Shared by user32 and the
+  ;; comctl32 _TrackMouseEvent forwarder.
+  (func $tme_track (param $ptr i32) (result i32)
+    (local $flags i32) (local $hwnd i32) (local $nc i32) (local $req i32)
+    (local $rec i32) (local $cur i32) (local $pos i32) (local $x i32) (local $y i32)
+    (local $hover i32)
+    (local.set $rec (call $tme_addr (global.get $current_thread_id)))
+    ;; cbSize must be sizeof(TRACKMOUSEEVENT).
+    (if (i32.or (i32.eqz (local.get $ptr))
+                (i32.ne (call $gl32 (local.get $ptr)) (i32.const 16)))
+      (then
+        (global.set $last_error (i32.const 87)) ;; ERROR_INVALID_PARAMETER
+        (return (i32.const 0))))
+    (local.set $flags (call $gl32 (i32.add (local.get $ptr) (i32.const 4))))
+    ;; TME_QUERY: the current tracking, in the caller's struct.
+    (if (i32.and (local.get $flags) (i32.const 0x40000000))
+      (then
+        (local.set $cur (i32.load (local.get $rec)))
+        (if (i32.eqz (i32.and (local.get $cur) (i32.const 3)))
+          (then (local.set $cur (i32.const 0))))
+        (local.set $cur (i32.and (local.get $cur) (i32.const 0x13)))
+        (call $gs32 (i32.add (local.get $ptr) (i32.const 4)) (local.get $cur))
+        (call $gs32 (i32.add (local.get $ptr) (i32.const 8))
+          (select (i32.load offset=4 (local.get $rec)) (i32.const 0) (local.get $cur)))
+        (call $gs32 (i32.add (local.get $ptr) (i32.const 12))
+          (select (i32.load offset=8 (local.get $rec)) (i32.const 0)
+            (i32.and (local.get $cur) (i32.const 1))))
+        (return (i32.const 1))))
+    (if (i32.and (local.get $flags) (i32.const 0x3FFFFFEC))
+      (then
+        (global.set $last_error (i32.const 1004)) ;; ERROR_INVALID_FLAGS
+        (return (i32.const 0))))
+    (local.set $hwnd (call $gl32 (i32.add (local.get $ptr) (i32.const 8))))
+    (if (i32.eqz (call $wnd_lookup_live (local.get $hwnd)))
+      (then
+        (global.set $last_error (i32.const 1400)) ;; ERROR_INVALID_WINDOW_HANDLE
+        (return (i32.const 0))))
+    (local.set $nc (i32.and (local.get $flags) (i32.const 0x10)))
+    (local.set $req (i32.and (local.get $flags) (i32.const 3)))
+    (local.set $cur (i32.load (local.get $rec)))
+    ;; TME_CANCEL: drop the named halves of a matching tracking.
+    (if (i32.lt_s (local.get $flags) (i32.const 0))
+      (then
+        (if (i32.and
+              (i32.and (i32.ne (i32.and (local.get $cur) (i32.const 3)) (i32.const 0))
+                       (i32.eq (i32.load offset=4 (local.get $rec)) (local.get $hwnd)))
+              (i32.eq (i32.and (local.get $cur) (i32.const 0x10)) (local.get $nc)))
+          (then
+            (local.set $cur (i32.and (local.get $cur) (i32.xor (local.get $req) (i32.const -1))))
+            (if (i32.and (local.get $cur) (i32.const 3))
+              (then (i32.store (local.get $rec) (local.get $cur)))
+              (else (call $tme_clear (local.get $rec))))))
+        (return (i32.const 1))))
+    (local.set $pos (call $cursor_screen_pos))
+    (local.set $x (i32.extend16_s (local.get $pos)))
+    (local.set $y (i32.shr_s (local.get $pos) (i32.const 16)))
+    ;; USER only tracks the window the mouse is in. For any other the leave
+    ;; has already happened: post it now and leave the current tracking be.
+    (if (i32.eqz (call $tme_cursor_inside (local.get $hwnd) (local.get $nc)
+          (local.get $x) (local.get $y)))
+      (then
+        (if (i32.and (local.get $req) (i32.const 2))
+          (then (call $tme_post_leave (local.get $hwnd) (local.get $nc))))
+        (return (i32.const 1))))
+    ;; The mouse is here, so it has left any other tracked window or area.
+    (if (i32.and (i32.ne (i32.and (local.get $cur) (i32.const 3)) (i32.const 0))
+          (i32.or (i32.ne (i32.load offset=4 (local.get $rec)) (local.get $hwnd))
+                  (i32.ne (i32.and (local.get $cur) (i32.const 0x10)) (local.get $nc))))
+      (then
+        (if (i32.and (local.get $cur) (i32.const 2))
+          (then (call $tme_post_leave (i32.load offset=4 (local.get $rec))
+            (i32.and (local.get $cur) (i32.const 0x10)))))
+        (local.set $cur (i32.const 0))))
+    (local.set $cur (i32.or (i32.and (local.get $cur) (i32.const 3)) (local.get $req)))
+    (if (i32.eqz (local.get $cur))
+      (then (call $tme_clear (local.get $rec)) (return (i32.const 1))))
+    (i32.store (local.get $rec) (i32.or (local.get $cur) (local.get $nc)))
+    (i32.store offset=4 (local.get $rec) (local.get $hwnd))
+    (if (i32.and (local.get $req) (i32.const 1))
+      (then
+        (local.set $hover (call $gl32 (i32.add (local.get $ptr) (i32.const 12))))
+        (i32.store offset=8 (local.get $rec)
+          (select (global.get $TME_HOVER_DEFAULT_MS) (local.get $hover)
+            (i32.eq (local.get $hover) (i32.const -1)))) ;; HOVER_DEFAULT
+        (i32.store offset=12 (local.get $rec) (local.get $x))
+        (i32.store offset=16 (local.get $rec) (local.get $y))
+        (i32.store offset=20 (local.get $rec) (call $host_get_ticks))))
+    (i32.const 1))
+
+  ;; TrackMouseEvent (user32) -- 1 arg stdcall
+  (func $handle_TrackMouseEvent (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $tme_track (local.get $arg0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))))
+
+  ;; _TrackMouseEvent (comctl32) -- forwards to user32 TrackMouseEvent
+  (func $handle__TrackMouseEvent (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_TrackMouseEvent (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))

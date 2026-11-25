@@ -3138,6 +3138,8 @@
   (global $capture_hwnd (mut i32) (i32.const 0))      ;; hwnd that has mouse capture (SetCapture/ReleaseCapture)
   (global $CURSOR_THREAD_STATE i32 (region.addr $CURSOR_THREAD_STATE 0))
   (global $CURSOR_THREAD_STATE_SIZE i32 (i32.const 0x110))
+  (global $TME_THREAD_STATE i32 (region.addr $TME_THREAD_STATE 0))  ;; TrackMouseEvent, 09a5 $tme_addr
+  (global $TME_THREAD_STATE_SIZE i32 (i32.const 0x440))
   (global $caret_hwnd (mut i32) (i32.const 0))        ;; USER caret owner hwnd
   (global $caret_x (mut i32) (i32.const 0))           ;; USER caret client x
   (global $caret_y (mut i32) (i32.const 0))           ;; USER caret client y

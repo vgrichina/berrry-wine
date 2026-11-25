@@ -254,6 +254,13 @@ Watching it: `evalfile:` with `get_blocks_now` through
 (cooperative) gives progress against the 2.06 G target; `--ready=0` and a
 single long `wait:` fit the splash into a 90 s probe only on a quiet box.
 
+**Mouse-move crash, 2026-11-25.** Once "WARNING: GM8.0 RELEASE CANDIDATE" and
+the forms after it exist, the first mouse move over the window calls comctl32
+`_TrackMouseEvent` (thunk `0x4258ac`, IAT `0x70d2b0`; caller ret `0x458a31`).
+The call comes from the VCL's mouse-enter tracking, with `TME_LEAVE` on hwnd
+`0x10005`. It trapped on the fail-fast stub in both modes, and is now real:
+`$tme_track` in `09a5`. Evidence is in `scratch/runs/20261125-track-mouse-event/`.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash

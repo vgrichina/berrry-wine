@@ -1176,3 +1176,10 @@
     (owner "11-seh.wat:$top_exception_filter"))
   (region.declare $TOP_FILTER_CONTEXTS (size 0x4000) (align 128)
     (owner "11-seh.wat:$top_filter_frame"))
+
+  ;; TrackMouseEvent: one tracking record per guest thread (tid 0..16), as
+  ;; USER keeps one per queue. Shared memory so a destroy on any instance can
+  ;; end tracking of the dying window; appended to preserve old bases.
+  (region.declare $TME_THREAD_STATE (size 0x440) (align 0x10)
+    (stride 0x40 (count 17))
+    (owner "09a5-handlers-window.wat:$tme_addr"))

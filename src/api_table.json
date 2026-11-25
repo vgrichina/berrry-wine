@@ -42071,5 +42071,33 @@
     "convention": "stdcall",
     "hash": 3424530739,
     "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4987,
+    "name": "TrackMouseEvent",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3265892589,
+    "args": [
+      {
+        "name": "lpEventTrack",
+        "type": "LPTRACKMOUSEEVENT"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4988,
+    "name": "_TrackMouseEvent",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 734949508,
+    "args": [
+      {
+        "name": "lpEventTrack",
+        "type": "LPTRACKMOUSEEVENT"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]
