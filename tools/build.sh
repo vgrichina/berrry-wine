@@ -5,6 +5,14 @@ cd "$(dirname "$0")/.."
 
 mkdir -p build
 
+# Registry paths (lib/apps.js) are repo-relative under `binaries/`, which is a
+# gitignored link to test/binaries so the page and the CLI resolve the same
+# files. A fresh clone has no link; make it (GitHub issue #31). Never replace
+# an existing file, directory or link.
+if [ ! -e binaries ] && [ ! -L binaries ] && [ -d test/binaries ]; then
+  ln -s test/binaries binaries
+fi
+
 # HOW THIS FILE RUNS. Each `step` below only DECLARES a gate; nothing runs
 # until tools/build-run-steps.js at the bottom takes the whole list and runs it
 # concurrently, bounded by CPU count. So the order here is the order failures

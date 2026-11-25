@@ -2961,10 +2961,14 @@ async function main() {
     ctx.vfs.dirs.add('c:\\windows');
     ctx.vfs.dirs.add('c:\\windows\\system');
     ctx.vfs.dirs.add('c:\\windows\\fonts');
-    mountSystemDataFiles(ctx.vfs, SYSTEM_DATA_FILES.map(file => ({
-      ...file,
-      bytes: new Uint8Array(fs.readFileSync(path.join(ROOT, file.url))),
-    })));
+    // Match the browser: a `localOnly` system file is never published and a
+    // fresh clone does not carry it, so its absence is not fatal (issue #31).
+    mountSystemDataFiles(ctx.vfs, SYSTEM_DATA_FILES
+      .filter(file => !file.localOnly || fs.existsSync(path.join(ROOT, file.url)))
+      .map(file => ({
+        ...file,
+        bytes: new Uint8Array(fs.readFileSync(path.join(ROOT, file.url))),
+      })));
     for (const name of BUNDLED_BITMAP_FONTS) {
       const bundledFon = path.join(ROOT, 'fonts', name);
       if (!fs.existsSync(bundledFon)) {

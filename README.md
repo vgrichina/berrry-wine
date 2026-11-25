@@ -74,10 +74,13 @@ Safari Private Browsing's tracking and fingerprinting protections can make WebAs
 ### Command line
 
 ```bash
-node test/run.js --app=sol                         # by registry id, same files the desktop mounts
-node test/run.js --exe=test/binaries/notepad.exe   # any PE
-node test/run.js --app=pinball --png=out.png       # render the final frame
+bash tools/build.sh                                 # also links binaries -> test/binaries
+node test/run.js --app=sol                          # by registry id, same files the desktop mounts
+node test/run.js --exe=test/binaries/entertainment-pack/freecell.exe   # any PE
+node test/run.js --app=freecell --no-close --png=out.png               # render the final frame
 ```
+
+A fresh clone carries the freely redistributable binaries only; registry apps whose files are not in the repository (Pinball, the demos) need their files placed under `test/binaries/` first.
 
 Key flags: `--trace-api` logs every Win32 call, `--trace-gdi` every drawing primitive, `--break=0xADDR` and `--break-api=Name` pause the emulator, `--input=BATCH:ACTION:ARGS` injects keys and clicks, `--threads` gives each guest thread a real worker. [CLAUDE.md](CLAUDE.md) documents the full tracing and debugging toolkit.
 
