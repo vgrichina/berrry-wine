@@ -3611,7 +3611,6 @@
     (if (i32.and (i32.shr_u (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2)))) (local.get $bit)) (i32.const 1))
       (then (global.set $flag_a (i32.const 0)) (global.set $flag_b (i32.const 1)))
       (else (global.set $flag_a (i32.const 1)) (global.set $flag_b (i32.const 0))))
-    (global.set $flag_res (i32.const 0)) ;; doesn't matter for CF
     (dispatch-next))
   (func $th_bts_r_i8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $bit i32) (local $val i32)
@@ -3672,7 +3671,7 @@
     (if (i32.and (i32.shr_u (local.get $val) (local.get $bit)) (i32.const 1))
       (then (global.set $flag_a (i32.const 0)) (global.set $flag_b (i32.const 1)))
       (else (global.set $flag_a (i32.const 1)) (global.set $flag_b (i32.const 0))))
-    (global.set $flag_res (i32.const 0)))
+  )
   (func $set_cf_bit16 (param $val i32) (param $bit i32)
     (call $set_cf_bit
       (i32.and (local.get $val) (i32.const 0xFFFF))

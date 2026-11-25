@@ -45,6 +45,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // ordinary/code16 execution and unsupported PE32 address67 rejection.
 // test-rotate-count.js covers bounded ROL/ROR counts, full-cycle CF,
 // defined flags, raw zero-count state, and actual cold/cache execution.
+// test-bit-zf.js covers preserved ZF, CF/data, signed bitstring indexes,
+// real flag producers and full state guards on actual cold/cache paths.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // test-decimal-adjust.js uses a bounded embedded matrix in the unit tier;
 // explicit full/excluded/control modes cover the exhaustive qualification.
