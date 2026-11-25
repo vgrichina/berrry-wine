@@ -3320,7 +3320,19 @@
   ;; first, so its deopt stub re-runs the whole instruction in threaded code
   ;; with nothing yet changed. A memory source is staged in cell 8 so the
   ;; destination is written only after the load succeeded.
+  ;; Emit entry after all memory operations of one instruction. Window misses
+  ;; leave before this marker; threaded fallback owns their entry transition.
   (func $uc_mmx_insn (param $R i32) (result i32)
+    (local $reason i32)
+    (local.set $reason (call $uc_mmx_body (local.get $R)))
+    (if (i32.and (i32.eqz (local.get $reason))
+                 (i32.ne (i32.load offset=28 (local.get $R)) (i32.const 4)))
+      (then (call $uc_emit (i32.const 108) (i32.const 0)
+        (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0)
+        (i64.const 0) (i64.const 0) (i64.const 0))))
+    (local.get $reason))
+
+  (func $uc_mmx_body (param $R i32) (result i32)
     (local $O0 i32) (local $O1 i32) (local $sub i32) (local $form i32) (local $t i64)
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
     (local.set $O1 (i32.add (local.get $R) (i32.const 80)))

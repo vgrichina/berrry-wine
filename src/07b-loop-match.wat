@@ -4079,8 +4079,8 @@
                 (i32.le_u (i32.and (local.get $src) (i32.const 0xFFF)) (i32.const 0xFC0))
                 (i32.le_u (i32.and (local.get $dst) (i32.const 0xFFF)) (i32.const 0xFC0))))
           (then
-            (local.set $src_wa (call $g2w (local.get $src)))
-            (local.set $dst_wa (call $g2w (local.get $dst)))
+            (local.set $src_wa (call $g2w_affine_span (local.get $src) (i32.const 64)))
+            (local.set $dst_wa (call $g2w_affine_span (local.get $dst) (i32.const 64)))
             (if (i32.and
                   (i32.ne (local.get $src_wa) (global.get $NULL_SENTINEL))
                   (i32.ne (local.get $dst_wa) (global.get $NULL_SENTINEL)))
@@ -4088,6 +4088,7 @@
                 ;; The loop leaves mm0..mm3 holding bytes 32..63 of its final
                 ;; line.  Capture them before bulk copy for exact MMX state.
                 (local.set $tail0 (v128.load offset=32 (local.get $src_wa)))
+                (call $mmx_complete)
                 (local.set $tail1 (v128.load offset=48 (local.get $src_wa)))
                 (local.set $q0 (i64x2.extract_lane 0 (local.get $tail0)))
                 (local.set $q1 (i64x2.extract_lane 1 (local.get $tail0)))
@@ -4102,6 +4103,7 @@
             ;; Preserve the source-observation order of the original eight
             ;; load pairs and eight stores for overlapping or split mappings.
             (local.set $q0 (call $mmx_load64 (local.get $src)))
+            (call $mmx_complete)
             (local.set $q1 (call $mmx_load64 (i32.add (local.get $src) (i32.const 8))))
             (call $mmx_store64 (local.get $dst) (local.get $q0))
             (call $mmx_store64 (i32.add (local.get $dst) (i32.const 8)) (local.get $q1))
@@ -4240,6 +4242,7 @@
             (call $mmx_store64 (local.get $ga) (local.get $pat))
             (if (global.get $eip_redirected)
               (then (local.set $abandon (i32.const 1)) (br $out)))
+            (call $mmx_enter)
             (local.set $done (i32.add (local.get $done) (i32.const 1)))
             (local.set $stop
               (call $mmx_fill64_hits_code (local.get $ga) (i32.const 8)
@@ -4263,6 +4266,8 @@
               (br $l16)))
             (if (i32.lt_u (local.get $p) (local.get $end))
               (then (i64.store (local.get $p) (local.get $pat))))
+            ;; A later chunk may fault after these MMX stores completed.
+            (call $mmx_enter)
             (global.set $mmx_fill64_bulk_qwords
               (i64.add (global.get $mmx_fill64_bulk_qwords) (i64.extend_i32_u (local.get $q))))
             (local.set $done (i32.add (local.get $done) (local.get $q)))))
@@ -4312,6 +4317,7 @@
         ;; Always capture all eight source qwords before any store. Besides
         ;; preserving MMX0..7, this exactly retains the original overlap order.
         (local.set $q0 (call $mmx_load64 (local.get $src)))
+        (call $mmx_complete)
         (local.set $q1 (call $mmx_load64 (i32.add (local.get $src) (i32.const 8))))
         (local.set $q2 (call $mmx_load64 (i32.add (local.get $src) (i32.const 16))))
         (local.set $q3 (call $mmx_load64 (i32.add (local.get $src) (i32.const 24))))
@@ -4435,13 +4441,14 @@
                 (i32.le_u (i32.and (local.get $src) (i32.const 0xFFF)) (i32.const 0xFC0))
                 (i32.le_u (i32.and (local.get $dst) (i32.const 0xFFF)) (i32.const 0xFC0))))
           (then
-            (local.set $src_wa (call $g2w (local.get $src)))
-            (local.set $dst_wa (call $g2w (local.get $dst)))
+            (local.set $src_wa (call $g2w_affine_span (local.get $src) (i32.const 64)))
+            (local.set $dst_wa (call $g2w_affine_span (local.get $dst) (i32.const 64)))
             (if (i32.and
                   (i32.ne (local.get $src_wa) (global.get $NULL_SENTINEL))
                   (i32.ne (local.get $dst_wa) (global.get $NULL_SENTINEL)))
               (then
                 (local.set $v0 (v128.load (local.get $src_wa)))
+                (call $mmx_complete)
                 (local.set $v1 (v128.load offset=16 (local.get $src_wa)))
                 (local.set $v2 (v128.load offset=32 (local.get $src_wa)))
                 (local.set $v3 (v128.load offset=48 (local.get $src_wa)))
@@ -4460,6 +4467,7 @@
         (if (i32.eqz (local.get $fast))
           (then
             (local.set $q0 (call $mmx_load64 (local.get $src)))
+            (call $mmx_complete)
             (local.set $q1 (call $mmx_load64 (i32.add (local.get $src) (i32.const 8))))
             (local.set $q2 (call $mmx_load64 (i32.add (local.get $src) (i32.const 16))))
             (call $mmx_store64 (local.get $dst) (local.get $q0))

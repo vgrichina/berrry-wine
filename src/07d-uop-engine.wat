@@ -1286,7 +1286,7 @@
     (loop $L
       (block $svc
       (block $miss
-      (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
+      (block $c108 (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
       (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
       (block $c94 (block $c93 (block $c92 (block $c91
       (block $c86 (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
@@ -1319,7 +1319,7 @@
                   ;; 91-107 native x87
                   $c91 $c92 $c93 $c94 $c95 $c96 $c97 $c98 $c99 $c100 $c101
                   $c102 $c103 $c104 $c105 $c106 $c107
-                  $c0
+                  $c108 $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
         (global.set $eip (i32.load offset=4 (local.get $pc)))
@@ -2373,6 +2373,9 @@
                                     (i32.shl (global.get $fpu_top) (i32.const 11))))
         (i32.store16 (global.get $reg_base) (global.get $fpu_sw))
         (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
+        ;; 108 MMX entry: emitted after one complete ordinary instruction.
+        (call $mmx_enter)
+        (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))

@@ -15,13 +15,18 @@
   ;; half computes the same result as the lower half and is discarded; that is
   ;; cheaper than masking and cannot introduce lane-crossing errors.
   ;;
-  ;; Architecturally MMX aliases the x87 mantissas and any MMX write should
-  ;; mark the FPU tag word full. We keep the two files separate: no guest mixes
-  ;; MMX and x87 without an EMMS between them (that is the whole point of
-  ;; EMMS), and $th_emms already clears the tag word.
-  ;; CVTPS2PI below explicitly sets TOP=0 and all occupancy bits valid as
-  ;; required by Intel SDM vol.2A 3-288. The separate value files still do not
-  ;; model MMX/x87 mantissa aliasing or the MMX destination's x87 exponent.
+  ;; Ordinary MMX enters TOP=0/all tags valid on successful execution.
+  ;; Values still use separate x87 and MMX backing; physical mantissa aliasing
+  ;; and the x87 destination exponent are not modeled by this entry repair.
+
+  (func $mmx_enter
+    (global.set $fpu_top (i32.const 0))
+    (global.set $fpu_tag (i32.const 255)))
+
+  ;; Called at instruction completion, after memory access and decoder LOCK
+  ;; rejection. A redirected memory fault must not create an entry effect.
+  (func $mmx_complete
+    (if (i32.eqz (global.get $eip_redirected)) (then (call $mmx_enter))))
 
   ;; ---- Register file ----
   ;; MMn is the i64 at $mmx_base + n*8 in this thread's $MMX_FILE slice. The
@@ -1199,9 +1204,7 @@
     (call $mmx_set (local.get $dst)
       (i64.or
         (i64.and (call $mmx_get (local.get $dst)) (i64.xor (local.get $mask) (i64.const -1)))
-        (i64.shl (i64.extend_i32_u (i32.and (local.get $word) (i32.const 65535))) (local.get $shift))))
-    (global.set $fpu_top (i32.const 0))
-    (global.set $fpu_tag (i32.const 255)))
+        (i64.shl (i64.extend_i32_u (i32.and (local.get $word) (i32.const 65535))) (local.get $shift)))))
 
   ;; SSE1 PEXTRW reads one physical MMX word into an entire r32, even in
   ;; code16. Intel SDM vol.2B PEXTRW and vol.3A MMX state table: reading
@@ -1210,9 +1213,7 @@
   (func $mmx_pextrw (param $dst i32) (param $src i32) (param $lane i32)
     (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $dst) (i32.const 2)))
       (i32.and (i32.wrap_i64 (i64.shr_u (call $mmx_get (local.get $src))
-        (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))) (i32.const 65535)))
-    (global.set $fpu_top (i32.const 0))
-    (global.set $fpu_tag (i32.const 255)))
+        (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))) (i32.const 65535))))
 
   ;; SSE1 PSHUFW uses all four immediate selectors. The source is a value
   ;; snapshot, so an aliased destination cannot affect a later selected word.
@@ -1230,9 +1231,7 @@
           (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1)))
       (br_if $words (i32.lt_u (local.get $lane) (i32.const 4))))
-    (call $mmx_set (local.get $dst) (local.get $value))
-    (global.set $fpu_top (i32.const 0))
-    (global.set $fpu_tag (i32.const 255)))
+    (call $mmx_set (local.get $dst) (local.get $value)))
 
   ;; SSE1 MASKMOVQ (Intel SDM vol.2B 4-10/11, vol.3B table 23-8).
   ;; mode: bit3 selects DI, bits0..2 carry the segment prefix (0 = DS).
@@ -1256,8 +1255,6 @@
     (if (i32.eq (local.get $seg) (i32.const 5)) (then (local.set $base (global.get $fs_base))))
     (if (i32.eq (local.get $seg) (i32.const 6)) (then (local.set $base (global.get $gs_base))))
     (local.set $addr (i32.add (local.get $addr) (local.get $base)))
-    (global.set $fpu_top (i32.const 0))
-    (global.set $fpu_tag (i32.const 255))
     (loop $bytes
       (if (i64.ne (i64.and (i64.shr_u (local.get $mask)
               (i64.extend_i32_u (i32.shl (local.get $i) (i32.const 3))))
@@ -1287,9 +1284,7 @@
           (i32.lt_s (local.get $difference) (i32.const 0)))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1)))
       (br_if $bytes (i32.lt_u (local.get $lane) (i32.const 8))))
-    (call $mmx_set (local.get $dst) (i64.extend_i32_u (local.get $sum)))
-    (global.set $fpu_top (i32.const 0))
-    (global.set $fpu_tag (i32.const 255)))
+    (call $mmx_set (local.get $dst) (i64.extend_i32_u (local.get $sum))))
 
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
@@ -1300,54 +1295,54 @@
     (if (i32.eq (local.get $sub) (i32.const 168))
       (then
         (call $mmx_psadbw (local.get $dst) (call $mmx_get (local.get $src)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 512))
                  (i32.le_u (local.get $sub) (i32.const 526)))
       (then
         (call $mmx_maskmovq (call $mmx_get (local.get $dst))
           (call $mmx_get (local.get $src)) (i32.sub (local.get $sub) (i32.const 512)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 256))
                  (i32.le_u (local.get $sub) (i32.const 511)))
       (then
         (call $mmx_pshufw (local.get $dst) (call $mmx_get (local.get $src))
           (i32.sub (local.get $sub) (i32.const 256)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     ;; PEXTRW subops 164..167 hold imm8[1:0]; dst is GPR, src is MMX.
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 164))
                  (i32.le_u (local.get $sub) (i32.const 167)))
       (then
         (call $mmx_pextrw (local.get $dst) (local.get $src)
           (i32.sub (local.get $sub) (i32.const 164)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 160))
                  (i32.le_u (local.get $sub) (i32.const 163)))
       (then
         (call $mmx_pinsrw (local.get $dst)
           (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $src) (i32.const 2))))
           (i32.sub (local.get $sub) (i32.const 160)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     ;; movq mm, mm
     (if (i32.eqz (local.get $sub))
-      (then (call $mmx_set (local.get $dst) (call $mmx_get (local.get $src))) (dispatch-next)))
+      (then (call $mmx_set (local.get $dst) (call $mmx_get (local.get $src))) (call $mmx_complete) (dispatch-next)))
     ;; movd mm, r32 -- src names a general register, not an MMX one.
     (if (i32.eq (local.get $sub) (i32.const 1))
       (then (call $mmx_set (local.get $dst)
               (i64.extend_i32_u (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $src) (i32.const 2))))))
-            (dispatch-next)))
+            (call $mmx_complete) (dispatch-next)))
     ;; movd r32, mm -- dst names a general register.
     (if (i32.eq (local.get $sub) (i32.const 2))
       (then (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $dst) (i32.const 2))) (i32.wrap_i64 (call $mmx_get (local.get $src))))
-            (dispatch-next)))
+            (call $mmx_complete) (dispatch-next)))
     ;; pmovmskb r32, mm -- the sign bits of the eight bytes.
     (if (i32.eq (local.get $sub) (i32.const 20))
       (then (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $dst) (i32.const 2))) (i32.and (i8x16.bitmask (i64x2.splat (call $mmx_get (local.get $src))))
                        (i32.const 0xFF)))
-            (dispatch-next)))
+            (call $mmx_complete) (dispatch-next)))
     (call $mmx_set (local.get $dst)
       (call $mmx_binop (call $mmx_get (local.get $dst)) (call $mmx_get (local.get $src))
             (local.get $sub)))
-    (dispatch-next))
+    (call $mmx_complete) (dispatch-next))
 
   (func $th_mmx_rm (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $addr i32)
@@ -1359,32 +1354,32 @@
       (then
         ;; Complete the exact m64 read before modifying architectural state.
         (call $mmx_psadbw (local.get $dst) (call $mmx_load64 (local.get $addr)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 256))
                  (i32.le_u (local.get $sub) (i32.const 511)))
       (then
         ;; Finish exactly the m64 read before changing MMX or x87 state.
         (call $mmx_pshufw (local.get $dst) (call $mmx_load64 (local.get $addr))
           (i32.sub (local.get $sub) (i32.const 256)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     (if (i32.and (i32.ge_u (local.get $sub) (i32.const 160))
                  (i32.le_u (local.get $sub) (i32.const 163)))
       (then
         ;; Complete exactly the architectural two-byte read before state changes.
         (call $mmx_pinsrw (local.get $dst) (call $gl16 (local.get $addr))
           (i32.sub (local.get $sub) (i32.const 160)))
-        (dispatch-next)))
+        (call $mmx_complete) (dispatch-next)))
     (if (i32.eqz (local.get $sub))
       (then (call $mmx_set (local.get $dst) (call $mmx_load64 (local.get $addr)))
-            (dispatch-next)))
+            (call $mmx_complete) (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 1))     ;; movd mm, m32
       (then (call $mmx_set (local.get $dst)
               (i64.extend_i32_u (call $gl32 (local.get $addr))))
-            (dispatch-next)))
+            (call $mmx_complete) (dispatch-next)))
     (call $mmx_set (local.get $dst)
       (call $mmx_binop (call $mmx_get (local.get $dst)) (call $mmx_load64 (local.get $addr))
             (local.get $sub)))
-    (dispatch-next))
+    (call $mmx_complete) (dispatch-next))
 
   (func $th_mmx_mr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $src i32) (local $addr i32)
@@ -1394,9 +1389,9 @@
     (local.set $addr (call $read_addr))
     (if (i32.eq (local.get $sub) (i32.const 2))     ;; movd m32, mm
       (then (call $gs32 (local.get $addr) (i32.wrap_i64 (call $mmx_get (local.get $src))))
-            (dispatch-next)))
+            (call $mmx_complete) (dispatch-next)))
     (call $mmx_store64 (local.get $addr) (call $mmx_get (local.get $src)))
-    (dispatch-next))
+    (call $mmx_complete) (dispatch-next))
 
   (func $th_mmx_ri (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32)
@@ -1407,7 +1402,7 @@
       (call $mmx_binop (call $mmx_get (local.get $dst))
             (i64.extend_i32_u (i32.and (local.get $op) (i32.const 0xFF)))
             (local.get $sub)))
-    (dispatch-next))
+    (call $mmx_complete) (dispatch-next))
 
   ;; ---- Decoder support ----
   ;; Map a second opcode byte to a subop, or -1 when it is not an MMX

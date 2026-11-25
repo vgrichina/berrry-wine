@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/07b-loop-match.wat",
+      "name": "$th_mmx_copy64",
+      "baseSHA256": "f3cc570aec566d95a61bc351c9fe4fa7667b271679a63a37c70666e4c9edf601",
+      "sha256": "1637c7ffc1ed74724461c5a2779f423737f5111804190cec5836222904187787",
+      "reason": "MMX entry review 20261125: Copy enters TOP=0/all-valid tags after the first completed MMX load, before destination stores. Fast spans now use existing nonfaulting affine-span probes. EIP targets, callback boundaries and ownership fields are unchanged; dispatch lifetime remains pending."
+    },
+    {
+      "file": "src/07b-loop-match.wat",
+      "name": "$th_mmx_fill64",
+      "baseSHA256": "60917fab74a36826ac7aa43bc457cd189ce2d9a6b26d146fb3cca97124f3a9d2",
+      "sha256": "fdd877992069cd107066c6be1b407de03054db4892ecbfde634f81b6c72fd913",
+      "reason": "MMX entry review 20261125: Fill enters TOP=0/all-valid tags after each successful slow store or bulk store batch, before a later page may fault. EIP targets, callback boundaries and ownership fields are unchanged; dispatch lifetime remains pending."
+    },
+    {
+      "file": "src/07b-loop-match.wat",
+      "name": "$th_mmx_stream_copy64",
+      "baseSHA256": "57b7953e792da578200324d38874e1d3f7affc35b1885315ff5da790e7d92551",
+      "sha256": "6b03c9dc8044b1895bc10cca466a544e5a7696fd46e5a3b01eb856ec5c6c8b8f",
+      "reason": "MMX entry review 20261125: Stream copy enters TOP=0/all-valid tags after the first completed source load, before destination stores. EIP targets, callback boundaries and ownership fields are unchanged; dispatch lifetime remains pending."
+    },
+    {
+      "file": "src/07b-loop-match.wat",
+      "name": "$th_mmx_pipelined_copy64",
+      "baseSHA256": "0b19db8796de831e45fd818aa08aeb575d3122f49944a10841265ba03a6e6a89",
+      "sha256": "775014f7534ec85c5c4127c08a54c54428a33a4cc87a38cee82ad8ab4a5767d2",
+      "reason": "MMX entry review 20261125: Pipelined copy enters TOP=0/all-valid tags after the first completed source load; fast spans use existing nonfaulting affine-span probes. EIP targets, callback boundaries and ownership fields are unchanged; dispatch lifetime remains pending."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "d8e4dc0887a904e41a21487cf67958f0c58efbfc8b3b23892ac1d50b455c704c",
+      "sha256": "14d8ff94943d1be88c6f8c6bcd1115b0a6311310a704f426192284ac9c8960cb",
+      "reason": "MMX entry review 20261125: Opcode 108 calls the shared TOP=0/all-valid-tag helper after one completed lowered ordinary MMX instruction. Memory misses leave before this marker through existing fallback; EMMS remains opcode 86. EIP targets, callback boundaries, invocation/restoration ownership fields and service boundaries are unchanged; dispatch lifetime remains pending."
+    }
+  ]
+}
