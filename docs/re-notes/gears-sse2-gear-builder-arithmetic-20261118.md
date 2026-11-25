@@ -95,3 +95,9 @@ diffs, new-file patches, tested modules and fixture recovery are retained in
 the run; result.json is written last. Box ID/state/expiry/stop receipt are
 null / NOT_CREATED / null / null. No agents, Codex workers, boxes, Python, Wine or
 public deployment were used; foreign UT/Alice/NFS/host-NE work is preserved.
+
+## Update 2026-11-24
+
+The `_libm_sse2_sin_precise` blocker is fixed, with its cos/sqrt siblings and `_time64`;
+CVTSD2SS was already supported on main. gears.exe now opens its window and animates:
+see [gears-libm-sse2-time64-20261124.md](gears-libm-sse2-time64-20261124.md).

@@ -572,6 +572,21 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; _time64(__time64_t *timer) — cdecl, MSVCR80+ (time() is an inline
+  ;; wrapper over it in those headers). Same calendar clock as time(), but the
+  ;; full 64-bit second count comes back in EDX:EAX and is stored as a qword.
+  (func $handle__time64 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $t i64)
+    (local.set $t (i64.div_s
+      (i64.sub (call $wall_clock_read64 (i32.const 2)) (i64.const 116444736000000000))
+      (i64.const 10000000)))
+    (i32.store offset=0 (global.get $reg_base) (i32.wrap_i64 (local.get $t)))
+    (i32.store offset=8 (global.get $reg_base) (i32.wrap_i64 (i64.shr_u (local.get $t) (i64.const 32))))
+    (if (local.get $arg0)
+      (then (call $gs64 (local.get $arg0) (local.get $t))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+  )
+
   ;; 746: atol(str) — convert ASCII string to long integer
   (func $handle_atol (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $ptr i32) (local $val i32) (local $ch i32) (local $neg i32)

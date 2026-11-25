@@ -41858,5 +41858,33 @@
     "convention": "stdcall",
     "hash": 2584528050,
     "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4959,
+    "name": "_libm_sse2_sin_precise",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 3888437131
+  },
+  {
+    "id": 4960,
+    "name": "_libm_sse2_cos_precise",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 1094220510
+  },
+  {
+    "id": 4961,
+    "name": "_libm_sse2_sqrt_precise",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 464167077
+  },
+  {
+    "id": 4962,
+    "name": "_time64",
+    "nargs": 1,
+    "convention": "cdecl",
+    "hash": 1250867989
   }
 ]
