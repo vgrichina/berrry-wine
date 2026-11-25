@@ -1,0 +1,18 @@
+runs/metrojd-1500-3000.json
+  threaded block entries 85825726, uop blocks 0 (not attributable), listed blocks 1676
+    5.66%     4855739  d-gm8:_FinalizeArray
+    4.74%     4065833  d-gm8:_InitializeRecord
+    2.81%     2408044  d-gm8:_FinalizeRecord
+    2.66%     2286372  d-gm8:_FinalizeRecord~
+    2.47%     2123906  d-gm8:_LStrClr
+    1.72%     1476879  d-gm8:_CopyRecord
+    0.58%      495758  d-gm8:_LStrAsg
+  unmatched by module: metrojd_gm7.exe 79.3%, d3dx8.dll 0.0%
+   ? 2.14% metrojd_gm7.exe 0x4aec50
+   ? 2.14% metrojd_gm7.exe 0x4aec56
+   ? 2.14% metrojd_gm7.exe 0x4aec5b
+   ? 1.35% metrojd_gm7.exe 0x406318
+   ? 1.35% metrojd_gm7.exe 0x40631f
+   ? 0.71% metrojd_gm7.exe 0x4a8424
+   ? 0.71% metrojd_gm7.exe 0x4a842a
+   ? 0.71% metrojd_gm7.exe 0x4a8432

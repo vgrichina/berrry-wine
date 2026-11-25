@@ -1,0 +1,18 @@
+/Users/vg/Documents/projects/phone/wine-assembly/scratch/runs/20261124-interp-bench/simcity_2001_vb/hist-20000-30000.json
+  threaded block entries 7686448, uop blocks 2745932 (not attributable), listed blocks 400
+   68.07%     5232325  msvbvm60.dll!ProcCallEngine
+    6.39%      491087  msvbvm60.dll!Zombie_Release
+    6.16%      473474  msvbvm60.dll!__vbaVar2Vec
+    3.47%      266896  msvbvm60.dll!__vbaUnkVar
+    3.47%      266484  msvbvm60.dll!__vbaVarCat
+    2.31%      177640  msvbvm60.dll!rtcCommandBstr
+    1.16%       88936  msvbvm60.dll!__vbaVarCmpNe
+    0.65%       49952  msvbvm60.dll!BASIC_CLASS_GetIDsOfNames
+    0.29%       22205  msvbvm60.dll!__vbaStrI2
+    0.28%       21569  msvbvm60.dll!_CIexp
+    0.20%       15613  msvbvm60.dll!__vbaLineInputStr
+    0.18%       13712  msvbvm60.dll!__vbaPutFxStr4
+    0.09%        7104  msvbvm60.dll!rtcBstrFromAnsi
+    0.04%        2839  msvbvm60.dll!__vbaPutOwner3
+    0.03%        2611  msvbvm60.dll!EVENT_SINK_Release
+  unmatched by module: msvbvm60.dll 3.2%, oleaut32.dll 1.9%, simcity2001.exe 0.6%

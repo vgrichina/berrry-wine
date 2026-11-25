@@ -1,0 +1,109 @@
+PE loaded. Entry: 0x004d4d70
+Extra cmdline args: "/R0"
+[files] policy lazy: 12 eager (1055266 bytes), 1 on demand (43362148 bytes) -- mounted eager without --lazy-ranges
+DLL: mss32.dll at 0x63f000, DllMain=0x652930, thunks=2023, origBase=0x20000000
+DLL: smackw32.dll at 0x767000, DllMain=0x76e9d2, thunks=2115, origBase=0x400000
+Patching EXE imports: mss32.dll -> DLL #0 (mss32.dll)
+Patching EXE imports: smackw32.DLL -> DLL #1 (smackw32.dll)
+After patching: 2115 thunks
+Calling DllMain at 0x652930...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x76e9d2...
+DllMain returned, EAX=0x1
+[ThreadManager] CreateThread handle=0xe1001 start=0x75051f0 param=0x0 flags=0x0 suspendCount=0
+[ThreadManager] Spawned thread 1 handle=0xe1001 EIP=0x75051f0 ESP=0x7eff0238
+Calling DllMain at 0x652930...
+DllMain returned, EAX=0x1
+Calling DllMain at 0x76e9d2...
+DllMain returned, EAX=0x1
+[CreateWindow] hwnd=0x10001 title="Heroes of Might and Magic II" style=0x14cf0000 pos=10,10 size=488x406 menu=5259900
+[ShowWindow] hwnd=0x10001 cmd=1
+[SetMenu] hwnd=0x10001 menu=0
+[ShowWindow] hwnd=0x10001 cmd=8
+[ShowWindow] hwnd=0x10001 cmd=5
+[SetMenu] hwnd=0x10001 menu=0
+[handler-hist] armed T0 at batch 1000
+[handler-hist] T0 batches=1000..1800 total=508598514
+  H467 $th_load32_rop: mov r,[base+disp], disp packed in the operand 84302010 (16.58%)
+  H404 $th_test_jcc: TEST r,r / TEST r8,r8 + Jcc 35266039 (6.93%)
+  H43 $th_jmp: operand=ignored, target in next word 34410586 (6.77%)
+  H53 $th_shift_r: shift/rotate reg by imm or CL 29840706 (5.87%)
+  H148 $th_lea_sib: LEA dst, [base+index*scale+disp] (op=dst, base|index<<4|scale<<8 in word, disp in word) 29226832 (5.75%)
+  H12 $th_add_r_r 25206875 (4.96%)
+  H405 $th_store32_abs_run: 2-4 back-to-back mov [abs],reg 24327400 (4.78%)
+  H11 $th_mov_r_r 22476410 (4.42%)
+  H400 $th_movsx8_sib: MOVSX r32, byte [base+index*scale+disp] 22121460 (4.35%)
+  H401 $th_store8_sib: MOV byte [base+index*scale+disp], r8 22121460 (4.35%)
+  H18 $th_xor_r_r 18869821 (3.71%)
+  H403 $th_ptrvar_fetch8: mov r,[abs] + inc r + mov [abs],r (+ mov r8,[r+disp]) 18470254 (3.63%)
+  H20 $th_load32: reg = [addr] 17383778 (3.42%)
+  H7 $th_and_r_i32 15833326 (3.11%)
+  H312 $th_jcc_nz: JNZ/JNE 9992862 (1.96%)
+  H311 $th_jcc_z: JZ/JE 9695422 (1.91%)
+  H217 $th_test_r8_i: TEST r8, imm8 (op=byte_reg, imm in next word) 8696598 (1.71%)
+  H407 $th_alu_m32_i_jcc: ALU dword [base+disp], imm + Jcc 8319752 (1.64%)
+  H45 $th_block_end: operand=eip to set 7488552 (1.47%)
+  H135 $th_unary_m32_ro: inc/dec/not/neg [base+disp] (op=unary_op<<4|base, disp in word) 7405028 (1.46%)
+  H402 $th_mov_m8_i8_sib: MOV byte [base+index*scale+disp], imm8 7373820 (1.45%)
+  H83 $th_rep_movsd 6835119 (1.34%)
+  H82 $th_rep_movsb 6710176 (1.32%)
+  H21 $th_store32: [addr] = reg 4153509 (0.82%)
+  x87: raw 0 (0.00%) [H188 0 H189 0 H190 0] fused-dispatches 0 (0.00%) [H449 0 H450 0 H451 0 H452 0 H453 0] H439 0
+  top blocks (distinct=273 collisions=0):
+    0x004c7341 18059380 (16.33%)
+    0x004c7651 9440802 (8.54%)
+    0x004c735b 8618578 (7.79%)
+    0x004c735f 8207704 (7.42%)
+    0x004c7379 8192100 (7.41%)
+    0x0049992a 7405065 (6.70%)
+    0x00499927 7373820 (6.67%)
+    0x00499937 7373820 (6.67%)
+    0x004c7664 6647686 (6.01%)
+    0x004c766c 6647686 (6.01%)
+    0x004c7700 6647686 (6.01%)
+    0x004c7728 2793116 (2.53%)
+    0x0045c9fa 480714 (0.43%)
+    0x0045ca06 480714 (0.43%)
+    0x0045ca0b 480714 (0.43%)
+    0x004c737d 410874 (0.37%)
+    0x004c7389 410874 (0.37%)
+    0x004c73a3 410874 (0.37%)
+    0x004c7411 410874 (0.37%)
+    0x004c7419 410874 (0.37%)
+  edges: 330 distinct, 0 dropped (table full)
+  wrote histogram JSON to scratch/runs/20261125-known-routine-census/runs/heroes2-1000-1800.json
+  top SIB consumers (recorded=51632344, collisions=0):
+    H79 $th_movsx8: sign-extends op=0x0 [eax+ecx*1+disp] 22121460 (42.84%)
+    H25 $th_store8: store low byte of reg op=0x0 [none+ecx*4+disp] 22121460 (42.84%)
+    H77 $th_mov_m8_i8: addr in next word, imm in operand op=0x4 [none+eax*4+disp] 7373820 (14.28%)
+    H81 $th_movsx16 op=0x1 [ebx+esi*1+disp] 15604 (0.03%)
+
+--- Final state ---
+EIP=0x0045c243 EAX=0x00000001 ECX=0x00790001 EDX=0x00010001 EBX=0x007906dc ESP=0x074ffccc EBP=0x074ffcf8 ESI=0x004e0998 EDI=0x074ffd2c
+wndproc: 0x0045bb60
+thunk_base: 0x07500000 thunk_end: 0x07505208 num_thunks: 2625
+heap_ptr: 0x009c2550
+free_list: 0x007cdcb0
+heap stats: allocs=296 frees=14 steps=73 (0.2/alloc) misses=205 missSteps=14 freeList=3 [16:1 65536:1 131072:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7efe0000
+heap_base: 0x0077c000
+cache: full clears M 2  T1 2
+cache[T1]: block decodes 303 evicted-live 0 | pages compiled 11 index-arena-full 0 | invalidations 0 dropped 23 last 0x0064c000
+cache: block decodes 3489 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 84 | index hits 217525331 misses 23413 (100.0% hit) | desk trips skipped 105734140
+runs:  extended 507 | blocks chained 863 | free fall-throughs 21151660
+       fall-through branches 21226622 | free 21151660 | paid 74962 (0.4% of fall-throughs are the defrag headroom)
+chunks: samples 13 | used mean 1637 max 5868 | <=4K 11 <=8K 13 <=12K 13 <=16K 13 | grows 14 reuses 13 unpublished 0
+cache: page invalidations 306 that dropped a block 120 last 0x004c1000
+       blocks retired one at a time 120 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 1 / 512   objects 3 / 512   dc_mark 2
+gdi: dib arena pages used 688 free 15440 largest free run 15248 of 16128
+
+Stats: 1759409 API calls, 1800 batches in 24.608s (73 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1001 state=active eip=0x6401b0 esp=0x7eff0220 ebp=0x0 yield=0 waitH=0x0 sleepCount=0 csPark/steal=0/0

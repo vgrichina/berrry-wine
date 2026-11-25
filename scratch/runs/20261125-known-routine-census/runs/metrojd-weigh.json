@@ -1,0 +1,45 @@
+{
+ "hist": "runs/metrojd-1500-3000.json",
+ "total": 85825726,
+ "uopBlocks": 0,
+ "rows": [
+  [
+   "d-gm8:_FinalizeArray",
+   4855739
+  ],
+  [
+   "d-gm8:_InitializeRecord",
+   4065833
+  ],
+  [
+   "d-gm8:_FinalizeRecord",
+   2408044
+  ],
+  [
+   "d-gm8:_FinalizeRecord~",
+   2286372
+  ],
+  [
+   "d-gm8:_LStrClr",
+   2123906
+  ],
+  [
+   "d-gm8:_CopyRecord",
+   1476879
+  ],
+  [
+   "d-gm8:_LStrAsg",
+   495758
+  ]
+ ],
+ "unmatchedByMod": [
+  [
+   "metrojd_gm7.exe",
+   68099335
+  ],
+  [
+   "d3dx8.dll",
+   13860
+  ]
+ ]
+}

@@ -1,0 +1,29 @@
+{
+ "hist": "runs/heroes2-1000-1800.json",
+ "total": 110593288,
+ "uopBlocks": 0,
+ "rows": [
+  [
+   "s-h2:memmove",
+   906105
+  ],
+  [
+   "s-h2:memset",
+   93624
+  ],
+  [
+   "mss32.dll!_AIL_serve@0",
+   78020
+  ]
+ ],
+ "unmatchedByMod": [
+  [
+   "h2demow.exe",
+   109484331
+  ],
+  [
+   "mss32.dll",
+   31208
+  ]
+ ]
+}

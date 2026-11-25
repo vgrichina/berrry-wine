@@ -1,0 +1,11 @@
+/Users/vg/Documents/projects/phone/wine-assembly/scratch/runs/20261125-spelunky-classic-gameplay-profile/headless/run-b/hist.json
+  threaded block entries 398177832, uop blocks 822221575 (not attributable), listed blocks 3487
+   12.74%    50713436  d-gm8:_FinalizeArray
+   10.69%    42576784  d-gm8:_FinalizeRecord
+    9.76%    38879721  d-gm8:Move
+    9.58%    38161398  d-gm8:_CopyRecord
+    5.76%    22940936  d-gm8:_LStrAsg
+    1.10%     4375464  d-gm8:_LStrClr
+    0.36%     1416721  d-gm8:_FinalizeRecord~
+    0.27%     1065778  d-gm8:_InitializeRecord
+  unmatched by module: spelunky.exe 49.7%, d3dx8.dll 0.0%, supersound.dll 0.0%, msvcrt.dll 0.0%

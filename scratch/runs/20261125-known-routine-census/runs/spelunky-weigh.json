@@ -1,0 +1,57 @@
+{
+ "hist": "/Users/vg/Documents/projects/phone/wine-assembly/scratch/runs/20261125-spelunky-classic-gameplay-profile/headless/run-b/hist.json",
+ "total": 398177832,
+ "uopBlocks": 822221575,
+ "rows": [
+  [
+   "d-gm8:_FinalizeArray",
+   50713436
+  ],
+  [
+   "d-gm8:_FinalizeRecord",
+   42576784
+  ],
+  [
+   "d-gm8:Move",
+   38879721
+  ],
+  [
+   "d-gm8:_CopyRecord",
+   38161398
+  ],
+  [
+   "d-gm8:_LStrAsg",
+   22940936
+  ],
+  [
+   "d-gm8:_LStrClr",
+   4375464
+  ],
+  [
+   "d-gm8:_FinalizeRecord~",
+   1416721
+  ],
+  [
+   "d-gm8:_InitializeRecord",
+   1065778
+  ]
+ ],
+ "unmatchedByMod": [
+  [
+   "spelunky.exe",
+   197988456
+  ],
+  [
+   "d3dx8.dll",
+   56820
+  ],
+  [
+   "supersound.dll",
+   2109
+  ],
+  [
+   "msvcrt.dll",
+   209
+  ]
+ ]
+}
