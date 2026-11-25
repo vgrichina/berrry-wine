@@ -330,6 +330,22 @@
                   (i32.eq (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63)))
               (then
                 (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))))
+            ;; Canonical infinity/QNaN only, with all exceptions masked.
+            (if (i32.and
+                  (i32.and (i32.eq (local.get $e) (i32.const 32767))
+                    (i64.lt_s (local.get $mant) (i64.const 0)))
+                  (i32.and
+                    (i32.or (i64.eq (local.get $mant) (i64.const 0x8000000000000000))
+                      (i64.ne (i64.and (local.get $mant) (i64.const 0x4000000000000000)) (i64.const 0)))
+                    (i32.eq (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63))))
+              (then
+                (if (i64.eq (local.get $mant) (i64.const 0x8000000000000000))
+                  (then (call $fpu_set (i32.const 0)
+                    (f64.reinterpret_i64 (i64.const 0x7FF0000000000000)))))
+                (call $fpu_push (call $phys80_decode (local.get $mant) (local.get $se)))
+                (call $phys80_write (global.get $fpu_top) (local.get $mant) (local.get $se))
+                (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+                (return)))
             ;; Canonical nonzero subnormal only; decline before any state mutation.
             (if (i32.and
                   (i32.and (i32.eqz (local.get $e))
@@ -1740,6 +1756,19 @@
     (local.set $t (i32.load16_u (call $phys80_se_addr (local.get $q))))
     (local.set $e (i32.and (local.get $s) (i32.const 32767)))
     (local.set $f (i32.and (local.get $t) (i32.const 32767)))
+    ;; Canonical infinity/QNaN scaled by canonical finite normal or zero.
+    ;; Exact result is the unchanged source image, including sign/payload.
+    (if (i32.and (i32.eq (local.get $e) (i32.const 32767))
+          (i32.and (i64.lt_s (local.get $m) (i64.const 0))
+            (i32.and (i32.eq (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63))
+              (i32.and (i32.or (i64.eq (local.get $m) (i64.const 0x8000000000000000))
+                          (i64.ne (i64.and (local.get $m) (i64.const 0x4000000000000000)) (i64.const 0)))
+                (i32.or (i32.and (i32.eqz (local.get $f)) (i64.eqz (local.get $n)))
+                  (i32.and (i32.lt_u (i32.sub (local.get $f) (i32.const 1)) (i32.const 32766))
+                    (i64.lt_s (local.get $n) (i64.const 0))))))))
+      (then
+        (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+        (return (i32.const 1))))
     (if (i32.eqz (local.get $e))
       (then (if (i64.ne (local.get $m) (i64.const 0)) (then (return (i32.const 0)))))
       (else (if (i32.or (i32.eq (local.get $e) (i32.const 32767))
