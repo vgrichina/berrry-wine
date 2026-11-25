@@ -3758,6 +3758,44 @@
             (call $te_raw (local.get $a))))
           (br $decode)))))
 
+      ;; NP MOVD (0F6E/7E) and MOVQ (0F6F/7F): admit before the coarse
+      ;; 67 guard. Actual 66 selects SSE2 even under code16 inversion.
+      ;; Reuse the MMX move handlers; stores reverse the register roles.
+      ;; Plain code32 NP retains the existing exact-copy matcher below.
+      (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
+        (if (i32.and
+              (i32.eq (i32.and (call $gl8 (global.get $d_pc)) (i32.const 0xEE))
+                      (i32.const 0x6E))
+              (i32.ne (i32.or (global.get $code16)
+                (i32.or (local.get $prefix_67) (i32.or (local.get $prefix_66)
+                  (i32.or (local.get $prefix_rep) (local.get $prefix_lock)))))
+                (i32.const 0))) (then
+          (if (i32.or (i32.ne (local.get $prefix_66)
+                (i32.and (i32.ne (global.get $code16) (i32.const 0))
+                         (i32.eqz (global.get $cs_big))))
+                (i32.or (i32.ne (local.get $prefix_rep) (i32.const 0))
+                        (i32.ne (local.get $prefix_lock) (i32.const 0))))
+            (then (unreachable)))
+          (local.set $op (call $d_fetch8))
+          (local.set $mmxsub (call $mmx_opcode_subop (local.get $op)))
+          (call $decode_modrm)
+          (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+            (call $te (i32.const 422)
+              (i32.or (i32.shl (local.get $mmxsub) (i32.const 8))
+                (if (result i32) (i32.and (local.get $op) (i32.const 0x10))
+                  (then (i32.or (i32.shl (global.get $mr_val) (i32.const 4)) (global.get $mr_reg)))
+                  (else (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))))
+          (else
+            (call $apply_seg_override)
+            (local.set $a (call $emit_sib_or_abs))
+            (call $te
+              (select (i32.const 424) (i32.const 423)
+                (i32.and (local.get $op) (i32.const 0x10)))
+              (i32.or (i32.shl (local.get $mmxsub) (i32.const 8))
+                (i32.shl (global.get $mr_reg) (i32.const 4))))
+            (call $te_raw (local.get $a))))
+          (br $decode)))))
+
       ;; 0x67 (address-size override) changes how an instruction forms its
       ;; effective address, so every opcode has to opt in deliberately —
       ;; decoding 16-bit addressing as 32-bit ModRM/SIB silently corrupts EAs.
