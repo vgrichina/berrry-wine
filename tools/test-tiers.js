@@ -31,6 +31,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // and production defaults in the unit tier.
 // test-x87-sqrt-exact.js uses bounded embedded exact-root literals by default;
 // selected + sweep explicitly cover the full normal exponent qualification.
+// test-x87-fcmov-images.js uses bounded canonical image literals by default;
+// an explicit full matrix also covers all retained PC/RC and status seeds.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an

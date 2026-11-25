@@ -1169,6 +1169,8 @@
             (call $fpu_image_compare (local.get $st0) (call $fpu_get (i32.const 1)) (i32.const 1) (i32.const 1))
             (drop (call $fpu_pop)) (drop (call $fpu_pop))
             (return)))
+        (if (i32.eq (local.get $reg) (i32.const 3))
+          (then (if (call $phys80_fcmov_parity (local.get $rm) (i32.const 0)) (then (return)))))
         ;; reg=3 = FCMOVU (cmov-if-PF) — lazy flag system has no PF, not impl.
         (call $fpu_crash_op (local.get $group) (local.get $reg) (local.get $rm)) (return)))
     ;; Group 3 (DB): FCMOVN, FNINIT, FNCLEX, FUCOMI, FCOMI
@@ -1201,6 +1203,8 @@
         ;; DB F0..F7 = FCOMI ST(i)
         (if (i32.eq (local.get $reg) (i32.const 6))
           (then (call $fpu_image_compare (local.get $st0) (call $fpu_get (local.get $rm)) (local.get $rm) (i32.const 2)) (return)))
+        (if (i32.eq (local.get $reg) (i32.const 3))
+          (then (if (call $phys80_fcmov_parity (local.get $rm) (i32.const 1)) (then (return)))))
         ;; reg=3 = FCMOVNU, reg=7 = reserved.
         (call $fpu_crash_op (local.get $group) (local.get $reg) (local.get $rm)) (return)))
     ;; Group 4 (DC): arith ST(rm), ST(0)
@@ -1463,6 +1467,35 @@
     (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $dst) (i32.const 3))) (local.get $raw))
     (global.set $fpu_raw_tag (i32.or (global.get $fpu_raw_tag)
       (i32.shl (local.get $valid) (local.get $dst)))))
+  ;; Bounded parity moves: masked, occupied canonical images only.
+  (func $phys80_fcmov_parity (param $src i32) (param $invert i32) (result i32)
+    (local $n i32) (local $i i32) (local $p i32) (local $exp i32) (local $mant i64)
+    (if (i32.ne (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63))
+      (then (return (i32.const 0))))
+    (loop $operands
+      (local.set $i (select (local.get $src) (i32.const 0) (local.get $n)))
+      (if (i32.eqz (call $fpu_is_valid (local.get $i))) (then (return (i32.const 0))))
+      (local.set $p (i32.and (i32.add (global.get $fpu_top) (local.get $i)) (i32.const 7)))
+      (if (i32.eqz (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+                      (i32.shl (i32.const 1) (local.get $p))))
+        (then (return (i32.const 0))))
+      (local.set $exp (i32.and (i32.load16_u (call $phys80_se_addr (local.get $p))) (i32.const 32767)))
+      (local.set $mant (i64.load (call $phys80_mant_addr (local.get $p))))
+      (if (i32.eqz (local.get $exp))
+        (then (if (i64.lt_s (local.get $mant) (i64.const 0)) (then (return (i32.const 0)))))
+        (else
+          (if (i32.eq (local.get $exp) (i32.const 32767))
+            (then
+              (if (i32.eqz (i32.or
+                    (i64.eq (local.get $mant) (i64.const 0x8000000000000000))
+                    (i64.eq (i64.and (local.get $mant) (i64.const 0xC000000000000000)) (i64.const 0xC000000000000000))))
+                (then (return (i32.const 0)))))
+            (else (if (i64.ge_s (local.get $mant) (i64.const 0)) (then (return (i32.const 0))))))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (br_if $operands (i32.lt_u (local.get $n) (i32.const 2))))
+    (if (i32.xor (call $get_pf) (local.get $invert))
+      (then (call $phys80_copy_logical (i32.const 0) (local.get $src))))
+    (i32.const 1))
   (func $phys80_copy_logical (param $dst i32) (param $src i32)
     (local.set $dst (i32.and (i32.add (global.get $fpu_top) (local.get $dst)) (i32.const 7)))
     (call $phys80_copy (local.get $dst)
