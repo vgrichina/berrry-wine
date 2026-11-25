@@ -4180,7 +4180,18 @@
         (call $wnd_set_parent (local.get $hwnd)
           (local.get $parent_hwnd))
         (call $host_set_parent (local.get $hwnd)
-          (local.get $parent_hwnd)))
+          (local.get $parent_hwnd))
+        ;; USER links a new WS_CHILD at the BOTTOM of its siblings and a new
+        ;; top-level window at the top (Wine: insert_after = WS_CHILD ?
+        ;; HWND_BOTTOM : HWND_TOP, "even if the CBT hook was called with
+        ;; HWND_TOP"). That is why creation order is tab order: the first
+        ;; child is the topmost. $wnd_z_init_slot gave this record a top
+        ;; rank when it was allocated; move it under the existing siblings.
+        ;; SimCity 2001 (VB6) creates its map PictureBox, then a same-sized
+        ;; AutoRedraw mask PictureBox; with the later box on top, the map's
+        ;; WS_CLIPSIBLINGS window DC clipped to an empty region and the city
+        ;; never reached the screen (docs/re-notes/simcity-2001-vb.md).
+        (call $wnd_z_set_after (local.get $hwnd) (i32.const 1))) ;; HWND_BOTTOM
       (else
         (call $wnd_set_owner (local.get $hwnd)
           (local.get $parent_hwnd))))
