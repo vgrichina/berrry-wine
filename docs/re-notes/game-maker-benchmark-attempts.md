@@ -108,3 +108,29 @@ sub-rect, destination offset or stretch; `d9g_mem+2956`, export
 case 5 of `test/test-d3d9-gps-present-stretch.js`. Evidence:
 `scratch/runs/20261124-metrojd-width/` (`before.png` raw DIB, `before-canvas.png`
 raw buffer laid over the left 80 px, `before-mid.png` the live window, `after.png`).
+
+## More GM5/GM7 runners for the Delphi arm D corpus (2026-11-25)
+
+Every Game Maker 5.3A and 7 runner links the Delphi 6-7 System unit, so all five
+fold-bench arm D helpers (`_LStrClr`, `_LStrAsg`, `_FinalizeRecord`,
+`_FinalizeArray`, `_CopyRecord`) match their signatures exactly
+(`node tools/delphi-detect.js PATH`). The added samples, with provenance in
+`test/binaries/SOURCES.md` under "Delphi corpus": Remar's Castle of Elite,
+Herocore, Hero and Retrobattle, each in GM5 and GM7; Seiklus 1.7; and Robo-Logan
+Quick Draw (GM7, CC0). Run them with every file in the game directory mounted
+(`--vfs-include=*`, or `--app=` for the registered GM5 ids), because the runners
+load fmod/jbfmod or Audiere with LoadLibrary.
+
+- GM5 (`castle_gm5`, `herocore_gm5`, `hero_gm5`, `retrobattle_gm5`, `seiklus`)
+  reaches its window and loading screen. The runner then shows "Unexpected error
+  occured when running the game", which is open.
+- GM7 Remar games crash between batch 26K and 73K. Herocore's crash is a
+  `jmp [0x5fa3f4]` (the `GlobalFree` IAT slot) that lands in heap data. Not
+  investigated.
+- Robo-Logan stops on `UNIMPLEMENTED API: <ord>` at batch 22049 (EIP 0x489865, a
+  COM vtable call).
+- With `--branch-clock` at 20000 batches, arm D on and off produce identical API
+  counts and end frames for all nine GM samples. Arm D's native-call count ranges
+  from 6.8K to 20.6K. `_CopyRecord` is 0 native in every one of these runs,
+  against 286 in Spelunky (GM8). The cause is not investigated. Evidence:
+  `scratch/runs/20261125-delphi-corpus/`.

@@ -930,3 +930,68 @@ Game Maker 5 build, not registered) and `metrojd.txt` (591 bytes, SHA-256
 
 **Terms.** Neither the archive.org item nor the readme states a licence.
 Not committed and not published.
+
+## Delphi corpus for the fold-bench arm D check (2026-11-25, local only)
+
+Fetched 2026-11-25 as test inputs for the Delphi System-helper fast path
+(branch `fold-bench`, arm D). Each lives in its own
+`candidates/<name>/download/` (as fetched) with `extracted/` beside it; none
+is committed or published, and nothing was run natively. Compiler/RTL
+buckets are `tools/delphi-detect.js` guesses. Run evidence:
+`scratch/runs/20261125-delphi-corpus/`.
+
+**Inno Setup installers** (Jordan Russell / Martijn Laan; Inno Setup
+License: free of charge, redistribution of the unmodified installer
+permitted). Each loader extracts and spawns its Delphi `setup.tmp` wizard.
+
+| Directory | URL | Bytes | SHA-256 | RTL bucket |
+|---|---|---|---|---|
+| `delphi-inno-isetup-1.3.26/` | `https://files.jrsoftware.org/is/1.3/isetup-1.3.26.exe` | 765,774 | `581fc5d936d2c88717091ce34018c7f8f5a14dc8a1be71d1df658ae8f1bbe46a` | Delphi 2-4 |
+| `delphi-inno-isetup-2.0.19/` | `https://files.jrsoftware.org/is/2/isetup-2.0.19.exe` | 1,125,846 | `3ecf561c3100694df4ffe48a5fd2a28c72cb40f4b251bdb8e591ee80d931765a` | Delphi 2-4 |
+| `delphi-inno-isetup-3.0.7/` | `https://files.jrsoftware.org/is/3/isetup-3.0.7.exe` | 943,005 | `a572866b311a9646b980c1965f5660b9eb13feb57cd4f99a907876786c632695` | Delphi 2-4 |
+| `delphi-inno-isetup-4.2.7/` | `https://files.jrsoftware.org/is/4/isetup-4.2.7.exe` | 1,011,323 | `43f5154b1300c7547f482762c604ae286b345e3974ec294232f609d2f9139d7e` | Delphi 2-4 |
+| `delphi-inno-isetup-5.1.14/` | `https://files.jrsoftware.org/is/5/isetup-5.1.14.exe` | 1,411,792 | `0241c4fa5fae606c3db00981764224f622dc8e1d7c90cee05be68294839b0615` | Delphi 2-4 |
+| `delphi-inno-innosetup-5.6.1/` | `https://files.jrsoftware.org/is/5/innosetup-5.6.1.exe` | 1,963,136 | `96fd6a5eaab473c61a19affff89618764b940ee3f15837c2944a5595aed5fde6` | Delphi 2-4 |
+| `delphi-inno-isetup-5.3.11-unicode/` | `https://files.jrsoftware.org/is/5/isetup-5.3.11-unicode.exe` | 1,990,288 | `c8180d6c4f87ff6c66bbf299bebfd69c808b3e67a793e38d7ba05c5cc4057069` | Delphi 2009+ Unicode, FastMM |
+| `delphi-inno-innosetup-6.7.4/` | `https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe` | 10,604,576 | `a549929319f9120716677c685535ca4671e4b937b5fdc87e2585f32d8eb30e8c` | Delphi 2009+ Unicode (Embarcadero) |
+
+**Game Maker games.** Daniel Remar's freeware from
+`https://www.remargames.se/games.php` ("Free Windows games I've made with
+Game Maker"; each readme: "This game is entirely free. Bundling this game
+with adware ... or selling it for money is illegal." -- no redistribution
+grant). Each zip has a GM 5.3A and a GM7 exe; all eight exes link the
+Delphi 6-7 System unit and match arm D 5/5.
+
+| Directory | URL | Zip bytes | Zip SHA-256 | Exes (SHA-256) |
+|---|---|---|---|---|
+| `gm-remar-herocore/` | `https://www.remargames.se/games/herocore.zip` | 7,141,852 | `ae5fa0a1ddf9550bdb824f916e5bd4824e3b79d681d731c4b1c2bd7d232eac5d` | `herocore gm7.exe` `9146fc64eb6704cf99ed5eb1728312a9571a6c472a300415c9261d32fcbd62ec`, `herocore gm5.exe` `be411b8b64cf821470e17e1dc913410b14f1eaab46187c5ab57c8da03d09a8ce` |
+| `gm-remar-castle/` | `https://www.remargames.se/games/castle.zip` | 5,997,973 | `dd64cdfc815f4b4bb81407dd0f92869255513ac68ea2589751ed18ccdd83f26e` | `castle gm7.exe` `d518661cd1b9a0ee39c13f1b07bd43cf552f773cd938fa2c72941351d7ca992b`, `castle gm5.exe` `1e693f46501c72d38db098c548dfed3852031b0a9b3e9b9531266ce6eaa822a7` |
+| `gm-remar-retrobattle/` | `https://www.remargames.se/games/retrobattle.zip` | 6,528,776 | `95f16a1e7f5830c4f69e8f8781a025e4b5e44e448bbfa4b8a091b7564ec23463` | `retrobattle gm7.exe` `4ff48d1f850ef66959b339ec16628387f2ec65ebf1b337ae30548ed8b870c676`, `retrobattle gm5.exe` `0ef6ae1699366338f9c7f5c92f38898920b779685ef67cbb090132736430a6ec` |
+| `gm-remar-hero/` | `https://www.remargames.se/games/hero.zip` | 5,398,318 | `342b3ff6dcbb5fc7fa8927c54f90dedd3c91f6b150372bf1a8a56346bd020046` | `hero gm7.exe` `a37f9c204fc3f2dbc509f27edc5f10d212611e6d47889685b7a6ef7dc57c3751`, `hero gm5.exe` `4b69f4b3fe878f1f280da2222fdccde3990681f2cba9deefafb38925399c57fd` |
+
+Also: `gm-seiklus/` -- Seiklus 1.7 (clysm, freeware), archive.org item
+`Seiklus`, `https://archive.org/download/Seiklus/Seiklus17.zip` (2,705,517
+bytes, SHA-256 `1f110afea558fdf2dce9673d11fbd9cedf6693949b50e8d652b4697d77259b0a`;
+`seiklus/seiklus.exe` 4,042,567 bytes, SHA-256
+`8f4acaed7807c1881f7d2f6b4f5a670623c9f8856ee8d0c25387bc3a4f8ce7b9`); the item
+states no licence. `gm-robo-logan-quick-draw/` -- Robo-Logan Quick Draw
+1.0.1.13, archive.org item `robo-logan_quick-draw`, licence CC0 1.0 (item
+metadata), `https://archive.org/download/robo-logan_quick-draw/robo-logan_quick-draw.exe`
+(2,495,385 bytes, SHA-256
+`d31426f0a7b1a882608f0b42865ab0bede5bc80a495af0fc7b9d7e3f2f49b088`).
+
+**Tools.** `delphi-heidisql-10.0-portable/` -- HeidiSQL 10.0 32-bit
+portable (GPL-2.0), `https://github.com/HeidiSQL/HeidiSQL/releases/download/10.0/HeidiSQL_10.0_32_Portable.zip`
+(10,524,311 bytes, SHA-256
+`95e161114da3e03783329783c0d48ec581fc51d97e5b80c4708425b7a8988cd8`).
+`heidisql.exe` is UPX-packed (7,791,671 bytes, SHA-256
+`bad7f78a467478161978f7cb5ef030794462566d750bbb3e786aa8efd4ee7e4b`);
+`unpacked/heidisql.exe` is `upx -d` of a copy (14,520,375 bytes, SHA-256
+`15c9d13307705502f7d6c63118002460d4beea50d3fd6d02f7f2d300e7a3b6f4`), Delphi
+2009+ Unicode RTL. `fpc-doublecmd-1.2.11/` -- Double Commander 1.2.11 i386
+(GPL-2.0; Lazarus / FPC 3.2.2, the negative control),
+`https://github.com/doublecmd/doublecmd/releases/download/v1.2.11/doublecmd-1.2.11.i386-win32.zip`
+(15,645,809 bytes, SHA-256
+`e098095364fb1aea95bfd713af1373ab002c667478b3df24d397a49a10bb83a1`;
+`doublecmd/doublecmd.exe` SHA-256
+`609d9609fd6662b4f702c622bb2576bd67154915d1bb1ea0d3433ef30b01aa03`).

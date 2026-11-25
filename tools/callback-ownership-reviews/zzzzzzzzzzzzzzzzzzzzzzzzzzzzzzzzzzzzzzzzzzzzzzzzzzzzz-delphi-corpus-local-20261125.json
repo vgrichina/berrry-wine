@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "d9ecc0c52337044622efdda99acf7e51dda1eb78cca6b51bde27d9c5cf46816a",
+      "sha256": "8defca8da686b10b93f813b323e385452a134828c04730ea542dd281d1afc186",
+      "reason": "Review 20261125 Delphi corpus local candidates for fold-bench arm D: eight LOCAL_CANDIDATE_APPS labels and eight localOnly APPS data entries (three Inno Setup installers with spawnProcesses, four Remar Game Maker 5 runners and Seiklus with their companion fmod/jbfmod/Audiere DLLs and data files as plain files). No launch arguments, config overlays, registry seeds, callback producer, boundary, export, owner, continuation, EIP/stack/clock write, rendering or input fence change. No gameplay compatibility assertion. General callback ownership remains pending."
+    }
+  ]
+}
