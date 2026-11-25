@@ -74,6 +74,153 @@ node test/run.js --app=spelunky_classic_hd --headless-gl --quiet-api \
   EnterCriticalSection parks behind T1's mixer section, and how often main
   gets the section depends on how much guest time each batch covers.
 
+## Gameplay route: level 1-1 via START (headless, deterministic)
+
+Run `scratch/runs/20261125-spelunky-hd-gameplay-profile/route/route.sh`. It
+drives `run.js --control --frozen` with `tools/ctl.js`. Its `gen-input.js`
+emits the same events as one `--input=` string. Both produce byte-identical
+PNGs at every checkpoint (ctl and three `--input` replays matched).
+
+Flags: `--screen=1024x768 --tick-ms-per-batch=5 --stuck-after=0 --headless-gl`.
+
+| Batch | Event |
+|---|---|
+| 112000 | Enter, held 60 batches |
+| 131000–160000 | Hold Left; he stops at TUTORIAL |
+| 160200–162700 | Right |
+| 163200–163900 | Right |
+| 164300 | Up, held 400 batches; enters START |
+| ~205000 | Level 1-1 is generated |
+| 213550 | Player at the entrance door; HUD shows 4 hearts, 4 bombs, 4 ropes, $0 |
+
+- Inside the level, one 6000-batch cycle (`route/cycle.sh`) is:
+  - Left 800, then Z (jump) 700 while still holding Left, then a 300 gap.
+  - X (whip) 500.
+  - The same to the right.
+- Keys must be held for at least 400 batches. Shorter presses fall between
+  frames.
+- Gameplay runs at about 247 batches per present. Presents are counted with
+  `ctl eval instance.exports.d3d9_gps_stat(4)`:
+  - 1414 at batch 213550.
+  - 2021 after 25 cycles, at 363550: 607 gameplay frames, about 20 s at 30 fps.
+
+Browser: Enter twice, about 30 frames apart, skips the intro straight to the
+title room by about frame 70. Two attempts with `--guest-script` frame
+pacing and wall-clock key holds left the player at the START door without
+entering it. The script's hold times are wall seconds, not frames.
+
+## Gameplay profile (2026-11-25, worktree a0bc18145)
+
+Window: batches 225000–345000, 485 presents, inside level 1-1. Load average
+was 4–15 throughout, so read the shares, not the times. Evidence is in
+`scratch/runs/20261125-spelunky-hd-gameplay-profile/`.
+
+**Headless (run C, V8 cpuprofile).** Wasm is only 37% of samples. The rest
+splits into:
+- 31%: `run.js` main closure. Self time is reported on its last line (13604)
+  and on its `await` lines; more below.
+- 25%: `lib/process-desktop.js` `receive`/`rows`/`publish`. `poll()` runs
+  every batch; it is CLI only.
+
+Rerunning with `node --no-turbo-inline-js-wasm-calls` (run D) leaves both
+buckets the same. So inlined JS-to-wasm calls are not what hides there.
+
+The main closure is one async function about 11,800 lines long. Each batch
+crosses about 15 `await`s (nativeFault.wait, mainExecutionSuspended,
+mainOwner.run/call, serviceMain*Wait, comInterfaces.drain,
+pumpWaveCallbacks, …), and most of them await a value that is already
+settled. That is about 0.57 ms of JS per batch. The likely reason, not
+verified, is that a function this size is never optimized: its own
+bytecode, plus the async resume and suspend V8 reports at the
+function-end position, runs as that closure's self time. The browser's
+`host.js` `step` is 0.4%.
+
+Inside wasm (gameplay, all shares are % of wasm self time):
+
+| Group | % of wasm |
+|---|---|
+| Threaded handlers | 38 |
+| SSE handlers | 26 |
+| Uop tier (`uop_fast` alone is 14) | 18 |
+| Memory access (`gs32`, `g2w_slow`) | 5 |
+| x87 | 3 |
+| Dispatch | 3 |
+| D3D9/GPS in wasm | 0.1 (presents go through the GL stream) |
+
+`th_sse_rr` alone is 18% of wasm. It is 11.9% of threaded ops but 40% of
+handler self time, at about 231 ns per op against a mean of 68 ns. Next by
+self time are `th_push_r` (115 ns), `th_load32_rop`, `th_test_jcc` (134 ns),
+`movss_load_ro` and `movss_store_ro` (about 93 ns).
+
+**Guest side (run B).** Threaded counts come from `--handler-hist`, and the
+SSE shares from `insn-mix.js` (threaded EXE blocks only).
+
+- Uop blocks are 63% of block executions: 289M uop blocks against 170M
+  threaded entries.
+- Census:
+  - 1544 installs over 950 heads.
+  - 100 programs retired as poor.
+  - 27.9M enters, which is 10.4 blocks per enter.
+- Threaded entries the tier did not take:
+
+  | Reason | Share of threaded entries |
+  |---|---|
+  | No-backedge | 29 |
+  | No verdict | 27 |
+  | Live | 17 |
+  | Head-unsupported | 10 |
+  | Poor | 6 |
+  | Call-indirect | 5 |
+
+- SSE is 11.8% of threaded guest instructions. Each SSE row is that
+  mnemonic's share of the SSE instructions:
+
+  | Mnemonic | % of SSE |
+  |---|---|
+  | movss | 24 |
+  | cvtps2pd | 15 |
+  | cvtss2sd | 13 |
+  | comisd | 8 |
+  | movq | 8 |
+  | cvtsi2ss | 7 |
+  | movsd | 4 |
+  | addsd, subsd, mulsd | about 7 together |
+
+  This is GML's double-based runtime converting to and from floats.
+- x87 is 1%.
+- The uop compiler declines most often (forms are weighted by the block
+  entries at each head):
+  - `ret` and `call`: the runner is call-heavy C++.
+  - `rep 0f 10` (movss): 12.2M.
+  - `pfx64` (`fs:` SEH prologue and epilogue movs): 6.9M.
+  - `rep ret` (the `/GS` cookie check at 0x6aa085): 3.4M.
+  - cvtsi2ss: 3.0M.
+  - xorps and pxor: 3.9M.
+
+Hot guest code:
+- `0x564c40` is the GML bytecode loop. Its per-instruction `call [ebp-0x20]`
+  at 0x564c87 is about 7% of threaded entries (0x564c7e, 0x564c8a, 0x564c69).
+  It is declined as call-indirect.
+- `0x4695c5` walks the instance list through `+0x17c`. It calls 0x453720
+  (event-exists: per-object table at `[esi+ebx*8+0x4c/0x50]`) and then
+  0x41d620 (perform event).
+- `0x4a6dc0` is the instance-id-valid check.
+- `0x56a9b0` is the large VM execute frame (0x874 bytes of stack, `/GS`).
+- `0x43f830` is a C++ method with SEH and `/GS`.
+- `0x6aa07d` is `__security_check_cookie`.
+
+**Browser** (`profile-web-frames.js --headful`, real GPU): the level was not
+reached, so the title room was profiled while the player ran, jumped and
+whipped. Wasm is 85% of the page with Threads off and 96% of the guest
+Worker with Threads on.
+- Uop is 28–37% and threaded handlers 33–36%. `th_sse_rr` is only about 3%
+  here, because the title room does little GML double math.
+- Host costs: WebGL `getError` is 2.5–5.4% of the page with Threads off;
+  `_audioSchedulerNow` 1.4%.
+- Headless Chrome without a GPU falls back to the WAT software D3D9 shader
+  VM (`d3d_shader_vm_run`, `d3d_software_step`): about 85% of the page and
+  2 presents/s. That number says nothing about the real game.
+
 ## Fixed gaps (in order of appearance)
 
 1. **SSE2 XMM forms** (decoder gate `src/07-decoder.wat`, `$sse2_form` /
@@ -135,4 +282,11 @@ above. D3DX also imports GetFileSizeEx and some msvcrt entries.
 - Identify the audio output and why T1 mixes thousands of samples per turn
   under the section main needs. That is the cost behind the slow title at
   coarse ticks.
-- Play a real level from the START door.
+- A browser route into level 1-1 (frame-paced holds are needed, not wall
+  seconds).
+- Gameplay levers, ranked in the run's report:
+  - Dedicated threaded handlers for the hot scalar SSE/SSE2 forms, so they
+    leave `th_sse_rr`.
+  - Uop support for `fs:` movs, `rep ret` and the scalar SSE moves and
+    conversions.
+  - Measure `--uop-icall` on the bytecode loop.

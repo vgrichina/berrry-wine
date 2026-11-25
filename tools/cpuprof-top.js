@@ -48,7 +48,9 @@ const wasmNames = (() => {
   const { execFileSync } = require('child_process');
   const path = require('path');
   const out = execFileSync('node',
-    [path.join(__dirname, 'wasm-func-name.js'), '--dump'], { encoding: 'utf8' });
+    // The dump lists every function (~16k lines, >1 MB): execFileSync's 1 MB
+    // default maxBuffer killed it with ENOBUFS.
+    [path.join(__dirname, 'wasm-func-name.js'), '--dump'], { encoding: 'utf8', maxBuffer: 256 << 20 });
   const map = new Map();
   for (const line of out.split('\n')) {
     const m = line.match(/^\[(\d+)\] (.+?) \(/);
