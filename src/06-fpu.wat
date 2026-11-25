@@ -1109,6 +1109,7 @@
                           (then
                             (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
                             (return)))))))
+                (if (call $phys80_sqrt_exact) (then (return)))
                 (if (f64.lt (local.get $st0) (f64.const 0)) (then (call $fpu_set_exc (i32.const 0x01))))
                 (call $fpu_set (i32.const 0) (f64.sqrt (local.get $st0))) (return)))
             (if (i32.eq (local.get $rm) (i32.const 3))
@@ -1612,6 +1613,47 @@
     (if (i32.ne (i32.and (local.get $status) (i32.const 0x3F)) (i32.const 0))
       (then (call $fpu_set_exc (i32.and (local.get $status) (i32.const 0x3F)))))
     (if (local.get $pop) (then (drop (call $fpu_pop)))))
+
+  ;; Exact positive normal squares only; every rejection keeps old FSQRT.
+  (func $phys80_sqrt_exact (result i32)
+    (local $p i32) (local $s i32) (local $k i32) (local $pc i32)
+    (local $m i64) (local $n i64) (local $r i64) (local $b i64) (local $t i64)
+    (if (i32.ne (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (call $fpu_is_valid (i32.const 0))) (then (return (i32.const 0))))
+    (local.set $p (global.get $fpu_top))
+    (if (i32.eqz (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+          (i32.shl (i32.const 1) (local.get $p)))) (then (return (i32.const 0))))
+    (local.set $s (i32.load16_u (call $phys80_se_addr (local.get $p))))
+    (local.set $m (i64.load (call $phys80_mant_addr (local.get $p))))
+    (if (i32.or (i32.or (i32.eqz (local.get $s)) (i32.ge_u (local.get $s) (i32.const 32767)))
+          (i64.ge_s (local.get $m) (i64.const 0))) (then (return (i32.const 0))))
+    (local.set $pc (i32.and (i32.shr_u (global.get $fpu_cw) (i32.const 8)) (i32.const 3)))
+    (if (i32.eq (local.get $pc) (i32.const 1)) (then (return (i32.const 0))))
+    ;; x = odd(M) * 2^k. A rational binary root needs k even and odd(M)
+    ;; a perfect integer square. Its root then has at most32 significant bits.
+    (local.set $t (i64.ctz (local.get $m)))
+    (local.set $k (i32.add (i32.sub (local.get $s) (i32.const 16446)) (i32.wrap_i64 (local.get $t))))
+    (if (i32.and (local.get $k) (i32.const 1)) (then (return (i32.const 0))))
+    (local.set $n (i64.shr_u (local.get $m) (local.get $t)))
+    (local.set $b (i64.const 0x4000000000000000))
+    ;; Unsigned restoring integer square root,32 bounded base4 digits.
+    (loop $digit
+      (local.set $t (i64.add (local.get $r) (local.get $b)))
+      (if (i64.ge_u (local.get $n) (local.get $t))
+        (then (local.set $n (i64.sub (local.get $n) (local.get $t)))
+          (local.set $r (i64.add (i64.shr_u (local.get $r) (i64.const 1)) (local.get $b))))
+        (else (local.set $r (i64.shr_u (local.get $r) (i64.const 1)))))
+      (local.set $b (i64.shr_u (local.get $b) (i64.const 2)))
+      (br_if $digit (i64.ne (local.get $b) (i64.const 0))))
+    (if (i64.ne (local.get $n) (i64.const 0)) (then (return (i32.const 0))))
+    (if (i32.and (i32.eqz (local.get $pc)) (i64.ge_u (local.get $r) (i64.const 0x1000000)))
+      (then (return (i32.const 0))))
+    (local.set $t (i64.clz (local.get $r)))
+    (call $phys80_write (local.get $p) (i64.shl (local.get $r) (local.get $t))
+      (i32.sub (i32.add (i32.shr_s (local.get $k) (i32.const 1)) (i32.const 16446)) (i32.wrap_i64 (local.get $t))))
+    (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+    (i32.const 1))
 
   ;; FRNDINT's floating result has no signed-integer destination range limit.
   ;; Handle canonical zero and normalized finite images; other encodings keep
