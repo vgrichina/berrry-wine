@@ -261,6 +261,80 @@ The call comes from the VCL's mouse-enter tracking, with `TME_LEAVE` on hwnd
 `0x10005`. It trapped on the fail-fast stub in both modes, and is now real:
 `$tme_track` in `09a5`. Evidence is in `scratch/runs/20261125-track-mouse-event/`.
 
+## Input latency and browser frame rate, 2026-11-25
+
+Reported as "super laggy, a delay after you press a key", and about 12 fps in
+the browser against a 30 fps room speed. Evidence:
+`scratch/runs/20261125-spelunky-input-latency/`. Desktop Chrome headful, dev
+server `--isolate`, box load 6–9.
+
+**Two Presents per GM step.** The GM8 loop (0x53e8aa) calls step+draw
+(0x53e53c), Presents from 0x4a2708/0x4a27ae, then runs ProcessMessages once
+(PeekMessage, ret 0x470d89). A second Present (ret 0x4a2864 from 0x4a27cc,
+after IsIconic + GetClientRect) comes from the GML builtin at 0x553180 and
+from 0x49c546. That is guest behaviour, so **presents/s ÷ 2 = GM fps**. The
+perf HUD's PRESENT/s counts both. In the browser timelines the present
+interval is p50 18 ms / p95 105–125 ms: pairs of presents, then one GM step.
+
+**Key → pixels**, measured with `tools/page-probes/arm-key-latency.js` +
+`read-key-latency.js`, summarised by `tools/key-latency-report.js`. All
+values are ms from the DOM event timestamp.
+
+| Run | GM fps | enq | deq (guest took WM_KEYDOWN) | moved (frame shows it) | paint | frame→paint |
+|---|---|---|---|---|---|---|
+| title, coop (`base-coop-3`) | 10.2 | 6 | 55 | 159 | 162 | 4.2 |
+| title, Threads (`base-threads-1`) | 8.8 | 0.4 | 59 | 163 | 177 | 15.7 |
+| tutorial, coop (`game-coop-4`) | 8.2 | 5 | 63 | 193 | 199 | 3.7 |
+
+- The host side is cheap: enqueue under 10 ms, composite 4 ms (coop) or
+  about 15 ms (Threads; the renderer holds publication until the Worker
+  slice ends, `_workerPublicationHeld`).
+- Keys arrive as WM_KEYDOWN through PeekMessage once per GM step (GetKeyState
+  only for modifiers), so `deq` is half a GM step on average. The frame that
+  shows the key is about 3 presents (1.5 GM steps) after `deq`.
+- **So the lag is the GM step rate.** At 8–10 GM fps, a key costs about
+  half a step plus 1.5 steps: 160–200 ms. At 30 GM fps the same pipeline
+  would be about 55–65 ms. No input-path fix changes this.
+- Spin parking, peek-spin, present pacing and logical-frame counters were all
+  0 in the browser title room: nothing in our timing paths is sleeping.
+- Headful synthetic keyups on window blur come from
+  `lib/browser-input.js` `releaseDeliveredKeys`, a focus-loss test artefact.
+
+**Headless "30 fps" is guest-clock fps, not wall fps.** The gameplay profile
+above counts presents against the 200 ms/batch clock. Wall-clock in the CLI
+on the same box, title room (`headless/title-batchclock-blocks.log`,
+`title-realticks.log`): 49 presents/s with the batch clock (24.5 GM fps),
+41 with `--real-ticks` (20.5 GM fps). The browser runs the same room at
+17.5–25 presents/s, so the browser executes GM steps about 2× slower than
+Node on the same machine.
+- `get_blocks_now` per present is not a comparable unit across hosts (uop
+  tier installs change what a block is): 312 k in the CLI, 0.87–1.04 M in
+  headful Chrome, 165 k in headless Chrome. Do not use it as "work".
+- A mouse over the window is **not** the cause: a CLI run with
+  `22100:mousemove:480:400` ran the same window as fast as one without
+  (`headless/title-mouse2.log`); an earlier slow mouse run was box load.
+- The browser presenter reads back and re-uploads every frame:
+  `readPixels` 8.2 % of page CPU and `putImageData` of the full frame per
+  present (`prof-coop-1`). This is a few percent, not 2×.
+
+**Remaining levers**, from the gameplay profile above (wall-clock gains
+unmeasured in the browser): Delphi record RTTI (`_CopyRecord` /
+`_FinalizeRecord`, about a third of guest work), uop no-backedge declines
+(55 % of threaded entries) and call/ret support, verdict-map aliasing (68 %
+of compiles are repeats), `fnstsw`/`sahf`. The browser/Node gap itself is
+not yet explained; profile it with `tools/profile-web-frames.js` once
+headful Chrome stays up (it closed 3–29 s into most runs on 2026-11-25).
+
+**Routes** (scripts in the evidence folder):
+- `latency-run.sh OUTDIR [--threads]`: load to 2.15 G blocks, Enter twice,
+  wait for ≥20 presents/s, 5× Left/Right taps.
+- `gameplay-run.sh OUTDIR 118 [--threads]`: as above, then hold Left for
+  118 presents (110 stops right of the tutorial door, 125 left of it),
+  wait 60, Up for 20, wait 300: "PRESS Z TO JUMP". Then 3× run/jump/whip.
+- `rate-run.sh OUTDIR [--threads]`: `tools/page-probes/measure-guest-rate.js`
+  over 8 s idle and with Left held.
+- CLI `--cpu-window=A:B` now prints `draws` and `blocks` too.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash
