@@ -175,7 +175,6 @@
     (if (i32.eq (local.get $type) (i32.const 0)) ;; ROL — CF = bit 0 of result
       (then
         (local.set $count (i32.rem_u (local.get $count) (local.get $bits)))
-        (if (i32.eqz (local.get $count)) (then (return (local.get $val))))
         (local.set $r (i32.and
           (i32.or (i32.shl (local.get $val) (local.get $count))
                   (i32.shr_u (local.get $val) (i32.sub (local.get $bits) (local.get $count))))
@@ -189,7 +188,6 @@
     (if (i32.eq (local.get $type) (i32.const 1)) ;; ROR — CF = top bit of result
       (then
         (local.set $count (i32.rem_u (local.get $count) (local.get $bits)))
-        (if (i32.eqz (local.get $count)) (then (return (local.get $val))))
         (local.set $r (i32.and
           (i32.or (i32.shr_u (local.get $val) (local.get $count))
                   (i32.shl (local.get $val) (i32.sub (local.get $bits) (local.get $count))))
