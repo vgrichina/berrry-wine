@@ -910,3 +910,23 @@ The same CAB holds `mingliu.ttc` (8,637,684 bytes, SHA-256
 `a3345ee1dd9335555ea3a32311cba5a1c1912a7ca378623f2cb1e82cf2349d94`), which is
 what `node tools/fetch-fonts.js --mingliu <path>` takes; the font itself is
 never committed or copied here.
+
+## Metrojd, Game Maker 5 and 7 (`candidates/metrojd/`, local only)
+
+Source: `https://archive.org/details/Metrojd` (Daniel Remar's platformer;
+the readme names him for design, code and graphics), fetched
+2026-11-24 as `download/Metrojd/Metrojd.zip` (4,652,773 bytes, SHA-1
+`9b542dbcd1e3ed5f353732e22f523ab5ad5f17fe` as the item lists it, SHA-256
+`1705b62c903ac6f037569096142a8f8806b2e53e85d7bd497de36088eed3b829`). Its
+unzip: `metrojd_gm7.exe` (3,693,624 bytes, SHA-256
+`3f15814a8e3f0b800393516c117b97021baa454367f228c19fdafd7e02ebef56`; the
+Game Maker 7 runner with the game appended, the one the app entry loads),
+`metrojd.exe` (2,869,091 bytes, SHA-256
+`2256ac5195b2811e6b6a43f15bf623b02f75d9974a05f1d56096b0d4095d40ad`; the
+Game Maker 5 build, not registered) and `metrojd.txt` (591 bytes, SHA-256
+`942e85820dbb9279b8b9af3457502696801f1a407daebaa4844d1b8d79b7de4e`). App id
+`metrojd_gm7`, local-only. Notes:
+`docs/re-notes/game-maker-benchmark-attempts.md`.
+
+**Terms.** Neither the archive.org item nor the readme states a licence.
+Not committed and not published.

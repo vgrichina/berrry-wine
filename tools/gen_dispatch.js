@@ -99,6 +99,7 @@ const namedApiIds = [
   ['IDirectMusicSegment8_QueryInterface', 'API_ID_IDirectMusicSegment8_BASE'],
   ['IDirectMusicAudioPath8_QueryInterface', 'API_ID_IDirectMusicAudioPath8_BASE'],
   ['IDirectMusicSegmentState8_QueryInterface', 'API_ID_IDirectMusicSegmentState8_BASE'],
+  ['IDirectMusicPathBuffer8_QueryInterface', 'API_ID_IDirectMusicPathBuffer8_BASE'],
 ];
 
 out.push('  ;; Named API ids consumed by hand-written dispatch fast paths.');

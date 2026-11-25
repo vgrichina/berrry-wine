@@ -429,19 +429,7 @@ async function main() {
   const perf2 = u32(out);
   assert.throws(() => vcall(perf2, P.Init, 0, 0, 0), WebAssembly.RuntimeError, 'Init traps');
   check('an unimplemented Performance8 method (Init) traps', true);
-  const waveFile = Buffer.concat([Buffer.from('RIFF'), Buffer.from([28, 0, 0, 0]), Buffer.from('WAVEfmt '),
-    Buffer.alloc(16)]);
-  e.test_dm_cocreate(clsidLoader, iidLoader8, out, esp);
-  const loader2 = u32(out);
-  assert.throws(() => {
-    new Uint8Array(memory.buffer, wa(desc), 0x350).fill(0);
-    dv.setUint32(wa(desc) + 4, 0x402, true);
-    for (let i = 0; i < 16; i++) dv.setUint8(wa(desc) + 0x18 + i, dv.getUint8(wa(clsidSegment) + i));
-    dv.setUint32(wa(desc) + 0x340, waveFile.length, true);
-    dv.setUint32(wa(desc) + 0x348, bytes(waveFile), true);
-    vcall(loader2, L.GetObject, desc, iidSegment8, out);
-  }, WebAssembly.RuntimeError, 'WAVE segment traps');
-  check('a WAVE segment traps instead of loading silently', true);
+  // WAVE segments: test-directmusic-wave-segments.js.
 
   console.log(`\n${pass} passed, ${fail} failed`);
   if (fail) process.exit(1);

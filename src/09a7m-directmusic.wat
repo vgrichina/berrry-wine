@@ -26,8 +26,20 @@
   ;; GUID_PerfMasterTempo, and volume (master + audiopath, centibels) scales
   ;; channel volume (CC7). A segment loops its whole length SetRepeats times.
   ;;
+  ;; WAVE segments (GM6-8 load every normal/background/3D sound this way, as
+  ;; a RIFF WAVE from memory): PCM 8/16-bit mono/stereo, parsed here at load.
+  ;; Each playing instance owns one host voice -- the same mixer slot an
+  ;; IDirectSoundBuffer plays through (voice_open + voice_play_ring
+  ;; snapshot), looping when the segment repeats. Its end is a guest-clock
+  ;; deadline (length x (repeats + 1), never for DMUS_SEG_REPEAT_INFINITE), so
+  ;; IsPlaying and the end of a one-shot are decided in WAT exactly as for
+  ;; MIDI; master + audiopath volume set the voice's linear gain. GM's
+  ;; sound_pan asks the audiopath for its buffer (GetObjectInPath,
+  ;; DMUS_PATH_BUFFER, IDirectSoundBuffer8): a DX type-66 object whose
+  ;; SetPan/SetVolume are stored on the path and reach its WAVE voices.
+  ;;
   ;; Deliberate limits, each a crash with a clear name rather than silence:
-  ;; WAVE (.wav) and DirectMusic Producer (.sgt) segments, SMPTE timing,
+  ;; compressed WAVE formats, DirectMusic Producer (.sgt) segments, SMPTE timing,
   ;; format 2, transitions, non-immediate start/stop times, a caller-supplied
   ;; DirectSound, DMUS_AUDIOPARAMS, and every method no caller has reached.
   ;; CoCreateInstance only activates these classes for the DirectX 8 IIDs:
@@ -41,16 +53,23 @@
   ;;   performance  misc0 MIDI handle, misc1 record, misc2 default audiopath,
   ;;                flags bit0 InitAudio done.
   ;;     record +0 master volume (cB) +4 master tempo (f32) +8 serial counter
-  ;;            +64 eight 64-byte instances:
+  ;;            +12 pchannels
+  ;;            +64 $DM_INSTANCES (32) 64-byte instances:
   ;;            +0 segment (ref held) +4 audiopath (ref held) +8 DMUS_SEGF flags
   ;;            +12 repeats left +16 tempo us/qn +20 serial +24 base ms (f64)
   ;;            +32 base tick +36 cursor block +40 CC7 per channel (16 bytes)
   ;;            +56 channels touched +60 gain (f32)
+  ;;            a WAVE instance has no cursor block and no channels; it keeps
+  ;;            +40 host voice +48 end ms (f64, +inf when looping forever)
   ;;     cursor (16 bytes per track) +0 offset +4 next tick +8 running status
   ;;            +12 track end offset (0 = track finished)
   ;;   segment      misc1 record: +0 data +4 length +8 format +12 tracks
   ;;                +16 division +20 track table ({start,end} per track)
   ;;                +24 repeats +28 total ticks +32 downloaded +36 GM flag
+  ;;                +40 kind (0 MIDI, 1 WAVE); a WAVE segment has no tracks,
+  ;;                division 500 so one tick is 1 ms at the default 120 bpm
+  ;;                (total ticks = length in ms), and +44 PCM offset in the
+  ;;                data +48 PCM bytes +52 sample rate +56 channels +60 bits
   ;;   loader       misc1 record: +0 count +4.. cached objects (ref held)
   ;;   audiopath    misc0 volume (cB) misc1 DMUS_APATH type misc2 performance
   ;;                flags bit0 active
@@ -61,8 +80,12 @@
   (global $DMUSIC_SEG_VTBL (mut i32) (i32.const 0))
   (global $DMUSIC_PATH_VTBL (mut i32) (i32.const 0))
   (global $DMUSIC_STATE_VTBL (mut i32) (i32.const 0))
+  (global $DMUSIC_PBUF_VTBL (mut i32) (i32.const 0))
   ;; The initialized performance this instance's run() services (0 = none).
   (global $dmusic_perf (mut i32) (i32.const 0))
+  ;; Instance slots in a performance record (record size 64 + 64 x this).
+  ;; GM sound effects overlap freely (one secondary instance per play).
+  (global $DM_INSTANCES i32 (i32.const 32))
   ;; Channel messages sent to the host since start (diagnostics/tests).
   (global $dmusic_events_sent (mut i32) (i32.const 0))
   ;; Scratch outputs of $dm_vlq / $dm_parse_event.
@@ -86,7 +109,9 @@
         (global.set $DMUSIC_PATH_VTBL
           (call $init_com_vtable (global.get $API_ID_IDirectMusicAudioPath8_BASE) (i32.const 7)))
         (global.set $DMUSIC_STATE_VTBL
-          (call $init_com_vtable (global.get $API_ID_IDirectMusicSegmentState8_BASE) (i32.const 10))))))
+          (call $init_com_vtable (global.get $API_ID_IDirectMusicSegmentState8_BASE) (i32.const 10)))
+        (global.set $DMUSIC_PBUF_VTBL
+          (call $init_com_vtable (global.get $API_ID_IDirectMusicPathBuffer8_BASE) (i32.const 24))))))
 
   ;; ---- small helpers ------------------------------------------------------
 
@@ -170,10 +195,10 @@
   (func $dmusic_perf_create (result i32)
     (local $obj i32) (local $entry i32) (local $rec i32) (local $wa i32)
     (call $dmusic_init_vtables)
-    (local.set $rec (call $heap_alloc (i32.const 576)))
+    (local.set $rec (call $heap_alloc (i32.const 2112)))
     (if (i32.eqz (local.get $rec)) (then (return (i32.const 0))))
     (local.set $wa (call $g2w (local.get $rec)))
-    (call $zero_memory (local.get $wa) (i32.const 576))
+    (call $zero_memory (local.get $wa) (i32.const 2112))
     (f32.store offset=4 (local.get $wa) (f32.const 1))
     (local.set $obj (call $dx_create_com_obj (i32.const 61) (global.get $DMUSIC_PERF_VTBL)))
     (if (i32.eqz (local.get $obj))
@@ -211,6 +236,10 @@
     (store.field DxObject misc1 (local.get $entry) (local.get $type))
     (store.field DxObject misc2 (local.get $entry) (local.get $perf))
     (store.field DxObject flags (local.get $entry) (i32.ne (local.get $active) (i32.const 0)))
+    ;; The path's DirectSound buffer controls (GetObjectInPath): pan as an
+    ;; i16, attenuation as a positive cB count. 0/0 = centre, full volume.
+    (store.field DxObject width (local.get $entry) (i32.const 0))
+    (store.field DxObject height (local.get $entry) (i32.const 0))
     (local.get $obj))
 
   (func $dm_valid_path_type (param $type i32) (result i32)
@@ -323,7 +352,7 @@
     (if (call $dm_tag (local.get $data) (i32.const 0x46464952))
       (then
         (if (call $dm_tag (i32.add (local.get $data) (i32.const 8)) (i32.const 0x45564157))
-          (then (call $crash_unimplemented "DirectMusic segment from RIFF WAVE (wave playback)")))
+          (then (return (call $dm_wave_record (local.get $data_gp) (local.get $len)))))
         (if (call $dm_tag (i32.add (local.get $data) (i32.const 8)) (i32.const 0x47534D44))
           (then (call $crash_unimplemented "DirectMusic segment file (RIFF DMSG .sgt)")))
         (if (i32.eqz (call $dm_tag (i32.add (local.get $data) (i32.const 8)) (i32.const 0x44494D52)))
@@ -403,6 +432,109 @@
     (i32.store offset=20 (local.get $rwa) (local.get $tracks))
     (i32.store offset=28 (local.get $rwa) (local.get $total))
     (local.get $rec))
+
+  ;; RIFF WAVE ($len >= 14 bytes at heap block $data_gp, "WAVE" at +8): the
+  ;; "fmt " and first "data" chunk, each clipped to the file. The record owns
+  ;; the whole file; the PCM is a span of it. Result as $dm_segment_record.
+  (func $dm_wave_record (param $data_gp i32) (param $len i32) (result i32)
+    (local $data i32) (local $pos i32) (local $body i32) (local $clen i32)
+    (local $fmt i32) (local $fmt_len i32) (local $pcm i32) (local $pcm_len i32)
+    (local $tag i32) (local $channels i32) (local $rate i32) (local $bits i32)
+    (local $align i32) (local $ms i32) (local $rec i32) (local $rwa i32)
+    (local.set $data (call $g2w (local.get $data_gp)))
+    (local.set $fmt (i32.const -1))
+    (local.set $pcm (i32.const -1))
+    (local.set $pos (i32.const 12))
+    (block $walked (loop $chunk
+      (br_if $walked (i32.gt_u (i32.add (local.get $pos) (i32.const 8)) (local.get $len)))
+      (local.set $body (i32.add (local.get $pos) (i32.const 8)))
+      (local.set $clen (i32.load offset=4 (i32.add (local.get $data) (local.get $pos))))
+      (if (i32.gt_u (local.get $clen) (i32.sub (local.get $len) (local.get $body)))
+        (then (local.set $clen (i32.sub (local.get $len) (local.get $body)))))
+      (if (i32.and (call $dm_tag (i32.add (local.get $data) (local.get $pos)) (i32.const 0x20746D66))
+            (i32.lt_s (local.get $fmt) (i32.const 0)))
+        (then (local.set $fmt (local.get $body)) (local.set $fmt_len (local.get $clen))))
+      (if (i32.and (call $dm_tag (i32.add (local.get $data) (local.get $pos)) (i32.const 0x61746164))
+            (i32.lt_s (local.get $pcm) (i32.const 0)))
+        (then (local.set $pcm (local.get $body)) (local.set $pcm_len (local.get $clen))))
+      (local.set $pos (i32.add (local.get $body)
+        (i32.and (i32.add (local.get $clen) (i32.const 1)) (i32.const -2))))
+      (br $chunk)))
+    (if (i32.or (i32.or (i32.lt_s (local.get $fmt) (i32.const 0)) (i32.lt_s (local.get $pcm) (i32.const 0)))
+          (i32.lt_u (local.get $fmt_len) (i32.const 16)))
+      (then (return (i32.const 0x88781200)))) ;; DMUS_E_INVALIDFILE
+    ;; WAVEFORMAT: +0 tag +2 channels +4 rate +12 block align +14 bits.
+    ;; WAVE_FORMAT_EXTENSIBLE names the real tag in its SubFormat GUID (+24).
+    (local.set $tag (i32.load16_u (i32.add (local.get $data) (local.get $fmt))))
+    (if (i32.and (i32.eq (local.get $tag) (i32.const 0xFFFE)) (i32.ge_u (local.get $fmt_len) (i32.const 40)))
+      (then (local.set $tag (i32.load16_u offset=24 (i32.add (local.get $data) (local.get $fmt))))))
+    (if (i32.ne (local.get $tag) (i32.const 1))
+      (then (call $crash_unimplemented "DirectMusic WAVE segment in a compressed (non-PCM) format")))
+    (local.set $channels (i32.load16_u offset=2 (i32.add (local.get $data) (local.get $fmt))))
+    (local.set $rate (i32.load offset=4 (i32.add (local.get $data) (local.get $fmt))))
+    (local.set $bits (i32.load16_u offset=14 (i32.add (local.get $data) (local.get $fmt))))
+    (if (i32.or (i32.eqz (local.get $rate)) (i32.eqz (local.get $channels)))
+      (then (return (i32.const 0x88781200))))
+    (if (i32.or (i32.gt_u (local.get $channels) (i32.const 2))
+          (i32.and (i32.ne (local.get $bits) (i32.const 8)) (i32.ne (local.get $bits) (i32.const 16))))
+      (then (call $crash_unimplemented "DirectMusic WAVE segment that is not 8/16-bit mono/stereo PCM")))
+    ;; Whole frames only; the length in ms is rounded up.
+    (local.set $align (i32.mul (local.get $channels) (i32.shr_u (local.get $bits) (i32.const 3))))
+    (local.set $pcm_len (i32.sub (local.get $pcm_len) (i32.rem_u (local.get $pcm_len) (local.get $align))))
+    (local.set $ms (i32.wrap_i64 (i64.div_u
+      (i64.add (i64.mul (i64.extend_i32_u (i32.div_u (local.get $pcm_len) (local.get $align))) (i64.const 1000))
+        (i64.extend_i32_u (i32.sub (local.get $rate) (i32.const 1))))
+      (i64.extend_i32_u (local.get $rate)))))
+    (local.set $rec (call $heap_alloc (i32.const 64)))
+    (if (i32.eqz (local.get $rec)) (then (return (i32.const 0x8007000E))))
+    (local.set $rwa (call $g2w (local.get $rec)))
+    (call $zero_memory (local.get $rwa) (i32.const 64))
+    (i32.store offset=0 (local.get $rwa) (local.get $data_gp))
+    (i32.store offset=4 (local.get $rwa) (local.get $len))
+    (i32.store offset=16 (local.get $rwa) (i32.const 500))
+    (i32.store offset=28 (local.get $rwa) (local.get $ms))
+    (i32.store offset=40 (local.get $rwa) (i32.const 1))
+    (i32.store offset=44 (local.get $rwa) (local.get $pcm))
+    (i32.store offset=48 (local.get $rwa) (local.get $pcm_len))
+    (i32.store offset=52 (local.get $rwa) (local.get $rate))
+    (i32.store offset=56 (local.get $rwa) (local.get $channels))
+    (i32.store offset=60 (local.get $rwa) (local.get $bits))
+    (local.get $rec))
+
+  (func $dm_seg_is_wave (param $obj i32) (result i32)
+    (i32.eq (i32.load offset=40 (call $dm_seg_wa (local.get $obj))) (i32.const 1)))
+
+  ;; Start a WAVE instance (fresh slot, repeats/gain already set): open its
+  ;; voice, take the PCM snapshot, and set the guest-clock end.
+  (func $dm_wave_start (param $inst i32) (param $seg_wa i32)
+    (local $voice i32) (local $reps i32) (local $len i32)
+    (call $zero_memory (i32.add (local.get $inst) (i32.const 40)) (i32.const 16))
+    (local.set $voice (call $host_voice_open (i32.load offset=52 (local.get $seg_wa))
+      (i32.load offset=56 (local.get $seg_wa)) (i32.load offset=60 (local.get $seg_wa))))
+    (i32.store offset=40 (local.get $inst) (local.get $voice))
+    (call $dm_wave_controls (local.get $inst))
+    (local.set $reps (i32.load offset=12 (local.get $inst)))
+    (f64.store offset=48 (local.get $inst)
+      (if (result f64) (i32.eq (local.get $reps) (i32.const -1))
+        (then (f64.const inf))
+        (else (f64.add (f64.load offset=24 (local.get $inst))
+          (f64.mul (f64.convert_i32_u (i32.load offset=28 (local.get $seg_wa)))
+            (f64.add (f64.convert_i32_u (local.get $reps)) (f64.const 1)))))))
+    (local.set $len (i32.load offset=48 (local.get $seg_wa)))
+    (if (local.get $len)
+      (then (drop (call $host_voice_play_ring (local.get $voice)
+        (i32.add (call $g2w (i32.load offset=0 (local.get $seg_wa))) (i32.load offset=44 (local.get $seg_wa)))
+        (local.get $len) (i32.const 0) (i32.ne (local.get $reps) (i32.const 0)))))))
+
+  ;; A WAVE instance's voice takes its gain (+60) and its audiopath buffer's pan.
+  (func $dm_wave_controls (param $inst i32)
+    (local $pe i32)
+    (call $host_voice_set_volume_linear (i32.load offset=40 (local.get $inst))
+      (i32.trunc_sat_f32_u (f32.mul (f32.load offset=60 (local.get $inst)) (f32.const 65535))))
+    (local.set $pe (call $dm_entry (i32.load offset=4 (local.get $inst)) (i32.const 64)))
+    (if (local.get $pe)
+      (then (call $host_voice_set_pan (i32.load offset=40 (local.get $inst))
+        (i32.extend16_s (load.field DxObject width (local.get $pe)))))))
 
   ;; Wrap a heap SMF buffer in a segment object (refcount 1). Frees the
   ;; buffer on failure. Result: object, or a negative HRESULT.
@@ -552,7 +684,8 @@
     (local.set $cb (i32.load offset=0 (local.get $rec_wa)))
     (local.set $pe (call $dm_entry (local.get $path) (i32.const 64)))
     (if (local.get $pe)
-      (then (local.set $cb (i32.add (local.get $cb) (load.field DxObject misc0 (local.get $pe))))))
+      (then (local.set $cb (i32.sub (i32.add (local.get $cb) (load.field DxObject misc0 (local.get $pe)))
+        (load.field DxObject height (local.get $pe))))))
     (if (i32.ge_s (local.get $cb) (i32.const 0)) (then (return (f32.const 1))))
     (if (i32.le_s (local.get $cb) (i32.const -9600)) (then (return (f32.const 0))))
     (f32.demote_f64 (call $host_math_pow (f64.const 10)
@@ -621,6 +754,10 @@
     (local $ch i32) (local $mask i32) (local $seg i32) (local $path i32) (local $cur i32)
     (local.set $seg (i32.load offset=0 (local.get $inst)))
     (if (i32.eqz (local.get $seg)) (then (return)))
+    (if (call $dm_seg_is_wave (local.get $seg))
+      (then
+        (drop (call $host_voice_stop (i32.load offset=40 (local.get $inst))))
+        (drop (call $host_voice_close (i32.load offset=40 (local.get $inst))))))
     (local.set $mask (i32.load offset=56 (local.get $inst)))
     (block $done (loop $chans
       (br_if $done (i32.ge_u (local.get $ch) (i32.const 16)))
@@ -644,6 +781,12 @@
     (local $t i32) (local $best i32) (local $best_tick i32) (local $c i32) (local $tick i32)
     (local $ev_ms f64) (local $end_ms f64) (local $reps i32) (local $total i32)
     (local $pos i32) (local $guard i32) (local $hi i32) (local $delta i32)
+    ;; A WAVE instance only ends, at its deadline.
+    (if (call $dm_seg_is_wave (i32.load offset=0 (local.get $inst)))
+      (then
+        (if (f64.ge (local.get $now) (f64.load offset=48 (local.get $inst)))
+          (then (call $dm_inst_stop (local.get $handle) (local.get $inst))))
+        (return)))
     (local.set $seg_wa (call $g2w (load.field DxObject misc1
       (call $dx_from_this (i32.load offset=0 (local.get $inst))))))
     (local.set $data (call $g2w (i32.load offset=0 (local.get $seg_wa))))
@@ -737,7 +880,7 @@
     (if (i32.eqz (local.get $entry)) (then (return)))
     (local.set $rec_wa (call $g2w (load.field DxObject misc1 (local.get $entry))))
     (block $done (loop $insts
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $i)))
       (if (i32.load offset=0 (local.get $inst))
         (then (call $dm_inst_service (load.field DxObject misc0 (local.get $entry))
@@ -756,12 +899,14 @@
     (local $rec_wa i32) (local $i i32) (local $inst i32) (local $ch i32)
     (local.set $rec_wa (call $g2w (load.field DxObject misc1 (local.get $entry))))
     (block $done (loop $insts
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $i)))
       (if (i32.load offset=0 (local.get $inst))
         (then
           (f32.store offset=60 (local.get $inst)
             (call $dm_gain (local.get $rec_wa) (i32.load offset=4 (local.get $inst))))
+          (if (call $dm_seg_is_wave (i32.load offset=0 (local.get $inst)))
+            (then (call $dm_wave_controls (local.get $inst))))
           (local.set $ch (i32.const 0))
           (block $chans_done (loop $chans
             (br_if $chans_done (i32.ge_u (local.get $ch) (i32.const 16)))
@@ -782,9 +927,14 @@
     (local $mspt f64) (local $ticks i32)
     (local.set $rec_wa (call $g2w (load.field DxObject misc1 (local.get $entry))))
     (block $done (loop $insts
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $i)))
+      ;; Master tempo does not change a WAVE segment's pitch or length.
       (if (i32.load offset=0 (local.get $inst))
+        (then (if (call $dm_seg_is_wave (i32.load offset=0 (local.get $inst)))
+          (then (local.set $inst (i32.const 0))))))
+      (if (i32.ne (local.get $inst) (i32.const 0))
+        (then (if (i32.load offset=0 (local.get $inst))
         (then
           (local.set $seg_wa (call $g2w (load.field DxObject misc1
             (call $dx_from_this (i32.load offset=0 (local.get $inst))))))
@@ -797,7 +947,7 @@
               (f64.store offset=24 (local.get $inst) (f64.add (f64.load offset=24 (local.get $inst))
                 (f64.mul (f64.convert_i32_s (local.get $ticks)) (local.get $mspt))))
               (i32.store offset=32 (local.get $inst)
-                (i32.add (i32.load offset=32 (local.get $inst)) (local.get $ticks)))))))
+                (i32.add (i32.load offset=32 (local.get $inst)) (local.get $ticks)))))))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $insts))))
 
@@ -808,7 +958,7 @@
     (local.set $rec_wa (call $g2w (load.field DxObject misc1 (local.get $entry))))
     (local.set $handle (load.field DxObject misc0 (local.get $entry)))
     (block $done (loop $insts
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (call $dm_inst_stop (local.get $handle) (call $dm_inst (local.get $rec_wa) (local.get $i)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $insts)))
@@ -829,7 +979,7 @@
     (if (i32.eq (local.get $type) (i32.const 65))
       (then (local.set $se (call $dx_from_this (local.get $obj)))))
     (block $done (loop $insts
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $i)))
       (local.set $hit (i32.ne (i32.load offset=0 (local.get $inst)) (i32.const 0)))
       (if (i32.eq (local.get $type) (i32.const 63))
@@ -968,6 +1118,7 @@
     (local $entry i32) (local $rec_wa i32) (local $seg_entry i32) (local $seg_wa i32)
     (local $pp_state i32) (local $from i32) (local $path i32) (local $i i32) (local $inst i32)
     (local $slot i32) (local $cur i32) (local $serial i32) (local $state i32) (local $se i32)
+    (local $wave i32)
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $pp_state (call $dm_arg (i32.const 7)))
     (local.set $from (call $dm_arg (i32.const 8)))
@@ -977,7 +1128,7 @@
       (then (call $amstream_finish (i32.const 0x88781162) (i32.const 44)) (return)))
     (local.set $seg_entry (call $dm_entry (local.get $arg1) (i32.const 63)))
     (if (i32.eqz (local.get $seg_entry))
-      (then (call $crash_unimplemented "IDirectMusicPerformance8_PlaySegmentEx: source is not a MIDI segment")))
+      (then (call $crash_unimplemented "IDirectMusicPerformance8_PlaySegmentEx: source is not a DirectMusic segment")))
     (if (i32.or (i32.ne (local.get $arg3) (i32.const 0)) (i32.ne (local.get $arg2) (i32.const 0)))
       (then (call $crash_unimplemented "IDirectMusicPerformance8_PlaySegmentEx with a transition or segment name")))
     (if (i32.or (i32.ne (call $dm_arg (i32.const 5)) (i32.const 0)) (i32.ne (call $dm_arg (i32.const 6)) (i32.const 0)))
@@ -1003,7 +1154,7 @@
       (then
         (local.set $i (i32.const 0))
         (block $done (loop $prim
-          (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+          (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
           (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $i)))
           (if (i32.and (i32.ne (i32.load offset=0 (local.get $inst)) (i32.const 0))
                 (i32.eqz (i32.and (i32.load offset=8 (local.get $inst)) (i32.const 0x80))))
@@ -1013,16 +1164,19 @@
     (local.set $slot (i32.const -1))
     (local.set $i (i32.const 0))
     (block $found (loop $free
-      (br_if $found (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $found (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (if (i32.eqz (i32.load offset=0 (call $dm_inst (local.get $rec_wa) (local.get $i))))
         (then (local.set $slot (local.get $i)) (br $found)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $free)))
     (if (i32.lt_s (local.get $slot) (i32.const 0))
-      (then (call $crash_unimplemented "IDirectMusicPerformance8_PlaySegmentEx: more than 8 segments playing")))
+      (then (call $crash_unimplemented "IDirectMusicPerformance8_PlaySegmentEx: more than 32 segments playing")))
     (local.set $seg_wa (call $g2w (load.field DxObject misc1 (local.get $seg_entry))))
-    (local.set $cur (call $heap_alloc (i32.shl (i32.load offset=12 (local.get $seg_wa)) (i32.const 4))))
-    (if (i32.eqz (local.get $cur)) (then (call $amstream_finish (i32.const 0x8007000E) (i32.const 44)) (return)))
+    (local.set $wave (i32.eq (i32.load offset=40 (local.get $seg_wa)) (i32.const 1)))
+    (if (i32.eqz (local.get $wave))
+      (then
+        (local.set $cur (call $heap_alloc (i32.shl (i32.load offset=12 (local.get $seg_wa)) (i32.const 4))))
+        (if (i32.eqz (local.get $cur)) (then (call $amstream_finish (i32.const 0x8007000E) (i32.const 44)) (return)))))
     (local.set $serial (i32.add (i32.load offset=8 (local.get $rec_wa)) (i32.const 1)))
     (i32.store offset=8 (local.get $rec_wa) (local.get $serial))
     (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $slot)))
@@ -1039,7 +1193,9 @@
     ;; GM's default channel volume.
     (memory.fill (i32.add (local.get $inst) (i32.const 40)) (i32.const 100) (i32.const 16))
     (f32.store offset=60 (local.get $inst) (call $dm_gain (local.get $rec_wa) (local.get $path)))
-    (call $dm_inst_rewind (local.get $inst) (local.get $seg_wa))
+    (if (local.get $wave)
+      (then (call $dm_wave_start (local.get $inst) (local.get $seg_wa)))
+      (else (call $dm_inst_rewind (local.get $inst) (local.get $seg_wa))))
     (if (local.get $pp_state)
       (then
         (call $dmusic_init_vtables)
@@ -1088,7 +1244,7 @@
     (local.set $rec_wa (call $g2w (load.field DxObject misc1 (local.get $entry))))
     (local.set $hr (i32.const 1))
     (block $done (loop $insts
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
+      (br_if $done (i32.ge_u (local.get $i) (global.get $DM_INSTANCES)))
       (local.set $inst (call $dm_inst (local.get $rec_wa) (local.get $i)))
       (local.set $hit (i32.ne (i32.load offset=0 (local.get $inst)) (i32.const 0)))
       (if (local.get $arg1)
@@ -1378,6 +1534,127 @@
         (call $dm_perf_service (local.get $perf) (call $dm_now))
         (call $dm_refresh_gain (local.get $pe))))
     (call $amstream_finish (i32.const 0) (i32.const 16)))
+
+  ;; GetObjectInPath(dwPChannel, dwStage, dwBuffer, guidObject, dwIndex,
+  ;;                 iidInterface, ppObject). Only the stage GM's sound_pan
+  ;; reaches: DMUS_PATH_BUFFER (0x6000), buffer 0, as IDirectSoundBuffer8.
+  (func $handle_IDirectMusicAudioPath8_GetObjectInPath (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $pp i32) (local $iid i32) (local $wa i32) (local $obj i32) (local $entry i32)
+    (local.set $pp (call $dm_arg (i32.const 7)))
+    (local.set $iid (call $dm_arg (i32.const 6)))
+    (if (i32.or (i32.eqz (local.get $pp)) (i32.eqz (local.get $iid)))
+      (then
+        (if (local.get $pp) (then (call $gs32 (local.get $pp) (i32.const 0))))
+        (call $amstream_finish (i32.const 0x80004003) (i32.const 36)) (return)))
+    (call $gs32 (local.get $pp) (i32.const 0))
+    (if (i32.ne (local.get $arg2) (i32.const 0x6000))
+      (then (call $crash_unimplemented "IDirectMusicAudioPath8_GetObjectInPath of a stage other than DMUS_PATH_BUFFER")))
+    (if (i32.or (i32.ne (local.get $arg3) (i32.const 0)) (i32.ne (call $dm_arg (i32.const 5)) (i32.const 0)))
+      (then (call $crash_unimplemented "IDirectMusicAudioPath8_GetObjectInPath of a buffer/object index other than 0")))
+    ;; guidObject: GUID_All_Objects {AA114DE5-C262-4169-A1C8-23D698CC73B5} or GUID_NULL.
+    (if (local.get $arg4)
+      (then
+        (local.set $wa (call $g2w (local.get $arg4)))
+        (if (i32.eqz (i32.or
+              (call $guid_words_equal (local.get $wa)
+                (i32.const 0xAA114DE5) (i32.const 0x4169C262) (i32.const 0xD623C8A1) (i32.const 0xB573CC98))
+              (call $guid_words_equal (local.get $wa) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0))))
+          (then (call $crash_unimplemented "IDirectMusicAudioPath8_GetObjectInPath of a specific buffer object GUID")))))
+    (if (i32.eqz (call $dm_is_dsbuffer_iid (call $g2w (local.get $iid))))
+      (then (call $crash_unimplemented "IDirectMusicAudioPath8_GetObjectInPath(DMUS_PATH_BUFFER) for an interface other than IDirectSoundBuffer/8")))
+    (call $dmusic_init_vtables)
+    (local.set $obj (call $dx_create_com_obj (i32.const 66) (global.get $DMUSIC_PBUF_VTBL)))
+    (if (i32.eqz (local.get $obj)) (then (call $amstream_finish (i32.const 0x8007000E) (i32.const 36)) (return)))
+    (local.set $entry (call $dx_from_this (local.get $obj)))
+    (store.field DxObject refcount (local.get $entry) (i32.const 1))
+    (drop (call $dx_com_addref (local.get $arg0)))
+    (store.field DxObject misc0 (local.get $entry) (local.get $arg0))
+    (call $gs32 (local.get $pp) (local.get $obj))
+    (call $amstream_finish (i32.const 0) (i32.const 36)))
+
+  ;; IUnknown / IDirectSoundBuffer {279AFA85-4981-11CE-A521-0020AF0BE560} /
+  ;; IDirectSoundBuffer8 {6825A449-7524-4D82-920F-50E36AB3AB1E}.
+  (func $dm_is_dsbuffer_iid (param $wa i32) (result i32)
+    (i32.or
+      (i32.or
+        (call $guid_words_equal (local.get $wa)
+          (i32.const 0) (i32.const 0) (i32.const 0x000000C0) (i32.const 0x46000000))
+        (call $guid_words_equal (local.get $wa)
+          (i32.const 0x279AFA85) (i32.const 0x11CE4981) (i32.const 0x200021A5) (i32.const 0x60E50BAF)))
+      (call $guid_words_equal (local.get $wa)
+        (i32.const 0x6825A449) (i32.const 0x4D827524) (i32.const 0xE3500F92) (i32.const 0x1EABB36A))))
+
+  ;; ---- the audiopath's IDirectSoundBuffer8 (DX type 66) --------------------
+  ;; misc0 = the audiopath (reference held). Its volume and pan live on the
+  ;; path (width/height), so they outlast this object and apply to every
+  ;; segment playing on the path: WAVE voices take both, MIDI the volume.
+
+  (func $dm_pbuf_path (param $obj i32) (result i32)
+    (call $dx_from_this (load.field DxObject misc0 (call $dx_from_this (local.get $obj)))))
+
+  ;; Re-apply gains/pans after a path control changed.
+  (func $dm_path_changed (param $path_entry i32)
+    (local $perf i32) (local $pe i32)
+    (local.set $perf (load.field DxObject misc2 (local.get $path_entry)))
+    (local.set $pe (call $dm_entry (local.get $perf) (i32.const 61)))
+    (if (local.get $pe)
+      (then
+        (call $dm_perf_service (local.get $perf) (call $dm_now))
+        (call $dm_refresh_gain (local.get $pe)))))
+
+  (func $handle_IDirectMusicPathBuffer8_QueryInterface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.or (i32.eqz (local.get $arg1)) (i32.eqz (local.get $arg2)))
+      (then
+        (if (local.get $arg2) (then (call $gs32 (local.get $arg2) (i32.const 0))))
+        (call $amstream_finish (i32.const 0x80004003) (i32.const 16))
+        (return)))
+    (call $amstream_finish (call $dx_query_interface_result (local.get $arg0) (local.get $arg2)
+      (call $dm_is_dsbuffer_iid (call $g2w (local.get $arg1)))) (i32.const 16)))
+
+  (func $handle_IDirectMusicPathBuffer8_Release (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $entry i32) (local $rc i32)
+    (local.set $entry (call $dx_from_this (local.get $arg0)))
+    (local.set $rc (i32.sub (load.field DxObject refcount (local.get $entry)) (i32.const 1)))
+    (store.field DxObject refcount (local.get $entry) (local.get $rc))
+    (if (i32.le_s (local.get $rc) (i32.const 0))
+      (then
+        (drop (call $dx_com_release_basic (load.field DxObject misc0 (local.get $entry))))
+        (call $dx_free (local.get $entry))
+        (local.set $rc (i32.const 0))))
+    (call $amstream_finish (local.get $rc) (i32.const 8)))
+
+  ;; GetVolume/GetPan(plValue)
+  (func $handle_IDirectMusicPathBuffer8_GetVolume (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.eqz (local.get $arg1)) (then (call $amstream_finish (i32.const 0x80070057) (i32.const 12)) (return)))
+    (call $gs32 (local.get $arg1)
+      (i32.sub (i32.const 0) (load.field DxObject height (call $dm_pbuf_path (local.get $arg0)))))
+    (call $amstream_finish (i32.const 0) (i32.const 12)))
+
+  (func $handle_IDirectMusicPathBuffer8_GetPan (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (if (i32.eqz (local.get $arg1)) (then (call $amstream_finish (i32.const 0x80070057) (i32.const 12)) (return)))
+    (call $gs32 (local.get $arg1)
+      (i32.extend16_s (load.field DxObject width (call $dm_pbuf_path (local.get $arg0)))))
+    (call $amstream_finish (i32.const 0) (i32.const 12)))
+
+  ;; SetVolume(lVolume): DSBVOLUME_MIN..MAX = -10000..0 cB.
+  (func $handle_IDirectMusicPathBuffer8_SetVolume (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $path i32)
+    (if (i32.or (i32.gt_s (local.get $arg1) (i32.const 0)) (i32.lt_s (local.get $arg1) (i32.const -10000)))
+      (then (call $amstream_finish (i32.const 0x80070057) (i32.const 12)) (return)))
+    (local.set $path (call $dm_pbuf_path (local.get $arg0)))
+    (store.field DxObject height (local.get $path) (i32.sub (i32.const 0) (local.get $arg1)))
+    (call $dm_path_changed (local.get $path))
+    (call $amstream_finish (i32.const 0) (i32.const 12)))
+
+  ;; SetPan(lPan): DSBPAN_LEFT..RIGHT = -10000..10000 cB.
+  (func $handle_IDirectMusicPathBuffer8_SetPan (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $path i32)
+    (if (i32.or (i32.gt_s (local.get $arg1) (i32.const 10000)) (i32.lt_s (local.get $arg1) (i32.const -10000)))
+      (then (call $amstream_finish (i32.const 0x80070057) (i32.const 12)) (return)))
+    (local.set $path (call $dm_pbuf_path (local.get $arg0)))
+    (store.field DxObject width (local.get $path) (i32.and (local.get $arg1) (i32.const 0xFFFF)))
+    (call $dm_path_changed (local.get $path))
+    (call $amstream_finish (i32.const 0) (i32.const 12)))
 
   ;; ---- IDirectMusicSegmentState8 ------------------------------------------
 

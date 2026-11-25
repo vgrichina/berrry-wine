@@ -41755,8 +41755,7 @@
     "name": "IDirectMusicAudioPath8_GetObjectInPath",
     "nargs": 8,
     "convention": "stdcall",
-    "hash": 112756255,
-    "handler": "ftm_unimplemented"
+    "hash": 112756255
   },
   {
     "id": 4946,
@@ -41886,5 +41885,191 @@
     "nargs": 1,
     "convention": "cdecl",
     "hash": 1250867989
+  },
+  {
+    "id": 4963,
+    "name": "IDirectMusicPathBuffer8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2131315723
+  },
+  {
+    "id": 4964,
+    "name": "IDirectMusicPathBuffer8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3927200104,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4965,
+    "name": "IDirectMusicPathBuffer8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 339782609
+  },
+  {
+    "id": 4966,
+    "name": "IDirectMusicPathBuffer8_GetCaps",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 515589577,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4967,
+    "name": "IDirectMusicPathBuffer8_GetCurrentPosition",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 971270146,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4968,
+    "name": "IDirectMusicPathBuffer8_GetFormat",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3426893675,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4969,
+    "name": "IDirectMusicPathBuffer8_GetVolume",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2919014026
+  },
+  {
+    "id": 4970,
+    "name": "IDirectMusicPathBuffer8_GetPan",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 86295583
+  },
+  {
+    "id": 4971,
+    "name": "IDirectMusicPathBuffer8_GetFrequency",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2947024150,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4972,
+    "name": "IDirectMusicPathBuffer8_GetStatus",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1012218986,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4973,
+    "name": "IDirectMusicPathBuffer8_Initialize",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3184202706,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4974,
+    "name": "IDirectMusicPathBuffer8_Lock",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 4011952691,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4975,
+    "name": "IDirectMusicPathBuffer8_Play",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 4146876806,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4976,
+    "name": "IDirectMusicPathBuffer8_SetCurrentPosition",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4149423926,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4977,
+    "name": "IDirectMusicPathBuffer8_SetFormat",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2554006151,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4978,
+    "name": "IDirectMusicPathBuffer8_SetVolume",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3983774502
+  },
+  {
+    "id": 4979,
+    "name": "IDirectMusicPathBuffer8_SetPan",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 911347995
+  },
+  {
+    "id": 4980,
+    "name": "IDirectMusicPathBuffer8_SetFrequency",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1771449330,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4981,
+    "name": "IDirectMusicPathBuffer8_Stop",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3264075828,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4982,
+    "name": "IDirectMusicPathBuffer8_Unlock",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3173207416,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4983,
+    "name": "IDirectMusicPathBuffer8_Restore",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2110200454,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4984,
+    "name": "IDirectMusicPathBuffer8_SetFX",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3738328362,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4985,
+    "name": "IDirectMusicPathBuffer8_AcquireResources",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3382213373,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4986,
+    "name": "IDirectMusicPathBuffer8_GetObjectInPath",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3424530739,
+    "handler": "ftm_unimplemented"
   }
 ]
