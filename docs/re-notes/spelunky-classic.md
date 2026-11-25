@@ -132,6 +132,77 @@ If the player overshoots the door, tap Right (about 80 batches) before Up.
 Evidence: `scratch/runs/20261124-spelunky-route/` (`s3-*.png` after the fix;
 `s2-*.png` before it, picture in the top-left 640x480).
 
+## Gameplay profile (tutorial level), 2026-11-25
+
+Evidence: `scratch/runs/20261125-spelunky-classic-gameplay-profile/`
+(`route/`, `headless/`, `browser/`, `native/`).
+
+**Replayable route.** The first START goes to the **tutorial**; Mines 1-1
+needs the tutorial finished. After the title, the route runs six cycles of
+run, jump and whip, 600 batches each. Each cycle presents about 208 frames,
+about 2.9 batches per present at `--batch-size=100000` and the default
+200 ms/batch clock.
+- `route/gen-input.js` prints the `--input=` string (`route/input-string.txt`):
+  - Enter at 21000 and 22020.
+  - Left from 25040 to 27440.
+  - Up from 27740 to 27800, which reaches the tutorial at about 29000.
+  - Cycles start at 29000.
+- That string replays md5-identical PNGs to the ctl run (`route/route.sh`).
+- Press Up only after the slide stops. An Up pressed mid-slide misses the door.
+- Profile window: batches 29600–32600, 1046 presents (about 35 s of game at
+  30 fps).
+
+**Where the time goes**, from the headless cpuprofile (`headless/run-c/buckets.txt`):
+
+| Bucket | Share of all samples |
+|---|---|
+| wasm | 76.9 % |
+| uop tier | 37.8 % (`uop_fast` alone is 33 %) |
+| threaded handlers | 16.3 % |
+| x87 | 10.5 % |
+| mem translate | 4.4 % |
+| SSE | 0 % |
+| D3D9/GPS wasm | ~0 % |
+
+- **Harness, not the app:**
+  - `process-desktop` `receive` is 11.5 %, almost all of it in
+    `Atomics.wait` at line 141.
+  - The `run.js:1758` closure is 1.2 %.
+- **Headless GL:** 5 % (`getIndexedParameter` 2.6 %).
+- **Block executions:** 67 % run in the uop tier. Threaded ops total 1.21 G,
+  at a mean of 26.8 ns/op.
+- **Unsupported uop forms, by weight:**
+  - `ret` 141 M, `call` 80 M, `sahf` 20 M, `ret imm` 12 M.
+  - `xchg r/m` 6.8 M (`_LStrAsg`).
+  - `lock dec`/`inc`/`cmpxchg` about 1.6 M combined.
+- **Declines:** threaded entries the tier did not take are 55 %
+  `no-backedge`.
+- **Compile churn:** 68 % of compiles are repeats from verdict-map aliasing.
+  0x4abf8d was compiled 471 times.
+
+**Guest code.** Weights are threaded instructions, then uop live blocks (`headless/run-b/attribute.txt`).
+
+| Share (threaded / uop) | Code |
+|---|---|
+| 33 % / 27 % | Delphi record RTTI: `_FinalizeRecord` 0x4064e8, `_FinalizeArray` 0x406534, `_CopyRecord` 0x40674c, `_InitializeRecord` 0x406448 |
+| 22 % / 22 % | GM instance core: var lookup 0x4a8a30, set x/y 0x4abf7c, per-object nth instance 0x4aee7c/0x4aeee0, depth check 0x4aef24 |
+| 18 % / 28 % | GML tree interpreter 0x520000–0x52a000: node eval 0x527530, call-arg copy 0x52919a |
+| 13 % / 12 % | Collision: bbox test 0x4aceec, scan 0x4e3ed0, event pass 0x539bb2, bbox recompute 0x4aa958 |
+| 4 % / 2 % | `Move` 0x4030a5 |
+| 3.6 % / 1.7 % | LStr (`_LStrClr` 0x405934 and `_LStrAsg` 0x405988 use `lock dec`/`inc` and `xchg`) |
+| 0.7 % | FastMM |
+
+- A GM value is a 24-byte record holding a string (TypeInfo 0x5436f0). Every
+  copy is `_CopyRecord` and every temporary is `_FinalizeRecord`, so about a
+  third of the guest work is RTTI walks.
+- Loading-time hot spots (LStrCmp, FastMM) do not matter in gameplay.
+
+**Browser.** Cooperative only:
+- The intro text runs at 4.8 GPU presents/s.
+- The title room, which is a playable lobby, with run/jump/whip keys runs at
+  28 presents/s; uop is 36 % and threaded 26 % of non-idle time.
+- A Threads-on profile hung in `profile-web-frames` and was killed.
+
 ## Reproduction
 
 ```sh
