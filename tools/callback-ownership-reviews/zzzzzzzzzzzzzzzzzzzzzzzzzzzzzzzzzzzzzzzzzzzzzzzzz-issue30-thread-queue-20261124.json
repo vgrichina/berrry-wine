@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "f65ea01ca918e5eab42c89820a3efff303603b0debcf9fafcad981f2fa5a0615",
+      "sha256": "ff11af8eb32d67d5b15e7a8c1a93745d52bb254fce91efdec94ba34437b7d451",
+      "reason": "Review 20261124 (issue #30): createThread clears the new Win32 thread id's shared USER queue (existing reset_thread_message_queue export, the same call exit cleanup makes) synchronously when the slot is allocated, before the id is published. No callback, continuation, scheduler or guest-context lifetime change. Covered by test/test-post-thread-message-before-start.js. General callback ownership remains pending."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:init_thread",
+      "baseSHA256": "07769bec1698f98632ebab504b9288d1566a1be31cdfba62a41f20468a4a3e13",
+      "sha256": "87b3f35370d164c6027e0de5714d54de9b32cfbc8c5c11db81bbe07645664ab7",
+      "reason": "Review 20261124 (issue #30): init_thread no longer resets a worker's shared post queue (only tid 0's); the queue is cleared at CreateThread instead, so a message posted before an asynchronous Worker start survives (UT splash WM_QUIT). No callback, continuation or guest-context lifetime change. Covered by test/test-post-thread-message-before-start.js. General callback ownership remains pending."
+    }
+  ]
+}

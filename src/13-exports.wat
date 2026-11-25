@@ -2417,7 +2417,14 @@
     (call $invocation_thread_begin (local.get $tid))
     (call $getmessage_hook_reset (global.get $current_thread_id))
     (call $getmessage_hook_open_owner (global.get $current_thread_id))
-    (call $shared_post_queue_reset_tid (global.get $current_thread_id))
+    ;; A worker's shared USER queue is NOT reset here. It belongs to the Win32
+    ;; thread id, which the creator already holds (CreateThread returned it
+    ;; and ThreadManager.createThread cleared the queue then); with the Worker
+    ;; backend this init runs later, asynchronously, and a reset here dropped
+    ;; messages posted in between (UT's splash thread lost its WM_QUIT, issue
+    ;; #30). The main thread (tid 0) still starts from an empty queue.
+    (if (i32.eqz (local.get $tid))
+      (then (call $shared_post_queue_reset_tid (global.get $current_thread_id))))
     (global.set $post_queue_count (i32.const 0))
     (global.set $pq_read_off (i32.const 0))
     (global.set $sync_msg_depth (i32.const 0))

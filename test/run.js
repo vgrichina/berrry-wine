@@ -1088,7 +1088,8 @@ const ZIP_LAUNCH = (() => {
       fs.mkdirSync(path.dirname(out), { recursive: true });
       fs.writeFileSync(out, zipMount.extractSync(bytes, m.entry));
     }
-    return { exePath: path.join(dir, ...hit.rel.split('\\')), root: plan.root, zipPath, dir };
+    return { exePath: path.join(dir, ...hit.rel.split('\\')), root: plan.root, zipPath, dir,
+      guestPath: path.win32.join(plan.root, hit.rel) };
   }
   throw new Error(`--zip-exe=${ZIP_EXE} not found in ${ZIP_MOUNTS.join(', ')}`);
 })();
@@ -1300,8 +1301,14 @@ const EXE_GUEST_PATH = (() => {
   // D:\Setup.exe, not the host temp copy reported as C:\Setup.exe.
   // A registry app's exeGuestPath is the same thing for an installed tree
   // (lib/apps.js), and the browser honours it too.
+  // A --zip-exe launch is likewise the exe's place in the mounted archive, as
+  // the page's upload/import reports it. Without it the mounted-private-DLL
+  // admission (lib/cli-mounted-private-dll.js) has no directory to look in, and
+  // Unreal Tournament out of a ZIP bound Core/Engine/Window.dll to stubs and
+  // trapped on Core!?appPackage@@YAPBGXZ, the issue #30 trap the page had.
   const requested = getArg('exe-guest-path', null) || (ISO_LAUNCH
     ? path.win32.join(ISO_LAUNCH.guestDir, path.basename(ISO_LAUNCH.exePath))
+    : ZIP_LAUNCH && !getArg('exe', null) ? ZIP_LAUNCH.guestPath
     : (APP_ENTRY && !getArg('exe', null) && APP_ENTRY.exeGuestPath) || null);
   if (!requested) return null;
   const rooted = /^[a-z]:[\\/]/i.test(requested) ? requested : `c:\\${requested}`;

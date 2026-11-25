@@ -127,3 +127,14 @@ hash verification. No public input was sent to the guest, so no DOWN/UP receipt
 or gameplay confirmation is claimed. There were no boxes, agents, Codex
 workers, Wine, Python, deployment, Telegram or GitHub posts. Box ID, expiry
 and stop receipt are null; box state is NOT_CREATED.
+
+## Follow-up 2026-11-24: the startup cause
+
+The UNKNOWN above is resolved; see "Upload/first-run path, Worker main" in
+`unreal-family-demos.md`. The self-launched process is UT's renderer probe and
+exits by design. What stopped the upload route was the splash thread's
+`WM_QUIT`, posted before its Worker started and then dropped by
+`init_thread`'s queue reset: the splash stayed over the wizard and took the
+clicks. With the queue cleared at CreateThread instead, the same ZIP upload
+in Chrome 158 (Threads, guest main in a Worker) clicks through the wizard to
+the UWindow menu. Evidence `scratch/runs/20261124-issue30-ut99`.
