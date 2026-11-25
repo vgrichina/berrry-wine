@@ -236,6 +236,17 @@
         (then
           (local.set $se (i32.load16_u (call $phys80_se_addr (global.get $fpu_top))))
           (local.set $exp (i32.and (local.get $se) (i32.const 32767)))
+          ;; E=0,J=0 canonical images are zero or denormal, without exceptions.
+          (if (i32.and (i32.eqz (local.get $exp))
+                (i64.ge_s (i64.load (call $phys80_mant_addr (global.get $fpu_top))) (i64.const 0)))
+            (then
+              (global.set $fpu_sw
+                (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xB8FF))
+                  (i32.or
+                    (select (i32.const 0x4000) (i32.const 0x4400)
+                      (i64.eqz (i64.load (call $phys80_mant_addr (global.get $fpu_top)))))
+                    (i32.shr_u (i32.and (local.get $se) (i32.const 32768)) (i32.const 6)))))
+              (return)))
           (if (i32.and (i32.and (i32.gt_u (local.get $exp) (i32.const 0))
                                (i32.lt_u (local.get $exp) (i32.const 32767)))
                 (i64.lt_s (i64.load (call $phys80_mant_addr (global.get $fpu_top))) (i64.const 0)))
