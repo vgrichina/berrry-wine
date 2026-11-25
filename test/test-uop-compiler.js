@@ -479,6 +479,88 @@ CASES.push(
   },
 );
 
+// ---- --uop-sse (07e kind 34, 07d SSER/SSEM/SSEMS) ----
+// The source walk is seeded with the values SSE gets wrong most easily --
+// signed zeros, denormals, infinities, quiet/signalling/negative NaNs, the
+// round-to-even halves and integers past the cvt* range (the indefinite
+// 0x80000000) -- every third slot left random, so the upper lanes and
+// mixed-class operands are random too. XMM0-7 start from random memory (the
+// scalar forms must keep the upper lanes they do not write) and are stored
+// to the destination after the loop, so the memory hash covers the whole
+// XMM file; (U)COMIS* flags are read through setcc inside the loop.
+const F32_SPECIALS = [0, 0x80000000, 0x3F800000, 0xBF800000, 0x3FC00000, 0x00011D7C, 0x80011D7C, 0x7F800000,
+  0xFF800000, 0x7FC00000, 0x7F800001, 0xFFC00001, 0x4F32D05E, 0xCF32D05E, 0x4F000000, 0xCF000001, 0x3F000000,
+  0x40200000, 0xC0200000, 0x7E967699, 0x00800000, 0x00000001];
+const F64_SPECIALS = [0n, 0x8000000000000000n, 0x3FF0000000000000n, 0xBFF0000000000000n, 0x4004000000000000n,
+  0xC004000000000000n, 0x41E65A0BC0000000n, 0xC1E65A0BC0000000n, 0x7E37E43C8800759Cn, 0x7FF0000000000000n,
+  0xFFF0000000000000n, 0x7FF8000000000000n, 0x7FF0000000000001n, 0xFFF8000000000001n, 0x0000000000000001n,
+  0x800012D687E3D9A4n, 0x41E0000000000000n, 0xC1E0000000100000n, 0x3FB999999999999An, 0x0010000000000000n,
+  0x47EFFFFFE0000000n, 0x36A0000000000000n];
+const ssePoke = (wide) => (mem, w) => {
+  const dv = new DataView(mem.buffer, mem.byteOffset);
+  let x = 0x2468ACE;
+  for (let k = 0; k < (wide ? 0x1800 : 0x1000); k++) {
+    x = (Math.imul(x, 1103515245) + 12345) | 0;
+    if (k % 3 === 2) continue;
+    const pick = (x >>> 8) % (wide ? F64_SPECIALS.length : F32_SPECIALS.length);
+    if (wide) dv.setBigUint64(w + 8 * k, F64_SPECIALS[pick], true);
+    else dv.setUint32(w + 4 * k, F32_SPECIALS[pick], true);
+  }
+};
+// movups xmmK, [esi + 0x8000 + 16K] for K = 0..7; movups [edi + 16K], xmmK
+const XMM_LOAD = [0, 1, 2, 3, 4, 5, 6, 7].map((k) => [0x0F, 0x10, 0x86 | (k << 3), ...d32(0x8000 + 16 * k)]);
+const XMM_SAVE = [0, 1, 2, 3, 4, 5, 6, 7].map((k) => [0x0F, 0x11, 0x47 | (k << 3), 16 * k]);
+CASES.push(
+  {
+    // Single precision: loads, the arithmetic and min/max on NaN/-0 pairs,
+    // sqrtss from memory, COMISS / UCOMISS (ZF/PF/CF, the unordered
+    // result), CVTTSS2SI / CVTSS2SI past the range, CVTSI2SS, CVTSS2SD,
+    // scalar stores.
+    name: 'sse-scalar-ss', regs: { ecx: N }, sse: true, head: 'l', poke: ssePoke(false), want: { sseSites: '>0' },
+    code: [...XMM_LOAD, L('l'), [0xF3, 0x0F, 0x10, 0x06], [0xF3, 0x0F, 0x10, 0x4E, 0x04], [0xF3, 0x0F, 0x58, 0xC1],
+           [0xF3, 0x0F, 0x59, 0x4E, 0x08], [0xF3, 0x0F, 0x5C, 0xC1], [0xF3, 0x0F, 0x5E, 0x4E, 0x0C],
+           [0xF3, 0x0F, 0x5D, 0xD0], [0xF3, 0x0F, 0x5F, 0xD9], [0xF3, 0x0F, 0x51, 0x26],
+           [0x0F, 0x2F, 0xC1], [0x0F, 0x92, 0xC2], [0x0F, 0x97, 0xC6], [0x01, 0xD5],
+           [0x0F, 0x2E, 0x4E, 0x04], [0x0F, 0x9A, 0xC2], [0x0F, 0x94, 0xC6], [0x01, 0xD3],
+           [0xF3, 0x0F, 0x2C, 0xC0], [0x01, 0xC5], [0xF3, 0x0F, 0x2D, 0x46, 0x08], [0x31, 0xC3],
+           [0xF3, 0x0F, 0x2A, 0xE8], [0xF3, 0x0F, 0x5A, 0xF0], [0xF3, 0x0F, 0x11, 0x07], [0xF3, 0x0F, 0x11, 0x6F, 0x04],
+           [0xF2, 0x0F, 0x11, 0x77, 0x08], [0x83, 0xC7, 0x10], [0x83, 0xC6, 0x04], 0x49, J(cc.NZ, 'l'),
+           ...XMM_SAVE, 0xC3],
+  },
+  {
+    // Double precision: the sd arithmetic, sqrtsd, COMISD / UCOMISD from a
+    // register and from memory, CVTTSD2SI / CVTSD2SI (memory) past the
+    // range, CVTSI2SD, CVTSD2SS (overflow to inf, denormal results),
+    // CVTSS2SD from memory, ANDPD, MOVQ m64 and MOVD r32 stores.
+    name: 'sse-scalar-sd', regs: { ecx: N }, sse: true, head: 'l', poke: ssePoke(true), want: { sseSites: '>0' },
+    code: [...XMM_LOAD, L('l'), [0xF2, 0x0F, 0x10, 0x06], [0xF2, 0x0F, 0x10, 0x4E, 0x08], [0xF2, 0x0F, 0x58, 0xC1],
+           [0xF2, 0x0F, 0x59, 0x4E, 0x10], [0xF2, 0x0F, 0x5C, 0xD0], [0xF2, 0x0F, 0x5E, 0x46, 0x18],
+           [0xF2, 0x0F, 0x51, 0xD9],
+           [0x66, 0x0F, 0x2F, 0xC1], [0x0F, 0x92, 0xC2], [0x0F, 0x97, 0xC6], [0x01, 0xD5],
+           [0x66, 0x0F, 0x2E, 0x16], [0x0F, 0x9A, 0xC2], [0x0F, 0x94, 0xC6], [0x01, 0xD3],
+           [0xF2, 0x0F, 0x2C, 0xC0], [0x01, 0xC5], [0xF2, 0x0F, 0x2D, 0x46, 0x08], [0x31, 0xC3],
+           [0xF2, 0x0F, 0x2A, 0xE0], [0xF2, 0x0F, 0x5A, 0xE8], [0xF3, 0x0F, 0x5A, 0x76, 0x04], [0x66, 0x0F, 0x54, 0xF9],
+           [0xF2, 0x0F, 0x11, 0x07], [0x66, 0x0F, 0xD6, 0x5F, 0x08], [0x66, 0x0F, 0x7E, 0xD0], [0x01, 0xC5],
+           [0x83, 0xC7, 0x10], [0x83, 0xC6, 0x08], 0x49, J(cc.NZ, 'l'),
+           ...XMM_SAVE, 0xC3],
+  },
+  {
+    // Packed forms: MOVUPS/MOVAPS, ADDPS/MULPS/MAXPS, SHUFPS, CMPPS (lt) to
+    // MOVMSKPS, UNPCKLPS, XORPS, CVTPS2PD, MOVLPS load, MOVHPS store, CMPSS
+    // unord, the SSE2 integer forms PSUBD / PSHUFD / PSRLQ imm (the 66 0F 73
+    // group: r/m both source and destination), MOVD xmm, r32.
+    name: 'sse-packed', regs: { ecx: N }, sse: true, head: 'l', poke: ssePoke(false), want: { sseSites: '>0' },
+    code: [...XMM_LOAD, L('l'), [0x0F, 0x10, 0x06], [0x0F, 0x28, 0xC8], [0x0F, 0x10, 0x56, 0x10], [0x0F, 0x58, 0xCA],
+           [0x0F, 0x59, 0xC8], [0x0F, 0xC6, 0xCA, 0x1B], [0x0F, 0xC2, 0xD0, 0x01], [0x0F, 0x50, 0xC2], [0x01, 0xC5],
+           [0x0F, 0x14, 0xD9], [0x0F, 0x57, 0xE3], [0x0F, 0x5F, 0xE9], [0x0F, 0x5A, 0xF0],
+           [0x66, 0x0F, 0xFA, 0xF9], [0x66, 0x0F, 0x70, 0xF7, 0x1B], [0x66, 0x0F, 0x73, 0xD7, 0x03],
+           [0x0F, 0x12, 0x66, 0x08], [0xF3, 0x0F, 0xC2, 0xE8, 0x03], [0x66, 0x0F, 0x6E, 0xC5],
+           [0x0F, 0x11, 0x0F], [0x0F, 0x17, 0x5F, 0x08],
+           [0x83, 0xC7, 0x10], [0x83, 0xC6, 0x10], 0x49, J(cc.NZ, 'l'),
+           ...XMM_SAVE, 0xC3],
+  },
+);
+
 // ---- --uop-icall / --uop-iat (07e FF /2 as kind 23, 07d ICG) ----
 // A callee's address is only known once the code is placed, so each is put
 // right after a CALL, which pushes it; the pop takes it. The "vtable" is a
@@ -1157,7 +1239,7 @@ function runCase(inst, c, a, codeAddr, mode) {
   // A known flag state on entry: a sub that sets CF.
   e.set_uop(mode === 'off' ? 0 : 1);
   if (c.aggr) e.set_aggressive_stack(mode === 'off' ? 0 : 1);
-  const feats = ['muldiv', 'icall', 'iat'].filter((f) => c[f]);
+  const feats = ['muldiv', 'icall', 'iat', 'sse'].filter((f) => c[f]);
   for (const f of feats) e['set_uop_' + f](mode === 'off' ? 0 : 1);
   // c.icgMega: the megamorphic-site threshold for this case (07d
   // $uop_icg_mega), put back to the default after
@@ -1176,6 +1258,8 @@ function runCase(inst, c, a, codeAddr, mode) {
   const CTR = { divExits: 16, icPass: 17, icFail: 18, iatPass: 19, iatFail: 20, icSites: -28, iatSites: -29, icRej: -30,
                 megaSites: 21, megaKills: 22, megaRef: -31,
                 ladN: -32, ladHalved: -33, ladIcut: -34, ladHead: -35, ladNocall: -36,
+                // --uop-sse: kind-34 sites kept
+                sseSites: -37,
                 bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301,
                 // 07d $uop_x87: x87 instructions run through the service path
                 x87svc: 400 };

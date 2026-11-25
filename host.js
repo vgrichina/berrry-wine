@@ -3438,6 +3438,9 @@ class WineAssembly {
     const aggressiveStack = (uop && (this.aggressiveStack === true ||
       (window.WineSuperops && window.WineSuperops.aggressiveStack === true))) ? 1 : 0;
     if (this.instance.exports.set_aggressive_stack) this.instance.exports.set_aggressive_stack(aggressiveStack);
+    // ?uop-sse: kind 34, the XMM forms in the tier (opt-in, compile-time).
+    const uopSse = (uop && window.WineSuperops && window.WineSuperops.uopSse === true) ? 1 : 0;
+    if (uopSse && this.instance.exports.set_uop_sse) this.instance.exports.set_uop_sse(1);
     const smcSameBlock = (this.smcSameBlock === true ||
       (window.WineSuperops && window.WineSuperops.smcSameBlock === true)) ? 1 : 0;
     if (this.instance.exports.set_smc_same_block) this.instance.exports.set_smc_same_block(smcSameBlock);
@@ -3536,6 +3539,9 @@ class WineAssembly {
       }
       if (this.instance.exports.set_aggressive_stack) {
         await this.guestWorker.callExport('set_aggressive_stack', aggressiveStack);
+      }
+      if (uopSse && this.instance.exports.set_uop_sse) {
+        await this.guestWorker.callExport('set_uop_sse', uopSse);
       }
       if (this.instance.exports.set_smc_same_block) {
         await this.guestWorker.callExport('set_smc_same_block', smcSameBlock);
@@ -3727,6 +3733,7 @@ class WineAssembly {
     this.threadManager.recordInheritedWasmGlobal('set_x87_affine_fusion', x87Fusion);
     this.threadManager.recordInheritedWasmGlobal('set_uop', uop);
     this.threadManager.recordInheritedWasmGlobal('set_aggressive_stack', aggressiveStack);
+    this.threadManager.recordInheritedWasmGlobal('set_uop_sse', uopSse);
     this.threadManager.recordInheritedWasmGlobal('set_smc_same_block', smcSameBlock);
     this.threadManager.recordInheritedWasmGlobal('set_uop_trace_heads', uopTraceHeads);
     // The bisect mask has to reach every guest thread for the same reason the
