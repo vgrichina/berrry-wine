@@ -906,13 +906,13 @@
                     (call $str16_mask (local.get $size))))))
           (local.set $b (call $str16_load
             (i32.add (local.get $dst_base) (local.get $di)) (local.get $size)))
+          (call $set_flags_sub (local.get $a) (local.get $b)
+            (i32.sub (local.get $a) (local.get $b)))
           (global.set $flag_sign_shift
             (if (result i32) (i32.eq (local.get $size) (i32.const 1))
               (then (i32.const 7))
               (else (select (i32.const 15) (i32.const 31)
-                            (i32.eq (local.get $size) (i32.const 2))))))
-          (call $set_flags_sub (local.get $a) (local.get $b)
-            (i32.sub (local.get $a) (local.get $b)))))
+                            (i32.eq (local.get $size) (i32.const 2))))))))
 
       ;; SI advances for everything that reads a source, DI for everything that
       ;; touches the destination.

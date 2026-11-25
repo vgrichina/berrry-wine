@@ -25,7 +25,7 @@ const path = require('path');
 const { execSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const WASM = path.join(ROOT, 'build', 'wine-assembly.wasm');
+const WASM = process.env.WIN16_TEST_WASM || path.join(ROOT, 'build', 'wine-assembly.wasm');
 const BIN = path.join(ROOT, 'test', 'binaries', 'win98-16bit');
 
 const SREG_ES = 0, SREG_CS = 1, SREG_SS = 2, SREG_DS = 3;
@@ -258,13 +258,136 @@ function runOne(inst, memory, logged, name) {
   }
 }
 
+// Portable, synthetic NE: no installed game or retained run is needed. Distinct
+// full-size DS/ES/FS segments also let us check the unused DS source and guards.
+async function runStringComparisons() {
+  const assert = require('assert/strict');
+  const { inst, memory } = await instantiate();
+  const e = inst.exports, mem = new Uint8Array(memory.buffer);
+  const image = Buffer.alloc(1024), ne = 64;
+  image.writeUInt16LE(0x5a4d); image.writeUInt32LE(ne, 60);
+  const word = (offset, value) => image.writeUInt16LE(value, ne + offset);
+  for (const [offset, value] of [[0,0x454e],[4,0x90],[6,2],[14,3],
+    [18,4096],[22,1],[24,0x8000],[26,8],[28,8],[34,0x40],[50,4]]) word(offset, value);
+  for (let i = 0; i < 8; i++) {
+    word(0x40+i*8, 0x20+i); word(0x42+i*8, 16);
+    word(0x44+i*8, i ? 1 : 0); word(0x46+i*8, 0);
+  }
+  mem.set(image, e.get_staging());
+  assert(e.load_pe(image.length) >= 0);
+  assert.equal(e.is_code16(), 1);
+  e.set_uop(0); e.set_block_exec(0); e.set_fault_unmapped(2);
+  e.win16_set_sreg(0, 5*8+7); e.win16_set_sreg(4, 7*8+7);
+  const code = e.win16_seg_base(1), ds = e.win16_seg_base(3);
+  const es = e.win16_seg_base(5), source = e.win16_seg_base(7);
+  const stack = e.win16_seg_base(8)+0x8000, g = p => e.guest_to_wasm(p) >>> 0;
+  assert.equal(e.win16_seg_base_of(1), code);
+  assert.equal(e.win16_seg_base_of(3), ds);
+  for (const n of [1,3,5,7,8]) assert.equal(e.win16_seg_limit(n), 65536);
+  const spans = [ds,es,source].map(p => [g(p-64), 65664]);
+  for (const p of [ds,es,source]) assert.equal(g(p+65599)-g(p-64), 65663);
+  const names = ['eax','ecx','edx','ebx','esp','ebp','esi','edi'];
+  const regs = () => names.map(n => e['get_'+n]() >>> 0);
+  const lazy = () => ['op','a','b','res','sign_shift'].map(n => e['get_flag_'+n]());
+  const segments = () => Array.from({length:6}, (_,i) =>
+    [e.win16_sreg(i),e.win16_seg_base_of(i)]);
+  // Separate arithmetic oracle: exact difference, unsigned borrow, signed
+  // range overflow, nibble borrow, and parity of the low result byte.
+  function subFlags(bits, a, b) {
+    const modulus = 2**bits, sign = modulus/2;
+    const result = Number((BigInt(a)-BigInt(b)+BigInt(modulus))%BigInt(modulus));
+    const signed = x => x >= sign ? x-modulus : x;
+    const difference = signed(a)-signed(b);
+    let ones = 0;
+    for (let bit=0; bit<8; bit++) ones += (result >>> bit)&1;
+    return (a<b ? 1:0) | (ones%2===0 ? 4:0) | ((a&15)<(b&15) ? 16:0)
+      | (result===0 ? 64:0) | (result>=sign ? 128:0)
+      | (difference < -sign || difference >= sign ? 2048:0);
+  }
+  let setupAt = code+0x9000;
+  const setups = new Map();
+  function setup(bytes) {
+    const key = bytes.join(',');
+    if (!setups.has(key)) {
+      setups.set(key, setupAt); mem.set([...bytes,235,0],g(setupAt)); setupAt += 32;
+      assert(setupAt < code+0xff00);
+    }
+    e.clear_yield(); e.set_eip(setups.get(key)); e.run(1);
+  }
+  function flags() {
+    const ax = e.get_eax(); setup([0x9c,0x58]);
+    const value = e.get_eax()&65535; e.set_eax(ax); return value;
+  }
+  let site = 0, rows = 0;
+  for (const bits of [8,16]) for (const cmps of [true,false])
+    for (const rep of [0,0xf3,0xf2]) for (let scenario=0; scenario<5; scenario++) {
+      const size=bits/8, modulus=2**bits, sign=modulus/2;
+      const at=code+0x100+site++*32;
+      const bytes=[0x64,...(rep ? [rep]:[]),cmps ? (size===1?0xa6:0xa7):(size===1?0xae:0xaf),235,0];
+      mem.set(bytes,g(at));
+      for (let hot=0; hot<2; hot++) {
+        const df=hot, step=(df?-1:1)*size;
+        const count=scenario===4 ? hot : 4-hot;
+        e.set_esp(stack); setup([0x68,0xd7,0x0a,0x9d,df?0xfd:0xfc]);
+        for (const [p,n] of spans) mem.fill(0x6c,p,p+n);
+        const si=df?0:65536-size, di=df?0:65536-size;
+        const [a,b]=[[modulus-1,0],[sign,1],[sign-1,modulus-1],[7,7],[0,0]][scenario];
+        const acc=(a+hot)%modulus;
+        const pairs=[];
+        const put=(base,index,value) => {
+          for (let j=0;j<size;j++) mem[g(base+index+j)]=(value >>> (j*8))&255;
+        };
+        for (let k=0;k<4;k++) {
+          const x=cmps ? (acc+k)%modulus : acc;
+          const y=rep===0xf3 ? (k===0?x:(x+1)%modulus)
+            : rep===0xf2 ? (k===1?x:(x+1)%modulus) : b;
+          pairs.push([x,y]); put(source,(si+k*step)&65535,x); put(es,(di+k*step)&65535,y);
+        }
+        const initial=[(0xa55a0000|acc)>>>0,(0xface0000|count)>>>0,0xc33c4433,
+          0xd11d6655,stack,0xe22e8877,(0x13570000|si)>>>0,(0x24680000|di)>>>0];
+        names.forEach((n,i)=>e['set_'+n](initial[i]));
+        const beforeFlags=flags(), beforeLazy=lazy(), seg=segments();
+        mem.fill(0xa5,g(stack-64),g(stack+64));
+        const guards=spans.map(([p,n])=>Buffer.from(mem.subarray(p,p+n)));
+        const stackGuard=Buffer.from(mem.subarray(g(stack-64),g(stack+64)));
+        e.clear_yield(); e.set_eip(at);
+        const hits=e.get_page_hits(), stores=e.get_cache_stores();
+        e.run(1);
+        const actual=regs(), afterLazy=lazy();
+        assert.deepEqual(segments(),seg);
+        assert.deepEqual(Buffer.from(mem.subarray(g(at),g(at)+bytes.length)),Buffer.from(bytes));
+        spans.forEach(([p,n],i)=>assert.deepEqual(Buffer.from(mem.subarray(p,p+n)),guards[i]));
+        assert.deepEqual(Buffer.from(mem.subarray(g(stack-64),g(stack+64))),stackGuard);
+        assert.deepEqual([e.get_page_hits()-hits,e.get_cache_stores()-stores],hot?[1,0]:[0,1]);
+        let used=0, status=beforeFlags&0x8d5;
+        while (used < (rep ? count : 1)) {
+          status=subFlags(bits,...pairs[used++]);
+          if (rep===0xf3 && !(status&64) || rep===0xf2 && (status&64)) break;
+        }
+        const expected=initial.slice();
+        if (cmps) expected[6]=(initial[6]&0xffff0000 | (si+used*step)&65535)>>>0;
+        expected[7]=(initial[7]&0xffff0000 | (di+used*step)&65535)>>>0;
+        if (rep) expected[1]=(initial[1]&0xffff0000 | count-used)>>>0;
+        const label=`code16 ${bits} ${cmps?'CMPS':'SCAS'} rep=${rep} case=${scenario} hot=${hot}`;
+        checkThat(label+' GPRs',JSON.stringify(actual)===JSON.stringify(expected));
+        check(label+' flags',flags()&0xcd5,status|(df?0x400:0));
+        if (used) check(label+' width',afterLazy[4],bits-1);
+        else checkThat(label+' zero count preserves lazy flags',JSON.stringify(beforeLazy)===JSON.stringify(afterLazy));
+        rows++;
+      }
+    }
+  console.log(`code16 string comparisons: ${rows} rows, ${site} cold and ${site} same-address cache hits`);
+}
+
 (async () => {
+  await runStringComparisons();
   // One instance per image, deliberately. The block cache is keyed by linear
   // address and loading a second NE does not invalidate it, so a shared
   // instance runs the *previous* app's decoded blocks at the same addresses —
   // which is exactly what happened here, and it made FREECELL stop somewhere
   // WINMINE's code had gone.
-  for (const name of ['WINMINE.EXE', 'FREECELL.EXE', 'MSHEARTS.EXE', 'SOL.EXE']) {
+  for (const name of process.argv.includes('--strings-only') ? []
+    : ['WINMINE.EXE', 'FREECELL.EXE', 'MSHEARTS.EXE', 'SOL.EXE']) {
     const { inst, memory, logged } = await instantiate();
     runOne(inst, memory, logged, name);
   }
