@@ -384,7 +384,9 @@ So the browser's title room fires collision events, and the GML that copies
 values with them, that the CLI room does not. That is a game-state or
 environment difference: player position, the held Enter key, screen size.
 For comparison, headless Chrome measured 165 k blocks/present in the section
-above. This is not fixed. **Next:** dump the instance list and the player's x/y
+above. (Resolved below in "Browser vs CLI work per present": the CLI window
+was the rope-descent phase of the title room; same phase, same work.) This is
+not fixed. **Next:** dump the instance list and the player's x/y
 in both hosts at the measuring point.
 
 **Coop duty cycle** (`tools/page-probes/measure-host-duty.js`, `coop-1`):
@@ -418,6 +420,83 @@ branch targets.
 copy with `node tools/build-compile-wat.js --out=X.wasm --names --no-facts`
 and read the names with `wasm-objdump -x -j name`. `prof-compare.js` takes that
 listing.
+
+## Browser vs CLI work per present: a title-room phase, 2026-11-25
+
+Evidence: `scratch/runs/20261125-spelunky-browser-cli-state/` (scripts
+`cli*.sh`, `br-*.sh`, probes in `probes/`). Chrome headful coop, dev server
+`--isolate`; Node v24; box load 6–21 from other agents, so timings there are
+noise and the counts are the result.
+
+**Not an emulator or environment difference.** The 2× was two different
+phases of the title room:
+- **Arrival:** the player climbs down the rope (instances 388 → 397).
+  About 395 k blocks/present on both hosts.
+- **Steady state:** after landing, about 855–870 k blocks/present on both
+  hosts.
+
+The CLI window `23500..25000` (Enter at 21000/22020) is the arrival. The
+browser route measures after it. With the route that `--cpu-window` and the
+earlier notes used:
+
+| Window | CLI blocks/present | Browser blocks/present |
+|---|---|---|
+| arrival (CLI 23500–25000) | 396 k | 192 k → 349 k (first 12 s after one Enter, `br-series-1enter`) |
+| steady (CLI 25000–31000, no input) | 855 k (`o-win-base-alone`) | 859–871 k (`br-series-1enter` windows 4–6) |
+| steady, extra Enter in the title | 854 k (`p-win-enter3-alone`) | 865 k (2-Enter route, `br-rate-2enter`) |
+
+**Guest-exact counters agree.** `--count` / `set_count` arm `$dbg_any`, so
+every block dispatches and there is no uop tier. Per GM step in the steady
+state, browser (`br-state`) vs CLI (`k-tut-base`):
+- `_FinalizeRecord` 0x4064e8: 15.9 k vs 15.3 k.
+- Var-lookup scan iterations 0x4a8a5b: 138 k vs 137 k.
+
+In the CLI arrival window (`e-ctl`) the same counters are 6.8 k and 26 k.
+API calls per present are identical in the two phases
+(`api-diff-arrival-vs-steady.txt`):
+- 218 draws, 1 `joyGetPosEx`, 2 `GetCursorPos`, 4 `IsIconic`.
+- Only HeapAlloc/HeapFree differ, and only during the arrival.
+
+So nothing the game reads from the host changes. The extra work is GML
+(global variable reads and writes, value-record copies) in the landed
+player's step. Presumably that is the full control/physics script, which
+the scripted rope descent skips; this is inferred from the timing, not traced.
+
+**The extra Enter.** The browser route's second Enter (1.5 s after the
+first) lands in the title room:
+- It skips the arrival straight to the steady state.
+- It leaves one more instance: object 760 at (384,144), invisible, bbox
+  13×16, field +0xc4 = 760.
+- A CLI Enter at batch 23100 reproduces both, and its per-step counters match
+  the browser's.
+- Without the Enter the browser reaches the same 860 k/present about 20 s
+  later, with no object 760. So object 760 is not the cost.
+
+A real player is in the steady state as soon as the rope descent ends, so
+**the user's play is always in the 860 k/present regime**. The CLI's 36–44
+presents/s "title room" figures in the section above are arrival-phase
+numbers.
+
+**Hist artefacts in the section above.** With `$dbg_any` armed on both
+hosts:
+- The collision event-pass block 0x539df9 runs 2240 (browser) vs 2195 (CLI)
+  per present, not 2360 vs 28. Its outer loop is the per-instance skip at
+  0x539c3e. The 84× came from uop/chained execution hiding block entries in
+  the CLI hist.
+- 0x4aeead (the `nth instance` return tail) still shows as a block entry only
+  in the browser. That is a decode boundary (the block was first entered at
+  that jump target), not extra work: every nth call counts it there, and the
+  call counts (0x4aee7c) are equal.
+
+GM8 structures used by `probes/gm-state.js`:
+- `[0x58f124]` is the global variable list: +4 rows, +8 count, 40-byte rows
+  with the var id at +0. There are 285 globals on both hosts.
+- `[[0x58fac4]]` is the instance manager: +0x78 per-object instance arrays,
+  +0x7c per-object counts (Delphi dynarrays).
+- In an instance, x is at +0x50 and y at +0x58 (doubles); +0x108 is the
+  skip/deactivated byte the collision pass tests.
+- Var lookup 0x4a8a30 scans that list backwards. Its callers are global get
+  0x525b34 and global set (ret 0x525e18).
 
 ## Ruled out
 
