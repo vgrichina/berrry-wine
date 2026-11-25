@@ -578,7 +578,7 @@
     (dispatch-next))
   (func $th_cmpsb (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
-    (local.set $a (call $gl8 (i32.load offset=24 (global.get $reg_base)))) (local.set $b (call $gl8 (i32.load offset=28 (global.get $reg_base))))
+    (local.set $a (call $gl8 (i32.add (i32.load offset=24 (global.get $reg_base)) (select (global.get $fs_base) (i32.const 0) (i32.and (local.get $op) (i32.const 2)))))) (local.set $b (call $gl8 (i32.load offset=28 (global.get $reg_base))))
     (call $set_flags_sub (local.get $a) (local.get $b) (i32.sub (local.get $a) (local.get $b)))
     (global.set $flag_sign_shift (i32.const 7))
     (if (global.get $df)
@@ -602,7 +602,7 @@
     (local $a i32) (local $b i32)
     (block $d (loop $l
       (br_if $d (i32.eqz (i32.load offset=4 (global.get $reg_base))))
-      (local.set $a (call $gl8 (i32.load offset=24 (global.get $reg_base)))) (local.set $b (call $gl8 (i32.load offset=28 (global.get $reg_base))))
+      (local.set $a (call $gl8 (i32.add (i32.load offset=24 (global.get $reg_base)) (select (global.get $fs_base) (i32.const 0) (i32.and (local.get $op) (i32.const 2)))))) (local.set $b (call $gl8 (i32.load offset=28 (global.get $reg_base))))
       (call $set_flags_sub (local.get $a) (local.get $b) (i32.sub (local.get $a) (local.get $b)))
       (global.set $flag_sign_shift (i32.const 7))
       (if (global.get $df)
@@ -611,7 +611,7 @@
         (else (i32.store offset=24 (global.get $reg_base) (i32.add (i32.load offset=24 (global.get $reg_base)) (i32.const 1)))
               (i32.store offset=28 (global.get $reg_base) (i32.add (i32.load offset=28 (global.get $reg_base)) (i32.const 1)))))
       (i32.store offset=4 (global.get $reg_base) (i32.sub (i32.load offset=4 (global.get $reg_base)) (i32.const 1)))
-      (if (i32.eqz (local.get $op)) ;; REPE: stop if not equal
+      (if (i32.eqz (i32.and (local.get $op) (i32.const 1))) ;; REPE: stop if not equal
         (then (br_if $d (i32.ne (local.get $a) (local.get $b))))
         (else (br_if $d (i32.eq (local.get $a) (local.get $b))))) ;; REPNE: stop if equal
       (br $l))) (dispatch-next))
@@ -635,7 +635,7 @@
   ;; --- CMPSD/SCASD (dword variants) ---
   (func $th_cmpsd (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
-    (local.set $a (call $gl32 (i32.load offset=24 (global.get $reg_base)))) (local.set $b (call $gl32 (i32.load offset=28 (global.get $reg_base))))
+    (local.set $a (call $gl32 (i32.add (i32.load offset=24 (global.get $reg_base)) (select (global.get $fs_base) (i32.const 0) (i32.and (local.get $op) (i32.const 2)))))) (local.set $b (call $gl32 (i32.load offset=28 (global.get $reg_base))))
     (call $set_flags_sub (local.get $a) (local.get $b) (i32.sub (local.get $a) (local.get $b)))
     (if (global.get $df)
       (then (i32.store offset=24 (global.get $reg_base) (i32.sub (i32.load offset=24 (global.get $reg_base)) (i32.const 4)))
@@ -657,7 +657,7 @@
     (local $a i32) (local $b i32)
     (block $d (loop $l
       (br_if $d (i32.eqz (i32.load offset=4 (global.get $reg_base))))
-      (local.set $a (call $gl32 (i32.load offset=24 (global.get $reg_base)))) (local.set $b (call $gl32 (i32.load offset=28 (global.get $reg_base))))
+      (local.set $a (call $gl32 (i32.add (i32.load offset=24 (global.get $reg_base)) (select (global.get $fs_base) (i32.const 0) (i32.and (local.get $op) (i32.const 2)))))) (local.set $b (call $gl32 (i32.load offset=28 (global.get $reg_base))))
       (call $set_flags_sub (local.get $a) (local.get $b) (i32.sub (local.get $a) (local.get $b)))
       (if (global.get $df)
         (then (i32.store offset=24 (global.get $reg_base) (i32.sub (i32.load offset=24 (global.get $reg_base)) (i32.const 4)))
@@ -665,7 +665,7 @@
         (else (i32.store offset=24 (global.get $reg_base) (i32.add (i32.load offset=24 (global.get $reg_base)) (i32.const 4)))
               (i32.store offset=28 (global.get $reg_base) (i32.add (i32.load offset=28 (global.get $reg_base)) (i32.const 4)))))
       (i32.store offset=4 (global.get $reg_base) (i32.sub (i32.load offset=4 (global.get $reg_base)) (i32.const 1)))
-      (if (i32.eqz (local.get $op))
+      (if (i32.eqz (i32.and (local.get $op) (i32.const 1)))
         (then (br_if $d (i32.ne (local.get $a) (local.get $b))))
         (else (br_if $d (i32.eq (local.get $a) (local.get $b)))))
       (br $l))) (dispatch-next))

@@ -2995,7 +2995,7 @@
   ;; 247: CMPSW single
   (func $th_cmpsw (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
-    (local.set $a (call $gl16 (i32.load offset=24 (global.get $reg_base)))) (local.set $b (call $gl16 (i32.load offset=28 (global.get $reg_base))))
+    (local.set $a (call $gl16 (i32.add (i32.load offset=24 (global.get $reg_base)) (select (global.get $fs_base) (i32.const 0) (i32.and (local.get $op) (i32.const 2)))))) (local.set $b (call $gl16 (i32.load offset=28 (global.get $reg_base))))
     (call $set_flags_sub (local.get $a) (local.get $b) (i32.sub (local.get $a) (local.get $b)))
     (global.set $flag_sign_shift (i32.const 15))
     (if (global.get $df)
@@ -3009,7 +3009,7 @@
      (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
     (block $d (loop $l
       (br_if $d (i32.eqz (i32.load offset=4 (global.get $reg_base))))
-      (local.set $a (call $gl16 (i32.load offset=24 (global.get $reg_base)))) (local.set $b (call $gl16 (i32.load offset=28 (global.get $reg_base))))
+      (local.set $a (call $gl16 (i32.add (i32.load offset=24 (global.get $reg_base)) (select (global.get $fs_base) (i32.const 0) (i32.and (local.get $op) (i32.const 2)))))) (local.set $b (call $gl16 (i32.load offset=28 (global.get $reg_base))))
       (call $set_flags_sub (local.get $a) (local.get $b) (i32.sub (local.get $a) (local.get $b)))
       (global.set $flag_sign_shift (i32.const 15))
       (if (global.get $df)
@@ -3018,7 +3018,7 @@
         (else (i32.store offset=24 (global.get $reg_base) (i32.add (i32.load offset=24 (global.get $reg_base)) (i32.const 2)))
               (i32.store offset=28 (global.get $reg_base) (i32.add (i32.load offset=28 (global.get $reg_base)) (i32.const 2)))))
       (i32.store offset=4 (global.get $reg_base) (i32.sub (i32.load offset=4 (global.get $reg_base)) (i32.const 1)))
-      (if (i32.eqz (local.get $op))
+      (if (i32.eqz (i32.and (local.get $op) (i32.const 1)))
         (then (br_if $d (i32.ne (local.get $a) (local.get $b))))
         (else (br_if $d (i32.eq (local.get $a) (local.get $b)))))
       (br $l))) (dispatch-next))

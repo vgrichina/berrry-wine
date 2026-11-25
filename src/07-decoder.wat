@@ -5140,12 +5140,13 @@
           (then (call $te (i32.const 185) (i32.const 0)))
           (else (call $te (i32.const 91) (i32.const 0))))
           (br $decode)))
+      ;; CMPS operand: bit 0 = REPNE (clear = REPE), bit 1 = FS source override.
       (if (i32.eq (local.get $op) (i32.const 0xA6)) ;; CMPSB
-        (then (if (local.get $prefix_rep) (then (call $te (i32.const 92) (i32.sub (local.get $prefix_rep) (i32.const 1)))) (else (call $te (i32.const 94) (i32.const 0)))) (br $decode)))
+        (then (if (local.get $prefix_rep) (then (call $te (i32.const 92) (i32.or (i32.sub (local.get $prefix_rep) (i32.const 1)) (i32.shl (i32.eq (local.get $prefix_seg) (i32.const 5)) (i32.const 1))))) (else (call $te (i32.const 94) (i32.shl (i32.eq (local.get $prefix_seg) (i32.const 5)) (i32.const 1))))) (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xA7)) ;; CMPSD / CMPSW with 66h
         (then (if (local.get $prefix_66)
-          (then (if (local.get $prefix_rep) (then (call $te (i32.const 248) (i32.sub (local.get $prefix_rep) (i32.const 1)))) (else (call $te (i32.const 247) (i32.const 0)))))
-          (else (if (local.get $prefix_rep) (then (call $te (i32.const 169) (i32.sub (local.get $prefix_rep) (i32.const 1)))) (else (call $te (i32.const 171) (i32.const 0))))))
+          (then (if (local.get $prefix_rep) (then (call $te (i32.const 248) (i32.or (i32.sub (local.get $prefix_rep) (i32.const 1)) (i32.shl (i32.eq (local.get $prefix_seg) (i32.const 5)) (i32.const 1))))) (else (call $te (i32.const 247) (i32.shl (i32.eq (local.get $prefix_seg) (i32.const 5)) (i32.const 1))))))
+          (else (if (local.get $prefix_rep) (then (call $te (i32.const 169) (i32.or (i32.sub (local.get $prefix_rep) (i32.const 1)) (i32.shl (i32.eq (local.get $prefix_seg) (i32.const 5)) (i32.const 1))))) (else (call $te (i32.const 171) (i32.shl (i32.eq (local.get $prefix_seg) (i32.const 5)) (i32.const 1)))))))
           (br $decode)))
       (if (i32.eq (local.get $op) (i32.const 0xAE)) ;; SCASB
         (then (if (local.get $prefix_rep) (then (call $te (i32.const 93) (i32.sub (local.get $prefix_rep) (i32.const 1)))) (else (call $te (i32.const 95) (i32.const 0)))) (br $decode)))
