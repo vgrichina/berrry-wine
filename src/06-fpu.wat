@@ -7,8 +7,8 @@
   ;; primitives required for full IEEE-754 / x87 compliance, and we do NOT
   ;; emulate them in software. The intentional differences are:
   ;;
-  ;;   * 80-bit extended precision is unavailable. ST(i) is f64 (53-bit
-  ;;     mantissa, 11-bit exponent). FLD/FSTP m80 convert between real 80-bit
+  ;;   * 80-bit extended precision is unavailable. Arithmetic uses f64 (53-bit
+  ;;     mantissa, 11-bit exponent). Exact physical register images retain all 80 bits; arithmetic converts between real 80-bit
   ;;     sign/exponent/explicit-mantissa values and f64, so code that depends
   ;;     on the extra ~11 bits of mantissa or the wider exponent range will
   ;;     still diverge.
@@ -97,11 +97,14 @@
 
   (func $fpu_raw_set (param $i i32) (param $v i64)
     (local $p i32)
+    (if (global.get $eip_redirected) (then (return)))
     (local.set $p (i32.and (i32.add (global.get $fpu_top) (local.get $i)) (i32.const 7)))
     (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3)))
       (local.get $v))
     (global.set $fpu_raw_tag
-      (i32.or (global.get $fpu_raw_tag) (i32.shl (i32.const 1) (local.get $p)))))
+      (i32.or (global.get $fpu_raw_tag) (i32.shl (i32.const 1) (local.get $p))))
+    (call $phys80_invalidate (local.get $p))
+    (call $phys80_materialize (local.get $p)))
 
   ;; Set status-word exception flags. Bits: IE=1, DE=2, ZE=4, OE=8, UE=16, PE=32,
   ;; SF=64 (stack fault, paired with IE), ES=128 (error summary).
@@ -146,9 +149,14 @@
       (i32.shl (i32.and (local.get $p) (i32.const 7)) (i32.const 3)))))
 
   (func $fpu_set_phys (param $p i32) (param $v f64)
+    (if (global.get $eip_redirected) (then (return)))
     (f64.store (i32.add (global.get $fpu_base)
       (i32.shl (i32.and (local.get $p) (i32.const 7)) (i32.const 3)))
-      (local.get $v)))
+      (local.get $v))
+    (global.set $fpu_raw_tag (i32.and (global.get $fpu_raw_tag)
+      (i32.xor (i32.const 255) (i32.shl (i32.const 1) (local.get $p)))))
+    (call $phys80_invalidate (i32.and (local.get $p) (i32.const 7)))
+    (call $phys80_materialize (i32.and (local.get $p) (i32.const 7))))
 
   (func $fpu_get (param $i i32) (result f64)
     (f64.load (i32.add (global.get $fpu_base)
@@ -158,16 +166,20 @@
   ;; Write ST(i): drop its exact-integer shadow and tag it valid.
   (func $fpu_set (param $i i32) (param $v f64)
     (local $p i32)
+    (if (global.get $eip_redirected) (then (return)))
     (local.set $p (i32.and (i32.add (global.get $fpu_top) (local.get $i)) (i32.const 7)))
     (f64.store (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3)))
       (local.get $v))
     (global.set $fpu_raw_tag (i32.and (global.get $fpu_raw_tag)
       (i32.xor (i32.const 0xFF) (i32.shl (i32.const 1) (local.get $p)))))
     (global.set $fpu_tag (i32.or (global.get $fpu_tag)
-      (i32.shl (i32.const 1) (local.get $p)))))
+      (i32.shl (i32.const 1) (local.get $p))))
+    (call $phys80_invalidate (local.get $p))
+    (call $phys80_materialize (local.get $p)))
 
   (func $fpu_push (param $v f64)
     (local $p i32)
+    (if (global.get $eip_redirected) (then (return)))
     ;; Stack overflow: pushing into a slot that is still tagged valid.
     ;; Real x87 sets IE|SF and (with IE masked) writes the "indefinite" QNaN.
     ;; We set the flag and keep going with the user's value, since we don't
@@ -181,7 +193,9 @@
     (global.set $fpu_raw_tag (i32.and (global.get $fpu_raw_tag)
       (i32.xor (i32.const 0xFF) (i32.shl (i32.const 1) (local.get $p)))))
     (global.set $fpu_tag (i32.or (global.get $fpu_tag)
-      (i32.shl (i32.const 1) (local.get $p)))))
+      (i32.shl (i32.const 1) (local.get $p))))
+    (call $phys80_invalidate (local.get $p))
+    (call $phys80_materialize (local.get $p)))
 
   (func $fpu_pop (result f64)
     (local $p i32) (local $m i32)
@@ -549,16 +563,14 @@
       (f64.reinterpret_i64 (call $gl64 (local.get $addr))))))))))))
 
   (func $fpu_load_m80 (param $addr i32) (result f64)
-    (local $se i32) (local $exp i32) (local $sign i32)
-    (local $mant i64) (local $val f64)
-    (local.set $mant (call $gl64 (local.get $addr)))
-    (local.set $se (call $gl16 (i32.add (local.get $addr) (i32.const 8))))
+    (call $phys80_decode (call $gl64 (local.get $addr))
+      (call $gl16 (i32.add (local.get $addr) (i32.const 8)))))
+
+  (func $phys80_decode (param $mant i64) (param $se i32) (result f64)
+    (local $exp i32) (local $sign i32)
+    (local $val f64)
     (local.set $exp (i32.and (local.get $se) (i32.const 0x7FFF)))
     (local.set $sign (i32.and (local.get $se) (i32.const 0x8000)))
-    ;; Backward compatibility for values stored by our FSTP m80 path: an f64
-    ;; payload followed by a zero sign/exponent word.
-    (if (i32.and (i32.eqz (local.get $exp)) (i64.ne (local.get $mant) (i64.const 0)))
-      (then (return (f64.reinterpret_i64 (local.get $mant)))))
     (if (i64.eqz (local.get $mant))
       (then
         (if (local.get $sign)
@@ -688,25 +700,20 @@
   ;; FNSAVE/FRSTOR ST area: 8 x 10-byte slots in PHYSICAL order.
   (func $fpu_store_regs (param $addr i32)
     (local $i i32)
-    (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
-      (call $fpu_store_m80
-        (i32.add (local.get $addr)
-          (i32.add (i32.shl (local.get $i) (i32.const 3)) (i32.shl (local.get $i) (i32.const 1))))
-        (call $fpu_get_phys (local.get $i)))
+    (local.set $i (i32.const 0))
+    (loop $each
+      (call $phys80_store (i32.add (local.get $addr) (i32.mul (local.get $i) (i32.const 10)))
+        (i32.and (i32.add (global.get $fpu_top) (local.get $i)) (i32.const 7)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $lp))))
+      (br_if $each (i32.lt_u (local.get $i) (i32.const 8)))))
 
   (func $fpu_load_regs (param $addr i32)
     (local $i i32)
-    (global.set $fpu_raw_tag (i32.const 0))
-    (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (i32.const 8)))
-      (call $fpu_set_phys (local.get $i)
-        (call $fpu_load_m80 (i32.add (local.get $addr)
-          (i32.add (i32.shl (local.get $i) (i32.const 3)) (i32.shl (local.get $i) (i32.const 1))))))
+    (loop $each
+      (call $phys80_load (i32.and (i32.add (global.get $fpu_top) (local.get $i)) (i32.const 7))
+        (i32.add (local.get $addr) (i32.mul (local.get $i) (i32.const 10))))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
-      (br $lp))))
+      (br_if $each (i32.lt_u (local.get $i) (i32.const 8)))))
 
   ;; FBLD: 80-bit packed BCD → ST(0). 18 BCD digits in low 9 bytes
   ;; (low nibble = lower digit), sign byte at offset 9 (bit 7 = negative).
@@ -846,10 +853,10 @@
           (then (call $gs32 (local.get $addr) (call $fpu_to_i32 (call $fpu_pop))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 5))
           ;; FLD m80 — decode real 80-bit extended values into f64.
-          (then (call $fpu_push (call $fpu_load_m80 (local.get $addr))) (return)))
+          (then (call $phys80_push_mem (local.get $addr)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 7))
           ;; FSTP m80 — convert f64-backed ST(0) to real 80-bit extended format.
-          (then (call $fpu_store_m80 (local.get $addr) (call $fpu_pop)) (return)))
+          (then (call $phys80_store (local.get $addr) (global.get $fpu_top)) (if (i32.eqz (global.get $eip_redirected)) (then (drop (call $fpu_pop)))) (return)))
         (call $fpu_crash_op (local.get $group) (local.get $reg) (i32.const 0)) (return)))
     ;; Group 7 (DF): FILD/FIST/FISTP int16, FILD/FISTP int64
     (if (i32.eq (local.get $group) (i32.const 7))
@@ -902,27 +909,10 @@
     (if (i32.eq (local.get $group) (i32.const 1))
       (then
         (if (i32.eq (local.get $reg) (i32.const 0))
-          (then (call $fpu_push (call $fpu_get (local.get $rm))) (return)))
+          (then (call $phys80_push_copy (local.get $rm)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 1))
           (then
-            (local.set $v (call $fpu_get (local.get $rm)))
-            ;; FXCH moves the exact 64-bit payload shadow along with the f64
-            ;; approximation. Optimized memcpy routines use two FILD m64s,
-            ;; FXCH, then two FISTP m64s; clearing these shadows here rounds
-            ;; arbitrary qwords to 53 bits and zeros the low byte of many
-            ;; eight-byte chunks.
-            (local.set $raw0_valid (call $fpu_raw_valid (i32.const 0)))
-            (local.set $rawi_valid (call $fpu_raw_valid (local.get $rm)))
-            (if (local.get $raw0_valid)
-              (then (local.set $raw0 (call $fpu_raw_get (i32.const 0)))))
-            (if (local.get $rawi_valid)
-              (then (local.set $rawi (call $fpu_raw_get (local.get $rm)))))
-            (call $fpu_set (local.get $rm) (local.get $st0))
-            (call $fpu_set (i32.const 0) (local.get $v))
-            (if (local.get $raw0_valid)
-              (then (call $fpu_raw_set (local.get $rm) (local.get $raw0))))
-            (if (local.get $rawi_valid)
-              (then (call $fpu_raw_set (i32.const 0) (local.get $rawi))))
+            (call $phys80_exchange (local.get $rm))
             (return)))
         ;; reg=2: only D9 D0 (rm=0) is FNOP. D9 D1..D7 are reserved.
         (if (i32.eq (local.get $reg) (i32.const 2))
@@ -932,9 +922,9 @@
         (if (i32.eq (local.get $reg) (i32.const 4))
           (then
             (if (i32.eq (local.get $rm) (i32.const 0))
-              (then (call $fpu_set (i32.const 0) (f64.neg (local.get $st0))) (return)))
+              (then (call $phys80_sign (i32.const 0)) (return)))
             (if (i32.eq (local.get $rm) (i32.const 1))
-              (then (call $fpu_set (i32.const 0) (f64.abs (local.get $st0))) (return)))
+              (then (call $phys80_sign (i32.const 1)) (return)))
             (if (i32.eq (local.get $rm) (i32.const 4))
               (then (call $fpu_compare (local.get $st0) (f64.const 0)) (return)))
             (if (i32.eq (local.get $rm) (i32.const 5))
@@ -1058,11 +1048,11 @@
     (if (i32.eq (local.get $group) (i32.const 2))
       (then
         (if (i32.eq (local.get $reg) (i32.const 0))
-          (then (if (call $get_cf) (then (call $fpu_set (i32.const 0) (call $fpu_get (local.get $rm))))) (return)))
+          (then (if (call $get_cf) (then (call $phys80_copy_logical (i32.const 0) (local.get $rm)))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 1))
-          (then (if (call $get_zf) (then (call $fpu_set (i32.const 0) (call $fpu_get (local.get $rm))))) (return)))
+          (then (if (call $get_zf) (then (call $phys80_copy_logical (i32.const 0) (local.get $rm)))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 2))
-          (then (if (i32.or (call $get_cf) (call $get_zf)) (then (call $fpu_set (i32.const 0) (call $fpu_get (local.get $rm))))) (return)))
+          (then (if (i32.or (call $get_cf) (call $get_zf)) (then (call $phys80_copy_logical (i32.const 0) (local.get $rm)))) (return)))
         ;; DA E9 = FUCOMPP — unordered compare ST(0)<->ST(1), pop both
         (if (i32.and (i32.eq (local.get $reg) (i32.const 5)) (i32.eq (local.get $rm) (i32.const 1)))
           (then
@@ -1075,11 +1065,11 @@
     (if (i32.eq (local.get $group) (i32.const 3))
       (then
         (if (i32.eq (local.get $reg) (i32.const 0))
-          (then (if (i32.eqz (call $get_cf)) (then (call $fpu_set (i32.const 0) (call $fpu_get (local.get $rm))))) (return)))
+          (then (if (i32.eqz (call $get_cf)) (then (call $phys80_copy_logical (i32.const 0) (local.get $rm)))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 1))
-          (then (if (i32.eqz (call $get_zf)) (then (call $fpu_set (i32.const 0) (call $fpu_get (local.get $rm))))) (return)))
+          (then (if (i32.eqz (call $get_zf)) (then (call $phys80_copy_logical (i32.const 0) (local.get $rm)))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 2))
-          (then (if (i32.eqz (i32.or (call $get_cf) (call $get_zf))) (then (call $fpu_set (i32.const 0) (call $fpu_get (local.get $rm))))) (return)))
+          (then (if (i32.eqz (i32.or (call $get_cf) (call $get_zf))) (then (call $phys80_copy_logical (i32.const 0) (local.get $rm)))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 4))
           (then
             ;; DB E0 / E1 = FNENI / FNDISI — 8087 enable/disable interrupts;
@@ -1135,9 +1125,9 @@
         (if (i32.eq (local.get $reg) (i32.const 0))
           (then (call $fpu_mark_empty (local.get $rm)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 2))
-          (then (call $fpu_set (local.get $rm) (local.get $st0)) (return)))
+          (then (call $phys80_copy_logical (local.get $rm) (i32.const 0)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 3))
-          (then (call $fpu_set (local.get $rm) (local.get $st0)) (drop (call $fpu_pop)) (return)))
+          (then (call $phys80_copy_logical (local.get $rm) (i32.const 0)) (drop (call $fpu_pop)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 4))
           (then (call $fpu_compare_unord (local.get $st0) (call $fpu_get (local.get $rm))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 5))
@@ -1270,3 +1260,163 @@
              (local $nx_fn i32) (local $nx_op i32)
   (global.set $fpu_top (i32.const 0))
   (global.set $fpu_tag (i32.const 0)) (dispatch-next))
+
+  ;; Physical image: canonical low64 in MMX_FILE, SE/valid in allocated metadata.
+  ;; Occupancy and signed FILD shadow validity are independent of image validity.
+  (func $phys80_mant_addr (param $p i32) (result i32)
+    (i32.add (global.get $mmx_base) (i32.shl (local.get $p) (i32.const 3))))
+  (func $phys80_se_addr (param $p i32) (result i32)
+    (i32.add (global.get $fpu_image_base) (i32.shl (local.get $p) (i32.const 1))))
+  (func $phys80_invalidate (param $p i32)
+    (i32.store offset=16 (global.get $fpu_image_base)
+      (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+        (i32.xor (i32.const 255) (i32.shl (i32.const 1) (local.get $p))))))
+  (func $phys80_publish (param $p i32) (param $mant i64) (param $se i32)
+    (i64.store (call $phys80_mant_addr (local.get $p)) (local.get $mant))
+    (i32.store16 (call $phys80_se_addr (local.get $p)) (local.get $se))
+    (i32.store offset=16 (global.get $fpu_image_base)
+      (i32.or (i32.load offset=16 (global.get $fpu_image_base))
+        (i32.shl (i32.const 1) (local.get $p)))))
+  (func $phys80_write (param $p i32) (param $mant i64) (param $se i32)
+    (f64.store (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3)))
+      (call $phys80_decode (local.get $mant) (local.get $se)))
+    (global.set $fpu_raw_tag (i32.and (global.get $fpu_raw_tag)
+      (i32.xor (i32.const 255) (i32.shl (i32.const 1) (local.get $p)))))
+    (call $phys80_publish (local.get $p) (local.get $mant) (local.get $se)))
+  (func $phys80_materialize (param $p i32)
+    (local $bits i64) (local $mant i64) (local $mag i64)
+    (local $exp i32) (local $se i32) (local $shift i64)
+    (if (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+          (i32.shl (i32.const 1) (local.get $p))) (then (return)))
+    (if (i32.and (global.get $fpu_raw_tag) (i32.shl (i32.const 1) (local.get $p)))
+      (then
+        (local.set $bits (call $fpu_raw_get_phys (local.get $p)))
+        (local.set $mag (local.get $bits))
+        (if (i64.lt_s (local.get $bits) (i64.const 0))
+          (then (local.set $se (i32.const 32768))
+            (local.set $mag (i64.sub (i64.const 0) (local.get $bits)))))
+        (if (i64.ne (local.get $mag) (i64.const 0))
+          (then
+            (local.set $shift (i64.clz (local.get $mag)))
+            (local.set $mant (i64.shl (local.get $mag) (local.get $shift)))
+            (local.set $se (i32.or (local.get $se)
+              (i32.sub (i32.const 16446) (i32.wrap_i64 (local.get $shift)))))))
+        (call $phys80_publish (local.get $p) (local.get $mant) (local.get $se))
+        (return)))
+    (local.set $bits (i64.reinterpret_f64 (call $fpu_get_phys (local.get $p))))
+    (local.set $se (i32.and (i32.wrap_i64 (i64.shr_u (local.get $bits) (i64.const 48))) (i32.const 32768)))
+    (local.set $exp (i32.and (i32.wrap_i64 (i64.shr_u (local.get $bits) (i64.const 52))) (i32.const 2047)))
+    (local.set $mant (i64.and (local.get $bits) (i64.const 0xFFFFFFFFFFFFF)))
+    (if (i32.eqz (local.get $exp))
+      (then
+        (if (i64.ne (local.get $mant) (i64.const 0))
+          (then
+            (local.set $shift (i64.clz (local.get $mant)))
+            (local.set $mant (i64.shl (local.get $mant) (local.get $shift)))
+            (local.set $se (i32.or (local.get $se)
+              (i32.sub (i32.const 15372) (i32.wrap_i64 (local.get $shift))))))))
+      (else
+        (local.set $mant (i64.or (i64.const 0x8000000000000000)
+          (i64.shl (local.get $mant) (i64.const 11))))
+        (local.set $se (i32.or (local.get $se)
+          (select (i32.const 32767) (i32.add (local.get $exp) (i32.const 15360))
+            (i32.eq (local.get $exp) (i32.const 2047)))))))
+    (call $phys80_publish (local.get $p) (local.get $mant) (local.get $se)))
+  (func $phys80_store (param $addr i32) (param $p i32)
+    (call $phys80_materialize (local.get $p))
+    (call $fpu_store_m80_bits (local.get $addr)
+      (i64.load (call $phys80_mant_addr (local.get $p)))
+      (i32.load16_u (call $phys80_se_addr (local.get $p)))))
+  (func $phys80_load (param $p i32) (param $addr i32)
+    (local $mant i64) (local $se i32)
+    (local.set $mant (call $gl64 (local.get $addr)))
+    (local.set $se (call $gl16 (i32.add (local.get $addr) (i32.const 8))))
+    (if (i32.eqz (global.get $eip_redirected))
+      (then (call $phys80_write (local.get $p) (local.get $mant) (local.get $se))
+        (call $phys80_integer_shadow (local.get $p) (local.get $mant) (local.get $se)))))
+  (func $phys80_push_mem (param $addr i32)
+    (local $mant i64) (local $se i32)
+    (local.set $mant (call $gl64 (local.get $addr)))
+    (local.set $se (call $gl16 (i32.add (local.get $addr) (i32.const 8))))
+    (if (global.get $eip_redirected) (then (return)))
+    (call $fpu_push (call $phys80_decode (local.get $mant) (local.get $se)))
+    (call $phys80_write (global.get $fpu_top) (local.get $mant) (local.get $se))
+    (call $phys80_integer_shadow (global.get $fpu_top) (local.get $mant) (local.get $se)))
+  (func $phys80_copy (param $dst i32) (param $src i32)
+    (local $raw i64) (local $valid i32)
+    (call $phys80_materialize (local.get $src))
+    (local.set $valid (i32.and (i32.shr_u (global.get $fpu_raw_tag) (local.get $src)) (i32.const 1)))
+    (local.set $raw (call $fpu_raw_get_phys (local.get $src)))
+    (call $phys80_write (local.get $dst)
+      (i64.load (call $phys80_mant_addr (local.get $src)))
+      (i32.load16_u (call $phys80_se_addr (local.get $src))))
+    (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $dst) (i32.const 3))) (local.get $raw))
+    (global.set $fpu_raw_tag (i32.or (global.get $fpu_raw_tag)
+      (i32.shl (local.get $valid) (local.get $dst)))))
+  (func $phys80_copy_logical (param $dst i32) (param $src i32)
+    (local.set $dst (i32.and (i32.add (global.get $fpu_top) (local.get $dst)) (i32.const 7)))
+    (call $phys80_copy (local.get $dst)
+      (i32.and (i32.add (global.get $fpu_top) (local.get $src)) (i32.const 7)))
+    (global.set $fpu_tag (i32.or (global.get $fpu_tag) (i32.shl (i32.const 1) (local.get $dst)))))
+  (func $phys80_push_copy (param $i i32)
+    (local $src i32) (local $mant i64) (local $se i32) (local $raw i64) (local $valid i32)
+    (local.set $src (i32.and (i32.add (global.get $fpu_top) (local.get $i)) (i32.const 7)))
+    (call $phys80_materialize (local.get $src))
+    (local.set $mant (i64.load (call $phys80_mant_addr (local.get $src))))
+    (local.set $se (i32.load16_u (call $phys80_se_addr (local.get $src))))
+    (local.set $raw (call $fpu_raw_get_phys (local.get $src)))
+    (local.set $valid (i32.and (i32.shr_u (global.get $fpu_raw_tag) (local.get $src)) (i32.const 1)))
+    (call $fpu_push (call $fpu_get_phys (local.get $src)))
+    (call $phys80_write (global.get $fpu_top) (local.get $mant) (local.get $se))
+    (if (local.get $valid) (then (call $fpu_raw_set (i32.const 0) (local.get $raw)))))
+  (func $phys80_exchange (param $i i32)
+    (local $src i32) (local $p i32) (local $mant i64) (local $se i32) (local $raw i64) (local $valid i32)
+    (local.set $p (global.get $fpu_top))
+    (local.set $src (i32.and (i32.add (local.get $p) (local.get $i)) (i32.const 7)))
+    (call $phys80_materialize (local.get $p))
+    (local.set $mant (i64.load (call $phys80_mant_addr (local.get $p))))
+    (local.set $se (i32.load16_u (call $phys80_se_addr (local.get $p))))
+    (local.set $raw (call $fpu_raw_get_phys (local.get $p)))
+    (local.set $valid (i32.and (i32.shr_u (global.get $fpu_raw_tag) (local.get $p)) (i32.const 1)))
+    (call $phys80_copy (local.get $p) (local.get $src))
+    (call $phys80_write (local.get $src) (local.get $mant) (local.get $se))
+    (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $src) (i32.const 3))) (local.get $raw))
+    (global.set $fpu_raw_tag (i32.or (global.get $fpu_raw_tag) (i32.shl (local.get $valid) (local.get $src)))))
+  (func $phys80_sign (param $abs i32)
+    (local $p i32) (local $se i32) (local $raw i64) (local $valid i32)
+    (local.set $p (global.get $fpu_top))
+    (local.set $valid (call $fpu_raw_valid (i32.const 0)))
+    (local.set $raw (call $fpu_raw_get (i32.const 0)))
+    (call $phys80_materialize (local.get $p))
+    (local.set $se (i32.load16_u (call $phys80_se_addr (local.get $p))))
+    (call $phys80_write (local.get $p) (i64.load (call $phys80_mant_addr (local.get $p)))
+      (select (i32.and (local.get $se) (i32.const 32767))
+        (i32.xor (local.get $se) (i32.const 32768)) (local.get $abs)))
+    (if (i32.or (i32.eqz (local.get $abs)) (i64.lt_s (local.get $raw) (i64.const 0)))
+      (then
+        (if (i64.eq (local.get $raw) (i64.const 0x8000000000000000))
+          (then (local.set $valid (i32.const 0))))
+        (local.set $raw (i64.sub (i64.const 0) (local.get $raw)))))
+    (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3))) (local.get $raw))
+    (global.set $fpu_raw_tag (i32.or (global.get $fpu_raw_tag) (i32.shl (local.get $valid) (local.get $p)))))
+
+  ;; Reconstruct only an exactly integral, in-range signed64 image after m80
+  ;; load/restore. This is not a general 80-bit arithmetic/conversion engine.
+  (func $phys80_integer_shadow (param $p i32) (param $mant i64) (param $se i32)
+    (local $exp i32) (local $shift i64) (local $mag i64)
+    (local.set $exp (i32.sub (i32.and (local.get $se) (i32.const 32767)) (i32.const 16383)))
+    (if (i64.eqz (local.get $mant))
+      (then
+        (if (i32.ne (i32.and (local.get $se) (i32.const 32767)) (i32.const 0)) (then (return))))
+      (else
+        (if (i32.gt_u (local.get $exp) (i32.const 63)) (then (return)))
+        (local.set $shift (i64.extend_i32_u (i32.sub (i32.const 63) (local.get $exp))))
+        (local.set $mag (i64.shr_u (local.get $mant) (local.get $shift)))
+        (if (i64.ne (i64.shl (local.get $mag) (local.get $shift)) (local.get $mant)) (then (return)))
+        (if (i32.and (local.get $se) (i32.const 32768))
+          (then
+            (if (i64.gt_u (local.get $mag) (i64.const 0x8000000000000000)) (then (return)))
+            (local.set $mag (i64.sub (i64.const 0) (local.get $mag))))
+          (else (if (i64.lt_s (local.get $mag) (i64.const 0)) (then (return)))))))
+    (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3))) (local.get $mag))
+    (global.set $fpu_raw_tag (i32.or (global.get $fpu_raw_tag) (i32.shl (i32.const 1) (local.get $p)))))

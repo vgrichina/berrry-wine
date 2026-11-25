@@ -1176,3 +1176,7 @@
     (owner "11-seh.wat:$top_exception_filter"))
   (region.declare $TOP_FILTER_CONTEXTS (size 0x4000) (align 128)
     (owner "11-seh.wat:$top_filter_frame"))
+
+  ;; Exact image metadata: u16 SE[8], u32 valid at +16, 12 reserved bytes.
+  (region.declare $FPU_IMAGE_META (size 512) (align 64)
+    (stride 32 (count $REGFILE_THREADS)) (owner "01-header.wat:$FPU_IMAGE_META"))

@@ -8,6 +8,8 @@ const path = require('path');
 const ROOT = path.join(__dirname, '..');
 const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 
+// test-mmx-x87-alias.js and test-mmx-x87-images.js exercise literal opcode
+// fixtures against the normal build module; both belong to the default unit tier.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an

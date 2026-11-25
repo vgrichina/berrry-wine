@@ -316,8 +316,7 @@ async function main() {
         `  ops (shrunk):\n    ${hex.join('\n    ')}`);
     }
   }
-  assert(islandsSeen > CASES * 0.8,
-    `the fuzz must actually exercise islands (${islandsSeen}/${CASES})`);
+  assert.strictEqual(islandsSeen, 0, 'physical-image repair routes every sequence through ordinary x87');
   console.log(`PASS x87 island fast == generic == unfused: ${CASES} sequences, ` +
     `${totalOps} ops, ${islandsSeen} with islands`);
 }

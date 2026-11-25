@@ -78,10 +78,11 @@ async function main(){
   const gprs=regs.map((_,i)=>0x7100a500+i*0x10001);gprs[4]=stack;
   const expected=gprs.slice();expected[dst]=want;
   const instruction=[...(address?[0x67]:[]),0x0f,0xc5,0xc0|dst<<3|src,imm];
-  const code=code16?[0xdb,0xe3,0xd9,0xe8,...instruction,...instruction,0xf4]:[
+  // FNINIT/FDECSTP seeds TOP=7 without destroying the physical mm7 payload.
+  const code=code16?[0xdb,0xe3,0xd9,0xf6,...instruction,...instruction,0xf4]:[
    ...mm.flatMap((_,i)=>[0x0f,0x6f,5|i<<3,...le(input+8*i)]),
    ...xmm.flatMap((_,i)=>[0x0f,0x10,5|i<<3,...le(input+64+16*i)]),
-   0xdb,0xe3,0xd9,0xe8,0x68,...le(0xad7),0x9d,...instruction,...instruction,
+   0xdb,0xe3,0xd9,0xf6,0x68,...le(0xad7),0x9d,...instruction,...instruction,
    ...regs.flatMap((_,i)=>[0x89,5|i<<3,...le(out+192+4*i)]),
    0xbc,...le(stack),0xd9,0x35,...le(env),
    ...mm.flatMap((_,i)=>[0x0f,0x7f,5|i<<3,...le(out+8*i)]),

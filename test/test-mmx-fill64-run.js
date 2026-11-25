@@ -132,8 +132,8 @@ const PATTERN_BYTES = Array.from({ length: 8 }, (_, i) => Number((PATTERN >> Big
     const before = e.test_fill_matches();
     const runsBefore = e.test_fill_runs();
     const r = ab(DX_LOOP, d => ({ edi: d, ecx: 7, eax: 0x11223344 }), 'edi', 56);
-    assert.strictEqual(e.test_fill_matches(), before + 1, 'exact body lowers once');
-    assert.strictEqual(e.test_fill_runs(), runsBefore + 1, 'lowered body runs once');
+    assert.strictEqual(e.test_fill_matches(), before, 'physical-image repair declines staged fill lowering');
+    assert.strictEqual(e.test_fill_runs(), runsBefore, 'ordinary instructions preserve intermediate fault state');
     assert.deepStrictEqual(r.out1, r.out0, 'aligned fill bytes agree');
     assert.deepStrictEqual(r.out1.slice(0, 8), PATTERN_BYTES, 'pattern is mm0, little-endian');
     assert.strictEqual(r.out1[56], 0xcc, 'no byte past the last qword');
@@ -154,14 +154,14 @@ const PATTERN_BYTES = Array.from({ length: 8 }, (_, i) => Number((PATTERN >> Big
     assert.deepStrictEqual(r.out1, r.out0, 'multi-page unaligned fill bytes agree');
     assert.deepStrictEqual(r.fused, r.base, 'multi-page state agrees');
     const bulk = Number(e.test_fill_bulk() - bulkBefore);
-    assert(bulk > 0 && bulk < count, `page-local runs bulk-filled, straddlers did not (${bulk})`);
+    assert.strictEqual(bulk, 0, 'all page boundaries use ordinary stores');
   }
 
   // 3. Another register assignment: esi base, edx counter, mm3.
   {
     const before = e.test_fill_matches();
     const r = ab(ALT_LOOP, d => ({ esi: d, edx: 33, ecx: 0x55 }), 'esi', 33 * 8);
-    assert.strictEqual(e.test_fill_matches(), before + 1, 'esi/edx/mm3 form lowers');
+    assert.strictEqual(e.test_fill_matches(), before, 'alternate register form also declines staged lowering');
     assert.deepStrictEqual(r.out1, r.out0, 'alternate-register fill agrees');
     assert.deepStrictEqual(r.fused, r.base, 'alternate-register state agrees');
     assert.strictEqual(r.fused.regs.ecx, 0x55, 'unrelated registers untouched');

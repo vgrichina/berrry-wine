@@ -2136,7 +2136,10 @@ async function main() {
   for (const clock of clocks) {
   e.set_branch_clock(clock);
   console.log(clock ? '-- branch clock (a block = an executed x86 branch)' : '-- block clock (threaded cuts charge)');
-  for (const c of CASES) {
+  for (const original of CASES) {
+    // Direct MMX lowering cannot publish an exact physical image on intermediate faults.
+    // Preserve ordinary execution/state comparisons and require the tier to decline.
+    const c = original.name.startsWith('mmx-') ? { ...original, declines: true, trace: false } : original;
     if (only && c.name !== only) continue;
     const at = () => { const x = a.code + 0x1000 * slot; slot += c.pages || 1; return x; };
     const off = runCase(inst, c, a, at(), 'off');

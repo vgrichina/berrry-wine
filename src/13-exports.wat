@@ -2330,6 +2330,11 @@
       (i32.mul (local.get $tid) (global.get $REGFILE_STRIDE))))
     (global.set $fpu_base (i32.add (global.get $FPU_FILE)
       (i32.mul (local.get $tid) (global.get $FPU_FILE_STRIDE))))
+    (global.set $fpu_image_base (i32.add (global.get $FPU_IMAGE_META)
+      (i32.mul (local.get $tid) (global.get $FPU_IMAGE_META_STRIDE))))
+    (memory.fill (global.get $fpu_image_base) (i32.const 0) (global.get $FPU_IMAGE_META_STRIDE))
+    (memory.fill (global.get $fpu_base) (i32.const 0) (global.get $FPU_FILE_STRIDE))
+    (call $fpu_reset (i32.const 0x037F))
     ;; A reused tid slot must not hand a new thread its predecessor's XMM.
     (global.set $xmm_base (i32.add (global.get $XMM_FILE)
       (i32.mul (local.get $tid) (global.get $XMM_FILE_STRIDE))))

@@ -3201,93 +3201,7 @@
   ;; forms stay service ops.
   (func $uc_x87_native_op (param $code i32) (param $mem i32) (result i32)
     (local $g i32) (local $r i32) (local $rm i32) (local $a i32)
-    (local.set $g (i32.and (i32.shr_u (local.get $code) (i32.const 8)) (i32.const 7)))
-    (local.set $r (i32.and (i32.shr_u (local.get $code) (i32.const 4)) (i32.const 7)))
-    (local.set $rm (i32.and (local.get $code) (i32.const 7)))
-    ;; $fpu_arith's operation r (D8 / DC memory, D8 register): kind, swap
-    ;; for the reversed forms, ZE for the divides, a pop for FCOMP
-    (local.set $a
-      (if (result i32) (i32.lt_u (i32.sub (local.get $r) (i32.const 2)) (i32.const 2))
-        (then (i32.or (i32.const 0x40000) (i32.shl (i32.sub (local.get $r) (i32.const 2)) (i32.const 22))))
-        (else (i32.or (i32.or
-          (i32.shl (select (local.get $r)
-                           (i32.add (i32.const 2) (i32.shr_u (i32.sub (local.get $r) (i32.const 4)) (i32.const 1)))
-                           (i32.lt_u (local.get $r) (i32.const 2)))
-                   (i32.const 16))
-          (select (i32.const 0x80000) (i32.const 0) (i32.and (local.get $r) (i32.const 1))))
-          (select (i32.const 0x100000) (i32.const 0) (i32.ge_u (local.get $r) (i32.const 6)))))))
-    ;; r0 add / r1 mul carry no swap even though r is odd: r1's bit is the kind
-    (if (i32.eq (local.get $r) (i32.const 1)) (then (local.set $a (i32.const 0x10000))))
-    (if (local.get $mem)
-      (then
-        (if (i32.eqz (local.get $g)) (then (return (i32.or (i32.const 98) (local.get $a)))))
-        (if (i32.eq (local.get $g) (i32.const 4)) (then (return (i32.or (i32.const 99) (local.get $a)))))
-        (if (i32.eq (local.get $g) (i32.const 1))
-          (then
-            (if (i32.eqz (local.get $r)) (then (return (i32.const 91))))
-            (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 94))))
-            (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x1005E))))
-            (if (i32.eq (local.get $r) (i32.const 5)) (then (return (i32.const 100))))
-            (if (i32.eq (local.get $r) (i32.const 7)) (then (return (i32.const 101))))
-            (return (i32.const 0))))
-        (if (i32.eq (local.get $g) (i32.const 5))
-          (then
-            (if (i32.eqz (local.get $r)) (then (return (i32.const 92))))
-            (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 95))))
-            (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x1005F))))
-            (return (i32.const 0))))
-        (if (i32.eq (local.get $g) (i32.const 3))
-          (then
-            (if (i32.eqz (local.get $r)) (then (return (i32.const 93))))
-            (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 96))))
-            (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x10060))))
-            (return (i32.const 0))))
-        (if (i32.and (i32.eq (local.get $g) (i32.const 7)) (i32.eq (local.get $r) (i32.const 7)))
-          (then (return (i32.const 97))))
-        (return (i32.const 0))))
-    ;; register forms. 105's bit 24: the 8-byte layout
-    ;; D8: $fpu_arith on ST(0), ST(rm), as the memory forms
-    (if (i32.eqz (local.get $g)) (then (return (i32.or (i32.const 0x1000069) (local.get $a)))))
-    ;; DC / DE: ST(rm) = ST(0) op ST(rm) with no ZE; add and mul are
-    ;; v op ST(0) (swapped, as 06 writes them); DE pops. DC/2-3 are the
-    ;; FCOM/FCOMP aliases, DE/3 rm 1 FCOMPP.
-    (if (i32.or (i32.eq (local.get $g) (i32.const 4)) (i32.eq (local.get $g) (i32.const 6)))
-      (then
-        (if (i32.lt_u (i32.sub (local.get $r) (i32.const 2)) (i32.const 2))
-          (then
-            (if (i32.eq (local.get $g) (i32.const 4))
-              (then (return (i32.or (i32.const 0x1000069) (local.get $a)))))
-            (if (i32.and (i32.eq (local.get $r) (i32.const 3)) (i32.eq (local.get $rm) (i32.const 1)))
-              (then (return (i32.const 0x1840069))))
-            (return (i32.const 0))))
-        (return (i32.or (i32.or (i32.const 0x1200069)
-                                (select (i32.const 0x400000) (i32.const 0) (i32.eq (local.get $g) (i32.const 6))))
-                        (i32.or (i32.and (local.get $a) (i32.const 0x70000))
-                                (select (i32.const 0x80000) (i32.const 0)
-                                        (i32.or (i32.lt_u (local.get $r) (i32.const 2))
-                                                (i32.and (local.get $r) (i32.const 1)))))))))
-    (if (i32.eq (local.get $g) (i32.const 1))
-      (then
-        (if (i32.eqz (local.get $r)) (then (return (i32.const 102))))
-        (if (i32.eq (local.get $r) (i32.const 1)) (then (return (i32.const 103))))
-        (if (i32.and (i32.eq (local.get $r) (i32.const 4)) (i32.lt_u (local.get $rm) (i32.const 2)))
-          (then (return (i32.const 106))))
-        (return (i32.const 0))))
-    (if (i32.eq (local.get $g) (i32.const 5))
-      (then
-        (if (i32.eq (local.get $r) (i32.const 2)) (then (return (i32.const 104))))
-        (if (i32.eq (local.get $r) (i32.const 3)) (then (return (i32.const 0x10068))))
-        ;; FUCOM / FUCOMP: 06's same compare
-        (if (i32.eq (local.get $r) (i32.const 4)) (then (return (i32.const 0x1040069))))
-        (if (i32.eq (local.get $r) (i32.const 5)) (then (return (i32.const 0x1440069))))
-        (return (i32.const 0))))
-    ;; DA E9 FUCOMPP
-    (if (i32.and (i32.eq (local.get $g) (i32.const 2))
-                 (i32.and (i32.eq (local.get $r) (i32.const 5)) (i32.eq (local.get $rm) (i32.const 1))))
-      (then (return (i32.const 0x1840069))))
-    (if (i32.and (i32.eq (local.get $g) (i32.const 7))
-                 (i32.and (i32.eq (local.get $r) (i32.const 4)) (i32.eqz (local.get $rm))))
-      (then (return (i32.const 107))))
+    ;; Use the existing generic x87 service and its central image helpers.
     (i32.const 0))
 
   (func $uc_x87_insn (param $R i32) (result i32)
@@ -3324,13 +3238,8 @@
   ;; leave before this marker; threaded fallback owns their entry transition.
   (func $uc_mmx_insn (param $R i32) (result i32)
     (local $reason i32)
-    (local.set $reason (call $uc_mmx_body (local.get $R)))
-    (if (i32.and (i32.eqz (local.get $reason))
-                 (i32.ne (i32.load offset=28 (local.get $R)) (i32.const 4)))
-      (then (call $uc_emit (i32.const 108) (i32.const 0)
-        (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0)
-        (i64.const 0) (i64.const 0) (i64.const 0))))
-    (local.get $reason))
+    ;; Type7 direct stores cannot publish exact80 metadata at fault boundaries.
+    (i32.const 22))
 
   (func $uc_mmx_body (param $R i32) (result i32)
     (local $O0 i32) (local $O1 i32) (local $sub i32) (local $form i32) (local $t i64)

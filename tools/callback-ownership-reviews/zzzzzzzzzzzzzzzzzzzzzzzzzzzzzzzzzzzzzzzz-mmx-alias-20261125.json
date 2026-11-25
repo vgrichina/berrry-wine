@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "eac27446dc148ae42bf4d9f6f8a10ef0d6b302dac8f490ab72abdacea4339a8b",
+      "sha256": "e6c1e7075fb5a01ba1118eedaf5fdcc90dff360d962591ea2ff81a70c030d447",
+      "reason": "MMX physical alias repair 20261125: CVTPS2PI m64 commits its MMX destination only after successful operand reads, then uses the existing entry transition. EIP advance and fault boundaries are unchanged. Lifetime clearance remains pending; nonlocal gates remain disabled."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "14d8ff94943d1be88c6f8c6bcd1115b0a6311310a704f426192284ac9c8960cb",
+      "sha256": "542f68e23467077e66b863fcc805d4807e5ae738ee0019cdfb69a65efee0bdec",
+      "reason": "MMX physical alias repair 20261125: Native x87 opcode arms route through the existing generic service so central physical-image helpers own updates and faults. EIP targets and ownership fields are unchanged. Lifetime clearance remains pending; nonlocal gates remain disabled."
+    },
+    {
+      "file": "src/09e-win16-api.wat",
+      "name": "$win16_bridge_frame_close",
+      "baseSHA256": "bab61b44037beae9874a37dd83dfef8d962c09294de398550e00556aaf81e596",
+      "sha256": "e9568d3ed837e8116d5d4deec37a634b40497ba6f3cd6fc6f6fde6c138c48774",
+      "reason": "MMX physical alias repair 20261125: Restore the 32 exact-image metadata bytes symmetrically from reserved bridge header [896,928), alongside the existing FPU/MMX/XMM restore. Owner validation, EIP restoration and sync-depth exit remain unchanged. Lifetime clearance remains pending; nonlocal gates remain disabled."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:init_thread",
+      "baseSHA256": "07769bec1698f98632ebab504b9288d1566a1be31cdfba62a41f20468a4a3e13",
+      "sha256": "d4de4992bd1e51e8bfe83f60f18928d56d57cd6ef965ba77c416c4231291702e",
+      "reason": "MMX physical alias repair 20261125: Select and clear only the new thread exact-image metadata and FPU approximation/shadow slice and initialize its environment. Existing MMX/XMM clearing and invocation-thread boundary remain unchanged. Lifetime clearance remains pending; nonlocal gates remain disabled."
+    }
+  ]
+}

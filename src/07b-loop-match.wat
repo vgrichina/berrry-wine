@@ -209,73 +209,23 @@
   ;; The whole 78-byte hash prevents a similar-looking near miss from being
   ;; lowered.  No image address is part of the recognizer.
   (func $try_emit_mmx_copy64 (param $start_eip i32) (result i32)
-    (if (i32.or (i32.eqz (global.get $mmx_copy64_enabled))
-                (global.get $code16))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl32 (local.get $start_eip)) (i32.const 0x3886180F))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl32 (i32.add (local.get $start_eip) (i32.const 74)))
-                (i32.const 0xB2754940))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $loop_hash_bytes (local.get $start_eip) (i32.const 78))
-                (i32.const 0x4E398899))
-      (then (return (i32.const 0))))
-    (global.set $mmx_copy64_matches
-      (i32.add (global.get $mmx_copy64_matches) (i32.const 1)))
-    ;; H419's negative operand namespace is reserved for exact MMX copies.
-    ;; ...0000 is the Jazz masked row; ...0001 is this straight memcpy.
-    (call $te (global.get $LOOP_SUPEROP_COPY) (i32.const 0x80000001))
-    (call $te_raw (i32.add (local.get $start_eip) (i32.const 78)))
-    (call $te_raw (local.get $start_eip))
-    (global.set $d_pc (i32.add (local.get $start_eip) (i32.const 78)))
-    (i32.const 1))
+    ;; Staged final MMX state is insufficient on an intermediate fault.
+    (i32.const 0))
 
   ;; Streaming sibling selected when CPUID advertises SSE: eight MOVQ loads,
   ;; eight MOVNTQ stores, and an EAX-counted 64-byte inner loop. UT2003.exe and
   ;; D3DDrv.dll contain the same address-independent 71-byte body.
   (func $try_emit_mmx_stream_copy64 (param $start_eip i32) (result i32)
-    (if (i32.or (i32.eqz (global.get $mmx_copy64_enabled))
-                (global.get $code16))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl32 (local.get $start_eip)) (i32.const 0x0F066F0F))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl32 (i32.add (local.get $start_eip) (i32.const 67)))
-                (i32.const 0xB9754840))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $loop_hash_bytes (local.get $start_eip) (i32.const 71))
-                (i32.const 0xD68032EC))
-      (then (return (i32.const 0))))
-    (global.set $mmx_copy64_matches
-      (i32.add (global.get $mmx_copy64_matches) (i32.const 1)))
-    (call $te (global.get $LOOP_SUPEROP_COPY) (i32.const 0x80000002))
-    (call $te_raw (i32.add (local.get $start_eip) (i32.const 71)))
-    (call $te_raw (local.get $start_eip))
-    (global.set $d_pc (i32.add (local.get $start_eip) (i32.const 71)))
-    (i32.const 1))
+    ;; Staged final MMX state is insufficient on an intermediate fault.
+    (i32.const 0))
 
   ;; D3DDrv's SSE-selected sibling pipelines three MMX registers around the
   ;; pointer bumps and uses negative offsets for the remainder of each line.
   ;; The full 79-byte proof includes that ordering because it changes both
   ;; overlap behavior and which source qwords remain in mm0..mm2.
   (func $try_emit_mmx_pipelined_copy64 (param $start_eip i32) (result i32)
-    (if (i32.or (i32.eqz (global.get $mmx_copy64_enabled))
-                (global.get $code16))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl32 (local.get $start_eip)) (i32.const 0x3886180F))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl32 (i32.add (local.get $start_eip) (i32.const 75)))
-                (i32.const 0xB175F84F))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $loop_hash_bytes (local.get $start_eip) (i32.const 79))
-                (i32.const 0x80AC549E))
-      (then (return (i32.const 0))))
-    (global.set $mmx_copy64_matches
-      (i32.add (global.get $mmx_copy64_matches) (i32.const 1)))
-    (call $te (global.get $LOOP_SUPEROP_COPY) (i32.const 0x80000003))
-    (call $te_raw (i32.add (local.get $start_eip) (i32.const 79)))
-    (call $te_raw (local.get $start_eip))
-    (global.set $d_pc (i32.add (local.get $start_eip) (i32.const 79)))
-    (i32.const 1))
+    ;; Staged final MMX state is insufficient on an intermediate fault.
+    (i32.const 0))
 
   ;; UE1 SoftDrv's MMX clear (Deus Ex demo softdrv+0x10d3ed70 and +0x10d3eec0,
   ;; Unreal SE softdrv+0x10931ed0 and +0x10931ff0):
@@ -289,45 +239,8 @@
   ;; Operands after H419's 0x80000005 tag: fall, back, r | c<<4 | N<<8.
   (func $try_emit_mmx_fill64 (param $start_eip i32) (result i32)
     (local $modrm i32) (local $r i32) (local $c i32) (local $mm i32)
-    (if (i32.or (i32.eqz (global.get $mmx_fill64_enabled))
-                (global.get $code16))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl16 (local.get $start_eip)) (i32.const 0x7F0F))
-      (then (return (i32.const 0))))
-    (local.set $modrm (call $gl8 (i32.add (local.get $start_eip) (i32.const 2))))
-    (if (i32.ne (i32.and (local.get $modrm) (i32.const 0xC0)) (i32.const 0))
-      (then (return (i32.const 0))))
-    (local.set $r (i32.and (local.get $modrm) (i32.const 7)))
-    (local.set $mm (i32.and (i32.shr_u (local.get $modrm) (i32.const 3)) (i32.const 7)))
-    (if (i32.ge_u (local.get $r) (i32.const 4))
-      (then (if (i32.le_u (local.get $r) (i32.const 5)) (then (return (i32.const 0))))))
-    ;; add r,8 (83 /0 ib, register form)
-    (if (i32.ne (call $gl8 (i32.add (local.get $start_eip) (i32.const 3))) (i32.const 0x83))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl8 (i32.add (local.get $start_eip) (i32.const 4)))
-                (i32.or (i32.const 0xC0) (local.get $r)))
-      (then (return (i32.const 0))))
-    (if (i32.ne (call $gl8 (i32.add (local.get $start_eip) (i32.const 5))) (i32.const 0x08))
-      (then (return (i32.const 0))))
-    ;; dec c (48+c)
-    (local.set $c (i32.sub (call $gl8 (i32.add (local.get $start_eip) (i32.const 6))) (i32.const 0x48)))
-    (if (i32.ge_u (local.get $c) (i32.const 8)) (then (return (i32.const 0))))
-    (if (i32.or (i32.eq (local.get $c) (local.get $r)) (i32.eq (local.get $c) (i32.const 4)))
-      (then (return (i32.const 0))))
-    ;; jnz back to the movq (rel8 -9)
-    (if (i32.ne (call $gl16 (i32.add (local.get $start_eip) (i32.const 7))) (i32.const 0xF775))
-      (then (return (i32.const 0))))
-    (global.set $mmx_fill64_matches
-      (i32.add (global.get $mmx_fill64_matches) (i32.const 1)))
-    (call $te (global.get $LOOP_SUPEROP_COPY) (i32.const 0x80000005))
-    (call $te_raw (i32.add (local.get $start_eip) (i32.const 9)))
-    (call $te_raw (local.get $start_eip))
-    (call $te_raw
-      (i32.or (local.get $r)
-        (i32.or (i32.shl (local.get $c) (i32.const 4))
-                (i32.shl (local.get $mm) (i32.const 8)))))
-    (global.set $d_pc (i32.add (local.get $start_eip) (i32.const 9)))
-    (i32.const 1))
+    ;; Staged final MMX state is insufficient on an intermediate fault.
+    (i32.const 0))
 
   ;; AoE I and II use the same span-list data structure and clipping algorithm,
   ;; but their MSVC builds assigned x/min/max registers differently and only
@@ -527,19 +440,8 @@
   ;; Every x87 fuser, in the order the decoder has always run them, behind the
   ;; bisect gate above.
   (func $x87_fuse_pass (param $eip i32)
-    (if (i32.or (i32.lt_u (local.get $eip) (global.get $x87_fuse_dbg_lo))
-                (i32.ge_u (local.get $eip) (global.get $x87_fuse_dbg_hi)))
-      (then (return)))
-    (if (i32.and (global.get $x87_fuse_dbg_mask) (i32.const 1))
-      (then (call $x87_fuse_block)))
-    (if (i32.and (global.get $x87_fuse_dbg_mask) (i32.const 2))
-      (then (call $x87_short_fuse_block)))
-    (if (i32.and (global.get $x87_fuse_dbg_mask) (i32.const 4))
-      (then (call $x87_tree4_fuse_block)))
-    (if (i32.and (global.get $x87_fuse_dbg_mask) (i32.const 8))
-      (then (call $x87_affine_fuse_block)))
-    (if (i32.and (global.get $x87_fuse_dbg_mask) (i32.const 16))
-      (then (call $x87_island_fuse_block))))
+    ;; Preserve per-instruction physical payload and fault boundaries.
+    (return))
 
   (func (export "set_x87_fuse_debug") (param $mask i32) (param $lo i32) (param $hi i32)
     (global.set $x87_fuse_dbg_mask (local.get $mask))

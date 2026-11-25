@@ -646,6 +646,8 @@
     (memory.copy (i32.add (local.get $frame) (i32.const 512)) (global.get $fpu_base) (i32.const 128))
     (memory.copy (i32.add (local.get $frame) (i32.const 640)) (global.get $mmx_base) (i32.const 128))
     (memory.copy (i32.add (local.get $frame) (i32.const 768)) (global.get $xmm_base) (i32.const 128))
+    (memory.copy (i32.add (local.get $frame) (global.get $WIN16_BRIDGE_IMAGE_OFFSET))
+      (global.get $fpu_image_base) (global.get $FPU_IMAGE_META_STRIDE))
     (global.set $win16_bridge_generation (i32.add (global.get $win16_bridge_generation) (i32.const 1)))
     (local.set $token (i64.or (i64.extend_i32_u (local.get $frame))
       (i64.shl (i64.extend_i32_u (global.get $win16_bridge_generation)) (i64.const 32))))
@@ -820,6 +822,8 @@
     (memory.copy (global.get $fpu_base) (i32.add (local.get $frame) (i32.const 512)) (i32.const 128))
     (memory.copy (global.get $mmx_base) (i32.add (local.get $frame) (i32.const 640)) (i32.const 128))
     (memory.copy (global.get $xmm_base) (i32.add (local.get $frame) (i32.const 768)) (i32.const 128))
+    (memory.copy (global.get $fpu_image_base)
+      (i32.add (local.get $frame) (global.get $WIN16_BRIDGE_IMAGE_OFFSET)) (global.get $FPU_IMAGE_META_STRIDE))
     ))
     (if (i32.load offset=24 (local.get $frame))
       (then

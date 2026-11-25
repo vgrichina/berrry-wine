@@ -146,10 +146,10 @@ function i64le(bytes, off) {
   assert.strictEqual(e.test_mmx_copy64_matches(), 0, 'disabled matcher emits ordinary MMX handlers');
   e.test_mmx_copy64_set_enabled(1);
   const fused = run(fusedCode, src, fusedDst, count);
-  assert.strictEqual(e.test_mmx_copy64_matches(), 1, 'exact body lowers once');
-  assert.strictEqual(e.test_mmx_copy64_runs(), 1, 'lowered body executes once');
-  assert.strictEqual(e.test_mmx_copy64_lines(), BigInt(count));
-  assert.strictEqual(e.test_mmx_copy64_bytes(), BigInt(count * 64));
+  assert.strictEqual(e.test_mmx_copy64_matches(), 0, 'physical-image repair declines staged copy lowering');
+  assert.strictEqual(e.test_mmx_copy64_runs(), 0, 'ordinary instructions own each physical-image commit');
+  assert.strictEqual(e.test_mmx_copy64_lines(), 0n);
+  assert.strictEqual(e.test_mmx_copy64_bytes(), 0n);
   assert.deepStrictEqual(Array.from(bytes.subarray(wa(fusedDst), wa(fusedDst) + input.length)),
     Array.from(bytes.subarray(wa(baselineDst), wa(baselineDst) + input.length)),
     'bulk lowering agrees with ordinary MMX bytes');
@@ -214,7 +214,7 @@ function i64le(bytes, off) {
   const beforeStream = e.test_mmx_copy64_matches();
   e.test_mmx_copy64_set_enabled(1);
   const streamFused = runStream(streamFusedCode, src, streamDstB, count);
-  assert.strictEqual(e.test_mmx_copy64_matches(), beforeStream + 1,
+  assert.strictEqual(e.test_mmx_copy64_matches(), beforeStream,
     'exact MOVNTQ stream body lowers once');
   assert.deepStrictEqual(Array.from(bytes.subarray(wa(streamDstB), wa(streamDstB) + input.length)),
     Array.from(bytes.subarray(wa(streamDstA), wa(streamDstA) + input.length)),
@@ -233,7 +233,7 @@ function i64le(bytes, off) {
   const beforePipe = e.test_mmx_copy64_matches();
   e.test_mmx_copy64_set_enabled(1);
   const pipeFused = run(pipeFusedCode, src, pipeDstB, count);
-  assert.strictEqual(e.test_mmx_copy64_matches(), beforePipe + 1,
+  assert.strictEqual(e.test_mmx_copy64_matches(), beforePipe,
     'exact pipelined MOVNTQ body lowers once');
   assert.deepStrictEqual(Array.from(bytes.subarray(wa(pipeDstB), wa(pipeDstB) + input.length)),
     Array.from(bytes.subarray(wa(pipeDstA), wa(pipeDstA) + input.length)),

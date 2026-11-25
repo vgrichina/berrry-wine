@@ -2,7 +2,7 @@
 // Intel SDM Vol3A 12.2 Table12-2:
 // ordinary MMX executes with TOP=0/all x87 tags valid; LOCK rejects first.
 // Literal vectors test entry and preservation, not full opcode qualification.
-// Separate x87/MMX backing is deliberately preserved, not certified as aliasing.
+// Successful destinations alias x87; faults and read-only operands preserve payloads.
 const fs=require('fs'),a=require('assert/strict'),root=process.cwd();
 const map=require(root+'/lib/region-map.generated');
 const le=x=>[x&255,x>>>8&255,x>>>16&255,x>>>24];
@@ -56,7 +56,7 @@ async function run(bytes){
   execute(0x180c000,[0xd9,0x25,...le(env),0xf4]);
   execute(0x180c080,[0x68,...le(0xad7),0x9d,0xf4]);
   regs.forEach((r,i)=>e['set_'+r](r==='esp'?stack:0x71000000+i*0x10001));
-  for(let i=0;i<8;i++){e.set_mmx(i,i===0?A:i===1?B:BigInt(i));dv.setFloat64(fp+8*i,i+1.25,true);}
+  for(let i=0;i<8;i++){e.set_mmx(i,i===0?A:i===1?B:BigInt(i));}
   mem.fill(0x5a,xm,xm+128);e.set_ecx(0x1234);e.set_esi(src);e.set_edi(dst);
   mem.fill(0x6b,g(src)-8,g(src)+80);mem.fill(0x6b,g(dst)-8,g(dst)+80);dv.setBigUint64(g(src),B,true);
  }
@@ -66,7 +66,13 @@ async function run(bytes){
  }
  function check(name,before,after,issues=[]){
   if(after.top!==0)issues.push('TOP');if(after.tag!==255)issues.push('tag');
-  for(const k of ['sw','cw','fp','xmm'])if(after[k]!==before[k])issues.push('preserve '+k);
+  for(const k of ['sw','cw','xmm'])if(after[k]!==before[k])issues.push('preserve '+k);
+  const expectedFP=Buffer.from(before.fp,'hex');
+  for(let i=0;i<8;i++)if(after.mm[i]!==before.mm[i]){
+   const mant=BigInt('0x'+after.mm[i]);
+   expectedFP.writeBigUInt64LE(mant===0n?0x8000000000000000n:(mant&0x7fffffffffffffffn)?0xfff8000000000000n:0xfff0000000000000n,8*i);
+  }
+  if(after.fp!==expectedFP.toString('hex'))issues.push('physical destination/neighbor/integer shadow bytes');
   rows.push({name,before,after,issues});return issues;
  }
  for(const [name,code,value,action]of vectors)for(const locked of [false,true]){
@@ -106,7 +112,7 @@ async function run(bytes){
  // m32 load/store, memory arithmetic. Require actual installed-tier entry.
  for(const [body,value,action]of [[[0x0f,0xfc,0xc1],0x1212121212121212n],[[0x0f,0x71,0xf0,1],0x4040404040404040n],[[0x0f,0x6e,0xc0],0x71000000n],[[0x0f,0x7e,0xc0],0x10101010,'eax'],[[0x0f,0x6f,0x06],B],[[0x0f,0x7f,0x07],A,'storeQ'],[[0x0f,0x6e,0x06],0x01010101n],[[0x0f,0x7e,0x07],0x10101010,'storeD'],[[0x0f,0xfc,0x06],0x1212121212121212n]]){
   const at=pc;pc+=128;write(at,[...body,0x49,0x75,256-(body.length+3),0xc3]);
-  init();e.set_ecx(2);e.set_uop(1);const program=e.uop_compile(at);a(program,'MMX loop must compile');e.uop_install(at,program);
+  init();e.set_ecx(2);e.set_uop(1);const program=e.uop_compile(at);a.equal(program,0,'MMX lowering must decline until image-aware');
   for(const cached of [false,true]){
    init(true);e.set_ecx(2);e.guest_write32(stack,0);const before=snap(),entered=e.uop_stats(4),want=structuredClone(before),wantMem=Buffer.from(mem.subarray(g(dst)-8,g(dst)+80));execute(at,null,100);const after=snap(),issues=[];
    want.gp[1]=0;want.gp[4]+=4;
@@ -114,17 +120,17 @@ async function run(bytes){
    for(const k of ['gp','mm'])if(JSON.stringify(after[k])!==JSON.stringify(want[k]))issues.push('uop '+k+' literal');
    if(after.flags!==19)issues.push('uop literal flags');
    if(!Buffer.from(mem.subarray(g(dst)-8,g(dst)+80)).equals(wantMem))issues.push('uop memory/guards');
-   if(e.uop_stats(4)<=entered)issues.push('uop never entered');if(e.get_ecx()!==0)issues.push('loop count');
+   if(e.uop_stats(4)!==entered)issues.push('declined MMX unexpectedly entered uop');if(e.get_ecx()!==0)issues.push('loop count');
    check('uop '+body.join(',')+' cached='+cached,before,after,issues);
   }
  }
  // A lowered memory instruction that misses its window falls back before
  // its completion marker, including MOVD store's register staging operation.
  for(const [name,body,reg]of [['load',[0x0f,0x6f,6],'esi'],['storeD',[0x0f,0x7e,7],'edi']]){
-  init();const at=pc;pc+=128;write(at,[...body,0x49,0x75,256-(body.length+3),0xc3]);e.set_uop(1);const program=e.uop_compile(at);a(program);e.uop_install(at,program);
+  init();const at=pc;pc+=128;write(at,[...body,0x49,0x75,256-(body.length+3),0xc3]);e.set_uop(1);const program=e.uop_compile(at);a.equal(program,0,'faulting MMX lowering must decline');
   init(true);e.set_ecx(1);e['set_'+reg](0xe0000000);const before=snap(),entered=e.uop_stats(4);let trap=false;
   try{execute(at,null,100);}catch(err){a(err instanceof WebAssembly.RuntimeError);trap=true;}
-  const after=snap(),issues=[];if(!trap)issues.push('missing uop memory trap');if(e.uop_stats(4)<=entered)issues.push('fault uop never entered');if(JSON.stringify(before)!==JSON.stringify(after))issues.push('uop fault mutation');rows.push({name:'uop fault '+name,before,after,issues});
+  const after=snap(),issues=[];if(!trap)issues.push('missing uop memory trap');if(e.uop_stats(4)!==entered)issues.push('faulting declined MMX entered uop');if(JSON.stringify(before)!==JSON.stringify(after))issues.push('uop fault mutation');rows.push({name:'uop fault '+name,before,after,issues});
  }
  // A copy has executed MMX loads before a destination fault; fill has not
  // executed any MMX store when its first destination faults.
@@ -144,10 +150,10 @@ async function run(bytes){
   e.set_mmx_copy64(1);e.set_loop_mmx_fill_emit(1);e.set_edi(target);e.set_ecx(unaligned?514:2);
   write(at,[0x0f,0x7f,7,0x83,0xc7,8,0x49,0x75,0xf7,0xc3]);
   const before=snap(),runs=e.get_mmx_fill64_runs();let trap=false;
-  try{execute(at,null,100);}catch(err){a(err instanceof WebAssembly.RuntimeError);trap=true;}
+  try{execute(at,null,2000);}catch(err){a(err instanceof WebAssembly.RuntimeError);trap=true;}
   const after=snap(),issues=[];
   if(!trap)issues.push('missing later fill trap');
-  if(e.get_mmx_fill64_runs()<=runs)issues.push('later fault fold never entered');
+  if(e.get_mmx_fill64_runs()!==runs)issues.push('declined fill fold entered');
   if(dv.getBigUint64(g(target),true)!==A)issues.push('first fill store missing');
   check('fill later-page trap unaligned='+unaligned,before,after,issues);
  }
@@ -167,7 +173,7 @@ async function run(bytes){
    if(after.flags!==18)issues.push('bulk flags literal');
    wantMem.fill(0x10,g(target)-(g(src)-8),g(target)-(g(src)-8)+(fill?8:64));
    if(!Buffer.from(mem.subarray(g(src)-8,g(dst)+80)).equals(wantMem))issues.push('bulk memory/guards');
-   if(runs!==undefined&&(fill?e.get_mmx_fill64_runs():e.entry_copy_runs())<=runs)issues.push('fold never entered');
+   if(runs!==undefined&&(fill?e.get_mmx_fill64_runs():e.entry_copy_runs())!==runs)issues.push('declined fold entered');
    if(!Buffer.from(mem.subarray(g(target),g(target)+(fill?8:64))).equals(Buffer.alloc(fill?8:64,0x10)))issues.push('bulk literal bytes');
    const changed=fill?0:name==='copy'?4:name==='stream'?8:3;
    for(let i=0;i<8;i++)if(after.mm[i]!== (i<changed?A.toString(16):before.mm[i]))issues.push('bulk MMX '+i);

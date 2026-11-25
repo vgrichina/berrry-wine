@@ -1317,8 +1317,9 @@
                   ;; 88-90 X87M / X87MS / X87R: calls, $uop_run's $uop_x87
                   $svc $svc $svc
                   ;; 91-107 native x87
-                  $c91 $c92 $c93 $c94 $c95 $c96 $c97 $c98 $c99 $c100 $c101
-                  $c102 $c103 $c104 $c105 $c106 $c107
+                  ;; Exact images require the central x87 service, including old native op layouts.
+                  $svc $svc $svc $svc $svc $svc $svc $svc $svc $svc $svc
+                  $svc $svc $svc $svc $svc $svc
                   $c108 $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip

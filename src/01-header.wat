@@ -4360,11 +4360,8 @@
   ;; The payloads are in $FPU_FILE at $fpu_base+64.
   (global $fpu_raw_tag (mut i32) (i32.const 0)) ;; bit i = physical ST(i) has raw_i64
 
-  ;; MMX registers. On real hardware these alias the x87 mantissas; we keep them
-  ;; separate because no guest reads one through the other without an EMMS in
-  ;; between, and an independent file costs nothing. i64 rather than v128: the
-  ;; MMX code we run is overwhelmingly whole-register moves, boolean ops and
-  ;; 64-bit shifts, which are one exact i64 instruction each. See src/06c-mmx.wat.
+  ;; MMX_FILE stores the canonical physical low64 mantissas shared with x87.
+  ;; FPU_FILE retains f64 arithmetic approximations and signed-integer shadows.
   ;; They live in this thread's slice of $MMX_FILE (below): MMn is
   ;; the i64 at $mmx_base + n*8, +64 is uop-tier scratch. They were eight
   ;; globals behind an eight-way branch; a file makes a register one load and
@@ -4495,3 +4492,10 @@
   (global $getmessage_owner_generation (mut i32) (i32.const 0))
   (global $GETMESSAGE_HOOKS i32 (region.addr $GETMESSAGE_HOOKS 0))
   (global $GETMESSAGE_HOOKS_SIZE i32 (region.size $GETMESSAGE_HOOKS))
+
+  (global $FPU_IMAGE_META i32 (region.addr $FPU_IMAGE_META 0))
+  (global $FPU_IMAGE_META_SIZE i32 (region.size $FPU_IMAGE_META))
+  (global $FPU_IMAGE_META_STRIDE i32 (i32.const 32))
+  (global $fpu_image_base (mut i32) (region.addr $FPU_IMAGE_META 0))
+  ;; Bridge header owns [0,1024); FPU/MMX/XMM occupy [512,896).
+  (global $WIN16_BRIDGE_IMAGE_OFFSET i32 (i32.const 896))

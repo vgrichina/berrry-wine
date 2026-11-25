@@ -9,6 +9,8 @@ assert(api && api.nargs === 0 && api.convention === 'cdecl');
 // Dirty all environment fields, including internal exact-integer validity;
 // physical register payloads must survive the logical reset.
 const extra = `
+ (func (export "seed_phys") (param $p i32) (param $v f64)
+   (call $fpu_set_phys (local.get $p) (local.get $v)))
  (func (export "dirty") (param $cw i32) (param $sw i32) (param $top i32)
    (global.set $fpu_cw (local.get $cw))
    (global.set $fpu_sw (local.get $sw))
@@ -53,7 +55,8 @@ for (let i=0; i<128; i++) {
 }
 // Exact finite values make FNSAVE's extended-real payload independently
 // checkable, rather than merely checking that its source bank was untouched.
-for (let i=0; i<8; i++) view.setFloat64(a.bank()+i*8, i % 2 ? -1.5 : 1.5, true);
+// Seed through the canonical writer; private f64 stores no longer define the physical image.
+for (let i=0; i<8; i++) a.seed_phys(i, i % 2 ? -1.5 : 1.5);
 const bankA = bank(a), bankB = bank(b);
 const state = e => [e.cw(),e.get_fpu_sw(),e.get_fpu_top(),e.get_fpu_tags(),e.raw_tags()];
 b.dirty(0x147f, 0xb5ff, 6);
@@ -88,7 +91,7 @@ for (const action of ['fninit','save']) {
     assert.equal(saved.readUInt32LE(4),0xffff,'FNSAVE captures old status and TOP');
     for (let i=0; i<8; i++) {
       assert.equal(saved.readBigUInt64LE(28+i*10),0xc000000000000000n,'saved 1.5 significand');
-      assert.equal(saved.readUInt16LE(36+i*10),i%2 ? 0xbfff : 0x3fff,'saved physical sign/exponent');
+      assert.equal(saved.readUInt16LE(36+i*10),(i+7)%2 ? 0xbfff : 0x3fff,'saved logical slot sign/exponent at TOP=7');
     }
   }
 }

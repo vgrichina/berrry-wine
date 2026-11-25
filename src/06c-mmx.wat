@@ -16,8 +16,8 @@
   ;; cheaper than masking and cannot introduce lane-crossing errors.
   ;;
   ;; Ordinary MMX enters TOP=0/all tags valid on successful execution.
-  ;; Values still use separate x87 and MMX backing; physical mantissa aliasing
-  ;; and the x87 destination exponent are not modeled by this entry repair.
+  ;; MMX_FILE holds the canonical physical mantissa. Image metadata retains SE
+  ;; separately from x87 occupancy and signed-integer shadow validity.
 
   (func $mmx_enter
     (global.set $fpu_top (i32.const 0))
@@ -32,12 +32,12 @@
   ;; MMn is the i64 at $mmx_base + n*8 in this thread's $MMX_FILE slice. The
   ;; &7 keeps a stray index inside the slice.
   (func $mmx_get (param $i i32) (result i64)
-    (i64.load (i32.add (global.get $mmx_base)
-      (i32.shl (i32.and (local.get $i) (i32.const 7)) (i32.const 3)))))
+    (local.set $i (i32.and (local.get $i) (i32.const 7)))
+    (call $phys80_materialize (local.get $i))
+    (i64.load (call $phys80_mant_addr (local.get $i))))
 
   (func $mmx_set (param $i i32) (param $v i64)
-    (i64.store (i32.add (global.get $mmx_base)
-      (i32.shl (i32.and (local.get $i) (i32.const 7)) (i32.const 3))) (local.get $v)))
+    (call $phys80_write (i32.and (local.get $i) (i32.const 7)) (local.get $v) (i32.const 65535)))
 
   ;; ============================================================
   ;; SSE base used by SDL2
@@ -279,7 +279,7 @@
       (global.set $fpu_tag (i32.const 255))
       (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 51)) (then
-      (call $mmx_set (local.get $dst)
+      (call $mmx_commit (local.get $dst)
         (i64.or
           (i64.extend_i32_u (call $sse_cvtt_f32_i32
             (f32.nearest (f32x4.extract_lane 0 (local.get $s)))))
@@ -405,7 +405,7 @@
         (i32x4.extract_lane 1 (local.get $s))))
       (br $wr))
       ;; cvttps2pi
-      (call $mmx_set (local.get $dst)
+      (call $mmx_commit (local.get $dst)
         (i64.or
           (i64.extend_i32_u (call $sse_cvtt_f32_i32 (f32x4.extract_lane 0 (local.get $s))))
           (i64.shl (i64.extend_i32_u (call $sse_cvtt_f32_i32 (f32x4.extract_lane 1 (local.get $s))))
@@ -517,7 +517,7 @@
     (if (i32.eq (local.get $sub) (i32.const 51)) (then
       ;; m64 permits unaligned operands. Both dword reads finish before any
       ;; destination or x87 transition is committed; no m128 over-read.
-      (call $mmx_set (local.get $dst)
+      (call $mmx_commit (local.get $dst)
         (i64.or
           (i64.extend_i32_u (call $sse_cvtt_f32_i32
             (f32.nearest (f32.reinterpret_i32 (call $gl32 (local.get $addr))))))
@@ -646,7 +646,7 @@
         (call $gl32 (i32.add (local.get $addr) (i32.const 4)))))
       (br $wr))
       ;; cvttps2pi
-      (call $mmx_set (local.get $dst)
+      (call $mmx_commit (local.get $dst)
         (i64.or
           (i64.extend_i32_u (call $sse_cvtt_f32_i32 (f32.reinterpret_i32 (call $gl32 (local.get $addr)))))
           (i64.shl (i64.extend_i32_u (call $sse_cvtt_f32_i32
@@ -1201,7 +1201,7 @@
     (local $shift i64) (local $mask i64)
     (local.set $shift (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))
     (local.set $mask (i64.shl (i64.const 65535) (local.get $shift)))
-    (call $mmx_set (local.get $dst)
+    (call $mmx_commit (local.get $dst)
       (i64.or
         (i64.and (call $mmx_get (local.get $dst)) (i64.xor (local.get $mask) (i64.const -1)))
         (i64.shl (i64.extend_i32_u (i32.and (local.get $word) (i32.const 65535))) (local.get $shift)))))
@@ -1231,7 +1231,7 @@
           (i64.extend_i32_u (i32.shl (local.get $lane) (i32.const 4))))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1)))
       (br_if $words (i32.lt_u (local.get $lane) (i32.const 4))))
-    (call $mmx_set (local.get $dst) (local.get $value)))
+    (call $mmx_commit (local.get $dst) (local.get $value)))
 
   ;; SSE1 MASKMOVQ (Intel SDM vol.2B 4-10/11, vol.3B table 23-8).
   ;; mode: bit3 selects DI, bits0..2 carry the segment prefix (0 = DS).
@@ -1284,7 +1284,7 @@
           (i32.lt_s (local.get $difference) (i32.const 0)))))
       (local.set $lane (i32.add (local.get $lane) (i32.const 1)))
       (br_if $bytes (i32.lt_u (local.get $lane) (i32.const 8))))
-    (call $mmx_set (local.get $dst) (i64.extend_i32_u (local.get $sum))))
+    (call $mmx_commit (local.get $dst) (i64.extend_i32_u (local.get $sum))))
 
   (func $th_mmx_rr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $sub i32) (local $dst i32) (local $src i32)
@@ -1324,10 +1324,10 @@
         (call $mmx_complete) (dispatch-next)))
     ;; movq mm, mm
     (if (i32.eqz (local.get $sub))
-      (then (call $mmx_set (local.get $dst) (call $mmx_get (local.get $src))) (call $mmx_complete) (dispatch-next)))
+      (then (call $mmx_commit (local.get $dst) (call $mmx_get (local.get $src))) (call $mmx_complete) (dispatch-next)))
     ;; movd mm, r32 -- src names a general register, not an MMX one.
     (if (i32.eq (local.get $sub) (i32.const 1))
-      (then (call $mmx_set (local.get $dst)
+      (then (call $mmx_commit (local.get $dst)
               (i64.extend_i32_u (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $src) (i32.const 2))))))
             (call $mmx_complete) (dispatch-next)))
     ;; movd r32, mm -- dst names a general register.
@@ -1339,7 +1339,7 @@
       (then (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $dst) (i32.const 2))) (i32.and (i8x16.bitmask (i64x2.splat (call $mmx_get (local.get $src))))
                        (i32.const 0xFF)))
             (call $mmx_complete) (dispatch-next)))
-    (call $mmx_set (local.get $dst)
+    (call $mmx_commit (local.get $dst)
       (call $mmx_binop (call $mmx_get (local.get $dst)) (call $mmx_get (local.get $src))
             (local.get $sub)))
     (call $mmx_complete) (dispatch-next))
@@ -1370,13 +1370,13 @@
           (i32.sub (local.get $sub) (i32.const 160)))
         (call $mmx_complete) (dispatch-next)))
     (if (i32.eqz (local.get $sub))
-      (then (call $mmx_set (local.get $dst) (call $mmx_load64 (local.get $addr)))
+      (then (call $mmx_commit (local.get $dst) (call $mmx_load64 (local.get $addr)))
             (call $mmx_complete) (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 1))     ;; movd mm, m32
-      (then (call $mmx_set (local.get $dst)
+      (then (call $mmx_commit (local.get $dst)
               (i64.extend_i32_u (call $gl32 (local.get $addr))))
             (call $mmx_complete) (dispatch-next)))
-    (call $mmx_set (local.get $dst)
+    (call $mmx_commit (local.get $dst)
       (call $mmx_binop (call $mmx_get (local.get $dst)) (call $mmx_load64 (local.get $addr))
             (local.get $sub)))
     (call $mmx_complete) (dispatch-next))
@@ -1398,7 +1398,7 @@
     (global.set $mmx_exec_count (i32.add (global.get $mmx_exec_count) (i32.const 1)))
     (local.set $sub (i32.shr_u (local.get $op) (i32.const 12)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 0xF)))
-    (call $mmx_set (local.get $dst)
+    (call $mmx_commit (local.get $dst)
       (call $mmx_binop (call $mmx_get (local.get $dst))
             (i64.extend_i32_u (i32.and (local.get $op) (i32.const 0xFF)))
             (local.get $sub)))
@@ -1492,3 +1492,8 @@
         (if (i32.eq (local.get $w) (i32.const 3)) (then (return (i32.const -1))))
         (return (i32.add (i32.const 136) (local.get $w)))))
     (i32.const -1))
+
+  ;; Operand helpers may redirect rather than trap: publish only on success.
+  (func $mmx_commit (param $i i32) (param $v i64)
+    (if (i32.eqz (global.get $eip_redirected))
+      (then (call $mmx_set (local.get $i) (local.get $v)))))
