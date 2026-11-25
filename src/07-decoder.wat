@@ -5712,7 +5712,9 @@
 
           ;; 0x0F 0x77: EMMS
           (if (i32.eq (local.get $op) (i32.const 0x77))
-            (then (call $te (i32.const 233) (i32.const 0)) (br $decode)))
+            (then
+              (if (local.get $prefix_lock) (then (unreachable)))
+              (call $te (i32.const 233) (i32.const 0)) (br $decode)))
 
           ;; 0x0F 0xB0: CMPXCHG r/m8, r8
           (if (i32.eq (local.get $op) (i32.const 0xB0))

@@ -1267,4 +1267,6 @@
     (return_call $branch_end))
 
 (func $th_emms (param $op i32)
-             (local $nx_fn i32) (local $nx_op i32) (global.set $fpu_tag (i32.const 0)) (dispatch-next))
+             (local $nx_fn i32) (local $nx_op i32)
+  (global.set $fpu_top (i32.const 0))
+  (global.set $fpu_tag (i32.const 0)) (dispatch-next))
