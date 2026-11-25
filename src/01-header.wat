@@ -3946,6 +3946,40 @@
   (global $hit0_r5 (mut i32) (i32.const 0))
   (global $hit0_r6 (mut i32) (i32.const 0))
   (global $hit0_r7 (mut i32) (i32.const 0))
+  ;; --count-census=REG[:BATCH]: every counted hit also lands in a value
+  ;; histogram keyed by (slot, the chosen GPR, the dword at [esp]) -- for a
+  ;; function entry that is (argument, call site). 1024 entries of 16 bytes
+  ;; {slot+1, reg, [esp], count}, linear probe; a full table drops the hit
+  ;; and counts it in $hit_census_lost. -1 = off. The table borrows the last
+  ;; 16 KB of the --edge-hist pair matrix (the map has no free page left), so
+  ;; the two flags do not combine.
+  (global $HIT_CENSUS i32 (region.addr $HANDLER_PAIR_HIST_COUNTS 0xFC000))
+  (global $hit_census_reg (mut i32) (i32.const -1))
+  (global $hit_census_lost (mut i32) (i32.const 0))
+  ;; --fold-arms=MASK (fold-bench prototype; every bit off by default):
+  ;;   1 A: a RET with no in-region return candidate is lowered as an exit at
+  ;;        the RET (07e $uc_ret_targets / $uc_emit_ret) instead of declining
+  ;;        the region; REP RET decodes as RET.
+  ;;   2 B: the pending CALL/RET seam ops 79/80/87 stay inside 07d $uop_fast
+  ;;        while no observer is armed (they are no-ops then), so an inlined
+  ;;        call/ret costs no service round trip.
+  ;;   4 C: a load from an absolute address inside a non-writable PE section
+  ;;        of the main image lowers to its constant; the folded bytes are
+  ;;        registered as a program range, so a write kills the program.
+  ;;   8 D: Delphi record RTTI helpers (_LStrClr, _LStrAsg, _FinalizeRecord,
+  ;;        _FinalizeArray, _CopyRecord), recognised by their exact bytes, run
+  ;;        as native WAT (10-helpers $delphi_rtti_at, 05-alu $th_delphi_rtti).
+  (global $fold_arms (mut i32) (i32.const 0))
+  (global $fold_d_native (mut i32) (i32.const 0))   ;; D: calls finished natively
+  (global $fold_d_fallback (mut i32) (i32.const 0)) ;; D: calls handed back to guest code
+  (global $fold_c_folds (mut i32) (i32.const 0))
+  (global $fold_d_race (mut i32) (i32.const 0))     ;; D: a checked release reached 0
+  (global $fold_dn1 (mut i32) (i32.const 0)) (global $fold_dn2 (mut i32) (i32.const 0))
+  (global $fold_dn3 (mut i32) (i32.const 0)) (global $fold_dn4 (mut i32) (i32.const 0))
+  (global $fold_dn5 (mut i32) (i32.const 0))
+  (global $fold_df1 (mut i32) (i32.const 0)) (global $fold_df2 (mut i32) (i32.const 0))
+  (global $fold_df3 (mut i32) (i32.const 0)) (global $fold_df4 (mut i32) (i32.const 0))
+  (global $fold_df5 (mut i32) (i32.const 0))    ;; C: loads folded to constants
   ;; Four return addresses walked off EBP at the moment slot 0 is hit. A vtable
   ;; call names no caller statically and one frame of $dbg_prev_eip names only
   ;; the thunk; the interesting call site is usually two or three frames up.

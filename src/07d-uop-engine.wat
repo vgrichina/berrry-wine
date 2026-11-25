@@ -2379,6 +2379,18 @@
       (global.set $uop_io_kind (i32.const 2))
       (global.set $uop_io_budget (local.get $budget))
       (return (local.get $pc)))
+      ;; fold-bench arm B (01-header $fold_arms bit 2): the pending CALL/RET
+      ;; seams 79/80/87 are no-ops while neither observer is armed
+      ;; ($pending_push/$pending_pop/$pending_entry return at once), so step
+      ;; over them here instead of leaving $uop_fast for each.
+      (if (i32.and (i32.ne (i32.and (global.get $fold_arms) (i32.const 2)) (i32.const 0))
+                   (i32.eqz (i32.or (global.get $dao_status) (global.get $pending_armed))))
+        (then
+          (local.set $v (i32.load (local.get $pc)))
+          (if (i32.eq (local.get $v) (i32.const 79))
+            (then (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L)))
+          (if (i32.or (i32.eq (local.get $v) (i32.const 80)) (i32.eq (local.get $v) (i32.const 87)))
+            (then (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L)))))
       ;; An op that needs a call, still at $pc.
       (global.set $uop_io_kind (i32.const 1))
       (global.set $uop_io_budget (local.get $budget))

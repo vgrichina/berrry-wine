@@ -932,7 +932,14 @@ const WATCH_JS_ONLY = hasFlag('watch-js-only');  // --watch-js-only: sample in J
 const TRACE_AT_WATCH = hasFlag('trace-at-watch'); // --trace-at-watch: diff --trace-at-dump regions vs previous hit, show changed bytes
 const SHOW_CSTRING = getArg('show-cstring', null); // --show-cstring=0xADDR[,0xADDR...]: decode MFC CString at these addrs in trace-at and debug prompt
 const SKIP_SPEC = getArg('skip', null);          // --skip=0xADDR[,0xADDR,...]: auto-return (simulate ret) when EIP hits
-const COUNT_SPEC = getArg('count', null);        // --count=0xADDR[,0xADDR,...]: passive hit counter per block dispatch (up to 16 slots)
+const COUNT_SPEC = getArg('count', null);
+// --count-census=REG[:BATCH]: histogram every --count hit by (slot, REG, [esp])
+// -- for a function entry that is (argument register, call site) -- from
+// batch BATCH (default 0). Printed at exit after the hit counts.
+const COUNT_CENSUS = getArg('count-census', null);
+const COUNT_CENSUS_REG = COUNT_CENSUS ? ['eax','ecx','edx','ebx','esp','ebp','esi','edi'].indexOf(COUNT_CENSUS.split(':')[0].toLowerCase()) : -1;
+const COUNT_CENSUS_FROM = COUNT_CENSUS && COUNT_CENSUS.includes(':') ? parseInt(COUNT_CENSUS.split(':')[1], 10) : 0;
+if (COUNT_CENSUS && COUNT_CENSUS_REG < 0) { console.error('--count-census=REG[:BATCH]: REG is eax..edi'); process.exit(1); }        // --count=0xADDR[,0xADDR,...]: passive hit counter per block dispatch (up to 16 slots)
 // --handler-hist-thread=N[,N...] --handler-hist-start=A --handler-hist-stop=B:
 // enable the existing WAT handler/block/pair histograms only for the requested
 // thread(s) in [A,B), then print a compact snapshot. A list divides that window
@@ -11250,6 +11257,7 @@ async function main() {
     // module-relative slot stays unresolved until its DLL loads, so this cannot
     // be a batch-0-only job.
     if (batch === 0) armCounts();
+    if (COUNT_CENSUS && batch === COUNT_CENSUS_FROM && instance.exports.set_count_census) instance.exports.set_count_census(COUNT_CENSUS_REG);
     if (PRESENT_FRAMES) presentFramesTick(batch);
     // Breakpoint check (EIP before run)
     if (breakAddrs.length && breakAddrs.includes(eipBefore)) {
@@ -12968,6 +12976,17 @@ if (VERBOSE) {
   }
 
   reportHitCounts('Hit counts:');
+  if (COUNT_CENSUS && instance.exports.get_count_census) {
+    const g = instance.exports.get_count_census, rows = [];
+    for (let i = 0; i < 1024; i++) if (g(i, 0)) rows.push([g(i, 0) - 1, g(i, 1) >>> 0, g(i, 2) >>> 0, g(i, 3) >>> 0]);
+    rows.sort((x, y) => y[3] - x[3]);
+    console.log(`Count census (${COUNT_CENSUS.split(':')[0]}, [esp]) from batch ${COUNT_CENSUS_FROM}: ${rows.length} keys, lost ${g(0, 4) >>> 0}`);
+    for (const r of rows) console.log(`  slot ${r[0]} ${hex(countAddrs[r[0]])} ${COUNT_CENSUS.split(':')[0]}=${hex(r[1])} ret=${hex(r[2])} n=${r[3]}`);
+  }
+  if (instance.exports.get_fold_arms && instance.exports.get_fold_arms()) {
+    const f = instance.exports.fold_stat;
+    console.log(`Fold arms ${instance.exports.get_fold_arms()}: d_native=${f(0) >>> 0} d_fallback=${f(1) >>> 0} c_folds=${f(2) >>> 0} d_race=${f(3) >>> 0} by-id(native/fallback: 1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord) ${[1, 2, 3, 4, 5].map(k => `${k}:${f(10 + k) >>> 0}/${f(20 + k) >>> 0}`).join(' ')}`);
+  }
 
   if (DUMP_VFS && ctx.vfs) {
     console.log('\n[VFS] Files (' + ctx.vfs.files.size + '):');

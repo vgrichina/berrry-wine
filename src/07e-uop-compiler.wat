@@ -514,6 +514,10 @@
     ;; override (either would have stopped the loop above on an unsupported
     ;; prefix byte below). +12 is 0 movs / 1 stos, +16 the element width in
     ;; bits; O0 is [EDI], O1 [ESI] -- the operands $uc_win proves windows on.
+    ;; fold-bench arm A: REP RET (F3 C3, the AMD branch-predictor idiom) is RET
+    (if (i32.and (i32.and (local.get $rep) (i32.eq (local.get $b) (i32.const 0xC3)))
+                 (i32.ne (i32.and (global.get $fold_arms) (i32.const 1)) (i32.const 0)))
+      (then (local.set $rep (i32.const 0))))
     (if (local.get $rep)
       (then
         (if (i32.or (i32.or (i32.eqz (global.get $uc_rep)) (local.get $sg))
@@ -1534,7 +1538,16 @@
     (block $rd (loop $rl
       (br_if $rd (i32.ge_u (local.get $i) (global.get $uc_ninsn)))
       (local.set $R (i32.add (global.get $UC_INSN) (i32.shl (local.get $i) (i32.const 8))))
-      (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 24))
+      ;; fold-bench arm A: a RET whose return address no call in the region
+      ;; names (or names more than two of) stays in the region with no
+      ;; successors; $uc_emit_ret lowers it as an exit at the RET itself, which
+      ;; the threaded RET then executes -- no stack assumption is made.
+      (if (i32.and (i32.eq (call $uc_kind (local.get $R)) (i32.const 24))
+                   (i32.ne (i32.and (global.get $fold_arms) (i32.const 1)) (i32.const 0)))
+        (then (if (i32.gt_u (i32.load offset=240 (local.get $R)) (i32.const 2))
+                (then (i32.store offset=240 (local.get $R) (i32.const 0))))))
+      (if (i32.and (i32.eq (call $uc_kind (local.get $R)) (i32.const 24))
+                   (i32.eqz (i32.and (global.get $fold_arms) (i32.const 1))))
         (then (if (i32.or (i32.eqz (i32.load offset=240 (local.get $R)))
                           (i32.gt_u (i32.load offset=240 (local.get $R)) (i32.const 2)))
                 (then (call $uc_unsup (local.get $R))))))
@@ -1720,6 +1733,11 @@
       ;; its marker paces it (09a8 $th_logical_frame): never inside a program.
       ;; A head there is declined; a loop reaching it exits to it.
       (if (i32.eq (local.get $a) (global.get $logical_frame_addr))
+        (then (call $uc_unsup (local.get $R))))
+      ;; fold-bench arm D: a Delphi RTTI helper body runs as its native
+      ;; threaded op, so a program exits to it rather than lowering its bytes
+      (if (i32.and (i32.ne (i32.and (global.get $fold_arms) (i32.const 8)) (i32.const 0))
+                   (i32.ne (call $delphi_rtti_at (local.get $a)) (i32.const 0)))
         (then (call $uc_unsup (local.get $R))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 28))
         (then (call $uc_jt_targets (local.get $R))))
@@ -2685,12 +2703,88 @@
     (if (result i64) (i32.ge_s (i32.load offset=8 (local.get $o)) (i32.const 0))
       (then (call $uc_aR (i32.load offset=8 (local.get $o)))) (else (call $uc_aC (i32.const 0)))))
 
+  ;; ---- fold-bench arm C: read-only image loads as constants -------------
+  ;; (01-header $fold_arms bit 4). A load whose address is a constant (no base,
+  ;; no index) inside a PE section of the main image that is not
+  ;; IMAGE_SCN_MEM_WRITE lowers to its value at compile time. Soundness does
+  ;; not rest on the section flag (VirtualProtect can change it): every folded
+  ;; dword is registered as one of the program's ranges ($uc_compile_locked),
+  ;; so any guest write to it kills the program like a write to its code. The
+  ;; flag only keeps mutable data from being folded and killed over and over.
+  ;; At most four folded dwords per program ($uc_f0-3).
+  (global $uc_nfold (mut i32) (i32.const 0))
+  (global $uc_f0 (mut i32) (i32.const 0))
+  (global $uc_f1 (mut i32) (i32.const 0))
+  (global $uc_f2 (mut i32) (i32.const 0))
+  (global $uc_f3 (mut i32) (i32.const 0))
+  (func $uc_fold_get (param $k i32) (result i32)
+    (select (global.get $uc_f0) (select (global.get $uc_f1) (select (global.get $uc_f2) (global.get $uc_f3)
+      (i32.eq (local.get $k) (i32.const 2))) (i32.eq (local.get $k) (i32.const 1))) (i32.eqz (local.get $k))))
+  ;; Is [a, a+4) inside one non-writable section of the main image?
+  (func $uc_ro_addr (param $a i32) (result i32)
+    (local $pe i32) (local $n i32) (local $s i32) (local $i i32) (local $lo i32)
+    (if (i32.eqz (global.get $image_base)) (then (return (i32.const 0))))
+    (if (i32.lt_u (local.get $a) (global.get $image_base)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl16 (global.get $image_base)) (i32.const 0x5A4D)) (then (return (i32.const 0))))
+    (local.set $pe (i32.add (global.get $image_base) (call $gl32 (i32.add (global.get $image_base) (i32.const 0x3C)))))
+    (if (i32.ne (call $gl32 (local.get $pe)) (i32.const 0x4550)) (then (return (i32.const 0))))
+    (local.set $n (call $gl16 (i32.add (local.get $pe) (i32.const 6))))
+    (local.set $s (i32.add (i32.add (local.get $pe) (i32.const 24)) (call $gl16 (i32.add (local.get $pe) (i32.const 20)))))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $lo (i32.add (global.get $image_base) (call $gl32 (i32.add (local.get $s) (i32.const 12)))))
+      (if (i32.and (i32.ge_u (local.get $a) (local.get $lo))
+                   (i32.le_u (i32.add (local.get $a) (i32.const 4))
+                             (i32.add (local.get $lo) (call $gl32 (i32.add (local.get $s) (i32.const 8))))))
+        (then (return (i32.eqz (i32.and (call $gl32 (i32.add (local.get $s) (i32.const 36))) (i32.const 0x80000000))))))
+      (local.set $s (i32.add (local.get $s) (i32.const 40)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l)))
+    (i32.const 0))
+  ;; Fold this load? Records the dword (deduplicated) when it does.
+  (func $uc_fold_load (param $o i32) (param $w i32) (result i32)
+    (local $a i32) (local $k i32)
+    (if (i32.eqz (i32.and (global.get $fold_arms) (i32.const 4))) (then (return (i32.const 0))))
+    (if (i32.or (i32.ge_s (i32.load offset=4 (local.get $o)) (i32.const 0))
+                (i32.ge_s (i32.load offset=8 (local.get $o)) (i32.const 0)))
+      (then (return (i32.const 0))))
+    (local.set $a (i32.and (i32.load offset=16 (local.get $o)) (i32.const -4)))
+    ;; a load that straddles two dwords is not folded
+    (if (i32.gt_u (i32.add (i32.and (i32.load offset=16 (local.get $o)) (i32.const 3))
+                           (i32.shr_u (local.get $w) (i32.const 3)))
+                  (i32.const 4))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (call $uc_ro_addr (local.get $a))) (then (return (i32.const 0))))
+    (block $have
+      (loop $l
+        (br_if $have (i32.ge_u (local.get $k) (global.get $uc_nfold)))
+        (if (i32.eq (call $uc_fold_get (local.get $k)) (local.get $a)) (then (return (i32.const 1))))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br $l)))
+    (if (i32.ge_u (global.get $uc_nfold) (i32.const 4)) (then (return (i32.const 0))))
+    (if (i32.eqz (global.get $uc_nfold)) (then (global.set $uc_f0 (local.get $a))))
+    (if (i32.eq (global.get $uc_nfold) (i32.const 1)) (then (global.set $uc_f1 (local.get $a))))
+    (if (i32.eq (global.get $uc_nfold) (i32.const 2)) (then (global.set $uc_f2 (local.get $a))))
+    (if (i32.eq (global.get $uc_nfold) (i32.const 3)) (then (global.set $uc_f3 (local.get $a))))
+    (global.set $uc_nfold (i32.add (global.get $uc_nfold) (i32.const 1)))
+    (i32.const 1))
+
   (func $uc_load (param $o i32) (param $w i32) (param $sg i32) (param $dst i64)
-    (local $code i32) (local $wa i64)
+    (local $code i32) (local $wa i64) (local $v i32)
     (if (i32.eq (global.get $uc_fwd_kind) (i32.const 1))
       (then (if (i32.ne (local.get $w) (i32.const 32)) (then (call $uc_fail (i32.const 22)) (return)))
             (call $uc_o2 (i32.const 2) (local.get $dst) (call $uc_aT (i32.const 20) (global.get $uc_fwd_a)))
             (return)))
+    (if (call $uc_fold_load (local.get $o) (local.get $w))
+      (then
+        (local.set $v (call $gl32 (i32.load offset=16 (local.get $o))))
+        (if (i32.eq (local.get $w) (i32.const 16))
+          (then (local.set $v (select (call $win16_short (local.get $v)) (i32.and (local.get $v) (i32.const 0xFFFF)) (local.get $sg)))))
+        (if (i32.eq (local.get $w) (i32.const 8))
+          (then (local.set $v (select (call $imp_sx8 (local.get $v)) (i32.and (local.get $v) (i32.const 0xFF)) (local.get $sg)))))
+        (global.set $fold_c_folds (i32.add (global.get $fold_c_folds) (i32.const 1)))
+        (call $uc_o2 (i32.const 2) (local.get $dst) (call $uc_aC (local.get $v)))
+        (return)))
     (local.set $code
       (if (result i32) (i32.eq (local.get $w) (i32.const 32)) (then (i32.const 33))
         (else (if (result i32) (i32.eq (local.get $w) (i32.const 16))
@@ -4036,6 +4130,9 @@
       (param $m i32) (param $md i32) (param $c i32) (param $cd i32) (result i32)
     (local $t i64) (local $d i64) (local $j i32) (local $n i32) (local $cand i32)
     (local $alt i64) (local $dest i64) (local $err i32)
+    ;; fold-bench arm A: no candidate -- leave at the RET, ESP untouched
+    (if (i32.eqz (call $uc_nsucc (local.get $R)))
+      (then (call $uc_o1 (i32.const 25) (call $uc_xstub)) (return (i32.const 0))))
     (local.set $t (call $uc_scratch))
     (call $uc_load (i32.add (local.get $R) (i32.const 80)) (i32.const 32) (i32.const 0) (local.get $t))
     (local.set $n (call $uc_nsucc (local.get $R)))
@@ -4926,6 +5023,7 @@
   (func $uc_attempt (param $eip i32) (param $mode i32) (result i32)
     (local $err i32)
     (global.set $uc_err (i32.const 0))
+    (global.set $uc_nfold (i32.const 0))
     (global.set $uc_nocall (local.get $mode))
     (local.set $err (call $uc_form_loop (local.get $eip)))
     (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
@@ -5228,6 +5326,18 @@
         (local.set $hi (i32.load offset=4 (local.get $R)))
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br $rl)))))
+    ;; fold-bench arm C: the dwords folded to constants are this program's
+    ;; ranges too, so a write to one kills it ($uc_fold_load). A full table
+    ;; cannot be left unregistered: decline (the ranges above then name a
+    ;; program that is never installed; a write there kills nothing live).
+    (local.set $k (i32.const 0))
+    (block $fd (loop $fl
+      (br_if $fd (i32.ge_u (local.get $k) (global.get $uc_nfold)))
+      (local.set $lo (call $uc_fold_get (local.get $k)))
+      (if (i32.eqz (call $uop_add_range (local.get $lo) (i32.add (local.get $lo) (i32.const 4)) (local.get $pc)))
+        (then (return (call $uc_decline (i32.const 25)))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $fl)))
     (global.set $uop_alloc (i32.and (i32.add (i32.add (global.get $uop_alloc) (local.get $bytes)) (i32.const 15))
                                     (i32.const -16)))
     (global.set $uc_compiled (i32.add (global.get $uc_compiled) (i32.const 1)))

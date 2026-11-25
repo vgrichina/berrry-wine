@@ -348,6 +348,368 @@
       (i32.and (i32.eq (i32.load16_u offset=36 (local.get $wa)) (i32.const 0xc9f8))
                (i32.eq (i32.load8_u offset=38 (local.get $wa)) (i32.const 0xc3)))))
 
+  ;; ---- fold-bench arm D: Delphi record RTTI helpers as native WAT ---------
+  ;; (01-header $fold_arms bit 8). The System unit's _LStrClr, _LStrAsg,
+  ;; _FinalizeRecord, _FinalizeArray and _CopyRecord are recognised at a block
+  ;; entry by their exact bytes -- an FNV-1a over the body with every E8/E9
+  ;; rel32 left out, plus the callee each one's native form stands in for
+  ;; checked by its own signature -- never by address; Spelunky Classic (GM8)
+  ;; and Metrojd (GM7) link the same bodies at different layouts. The decoder
+  ;; emits handler 502 (operand = id) followed by RET. The block covers only
+  ;; the body's FIRST instruction ($d_k bytes): a fallback resumes at entry+k
+  ;; and _CopyRecord's tail at entry+0x110, and a block entered inside another
+  ;; block's cover retires it (04-cache $page_publish), so covering the whole
+  ;; body re-decoded (and re-hashed) the HLE block on every resume -- 5 us a
+  ;; call. The gap this leaves: a store to body bytes past the first
+  ;; instruction does not retire the HLE block. A hook patching a helper
+  ;; writes its entry bytes, which are covered; nothing in the System unit
+  ;; rewrites a body's interior.
+  ;;
+  ;; Exactness. Native only when the whole call can finish without the memory
+  ;; manager: a string whose release would reach zero (or an AnsiString
+  ;; literal that _LStrAsg would copy), a refcount word that is unaligned or in
+  ;; the shared heap, a field kind other than AnsiString, or more than one
+  ;; managed field, all go back to the guest body at the instruction after the
+  ;; first one (which the handler performs), with nothing else written. The
+  ;; refcount INC/DEC are atomic RMWs like LOCK INC/DEC. Reproduced: memory,
+  ;; all eight GPRs, EIP and the flags. _CopyRecord's trailing System.Move
+  ;; (bytes after the string field) is not done natively: the handler rebuilds
+  ;; the body's frame and registers at that CALL and resumes there, so Move's
+  ;; own exit state is exact. Not reproduced, as with $th_ftol_native: the
+  ;; stores the bodies make below ESP (dead), and the x87 scratch registers a
+  ;; FILD/FISTP-based Move leaves for the gap before the field (the stack and
+  ;; tag word come back balanced). That leading Move is taken at its contract
+  ;; (memmove); its body is not checked.
+  (func $d_in4 (param $o i32) (param $s i32) (result i32)
+    (i32.lt_u (i32.sub (local.get $o) (local.get $s)) (i32.const 4)))
+  ;; length of the body's first instruction (the fallback's resume offset)
+  (func $d_k (param $id i32) (result i32)
+    (select (i32.const 3) (select (i32.const 1) (i32.const 2) (i32.eq (local.get $id) (i32.const 5)))
+            (i32.eq (local.get $id) (i32.const 4))))
+  ;; Is body offset $o inside a rel32 operand left out of id's hash?
+  (func $d_masked (param $id i32) (param $o i32) (result i32)
+    (if (i32.eq (local.get $id) (i32.const 1)) (then (return (call $d_in4 (local.get $o) (i32.const 0x1D)))))
+    (if (i32.eq (local.get $id) (i32.const 2))
+      (then (return (i32.or (call $d_in4 (local.get $o) (i32.const 0x10))
+                            (i32.or (call $d_in4 (local.get $o) (i32.const 0x1C)) (call $d_in4 (local.get $o) (i32.const 0x3E)))))))
+    (if (i32.eq (local.get $id) (i32.const 3)) (then (return (call $d_in4 (local.get $o) (i32.const 0x21)))))
+    (if (i32.eq (local.get $id) (i32.const 4))
+      (then (return
+        (i32.or (i32.or (i32.or (call $d_in4 (local.get $o) (i32.const 0x3F)) (call $d_in4 (local.get $o) (i32.const 0x4B)))
+                        (i32.or (call $d_in4 (local.get $o) (i32.const 0x50)) (call $d_in4 (local.get $o) (i32.const 0x57))))
+          (i32.or (i32.or (i32.or (call $d_in4 (local.get $o) (i32.const 0x5C)) (call $d_in4 (local.get $o) (i32.const 0x68)))
+                          (i32.or (call $d_in4 (local.get $o) (i32.const 0x71)) (call $d_in4 (local.get $o) (i32.const 0x7D))))
+                  (i32.or (i32.or (call $d_in4 (local.get $o) (i32.const 0x9A)) (call $d_in4 (local.get $o) (i32.const 0xB0)))
+                          (i32.or (i32.or (call $d_in4 (local.get $o) (i32.const 0xC0)) (call $d_in4 (local.get $o) (i32.const 0xD1)))
+                                  (call $d_in4 (local.get $o) (i32.const 0xE1)))))))))
+    (if (i32.eq (local.get $id) (i32.const 5))
+      (then (return
+        (i32.or (i32.or (i32.or (call $d_in4 (local.get $o) (i32.const 0x28)) (call $d_in4 (local.get $o) (i32.const 0x67)))
+                        (i32.or (call $d_in4 (local.get $o) (i32.const 0x71)) (call $d_in4 (local.get $o) (i32.const 0x82))))
+          (i32.or (i32.or (i32.or (call $d_in4 (local.get $o) (i32.const 0x93)) (call $d_in4 (local.get $o) (i32.const 0xB7)))
+                          (i32.or (call $d_in4 (local.get $o) (i32.const 0xD0)) (call $d_in4 (local.get $o) (i32.const 0xDD))))
+                  (i32.or (call $d_in4 (local.get $o) (i32.const 0xF0)) (call $d_in4 (local.get $o) (i32.const 0x111))))))))
+    (i32.const 0))
+  (func $d_len (param $id i32) (result i32)
+    (select (i32.const 0x23) (select (i32.const 0x43) (select (i32.const 0x31) (select (i32.const 0xEA) (i32.const 0x11A)
+      (i32.eq (local.get $id) (i32.const 4))) (i32.eq (local.get $id) (i32.const 3))) (i32.eq (local.get $id) (i32.const 2)))
+      (i32.eq (local.get $id) (i32.const 1))))
+  (func $d_first (param $id i32) (result i32)
+    (select (i32.const 0xd285108b) (select (i32.const 0x2474d285) (select (i32.const 0x8a53c931) (select (i32.const 0x0f00f983) (i32.const 0x55575653)
+      (i32.eq (local.get $id) (i32.const 4))) (i32.eq (local.get $id) (i32.const 3))) (i32.eq (local.get $id) (i32.const 2)))
+      (i32.eq (local.get $id) (i32.const 1))))
+  (func $d_fnv (param $id i32) (result i32)
+    (select (i32.const 0xcacb444e) (select (i32.const 0xa1749f54) (select (i32.const 0xfa8250b0) (select (i32.const 0xe8843657) (i32.const 0xbfece31d)
+      (i32.eq (local.get $id) (i32.const 4))) (i32.eq (local.get $id) (i32.const 3))) (i32.eq (local.get $id) (i32.const 2)))
+      (i32.eq (local.get $id) (i32.const 1))))
+  ;; Does body $id start at guest address $ga?
+  (func $d_sig (param $ga i32) (param $id i32) (result i32)
+    (local $h i32) (local $i i32) (local $n i32)
+    (if (i32.ne (call $gl32 (local.get $ga)) (call $d_first (local.get $id))) (then (return (i32.const 0))))
+    (local.set $n (call $d_len (local.get $id)))
+    (local.set $h (i32.const 0x811c9dc5))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $i) (local.get $n)))
+      (if (i32.eqz (call $d_masked (local.get $id) (local.get $i)))
+        (then (local.set $h (i32.mul (i32.xor (local.get $h) (call $gl8 (i32.add (local.get $ga) (local.get $i))))
+                                     (i32.const 0x01000193)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l)))
+    (i32.eq (local.get $h) (call $d_fnv (local.get $id))))
+  ;; The target of the rel32 at body offset $o.
+  (func $d_rel (param $ga i32) (param $o i32) (result i32)
+    (i32.add (i32.add (local.get $ga) (i32.add (local.get $o) (i32.const 4)))
+             (call $gl32 (i32.add (local.get $ga) (local.get $o)))))
+  ;; Which helper (1-5) starts at $eip, or 0. Asked once per block decode.
+  (func $delphi_rtti_at (param $eip i32) (result i32)
+    (local $w i32) (local $id i32) (local $fa i32)
+    (if (i32.or (global.get $code16) (i32.eqz (i32.and (global.get $fold_arms) (i32.const 8))))
+      (then (return (i32.const 0))))
+    (local.set $w (call $gl32 (local.get $eip)))
+    (local.set $id (i32.const 1))
+    (block $found (loop $l
+      (br_if $found (i32.eq (local.get $w) (call $d_first (local.get $id))))
+      (local.set $id (i32.add (local.get $id) (i32.const 1)))
+      (br_if $l (i32.le_u (local.get $id) (i32.const 5)))
+      (return (i32.const 0))))
+    (if (i32.eqz (call $d_sig (local.get $eip) (local.get $id))) (then (return (i32.const 0))))
+    ;; the callees whose semantics the native form includes
+    (if (i32.eq (local.get $id) (i32.const 3))
+      (then (local.set $fa (call $d_rel (local.get $eip) (i32.const 0x21)))
+            (if (i32.eqz (call $d_sig (local.get $fa) (i32.const 4))) (then (return (i32.const 0))))
+            (if (i32.eqz (call $d_sig (call $d_rel (local.get $fa) (i32.const 0x4B)) (i32.const 1))) (then (return (i32.const 0))))))
+    (if (i32.eq (local.get $id) (i32.const 4))
+      (then (if (i32.eqz (call $d_sig (call $d_rel (local.get $eip) (i32.const 0x4B)) (i32.const 1))) (then (return (i32.const 0))))))
+    (if (i32.eq (local.get $id) (i32.const 5))
+      (then (if (i32.eqz (call $d_sig (call $d_rel (local.get $eip) (i32.const 0x71)) (i32.const 2))) (then (return (i32.const 0))))))
+    (local.get $id))
+
+  ;; A refcount word a native atomic RMW may use.
+  (func $d_rc_ok (param $a i32) (result i32)
+    (i32.and (i32.eqz (i32.and (local.get $a) (i32.const 3)))
+             (i32.eqz (call $shared_heap_address (local.get $a)))))
+  ;; Can a release of $s (with $extra references the same call adds first)
+  ;; finish without freeing? 0 = hand the call back.
+  (func $d_rel_ok (param $s i32) (param $extra i32) (result i32)
+    (local $rc i32)
+    (if (i32.eqz (local.get $s)) (then (return (i32.const 1))))
+    (local.set $rc (i32.add (call $gl32 (i32.sub (local.get $s) (i32.const 8))) (local.get $extra)))
+    (if (i32.lt_s (i32.sub (local.get $rc) (i32.const 1)) (i32.const 0)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $rc) (i32.const 1)) (then (return (i32.const 0))))
+    (call $d_rc_ok (i32.sub (local.get $s) (i32.const 8))))
+  ;; _LStrClr's tail on a string already unlinked: ECX and the flags as the
+  ;; body leaves them (s != 0; $d_rel_ok said yes).
+  (func $d_release (param $s i32)
+    (local $a i32) (local $rc i32) (local $old i32)
+    (local.set $a (i32.sub (local.get $s) (i32.const 8)))
+    (local.set $rc (call $gl32 (local.get $a)))
+    (i32.store offset=4 (global.get $reg_base) (i32.sub (local.get $rc) (i32.const 1)))
+    (if (i32.lt_s (i32.sub (local.get $rc) (i32.const 1)) (i32.const 0))
+      (then (call $set_flags_dec (local.get $rc) (i32.sub (local.get $rc) (i32.const 1)))
+            (global.set $flag_sign_shift (i32.const 31))
+            (return)))
+    (local.set $old (i32.atomic.rmw.sub (call $g2w (local.get $a)) (i32.const 1)))
+    (call $set_flags_dec (local.get $old) (i32.sub (local.get $old) (i32.const 1)))
+    (global.set $flag_sign_shift (i32.const 31))
+    ;; Only another thread can make this reach zero after the check; the
+    ;; string then leaks rather than being freed twice.
+    (if (i32.eq (local.get $old) (i32.const 1))
+      (then (global.set $fold_d_race (i32.add (global.get $fold_d_race) (i32.const 1))))))
+  ;; _LStrClr on [p]: EDX = [p], the slot cleared, the string released.
+  (func $d_lstrclr (param $p i32)
+    (local $s i32)
+    (local.set $s (call $gl32 (local.get $p)))
+    (i32.store offset=8 (global.get $reg_base) (local.get $s))
+    (if (i32.eqz (local.get $s))
+      (then (call $set_flags_logic (i32.const 0)) (global.set $flag_sign_shift (i32.const 31)) (return)))
+    (call $gs32 (local.get $p) (i32.const 0))
+    (call $d_release (local.get $s)))
+  ;; _LStrAsg([p], s), already checked: add s, swap, release the old one.
+  (func $d_lstrasg (param $p i32) (param $s i32)
+    (local $old i32) (local $rc i32)
+    (if (local.get $s)
+      (then
+        (local.set $rc (i32.atomic.rmw.add (call $g2w (i32.sub (local.get $s) (i32.const 8))) (i32.const 1)))
+        (i32.store offset=4 (global.get $reg_base) (i32.add (local.get $rc) (i32.const 1)))))
+    (local.set $old (call $gl32 (local.get $p)))
+    (call $gs32 (local.get $p) (local.get $s))
+    (i32.store offset=8 (global.get $reg_base) (local.get $old))
+    (if (i32.eqz (local.get $old))
+      (then (call $set_flags_logic (i32.const 0)) (global.set $flag_sign_shift (i32.const 31)) (return)))
+    (call $d_release (local.get $old)))
+  ;; System.Move: memmove, byte-exact.
+  (func $d_move (param $dst i32) (param $src i32) (param $n i32)
+    (local $i i32)
+    (if (i32.or (i32.le_s (local.get $n) (i32.const 0)) (i32.eq (local.get $dst) (local.get $src))) (then (return)))
+    (if (i32.or (i32.lt_u (local.get $dst) (local.get $src))
+                (i32.ge_u (local.get $dst) (i32.add (local.get $src) (local.get $n))))
+      (then
+        (block $d (loop $l
+          (br_if $d (i32.gt_u (i32.add (local.get $i) (i32.const 4)) (local.get $n)))
+          (call $gs32 (i32.add (local.get $dst) (local.get $i)) (call $gl32 (i32.add (local.get $src) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 4)))
+          (br $l)))
+        (block $d2 (loop $l2
+          (br_if $d2 (i32.ge_u (local.get $i) (local.get $n)))
+          (call $gs8 (i32.add (local.get $dst) (local.get $i)) (call $gl8 (i32.add (local.get $src) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $l2)))
+        (return)))
+    (local.set $i (local.get $n))
+    (block $d3 (loop $l3
+      (br_if $d3 (i32.eqz (local.get $i)))
+      (local.set $i (i32.sub (local.get $i) (i32.const 1)))
+      (call $gs8 (i32.add (local.get $dst) (local.get $i)) (call $gl8 (i32.add (local.get $src) (local.get $i))))
+      (br $l3))))
+
+  ;; arm D call counts: totals and per helper id (fold_stat)
+  (func $fold_d_tick (param $id i32) (param $fb i32)
+    (if (local.get $fb)
+      (then
+        (global.set $fold_d_fallback (i32.add (global.get $fold_d_fallback) (i32.const 1)))
+        (if (i32.eq (local.get $id) (i32.const 1)) (then (global.set $fold_df1 (i32.add (global.get $fold_df1) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 2)) (then (global.set $fold_df2 (i32.add (global.get $fold_df2) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 3)) (then (global.set $fold_df3 (i32.add (global.get $fold_df3) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 4)) (then (global.set $fold_df4 (i32.add (global.get $fold_df4) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 5)) (then (global.set $fold_df5 (i32.add (global.get $fold_df5) (i32.const 1)))))
+        (return)))
+    (global.set $fold_d_native (i32.add (global.get $fold_d_native) (i32.const 1)))
+    (if (i32.eq (local.get $id) (i32.const 1)) (then (global.set $fold_dn1 (i32.add (global.get $fold_dn1) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 2)) (then (global.set $fold_dn2 (i32.add (global.get $fold_dn2) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 3)) (then (global.set $fold_dn3 (i32.add (global.get $fold_dn3) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 4)) (then (global.set $fold_dn4 (i32.add (global.get $fold_dn4) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 5)) (then (global.set $fold_dn5 (i32.add (global.get $fold_dn5) (i32.const 1))))))
+
+  ;; One managed field of a record typeinfo: 0 unless the record has exactly
+  ;; one field and it is an AnsiString; else its offset + 1.
+  (func $d_one_str_field (param $ti i32) (result i32)
+    (local $fp i32)
+    (local.set $fp (i32.add (local.get $ti) (i32.add (call $gl8 (i32.add (local.get $ti) (i32.const 1))) (i32.const 0xA))))
+    (if (i32.ne (call $gl32 (i32.sub (local.get $fp) (i32.const 4))) (i32.const 1)) (then (return (i32.const 0))))
+    (if (i32.ne (call $gl8 (call $gl32 (call $gl32 (local.get $fp)))) (i32.const 0xA)) (then (return (i32.const 0))))
+    (i32.add (call $gl32 (i32.add (local.get $fp) (i32.const 4))) (i32.const 1)))
+
+  ;; 502: one of the five helpers (operand = id, one word = entry EIP),
+  ;; followed by RET.
+  (func $th_delphi_rtti (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32)
+    (local $eax i32) (local $ecx i32) (local $edx i32) (local $f i32) (local $s i32) (local $d i32)
+    (local $size i32) (local $off i32) (local $entry i32) (local $esp i32)
+    (local.set $eax (i32.load (global.get $reg_base)))
+    (local.set $ecx (i32.load offset=4 (global.get $reg_base)))
+    (local.set $edx (i32.load offset=8 (global.get $reg_base)))
+    ;; the body's entry address, in the op's one extra word
+    (local.set $entry (read-thread-word))
+    (block $fallback
+      ;; 1 _LStrClr(eax = @s)
+      (if (i32.eq (local.get $op) (i32.const 1))
+        (then
+          (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $eax)) (i32.const 0))))
+          (call $d_lstrclr (local.get $eax))
+          (call $fold_d_tick (local.get $op) (i32.const 0))
+          (dispatch-next)))
+      ;; 2 _LStrAsg(eax = @dest, edx = s)
+      (if (i32.eq (local.get $op) (i32.const 2))
+        (then
+          (local.set $d (call $gl32 (local.get $eax)))
+          (if (local.get $edx)
+            (then (br_if $fallback (i32.lt_s (call $gl32 (i32.sub (local.get $edx) (i32.const 8))) (i32.const 0)))
+                  (br_if $fallback (i32.eqz (call $d_rc_ok (i32.sub (local.get $edx) (i32.const 8)))))))
+          (br_if $fallback (i32.eqz (call $d_rel_ok (local.get $d)
+            (i32.and (i32.eq (local.get $d) (local.get $edx)) (i32.ne (local.get $edx) (i32.const 0))))))
+          (call $d_lstrasg (local.get $eax) (local.get $edx))
+          (call $fold_d_tick (local.get $op) (i32.const 0))
+          (dispatch-next)))
+      ;; 4 _FinalizeArray(eax = p, edx = typeinfo, ecx = count)
+      (if (i32.eq (local.get $op) (i32.const 4))
+        (then
+          (if (i32.eqz (local.get $ecx))
+            (then (call $set_flags_sub (i32.const 0) (i32.const 0) (i32.const 0))
+                  (global.set $flag_sign_shift (i32.const 31))
+                  (call $fold_d_tick (local.get $op) (i32.const 0))
+                  (dispatch-next)))
+          (br_if $fallback (i32.ne (local.get $ecx) (i32.const 1)))
+          (br_if $fallback (i32.ne (call $gl8 (local.get $edx)) (i32.const 0xA)))
+          (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $eax)) (i32.const 0))))
+          (call $d_lstrclr (local.get $eax))
+          (call $fold_d_tick (local.get $op) (i32.const 0))
+          (dispatch-next)))
+      ;; 3 _FinalizeRecord(eax = p, edx = typeinfo): EAX = p on return
+      (if (i32.eq (local.get $op) (i32.const 3))
+        (then
+          (local.set $f (call $d_one_str_field (local.get $edx)))
+          (br_if $fallback (i32.eqz (local.get $f)))
+          (local.set $f (i32.add (local.get $eax) (i32.sub (local.get $f) (i32.const 1))))
+          (br_if $fallback (i32.eqz (call $d_rel_ok (call $gl32 (local.get $f)) (i32.const 0))))
+          (i32.store offset=4 (global.get $reg_base) (i32.const 1))
+          (call $d_lstrclr (local.get $f))
+          ;; the loop's DEC EDI, 1 -> 0, is the last flag write
+          (call $set_flags_dec (i32.const 1) (i32.const 0))
+          (global.set $flag_sign_shift (i32.const 31))
+          (call $fold_d_tick (local.get $op) (i32.const 0))
+          (dispatch-next)))
+      ;; 5 _CopyRecord(eax = dst, edx = src, ecx = typeinfo)
+      (if (i32.eq (local.get $op) (i32.const 5))
+        (then
+          (local.set $f (call $d_one_str_field (local.get $ecx)))
+          (br_if $fallback (i32.eqz (local.get $f)))
+          (local.set $off (i32.sub (local.get $f) (i32.const 1)))
+          (local.set $size (call $gl32 (i32.add (local.get $ecx)
+            (i32.add (call $gl8 (i32.add (local.get $ecx) (i32.const 1))) (i32.const 2)))))
+          (local.set $s (call $gl32 (i32.add (local.get $edx) (local.get $off))))
+          (local.set $d (call $gl32 (i32.add (local.get $eax) (local.get $off))))
+          (if (local.get $s)
+            (then (br_if $fallback (i32.lt_s (call $gl32 (i32.sub (local.get $s) (i32.const 8))) (i32.const 0)))
+                  (br_if $fallback (i32.eqz (call $d_rc_ok (i32.sub (local.get $s) (i32.const 8)))))))
+          (br_if $fallback (i32.eqz (call $d_rel_ok (local.get $d)
+            (i32.and (i32.eq (local.get $d) (local.get $s)) (i32.ne (local.get $s) (i32.const 0))))))
+          ;; the string slot must not overlap the bytes Move copies around it
+          (br_if $fallback (i32.and (i32.ne (local.get $eax) (local.get $edx))
+            (i32.lt_u (i32.add (i32.sub (local.get $eax) (local.get $edx)) (local.get $size))
+                      (i32.shl (local.get $size) (i32.const 1)))))
+          (call $d_move (local.get $eax) (local.get $edx) (local.get $off))
+          (call $d_lstrasg (i32.add (local.get $eax) (local.get $off)) (local.get $s))
+          (local.set $off (i32.add (local.get $off) (i32.const 4)))
+          ;; 0x406852: pop ecx (= size); sub ecx,eax (eax = off+4); jle
+          (i32.store offset=4 (global.get $reg_base) (i32.sub (local.get $size) (local.get $off)))
+          (call $fold_d_tick (local.get $op) (i32.const 0))
+          (if (i32.le_s (i32.sub (local.get $size) (local.get $off)) (i32.const 0))
+            (then
+              ;; no tail: pop ebp/edi/esi/ebx (unchanged), ret. EDX is what
+              ;; _LStrAsg left.
+              (i32.store (global.get $reg_base) (local.get $off))
+              (call $set_flags_sub (local.get $size) (local.get $off) (i32.sub (local.get $size) (local.get $off)))
+              (global.set $flag_sign_shift (i32.const 31))
+              (dispatch-next)))
+          ;; A tail: the app's own System.Move copies it, so its register and
+          ;; flag exit state is that body's. Rebuild the frame (push ebx, esi,
+          ;; edi, ebp; the size word pushed below it is popped residue) and
+          ;; the registers at the `call Move` (entry+0x110), and resume there:
+          ;; Move returns into the body's own pops and RET.
+          (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+          (call $gs32 (i32.sub (local.get $esp) (i32.const 4)) (i32.load offset=12 (global.get $reg_base)))
+          (call $gs32 (i32.sub (local.get $esp) (i32.const 8)) (i32.load offset=24 (global.get $reg_base)))
+          (call $gs32 (i32.sub (local.get $esp) (i32.const 12)) (i32.load offset=28 (global.get $reg_base)))
+          (call $gs32 (i32.sub (local.get $esp) (i32.const 16)) (i32.load offset=20 (global.get $reg_base)))
+          (call $gs32 (i32.sub (local.get $esp) (i32.const 20)) (local.get $size))
+          (i32.store offset=16 (global.get $reg_base) (i32.sub (local.get $esp) (i32.const 16)))
+          (i32.store offset=12 (global.get $reg_base) (local.get $eax))       ;; ebx = dst
+          (i32.store offset=24 (global.get $reg_base) (local.get $edx))       ;; esi = src
+          ;; edi = the field table walked past its one entry
+          (i32.store offset=28 (global.get $reg_base)
+            (i32.add (i32.add (local.get $ecx) (call $gl8 (i32.add (local.get $ecx) (i32.const 1)))) (i32.const 0x12)))
+          (i32.store offset=20 (global.get $reg_base) (i32.const 0))          ;; ebp = 0 fields left
+          (i32.store offset=8 (global.get $reg_base) (i32.add (local.get $eax) (local.get $off)))
+          (i32.store (global.get $reg_base) (i32.add (local.get $edx) (local.get $off)))
+          (call $set_flags_add (local.get $off) (local.get $edx) (i32.add (local.get $edx) (local.get $off)))
+          (global.set $flag_sign_shift (i32.const 31))
+          (global.set $eip (i32.add (local.get $entry) (i32.const 0x110)))
+          (return_call $branch_end)))
+      (unreachable))
+    ;; Back to the guest body: perform its first instruction, resume after it.
+    (call $fold_d_tick (local.get $op) (i32.const 1))
+    (if (i32.eq (local.get $op) (i32.const 1))      ;; mov edx,[eax]
+      (then (i32.store offset=8 (global.get $reg_base) (call $gl32 (local.get $eax)))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 2)))))
+    (if (i32.eq (local.get $op) (i32.const 2))      ;; test edx,edx
+      (then (call $set_flags_logic (local.get $edx)) (global.set $flag_sign_shift (i32.const 31))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 2)))))
+    (if (i32.eq (local.get $op) (i32.const 3))      ;; xor ecx,ecx
+      (then (i32.store offset=4 (global.get $reg_base) (i32.const 0))
+            (call $set_flags_logic (i32.const 0)) (global.set $flag_sign_shift (i32.const 31))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 2)))))
+    (if (i32.eq (local.get $op) (i32.const 4))      ;; cmp ecx,0
+      (then (call $set_flags_sub (local.get $ecx) (i32.const 0) (local.get $ecx))
+            (global.set $flag_sign_shift (i32.const 31))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 3)))))
+    (if (i32.eq (local.get $op) (i32.const 5))      ;; push ebx
+      (then (local.set $esp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+            (call $gs32 (local.get $esp) (i32.load offset=12 (global.get $reg_base)))
+            (i32.store offset=16 (global.get $reg_base) (local.get $esp))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 1)))))
+    (global.set $eip (local.get $entry))
+    (return_call $branch_end))
+
   (func $fast_msvc_sbh_scan (result i32)
     (local $wa i32) (local $scan i32) (local $scan_wa i32) (local $page i32)
     (local $first i32) (local $mode i32) (local $match i32)

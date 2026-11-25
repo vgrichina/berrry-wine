@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "47a412c8028db6238f732af81747e22a5875ea0a4b360d67f7dea0438aa971e7",
+      "sha256": "167d3ae169f909f552a06952154bb6fea3eab9c58249d136e4af9a16a87c27cc",
+      "reason": "Review 20261125 fold-bench --count-census: inside the existing passive --count hit block, when $hit_census_reg is armed, $hit_census_add records (slot, one GPR, the dword at [esp]) into a debug histogram table. It reads registers and guest memory only; no EIP, stack, callback frame, continuation or ownership state is written, and the hit-count path is unchanged when the flag is off."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "d8e4dc0887a904e41a21487cf67958f0c58efbfc8b3b23892ac1d50b455c704c",
+      "sha256": "e8f59c478121002b84d63f53f1bfd9d6b8b56bf4904b3129125cc99f31839105",
+      "reason": "Review 20261125 fold-bench arm B (--fold-arms bit 2, off by default): at the service landing, the pending CALL/RET seam ops 79/80/87 are stepped over inside $uop_fast only while $dao_status and $pending_armed are both zero, the state in which $pending_push/$pending_pop/$pending_entry return without effect. No EIP target, stack, callback or ownership write is added; an armed observer still takes the service path."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "caf31452a7c222a7c99e0913331f71642d940d0d26b75b7c0ab824d1c3aaee2f",
+      "sha256": "098bf88fd3afb1f39d85866bd8051eec21d3c0bb078c6dfb46f52772db39a39c",
+      "reason": "Review 20261125 fold-bench: one more inherited setter/getter pair (set_fold_arms/get_fold_arms) in the worker setter table so a guest thread decodes with the main instance's fold-bench arms. No import, callback or lifetime change."
+    }
+  ],
+  "additions": [
+    {
+      "file": "src/10-helpers.wat",
+      "name": "$th_delphi_rtti",
+      "writes": 2,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "i32.add",
+          [
+            "local.get",
+            "$entry"
+          ],
+          [
+            "i32.const",
+            "0x110"
+          ]
+        ],
+        [
+          "local.get",
+          "$entry"
+        ]
+      ],
+      "sha256": "f5be579ae9fe33838a73d67d09160bf5f8dfb277d8d3bbfc2aaa5b5f3e906450",
+      "kind": "guest-control",
+      "ownership": "pending",
+      "reason": "Review 20261125 fold-bench arm D (--fold-arms bit 8, off by default): handler 502 runs a signature-matched Delphi RTTI helper body natively and falls through to the body's own RET op; when the call cannot finish natively it performs the body's first instruction and sets EIP to the next instruction of the same body (its entry, from the op's thread word, plus 1-3), then ends the block through $branch_end like any threaded transfer. No callback, continuation, invocation enter/leave or ownership state is touched. Ownership remains pending. Second EIP write: _CopyRecord with bytes after its string field rebuilds the body's own push frame and registers at its CALL System.Move (entry+0x110, inside the same matched body) and resumes there, so Move returns into the body's pops and RET."
+    }
+  ]
+}

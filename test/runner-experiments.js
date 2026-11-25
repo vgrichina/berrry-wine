@@ -116,6 +116,10 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // $uc_trace_cut; docs/uop-tier-design.md §21.3). On by default; it only
   // acts under --branch-clock.
   const NO_UOP_TRACE_CUT = hasFlag('no-uop-trace-cut');
+  // --fold-arms=MASK: fold-bench prototype arms (01-header $fold_arms): 1 A
+  // exit-at-ret, 2 B in-loop call/ret seams, 4 C read-only load fold, 8 D
+  // Delphi RTTI native. Off by default; set before the first decode.
+  const FOLD_ARMS = Number(getArg('fold-arms', '0')) | 0;
   // --no-uop-mcopy: runs of dword mov pairs stay one LD/ST per instruction
   // instead of one MCOPY (07e $uc_mcopy_on; docs/uop-tier-design.md §21.4).
   const NO_UOP_MCOPY = hasFlag('no-uop-mcopy');
@@ -407,6 +411,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (UOP_CENSUS) inheritWasm('set_uop_census', 1);
     if (UOP_POOR_WORK !== null) inheritWasm('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
     if (NO_UOP_TRACE_CUT) inheritWasm('set_uop_trace_cut', 0);
+    if (FOLD_ARMS) inheritWasm('set_fold_arms', FOLD_ARMS);
     if (NO_UOP_MCOPY) inheritWasm('set_uop_mcopy', 0);
     if (NO_UOP_HOT_STICKY) inheritWasm('set_uop_hot_sticky', 0);
     if (UOP_HOT_AGE !== null) inheritWasm('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
@@ -426,6 +431,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   function visitMain(available, set, { copySuperops: COPY_SUPEROPS, ctx = null }) {
     let enablesUop = false;
     if (BRANCH_CLOCK && available('set_branch_clock')) set('set_branch_clock', 1);
+    if (FOLD_ARMS && available('set_fold_arms')) set('set_fold_arms', FOLD_ARMS);
     if (CODE_WRITE_LEGACY && available('set_code_write_legacy')) set('set_code_write_legacy', 1);
     if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
     if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);

@@ -3016,6 +3016,22 @@
           (call $publish_block (local.get $start_eip) (local.get $tstart)
                 (i32.add (local.get $start_eip) (i32.const 39))))))
 
+    ;; fold-bench arm D: a Delphi record-RTTI helper body becomes handler 502
+    ;; and the body's RET ($delphi_rtti_at, 10-helpers.wat); the block covers
+    ;; the whole body.
+    (if (i32.and (i32.ne (i32.and (global.get $fold_arms) (i32.const 8)) (i32.const 0))
+                 (i32.eqz (global.get $instruction_watch)))
+      (then
+        (local.set $a (call $delphi_rtti_at (local.get $start_eip)))
+        (if (local.get $a)
+          (then
+            (call $te (i32.const 502) (local.get $a))
+            (call $te_raw (local.get $start_eip))
+            (call $te (i32.const 41) (i32.const 0))
+            (return
+              (call $publish_block (local.get $start_eip) (local.get $tstart)
+                    (i32.add (local.get $start_eip) (call $d_k (local.get $a)))))))))
+
     ;; A 16-bit task can only execute inside the selector arena. Landing
     ;; outside it means a far pointer was used as a linear address somewhere,
     ;; and this has to be checked before the zeros test below: the runaway
