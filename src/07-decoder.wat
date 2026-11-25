@@ -5249,7 +5249,7 @@
                     (i32.or (i32.const 9) (i32.shl (local.get $imm) (i32.const 8))))
                   (br $decode)))
           (call $te
-            (if (result i32) (global.get $code16)
+            (if (result i32) (local.get $prefix_66)
               (then (i32.const 383))
               (else (i32.const 399)))
             (local.get $imm))
@@ -5257,7 +5257,7 @@
       (if (i32.eq (local.get $op) (i32.const 0xC9))
         (then (if (i32.and (global.get $code16) (i32.eqz (local.get $prefix_66)))
                 (then (call $te (i32.const 477) (i32.const 10)) (br $decode)))
-              (call $te (if (result i32) (global.get $code16) (then (i32.const 384)) (else (i32.const 113)))
+              (call $te (if (result i32) (local.get $prefix_66) (then (i32.const 384)) (else (i32.const 113)))
                 (i32.const 0))
               (br $decode))) ;; LEAVE
       (if (i32.eq (local.get $op) (i32.const 0xCC)) (then (call $te (i32.const 45) (global.get $d_pc)) (local.set $done (i32.const 1)) (br $decode))) ;; INT3

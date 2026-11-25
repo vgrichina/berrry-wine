@@ -789,8 +789,11 @@
   ;; 384: LEAVE — SP = BP, then pop BP. SP comes back through the SS base
   ;; because BP holds an offset, not a linear address.
   (func $th_leave16 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (i32.store offset=16 (global.get $reg_base) (i32.add (global.get $seg_base_ss)
-                              (i32.and (i32.load offset=20 (global.get $reg_base)) (i32.const 0xFFFF))))
+     (local $nx_fn i32) (local $nx_op i32) (i32.store offset=16 (global.get $reg_base)
+      (if (result i32) (global.get $code16)
+        (then (i32.add (global.get $seg_base_ss)
+          (i32.and (i32.load offset=20 (global.get $reg_base)) (i32.const 0xFFFF))))
+        (else (i32.load offset=20 (global.get $reg_base)))))
     (call $set_reg16 (i32.const 5) (call $gl16 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2)))
     (dispatch-next))
