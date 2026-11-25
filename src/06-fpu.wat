@@ -1089,6 +1089,26 @@
               ;; FSQRT — set IE on negative input (WASM's f64.sqrt of a
               ;; negative produces NaN, equivalent to the masked-IE result).
               (then
+                ;; Exact masked canonical zero, positive infinity and unary QNaN.
+                (if (i32.and (call $fpu_is_valid (i32.const 0))
+                      (i32.eq (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63)))
+                  (then
+                    (if (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+                          (i32.shl (i32.const 1) (global.get $fpu_top)))
+                      (then
+                        (local.set $raw0 (i64.load (call $phys80_mant_addr (global.get $fpu_top))))
+                        (local.set $raw0_valid (i32.load16_u (call $phys80_se_addr (global.get $fpu_top))))
+                        (if (i32.or
+                              (i32.and (i32.eqz (i32.and (local.get $raw0_valid) (i32.const 32767))) (i64.eqz (local.get $raw0)))
+                              (i32.and
+                                (i32.eq (i32.and (local.get $raw0_valid) (i32.const 32767)) (i32.const 32767))
+                                (i32.or
+                                  (i32.and (i32.eq (local.get $raw0_valid) (i32.const 32767))
+                                    (i64.eq (local.get $raw0) (i64.const 0x8000000000000000)))
+                                  (i64.eq (i64.and (local.get $raw0) (i64.const 0xC000000000000000)) (i64.const 0xC000000000000000)))))
+                          (then
+                            (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+                            (return)))))))
                 (if (f64.lt (local.get $st0) (f64.const 0)) (then (call $fpu_set_exc (i32.const 0x01))))
                 (call $fpu_set (i32.const 0) (f64.sqrt (local.get $st0))) (return)))
             (if (i32.eq (local.get $rm) (i32.const 3))
