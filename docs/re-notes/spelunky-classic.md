@@ -203,6 +203,39 @@ about 2.9 batches per present at `--batch-size=100000` and the default
   28 presents/s; uop is 36 % and threaded 26 % of non-idle time.
 - A Threads-on profile hung in `profile-web-frames` and was killed.
 
+## Delphi RTTI helpers: generic folds vs HLE (fold-bench), 2026-11-25
+
+Branch `fold-bench` (not on main), evidence `scratch/runs/20261125-fold-arms-bench/`.
+`--fold-arms=MASK`: 1 A no-backedge call/ret uop programs, 2 B inline seams,
+4 C read-only constant loads, 8 D HLE of the System unit helpers by signature
+(`$th_delphi_rtti`, 10-helpers.wat). All off by default.
+
+**Helper branch counts** (block ends before the final RET; what D charges under
+`--branch-clock` so the guest timeline is unchanged):
+
+| Helper | VA | Block ends |
+|---|---|---|
+| `_LStrClr` | 0x405934 | nil 1, literal (rc<0) 2, shared 3; free path partial m=3 |
+| `_LStrAsg` | 0x405988 | src half (nil 1, else 2) + LStrClr-like count for the old string |
+| `_FinalizeArray` | 0x406534 | count 0 → 1; one string field → 6 + clr |
+| `_FinalizeRecord` | 0x4064e8 | 9 + clr |
+| `System.Move` | 0x4030a8 | FILD/FISTP form: src=dst 1, 9..16 B 4, 17..32 B 5 |
+| `_CopyRecord` | 0x40674c | (off>0 ? 7+move : 6) + asg, tail −1 |
+
+- Game Maker 7 (metrojd_gm7) links the same CopyRecord but a **REP MOVSD
+  Move** (0x402a90); the rel32 is masked in the signature, so D checks the
+  callee's code and falls back for any other Move. Without that check metrojd
+  drifted (10426595 vs 10449449 API calls at 10000 batches).
+- x86_64 V8 box, 5 alternating rounds, window 21000:29000: A +2.3 %, A+B
+  −2.2 %, A+B+C −2.5 %, D −10.6 %, all −14.7 % (null band 3.9 %); window
+  29600:32600: D −16.2 %, all −17.2 % (band 0.2 %). API calls and presents are
+  identical in every arm.
+- Under `--branch-clock` the 29600:32600 window presents 198 frames, not the
+  1046 of the default-clock profile above: batches are branch counts, so the
+  same batch numbers land elsewhere in the route. Still fixed work.
+- Ruled out: A's `rep ret` decode as the cause of A's divergence; it was A
+  charging the RET exit as a JMP (fixed in bd4c09da0).
+
 ## Reproduction
 
 ```sh
