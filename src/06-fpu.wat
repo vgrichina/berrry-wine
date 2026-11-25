@@ -228,6 +228,23 @@
   ;; it sends -10 through FYL2X as log2(-10), producing a NaN and VB error 6.
   (func $fpu_fxam
     (local $v f64) (local $abs f64) (local $cc i32)
+    (local $se i32) (local $exp i32)
+    ;; Canonical normalized finite physical80 images can exceed the f64 range.
+    (if (call $fpu_is_valid (i32.const 0))
+      (then (if (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+                  (i32.shl (i32.const 1) (global.get $fpu_top)))
+        (then
+          (local.set $se (i32.load16_u (call $phys80_se_addr (global.get $fpu_top))))
+          (local.set $exp (i32.and (local.get $se) (i32.const 32767)))
+          (if (i32.and (i32.and (i32.gt_u (local.get $exp) (i32.const 0))
+                               (i32.lt_u (local.get $exp) (i32.const 32767)))
+                (i64.lt_s (i64.load (call $phys80_mant_addr (global.get $fpu_top))) (i64.const 0)))
+            (then
+              (global.set $fpu_sw
+                (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xB8FF))
+                  (i32.or (i32.const 0x0400)
+                    (i32.shr_u (i32.and (local.get $se) (i32.const 32768)) (i32.const 6)))))
+              (return)))))))
     (if (i32.eqz (call $fpu_is_valid (i32.const 0)))
       (then (local.set $cc (i32.const 0x4100)))       ;; empty: 101
       (else
@@ -284,6 +301,30 @@
   (func $fpu_fxtract
     (local $v f64) (local $abs f64) (local $bits i64)
     (local $e i32) (local $adj i32) (local $sig f64) (local $inf f64)
+    (local $p i32) (local $se i32) (local $mant i64)
+    ;; Exact canonical finite image path; all other cases retain the fallback.
+    (local.set $p (global.get $fpu_top))
+    (if (i32.and (call $fpu_is_valid (i32.const 0))
+          (i32.eqz (call $fpu_is_valid (i32.const 7))))
+      (then
+        (if (i32.and (i32.load offset=16 (global.get $fpu_image_base))
+              (i32.shl (i32.const 1) (local.get $p)))
+          (then
+            (local.set $mant (i64.load (call $phys80_mant_addr (local.get $p))))
+            (local.set $se (i32.load16_u (call $phys80_se_addr (local.get $p))))
+            (local.set $e (i32.and (local.get $se) (i32.const 32767)))
+            (if (i32.and (i32.and (i32.gt_u (local.get $e) (i32.const 0))
+                                  (i32.lt_u (local.get $e) (i32.const 32767)))
+                         (i64.lt_s (local.get $mant) (i64.const 0)))
+              (then
+                (call $fpu_set (i32.const 0)
+                  (f64.convert_i32_s (i32.sub (local.get $e) (i32.const 16383))))
+                (local.set $se (i32.or (i32.and (local.get $se) (i32.const 32768))
+                                      (i32.const 16383)))
+                (call $fpu_push (call $phys80_decode (local.get $mant) (local.get $se)))
+                (call $phys80_write (global.get $fpu_top) (local.get $mant) (local.get $se))
+                (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+                (return)))))))
     (local.set $inf (f64.reinterpret_i64 (i64.const 0x7FF0000000000000)))
     (local.set $v (call $fpu_get (i32.const 0)))
     (local.set $abs (f64.abs (local.get $v)))
@@ -1635,9 +1676,10 @@
     (call $fpu_compare_eflags_unord (local.get $a) (local.get $b)))
 
   ;; Exact exponent-only FSCALE for canonical zero/normal operands and a
-  ;; bounded finite scale. Decline specials, subnormals and range crossings.
+  ;; bounded finite scale. Also accept masked subnormal/zero results; decline rounding to normal.
   (func $phys80_scale (result i32)
     (local $p i32) (local $q i32) (local $m i64) (local $n i64)
+    (local $r i64) (local $half i64) (local $inc i32) (local $raised i32) (local $rc i32)
     (local $mask i32) (local $s i32) (local $t i32) (local $e i32) (local $f i32) (local $k i32)
     (local.set $p (global.get $fpu_top))
     (local.set $q (i32.and (i32.add (local.get $p) (i32.const 1)) (i32.const 7)))
@@ -1673,10 +1715,51 @@
     (if (i64.ne (local.get $m) (i64.const 0))
       (then
         (local.set $e (i32.add (local.get $e) (local.get $k)))
-        (if (i32.or (i32.le_s (local.get $e) (i32.const 0))
-                   (i32.ge_s (local.get $e) (i32.const 32767)))
+        (if (i32.le_s (local.get $e) (i32.const 0))
+          (then
+            ;; Guard every decline before physical/status mutation.
+            (if (i32.ne (i32.and (global.get $fpu_cw) (i32.const 63)) (i32.const 63))
+              (then (return (i32.const 0))))
+            (local.set $k (i32.sub (i32.const 1) (local.get $e)))
+            (if (i32.lt_u (local.get $k) (i32.const 64))
+              (then
+                (local.set $n (i64.shr_u (local.get $m) (i64.extend_i32_u (local.get $k))))
+                (local.set $r (i64.and (local.get $m)
+                  (i64.sub (i64.shl (i64.const 1) (i64.extend_i32_u (local.get $k))) (i64.const 1))))
+                (local.set $half (i64.shl (i64.const 1)
+                  (i64.extend_i32_u (i32.sub (local.get $k) (i32.const 1))))))
+              (else
+                ;; Never shift by >=64: Wasm masks shift counts modulo 64.
+                (local.set $n (i64.const 0))
+                (local.set $r (local.get $m))
+                (if (i32.eq (local.get $k) (i32.const 64))
+                  (then (local.set $half (i64.const 0x8000000000000000))))))
+            (if (i64.ne (local.get $r) (i64.const 0))
+              (then
+                (local.set $raised (i32.const 48))
+                (local.set $rc (i32.and (i32.shr_u (global.get $fpu_cw) (i32.const 10)) (i32.const 3)))
+                (if (i32.eqz (local.get $rc))
+                  (then
+                    (if (i32.le_u (local.get $k) (i32.const 64))
+                      (then (local.set $inc (i32.or
+                        (i64.gt_u (local.get $r) (local.get $half))
+                        (i32.and (i64.eq (local.get $r) (local.get $half))
+                          (i32.wrap_i64 (i64.and (local.get $n) (i64.const 1)))))))))
+                  (else
+                    (local.set $inc (i32.or
+                      (i32.and (i32.eq (local.get $rc) (i32.const 1))
+                        (i32.ne (i32.and (local.get $s) (i32.const 32768)) (i32.const 0)))
+                      (i32.and (i32.eq (local.get $rc) (i32.const 2))
+                        (i32.eqz (i32.and (local.get $s) (i32.const 32768))))))))))
+            (local.set $m (i64.add (local.get $n) (i64.extend_i32_u (local.get $inc))))
+            ;; Tininess reporting when rounding to normal remains unqualified.
+            (if (i64.ge_u (local.get $m) (i64.const 0x8000000000000000))
+              (then (return (i32.const 0))))
+            (local.set $e (i32.const 0))))
+        (if (i32.ge_s (local.get $e) (i32.const 32767))
           (then (return (i32.const 0))))
         (local.set $s (i32.or (i32.and (local.get $s) (i32.const 32768)) (local.get $e)))))
     (call $phys80_write (local.get $p) (local.get $m) (local.get $s))
-    (global.set $fpu_sw (i32.and (global.get $fpu_sw) (i32.const 0xFDFF)))
+    (global.set $fpu_sw (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xFDFF))
+      (i32.or (local.get $raised) (i32.shl (local.get $inc) (i32.const 9)))))
     (i32.const 1))
