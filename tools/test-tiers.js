@@ -10,6 +10,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 
 // test-mmx-x87-alias.js and test-mmx-x87-images.js exercise literal opcode
 // fixtures against the normal build module; both belong to the default unit tier.
+// test-x87-fist-precision-status.js and test-mmx-copy64-alias.js also use
+// normal production defaults and belong to the default unit tier.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // stable filename conventions so adding one does not require a second commit
 // to a central manifest. These patterns are deliberately conservative: an

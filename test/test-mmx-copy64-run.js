@@ -146,10 +146,10 @@ function i64le(bytes, off) {
   assert.strictEqual(e.test_mmx_copy64_matches(), 0, 'disabled matcher emits ordinary MMX handlers');
   e.test_mmx_copy64_set_enabled(1);
   const fused = run(fusedCode, src, fusedDst, count);
-  assert.strictEqual(e.test_mmx_copy64_matches(), 0, 'physical-image repair declines staged copy lowering');
-  assert.strictEqual(e.test_mmx_copy64_runs(), 0, 'ordinary instructions own each physical-image commit');
-  assert.strictEqual(e.test_mmx_copy64_lines(), 0n);
-  assert.strictEqual(e.test_mmx_copy64_bytes(), 0n);
+  assert(e.test_mmx_copy64_matches() > 0, 'literal straight copy installs its alias-safe handler');
+  assert(e.test_mmx_copy64_runs() > 0, 'alias-safe handler actually executes');
+  assert.strictEqual(e.test_mmx_copy64_lines(), BigInt(count));
+  assert.strictEqual(e.test_mmx_copy64_bytes(), BigInt(count * 64));
   assert.deepStrictEqual(Array.from(bytes.subarray(wa(fusedDst), wa(fusedDst) + input.length)),
     Array.from(bytes.subarray(wa(baselineDst), wa(baselineDst) + input.length)),
     'bulk lowering agrees with ordinary MMX bytes');

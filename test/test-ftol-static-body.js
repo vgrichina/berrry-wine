@@ -73,7 +73,14 @@ async function main() {
 
   let codeOffset = 0;
   function convert(value, target) {
-    dv.setFloat64(g2w(X), value, true);
+    // Each path starts with clean exception flags; compare PE/IE/C1 explicitly.
+    e.set_uop(0);
+    put(imageBase + 0x2000, [0xdb, 0xe3, 0xeb, 0]);
+    e.set_eip(imageBase + 0x2000); e.run(1);
+    if (typeof value === 'object' && value) {
+      dv.setBigUint64(g2w(X), value.mant, true);
+      dv.setUint16(g2w(X) + 8, value.se, true);
+    } else dv.setFloat64(g2w(X), value, true);
     for (let i = 0; i < 24; i += 4) dv.setUint32(g2w(OUT + i), 0xdeadbeef, true);
     // Scratch below the callee's frame: the authentic body writes here.
     for (let a = STACK - 0x40; a < STACK; a += 4) dv.setUint32(g2w(a), 0x5a5a5a5a, true);
@@ -82,7 +89,7 @@ async function main() {
     const call = target - (stub + 16);   // rel32 from the next instruction
     const bytes = [
       0xBD, ...le32(0x12345678),        // mov ebp, 0x12345678
-      0xDD, 0x05, ...le32(X),           // fld qword [x]
+      ...(typeof value === 'object' && value ? [0xDB, 0x2D] : [0xDD, 0x05]), ...le32(X), // fld m80 or m64
       0xE8, ...le32(call),              // call _ftol
       0xA3, ...le32(OUT),               // mov [out], eax
       0x89, 0x15, ...le32(OUT + 4),     // mov [out+4], edx
@@ -106,6 +113,7 @@ async function main() {
       lo: dv.getUint32(g2w(OUT), true), hi: dv.getUint32(g2w(OUT + 4), true),
       ebp: dv.getUint32(g2w(OUT + 8), true), esp: dv.getUint32(g2w(OUT + 12), true),
       cw: dv.getUint16(g2w(OUT + 16), true), top: (dv.getUint32(g2w(OUT + 20), true) >>> 11) & 7,
+      status: dv.getUint32(g2w(OUT + 20), true) & 0x23f,
       scratchTouched,
     };
   }
@@ -115,7 +123,9 @@ async function main() {
     NaN, Infinity, -Infinity, 1e-300, 123456.789, -98765.4321];
   for (const v of values) {
     const n = convert(v, NATIVE_FTOL), s = convert(v, SPLIT_FTOL);
-    for (const k of ['lo', 'hi', 'ebp', 'esp', 'cw', 'top']) check(`${v} ${k}`, n[k], s[k]);
+    for (const k of ['lo', 'hi', 'ebp', 'esp', 'cw', 'top', 'status']) check(`${v} ${k}`, n[k], s[k]);
+    const invalid = !Number.isFinite(v) || v >= 2 ** 63 || v < -(2 ** 63);
+    check(`${v} literal IE/PE/C1`, n.status, invalid ? 1 : v === Math.trunc(v) ? 0 : 0x20);
     check(`${v} native path ran (no scratch below ESP)`, n.scratchTouched, 0);
     check(`${v} split copy interpreted (scratch written)`, s.scratchTouched, 1);
   }
@@ -124,6 +134,17 @@ async function main() {
   check('-2.5 high half', t.hi, 0xffffffff);
   check('ebp restored', t.ebp, 0x12345678);
   check('esp balanced', t.esp, STACK - 0x10);
+
+  for (const v of [
+    {mant:0x8000000000000400n,se:0x4034,want:9007199254740993n,status:0},
+    {mant:0xa000000000000001n,se:0x4000,want:2n,status:0x20},
+    {mant:0xa000000000000001n,se:0xc000,want:-2n,status:0x20},
+  ]) {
+    const n=convert(v,NATIVE_FTOL),s=convert(v,SPLIT_FTOL);
+    for (const k of ['lo','hi','ebp','esp','cw','top','status']) check(`m80 ${v.se} ${k}`,n[k],s[k]);
+    check('m80 literal integer',BigInt.asIntN(64,BigInt(n.lo)|(BigInt(n.hi)<<32n)),v.want);
+    check('m80 literal status',n.status,v.status);
+  }
 
   if (failures) { console.log(`FAIL ${failures} checks`); process.exit(1); }
   console.log(`PASS  static MSVC _ftol native path matches the interpreted body (${values.length} values)`);

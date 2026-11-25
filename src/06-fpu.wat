@@ -848,9 +848,9 @@
         (if (i32.eq (local.get $reg) (i32.const 0))
           (then (call $fpu_push (f64.convert_i32_s (call $gl32 (local.get $addr)))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 2))
-          (then (call $gs32 (local.get $addr) (call $fpu_to_i32 (call $fpu_get (i32.const 0)))) (return)))
+          (then (call $phys80_fist (local.get $addr) (i32.const 32) (i32.const 0) (i32.const 0)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 3))
-          (then (call $gs32 (local.get $addr) (call $fpu_to_i32 (call $fpu_pop))) (return)))
+          (then (call $phys80_fist (local.get $addr) (i32.const 32) (i32.const 1) (i32.const 0)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 5))
           ;; FLD m80 — decode real 80-bit extended values into f64.
           (then (call $phys80_push_mem (local.get $addr)) (return)))
@@ -864,9 +864,9 @@
         (if (i32.eq (local.get $reg) (i32.const 0))
           (then (call $fpu_push (f64.convert_i32_s (i32.extend16_s (call $gl16 (local.get $addr))))) (return)))
         (if (i32.eq (local.get $reg) (i32.const 2))
-          (then (call $gs16 (local.get $addr) (call $fpu_to_i16 (call $fpu_get (i32.const 0)))) (return)))
+          (then (call $phys80_fist (local.get $addr) (i32.const 16) (i32.const 0) (i32.const 0)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 3))
-          (then (call $gs16 (local.get $addr) (call $fpu_to_i16 (call $fpu_pop))) (return)))
+          (then (call $phys80_fist (local.get $addr) (i32.const 16) (i32.const 1) (i32.const 0)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 4))
           (then (call $fpu_bld (local.get $addr)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 5))
@@ -879,12 +879,7 @@
           (then (call $fpu_bstp (local.get $addr)) (return)))
         (if (i32.eq (local.get $reg) (i32.const 7))
           (then
-            (if (call $fpu_raw_valid (i32.const 0))
-              (then
-                (call $gs64 (local.get $addr) (call $fpu_raw_get (i32.const 0)))
-                (drop (call $fpu_pop))
-                (return)))
-            (call $gs64 (local.get $addr) (call $fpu_to_i64 (call $fpu_pop)))
+            (call $phys80_fist (local.get $addr) (i32.const 64) (i32.const 1) (i32.const 0))
             (return)))
         (call $fpu_crash_op (local.get $group) (local.get $reg) (i32.const 0)) (return)))
     (call $fpu_crash_op (local.get $group) (local.get $reg) (i32.const 0))
@@ -1206,13 +1201,13 @@
   ;; convention. Croc 2 spends 14% of its block entries in this one body.
   (func $th_ftol_native (param $op i32)
     (local $nx_fn i32) (local $nx_op i32)
-    (local $saved_cw i32) (local $value i64)
+    (local $saved_cw i32)
     (local.set $saved_cw (global.get $fpu_cw))
     (global.set $fpu_cw (i32.or (local.get $saved_cw) (i32.const 0x0C00)))
-    (local.set $value (call $fpu_to_i64 (call $fpu_pop)))
+    ;; This existing register-return path must publish the same conversion
+    ;; status and exact retained-image integer as interpreted FISTP m64.
+    (call $phys80_fist (i32.const 0) (i32.const 64) (i32.const 1) (i32.const 1))
     (global.set $fpu_cw (local.get $saved_cw))
-    (i32.store offset=0 (global.get $reg_base) (i32.wrap_i64 (local.get $value)))
-    (i32.store offset=8 (global.get $reg_base) (i32.wrap_i64 (i64.shr_u (local.get $value) (i64.const 32))))
     (dispatch-next))
 
   ;; 190: FPU memory op with base+disp — op=(group<<8)|(reg<<4)|base, disp in next word
@@ -1420,3 +1415,86 @@
           (else (if (i64.lt_s (local.get $mag) (i64.const 0)) (then (return)))))))
     (i64.store offset=64 (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3))) (local.get $mag))
     (global.set $fpu_raw_tag (i32.or (global.get $fpu_raw_tag) (i32.shl (i32.const 1) (local.get $p)))))
+
+  ;; FIST must round the retained source image, before any f64 approximation.
+  ;; This conversion does not provide extended-precision arithmetic or #MF delivery.
+  ;; Static _ftol uses the same conversion with an EDX:EAX destination.
+  ;; Its documented scratch-store omission remains; FIST uses guest stores.
+  (func $phys80_fist (param $addr i32) (param $width i32) (param $pop i32) (param $to_regs i32)
+    (local $mant i64) (local $mag i64) (local $lost i64) (local $half i64)
+    (local $limit i64) (local $shift i64) (local $se i32) (local $exp i32)
+    (local $neg i32) (local $rc i32) (local $up i32)
+    (local $value i64) (local $status i32)
+    (local.set $limit (i64.shl (i64.const 1)
+      (i64.extend_i32_u (i32.sub (local.get $width) (i32.const 1)))))
+    (call $phys80_materialize (global.get $fpu_top))
+    (local.set $mant (i64.load (call $phys80_mant_addr (global.get $fpu_top))))
+    (local.set $se (i32.load16_u (call $phys80_se_addr (global.get $fpu_top))))
+    (local.set $neg (i32.ne (i32.and (local.get $se) (i32.const 32768)) (i32.const 0)))
+    (local.set $exp (i32.and (local.get $se) (i32.const 32767)))
+    (block $converted
+    (block $invalid
+      ;; NaN, infinity and unsupported unnormal encodings are invalid.
+      (br_if $invalid (i32.eq (local.get $exp) (i32.const 32767)))
+      (br_if $invalid (i32.and (i32.ne (local.get $exp) (i32.const 0))
+        (i64.ge_s (local.get $mant) (i64.const 0))))
+      (local.set $exp (i32.sub (local.get $exp) (i32.const 16383)))
+      (br_if $invalid (i32.gt_s (local.get $exp) (i32.const 63)))
+      (if (i32.eq (local.get $exp) (i32.const 63))
+        (then (local.set $mag (local.get $mant)))
+        (else
+          (if (i32.ge_s (local.get $exp) (i32.const 0))
+            (then
+              (local.set $shift (i64.extend_i32_u (i32.sub (i32.const 63) (local.get $exp))))
+              (local.set $mag (i64.shr_u (local.get $mant) (local.get $shift)))
+              (local.set $lost (i64.and (local.get $mant)
+                (i64.sub (i64.shl (i64.const 1) (local.get $shift)) (i64.const 1))))
+              (local.set $half (i64.shl (i64.const 1) (i64.sub (local.get $shift) (i64.const 1)))))
+            (else
+              ;; Avoid Wasm's modulo-64 shift at |x| < 1.
+              (local.set $lost (local.get $mant))
+              (local.set $half (i64.const 0x8000000000000000))))
+          (local.set $rc (i32.and (i32.shr_u (global.get $fpu_cw) (i32.const 10)) (i32.const 3)))
+          (if (i32.eqz (local.get $rc))
+            (then
+              (local.set $up (i32.and (i32.ge_s (local.get $exp) (i32.const -1))
+                (i32.or (i64.gt_u (local.get $lost) (local.get $half))
+                  (i32.and (i64.eq (local.get $lost) (local.get $half))
+                    (i64.ne (i64.and (local.get $mag) (i64.const 1)) (i64.const 0)))))))
+            (else
+              (local.set $up (i32.and (i64.ne (local.get $lost) (i64.const 0))
+                (i32.or
+                  (i32.and (i32.eq (local.get $rc) (i32.const 1)) (local.get $neg))
+                  (i32.and (i32.eq (local.get $rc) (i32.const 2)) (i32.eqz (local.get $neg))))))))
+          (if (local.get $up) (then (local.set $mag (i64.add (local.get $mag) (i64.const 1)))))))
+      (br_if $invalid (i64.gt_u (local.get $mag) (local.get $limit)))
+      (br_if $invalid (i32.and (i64.eq (local.get $mag) (local.get $limit)) (i32.eqz (local.get $neg))))
+      (local.set $value (select (i64.sub (i64.const 0) (local.get $mag)) (local.get $mag) (local.get $neg)))
+      ;; Intel SDM Vol.1 8.5.6: truncating discarded bits is not round-up.
+      ;; C1 records increment of magnitude, including for negative operands.
+      ;; Range-invalid conversions take the IE path without a new PE or C1.
+      (if (i64.ne (local.get $lost) (i64.const 0))
+        (then (local.set $status (i32.or (i32.const 32)
+          (i32.shl (local.get $up) (i32.const 9))))))
+      (br $converted))
+    (local.set $value (i64.sub (i64.const 0) (local.get $limit)))
+    (local.set $status (i32.const 1)))
+    (if (local.get $to_regs)
+      (then
+        (i32.store (global.get $reg_base) (i32.wrap_i64 (local.get $value)))
+        (i32.store offset=8 (global.get $reg_base) (i32.wrap_i64 (i64.shr_u (local.get $value) (i64.const 32)))))
+      (else
+    (if (i32.eq (local.get $width) (i32.const 16))
+      (then (call $gs16 (local.get $addr) (i32.wrap_i64 (local.get $value))))
+      (else (if (i32.eq (local.get $width) (i32.const 32))
+        (then (call $gs32 (local.get $addr) (i32.wrap_i64 (local.get $value))))
+        (else (call $gs64 (local.get $addr) (local.get $value))))))))
+    ;; Publish status and pop only after a successful store. A trapping store
+    ;; never reaches here; a redirected fault preserves the prior status too.
+    (if (global.get $eip_redirected) (then (return)))
+    (global.set $fpu_sw (i32.or
+      (i32.and (global.get $fpu_sw) (i32.const 0xFDFF))
+      (i32.and (local.get $status) (i32.const 0x0200))))
+    (if (i32.ne (i32.and (local.get $status) (i32.const 0x3F)) (i32.const 0))
+      (then (call $fpu_set_exc (i32.and (local.get $status) (i32.const 0x3F)))))
+    (if (local.get $pop) (then (drop (call $fpu_pop)))))

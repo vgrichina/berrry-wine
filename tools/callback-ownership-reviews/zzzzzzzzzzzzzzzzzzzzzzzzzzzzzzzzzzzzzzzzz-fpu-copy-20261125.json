@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/07b-loop-match.wat",
+      "name": "$th_mmx_copy64",
+      "baseSHA256": "1637c7ffc1ed74724461c5a2779f423737f5111804190cec5836222904187787",
+      "sha256": "144060c6ee5eca1818f04f175fa0d0fcbdf1d47a0ea049c9011d138e1a8424ff",
+      "reason": "Qualified straight MMX copy only: each mapping helper executes with its literal original instruction EIP; successful loads commit coherent physical images and each completed line publishes GPRs/flags. Faults return before later instructions and resume at the failed access. The exact 17 EIP targets are inventoried; no callback boundary, ownership write, or lifetime clearance changes. Ownership remains pending and nonlocal APIs remain disabled."
+    }
+  ]
+}
