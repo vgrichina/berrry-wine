@@ -41,6 +41,8 @@ const TEST_NAME = /^(?:test-[A-Za-z0-9._-]+|[A-Za-z0-9._-]+\.test)\.js$/;
 // including same-address cache paths and focused AAM/AAD interaction.
 // test-aam-lock.js uses a bounded authored AAM matrix in the unit tier,
 // including cold/cached LOCK rejection and unprefixed base-zero exceptions.
+// test-xlat-fs.js covers FS decoys, changing cached FS bases, and preserved
+// ordinary/code16 execution and unsupported PE32 address67 rejection.
 // Most tests are fast, in-process UNIT tests. Browser/application tests use
 // test-decimal-adjust.js uses a bounded embedded matrix in the unit tier;
 // explicit full/excluded/control modes cover the exhaustive qualification.

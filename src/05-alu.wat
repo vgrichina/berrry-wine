@@ -4252,10 +4252,12 @@
     (dispatch-next))
 
   ;; Handler 280: XLAT — AL = byte [EBX + zero-extended AL]. No flags touched.
+  ;; PE32 address32 operand: 1 selects FS; 0 retains the flat source.
   (func $th_xlat (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $b i32)
     (local.set $b (i32.load8_u (call $g2w
-      (i32.add (i32.load offset=12 (global.get $reg_base)) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF))))))
+      (i32.add (select (global.get $fs_base) (i32.const 0) (local.get $op))
+        (i32.add (i32.load offset=12 (global.get $reg_base)) (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)))))))
     (i32.store8 (global.get $reg_base) (local.get $b))
     (dispatch-next))
 
