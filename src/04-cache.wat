@@ -831,6 +831,8 @@
                 (br $os)))))))
       (local.set $page (i32.add (local.get $page) (i32.const 0x1000)))
       (br $ps)))
+    ;; the bytes a Delphi helper's native form rests on (10-helpers-delphi-fold)
+    (call $dfold_code_write (local.get $ga) (local.get $len))
     (global.set $in_code_write (i32.const 0))
     (if (i32.ne (global.get $cache_inval_hits) (local.get $hits0))
       (then (global.set $store_invalidation_pending (i32.const 1))))

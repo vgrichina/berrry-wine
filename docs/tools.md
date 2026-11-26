@@ -2,6 +2,8 @@
 
 Commands and code paths are relative to the repository root.
 
+- `--no-delphi-fold` (`test/run.js`; `?no-delphi-fold` in the browser) — turn off the Delphi System RTTI/LStr helper fold, which is **on by default**. With it on, `_LStrClr`, `_LStrAsg`, `_FinalizeRecord`, `_FinalizeArray` and `_CopyRecord` are recognised by their byte signatures at a block entry and run as threaded handler 395 (`src/10-helpers-delphi-fold.wat`). A call that cannot finish exactly falls back to the guest body. The fold is decode-time, so the flag is set before the first decode and inherited by every guest thread. When the fold fired, the exit report prints `Delphi fold: native=… fallback=… partial=… cas_lost=… smc_drops=…` with per-helper counts. Use the flag to A/B a Delphi app, or when a `--break` inside one of those helpers must fire. Tests: `test/test-delphi-fold.js`.
+
 - `tools/board.js` — read the shared `messageboard.txt` as text (it has contained NUL bytes since August, so plain `grep`/`tail` call it binary): `node tools/board.js [--tail=N] [--grep=PATTERN] [-i] [--since=ISO] [--file=PATH]`. NULs are stripped, and unstamped lines inherit the previous entry's time for `--since`. It finds the main checkout's board from inside a worktree. It is read-only: post with `echo ... >> messageboard.txt`.
 - `tools/gen_dispatch.js` — Generates `09b2-dispatch-table.generated.wat` (br_table + calls + `$init_dx_com_thunks`) from `api_table.json`. COM vtable start IDs are auto-computed from interface prefixes (e.g. `IDirectDraw_*`), so adding a new API never requires manual ID fixups.
 - `tools/gen_api_table.js` — Generates the API hash table (`01b-api-hashes.generated.wat`)

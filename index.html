@@ -2708,6 +2708,10 @@ Resource-aware Win98 emulator
     // ?smc-same-block: decoder checkpoints for a store that rewrites its own
     // running block (opt-in, decode-time; read at launch, host.js).
     if (new URLSearchParams(location.search).has('smc-same-block')) window.WineSuperops.smcSameBlock = true;
+    // ?no-delphi-fold: the Delphi System RTTI/LStr helpers run as their guest
+    // bodies instead of natively (on by default, decode-time; read at launch,
+    // host.js; src/10-helpers-delphi-fold.wat).
+    if (new URLSearchParams(location.search).has('no-delphi-fold')) window.WineSuperops.delphiFold = false;
     // Trace heads: hot heads with no back edge become forward traces (on by
     // default, compile-time; read at launch, host.js). ?no-uop-trace-heads
     // turns them off; ?uop-trace-heads is still accepted and changes nothing.

@@ -1999,6 +1999,10 @@
       ;; A head there is declined; a loop reaching it exits to it.
       (if (i32.eq (local.get $a) (global.get $logical_frame_addr))
         (then (call $uc_unsup (local.get $R))))
+      ;; A Delphi helper entry runs as its native threaded op (10-helpers-
+      ;; delphi-fold.wat), so a program exits to it rather than lowering it.
+      (if (call $dfold_at (local.get $a))
+        (then (call $uc_unsup (local.get $R))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 28))
         (then (call $uc_jt_targets (local.get $R))))
       (br_if $l (i32.eqz (call $uc_kind (local.get $R))))

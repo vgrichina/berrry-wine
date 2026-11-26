@@ -12976,6 +12976,14 @@ if (VERBOSE) {
   }
 
   reportHitCounts('Hit counts:');
+  // The Delphi helper fold (on unless --no-delphi-fold): printed only when it
+  // fired, so a non-Delphi app's log is unchanged.
+  if (instance.exports.delphi_fold_stat && (instance.exports.delphi_fold_stat(0) || instance.exports.delphi_fold_stat(1) || instance.exports.delphi_fold_stat(2))) {
+    const f = (k) => instance.exports.delphi_fold_stat(k) >>> 0;
+    console.log(`Delphi fold: native=${f(0)} fallback=${f(1)} partial=${f(2)} cas_lost=${f(3)} smc_drops=${f(4)} ` +
+      `by-id native/fallback (1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord) ` +
+      [1, 2, 3, 4, 5].map((k) => `${k}:${f(10 + k)}/${f(20 + k)}`).join(' '));
+  }
 
   if (DUMP_VFS && ctx.vfs) {
     console.log('\n[VFS] Files (' + ctx.vfs.files.size + '):');

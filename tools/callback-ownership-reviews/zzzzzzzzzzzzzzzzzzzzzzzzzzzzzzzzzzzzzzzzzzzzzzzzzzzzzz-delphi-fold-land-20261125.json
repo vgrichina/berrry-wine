@@ -1,0 +1,93 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "186cff6e19750a796324846127a06f6fa783ad39d96e288d4b9ac15c30e645d7",
+      "sha256": "dcdbb21c82a03a4a58154ddde7c72237876a14d36b135afa7396b3696d143176",
+      "reason": "Review 20261125 Delphi RTTI/LStr fold (default on, --no-delphi-fold / ?no-delphi-fold): threaded handler 395 (the retired SMACK_HUFF slot) runs _LStrClr/_LStrAsg/_FinalizeRecord/_FinalizeArray/_CopyRecord natively and writes EIP only to resume inside the same helper body (fallback after its first instruction, or a partial path at its own CALL) or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_delphi_fold like set_smc_same_block. General callback ownership remains pending."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "572eb8ce1ced16af8e819c15aefad110a908ee60403661660233da0e50ab9039",
+      "sha256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
+      "reason": "Review 20261125 Delphi RTTI/LStr fold (default on, --no-delphi-fold / ?no-delphi-fold): threaded handler 395 (the retired SMACK_HUFF slot) runs _LStrClr/_LStrAsg/_FinalizeRecord/_FinalizeArray/_CopyRecord natively and writes EIP only to resume inside the same helper body (fallback after its first instruction, or a partial path at its own CALL) or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_delphi_fold like set_smc_same_block. General callback ownership remains pending."
+    }
+  ],
+  "additions": [
+    {
+      "file": "src/10-helpers-delphi-fold.wat",
+      "name": "$th_delphi_rtti",
+      "writes": 6,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        [
+          "i32.add",
+          [
+            "local.get",
+            "$entry"
+          ],
+          [
+            "i32.const",
+            "0x1C"
+          ]
+        ],
+        [
+          "i32.add",
+          [
+            "local.get",
+            "$entry"
+          ],
+          [
+            "i32.const",
+            "0x3D"
+          ]
+        ],
+        [
+          "i32.add",
+          [
+            "local.get",
+            "$entry"
+          ],
+          [
+            "i32.const",
+            "0x4A"
+          ]
+        ],
+        [
+          "i32.add",
+          [
+            "local.get",
+            "$entry"
+          ],
+          [
+            "i32.const",
+            "0x20"
+          ]
+        ],
+        [
+          "i32.add",
+          [
+            "local.get",
+            "$entry"
+          ],
+          [
+            "i32.const",
+            "0x110"
+          ]
+        ],
+        [
+          "local.get",
+          "$entry"
+        ]
+      ],
+      "sha256": "217068817ea5295d1d8a5e87a3d846e966e533c7f103fdabc0a714950416bb33",
+      "kind": "guest-control",
+      "reason": "Review 20261125 Delphi RTTI/LStr fold (default on, --no-delphi-fold / ?no-delphi-fold): threaded handler 395 (the retired SMACK_HUFF slot) runs _LStrClr/_LStrAsg/_FinalizeRecord/_FinalizeArray/_CopyRecord natively and writes EIP only to resume inside the same helper body (fallback after its first instruction, or a partial path at its own CALL) or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_delphi_fold like set_smc_same_block. General callback ownership remains pending.",
+      "ownership": "pending"
+    }
+  ]
+}

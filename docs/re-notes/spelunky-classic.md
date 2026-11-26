@@ -203,6 +203,52 @@ about 2.9 batches per present at `--batch-size=100000` and the default
   28 presents/s; uop is 36 % and threaded 26 % of non-idle time.
 - A Threads-on profile hung in `profile-web-frames` and was killed.
 
+## Delphi helper fold on main (default on), 2026-11-25
+
+Fold-bench arm D landed on its own as `src/10-helpers-delphi-fold.wat`: on by
+default, `--no-delphi-fold` / `?no-delphi-fold` turns it off. Arms A–C stay on
+branch `fold-bench`. Evidence is in `scratch/runs/20261125-delphi-fold-land/`.
+
+- **Handler 395**, the retired SMACK_HUFF slot. Ids 502–511 are now
+  `--sse-fast`, and a 513th entry would outgrow the 512×512 handler
+  pair-histogram region, which the region map has no space to grow.
+- **Code writes.** The page-index cover is still only the first instruction,
+  so a guest body that resumes does not retire the HLE block. Every byte range
+  the native form depends on is registered as well: the body, its included
+  callees (`_FinalizeRecord`→`_FinalizeArray`→`_LStrClr`,
+  `_CopyRecord`→`_LStrAsg`) and the FILD/FISTP `System.Move`. A guest store
+  into any of them drops that group's pages (`$dfold_code_write`), and the next
+  entry re-checks the signature. The SMC cases in `test/test-delphi-fold.js`
+  fail with the hook removed: the stale native form runs, and memory and the
+  block count differ.
+- **Threads.** Refcount changes and the `_LStrAsg` slot exchange are atomic.
+  A decrement is a CAS against the count the decision was made on, done before
+  anything irreversible. A lost CAS undoes what it already moved and falls
+  back (`cas_lost`).
+- Typical counts at 20000 batches, `--branch-clock`: native 10082, partial
+  5632, fallback 643, by id `LStrClr 8073/29`, `LStrAsg 1099/558`,
+  `FinalizeRecord 584/43`, `FinalizeArray 40/10`, `CopyRecord 286/3`
+  (native/fallback).
+- **Parity, D on vs `--no-delphi-fold`, at a fixed `--max-batches`.** Under
+  `--branch-clock` every row is identical: API count, batches, end-frame md5
+  and the `--present-distinct` line. That covers Spelunky through the intro
+  (23500 batches at `--batch-size=100000`, Enter at 20500: 2245487 API calls
+  and 1332 presents in both arms), metrojd_gm7, tetravex, castle_gm5 and
+  seiklus at 20000, the heroes2_demo and sol controls (no fold fires), and
+  Spelunky with `--threads` (the guest thread at 0x405880 is System unit code
+  in a worker, which inherits `set_delphi_fold`).
+- **The default clock is not invariant under D.** It counts threaded block
+  cuts, and D does not model them. Charging D's branch counts on that clock
+  too was tried and is off by 1–2 per path. The default-clock rows match for
+  metrojd, castle and sol and diverge for tetravex (34366 vs 34334 API calls,
+  same frame), seiklus (150711 vs 150709), and Spelunky's intro (2254351 vs
+  1739765 API calls, 1338 vs 1032 presents). They still diverge with
+  `--no-uop`, so the cause is D's own block collapse. Any decode-time tier
+  does the same, which is why tier A/Bs use `--branch-clock`.
+- Not reproduced, as before: stores below ESP, the x87 scratch left by a
+  FILD/FISTP Move, faults inside a helper, and a `--break` inside a matched
+  body. Use `--no-delphi-fold` for those.
+
 ## Reproduction
 
 ```sh

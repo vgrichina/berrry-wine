@@ -77,12 +77,17 @@ Non-goals:
 | Decoder idiom fusions | `07-decoder.wat`: RLE_RUN 429, implode 466, `test_jcc` 404, `fnstsw_test_ah_jcc` 439, stack runs 472–475, … | instruction idioms anywhere | per-fusion | per-fusion, charged against both meters | `test-tree-fold.js`, `test-wat-dib-rle.js`, … | RLE_RUN +7 % Caesar |
 | `07b` loop matchers, x87 fusion | `07b-loop-match.wat` | loop shapes | shape checks | `$bc_fold_charge` | `test-debug-x87-fold.js` | x87 −16 % |
 | uop `COPY`/`FILL`/`MCOPY` | `07e-uop-compiler.wat`, `07d-uop-engine.wat` | `rep movs/stos`, unrolled `mov` pairs | window guards, `$uop_bulk_slow` | uop block ends | `test-uop-compiler.js`, `test-rep-movs-fault-restart.js` | H3 gameplay −51 % (whole tier) |
-| **Fold-bench arm D** (not on main) | branch `fold-bench`: `$delphi_rtti_at`, handler 502 | first dword + FNV-1a over the masked body, skipping E8/E9 rel32, plus callee signature (`$d_sig`, `$d_move_form`) | `entry+k` resume; native only for aligned unshared refcounts and a single AnsiString field; partial paths up to `FreeMem` | per-path branch tables (`$d_clr_pre`, `$d_asg_pre`, `$d_move_pre`), `$d_pay` checks the budget, otherwise falls back | `test/test-fold-arms.js` | above |
+| **Delphi RTTI/LStr fold** (on by default, `--no-delphi-fold`) | `src/10-helpers-delphi-fold.wat`: `$dfold_at`, threaded handler 395 | first dword + FNV-1a over the masked body, skipping E8/E9 rel32, plus callee signature (`$d_sig`, `$d_move_form`) | `entry+k` resume; native only for aligned unshared refcounts and a single AnsiString field; partial paths up to `FreeMem`; refcount/slot changes are atomic CAS, a lost CAS falls back | per-path branch tables (`$d_clr_pre`, `$d_asg_pre`, `$d_move_pre`), `$d_can` checks the budget before anything is written, otherwise falls back | `test/test-delphi-fold.js` | Spelunky Classic D −10.6 % / −16.2 % (fold-bench) |
 
 D's block publish covers only the first instruction, to avoid re-hashing when
-the guest body resumes. A write to the body's interior therefore does not
-retire the claim. Handler id 502 is now one of `--sse-fast`'s 502–511, so it
-cannot be reused.
+the guest body resumes. Code writes are covered separately: `$dfold_emit`
+registers every byte range the native form rests on (the body, each callee it
+includes, the System.Move `_CopyRecord` assumes) in up to four per-instance
+range groups, and `$invalidate_code_range` calls `$dfold_code_write`, which
+drops every page of a group a store lands in. The next entry re-decodes and
+re-checks the signature. It landed in the retired SMACK_HUFF slot 395, because
+502–511 belong to `--sse-fast` and growing the table past 512 would also grow
+the 1 MB handler pair-histogram region, which the memory map has no room for.
 
 ## 3. Census
 

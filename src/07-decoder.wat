@@ -3016,6 +3016,17 @@
           (call $publish_block (local.get $start_eip) (local.get $tstart)
                 (i32.add (local.get $start_eip) (i32.const 39))))))
 
+    ;; A Delphi System RTTI/LStr helper body becomes handler 395 and the body's
+    ;; RET (10-helpers-delphi-fold.wat $dfold_emit, which also registers the
+    ;; body's bytes for code-write invalidation).
+    (if (i32.eqz (global.get $instruction_watch))
+      (then
+        (if (call $dfold_emit (local.get $start_eip))
+          (then
+            (return
+              (call $publish_block (local.get $start_eip) (local.get $tstart)
+                    (global.get $dfold_cover_end)))))))
+
     ;; A 16-bit task can only execute inside the selector arena. Landing
     ;; outside it means a far pointer was used as a linear address somewhere,
     ;; and this has to be checked before the zeros test below: the runaway
