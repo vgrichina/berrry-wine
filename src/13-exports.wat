@@ -2303,9 +2303,6 @@
           (global.get $PAGE_INDEX_WORKER_EXTRA_BYTES)))
         (if (global.get $PAGE_INDEX_WORKER_EXTRA_BYTES)
           (then (global.set $PAGE_INDEX_EXTRA (global.get $THREAD_END))))
-        ;; A second instance exists from now on (07d $UOP_MULTI_INST: every
-        ;; program that folded a read-only dword falls through and drops).
-        (i32.atomic.store (global.get $UOP_MULTI_INST) (i32.const 1))
         ;; This worker's micro-op arena (07d), split the same way.
         (call $uop_set_arena
           (i32.add (global.get $UOP_THREAD_ARENAS)

@@ -151,9 +151,10 @@
       (then (call $uop_win_bump)))
     ;; --uop-opt 0x080: a program that folded a dword of a released page
     ;; read it from backing that is gone (07e $uc_fold_ok)
-    (if (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x80)) (i32.const 0))
-                 (i32.ne (global.get $uop_nranges) (i32.const 0)))
-      (then (call $uop_code_write (local.get $guest) (local.get $size)))))
+    (if (i32.and (global.get $uop_opt) (i32.const 0x80))
+      (then (call $uop_fold_hit (local.get $guest) (local.get $size))
+            (if (global.get $uop_nranges)
+              (then (call $uop_code_write (local.get $guest) (local.get $size)))))))
 
   ;; Change PAGE_* on a page-rounded committed range. The caller holds
   ;; LOCK_VIRTUAL_MAP, so the validation pass and update pass are atomic with

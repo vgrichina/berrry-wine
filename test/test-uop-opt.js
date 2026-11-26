@@ -13,7 +13,7 @@
 //    that assumed something -- VirtualProtect and $guest_page_clear_range on
 //    a folded dword, a guest store to a folded page (never folded again), a
 //    LOCK_MODE flip under a plain-RMW LOCK, an fs_base change under an FS:
-//    program, and a second instance under a folded program -- each falling
+//    program, and another instance's write to a folded dword -- each falling
 //    back to threaded code with the same result.
 
 const assert = require('assert');
@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -34,8 +34,10 @@ const extraWat = String.raw`
     (i32.load offset=0 (global.get $reg_base)))
   (func (export "test_page_clear") (param $address i32) (param $size i32)
     (call $guest_page_clear_range (local.get $address) (local.get $size)))
-  (func (export "test_multi_inst") (param $v i32)
-    (i32.atomic.store (global.get $UOP_MULTI_INST) (local.get $v)))
+  ;; what another instance's $invalidate_code_range does on a write: no
+  ;; ranges of its own to scan, only the shared fold epoch (07d)
+  (func (export "test_fold_hit") (param $address i32) (param $len i32)
+    (call $uop_fold_hit (local.get $address) (local.get $len)))
 `;
 
 function armsPass() {
@@ -183,22 +185,59 @@ async function invalidation() {
     ok('fs_base change drops the FS: program; same result');
   }
 
-  // a second instance (a guest thread) after a folded program compiled
+  // another instance writes a folded dword: it has none of this instance's
+  // ranges, so only the shared fold epoch can reach the program
   {
-    const P = imageBase + 0x2800;
-    dv().setUint32(g2w(P), 3, true);
+    const P = imageBase + 0x2800, Q = imageBase + 0x6800;
+    // the reference first: set_uop flushes every program
+    dv().setUint32(g2w(P), 9, true);
     e.set_uop(0); fill(); const want = run(fresh(foldLoop(P)), R); e.set_uop(1);
+    dv().setUint32(g2w(P), 3, true);
     const { at, pc } = compiled(foldLoop(P));
     assert.strictEqual(stamp(pc) & 4, 4);
-    e.test_multi_inst(1);
-    const s0 = st(0);
+    const other = compiled(foldLoop(imageBase + 0x7800));
+    e.test_fold_hit(Q, 4);   // a page no fold read: nothing drops
+    let s0 = st(0);
+    fill(); run(other.at, R);
+    assert.strictEqual(st(0), s0, 'a write to an unfolded page drops nothing');
+    dv().setUint32(g2w(P), 9, true);
+    e.test_fold_hit(P, 4);
+    s0 = st(0);
     fill(); const got = run(at, R);
-    const again = e.uop_compile(fresh(foldLoop(P))) >>> 0;
-    e.test_multi_inst(0);
-    assert.strictEqual(got, want);
-    assert(st(0) > s0, 'a second instance drops a folded program');
-    assert(again && (stamp(again) & 4) === 0, 'nothing folds with two instances');
-    ok('a second instance drops folded programs and stops F2');
+    assert.strictEqual(got, want, 'the loop sees the other instance\'s value');
+    assert(st(0) > s0, 'the epoch dropped the folded program');
+    const again = e.uop_compile(fresh(foldLoop(imageBase + 0x8800))) >>> 0;
+    assert(again && (stamp(again) & 4) === 4, 'F2 still folds other pages with two instances');
+    ok('another instance\'s write drops folded programs through the shared epoch');
+  }
+  // S1: a loop loading through EBX, which it never writes. Entered with
+  // EBX at one read-only record it profiles, compiles a variant knowing
+  // EBX (the byte compare decided, the loads folded) and enters it while
+  // EBX holds that value; any other EBX runs the generic program.
+  {
+    e.set_uop_opt(0x3FF);
+    const P = imageBase + 0x7A00, Q = imageBase + 0x8A00;
+    dv().setUint32(g2w(P), 0x11, true); dv().setUint32(g2w(P + 4), 7, true);
+    dv().setUint32(g2w(Q), 0x22, true); dv().setUint32(g2w(Q + 4), 3, true);
+    const body = loop([[0x8B, 0x03], [0x31, 0xD2], [0x8A, 0x53, 0x04], [0x80, 0xFA, 0x07], [0x75, 0x02],
+      [0x01, 0x07], [0x83, 0xC7, 0x04]]);
+    const RP = { ecx: 4, ebx: P, edi: a.buf, eax: 0, edx: 0 }, RQ = { ...RP, ebx: Q };
+    e.set_uop(0);
+    fill(); const wantP = run(fresh(body), RP);
+    fill(); const wantQ = run(fresh(body), RQ);
+    e.set_uop(1);
+    const v0 = st(11), h0 = st(13), j0 = st(8);
+    const { at } = compiled(body);
+    for (let i = 0; i < 70; i++) { fill(); assert.strictEqual(run(at, RP), wantP, `entry ${i} with EBX = P`); }
+    assert(st(11) > v0, 'a dominant read-only EBX compiled a variant');
+    assert(st(8) > j0, "the variant's byte compare was decided (C1)");
+    const h1 = st(13);
+    assert(h1 > h0, 'later entries ran the variant');
+    fill(); assert.strictEqual(run(at, RQ), wantQ, 'another EBX falls back to the generic program');
+    assert.strictEqual(st(13), h1, 'the guard kept the variant out');
+    fill(); assert.strictEqual(run(at, RP), wantP);
+    assert.strictEqual(st(13), h1 + 1, 'and EBX = P enters it again');
+    ok('S1 variant: compiled from the profile, entered only under its guard');
   }
   e.set_uop_opt(0);
   e.set_uop(0);

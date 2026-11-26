@@ -662,14 +662,14 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       // $uop_cstat 37: kind-34 sites kept; uop_sse_svcs: window-miss services
       if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} miss-services=${x.uop_sse_svcs() >>> 0}`);
       // The --uop-opt ledger (07d uop_opt_stat): printed for every arm,
-      // control included, so arms compare line for line. Cut passes (R2 C2
-      // S1 M1 C3 V5) report 0: stores deleted, variants.
+      // control included, so arms compare line for line. variants /
+      // variant-hits / megamorphic are S1's (0x200).
       if (x.uop_opt_stat) {
         const os = (k) => x.uop_opt_stat(k) >>> 0;
         log(`uop opt: mask=0x${(x.get_uop_opt ? x.get_uop_opt() >>> 0 : 0).toString(16)} enters=${st(4)} ` +
           `exits=${st(4)} head-exits=${st(6)} charged-blocks=${st(5)} service-calls=${os(2)} ` +
           `loads-deleted=${os(7)} stores-deleted=0 folds=${os(7)} fold-dwords=${os(10)} jcc-folded=${os(8)} ` +
-          `variants=0 megamorphic=${st(21)} lock-sites=${os(4)} sahf-sites=${os(5)} ret-exits=${os(6)} ` +
+          `variants=${os(11)} variant-hits=${os(13)} megamorphic=${os(12)} icg-megamorphic=${st(21)} lock-sites=${os(4)} sahf-sites=${os(5)} ret-exits=${os(6)} ` +
           `fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
       }
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
