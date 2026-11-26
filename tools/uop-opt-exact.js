@@ -29,17 +29,18 @@ const APPS = {
   // into the title room (a Game Maker 8 runner: Delphi).
   spel: { app: 'spelunky_classic', gl: true,
     args: ['--screen=1024x768', '--batch-size=100000', '--stuck-after=0', '--max-batches=23500'],
-    input: ['20500:keydown:13', '20510:keyup:13'] },
+    input: ['20500:keydown:13', '20510:keyup:13'], shots: [15000, 19000, 21000, 22500] },
   // docs/re-notes/spelunky-classic-hd.md: title room, down the rope, walk
   spelhd: { app: 'spelunky_classic_hd', gl: true,
     args: ['--screen=1024x768', '--tick-ms-per-batch=5', '--stuck-after=0', '--max-batches=181000'],
     input: ['112000:keydown:13', '112060:keyup:13', '131000:keydown:37', '166100:keyup:37',
-      '166200:keydown:38', '166600:keyup:38'] },
+      '166200:keydown:38', '166600:keyup:38'], shots: [100000, 140000, 170000] },
   // docs/re-notes/game-maker-benchmark-attempts.md (Game Maker 7: Delphi):
   // the first room, run right, jump
   metro: { app: 'metrojd_gm7', gl: true,
     args: ['--stuck-after=0', '--max-batches=70000'],
-    input: ['62000:keydown:39', '64000:keyup:39', '68500:keydown:38', '69500:keyup:38'] },
+    input: ['62000:keydown:39', '64000:keyup:39', '68500:keydown:38', '69500:keyup:38'],
+    shots: [61000, 63000, 66000, 69000] },
   // tools/uop-game-ab.js h2: into a scenario, then scroll the map
   h2: { app: 'heroes2_demo',
     args: ['--batch-size=20000', '--max-batches=2400', '--repaint-every=50'],
@@ -102,11 +103,15 @@ for (const key of apps) {
     for (const mask of arms) {
       const tag = `${key}-${clock}-0x${mask.toString(16)}`;
       const log = path.join(outDir, `${tag}.log`), png = path.join(outDir, `${tag}.png`);
+      // mid-route frames (an end frame can be a black fade): BATCH:png:PATH
+      const shots = (g.shots || []).map(b => [b, path.join(outDir, `${tag}-b${b}.png`)]);
+      const input = [...(g.input || []), ...shots.map(([b, f]) => `${b}:png:${f}`)]
+        .sort((x, y) => parseInt(x, 10) - parseInt(y, 10));
       const argv = ['test/run.js', `--app=${g.app}`, '--no-build', '--quiet-api', '--no-close',
         '--trace-api-counts', '--api-counts-top=100000', ...(g.gl ? ['--headless-gl'] : []),
         ...g.args, ...(clock === 'branch' ? ['--branch-clock'] : []),
         `--uop-opt=0x${mask.toString(16)}`, ...extra, `--max-seconds=${timeoutS - 10}`,
-        `--png=${png}`, ...(g.input && g.input.length ? [`--input=${g.input.join(',')}`] : [])];
+        `--png=${png}`, ...(input.length ? [`--input=${input.join(',')}`] : [])];
       // a GL run holds the display awake for its whole length (a display that
       // sleeps mid-sweep leaves GLFW with zero displays: a different renderer,
       // so a different frame); one retry if it still came up unusable
@@ -123,18 +128,21 @@ for (const key of apps) {
       fs.writeFileSync(log, (r.stdout || '') + (r.stderr || ''));
       const d = digest((r.stdout || '') + (r.stderr || ''));
       const pngSha = fs.existsSync(png) ? sha(fs.readFileSync(png)) : null;
+      const shotShas = shots.map(([b, f]) => [b, fs.existsSync(f) ? sha(fs.readFileSync(f)) : null]);
       const row = { app: key, appId: g.app, clock, mask: `0x${mask.toString(16)}`, status: r.status, signal: r.signal,
-        wall, batches: d.batches, apiCalls: d.apiCalls, apiSha: d.apiSha, presSha: d.presSha, pngSha,
+        wall, batches: d.batches, apiCalls: d.apiCalls, apiSha: d.apiSha, presSha: d.presSha, pngSha, shotShas,
         presents: d.pres, ledger: d.ledger, log: path.relative(ROOT, log) };
       if (mask === 0) control = row;
       const bad = [];
       if (r.status !== 0) bad.push(`exit ${r.status}${r.signal ? ' ' + r.signal : ''}`);
       if (!pngSha) bad.push('no png');
+      for (const [b, h] of shotShas) if (!h) bad.push(`no frame @${b}`);
       if (g.gl && unusable(r)) bad.push('GL unusable (display asleep)');
       if (control && row !== control) {
         if (row.apiSha !== control.apiSha) bad.push(`api ${row.apiCalls} vs ${control.apiCalls}`);
         if (row.presSha !== control.presSha) bad.push('presents');
         if (row.pngSha !== control.pngSha) bad.push('frame');
+        shotShas.forEach(([b, h], k) => { if (h !== (control.shotShas[k] || [])[1]) bad.push(`frame@${b}`); });
       }
       row.verdict = bad.length ? bad.join(', ') : (row === control ? 'control' : 'identical');
       if (bad.length) diffs++;

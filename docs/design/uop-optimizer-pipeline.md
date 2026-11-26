@@ -1018,6 +1018,15 @@ Notes on the table:
   `--no-uop` gives the same on metro and h2.
 - **Block clock, metro:** single bits `0x008` and `0x010` differ (§10.3).
   The other bits are identical.
+- **Mid-route frames are compared too.** Under the branch clock the guest is further along at a
+  given batch, and the Spelunky Classic end frame is a black fade. So the
+  driver also captures `B:png` frames mid-route and compares their hashes:
+  - spel at 15000/19000/21000/22500 (title, intro);
+  - spelhd at 100000/140000/170000;
+  - metro at 61000/63000/66000/69000.
+
+  All of them are identical at `0x1ff` vs 0, with D off and with D on
+  (`exact/frames-d-off`, `exact/frames-d-on`).
 - **Two runs were rejected as invalid, not counted as divergences.** The
   laptop display slept in the middle of a sweep, so `--headless-gl` reported
   zero displays. The driver now holds the display awake and fails such a run
