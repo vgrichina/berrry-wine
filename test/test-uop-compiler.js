@@ -2082,7 +2082,8 @@ function reguardWidenCase(inst, a, nextCode) {
     const Lc = nextCode();
     mem.set(loop, g2w(Lc));
     e.set_uop_reguard_span(span);
-    e.set_uop_reguard_lazy(lazy);
+    // a control build (test-uop-opt-identity) predates the lazy knob
+    if (e.set_uop_reguard_lazy) e.set_uop_reguard_lazy(lazy);
     e.set_uop(1);
     if (!install(Lc)) return null;
     // 1. A pure data sweep over 16 pages of the buffer, four times.
@@ -2112,7 +2113,9 @@ function reguardWidenCase(inst, a, nextCode) {
     const wide = arm(0x10000);
     // --uop-reguard-lazy: the sweep is a walk, so it still widens (after
     // its second page), ends in the same memory and stops at the code page
-    const lazy = arm(0x10000, 1);
+    // not under UOP_DIGEST: test-uop-opt-identity compares the arena with a
+    // control build that has no lazy arm to run
+    const lazy = e.set_uop_reguard_lazy && !process.env.UOP_DIGEST ? arm(0x10000, 1) : null;
     if (narrow && lazy) {
       if (narrow.hash !== lazy.hash) errs.push('data sweep: lazy and narrow re-guards left different memory');
       if (!lazy.widened) errs.push('lazy re-guard never widened on a walk');
@@ -2129,7 +2132,7 @@ function reguardWidenCase(inst, a, nextCode) {
   } finally {
     e.set_uop(0);
     e.set_uop_reguard_span(0x10000);
-    e.set_uop_reguard_lazy(0);
+    if (e.set_uop_reguard_lazy) e.set_uop_reguard_lazy(0);
   }
   return errs;
 }
