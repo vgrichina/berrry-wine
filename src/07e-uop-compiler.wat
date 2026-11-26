@@ -2724,7 +2724,11 @@
   ;; `hin` are the states entering the head from outside this copy of the
   ;; loop; `back` says whether this copy's own latches reach it.
 
+  ;; slots 0-2 in $UOP_CSCRATCH; 3-9 (C2's later copies) in $UOP_C2SCRATCH
   (func $uc_flow_slot (param $i i32) (result i32)
+    (if (i32.ge_u (local.get $i) (i32.const 3))
+      (then (return (i32.add (global.get $UC_C2_FLOW)
+                             (i32.mul (i32.sub (local.get $i) (i32.const 3)) (i32.const 0xA000))))))
     (i32.add (global.get $UC_FLOW) (i32.mul (local.get $i) (i32.const 0xA000))))
 
   (func $uc_flow (param $F i32) (param $hin i32) (param $nhin i32) (param $back i32) (result i32)
@@ -3107,6 +3111,36 @@
   ;; one charged block, as the Jcc was ($uc_emit_program).
   (global $UC_FOLDS i32 (region.addr $UOP_CSCRATCH 0x060A00)) ;; 64 x 4
   (global $UC_LAT   i32 (region.addr $UOP_CSCRATCH 0x061000)) ;; 401 x 36
+  ;; C2 (0x400): iteration copies, each with its own lattice table. Flow
+  ;; slots 3-9 and tables 0-7 in $UOP_C2SCRATCH; per-block reached flags and
+  ;; two 36-byte states (meet accumulator, a copy's entry facts).
+  (global $UOP_C2SCRATCH i32 (region.addr $UOP_C2SCRATCH 0))
+  (global $UOP_C2SCRATCH_SIZE i32 (region.size $UOP_C2SCRATCH))
+  (global $UC_C2_FLOW  i32 (region.addr $UOP_C2SCRATCH 0x000000)) ;; 7 x 0xA000
+  (global $UC_LAT_TABS i32 (region.addr $UOP_C2SCRATCH 0x046000)) ;; 8 x 0x3900
+  (global $UC_LAT_SEEN i32 (region.addr $UOP_C2SCRATCH 0x062800)) ;; 1 per block
+  (global $UC_LAT_ACC  i32 (region.addr $UOP_C2SCRATCH 0x063000))
+  (global $UC_C2_E     i32 (region.addr $UOP_C2SCRATCH 0x063040))
+  ;; the table $uc_lat reads: $UC_LAT, or a C2 copy's during its emission
+  (global $uc_lat_tab (mut i32) (region.addr $UOP_CSCRATCH 0x061000))
+  ;; C2 bounds: at most this many peeled iterations, and copies x loop
+  ;; instructions at most $uc_c2_ins (set_uop_c2)
+  (global $uc_c2_max (mut i32) (i32.const 4))
+  (global $uc_c2_ins (mut i32) (i32.const 1200))
+  ;; per attempt: the seed F1 dropped at block 0 (C2 wants copies), a retry
+  ;; without C2 after a failure, and whether this attempt's program has them
+  (global $uc_c2_want (mut i32) (i32.const 0))
+  (global $uc_c2_off (mut i32) (i32.const 0))
+  (global $uc_c2_used (mut i32) (i32.const 0))
+  (global $uc_n_c2 (mut i32) (i32.const 0))
+  (global $uc_t_c2 (mut i32) (i32.const 0))
+  (global $uc_t_c2p (mut i32) (i32.const 0))
+  ;; emitting a copy with its own table: the flags state entering its head.
+  ;; A Jcc whose producer is that state's may read the previous iteration's
+  ;; flags, which this table does not describe ($uc_c1_eval).
+  (global $uc_c_guard (mut i32) (i32.const 0))
+  (global $uc_c_hm (mut i32) (i32.const 0))
+  (global $uc_c_hc (mut i32) (i32.const 0))
   (global $UC_MAX_FOLDS i32 (i32.const 64))
   (global $uc_nfold (mut i32) (i32.const 0))
   (global $uc_lat_on (mut i32) (i32.const 0))
@@ -3141,6 +3175,9 @@
     (if (i32.eq (local.get $k) (i32.const 4)) (then (return (global.get $uc_t_cfold))))
     (if (i32.eq (local.get $k) (i32.const 5)) (then (return (global.get $uc_t_fs))))
     (if (i32.eq (local.get $k) (i32.const 6)) (then (return (global.get $uc_t_fdw))))
+    ;; 10 C2 iteration copies, 11 programs with them
+    (if (i32.eq (local.get $k) (i32.const 10)) (then (return (global.get $uc_t_c2))))
+    (if (i32.eq (local.get $k) (i32.const 11)) (then (return (global.get $uc_t_c2p))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming
@@ -3163,7 +3200,12 @@
     (global.set $uc_n_sahf (i32.const 0))
     (global.set $uc_n_retx (i32.const 0))
     (global.set $uc_n_fold (i32.const 0))
-    (global.set $uc_n_cfold (i32.const 0)))
+    (global.set $uc_n_cfold (i32.const 0))
+    (global.set $uc_lat_tab (global.get $UC_LAT))
+    (global.set $uc_c2_want (i32.const 0))
+    (global.set $uc_c2_used (i32.const 0))
+    (global.set $uc_n_c2 (i32.const 0))
+    (global.set $uc_c_guard (i32.const 0)))
   ;; Is [a, a+4) inside one non-writable section of the main image?
   (func $uc_ro_addr (param $a i32) (result i32)
     (local $pe i32) (local $n i32) (local $s i32) (local $i i32) (local $lo i32)
@@ -3219,7 +3261,7 @@
     (local.get $v))
 
   (func $uc_lat (param $pos i32) (result i32)
-    (i32.add (global.get $UC_LAT) (i32.mul (local.get $pos) (i32.const 36))))
+    (i32.add (global.get $uc_lat_tab) (i32.mul (local.get $pos) (i32.const 36))))
   ;; Operand o's value in state S, into $uc_lat_v: an immediate, a known
   ;; 32-bit register, or a 32-bit load F2 may fold at a known address.
   (func $uc_lat_val (param $S i32) (param $o i32) (result i32)
@@ -3390,88 +3432,226 @@
         (i32.store (local.get $S) (i32.or (i32.load (local.get $S))
           (select (i32.shl (i32.const 0x100) (local.get $d)) (i32.shl (i32.const 0x101) (local.get $d)) (local.get $lo8))))
         (i32.store offset=4 (i32.add (local.get $S) (i32.shl (local.get $d) (i32.const 2))) (local.get $v)))))
-  (func $uc_lat_run
+  ;; A state's values agree with its mask: a register known in full keeps its
+  ;; value, one whose low byte alone is known keeps that byte, others are 0,
+  ;; so two states with the same facts compare equal byte for byte.
+  (func $uc_lat_norm (param $S i32)
+    (local $r i32) (local $m i32) (local $p i32)
+    (local.set $m (i32.load (local.get $S)))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $r) (i32.const 8)))
+      (local.set $p (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2))))
+      (if (i32.eqz (i32.and (local.get $m) (i32.shl (i32.const 1) (local.get $r))))
+        (then
+          (i32.store offset=4 (local.get $p)
+            (select (i32.and (i32.load offset=4 (local.get $p)) (i32.const 0xFF)) (i32.const 0)
+                    (i32.ne (i32.and (local.get $m) (i32.shl (i32.const 0x100) (local.get $r))) (i32.const 0))))))
+      (local.set $r (i32.add (local.get $r) (i32.const 1)))
+      (br $l))))
+  ;; S := S meet T: a fact survives when both states hold it with one value.
+  (func $uc_lat_meet (param $S i32) (param $T i32)
+    (local $m i32) (local $r i32) (local $a i32) (local $b i32)
+    (local.set $m (i32.and (i32.load (local.get $S)) (i32.load (local.get $T))))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $r) (i32.const 8)))
+      (local.set $a (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2)))))
+      (local.set $b (i32.load offset=4 (i32.add (local.get $T) (i32.shl (local.get $r) (i32.const 2)))))
+      (if (i32.ne (local.get $a) (local.get $b))
+        (then (local.set $m (i32.and (local.get $m) (i32.xor (i32.shl (i32.const 1) (local.get $r)) (i32.const -1))))))
+      (if (i32.and (i32.xor (local.get $a) (local.get $b)) (i32.const 0xFF))
+        (then (local.set $m (i32.and (local.get $m) (i32.xor (i32.shl (i32.const 0x100) (local.get $r)) (i32.const -1))))))
+      (local.set $r (i32.add (local.get $r) (i32.const 1)))
+      (br $l)))
+    (i32.store (local.get $S) (local.get $m))
+    (call $uc_lat_norm (local.get $S)))
+  ;; Predecessor block p's exit state into T: its last position, through it.
+  (func $uc_lat_exit (param $p i32) (param $T i32)
+    (local $Q i32) (local $n i32)
+    (local.set $Q (call $uc_blk (local.get $p)))
+    (local.set $n (i32.sub (i32.add (i32.load offset=4 (local.get $Q)) (i32.load offset=8 (local.get $Q))) (i32.const 1)))
+    (memory.copy (local.get $T) (call $uc_lat (local.get $n)) (i32.const 36))
+    (call $uc_lat_xfer (local.get $T) (call $uc_loop_insn (local.get $n)))
+    (call $uc_lat_norm (local.get $T)))
+  ;; One F1 table ($uc_lat_tab): forward constant propagation to a fixed
+  ;; point. Block 0 meets the entry facts E (0: none) with -- when `back` --
+  ;; the back edges into it; every other block meets the predecessors reached
+  ;; so far, so a merge with a later block in loop order (a callee's RET, an
+  ;; inner loop's back edge) keeps what all its inputs agree on. The facts
+  ;; only shrink once a block is reached, so it converges; 0 if it does not
+  ;; within the pass bound (the caller then trusts no table).
+  (func $uc_lat_pass (param $E i32) (param $back i32) (result i32)
     (local $k i32) (local $B i32) (local $n i32) (local $j i32) (local $p i32) (local $S i32)
-    (local $T i32) (local $Q i32) (local $first i32) (local $r i32) (local $m i32) (local $sm i32)
+    (local $T i32) (local $A i32) (local $first i32) (local $pass i32) (local $changed i32)
+    (local.set $T (call $uc_lat (global.get $UC_MAX_LOOP)))
+    (local.set $A (global.get $UC_LAT_ACC))
+    (memory.fill (global.get $UC_LAT_SEEN) (i32.const 0) (global.get $uc_nblk))
+    (block $done (loop $again
+      (local.set $changed (i32.const 0))
+      (local.set $k (i32.const 0))
+      (block $bd (loop $bl
+        (br_if $bd (i32.ge_u (local.get $k) (global.get $uc_nblk)))
+        (local.set $B (call $uc_blk (local.get $k)))
+        (local.set $first (i32.const 1))
+        (if (i32.eqz (local.get $k))
+          (then
+            (if (local.get $E)
+              (then (memory.copy (local.get $A) (local.get $E) (i32.const 36))
+                    (call $uc_lat_norm (local.get $A)))
+              (else (memory.fill (local.get $A) (i32.const 0) (i32.const 36))))
+            (local.set $first (i32.const 0))))
+        (local.set $j (i32.const 0))
+        (block $pd (loop $pl
+          (br_if $pd (i32.ge_u (local.get $j) (i32.load offset=12 (local.get $B))))
+          (local.set $p (call $uc_pred (local.get $B) (local.get $j)))
+          (local.set $j (i32.add (local.get $j) (i32.const 1)))
+          (br_if $pl (i32.and (i32.eqz (local.get $k)) (i32.eqz (local.get $back))))
+          (br_if $pl (i32.eqz (i32.load8_u (i32.add (global.get $UC_LAT_SEEN) (local.get $p)))))
+          (call $uc_lat_exit (local.get $p) (local.get $T))
+          (if (local.get $first)
+            (then (memory.copy (local.get $A) (local.get $T) (i32.const 36)) (local.set $first (i32.const 0)))
+            (else (call $uc_lat_meet (local.get $A) (local.get $T))))
+          (br $pl)))
+        (if (i32.eqz (local.get $first))
+          (then
+            (local.set $S (call $uc_lat (i32.load offset=4 (local.get $B))))
+            (if (i32.or (i32.eqz (i32.load8_u (i32.add (global.get $UC_LAT_SEEN) (local.get $k))))
+                        (i32.ne (call $uc_lat_eq (local.get $S) (local.get $A)) (i32.const 1)))
+              (then
+                (memory.copy (local.get $S) (local.get $A) (i32.const 36))
+                (i32.store8 (i32.add (global.get $UC_LAT_SEEN) (local.get $k)) (i32.const 1))
+                (local.set $changed (i32.const 1))
+                ;; through the block
+                (local.set $n (i32.const 1))
+                (block $id (loop $il
+                  (br_if $id (i32.ge_u (local.get $n) (i32.load offset=8 (local.get $B))))
+                  (local.set $p (i32.add (i32.load offset=4 (local.get $B)) (local.get $n)))
+                  (memory.copy (call $uc_lat (local.get $p)) (call $uc_lat (i32.sub (local.get $p) (i32.const 1))) (i32.const 36))
+                  (call $uc_lat_xfer (call $uc_lat (local.get $p)) (call $uc_loop_insn (i32.sub (local.get $p) (i32.const 1))))
+                  (local.set $n (i32.add (local.get $n) (i32.const 1)))
+                  (br $il)))))))
+        (local.set $k (i32.add (local.get $k) (i32.const 1)))
+        (br $bl)))
+      (br_if $done (i32.eqz (local.get $changed)))
+      (local.set $pass (i32.add (local.get $pass) (i32.const 1)))
+      (if (i32.gt_u (local.get $pass) (i32.const 64)) (then (return (i32.const 0))))
+      (br $again)))
+    ;; a block no path reaches knows nothing (its positions hold an older
+    ;; compile's states otherwise)
+    (local.set $k (i32.const 0))
+    (block $ud (loop $ul
+      (br_if $ud (i32.ge_u (local.get $k) (global.get $uc_nblk)))
+      (if (i32.eqz (i32.load8_u (i32.add (global.get $UC_LAT_SEEN) (local.get $k))))
+        (then
+          (local.set $B (call $uc_blk (local.get $k)))
+          (memory.fill (call $uc_lat (i32.load offset=4 (local.get $B))) (i32.const 0)
+                       (i32.mul (i32.load offset=8 (local.get $B)) (i32.const 36)))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $ul)))
+    (i32.const 1))
+  (func $uc_lat_eq (param $S i32) (param $T i32) (result i32)
+    (local $k i32)
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $k) (i32.const 36)))
+      (if (i32.ne (i32.load (i32.add (local.get $S) (local.get $k))) (i32.load (i32.add (local.get $T) (local.get $k))))
+        (then (return (i32.const 0))))
+      (local.set $k (i32.add (local.get $k) (i32.const 4)))
+      (br $l)))
+    (i32.const 1))
+  ;; F1 over the program: the shared table $UC_LAT. S1: a variant enters
+  ;; block 0 knowing its register; the back edges meet it, so it is kept
+  ;; only if every one of them brings the same value. When they do not, C2
+  ;; (0x400) wants iteration copies that keep it ($uc_c2_chain).
+  (func $uc_lat_run
     (if (i32.eqz (i32.and (global.get $uop_opt) (i32.const 0x40))) (then (return)))
     (if (i32.gt_u (global.get $uc_nloop) (global.get $UC_MAX_LOOP)) (then (return)))
-    (local.set $T (call $uc_lat (global.get $UC_MAX_LOOP)))
-    ;; S1: a variant starts block 0 knowing its register -- kept only if every
-    ;; back edge into block 0 arrives with the same value (else one more pass
-    ;; without it)
-    (local.set $sm (i32.ge_s (global.get $uc_seed_r) (i32.const 0)))
-    (loop $fix
-    (local.set $k (i32.const 0))
-    (block $bd (loop $bl
-      (br_if $bd (i32.ge_u (local.get $k) (global.get $uc_nblk)))
-      (local.set $B (call $uc_blk (local.get $k)))
-      (local.set $S (call $uc_lat (i32.load offset=4 (local.get $B))))
-      (memory.fill (local.get $S) (i32.const 0) (i32.const 36))
-      (if (i32.and (i32.eqz (local.get $k)) (local.get $sm))
-        (then (i32.store (local.get $S) (i32.shl (i32.const 0x101) (global.get $uc_seed_r)))
-              (i32.store offset=4 (i32.add (local.get $S) (i32.shl (global.get $uc_seed_r) (i32.const 2)))
-                (global.get $uc_seed_v))))
-      (if (i32.and (i32.ne (local.get $k) (i32.const 0)) (i32.ne (i32.load offset=12 (local.get $B)) (i32.const 0)))
-        (then
-          (local.set $first (i32.const 1))
-          (local.set $j (i32.const 0))
-          (block $pd (loop $pl
-            (br_if $pd (i32.ge_u (local.get $j) (i32.load offset=12 (local.get $B))))
-            (local.set $p (call $uc_pred (local.get $B) (local.get $j)))
-            (if (i32.ge_u (local.get $p) (local.get $k))
-              (then (i32.store (local.get $S) (i32.const 0)) (br $pd)))
-            ;; the predecessor's exit: its last position's entry, through it
-            (local.set $Q (call $uc_blk (local.get $p)))
-            (local.set $n (i32.sub (i32.add (i32.load offset=4 (local.get $Q)) (i32.load offset=8 (local.get $Q))) (i32.const 1)))
-            (memory.copy (local.get $T) (call $uc_lat (local.get $n)) (i32.const 36))
-            (call $uc_lat_xfer (local.get $T) (call $uc_loop_insn (local.get $n)))
-            (if (local.get $first)
-              (then (memory.copy (local.get $S) (local.get $T) (i32.const 36)) (local.set $first (i32.const 0)))
-              (else
-                (local.set $m (i32.and (i32.load (local.get $S)) (i32.load (local.get $T))))
-                (local.set $r (i32.const 0))
-                (block $rd (loop $rl
-                  (br_if $rd (i32.ge_u (local.get $r) (i32.const 8)))
-                  (if (i32.ne (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2))))
-                              (i32.load offset=4 (i32.add (local.get $T) (i32.shl (local.get $r) (i32.const 2)))))
-                    (then (local.set $m (i32.and (local.get $m) (i32.xor (i32.shl (i32.const 1) (local.get $r)) (i32.const -1))))))
-                  (if (i32.and (i32.xor (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2))))
-                                        (i32.load offset=4 (i32.add (local.get $T) (i32.shl (local.get $r) (i32.const 2)))))
-                               (i32.const 0xFF))
-                    (then (local.set $m (i32.and (local.get $m) (i32.xor (i32.shl (i32.const 0x100) (local.get $r)) (i32.const -1))))))
-                  (local.set $r (i32.add (local.get $r) (i32.const 1)))
-                  (br $rl)))
-                (i32.store (local.get $S) (local.get $m))))
-            (local.set $j (i32.add (local.get $j) (i32.const 1)))
-            (br $pl)))))
-      ;; through the block
-      (local.set $n (i32.const 1))
-      (block $id (loop $il
-        (br_if $id (i32.ge_u (local.get $n) (i32.load offset=8 (local.get $B))))
-        (local.set $p (i32.add (i32.load offset=4 (local.get $B)) (local.get $n)))
-        (memory.copy (call $uc_lat (local.get $p)) (call $uc_lat (i32.sub (local.get $p) (i32.const 1))) (i32.const 36))
-        (call $uc_lat_xfer (call $uc_lat (local.get $p)) (call $uc_loop_insn (i32.sub (local.get $p) (i32.const 1))))
-        (local.set $n (i32.add (local.get $n) (i32.const 1)))
-        (br $il)))
-      (local.set $k (i32.add (local.get $k) (i32.const 1)))
-      (br $bl)))
-    (if (local.get $sm)
-      (then
-        (local.set $B (call $uc_blk (i32.const 0)))
-        (local.set $j (i32.const 0))
-        (block $cd (loop $cl
-          (br_if $cd (i32.ge_u (local.get $j) (i32.load offset=12 (local.get $B))))
-          (local.set $Q (call $uc_blk (call $uc_pred (local.get $B) (local.get $j))))
-          (local.set $n (i32.sub (i32.add (i32.load offset=4 (local.get $Q)) (i32.load offset=8 (local.get $Q))) (i32.const 1)))
-          (memory.copy (local.get $T) (call $uc_lat (local.get $n)) (i32.const 36))
-          (call $uc_lat_xfer (local.get $T) (call $uc_loop_insn (local.get $n)))
-          (if (i32.or (i32.eqz (i32.and (i32.load (local.get $T)) (i32.shl (i32.const 1) (global.get $uc_seed_r))))
-                      (i32.ne (i32.load offset=4 (i32.add (local.get $T) (i32.shl (global.get $uc_seed_r) (i32.const 2))))
-                              (global.get $uc_seed_v)))
-            (then (local.set $sm (i32.const 0)) (br $fix)))
-          (local.set $j (i32.add (local.get $j) (i32.const 1)))
-          (br $cl))))))
+    (global.set $uc_lat_tab (global.get $UC_LAT))
+    (memory.fill (global.get $UC_C2_E) (i32.const 0) (i32.const 36))
+    (if (i32.ge_s (global.get $uc_seed_r) (i32.const 0))
+      (then (i32.store (global.get $UC_C2_E) (i32.shl (i32.const 0x101) (global.get $uc_seed_r)))
+            (i32.store offset=4 (i32.add (global.get $UC_C2_E) (i32.shl (global.get $uc_seed_r) (i32.const 2)))
+              (global.get $uc_seed_v))))
+    (if (i32.eqz (call $uc_lat_pass (global.get $UC_C2_E) (i32.const 1))) (then (return)))
+    (global.set $uc_c2_want
+      (i32.and (i32.and (i32.ge_s (global.get $uc_seed_r) (i32.const 0))
+                        (i32.eqz (global.get $uc_c2_off)))
+               (i32.and (i32.eq (i32.and (global.get $uop_opt) (i32.const 0x400)) (i32.const 0x400))
+                        (i32.eqz (i32.and (i32.load (call $uc_lat (i32.const 0)))
+                                          (i32.shl (i32.const 1) (global.get $uc_seed_r)))))))
     (global.set $uc_lat_on (i32.const 1)))
+  ;; C2: up to $uc_c2_max copies of the whole program, each one iteration
+  ;; entered only from the one before (copy 0 from outside, with the seed),
+  ;; each with its own table whose block 0 knows what the previous copy's
+  ;; back edges agree on (EDI += 8: the next record; a register the loop
+  ;; redefines: what it was set to). The last copy's back edges enter the
+  ;; steady copy, which knows nothing at its head (the shared table). Each
+  ;; copy also has its own flag flow, entered with the previous copy's latch
+  ;; states; a copy head that would have to merge disagreeing flags, or a
+  ;; flow that fails, gives up C2 for this attempt. 1 when the copies are set.
+  (func $uc_c2_chain (result i32)
+    (local $i i32) (local $F i32) (local $hin i32) (local $nh i32) (local $tab i32)
+    (local $cp i32) (local $B i32) (local $j i32) (local $first i32) (local $Fs i32)
+    (local.set $cp (i32.add (global.get $UC_MISC) (i32.const 0xD00)))
+    (local.set $hin (global.get $UC_MISC))
+    (local.set $nh (i32.const 1))
+    (local.set $B (call $uc_blk (i32.const 0)))
+    (block $chain (loop $cl
+      (br_if $chain (i32.ge_u (local.get $i) (global.get $uc_c2_max)))
+      (br_if $chain (i32.gt_u (i32.mul (global.get $uc_nloop) (i32.add (local.get $i) (i32.const 2)))
+                              (global.get $uc_c2_ins)))
+      (local.set $tab (i32.add (global.get $UC_LAT_TABS) (i32.mul (local.get $i) (i32.const 0x3900))))
+      (global.set $uc_lat_tab (local.get $tab))
+      (if (i32.eqz (call $uc_lat_pass (global.get $UC_C2_E) (i32.const 0))) (then (br $chain)))
+      (local.set $F (call $uc_flow_slot (select (i32.const 1) (i32.add (local.get $i) (i32.const 2)) (i32.eqz (local.get $i)))))
+      (br_if $chain (i32.eqz (call $uc_flow (local.get $F) (local.get $hin) (local.get $nh) (i32.const 0))))
+      (br_if $chain (i32.ne (i32.load offset=16 (local.get $F)) (i32.const 0)))
+      ;; copy i: kind 1 (the peeled copy's), then 16, 20, ... (their seams +2)
+      (i32.store (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4)))
+        (select (i32.const 1) (i32.add (i32.const 12) (i32.shl (local.get $i) (i32.const 2))) (i32.eqz (local.get $i))))
+      (i32.store offset=4 (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4))) (local.get $F))
+      (i32.store offset=12 (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4))) (local.get $tab))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (local.set $hin (i32.add (local.get $F) (i32.const 0x7800)))
+      (local.set $nh (i32.load (i32.add (local.get $F) (i32.const 0x9FFC))))
+      ;; the next copy's entry: what this copy's back edges agree on
+      (local.set $first (i32.const 1))
+      (local.set $j (i32.const 0))
+      (block $pd (loop $pl
+        (br_if $pd (i32.ge_u (local.get $j) (i32.load offset=12 (local.get $B))))
+        (if (i32.load8_u (i32.add (global.get $UC_LAT_SEEN) (call $uc_pred (local.get $B) (local.get $j))))
+          (then
+            (call $uc_lat_exit (call $uc_pred (local.get $B) (local.get $j)) (call $uc_lat (global.get $UC_MAX_LOOP)))
+            (if (local.get $first)
+              (then (memory.copy (global.get $UC_C2_E) (call $uc_lat (global.get $UC_MAX_LOOP)) (i32.const 36))
+                    (local.set $first (i32.const 0)))
+              (else (call $uc_lat_meet (global.get $UC_C2_E) (call $uc_lat (global.get $UC_MAX_LOOP)))))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br $pl)))
+      (br_if $chain (local.get $first))
+      (br_if $chain (i32.eqz (i32.and (i32.load (global.get $UC_C2_E)) (i32.const 0xFFEF))))
+      (br $cl)))
+    (global.set $uc_lat_tab (global.get $UC_LAT))
+    (if (i32.eqz (local.get $i)) (then (return (i32.const 0))))
+    ;; the steady copy: entered by the last copy's latches and its own
+    (local.set $Fs (call $uc_flow_slot (i32.const 2)))
+    (if (i32.eqz (local.get $nh)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $uc_flow (local.get $Fs) (local.get $hin) (local.get $nh) (i32.const 1))) (then (return (i32.const 0))))
+    (if (i32.load offset=16 (local.get $Fs)) (then (return (i32.const 0))))
+    (i32.store (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4))) (i32.const 2))
+    (i32.store offset=4 (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4))) (local.get $Fs))
+    (i32.store offset=8 (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4))) (i32.const 0))
+    (i32.store offset=12 (i32.add (local.get $cp) (i32.shl (local.get $i) (i32.const 4))) (i32.const 0))
+    ;; each copy's back edges go to the next one's head
+    (local.set $j (i32.const 0))
+    (block $nd (loop $nl
+      (br_if $nd (i32.ge_u (local.get $j) (local.get $i)))
+      (i32.store offset=8 (i32.add (local.get $cp) (i32.shl (local.get $j) (i32.const 4)))
+        (i32.load (i32.add (local.get $cp) (i32.shl (i32.add (local.get $j) (i32.const 1)) (i32.const 4)))))
+      (local.set $j (i32.add (local.get $j) (i32.const 1)))
+      (br $nl)))
+    (global.set $uc_ncopies (i32.add (local.get $i) (i32.const 1)))
+    (global.set $uc_c2_used (i32.const 1))
+    (global.set $uc_n_c2 (local.get $i))
+    (i32.const 1))
   ;; C1: -1 unknown, else whether the Jcc R (flags from (m, c)) is taken.
   (func $uc_c1_eval (param $R i32) (param $m i32) (param $c i32) (result i32)
     (local $P i32) (local $S i32) (local $k i32) (local $op i32) (local $O0 i32) (local $O1 i32)
@@ -3483,6 +3663,9 @@
       (then (return (i32.const -1))))
     (local.set $P (call $uc_in_loop (local.get $m)))
     (if (i32.eqz (local.get $P)) (then (return (i32.const -1))))
+    (if (i32.and (global.get $uc_c_guard)
+                 (i32.or (i32.eq (local.get $m) (global.get $uc_c_hm)) (i32.eq (local.get $m) (global.get $uc_c_hc))))
+      (then (return (i32.const -1))))
     (local.set $k (call $uc_kind (local.get $P)))
     (local.set $op (select (i32.const 4) (i32.load offset=12 (local.get $P)) (i32.eq (local.get $k) (i32.const 4))))
     (if (i32.eqz (i32.or (i32.eq (local.get $k) (i32.const 4))
@@ -5101,6 +5284,13 @@
       (local.set $pfx (i32.load (local.get $cp)))
       (local.set $F (i32.load offset=4 (local.get $cp)))
       (local.set $peel (i32.load offset=8 (local.get $cp)))
+      ;; a C2 copy reads its own F1 table; C1 there must not decide on the
+      ;; flags that entered its head (the previous iteration's)
+      (local.set $t (i32.load offset=12 (local.get $cp)))
+      (global.set $uc_lat_tab (select (local.get $t) (global.get $UC_LAT) (local.get $t)))
+      (global.set $uc_c_guard (i32.ne (local.get $t) (i32.const 0)))
+      (global.set $uc_c_hm (i32.load (local.get $F)))
+      (global.set $uc_c_hc (i32.load offset=8 (local.get $F)))
       (local.set $k (i32.const 0))
       (block $bdone (loop $bloop
         (br_if $bdone (i32.ge_u (local.get $k) (global.get $uc_nblk)))
@@ -5278,11 +5468,15 @@
         (br $bloop)))
       (local.set $ci (i32.add (local.get $ci) (i32.const 1)))
       (br $cloop)))
+    (global.set $uc_lat_tab (global.get $UC_LAT))
+    (global.set $uc_c_guard (i32.const 0))
     (call $uc_flush_stubs))
 
-  ;; A peeled copy's back edges enter the steady-state copy.
+  ;; A peeled copy's back edges enter the next copy (`peel` is its label
+  ;; kind: the steady copy's 2, or C2's next iteration).
   (func $uc_lab (param $pfx i32) (param $peel i32) (param $t i32) (result i32)
-    (select (i32.const 2) (local.get $pfx) (i32.and (local.get $peel) (i32.eq (local.get $t) (global.get $uc_head)))))
+    (select (local.get $peel) (local.get $pfx)
+            (i32.and (i32.ne (local.get $peel) (i32.const 0)) (i32.eq (local.get $t) (global.get $uc_head)))))
   (func $uc_goto (param $pfx i32) (param $peel i32) (param $t i32) (param $next i64)
     (local $l i64)
     (local.set $l (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $t)) (local.get $t)))
@@ -5731,12 +5925,22 @@
     (i32.store (local.get $cp) (i32.const 2))
     (i32.store offset=4 (local.get $cp) (local.get $F0))
     (i32.store offset=8 (local.get $cp) (i32.const 0))
+    (i32.store offset=12 (local.get $cp) (i32.const 0))
+    ;; C2 (0x400): iteration copies keeping the seed F1 dropped at the head
+    (if (global.get $uc_c2_want)
+      (then
+        (if (i32.eqz (call $uc_c2_chain))
+          (then (global.set $uc_ncopies (i32.const 1))
+                (i32.store (local.get $cp) (i32.const 2))
+                (i32.store offset=4 (local.get $cp) (local.get $F0))
+                (i32.store offset=8 (local.get $cp) (i32.const 0))
+                (i32.store offset=12 (local.get $cp) (i32.const 0))))))
     ;; PEELING. The head merges the entry flags (the globals) with whatever
     ;; the latch produced, so the single-copy form must record the latch's
     ;; flags every iteration just to agree with the entry. Emit the first
     ;; iteration as its own copy entered with the globals, whose back edges
     ;; land in a second copy whose head only ever sees the latch producers.
-    (if (call $uc_head_pred_rec (local.get $F0))
+    (if (i32.and (i32.eqz (global.get $uc_c2_used)) (i32.ne (call $uc_head_pred_rec (local.get $F0)) (i32.const 0)))
       (then
         (if (call $uc_flow (local.get $F1) (global.get $UC_MISC) (i32.const 1) (i32.const 0))
           (then
@@ -5748,10 +5952,11 @@
                     (global.set $uc_ncopies (i32.const 2))
                     (i32.store (local.get $cp) (i32.const 1))
                     (i32.store offset=4 (local.get $cp) (local.get $F1))
-                    (i32.store offset=8 (local.get $cp) (i32.const 1))
+                    (i32.store offset=8 (local.get $cp) (i32.const 2))
                     (i32.store offset=16 (local.get $cp) (i32.const 2))
                     (i32.store offset=20 (local.get $cp) (local.get $F2))
-                    (i32.store offset=24 (local.get $cp) (i32.const 0))))))))))
+                    (i32.store offset=24 (local.get $cp) (i32.const 0))
+                    (i32.store offset=28 (local.get $cp) (i32.const 0))))))))))
     (local.set $k (i32.const 0))
     (block $d (loop $l
       (br_if $d (i32.ge_u (local.get $k) (global.get $uc_nloop)))
@@ -5919,6 +6124,22 @@
     (local.set $err (call $uc_form_loop (local.get $eip)))
     (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
     (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
+    ;; C2's copies made it fail, or too big to place: the same attempt
+    ;; without them
+    (if (i32.and (global.get $uc_c2_used)
+                 (i32.or (i32.ne (local.get $err) (i32.const 0))
+                         (i32.gt_u (i32.add (i32.add (global.get $UOP_HDR) (i32.const 64))
+                                            (i32.add (i32.shl (call $uc_encode_words) (i32.const 2))
+                                                     (i32.shl (global.get $uc_nwin) (i32.const 4))))
+                                   (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))))
+      (then
+        (global.set $uc_c2_off (i32.const 1))
+        (global.set $uc_err (i32.const 0))
+        (call $uc_opt_reset)
+        (local.set $err (call $uc_form_loop (local.get $eip)))
+        (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
+        (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
+        (global.set $uc_c2_off (i32.const 0))))
     (local.get $err))
 
   ;; The retry ladder (docs/uop-tier-design.md section 24; --no-uop-retry-ladder
@@ -6360,6 +6581,8 @@
     (global.set $uc_t_cfold (i32.add (global.get $uc_t_cfold) (global.get $uc_n_cfold)))
     (global.set $uc_t_fs (i32.add (global.get $uc_t_fs) (global.get $uc_st_fs)))
     (global.set $uc_t_fdw (i32.add (global.get $uc_t_fdw) (global.get $uc_nfold)))
+    (global.set $uc_t_c2 (i32.add (global.get $uc_t_c2) (global.get $uc_n_c2)))
+    (global.set $uc_t_c2p (i32.add (global.get $uc_t_c2p) (i32.ne (global.get $uc_n_c2) (i32.const 0))))
     (global.set $uc_ntraces (i32.add (global.get $uc_ntraces) (global.get $uc_is_trace)))
     (global.set $uc_insns (i32.add (global.get $uc_insns) (global.get $uc_nloop)))
     (global.set $uc_uops (i32.add (global.get $uc_uops) (global.get $uc_nops)))
@@ -6503,13 +6726,19 @@
   ;; An unchanged mask changes nothing (set_uop_opt(0) on a fresh instance is
   ;; the tier as it was: test-uop-opt-identity.js).
   (func (export "set_uop_opt") (param $mask i32)
-    (local.set $mask (i32.and (local.get $mask) (i32.const 0x3FF)))
+    (local.set $mask (i32.and (local.get $mask) (i32.const 0x7FFF)))
     (if (i32.eq (local.get $mask) (global.get $uop_opt)) (then (return)))
     (global.set $uop_opt (local.get $mask))
     (memory.fill (global.get $UOP_FOLD_WRITTEN) (i32.const 0) (i32.const 256))
     (memory.fill (global.get $UOP_FOLD_PAGES) (i32.const 0) (i32.const 512))
     (call $uop_flush_all))
   (func (export "get_uop_opt") (result i32) (global.get $uop_opt))
+  ;; C2's bounds (--uop-c2=COPIES[:INSNS]): peeled iterations per program
+  ;; (0-8) and copies x loop instructions. Programs compiled from now on.
+  (func (export "set_uop_c2") (param $copies i32) (param $insns i32)
+    (global.set $uc_c2_max (select (i32.const 8) (local.get $copies) (i32.gt_u (local.get $copies) (i32.const 8))))
+    (if (local.get $insns) (then (global.set $uc_c2_ins (local.get $insns))))
+    (call $uop_flush))
   ;; --no-uop-mmx: kind 27 off for programs compiled from now on.
   (func (export "set_uop_mmx") (param $flag i32)
     (global.set $uc_mmx (i32.ne (local.get $flag) (i32.const 0)))

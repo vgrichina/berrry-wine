@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -254,6 +254,48 @@ async function invalidation() {
     assert(st(8) > j8, 'a compare on a register only whose low byte is known was decided');
     fill(); assert.strictEqual(run(c8.at, RQ8), wantQ8, 'its guard falls back too');
     ok('S1 + F1 low byte: a byte compare decided with the upper bytes unknown');
+  }
+  // C2: a loop walking read-only 8-byte records through EDI (EDI += 8), so
+  // the variant's seed does not survive the back edge. The iteration copies
+  // keep it: copy i knows EDI = P + 8i, folds its record and decides its
+  // compare; the steady copy knows nothing. Every trip count around the
+  // bound must match threaded code, and no program peels more than the bound.
+  {
+    e.set_uop_opt(0x7FF);
+    const P = imageBase + 0x9C00;
+    const recs = [[7, 5], [3, 9], [7, 1], [7, 4], [2, 8], [7, 6], [5, 2], [7, 3], [1, 1], [7, 7]];
+    recs.forEach(([k, v], i) => { dv().setUint32(g2w(P + 8 * i), k, true); dv().setUint32(g2w(P + 8 * i + 4), v, true); });
+    // mov eax,[edi]; cmp eax,7; jne +2; add [esi],eax; add eax,[edi+4];
+    // add [esi+4],eax; add edi,8; (dec ecx; jnz)
+    const body = loop([[0x8B, 0x07], [0x83, 0xF8, 0x07], [0x75, 0x02], [0x01, 0x06], [0x03, 0x47, 0x04],
+      [0x01, 0x46, 0x04], [0x83, 0xC7, 0x08]]);
+    const regsFor = (n) => ({ ecx: n, edi: P, esi: a.buf, eax: 0 });
+    const TRIPS = [1, 2, 3, 4, 5, 6, 7, 9];
+    e.set_uop(0);
+    const want = {};
+    for (const n of TRIPS) { fill(); want[n] = run(fresh(body), regsFor(n)); }
+    e.set_uop(1);
+    const bounded = (max, label) => {
+      e.set_uop_c2(max, 0);
+      const c0 = st(14), p0 = st(15), j0 = st(8);
+      const { at } = compiled(body);
+      for (let i = 0; i < 70; i++) { fill(); assert.strictEqual(run(at, regsFor(3)), want[3], `${label}: warm entry ${i}`); }
+      for (const n of TRIPS) for (let r = 0; r < 3; r++) { fill(); assert.strictEqual(run(at, regsFor(n)), want[n], `${label}: ${n} trips`); }
+      const copies = st(14) - c0, progs = st(15) - p0;
+      if (max === 0) assert.strictEqual(copies, 0, `${label}: no copies`);
+      else {
+        assert(progs > 0 && copies > 0, `${label}: the variant has iteration copies`);
+        assert(copies <= progs * max, `${label}: at most ${max} copies per program (${copies} over ${progs})`);
+        assert(st(8) > j0, `${label}: the copies decided their compares`);
+      }
+      return { copies, progs };
+    };
+    const b4 = bounded(4, 'bound 4');
+    const b1 = bounded(1, 'bound 1');
+    assert.strictEqual(b1.copies, b1.progs, 'bound 1: exactly one peeled iteration per program');
+    bounded(0, 'bound 0');
+    e.set_uop_c2(4, 0);
+    ok(`C2 iteration copies: trips ${TRIPS.join('/')} exact at bounds 4, 1, 0 (bound 4: ${b4.copies} copies over ${b4.progs} programs)`);
   }
   e.set_uop_opt(0);
   e.set_uop(0);

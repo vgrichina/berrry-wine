@@ -410,6 +410,11 @@
   (region.declare $XMM_FILE (size 0x00000800) (align 0x00000040)
     (stride 0x80 (count $REGFILE_THREADS))
     (owner "01-header.wat:$XMM_FILE"))
+  ;; --uop-opt C2 (07e): the compiler's per-iteration copies -- seven more
+  ;; flag-flow slots and eight lattice tables. Its own region after the
+  ;; register files, so nothing placed before it moves.
+  (region.declare $UOP_C2SCRATCH (size 0x00064000) (align 0x00001000)
+    (owner "07e-uop-compiler.wat:$UOP_C2SCRATCH"))
   (region.declare-derived $GUEST_STACK (base (g2w 0x07400000)) (size 0x00100000) (align 0x00001000)
     (owner "01-header.wat:$GUEST_STACK"))
   (region.declare-derived $THUNK_BASE (base (g2w 0x07500000)) (size 0x00040000) (align 0x00001000)
