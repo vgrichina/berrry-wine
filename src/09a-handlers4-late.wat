@@ -1955,29 +1955,76 @@ SetColorAdjustment — validate and copy complete per-DC state.
   ;; CharUpperBuffA(lpsz, cchLength) — uppercase cchLength characters in
   ;; place and return how many were converted. Unlike CharUpperA this does not
   ;; stop at a NUL: the count is the whole contract.
-  (func $handle_CharUpperBuffA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $p i32) (local $i i32) (local $c i32)
-    (if (i32.eqz (local.get $arg0))
+  ;; CompareStringOrdinal(lpString1, cchCount1, lpString2, cchCount2,
+  ;; bIgnoreCase) -- 5 stdcall args. UTF-16 code units compared by value; a
+  ;; count of -1 means NUL-terminated. bIgnoreCase folds a-z, the same range
+  ;; CharUpperW folds. Returns CSTR_LESS_THAN 1 / CSTR_EQUAL 2 /
+  ;; CSTR_GREATER_THAN 3, or 0 with ERROR_INVALID_PARAMETER for a NULL string
+  ;; or a count below -1. Inno Setup 6 compares its switch names with it.
+  (func $handle_CompareStringOrdinal (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ignore i32) (local $i i32) (local $a i32) (local $b i32) (local $r i32)
+    (local.set $ignore (local.get $arg4))
+    (if (i32.or (i32.or (i32.eqz (local.get $arg0)) (i32.eqz (local.get $arg2)))
+          (i32.or (i32.lt_s (local.get $arg1) (i32.const -1)) (i32.lt_s (local.get $arg3) (i32.const -1))))
       (then
+        (global.set $last_error (i32.const 87))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
         (return)))
-    (local.set $p (call $g2w (local.get $arg0)))
+    (if (i32.eq (local.get $arg1) (i32.const -1))
+      (then (local.set $arg1 (call $guest_wcslen (local.get $arg0)))))
+    (if (i32.eq (local.get $arg3) (i32.const -1))
+      (then (local.set $arg3 (call $guest_wcslen (local.get $arg2)))))
+    (local.set $r (i32.const 2))
     (block $done (loop $lp
-      (br_if $done (i32.ge_u (local.get $i) (local.get $arg1)))
-      (local.set $c (i32.load8_u (i32.add (local.get $p) (local.get $i))))
-      (if (i32.and
-            (i32.ge_u (local.get $c) (i32.const 0x61))
-            (i32.le_u (local.get $c) (i32.const 0x7a)))
+      (if (i32.or (i32.ge_u (local.get $i) (local.get $arg1)) (i32.ge_u (local.get $i) (local.get $arg3)))
         (then
-          (i32.store8
-            (i32.add (local.get $p) (local.get $i))
-            (i32.sub (local.get $c) (i32.const 0x20)))))
+          (local.set $r (select (i32.const 1)
+            (select (i32.const 3) (i32.const 2) (i32.gt_u (local.get $arg1) (local.get $arg3)))
+            (i32.lt_u (local.get $arg1) (local.get $arg3))))
+          (br $done)))
+      (local.set $a (call $gl16 (i32.add (local.get $arg0) (i32.shl (local.get $i) (i32.const 1)))))
+      (local.set $b (call $gl16 (i32.add (local.get $arg2) (i32.shl (local.get $i) (i32.const 1)))))
+      (if (local.get $ignore)
+        (then
+          (if (i32.and (i32.ge_u (local.get $a) (i32.const 0x61)) (i32.le_u (local.get $a) (i32.const 0x7a)))
+            (then (local.set $a (i32.sub (local.get $a) (i32.const 0x20)))))
+          (if (i32.and (i32.ge_u (local.get $b) (i32.const 0x61)) (i32.le_u (local.get $b) (i32.const 0x7a)))
+            (then (local.set $b (i32.sub (local.get $b) (i32.const 0x20)))))))
+      (if (i32.ne (local.get $a) (local.get $b))
+        (then
+          (local.set $r (select (i32.const 1) (i32.const 3) (i32.lt_u (local.get $a) (local.get $b))))
+          (br $done)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $lp)))
-    (i32.store offset=0 (global.get $reg_base) (local.get $arg1))
-    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
-  )
+    (i32.store offset=0 (global.get $reg_base) (local.get $r))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+
+  ;; CharUpperBuffW counts WCHARs and folds the same a-z as CharUpperW; Inno
+  ;; Setup 6 uppercases its command-line switches with it before any window.
+  (func $char_upper_buff (param $buf_g i32) (param $length i32) (param $wide i32) (result i32)
+    (local $i i32) (local $c i32) (local $at i32)
+    (if (i32.eqz (local.get $buf_g)) (then (return (i32.const 0))))
+    (block $done (loop $lp
+      (br_if $done (i32.ge_u (local.get $i) (local.get $length)))
+      (local.set $at (i32.add (local.get $buf_g) (i32.shl (local.get $i) (local.get $wide))))
+      (local.set $c (call $gl_char (local.get $at) (local.get $wide)))
+      (if (i32.and (i32.ge_u (local.get $c) (i32.const 0x61))
+                   (i32.le_u (local.get $c) (i32.const 0x7a)))
+        (then (call $store_char (local.get $at) (i32.sub (local.get $c) (i32.const 0x20)) (local.get $wide))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $lp)))
+    (local.get $length))
+
+  (func $handle_CharUpperBuffA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $char_upper_buff
+      (local.get $arg0) (local.get $arg1) (i32.const 0)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  (func $handle_CharUpperBuffW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base) (call $char_upper_buff
+      (local.get $arg0) (local.get $arg1) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
 
   ;; Win98's en-US ANSI/OEM pair is CP1252 <-> CP437, not a byte copy.
   ;; Keep the complete single-byte maps in a free page immediately below the

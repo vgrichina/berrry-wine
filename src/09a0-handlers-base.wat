@@ -4898,6 +4898,151 @@
     (i32.store offset=8 (global.get $reg_base) (local.get $arg1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
 
+  ;; GetFileSizeEx(hFile, PLARGE_INTEGER lpFileSize) -> BOOL: GetFileSize's
+  ;; host query with the high dword written straight into LowPart+4. The
+  ;; error code, not the value, says whether it failed (a low dword of
+  ;; 0xFFFFFFFF is a real size). Inno Setup 6 sizes its own exe with it.
+  (func $handle_GetFileSizeEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $error i32)
+    (if (i32.eqz (local.get $arg1))
+      (then (local.set $error (i32.const 998))) ;; ERROR_NOACCESS
+      (else
+        (local.set $error (call $host_fs_file_size_result
+          (local.get $arg0) (global.get $reg_base) (i32.add (local.get $arg1) (i32.const 4))))
+        (if (i32.eqz (local.get $error))
+          (then (call $gs32 (local.get $arg1) (i32.load offset=0 (global.get $reg_base)))))))
+    (if (local.get $error) (then (global.set $last_error (local.get $error))))
+    (i32.store offset=0 (global.get $reg_base) (i32.eqz (local.get $error)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  ;; SetFilePointerEx(hFile, LARGE_INTEGER liDistanceToMove (two dwords),
+  ;; PLARGE_INTEGER lpNewFilePointer (optional), dwMoveMethod) -> BOOL, five
+  ;; stdcall dwords. SetFilePointer's host seek, whose high dword is an in/out
+  ;; guest pointer: a heap dword carries it, then the 64-bit position is
+  ;; copied out. The error code decides success, as in GetFileSizeEx.
+  (func $handle_SetFilePointerEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $high i32) (local $error i32)
+    (local.set $high (call $heap_alloc (i32.const 4)))
+    (if (i32.eqz (local.get $high))
+      (then (local.set $error (i32.const 8))) ;; ERROR_NOT_ENOUGH_MEMORY
+      (else
+        (call $gs32 (local.get $high) (local.get $arg2))
+        (local.set $error (call $host_fs_seek_result
+          (local.get $arg0) (local.get $arg1) (local.get $high)
+          (local.get $arg4) (global.get $reg_base)))
+        (if (i32.and (i32.eqz (local.get $error)) (i32.ne (local.get $arg3) (i32.const 0)))
+          (then
+            (call $gs32 (local.get $arg3) (i32.load offset=0 (global.get $reg_base)))
+            (call $gs32 (i32.add (local.get $arg3) (i32.const 4)) (call $gl32 (local.get $high)))))
+        (call $heap_free (local.get $high))))
+    (global.set $last_error (local.get $error))
+    (i32.store offset=0 (global.get $reg_base) (i32.eqz (local.get $error)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+
+  ;; One VER_* comparison: 1 EQUAL, 2 GREATER, 3 GREATER_EQUAL, 4 LESS,
+  ;; 5 LESS_EQUAL. $sys and $req are unsigned.
+  (func $ver_condition_holds (param $sys i32) (param $req i32) (param $cond i32) (result i32)
+    (if (i32.eq (local.get $cond) (i32.const 1)) (then (return (i32.eq (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 2)) (then (return (i32.gt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 3)) (then (return (i32.ge_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 4)) (then (return (i32.lt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 5)) (then (return (i32.le_u (local.get $sys) (local.get $req)))))
+    (i32.const 0))
+
+  (func $ver_condition_holds64 (param $sys i64) (param $req i64) (param $cond i32) (result i32)
+    (if (i32.eq (local.get $cond) (i32.const 1)) (then (return (i64.eq (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 2)) (then (return (i64.gt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 3)) (then (return (i64.ge_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 4)) (then (return (i64.lt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 5)) (then (return (i64.le_u (local.get $sys) (local.get $req)))))
+    (i32.const 0))
+
+  ;; VerifyVersionInfoW(OSVERSIONINFOEXW*, dwTypeMask, ULONGLONG
+  ;; dwlConditionMask) -- 4 stdcall dwords. The running system is $winver
+  ;; (the same source as GetVersionEx) with no service pack, no suite bits and
+  ;; product type VER_NT_WORKSTATION. As kernel32 does, major, minor and the
+  ;; service-pack pair are one lexicographic version compared under the
+  ;; condition of the highest of them present; build, platform, suite (AND/OR)
+  ;; and product type are separate tests. A mismatch is ERROR_OLD_WIN_VERSION,
+  ;; an empty type or condition mask ERROR_BAD_ARGUMENTS. Inno Setup 6 asks it
+  ;; for its minimum Windows version at startup.
+  (func $handle_VerifyVersionInfoW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ok i32) (local $cond i32) (local $sys i64) (local $req i64) (local $mask i64)
+    (local $nt i32)
+    (local.set $mask (i64.or (i64.extend_i32_u (local.get $arg2))
+      (i64.shl (i64.extend_i32_u (local.get $arg3)) (i64.const 32))))
+    (local.set $ok (i32.const 1))
+    (if (i32.or (i32.eqz (i32.and (local.get $arg1) (i32.const 0xFF)))
+                (i64.eqz (local.get $mask)))
+      (then
+        (global.set $last_error (i32.const 160)) ;; ERROR_BAD_ARGUMENTS
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    (local.set $nt (i32.eqz (i32.and (global.get $winver) (i32.const 0x80000000))))
+    ;; Version tuple: major(0x02) > minor(0x01) > SP major(0x20) > SP minor
+    ;; (0x10), 16 bits each, most significant first; a field not in the type
+    ;; mask stays 0 on both sides. The system has no service pack. Condition
+    ;; fields sit at 3*bit: major 3, minor 0, SP major 15, SP minor 12.
+    (if (i32.and (local.get $arg1) (i32.const 0x02))
+      (then
+        (local.set $cond (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 3)) (i64.const 7))))
+        (local.set $sys (i64.shl (i64.extend_i32_u (i32.and (global.get $winver) (i32.const 0xFF))) (i64.const 48)))
+        (local.set $req (i64.shl (i64.extend_i32_u (i32.and (call $gl32 (i32.add (local.get $arg0) (i32.const 4))) (i32.const 0xFFFF))) (i64.const 48)))))
+    (if (i32.and (local.get $arg1) (i32.const 0x01))
+      (then
+        (if (i32.eqz (local.get $cond))
+          (then (local.set $cond (i32.wrap_i64 (i64.and (local.get $mask) (i64.const 7))))))
+        (local.set $sys (i64.or (local.get $sys) (i64.shl (i64.extend_i32_u
+          (i32.and (i32.shr_u (global.get $winver) (i32.const 8)) (i32.const 0xFF))) (i64.const 32))))
+        (local.set $req (i64.or (local.get $req) (i64.shl (i64.extend_i32_u
+          (i32.and (call $gl32 (i32.add (local.get $arg0) (i32.const 8))) (i32.const 0xFFFF))) (i64.const 32))))))
+    (if (i32.and (local.get $arg1) (i32.const 0x20))
+      (then
+        (if (i32.eqz (local.get $cond))
+          (then (local.set $cond (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 15)) (i64.const 7))))))
+        (local.set $req (i64.or (local.get $req) (i64.shl (i64.extend_i32_u
+          (call $gl16 (i32.add (local.get $arg0) (i32.const 276)))) (i64.const 16))))))
+    (if (i32.and (local.get $arg1) (i32.const 0x10))
+      (then
+        (if (i32.eqz (local.get $cond))
+          (then (local.set $cond (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 12)) (i64.const 7))))))
+        (local.set $req (i64.or (local.get $req) (i64.extend_i32_u
+          (call $gl16 (i32.add (local.get $arg0) (i32.const 278))))))))
+    (if (i32.and (local.get $arg1) (i32.const 0x33))
+      (then
+        (if (i32.eqz (call $ver_condition_holds64 (local.get $sys) (local.get $req) (local.get $cond)))
+          (then (local.set $ok (i32.const 0))))))
+    ;; VER_BUILDNUMBER (0x04, condition at bit 6).
+    (if (i32.and (local.get $arg1) (i32.const 0x04))
+      (then (if (i32.eqz (call $ver_condition_holds
+              (i32.and (i32.shr_u (global.get $winver) (i32.const 16)) (i32.const 0x7FFF))
+              (call $gl32 (i32.add (local.get $arg0) (i32.const 12)))
+              (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 6)) (i64.const 7)))))
+        (then (local.set $ok (i32.const 0))))))
+    ;; VER_PLATFORMID (0x08, bit 9): 1 Win9x, 2 NT.
+    (if (i32.and (local.get $arg1) (i32.const 0x08))
+      (then (if (i32.eqz (call $ver_condition_holds
+              (select (i32.const 2) (i32.const 1) (local.get $nt))
+              (call $gl32 (i32.add (local.get $arg0) (i32.const 16)))
+              (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 9)) (i64.const 7)))))
+        (then (local.set $ok (i32.const 0))))))
+    ;; VER_SUITENAME (0x40, bit 18): 6 VER_AND = all requested bits, 7 VER_OR
+    ;; = any; the system reports no suite bits.
+    (if (i32.and (i32.ne (i32.and (local.get $arg1) (i32.const 0x40)) (i32.const 0))
+          (i32.ne (call $gl16 (i32.add (local.get $arg0) (i32.const 280))) (i32.const 0)))
+      (then (local.set $ok (i32.const 0))))
+    ;; VER_PRODUCT_TYPE (0x80, bit 21): VER_NT_WORKSTATION (1).
+    (if (i32.and (local.get $arg1) (i32.const 0x80))
+      (then (if (i32.eqz (call $ver_condition_holds (i32.const 1)
+              (call $gl8 (i32.add (local.get $arg0) (i32.const 282)))
+              (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 21)) (i64.const 7)))))
+        (then (local.set $ok (i32.const 0))))))
+    (if (i32.eqz (local.get $ok))
+      (then (global.set $last_error (i32.const 1150)))) ;; ERROR_OLD_WIN_VERSION
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
   ;; LookupPrivilegeValueW(lpSystemName, lpName, lpLuid): the A lookup over
   ;; UTF-16 names (Double Commander asks for SeShutdownPrivilege at startup).
   (func $handle_LookupPrivilegeValueW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

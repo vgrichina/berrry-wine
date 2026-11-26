@@ -39,10 +39,16 @@ const extraWat = String.raw`
   ${callWat('VirtualAlloc')}
   ${callWat('VirtualFree')}
   ${callWat('GetCPInfo')}
+  ${callWat('SetFilePointerEx')}
+  ${callWat('GetFileSizeEx')}
+  ${callWat('CompareStringOrdinal')}
+  ${callWat('CharUpperBuffW')}
+  ${callWat('VerifyVersionInfoW')}
+  ${callWat('GetVersionExA')}
 `;
 
 (async () => {
-  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory, hostCtx } = await bootRenderHarness({ extraWat, fonts: 'none' });
   const imageBase = e.get_image_base() >>> 0;
   const guestBase = e.get_guest_base() >>> 0;
   const toWasm = guest => (guest - imageBase + guestBase) >>> 0;
@@ -142,6 +148,84 @@ const extraWat = String.raw`
   assert.strictEqual(call('GetCPInfo', 1252, cpi), 1);
   assert.strictEqual(u32(cpi), 1, 'CP1252 is still single-byte');
   assert.strictEqual(call('GetCPInfo', 12345, cpi), 0, 'an unknown page still fails');
+
+  // --- VerifyVersionInfoW against the version GetVersionEx reports.
+  const vi = alloc(284);
+  set32(vi, 156);
+  assert.strictEqual(call('GetVersionExA', vi), 1);
+  const major = u32(vi + 4), minor = u32(vi + 8), platform = u32(vi + 16);
+  const VMAJ = 2, VMIN = 1, VPLAT = 8, VSPMAJ = 0x20;
+  const condMask = (...pairs) => { let lo = 0, hi = 0; for (const [type, cond] of pairs) { lo = call('VerSetConditionMask', lo, hi, type, cond); hi = e.t_edx() >>> 0; } return [lo, hi]; };
+  const verify = (maj, min, type, mask, sp = 0) => {
+    const req = alloc(284);
+    set32(req, 284); set32(req + 4, maj); set32(req + 8, min); set32(req + 16, platform);
+    view().setUint16(toWasm(req + 276), sp, true);
+    return call('VerifyVersionInfoW', req, type, mask[0], mask[1]);
+  };
+  const ge = condMask([VMAJ, 3], [VMIN, 3], [VSPMAJ, 3]);
+  assert.strictEqual(verify(major, minor, VMAJ | VMIN | VSPMAJ, ge), 1, 'the running version satisfies >= itself');
+  assert.strictEqual(e.t_esp_delta(), 20, 'VerifyVersionInfoW pops four dwords');
+  assert.strictEqual(verify(major, minor + 1, VMAJ | VMIN | VSPMAJ, ge), 0, 'a newer minor is refused');
+  assert.strictEqual(e.t_last_error(), 1150, 'ERROR_OLD_WIN_VERSION');
+  assert.strictEqual(verify(major - 1, 99, VMAJ | VMIN, ge), 1, 'lexicographic: an older major wins whatever its minor');
+  assert.strictEqual(verify(major + 1, 0, VMAJ | VMIN, ge), 0, 'Inno 6 asking for a newer major is refused');
+  assert.strictEqual(verify(major, minor, VMAJ | VMIN | VSPMAJ, ge, 1), 0, 'no service pack is installed');
+  assert.strictEqual(verify(major, minor, VPLAT, condMask([VPLAT, 1])), 1, 'platform id matches GetVersionEx');
+  {
+    const req = alloc(284);
+    set32(req, 284);
+    view().setUint16(toWasm(req + 280), 0x0100, true); // VER_SUITE_PERSONAL
+    const m = condMask([0x40, 6]);
+    assert.strictEqual(call('VerifyVersionInfoW', req, 0x40, m[0], m[1]), 0, 'a requested suite the system lacks fails');
+  }
+  assert.strictEqual(verify(major, minor, 0, ge), 0, 'empty type mask');
+  assert.strictEqual(e.t_last_error(), 160, 'ERROR_BAD_ARGUMENTS');
+
+  // --- CharUpperBuffW: counted, embedded NUL included, a-z only.
+  const cu = alloc(32);
+  writeW(cu, 'abcdefg');
+  view().setUint16(toWasm(cu + 4), 0, true);   // embedded NUL at index 2
+  assert.strictEqual(call('CharUpperBuffW', cu, 5), 5, 'returns the count');
+  assert.strictEqual(e.t_esp_delta(), 12);
+  const got = Array.from({ length: 7 }, (_, i) => view().getUint16(toWasm(cu + 2 * i), true));
+  assert.deepStrictEqual(String.fromCharCode(...got), 'AB\u0000DEfg', 'crosses the NUL, stops at the count');
+  assert.strictEqual(call('CharUpperBuffW', 0, 5), 0, 'NULL converts nothing');
+
+  // --- CompareStringOrdinal (bIgnoreCase is the 5th argument, $arg4).
+  const s1 = alloc(32), s2 = alloc(32);
+  const cso = (x, nx, y, ny, ic) => { writeW(s1, x); writeW(s2, y); return call('CompareStringOrdinal', s1, nx, s2, ny, ic); };
+  assert.strictEqual(cso('/SILENT', -1, '/SILENT', -1, 0), 2, 'CSTR_EQUAL');
+  assert.strictEqual(e.t_esp_delta(), 24, 'five stdcall args');
+  assert.strictEqual(cso('/silent', -1, '/SILENT', -1, 0), 3, 'ordinal: lower case sorts after upper');
+  assert.strictEqual(cso('/silent', -1, '/SILENT', -1, 1), 2, 'bIgnoreCase folds a-z');
+  assert.strictEqual(cso('abc', -1, 'abd', -1, 0), 1, 'CSTR_LESS_THAN');
+  assert.strictEqual(cso('abc', 2, 'abd', 2, 0), 2, 'counts bound the comparison');
+  assert.strictEqual(cso('ab', -1, 'abc', -1, 0), 1, 'a prefix is less');
+  assert.strictEqual(call('CompareStringOrdinal', 0, -1, s2, -1, 0, 0), 0, 'NULL string');
+  assert.strictEqual(e.t_last_error(), 87);
+
+  // --- GetFileSizeEx
+  const fh = hostCtx.vfs.createFile('c:\\sizeex.bin', 0xc0000000, 2);
+  hostCtx.vfs.writeFile(fh, new Uint8Array(300), 300);
+  const li = alloc(8);
+  set32(li, 0xdeadbeef); set32(li + 4, 0xdeadbeef);
+  assert.strictEqual(call('GetFileSizeEx', fh, li), 1);
+  assert.strictEqual(e.t_esp_delta(), 12);
+  assert.deepStrictEqual([u32(li), u32(li + 4)], [300, 0], 'LARGE_INTEGER size');
+  assert.strictEqual(call('GetFileSizeEx', 0x1234, li), 0, 'a bad handle fails');
+  assert.strictEqual(e.t_last_error(), 6, 'ERROR_INVALID_HANDLE');
+
+  // --- SetFilePointerEx (same file as GetFileSizeEx above, 300 bytes)
+  const np = alloc(8);
+  assert.strictEqual(call('SetFilePointerEx', fh, 100, 0, np, 0), 1, 'FILE_BEGIN');
+  assert.strictEqual(e.t_esp_delta(), 24, 'five stdcall dwords');
+  assert.deepStrictEqual([u32(np), u32(np + 4)], [100, 0]);
+  assert.strictEqual(call('SetFilePointerEx', fh, 0xFFFFFFF6, 0xFFFFFFFF, np, 1), 1, 'FILE_CURRENT -10');
+  assert.deepStrictEqual([u32(np), u32(np + 4)], [90, 0]);
+  assert.strictEqual(call('SetFilePointerEx', fh, 0, 0, 0, 2), 1, 'FILE_END with no out pointer');
+  assert.strictEqual(call('SetFilePointerEx', fh, 0, 0, np, 1), 1);
+  assert.deepStrictEqual([u32(np), u32(np + 4)], [300, 0], 'the seek to the end took effect');
+  assert.strictEqual(call('SetFilePointerEx', 0x1234, 0, 0, np, 0), 0, 'a bad handle fails');
 
   console.log('test-delphi-corpus-apis: OK');
 })().catch(err => { console.error(err); process.exit(1); });

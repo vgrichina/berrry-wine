@@ -42200,5 +42200,129 @@
       }
     ],
     "ret": "DWORD"
+  },
+  {
+    "id": 4993,
+    "name": "VerifyVersionInfoW",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3945885385,
+    "args": [
+      {
+        "name": "lpVersionInformation",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwTypeMask",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwlConditionMaskLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwlConditionMaskHi",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4994,
+    "name": "CharUpperBuffW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4065595103,
+    "args": [
+      {
+        "name": "lpsz",
+        "type": "LPWSTR"
+      },
+      {
+        "name": "cchLength",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4995,
+    "name": "CompareStringOrdinal",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 496110642,
+    "args": [
+      {
+        "name": "lpString1",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "cchCount1",
+        "type": "int"
+      },
+      {
+        "name": "lpString2",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "cchCount2",
+        "type": "int"
+      },
+      {
+        "name": "bIgnoreCase",
+        "type": "BOOL"
+      }
+    ],
+    "ret": "int"
+  },
+  {
+    "id": 4996,
+    "name": "GetFileSizeEx",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4257869773,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "lpFileSize",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4997,
+    "name": "SetFilePointerEx",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3865219911,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "liDistanceToMoveLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "liDistanceToMoveHi",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpNewFilePointer",
+        "type": "LPVOID",
+        "out": true
+      },
+      {
+        "name": "dwMoveMethod",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]
