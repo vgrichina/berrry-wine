@@ -4,15 +4,15 @@
     {
       "file": "host.js",
       "name": "host-file",
-      "baseSHA256": "186cff6e19750a796324846127a06f6fa783ad39d96e288d4b9ac15c30e645d7",
-      "sha256": "7536f3e4779419c0972843d8c8b5d5680b276557f81d8a1883a6f17ab22a28d3",
+      "baseSHA256": "dcdbb21c82a03a4a58154ddde7c72237876a14d36b135afa7396b3696d143176",
+      "sha256": "173828497480cdd8e5703edbe69abc0a97791d71d1a9217f4920f2b5079ddf6d",
       "reason": "Review 20261125 --uop-opt=MASK (opt-in, default 0): the host plumbs set_uop_opt (main instance, guest Worker, inherited for CreateThread instances) exactly like set_uop_sse. A compile-time mask of uop optimizer passes; no EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending."
     },
     {
       "file": "lib/worker-imports.js",
       "name": "host-file",
-      "baseSHA256": "572eb8ce1ced16af8e819c15aefad110a908ee60403661660233da0e50ab9039",
-      "sha256": "5af6ca3ce27394b45fc9c15f90ba08b6302cefcf299c19f8b00b5f4dc2f5cf70",
+      "baseSHA256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
+      "sha256": "b0f91b6e6823b23dc23680cfe600164d0929eeaf0603bb512161207b4f02faf1",
       "reason": "Review 20261125 --uop-opt=MASK: set_uop_opt joins the inherited setters, a compile-time choice per instance with the same lifetime as set_uop_sse."
     },
     {

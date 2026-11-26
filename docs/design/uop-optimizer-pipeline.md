@@ -891,7 +891,7 @@ hooks (`$guest_page_clear_range` in 03, VirtualProtect in 09a0b) and the
 | `0x002` | R1 + V4 | `rep ret` decodes as `ret`. A RET with no candidate target exits the program as a charged GOTO to the deopt stub. **Branch clock only** (`$uc_retx_on`, header stamp 8): see §10.3. |
 | `0x004` | R3 seam elision | A runtime decision, not the compile-time entry guard of §6: the seam ops (79/80/87) are skipped in `$uop_fast` when `dao_status \| pending_armed` is 0. |
 | `0x008` | V1 | `LOCK` ALU/INC/DEC/NOT/NEG and memory `XCHG` lower as the plain RMW while `$LOCK_MODE` is 0. A guard leaves any address ≥ `0x80000000` (the shared heap, whose CAS the host serialises) to threaded code before it reads. Stamp 1 drops the program if `LOCK_MODE` changes. |
-| `0x010` | V2 (`sahf` only) | `sahf` compiles as service op SSER 108 → `$th_sahf`, so it no longer declines the region. It is still a handback, not a native op. |
+| `0x010` | V2 (`sahf` only) | `sahf` compiles as the SSER service op (op 108, calling threaded handler 212), so it no longer declines the region. It is still a handback, not a native op. |
 | `0x020` | V3 | `fs:` integer forms fold `fs_base` into the displacement, recorded at header +40. Stamp 2 drops the program when the instance's `fs_base` differs. No ESP-based operand, LEA or string op. |
 | `0x040` | F1 | Forward constant lattice over the region (`$uc_lat_xfer`): ⊥ / const / ⊤ per register, joined at merge points. |
 | `0x080` | F2 | A load from a lattice-constant address in a non-writable image section folds to its value. Adjacent folded dwords are coalesced into SMC ranges (`$uc_fold_ranges` → `$uop_add_range`, which also code-marks the page). Stamp 4 re-checks the single-instance word (§4.3). A page that ever took a guest store is recorded in `$UOP_FOLD_WRITTEN` (64 entries, process-wide) and is never folded again. |
@@ -956,7 +956,7 @@ instance, 8 = branch clock. They are checked by `$uop_hdr_bad` in
   - a second instance drops it.
 - **Mask 0 is main:** `test/test-uop-opt-identity.js` hashes the program
   arena over the whole corpus. Unset equals `set_uop_opt(0)`, and both equal
-  a control build of 5ac21c5f8.
+  control builds of 5ac21c5f8 and of main 28b658ece, which has D.
 
 ### 10.4 Notes for the sweep
 
@@ -983,3 +983,75 @@ instance, 8 = branch clock. They are checked by `$uop_hdr_bad` in
   (C1 charges per segment at the exit), and LOCK as plain RMW (8–9× over
   CAS). Not yet taken: inline `$gl32`/`$g2w` fast paths in program ops, and
   dead-flag elimination (C3, cut).
+
+### 10.5 App exactness matrix (`tools/uop-opt-exact.js`)
+
+Each cell compares the run with mask-0 control on the same clock and the
+same D setting. The comparison covers the whole API histogram
+(`--trace-api-counts`), the present/GPS lines with wall-clock fields
+stripped, and the end-frame PNG's SHA-256. Every run is serial, under 3
+minutes, and headless GL held awake by `caffeinate -d -i`.
+
+Routes:
+- `spel`: Spelunky Classic, title room, 23500 batches.
+- `spelhd`: Spelunky Classic HD rope route, 181000.
+- `metro`: metrojd_gm7, Delphi 6-7 by `tools/delphi-detect.js`, first room,
+  run and jump, 70000.
+- `h2`: Heroes II demo, scenario and scroll, 2400.
+- `sc`: StarCraft shareware, `--no-threads`, Terran base, 3500.
+
+| Arms | Clock | D | spel | spelhd | metro | h2 | sc |
+|---|---|---|---|---|---|---|---|
+| each bit alone (0x1 … 0x80), 0x140, 0x1ff | branch | absent (pre-rebase) | identical | identical | identical | identical | identical |
+| each bit alone, 0x140, 0x1ff | branch | `--no-delphi-fold` | 0x1ff identical | 0x1ff identical | identical | identical | identical |
+| 0x1ff | branch | on (default) | identical | identical | identical | identical | identical |
+| 0x1ff | block | off | differs (timing) | differs (timing) | differs (timing) | identical | identical |
+
+Notes on the table:
+- **Branch clock:** the control hashes are equal across D off, D on and the
+  pre-D build:
+  - spel 2245487 calls, frame 6a4436d8;
+  - spelhd 2333089, 78cf8e1d;
+  - metro 1213199, c8cbac72;
+  - h2 1520029, 55aaf300;
+  - sc 353869, c821b6c5.
+  `--no-uop` gives the same on metro and h2.
+- **Block clock, metro:** single bits `0x008` and `0x010` differ (§10.3).
+  The other bits are identical.
+- **Two runs were rejected as invalid, not counted as divergences.** The
+  laptop display slept in the middle of a sweep, so `--headless-gl` reported
+  zero displays. The driver now holds the display awake and fails such a run
+  as "GL unusable".
+
+### 10.6 Ledger on Spelunky Classic (branch clock, D off, 23500 batches)
+
+| Mask | enters | charged blocks | service calls | seams skipped | ret-exits | jcc-folded | lock | sahf | fs | decl-hits | folds |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 97.65M | 1704.9M | 620.7M | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x001 | 100.55M | 1700.1M | 616.7M | 0 | 0 | 0 | 0 | 0 | 0 | 248 | 0 |
+| 0x002 | 91.57M | 1727.6M | 638.3M | 0 | 6858 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x004 | 97.65M | 1704.9M | 311.5M | 309.1M | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x008 | 101.73M | 1744.7M | 652.5M | 0 | 0 | 0 | 3652 | 0 | 0 | 0 | 0 |
+| 0x010 | 98.25M | 1711.1M | 632.3M | 0 | 0 | 0 | 0 | 470 | 0 | 0 | 0 |
+| 0x020 | 100.53M | 1708.4M | 624.7M | 0 | 0 | 0 | 0 | 0 | 1848 | 0 | 0 |
+| 0x040 | = 0 | = 0 | = 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x080 | = 0 | = 0 | = 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x140 | 100.41M | 1698.9M | 615.7M | 0 | 0 | 706 | 0 | 0 | 0 | 0 | 0 |
+| 0x1ff | 99.91M | 1744.8M | 334.8M | 325.0M | 7592 | 1114 | 4518 | 464 | 1964 | 326 | 0 |
+| 0 + D on | 84.50M | 1647.7M | 584.0M | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x1ff + D on | 84.15M | 1657.1M | 289.8M | 302.6M | 3764 | 744 | 1405 | 506 | 1432 | 193 | 0 |
+
+How to read it:
+- **Charged blocks are the tier's coverage, not work.** More blocks inside
+  programs means more x86 executed by the tier.
+- **Enters go up when coverage widens.** Newly accepted regions add their
+  own enters.
+- **R1 (`0x002`) cuts enters by 6 %.** Programs that used to stop at a RET
+  now continue through it.
+- **R3 (`0x004`) cuts service calls by 50 %.** It is the one pass the ledger
+  says is worth timing alone.
+- **F1/F2 alone do nothing on this route** (§10.4).
+- **With D on, R3 still removes 294M service calls.** D removes the helper
+  bodies; it does not remove the seams.
+- **Wall time on the laptop is not a measurement.** The box sweep times these
+  arms.
