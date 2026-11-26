@@ -23,7 +23,14 @@
 // code-write invalidation; its block's page-index cover is only the first
 // instruction).
 //
-// Needs test/binaries/candidates/spelunky-classic (skips when absent).
+// _InitializeRecord / _InitializeArray run over the image's RValue and over
+// synthetic RTTI (every kind they take, records of static arrays of records,
+// three deep, an empty static array) into a buffer of nonzero junk; System.Move
+// runs every size class of the FILD form, and of Game Maker 7's REP MOVSD form
+// (from Metrojd, placed at a VA of its own), apart and overlapping both ways.
+//
+// Needs test/binaries/candidates/spelunky-classic (skips when absent); the
+// REP Move cases need candidates/metrojd/metrojd_gm7.exe.
 
 const fs = require('fs');
 const path = require('path');
@@ -61,6 +68,12 @@ const BUF = 0x00a00000, STACK = 0x00900000, STUB = 0x00980000, POKE = STUB + 0x4
 const RVALUE = 0x5436f4, RTOKEN = 0x543710, ANSI = 0x4010d0;
 const H = { clr: 0x405934, asg: 0x405988, frec: 0x4064e8, farr: 0x406534, crec: 0x40674c };
 const MOVE = 0x4030a8;
+// _InitializeRecord / _InitializeArray
+const IR = 0x406418, IA = 0x406448;
+const REPMV = STUB + 0x100, DFSTUB = STUB + 0x80;
+const MJ = path.join(ROOT, 'test/binaries/candidates/metrojd/metrojd_gm7.exe');
+const REP_BODY = fs.existsSync(MJ) ? peImage(MJ)(0x402a90, 0x40) : null;
+const le32 = (v) => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF];
 // delphi_fold_stat keys
 const NATIVE = 0, FALLBACK = 1, PARTIAL = 2, SMC_DROPS = 4;
 
@@ -74,6 +87,12 @@ async function delphiInstance(img, on, branchClock) {
   // the code-write path a self-modifying program would
   mem.set([0x80, 0x32, 0x01, 0xC3], g2w(POKE));
   new DataView(e.memory.buffer).setUint32(g2w(0x589730), STUB, true);
+  // Game Maker 7's REP MOVSD System.Move, from Metrojd, at a VA of its own
+  // (it is matched by its bytes); and `std; call it; cld; ret`
+  if (REP_BODY) {
+    mem.set(REP_BODY, g2w(REPMV));
+    mem.set([0xFD, 0xE8, ...le32(REPMV - (DFSTUB + 6)), 0xFC, 0xC3], g2w(DFSTUB));
+  }
   e.set_uop(0);
   e.set_delphi_fold(on ? 1 : 0);
   if (e.get_delphi_fold() !== (on ? 1 : 0)) fail('set_delphi_fold did not take');
@@ -86,7 +105,8 @@ function layoutBuf(inst, spec) {
   mem.fill(0, g2w(BUF), g2w(BUF) + 0x2000);
   const dv = new DataView(inst.e.memory.buffer);
   const w = (ga, v) => dv.setUint32(g2w(ga), v >>> 0, true);
-  spec(w);
+  const b = (ga, v) => { mem[g2w(ga)] = v & 0xFF; };
+  spec(w, b);
 }
 
 function call(inst, entry, regs) {
@@ -177,6 +197,98 @@ const CASES = [
     regs: { eax: BUF, edx: BUF + 0x40, ecx: RTOKEN } },
 ];
 
+// Synthetic RTTI at TI (inside the compared buffer, outside every zeroed
+// span): [kind, L, name(L)] then, from +2+L, the kind's data. Record (0x0E):
+// size, field count, {PPTypeInfo, offset} per field. Static array (0x0D):
+// element stride, count, PPTypeInfo. Each typeinfo X has a PPTypeInfo cell.
+const TI = BUF + 0x1800;
+const T = { ansi: ANSI };
+const PP = {};
+function rtti(w, b) {
+  let at = TI;
+  const cell = (name, ti) => { PP[name] = at; w(at, ti); at += 4; };
+  const head = (name, kind, label) => {
+    at = (at + 3) & ~3;
+    T[name] = at; b(at, kind); b(at + 1, label.length);
+    for (let i = 0; i < label.length; i++) b(at + 2 + i, label.charCodeAt(i));
+    at += 2 + label.length;
+    return at;
+  };
+  const rec = (name, size, fields) => {
+    const d = head(name, 0x0E, name.toUpperCase());
+    w(d, size); w(d + 4, fields.length);
+    fields.forEach(([t, off], i) => { w(d + 8 + 8 * i, PP[t]); w(d + 12 + 8 * i, off); });
+    at = d + 8 + 8 * fields.length;
+    cell(name, T[name]);
+  };
+  const arr = (name, stride, count, el) => {
+    const d = head(name, 0x0D, name);
+    w(d, stride); w(d + 4, count); w(d + 8, PP[el]);
+    at = d + 12;
+    cell(name, T[name]);
+  };
+  const leaf = (name, kind) => { head(name, kind, name); cell(name, T[name]); };
+  cell('ansi', ANSI);
+  leaf('wstr', 0x0B); leaf('var', 0x0C); leaf('intf', 0x0F); leaf('dyn', 0x11);
+  rec('r1', 0x10, [['ansi', 4], ['ansi', 0xC]]);
+  arr('a1', 0x20, 2, 'r1');                       // two r1 per element
+  arr('a0', 0x08, 0, 'ansi');                     // an empty static array
+  rec('r2', 0x60, [['ansi', 0], ['a1', 8], ['var', 0x28], ['intf', 0x38], ['wstr', 0x3C], ['dyn', 0x40], ['a0', 0x44]]);
+  arr('a2', 0x60, 2, 'r2');                       // array of records of arrays of records
+  rec('r3', 0xC8, [['a2', 0], ['ansi', 0xC4]]);
+}
+rtti(() => {}, () => {});   // T/PP addresses only
+// the buffer the Init cases zero: every byte nonzero first
+const junk = (w, b) => { for (let k = 0; k < 0x400; k += 4) w(BUF + k, 0x5A000000 + k); rtti(w, b); };
+const INIT = [
+  ['InitRecord RValue', IR, { edx: RVALUE }, 'n'],
+  ['InitRecord r1', IR, { edx: T.r1 }, 'n'],
+  ['InitRecord r2 (all kinds, nested)', IR, { edx: T.r2 }, 'n'],
+  ['InitRecord r3 (3 deep)', IR, { edx: T.r3 }, 'n'],
+  ['InitArray ansi 0', IA, { edx: ANSI, ecx: 0 }, 'n'],
+  ['InitArray ansi 1', IA, { edx: ANSI, ecx: 1 }, 'n'],
+  ['InitArray ansi 7', IA, { edx: ANSI, ecx: 7 }, 'n'],
+  ['InitArray ansi -1', IA, { edx: ANSI, ecx: -1 }, 'f'],
+  ['InitArray wstr 2', IA, { edx: T.wstr, ecx: 2 }, 'n'],
+  ['InitArray variant 3', IA, { edx: T.var, ecx: 3 }, 'n'],
+  ['InitArray intf 1', IA, { edx: T.intf, ecx: 1 }, 'n'],
+  ['InitArray dynarray 4', IA, { edx: T.dyn, ecx: 4 }, 'n'],
+  ['InitArray RValue 3', IA, { edx: RVALUE, ecx: 3 }, 'n'],
+  ['InitArray r2 2', IA, { edx: T.r2, ecx: 2 }, 'n'],
+  ['InitArray a1 3 (static, nested)', IA, { edx: T.a1, ecx: 3 }, 'n'],
+  ['InitArray a0 2 (empty elements)', IA, { edx: T.a0, ecx: 2 }, 'n'],
+];
+// (A kind the bodies do not take, or a record with no managed field, runs
+// the guest's RunError path / a do-while over garbage: declined natively,
+// not exercised here.)
+for (const [name, entry, regs, want] of INIT) CASES.push({ name, entry, want, buf: junk, regs: { eax: BUF + 0x10, ...regs } });
+// a typeinfo inside the span it would zero: the guest body re-reads it
+CASES.push({ name: 'InitArray zeroes its typeinfo', entry: IA, want: 'f',
+  buf: (w, b) => { junk(w, b); b(BUF + 0x18, 0x0A); b(BUF + 0x19, 0); }, regs: { eax: BUF + 0x10, edx: BUF + 0x18, ecx: 4 } });
+
+// System.Move(eax = src, edx = dst, ecx = n): every size class of both
+// forms, forward, backward and overlapping both ways, odd alignments.
+const pattern = (w) => { for (let k = 0; k < 0x800; k += 4) w(BUF + k, (0x01020304 * (k + 1)) ^ 0xA5C3E10F); };
+const MOVES = [];
+for (const n of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 15, 16, 17, 24, 25, 32, 33, 40, 64, 100, 257]) {
+  MOVES.push([`${n} apart`, 0x100, 0x500 + (n & 3), n]);
+}
+for (const n of [3, 8, 12, 20, 40, 100, 257]) {
+  MOVES.push([`${n} dst=src-3`, 0x203, 0x200, n]);
+  MOVES.push([`${n} dst=src+5`, 0x200, 0x205, n]);
+  MOVES.push([`${n} dst=src+9`, 0x201, 0x20A, n]);
+}
+MOVES.push(['40 dst<src far', 0x600, 0x101, 40], ['0 same', 0x100, 0x100, 0], ['50 same', 0x100, 0x100, 50]);
+for (const [label, s, d, n] of MOVES) {
+  CASES.push({ name: `Move ${label}`, entry: MOVE, want: 'n', buf: pattern, regs: { eax: BUF + s, edx: BUF + d, ecx: n } });
+  if (REP_BODY) CASES.push({ name: `REP Move ${label}`, entry: REPMV, want: 'n', buf: pattern, regs: { eax: BUF + s, edx: BUF + d, ecx: n } });
+}
+CASES.push({ name: 'Move -1', entry: MOVE, want: 'n', buf: pattern, regs: { eax: BUF, edx: BUF + 0x100, ecx: -1 } });
+if (REP_BODY) {
+  CASES.push({ name: 'REP Move -1', entry: REPMV, want: 'f', buf: pattern, regs: { eax: BUF, edx: BUF + 0x100, ecx: -1 } });
+  CASES.push({ name: 'REP Move under DF=1', entry: DFSTUB, want: 'f', buf: pattern, regs: { eax: BUF + 0x300, edx: BUF + 0x100, ecx: 8 } });
+}
+
 function compare(a, b, withBlocks) {
   const diffs = [];
   if (!a.ok || !b.ok) diffs.push('did not return');
@@ -218,6 +330,10 @@ function everyBudget(off, on, tag) {
   for (const c of CASES) {
     layoutBuf(off, c.buf);
     const full = call(off, c.entry, c.regs).blocks;
+    // the same full call in `on` too, so both start every budget from the
+    // same lazy flags (a stub whose first block writes none shows them)
+    layoutBuf(on, c.buf);
+    call(on, c.entry, c.regs);
     for (let b = 1; b <= full + 1; b++) {
       const st = [];
       for (const inst of [off, on]) {
@@ -287,7 +403,7 @@ async function main() {
   // outside that cover. The next call must run the patched guest code. The
   // patched byte (+0x10 of _LStrClr) turns its `jl` at +0xF into another
   // condition, which an off/on mismatch would show.
-  const ID = { [H.clr]: 1, [H.asg]: 2, [H.frec]: 3, [H.farr]: 4, [H.crec]: 5 };
+  const ID = { [H.clr]: 1, [H.asg]: 2, [H.frec]: 3, [H.farr]: 4, [H.crec]: 5, [IR]: 6, [IA]: 7, [MOVE]: 8, [REPMV]: 9 };
   const smcPair = (label, name, target, matchOk = false) => {
     const c = byName(name), id = ID[c.entry];
     return pair(img, label, c, async (inst, isOn) => {
@@ -319,6 +435,30 @@ async function main() {
   await smcPair('SMC callee: FinalizeArray via LStrClr', 'FinalizeArray 1 str', H.clr + 0x10);
   // System.Move, which _CopyRecord's native form assumes for its leading copy.
   await smcPair('SMC Move: CopyRecord', 'CopyRecord RValue', MOVE + 0x1A, true);
+  // _InitializeRecord's mov ecx,1 -> 0; _InitializeArray's flat-loop stride
+  // 4 -> 5, directly and as _InitializeRecord's callee; System.Move's cmp
+  // ecx,8 -> cmp cl,8 and its jump table; the REP form's and ecx,3 -> 2
+  await smcPair('SMC mid-body: InitRecord +0x1D', 'InitRecord RValue', IR + 0x1D);
+  await smcPair('SMC mid-body: InitArray +0x44', 'InitArray ansi 7', IA + 0x44);
+  await smcPair('SMC callee: InitRecord via InitArray', 'InitRecord r1', IA + 0x44);
+  await smcPair('SMC callee: InitArray via InitRecord', 'InitArray RValue 3', IR + 0x1D);
+  await smcPair('SMC mid-body: Move +0x1A', 'Move 16 apart', MOVE + 0x1A);
+  await smcPair('SMC jump table: Move +0x3C', 'Move 9 apart', MOVE + 0x3C);
+  if (REP_BODY) await smcPair('SMC mid-body: REP Move +0x19', 'REP Move 7 apart', REPMV + 0x19);
+  // Move fold off by a changed byte, CopyRecord falls back with it.
+  await pair(img, 'patched Move never matches', byName('Move 24 apart'),
+    (inst) => { inst.mem[inst.g2w(MOVE + 0x1A)] ^= 0x01; },
+    (d) => (d.native + d.fallback + d.partial ? `still matched (${d.native + d.fallback + d.partial} calls)` : ''));
+  // CopyRecord over the REP form: its leading Move is that form's branches.
+  if (REP_BODY) {
+    await pair(img, 'CopyRecord over the REP Move', byName('CopyRecord RValue'),
+      (inst) => {
+        const dv = new DataView(inst.e.memory.buffer);
+        dv.setInt32(inst.g2w(H.crec + 0x28), REPMV - (H.crec + 0x2C), true);
+        dv.setInt32(inst.g2w(H.crec + 0x111), REPMV - (H.crec + 0x115), true);
+      },
+      (d) => (d.native < 1 || d.fallback ? `want native, got native=${d.native} fallback=${d.fallback}` : ''));
+  }
   const smc = (target, name) => async (inst) => {
     const c = byName(name);
     layoutBuf(inst, c.buf);
