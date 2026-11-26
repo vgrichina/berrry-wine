@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x4010, 0x7FFF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -42,7 +42,9 @@ const extraWat = String.raw`
 
 function armsPass() {
   let fails = 0;
-  for (const m of ARMS) {
+  // UOP_OPT_ARMS=0x10,0x4010: those arms alone
+  const arms = process.env.UOP_OPT_ARMS ? process.env.UOP_OPT_ARMS.split(',').map(Number) : ARMS;
+  for (const m of arms) {
     const mask = '0x' + m.toString(16);
     const r = spawnSync(process.execPath, [path.join(__dirname, 'test-uop-compiler.js')],
       { env: { ...process.env, UOP_OPT: mask }, encoding: 'utf8', timeout: 300000 });
@@ -438,6 +440,29 @@ async function invalidation() {
       }
       ok(`R2 shape ${name}: exact at trips ${TRIPS.join('/')}, masks ${MASKS.map((m) => '0x' + m.toString(16)).join('/')} (${ctx} contexts)`);
     }
+  }
+  // 0x4000: fcomp m32 / fnstsw ax / sahf / jcc, every flag pair SAHF can
+  // supply, over random floats (NaNs included: C3=C2=C0=1), against threaded
+  // code; SAHF inline and the Jcc off AH
+  {
+    let fused = 0;
+    for (let cc = 2; cc <= 11; cc++) {
+      const body = Uint8Array.from([0xD9, 0x06, 0xD8, 0x5E, 0x04, 0xDF, 0xE0, 0x9E, 0x0F, 0x80 | cc, ...d32(3),
+        0x83, 0x07, 0x01, 0x83, 0xC6, 0x04, 0x83, 0xC7, 0x04, 0x49, 0x75, 0xE6 - 0x100 + 0x100 - 0x0, 0xC3]);
+      // rel8 of the jnz: back to offset 0 from the end of the jnz (offset 24)
+      body[23] = (0x100 - 24) & 0xFF;
+      const RR = { eax: 0, ebx: 0, ecx: 300, edx: 0, ebp: 0, esi: a.buf, edi: a.buf + 0x10000 };
+      e.set_uop(0); fill(); const want = run(fresh(body), RR);
+      e.set_uop(1);
+      for (const mask of [0x10, 0x4010, 0x7FFF]) {
+        e.set_uop_opt(mask);
+        const f0 = st(18);
+        const { at } = compiled(body);
+        if (mask & 0x4000) { assert(st(18) > f0, `cc ${cc}: the Jcc read AH`); fused += st(18) - f0; }
+        fill(); assert.strictEqual(run(at, RR), want, `fnstsw/sahf/j${cc} mask 0x${mask.toString(16)}`);
+      }
+    }
+    ok(`0x4000 fnstsw/sahf/jcc: cc 2-11 exact over 300 random float compares (${fused} Jcc read off AH)`);
   }
   e.set_uop_opt(0);
   e.set_uop(0);

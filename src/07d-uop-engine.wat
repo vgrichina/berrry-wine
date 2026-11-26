@@ -1607,7 +1607,7 @@
     (loop $L
       (block $svc
       (block $miss
-      (block $c109 (block $c108
+      (block $c111 (block $c109 (block $c108
       (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
       (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
       (block $c94 (block $c93 (block $c92 (block $c91
@@ -1643,6 +1643,8 @@
                   $c102 $c103 $c104 $c105 $c106 $c107
                   ;; 108 SSER, 109 SSEM / 110 SSEMS (one arm)
                   $c108 $c109 $c109
+                  ;; 111 SAHFI
+                  $c111
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -2706,6 +2708,12 @@
         (call $uop_sse_mem (i32.load offset=4 (local.get $pc))
           (i32.shr_u (i32.load offset=16 (local.get $pc)) (i32.const 8)) (local.get $ga))
         (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 111 SAHFI: --uop-opt 0x4000, $th_sahf (handler 212) inline -- SF ZF
+        ;; AF PF CF from AH, every other flag as it was
+        (call $load_eflags (i32.or
+          (i32.and (call $build_eflags) (i32.const 0xFFFFFF2A))
+          (i32.and (i32.shr_u (i32.load (global.get $reg_base)) (i32.const 8)) (i32.const 0xD5))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))

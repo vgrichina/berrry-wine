@@ -3350,6 +3350,8 @@
     ;; 12 R2 callee contexts, 13 programs with them
     (if (i32.eq (local.get $k) (i32.const 12)) (then (return (global.get $uc_t_r2))))
     (if (i32.eq (local.get $k) (i32.const 13)) (then (return (global.get $uc_t_r2p))))
+    ;; 14 Jcc read off AH after an inline SAHF (0x4000)
+    (if (i32.eq (local.get $k) (i32.const 14)) (then (return (global.get $uc_t_ahcc))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming
@@ -3370,6 +3372,8 @@
     (global.set $uc_st_fs (i32.const 0))
     (global.set $uc_n_lock (i32.const 0))
     (global.set $uc_n_sahf (i32.const 0))
+    (global.set $uc_n_ahcc (i32.const 0))
+    (global.set $uc_sahf_next (i32.const 0))
     (global.set $uc_n_retx (i32.const 0))
     (global.set $uc_n_fold (i32.const 0))
     (global.set $uc_n_cfold (i32.const 0))
@@ -4035,7 +4039,13 @@
         (local.set $n (call $uc_rec (global.get $uc_x_m) (global.get $uc_x_md)
                                     (global.get $uc_x_c) (global.get $uc_x_cd)))
         (if (local.get $n) (then (return (local.get $n))))
-        (call $uc_o2 (i32.const 108) (call $uc_aN (i32.const 0)) (call $uc_aN (i32.const 212)))
+        ;; --uop-opt 0x4000: the handler's body as one inline op (SAHFI), and
+        ;; the next instruction, if a Jcc, reads its condition off AH
+        (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x4000)) (i32.const 0))
+          (then (call $uc_emit (i32.const 111) (i32.const 0) (i64.const 0) (i64.const 0) (i64.const 0)
+                               (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0))
+                (global.set $uc_sahf_next (i32.load offset=4 (local.get $R))))
+          (else (call $uc_o2 (i32.const 108) (call $uc_aN (i32.const 0)) (call $uc_aN (i32.const 212)))))
         (global.set $uc_n_sahf (i32.add (global.get $uc_n_sahf) (i32.const 1)))
         (return (i32.const 0))))
     (if (i32.eq (local.get $k) (i32.const 29))
@@ -4945,12 +4955,36 @@
     (call $uc_o2 (select (i32.const 47) (i32.const 48) (i32.eq (local.get $w) (i32.const 8))) (local.get $t) (local.get $v))
     (local.get $t))
 
+  ;; The EAX bits a SAHF'd condition pair i = (cc - 2) / 2 reads: B/AE CF,
+  ;; E/NE ZF, BE/A CF|ZF, S/NS SF, P/NP PF (AH bits 0, 6, 7, 2).
+  (global $uc_sahf_next (mut i32) (i32.const 0))
+  (global $uc_n_ahcc (mut i32) (i32.const 0))
+  (global $uc_t_ahcc (mut i32) (i32.const 0))
+  (func $uc_ahmask (param $i i32) (result i32)
+    (if (i32.eqz (local.get $i)) (then (return (i32.const 0x100))))
+    (if (i32.eq (local.get $i) (i32.const 1)) (then (return (i32.const 0x4000))))
+    (if (i32.eq (local.get $i) (i32.const 2)) (then (return (i32.const 0x4100))))
+    (if (i32.eq (local.get $i) (i32.const 3)) (then (return (i32.const 0x8000))))
+    (i32.const 0x400))
   ;; Branch to `target` if condition cc holds in state (m, md, c, cd); srm is
   ;; the record state after a REC that already ran before the branch.
   (func $uc_cond (param $srm i32) (param $m i32) (param $md i32) (param $c i32) (param $cd i32)
       (param $cc i32) (param $target i64) (result i32)
     (local $rk i32) (local $w i32) (local $Z i64) (local $Bu i64) (local $Au i64) (local $hasA i32)
     (local $As i64) (local $Bs i64) (local $Rv i64) (local $t i64) (local $One i64)
+    ;; --uop-opt 0x4000: a Jcc straight after a SAHFI tests AH, which the
+    ;; flags were just loaded from: CF bit 8, PF 10, ZF 14, SF 15 of EAX
+    ;; (B/AE E/NE BE/A S/NS P/NP; OF-reading forms stay on the globals)
+    (if (i32.and (i32.eq (local.get $m) (global.get $UC_G))
+                 (i32.and (i32.eq (global.get $uc_sahf_next) (global.get $uc_x_eip))
+                          (i32.lt_u (i32.sub (local.get $cc) (i32.const 2)) (i32.const 10))))
+      (then
+        (local.set $t (call $uc_scratch))
+        (call $uc_o3 (i32.const 9) (local.get $t) (call $uc_aR (i32.const 0))
+          (call $uc_aN (call $uc_ahmask (i32.shr_u (i32.sub (local.get $cc) (i32.const 2)) (i32.const 1)))))
+        (call $uc_o2 (select (i32.const 22) (i32.const 21) (i32.and (local.get $cc) (i32.const 1))) (local.get $t) (local.get $target))
+        (global.set $uc_n_ahcc (i32.add (global.get $uc_n_ahcc) (i32.const 1)))
+        (return (i32.const 0))))
     (if (i32.eq (local.get $m) (global.get $UC_G))
       (then (call $uc_o2 (i32.const 57) (call $uc_aN (local.get $cc)) (local.get $target)) (return (i32.const 0))))
     (if (i32.eq (local.get $m) (global.get $UC_D)) (then (return (i32.const 18))))
@@ -6762,6 +6796,7 @@
     (global.set $uc_compiled (i32.add (global.get $uc_compiled) (i32.const 1)))
     (global.set $uc_t_lock (i32.add (global.get $uc_t_lock) (global.get $uc_n_lock)))
     (global.set $uc_t_sahf (i32.add (global.get $uc_t_sahf) (global.get $uc_n_sahf)))
+    (global.set $uc_t_ahcc (i32.add (global.get $uc_t_ahcc) (global.get $uc_n_ahcc)))
     (global.set $uc_t_retx (i32.add (global.get $uc_t_retx) (global.get $uc_n_retx)))
     (global.set $uc_t_fold (i32.add (global.get $uc_t_fold) (global.get $uc_n_fold)))
     (global.set $uc_t_cfold (i32.add (global.get $uc_t_cfold) (global.get $uc_n_cfold)))
