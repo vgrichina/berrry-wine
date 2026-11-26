@@ -107,6 +107,29 @@
     (local.set $bits (call $gdi_bitmap_record_dib_bits (local.get $record)))
     (if (local.get $bits)
       (then (i32.store offset=20 (local.get $buffer) (call $w2g (local.get $bits)))))
+    ;; A DIB section asked with room for a DIBSECTION (84 bytes) gets one, as
+    ;; on Windows: BITMAP, then the BITMAPINFOHEADER at +24, dsBitfields at
+    ;; +64, dshSection at +76, dsOffset at +80. Delphi's TBitmap keeps this
+    ;; dsBmih and writes it verbatim when it saves a bitmap to a stream; with
+    ;; only the 24-byte BITMAP back, Game Maker 5 runners saved BMPs with a
+    ;; zero info header, reloaded them, and stopped on "Unexpected error".
+    ;; The section handle and offset are not tracked: 0, which is what a
+    ;; section made without a file mapping reports. Compression is BI_RGB.
+    (if (i32.and (i32.ne (local.get $bits) (i32.const 0))
+          (i32.ge_u (local.get $buffer_size) (i32.const 84)))
+      (then
+        (memory.fill (i32.add (local.get $buffer) (i32.const 24)) (i32.const 0) (i32.const 60))
+        (i32.store offset=24 (local.get $buffer) (i32.const 40))
+        (i32.store offset=28 (local.get $buffer) (i32.load offset=8 (local.get $record)))
+        (i32.store offset=32 (local.get $buffer)
+          (select (i32.sub (i32.const 0) (i32.load offset=12 (local.get $record)))
+            (i32.load offset=12 (local.get $record))
+            (i32.and (i32.load offset=20 (local.get $record)) (i32.const 2))))
+        (i32.store16 offset=36 (local.get $buffer) (i32.const 1))
+        (i32.store16 offset=38 (local.get $buffer) (i32.load offset=16 (local.get $record)))
+        (i32.store offset=44 (local.get $buffer)
+          (i32.mul (i32.load offset=28 (local.get $record)) (i32.load offset=12 (local.get $record))))
+        (return (i32.const 84))))
     (i32.const 24))
 
   ;; Parsed DIB metadata is a 48-byte plan:

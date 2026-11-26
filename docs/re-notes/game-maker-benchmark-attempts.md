@@ -169,3 +169,15 @@ load fmod/jbfmod or Audiere with LoadLibrary.
   is not the FILD/FISTP form `$d_move_form` checks. A record whose string field
   is not at offset 0 needs that Move for its leading bytes. This is signature
   variance in Move, not in `_CopyRecord`; the fold is unchanged.
+- **GM5 "Unexpected error" was GetObjectA.** The runner builds each sprite as
+  a TBitmap over a DIB section (`CreateDIBSection` 24bpp), saves it to a
+  TMemoryStream, and loads it back. Delphi's `TBitmap` takes the
+  BITMAPINFOHEADER it saves from `GetObject(h, sizeof(DIBSECTION))`'s
+  `dsBmih`. We answered 24 (BITMAP only), so the saved stream was "BM", a
+  bfSize, and a zero info header. `ReadDIB` (castle gm5 `0x427319`,
+  `cmp word [ebx+0xc],1`, biPlanes) raised through `0x422530` / `0x422518`,
+  and the runner turned that into the generic box. GetObjectA now fills the
+  84-byte DIBSECTION for a DIB section (`$gdi_bitmap_write_object`). Castle
+  GM5 then reaches its game window ("Castle of Elite - F4 for fullscreen")
+  with no exception in 496K batches. The client area is black in that
+  capture, which has not been investigated.

@@ -162,5 +162,22 @@ function writeCString(wat, ptr, text) {
     assert.strictEqual(readBitmap(fromFile).width, WIDTH);
   });
 
+  // Delphi's TBitmap asks GetObject for a whole DIBSECTION and saves its
+  // dsBmih verbatim; a 24-byte answer left Game Maker 5 runners writing BMPs
+  // with a zero info header they then could not reload.
+  check('GetObjectA with an 84-byte buffer returns a DIBSECTION', () => {
+    const ds = wat.guest_alloc(84) >>> 0;
+    for (let i = 0; i < 84; i += 4) wat.guest_write32(ds + i, 0xcccccccc);
+    assert.strictEqual(wat.test_call_GetObjectA(section, 84, ds), 84);
+    assert.strictEqual(wat.guest_read32(ds + 20) >>> 0, bm.bits, 'dsBm.bmBits');
+    assert.strictEqual(wat.guest_read32(ds + 24), 40, 'biSize');
+    assert.strictEqual(wat.guest_read32(ds + 28) | 0, WIDTH, 'biWidth');
+    assert.strictEqual(Math.abs(wat.guest_read32(ds + 32) | 0), HEIGHT, 'biHeight');
+    assert.strictEqual(wat.guest_read32(ds + 36) >>> 0, (32 << 16) | 1, 'biPlanes 1, biBitCount 32');
+    assert.strictEqual(wat.guest_read32(ds + 40), 0, 'BI_RGB');
+    assert.strictEqual(wat.guest_read32(ds + 44), STRIDE * HEIGHT, 'biSizeImage');
+    assert.strictEqual(wat.guest_read32(ds + 80), 0, 'dsOffset');
+  });
+
   console.log(`\n${passed} checks passed`);
 })().catch(err => { console.error(err); process.exit(1); });
