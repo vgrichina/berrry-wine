@@ -335,16 +335,23 @@
   ;; The program header's stamp (+36) names what the program assumed when
   ;; it was compiled; $th_uop_enter re-checks it and drops every program
   ;; when it no longer holds (it changes at most a few times per process).
-  ;;   1 LOCK_MODE was 0   2 fs_base was +40   4 one instance ran
+  ;;   1 LOCK_MODE was 0   2 fs_base was the block's +4   4 one instance ran
+  ;;   8 the branch clock was on
+  ;; The block follows the program's window slots; header nwin (+8) has its
+  ;; top bit set when there is one ($uop_stamp_at).
+  (func $uop_stamp_at (param $op i32) (result i32)
+    (i32.add (i32.load offset=12 (local.get $op))
+             (i32.shl (i32.and (i32.load offset=8 (local.get $op)) (i32.const 0xFFFF)) (i32.const 4))))
   (func $uop_hdr_bad (param $op i32) (result i32)
-    (local $s i32)
-    (local.set $s (i32.load offset=36 (local.get $op)))
+    (local $s i32) (local $b i32)
+    (local.set $b (call $uop_stamp_at (local.get $op)))
+    (local.set $s (i32.load (local.get $b)))
     (i32.or
       (i32.or
         (i32.and (i32.ne (i32.and (local.get $s) (i32.const 1)) (i32.const 0))
                  (i32.ne (i32.load (global.get $LOCK_MODE)) (i32.const 0)))
         (i32.and (i32.ne (i32.and (local.get $s) (i32.const 2)) (i32.const 0))
-                 (i32.ne (global.get $fs_base) (i32.load offset=40 (local.get $op)))))
+                 (i32.ne (global.get $fs_base) (i32.load offset=4 (local.get $b)))))
       (i32.or
         (i32.and (i32.ne (i32.and (local.get $s) (i32.const 4)) (i32.const 0))
                  (i32.ne (i32.load (global.get $UOP_MULTI_INST)) (i32.const 0)))
@@ -606,7 +613,7 @@
   ;; again -- the error only ever runs toward re-guarding.
   (func $uop_windows_reset (param $op i32) (param $ep i32)
     (local $w i32) (local $n i32)
-    (local.set $n (i32.load offset=8 (local.get $op)))
+    (local.set $n (i32.and (i32.load offset=8 (local.get $op)) (i32.const 0xFFFF)))
     (local.set $w (i32.load offset=12 (local.get $op)))
     (block $d (loop $l
       (br_if $d (i32.eqz (local.get $n)))
@@ -3025,7 +3032,7 @@
         ;; --uop-opt: what the program assumed when compiled ($uop_hdr_bad).
         ;; A stale stamp drops every program (they recompile under the new
         ;; state) and this entry falls through to the threaded block.
-        (if (i32.load offset=36 (local.get $op))
+        (if (i32.lt_s (i32.load offset=8 (local.get $op)) (i32.const 0))
           (then (if (call $uop_hdr_bad (local.get $op))
                   (then (global.set $uop_opt_stampfail (i32.add (global.get $uop_opt_stampfail) (i32.const 1)))
                         (call $uop_flush)

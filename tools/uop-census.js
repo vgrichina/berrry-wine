@@ -147,6 +147,8 @@ const head = eip => {
   return h;
 };
 let flushes = 0, flushAll = 0;
+// what each flush found: the arena bytes in use (b) and the range count (c)
+const flushAt = [];
 let hotTable = null;
 for (const r of recs) {
   if (r.k === 1) {
@@ -163,6 +165,7 @@ for (const r of recs) {
     head(r.a).writes++;
   } else if (r.k === 4) {
     flushes++;
+    flushAt.push([r.b, r.c]);
   } else if (r.k === 5) {
     flushAll++;
   } else if (r.k === 6) {
@@ -234,6 +237,13 @@ say(`records: ${recs.length}   heads seen: ${all.length}`);
 say(`compiles: ${compiles} over ${distinct} distinct heads  (repeat compiles: ${compiles - distinct}, ` +
   `${compiles ? (100 * (compiles - distinct) / compiles).toFixed(1) : 0}%)`);
 say(`flushes: ${flushes} (of them flush-all, verdicts forgotten: ${flushAll})   busy (lock held): ${sum(all, h => h.busy)}`);
+if (flushAt.length) {
+  // UOP_RANGES_MAX is 4096: a flush at >= 4000 ranges is the range table, else the arena
+  const rng = flushAt.filter(([, n]) => n >= 4000).length;
+  const q = (xs, f) => xs.slice().sort((x, y) => x - y)[Math.min(xs.length - 1, Math.floor(f * xs.length))];
+  const al = flushAt.map(([a]) => a), nr = flushAt.map(([, n]) => n);
+  say(`flush state: range table full (>=4000 ranges) ${rng}, otherwise ${flushAt.length - rng}; arena bytes p10/p50/p90 ${q(al, .1)}/${q(al, .5)}/${q(al, .9)}, ranges p10/p50/p90 ${q(nr, .1)}/${q(nr, .5)}/${q(nr, .9)}`);
+}
 say(`installs: ${sum(all, h => h.installs)} over ${installed.length} heads ` +
   `(traces: ${sum(all, h => h.traces || 0)})   ` +
   `retired poor: ${sum(all, h => h.poor.length)} over ${poorHeads.length} heads   ` +

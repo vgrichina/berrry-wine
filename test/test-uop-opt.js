@@ -83,7 +83,13 @@ async function invalidation() {
   const out = () => require('crypto').createHash('sha256').update(new Uint8Array(e.memory.buffer, g2w(a.buf), 0x20000)).digest('hex');
   const regs = (r) => { for (const [k, v] of Object.entries(r)) e['set_' + k](v >>> 0); };
   const run = (at, r) => { regs(r); assert(bench.runToCompletion(e, at, a.stackTop), 'loop returned'); return out() + ':' + e.get_eax(); };
-  const stamp = (pc) => dv().getUint32(pc + 36, true);
+  // the assumption block after the window slots, when nwin's top bit says
+  // there is one (07d $uop_stamp_at); +0 the stamp, +4 the fs_base
+  const stampAt = (pc) => {
+    const n = dv().getUint32(pc + 8, true);
+    return (n & 0x80000000) ? dv().getUint32(pc + 12, true) + (n & 0xFFFF) * 16 : 0;
+  };
+  const stamp = (pc) => { const b = stampAt(pc); return b ? dv().getUint32(b, true) : 0; };
   const st = (k) => e.uop_opt_stat(k) >>> 0;
   const R = { ecx: 64, esi: a.buf, edi: a.buf + 0x10000, eax: 0 };
   let n = 0;
@@ -167,7 +173,7 @@ async function invalidation() {
     e.set_fs_base(0);
     const { at, pc } = compiled(fsLoop);
     assert.strictEqual(stamp(pc) & 2, 2);
-    assert.strictEqual(dv().getUint32(pc + 40, true), 0, 'the program records the fs_base it was compiled under');
+    assert.strictEqual(dv().getUint32(stampAt(pc) + 4, true), 0, 'the program records the fs_base it was compiled under');
     e.set_fs_base(0x40);
     const s0 = st(0);
     fill(); const got = run(at, R);

@@ -6062,7 +6062,7 @@
 
   (func $uc_compile_locked (param $eip i32) (result i32)
     (local $err i32) (local $bytes i32) (local $pc i32) (local $k i32) (local $R i32)
-    (local $lo i32) (local $hi i32) (local $retried i32) (local $wofs i32)
+    (local $lo i32) (local $hi i32) (local $retried i32) (local $wofs i32) (local $stamp i32)
     (if (i32.and (i32.ne (global.get $uc_limit) (i32.const 0))
                  (i32.ge_u (global.get $uc_compiled) (global.get $uc_limit)))
       (then (return (i32.const 0))))
@@ -6075,6 +6075,17 @@
                                        (i32.const 15))
                               (i32.const -16)))
     (local.set $bytes (i32.add (local.get $wofs) (i32.shl (global.get $uc_nwin) (i32.const 4))))
+    ;; --uop-opt: what the program assumes (07d $uop_hdr_bad), in a 16-byte
+    ;; block after its window slots, flagged by nwin's top bit. Not in the
+    ;; header: +36..+47 are --uop-census's, and a program that assumes
+    ;; nothing is laid out exactly as without --uop-opt.
+    (local.set $stamp
+      (i32.or (i32.or (select (i32.const 1) (i32.const 0)
+                        (i32.or (global.get $uc_st_lock) (i32.ne (global.get $uc_nfold) (i32.const 0))))
+                      (select (i32.const 2) (i32.const 0) (global.get $uc_st_fs)))
+              (i32.or (select (i32.const 4) (i32.const 0) (i32.ne (global.get $uc_nfold) (i32.const 0)))
+                      (select (i32.const 8) (i32.const 0) (i32.ne (global.get $uc_n_retx) (i32.const 0))))))
+    (if (local.get $stamp) (then (local.set $bytes (i32.add (local.get $bytes) (i32.const 16)))))
     (if (i32.gt_u (local.get $bytes) (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))
       (then (return (call $uc_decline (i32.const 24)))))
     (block $placed (loop $retry
@@ -6082,7 +6093,8 @@
         (then (call $uop_flush) (global.set $uc_flushes (i32.add (global.get $uc_flushes) (i32.const 1)))))
       (local.set $pc (i32.add (global.get $uop_arena) (global.get $uop_alloc)))
       (memory.fill (local.get $pc) (i32.const 0) (global.get $UOP_HDR))
-      (i32.store offset=8 (local.get $pc) (global.get $uc_nwin))
+      (i32.store offset=8 (local.get $pc)
+        (i32.or (global.get $uc_nwin) (select (i32.const 0x80000000) (i32.const 0) (i32.ne (local.get $stamp) (i32.const 0)))))
       (global.set $uc_wb (i32.add (local.get $pc) (local.get $wofs)))
       (i32.store offset=12 (local.get $pc) (global.get $uc_wb))
       ;; every slot starts poisoned and a load window (the encoding marks the
@@ -6096,14 +6108,10 @@
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
         (br $wl)))
       (i32.store offset=28 (local.get $pc) (i32.atomic.load (global.get $UOP_WIN_EPOCH)))
-      ;; --uop-opt: what the program assumes (07d $uop_hdr_bad)
-      (i32.store offset=36 (local.get $pc)
-        (i32.or (i32.or (select (i32.const 1) (i32.const 0)
-                          (i32.or (global.get $uc_st_lock) (i32.ne (global.get $uc_nfold) (i32.const 0))))
-                        (select (i32.const 2) (i32.const 0) (global.get $uc_st_fs)))
-                (i32.or (select (i32.const 4) (i32.const 0) (i32.ne (global.get $uc_nfold) (i32.const 0)))
-                        (select (i32.const 8) (i32.const 0) (i32.ne (global.get $uc_n_retx) (i32.const 0))))))
-      (if (global.get $uc_st_fs) (then (i32.store offset=40 (local.get $pc) (global.get $fs_base))))
+      (if (local.get $stamp)
+        (then (i32.store (i32.add (global.get $uc_wb) (i32.shl (global.get $uc_nwin) (i32.const 4))) (local.get $stamp))
+              (i32.store offset=4 (i32.add (global.get $uc_wb) (i32.shl (global.get $uc_nwin) (i32.const 4)))
+                (select (global.get $fs_base) (i32.const 0) (global.get $uc_st_fs)))))
       (call $uc_encode_write (i32.add (local.get $pc) (global.get $UOP_HDR)))
       ;; the guest byte ranges it was lowered from: a write to any kills it
       (local.set $k (i32.const 0))
