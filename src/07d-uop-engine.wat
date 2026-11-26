@@ -801,7 +801,18 @@
                   (i32.const 0x1000))
       (then (return (i32.const 0))))
     (if (i32.ne (global.get $uop_rg_mask) (i32.const 0xFFFFF000))
-      (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+      (then
+        ;; --uop-reguard-lazy: widen only on evidence of a walk -- the slot's
+        ;; window is one page in the same span-aligned block, or the missed
+        ;; page touches either end of the window. Anything else (a poisoned
+        ;; slot, an object somewhere else in a sparse heap) proves its one
+        ;; page, so a short routine that touches a different heap block on
+        ;; every entry stops paying a 16-page proof it throws away.
+        (if (i32.eqz (global.get $uop_rg_lazy))
+          (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+        (if (call $uop_rg_walking (local.get $w) (local.get $pg))
+          (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+        (global.set $uop_rg_lazy_one (i32.add (global.get $uop_rg_lazy_one) (i32.const 1)))))
     (call $uop_window_set (local.get $w) (local.get $pg) (i32.const 0x1000)
       (i32.load offset=12 (local.get $w))))
 
@@ -818,6 +829,25 @@
   ;; epoch rules are unchanged: nothing it relied on can change without a
   ;; $uop_win_bump.
   (global $uop_rg_mask (mut i32) (i32.const 0xFFFF0000))
+  ;; --uop-reguard-lazy (off by default) and the re-guards it kept to one page
+  (global $uop_rg_lazy (mut i32) (i32.const 0))
+  (global $uop_rg_lazy_one (mut i32) (i32.const 0))
+  ;; Slot $w missed on page $pg: is it walking? Its window (+0 lo, +4 span;
+  ;; a poisoned slot's span is under a page) is one page in $pg's block, or
+  ;; $pg is the page just past either end.
+  (func $uop_rg_walking (param $w i32) (param $pg i32) (result i32)
+    (local $lo i32) (local $sp i32)
+    (local.set $lo (i32.load (local.get $w)))
+    (local.set $sp (i32.load offset=4 (local.get $w)))
+    (if (i32.lt_u (local.get $sp) (i32.const 0x1000)) (then (return (i32.const 0))))
+    (i32.or
+      (i32.and (i32.eq (local.get $sp) (i32.const 0x1000))
+               (i32.eq (i32.and (local.get $lo) (global.get $uop_rg_mask))
+                       (i32.and (local.get $pg) (global.get $uop_rg_mask))))
+      (i32.or (i32.eq (local.get $pg) (i32.add (local.get $lo) (local.get $sp)))
+              (i32.eq (i32.add (local.get $pg) (i32.const 0x1000)) (local.get $lo)))))
+  (func (export "set_uop_reguard_lazy") (param $on i32) (global.set $uop_rg_lazy (local.get $on)))
+  (func (export "uop_rg_lazy_one") (result i32) (global.get $uop_rg_lazy_one))
   (global $uop_rg_pages (mut i32) (i32.const 0))   ;; pages proved by wide re-guards
   (global $uop_rg_nonadj (mut i32) (i32.const 0))  ;; growth stopped at a non-adjacent backing page
   (func $uop_reguard_wide (param $w i32) (param $pg i32) (result i32)

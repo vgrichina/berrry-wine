@@ -2075,13 +2075,14 @@ function reguardWidenCase(inst, a, nextCode) {
     e.uop_install(Lc, pc);
     return true;
   };
-  const arm = (span) => {
+  const arm = (span, lazy = 0) => {
     // Fresh pages per arm: the previous arm left its code page rewritten.
     let D = nextCode(), P = nextCode();
     while ((D >>> 16) !== (P >>> 16)) { D = P; P = nextCode(); }
     const Lc = nextCode();
     mem.set(loop, g2w(Lc));
     e.set_uop_reguard_span(span);
+    e.set_uop_reguard_lazy(lazy);
     e.set_uop(1);
     if (!install(Lc)) return null;
     // 1. A pure data sweep over 16 pages of the buffer, four times.
@@ -2109,6 +2110,15 @@ function reguardWidenCase(inst, a, nextCode) {
   try {
     const narrow = arm(0x1000);
     const wide = arm(0x10000);
+    // --uop-reguard-lazy: the sweep is a walk, so it still widens (after
+    // its second page), ends in the same memory and stops at the code page
+    const lazy = arm(0x10000, 1);
+    if (narrow && lazy) {
+      if (narrow.hash !== lazy.hash) errs.push('data sweep: lazy and narrow re-guards left different memory');
+      if (!lazy.widened) errs.push('lazy re-guard never widened on a walk');
+      if (!(lazy.reguards * 2 <= narrow.reguards)) errs.push(`lazy re-guards ${lazy.reguards} not well under narrow ${narrow.reguards}`);
+      if (!errs.length) console.log(`reguard-lazy       ok (data sweep re-guards: ${lazy.reguards} lazy, +${lazy.widened} pages)`);
+    }
     if (narrow && wide) {
       if (narrow.hash !== wide.hash) errs.push('data sweep: wide and narrow re-guards left different memory');
       if (narrow.widened) errs.push(`one-page re-guard widened ${narrow.widened} pages`);
@@ -2119,6 +2129,7 @@ function reguardWidenCase(inst, a, nextCode) {
   } finally {
     e.set_uop(0);
     e.set_uop_reguard_span(0x10000);
+    e.set_uop_reguard_lazy(0);
   }
   return errs;
 }
