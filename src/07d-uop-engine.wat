@@ -810,6 +810,15 @@
         ;; every entry stops paying a 16-page proof it throws away.
         (if (i32.eqz (global.get $uop_rg_lazy))
           (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+        ;; --uop-reguard-lazy=sparse (2): lazy only for a page outside the
+        ;; direct window (the sparse VirtualAlloc heap, where GM7's re-guards
+        ;; land); image and direct-window pages keep the wide proof, since
+        ;; lazy there cost Diablo +13% (more kills and recompiles).
+        (if (i32.and (i32.eq (global.get $uop_rg_lazy) (i32.const 2))
+                     (i32.lt_u (i32.add (i32.sub (local.get $pg) (global.get $image_base))
+                                        (global.get $GUEST_BASE))
+                               (region.end $DIRECT_WINDOW)))
+          (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
         (if (call $uop_rg_walking (local.get $w) (local.get $pg))
           (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
         (global.set $uop_rg_lazy_one (i32.add (global.get $uop_rg_lazy_one) (i32.const 1)))))
