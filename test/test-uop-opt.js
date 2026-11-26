@@ -516,27 +516,42 @@ async function invalidation() {
   // 0x800 dynamic RET (07d RETX/EXITR, branch clock, as R1): a function head
   // compiled on its own as a trace, called 24 times from threaded code. Its
   // RET names no call in the program, so it pops and leaves to the caller's
-  // return address; the caller stores the flags (pushfd) after each return.
+  // return address; the caller stores CF, ZF and SF<>OF (setb/sete/setl)
+  // after each return.
   // `ret` and `ret 4` (the caller pushes one argument).
   {
     e.set_branch_clock(1);
-    let dyn = 0;
+    let dyn = 0, chains = 0, reused = 0;
     for (const imm of [0, 4]) {
       const F = [0x8B, 0x06, 0x03, 0x46, 0x04, 0x89, 0x07, 0x31, 0xDB, 0x01, 0xC3, 0x43, 0x89, 0x5F, 0x04,
                  0x8D, 0x0C, 0x18, 0x89, 0x4F, 0x08, 0x29, 0xC1, 0x83, 0xC6, 0x04, 0x39, 0xD9,
                  ...(imm ? [0xC2, imm, 0] : [0xC3])];
-      // caller at +0x100: 24 x { [push esi;] call F; pushfd; pop edx; mov [edi+12],edx; add edi,16 }; ret
+      // caller at +0x100: 24 x { [push esi;] call F; setb dl; sete dh; mov [edi+12],edx;
+      //                          setl dl; mov [edi+14],dl; add edi,16 }; ret
       const call = [];
       for (let k = 0; k < 24; k++) {
         const pre = imm ? [0x56] : [];
         const site = 0x100 + call.length + pre.length;
         const rel = (0 - (site + 5)) >>> 0;
-        call.push(...pre, 0xE8, ...d32(rel), 0x9C, 0x5A, 0x89, 0x57, 0x0C, 0x83, 0xC7, 0x10);
+        call.push(...pre, 0xE8, ...d32(rel), 0x0F, 0x92, 0xC2, 0x0F, 0x94, 0xC6, 0x89, 0x57, 0x0C,
+          0x0F, 0x9C, 0xC2, 0x88, 0x57, 0x0E, 0x83, 0xC7, 0x10);
       }
       const code = new Uint8Array(0x100 + call.length + 1);
       code.set(F, 0); code.set(call, 0x100); code[code.length - 1] = 0xC3;
       const RR = { eax: 0, ebx: 0, ecx: 0, edx: 0, ebp: 0, esi: a.buf, edi: a.buf + 0x10000 };
       e.set_uop(0); fill(); const at0 = fresh(code); const want = run(at0 + 0x100, RR) + ':' + e.get_esp();
+      // the batch stops of 7-block batches: where each one left EIP
+      const runCut = (at) => {
+        regs(RR); e.set_esp(a.stackTop); dv().setUint32(g2w(a.stackTop), 0, true); e.set_eip(at); e.clear_yield();
+        const stops = [];
+        for (let i = 0; i < 4096 && e.get_eip() !== 0; i++) { e.run(7); stops.push(e.get_eip() ? (e.get_eip() - at).toString(16) : 'end'); }
+        assert.strictEqual(e.get_eip(), 0, 'cut run returned');
+        return out() + ':' + e.get_esp() + ':' + stops.join(',');
+      };
+      fill(); const wantCut = runCut(fresh(code) + 0x100);
+      // the return address of the 6th call: compiled too, so F's RET can
+      // continue into it ($uop_ret_chain)
+      const cont = 0x100 + 5 * (call.length / 24) + (imm ? 1 : 0) + 5;
       e.set_uop(1);
       for (const mask of [0x2, 0x802, 0xFFF, 0x7FFF]) {
         e.set_uop_opt(mask);
@@ -547,10 +562,42 @@ async function invalidation() {
         e.uop_install(at, pc);
         if (mask & 0x800) { assert(st(20) > d0, `ret ${imm}: RETX at 0x${mask.toString(16)}`); dyn += st(20) - d0; }
         fill(); assert.strictEqual(run(at + 0x100, RR) + ':' + e.get_esp(), want, `RETX ret ${imm} mask 0x${mask.toString(16)}`);
+        // again with the continuation compiled, whole and in 7-block batches
+        for (const cut of [false, true]) {
+          const at2 = fresh(code);
+          // each install right after its own compile (07d uop_install)
+          const pf = e.uop_compile(at2) >>> 0; e.uop_install(at2, pf);
+          const pk = e.uop_compile(at2 + cont) >>> 0; e.uop_install(at2 + cont, pk);
+          assert(pf && pk, `F and its caller's continuation compile at 0x${mask.toString(16)}`);
+          const c0 = st(21);
+          // the earlier runs' sentinel return left an exit yield, which makes
+          // $branch_end and $uop_ret_chain both stop at every transfer
+          fill(); e.clear_yield();
+          const got = cut ? runCut(at2 + 0x100) : run(at2 + 0x100, RR) + ':' + e.get_esp();
+          assert.strictEqual(got, cut ? wantCut : want, `RETX chain ret ${imm} mask 0x${mask.toString(16)}${cut ? ' cut' : ''}`);
+          if (mask & 0x800) { assert(st(21) > c0, `ret ${imm}: chained at 0x${mask.toString(16)}${cut ? ' cut' : ''}`); chains += st(21) - c0; }
+        }
+        // a map way outlives a flush: after one, F lands where it was and the
+        // caller's head lands where the continuation's program was, so the
+        // continuation's stale way names a live program with another head.
+        // The RET must not continue into it.
+        {
+          const at3 = fresh(code);
+          e.uop_flush();                 // both generations start at the arena's base
+          const pf = e.uop_compile(at3) >>> 0; e.uop_install(at3, pf);
+          const pk = e.uop_compile(at3 + cont) >>> 0; e.uop_install(at3 + cont, pk);
+          e.uop_flush();
+          const pf2 = e.uop_compile(at3) >>> 0; e.uop_install(at3, pf2);
+          const ph = e.uop_compile(at3 + 0x100) >>> 0; e.uop_install(at3 + 0x100, ph);
+          assert(pf2 === pf && ph === pk, `flush reuse lands at the same addresses (0x${mask.toString(16)}): ${[pf, pk, pf2, ph].map(v => v.toString(16))}`);
+          fill();
+          assert.strictEqual(run(at3 + 0x100, RR) + ':' + e.get_esp(), want, `RETX after flush ret ${imm} mask 0x${mask.toString(16)}`);
+          reused++;
+        }
       }
     }
     e.set_branch_clock(0);
-    ok(`0x800 dynamic RET: ret / ret 4 from a compiled callee, 24 returns each, exact with the flags (${dyn} RETX sites)`);
+    ok(`0x800 dynamic RET: ret / ret 4 from a compiled callee, 24 returns each, exact with the flags, whole and in 7-block batches, with and without a compiled continuation (${dyn} RETX sites, ${chains} chained returns), and never into a flushed way's reused address (${reused} runs)`);
   }
   e.set_uop_opt(0);
   e.set_uop(0);

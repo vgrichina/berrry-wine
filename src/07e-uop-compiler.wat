@@ -3359,6 +3359,8 @@
     (if (i32.eq (local.get $k) (i32.const 15)) (then (return (global.get $uc_t_m1))))
     ;; 16 RETs that leave to the popped address (0x800 RETX)
     (if (i32.eq (local.get $k) (i32.const 16)) (then (return (global.get $uc_t_retd))))
+    ;; 17 RETX transfers that continued into the next program (07d $uop_ret_chain)
+    (if (i32.eq (local.get $k) (i32.const 17)) (then (return (global.get $uop_ret_chains))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming

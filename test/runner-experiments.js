@@ -681,7 +681,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
           `loads-deleted=${os(7)} stores-deleted=0 folds=${os(7)} fold-dwords=${os(10)} jcc-folded=${os(8)} ` +
           `variants=${os(11)} variant-hits=${os(13)} megamorphic=${os(12)} icg-megamorphic=${st(21)} lock-sites=${os(4)} sahf-sites=${os(5)} ret-exits=${os(6)} ` +
           `c2-copies=${os(14)} c2-programs=${os(15)} r2-contexts=${os(16)} r2-programs=${os(17)} ` +
-          `sahf-jcc=${os(18)} m1-loads=${os(19)} ret-dyn=${os(20)} fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
+          `sahf-jcc=${os(18)} m1-loads=${os(19)} ret-dyn=${os(20)} ret-chain=${os(21)} fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
       }
       if (UOP_R2_WINDOW !== null && x.uop_r2_last_head) log(`uop r2 window: last head 0x${(x.uop_r2_last_head() >>> 0).toString(16)}`);
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);

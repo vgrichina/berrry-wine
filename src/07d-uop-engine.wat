@@ -2736,11 +2736,17 @@
         (br $L))
         ;; 113 EXITR a -- leave to the address in a as the RET's transfer:
         ;; one block spent, as $branch_end would; none left, and threaded
-        ;; code would stop the batch at that address (EXITB's form)
+        ;; code would stop the batch at that address (EXITB's form). With
+        ;; blocks left and a program compiled at that address that its enter
+        ;; op would run ($uop_ret_chain), run it here instead: the same
+        ;; charge, without the round trip through $branch_end and the enter.
         (global.set $eip (i32.load (i32.load offset=4 (local.get $pc))))
         (global.set $uop_io_kind (i32.const 0))
         (if (i32.gt_s (local.get $budget) (i32.const 0))
-          (then (global.set $uop_io_budget (i32.sub (local.get $budget) (i32.const 1))))
+          (then (local.set $budget (i32.sub (local.get $budget) (i32.const 1)))
+                (local.set $t (call $uop_ret_chain (global.get $eip)))
+                (if (local.get $t) (then (local.set $pc (local.get $t)) (br $L)))
+                (global.set $uop_io_budget (local.get $budget)))
           (else (global.set $uop_bexit (i32.const 1))
                 (global.set $uop_io_budget (i32.const 0))))
         (return (local.get $pc)))
@@ -3316,6 +3322,48 @@
         (if (i32.eq (local.get $b0) (local.get $b1))
           (then (call $uop_poor_check (local.get $op))))))
     (dispatch-next))
+
+  ;; --uop-opt 0x800: the program 07d op 113 EXITR may continue into at
+  ;; $eip, the address a RET popped, instead of leaving through $branch_end
+  ;; (which would charge the block EXITR already charged and dispatch the
+  ;; head's enter op): the code to run, or 0 to leave. 0 for everything that
+  ;; would make $branch_end stop or the enter op fall through -- debug and
+  ;; yield guards, the breakpoint and SBH addresses, 16-bit code, the
+  ;; census (it counts exits per program), a pending-context hook to run --
+  ;; and for a program whose stamp is stale or whose S1 pick declines. The
+  ;; windows are re-proved as the enter would. The blocks it spends are
+  ;; credited to the program that was entered.
+  (global $uop_ret_chains (mut i32) (i32.const 0))
+  (func $uop_ret_chain (param $eip i32) (result i32)
+    (local $op i32) (local $run i32) (local $ep i32)
+    (if (i32.or
+          (i32.or (i32.or (global.get $dbg_tier_guard) (global.get $code16))
+                  (i32.or (global.get $yield_flag) (global.get $yield_reason)))
+          (i32.or (i32.or (global.get $uop_census) (i32.or (global.get $dao_status) (global.get $pending_armed)))
+                  (i32.or (i32.eq (local.get $eip) (global.get $bp_addr))
+                          (i32.or (i32.eq (local.get $eip) (global.get $sbh_eip_a))
+                                  (i32.eq (local.get $eip) (global.get $sbh_eip_b))))))
+      (then (return (i32.const 0))))
+    (local.set $op (call $uop_map_get (local.get $eip)))
+    (if (i32.eqz (local.get $op)) (then (return (i32.const 0))))
+    ;; The enter op's own eip test, and not redundant: a map way outlives the
+    ;; flush that freed its program, and the code bump of the next
+    ;; generation can put another head's live program at that very address.
+    ;; $uop_map_get only proves "a live program starts here". Without this,
+    ;; Spelunky's boot chained a RET into another head's program at batch
+    ;; 3022 and returned to a wild EIP.
+    (if (i32.ne (i32.load offset=4 (local.get $op)) (local.get $eip)) (then (return (i32.const 0))))
+    (local.set $run (local.get $op))
+    (if (i32.lt_s (i32.load offset=8 (local.get $op)) (i32.const 0))
+      (then (if (call $uop_hdr_bad (local.get $op)) (then (return (i32.const 0))))
+            (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x200)) (i32.const 0))
+              (then (local.set $run (call $uop_s1_pick (local.get $op)))
+                    (if (i32.eqz (local.get $run)) (then (return (i32.const 0))))))))
+    (local.set $ep (i32.load (global.get $UOP_WIN_EPOCH)))
+    (if (i32.ne (i32.load offset=28 (local.get $run)) (local.get $ep))
+      (then (call $uop_windows_reset (local.get $run) (local.get $ep))))
+    (global.set $uop_ret_chains (i32.add (global.get $uop_ret_chains) (i32.const 1)))
+    (i32.add (local.get $run) (global.get $UOP_HDR)))
 
   ;; The enter for a program with an assumption block (header +8 top bit):
   ;; the same steps as $th_uop_enter, after the stamp check and the S1 pick.
