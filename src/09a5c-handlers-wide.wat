@@ -172,6 +172,7 @@
 
   ;; 289: DefWindowProcW — same as DefWindowProcA
   (func $handle_DefWindowProcW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $buf i32)
     (if (i32.eq (local.get $arg1) (i32.const 0x0046))
       (then
         (call $windowpos_defproc_minmax (local.get $arg0) (local.get $arg3))
@@ -190,6 +191,20 @@
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    ;; WM_SETTEXT / WM_GETTEXT / WM_GETTEXTLENGTH: the caption store is ANSI,
+    ;; so run DefWindowProcA's handling on converted text. These used to fall
+    ;; to the "return 0" tail: a Unicode window's default WM_SETTEXT set
+    ;; nothing and WM_GETTEXT answered "".
+    (if (i32.and (i32.ge_u (local.get $arg1) (i32.const 0x000C))
+                 (i32.le_u (local.get $arg1) (i32.const 0x000E)))
+      (then
+        ;; hwnd 0: DefWindowProcA's caption store is ANSI whatever the class.
+        (local.set $buf (call $wmsg_narrow_in (i32.const 0) (local.get $arg1) (local.get $arg2) (local.get $arg3)))
+        (call $handle_DefWindowProcA (local.get $arg0) (local.get $arg1) (local.get $arg2)
+          (select (local.get $buf) (local.get $arg3) (local.get $buf))
+          (local.get $arg4) (local.get $name_ptr))
+        (call $wmsg_widen_out (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $buf))
         (return)))
     ;; Encoding-neutral default: permit WM_QUERYOPEN unless the application
     ;; consumes it before reaching DefWindowProcW.
@@ -394,11 +409,127 @@
     (if (i32.eqz (call $msg_lparam_is_text (local.get $msg))) (then (return (i32.const 0))))
     (if (i32.lt_u (local.get $lParam) (i32.const 0x10000)) (then (return (i32.const 0))))
     (if (i32.eqz (call $ctrl_table_get_class (local.get $hwnd))) (then (return (i32.const 0))))
+    ;; A control a Unicode guest proc has subclassed is not ours yet: the
+    ;; message goes to that proc first, which wants UTF-16 and reads it after
+    ;; this returns (the narrowed copy would already be freed). When it chains
+    ;; to the native proc, CallWindowProcW narrows ($wmsg_narrow_in). Delphi's
+    ;; VCL does exactly this for every TComboBox item (Inno Setup 5.3.11u).
+    (if (i32.and (call $ctrl_is_subclassed (local.get $hwnd))
+                 (i32.ne (call $wnd_unicode_get (local.get $hwnd)) (i32.const 0)))
+      (then (return (i32.const 0))))
     (local.set $n (i32.add (call $guest_wcslen (local.get $lParam)) (i32.const 1)))
     (local.set $buf (call $heap_alloc (local.get $n)))
     (if (i32.eqz (local.get $buf)) (then (return (i32.const 0))))
     (drop (call $wide_to_ansi (local.get $lParam) (local.get $buf) (local.get $n)))
     (local.get $buf))
+
+  ;; A W message about to reach one of our ANSI-only procs (a native control,
+  ;; DefWindowProcA): return a guest buffer to pass as lParam instead, or 0
+  ;; when lParam carries nothing encoded. The caller passes the buffer, runs
+  ;; the proc synchronously, then hands it to $wmsg_widen_out.
+  ;;   text-in messages   -> narrowed copy of the UTF-16 string
+  ;;   WM_NCCREATE/CREATE -> CREATESTRUCT copy with narrowed name and class
+  ;;   WM_GETTEXT, CB_GETLBTEXT, LB_GETTEXT -> ANSI scratch, widened afterwards
+  ;; Delphi's VCL creates every control under its own superclass (TButton,
+  ;; TNewStaticText...) and chains each message to the stock proc with
+  ;; CallWindowProcW, so its WM_CREATE carries CREATESTRUCTW: read as bytes,
+  ;; the caption "Cancel" became "C" (Inno Setup 5.3.11u language dialog).
+  (func $wmsg_narrow_in (param $hwnd i32) (param $msg i32) (param $wParam i32) (param $lParam i32) (result i32)
+    (local $n i32) (local $buf i32) (local $i i32) (local $p i32) (local $class i32)
+    (if (i32.lt_u (local.get $lParam) (i32.const 0x10000)) (then (return (i32.const 0))))
+    ;; EDIT and RichEdit created by CreateWindowExW already read and write
+    ;; UTF-16 for their text messages ($edit_wndproc); only creation differs.
+    (local.set $class (call $ctrl_table_get_class (local.get $hwnd)))
+    (if (i32.and
+          (i32.ne (call $wnd_unicode_get (local.get $hwnd)) (i32.const 0))
+          (i32.or (i32.eq (local.get $class) (i32.const 2))
+            (i32.or (i32.eq (local.get $class) (i32.const 24))
+                    (i32.eq (local.get $class) (i32.const 25)))))
+      (then
+        (if (i32.eqz (i32.or (i32.eq (local.get $msg) (i32.const 0x0001))
+                             (i32.eq (local.get $msg) (i32.const 0x0081))))
+          (then (return (i32.const 0))))))
+    (if (call $msg_lparam_is_text (local.get $msg))
+      (then
+        (local.set $n (i32.add (call $guest_wcslen (local.get $lParam)) (i32.const 1)))
+        ;; DBCS: a UTF-16 unit can take two bytes.
+        (local.set $n (i32.shl (local.get $n) (i32.const 1)))
+        (local.set $buf (call $heap_alloc (local.get $n)))
+        (if (i32.eqz (local.get $buf)) (then (return (i32.const 0))))
+        (drop (call $wide_to_ansi (local.get $lParam) (local.get $buf) (local.get $n)))
+        (return (local.get $buf))))
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0001))
+                (i32.eq (local.get $msg) (i32.const 0x0081)))
+      (then
+        ;; 48-byte CREATESTRUCT, then 256 bytes each for name and class.
+        (local.set $buf (call $heap_alloc (i32.const 560)))
+        (if (i32.eqz (local.get $buf)) (then (return (i32.const 0))))
+        (loop $copy
+          (call $gs32 (i32.add (local.get $buf) (local.get $i))
+            (call $gl32 (i32.add (local.get $lParam) (local.get $i))))
+          (local.set $i (i32.add (local.get $i) (i32.const 4)))
+          (br_if $copy (i32.lt_u (local.get $i) (i32.const 48))))
+        (local.set $p (call $gl32 (i32.add (local.get $lParam) (i32.const 36))))
+        (if (i32.ge_u (local.get $p) (i32.const 0x10000))
+          (then
+            (drop (call $wide_to_ansi (local.get $p)
+              (i32.add (local.get $buf) (i32.const 48)) (i32.const 256)))
+            (call $gs32 (i32.add (local.get $buf) (i32.const 36))
+              (i32.add (local.get $buf) (i32.const 48)))))
+        (local.set $p (call $gl32 (i32.add (local.get $lParam) (i32.const 40))))
+        (if (i32.ge_u (local.get $p) (i32.const 0x10000))
+          (then
+            (drop (call $wide_to_ansi (local.get $p)
+              (i32.add (local.get $buf) (i32.const 304)) (i32.const 256)))
+            (call $gs32 (i32.add (local.get $buf) (i32.const 40))
+              (i32.add (local.get $buf) (i32.const 304)))))
+        (return (local.get $buf))))
+    (if (i32.eq (local.get $msg) (i32.const 0x000D))   ;; WM_GETTEXT: wParam = chars
+      (then
+        (if (i32.le_s (local.get $wParam) (i32.const 0)) (then (return (i32.const 0))))
+        (local.set $n (i32.shl (local.get $wParam) (i32.const 1)))
+        (local.set $buf (call $heap_alloc (local.get $n)))
+        (if (local.get $buf) (then (call $gs8 (local.get $buf) (i32.const 0))))
+        (return (local.get $buf))))
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0148))    ;; CB_GETLBTEXT
+                (i32.eq (local.get $msg) (i32.const 0x0189)))   ;; LB_GETTEXT
+      (then
+        ;; No capacity is passed; callers size it from *_GETTEXTLEN.
+        (local.set $buf (call $heap_alloc (i32.const 1024)))
+        (if (local.get $buf) (then (call $gs8 (local.get $buf) (i32.const 0))))
+        (return (local.get $buf))))
+    (i32.const 0))
+
+  ;; CreateWindowExW builds a CREATESTRUCTW for guest procs. A native control
+  ;; created directly is sent its WM_CREATE synchronously from the shared A
+  ;; core; give it an ANSI copy (free with $heap_free), or 0 for an A call.
+  (func $createstruct_narrow_for_native (param $cs i32) (result i32)
+    (if (i32.eqz (i32.or (global.get $createwnd_wide_name)
+                         (global.get $createwnd_wide_class)))
+      (then (return (i32.const 0))))
+    (call $wmsg_narrow_in (i32.const 0) (i32.const 0x0001) (i32.const 0) (local.get $cs)))
+
+  ;; Finish a $wmsg_narrow_in conversion: widen any text the proc produced
+  ;; into the caller's UTF-16 buffer, and release the scratch.
+  (func $wmsg_widen_out (param $msg i32) (param $wParam i32) (param $lParam i32) (param $buf i32)
+    (if (i32.eqz (local.get $buf)) (then (return)))
+    (if (i32.eq (local.get $msg) (i32.const 0x000D))
+      (then (drop (call $ansi_to_wide (local.get $buf) (local.get $lParam) (local.get $wParam)))))
+    (if (i32.or (i32.eq (local.get $msg) (i32.const 0x0148))
+                (i32.eq (local.get $msg) (i32.const 0x0189)))
+      (then
+        ;; LB_ERR / CB_ERR leaves the caller's buffer alone.
+        (if (i32.ge_s (i32.load (global.get $reg_base)) (i32.const 0))
+          (then (drop (call $ansi_to_wide (local.get $buf) (local.get $lParam)
+            (i32.add (call $guest_strlen (local.get $buf)) (i32.const 1))))))))
+    (call $heap_free (local.get $buf)))
+
+  ;; Does a CallWindowProcW to PROC run one of our ANSI procs synchronously?
+  ;; Guest code and thunks keep the UTF-16 payload; DefDlgProc may continue
+  ;; into a guest DLGPROC after we return, so it is not narrowed here.
+  (func $cwp_w_target_is_native (param $proc i32) (result i32)
+    (i32.and (call $is_wndproc_marker (local.get $proc))
+             (i32.ne (local.get $proc) (global.get $WNDPROC_DIALOG))))
 
   ;; SendMessageW — the A path owns dispatch. Only the text-bearing messages
   ;; differ, and only when the target is one of our own controls: XP Sound

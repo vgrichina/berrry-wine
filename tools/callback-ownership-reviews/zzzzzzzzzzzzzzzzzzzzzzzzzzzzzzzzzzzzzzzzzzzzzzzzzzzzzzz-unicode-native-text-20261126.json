@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_CreateWindowExA",
+      "baseSHA256": "0ec587e3cd5f67564918c165bb97551ba9ab980b96ae2daf98e9fa5351a83dc7",
+      "sha256": "7ad42959e1719e40b03acbb7083220bc04357e0698b1ba7ad6fa261fdb903c71",
+      "reason": "Review 20261126 Unicode native-control text: the two synchronous WAT-native WM_CREATE dispatches (system-class top level, native child control) now pass an ANSI copy of CREATESTRUCTW from $createstruct_narrow_for_native when the call came through CreateWindowExW, and free it after the synchronous $wat_wndproc_dispatch returns. No guest callback, EIP write or frame change is added; the guest-visible CREATESTRUCTW at wnd_scratch is unchanged."
+    }
+  ]
+}

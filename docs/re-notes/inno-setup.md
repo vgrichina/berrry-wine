@@ -21,12 +21,36 @@ CP_UTF7 / CP_UTF8: MaxCharSize 5 / 4, DefaultChar "?", no lead bytes.
 `is_supported_code_page` is unchanged, because IsValidCodePage and the console
 code-page APIs share it and the conversion layer has no real UTF-8 path.
 
-The child then builds "Select Setup Language". **Next blocker:** the dialog's
-label, buttons and combo paint only the first character ("S", "O", "C"; the
-combo shows "(‡"). That is UTF-16 text read as ANSI somewhere in native-control
-painting or WM_GETTEXT, since the CreateWindow titles in the log are correct.
-It has not been investigated. Run 20261125-delphi-corpus-fixes:
-`inno5311u-child.png`.
+The child then builds "Select Setup Language".
+
+## 5.3.11 Unicode: text painted only its first character (fixed 2026-11-26)
+
+The label, buttons and combo showed "S", "O", "C" and "(‡". The text APIs were
+not involved: the VCL creates every control under its own superclass
+(`TButton`, `TNewStaticText`, `TComboBox`) and chains each message to the stock
+proc with `CallWindowProcW(<GetClassInfoW lpfnWndProc>, ...)`. That proc is our
+`$WNDPROC_SYSCLASS` marker, so the native control got a Unicode payload:
+
+- WM_CREATE carried CREATESTRUCTW, and the button/static procs `strlen` the
+  UTF-16 caption, which stops at the first character.
+- CB_ADDSTRING was sent with SendMessageW to a control that had been adopted
+  as a native combo. `$msg_narrow_text_lparam` narrowed it, but the target's
+  proc is guest code, so the narrowed copy was freed before the VCL read it.
+  That gave "(‡".
+
+Fix (09a5c `$wmsg_narrow_in` / `$wmsg_widen_out`): CallWindowProcW to a native
+marker converts CREATESTRUCTW, text-in messages and WM_GETTEXT / CB_GETLBTEXT /
+LB_GETTEXT around the synchronous call. SendMessageW no longer narrows for a
+control that a Unicode guest proc has subclassed. DefWindowProcW now handles
+WM_SETTEXT / WM_GETTEXT / WM_GETTEXTLENGTH; they used to return 0. A native
+control created directly by CreateWindowExW is also sent an ANSI CREATESTRUCT.
+W-created EDIT/RichEdit keep UTF-16 text messages, since `$edit_wndproc` reads
+UTF-16 for them. Test: `test/test-callwindowproc-wide-native.js`.
+
+Now the dialog renders whole. Enter at child batch 400000 reaches the wizard's
+Welcome page, which renders correctly with its bitmap. Run
+20261126-delphi-corpus-fixes-2: `inno5311u-child-after.png`,
+`inno5311u-child-enter.png`.
 
 ## 6.7.4: Vista-era startup APIs (2026-11-25)
 
