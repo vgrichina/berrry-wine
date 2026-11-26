@@ -326,6 +326,119 @@ async function invalidation() {
     assert(all.ctx >= 2);
     ok(`R2 call-site contexts: ${on.ctx} contexts, ${on.jcc} compares decided, exact against threaded code`);
   }
+  // R2 shapes: each a loop calling shared helpers from two sites, run
+  // against threaded code at several trip counts. A tiny assembler: bytes,
+  // {L}, {call}, {jmp}, {jcc, cc} (rel32).
+  {
+    const asm = (items) => {
+      const out = [], labs = {}, fix = [];
+      for (const it of items) {
+        if (typeof it === 'number') out.push(it);
+        else if (Array.isArray(it)) out.push(...it);
+        else if (it.L) labs[it.L] = out.length;
+        else {
+          if (it.call) out.push(0xE8); else if (it.jmp) out.push(0xE9); else out.push(0x0F, 0x80 | it.cc);
+          fix.push([out.length, it.call || it.jmp || it.to]); out.push(0, 0, 0, 0);
+        }
+      }
+      for (const [at, l] of fix) {
+        if (labs[l] === undefined) throw new Error(`label ${l}`);
+        const r = (labs[l] - (at + 4)) | 0;
+        out.splice(at, 4, ...d32(r >>> 0));
+      }
+      return Uint8Array.from(out);
+    };
+    const tail = [0x83, 0xC6, 0x04, 0x49, { cc: 5, to: 'L' }, 0xC3];
+    const SHAPES = {
+      // caller's flags consumed in the callee
+      'flags-in': [{ L: 'L' }, [0x8B, 0x06], [0x83, 0xE0, 0x03], [0x83, 0xF8, 0x01], { call: 'H' },
+        [0x8B, 0x46, 0x04], [0x83, 0xF8, 0x02], { call: 'H' }, ...tail,
+        { L: 'H' }, { cc: 4, to: 'Hz' }, [0x83, 0x07, 0x01], 0xC3, { L: 'Hz' }, [0x83, 0x47, 0x04, 0x03], 0xC3],
+      // callee's flags consumed by the caller after the RET
+      'flags-out': [{ L: 'L' }, { call: 'H' }, [0x85, 0xC0], { cc: 4, to: 'S1' }, [0x01, 0x07], { L: 'S1' },
+        [0x83, 0xC6, 0x01], { call: 'H' }, [0x85, 0xC0], { cc: 4, to: 'S2' }, [0x01, 0x47, 0x08], { L: 'S2' }, ...tail,
+        { L: 'H' }, 0x56, [0x8B, 0xF1], [0xF6, 0x46, 0x01, 0x21], { cc: 4, to: 'Ha' }, [0xB8, 1, 0, 0, 0], 0x5E, 0xC3,
+        { L: 'Ha' }, [0x8B, 0x46, 0x08], 0x5E, 0xC3],
+      // a callee's ADD's carry read after the RET
+      'carry-out': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' }, { cc: 2, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, { cc: 3, to: 'C2' }, [0x83, 0x47, 0x04, 0x07], { L: 'C2' }, ...tail,
+        { L: 'H' }, [0x01, 0x57, 0x0C], 0xC3],
+      'co-one': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' }, { cc: 2, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, ...tail,
+        { L: 'H' }, [0x01, 0x57, 0x0C], 0xC3],
+      'co-sub': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' }, { cc: 2, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, [0x83, 0xC6, 0x04], [0x83, 0xE9, 0x01], { cc: 5, to: 'L' }, 0xC3,
+        { L: 'H' }, [0x01, 0x57, 0x0C], 0xC3],
+      'co-two': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, { cc: 2, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' }, ...tail,
+        { L: 'H' }, [0x01, 0x57, 0x0C], 0xC3],
+      'co-reg': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' }, { cc: 2, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, { cc: 3, to: 'C2' }, [0x83, 0x47, 0x04, 0x07], { L: 'C2' }, ...tail,
+        { L: 'H' }, [0x01, 0xD0], 0xC3],
+      'co-noexit': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' }, { cc: 2, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, { cc: 3, to: 'C2' }, [0x83, 0x47, 0x04, 0x07], { L: 'C2' },
+        [0x83, 0xC6, 0x04], 0x49, { cc: 5, to: 'L' }, 0xF8, 0xC3,
+        { L: 'H' }, [0x01, 0x57, 0x0C], 0xC3],
+      'co-zf': [{ L: 'L' }, [0x8B, 0x16], { call: 'H' }, { cc: 4, to: 'C1' }, [0x83, 0x07, 0x05], { L: 'C1' },
+        [0x8B, 0x56, 0x04], { call: 'H' }, { cc: 5, to: 'C2' }, [0x83, 0x47, 0x04, 0x07], { L: 'C2' }, ...tail,
+        { L: 'H' }, [0x01, 0x57, 0x0C], 0xC3],
+      // RET imm16 and an argument read through ESP
+      'ret-imm': [{ L: 'L' }, [0x6A, 0x05], { call: 'H' }, [0x6A, 0x07], { call: 'H' }, ...tail,
+        { L: 'H' }, [0x8B, 0x44, 0x24, 0x04], [0x01, 0x07], [0xC2, 0x04, 0x00]],
+      // nested: H1 (two sites) calls H2, which saves EBX
+      'nested': [{ L: 'L' }, [0xBA, 3, 0, 0, 0], { call: 'H1' }, [0xBA, 9, 0, 0, 0], { call: 'H1' }, ...tail,
+        { L: 'H1' }, [0x01, 0x17], { call: 'H2' }, [0x83, 0xFA, 0x05], { cc: 7, to: 'H1b' }, [0x83, 0x47, 0x10, 0x01], { L: 'H1b' }, 0xC3,
+        { L: 'H2' }, 0x53, [0x8B, 0x1E], [0x01, 0x5F, 0x14], [0x01, 0xD3], [0x89, 0x5F, 0x18], 0x5B, 0xC3],
+      // a loop inside the callee
+      'inner-loop': [{ L: 'L' }, [0xBA, 3, 0, 0, 0], { call: 'H' }, [0xBA, 5, 0, 0, 0], { call: 'H' }, ...tail,
+        { L: 'H' }, { L: 'Hl' }, [0x01, 0x17], [0x83, 0xC7, 0x04], 0x4A, { cc: 5, to: 'Hl' }, 0xC3],
+      // a callee that moves its return address past two bytes
+      'ret-moved': [{ L: 'L' }, { call: 'H' }, [0xEB, 0x00], [0x83, 0x07, 0x01], { call: 'H' }, [0xEB, 0x00], ...tail,
+        { L: 'H' }, [0x83, 0x04, 0x24, 0x02], [0x83, 0x47, 0x04, 0x01], 0xC3],
+      // a helper also reached by a jump from a third, single-site one
+      'jmp-in': [{ L: 'L' }, { call: 'H' }, { call: 'H' }, [0xF6, 0x06, 0x01], { cc: 4, to: 'T' }, { call: 'G' }, { L: 'T' },
+        ...tail,
+        { L: 'G' }, 0x53, [0x8B, 0x5E, 0x04], [0x01, 0x5F, 0x08], 0x5B, { jmp: 'H' },
+        { L: 'H' }, [0x83, 0x07, 0x01], 0xC3],
+      // a tail jump from one helper into another, which also has its own site
+      'tail-jmp': [{ L: 'L' }, { call: 'H1' }, { call: 'H2' }, { call: 'H1' }, ...tail,
+        { L: 'H1' }, [0x83, 0x47, 0x08, 0x02], { jmp: 'H2' },
+        { L: 'H2' }, [0x8B, 0x06], [0x01, 0x47, 0x0C], 0xC3],
+      // 16-bit flags (StarCraft 0x4c4281 neg ax) across the call
+      'flags16': [{ L: 'L' }, [0x66, 0x8B, 0x06], [0x66, 0xF7, 0xD8], { call: 'H' },
+        [0x66, 0x8B, 0x46, 0x02], [0x66, 0x83, 0xE8, 0x10], { call: 'H' }, ...tail,
+        { L: 'H' }, { cc: 8, to: 'Hs' }, [0x66, 0x01, 0x07], 0xC3, { L: 'Hs' }, [0x66, 0x29, 0x47, 0x02], 0xC3],
+    };
+    const TRIPS = [1, 2, 3, 7, 40];
+    const MASKS = process.env.UOP_R2_MASKS ? process.env.UOP_R2_MASKS.split(',').map(Number) : [0x800, 0x802, 0x840, 0x940, 0xFFF];
+    const ONLY = process.env.UOP_R2_SHAPE;
+    for (const [name, items] of Object.entries(SHAPES)) {
+      if (ONLY && name !== ONLY) continue;
+      const body = asm(items);
+      let ctx = 0;
+      for (const ecx of TRIPS) {
+        const RR = { eax: 0x11, ebx: 0x22, ecx, edx: 0x33, ebp: 0x44, esi: a.buf, edi: a.buf + 0x10000 };
+        e.set_uop(0); fill(); const want = run(fresh(body), RR);
+        const wantBuf = Uint8Array.from(new Uint8Array(e.memory.buffer, g2w(a.buf), 0x20000));
+        e.set_uop(1);
+        for (const mask of MASKS) {
+          e.set_uop_opt(mask);
+          const c0 = st(16);
+          const { at } = compiled(body);
+          ctx += st(16) - c0;
+          fill(); const got = run(at, RR);
+          if (got !== want) {
+            const gb = new Uint8Array(e.memory.buffer, g2w(a.buf), 0x20000);
+            const dw = (b, k) => (b[k] | b[k + 1] << 8 | b[k + 2] << 16 | b[k + 3] << 24) >>> 0;
+            for (let k = 0; k < 0x20000; k += 4) if (dw(gb, k) !== dw(wantBuf, k)) console.log(`  diff buf+0x${k.toString(16)}: got 0x${dw(gb, k).toString(16)} want 0x${dw(wantBuf, k).toString(16)}`);
+            console.log(`  eax got ${got.split(':')[1]} want ${want.split(':')[1]}`);
+          }
+          assert.strictEqual(got, want, `${name} trips ${ecx} mask 0x${mask.toString(16)}`);
+        }
+      }
+      ok(`R2 shape ${name}: exact at trips ${TRIPS.join('/')}, masks ${MASKS.map((m) => '0x' + m.toString(16)).join('/')} (${ctx} contexts)`);
+    }
+  }
   e.set_uop_opt(0);
   e.set_uop(0);
   return n;
@@ -333,7 +446,8 @@ async function invalidation() {
 
 async function main() {
   require(path.join(ROOT, 'tools', 'bench-loops.js')).ensureBuilt();
-  const fails = armsPass();
+  // UOP_OPT_SKIP_ARMS=1: the one-instance checks alone (a quick loop while debugging)
+  const fails = process.env.UOP_OPT_SKIP_ARMS ? 0 : armsPass();
   console.log('invalidation (one instance, test exports):');
   const n = await invalidation();
   if (fails) { console.log(`FAIL: ${fails} arm(s)`); process.exit(1); }

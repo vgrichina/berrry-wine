@@ -162,6 +162,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // around the page it missed on (07d $uop_reguard_wide; default 64KB, 4096 =
   // the old one-page window). Every instance: each thread re-guards its own.
   const UOP_REGUARD_SPAN = getArg('uop-reguard-span', null);
+  // --uop-r2-window=LO:HI: R2 (0x800) keeps contexts only in the LO..HI-1th
+  // program that would keep them, in compile order -- to bisect a diff.
+  const UOP_R2_WINDOW = getArg('uop-r2-window', null);
   if (UOP_CENSUS) env.DBG_INV = '1';
   // --branch-clock: one guest-clock block per executed x86 branch, not per
   // threaded block cut ($branch_clock in 05-alu). Pass it to BOTH arms of any
@@ -458,6 +461,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_WIN_CENSUS && available('set_uop_win_census')) set('set_uop_win_census', 1);
       if (UOP_X87_CENSUS && available('set_uop_x87_census')) set('set_uop_x87_census', 1);
       if (UOP_REGUARD_SPAN !== null && available('set_uop_reguard_span')) set('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
+      // main instance only: a diagnostic, not a policy a thread inherits
+      if (UOP_R2_WINDOW !== null && available('set_uop_r2_window')) {
+        const [lo, hi] = UOP_R2_WINDOW.split(':').map(Number);
+        set('set_uop_r2_window', lo >>> 0, hi >>> 0);
+      }
       if (UOP_POOR_WORK !== null && available('set_uop_poor_work')) set('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
       if (NO_UOP_TRACE_CUT && available('set_uop_trace_cut')) set('set_uop_trace_cut', 0);
       if (NO_UOP_MCOPY && available('set_uop_mcopy')) set('set_uop_mcopy', 0);
@@ -675,6 +683,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
           `c2-copies=${os(14)} c2-programs=${os(15)} r2-contexts=${os(16)} r2-programs=${os(17)} ` +
           `fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
       }
+      if (UOP_R2_WINDOW !== null && x.uop_r2_last_head) log(`uop r2 window: last head 0x${(x.uop_r2_last_head() >>> 0).toString(16)}`);
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
         (x.uop_hot_halvings ? ` halvings=${x.uop_hot_halvings() >>> 0}` : ''));

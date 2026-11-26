@@ -1733,7 +1733,7 @@
     (if (i32.eq (i32.load (local.get $o)) (i32.const 1))
       (then (call $uc_ref_set (local.get $d) (i32.const 0) (i32.load offset=4 (local.get $o))
                               (i32.const 0) (i32.load offset=8 (local.get $o)) (i32.const 0)) (return)))
-    (call $uc_ref_set (local.get $d) (i32.const 1) (i32.load (local.get $R)) (local.get $tag)
+    (call $uc_ref_set (local.get $d) (i32.const 1) (call $uc_pid (local.get $R)) (local.get $tag)
                       (i32.const 0) (i32.load offset=20 (local.get $o))))
 
   ;; recipeFor: what a flag consumer needs from producer R, and where each
@@ -1744,7 +1744,7 @@
   ;;   9 shift 10 imul
   (func $uc_recipe (param $R i32)
     (local $a i32) (local $k i32) (local $O0 i32) (local $r32 i32) (local $op i32)
-    (local.set $a (i32.load (local.get $R)))
+    (local.set $a (call $uc_pid (local.get $R)))
     (local.set $k (call $uc_kind (local.get $R)))
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
     (i32.store offset=128 (local.get $R) (i32.const 0))
@@ -1879,6 +1879,25 @@
     (i32.store offset=8 (local.get $p) (i32.add (i32.load offset=8 (local.get $E)) (i32.const 1)))
     (i32.store offset=12 (local.get $p) (local.get $t))
     (local.get $n))
+  ;; --uop-r2-window LO:HI: only the LO..HI-1th program that keeps contexts
+  ;; (in compile order) keeps them -- a bisection knob.
+  (global $uc_r2_seq (mut i32) (i32.const 0))
+  (global $uc_r2_lo (mut i32) (i32.const 0))
+  (global $uc_r2_hi (mut i32) (i32.const -1))
+  (func (export "set_uop_r2_window") (param $lo i32) (param $hi i32)
+    (global.set $uc_r2_lo (local.get $lo)) (global.set $uc_r2_hi (local.get $hi))
+    (global.set $uc_r2_seq (i32.const 0))
+    (call $uop_flush))
+  (func $uc_r2_window (result i32)
+    (local $n i32)
+    (if (i32.eqz (call $uc_r2_shared)) (then (return (i32.const 0))))
+    (local.set $n (global.get $uc_r2_seq))
+    (global.set $uc_r2_seq (i32.add (local.get $n) (i32.const 1)))
+    (if (i32.and (i32.ge_u (local.get $n) (global.get $uc_r2_lo)) (i32.lt_u (local.get $n) (global.get $uc_r2_hi)))
+      (then (global.set $uc_r2_last (global.get $uc_r2_head)) (return (i32.const 1))))
+    (i32.const 0))
+  (global $uc_r2_last (mut i32) (i32.const 0))
+  (func (export "uop_r2_last_head") (result i32) (global.get $uc_r2_last))
   ;; whether two contexts have the same callee (two call sites)
   (func $uc_r2_shared (result i32)
     (local $i i32) (local $j i32) (local $t i32)
@@ -2362,7 +2381,7 @@
         (if (global.get $uc_trace) (then (return (call $uc_form_trace (local.get $head)))))
         (return (i32.const 4))))
     ;; contexts pay only where a callee has two: else scan again without
-    (if (i32.and (i32.ne (global.get $uc_r2) (i32.const 0)) (i32.eqz (call $uc_r2_shared)))
+    (if (i32.and (i32.ne (global.get $uc_r2) (i32.const 0)) (i32.eqz (call $uc_r2_window)))
       (then (global.set $uc_r2 (i32.const 0))
             (return (call $uc_form_loop (local.get $head)))))
     (if (i32.gt_u (local.get $n) (global.get $UC_MAX_LOOP)) (then (return (i32.const 5))))
