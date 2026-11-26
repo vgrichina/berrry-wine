@@ -3183,6 +3183,106 @@
   ;; correctness.
   (func $th_uop_enter (param $op i32)
     (local $nx_fn i32) (local $nx_op i32)
+    (local $ep i32) (local $b0 i32) (local $b1 i32) (local $n i32) (local $spent i32)
+    ;; $uop_live, not just the gen word: this op outlives the flush that
+    ;; freed its program, and the bytes it names get reused.
+    (if (i32.and
+          (i32.and (call $uop_live (local.get $op))
+                   (i32.eq (i32.load offset=4 (local.get $op)) (global.get $eip)))
+          ;; $dbg_tier_guard, not $dbg_chain_guard: the handler histogram
+          ;; must see the tier running (13-exports.wat $dbg_recompute).
+          (i32.eqz (i32.or (global.get $dbg_tier_guard) (global.get $code16))))
+      (then
+        ;; --uop-opt: a program compiled with assumptions (nwin top bit,
+        ;; 07e) takes its own enter ($th_uop_enter_opt): stamp check and S1
+        ;; variant pick. Every other program pays this one load and test, so
+        ;; mask 0 runs main's enter.
+        (if (i32.lt_s (i32.load offset=8 (local.get $op)) (i32.const 0))
+          (then (return_call $th_uop_enter_opt (local.get $op))))
+
+        ;; Keep the windows the last run proved unless something they depend
+        ;; on changed since; else poison them, so the first access through
+        ;; each misses and guards its own page.
+        ;; A plain load: an atomic one is a full barrier on arm64 (dmb ish
+        ;; either side) on every entry, and orders nothing this needs -- the
+        ;; epoch can move the instant after either load, and a program that
+        ;; then runs on proven windows is exactly as covered by the per-access
+        ;; guards as one that read it a moment earlier.
+        (local.set $ep (i32.load (global.get $UOP_WIN_EPOCH)))
+        (if (i32.eq (i32.load offset=28 (local.get $op)) (local.get $ep))
+          (then (global.set $uop_win_kept (i32.add (global.get $uop_win_kept) (i32.const 1))))
+          (else
+            (global.set $uop_win_reset (i32.add (global.get $uop_win_reset) (i32.const 1)))
+            (call $uop_windows_reset (local.get $op) (local.get $ep))))
+        (local.set $b0 (global.get $block_budget))
+        (local.set $b1 (call $uop_run (i32.add (local.get $op) (global.get $UOP_HDR))
+                                      (local.get $b0)))
+        (global.set $block_budget (local.get $b1))
+        (global.set $uop_enters (i32.add (global.get $uop_enters) (i32.const 1)))
+        (local.set $spent (i32.sub (local.get $b0) (local.get $b1)))
+        (global.set $uop_blocks (i64.add (global.get $uop_blocks)
+          (i64.extend_i32_s (local.get $spent))))
+        ;; Per-program enters/blocks, kept in locals for the poor test below:
+        ;; $spent becomes the running block total.
+        (local.set $n (i32.add (i32.load offset=16 (local.get $op)) (i32.const 1)))
+        (i32.store offset=16 (local.get $op) (local.get $n))
+        (local.set $spent (i32.add (i32.load offset=20 (local.get $op)) (local.get $spent)))
+        (i32.store offset=20 (local.get $op) (local.get $spent))
+        ;; A trace's exit said how far it got (84 WORK); saturating, so a
+        ;; long-lived program's sum never wraps back to "poor".
+        (if (global.get $uop_xwork)
+          (then
+            (local.set $ep (i32.add (i32.load offset=32 (local.get $op)) (global.get $uop_xwork)))
+            (i32.store offset=32 (local.get $op)
+              (select (i32.const 0x40000000) (local.get $ep) (i32.gt_u (local.get $ep) (i32.const 0x40000000))))
+            (global.set $uop_xwork (i32.const 0))))
+        (if (global.get $uop_census) (then (call $uop_census_exit (local.get $op))))
+        ;; It left through a megamorphic site's guard ($uop_icg_count): kill
+        ;; it so the head recompiles without that inline cache. Its enters
+        ;; are zeroed so neither poor test below can mark the head.
+        (if (global.get $uop_icg_retire)
+          (then
+            (if (global.get $uop_census) (then (call $uop_census_prog (i32.const 12) (local.get $op))))
+            (global.set $uop_icg_retire (i32.const 0))
+            (global.set $uop_icg_mkills (i32.add (global.get $uop_icg_mkills) (i32.const 1)))
+            (call $uop_kill (local.get $op))
+            (call $uop_drop_ranges (local.get $op))
+            (i32.store offset=16 (local.get $op) (i32.const 0))
+            (local.set $n (i32.const 0))))
+        ;; EXITB: the batch is over, at the transfer target, as in threaded.
+        (if (global.get $uop_bexit)
+          (then
+            (global.set $uop_bexit (i32.const 0))
+            (global.set $block_budget (i32.const 0))
+            (return)))
+        ;; Resume in threaded code through $branch_end, adding back the block
+        ;; it charges: an exit is not a transfer of its own. (An exit to the
+        ;; head falls straight into the threaded head block instead, since
+        ;; $branch_end would re-enter the program.)
+        (if (i32.or (i32.ne (global.get $eip) (i32.load offset=4 (local.get $op)))
+                    (i32.lt_s (local.get $b1) (i32.const 0)))
+          (then
+            (global.set $block_budget (i32.add (local.get $b1) (i32.const 1)))
+            ;; $uop_poor_check's test, inline: the call is only made to retire
+            (if (i32.and (i32.ge_u (local.get $n) (i32.const 256))
+                         (i32.lt_u (local.get $spent) (i32.shl (local.get $n) (i32.const 1))))
+              (then (call $uop_poor_check (local.get $op))))
+            (return_call $branch_end)))
+        (global.set $uop_head_exits (i32.add (global.get $uop_head_exits) (i32.const 1)))
+        (i32.store offset=24 (local.get $op)
+          (i32.add (i32.load offset=24 (local.get $op)) (i32.const 1)))
+        ;; An exit at the head that spent no block did nothing at all: the
+        ;; first access failed its guard (a store into a page holding decoded
+        ;; code, say), and it will fail the same way next time. Such an entry
+        ;; is exactly as poor as a short trip out of a side exit.
+        (if (i32.eq (local.get $b0) (local.get $b1))
+          (then (call $uop_poor_check (local.get $op))))))
+    (dispatch-next))
+
+  ;; The enter for a program with an assumption block (header +8 top bit):
+  ;; the same steps as $th_uop_enter, after the stamp check and the S1 pick.
+  (func $th_uop_enter_opt (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32)
     (local $ep i32) (local $b0 i32) (local $b1 i32) (local $n i32) (local $spent i32) (local $run i32)
     ;; $uop_live, not just the gen word: this op outlives the flush that
     ;; freed its program, and the bytes it names get reused.
