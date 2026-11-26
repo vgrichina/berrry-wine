@@ -179,5 +179,19 @@ load fmod/jbfmod or Audiere with LoadLibrary.
   and the runner turned that into the generic box. GetObjectA now fills the
   84-byte DIBSECTION for a DIB section (`$gdi_bitmap_write_object`). Castle
   GM5 then reaches its game window ("Castle of Elite - F4 for fullscreen")
-  with no exception in 496K batches. The client area is black in that
-  capture, which has not been investigated.
+  with no exception in 496K batches. The client area was black in that
+  capture; see the next item.
+- **GM5 black client area was the DirectDraw DC's default clip** (2026-11-26,
+  run 20261126-delphi-corpus-fixes-2 `castle5/`). The play loop is plain
+  DDraw at 32bpp: tiles BltFast onto a 480x480 back surface, one Blt to the
+  primary. Every source surface was a single colour (plain ones all zero).
+  Each sprite reaches its surface at batch ~374795 through: 24bpp DIB
+  section -> `StretchBlt` into a screen-compatible DDB (after `PatBlt`
+  WHITENESS) -> `IDirectDrawSurface::GetDC` -> TCanvas selects font/pen/brush
+  and calls `IntersectClipRect(dc, 0, 0, w, h)` -> `StretchBlt` SRCCOPY ->
+  `ReleaseDC`. `$gdi_dc_target_size` had no case for the `0x200000+slot`
+  surface DCs, so their default clip was 0x0. IntersectClipRect returned
+  NULLREGION (1, which reads like TRUE in an API trace), and every later blit
+  returned 1 without writing a pixel. The surface DC now reports the surface's
+  w/h (`test/test-directdraw-gdi-clip.js`). A colour-keyed surface kept its
+  single `Blt` colour fill, which is why those looked "filled".
