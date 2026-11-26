@@ -1679,12 +1679,12 @@
         (return)))
     (if (i32.eq (local.get $fc) (i32.const 2))
       (then
-        (global.set $uc_sm (i32.load (local.get $R))) (global.set $uc_smd (i32.const 0))
-        (global.set $uc_sc (i32.load (local.get $R))) (global.set $uc_scd (i32.const 0))
+        (global.set $uc_sm (call $uc_pid (local.get $R))) (global.set $uc_smd (i32.const 0))
+        (global.set $uc_sc (call $uc_pid (local.get $R))) (global.set $uc_scd (i32.const 0))
         (return)))
     (if (i32.eq (local.get $fc) (i32.const 1))
       (then
-        (global.set $uc_sm (i32.load (local.get $R))) (global.set $uc_smd (i32.const 0))
+        (global.set $uc_sm (call $uc_pid (local.get $R))) (global.set $uc_smd (i32.const 0))
         (global.set $uc_scd (i32.or (global.get $uc_scd) (local.get $w)))
         (return)))
     (global.set $uc_smd (i32.or (global.get $uc_smd) (local.get $w)))
@@ -1825,6 +1825,92 @@
     (if (i32.lt_s (local.get $r) (i32.const 0)) (then (return (i32.const 0))))
     (if (i32.eqz (i32.and (i32.load offset=40 (local.get $r)) (i32.const 1))) (then (return (i32.const 0))))
     (local.get $r))
+
+  ;; ---- R2 (0x800) call contexts ----
+  ;; A record is keyed (address, context): context 0 is the head's frame,
+  ;; and every call the scan follows gets a context of its own (its
+  ;; callee's clone), so a callee reached from two call sites is two sets of
+  ;; records with their own F1 facts, and its RET has exactly one place to
+  ;; go. Record +228 its context, +232 (a call) its callee's. With the bit
+  ;; clear every context is 0 and every key is the address, as before.
+  (func $uc_key (param $a i32) (param $c i32) (result i64)
+    (i64.or (i64.extend_i32_u (local.get $a)) (i64.shl (i64.extend_i32_u (local.get $c)) (i64.const 32))))
+  (func $uc_ctx (param $R i32) (result i32) (i32.load offset=228 (local.get $R)))
+  (func $uc_insn_atc (param $a i32) (param $c i32) (result i32)
+    (call $uc_hm_get (global.get $UC_HM_INSN) (call $uc_key (local.get $a) (local.get $c))))
+  (func $uc_in_loopc (param $a i32) (param $c i32) (result i32)
+    (local $r i32)
+    (local.set $r (call $uc_insn_atc (local.get $a) (local.get $c)))
+    (if (i32.lt_s (local.get $r) (i32.const 0)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.and (i32.load offset=40 (local.get $r)) (i32.const 1))) (then (return (i32.const 0))))
+    (local.get $r))
+  ;; the context successor k of R runs in: a call's callee clone, a cloned
+  ;; RET's caller, otherwise R's own
+  (func $uc_sctx (param $R i32) (param $k i32) (result i32)
+    (local $kd i32) (local $c i32)
+    (if (i32.eqz (global.get $uc_r2)) (then (return (i32.const 0))))
+    (local.set $kd (call $uc_kind (local.get $R)))
+    (local.set $c (call $uc_ctx (local.get $R)))
+    (if (i32.eq (local.get $kd) (i32.const 23)) (then (return (i32.load offset=232 (local.get $R)))))
+    (if (i32.and (i32.eq (local.get $kd) (i32.const 24)) (i32.ne (local.get $c) (i32.const 0)))
+      (then (return (i32.load (i32.add (global.get $UC_CTX) (i32.shl (local.get $c) (i32.const 4)))))))
+    (local.get $c))
+  ;; A new context for a call in context c to target t returning to ra, or
+  ;; -1: the table is full, the chain is $UC_R2_DEPTH deep, or t is already
+  ;; a callee on it.
+  (func $uc_r2_open (param $c i32) (param $t i32) (param $ra i32) (result i32)
+    (local $n i32) (local $p i32) (local $E i32)
+    (if (i32.ge_u (global.get $uc_nctx) (global.get $UC_MAX_CTX)) (then (return (i32.const -1))))
+    (local.set $E (i32.add (global.get $UC_CTX) (i32.shl (local.get $c) (i32.const 4))))
+    (if (i32.ge_u (i32.load offset=8 (local.get $E)) (global.get $UC_R2_DEPTH)) (then (return (i32.const -1))))
+    (local.set $p (local.get $c))
+    (block $d (loop $l
+      (br_if $d (i32.eqz (local.get $p)))
+      (if (i32.eq (i32.load offset=12 (i32.add (global.get $UC_CTX) (i32.shl (local.get $p) (i32.const 4)))) (local.get $t))
+        (then (return (i32.const -1))))
+      (local.set $p (i32.load (i32.add (global.get $UC_CTX) (i32.shl (local.get $p) (i32.const 4)))))
+      (br $l)))
+    (if (i32.eq (local.get $t) (global.get $uc_r2_head)) (then (return (i32.const -1))))
+    (local.set $n (global.get $uc_nctx))
+    (global.set $uc_nctx (i32.add (local.get $n) (i32.const 1)))
+    (local.set $p (i32.add (global.get $UC_CTX) (i32.shl (local.get $n) (i32.const 4))))
+    (i32.store (local.get $p) (local.get $c))
+    (i32.store offset=4 (local.get $p) (local.get $ra))
+    (i32.store offset=8 (local.get $p) (i32.add (i32.load offset=8 (local.get $E)) (i32.const 1)))
+    (i32.store offset=12 (local.get $p) (local.get $t))
+    (local.get $n))
+  ;; whether two contexts have the same callee (two call sites)
+  (func $uc_r2_shared (result i32)
+    (local $i i32) (local $j i32) (local $t i32)
+    (local.set $i (i32.const 1))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $i) (global.get $uc_nctx)))
+      (local.set $t (i32.load offset=12 (i32.add (global.get $UC_CTX) (i32.shl (local.get $i) (i32.const 4)))))
+      (local.set $j (i32.add (local.get $i) (i32.const 1)))
+      (block $d2 (loop $l2
+        (br_if $d2 (i32.ge_u (local.get $j) (global.get $uc_nctx)))
+        (if (i32.eq (i32.load offset=12 (i32.add (global.get $UC_CTX) (i32.shl (local.get $j) (i32.const 4)))) (local.get $t))
+          (then (return (i32.const 1))))
+        (local.set $j (i32.add (local.get $j) (i32.const 1)))
+        (br $l2)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l)))
+    (i32.const 0))
+  ;; successor k's record, if it is in the loop
+  (func $uc_succ_rec (param $R i32) (param $k i32) (result i32)
+    (call $uc_in_loopc (call $uc_succ (local.get $R) (local.get $k)) (call $uc_sctx (local.get $R) (local.get $k))))
+  ;; A flag producer's name in the flow states (m, c): its address, or for
+  ;; a record in a callee clone 0xFFF00000 | its index, so a consumer always
+  ;; names the clone that ran ($uc_prod_rec reads it back).
+  (func $uc_pid (param $R i32) (result i32)
+    (if (result i32) (i32.load offset=228 (local.get $R))
+      (then (i32.or (i32.const 0xFFF00000) (i32.shr_u (i32.sub (local.get $R) (global.get $UC_INSN)) (i32.const 8))))
+      (else (i32.load (local.get $R)))))
+  (func $uc_prod_rec (param $p i32) (result i32)
+    (if (i32.and (i32.ne (global.get $uc_r2) (i32.const 0))
+                 (i32.eq (i32.and (local.get $p) (i32.const 0xFFF00000)) (i32.const 0xFFF00000)))
+      (then (return (i32.add (global.get $UC_INSN) (i32.shl (i32.and (local.get $p) (i32.const 0xFFFFF)) (i32.const 8))))))
+    (call $uc_insn_at (local.get $p)))
   (func $uc_flag (param $R i32) (param $bit i32) (result i32)
     (i32.ne (i32.and (i32.load offset=40 (local.get $R)) (local.get $bit)) (i32.const 0)))
   (func $uc_set_flag (param $R i32) (param $bit i32)
@@ -1860,6 +1946,9 @@
   (func $uc_ret_targets
     (local $i i32) (local $C i32) (local $ra i32) (local $sp i32) (local $a i32)
     (local $R i32) (local $k i32) (local $n i32) (local $stamp i32)
+    ;; R2: every followed call has its own clone, whose RET the scan gave
+    ;; its one return address; a RET in the head's frame has none
+    (if (global.get $uc_r2) (then (local.set $i (global.get $uc_ninsn))))
     (block $cd (loop $cl
       (br_if $cd (i32.ge_u (local.get $i) (global.get $uc_ninsn)))
       (local.set $C (i32.add (global.get $UC_INSN) (i32.shl (local.get $i) (i32.const 8))))
@@ -2078,23 +2167,32 @@
   (func $uc_form_loop (param $head i32) (result i32)
     (local $sp i32) (local $a i32) (local $R i32) (local $k i32) (local $j i32)
     (local $s i32) (local $n i32) (local $x i32) (local $changed i32) (local $S i32)
-    (local $h i32) (local $pos i32) (local $d i64)
+    (local $h i32) (local $pos i32) (local $d i64) (local $c i32) (local $kx i64) (local $kr i64)
     (call $uc_hm_clear (global.get $UC_HM_INSN))
     (global.set $uc_ninsn (i32.const 0))
     (global.set $uc_is_trace (i32.const 0))
     (global.set $uc_nicall_seen (i32.const 0))
     (i32.store (global.get $UC_CALLT) (i32.const 0))
     (i32.store (global.get $UC_WORK) (local.get $head))
+    (global.set $uc_nctx (i32.const 1))
+    (global.set $uc_r2_head (local.get $head))
+    (if (global.get $uc_r2)
+      (then (memory.fill (global.get $UC_CTX) (i32.const 0) (i32.const 16))
+            (i32.store (global.get $UC_WORKC) (i32.const 0))))
     (local.set $sp (i32.const 1))
     (block $done (loop $l
       (br_if $done (i32.eqz (local.get $sp)))
       (local.set $sp (i32.sub (local.get $sp) (i32.const 1)))
       (local.set $a (i32.load (i32.add (global.get $UC_WORK) (i32.shl (local.get $sp) (i32.const 2)))))
-      (br_if $l (i32.ge_s (call $uc_insn_at (local.get $a)) (i32.const 0)))
+      (local.set $c (i32.const 0))
+      (if (global.get $uc_r2)
+        (then (local.set $c (i32.load (i32.add (global.get $UC_WORKC) (i32.shl (local.get $sp) (i32.const 2)))))))
+      (br_if $l (i32.ge_s (call $uc_insn_atc (local.get $a) (local.get $c)) (i32.const 0)))
       (if (i32.ge_u (global.get $uc_ninsn) (global.get $UC_MAX_SCAN)) (then (return (i32.const 1))))
       (local.set $R (i32.add (global.get $UC_INSN) (i32.shl (global.get $uc_ninsn) (i32.const 8))))
       (call $uc_decode (local.get $a) (local.get $R))
-      (call $uc_hm_put (global.get $UC_HM_INSN) (i64.extend_i32_u (local.get $a)) (local.get $R))
+      (i32.store offset=228 (local.get $R) (local.get $c))
+      (call $uc_hm_put (global.get $UC_HM_INSN) (call $uc_key (local.get $a) (local.get $c)) (local.get $R))
       (global.set $uc_ninsn (i32.add (global.get $uc_ninsn) (i32.const 1)))
       ;; which calls are the region's edge ($uc_nocall, $uc_lower_head's
       ;; retry ladder): 1 the FF /2 inline-cache sites, 2 every call but the
@@ -2121,6 +2219,21 @@
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 28))
         (then (call $uc_jt_targets (local.get $R))))
       (br_if $l (i32.eqz (call $uc_kind (local.get $R))))
+      ;; R2: a cloned callee's RET goes back to its own call site only
+      (if (i32.and (i32.eq (call $uc_kind (local.get $R)) (i32.const 24)) (i32.ne (local.get $c) (i32.const 0)))
+        (then (i32.store offset=24 (local.get $R)
+                (i32.load offset=4 (i32.add (global.get $UC_CTX) (i32.shl (local.get $c) (i32.const 4)))))
+              (i32.store offset=240 (local.get $R) (i32.const 1))))
+      ;; R2: a call opens its callee's context -- unless the table is full,
+      ;; the chain is deep, or the callee is already on it (recursion); then
+      ;; the call is the region's edge
+      (if (i32.and (global.get $uc_r2) (i32.eq (call $uc_kind (local.get $R)) (i32.const 23)))
+        (then
+          (local.set $x (call $uc_r2_open (local.get $c) (i32.load offset=24 (local.get $R))
+                                          (i32.load offset=4 (local.get $R))))
+          (if (i32.lt_s (local.get $x) (i32.const 0))
+            (then (call $uc_unsup (local.get $R)) (br $l)))
+          (i32.store offset=232 (local.get $R) (local.get $x))))
       ;; a call: its callee is near code too, and the return address is
       ;; where the callee's ret goes ($uc_ret_targets)
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 23))
@@ -2130,6 +2243,9 @@
             (then (i32.store (i32.add (global.get $UC_CALLT) (i32.shl (i32.add (local.get $x) (i32.const 1)) (i32.const 2)))
                              (i32.load offset=24 (local.get $R)))
                   (i32.store (global.get $UC_CALLT) (i32.add (local.get $x) (i32.const 1)))))
+          (if (global.get $uc_r2)
+            (then (if (i32.ge_u (local.get $sp) (i32.const 2047)) (then (return (i32.const 1))))
+                  (i32.store (i32.add (global.get $UC_WORKC) (i32.shl (local.get $sp) (i32.const 2))) (local.get $c))))
           (i32.store (i32.add (global.get $UC_WORK) (i32.shl (local.get $sp) (i32.const 2))) (i32.load offset=4 (local.get $R)))
           (local.set $sp (i32.add (local.get $sp) (i32.const 1)))))
       (local.set $n (call $uc_nsucc (local.get $R)))
@@ -2139,6 +2255,10 @@
         (local.set $s (call $uc_succ (local.get $R) (local.get $k)))
         (if (call $uc_near (local.get $head) (local.get $s))
           (then
+            (if (global.get $uc_r2)
+              (then (if (i32.ge_u (local.get $sp) (i32.const 2047)) (then (return (i32.const 1))))
+                    (i32.store (i32.add (global.get $UC_WORKC) (i32.shl (local.get $sp) (i32.const 2)))
+                               (call $uc_sctx (local.get $R) (local.get $k)))))
             (i32.store (i32.add (global.get $UC_WORK) (i32.shl (local.get $sp) (i32.const 2))) (local.get $s))
             (local.set $sp (i32.add (local.get $sp) (i32.const 1)))))
         (local.set $k (i32.add (local.get $k) (i32.const 1)))
@@ -2146,17 +2266,20 @@
       (br $l)))
     (if (global.get $uc_err) (then (return (global.get $uc_err))))
     (call $uc_ret_targets)
-    ;; Address order (insertion sort; at most MAX_SCAN records).
+    ;; Address order (insertion sort; at most MAX_SCAN records); R2: context
+    ;; order first, so each clone is laid out together.
     (local.set $k (i32.const 0))
     (block $d1 (loop $l1
       (br_if $d1 (i32.ge_u (local.get $k) (global.get $uc_ninsn)))
       (local.set $R (i32.add (global.get $UC_INSN) (i32.shl (local.get $k) (i32.const 8))))
+      (local.set $kr (call $uc_key (i32.load (local.get $R)) (call $uc_ctx (local.get $R))))
       (local.set $j (local.get $k))
       (block $d2 (loop $l2
         (br_if $d2 (i32.eqz (local.get $j)))
         (local.set $x (i32.load (i32.add (global.get $UC_SORT)
                                          (i32.shl (i32.sub (local.get $j) (i32.const 1)) (i32.const 2)))))
-        (br_if $d2 (i32.le_u (i32.load (local.get $x)) (i32.load (local.get $R))))
+        (local.set $kx (call $uc_key (i32.load (local.get $x)) (call $uc_ctx (local.get $x))))
+        (br_if $d2 (i64.le_u (local.get $kx) (local.get $kr)))
         (i32.store (i32.add (global.get $UC_SORT) (i32.shl (local.get $j) (i32.const 2))) (local.get $x))
         (local.set $j (i32.sub (local.get $j) (i32.const 1)))
         (br $l2)))
@@ -2170,7 +2293,8 @@
       (br_if $d3 (i32.ge_u (local.get $k) (global.get $uc_ninsn)))
       (local.set $x (i32.load (i32.add (global.get $UC_SORT) (i32.shl (i32.sub (local.get $k) (i32.const 1)) (i32.const 2)))))
       (local.set $R (i32.load (i32.add (global.get $UC_SORT) (i32.shl (local.get $k) (i32.const 2)))))
-      (if (i32.and (i32.ne (call $uc_kind (local.get $x)) (i32.const 0))
+      (if (i32.and (i32.and (i32.ne (call $uc_kind (local.get $x)) (i32.const 0))
+                            (i32.eq (call $uc_ctx (local.get $x)) (call $uc_ctx (local.get $R))))
                    (i32.gt_u (i32.load offset=4 (local.get $x)) (i32.load (local.get $R))))
         (then (return (i32.const 2))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
@@ -2194,7 +2318,8 @@
         (local.set $j (i32.const 0))
         (block $d6 (loop $l6
           (br_if $d6 (i32.ge_u (local.get $j) (local.get $n)))
-          (local.set $S (call $uc_insn_at (call $uc_succ (local.get $R) (local.get $j))))
+          (local.set $S (call $uc_insn_atc (call $uc_succ (local.get $R) (local.get $j))
+                                           (call $uc_sctx (local.get $R) (local.get $j))))
           (if (i32.ge_s (local.get $S) (i32.const 0))
             (then
               (if (i32.and (i32.ne (call $uc_kind (local.get $S)) (i32.const 0))
@@ -2221,7 +2346,8 @@
           (local.set $j (i32.const 0))
           (block $bd (loop $bl
             (br_if $bd (i32.ge_u (local.get $j) (call $uc_nsucc (local.get $R))))
-            (if (i32.eq (call $uc_succ (local.get $R) (local.get $j)) (local.get $head))
+            (if (i32.and (i32.eq (call $uc_succ (local.get $R) (local.get $j)) (local.get $head))
+                         (i32.eqz (call $uc_sctx (local.get $R) (local.get $j))))
               (then (local.set $changed (i32.const 1))))
             (local.set $j (i32.add (local.get $j) (i32.const 1)))
             (br $bl)))))
@@ -2229,8 +2355,16 @@
       (br $l7)))
     (if (i32.eqz (local.get $changed))
       (then
+        ;; a trace is formed without contexts: scan again as before
+        (if (global.get $uc_r2)
+          (then (global.set $uc_r2 (i32.const 0))
+                (return (call $uc_form_loop (local.get $head)))))
         (if (global.get $uc_trace) (then (return (call $uc_form_trace (local.get $head)))))
         (return (i32.const 4))))
+    ;; contexts pay only where a callee has two: else scan again without
+    (if (i32.and (i32.ne (global.get $uc_r2) (i32.const 0)) (i32.eqz (call $uc_r2_shared)))
+      (then (global.set $uc_r2 (i32.const 0))
+            (return (call $uc_form_loop (local.get $head)))))
     (if (i32.gt_u (local.get $n) (global.get $UC_MAX_LOOP)) (then (return (i32.const 5))))
     ;; Rotate: from the head to the end of the address order, then the rest.
     (local.set $pos (i32.const 0))
@@ -2462,7 +2596,7 @@
           (local.set $j (i32.const 0))
           (block $sd (loop $sl
             (br_if $sd (i32.ge_u (local.get $j) (call $uc_nsucc (local.get $R))))
-            (local.set $t (call $uc_in_loop (call $uc_succ (local.get $R) (local.get $j))))
+            (local.set $t (call $uc_succ_rec (local.get $R) (local.get $j)))
             (if (local.get $t) (then (call $uc_set_flag (local.get $t) (i32.const 2))))
             (local.set $j (i32.add (local.get $j) (i32.const 1)))
             (br $sl)))))
@@ -2476,14 +2610,17 @@
       (br_if $d2 (i32.ge_u (local.get $k) (global.get $uc_nloop)))
       (local.set $R (call $uc_loop_insn (local.get $k)))
       (if (i32.or (i32.or (i32.eqz (local.get $k)) (call $uc_flag (local.get $R) (i32.const 2)))
-                  (i32.or (i32.ne (i32.load offset=4 (local.get $P)) (i32.load (local.get $R)))
+                  (i32.or (i32.or (i32.ne (i32.load offset=4 (local.get $P)) (i32.load (local.get $R)))
+                                  (i32.ne (call $uc_ctx (local.get $P)) (call $uc_ctx (local.get $R))))
                           (call $uc_is_branch (local.get $P))))
         (then
           (local.set $B (call $uc_blk (local.get $nb)))
           (memory.fill (local.get $B) (i32.const 0) (i32.const 64))
           (i32.store (local.get $B) (i32.load (local.get $R)))
           (i32.store offset=4 (local.get $B) (local.get $k))
-          (call $uc_hm_put (global.get $UC_HM_BLK) (i64.extend_i32_u (i32.load (local.get $R))) (local.get $nb))
+          (i32.store offset=20 (local.get $B) (call $uc_ctx (local.get $R)))
+          (call $uc_hm_put (global.get $UC_HM_BLK) (call $uc_key (i32.load (local.get $R)) (call $uc_ctx (local.get $R)))
+                           (local.get $nb))
           (local.set $nb (i32.add (local.get $nb) (i32.const 1)))))
       (i32.store offset=8 (local.get $B) (i32.add (i32.load offset=8 (local.get $B)) (i32.const 1)))
       (i32.store offset=44 (local.get $R) (i32.sub (local.get $nb) (i32.const 1)))
@@ -2501,7 +2638,7 @@
       (block $d4 (loop $l4
         (br_if $d4 (i32.ge_u (local.get $j) (call $uc_nsucc (local.get $L))))
         (local.set $s (call $uc_hm_get (global.get $UC_HM_BLK)
-                        (i64.extend_i32_u (call $uc_succ (local.get $L) (local.get $j)))))
+                        (call $uc_key (call $uc_succ (local.get $L) (local.get $j)) (call $uc_sctx (local.get $L) (local.get $j)))))
         (if (i32.ge_s (local.get $s) (i32.const 0))
           (then
             (local.set $t (call $uc_blk (local.get $s)))
@@ -2530,7 +2667,7 @@
       (block $d7 (loop $l7
         (br_if $d7 (i32.ge_u (local.get $j) (call $uc_nsucc (local.get $L))))
         (local.set $s (call $uc_hm_get (global.get $UC_HM_BLK)
-                        (i64.extend_i32_u (call $uc_succ (local.get $L) (local.get $j)))))
+                        (call $uc_key (call $uc_succ (local.get $L) (local.get $j)) (call $uc_sctx (local.get $L) (local.get $j)))))
         (if (i32.ge_s (local.get $s) (i32.const 0))
           (then
             (local.set $t (call $uc_blk (local.get $s)))
@@ -2659,7 +2796,7 @@
     (local $j i32) (local $S i32)
     (block $d (loop $l
       (br_if $d (i32.ge_u (local.get $j) (call $uc_nsucc (local.get $R))))
-      (local.set $S (call $uc_in_loop (call $uc_succ (local.get $R) (local.get $j))))
+      (local.set $S (call $uc_succ_rec (local.get $R) (local.get $j)))
       (if (i32.eqz (local.get $S)) (then (return (i32.const 1))))
       (if (call $uc_flag (local.get $S) (i32.const 8)) (then (return (i32.const 1))))
       (local.set $j (i32.add (local.get $j) (i32.const 1)))
@@ -2698,7 +2835,7 @@
         (local.set $j (i32.const 0))
         (block $d3 (loop $l3
           (br_if $d3 (i32.ge_u (local.get $j) (call $uc_nsucc (local.get $R))))
-          (local.set $S (call $uc_in_loop (call $uc_succ (local.get $R) (local.get $j))))
+          (local.set $S (call $uc_succ_rec (local.get $R) (local.get $j)))
           (if (local.get $S)
             (then (if (call $uc_flag (local.get $S) (i32.const 8)) (then (local.set $out (i32.const 1)))))
             (else (local.set $out (i32.const 1))))
@@ -3121,6 +3258,19 @@
   (global $UC_LAT_SEEN i32 (region.addr $UOP_C2SCRATCH 0x062800)) ;; 1 per block
   (global $UC_LAT_ACC  i32 (region.addr $UOP_C2SCRATCH 0x063000))
   (global $UC_C2_E     i32 (region.addr $UOP_C2SCRATCH 0x063040))
+  ;; R2 (0x800): call contexts, 16 bytes each (+0 parent, +4 return
+  ;; address, +8 depth, +12 call target), and the scan's context stack
+  ;; beside $UC_WORK's addresses
+  (global $UC_CTX      i32 (region.addr $UOP_C2SCRATCH 0x063100)) ;; 64 x 16
+  (global $UC_WORKC    i32 (region.addr $UOP_C2SCRATCH 0x064000)) ;; 2048 x 4
+  (global $UC_MAX_CTX  i32 (i32.const 48))
+  (global $UC_R2_DEPTH i32 (i32.const 4))
+  (global $uc_r2 (mut i32) (i32.const 0))
+  (global $uc_r2_off (mut i32) (i32.const 0))
+  (global $uc_nctx (mut i32) (i32.const 1))
+  (global $uc_r2_head (mut i32) (i32.const 0))
+  (global $uc_t_r2 (mut i32) (i32.const 0))
+  (global $uc_t_r2p (mut i32) (i32.const 0))
   ;; the table $uc_lat reads: $UC_LAT, or a C2 copy's during its emission
   (global $uc_lat_tab (mut i32) (region.addr $UOP_CSCRATCH 0x061000))
   ;; C2 bounds: at most this many peeled iterations, and copies x loop
@@ -3178,6 +3328,9 @@
     ;; 10 C2 iteration copies, 11 programs with them
     (if (i32.eq (local.get $k) (i32.const 10)) (then (return (global.get $uc_t_c2))))
     (if (i32.eq (local.get $k) (i32.const 11)) (then (return (global.get $uc_t_c2p))))
+    ;; 12 R2 callee contexts, 13 programs with them
+    (if (i32.eq (local.get $k) (i32.const 12)) (then (return (global.get $uc_t_r2))))
+    (if (i32.eq (local.get $k) (i32.const 13)) (then (return (global.get $uc_t_r2p))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming
@@ -3661,8 +3814,9 @@
       (then (return (i32.const -1))))
     (if (i32.or (i32.ne (local.get $m) (local.get $c)) (i32.le_u (local.get $m) (i32.const 2)))
       (then (return (i32.const -1))))
-    (local.set $P (call $uc_in_loop (local.get $m)))
-    (if (i32.eqz (local.get $P)) (then (return (i32.const -1))))
+    (local.set $P (call $uc_prod_rec (local.get $m)))
+    (if (i32.lt_s (local.get $P) (i32.const 0)) (then (return (i32.const -1))))
+    (if (i32.eqz (call $uc_flag (local.get $P) (i32.const 1))) (then (return (i32.const -1))))
     (if (i32.and (global.get $uc_c_guard)
                  (i32.or (i32.eq (local.get $m) (global.get $uc_c_hm)) (i32.eq (local.get $m) (global.get $uc_c_hc))))
       (then (return (i32.const -1))))
@@ -3798,8 +3952,8 @@
       (then (return (call $uc_ref_new (i32.const 0) (i32.load offset=4 (local.get $o)) (i32.const 0)
                                       (i32.load offset=8 (local.get $o)) (i32.const 0)))))
     (call $uc_load (local.get $o) (i32.load offset=20 (local.get $o)) (i32.const 0)
-                   (call $uc_aT (local.get $tag) (i32.load (local.get $R))))
-    (call $uc_ref_new (i32.const 1) (i32.load (local.get $R)) (local.get $tag) (i32.const 0)
+                   (call $uc_aT (local.get $tag) (call $uc_pid (local.get $R))))
+    (call $uc_ref_new (i32.const 1) (call $uc_pid (local.get $R)) (local.get $tag) (i32.const 0)
                       (i32.load offset=20 (local.get $o))))
 
   (func $uc_write_reg (param $o i32) (param $v i64)
@@ -3825,9 +3979,9 @@
   ;; snapAfter: a later exit needs this operand of R after the loop has
   ;; overwritten its register, so keep a copy.
   (func $uc_snap_after (param $R i32) (param $name i32) (param $ref i32)
-    (if (i32.and (call $uc_demand_has (i32.const 1) (local.get $name) (i32.load (local.get $R)))
+    (if (i32.and (call $uc_demand_has (i32.const 1) (local.get $name) (call $uc_pid (local.get $R)))
                  (i32.eqz (i32.load (local.get $ref))))
-      (then (call $uc_o2 (i32.const 2) (call $uc_aT (i32.add (i32.const 9) (local.get $name)) (i32.load (local.get $R)))
+      (then (call $uc_o2 (i32.const 2) (call $uc_aT (i32.add (i32.const 9) (local.get $name)) (call $uc_pid (local.get $R)))
                      (call $uc_aR (i32.load offset=4 (local.get $ref)))))))
 
   ;; ---- instructions ----
@@ -3837,7 +3991,7 @@
     (local $src i64) (local $w i32) (local $op i32) (local $vx i64) (local $vy i64) (local $n i32)
     (local $vl1 i64) (local $vl2 i64)
     (local.set $k (call $uc_kind (local.get $R)))
-    (local.set $a (i32.load (local.get $R)))
+    (local.set $a (call $uc_pid (local.get $R)))
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
     (local.set $O1 (i32.add (local.get $R) (i32.const 80)))
     (local.set $O2 (i32.add (local.get $R) (i32.const 104)))
@@ -4539,7 +4693,7 @@
     (local $O0 i32) (local $A i32) (local $B i32) (local $op i32) (local $w i32)
     (local $a i32) (local $r32 i32) (local $dst i64) (local $va i64) (local $vb i64) (local $imm i32)
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
-    (local.set $a (i32.load (local.get $R)))
+    (local.set $a (call $uc_pid (local.get $R)))
     (local.set $op (i32.load offset=12 (local.get $R)))
     (local.set $w (i32.load offset=16 (local.get $R)))
     (local.set $A (call $uc_read (local.get $O0) (local.get $R) (i32.const 1)))
@@ -4588,7 +4742,7 @@
   ;; `dirty` registers were written since the producer ran.
   (func $uc_pref (param $p i32) (param $name i32) (param $dirty i32) (result i32)
     (local $R i32) (local $ref i32)
-    (local.set $R (call $uc_insn_at (local.get $p)))
+    (local.set $R (call $uc_prod_rec (local.get $p)))
     (local.set $ref (i32.add (local.get $R)
       (select (i32.const 136) (select (i32.const 156) (i32.const 176) (i32.eq (local.get $name) (i32.const 2)))
               (i32.eq (local.get $name) (i32.const 1)))))
@@ -4602,11 +4756,11 @@
 
   (func $uc_rkind (param $p i32) (result i32)
     (local $R i32)
-    (local.set $R (call $uc_insn_at (local.get $p)))
+    (local.set $R (call $uc_prod_rec (local.get $p)))
     (if (i32.lt_s (local.get $R) (i32.const 0)) (then (return (i32.const 0))))
     (i32.load offset=128 (local.get $R)))
   (func $uc_rw (param $p i32) (result i32)
-    (i32.load offset=132 (call $uc_insn_at (local.get $p))))
+    (i32.load offset=132 (call $uc_prod_rec (local.get $p))))
   (func $uc_mask (param $w i32) (result i32)
     (select (i32.const 0xFF) (i32.const 0xFFFF) (i32.eq (local.get $w) (i32.const 8))))
 
@@ -5188,8 +5342,8 @@
       (local.set $cand (call $uc_succ (local.get $R) (local.get $j)))
       (local.set $d (call $uc_scratch))
       (call $uc_o3 (i32.const 42) (local.get $d) (local.get $t) (call $uc_aN (local.get $cand)))
-      (local.set $alt (call $uc_aL (i32.add (local.get $pfx) (i32.const 6))
-                                   (i32.add (i32.load (local.get $R)) (local.get $j))))
+      (local.set $alt (call $uc_aLc (i32.add (local.get $pfx) (i32.const 6))
+                                    (i32.add (i32.load (local.get $R)) (local.get $j)) (call $uc_ctx (local.get $R))))
       (call $uc_o2 (i32.const 64) (local.get $d)
         (if (result i64) (i32.lt_u (i32.add (local.get $j) (i32.const 1)) (local.get $n))
           (then (local.get $alt)) (else (call $uc_xstub))))
@@ -5206,8 +5360,8 @@
         (then (local.set $err (call $uc_rec (local.get $m) (local.get $md) (local.get $c) (local.get $cd)))
               (if (local.get $err) (then (return (local.get $err))))))
       (local.set $dest
-        (if (result i64) (call $uc_in_loop (local.get $cand))
-          (then (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $cand)) (local.get $cand)))
+        (if (result i64) (call $uc_in_loopc (local.get $cand) (call $uc_sctx (local.get $R) (local.get $j)))
+          (then (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $cand) (call $uc_sctx (local.get $R) (local.get $j))))
           (else (call $uc_stub_get (i32.const 0) (local.get $cand) (i32.const 0) (i32.const 0)
                   (select (global.get $UC_G) (local.get $m) (local.get $rae))
                   (select (i32.const 0) (local.get $md) (local.get $rae))
@@ -5260,8 +5414,8 @@
         (then (local.set $err (call $uc_rec (local.get $m) (local.get $md) (local.get $c) (local.get $cd)))
               (if (local.get $err) (then (return (local.get $err))))))
       (local.set $dest
-        (if (result i64) (call $uc_in_loop (local.get $cand))
-          (then (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $cand)) (local.get $cand)))
+        (if (result i64) (call $uc_in_loopc (local.get $cand) (call $uc_ctx (local.get $R)))
+          (then (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $cand) (call $uc_ctx (local.get $R))))
           (else (call $uc_stub_get (i32.const 0) (local.get $cand) (i32.const 0) (i32.const 0)
                   (select (global.get $UC_G) (local.get $m) (local.get $rae))
                   (select (i32.const 0) (local.get $md) (local.get $rae))
@@ -5297,8 +5451,9 @@
         (local.set $B (call $uc_blk (local.get $k)))
         (local.set $next (i64.const 0))
         (if (i32.lt_u (i32.add (local.get $k) (i32.const 1)) (global.get $uc_nblk))
-          (then (local.set $next (call $uc_aL (local.get $pfx) (i32.load (call $uc_blk (i32.add (local.get $k) (i32.const 1))))))))
-        (call $uc_label (call $uc_aL (local.get $pfx) (i32.load (local.get $B))))
+          (then (local.set $next (call $uc_aLc (local.get $pfx) (i32.load (call $uc_blk (i32.add (local.get $k) (i32.const 1))))
+                                               (i32.load offset=20 (call $uc_blk (i32.add (local.get $k) (i32.const 1))))))))
+        (call $uc_label (call $uc_aLc (local.get $pfx) (i32.load (local.get $B)) (i32.load offset=20 (local.get $B))))
         (if (global.get $pending_armed) (then
           (call $uc_o2 (i32.const 87) (call $uc_aN (i32.load (local.get $B))) (call $uc_aR (i32.const 4)))))
         (local.set $rae (i32.load (i32.add (i32.add (local.get $F) (i32.const 0x5000)) (i32.shl (local.get $k) (i32.const 2)))))
@@ -5320,7 +5475,7 @@
             (then
               (local.set $err (call $uc_check (i32.const 1) (i32.load (local.get $R)) (i32.const 0) (i32.const 0)))
               (if (local.get $err) (then (return (local.get $err))))
-              (local.set $l (call $uc_aL (i32.add (local.get $pfx) (i32.const 2)) (i32.load (local.get $R))))
+              (local.set $l (call $uc_aLc (i32.add (local.get $pfx) (i32.const 2)) (i32.load (local.get $R)) (call $uc_ctx (local.get $R))))
               (call $uc_o1 (i32.const 25) (local.get $l))
               (call $uc_label (local.get $l))))
           ;; a run of dword mov pairs: one MCOPY (§21.4)
@@ -5389,8 +5544,8 @@
                       (local.set $ac (select (global.get $UC_G) (local.get $c) (local.get $rae)))
                       (local.set $acd (select (i32.const 0) (local.get $cd) (local.get $rae)))
                       (call $uc_o1 (i32.const 25)
-                        (if (result i64) (call $uc_in_loop (local.get $tgt))
-                          (then (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $tgt)) (local.get $tgt)))
+                        (if (result i64) (call $uc_in_loopc (local.get $tgt) (call $uc_ctx (local.get $R)))
+                          (then (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $tgt) (call $uc_ctx (local.get $R))))
                           (else (call $uc_stub_get (i32.const 0) (local.get $tgt) (i32.const 0) (i32.const 0)
                                                    (local.get $am) (local.get $amd) (local.get $ac) (local.get $acd)))))
                       (global.set $uc_n_cfold (i32.add (global.get $uc_n_cfold) (i32.const 1)))
@@ -5410,8 +5565,8 @@
               (local.set $ac (select (global.get $UC_G) (local.get $c) (local.get $rae)))
               (local.set $acd (select (i32.const 0) (local.get $cd) (local.get $rae)))
               (local.set $dest
-                (if (result i64) (call $uc_in_loop (local.get $tgt))
-                  (then (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $tgt)) (local.get $tgt)))
+                (if (result i64) (call $uc_in_loopc (local.get $tgt) (call $uc_sctx (local.get $R) (i32.const 0)))
+                  (then (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $tgt) (call $uc_sctx (local.get $R) (i32.const 0))))
                   (else (call $uc_stub_get (i32.const 0) (local.get $tgt) (i32.const 0) (i32.const 0)
                                            (local.get $am) (local.get $amd) (local.get $ac) (local.get $acd)))))
               (if (i32.or (i32.eq (call $uc_kind (local.get $R)) (i32.const 16))
@@ -5422,8 +5577,8 @@
               (local.set $err (call $uc_cond (local.get $am) (local.get $m) (local.get $md) (local.get $c) (local.get $cd)
                                              (i32.load offset=20 (local.get $R)) (local.get $dest)))
               (if (local.get $err) (then (return (local.get $err))))
-              (if (call $uc_in_loop (local.get $nx))
-                (then (call $uc_goto (local.get $pfx) (local.get $peel) (local.get $nx) (local.get $next)))
+              (if (call $uc_in_loopc (local.get $nx) (call $uc_ctx (local.get $R)))
+                (then (call $uc_goto (local.get $pfx) (local.get $peel) (local.get $nx) (call $uc_ctx (local.get $R)) (local.get $next)))
                 (else (local.set $err (call $uc_inline_stub (local.get $nx) (local.get $am) (local.get $amd) (local.get $ac) (local.get $acd)))
                       (if (local.get $err) (then (return (local.get $err))))))
               (local.set $n (i32.add (local.get $n) (i32.const 1)))
@@ -5435,7 +5590,7 @@
                     (i32.and (i32.load offset=252 (local.get $R)) (i32.const 4))))
           (if (global.get $uc_fwd_kind)
             (then (global.set $uc_fwd_a
-                    (i32.load (call $uc_loop_insn (i32.and (i32.load offset=248 (local.get $R)) (i32.const 0xFFFF)))))))
+                    (call $uc_pid (call $uc_loop_insn (i32.and (i32.load offset=248 (local.get $R)) (i32.const 0xFFFF)))))))
           (local.set $err (call $uc_insn (local.get $R)))
           (global.set $uc_fwd_kind (i32.const 0))
           (if (local.get $err) (then (return (local.get $err))))
@@ -5449,16 +5604,16 @@
                 (then (local.set $err (call $uc_rec (global.get $uc_sm) (global.get $uc_smd) (global.get $uc_sc) (global.get $uc_scd)))
                       (if (local.get $err) (then (return (local.get $err))))
                       (call $uc_state_load (global.get $UC_MISC))))
-              (local.set $t (call $uc_in_loop (local.get $nx)))
+              (local.set $t (call $uc_in_loopc (local.get $nx) (call $uc_ctx (local.get $R))))
               (if (i32.and (i32.ne (local.get $t) (i32.const 0)) (call $uc_flag (local.get $t) (i32.const 16)))
                 (then
                   (local.set $err (call $uc_check (i32.const 1) (local.get $nx) (i32.const 0) (i32.const 0)))
                   (if (local.get $err) (then (return (local.get $err))))
-                  (call $uc_o1 (i32.const 25) (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $nx)) (local.get $nx)))
+                  (call $uc_o1 (i32.const 25) (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $nx) (call $uc_ctx (local.get $R))))
                   (local.set $n (i32.add (local.get $n) (i32.const 1)))
                   (br $iloop)))
               (if (local.get $t)
-                (then (call $uc_goto (local.get $pfx) (local.get $peel) (local.get $nx) (local.get $next)))
+                (then (call $uc_goto (local.get $pfx) (local.get $peel) (local.get $nx) (call $uc_ctx (local.get $R)) (local.get $next)))
                 (else (local.set $err (call $uc_inline_stub (local.get $nx) (global.get $uc_sm) (global.get $uc_smd)
                                                             (global.get $uc_sc) (global.get $uc_scd)))
                       (if (local.get $err) (then (return (local.get $err))))))))
@@ -5474,12 +5629,18 @@
 
   ;; A peeled copy's back edges enter the next copy (`peel` is its label
   ;; kind: the steady copy's 2, or C2's next iteration).
-  (func $uc_lab (param $pfx i32) (param $peel i32) (param $t i32) (result i32)
+  (func $uc_lab (param $pfx i32) (param $peel i32) (param $t i32) (param $c i32) (result i32)
     (select (local.get $peel) (local.get $pfx)
-            (i32.and (i32.ne (local.get $peel) (i32.const 0)) (i32.eq (local.get $t) (global.get $uc_head)))))
-  (func $uc_goto (param $pfx i32) (param $peel i32) (param $t i32) (param $next i64)
+            (i32.and (i32.ne (local.get $peel) (i32.const 0))
+                     (i32.and (i32.eq (local.get $t) (global.get $uc_head)) (i32.eqz (local.get $c))))))
+  ;; the label of t in context c in copy pfx (R2: the context in bits 40-55)
+  (func $uc_tl (param $pfx i32) (param $peel i32) (param $t i32) (param $c i32) (result i64)
+    (call $uc_aLc (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $t) (local.get $c)) (local.get $t) (local.get $c)))
+  (func $uc_aLc (param $kind i32) (param $v i32) (param $c i32) (result i64)
+    (i64.or (call $uc_aL (local.get $kind) (local.get $v)) (i64.shl (i64.extend_i32_u (local.get $c)) (i64.const 40))))
+  (func $uc_goto (param $pfx i32) (param $peel i32) (param $t i32) (param $c i32) (param $next i64)
     (local $l i64)
-    (local.set $l (call $uc_aL (call $uc_lab (local.get $pfx) (local.get $peel) (local.get $t)) (local.get $t)))
+    (local.set $l (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $t) (local.get $c)))
     (if (i64.ne (local.get $l) (local.get $next)) (then (call $uc_o1 (i32.const 62) (local.get $l)))))
 
   ;; ------------------------------------------------ mov-pair runs --
@@ -5870,7 +6031,7 @@
       (i32.store offset=252 (local.get $R) (i32.const 0))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
       (br $l)))
-    (if (i32.eqz (global.get $uc_aggr)) (then (return)))
+    (if (i32.or (i32.eqz (global.get $uc_aggr)) (i32.gt_u (global.get $uc_nctx) (i32.const 1))) (then (return)))
     (local.set $k (i32.const 0))
     (block $d1 (loop $l1
       (br_if $d1 (i32.ge_u (local.get $k) (global.get $uc_nblk)))
@@ -5884,7 +6045,7 @@
   ;; its slot, addressed off the ESP register (exact at x).
   (func $uc_spill_at (param $x i32)
     (local $R i32) (local $B i32) (local $p i32) (local $pos i32) (local $ex i32) (local $P i32)
-    (if (i32.eqz (global.get $uc_aggr)) (then (return)))
+    (if (i32.or (i32.eqz (global.get $uc_aggr)) (i32.gt_u (global.get $uc_nctx) (i32.const 1))) (then (return)))
     (local.set $R (call $uc_in_loop (local.get $x)))
     (if (i32.eqz (local.get $R)) (then (return)))
     (local.set $pos (i32.load offset=48 (local.get $R)))
@@ -6118,15 +6279,10 @@
   ;; (which calls are the region's edge): 0, or a decline reason.
   (func $uc_attempt (param $eip i32) (param $mode i32) (result i32)
     (local $err i32)
-    (global.set $uc_err (i32.const 0))
-    (call $uc_opt_reset)
-    (global.set $uc_nocall (local.get $mode))
-    (local.set $err (call $uc_form_loop (local.get $eip)))
-    (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
-    (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
-    ;; C2's copies made it fail, or too big to place: the same attempt
-    ;; without them
-    (if (i32.and (global.get $uc_c2_used)
+    (local.set $err (call $uc_attempt1 (local.get $eip) (local.get $mode)))
+    ;; C2's copies or R2's contexts made it fail, or too big to place: the
+    ;; same attempt without them
+    (if (i32.and (i32.or (global.get $uc_c2_used) (global.get $uc_r2))
                  (i32.or (i32.ne (local.get $err) (i32.const 0))
                          (i32.gt_u (i32.add (i32.add (global.get $UOP_HDR) (i32.const 64))
                                             (i32.add (i32.shl (call $uc_encode_words) (i32.const 2))
@@ -6134,12 +6290,23 @@
                                    (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))))
       (then
         (global.set $uc_c2_off (i32.const 1))
-        (global.set $uc_err (i32.const 0))
-        (call $uc_opt_reset)
-        (local.set $err (call $uc_form_loop (local.get $eip)))
-        (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
-        (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
-        (global.set $uc_c2_off (i32.const 0))))
+        (global.set $uc_r2_off (i32.const 1))
+        (local.set $err (call $uc_attempt1 (local.get $eip) (local.get $mode)))
+        (global.set $uc_c2_off (i32.const 0))
+        (global.set $uc_r2_off (i32.const 0))))
+    (local.get $err))
+  (func $uc_attempt1 (param $eip i32) (param $mode i32) (result i32)
+    (local $err i32)
+    (global.set $uc_err (i32.const 0))
+    (call $uc_opt_reset)
+    (global.set $uc_nocall (local.get $mode))
+    ;; R2 only where calls are followed, and never for a trace
+    (global.set $uc_r2 (i32.and (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x800)) (i32.const 0))
+                                         (i32.eqz (global.get $uc_r2_off)))
+                                (i32.ne (global.get $uc_nocall) (i32.const 3))))
+    (local.set $err (call $uc_form_loop (local.get $eip)))
+    (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_lower))))
+    (if (i32.eqz (local.get $err)) (then (local.set $err (call $uc_encode_prepare))))
     (local.get $err))
 
   ;; The retry ladder (docs/uop-tier-design.md section 24; --no-uop-retry-ladder
@@ -6583,6 +6750,9 @@
     (global.set $uc_t_fdw (i32.add (global.get $uc_t_fdw) (global.get $uc_nfold)))
     (global.set $uc_t_c2 (i32.add (global.get $uc_t_c2) (global.get $uc_n_c2)))
     (global.set $uc_t_c2p (i32.add (global.get $uc_t_c2p) (i32.ne (global.get $uc_n_c2) (i32.const 0))))
+    (if (global.get $uc_r2)
+      (then (global.set $uc_t_r2 (i32.add (global.get $uc_t_r2) (i32.sub (global.get $uc_nctx) (i32.const 1))))
+            (global.set $uc_t_r2p (i32.add (global.get $uc_t_r2p) (i32.gt_u (global.get $uc_nctx) (i32.const 1))))))
     (global.set $uc_ntraces (i32.add (global.get $uc_ntraces) (global.get $uc_is_trace)))
     (global.set $uc_insns (i32.add (global.get $uc_insns) (global.get $uc_nloop)))
     (global.set $uc_uops (i32.add (global.get $uc_uops) (global.get $uc_nops)))

@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -296,6 +296,35 @@ async function invalidation() {
     bounded(0, 'bound 0');
     e.set_uop_c2(4, 0);
     ok(`C2 iteration copies: trips ${TRIPS.join('/')} exact at bounds 4, 1, 0 (bound 4: ${b4.copies} copies over ${b4.progs} programs)`);
+  }
+  // R2: one helper called from two sites with EDX = 16 and EDX = 4. Shared,
+  // F1 meets them and the helper's `cmp edx,8 / ja` stays; with a context
+  // per call site each clone knows its EDX, C1 decides both, and each
+  // clone's RET has its one return address.
+  {
+    //  L: mov edx,16; call H; mov edx,4; call H; add edi,4; dec ecx; jnz L; ret
+    //  H: cmp edx,8; ja +3; add [esi],edx; ret; add [esi+4],edx; ret
+    const body = Uint8Array.from([0xBA, 16, 0, 0, 0, 0xE8, ...d32(17), 0xBA, 4, 0, 0, 0, 0xE8, ...d32(7),
+      0x83, 0xC7, 0x04, 0x49, 0x75, 0xE6, 0xC3,
+      0x83, 0xFA, 0x08, 0x77, 0x03, 0x01, 0x16, 0xC3, 0x01, 0x56, 0x04, 0xC3]);
+    e.set_uop(0);
+    fill(); const want = run(fresh(body), R);
+    e.set_uop(1);
+    const arm = (mask) => {
+      e.set_uop_opt(mask);
+      const c0 = st(16), p0 = st(17), j0 = st(8);
+      const { at } = compiled(body);
+      fill(); assert.strictEqual(run(at, R), want, `mask 0x${mask.toString(16)}: same result as threaded code`);
+      return { ctx: st(16) - c0, progs: st(17) - p0, jcc: st(8) - j0 };
+    };
+    const off = arm(0x140), on = arm(0x940);
+    assert.strictEqual(off.ctx, 0, 'no contexts without 0x800');
+    assert.strictEqual(off.jcc, 0, "shared, the helper's compare is not decided");
+    assert(on.progs >= 1 && on.ctx >= 2, `a context per call site (${on.ctx})`);
+    assert(on.jcc >= 2, `each clone decided its compare (${on.jcc})`);
+    const all = arm(0x7FFF);
+    assert(all.ctx >= 2);
+    ok(`R2 call-site contexts: ${on.ctx} contexts, ${on.jcc} compares decided, exact against threaded code`);
   }
   e.set_uop_opt(0);
   e.set_uop(0);
