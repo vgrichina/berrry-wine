@@ -165,6 +165,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // --uop-reguard-lazy: a re-guard widens only when the slot is walking
   // (07d $uop_rg_walking); otherwise it proves its one page. Every instance.
   const UOP_REGUARD_LAZY = hasFlag('uop-reguard-lazy');
+  // --no-fpu-direct: 06 $fpu_exec_mem's direct-f64 memory forms off (A/B)
+  const NO_FPU_DIRECT = hasFlag('no-fpu-direct');
   // --uop-r2-window=LO:HI: R2 (0x800) keeps contexts only in the LO..HI-1th
   // program that would keep them, in compile order -- to bisect a diff.
   const UOP_R2_WINDOW = getArg('uop-r2-window', null);
@@ -441,6 +443,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (uopOptWanted()) inheritWasm('set_uop_opt', UOP_OPT);
     if (UOP_REGUARD_SPAN !== null) inheritWasm('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
     if (UOP_REGUARD_LAZY) inheritWasm('set_uop_reguard_lazy', 1);
+    if (NO_FPU_DIRECT) inheritWasm('set_fpu_direct', 0);
     if (TREE_FOLD || TRACE_TREE_FOLD) inheritWasm('set_tree_fold', 1);
     if (TRACE_TREE_FOLD) inheritWasm('set_tree_trace', 1);
     // The thresholds too: a guest thread decodes in its own instance, so a cap
@@ -458,6 +461,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
     if (sseFastWanted() && available('set_sse_fast')) set('set_sse_fast', 1);
     if (NO_DELPHI_FOLD && available('set_delphi_fold')) set('set_delphi_fold', 0);
+    if (NO_FPU_DIRECT && available('set_fpu_direct')) set('set_fpu_direct', 0);
     if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);
     if (uopWanted() && available('set_uop') && ctx) {
       if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);

@@ -231,8 +231,12 @@ async function main() {
     mem.set(stateImage, g2w(stateAddr));
     const fb = e.test_fpu_base() >>> 0;
     mem.set(fileImage, fb);
-    e.set_x87_pipeline4_fusion(arm === 'plain' ? 0 : 1);
+    e.set_x87_pipeline4_fusion(arm === 'plain' || arm === 'nodirect' ? 0 : 1);
     e.set_x87_island_predecode(arm === 'fast' ? 1 : 0);
+    // 'nodirect': the plain walk with 06 $fpu_exec_mem's direct-f64 memory
+    // forms off (--no-fpu-direct), so the inline forms meet the calls they
+    // replaced on every random state, empty and full slots included
+    e.set_fpu_direct(arm === 'nodirect' ? 0 : 1);
     const code = codeCursor;
     codeCursor = (codeCursor + 0x400) >>> 0;
     const prologue = [0xDD, 0x25, ...le32(stateAddr), 0x39, 0xDA];  // frstor [state]; cmp edx,ebx
@@ -268,10 +272,11 @@ async function main() {
     const fast = runArm(bytes, 'fast');
     const generic = runArm(bytes, 'generic');
     const plain = runArm(bytes, 'plain');
+    const nodirect = runArm(bytes, 'nodirect');
     if (generic.islands !== fast.islands) {
       return { fast, msg: `island count ${fast.islands} vs ${generic.islands}` };
     }
-    for (const [name, ref] of [['generic', generic], ['plain', plain]]) {
+    for (const [name, ref] of [['generic', generic], ['plain', plain], ['nodirect', nodirect]]) {
       for (const key of ['file', 'top', 'tag', 'raw', 'sw', 'cw', 'buf', 'eax', 'flags', 'trace']) {
         const a = JSON.stringify(fast[key]);
         const b = JSON.stringify(ref[key]);
@@ -318,7 +323,7 @@ async function main() {
   }
   assert(islandsSeen > CASES * 0.8,
     `the fuzz must actually exercise islands (${islandsSeen}/${CASES})`);
-  console.log(`PASS x87 island fast == generic == unfused: ${CASES} sequences, ` +
+  console.log(`PASS x87 island fast == generic == unfused == unfused --no-fpu-direct: ${CASES} sequences, ` +
     `${totalOps} ops, ${islandsSeen} with islands`);
 }
 
