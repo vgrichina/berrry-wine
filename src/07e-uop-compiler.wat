@@ -3325,6 +3325,9 @@
   (global $uc_n_lock (mut i32) (i32.const 0))
   (global $uc_n_sahf (mut i32) (i32.const 0))
   (global $uc_n_retx (mut i32) (i32.const 0))
+  ;; RETs left to the popped address (0x800 RETX): stat 16
+  (global $uc_n_retd (mut i32) (i32.const 0))
+  (global $uc_t_retd (mut i32) (i32.const 0))
   (global $uc_n_fold (mut i32) (i32.const 0))
   (global $uc_n_cfold (mut i32) (i32.const 0))
   (global $uc_t_lock (mut i32) (i32.const 0))
@@ -3354,6 +3357,8 @@
     (if (i32.eq (local.get $k) (i32.const 14)) (then (return (global.get $uc_t_ahcc))))
     ;; 15 loads M1 replaced by a register MOV (0x1000)
     (if (i32.eq (local.get $k) (i32.const 15)) (then (return (global.get $uc_t_m1))))
+    ;; 16 RETs that leave to the popped address (0x800 RETX)
+    (if (i32.eq (local.get $k) (i32.const 16)) (then (return (global.get $uc_t_retd))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming
@@ -3378,6 +3383,7 @@
     (global.set $uc_n_ahcc (i32.const 0))
     (global.set $uc_sahf_next (i32.const 0))
     (global.set $uc_n_retx (i32.const 0))
+    (global.set $uc_n_retd (i32.const 0))
     (global.set $uc_n_fold (i32.const 0))
     (global.set $uc_n_cfold (i32.const 0))
     (global.set $uc_lat_tab (global.get $UC_LAT))
@@ -5484,13 +5490,15 @@
           (local.set $err (call $uc_rec (i32.load offset=16 (local.get $S)) (i32.load offset=20 (local.get $S))
                                         (i32.load offset=24 (local.get $S)) (i32.load offset=28 (local.get $S))))
           (if (local.get $err) (then (return (local.get $err))))
+          (if (i32.eq (i32.load (local.get $S)) (i32.const 3))
+            (then (call $uc_o1 (i32.const 113) (call $uc_aT (i32.const 13) (i32.load offset=4 (local.get $S))))))
           (if (i32.eq (i32.load (local.get $S)) (i32.const 1))
             (then (call $uc_o1 (i32.const 63) (call $uc_aN (i32.load offset=4 (local.get $S)))))
-            (else
+            (else (if (i32.eq (i32.load (local.get $S)) (i32.const 2)) (then
               (call $uc_o2 (i32.const 57) (call $uc_aN (i32.load offset=4 (local.get $S))) (call $uc_aL (i32.const 6) (local.get $k)))
               (call $uc_o1 (i32.const 63) (call $uc_aN (i32.load offset=12 (local.get $S))))
               (call $uc_label (call $uc_aL (i32.const 6) (local.get $k)))
-              (call $uc_o1 (i32.const 63) (call $uc_aN (i32.load offset=8 (local.get $S))))))))
+              (call $uc_o1 (i32.const 63) (call $uc_aN (i32.load offset=8 (local.get $S))))))))))
       (local.set $k (i32.add (local.get $k) (i32.const 1)))
       (br $l)))
     (i32.const 0))
@@ -5520,6 +5528,25 @@
     ;; GOTO, not JMP: the deopt stub exits before the RET, which the
     ;; threaded RET then charges (a JMP would charge a phantom block with no
     ;; CHK before it and drive an exhausted budget below zero).
+    ;; --uop-opt 0x800 (and no elided push open: not under
+    ;; --aggressive-stack): pop it here and leave to the popped address
+    ;; (07d RETX, then EXITR from a stub that materializes the flags). RETX
+    ;; still goes to the deopt stub for what only $th_ret records.
+    (if (i32.and (i32.eqz (call $uc_nsucc (local.get $R)))
+                 (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x800)) (i32.const 0))
+                          (i32.and (i32.eqz (global.get $uc_aggr))
+                                   (i32.and (i32.ne (local.get $m) (global.get $UC_D)) (i32.ne (local.get $c) (global.get $UC_D))))))
+      (then
+        (local.set $t (call $uc_scratch))
+        (call $uc_load (i32.add (local.get $R) (i32.const 80)) (i32.const 32) (i32.const 0) (local.get $t))
+        (call $uc_emit (i32.const 112) (i32.const 4) (local.get $t) (call $uc_aN (i32.load offset=28 (local.get $R)))
+          (call $uc_xstub)
+          (call $uc_stub_get (i32.const 3) (i32.wrap_i64 (local.get $t)) (i32.const 0) (i32.const 0)
+            (local.get $m) (i32.or (local.get $md) (i32.const 16)) (local.get $c) (i32.or (local.get $cd) (i32.const 16)))
+          (i64.const 0) (i64.const 0) (i64.const 0))
+        (global.set $uc_n_retx (i32.add (global.get $uc_n_retx) (i32.const 1)))
+        (global.set $uc_n_retd (i32.add (global.get $uc_n_retd) (i32.const 1)))
+        (return (i32.const 0))))
     (if (i32.eqz (call $uc_nsucc (local.get $R)))
       (then (call $uc_o1 (i32.const 62) (call $uc_xstub))
             (global.set $uc_n_retx (i32.add (global.get $uc_n_retx) (i32.const 1)))
@@ -6949,6 +6976,7 @@
     (global.set $uc_t_ahcc (i32.add (global.get $uc_t_ahcc) (global.get $uc_n_ahcc)))
     (global.set $uc_t_m1 (i32.add (global.get $uc_t_m1) (global.get $uc_n_m1)))
     (global.set $uc_t_retx (i32.add (global.get $uc_t_retx) (global.get $uc_n_retx)))
+    (global.set $uc_t_retd (i32.add (global.get $uc_t_retd) (global.get $uc_n_retd)))
     (global.set $uc_t_fold (i32.add (global.get $uc_t_fold) (global.get $uc_n_fold)))
     (global.set $uc_t_cfold (i32.add (global.get $uc_t_cfold) (global.get $uc_n_cfold)))
     (global.set $uc_t_fs (i32.add (global.get $uc_t_fs) (global.get $uc_st_fs)))

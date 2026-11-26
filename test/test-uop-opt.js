@@ -513,6 +513,45 @@ async function invalidation() {
     assert(hits > 0, 'M1 replaced loads');
     ok(`0x1000 M1: 5 shapes x 2 aliasings exact (${hits} loads replaced)`);
   }
+  // 0x800 dynamic RET (07d RETX/EXITR, branch clock, as R1): a function head
+  // compiled on its own as a trace, called 24 times from threaded code. Its
+  // RET names no call in the program, so it pops and leaves to the caller's
+  // return address; the caller stores the flags (pushfd) after each return.
+  // `ret` and `ret 4` (the caller pushes one argument).
+  {
+    e.set_branch_clock(1);
+    let dyn = 0;
+    for (const imm of [0, 4]) {
+      const F = [0x8B, 0x06, 0x03, 0x46, 0x04, 0x89, 0x07, 0x31, 0xDB, 0x01, 0xC3, 0x43, 0x89, 0x5F, 0x04,
+                 0x8D, 0x0C, 0x18, 0x89, 0x4F, 0x08, 0x29, 0xC1, 0x83, 0xC6, 0x04, 0x39, 0xD9,
+                 ...(imm ? [0xC2, imm, 0] : [0xC3])];
+      // caller at +0x100: 24 x { [push esi;] call F; pushfd; pop edx; mov [edi+12],edx; add edi,16 }; ret
+      const call = [];
+      for (let k = 0; k < 24; k++) {
+        const pre = imm ? [0x56] : [];
+        const site = 0x100 + call.length + pre.length;
+        const rel = (0 - (site + 5)) >>> 0;
+        call.push(...pre, 0xE8, ...d32(rel), 0x9C, 0x5A, 0x89, 0x57, 0x0C, 0x83, 0xC7, 0x10);
+      }
+      const code = new Uint8Array(0x100 + call.length + 1);
+      code.set(F, 0); code.set(call, 0x100); code[code.length - 1] = 0xC3;
+      const RR = { eax: 0, ebx: 0, ecx: 0, edx: 0, ebp: 0, esi: a.buf, edi: a.buf + 0x10000 };
+      e.set_uop(0); fill(); const at0 = fresh(code); const want = run(at0 + 0x100, RR) + ':' + e.get_esp();
+      e.set_uop(1);
+      for (const mask of [0x2, 0x802, 0xFFF, 0x7FFF]) {
+        e.set_uop_opt(mask);
+        const d0 = st(20);
+        const at = fresh(code);
+        const pc = e.uop_compile(at) >>> 0;
+        assert(pc, `F (ret ${imm}) compiles at 0x${mask.toString(16)}`);
+        e.uop_install(at, pc);
+        if (mask & 0x800) { assert(st(20) > d0, `ret ${imm}: RETX at 0x${mask.toString(16)}`); dyn += st(20) - d0; }
+        fill(); assert.strictEqual(run(at + 0x100, RR) + ':' + e.get_esp(), want, `RETX ret ${imm} mask 0x${mask.toString(16)}`);
+      }
+    }
+    e.set_branch_clock(0);
+    ok(`0x800 dynamic RET: ret / ret 4 from a compiled callee, 24 returns each, exact with the flags (${dyn} RETX sites)`);
+  }
   e.set_uop_opt(0);
   e.set_uop(0);
   return n;

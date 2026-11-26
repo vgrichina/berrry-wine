@@ -1607,7 +1607,7 @@
     (loop $L
       (block $svc
       (block $miss
-      (block $c111 (block $c109 (block $c108
+      (block $c113 (block $c112 (block $c111 (block $c109 (block $c108
       (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
       (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
       (block $c94 (block $c93 (block $c92 (block $c91
@@ -1645,6 +1645,8 @@
                   $c108 $c109 $c109
                   ;; 111 SAHFI
                   $c111
+                  ;; 112 RETX 113 EXITR
+                  $c112 $c113
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -2714,6 +2716,34 @@
           (i32.and (call $build_eflags) (i32.const 0xFFFFFF2A))
           (i32.and (i32.shr_u (i32.load (global.get $reg_base)) (i32.const 8)) (i32.const 0xD5))))
         (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
+        ;; 112 RETX a imm x s -- --uop-opt 0x800: a RET whose address (a, read
+        ;; from [esp]) no call in the program named. What $th_ret does
+        ;; besides the pop goes to threaded code at the RET (x, ESP untouched):
+        ;; address 0, and the thread-return, null-transfer, call-stack and
+        ;; callback-feed recorders. Otherwise the pending seam, ESP += 4 + imm,
+        ;; and on to s, the stub that materializes the flags for EXITR.
+        (local.set $v (i32.load (i32.load offset=4 (local.get $pc))))
+        (if (i32.or (i32.or (i32.eqz (local.get $v)) (i32.ne (global.get $thread_return_slot) (i32.const 0)))
+                    (i32.or (i32.ne (global.get $null_transfer_on) (i32.const 0))
+                            (i32.or (i32.ne (global.get $cs_enabled) (i32.const 0))
+                                    (i32.ne (global.get $callback_feed_enabled) (i32.const 0)))))
+          (then (local.set $pc (i32.load offset=12 (local.get $pc))) (br $L)))
+        (if (i32.or (global.get $dao_status) (global.get $pending_armed))
+          (then (call $pending_pop (local.get $v) (i32.load offset=16 (global.get $reg_base)))))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (i32.load offset=8 (local.get $pc)))))
+        (local.set $pc (i32.load offset=16 (local.get $pc)))
+        (br $L))
+        ;; 113 EXITR a -- leave to the address in a as the RET's transfer:
+        ;; one block spent, as $branch_end would; none left, and threaded
+        ;; code would stop the batch at that address (EXITB's form)
+        (global.set $eip (i32.load (i32.load offset=4 (local.get $pc))))
+        (global.set $uop_io_kind (i32.const 0))
+        (if (i32.gt_s (local.get $budget) (i32.const 0))
+          (then (global.set $uop_io_budget (i32.sub (local.get $budget) (i32.const 1))))
+          (else (global.set $uop_bexit (i32.const 1))
+                (global.set $uop_io_budget (i32.const 0))))
+        (return (local.get $pc)))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))
