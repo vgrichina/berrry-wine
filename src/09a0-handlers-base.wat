@@ -6038,6 +6038,25 @@
     (local $cp i32) (local $info i32)
     ;; CPINFO struct: MaxCharSize(4), DefaultChar[2](2), LeadByte[12](12)
     (local.set $cp (call $resolve_code_page (local.get $arg0)))
+    ;; CP_UTF7 (65000) / CP_UTF8 (65001): the fixed Windows answer, MaxCharSize
+    ;; 5 / 4, DefaultChar "?", no lead-byte ranges. Delphi 2009+ builds
+    ;; TEncoding.UTF7/UTF8 through TMBCSEncoding.Create, which raises
+    ;; EEncodingError "Invalid code page" when GetCPInfo fails -- Inno Setup
+    ;; 5.3.11 Unicode stopped there before its first window. IsDBCSLeadByteEx
+    ;; accepts the same two pages.
+    (if (i32.and (i32.ne (local.get $arg1) (i32.const 0))
+          (i32.or (i32.eq (local.get $cp) (i32.const 65000))
+                  (i32.eq (local.get $cp) (i32.const 65001))))
+      (then
+        (local.set $info (call $guest_span_in (local.get $arg1) (i32.const 20)))
+        (call $zero_memory (local.get $info) (i32.const 20))
+        (i32.store (local.get $info)
+          (select (i32.const 5) (i32.const 4) (i32.eq (local.get $cp) (i32.const 65000))))
+        (i32.store8 offset=4 (local.get $info) (i32.const 0x3F))
+        (call $guest_span_writeback (local.get $arg1) (local.get $info) (i32.const 20))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
     ;; Do not publish a plausible SBCS description for a code page the
     ;; conversion layer cannot actually provide. Validate before translating
     ;; or mutating the caller's output structure.

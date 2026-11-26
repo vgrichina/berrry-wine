@@ -38,6 +38,7 @@ const extraWat = String.raw`
   ${callWat('OpenFileMappingW')}
   ${callWat('VirtualAlloc')}
   ${callWat('VirtualFree')}
+  ${callWat('GetCPInfo')}
 `;
 
 (async () => {
@@ -129,6 +130,18 @@ const extraWat = String.raw`
     'a released range can be reserved at its own address again');
   assert.strictEqual(call('VirtualAlloc', region, 0x1000, MEM_COMMIT, 4), region,
     'committing inside a reservation still works');
+
+  // --- GetCPInfo for CP_UTF8 / CP_UTF7 (Delphi 2009+ TEncoding.UTF8/UTF7).
+  const cpi = alloc(20);
+  set32(cpi, 0xdeadbeef);
+  assert.strictEqual(call('GetCPInfo', 65001, cpi), 1, 'CP_UTF8 is described');
+  assert.strictEqual(e.t_esp_delta(), 12);
+  assert.deepStrictEqual([u32(cpi), u32(cpi + 4) & 0xffff, u32(cpi + 8), u32(cpi + 16) & 0xffff], [4, 0x3f, 0, 0]);
+  assert.strictEqual(call('GetCPInfo', 65000, cpi), 1, 'CP_UTF7 is described');
+  assert.strictEqual(u32(cpi), 5);
+  assert.strictEqual(call('GetCPInfo', 1252, cpi), 1);
+  assert.strictEqual(u32(cpi), 1, 'CP1252 is still single-byte');
+  assert.strictEqual(call('GetCPInfo', 12345, cpi), 0, 'an unknown page still fails');
 
   console.log('test-delphi-corpus-apis: OK');
 })().catch(err => { console.error(err); process.exit(1); });
