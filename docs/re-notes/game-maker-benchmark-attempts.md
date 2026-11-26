@@ -162,7 +162,53 @@ load fmod/jbfmod or Audiere with LoadLibrary.
   form (style `0x86C80000`, no WS_VISIBLE), created at every start.
 - With the uop tier on, GM7 loading is about 4x slower than `--no-uop`. Castle
   is still on LOADING after 183K batches. This is reported to the uop-opt
-  owner.
+  owner. **Diagnosed 2026-11-26** (run 20261126-delphi-corpus-fixes-2
+  `gm7uop/`; counts only, no uop source touched). All arms use
+  `--branch-clock` and reach identical API counts (5,367,414 at 200K
+  batches), so they are comparable. The "4x" came from runs on the
+  historical clock.
+
+  | Castle GM7, batches | `--no-uop` | uop (default) | uop `--uop-reguard-span=4096` |
+  |---|---|---|---|
+  | 0-60K | 6.0s | 5.4s | |
+  | 0-150K | 12.1s | 10.2s | |
+  | 0-200K | 18.6s | 28.7s | **12.6s** |
+
+  The loss is all in 150K-200K: 18.5s with uop against 6.5s without. The
+  cause is the widened re-guard (`$uop_reguard_wide`, 64KB default). Counts at
+  200K:
+  - 10.7M enters, 12.0 blocks per enter.
+  - 13.5M re-guards proved 183M pages, 13.6 pages each.
+  - With the one-page span, 18.2M re-guards prove 18.2M pages: 10x fewer
+    page proofs for 35% more re-guards.
+
+  `--uop-win-census`:
+  - 92% of re-guards are sparse (Delphi MM's VirtualAlloc heap; 44 map
+    records, 92% of reservations one affine run).
+  - Only 19.6% follow on into the next page. Most are first touches after
+    the per-enter window reset.
+
+  The hot programs are short Delphi RTL heads that run 4-7 blocks per enter,
+  each ~70K enters by 200K: `_LStrCmp` `0x4053b4`, `0x4023a4`, `0x402200`,
+  `0x40520c`, `0x4050a8`. So a 16-page proof is paid on almost every enter and
+  discarded a few blocks later.
+
+  Other counts are not the cause:
+  - Compile churn is 238 repeat compiles of 1065 (22%; 51 from verdict-map
+    aliasing) with 9 flushes.
+  - No code-write kills (0 retiring guest writes in both arms).
+  - The Delphi fold counts are identical between arms.
+
+  Proposed fix, for the uop owner (07d):
+  - Widen lazily. Prove one page on the first re-guard of a window after an
+    enter's reset, and widen only on the second miss of the same slot within
+    the enter. The 19.6% next-page streams still get the 64KB window.
+  - Or prove the sparse 64KB block with the single bulk `$g2w_affine_span`
+    (100% ok here) plus the 16-bit code-page bitmap load, rather than per
+    page.
+
+  Either should be A/B'd on Diablo and Moorhuhn 3, where widening was
+  measured as a win.
 - `_CopyRecord` native=0: the routine *is* called (Herocore GM7: 0 native,
   185180 fallback before the fix; 0/288 after it). It falls back on every call
   because `tools/delphi-detect.js` reports `move=0`: these runners' System.Move
