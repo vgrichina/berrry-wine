@@ -645,7 +645,7 @@
     (owner "09a0-handlers-base.wat:$mapped_view_register"))
   (region.declare $VIRTUAL_RESERVE_TABLE (size 0x00010000) (align 0x00000010)
     (stride 8 (count $MAX_VIRTUAL_RESERVES))
-    (owner "10-helpers.wat:$virtual_reserve_record"))
+    (owner "10-helpers.wat:$virtual_reserve_record_locked"))
   (region.declare $VIRTUAL_HOLE_TABLE (size 0x00008000) (align 0x00000010)
     (stride 8 (count $MAX_VIRTUAL_HOLES))
     (owner "10-helpers.wat:$virtual_hole_add"))

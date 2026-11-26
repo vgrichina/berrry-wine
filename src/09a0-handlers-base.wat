@@ -4768,6 +4768,16 @@
       (i32.ge_u (local.get $ptr) (i32.const 0x00010000))
       (call $security_span_valid (local.get $ptr) (local.get $size))))
 
+  ;; Privilege names arrive as ANSI (LookupPrivilegeValueA) or UTF-16
+  ;; (LookupPrivilegeValueW); the W handler sets this around its lookup so
+  ;; both share the validator, the comparison and the name table. A UTF-16
+  ;; unit above 0xFF can never equal an ASCII table name, so it is kept whole.
+  (global $token_name_wide (mut i32) (i32.const 0))
+  (func $token_name_char (param $ptr i32) (param $i i32) (result i32)
+    (if (result i32) (global.get $token_name_wide)
+      (then (call $gl16 (i32.add (local.get $ptr) (i32.shl (local.get $i) (i32.const 1)))))
+      (else (call $gl8 (i32.add (local.get $ptr) (local.get $i))))))
+
   (func $token_guest_string_valid (param $ptr i32) (result i32)
     (local $i i32)
     (if (i32.eqz (local.get $ptr)) (then (return (i32.const 0))))
@@ -4776,9 +4786,11 @@
         (br_if $too_long (i32.ge_u (local.get $i) (i32.const 64)))
         (if (i32.eqz
               (call $token_guest_span_valid
-                (i32.add (local.get $ptr) (local.get $i)) (i32.const 1)))
+                (i32.add (local.get $ptr)
+                  (i32.shl (local.get $i) (global.get $token_name_wide)))
+                (i32.add (global.get $token_name_wide) (i32.const 1))))
           (then (return (i32.const 0))))
-        (if (i32.eqz (call $gl8 (i32.add (local.get $ptr) (local.get $i))))
+        (if (i32.eqz (call $token_name_char (local.get $ptr) (local.get $i)))
           (then (return (i32.const 1))))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $scan)))
@@ -4789,7 +4801,7 @@
     (block $different
       (loop $compare
         (br_if $different (i32.ge_u (local.get $i) (i32.const 64)))
-        (local.set $a (call $gl8 (i32.add (local.get $name) (local.get $i))))
+        (local.set $a (call $token_name_char (local.get $name) (local.get $i)))
         (local.set $b (i32.load8_u (i32.add (local.get $known_wa) (local.get $i))))
         (br_if $different
           (i32.ne (call $tolower (local.get $a)) (call $tolower (local.get $b))))
@@ -4849,7 +4861,7 @@
             (global.set $last_error (i32.const 87))
             (i32.store offset=0 (global.get $reg_base) (i32.const 0))
             (return)))
-        (if (call $gl8 (local.get $arg0))
+        (if (call $token_name_char (local.get $arg0) (i32.const 0))
           (then
             (global.set $last_error (i32.const 53)) ;; ERROR_BAD_NETPATH
             (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -4863,6 +4875,36 @@
     (call $gs32 (local.get $arg2) (local.get $luid))
     (call $gs32 (i32.add (local.get $arg2) (i32.const 4)) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1)))
+
+  ;; VerSetConditionMask(ULONGLONG ConditionMask, DWORD TypeMask, BYTE
+  ;; Condition) -- stdcall, the 64-bit mask in two stack dwords, result in
+  ;; EDX:EAX. Pure arithmetic: the 3-bit condition lands in the field of the
+  ;; highest VER_* bit present in TypeMask (VER_MINORVERSION 0x01 at bit 0 ...
+  ;; VER_PRODUCT_TYPE 0x80 at bit 21), as kernel32 does; a zero TypeMask or
+  ;; Condition returns the mask unchanged. Inno Setup 6 builds its
+  ;; VerifyVersionInfoW masks with it.
+  (func $handle_VerSetConditionMask (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $cond i32) (local $field i32)
+    (local.set $cond (i32.and (local.get $arg3) (i32.const 7)))
+    (if (i32.and (i32.ne (i32.and (local.get $arg2) (i32.const 0xFF)) (i32.const 0))
+                 (i32.ne (local.get $cond) (i32.const 0)))
+      (then
+        ;; Index of the highest set bit among the eight VER_* type bits.
+        (local.set $field (i32.sub (i32.const 31)
+          (i32.clz (i32.and (local.get $arg2) (i32.const 0xFF)))))
+        (local.set $arg0 (i32.or (local.get $arg0)
+          (i32.shl (local.get $cond) (i32.mul (local.get $field) (i32.const 3)))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
+    (i32.store offset=8 (global.get $reg_base) (local.get $arg1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  ;; LookupPrivilegeValueW(lpSystemName, lpName, lpLuid): the A lookup over
+  ;; UTF-16 names (Double Commander asks for SeShutdownPrivilege at startup).
+  (func $handle_LookupPrivilegeValueW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (global.set $token_name_wide (i32.const 1))
+    (call $handle_LookupPrivilegeValueA (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (global.set $token_name_wide (i32.const 0)))
 
   ;; OpenProcessToken(ProcessHandle, DesiredAccess, TokenHandle).  The browser
   ;; hosts one elevated process token.  Each open gets a distinct closeable
@@ -5751,9 +5793,28 @@
       (then
         (if (i32.ge_u (local.get $arg0) (call $virtual_alloc_min))
           (then
+            ;; MEM_RESERVE at an address is a claim on free address space:
+            ;; it fails when any part of the range is already allocated. See
+            ;; $virtual_reserve_at for the Delphi allocator that relies on it.
+            (if (i32.and (local.get $arg2) (i32.const 0x2000))
+              (then
+                (if (i32.eqz (call $virtual_reserve_at
+                      (local.get $arg0) (local.get $size) (local.get $arg3)))
+                  (then
+                    (global.set $last_error (i32.const 487)) ;; ERROR_INVALID_ADDRESS
+                    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+                    (i32.store offset=16 (global.get $reg_base)
+                      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+                    (return)))))
             ;; Commit into a sparse high guest reserve.
             (i32.store offset=0 (global.get $reg_base) (call $virtual_map_commit_protect
-              (local.get $arg0) (local.get $size) (local.get $arg3))))
+              (local.get $arg0) (local.get $size) (local.get $arg3)))
+            (if (i32.and (i32.ne (i32.and (local.get $arg2) (i32.const 0x2000)) (i32.const 0))
+                  (i32.eqz (i32.load (global.get $reg_base))))
+              (then
+                (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+                (call $virtual_reserve_forget_locked (local.get $arg0))
+                (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))))
           (else
             ;; MEM_COMMIT at an existing low address. Refuse commits that would
             ;; map into emulator-private decoded-code/cache memory.

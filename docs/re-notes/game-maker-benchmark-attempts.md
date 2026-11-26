@@ -134,3 +134,38 @@ load fmod/jbfmod or Audiere with LoadLibrary.
   from 6.8K to 20.6K. `_CopyRecord` is 0 native in every one of these runs,
   against 286 in Spelunky (GM8). The cause is not investigated. Evidence:
   `scratch/runs/20261125-delphi-corpus/`.
+
+## GM7 crash root cause and fixes (2026-11-25, run 20261125-delphi-corpus-fixes)
+
+- **The GM7 Remar crash was VirtualAlloc, not GM7.** Delphi's memory manager
+  reserves 1MB regions and grows one by calling `VirtualAlloc(end, 1MB,
+  MEM_RESERVE)` at the address just past it, merging on success. Our handler
+  accepted a fixed MEM_RESERVE even when that address was already allocated.
+  `MakeObjectInstance` had committed its 4KB window-procedure thunk page
+  exactly there (`0x0c3f0000` in Herocore/Castle), so the allocator handed the
+  thunk page out, sprite data was copied over it (writer EIP `0x41d223`), and
+  the next message sent to a form (from SetWindowPos) jumped to
+  `0x0c3f0eaa` and executed pixels. It reproduces deterministically with
+  `--no-delphi-fold` (batch 33785 in Herocore); with the fold on, only the
+  timing changes. A fixed MEM_RESERVE now fails with ERROR_INVALID_ADDRESS when
+  any page of the range is owned (`$virtual_reserve_at`, 10-helpers.wat). Seven
+  Minutes' "runtime-generated code at 0x0c3f0e.." row above has the same
+  signature; it has not been re-run yet.
+- After the fix: Castle GM7 reaches its title screen ("Press F1 for help /
+  Enter to start", ~408K batches with `--no-uop`). Herocore GM7 stays on the
+  Remar splash for 1.78M batches without crashing. Its loader is
+  `_LStrCmp`-heavy, at `0x4053b4`. Hero GM7 shows its title art.
+- Hero GM7 loads XeAudiere.dll, which loads Audiere.dll; both are UPX-packed.
+  Audiere's stub resolves RPCRT4 `UuidFromStringA` and fails
+  DLL_PROCESS_ATTACH when GetProcAddress returns 0. That API is now
+  implemented. The "Error Messages" window in the log is GM's hidden error
+  form (style `0x86C80000`, no WS_VISIBLE), created at every start.
+- With the uop tier on, GM7 loading is about 4x slower than `--no-uop`. Castle
+  is still on LOADING after 183K batches. This is reported to the uop-opt
+  owner.
+- `_CopyRecord` native=0: the routine *is* called (Herocore GM7: 0 native,
+  185180 fallback before the fix; 0/288 after it). It falls back on every call
+  because `tools/delphi-detect.js` reports `move=0`: these runners' System.Move
+  is not the FILD/FISTP form `$d_move_form` checks. A record whose string field
+  is not at offset 0 needs that Move for its leading bytes. This is signature
+  variance in Move, not in `_CopyRecord`; the fold is unchanged.

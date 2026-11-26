@@ -674,8 +674,42 @@
   ;; allocation contract even before any page in the reservation is committed.
   (func $virtual_reserve_record
       (param $guest i32) (param $size i32) (param $protect i32)
-    (local $count i32) (local $floor i32) (local $i i32) (local $ent i32)
     (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+    (call $virtual_reserve_record_locked
+      (local.get $guest) (local.get $size) (local.get $protect))
+    (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
+
+  ;; VirtualAlloc(lpAddress != NULL, MEM_RESERVE): Windows reserves exactly
+  ;; there or fails with ERROR_INVALID_ADDRESS when any page of the range
+  ;; already belongs to another allocation. Check and publish under one lock.
+  ;; Windows also rounds the base down to the 64KB granule and refuses a
+  ;; granule another allocation started in; that half is not enforced here,
+  ;; because fixed page-adjacent sparse reservations are how the fault and
+  ;; MMX fixtures (test-fault-null-raise, test-mmx-pinsrw) lay out backing. Returns 1 when the
+  ;; range is now this caller's reservation, 0 when something owns part of it.
+  ;; Delphi's memory manager grows a full 1MB region by reserving the address
+  ;; right after it and merging on success; that address can hold the 4KB
+  ;; MakeObjectInstance block (window-procedure thunks). Accepting the reserve
+  ;; handed the thunk page to the allocator, sprite data was copied over it,
+  ;; and the next message to a form jumped into pixels (Game Maker 7 runners).
+  (func $virtual_reserve_at
+      (param $guest i32) (param $size i32) (param $protect i32) (result i32)
+    (local $lo i32)
+    (local.set $lo (i32.and (local.get $guest) (i32.const 0xFFFFF000)))
+    (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+    (if (call $virtual_range_blocker_locked (local.get $lo)
+          (i32.sub (i32.add (local.get $guest) (local.get $size)) (local.get $lo)))
+      (then
+        (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
+        (return (i32.const 0))))
+    (call $virtual_reserve_record_locked
+      (local.get $guest) (local.get $size) (local.get $protect))
+    (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
+    (i32.const 1))
+
+  (func $virtual_reserve_record_locked
+      (param $guest i32) (param $size i32) (param $protect i32)
+    (local $count i32) (local $floor i32) (local $i i32) (local $ent i32)
     (local.set $count (i32.load offset=16 (global.get $VIRTUAL_MAP_STATE)))
     ;; Placement publishes ownership before unlocking. Older callers still
     ;; supply the final protection afterward; update that entry, never append
@@ -689,7 +723,6 @@
         (then
           (i32.store (local.get $ent) (i32.or (local.get $guest)
             (i32.and (local.get $protect) (global.get $GUEST_PTE_PROTECT_MASK))))
-          (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
           (return)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))
@@ -710,8 +743,7 @@
             (i32.shl (local.get $count) (i32.const 3)))
           (local.get $size))
         (i32.store offset=16 (global.get $VIRTUAL_MAP_STATE)
-          (i32.add (local.get $count) (i32.const 1)))))
-    (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
+          (i32.add (local.get $count) (i32.const 1))))))
 
   ;; MEM_RELEASE names the reservation base. Drop the entry by swapping the last
   ;; one down, the same compaction the map table uses.
