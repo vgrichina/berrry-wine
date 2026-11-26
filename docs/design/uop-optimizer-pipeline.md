@@ -606,14 +606,20 @@ plain read-modify-write.
   instance's range table. Every guest thread is its own instance, Worker or
   cooperative, each with its own arena and ranges. The shared code-page
   bitmap only makes the writer *look*; it never reaches another instance's
-  programs. F2 is therefore restricted to a single instance and to
-  `$LOCK_MODE == 0`:
-  - `init_thread` sets the shared word `$UOP_MULTI_INST` with an atomic
-    store the first time a second instance starts;
-  - `$uc_fold_ok` folds nothing once it is set;
-  - a folded program's header stamp bit 4 makes every entry re-check the
-    word, so a program folded before the second thread started is dropped
-    (`stampfail`, flush) at its next entry.
+  programs.
+  - **First build (superseded):** F2 folded only while one instance existed
+    (`$UOP_MULTI_INST`, set by `init_thread`). That rule silently made F2
+    fold **nothing** on any app that starts a thread at init -- Spelunky
+    Classic does, and the thread never even enters a program (§10.7).
+  - **As built now:** a shared fold epoch (`$UOP_FOLD_EPOCH`) and a shared
+    4096-bit set of folded pages (`$UOP_FOLD_PAGES`, marked at install).
+    Every instance's `$invalidate_code_range`, VirtualProtect and page
+    release calls `$uop_fold_hit`, which bumps the epoch when the range
+    touches a page in the set. A folded program records the epoch it read
+    its dwords under (read before lowering) in its assumption block; stamp 4
+    drops it at the next entry when the epoch has moved. F2 still requires
+    `$LOCK_MODE == 0` (stamp 1): instances then interleave only between
+    batches and a program never spans a batch, so the drop is exact.
 
 **Determinism.** Every compile decision depends on entry counts and guest
 bytes, never on wall time, so headless runs stay deterministic per arm. They
@@ -874,13 +880,13 @@ the SSE census and A/B (`20261125-uop-sse/census`, `remote/`).
 
 ## 10. As built: branch `uop-opt` (2026-11-25)
 
-Stages 0–4 landed as one change behind `--uop-opt=MASK` (browser
+Stages 0–4 landed first, then S1 and the cross-instance F2 (§10.7), behind `--uop-opt=MASK` (browser
 `?uop-opt=MASK`), default 0, inherited by every Worker and cooperative
 instance through `set_uop_opt`. Stages 5–8 and the stage-1/4 parts listed
 under "Cut" were not built. No threaded handler was added: everything lives
 in `src/07d-uop-engine.wat` and `src/07e-uop-compiler.wat`, plus two kill
 hooks (`$guest_page_clear_range` in 03, VirtualProtect in 09a0b) and the
-`init_thread` multi-instance word in 13. Run evidence:
+fold-epoch hook in `$invalidate_code_range` (04). Run evidence:
 `scratch/runs/20261125-uop-opt/`.
 
 ### 10.1 Bits
@@ -893,25 +899,37 @@ hooks (`$guest_page_clear_range` in 03, VirtualProtect in 09a0b) and the
 | `0x008` | V1 | `LOCK` ALU/INC/DEC/NOT/NEG and memory `XCHG` lower as the plain RMW while `$LOCK_MODE` is 0. A guard leaves any address ≥ `0x80000000` (the shared heap, whose CAS the host serialises) to threaded code before it reads. Stamp 1 drops the program if `LOCK_MODE` changes. |
 | `0x010` | V2 (`sahf` only) | `sahf` compiles as the SSER service op (op 108, calling threaded handler 212), so it no longer declines the region. It is still a handback, not a native op. |
 | `0x020` | V3 | `fs:` integer forms fold `fs_base` into the displacement, recorded at header +40. Stamp 2 drops the program when the instance's `fs_base` differs. No ESP-based operand, LEA or string op. |
-| `0x040` | F1 | Forward constant lattice over the region (`$uc_lat_xfer`): ⊥ / const / ⊤ per register, joined at merge points. |
-| `0x080` | F2 | A load from a lattice-constant address in a non-writable image section folds to its value. Adjacent folded dwords are coalesced into SMC ranges (`$uc_fold_ranges` → `$uop_add_range`, which also code-marks the page). Stamp 4 re-checks the single-instance word (§4.3). A page that ever took a guest store is recorded in `$UOP_FOLD_WRITTEN` (64 entries, process-wide) and is never folded again. |
-| `0x100` | C1 | A Jcc whose flags the lattice resolves becomes an unconditional edge, and the dead arm is pruned. The clock is charged per pruned segment, so the batch stop is unchanged. Needs `0x040`. |
+| `0x040` | F1 | Forward constant lattice over the region (`$uc_lat_xfer`): ⊥ / const / ⊤ per register, joined at merge points. A MOV into part of a known register merges; a byte MOV into an unknown register makes its low byte alone known (mask bit 8+r), enough for a byte compare. |
+| `0x080` | F2 | A load from a lattice-constant address in a non-writable image section folds to its value. Adjacent folded dwords are coalesced into SMC ranges (`$uc_fold_ranges` → `$uop_add_range`, which also code-marks the page). Stamp 4 re-checks the shared fold epoch (§4.3). A page that ever took a guest store is recorded in `$UOP_FOLD_WRITTEN` (64 entries, process-wide) and is never folded again. |
+| `0x100` | C1 | A Jcc whose flags the lattice resolves becomes an unconditional edge, and the dead arm is pruned. The clock is charged per pruned segment, so the batch stop is unchanged. 8-, 16- and 32-bit producers (operands shifted to the top, PF from the shifted-back byte). Needs `0x040`. |
+| `0x200` | S1 | Value variants (§10.7). The compiler names up to two *wish* registers: live-in registers the program loads through (`$uc_s1_wish`). The generic program samples them on entry (Misra-Gries, 64-entry windows) in its assumption block. A dominant value that points into a read-only image section gets a variant compiled with that register seeded into F1 at block 0. The seed is kept only if every back edge into block 0 brings the same value (a fixed point in `$uc_lat_run`). `$th_uop_enter` walks the variants (at most 3, `$uop_s1_pick`) and runs the first whose register holds its value, otherwise the generic program; statistics stay on the generic program. Four windows with no usable value, or a 4th wish, mark the head megamorphic and profiling stops. Needs `0x040`; useful with `0x080`/`0x100`. |
 
-Header stamp (+36) bits: 1 = `LOCK_MODE` 0, 2 = `fs_base` (+40), 4 = single
-instance, 8 = branch clock. They are checked by `$uop_hdr_bad` in
-`$th_uop_enter` only when the stamp is non-zero. A failure counts
+Assumption block. It sits after the program's window slots, flagged by header nwin's top bit (`$uop_stamp_at`); it was at header +36 first, which `--uop-census` already owns, and the census's exit counters made every program look stale -- 123K flushes in a 23500-batch census run, not a real limit.
+- **Stamp bits:** 1 = `LOCK_MODE` 0, 2 = `fs_base` (+4), 4 = fold epoch (+8), 8 = branch clock.
+- **Not assumptions:** 16 = S1 profile and 32 = S1 variant, which use a 48-byte block (+12 wish or guard register, +16 value, +36 variant chain).
+
+The stamp bits are checked by `$uop_hdr_bad` in `$th_uop_enter`, and only when the block exists. A failure counts
 `stampfail`, flushes, and continues in threaded code.
 
-### 10.2 Cut, and why
+### 10.2 Not built yet, and why
 
-- **R2 contexts / inlining.** The `(address, context)` record key is the
-  prerequisite of C2 (an unrolled iteration is a context), S1 (a variant is a
-  context) and the compound-program form that M1/C3 work over. It is a
-  rewrite of the record and range model, not one more pass, and it did not
-  fit in this change alongside a provably identical mask 0. Cutting it cuts
-  **C2, S1, M1 and C3** with it.
-- **C1 re-formation rounds.** C1 folds and prunes once. Re-forming the region
-  after pruning needs R2's context records to be worth anything.
+- **R2 contexts / inlining.** Still not built. The first build's ledger
+  (folds 0) was read as "F2 needs R2", but the cause was the one-instance
+  rule (§10.7). Once F2 crossed instances, the helper-head variant of S1
+  delivered the per-call-site constant R2 was meant to provide for
+  `_CopyRecord`: its callers pass one of two TypeInfo pointers in ECX, so a
+  variant at the helper head is the call-site context. R2 is still needed
+  for what a head variant cannot reach: stack-slot facts, a constant that
+  differs per call site but is not a register at the helper's head, and
+  callee code that is not its own program head.
+- **C2 unroll.** Not built. It is the next blocker on this route.
+  `_CopyRecord`'s field loop (head 0x406773) and `_InitializeRecord`'s
+  loop (0x406448/0x406418) get variants whose seed F1 correctly drops: the
+  back edge advances the seeded register (EDI += 8) or redefines it
+  (`xor edx,edx; mov dl,[esi+1]`). Keeping the first iteration's facts
+  needs a peeled or unrolled iteration (§10.7).
+- **C1 re-formation rounds, M1 (store→load forwarding, redundant loads),
+  C3 (dead flags and snapshots).** Not built in this pass.
 - **The fused `fnstsw/sahf/jcc` → f64 compare-branch.** Only the `sahf`
   decline was removed. The WAT microbench (`docs/design/wat-representation-bench.md`)
   measures the fusion at 2–3× everywhere, so it is the next V2 step.
@@ -1064,3 +1082,45 @@ How to read it:
   bodies; it does not remove the seams.
 - **Wall time on the laptop is not a measurement.** The box sweep times these
   arms.
+
+### 10.7 Why F2 folded nothing, and S1 on `_CopyRecord` (2026-11-25, second pass)
+
+Route: Spelunky Classic, branch clock, `--no-delphi-fold`, 23500 batches. Evidence is in `scratch/runs/20261125-uop-opt/r2/`.
+
+**The diagnosis: the one-instance rule.** The first build's ledger showed folds = 0 at `0x1ff`. That was read as "F2 needs R2's contexts". It was not the cause:
+- Spelunky starts a second guest thread at init (tid 1, which never enters a program).
+- `init_thread` set `$UOP_MULTI_INST`, and from then on `$uc_fold_ok` refused every fold, process-wide.
+
+With the cross-instance epoch (§4.3), F2 alone folds 1656 load sites over 750 dwords (`0x80`), with 2 stamp drops on the route.
+
+**A census artefact found on the way.** The first assumption stamp lived at header +36, and `--uop-census` uses +36/+40 for its exit counters. The census therefore turned every program "stale": 123441 flushes in a 23500-batch census run. With the block moved, the same census flushes 35 times, which is arena-full, as on main. Runs without `--uop-census` (every exactness run) were never affected.
+
+**S1 at the helper head instead of R2 at the call site.** `_CopyRecord` (0x40674c) is reached from 22 call sites, and every one loads ECX from a TypeInfo slot in `.text`. A variant guarded on ECX is therefore the call-site context for this helper.
+
+Census, `0x3ff`, D off:
+
+| head | variant | folded loads | Jccs decided |
+|---|---|---|---|
+| 0x40674c `_CopyRecord` | ecx=0x5436f4 (RValue) | 22 | 16 |
+| 0x40674c `_CopyRecord` | ecx=0x543710 | 22 | 16 |
+| 0x406534 `_FinalizeArray` | edx=0x5436f4 / 0x4010d0 | 14 / 12 | 14 / 14 |
+| 0x406773 `_CopyRecord` field loop | edi=0x543704 | 0 | 0 (seed dropped: EDI += 8 on the back edge) |
+| 0x406448 / 0x406418 init-record loops | edx=… | 0 | 0 (seed dropped: EDX redefined in the loop) |
+
+- **`_CopyRecord`:** the TypeInfo loads (size, field count, field PPTypeInfo, the field's kind byte) fold. The `jle` on the field count and the whole `cmp cl,0x0a..0x11` kind ladder are decided: 16 Jccs.
+- **`_FinalizeArray`:** its ladder is decided only since F1 learned the low byte of an otherwise unknown register (`mov al,[esi]` with EAX's upper bytes unknown).
+- **The field loop:** not folded. That needs a peeled or unrolled iteration (C2, §10.2).
+
+Ledger, D off, branch clock (identical frames, API counts and presents to mask 0; §10.5):
+
+| Mask | enters | charged blocks | service calls | loads folded (sites) | fold dwords | jcc folded | variants | variant hits | megamorphic |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 97.65M | 1704.9M | 620.7M | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x80 | 99.96M | 1699.7M | 618.5M | 1656 | 750 | 0 | 0 | 0 | 0 |
+| 0x240 | 96.43M | 1700.6M | 618.8M | 0 | 0 | 0 | 424 | 6.28M | 2533 |
+| 0x3ff | 99.98M | 1736.8M | 333.2M | 9156 | 3283 | 4146 | 649 | 6.25M | 2716 |
+
+How to read it:
+- **No column times anything.** Folded loads and decided Jccs are static compile counts, and variant hits are dynamic entries (6.3% of all entries at 0x3ff).
+- **Enters per charged block** are 0.0573 at mask 0 and 0.0576 at 0x3ff. No guest instruction-retired counter exists, so "enters per instruction" cannot be stated directly.
+- **Variant compiles recur after every arena-full flush** (51 flushes on this route), which is why there are 649 variants over 67 distinct (head, register, value) keys.

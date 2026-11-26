@@ -238,6 +238,22 @@ async function invalidation() {
     fill(); assert.strictEqual(run(at, RP), wantP);
     assert.strictEqual(st(13), h1 + 1, 'and EBX = P enters it again');
     ok('S1 variant: compiled from the profile, entered only under its guard');
+    // the byte compare again, EDX's upper bytes unknown: F1 knows the low
+    // byte alone (mask bit 8+r) and C1 still decides the jne
+    const body8 = loop([[0x8B, 0x03], [0x8A, 0x53, 0x04], [0x80, 0xFA, 0x07], [0x75, 0x02],
+      [0x01, 0x07], [0x83, 0xC7, 0x04]]);
+    const RP8 = { ...RP, edx: 0x12345600 }, RQ8 = { ...RQ, edx: 0x12345600 };
+    e.set_uop(0);
+    fill(); const wantP8 = run(fresh(body8), RP8);
+    fill(); const wantQ8 = run(fresh(body8), RQ8);
+    e.set_uop(1);
+    const v8 = st(11), j8 = st(8);
+    const c8 = compiled(body8);
+    for (let i = 0; i < 70; i++) { fill(); assert.strictEqual(run(c8.at, RP8), wantP8, `byte entry ${i}`); }
+    assert(st(11) > v8, 'a variant for the byte loop');
+    assert(st(8) > j8, 'a compare on a register only whose low byte is known was decided');
+    fill(); assert.strictEqual(run(c8.at, RQ8), wantQ8, 'its guard falls back too');
+    ok('S1 + F1 low byte: a byte compare decided with the upper bytes unknown');
   }
   e.set_uop_opt(0);
   e.set_uop(0);

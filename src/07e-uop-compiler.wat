@@ -3258,8 +3258,12 @@
         (local.set $p (i32.load offset=8 (local.get $o)))
         (if (i32.or (i32.gt_u (local.get $p) (i32.const 3)) (i32.ge_u (local.get $r) (i32.const 8)))
           (then (return (i32.const 0))))
+        ;; mask bit 8+r: only r's low byte is known (a byte MOV into an
+        ;; unknown register), enough for a low-byte operand
         (if (i32.eqz (i32.and (i32.load (local.get $S)) (i32.shl (i32.const 1) (local.get $r))))
-          (then (return (i32.const 0))))
+          (then (if (i32.or (i32.ne (local.get $p) (i32.const 2))
+                            (i32.eqz (i32.and (i32.load (local.get $S)) (i32.shl (i32.const 0x100) (local.get $r)))))
+                  (then (return (i32.const 0))))))
         (local.set $v (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2)))))
         (if (i32.eq (local.get $p) (i32.const 1)) (then (local.set $v (i32.and (local.get $v) (i32.const 0xFFFF)))))
         (if (i32.eq (local.get $p) (i32.const 2)) (then (local.set $v (i32.and (local.get $v) (i32.const 0xFF)))))
@@ -3310,7 +3314,7 @@
   ;; State S through instruction R, in place.
   (func $uc_lat_xfer (param $S i32) (param $R i32)
     (local $k i32) (local $O0 i32) (local $O1 i32) (local $d i32) (local $ok i32) (local $v i32)
-    (local $a i32) (local $op i32) (local $pd i32) (local $pv i32)
+    (local $a i32) (local $op i32) (local $pd i32) (local $pv i32) (local $lo8 i32) (local $wm i32)
     (local.set $k (call $uc_kind (local.get $R)))
     (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
     (local.set $O1 (i32.add (local.get $R) (i32.const 80)))
@@ -3362,6 +3366,11 @@
                                    (i32.le_u (i32.load offset=8 (local.get $O0)) (i32.const 3)))))
       (then
         (local.set $pd (i32.load offset=4 (local.get $O0)))
+        (if (i32.and (i32.eq (i32.load offset=8 (local.get $O0)) (i32.const 2))
+                     (i32.eqz (i32.and (i32.load (local.get $S)) (i32.shl (i32.const 1) (local.get $pd)))))
+          (then (if (call $uc_lat_valw (local.get $S) (local.get $O1))
+                  (then (local.set $d (local.get $pd)) (local.set $ok (i32.const 1)) (local.set $lo8 (i32.const 1))
+                        (local.set $v (i32.and (global.get $uc_lat_v) (i32.const 0xFF)))))))
         (if (i32.ne (i32.and (i32.load (local.get $S)) (i32.shl (i32.const 1) (local.get $pd))) (i32.const 0))
           (then
             (local.set $pv (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $pd) (i32.const 2)))))
@@ -3372,11 +3381,14 @@
                 (local.set $v (call $uc_merge_part (local.get $pv) (global.get $uc_lat_v)
                                 (i32.load offset=8 (local.get $O0))))))))))
     ;; what it writes is unknown, ESP always
+    (local.set $wm (i32.and (i32.or (call $uc_writes (local.get $R)) (i32.const 16)) (i32.const 0xFF)))
     (i32.store (local.get $S) (i32.and (i32.load (local.get $S))
-      (i32.xor (i32.or (call $uc_writes (local.get $R)) (i32.const 16)) (i32.const -1))))
+      (i32.xor (i32.or (local.get $wm) (i32.shl (local.get $wm) (i32.const 8))) (i32.const -1))))
     (if (i32.and (i32.ne (local.get $ok) (i32.const 0)) (i32.ne (local.get $d) (i32.const 4)))
       (then
-        (i32.store (local.get $S) (i32.or (i32.load (local.get $S)) (i32.shl (i32.const 1) (local.get $d))))
+        ;; a known register's low byte is known too (bit 8+d)
+        (i32.store (local.get $S) (i32.or (i32.load (local.get $S))
+          (select (i32.shl (i32.const 0x100) (local.get $d)) (i32.shl (i32.const 0x101) (local.get $d)) (local.get $lo8))))
         (i32.store offset=4 (i32.add (local.get $S) (i32.shl (local.get $d) (i32.const 2))) (local.get $v)))))
   (func $uc_lat_run
     (local $k i32) (local $B i32) (local $n i32) (local $j i32) (local $p i32) (local $S i32)
@@ -3396,7 +3408,7 @@
       (local.set $S (call $uc_lat (i32.load offset=4 (local.get $B))))
       (memory.fill (local.get $S) (i32.const 0) (i32.const 36))
       (if (i32.and (i32.eqz (local.get $k)) (local.get $sm))
-        (then (i32.store (local.get $S) (i32.shl (i32.const 1) (global.get $uc_seed_r)))
+        (then (i32.store (local.get $S) (i32.shl (i32.const 0x101) (global.get $uc_seed_r)))
               (i32.store offset=4 (i32.add (local.get $S) (i32.shl (global.get $uc_seed_r) (i32.const 2)))
                 (global.get $uc_seed_v))))
       (if (i32.and (i32.ne (local.get $k) (i32.const 0)) (i32.ne (i32.load offset=12 (local.get $B)) (i32.const 0)))
@@ -3423,6 +3435,10 @@
                   (if (i32.ne (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2))))
                               (i32.load offset=4 (i32.add (local.get $T) (i32.shl (local.get $r) (i32.const 2)))))
                     (then (local.set $m (i32.and (local.get $m) (i32.xor (i32.shl (i32.const 1) (local.get $r)) (i32.const -1))))))
+                  (if (i32.and (i32.xor (i32.load offset=4 (i32.add (local.get $S) (i32.shl (local.get $r) (i32.const 2))))
+                                        (i32.load offset=4 (i32.add (local.get $T) (i32.shl (local.get $r) (i32.const 2)))))
+                               (i32.const 0xFF))
+                    (then (local.set $m (i32.and (local.get $m) (i32.xor (i32.shl (i32.const 0x100) (local.get $r)) (i32.const -1))))))
                   (local.set $r (i32.add (local.get $r) (i32.const 1)))
                   (br $rl)))
                 (i32.store (local.get $S) (local.get $m))))

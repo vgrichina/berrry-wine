@@ -531,6 +531,10 @@
     (i32.store offset=36 (local.get $b) (local.get $pc))
     (i32.store offset=40 (local.get $b) (i32.add (i32.load offset=40 (local.get $b)) (i32.const 1)))
     (global.set $uop_opt_variants (i32.add (global.get $uop_opt_variants) (i32.const 1)))
+    ;; census 19: head, register, value, folded loads | decided Jccs << 16
+    (if (global.get $uop_census)
+      (then (call $uop_census_ev (i32.const 19) (i32.load offset=4 (local.get $g)) (local.get $best) (local.get $bv)
+              (i32.or (global.get $uc_n_fold) (i32.shl (global.get $uc_n_cfold) (i32.const 16))))))
     (local.get $g))
   (func $uop_s1_mega (param $b i32)
     (if (i32.eqz (i32.and (i32.load offset=12 (local.get $b)) (i32.const 0xFF000000)))
