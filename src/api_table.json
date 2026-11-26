@@ -42347,5 +42347,23 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 4999,
+    "name": "EnumSystemLocalesW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2580403173,
+    "args": [
+      {
+        "name": "lpLocaleEnumProc",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]

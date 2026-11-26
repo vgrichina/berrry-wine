@@ -2346,6 +2346,26 @@
     {"name": "SMapLS_IP_EBP_20", "api": "SMapLS_IP_EBP_20", "ordinal": 626},
     {"name": "SUnMapLS_IP_EBP_20", "api": "SUnMapLS_IP_EBP_20", "ordinal": 627},
     {"name": "SMapLS_IP_EBP_24", "api": "SMapLS_IP_EBP_24", "ordinal": 628},
-    {"name": "SUnMapLS_IP_EBP_24", "api": "SUnMapLS_IP_EBP_24", "ordinal": 629}
+    {"name": "SUnMapLS_IP_EBP_24", "api": "SUnMapLS_IP_EBP_24", "ordinal": 629},
+    { "name": "GetStringTypeExA", "api": "GetStringTypeExA", "ordinal": 631 },
+    { "name": "GetSystemPowerStatus", "api": "GetSystemPowerStatus", "ordinal": 632 },
+    { "name": "GlobalMemoryStatusEx", "api": "GlobalMemoryStatusEx", "ordinal": 633 },
+    { "name": "FindFirstFileExA", "api": "FindFirstFileExA", "ordinal": 634 },
+    { "name": "FreeLibraryAndExitThread", "api": "FreeLibraryAndExitThread", "ordinal": 635 },
+    { "name": "EncodePointer", "api": "EncodePointer", "ordinal": 636 },
+    { "name": "DecodePointer", "api": "DecodePointer", "ordinal": 637 },
+    { "name": "MakeCriticalSectionGlobal", "api": "MakeCriticalSectionGlobal", "ordinal": 638 },
+    { "name": "ExpandEnvironmentStringsW", "api": "ExpandEnvironmentStringsW", "ordinal": 639 },
+    { "name": "GetConsoleWindow", "api": "GetConsoleWindow", "ordinal": 640 },
+    { "name": "CreateWaitableTimerW", "api": "CreateWaitableTimerW", "ordinal": 641 },
+    { "name": "SetWaitableTimer", "api": "SetWaitableTimer", "ordinal": 642 },
+    { "name": "CancelWaitableTimer", "api": "CancelWaitableTimer", "ordinal": 643 },
+    { "name": "CreateFileMappingW", "api": "CreateFileMappingW", "ordinal": 644 },
+    { "name": "VerSetConditionMask", "api": "VerSetConditionMask", "ordinal": 645 },
+    { "name": "VerifyVersionInfoW", "api": "VerifyVersionInfoW", "ordinal": 646 },
+    { "name": "CompareStringOrdinal", "api": "CompareStringOrdinal", "ordinal": 647 },
+    { "name": "GetFileSizeEx", "api": "GetFileSizeEx", "ordinal": 648 },
+    { "name": "SetFilePointerEx", "api": "SetFilePointerEx", "ordinal": 649 },
+    { "name": "EnumSystemLocalesW", "api": "EnumSystemLocalesW", "ordinal": 650 }
   ]
 }

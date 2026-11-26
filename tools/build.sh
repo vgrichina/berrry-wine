@@ -164,6 +164,8 @@ step gpu-stream-gen -- node tools/gen-gpu-stream.js --check
 # GL GPS fallback reason names + diagnostics contract for hosts and the HUD:
 # lib/gl-gps-declines.generated.{json,js} from the table in 09a8gt-gl-gps.wat.
 step gl-declines-gen -- node tools/gen-gl-gps-declines.js --check
+# Also refuses an implemented API that Wine's kernel32.spec owns but the
+# manifest does not export (tools/kernel32-export-census.js).
 step kernel32-gen -- node tools/gen-kernel32-image.js --check
 step hash-table quiet -- node tools/check-hash-table.js
 # lib/app-file-sizes.generated.js declares the size of every large inline app

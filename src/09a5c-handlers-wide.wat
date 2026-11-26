@@ -576,3 +576,51 @@
     (call $handle_GetModuleFileNameW_locked (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
     (call $lock_release (global.get $DLL_LOAD_LOCK))
     )
+
+  ;; EnumSystemLocalesW(lpLocaleEnumProc, dwFlags) → BOOL. Same installation
+  ;; as EnumSystemLocalesA: one en-US locale, handed to the callback as the
+  ;; UTF-16 string L"00000409". The callback runs as a real guest call and
+  ;; returns through CACA0011 with the SYS1 typed frame, which frees the
+  ;; string and returns TRUE to the caller (09b-dispatch.wat). A NULL
+  ;; callback fails with ERROR_INVALID_PARAMETER, as on NT.
+  (func $handle_EnumSystemLocalesW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ret i32) (local $text i32) (local $wa i32) (local $i i32)
+    (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+    (if (i32.eqz (local.get $arg0))
+      (then
+        (global.set $last_error (i32.const 87))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (global.set $eip (local.get $ret))
+        (return)))
+    (local.set $text (call $heap_alloc (i32.const 18)))
+    (if (i32.eqz (local.get $text))
+      (then
+        (global.set $last_error (i32.const 8))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (global.set $eip (local.get $ret))
+        (return)))
+    (local.set $wa (call $g2w (local.get $text)))
+    ;; "00000409" as UTF-16, NUL-terminated.
+    (block $done (loop $fill
+      (br_if $done (i32.ge_u (local.get $i) (i32.const 5)))
+      (i32.store16 (i32.add (local.get $wa) (i32.shl (local.get $i) (i32.const 1))) (i32.const 0x30))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $fill)))
+    (i32.store16 offset=10 (local.get $wa) (i32.const 0x34))
+    (i32.store16 offset=12 (local.get $wa) (i32.const 0x30))
+    (i32.store16 offset=14 (local.get $wa) (i32.const 0x39))
+    (i32.store16 offset=16 (local.get $wa) (i32.const 0))
+    ;; Frame after the callback's RET 4: SYS1 marker, allocation, API return.
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $ret))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $text))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (i32.const 0x31535953)) ;; "SYS1"
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (local.get $text))
+    (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (call $gs32 (i32.load offset=16 (global.get $reg_base)) (global.get $font_enum_ret_thunk))
+    (global.set $eip (local.get $arg0))
+    (global.set $steps (i32.const 0)))
