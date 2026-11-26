@@ -159,7 +159,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   const UOP_REGUARD_SPAN = getArg('uop-reguard-span', null);
   // --uop-reguard-lazy: a re-guard widens only when the slot is walking
   // (07d $uop_rg_walking); otherwise it proves its one page. Every instance.
-  const UOP_REGUARD_LAZY = hasFlag('uop-reguard-lazy');
+  // --uop-reguard-lazy=sparse: only for pages outside the direct window.
+  const UOP_REGUARD_LAZY = getArg('uop-reguard-lazy', null) === 'sparse' ? 2 : hasFlag('uop-reguard-lazy') ? 1 : 0;
   if (UOP_CENSUS) env.DBG_INV = '1';
   // --branch-clock: one guest-clock block per executed x86 branch, not per
   // threaded block cut ($branch_clock in 05-alu). Pass it to BOTH arms of any
@@ -431,7 +432,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (UOP_ICG_MEGA !== null) inheritWasm('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
     if (UOP_RETRY_LADDER !== null) inheritWasm('set_uop_retry_ladder', UOP_RETRY_LADDER);
     if (UOP_REGUARD_SPAN !== null) inheritWasm('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
-    if (UOP_REGUARD_LAZY) inheritWasm('set_uop_reguard_lazy', 1);
+    if (UOP_REGUARD_LAZY) inheritWasm('set_uop_reguard_lazy', UOP_REGUARD_LAZY);
     if (TREE_FOLD || TRACE_TREE_FOLD) inheritWasm('set_tree_fold', 1);
     if (TRACE_TREE_FOLD) inheritWasm('set_tree_trace', 1);
     // The thresholds too: a guest thread decodes in its own instance, so a cap
@@ -456,7 +457,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_WIN_CENSUS && available('set_uop_win_census')) set('set_uop_win_census', 1);
       if (UOP_X87_CENSUS && available('set_uop_x87_census')) set('set_uop_x87_census', 1);
       if (UOP_REGUARD_SPAN !== null && available('set_uop_reguard_span')) set('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
-      if (UOP_REGUARD_LAZY && available('set_uop_reguard_lazy')) set('set_uop_reguard_lazy', 1);
+      if (UOP_REGUARD_LAZY && available('set_uop_reguard_lazy')) set('set_uop_reguard_lazy', UOP_REGUARD_LAZY);
       if (UOP_POOR_WORK !== null && available('set_uop_poor_work')) set('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
       if (NO_UOP_TRACE_CUT && available('set_uop_trace_cut')) set('set_uop_trace_cut', 0);
       if (NO_UOP_MCOPY && available('set_uop_mcopy')) set('set_uop_mcopy', 0);
