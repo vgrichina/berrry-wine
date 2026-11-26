@@ -478,3 +478,5 @@ not replace a newer main finding. Preparation-only and superseded notes are omit
 | Zuma Deluxe: current ordinary launch | [zuma-deluxe.md](zuma-deluxe.md) |
 | WordPad (Win98): initial frame placement, MFC load base | [wordpad.md](wordpad.md) |
 | Spelunky Classic HD 1.1.7 (GameMaker:Studio 1.4, D3D9 + D3DX9_43) | [spelunky-classic-hd.md](spelunky-classic-hd.md) |
+| Inno Setup 1.3–6.7 loaders: child-process runs, Delphi 2009 code pages, Vista-era startup APIs | [inno-setup.md](inno-setup.md) |
+| HeidiSQL 10.0 (Delphi): the packed unpacker needs KERNEL32 exports; the unpacked build stops at named pipes | [heidisql.md](heidisql.md) |

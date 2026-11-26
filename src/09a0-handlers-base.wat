@@ -6178,8 +6178,37 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; GetCPInfoExW(CodePage, dwFlags, lpCPInfoEx) -> BOOL. CPINFOEXW is CPINFO's
+  ;; 18 bytes followed by UnicodeDefaultChar (+18), the resolved CodePage (+20)
+  ;; and CodePageName[260] (+24), so GetCPInfo fills the prefix and decides
+  ;; success. The name is the code page number in decimal. Windows uses a
+  ;; descriptive string; no caller here reads it. Packed HeidiSQL's
+  ;; unpacker resolves this by GetProcAddress and calls ExitProcess(0) when it
+  ;; gets NULL.
+  (func $handle_GetCPInfoExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $cp i32) (local $n i32) (local $digits i32) (local $at i32)
+    (call $handle_GetCPInfo (local.get $arg0) (local.get $arg2) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (if (i32.eqz (i32.load offset=0 (global.get $reg_base))) (then (return)))
+    (local.set $cp (call $resolve_code_page (local.get $arg0)))
+    (call $gs16 (i32.add (local.get $arg2) (i32.const 18)) (i32.const 0x3F))
+    (call $gs32 (i32.add (local.get $arg2) (i32.const 20)) (local.get $cp))
+    (local.set $n (local.get $cp))
+    (loop $count
+      (local.set $digits (i32.add (local.get $digits) (i32.const 1)))
+      (local.set $n (i32.div_u (local.get $n) (i32.const 10)))
+      (br_if $count (local.get $n)))
+    (local.set $at (i32.add (local.get $arg2) (i32.add (i32.const 24) (i32.shl (local.get $digits) (i32.const 1)))))
+    (call $gs16 (local.get $at) (i32.const 0))
+    (local.set $n (local.get $cp))
+    (loop $emit
+      (local.set $at (i32.sub (local.get $at) (i32.const 2)))
+      (call $gs16 (local.get $at) (i32.add (i32.const 0x30) (i32.rem_u (local.get $n) (i32.const 10))))
+      (local.set $n (i32.div_u (local.get $n) (i32.const 10)))
+      (br_if $emit (local.get $n))))
+
   ;; 42: GetCPInfo
-  (func $handle_GetCPInfo (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_GetCPInfo(param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cp i32) (local $info i32)
     ;; CPINFO struct: MaxCharSize(4), DefaultChar[2](2), LeadByte[12](12)
     (local.set $cp (call $resolve_code_page (local.get $arg0)))

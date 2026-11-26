@@ -42324,5 +42324,28 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 4998,
+    "name": "GetCPInfoExW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1252489070,
+    "args": [
+      {
+        "name": "CodePage",
+        "type": "UINT"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpCPInfoEx",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
   }
 ]

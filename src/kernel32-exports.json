@@ -593,6 +593,11 @@
       "ordinal": 238
     },
     {
+      "name": "GetCPInfoExW",
+      "api": "GetCPInfoExW",
+      "ordinal": 630
+    },
+    {
       "name": "GetCurrentDirectoryA",
       "api": "GetCurrentDirectoryA",
       "ordinal": 239

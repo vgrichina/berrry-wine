@@ -39,6 +39,7 @@ const extraWat = String.raw`
   ${callWat('VirtualAlloc')}
   ${callWat('VirtualFree')}
   ${callWat('GetCPInfo')}
+  ${callWat('GetCPInfoExW')}
   ${callWat('SetFilePointerEx')}
   ${callWat('GetFileSizeEx')}
   ${callWat('CompareStringOrdinal')}
@@ -226,6 +227,20 @@ const extraWat = String.raw`
   assert.strictEqual(call('SetFilePointerEx', fh, 0, 0, np, 1), 1);
   assert.deepStrictEqual([u32(np), u32(np + 4)], [300, 0], 'the seek to the end took effect');
   assert.strictEqual(call('SetFilePointerEx', 0x1234, 0, 0, np, 0), 0, 'a bad handle fails');
+
+  // --- GetCPInfoExW: CPINFO prefix + UnicodeDefaultChar + CodePage + name.
+  const cx = alloc(544);
+  assert.strictEqual(call('GetCPInfoExW', 1252, 0, cx), 1);
+  assert.strictEqual(e.t_esp_delta(), 16, 'three stdcall args');
+  assert.strictEqual(u32(cx), 1, 'MaxCharSize');
+  assert.strictEqual(view().getUint16(toWasm(cx + 18), true), 0x3f, 'UnicodeDefaultChar');
+  assert.strictEqual(u32(cx + 20), 1252, 'CodePage');
+  const nm = Array.from({ length: 5 }, (_, i) => view().getUint16(toWasm(cx + 24 + 2 * i), true));
+  assert.strictEqual(String.fromCharCode(...nm), '1252\u0000', 'CodePageName');
+  assert.strictEqual(call('GetCPInfoExW', 65001, 0, cx), 1);
+  assert.strictEqual(u32(cx + 20), 65001);
+  assert.strictEqual(call('GetCPInfoExW', 12345, 0, cx), 0, 'unsupported page fails');
+  assert.strictEqual(e.t_esp_delta(), 16);
 
   console.log('test-delphi-corpus-apis: OK');
 })().catch(err => { console.error(err); process.exit(1); });

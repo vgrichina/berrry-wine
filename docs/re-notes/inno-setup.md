@@ -48,3 +48,12 @@ issue. It has not been investigated. Run 20261125-delphi-corpus-fixes,
 Double Commander 1.2.11 (FPC) gets past LookupPrivilegeValueW and stops on
 `SetDllDirectoryW` at batch 174. That API is not in api_table.json; it needs
 a DLL search directory threaded into LoadLibrary, so it was left unimplemented.
+
+## 1.3.26 / 2.0.19 / 3.0.7: not windowless (2026-11-25)
+
+The sweep reported "no window" for these loaders. Their first UI is a modal
+Yes/No `MessageBox` ("This will install Inno Setup. Do you wish to
+continue?", type 0x24), not a CreateWindowEx frame, so a window census never
+sees it. The PNG shows the box rendered correctly. To go further, click Yes
+with `--input`; the wizard runs in the spawned child. Run
+20261125-delphi-corpus-fixes, `inno307-loader.png`.
