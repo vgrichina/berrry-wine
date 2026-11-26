@@ -412,7 +412,8 @@
     (owner "01-header.wat:$XMM_FILE"))
   ;; --uop-opt C2 (07e): the compiler's per-iteration copies -- seven more
   ;; flag-flow slots and eight lattice tables -- and R2's call-site context
-  ;; table and context work stack (+0x63100, +0x64000). Its own region after the
+  ;; table and context work stack (+0x63100, +0x64000), and M1's load table
+  ;; (+0x63800, 384 bytes). Its own region after the
   ;; register files, so nothing placed before it moves.
   (region.declare $UOP_C2SCRATCH (size 0x00066000) (align 0x00001000)
     (owner "07e-uop-compiler.wat:$UOP_C2SCRATCH"))

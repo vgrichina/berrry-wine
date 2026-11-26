@@ -3352,6 +3352,8 @@
     (if (i32.eq (local.get $k) (i32.const 13)) (then (return (global.get $uc_t_r2p))))
     ;; 14 Jcc read off AH after an inline SAHF (0x4000)
     (if (i32.eq (local.get $k) (i32.const 14)) (then (return (global.get $uc_t_ahcc))))
+    ;; 15 loads M1 replaced by a register MOV (0x1000)
+    (if (i32.eq (local.get $k) (i32.const 15)) (then (return (global.get $uc_t_m1))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming
@@ -3372,6 +3374,7 @@
     (global.set $uc_st_fs (i32.const 0))
     (global.set $uc_n_lock (i32.const 0))
     (global.set $uc_n_sahf (i32.const 0))
+    (global.set $uc_n_m1 (i32.const 0))
     (global.set $uc_n_ahcc (i32.const 0))
     (global.set $uc_sahf_next (i32.const 0))
     (global.set $uc_n_retx (i32.const 0))
@@ -3928,6 +3931,129 @@
           (then (return (i32.const 0))))))
     (call $uc_fold_ok (global.get $uc_lat_v) (local.get $w)))
 
+  ;; ==== --uop-opt 0x1000 M1: redundant loads ====
+  ;; Within one straight-line run of a block (reset at every label, at an
+  ;; MCOPY run and at any instruction it does not model), a load into a
+  ;; full register (mov r32,[m]; movzx/movsx r32,[m]; pop r32) leaves an
+  ;; entry {base, idx, sc, disp, w, sg, holder}. A later load with the same
+  ;; key is a MOV from the holder while the holder, base and index are
+  ;; unwritten and no store can have reached the bytes: a store kills every
+  ;; entry but one off the same base register, no index, disjoint bytes.
+  ;; Only kinds whose lowering is straight-line and whose one memory read
+  ;; comes before any store look entries up or leave them ($uc_m1_kind);
+  ;; anything else, any LOCK form, kills the table. The value is the one the
+  ;; load would have read: no exit, call or other instance runs in between,
+  ;; and the access's window passed for the same address.
+  ;; Entry (32 bytes): +0 base +4 idx +8 sc +12 disp +16 w +20 sg +24 holder.
+  ;; Live entries 0-7, this instruction's pending ones 8-11.
+  (global $UC_M1 i32 (region.addr $UOP_C2SCRATCH 0x063800)) ;; 12 x 32
+  (global $uc_m1_n (mut i32) (i32.const 0))
+  (global $uc_m1_p (mut i32) (i32.const 0))
+  (global $uc_m1_on (mut i32) (i32.const 0))
+  (global $uc_n_m1 (mut i32) (i32.const 0))
+  (global $uc_t_m1 (mut i32) (i32.const 0))
+  (func $uc_m1_reset (global.set $uc_m1_n (i32.const 0)) (global.set $uc_m1_p (i32.const 0)))
+  ;; does R's kind take part (lookups and entries)? alu, inc, dec, test, mov,
+  ;; lea, cwde, cdq, shift, not, neg, imul, movx, shift-by-cl, setcc, adc/sbb, pop
+  (func $uc_m1_kind (param $R i32) (result i32)
+    (local $k i32)
+    (if (i32.ne (i32.and (i32.load offset=40 (local.get $R)) (i32.const 0x100)) (i32.const 0)) (then (return (i32.const 0))))
+    (local.set $k (call $uc_kind (local.get $R)))
+    (if (i32.and (i32.ge_u (local.get $k) (i32.const 1)) (i32.le_u (local.get $k) (i32.const 6))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $k) (i32.const 9)) (i32.le_u (local.get $k) (i32.const 14))) (then (return (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $k) (i32.const 17)) (i32.le_u (local.get $k) (i32.const 20))) (then (return (i32.const 1))))
+    (i32.and (i32.eq (local.get $k) (i32.const 22)) (i32.eqz (call $uc_is_mem (i32.add (local.get $R) (i32.const 56))))))
+  (func $uc_m1_eq (param $e i32) (param $o i32) (param $w i32) (param $sg i32) (result i32)
+    (i32.and
+      (i32.and (i32.eq (i32.load (local.get $e)) (i32.load offset=4 (local.get $o)))
+               (i32.eq (i32.load offset=4 (local.get $e)) (i32.load offset=8 (local.get $o))))
+      (i32.and
+        (i32.and (i32.eq (i32.load offset=8 (local.get $e)) (i32.load offset=12 (local.get $o)))
+                 (i32.eq (i32.load offset=12 (local.get $e)) (i32.load offset=16 (local.get $o))))
+        (i32.and (i32.eq (i32.load offset=16 (local.get $e)) (local.get $w))
+                 (i32.eq (i32.load offset=20 (local.get $e)) (local.get $sg))))))
+  (func $uc_m1_find (param $o i32) (param $w i32) (param $sg i32) (result i32)
+    (local $i i32) (local $e i32)
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $i) (global.get $uc_m1_n)))
+      (local.set $e (i32.add (global.get $UC_M1) (i32.shl (local.get $i) (i32.const 5))))
+      (if (call $uc_m1_eq (local.get $e) (local.get $o) (local.get $w) (local.get $sg))
+        (then (return (i32.load offset=24 (local.get $e)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l)))
+    (i32.const -1))
+  (func $uc_m1_note (param $o i32) (param $w i32) (param $sg i32) (param $r i32)
+    (local $e i32)
+    (if (i32.ge_u (global.get $uc_m1_p) (i32.const 4)) (then (return)))
+    (local.set $e (i32.add (global.get $UC_M1) (i32.shl (i32.add (i32.const 8) (global.get $uc_m1_p)) (i32.const 5))))
+    (i32.store (local.get $e) (i32.load offset=4 (local.get $o)))
+    (i32.store offset=4 (local.get $e) (i32.load offset=8 (local.get $o)))
+    (i32.store offset=8 (local.get $e) (i32.load offset=12 (local.get $o)))
+    (i32.store offset=12 (local.get $e) (i32.load offset=16 (local.get $o)))
+    (i32.store offset=16 (local.get $e) (local.get $w))
+    (i32.store offset=20 (local.get $e) (local.get $sg))
+    (i32.store offset=24 (local.get $e) (local.get $r))
+    (global.set $uc_m1_p (i32.add (global.get $uc_m1_p) (i32.const 1))))
+  ;; is entry e's base or index register, or (unless pending) its holder, in defs?
+  (func $uc_m1_hit (param $e i32) (param $defs i32) (param $own i32) (result i32)
+    (i32.or
+      (i32.or
+        (i32.and (i32.ge_s (i32.load (local.get $e)) (i32.const 0))
+                 (i32.ne (i32.and (local.get $defs) (i32.shl (i32.const 1) (i32.load (local.get $e)))) (i32.const 0)))
+        (i32.and (i32.ge_s (i32.load offset=4 (local.get $e)) (i32.const 0))
+                 (i32.ne (i32.and (local.get $defs) (i32.shl (i32.const 1) (i32.load offset=4 (local.get $e)))) (i32.const 0))))
+      (i32.and (i32.eqz (local.get $own))
+               (i32.ne (i32.and (local.get $defs) (i32.shl (i32.const 1) (i32.load offset=24 (local.get $e)))) (i32.const 0)))))
+  ;; after R: its stores and register writes kill, then its own loads enter
+  (func $uc_m1_after (param $R i32)
+    (local $defs i32) (local $st i32) (local $O i32) (local $k i32) (local $i i32) (local $j i32) (local $e i32)
+    (local $keep i32) (local $sb i32) (local $sw i32)
+    (if (i32.eqz (call $uc_m1_kind (local.get $R))) (then (call $uc_m1_reset) (return)))
+    (local.set $defs (call $uc_writes (local.get $R)))
+    (local.set $O (i32.add (local.get $R) (i32.const 56)))
+    (local.set $k (call $uc_kind (local.get $R)))
+    ;; a store: O0 in memory, by any kind here but test and cmp
+    (local.set $st (i32.and (call $uc_is_mem (local.get $O))
+                            (i32.and (i32.ne (local.get $k) (i32.const 4))
+                                     (i32.eqz (i32.and (i32.eq (local.get $k) (i32.const 1))
+                                                       (i32.eq (i32.load offset=12 (local.get $R)) (i32.const 7)))))))
+    (if (i32.and (local.get $st) (i32.eq (local.get $k) (i32.const 6))) (then (local.set $st (i32.const 0))))
+    (local.set $sb (i32.load offset=4 (local.get $O)))
+    (local.set $sw (i32.shr_u (i32.load offset=20 (local.get $O)) (i32.const 3)))
+    (if (local.get $st) (then (global.set $uc_m1_p (i32.const 0))))
+    (block $d (loop $l
+      (br_if $d (i32.ge_u (local.get $i) (global.get $uc_m1_n)))
+      (local.set $e (i32.add (global.get $UC_M1) (i32.shl (local.get $i) (i32.const 5))))
+      (local.set $keep (i32.eqz (call $uc_m1_hit (local.get $e) (local.get $defs) (i32.const 0))))
+      (if (local.get $st)
+        (then
+          (if (i32.eqz (i32.and
+                (i32.and (i32.ge_s (local.get $sb) (i32.const 0)) (i32.eq (local.get $sb) (i32.load (local.get $e))))
+                (i32.and (i32.and (i32.lt_s (i32.load offset=8 (local.get $O)) (i32.const 0))
+                                  (i32.lt_s (i32.load offset=4 (local.get $e)) (i32.const 0)))
+                         (i32.or (i32.le_s (i32.add (i32.load offset=16 (local.get $O)) (local.get $sw)) (i32.load offset=12 (local.get $e)))
+                                 (i32.le_s (i32.add (i32.load offset=12 (local.get $e)) (i32.shr_u (i32.load offset=16 (local.get $e)) (i32.const 3)))
+                                           (i32.load offset=16 (local.get $O)))))))
+            (then (local.set $keep (i32.const 0))))))
+      (if (local.get $keep)
+        (then (if (i32.ne (local.get $i) (local.get $j))
+                (then (memory.copy (i32.add (global.get $UC_M1) (i32.shl (local.get $j) (i32.const 5))) (local.get $e) (i32.const 32))))
+              (local.set $j (i32.add (local.get $j) (i32.const 1)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l)))
+    (global.set $uc_m1_n (local.get $j))
+    (local.set $i (i32.const 0))
+    (block $d2 (loop $l2
+      (br_if $d2 (i32.ge_u (local.get $i) (global.get $uc_m1_p)))
+      (local.set $e (i32.add (global.get $UC_M1) (i32.shl (i32.add (i32.const 8) (local.get $i)) (i32.const 5))))
+      (if (i32.and (i32.lt_u (global.get $uc_m1_n) (i32.const 8))
+                   (i32.eqz (call $uc_m1_hit (local.get $e) (local.get $defs) (i32.const 1))))
+        (then (memory.copy (i32.add (global.get $UC_M1) (i32.shl (global.get $uc_m1_n) (i32.const 5))) (local.get $e) (i32.const 32))
+              (global.set $uc_m1_n (i32.add (global.get $uc_m1_n) (i32.const 1)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $l2)))
+    (global.set $uc_m1_p (i32.const 0)))
+
   (func $uc_load (param $o i32) (param $w i32) (param $sg i32) (param $dst i64)
     (local $code i32) (local $wa i64) (local $a i32)
     (if (i32.eq (global.get $uc_fwd_kind) (i32.const 1))
@@ -3941,6 +4067,19 @@
         (call $uc_o2 (i32.const 2) (local.get $dst)
           (call $uc_aC (call $uc_fold_val (local.get $a) (local.get $w) (local.get $sg))))
         (return)))
+    (if (global.get $uc_m1_on)
+      (then
+        (local.set $a (call $uc_m1_find (local.get $o) (local.get $w) (local.get $sg)))
+        (if (i32.ge_s (local.get $a) (i32.const 0))
+          (then
+            (global.set $uc_n_m1 (i32.add (global.get $uc_n_m1) (i32.const 1)))
+            (if (i64.ne (local.get $dst) (call $uc_aR (local.get $a)))
+              (then (call $uc_o2 (i32.const 2) (local.get $dst) (call $uc_aR (local.get $a)))))
+            (return)))
+        ;; a full register: this load's value stays there until it is written
+        (if (i64.lt_u (i64.sub (local.get $dst) (i64.const 0x0200000000000000)) (i64.const 8))
+          (then (call $uc_m1_note (local.get $o) (local.get $w) (local.get $sg)
+                                  (i32.wrap_i64 (i64.sub (local.get $dst) (i64.const 0x0200000000000000))))))))
     (local.set $code
       (if (result i32) (i32.eq (local.get $w) (i32.const 32)) (then (i32.const 33))
         (else (if (result i32) (i32.eq (local.get $w) (i32.const 16))
@@ -5507,6 +5646,7 @@
           (then (local.set $next (call $uc_aLc (local.get $pfx) (i32.load (call $uc_blk (i32.add (local.get $k) (i32.const 1))))
                                                (i32.load offset=20 (call $uc_blk (i32.add (local.get $k) (i32.const 1))))))))
         (call $uc_label (call $uc_aLc (local.get $pfx) (i32.load (local.get $B)) (i32.load offset=20 (local.get $B))))
+        (call $uc_m1_reset)
         (if (global.get $pending_armed) (then
           (call $uc_o2 (i32.const 87) (call $uc_aN (i32.load (local.get $B))) (call $uc_aR (i32.const 4)))))
         (local.set $rae (i32.load (i32.add (i32.add (local.get $F) (i32.const 0x5000)) (i32.shl (local.get $k) (i32.const 2)))))
@@ -5530,11 +5670,13 @@
               (if (local.get $err) (then (return (local.get $err))))
               (local.set $l (call $uc_aLc (i32.add (local.get $pfx) (i32.const 2)) (i32.load (local.get $R)) (call $uc_ctx (local.get $R))))
               (call $uc_o1 (i32.const 25) (local.get $l))
-              (call $uc_label (local.get $l))))
+              (call $uc_label (local.get $l))
+              (call $uc_m1_reset)))
           ;; a run of dword mov pairs: one MCOPY (§21.4)
           (local.set $t (call $uc_try_mcopy (local.get $B) (local.get $n)))
           (if (local.get $t)
             (then (if (global.get $uc_err) (then (return (global.get $uc_err))))
+                  (call $uc_m1_reset)
                   (local.set $n (i32.add (local.get $n) (local.get $t)))
                   (br $iloop)))
           (local.set $tgt (i32.load offset=24 (local.get $R)))
@@ -5644,7 +5786,15 @@
           (if (global.get $uc_fwd_kind)
             (then (global.set $uc_fwd_a
                     (call $uc_pid (call $uc_loop_insn (i32.and (i32.load offset=248 (local.get $R)) (i32.const 0xFFFF)))))))
+          ;; --uop-opt 0x1000 M1 (not under --aggressive-stack, whose elided
+          ;; pushes are slots memory does not hold)
+          (global.set $uc_m1_on
+            (i32.and (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x1000)) (i32.const 0))
+                              (i32.eqz (global.get $uc_aggr)))
+                     (call $uc_m1_kind (local.get $R))))
           (local.set $err (call $uc_insn (local.get $R)))
+          (if (global.get $uc_m1_on) (then (call $uc_m1_after (local.get $R))) (else (call $uc_m1_reset)))
+          (global.set $uc_m1_on (i32.const 0))
           (global.set $uc_fwd_kind (i32.const 0))
           (if (local.get $err) (then (return (local.get $err))))
           (if (global.get $uc_err) (then (return (global.get $uc_err))))
@@ -6797,6 +6947,7 @@
     (global.set $uc_t_lock (i32.add (global.get $uc_t_lock) (global.get $uc_n_lock)))
     (global.set $uc_t_sahf (i32.add (global.get $uc_t_sahf) (global.get $uc_n_sahf)))
     (global.set $uc_t_ahcc (i32.add (global.get $uc_t_ahcc) (global.get $uc_n_ahcc)))
+    (global.set $uc_t_m1 (i32.add (global.get $uc_t_m1) (global.get $uc_n_m1)))
     (global.set $uc_t_retx (i32.add (global.get $uc_t_retx) (global.get $uc_n_retx)))
     (global.set $uc_t_fold (i32.add (global.get $uc_t_fold) (global.get $uc_n_fold)))
     (global.set $uc_t_cfold (i32.add (global.get $uc_t_cfold) (global.get $uc_n_cfold)))

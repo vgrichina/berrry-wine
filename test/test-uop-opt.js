@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x4010, 0x7FFF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x1000, 0x1040, 0x4010, 0x7FFF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -463,6 +463,55 @@ async function invalidation() {
       }
     }
     ok(`0x4000 fnstsw/sahf/jcc: cc 2-11 exact over 300 random float compares (${fused} Jcc read off AH)`);
+  }
+  // 0x1000 M1: repeated loads within a block become register MOVs; a store
+  // to the same bytes, through another base (aliased here: EDI == ESI + 4 in
+  // the second run), or a write to the base or holder must make the next
+  // load read memory again. Loop: dec ebp / jnz back to 0.
+  {
+    const lp = (insns) => {
+      const b = insns.flat();
+      const len = b.length + 3;
+      return Uint8Array.from([...b, 0x4D, 0x75, (0x100 - len) & 0xFF, 0xC3]);
+    };
+    const bodies = {
+      // hit, disjoint same-base store keeps it, overlapping store kills it
+      'same-base': lp([[0x8B, 0x06], [0x01, 0xC3], [0x8B, 0x0E], [0x01, 0xCB], [0x89, 0x56, 0x04], [0x8B, 0x16], [0x01, 0xD3],
+                       [0x89, 0x1E], [0x8B, 0x06], [0x01, 0xC3], [0x83, 0xC6, 0x08]]),
+      // a store through EDI kills every entry (EDI may alias ESI)
+      'other-base': lp([[0x8B, 0x06], [0x89, 0x1F], [0x8B, 0x0E], [0x01, 0xCB], [0x01, 0x47, 0x04], [0x8B, 0x16], [0x01, 0xD3],
+                        [0x89, 0x5F, 0x08], [0x83, 0xC6, 0x04], [0x83, 0xC7, 0x04]]),
+      // the holder or the base written in between
+      'holder-base': lp([[0x8B, 0x46, 0x08], [0x40], [0x8B, 0x4E, 0x08], [0x01, 0xCB], [0x8B, 0x46, 0x08], [0x83, 0xC6, 0x04],
+                         [0x8B, 0x56, 0x04], [0x01, 0xD3], [0x01, 0xC3], [0x89, 0x5E, 0x0C]]),
+      // widths and extensions are separate keys; cmp [m] reads through a hit
+      'widths': lp([[0x0F, 0xB6, 0x06], [0x8B, 0x0E], [0x0F, 0xB6, 0x16], [0x0F, 0xBE, 0x3E], [0x01, 0xC3], [0x01, 0xCB], [0x01, 0xD3],
+                    [0x01, 0xFB], [0x39, 0x0E], [0x0F, 0x94, 0xC0], [0x01, 0xC3], [0x89, 0x5E, 0x10], [0x83, 0xC6, 0x03], [0x8B, 0xFE]]),
+      // xchg and a lock'd add kill the table
+      'xchg-lock': lp([[0x8B, 0x06], [0x87, 0x1E], [0x8B, 0x0E], [0x01, 0xCB], [0x8B, 0x06], [0xF0, 0x01, 0x06], [0x8B, 0x16],
+                       [0x01, 0xD3], [0x83, 0xC6, 0x04]]),
+    };
+    let hits = 0;
+    for (const [name, body] of Object.entries(bodies)) {
+      for (const alias of [0x10000, 4]) {
+        const RR = { eax: 0, ebx: 0, ecx: 0, edx: 0, ebp: 200, esi: a.buf, edi: a.buf + alias };
+        e.set_uop(0); fill(); const want = run(fresh(body), RR);
+        e.set_uop(1);
+        for (const mask of [0x1000, 0x1040, 0x7FFF]) {
+          e.set_uop_opt(mask);
+          const m0 = st(19);
+          const at = fresh(body);
+          const pc = e.uop_compile(at) >>> 0;
+          // xchg / lock compile only with V1 (0x008)
+          if (!pc) { assert(name === 'xchg-lock' && !(mask & 8), `M1 ${name} compiles at 0x${mask.toString(16)}`); continue; }
+          e.uop_install(at, pc);
+          hits += st(19) - m0;
+          fill(); assert.strictEqual(run(at, RR), want, `M1 ${name} alias ${alias} mask 0x${mask.toString(16)}`);
+        }
+      }
+    }
+    assert(hits > 0, 'M1 replaced loads');
+    ok(`0x1000 M1: 5 shapes x 2 aliasings exact (${hits} loads replaced)`);
   }
   e.set_uop_opt(0);
   e.set_uop(0);
