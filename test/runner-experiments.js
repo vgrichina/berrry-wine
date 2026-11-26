@@ -157,6 +157,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // around the page it missed on (07d $uop_reguard_wide; default 64KB, 4096 =
   // the old one-page window). Every instance: each thread re-guards its own.
   const UOP_REGUARD_SPAN = getArg('uop-reguard-span', null);
+  // --uop-reguard-lazy: a re-guard widens only when the slot is walking
+  // (07d $uop_rg_walking); otherwise it proves its one page. Every instance.
+  const UOP_REGUARD_LAZY = hasFlag('uop-reguard-lazy');
   if (UOP_CENSUS) env.DBG_INV = '1';
   // --branch-clock: one guest-clock block per executed x86 branch, not per
   // threaded block cut ($branch_clock in 05-alu). Pass it to BOTH arms of any
@@ -428,6 +431,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (UOP_ICG_MEGA !== null) inheritWasm('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
     if (UOP_RETRY_LADDER !== null) inheritWasm('set_uop_retry_ladder', UOP_RETRY_LADDER);
     if (UOP_REGUARD_SPAN !== null) inheritWasm('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
+    if (UOP_REGUARD_LAZY) inheritWasm('set_uop_reguard_lazy', 1);
     if (TREE_FOLD || TRACE_TREE_FOLD) inheritWasm('set_tree_fold', 1);
     if (TRACE_TREE_FOLD) inheritWasm('set_tree_trace', 1);
     // The thresholds too: a guest thread decodes in its own instance, so a cap
@@ -452,6 +456,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_WIN_CENSUS && available('set_uop_win_census')) set('set_uop_win_census', 1);
       if (UOP_X87_CENSUS && available('set_uop_x87_census')) set('set_uop_x87_census', 1);
       if (UOP_REGUARD_SPAN !== null && available('set_uop_reguard_span')) set('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
+      if (UOP_REGUARD_LAZY && available('set_uop_reguard_lazy')) set('set_uop_reguard_lazy', 1);
       if (UOP_POOR_WORK !== null && available('set_uop_poor_work')) set('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
       if (NO_UOP_TRACE_CUT && available('set_uop_trace_cut')) set('set_uop_trace_cut', 0);
       if (NO_UOP_MCOPY && available('set_uop_mcopy')) set('set_uop_mcopy', 0);
@@ -637,7 +642,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       const why = UOP_REASONS.map((name, k) => [name, k && x.uop_decline_count(k) >>> 0])
         .filter(([, n]) => n).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => `${k}=${n}`).join(' ');
       log(`uop: installs=${st(2)} kills=${st(3)} retired-poor=${st(7)} enters=${st(4)} ` +
-        `blocks=${st(5)} head-exits=${st(6)} reguards=${st(1)} rg-pages=${st(14)} rg-nonadj=${st(15)} win-kept=${st(9)} win-reset=${st(10)} gen=${st(8)} | compiled=${cs(0)} declined=${cs(1)} ` +
+        `blocks=${st(5)} head-exits=${st(6)} reguards=${st(1)} rg-pages=${st(14)} rg-nonadj=${st(15)} ${UOP_REGUARD_LAZY && x.uop_rg_lazy_one ? `rg-lazy-one=${x.uop_rg_lazy_one() >>> 0} ` : ''}win-kept=${st(9)} win-reset=${st(10)} gen=${st(8)} | compiled=${cs(0)} declined=${cs(1)} ` +
         `insns=${cs(2)} uops=${cs(3)} flushes=${cs(4)}` + (traceWanted() ? ` traces=${cs(26)}` : '') + (why ? `\n  declines: ${why}` : ''));
       // $uop_cstat 32..36: the retry ladder (07e $uc_lower_head, section 24)
       if (x.get_uop_retry_ladder) log(`uop ladder: mask=${x.get_uop_retry_ladder()} retried=${cs(32)} ok-halved=${cs(33)} ` +
