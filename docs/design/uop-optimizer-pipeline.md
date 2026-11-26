@@ -602,6 +602,18 @@ plain read-modify-write.
   not, F2 is restricted to `$LOCK_MODE == 0` until it does. The §3 gap in
   `docs/uop-tier-design.md` (another instance modifying code *during* a run)
   applies to folded data too, and is documented the same way.
+- **Answer (as built, §10): no.** `$uop_code_write` walks only the writing
+  instance's range table. Every guest thread is its own instance, Worker or
+  cooperative, each with its own arena and ranges. The shared code-page
+  bitmap only makes the writer *look*; it never reaches another instance's
+  programs. F2 is therefore restricted to a single instance and to
+  `$LOCK_MODE == 0`:
+  - `init_thread` sets the shared word `$UOP_MULTI_INST` with an atomic
+    store the first time a second instance starts;
+  - `$uc_fold_ok` folds nothing once it is set;
+  - a folded program's header stamp bit 4 makes every entry re-check the
+    word, so a program folded before the second thread started is dropped
+    (`stampfail`, flush) at its next entry.
 
 **Determinism.** Every compile decision depends on entry counts and guest
 bytes, never on wall time, so headless runs stay deterministic per arm. They
@@ -859,3 +871,115 @@ The numbers cited from other runs are the fold-bench summary
 attribution and cpuprofile buckets
 (`20261125-spelunky-classic-gameplay-profile/headless/run-b`, `run-c`), and
 the SSE census and A/B (`20261125-uop-sse/census`, `remote/`).
+
+## 10. As built: branch `uop-opt` (2026-11-25)
+
+Stages 0–4 landed as one change behind `--uop-opt=MASK` (browser
+`?uop-opt=MASK`), default 0, inherited by every Worker and cooperative
+instance through `set_uop_opt`. Stages 5–8 and the stage-1/4 parts listed
+under "Cut" were not built. No threaded handler was added: everything lives
+in `src/07d-uop-engine.wat` and `src/07e-uop-compiler.wat`, plus two kill
+hooks (`$guest_page_clear_range` in 03, VirtualProtect in 09a0b) and the
+`init_thread` multi-instance word in 13. Run evidence:
+`scratch/runs/20261125-uop-opt/`.
+
+### 10.1 Bits
+
+| Bit | Pass | What it does as built |
+|---|---|---|
+| `0x001` | stage 0 decline table | Fixes the verdict-map aliasing: a declined head is recorded in a direct-mapped table keyed by the full address (`$uop_decl_slot`), so a colliding head no longer re-compiles a decline. Cleared by `mark_dead` / `flush_all`. |
+| `0x002` | R1 + V4 | `rep ret` decodes as `ret`. A RET with no candidate target exits the program as a charged GOTO to the deopt stub. **Branch clock only** (`$uc_retx_on`, header stamp 8): see §10.3. |
+| `0x004` | R3 seam elision | A runtime decision, not the compile-time entry guard of §6: the seam ops (79/80/87) are skipped in `$uop_fast` when `dao_status \| pending_armed` is 0. |
+| `0x008` | V1 | `LOCK` ALU/INC/DEC/NOT/NEG and memory `XCHG` lower as the plain RMW while `$LOCK_MODE` is 0. A guard leaves any address ≥ `0x80000000` (the shared heap, whose CAS the host serialises) to threaded code before it reads. Stamp 1 drops the program if `LOCK_MODE` changes. |
+| `0x010` | V2 (`sahf` only) | `sahf` compiles as service op SSER 108 → `$th_sahf`, so it no longer declines the region. It is still a handback, not a native op. |
+| `0x020` | V3 | `fs:` integer forms fold `fs_base` into the displacement, recorded at header +40. Stamp 2 drops the program when the instance's `fs_base` differs. No ESP-based operand, LEA or string op. |
+| `0x040` | F1 | Forward constant lattice over the region (`$uc_lat_xfer`): ⊥ / const / ⊤ per register, joined at merge points. |
+| `0x080` | F2 | A load from a lattice-constant address in a non-writable image section folds to its value. Adjacent folded dwords are coalesced into SMC ranges (`$uc_fold_ranges` → `$uop_add_range`, which also code-marks the page). Stamp 4 re-checks the single-instance word (§4.3). A page that ever took a guest store is recorded in `$UOP_FOLD_WRITTEN` (64 entries, process-wide) and is never folded again. |
+| `0x100` | C1 | A Jcc whose flags the lattice resolves becomes an unconditional edge, and the dead arm is pruned. The clock is charged per pruned segment, so the batch stop is unchanged. Needs `0x040`. |
+
+Header stamp (+36) bits: 1 = `LOCK_MODE` 0, 2 = `fs_base` (+40), 4 = single
+instance, 8 = branch clock. They are checked by `$uop_hdr_bad` in
+`$th_uop_enter` only when the stamp is non-zero. A failure counts
+`stampfail`, flushes, and continues in threaded code.
+
+### 10.2 Cut, and why
+
+- **R2 contexts / inlining.** The `(address, context)` record key is the
+  prerequisite of C2 (an unrolled iteration is a context), S1 (a variant is a
+  context) and the compound-program form that M1/C3 work over. It is a
+  rewrite of the record and range model, not one more pass, and it did not
+  fit in this change alongside a provably identical mask 0. Cutting it cuts
+  **C2, S1, M1 and C3** with it.
+- **C1 re-formation rounds.** C1 folds and prunes once. Re-forming the region
+  after pruning needs R2's context records to be worth anything.
+- **The fused `fnstsw/sahf/jcc` → f64 compare-branch.** Only the `sahf`
+  decline was removed. The WAT microbench (`docs/design/wat-representation-bench.md`)
+  measures the fusion at 2–3× everywhere, so it is the next V2 step.
+- **V5 SSE native ops.** These overlap the landed `--uop-sse` / `--sse-fast`
+  arms (796e017da). The microbench says the representation matters more
+  than the op list: `$xmm_addr` calls are the worst form measured, inline
+  const-offset `v128.load` is 9×, and ss/sd lane-0 loads are 5×. V5 should
+  be built on that, as its own change.
+- **E1, KCALL:** out of scope (stages 9–10).
+
+### 10.3 Exactness, as measured
+
+- **The branch clock is the exactness clock.** Under `--branch-clock` the
+  tier off (`--no-uop`), mask 0 and every arm give identical API histograms,
+  present lines and end frames.
+- **The block clock is not tier-exact on main.** Its cuts follow threaded
+  decode history, so any change in what compiles moves the batch stop.
+  - metrojd_gm7, 70000 batches: `--no-uop` 1148493 API calls, mask 0
+    1133243, main's own `--uop-icall` 1130214.
+  - heroes2_demo, 2400 batches: `--no-uop` 1348459, mask 0 1077776.
+  - So block-clock runs of a coverage-changing arm (`0x008`, `0x010`) differ
+    from mask 0 exactly as main's widenings do: same presents count, a
+    different amount of work drawn in the window. That is not a pass bug.
+  - It is why §5.3 already fixes `--branch-clock` for every timed arm.
+- **The RET exit made the block clock worse than that.** A mid-block deopt
+  at a RET creates a threaded block head that tier-off code never makes, and
+  four suite cases changed their batch stop under the block clock. R1 is
+  therefore gated on the branch clock (stamp 8 drops such a program if the
+  clock changes). A block-clock-exact R1 would need dynamic-target budget
+  stubs.
+- **Unit level:** `test/test-uop-opt.js` runs every arm over the
+  `test-uop-compiler.js` corpus under both clocks. Each 37-block batch stop,
+  register, flag and byte must match threaded code. That covers clock
+  charging at budget cuts, C1's segment charges, and the flags each cut
+  materialises. On top of that, seven invalidation checks:
+  - `.data` is not folded;
+  - VirtualProtect kills;
+  - page release kills;
+  - a guest store kills, and the page is never refolded;
+  - a `LOCK_MODE` flip drops the program;
+  - an `fs_base` change drops it;
+  - a second instance drops it.
+- **Mask 0 is main:** `test/test-uop-opt-identity.js` hashes the program
+  arena over the whole corpus. Unset equals `set_uop_opt(0)`, and both equal
+  a control build of 5ac21c5f8.
+
+### 10.4 Notes for the sweep
+
+- **R1 can lower coverage.** test-uop-compiler's trace-callee case: 256
+  enters over 360 blocks, against 2736 over 10204. The ledger's enters and
+  charged blocks show it per app.
+- **A once-folded page stays code-marked.** A store to it exits every
+  program entry that reaches it. F2 only folds non-writable sections, so
+  this needs a VirtualProtect'd section.
+- **`sahf` is a service op,** so `service-calls` rises with `0x010`. Fusing it
+  is §10.2's next step.
+- The `service-calls` counter runs at mask 0 too: it is the tier's own
+  handback count.
+- **F2 folds nothing on Spelunky Classic** (`folds=0` at `0x1ff`). The
+  constant addresses §2.2 counts on are TypeInfo pointers *passed in* to
+  `_CopyRecord` / `_FinalizeRecord`. Those become lattice constants only
+  inside an inlined context (R2) or a specialised variant (S1), and both
+  were cut. On their own, F1 and F2 are the plumbing for those passes. C1
+  does fold on its own lattice: 706 Jcc sites at `0x140`.
+- **R3 is the biggest single ledger delta on Spelunky Classic.** It skips
+  309M seam ops and halves service calls, from 620.7M to 311.5M. The seam
+  ops were handbacks.
+- **Microbench guidance taken:** clock charged at exits and back edges only
+  (C1 charges per segment at the exit), and LOCK as plain RMW (8–9× over
+  CAS). Not yet taken: inline `$gl32`/`$g2w` fast paths in program ops, and
+  dead-flag elimination (C3, cut).
