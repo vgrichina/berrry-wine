@@ -12227,8 +12227,17 @@
         ;; through DIPROP_BUFFERSIZE. MCM trusts that count when sizing the
         ;; following read; exposing the entire browser FIFO overwrites its
         ;; fixed 16-record stack buffer with DIDEVICEOBJECTDATA entries.
-        (if (i32.and (i32.ne (local.get $capacity) (i32.const 0))
-                     (i32.gt_u (local.get $requested) (local.get $capacity)))
+        ;; NULL + INFINITE without PEEK flushes every pending record, not
+        ;; merely one capacity-sized prefix. Keep the ordinary read/PEEK cap;
+        ;; walking the normal removal path also discards omitted objects and
+        ;; commits button state, sequence and receipt bookkeeping.
+        (if (i32.and
+              (i32.and (i32.ne (local.get $capacity) (i32.const 0))
+                       (i32.gt_u (local.get $requested) (local.get $capacity)))
+              (i32.eqz (i32.and
+                (i32.and (i32.eqz (local.get $arg2))
+                         (i32.eq (local.get $requested) (i32.const -1)))
+                (i32.eqz (i32.and (local.get $arg4) (i32.const 1))))))
           (then (local.set $requested (local.get $capacity))))
         ;; NULL PEEK must walk the same selected objects as an output PEEK.
         ;; Counting raw FIFO words includes objects omitted by a custom format.

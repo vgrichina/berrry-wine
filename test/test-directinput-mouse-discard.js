@@ -55,9 +55,9 @@ const cases = [
   h.records(8, 0, [[0, -11, 0], [4, 9, 1]]);
   h.state([-11, 9, 0, 0]); h.state([0, 0, 0, 0]);
  }],
- ['configured capacity limits a discard and preserves the suffix', h => {
+ ['configured capacity limits a finite discard and preserves the suffix', h => {
   h.move(-8, 6); h.move(3, -4);
-  h.discard(0xffffffff, 2);
+  h.discard(8, 2);
   h.records(8, 1, [[0, 3, 2], [4, -4, 3]]);
   h.records(8, 0, [[0, 3, 2], [4, -4, 3]]);
   h.state([-5, 2, 0, 0]); h.records(8, 0, []);
