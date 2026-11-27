@@ -2722,11 +2722,17 @@ GetTopWindow(hWnd) — 1 arg stdcall
   (func $handle_ScrollWindowEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $l i32) (local $t i32) (local $r i32) (local $b i32)
     (local $wa i32) (local $cs i32) (local $prcUpdate i32)
+    (local $flags i32) (local $slot i32) (local $child i32)
+    (local $x i32) (local $y i32) (local $wh i32)
     (if (i32.eqz (local.get $arg0))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
         (return)))
+    (local.set $flags (call $gl32
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+    (local.set $prcUpdate (call $gl32
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     (drop
       (call $gdi_native_scroll_window
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
@@ -2744,6 +2750,55 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (local.set $t (i32.const 0))
         (local.set $r (i32.and (local.get $cs) (i32.const 0xFFFF)))
         (local.set $b (i32.shr_u (local.get $cs) (i32.const 16)))))
+    ;; SW_SCROLLCHILDREN selects direct children against prcScroll, not the
+    ;; device-bit clip below. Descendants travel with their parent's origin;
+    ;; adding the delta to their local geometry too would move them twice.
+    (if (i32.and
+          (i32.ne (i32.and (local.get $flags) (i32.const 1)) (i32.const 0))
+          (i32.and (i32.gt_s (local.get $r) (local.get $l))
+                   (i32.gt_s (local.get $b) (local.get $t))))
+      (then
+        (block $children_done (loop $children
+          (local.set $slot (call $wnd_next_child_slot (local.get $arg0) (local.get $slot)))
+          (br_if $children_done (i32.lt_s (local.get $slot) (i32.const 0)))
+          (local.set $child (call $wnd_slot_hwnd (local.get $slot)))
+          ;; Owned popups also retain a parent record, but are not children.
+          (if (i32.eqz (i32.and (call $wnd_get_style (local.get $child)) (i32.const 0x40000000)))
+            (then
+              (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+              (br $children)))
+          (local.set $x (call $ctrl_get_x_s (local.get $child)))
+          (local.set $y (call $ctrl_get_y_s (local.get $child)))
+          (local.set $wh (call $ctrl_get_wh_packed (local.get $child)))
+          (if (i32.and
+                (i32.and
+                  (i32.gt_u (i32.and (local.get $wh) (i32.const 0xFFFF)) (i32.const 0))
+                  (i32.gt_u (i32.shr_u (local.get $wh) (i32.const 16)) (i32.const 0)))
+                (i32.and
+                  (i32.and
+                    (i32.lt_s (local.get $x) (local.get $r))
+                    (i32.gt_s (i32.add (local.get $x)
+                      (i32.and (local.get $wh) (i32.const 0xFFFF))) (local.get $l)))
+                  (i32.and
+                    (i32.lt_s (local.get $y) (local.get $b))
+                    (i32.gt_s (i32.add (local.get $y)
+                      (i32.shr_u (local.get $wh) (i32.const 16))) (local.get $t)))))
+            (then
+              (local.set $x (i32.add (local.get $x) (local.get $arg1)))
+              (local.set $y (i32.add (local.get $y) (local.get $arg2)))
+              ;; Commit both geometry mirrors without repainting/erasing the
+              ;; old child rectangle. ScrollWindowEx owns the copy and damage.
+              ;; NOSIZE | NOZORDER | NOREDRAW | NOACTIVATE = 0x1D.
+              (call $host_move_window (local.get $child) (local.get $x) (local.get $y)
+                (i32.const 0) (i32.const 0) (i32.const 0x1D))
+              (call $ctrl_geom_sync (local.get $child) (local.get $x) (local.get $y)
+                (i32.const 0) (i32.const 0) (i32.const 0x1D))
+              ;; Unlike SetWindowPos's default-proc derived notification,
+              ;; ScrollWindowEx promises WM_MOVE even when dx == dy == 0.
+              (drop (call $wnd_send_message (local.get $child) (i32.const 3)
+                (i32.const 0) (call $window_client_xy_packed (local.get $child))))))
+          (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+          (br $children)))))
     (if (local.get $arg4)
       (then
         (local.set $wa (call $g2w (local.get $arg4)))
@@ -2755,8 +2810,6 @@ GetTopWindow(hWnd) — 1 arg stdcall
           (then (local.set $r (load.field.memarg Rect right (local.get $wa)))))
         (if (i32.lt_s (load.field.memarg Rect bottom (local.get $wa)) (local.get $b))
           (then (local.set $b (load.field.memarg Rect bottom (local.get $wa)))))))
-    ;; prcUpdate is the 7th argument at [esp+28].
-    (local.set $prcUpdate (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     (if (i32.or
           (i32.le_s (local.get $r) (local.get $l))
           (i32.le_s (local.get $b) (local.get $t)))
@@ -2778,9 +2831,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (store.field.memarg Rect bottom (local.get $wa) (local.get $b))))
     ;; flags is the 8th argument at [esp+32]. Without SW_INVALIDATE or
     ;; SW_ERASE the copy must not create an update region or queue WM_PAINT.
-    (if (i32.and (call $gl32
-          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))
-          (i32.const 6))
+    (if (i32.and (local.get $flags) (i32.const 6))
       (then
         (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
         (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
