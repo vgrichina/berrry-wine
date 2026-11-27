@@ -261,7 +261,8 @@ const drainTimer = () => { const t = timers.shift(); if (t) t.fn(); return t; };
   const { Win98Renderer } = require('../lib/renderer');
   const { createHostImports } = require('../lib/host-imports');
   const { inputEventHwnd } = require('../lib/host-window');
-  const context = { console, createHostImports, inputEventHwnd };
+  const context = { console, createHostImports, inputEventHwnd,
+    require: require('node:module').createRequire(require.resolve('../host.js')) };
   vm.runInNewContext(fs.readFileSync(require.resolve('../host.js'), 'utf8') +
     '\n;globalThis.WineAssembly = WineAssembly;', context);
   const a = 0x10001, b = 0x20001;
