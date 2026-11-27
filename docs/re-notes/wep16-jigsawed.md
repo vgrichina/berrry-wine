@@ -16,8 +16,8 @@ node test/run.js --app=wep16_jigsawed --max-batches=1500 --quiet-blocks --input=
   `dlg-click` before it exists logs `NO DIALOG`, and the About box then blocks the whole route.
   `B:wait-dlg-control:1` waits for it robustly, but it delays every later event.
 - Game > Open puts up the VB1 file picker. Select `bricks.bmp` at (150,150) and press OK at (475,180).
-- The picture is scrambled into pieces using the guest clock. In this route a 108x59 piece sits at
-  [226,203]-[334,262), and dragging it 60 px down moves it exactly.
+- The picture is scrambled into pieces using the guest clock. After the CB_DIR repair a 108x59 piece sits at
+  [236,210]-[344,269), and dragging it 60 px down moves it exactly.
 
 ## Window layout after loading
 
@@ -52,3 +52,43 @@ node test/run.js --app=wep16_jigsawed --max-batches=1500 --quiet-blocks --input=
 - While a piece is dragged, nothing is drawn at the cursor in the captures; the source spot goes black until
   release.
 - Placing a piece into its solved slot has not been tested.
+
+## CB_DIR repair (2026-11-27)
+
+The published module `cad8f2d1` stopped in Open at batch 269: the native combo's
+CB_DIR guard rejected the picker's ANSI string dropdowns. Its literal diagnostic
+pointer happened to name `win.ini`; the original VBRUN100 USER.122
+CallWindowProc import and Win16 CB_DIR `0x405` to `0x145` conversion were correct.
+Static VB callers use flags 0 and `0xc000` (DDL_DRIVES | DDL_EXCLUSIVE); which
+caller caused that particular trap was not recorded.
+
+The picker style `0x223` is CBS_DROPDOWNLIST | CBS_OWNERDRAWVARIABLE |
+CBS_HASSTRINGS. CBS_SORT is `0x100`, not `0x20`; `0x323` adds sorting. The repair
+accepts ANSI string controls, enumerates matching file attributes/directories
+and mapped drives, and inserts through CB_ADDSTRING so sorted insertion keeps
+the combo's selection mirror and item data aligned. LB_DIR lacks drive support
+and complete attribute filtering, so it is not used for this operation.
+
+`node test/test-combobox-directory.cjs --controls` covers SIMPLE `0x81`, actual
+picker `0x223`, sorted `0x323`, flags 0 / `0xc000`, attribute filtering, bracketed
+directories, strings/count/return values, retained selection/data, and far
+CB_DIR through USER.122 with restored bridge state. The original physical
+SIMPLE regression remains available under its existing invocation.
+
+Clean candidate `4f21c54a` passed the locked build and focused controls. One
+original run reached batch 1500 without trapping, opened the original
+`c:\BRICKS.BMP`, and moved the selected 108x59 piece exactly 60 pixels down:
+all 6372 pixels at the observed source `[236,210]-[344,269)` translated exactly.
+The old test first rejected the uppercase filename. Retained-capture evaluation
+also exposed stale fixed shuffle coordinates: the old `[226,203]-[334,262)`
+rectangle matches only 5167 pixels. The corrected test accepts filename case,
+uses the observed selected fragment, and retains the >5500 translated-pixel
+threshold. It also requires >5500 old-source pixels to change, allowing the
+neighboring fragment exposed underneath instead of requiring black clearing.
+All final test assertions pass on the exact retained log/captures: 6372 picture
+pixels translate and 6010 source pixels change. There was one original runtime
+only; its old assertion failures remain recorded. The existing physical SIMPLE
+regression passed population/state and
+all four presentation planes at stages 0/1/2, but its final native row click
+produced no notification on both this candidate and published baseline
+`a4a6f062`. Evidence: `20261127-jigsawed-combobox-dir-root`.
