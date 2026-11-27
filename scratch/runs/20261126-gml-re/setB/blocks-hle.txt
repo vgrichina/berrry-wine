@@ -1,0 +1,165 @@
+threaded weighted insns 881720665; (handler ops 849761302); listed 100.00%
+   21.57%  var list lookup: backward scan loop 0x4a8a4c..0x4a8a5f
+   12.31%  GM: object instance table 0x4aee7c..
+    6.45%  exe other page 0x4b0000
+    4.89%  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    4.27%  exe other page 0x4af000
+    3.01%  GM: bbox-vs-rect test 0x4aceec
+    2.98%  exe other page 0x4ae000
+    2.79%  exe other page 0x406000
+    2.53%  GM: collision scan 0x4e3ed0
+    2.50%  var read node 0x527530
+    2.42%  eval dispatch 0x52786c
+    2.17%  extension call 0x5290fc
+    2.16%  exe other page 0x55c000
+    2.15%  exe other page 0x539000
+    1.93%  binary node 0x5277c0
+    1.77%  exe other page 0x4ac000
+    1.75%  binary op 0x5265a4
+    1.70%  RTL: LStr clr/asg
+    1.69%  var list: other (set 0x4a88d4 ...)
+    1.61%  call node 0x526fc0
+    1.47%  exe other page 0x4ad000
+    1.44%  exe other page 0x4a3000
+    1.39%  exe other page 0x4e3000
+    1.19%  exe other page 0x4bf000
+    0.82%  var list lookup 0x4a8a30: entry + copy-out
+    0.73%  global get/set wrappers 0x525b24/0x525b34
+    0.70%  exe other page 0x403000
+    0.66%  repeat/if/while/do/for
+    0.65%  exe other page 0x4b1000
+    0.57%  GM: nth instance 0x4ad5e8
+    0.57%  instance var get 0x525de8
+    0.52%  exe other page 0x53e000
+    0.51%  code exec 0x528b3c
+    0.51%  exe other page 0x4a6000
+    0.50%  assignment 0x527920
+    0.44%  switch/block/var
+    0.44%  statement dispatch 0x5288ac
+    0.41%  exe other page 0x401000
+    0.36%  exe other page 0x4ab000
+    0.31%  exe other page 0x53a000
+    0.29%  exe other page 0x4b2000
+    0.24%  exe other page 0x40e000
+    0.24%  exe other page 0x423000
+    0.24%  exe other page 0x4a5000
+    0.20%  exe other page 0x405000
+    0.18%  exe other page 0x513000
+    0.13%  exe other page 0x407000
+    0.10%  interp other
+    0.10%  var owner/index eval 0x527280
+    0.10%  exe other page 0x402000
+    0.10%  exe other page 0x49e000
+    0.09%  instance var set 0x525e20
+    0.08%  exe other page 0x53b000
+    0.07%  exe other page 0x40a000
+    0.07%  exe other page 0x51f000
+    0.07%  exe other page 0x523000
+    0.07%  unary node 0x52777c
+    0.07%  exe other page 0x404000
+    0.06%  exe other page 0x519000
+    0.06%  owner var get/set (all / object / id)
+    0.05%  unary op 0x52649c
+    0.05%  exe other page 0x570000
+    0.05%  exe other page 0x514000
+    0.05%  exe other page 0x549000
+    0.04%  exe other page 0x4a4000
+    0.04%  exe other page 0x550000
+    0.03%  exe other page 0x4a7000
+    0.02%  exe other page 0x41d000
+    0.02%  exe other page 0x554000
+    0.02%  exe other page 0x49a000
+    0.02%  exe other page 0x49c000
+    0.02%  exe other page 0x410000
+    0.02%  exe other page 0x4a2000
+    0.02%  exe other page 0x564000
+    0.01%  exe other page 0x49b000
+    0.01%  exe other page 0x4aa000
+    0.01%  exe other page 0x45b000
+    0.01%  exe other page 0x4be000
+    0.01%  with 0x528358
+    0.01%  exe other page 0x4a0000
+    0.01%  exe other page 0x51a000
+    0.01%  exe other page 0x48a000
+    0.01%  exe other page 0x551000
+    0.01%  exe other page 0x41e000
+    0.01%  exe other page 0x408000
+    0.01%  exe other page 0x518000
+    0.00%  exe other page 0x54c000
+    0.00%  exe other page 0x41b000
+    0.00%  exe other page 0x41c000
+    0.00%  exe other page 0x4a1000
+    0.00%  exe other page 0x556000
+    0.00%  exe other page 0x48b000
+    0.00%  exe other page 0x453000
+    0.00%  exe other page 0x524000
+    0.00%  exe other page 0x49d000
+    0.00%  exe other page 0x468000
+    0.00%  exe other page 0x553000
+    0.00%  DLLs
+    0.00%  exe other page 0x458000
+    0.00%  exe other page 0x419000
+    0.00%  exe other page 0x53d000
+    0.00%  exe other page 0x454000
+    0.00%  exe other page 0x470000
+    0.00%  exe other page 0x521000
+    0.00%  exe other page 0x56f000
+    0.00%  exe other page 0x469000
+    0.00%  exe other page 0x4e4000
+    0.00%  exe other page 0x460000
+    0.00%  exe other page 0x46d000
+    0.00%  exe other page 0x54e000
+    0.00%  exe other page 0x484000
+    0.00%  exe other page 0x46b000
+    0.00%  exe other page 0x45a000
+    0.00%  exe other page 0x466000
+    0.00%  exe other page 0x515000
+    0.00%  exe other page 0x450000
+    0.00%  exe other page 0x422000
+    0.00%  exe other page 0x42f000
+    0.00%  exe other page 0x451000
+    0.00%  exe other page 0x472000
+    0.00%  exe other page 0x4cd000
+    0.00%  exe other page 0x482000
+    0.00%  exe other page 0x45c000
+    0.00%  exe other page 0x568000
+    0.00%  exe other page 0x4e5000
+    0.00%  exe other page 0x46f000
+    0.00%  exe other page 0x471000
+    0.00%  var list: add/set/remove
+    0.00%  exe other page 0x516000
+    0.00%  exe other page 0x4a8000
+    0.00%  exe other page 0x46c000
+    0.00%  exe other page 0x455000
+
+top blocks
+   12.34%  0x4a8a4c  entries 27198258 x 4  var list lookup: backward scan loop 0x4a8a4c..0x4a8a5f
+    9.18%  0x4a8a5b  entries 26978899 x 3  var list lookup: backward scan loop 0x4a8a4c..0x4a8a5f
+    2.98%  0x4aeee0  entries 2626850 x 10  GM: object instance table 0x4aee7c..
+    2.68%  0x4aef0e  entries 2626849 x 9  GM: object instance table 0x4aee7c..
+    1.86%  0x4b03c0  entries 1639820 x 10  exe other page 0x4b0000
+    1.79%  0x4aef1a  entries 2626849 x 6  GM: object instance table 0x4aee7c..
+    1.12%  0x4b03f5  entries 1639820 x 6  exe other page 0x4b0000
+    1.11%  0x406d64  entries 4911138 x 2  exe other page 0x406000
+    1.11%  0x4065db  entries 2449978 x 4  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    1.10%  0x406861  entries 1940679 x 5  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    1.05%  0x406d68  entries 4610386 x 2  exe other page 0x406000
+    0.96%  0x4aee54  entries 1057913 x 8  exe other page 0x4ae000
+    0.94%  0x52786c  entries 925338 x 9  eval dispatch 0x52786c
+    0.92%  0x4ac734  entries 477916 x 17  exe other page 0x4ac000
+    0.89%  0x4aef03  entries 2626849 x 3  GM: object instance table 0x4aee7c..
+    0.88%  0x4aceec  entries 554305 x 14  GM: bbox-vs-rect test 0x4aceec
+    0.88%  0x4a88f0  entries 1928924 x 4  var list: other (set 0x4a88d4 ...)
+    0.86%  0x4b03f3  entries 1087320 x 7  exe other page 0x4b0000
+    0.85%  0x527530  entries 341280 x 22  var read node 0x527530
+    0.84%  0x4aee6d  entries 1057913 x 7  exe other page 0x4ae000
+    0.82%  0x4e3fe3  entries 554305 x 13  GM: collision scan 0x4e3ed0
+    0.74%  0x4aee7c  entries 652347 x 10  GM: object instance table 0x4aee7c..
+    0.67%  0x4aeea4  entries 652347 x 9  GM: object instance table 0x4aee7c..
+    0.64%  0x4a88ff  entries 1886362 x 3  var list: other (set 0x4a88d4 ...)
+    0.61%  0x4afdbe  entries 1348325 x 4  exe other page 0x4af000
+    0.60%  0x4aee73  entries 1057913 x 5  exe other page 0x4ae000
+    0.60%  0x4aeef0  entries 2626850 x 2  GM: object instance table 0x4aee7c..
+    0.60%  0x4aeefb  entries 2626849 x 2  GM: object instance table 0x4aee7c..
+    0.60%  0x4aeeff  entries 2626849 x 2  GM: object instance table 0x4aee7c..
+    0.58%  0x5291ee  entries 571686 x 9  extension call 0x5290fc
