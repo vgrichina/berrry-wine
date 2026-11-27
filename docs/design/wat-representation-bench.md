@@ -496,6 +496,42 @@ would have executed, as one sum at exits and back edges).
 | Two budget globals per block | Charge once per back edge / exit with the summed block weight (−13 % opt JIT, −26 % interp); merging the two globals alone is noise. | pipeline §4.1 clock |
 | 32-bit memory, one memory | Keep. memory64 costs 13–56 %; a second memory is 3× on JSC. `bigMemory` beyond 4 GB would need a different design than memory64-everywhere. | — |
 
+**Adopted for `$set_reg8` / `$set_reg16`: on branch `opt/narrow-regs`, not on main**
+(run `scratch/runs/20261127-narrow-regs`):
+
+- **What changed.** The threaded handlers write partial registers through the
+  `set-reg8` / `set-reg16` / `set-al|ah|ax|cx|dx` macros in `03-registers.wat`.
+  Each macro is a 32-bit load-merge-store, expanded in place at 169 sites in
+  05/05c/06/06b/07b.
+- **Why a macro.** Expanding in place also removes the call. SpiderMonkey Ion
+  did not inline `$set_reg8`: base `$th_mov_r8_i8` makes a `bl` to it, and
+  after the change it is an inline `ldr / ror-mask / and / orr / str`. V8
+  TurboFan had already inlined it as a `strb`, so on V8 the change is purely
+  `strb` → `ldr/and/orr/str`.
+- **Untouched.** The uop tier (07d/07e) already merges and is unchanged.
+- **Reads.** The read side keeps `load8_u` / `load16_u`, because a narrow load
+  inside a dword store forwards. A second commit only expands those reads in
+  place (53 sites).
+- **Exactness.** Under `--branch-clock`, every arm produced the same API
+  count, batches and end-frame md5 on Spelunky Classic, StarCraft, Heroes II
+  and Civ II / Sol (Win16). `test/test-narrow-reg-writes.js` checks 567
+  forms against a JS model.
+- **Dynamic weight is small.** Most blocks run in the uop tier, where no
+  handler is dispatched. In the gameplay window, threaded handlers that write
+  a partial register are:
+
+  | App | Share of threaded dispatches | Blocks that ran in the uop tier |
+  |---|---|---|
+  | StarCraft | 9.2 % | 67 % |
+  | Spelunky Classic | 3.3 % | 66 % |
+  | Heroes II | 2.2 % | 93 % |
+
+- **Box timing (n = 6, interleaved).** No effect could be resolved. Same-commit
+  pairs moved by up to 30 % from one round to the next, and the m1/m2 medians
+  differ by 1.3 % (spel) to 6.3 % (sc).
+- **Status.** The suite's 2.3× is a per-write figure; at these shares it is
+  below what whole-run CPU on this box can show.
+
 **For the optimizer pipeline's ordering**
 ([uop-optimizer-pipeline.md §2](uop-optimizer-pipeline.md)):
 
