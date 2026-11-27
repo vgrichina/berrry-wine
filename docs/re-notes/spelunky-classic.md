@@ -821,6 +821,129 @@ the handler applies its result.
     registers.
   - Next lever for Firefox: a call-free inner loop per guest page.
 
+### Collision scan fold (opt/gm-fold2, run 20261127-gm-fold2)
+
+- **What.** The line and point collision scans' per-instance loops run
+  natively in `$gmf_coll` (`--gm-fold` bits 3 and 4, default mask now 0x1F).
+  - Line scan: entry 0x4e3faf (loop head inside the scan at 0x4e3ed0), its
+    bbox test 0x4aceec. Point scan: entry 0x4e396b, its test 0x4ac734.
+    Both tests run only as callees (sig ids 17/18), never folded alone.
+  - Per trip: read row[j] through the instance read (id 11 body plus its
+    DynArray length), skip self (`notme`), skip deactivated (`+0x108`),
+    then the test's four compares against the shape's min/max. A trip that
+    gets past all four (a hit), a nil or out-of-row instance, a NaN shape,
+    an x87 push into a valid slot, the branch budget or the chunk end stops
+    the loop **at its head before that trip**; the threaded code runs it.
+    With no trip done it falls back (`cmp byte [ebp+8],0`, resume +4).
+  - Branch clock per trip: 12 (self skip), base+12 (deactivated), base+24+t
+    (test reject; base 10 with `notme`, else 0; t = 2 + jmp bit per stage
+    for line, the stage number for point), as the threaded code charges.
+  - Exit state: EAX/ECX/EDX/EBX/ESI, inc/dec flags, the x87 scratch slot,
+    its raw shadow bit and C0–C3/TOP.
+- **Scope: Game Maker 8 only.** GM7's line test (Metrojd) uses bbox
+  offsets 0xc0/0xc8 and no FWAIT, so it does not match. In the GM corpus
+  only Spelunky.exe and its config.exe match.
+- **SMC.** `$dfold_code_write` now drops **every** range group on a hit.
+  The scans at 0x4e3000 rest on code at 0x4ac000 (tests, instance read)
+  and at 0x406d64 (DynArray length, System). A per-group drop missed a
+  write into a callee in another group; that latent gap also applied to
+  the id 11–13 reads.
+- **Hits (Spelunky route, 32700 batches, box).**
+  - Line scan: 4506 ran to the end, 1226 fallback, 1251 stopped at the
+    head. Point scan: 7194 / 3527 / 3468.
+  - 3.98 M native trips.
+  - inst2w native drops from 9.65 M to 50 k because its calls from the
+    scan loops are now inside the fold.
+- **Exactness** (`--branch-clock`).
+  - Spelunky spelx route (box): masks 0x1F, 7, 0, 8, 16 and the previous
+    branch's default (285726c8b, mask 7) all give 3,413,254 API calls,
+    runner-image digest c50420bc4282c74f (two 2 MB dumps at 29000 and
+    32600, the same digest as the 20261126 run) and end frame
+    6a4436d8e792d22f.
+  - spel30 timing lane: all 24 runs give 4,845,761 API calls and the same
+    end frame.
+  - Metrojd GM7 (laptop, 4000 batches): mask 0x1F and mask 0 give 4,407,516
+    API calls and image digest 34483b6f817da97d. The new bits are inert
+    there: line/point 0/0/0.
+  - `test/test-delphi-fold.js`: 19 scan cases with the x87 file compared;
+    every budget; SMC in the loop, both tests, the instance read and the
+    DynArray length; one x87 register in use and a full stack;
+    `set_gm_fold(0)` and `(8)`.
+- **Guest-instruction shares.** One gameplay cycle (29000..29600,
+  `--no-uop --handler-hist-*`, box). Same `g1` module at `--gm-fold=7`
+  vs default. `blocks.js` with HLE entries = the 7 Delphi RTL entries +
+  Move 0x4030a8 + the GM entries; this set reproduces the 20261126 totals
+  (111.73 M / 61.22 M) exactly.
+
+| | mask 7 (before) | mask 0x1F (after) |
+|---|---|---|
+| threaded weighted insns / cycle | 60.99 M | 45.76 M (−25.0%) |
+| bbox test 0x4aceec | 7.21% | 0.02% |
+| collision scan 0x4e3ed0 | 6.85% | 0.05% |
+| page 0x4ac000 (other box tests, reads) | 5.67% | 0.71% |
+| page 0x4e3000 (scan bodies) | 4.99% | 0.17% |
+| var-read node 0x527530 | 4.47% | 5.96% |
+| collision-event pass, page 0x539000 | 4.46% | 5.95% |
+| eval dispatch 0x52786c | 4.33% | 5.78% |
+| page 0x406000 (System) | 3.77% | 5.02% |
+| RTL record init/finalize/copy | 3.65% | 4.87% |
+| extension/script call 0x5290fc | 3.53% | 4.70% |
+| binary node + op | 6.74% | 8.98% |
+
+- **Timing.** One box: Boat bx_acc8e7vw, 4 vCPU AMD EPYC, node 24.22.1
+  (V8 13.6), x86-64, deleted after the runs.
+  - Arms: n1/n2 = 088db1f91 built twice (default 0x1F); m7 = the n1
+    module at `--gm-fold=7`; cur = 285726c8b (the previous branch's
+    default, mask 7). 6 interleaved reps, `--branch-clock`.
+  - The box was noisy: per-arm spread 19–40% on spel30. The whole-run null
+    band (6.1%) is wider than the whole-run effect, so whole-run CPU does
+    not resolve it.
+  - The gameplay window does resolve it. n1 beat m7 in all 6 paired reps
+    (ratios 0.63–0.83), and n2 beat it in 5 of 6.
+
+| Workload | Measure | n1 median | null band (n2) | m7 vs n1 | cur vs n1 | paired n1/m7 median |
+|---|---|---|---|---|---|---|
+| spel30 | whole run | 65.27 s | 6.14% | +2.8% | +4.3% | 0.96 (−4%, inside the band) |
+| spel30 | window 29600:47000 (gameplay) | 11.51 s | 4.64% | **+38.1%** | +35.3% | **0.755 (−24.6%)** |
+| spel30 | window 21000:29000 (title → tutorial) | 12.50 s | 1.08% | +10.0% | +12.2% | — |
+| heroes2_demo (non-GM control) | whole run | 5.17 s | 7.07% | −3.2% | −6.0% | inside the ±50% spread |
+
+- **Native code** (box x86-64; SpiderMonkey 162 Ion, V8 16.0.133 d8
+  TurboFan; `wasm-native.js --index` from `build/watx-facts.json`).
+  - `$gmf_coll`: Ion 2707 bytes, V8 3200 bytes. Neither engine inlines it
+    into `$gmf_run`, so `$gmf_run` (Ion 2298 / V8 15936 bytes) and
+    `$th_delphi_rtti` (Ion 8913 / V8 23168) grew by 0.3–1.5% against 285726c8b.
+  - Each trip's guest reads are out-of-line calls. In Ion: 18 `$gl32`,
+    4 `$gl64` (the shape doubles) and 3 `$gl8` sites. V8 has 21 calls to
+    one memory helper.
+  - Next lever inside the fold: resolve the row, instance and bbox pages
+    once per trip with `$g2w` and read them with plain loads.
+- **Not folded: the var-read node 0x527530 and the eval dispatch 0x52786c.**
+  - The var-read node opens an SEH frame (`push fs:[0]` with handler
+    0x527728), zero-inits four managed locals finalized in its
+    try/finally, and switches on owner+7 into paths that call the Delphi
+    builtin-variable getters (34.5% of reads), the instance-list lookup
+    and CopyRecord. An exact fold has to reproduce the frame chain and the
+    finally, or fall back on every path that is not "unqualified user real
+    variable", which is the part already folded below it (var scan,
+    CopyRecord).
+  - The eval dispatch is clean: 13 instructions of compare chain, then a
+    call to the kind's handler. But a fold saves only the chain (about 4
+    blocks per eval; the share is the chain itself), and its callees stay
+    threaded. Worth it only as the entry of a numeric-subtree evaluator
+    (item 4 of the recommendation above), not alone.
+- **What next, by share after this fold.**
+  1. **Collision-event pass 0x539bb4** (5.95%). It is the same machinery:
+     a pair list `[0x58f550]`, A×B instance loops through the instance
+     reads 0x4aee54/0x4aee7c, a deactivated byte at +0x108 and the box
+     test. Its inner loop (0x539c22..0x539c5f, ~97 k trips per cycle) is
+     a direct extension of `$gmf_coll`.
+  2. Call-free page-local reads inside `$gmf_coll` and the var scan
+     (native-code item above).
+  3. The GML tree walk (var-read node, eval, binary node/op, call node,
+     script call: about 29% together now) is the next large block. It needs a numeric
+     subtree evaluator with fallback, not more single-function folds.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash
