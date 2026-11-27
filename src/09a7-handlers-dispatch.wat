@@ -4868,6 +4868,8 @@
   ;; 779: UnmapViewOfFile(lpBaseAddress) — 1 arg
   (func $handle_UnmapViewOfFile (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $host_fs_unmap_view (local.get $arg0)))
+    (if (i32.eqz (i32.load offset=0 (global.get $reg_base)))
+      (then (global.set $last_error (i32.const 487)))) ;; ERROR_INVALID_ADDRESS
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))  ;; 1 arg
   )
 
