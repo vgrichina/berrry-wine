@@ -37,6 +37,10 @@ function boot(mutation='') {
     (import "fixture" "allocate" (func $gl_alloc_affine (param i32) (result i32)))
     (import "fixture" "free" (func $heap_free (param i32)))
     (import "fixture" "encode" (func $gl_wat_encode_call (param i32 i32 i32) (result i32)))
+    ;; $gl8/$gl16/$gl32 test the Win98 shared-heap range first (2ef390475).
+    ;; No fixture address lies there; the import throws if one ever does.
+    (import "fixture" "sharedHeap" (func $host_shared_heap (param i32 i32 i32 i32 i32) (result i32)))
+    ${form(registers,'$shared_heap_address')}
     (defmacro (g2w-fast $p) (call $g2w $p))
     ;; $gl32's direct-window fast path (c693e2b8b), matched to translate():
     ;; guest p below the fixture's 4 MB memory is p-0x400000+4096, the same
@@ -53,6 +57,7 @@ function boot(mutation='') {
     0x8000+(((p-0x50000000)>>>12)*0x2000)+(p&4095):p-0x400000+4096;
   let v,rawExpected=[];
   const e=new WebAssembly.Instance(new WebAssembly.Module(compile(wat,new Map(),{mode:'production'}).wasmBinary),{fixture:{
+    sharedHeap:(op,ga)=>{throw Error(`fixture reached the shared heap: op ${op} ga 0x${(ga>>>0).toString(16)}`);},
     translate:t,allocate:n=>{assert.strictEqual(n,24);allocations++;return failAlloc?0:0x420000;},
     free:p=>{assert.strictEqual(p,0x420000);frees++;},
     encode:(op,p,aux)=>{assert.strictEqual(op,0x10003);assert.strictEqual(aux,0);calls++;const tag=v.getUint32(p+4,true),bits=tag&255;
