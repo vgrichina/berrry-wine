@@ -2719,7 +2719,8 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; The source is not clipped before translation: bits may enter the clip
   ;; from outside it. Canonical region subtraction retains diagonal L shapes.
   (func $scroll_window_ex_outputs (param $hwnd i32) (param $dx i32) (param $dy i32)
-      (param $scroll i32) (param $clip i32) (param $hrgn i32) (param $rect i32) (result i32)
+      (param $scroll i32) (param $clip i32) (param $hrgn i32) (param $rect i32)
+      (param $flags i32) (result i32)
     (local $l i32) (local $t i32) (local $r i32) (local $b i32)
     (local $p i32) (local $cs i32) (local $source i32) (local $moved i32)
     (local $result i32)
@@ -2770,6 +2771,16 @@ GetTopWindow(hWnd) — 1 arg stdcall
       (if (i32.and (i32.ne (local.get $result) (i32.const 0))
                     (i32.ne (local.get $rect) (i32.const 0)))
         (then (drop (call $gdi_rgn_get_box (local.get $source) (call $g2w (local.get $rect))))))
+      ;; Keep the exact exposure alive independently of either output pointer.
+      ;; One bounded union publishes all bands atomically, including diagonal
+      ;; shapes. Never reread input RECTs after an aliased output was written.
+      (if (i32.and (i32.gt_u (local.get $result) (i32.const 1))
+                    (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0)))
+        (then
+          (local.set $p (call $gdi_rgn_record (local.get $source)))
+          (if (i32.eqz (call $update_apply_bands (local.get $hwnd)
+                (call $gdi_rgn_bands (local.get $p)) (i32.load offset=28 (local.get $p)) (i32.const 2)))
+            (then (local.set $result (i32.const 0))))))
       (drop (call $gdi_rgn_delete (local.get $source)))))
     (drop (call $gdi_rgn_delete (local.get $moved)))
     (local.get $result))
@@ -2860,35 +2871,17 @@ GetTopWindow(hWnd) — 1 arg stdcall
                 (i32.const 0) (call $window_client_xy_packed (local.get $child))))))
           (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
           (br $children)))))
-    (if (local.get $arg4)
-      (then
-        (local.set $wa (call $g2w (local.get $arg4)))
-        (if (i32.gt_s (load.field Rect left (local.get $wa)) (local.get $l))
-          (then (local.set $l (load.field Rect left (local.get $wa)))))
-        (if (i32.gt_s (load.field.memarg Rect top (local.get $wa)) (local.get $t))
-          (then (local.set $t (load.field.memarg Rect top (local.get $wa)))))
-        (if (i32.lt_s (load.field.memarg Rect right (local.get $wa)) (local.get $r))
-          (then (local.set $r (load.field.memarg Rect right (local.get $wa)))))
-        (if (i32.lt_s (load.field.memarg Rect bottom (local.get $wa)) (local.get $b))
-          (then (local.set $b (load.field.memarg Rect bottom (local.get $wa)))))))
     ;; Write outputs after consuming input RECTs: callers may reuse an input
     ;; rectangle for prcUpdate without changing the copy or child selection.
     (local.set $output (call $scroll_window_ex_outputs
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4)
-      (local.get $hrgnUpdate) (local.get $prcUpdate)))
-    (if (i32.or
-          (i32.le_s (local.get $r) (local.get $l))
-          (i32.le_s (local.get $b) (local.get $t)))
+      (local.get $hrgnUpdate) (local.get $prcUpdate) (local.get $flags)))
+    ;; Only a successfully stored, nonempty exposure queues paint or erase.
+    ;; SW_ERASE alone preserves existing damage and its retained erase bit.
+    (if (i32.and (i32.gt_u (local.get $output) (i32.const 1))
+                  (i32.ne (i32.and (local.get $flags) (i32.const 2)) (i32.const 0)))
       (then
-        (i32.store offset=0 (global.get $reg_base) (local.get $output))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
-        (return)))
-    ;; flags is the 8th argument at [esp+32]. Only SW_INVALIDATE creates
-    ;; damage/queues WM_PAINT; SW_ERASE alone must preserve existing damage.
-    (if (i32.and (local.get $flags) (i32.const 2))
-      (then
-        (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
         ;; SW_ERASE requests BeginPaint erasure only with SW_INVALIDATE.
         ;; Reuse InvalidateRect's retained bit; do not clear an earlier request.
         (if (i32.and (local.get $flags) (i32.const 4))
