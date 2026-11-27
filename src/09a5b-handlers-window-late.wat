@@ -2714,14 +2714,72 @@ GetTopWindow(hWnd) — 1 arg stdcall
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
   )
 
+  ;; Return the exposed client region separately from window invalidation.
+  ;; S = client AND scroll; exposure = (S AND clip) DIFF offset(S, dx, dy).
+  ;; The source is not clipped before translation: bits may enter the clip
+  ;; from outside it. Canonical region subtraction retains diagonal L shapes.
+  (func $scroll_window_ex_outputs (param $hwnd i32) (param $dx i32) (param $dy i32)
+      (param $scroll i32) (param $clip i32) (param $hrgn i32) (param $rect i32) (result i32)
+    (local $l i32) (local $t i32) (local $r i32) (local $b i32)
+    (local $p i32) (local $cs i32) (local $source i32) (local $moved i32)
+    (local $result i32)
+    (local.set $cs (call $host_get_window_client_size (local.get $hwnd)))
+    (local.set $r (i32.and (local.get $cs) (i32.const 0xFFFF)))
+    (local.set $b (i32.shr_u (local.get $cs) (i32.const 16)))
+    (if (local.get $scroll) (then
+      (local.set $p (call $g2w (local.get $scroll)))
+      (if (i32.gt_s (i32.load (local.get $p)) (local.get $l))
+        (then (local.set $l (i32.load (local.get $p)))))
+      (if (i32.gt_s (i32.load offset=4 (local.get $p)) (local.get $t))
+        (then (local.set $t (i32.load offset=4 (local.get $p)))))
+      (if (i32.lt_s (i32.load offset=8 (local.get $p)) (local.get $r))
+        (then (local.set $r (i32.load offset=8 (local.get $p)))))
+      (if (i32.lt_s (i32.load offset=12 (local.get $p)) (local.get $b))
+        (then (local.set $b (i32.load offset=12 (local.get $p)))))))
+    ;; CreateRectRgn normalizes reversed bounds, whereas intersection must
+    ;; keep an empty result empty.
+    (if (i32.or (i32.le_s (local.get $r) (local.get $l))
+                (i32.le_s (local.get $b) (local.get $t)))
+      (then (local.set $r (local.get $l)) (local.set $b (local.get $t))))
+    (local.set $moved (call $gdi_rgn_alloc_rect
+      (local.get $l) (local.get $t) (local.get $r) (local.get $b)))
+    (if (i32.eqz (local.get $moved)) (then (return (i32.const 0))))
+    (drop (call $gdi_rgn_offset (local.get $moved) (local.get $dx) (local.get $dy)))
+    (if (local.get $clip) (then
+      (local.set $p (call $g2w (local.get $clip)))
+      (if (i32.gt_s (i32.load (local.get $p)) (local.get $l))
+        (then (local.set $l (i32.load (local.get $p)))))
+      (if (i32.gt_s (i32.load offset=4 (local.get $p)) (local.get $t))
+        (then (local.set $t (i32.load offset=4 (local.get $p)))))
+      (if (i32.lt_s (i32.load offset=8 (local.get $p)) (local.get $r))
+        (then (local.set $r (i32.load offset=8 (local.get $p)))))
+      (if (i32.lt_s (i32.load offset=12 (local.get $p)) (local.get $b))
+        (then (local.set $b (i32.load offset=12 (local.get $p)))))))
+    (if (i32.or (i32.le_s (local.get $r) (local.get $l))
+                (i32.le_s (local.get $b) (local.get $t)))
+      (then (local.set $r (local.get $l)) (local.set $b (local.get $t))))
+    (local.set $source (call $gdi_rgn_alloc_rect
+      (local.get $l) (local.get $t) (local.get $r) (local.get $b)))
+    (if (local.get $source) (then
+      (local.set $result (call $gdi_rgn_combine
+        (local.get $source) (local.get $source) (local.get $moved) (i32.const 4)))
+      (if (i32.and (i32.ne (local.get $result) (i32.const 0))
+                    (i32.ne (local.get $hrgn) (i32.const 0)))
+        (then (local.set $result (call $gdi_rgn_combine
+          (local.get $hrgn) (local.get $source) (i32.const 0) (i32.const 5)))))
+      (if (i32.and (i32.ne (local.get $result) (i32.const 0))
+                    (i32.ne (local.get $rect) (i32.const 0)))
+        (then (drop (call $gdi_rgn_get_box (local.get $source) (call $g2w (local.get $rect))))))
+      (drop (call $gdi_rgn_delete (local.get $source)))))
+    (drop (call $gdi_rgn_delete (local.get $moved)))
+    (local.get $result))
+
   ;; 670: ScrollWindowEx(hWnd, dx, dy, prcScroll, prcClip, hrgnUpdate,
-  ;;                     prcUpdate, flags) → region complexity.
-  ;; Scroll the host backing store when possible, report the invalidated area,
-  ;; and mark the window for repaint. Region details are approximated to a
-  ;; single rectangle, but prcScroll/prcClip are intersected in client coords.
+  ;;                     prcUpdate, flags) → exposed region complexity.
   (func $handle_ScrollWindowEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $l i32) (local $t i32) (local $r i32) (local $b i32)
-    (local $wa i32) (local $cs i32) (local $prcUpdate i32)
+    (local $wa i32) (local $cs i32) (local $output i32)
+    (local $hrgnUpdate i32) (local $prcUpdate i32)
     (local $flags i32) (local $slot i32) (local $child i32)
     (local $x i32) (local $y i32) (local $wh i32)
     (if (i32.eqz (local.get $arg0))
@@ -2731,6 +2789,9 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (return)))
     (local.set $flags (call $gl32
       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
+    ;; Capture stack arguments before child callbacks.
+    (local.set $hrgnUpdate (call $gl32
+      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
     (local.set $prcUpdate (call $gl32
       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))))
     (drop
@@ -2810,25 +2871,19 @@ GetTopWindow(hWnd) — 1 arg stdcall
           (then (local.set $r (load.field.memarg Rect right (local.get $wa)))))
         (if (i32.lt_s (load.field.memarg Rect bottom (local.get $wa)) (local.get $b))
           (then (local.set $b (load.field.memarg Rect bottom (local.get $wa)))))))
+    ;; Write outputs after consuming input RECTs: callers may reuse an input
+    ;; rectangle for prcUpdate without changing the copy or child selection.
+    (local.set $output (call $scroll_window_ex_outputs
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4)
+      (local.get $hrgnUpdate) (local.get $prcUpdate)))
     (if (i32.or
           (i32.le_s (local.get $r) (local.get $l))
           (i32.le_s (local.get $b) (local.get $t)))
       (then
-        (if (local.get $prcUpdate)
-          (then
-            (local.set $wa (call $g2w (local.get $prcUpdate)))
-            (i64.store (local.get $wa) (i64.const 0))
-            (i64.store offset=8 (local.get $wa) (i64.const 0))))
-        (i32.store offset=0 (global.get $reg_base) (i32.const 1)) ;; NULLREGION
+        (i32.store offset=0 (global.get $reg_base) (local.get $output))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
         (return)))
-    (if (local.get $prcUpdate)
-      (then
-        (local.set $wa (call $g2w (local.get $prcUpdate)))
-        (store.field Rect left (local.get $wa) (local.get $l))
-        (store.field.memarg Rect top (local.get $wa) (local.get $t))
-        (store.field.memarg Rect right (local.get $wa) (local.get $r))
-        (store.field.memarg Rect bottom (local.get $wa) (local.get $b))))
     ;; flags is the 8th argument at [esp+32]. Without SW_INVALIDATE or
     ;; SW_ERASE the copy must not create an update region or queue WM_PAINT.
     (if (i32.and (local.get $flags) (i32.const 6))
@@ -2838,7 +2893,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
           (then (global.set $paint_pending (i32.const 1)))
           (else (call $paint_flag_set (local.get $arg0))))
         (call $host_invalidate (local.get $arg0))))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 2)) ;; SIMPLEREGION
+    (i32.store offset=0 (global.get $reg_base) (local.get $output))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
   )
 
