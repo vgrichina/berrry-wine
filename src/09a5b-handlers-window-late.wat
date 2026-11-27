@@ -3249,6 +3249,9 @@ Layout(hdc) -> DWORD — return 0 (LTR layout)
     (if (i32.eqz (local.get $arg0))
       (then
         (global.set $clip_cursor_active (i32.const 0))
+        (call $host_publish_clip_cursor (global.get $clip_cursor_active)
+          (global.get $clip_cursor_l) (global.get $clip_cursor_t)
+          (global.get $clip_cursor_r) (global.get $clip_cursor_b))
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
         (return)))
@@ -3261,6 +3264,9 @@ Layout(hdc) -> DWORD — return 0 (LTR layout)
       (i32.and
         (i32.lt_s (global.get $clip_cursor_l) (global.get $clip_cursor_r))
         (i32.lt_s (global.get $clip_cursor_t) (global.get $clip_cursor_b))))
+    (call $host_publish_clip_cursor (global.get $clip_cursor_active)
+      (global.get $clip_cursor_l) (global.get $clip_cursor_t)
+      (global.get $clip_cursor_r) (global.get $clip_cursor_b))
     ;; Establish confinement immediately, before any later mouse input.
     ;; Use the existing packed signed-coordinate read and cursor-warp import;
     ;; Worker RPC flushes that warp before the following GetCursorPos read.

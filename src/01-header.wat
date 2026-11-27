@@ -68,6 +68,9 @@
   ;; create_window(hwnd, style, x, y, cx, cy, title_ptr, menu_id) → hwnd
   (import "host" "show_window" (func $host_show_window (param i32 i32) (result i32)))
   (import "host" "set_cursor" (func $host_set_cursor (param i32)))
+  ;; Synchronous USER state publication to the page input owner's instance.
+  (import "host" "publish_clip_cursor"
+    (func $host_publish_clip_cursor (param i32 i32 i32 i32 i32)))
   ;; set_cursor_image(hcur, width, height, hot_x, hot_y, bgra_wa) — present a
   ;; cursor the guest BUILT rather than loaded: CreateIconIndirect hands over
   ;; bitmaps, and WAT composites their AND/XOR planes into premultiplied BGRA

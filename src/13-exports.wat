@@ -5456,6 +5456,14 @@
   (func (export "clip_cursor_top")      (result i32) (global.get $clip_cursor_t))
   (func (export "clip_cursor_right")    (result i32) (global.get $clip_cursor_r))
   (func (export "clip_cursor_bottom")   (result i32) (global.get $clip_cursor_b))
+  ;; Host mirror only: no guest dispatch, input, or cursor movement.
+  (func (export "sync_clip_cursor") (param $active i32)
+    (param $l i32) (param $t i32) (param $r i32) (param $b i32)
+    (global.set $clip_cursor_l (local.get $l))
+    (global.set $clip_cursor_t (local.get $t))
+    (global.set $clip_cursor_r (local.get $r))
+    (global.set $clip_cursor_b (local.get $b))
+    (global.set $clip_cursor_active (local.get $active)))
   (func (export "set_focus_hwnd")       (param i32)  (global.set $focus_hwnd (local.get 0)))
   ;; Set focus via the proper SETFOCUS/KILLFOCUS message round-trip so
   ;; per-class focus bits + default-button flip + invalidates fire.
