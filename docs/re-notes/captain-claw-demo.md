@@ -30,3 +30,20 @@ CLAW_BEFORE_SCREENSHOT=/private/tmp/claw-before.png \
 CLAW_SCREENSHOT=/private/tmp/claw-after.png \
   node test/test-captain-claw-gameplay.js
 ```
+
+## Weapon consequence (2026-11-27)
+
+Run `20261127-claw-combat-consequence-root` inspected the current La Roca
+scene in one original registered-app CLI process (47.527 seconds, finite
+`native-supervise.cjs`, exit 0, no leaked processes). After approaching the
+blue floor object, DirectInput Alt (VK 18) held for 12 batches fired the
+pistol: the visible ammunition HUD changed from **10 to 09**, remaining 09
+after release and 30 further batches. Health stayed 60 during that attack.
+This establishes an attack-caused ammunition consequence; enemy damage or
+removal was not established. Rightward movement is prior accepted behavior.
+
+The run retains inspected `target.png`, `weapon-shot.png`, `after-shot.png`,
+an enlarged HUD comparison, exact input/reply logs, Git/diff identity, and the
+exact tested module (`d4e95883e44848490831d279a8231cc51a36315bab60462e4fa28b3721fc3615`).
+All three installer-produced media hashes matched the gameplay test pins.
+No emulator change or guest-memory state modification was needed.
