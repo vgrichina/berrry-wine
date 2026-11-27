@@ -81,6 +81,31 @@ check('worker calendar APIs use the moving process calendar', () => {
   assert.strictEqual(new DataView(memory).getUint16(256, true), 1999);
 });
 
+check('a guest thread kicks the process D3DIM ring consumer, not a second executor', () => {
+  // Re-Volt's loader thread: main CREATEs the colour target, the thread's
+  // first TARGETS names it. A per-thread bridge was a fresh executor that
+  // had never seen the CREATE ("color target 11 was never created").
+  const { createHostImports } = require('../lib/host-imports');
+  const { makeProducer } = require('./gpu-stream-fixture');
+  const GS = require('../lib/gpu-stream');
+  const buffer = new SharedArrayBuffer(65536);
+  const p = makeProducer({ buffer, ringBytes: 1024, arenaBytes: 1024 });
+  const apiOff = GS.LAYOUTS.GpsRing.fields.find((f) => f.name === 'api').offset;
+  new DataView(buffer).setUint32(64 + apiOff, GS.CONST.API_D3DIM, true);
+  const memory = { buffer };
+  const mainCtx = { getMemory: () => memory, d3dimBackend: 'null' };
+  const main = createHostImports(mainCtx).host;
+  const workerCtx = { ...processSharedCtx(mainCtx), getMemory: () => memory, d3dimBackend: 'null' };
+  const worker = createHostImports(workerCtx).host;
+  p.emit('CREATE', { id: 11, kind: 5, fmt: 15, levels: 1, width: 4, height: 4 });
+  assert.strictEqual(main.gpu_stream_kick(64, 0), 1);
+  assert.strictEqual(workerCtx.getD3dimBridge(), mainCtx.getD3dimBridge(),
+    'the worker sees the process bridge before its own first kick');
+  p.emit('TARGETS', { color: 11, depth: 0 });
+  assert.strictEqual(worker.gpu_stream_kick(64, 0), 1);
+  assert.strictEqual(workerCtx.getD3dimBridge(), mainCtx.getD3dimBridge(), 'one consumer per process');
+});
+
 check('a key the host does not have stays absent', () => {
   // The two hosts legitimately share different sets — the browser has a
   // sharedMixer because several apps play audio in one page, the CLI has
