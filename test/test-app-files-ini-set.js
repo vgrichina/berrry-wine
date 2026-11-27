@@ -32,6 +32,45 @@ assert.strictEqual(text(applyIniSet(bytes(ini), {})), ini);
 // LF-only files stay LF-only.
 assert.strictEqual(text(applyIniSet(bytes('[A]\nk=1\n'), { A: { k: '2' } })), '[A]\nk=2\n');
 
+// Literal byte expectations through the public export: no newline normalization,
+// including in untouched sections. New lines use CRLF when present, else LF.
+const delimiterCases = [
+  ['mixed case-insensitive edit', ';caf\xe9\r\n[VIDEO]\r\nHW_TYPE=1\n\r\n[Other]\nName=\xff\xe9\n',
+    { video: { hw_type: '0' } }, ';caf\xe9\r\n[VIDEO]\r\nhw_type=0\n\r\n[Other]\nName=\xff\xe9\n'],
+  ['mixed identity', '[A]\r\nk=\xe9\n[Other]\nName=\xff\r\n', {}, '[A]\r\nk=\xe9\n[Other]\nName=\xff\r\n'],
+  ['CRLF identity', '[A]\r\nk=\xe9\r\n', {}, '[A]\r\nk=\xe9\r\n'],
+  ['LF identity', '[A]\nk=\xe9\n', {}, '[A]\nk=\xe9\n'],
+  ['CRLF case-insensitive edit', '[A]\r\nK=1\r\n', { a: { k: '2' } }, '[A]\r\nk=2\r\n'],
+  ['LF case-insensitive edit', '[A]\nK=1\n', { a: { k: '2' } }, '[A]\nk=2\n'],
+  ['mixed insertion before blanks', '[A]\r\nx=\xe9\n\r\n \n[Other]\nName=\xff',
+    { a: { k: '2', j: '3' } }, '[A]\r\nx=\xe9\nk=2\r\nj=3\r\n\r\n \n[Other]\nName=\xff'],
+  ['CRLF insertion before blanks', '[A]\r\nx=1\r\n\r\n[Other]\r\ny=2\r\n',
+    { A: { k: '2' } }, '[A]\r\nx=1\r\nk=2\r\n\r\n[Other]\r\ny=2\r\n'],
+  ['LF insertion before blanks', '[A]\nx=1\n\n[Other]\ny=2\n',
+    { A: { k: '2' } }, '[A]\nx=1\nk=2\n\n[Other]\ny=2\n'],
+  ['mixed missing section', '[Other]\r\nName=\xe9\n', { A: { k: '2' } },
+    '[Other]\r\nName=\xe9\n\r\n[A]\r\nk=2\r\n'],
+  ['CRLF missing section', '[Other]\r\nName=\xe9\r\n', { A: { k: '2' } },
+    '[Other]\r\nName=\xe9\r\n\r\n[A]\r\nk=2\r\n'],
+  ['LF missing section', '[Other]\nName=\xe9\n', { A: { k: '2' } },
+    '[Other]\nName=\xe9\n\n[A]\nk=2\n'],
+  ['unterminated identity', '[A]\r\nk=\xe9\n[Other]', {}, '[A]\r\nk=\xe9\n[Other]'],
+  ['unterminated replacement', '[A]\r\nK=1', { a: { k: '2' } }, '[A]\r\nk=2'],
+  ['unterminated key append', '[A]\nx=1', { A: { k: '2', j: '3' } }, '[A]\nx=1\nk=2\nj=3'],
+  ['unterminated section key append', '[A]', { A: { k: '2' } }, '[A]\nk=2'],
+  ['unterminated section append', '[Other]\nx=1', { A: { k: '2' } }, '[Other]\nx=1\n\n[A]\nk=2\n'],
+  ['empty identity', '', {}, ''],
+  ['empty file section append', '', { A: { k: '2' } }, '\n[A]\nk=2\n'],
+];
+for (const [name, inputText, edits, expectedText] of delimiterCases) {
+  const input = bytes(inputText);
+  const original = input.slice();
+  const originalEdits = JSON.stringify(edits);
+  assert.deepStrictEqual(applyIniSet(input, edits), bytes(expectedText), name);
+  assert.deepStrictEqual(input, original, name + ': input unchanged');
+  assert.strictEqual(JSON.stringify(edits), originalEdits, name + ': edits unchanged');
+}
+
 // Both hosts apply it, and the Deus Ex entry uses it.
 const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
 assert(/applyIniSet\(/.test(read('host.js')), 'host.js applies iniSet');
