@@ -37,6 +37,11 @@
 //             which System.Move the program links ("move="): the FILD/FISTP
 //             form with its jump table (id 8) or the REP MOVSD form (id 9),
 //             both folded and both what _CopyRecord's leading Move assumes.
+//   GM fold   "gm=": the Game Maker runner bodies the same handler folds
+//             (varscan, inst2w, inst2b, inst1 with their DynArray-length
+//             callee; lineloop / pointloop, the collision_line/_point scan
+//             over one object's instances, with their reads and bbox tests; "records" = _FinalizeArray whose record loop calls the
+//             System _FinalizeRecord back-to-back), with a count each.
 //             "exact" = body and callees match (D would fire); "body" =
 //             body matches, a callee does not (D falls back); "variantNN" =
 //             no exact body, but some body is NN% byte-equal (rel32s left
@@ -85,6 +90,29 @@ const M = {
   9: { name: 'REP', first: 0xc6895756, len: 0x40, fnv: 0xfa2e0fd2, masks: [] },
 };
 const MOVE_TABLE = [0x35, 0xB6, 0xBC, 0xC3, 0xD0, 0xD5, 0xE0, 0xED, 0xF8];
+// The GM fold ($gm_fold): Game Maker runner routines, identical in the GM5,
+// GM7 and GM8 runners. 10 the variable-list backward scan loop, 11/12 the
+// 2-D instance-table reads (disp32 / disp8 fields), 13 the 1-D one, each
+// calling 14 DynArray length (+0x17/+0x14/+0x11, checked). Plus whether
+// _FinalizeArray's record loop (+0xB0) calls the System unit's
+// _FinalizeRecord, which calls it back (+0x21): the record-array fold.
+const G = {
+  10: { name: 'varscan', first: 0x8bb61c8d, len: 0x15, fnv: 0x988ad2c0, masks: [] },
+  11: { name: 'inst2w', first: 0x55575653, len: 0x41, fnv: 0xeab1a823, masks: [0x17], callee: 0x17 },
+  12: { name: 'inst2b', first: 0x55575653, len: 0x38, fnv: 0xa935754b, masks: [0x14], callee: 0x14 },
+  13: { name: 'inst1', first: 0x8b575653, len: 0x25, fnv: 0x67490794, masks: [0x11], callee: 0x11 },
+  14: { name: 'dynlen', first: 0x0374c085, len: 0x08, fnv: 0x567cdfc7, masks: [] },
+  // collision_line / collision_point over one object's instances: the scan
+  // loop at its head (`cmp byte [ebp+8],0`), whose three instance reads are
+  // id 11 and whose test is 17 / 18 (A1 absolutes: the instance table global,
+  // all four equal), and the bbox tests (matched as callees only).
+  15: { name: 'lineloop', first: 0x00087d80, len: 0x89, fnv: 0x9b2b3507, masks: [0x12, 0x27, 0x58, 0x61, 0x75, 0x7d, 0x7, 0x1c, 0x4d, 0x6a],
+        reads: [0x12, 0x27, 0x58], test: [0x61, 17], abs: [0x7, 0x1c, 0x4d, 0x6a] },
+  16: { name: 'pointloop', first: 0x00087d80, len: 0x79, fnv: 0xb8c87edf, masks: [0x12, 0x27, 0x4c, 0x55, 0x69, 0x71, 0x7, 0x1c, 0x41, 0x5e],
+        reads: [0x12, 0x27, 0x4c], test: [0x55, 18], abs: [0x7, 0x1c, 0x41, 0x5e] },
+  17: { name: 'linetest', first: 0x83ec8b55, len: 0x2b3, fnv: 0x2c975ca7, masks: [0x227, 0x230, 0x244, 0x24d, 0x268, 0x271, 0x27a, 0x283, 0x293, 0x2a2] },
+  18: { name: 'pointtest', first: 0x51ec8b55, len: 0xfe, fnv: 0xeea92a4b, masks: [0x85, 0x8e, 0xa2, 0xab, 0xc6, 0xcf, 0xdf, 0xee] },
+};
 // The reference bodies those hashes were taken from (Spelunky Classic 1.1,
 // Game Maker 8 runner, at 0x405934 / 0x405988 / 0x4064e8 / 0x406534 /
 // 0x40674c), used only to rate a non-matching body by its byte similarity.
@@ -110,7 +138,7 @@ function rd32(img, rva) {
   for (const s of img.secs) { const o = rva - s.rva; if (o >= 0 && o + 4 <= s.buf.length) return s.buf.readUInt32LE(o); }
   return -1;
 }
-const T = id => D[id] || M[id];
+const T = id => D[id] || M[id] || G[id];
 function masked(id, o) {
   const t = T(id);
   return t.masks.some(m => o - m >= 0 && o - m < 4) || (t.range && o >= t.range[0] && o < t.range[1]);
@@ -157,6 +185,32 @@ function similarity(b, o, id) {
     if (b[o + i] !== ref[i] && ++miss > allowed) return 0;
   }
   return (total - miss) / total;
+}
+// GM fold bodies: VAs (as RVAs) of each exact match
+// a collision scan loop's callees: id 11 (with its DynArray length) at each
+// read, its bbox test, and one instance-table global in every A1 field
+function gmLoopOk(img, rva, g) {
+  for (const o of g.reads) { const r = rel(img, rva, o); if (!sig(img, r, 11) || !sig(img, rel(img, r, 0x17), 14)) return false; }
+  if (!sig(img, rel(img, rva, g.test[0]), g.test[1])) return false;
+  return g.abs.every((o) => rd32(img, rva + o) === rd32(img, rva + g.abs[0]));
+}
+function scanG(img, faRVAs) {
+  const out = {};
+  for (const id of [10, 11, 12, 13, 15, 16]) out[G[id].name] = [];
+  for (const s of img.secs) {
+    if (!s.exec) continue;
+    for (let o = 0; o + 4 <= s.buf.length; o++) {
+      const w = s.buf.readUInt32LE(o);
+      for (const id of [10, 11, 12, 13, 15, 16]) {
+        if (w !== G[id].first || bodyHash(img, s.rva + o, id) !== G[id].fnv) continue;
+        if (G[id].callee && !sig(img, rel(img, s.rva + o, G[id].callee), 14)) continue;
+        if (G[id].reads && !gmLoopOk(img, s.rva + o, G[id])) continue;
+        out[G[id].name].push(s.rva + o);
+      }
+    }
+  }
+  out.records = faRVAs.filter((fa) => { const fr = rel(img, fa, 0xB0); return sig(img, fr, 3) && rel(img, fr, 0x21) === fa; });
+  return out;
 }
 function scanD(img) {
   const out = {};
@@ -293,6 +347,9 @@ function analyse(file) {
     }
     r.armDExactRVAs = Object.fromEntries(Object.entries(d.ids).filter(([, x]) => x.exact).map(([id, x]) => [D[id].name, x.at.map(a => '0x' + (a + p.imageBase).toString(16))]));
     r.moveForm = Object.entries(d.moveForm).filter(([, n]) => n).map(([k, n]) => `${k}x${n}`).join('+') || '-';
+    const g = scanG(img, d.ids[4].at);
+    r.gmFoldRVAs = Object.fromEntries(Object.entries(g).map(([k, v]) => [k, v.map(a => '0x' + (a + p.imageBase).toString(16))]));
+    r.gmFold = Object.entries(g).filter(([, v]) => v.length).map(([k, v]) => `${k}x${v.length}`).join('+') || '-';
     const v = Object.values(r.armD), nd = v.length;
     r.armDSummary = v.every(x => x === 'exact') ? `exact(${nd}/${nd})` : v.some(x => x === 'exact') ? `partial(${v.filter(x => x === 'exact').length}/${nd})`
       : v.some(x => x !== '-') ? 'variant' : 'none';
@@ -359,7 +416,7 @@ for (const root of roots) for (const f of walk(root)) {
   if (r.pascal) nPas++;
   if (APPS) r.registered = appsHit(f);
   if (JSON_OUT) { console.log(JSON.stringify(r)); continue; }
-  const d = r.armD ? `${r.armDSummary} [${Object.entries(r.armD).map(([k, v]) => k + ':' + v).join(' ')}] move=${r.moveForm}` : '';
+  const d = r.armD ? `${r.armDSummary} [${Object.entries(r.armD).map(([k, v]) => k + ':' + v).join(' ')}] move=${r.moveForm} gm=${r.gmFold}` : '';
   console.log([r.path, r.pascal ? (r.version || '?') : 'not-pascal', r.gameMaker ? 'GM' : '', r.inno ? 'Inno' : '', r.packer ? 'packed:' + r.packer : '',
     APPS ? 'apps:' + r.registered : '', d, r.product ? `"${r.product}${r.fileVersion ? ' ' + r.fileVersion : ''}"` : ''].filter(Boolean).join(' | '));
 }

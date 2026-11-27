@@ -29,6 +29,20 @@
 // runs every size class of the FILD form, and of Game Maker 7's REP MOVSD form
 // (from Metrojd, placed at a VA of its own), apart and overlapping both ways.
 //
+// The GM fold (same handler, ids 10-13 and _FinalizeArray over records,
+// set_gm_fold mask): Spelunky Classic's Game Maker 8 runner bytes for the
+// variable-list scan (0x4a8a46.., placed as a stub that returns at the loop
+// exit), the 2-D and 1-D instance-table reads (0x4aee54..0x4aef21, called at
+// their own VAs) and _FinalizeArray over RValue arrays (the 16-Value GML
+// argument arrays), each element's release shared, literal, nil, last
+// (the guest's record loop resumes at that element) or repeated. And the
+// Game Maker 8 collision scans' per-instance loops (ids 15/16, line and point,
+// entered at their heads with a frame in the buffer): every skip kind, a
+// reject at each of the box tests' four compares (equal ones too, both
+// min/max orders), notme on and off, a box hit (the loop stops at its head
+// and the guest takes that trip), a nil or out-of-row instance, a NaN shape,
+// with the x87 state compared too, one register in use and a full stack.
+//
 // Needs test/binaries/candidates/spelunky-classic (skips when absent); the
 // REP Move cases need candidates/metrojd/metrojd_gm7.exe.
 
@@ -72,15 +86,33 @@ const MOVE = 0x4030a8;
 const IR = 0x406418, IA = 0x406448;
 const REPMV = STUB + 0x100, DFSTUB = STUB + 0x80;
 const MJ = path.join(ROOT, 'test/binaries/candidates/metrojd/metrojd_gm7.exe');
+// GM fold: the var scan as a stub (dec esi; cmp esi,0; jl X; the loop; X: ret),
+// and the instance-table reads at their own VAs
+const VSCAN = STUB + 0x200, VSCAN_HEAD = VSCAN + 6;
+const I2W = 0x4aeee0, I2B = 0x4aee7c, I1 = 0x4aee54;
 const REP_BODY = fs.existsSync(MJ) ? peImage(MJ)(0x402a90, 0x40) : null;
+// GM fold collision scans (Game Maker 8): the line and point loops' heads,
+// their exits, the box tests; stubs that load the x87 stack first
+const LL = 0x4e3faf, LP = 0x4e396b, LL_OUT = 0x4e40e4, LP_OUT = 0x4e3a84, LTEST = 0x4aceec, PTEST = 0x4ac734;
+const FLD1 = STUB + 0x300, FLD8 = STUB + 0x310, FNINIT = STUB + 0x330;
+const FPU_FILE = require(path.join(ROOT, 'lib', 'region-map.generated.js')).REGIONS.FPU_FILE.base;
 const le32 = (v) => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF];
 // delphi_fold_stat keys
 const NATIVE = 0, FALLBACK = 1, PARTIAL = 2, SMC_DROPS = 4;
 
-async function delphiInstance(img, on, branchClock) {
+async function delphiInstance(img, on, branchClock, gmMask) {
   const inst = await bench.newInstance();
   const { e, mem, g2w } = inst;
-  for (const [va, len] of [[0x401000, 0x6000], [0x5436e0, 0x80], [0x589720, 0x20]]) mem.set(img(va, len), g2w(va));
+  for (const [va, len] of [[0x401000, 0x6000], [0x5436e0, 0x80], [0x589720, 0x20], [0x4aee40, 0x100],
+    [0x4ac000, 0x3000], [0x4e3800, 0x900]]) mem.set(img(va, len), g2w(va));
+  // the collision scans' exits (the loop's fallthrough and the hit both
+  // JMP there): a RET
+  mem[g2w(LL_OUT)] = 0xC3; mem[g2w(LP_OUT)] = 0xC3;
+  // fld1 once / eight times, then ret: x87 stack state before a scan
+  mem.set([0xD9, 0xE8, 0xC3], g2w(FLD1));
+  mem.set([...Array(8).fill([0xD9, 0xE8]).flat(), 0xC3], g2w(FLD8));
+  mem.set([0xDB, 0xE3, 0xC3], g2w(FNINIT));
+  mem.set([...img(0x4a8a46, 0x1B), 0xC3], g2w(VSCAN));
   // FreeMem stub: [eax-8] (the AnsiString refcount word) = 0xDEAD, eax = 0
   mem.set([0xC7, 0x40, 0xF8, 0xAD, 0xDE, 0, 0, 0x31, 0xC0, 0xC3], g2w(STUB));
   // poke stub: xor byte [edx], 1 ; ret -- a guest store, so it goes through
@@ -95,6 +127,7 @@ async function delphiInstance(img, on, branchClock) {
   }
   e.set_uop(0);
   e.set_delphi_fold(on ? 1 : 0);
+  if (gmMask !== undefined) e.set_gm_fold(gmMask);
   if (e.get_delphi_fold() !== (on ? 1 : 0)) fail('set_delphi_fold did not take');
   e.set_branch_clock(branchClock ? 1 : 0);
   return inst;
@@ -120,9 +153,16 @@ function call(inst, entry, regs) {
   const out = { ok, blocks, eip: e.get_eip() >>> 0, flags: e.uop_flags() };
   for (const r of REGS) out[r] = e['get_' + r]() >>> 0;
   out.mem = Buffer.from(inst.mem.subarray(inst.g2w(BUF), inst.g2w(BUF) + 0x2000)).toString('base64');
+  out.fpu = fpuState(inst);
   return out;
 }
+// TOP, the status and tag words, the eight registers and their raw shadows
+const fpuState = (inst) => [inst.e.get_fpu_top(), inst.e.get_fpu_sw(), inst.e.get_fpu_tags(),
+  Buffer.from(inst.mem.subarray(FPU_FILE, FPU_FILE + 0x80)).toString('base64')].join(',');
 const poke = (inst, ga) => call(inst, POKE, { edx: ga });
+// a clean x87 (FNINIT, and the register file zeroed) for the cases that
+// compare it
+const resetFpu = (inst) => { call(inst, FNINIT, {}); inst.mem.fill(0, FPU_FILE, FPU_FILE + 0x80); };
 
 const str = (w, ga, rc, text) => {
   w(ga, rc); w(ga + 4, text.length);
@@ -289,13 +329,155 @@ if (REP_BODY) {
   CASES.push({ name: 'REP Move under DF=1', entry: DFSTUB, want: 'f', buf: pattern, regs: { eax: BUF + 0x300, edx: BUF + 0x100, ecx: 8 } });
 }
 
-function compare(a, b, withBlocks) {
+// ---- GM fold cases ----
+// Var list at BUF: [+4] rows, [+8] count; rows of 40 bytes, id at +0. The
+// stub enters with esi = count, eax = list, edx = id, ecx = -1.
+const vlist = (base, ids) => (w) => {
+  w(BUF + 4, base); w(BUF + 8, ids.length);
+  ids.forEach((id, i) => { w(base + 40 * i, id); w(base + 40 * i + 8, 0x1000 + i); });
+};
+const ids = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+const VS = [
+  ['varscan hit middle', ids(50, (i) => 100000 + i), 100020, BUF + 0x100],
+  ['varscan hit duplicate (last wins)', ids(50, (i) => (i === 5 || i === 30 ? 777 : 100000 + i)), 777, BUF + 0x100],
+  ['varscan hit top row', ids(50, (i) => 100000 + i), 100049, BUF + 0x100],
+  ['varscan hit row 0', ids(150, (i) => 100000 + i), 100000, BUF + 0x100],
+  ['varscan miss', ids(150, (i) => 100000 + i), 5, BUF + 0x100],
+  ['varscan one row hit', [42], 42, BUF + 0x100],
+  ['varscan one row miss', [42], 43, BUF + 0x100],
+  ['varscan row id straddles a page', ids(30, (i) => 100000 + i), 100003, BUF + 0xFFD - 40 * 10],
+  ['varscan miss across pages', ids(60, (i) => 100000 + i), 9, BUF + 0xFFD - 40 * 10],
+];
+for (const [name, list, id, base] of VS) {
+  CASES.push({ name, entry: VSCAN, want: 'n', buf: vlist(base, list), regs: { eax: BUF, edx: id, ecx: -1, esi: list.length } });
+}
+CASES.push({ name: 'varscan empty list', entry: VSCAN, want: '-', buf: vlist(BUF + 0x100, []), regs: { eax: BUF, edx: 1, ecx: -1, esi: 0 } });
+// Instance table at BUF: 2-D counts A = [+C], rows B = [+D] (C/D 0x84/0x80
+// or 0x7C/0x78); A is a dynarray (length at A-4) of per-row counts.
+const itab = (C, D, nil) => (w) => {
+  const A = BUF + 0x208, B = BUF + 0x300;
+  if (!nil) { w(BUF + C, A); w(A - 4, 3); }
+  w(BUF + D, B);
+  [2, 0, 4].forEach((c, i) => { w(A + 4 * i, c); w(B + 4 * i, BUF + 0x400 + 0x40 * i); });
+  for (let k = 0; k < 0x30; k += 4) w(BUF + 0x400 + k * 4, 0xC0DE0000 + k);
+};
+for (const [label, entry, C, D] of [['inst2w', I2W, 0x84, 0x80], ['inst2b', I2B, 0x7C, 0x78], ['inst1', I1, 0x7C, 0x78]]) {
+  const two = entry !== I1;
+  const pts = two ? [[-1, 0], [3, 0], [7, 1], [0, -1], [0, 2], [1, 0], [0, 1], [2, 3], [2, 0]] : [[-1, 0], [3, 0], [0, 0], [2, 0]];
+  for (const [i, j] of pts) CASES.push({ name: `${label} [${i}][${j}]`, entry, want: 'n', buf: itab(C, D), regs: { eax: BUF, edx: i, ecx: j } });
+  CASES.push({ name: `${label} nil table`, entry, want: 'n', buf: itab(C, D, true), regs: { eax: BUF, edx: 0, ecx: 0 } });
+}
+// _FinalizeArray over RValue (0x18 bytes, string at +0x10): per element a
+// release kind -- null nil, 's' shared (rc 3), 'l' literal, 'f' last ref (rc
+// 1), 'd' rc 2, or a number naming an earlier element whose string it repeats.
+const rvals = (spec) => (w) => {
+  const at = [];
+  spec.forEach((k, i) => {
+    w(BUF + 0x18 * i, 1); w(BUF + 0x18 * i + 8, 0x3FF00000 + i);
+    let p = 0;
+    if (k === 's') p = str(w, BUF + 0x1000 + 0x20 * i, 3, 'sh' + i);
+    if (k === 'l') p = str(w, BUF + 0x1000 + 0x20 * i, -1, 'lt' + i);
+    if (k === 'f') p = str(w, BUF + 0x1000 + 0x20 * i, 1, 'fr' + i);
+    if (k === 'd') p = str(w, BUF + 0x1000 + 0x20 * i, 2, 'du' + i);
+    if (typeof k === 'number') p = at[k];
+    at.push(p);
+    w(BUF + 0x18 * i + 0x10, p);
+  });
+};
+const sixteen = (f) => Array.from({ length: 16 }, (_, i) => f(i));
+for (const [name, spec, want] of [
+  ['FinalizeArray RValue x16 nil', sixteen(() => null), 'n'],
+  ['FinalizeArray RValue x16 mixed', sixteen((i) => ['s', null, 'l', null][i & 3]), 'n'],
+  ['FinalizeArray RValue x16 one string 16 times', sixteen((i) => (i ? 0 : 's')), 'p'],
+  ['FinalizeArray RValue x1', ['s'], 'n'],
+  ['FinalizeArray RValue x16 last ref at 5', sixteen((i) => (i === 5 ? 'f' : i & 1 ? 's' : null)), 'p'],
+  ['FinalizeArray RValue x16 last ref at 15', sixteen((i) => (i === 15 ? 'f' : null)), 'p'],
+  ['FinalizeArray RValue last ref at 0', ['f', 's', null], 'f'],
+  ['FinalizeArray RValue repeated rc 2', [null, 's', 'd', 2, null], 'p'],
+  ['FinalizeArray RValue repeated rc 3 and a literal', ['s', null, 0, 'l', 3], 'n'],
+  ['FinalizeArray RValue x100 nil', Array.from({ length: 100 }, () => null), 'n'],
+]) CASES.push({ name, entry: H.farr, want, buf: rvals(spec), regs: { eax: BUF, edx: RVALUE, ecx: spec.length } });
+CASES.push({ name: 'FinalizeArray RToken x2', entry: H.farr, want: 'f',
+  buf: (w) => { w(BUF + 0x20, str(w, BUF + 0x1000, 4, 'tk')); }, regs: { eax: BUF, edx: RTOKEN, ecx: 2 } });
+
+// The collision scans (Game Maker 8 line / point), entered at the loop head
+// with EDI = object 1, EBX = first instance, ESI = instances left, EBP = a
+// frame in BUF: [ebp+8] notme, [ebp+0xC..] the shape's doubles A B (C D),
+// [ebp-4] self, [ebp-5] precise. Instance table: [[0x58fac4]] = OBJ, rows at
+// [OBJ+0x80], per-row counts (a dynarray) at [OBJ+0x84]; instances 0x120
+// apart with the bbox at +0xB8 +0xBC +0xC0 +0xC4 (l t r b) and the
+// deactivated byte at +0x108. The exits RET.
+const FR = BUF + 0x800, OBJ = BUF + 0x40, INST = (j) => BUF + 0x1000 + 0x120 * j;
+const f64w = (w, ga, v) => {
+  const d = new DataView(new ArrayBuffer(8)); d.setFloat64(0, v, true);
+  w(ga, d.getUint32(0, true)); w(ga + 4, d.getUint32(4, true));
+};
+const collBuf = ({ nb = 1, self = -1, prec = 0, shape, inst, rowc, nil = [] }) => (w, b) => {
+  w(0x58fac4, BUF + 0x10); w(BUF + 0x10, OBJ);
+  const A = BUF + 0x108, R = BUF + 0x180, ROW = BUF + 0x200;
+  w(OBJ + 0x84, A); w(A - 4, 3); w(A + 4, rowc === undefined ? inst.length : rowc);
+  w(OBJ + 0x80, R); w(R + 4, ROW);
+  inst.forEach(([l, t, r, bt, off], j) => {
+    const p = INST(j);
+    w(ROW + 4 * j, nil.includes(j) ? 0 : p);
+    w(p + 0xB8, l); w(p + 0xBC, t); w(p + 0xC0, r); w(p + 0xC4, bt); b(p + 0x108, off ? 1 : 0);
+  });
+  b(FR + 8, nb); b(FR - 5, prec); w(FR - 4, self >= 0 ? INST(self) : 0x5E1F0000);
+  shape.forEach((v, k) => f64w(w, FR + 0xC + 8 * k, v));
+};
+// line shape 1: B=100 < D=150, A=50 > C=20 (min/max: no JMP, JMP, JMP, no
+// JMP); shape 2 the other way round. Instances [l, t, r, b, deactivated]
+// rejected at each of the four compares (and on an equal one), a box hit
+// (the line clip then runs in the guest), deactivated.
+const LS1 = [50, 100, 20, 150], LS2 = [20, 150, 50, 100];
+const LI = { s1: [0, 0, 50, 0], s1eq: [0, 0, 99, 0], s2: [160, 0, 200, 0], s3: [120, 0, 200, 10],
+  s4: [120, 60, 200, 100], hit: [120, 30, 200, 100], off: [0, 0, 50, 0, 1] };
+const LI2 = { s1: [0, 0, 50, 0], s2: [160, 0, 200, 0], s3: [120, 0, 200, 10], s4: [120, 60, 200, 100], hit: [120, 30, 200, 100] };
+// point shape A=50, B=100; c0+1 and b8 against B, c4+1 and bc against A
+const PS = [50, 100];
+const PI = { s1: [0, 0, 50, 0], s1eq: [0, 0, 99, 0], s2: [101, 0, 200, 0], s3: [90, 0, 200, 10], s4: [90, 60, 200, 100],
+  hit: [90, 30, 200, 100], off: [90, 30, 200, 100, 1] };
+const coll = (name, entry, want, o, regs = {}) => CASES.push({ name, entry, want, fpu: true, buf: collBuf(o),
+  regs: { edi: 1, ebx: 0, esi: o.rem === undefined ? o.inst.length : o.rem, ebp: FR, ...regs } });
+const pick = (T, ks) => ks.map((k) => T[k]);
+const MIX = ['s1', 's2', 'self', 's3', 's4', 'off', 's1eq', 's2'];
+const mix = (T) => MIX.map((k) => (k === 'self' ? T.s1 : T[k]));
+coll('line scan mixed, notme', LL, 'n', { shape: LS1, inst: mix(LI), self: 2 });
+coll('line scan mixed, notme off', LL, 'n', { shape: LS1, inst: mix(LI), self: 2, nb: 0 });
+coll('line scan shape 2', LL, 'n', { shape: LS2, inst: pick(LI2, ['s1', 's2', 's3', 's4', 's4', 's1']) });
+coll('line scan shape 2, notme off', LL, 'n', { shape: LS2, inst: pick(LI2, ['s4', 's3', 's2', 's1']), nb: 0 });
+coll('line scan one instance', LL, 'n', { shape: LS1, inst: [LI.s3] });
+coll('line scan ends on self', LL, 'n', { shape: LS1, inst: pick(LI, ['s1', 's2']), self: 1 });
+coll('line scan from instance 2', LL, 'n', { shape: LS1, inst: pick(LI, ['s1', 's1', 's2', 's3', 's4']), rem: 3 }, { ebx: 2 });
+coll('line scan box hit in the middle', LL, 'm', { shape: LS1, inst: pick(LI, ['s1', 's2', 'hit', 's3']) });
+coll('line scan box hit first', LL, 'f', { shape: LS1, inst: pick(LI, ['hit', 's1']) });
+coll('line scan NaN shape', LL, 'f', { shape: [50, NaN, 20, 150], inst: pick(LI, ['s1', 's2']) });
+coll('line scan nil instance', LL, 'm', { shape: LS1, inst: pick(LI, ['s1', 's2', 's3']), nil: [1] });
+coll('line scan past the row', LL, 'm', { shape: LS1, inst: pick(LI, ['s1', 's2', 's3']), rowc: 2 });
+coll('point scan mixed, notme', LP, 'n', { shape: PS, inst: mix(PI), self: 2 });
+coll('point scan mixed, notme off', LP, 'n', { shape: PS, inst: mix(PI), self: 2, nb: 0 });
+coll('point scan each compare', LP, 'n', { shape: PS, inst: pick(PI, ['s4', 's3', 's2', 's1', 's1eq']) });
+coll('point scan hit in the middle', LP, 'm', { shape: PS, inst: pick(PI, ['s1', 's3', 'hit', 's2']) });
+coll('point scan hit first', LP, 'f', { shape: PS, inst: pick(PI, ['hit', 's2']) });
+coll('point scan deactivated hit', LP, 'n', { shape: PS, inst: pick(PI, ['off', 's2']) });
+coll('point scan NaN shape', LP, 'f', { shape: [NaN, 100], inst: pick(PI, ['s1']) });
+
+// withFpu: the x87 state too (the collision scans reproduce it; the FILD
+// Move's scratch registers are not)
+function compare(a, b, withBlocks, withFpu) {
   const diffs = [];
   if (!a.ok || !b.ok) diffs.push('did not return');
   for (const k of ['eip', 'flags', ...(withBlocks ? ['blocks'] : []), ...REGS]) {
     if (a[k] !== b[k]) diffs.push(`${k} ${a[k].toString(16)} vs ${b[k].toString(16)}`);
   }
   if (a.mem !== b.mem) diffs.push('memory differs');
+  if (withFpu && a.fpu !== b.fpu) {
+    const [x, y] = [a.fpu, b.fpu].map((f) => f.split(','));
+    const bx = Buffer.from(x[3], 'base64'), by = Buffer.from(y[3], 'base64');
+    const at = bx.findIndex((v, i) => v !== by[i]);
+    diffs.push(`x87 ${x.slice(0, 3).join('/')} vs ${y.slice(0, 3).join('/')}` +
+      (at >= 0 ? `, file +0x${at.toString(16)}: ${bx.subarray(at & ~7, (at & ~7) + 8).toString('hex')} vs ${by.subarray(at & ~7, (at & ~7) + 8).toString('hex')}` : ''));
+  }
   return diffs;
 }
 
@@ -305,13 +487,16 @@ async function casesUnder(img, branchClock) {
   const on = await delphiInstance(img, true, branchClock);
   for (const c of CASES) {
     layoutBuf(off, c.buf); layoutBuf(on, c.buf);
+    if (c.fpu) { resetFpu(off); resetFpu(on); }
     const s0 = [NATIVE, FALLBACK, PARTIAL].map((k) => on.e.delphi_fold_stat(k));
     const a = call(off, c.entry, c.regs), b = call(on, c.entry, c.regs);
     const [dn, df, dp] = [NATIVE, FALLBACK, PARTIAL].map((k, i) => on.e.delphi_fold_stat(k) - s0[i]);
-    const diffs = compare(a, b, branchClock);
+    const diffs = compare(a, b, branchClock, c.fpu);
+    if (c.want === 'm' && dn + df + dp < 1) diffs.push('want the fold to run, it did not');
     if (c.want === 'n' && (dn < 1 || df || dp)) diffs.push(`want native, got native=${dn} partial=${dp} fallback=${df}`);
     if (c.want === 'f' && df < 1) diffs.push(`want fallback, got native=${dn} fallback=${df}`);
     if (c.want === 'p' && (dp < 1 || df)) diffs.push(`want partial, got partial=${dp} fallback=${df}`);
+    if (c.want === '-' && (dn || df || dp)) diffs.push(`want no fold, got native=${dn} partial=${dp} fallback=${df}`);
     if (off.e.delphi_fold_stat(NATIVE) + off.e.delphi_fold_stat(FALLBACK) + off.e.delphi_fold_stat(PARTIAL)) {
       diffs.push('the fold fired with set_delphi_fold(0)');
     }
@@ -338,6 +523,7 @@ function everyBudget(off, on, tag) {
       const st = [];
       for (const inst of [off, on]) {
         layoutBuf(inst, c.buf);
+        if (c.fpu) resetFpu(inst);
         const { e } = inst;
         for (const r of ['eax', 'ecx', 'edx', 'ebx', 'ebp', 'esi', 'edi']) e['set_' + r]((c.regs[r] || 0) >>> 0);
         e.set_esp(STACK);
@@ -345,6 +531,7 @@ function everyBudget(off, on, tag) {
         e.set_eip(c.entry);
         e.run(b);
         const o = [e.get_eip() >>> 0, e.get_last_run_blocks(), e.uop_flags(), ...REGS.map((r) => e['get_' + r]() >>> 0)];
+        if (c.fpu) o.push(fpuState(inst));
         o.push(Buffer.from(inst.mem.subarray(inst.g2w(BUF), inst.g2w(BUF) + 0x2000)).toString('base64'));
         st.push(o.join(','));
       }
@@ -361,13 +548,14 @@ function everyBudget(off, on, tag) {
 // move as `check` says.
 async function pair(img, label, c, prep, check) {
   const off = await delphiInstance(img, false, true), on = await delphiInstance(img, true, true);
+  if (c.fpu) { resetFpu(off); resetFpu(on); }
   await prep(off, false); await prep(on, true);
   layoutBuf(off, c.buf); layoutBuf(on, c.buf);
   const s = (k) => on.e.delphi_fold_stat(k);
   const before = [NATIVE, FALLBACK, PARTIAL, SMC_DROPS].map(s);
   const a = call(off, c.entry, c.regs), b = call(on, c.entry, c.regs);
   const d = [NATIVE, FALLBACK, PARTIAL, SMC_DROPS].map((k, i) => s(k) - before[i]);
-  const diffs = compare(a, b, true);   // pair() instances run the branch clock
+  const diffs = compare(a, b, true, c.fpu);   // pair() instances run the branch clock
   const why = check({ native: d[0], fallback: d[1], partial: d[2], drops: d[3], on });
   if (why) diffs.push(why);
   console.log(`${label.padEnd(43)} ${diffs.length ? 'FAIL ' + diffs.join(', ') : 'ok'} (native=${d[0]} partial=${d[2]} fallback=${d[1]})`);
@@ -403,18 +591,23 @@ async function main() {
   // outside that cover. The next call must run the patched guest code. The
   // patched byte (+0x10 of _LStrClr) turns its `jl` at +0xF into another
   // condition, which an off/on mismatch would show.
-  const ID = { [H.clr]: 1, [H.asg]: 2, [H.frec]: 3, [H.farr]: 4, [H.crec]: 5, [IR]: 6, [IA]: 7, [MOVE]: 8, [REPMV]: 9 };
+  const ID = { [H.clr]: 1, [H.asg]: 2, [H.frec]: 3, [H.farr]: 4, [H.crec]: 5, [IR]: 6, [IA]: 7, [MOVE]: 8, [REPMV]: 9,
+    [VSCAN]: 10, [I2W]: 11, [I2B]: 12, [I1]: 13, [LL]: 15, [LP]: 16 };
+  // delphi_fold_stat keys: 11-19 / 21-29 native / fallback for 1-9, 30-33 /
+  // 40-43 for the GM ids 10-13, 45/46 / 55/56 for the collision scans
+  const NK = (id) => (id < 10 ? 10 + id : id < 14 ? 20 + id : 30 + id);
+  const FK = (id) => (id < 10 ? 20 + id : id < 14 ? 30 + id : 40 + id);
   const smcPair = (label, name, target, matchOk = false) => {
     const c = byName(name), id = ID[c.entry];
     return pair(img, label, c, async (inst, isOn) => {
       layoutBuf(inst, c.buf);
       call(inst, c.entry, c.regs);
-      if (isOn && inst.e.delphi_fold_stat(10 + id) < 1 && inst.e.delphi_fold_stat(PARTIAL) < 1) fail(`${label}: warm-up was not folded`);
+      if (isOn && inst.e.delphi_fold_stat(NK(id)) < 1 && inst.e.delphi_fold_stat(PARTIAL) < 1) fail(`${label}: warm-up was not folded`);
       const d0 = inst.e.delphi_fold_stat(SMC_DROPS);
       poke(inst, target);
       inst.smcDrops = inst.e.delphi_fold_stat(SMC_DROPS) - d0;
-      inst.nativeBefore = inst.e.delphi_fold_stat(10 + id);
-      inst.fallbackBefore = inst.e.delphi_fold_stat(20 + id);
+      inst.nativeBefore = inst.e.delphi_fold_stat(NK(id));
+      inst.fallbackBefore = inst.e.delphi_fold_stat(FK(id));
     }, (d) => {
       // The patched helper (the call's own entry) must not run natively; an
       // intact helper it calls may (_CopyRecord's guest body calls _LStrAsg).
@@ -422,9 +615,9 @@ async function main() {
       // leaves _CopyRecord's own bytes intact).
       const e = d.on.e;
       if (!d.on.smcDrops) return 'the poke dropped no range group';
-      if (e.delphi_fold_stat(10 + id) !== d.on.nativeBefore) return 'the patched helper still ran natively';
-      if (!matchOk && e.delphi_fold_stat(20 + id) !== d.on.fallbackBefore) return 'the patched helper still matched';
-      if (matchOk && e.delphi_fold_stat(20 + id) === d.on.fallbackBefore) return 'did not fall back';
+      if (e.delphi_fold_stat(NK(id)) !== d.on.nativeBefore) return 'the patched helper still ran natively';
+      if (!matchOk && e.delphi_fold_stat(FK(id)) !== d.on.fallbackBefore) return 'the patched helper still matched';
+      if (matchOk && e.delphi_fold_stat(FK(id)) === d.on.fallbackBefore) return 'did not fall back';
       return '';
     });
   };
@@ -458,6 +651,74 @@ async function main() {
         dv.setInt32(inst.g2w(H.crec + 0x111), REPMV - (H.crec + 0x115), true);
       },
       (d) => (d.native < 1 || d.fallback ? `want native, got native=${d.native} fallback=${d.fallback}` : ''));
+  }
+  // GM fold: the var scan's cmp edx,[edi+ebx*8] -> cmp edx,[edi+ebx*8+..]
+  // (its jnz at +9 -> jz), an instance read's jge, _FinalizeRecord under the
+  // record loop (FinalizeArray still matches and must fall back).
+  await smcPair('SMC mid-loop: varscan +0x9', 'varscan hit middle', VSCAN_HEAD + 0x9);
+  await smcPair('SMC mid-body: inst2w +0x1D', 'inst2w [1][0]', I2W + 0x1D);
+  await smcPair('SMC mid-body: inst1 +0x17', 'inst1 [2][0]', I1 + 0x17);
+  await smcPair('SMC callee: record FinalizeArray via FinalizeRecord', 'FinalizeArray RValue x16 mixed', H.frec + 0x1D, true);
+  // the collision scans: the loop's cmp byte [eax+0x108],0 -> ,1; the box
+  // tests' first jbe -> ja; the instance read they call (its jge)
+  await smcPair('SMC mid-loop: line scan +0x31', 'line scan mixed, notme', LL + 0x31);
+  await smcPair('SMC mid-loop: point scan +0x31', 'point scan mixed, notme', LP + 0x31);
+  await smcPair('SMC callee: line scan via its box test', 'line scan mixed, notme', LTEST + 0x3E);
+  await smcPair('SMC callee: point scan via its box test', 'point scan each compare', PTEST + 0x20);
+  await smcPair('SMC callee: line scan via the instance read', 'line scan shape 2', I2W + 0x1D);
+  // the instance read's DynArray length (System unit, another range group):
+  // its jz -> jnz
+  await smcPair('SMC callee: inst2w via DynArray length', 'inst2w [1][0]', 0x406d64 + 0x2);
+  // x87: one register in use (the scans push into the next, ST0 must
+  // survive); a full stack (the first trip's push overflows, IE|SF: that
+  // trip is the guest's; its pop frees the slot, so later ones may fold)
+  for (const [label, stub, want] of [['one x87 register in use', FLD1, 'n'], ['x87 stack full', FLD8, 'f']]) {
+    for (const n of ['line scan mixed, notme', 'point scan mixed, notme']) {
+      const id = ID[byName(n).entry];
+      await pair(img, `${n.split(' ')[0]} scan, ${label}`, byName(n), (inst) => {
+        call(inst, stub, {});
+        inst.n0 = inst.e.delphi_fold_stat(NK(id)); inst.f0 = inst.e.delphi_fold_stat(FK(id));
+      }, (d) => {
+        const dn = d.on.e.delphi_fold_stat(NK(id)) - d.on.n0, df = d.on.e.delphi_fold_stat(FK(id)) - d.on.f0;
+        if (want === 'n' && (dn < 1 || df)) return `want native, got native=${dn} fallback=${df}`;
+        if (want === 'f' && df < 1) return `want fallback, got native=${dn} fallback=${df}`;
+        return '';
+      });
+    }
+  }
+  // set_gm_fold(0): the GM ids are left alone and the record arrays fall
+  // back, while the Delphi helpers still fold
+  {
+    const off = await delphiInstance(img, false, true), on = await delphiInstance(img, true, true, 0);
+    let bad = 0;
+    const KEYS = [30, 31, 33, 34, 45, 46, 55, 56, 0];
+    for (const n of ['varscan hit middle', 'inst2w [1][0]', 'inst1 [2][0]', 'FinalizeArray RValue x16 mixed',
+      'line scan mixed, notme', 'point scan mixed, notme', 'LStrClr shared']) {
+      const c = byName(n);
+      layoutBuf(off, c.buf); layoutBuf(on, c.buf);
+      const st = KEYS.map((k) => on.e.delphi_fold_stat(k));
+      const a = call(off, c.entry, c.regs), b = call(on, c.entry, c.regs);
+      const moved = KEYS.map((k, i) => on.e.delphi_fold_stat(k) - st[i]);
+      const diffs = compare(a, b, true, c.fpu);
+      if (moved.slice(0, -1).some((x) => x)) diffs.push('a GM fold ran under set_gm_fold(0): ' + moved.join(','));
+      if (n === 'LStrClr shared' && moved[moved.length - 1] < 1) diffs.push('the Delphi fold stopped too');
+      if (diffs.length) { bad++; console.log(`gm_fold 0: ${n} FAIL ${diffs.join(', ')}`); }
+    }
+    if (bad) fails++; else console.log(`${'set_gm_fold(0) leaves the GM ids alone'.padEnd(43)} ok`);
+  }
+  // set_gm_fold(8): the line scan alone
+  {
+    const off = await delphiInstance(img, false, true), on = await delphiInstance(img, true, true, 8);
+    const diffs = [];
+    for (const [n, k, want] of [['line scan mixed, notme', 45, 1], ['point scan mixed, notme', 46, 0], ['varscan hit middle', 30, 0]]) {
+      const c = byName(n);
+      layoutBuf(off, c.buf); layoutBuf(on, c.buf);
+      const st = on.e.delphi_fold_stat(k);
+      diffs.push(...compare(call(off, c.entry, c.regs), call(on, c.entry, c.regs), true, c.fpu));
+      if ((on.e.delphi_fold_stat(k) - st > 0) !== !!want) diffs.push(`${n}: ${want ? 'did not fold' : 'folded'} under set_gm_fold(8)`);
+    }
+    if (diffs.length) fail(`set_gm_fold(8): ${diffs.join(', ')}`);
+    else console.log(`${'set_gm_fold(8) folds the line scan alone'.padEnd(43)} ok`);
   }
   const smc = (target, name) => async (inst) => {
     const c = byName(name);

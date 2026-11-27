@@ -578,6 +578,372 @@ GM8 structures used by `probes/gm-state.js`:
 - Var lookup 0x4a8a30 scans that list backwards. Its callers are global get
   0x525b34 and global set (ret 0x525e18).
 
+## GML interpreter: structures and census, 2026-11-26
+
+Evidence: `scratch/runs/20261126-gml-re/` (branch `opt/gml-re`). Taken with the
+new `--value-probe` (docs/tracing.md) in a `--control --frozen` session at the
+tutorial level. Probes arm `$dbg_any`, so the uop tier is off: every number
+below is a **guest-exact count or a guest-instruction share**, not CPU time.
+The window is one run/jump/whip cycle of 168–169 GM steps.
+
+Correction to the note above: the main caller of var lookup 0x4a8a30 is the
+instance get 0x525de8 (ret 0x525e18, 89%); the global get 0x525b34 is 11%.
+
+### Structure map
+
+- **Value**: 24 bytes, RTTI 0x5436f0. +0 tag (0 real, 1 string), +8 f64, +0x10 LStr.
+- **Node**: 0x38 bytes.
+  - +0 kind, +4 id (var id / op / function index), +8 owner.
+  - +0x10 constant value.
+  - +0x28 child count, +0x2c → holder, `[holder]` = inline child array (stride 0x38).
+  - +0x30 source position.
+- **Expression eval** 0x52786c (eax ctx, edx node, ecx result) is a compare chain, not a vtable:
+
+  | Kind | Meaning | Handler |
+  |---|---|---|
+  | 5 | constant | CopyRecord from +0x10 |
+  | 6 | call | 0x526fc0 |
+  | 8 | simple var | 0x527530 |
+  | 7 | var with owner/index expressions | 0x527530 → 0x527280 |
+  | 1010 | unary | 0x52777c → 0x52649c |
+  | 1011 | binary | 0x5277c0 → 0x5265a4 |
+
+  - Unary ops: 203 `!`, 210 `+`, 211 `-`, 220 `~`.
+  - Binary ops: 201 `&&`, 202 `||`, 101/204..209 comparisons (also on strings), 210 `+` (also string concat), 211 `-`, 212 `*`, 213 `/`, 214 div/mod. 215..222 go through the jump table at 0x526633.
+- **Statements** 0x5288ac (table 0x5288d0):
+
+  | Kind | Meaning | Handler or return value |
+  |---|---|---|
+  | 13 | if | 0x527f28 |
+  | 16 | while | |
+  | 17 | do-until | |
+  | 18 | for | 0x5281f8 |
+  | 20 | repeat | |
+  | 21 | exit | returns −2 |
+  | 22 | break | returns −3 |
+  | 23 | continue | returns −4 |
+  | 24 | with | 0x528358; self/other swap at 0x52831c |
+  | 25 | return | |
+  | 26 | switch | 0x5286b4 |
+  | 30 | var decl | |
+  | 101 | assignment | 0x527920; child0 is the lvalue, op [+4]: 0x65 `=`, 0x66.. compound |
+  | 1000 | block | |
+
+- **ctx**: [+0] self, [+4] other, [+8] locals, [+0xc] code object.
+- **Code execution** 0x528b3c (eax self, edx other, ecx code). code+4 kind: 3 constant, 2 expression, else statement. The root is at code+0x10 and is CopyRecord'd to the stack on every execution.
+- **Variable read** 0x527530 switches on owner+7 (table 0x5275ac):
+
+  | Owner | Meaning |
+  |---|---|
+  | −7 | local |
+  | −6 | unqualified: a byte flag at `[0x6d2a6c][id-100000]` says global, else self |
+  | −5 | global |
+  | −2 | other |
+  | −1 | self |
+  | −3, or ≥ 0 | all / object / instance-id iteration, 0x525e74 |
+
+- **Instance get** 0x525de8. An id below 10000 is a builtin variable and calls the Delphi getter `[0x6c8e1c+id*80]`. Otherwise it looks the id up in the instance list `[inst+0x104]` with 0x4a8a30.
+- **Var list** 0x4a8a30 (eax list, edx id, ecx array index).
+  - Rows are 40 bytes: +0 id, +8 value, +0x20 array.
+  - Lookup is a **linear backward scan** over `[list+4]`, with `[list+8]` rows (loop 0x4a8a4c..0x4a8a5f).
+  - The array index `i*32000+j` is split with two `idiv`.
+  - Set 0x4a88d4.
+- **Calls** 0x526fc0.
+  - Arguments go into a stack array of **16 Values**: InitializeArray and FinalizeArray run for every call, whatever the argc.
+  - id < 100000: builtin `[[0x58fbe8]]+id*80`, handler at +0x44.
+  - 100000 ≤ id < 500000: **script** 0x5290fc. Its code object is `[[0x58f13c]+i*4]+8`. The call saves all 16 `argumentN` Values (16 CopyRecords), copies argc in, zeroes the rest, runs the code, then restores 16 more.
+  - id ≥ 500000: extension 0x51da48.
+- **Names**:
+  - Builtin function: ShortString at `[[0x58fbe8]]+id*80`.
+  - Builtin variable: ShortString at `0x6c8dd8+id*80`.
+  - User variable: LStr at `[[0x58f134]+(id-100000)*4]`.
+  - `scratch/runs/20261126-gml-re/gml-dump.js` reads all three.
+
+### Census (per GM step, tutorial gameplay)
+
+- 5,470 expression evals, 1,190 statements, 640 function calls (65% builtin, 35% script), 255 code executions (87% are script calls).
+- **1,300 var-list lookups costing 161,000 scan iterations**, about 124 per lookup.
+  - The player's instance list has 204 variables.
+  - The hot ones are near the front, so the backward scan crosses almost all of them: `state` 167 rows, `ON_GROUND` 191.
+  - The ALL-CAPS "constants" (`ON_GROUND`, `RUNNING`, …) are instance variables set in the create event.
+  - The global list has 299 rows.
+- **Node kinds**: var 37% (simple 35.8%, owner/index 1.2%), binary 28.7%, const 22.5% (92% real), call 9.9%, unary 2.0%.
+- **Var reads**:
+  - 91% are unqualified (owner −6), 5% `global.`, 4% `obj.`.
+  - 56% user variables in an instance list, 34.5% builtin variables through Delphi getters (`x`, `y`, `sprite_index`, `room`).
+  - 95% of results are reals.
+- **Operators**: `&&` 21%, comparisons 32%, `||` 13%, `+`/`-` 20%, `!` 6%, `*` `/` 1%.
+- **Statements**: if 48%, assignment 22%, return 16%, call 8%, block 5%, with 0.5%.
+- **Numeric-only subtrees** (real constants, vars, arithmetic and comparisons, no call or string anywhere):
+  - 70% of expression roots.
+  - 72% of eval entries fall inside such a root.
+- **Hottest calls**:
+  - `room_get_name` plus script #211: 14.7k each, called together (a room-name test in a script).
+  - `round` 13.4k, `collision_point` 6.6k, `instance_exists` 5.5k, script #56 5.3k, script #20 3.8k (the collision-bounds getter).
+  - `collision_rectangle` 3.3k, `collision_line` 3.2k (counts are per window).
+- **Concentration**: 84 distinct code objects ran.
+  - Share of interpreter work: top 1 16%, top 5 51%, top 10 68%, top 20 84%.
+  - Nesting stays under about 3 script levels (the ESP spread at 0x528b3c is ~1.8 KB).
+- **RTL traffic**:
+  - 11.5k CopyRecord per step: 62% script-call argument save and restore, 11% var-lookup copy-out, 11% constant eval.
+  - 18k FinalizeRecord per step, 80% from FinalizeArray. Most of it is the 16-Value call/script argument arrays.
+  - The Delphi fold runs FinalizeRecord and CopyRecord natively, but **FinalizeArray almost always falls back**: 4.3k native vs 3.96M fallback since boot.
+
+### Guest-instruction shares (uop tier off, 169 steps, 882 M weighted insns)
+
+`blocks.js setB/hist.json EXE --hle=<fold entries>` (fold HLE blocks weigh 1):
+
+| Share | What |
+|---|---|
+| **21.6%** | var-list backward scan loop 0x4a8a4c/0x4a8a5b (27.2 M iterations) |
+| ~13–15% | object instance table: nth 0x4aeee0 (2.63 M calls, each also calls DynArray length 0x406d64), 0x4aee7c, 0x4aee54 |
+| ~14% | GML tree walk itself (eval 2.4, var-read node 2.5, binary node + op 3.7, call node 1.6, script call 2.2, statements/assign/code exec ~2.5) |
+| ~6.5% | RTL record + LStr remaining after the Delphi fold |
+| ~5.5% | collision: bbox test 0x4aceec 3.0 + scan 0x4e3ed0 2.5 (+ collision-event pass 0x539bb4 ~2) |
+| rest | unlabelled runner pages 0x4b0000 (6.5%, hot 0x4b03c0), 0x4af000, 0x55c000, … |
+
+On main, the uop tier runs the scan loop as a resident program (the 20261126 census shows 204 blocks per entry at 0x4a8a4c), so its CPU share there is below its 21.6% instruction share. The old attribute.js "uop%" column undercounted it at 1.8%.
+
+### Recommendation: (c) targeted folds, not a GML evaluator
+
+1. **Var-list lookup fold**: about 20% of guest instructions; the largest single lever and exact by construction.
+   - Run the 0x4a8a30 scan natively, as a Delphi-fold-style HLE on the loop or on the whole lookup.
+   - Optionally add a validated per-list index hint keyed by list, checked by `rows[i].id == id` with no later duplicate.
+   - Exit state is esi/ebx/edi/ecx plus the last cmp's flags. Charge the branch clock per iteration, as the Init/Move folds do, so `--branch-clock` stays invariant.
+   - A generic strided-search idiom in the loop matcher would also catch it.
+2. **Instance-table fold**: about 10–13%. 0x4aeee0 / 0x4aee7c / 0x4aee54 are pure bounds-checked dynarray reads; fold them with DynArray length.
+3. **FinalizeArray fold coverage**: a few %. Find why the 16-Value argument arrays fall back.
+4. **(a) Native numeric GML evaluator**: it can remove at most the ~14% tree walk, and only the numeric 72% of it.
+   - It still pays the var lookups (item 1).
+   - It must reimplement or fall back on the builtin-variable getters (34.5% of reads), GM's real/string semantics and error paths.
+   - Revisit only after items 1–2.
+5. **(b) Partial evaluation**: no. Its targets are tree shape and constants, while the cost is in lookups and instance loops.
+
+## GM fold (branch opt/gm-fold), 2026-11-26
+
+Evidence: `scratch/runs/20261126-gm-fold/`. Items 1–3 of the recommendation
+above, as extra paths of the Delphi fold's handler 395 under a separate
+mask (`$gm_fold`, `--gm-fold=N`, default 7; `set_gm_fold` export). The
+native code is `$gmf_run` (10-helpers-delphi-fold.wat), which writes no EIP;
+the handler applies its result.
+
+- **Matching.** By body signature, never by address: first dword, FNV-1a
+  over the body with rel32 bytes masked, plus callee checks. The same bodies
+  are in all 13 GM5/GM7/GM8 runner PEs in `test/binaries/candidates`
+  (`node tools/delphi-detect.js DIR` prints `gm=`). Metrojd GM7 has them at
+  0x4aa378 / 0x4b04f0 / 0x4b048c / 0x4b0464.
+
+| Mask bit | Id | Spelunky VA | What |
+|---|---|---|---|
+| 1 | 10 | 0x4a8a4c | var-list backward scan loop (21 bytes, 40-byte rows); exit at +0x15 |
+| 2 | 11 | 0x4aeee0 | 2-D instance read, fields +0x84 (counts) / +0x80 (rows) |
+| 2 | 12 | 0x4aee7c | 2-D instance read, disp8 fields +0x7C / +0x78 |
+| 2 | 13 | 0x4aee54 | 1-D instance read, +0x7C |
+| — | 14 | 0x406d64 | DynArray length, the callee of 11–13 (checked, registered for SMC) |
+| 4 | 4+0x400 | 0x406534 | `_FinalizeArray` kind 0x0E (records) whose only managed field is one AnsiString |
+
+- **Why FinalizeArray fell back.** The id-4 native path took only `ecx == 1`
+  with kind 0x0A (one AnsiString). The 16-Value GML argument arrays are kind
+  0x0E (RValue records, string at +0x10) with n = 16, so every call fell
+  back. The record path is gated at decode on `_FinalizeArray`'s record loop
+  (+0xB0) calling the id-3 `_FinalizeRecord` that calls it back (+0x21).
+  A last reference mid-array (a free) hands the element to the guest: the
+  path rebuilds the record loop's state at its top (+0xA7) after k elements
+  and resumes there; k = 0 falls back.
+- **Branch clock.** Var scan: 2 per trip; it stops at the loop head after
+  any whole trip, where the threaded loop stops when the budget runs out.
+  Instance reads: 1 / 5 / 6 / 7 before the RET. Records: 6 + Σ(12 +
+  `_LStrClr`'s own) + 1.
+- **Latent bug fixed in id 1.** The released path of `_LStrClr` did not set
+  CF = 0 (its TEST does), so a caller's CF = 1 leaked through.
+- **Index hint: not done.** Checking a hint needs "no later duplicate", which
+  is the scan of the rows above it anyway.
+- **Exactness** (`--branch-clock`, fold vs `--gm-fold=0`):
+  - Spelunky Classic, the sweep2 `spel` route (32700 batches, 6 gameplay
+    cycles) on the box: every arm (control module twice, fold module mask
+    0 and 7, the split module mask 0 and 7) gives 3413254 API calls, and
+    the same digest of the 2 MB runner image hexdumped at 29000 and 32600.
+  - Metrojd GM7 (`--d3d9-gps=null --batch-size=100000`, 4000 batches): masks
+    7/0/1/2/4 give the same 4407516 API calls; 7 vs 0 give the same image
+    dumps at 2000 and 4000.
+  - A single headless-GL pair once differed by a diagonal line. Every rerun
+    of the same mask matched mask 0, and the image dumps match, so this is
+    attributed to headless GL rather than the fold.
+  - `test/test-delphi-fold.js` covers var-scan hits, duplicates, misses and
+    page-straddling rows; every instance-read branch; record arrays; SMC
+    mid-loop, mid-body and callee writes; `set_gm_fold(0)`; and every
+    budget.
+- **Hit counts, Spelunky route (mask 7).**
+  - Var scan: 452999 native / 430 fallback, 45.3 M trips (≈100 rows per
+    lookup).
+  - Instance reads 2-D wide / 2-D byte / 1-D: 9.65 M / 4.14 M / 6.69 M native.
+  - Record arrays: 1.15 M native, 840 resumed.
+  - uop blocks fall from 1.84 G to 1.60 G (fold entries leave uop programs).
+- **First layout cost.** With the GM paths inline in `$th_delphi_rtti`,
+  the handler grew from 9.8 KB to 13.7 KB of Ion code (V8: 20.6 KB to
+  23.8 KB). The GM paths now run in `$gmf_run` (commit 7a8196ba6), so Ion
+  is back to 10.5 KB. Single box runs had suggested the inline layout cost
+  ~10%; the 6-rep lane put both layouts inside the box's noise.
+- **Guest-instruction shares.** Method: `blocks.js` on one gameplay cycle
+  (29000..29600, `--no-uop --handler-hist-*`, box); fold entries weigh 1.
+
+| | control | fold (7a8196ba6) |
+|---|---|---|
+| threaded weighted insns / cycle | 111.7 M | 61.2 M (−45%) |
+| var-list scan loop | 20.4% | 0.05% |
+| object instance table | 16.9% | 1.35% |
+| RTL record init/finalize/copy | 4.5% | 3.6% of the smaller total |
+| top of the list now | — | collision bbox 0x4aceec 7.2%, collision scan 0x4e3ed0 7.0%, var-read node 4.5%, eval dispatch 4.3% |
+
+- **Timing.** One box: Boat 4 vCPU AMD EPYC, node 24.22.1, x86-64.
+  - Method: sweep2 harness, `--branch-clock`, whole-run `/usr/bin/time`
+    user CPU, 6 interleaved reps.
+  - Arms: n1/n2 are the control d4cb724ef built twice; ctl2/fold2 are
+    7a8196ba6 at `--gm-fold=0` / default.
+  - The box was noisy: per-arm spread was 8–33%.
+
+| Workload | Measure | n1 median | null band (n2) | fold2 vs ctl2 | fold2 vs n1 |
+|---|---|---|---|---|---|
+| spel30 (30 gameplay cycles, 47100 batches) | whole run | 66.24 s | +0.52% | **−5.15%** (min −6.21%) | −4.72% |
+| spel30 | window 29600:47000 (gameplay) | 16.53 s | +0.97% | **−18.66%** (min −16.19%) | −16.33% |
+| spel30 | window 21000:29000 (title → tutorial) | 14.20 s | +0.13% | −11.95% | −12.26% |
+| spel (6 cycles) | whole run | 54.95 s | −0.47% | −6.05% (min −3.60%) | −3.27% |
+| heroes2_demo (non-GM control) | whole run | 5.06 s | −0.40% | +1.57% | −3.85% (inside the ±20% spread) |
+
+- **Native code** (V8 and SpiderMonkey, arm64 laptop and x86-64 box).
+  - The var-scan loop's fast path (same page) has no call.
+  - V8 keeps most of the loop in registers; one stack reload per trip on
+    x86-64.
+  - Ion keeps every loop variable in stack slots, on both architectures.
+    Moving the loop into its own small function did not change that (Ion,
+    arm64; variant not landed). The likely cause is the cold `$g2w`/`$gl32`
+    calls inside the loop: SpiderMonkey's wasm ABI has no callee-saved
+    registers.
+  - Next lever for Firefox: a call-free inner loop per guest page.
+
+### Collision scan fold (opt/gm-fold2, run 20261127-gm-fold2)
+
+- **What.** The line and point collision scans' per-instance loops run
+  natively in `$gmf_coll` (`--gm-fold` bits 3 and 4, default mask now 0x1F).
+  - Line scan: entry 0x4e3faf (loop head inside the scan at 0x4e3ed0), its
+    bbox test 0x4aceec. Point scan: entry 0x4e396b, its test 0x4ac734.
+    Both tests run only as callees (sig ids 17/18), never folded alone.
+  - Per trip: read row[j] through the instance read (id 11 body plus its
+    DynArray length), skip self (`notme`), skip deactivated (`+0x108`),
+    then the test's four compares against the shape's min/max. A trip that
+    gets past all four (a hit), a nil or out-of-row instance, a NaN shape,
+    an x87 push into a valid slot, the branch budget or the chunk end stops
+    the loop **at its head before that trip**; the threaded code runs it.
+    With no trip done it falls back (`cmp byte [ebp+8],0`, resume +4).
+  - Branch clock per trip: 12 (self skip), base+12 (deactivated), base+24+t
+    (test reject; base 10 with `notme`, else 0; t = 2 + jmp bit per stage
+    for line, the stage number for point), as the threaded code charges.
+  - Exit state: EAX/ECX/EDX/EBX/ESI, inc/dec flags, the x87 scratch slot,
+    its raw shadow bit and C0–C3/TOP.
+- **Scope: Game Maker 8 only.** GM7's line test (Metrojd) uses bbox
+  offsets 0xc0/0xc8 and no FWAIT, so it does not match. In the GM corpus
+  only Spelunky.exe and its config.exe match.
+- **SMC.** `$dfold_code_write` now drops **every** range group on a hit.
+  The scans at 0x4e3000 rest on code at 0x4ac000 (tests, instance read)
+  and at 0x406d64 (DynArray length, System). A per-group drop missed a
+  write into a callee in another group; that latent gap also applied to
+  the id 11–13 reads.
+- **Hits (Spelunky route, 32700 batches, box).**
+  - Line scan: 4506 ran to the end, 1226 fallback, 1251 stopped at the
+    head. Point scan: 7194 / 3527 / 3468.
+  - 3.98 M native trips.
+  - inst2w native drops from 9.65 M to 50 k because its calls from the
+    scan loops are now inside the fold.
+- **Exactness** (`--branch-clock`).
+  - Spelunky spelx route (box): masks 0x1F, 7, 0, 8, 16 and the previous
+    branch's default (285726c8b, mask 7) all give 3,413,254 API calls,
+    runner-image digest c50420bc4282c74f (two 2 MB dumps at 29000 and
+    32600, the same digest as the 20261126 run) and end frame
+    6a4436d8e792d22f.
+  - spel30 timing lane: all 24 runs give 4,845,761 API calls and the same
+    end frame.
+  - Metrojd GM7 (laptop, 4000 batches): mask 0x1F and mask 0 give 4,407,516
+    API calls and image digest 34483b6f817da97d. The new bits are inert
+    there: line/point 0/0/0.
+  - `test/test-delphi-fold.js`: 19 scan cases with the x87 file compared;
+    every budget; SMC in the loop, both tests, the instance read and the
+    DynArray length; one x87 register in use and a full stack;
+    `set_gm_fold(0)` and `(8)`.
+- **Guest-instruction shares.** One gameplay cycle (29000..29600,
+  `--no-uop --handler-hist-*`, box). Same `g1` module at `--gm-fold=7`
+  vs default. `blocks.js` with HLE entries = the 7 Delphi RTL entries +
+  Move 0x4030a8 + the GM entries; this set reproduces the 20261126 totals
+  (111.73 M / 61.22 M) exactly.
+
+| | mask 7 (before) | mask 0x1F (after) |
+|---|---|---|
+| threaded weighted insns / cycle | 60.99 M | 45.76 M (−25.0%) |
+| bbox test 0x4aceec | 7.21% | 0.02% |
+| collision scan 0x4e3ed0 | 6.85% | 0.05% |
+| page 0x4ac000 (other box tests, reads) | 5.67% | 0.71% |
+| page 0x4e3000 (scan bodies) | 4.99% | 0.17% |
+| var-read node 0x527530 | 4.47% | 5.96% |
+| collision-event pass, page 0x539000 | 4.46% | 5.95% |
+| eval dispatch 0x52786c | 4.33% | 5.78% |
+| page 0x406000 (System) | 3.77% | 5.02% |
+| RTL record init/finalize/copy | 3.65% | 4.87% |
+| extension/script call 0x5290fc | 3.53% | 4.70% |
+| binary node + op | 6.74% | 8.98% |
+
+- **Timing.** One box: Boat bx_acc8e7vw, 4 vCPU AMD EPYC, node 24.22.1
+  (V8 13.6), x86-64, deleted after the runs.
+  - Arms: n1/n2 = 088db1f91 built twice (default 0x1F); m7 = the n1
+    module at `--gm-fold=7`; cur = 285726c8b (the previous branch's
+    default, mask 7). 6 interleaved reps, `--branch-clock`.
+  - The box was noisy: per-arm spread 19–40% on spel30. The whole-run null
+    band (6.1%) is wider than the whole-run effect, so whole-run CPU does
+    not resolve it.
+  - The gameplay window does resolve it. n1 beat m7 in all 6 paired reps
+    (ratios 0.63–0.83), and n2 beat it in 5 of 6.
+
+| Workload | Measure | n1 median | null band (n2) | m7 vs n1 | cur vs n1 | paired n1/m7 median |
+|---|---|---|---|---|---|---|
+| spel30 | whole run | 65.27 s | 6.14% | +2.8% | +4.3% | 0.96 (−4%, inside the band) |
+| spel30 | window 29600:47000 (gameplay) | 11.51 s | 4.64% | **+38.1%** | +35.3% | **0.755 (−24.6%)** |
+| spel30 | window 21000:29000 (title → tutorial) | 12.50 s | 1.08% | +10.0% | +12.2% | — |
+| heroes2_demo (non-GM control) | whole run | 5.17 s | 7.07% | −3.2% | −6.0% | inside the ±50% spread |
+
+- **Native code** (box x86-64; SpiderMonkey 162 Ion, V8 16.0.133 d8
+  TurboFan; `wasm-native.js --index` from `build/watx-facts.json`).
+  - `$gmf_coll`: Ion 2707 bytes, V8 3200 bytes. Neither engine inlines it
+    into `$gmf_run`, so `$gmf_run` (Ion 2298 / V8 15936 bytes) and
+    `$th_delphi_rtti` (Ion 8913 / V8 23168) grew by 0.3–1.5% against 285726c8b.
+  - Each trip's guest reads are out-of-line calls. In Ion: 18 `$gl32`,
+    4 `$gl64` (the shape doubles) and 3 `$gl8` sites. V8 has 21 calls to
+    one memory helper.
+  - Next lever inside the fold: resolve the row, instance and bbox pages
+    once per trip with `$g2w` and read them with plain loads.
+- **Not folded: the var-read node 0x527530 and the eval dispatch 0x52786c.**
+  - The var-read node opens an SEH frame (`push fs:[0]` with handler
+    0x527728), zero-inits four managed locals finalized in its
+    try/finally, and switches on owner+7 into paths that call the Delphi
+    builtin-variable getters (34.5% of reads), the instance-list lookup
+    and CopyRecord. An exact fold has to reproduce the frame chain and the
+    finally, or fall back on every path that is not "unqualified user real
+    variable", which is the part already folded below it (var scan,
+    CopyRecord).
+  - The eval dispatch is clean: 13 instructions of compare chain, then a
+    call to the kind's handler. But a fold saves only the chain (about 4
+    blocks per eval; the share is the chain itself), and its callees stay
+    threaded. Worth it only as the entry of a numeric-subtree evaluator
+    (item 4 of the recommendation above), not alone.
+- **What next, by share after this fold.**
+  1. **Collision-event pass 0x539bb4** (5.95%). It is the same machinery:
+     a pair list `[0x58f550]`, A×B instance loops through the instance
+     reads 0x4aee54/0x4aee7c, a deactivated byte at +0x108 and the box
+     test. Its inner loop (0x539c22..0x539c5f, ~97 k trips per cycle) is
+     a direct extension of `$gmf_coll`.
+  2. Call-free page-local reads inside `$gmf_coll` and the var scan
+     (native-code item above).
+  3. The GML tree walk (var-read node, eval, binary node/op, call node,
+     script call: about 29% together now) is the next large block. It needs a numeric
+     subtree evaluator with fallback, not more single-function folds.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash

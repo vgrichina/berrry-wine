@@ -129,7 +129,7 @@ for (let i = 0; i + 4 < vals.length; i++) {
   if ((vals[i] & 0xFFFF0000) >>> 0 !== 0xC5E50000) continue;
   const k = vals[i] & 0xFFFF;
   // 10-18 (program lifetimes, exits, shape, retries) are read by tools/uop-census-diff.js
-  if (k < 1 || k > 18) continue;
+  if (k < 1 || k > 19) continue;
   recs.push({ k, a: vals[i + 1], b: vals[i + 2], c: vals[i + 3], d: vals[i + 4] });
   i += 4;
 }
@@ -147,6 +147,10 @@ const head = eip => {
   return h;
 };
 let flushes = 0, flushAll = 0;
+// --uop-opt S1 (0x200): every variant compiled, {head, reg, value, folds, jcc}
+const variants = [];
+// what each flush found: the arena bytes in use (b) and the range count (c)
+const flushAt = [];
 let hotTable = null;
 for (const r of recs) {
   if (r.k === 1) {
@@ -161,8 +165,11 @@ for (const r of recs) {
     head(r.a).last = 'poor';
   } else if (r.k === 3) {
     head(r.a).writes++;
+  } else if (r.k === 19) {
+    variants.push({ head: r.a, reg: r.b, value: r.c, folds: r.d & 0xFFFF, jcc: r.d >>> 16 });
   } else if (r.k === 4) {
     flushes++;
+    flushAt.push([r.b, r.c]);
   } else if (r.k === 5) {
     flushAll++;
   } else if (r.k === 6) {
@@ -234,6 +241,28 @@ say(`records: ${recs.length}   heads seen: ${all.length}`);
 say(`compiles: ${compiles} over ${distinct} distinct heads  (repeat compiles: ${compiles - distinct}, ` +
   `${compiles ? (100 * (compiles - distinct) / compiles).toFixed(1) : 0}%)`);
 say(`flushes: ${flushes} (of them flush-all, verdicts forgotten: ${flushAll})   busy (lock held): ${sum(all, h => h.busy)}`);
+if (variants.length) {
+  // S1: one line per (head, register, value), compiles of it counted (a flush recompiles them)
+  const REG = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi'];
+  const by = new Map();
+  for (const v of variants) {
+    const key = `${v.head}:${v.reg}:${v.value}`;
+    const e = by.get(key) || { ...v, n: 0 };
+    e.n++; e.folds = Math.max(e.folds, v.folds); e.jcc = Math.max(e.jcc, v.jcc); by.set(key, e);
+  }
+  const rows = [...by.values()].sort((x, y) => x.head - y.head);
+  say(`S1 variants: ${variants.length} compiles, ${rows.length} distinct (head, register, value) over ${new Set(rows.map(v => v.head)).size} heads`);
+  for (const v of rows.slice(0, Number(flag('variants', 40)))) {
+    say(`  0x${v.head.toString(16)}  ${REG[v.reg & 7]}=0x${(v.value >>> 0).toString(16)}  folds=${v.folds} jcc=${v.jcc}  compiles=${v.n}`);
+  }
+}
+if (flushAt.length) {
+  // UOP_RANGES_MAX is 4096: a flush at >= 4000 ranges is the range table, else the arena
+  const rng = flushAt.filter(([, n]) => n >= 4000).length;
+  const q = (xs, f) => xs.slice().sort((x, y) => x - y)[Math.min(xs.length - 1, Math.floor(f * xs.length))];
+  const al = flushAt.map(([a]) => a), nr = flushAt.map(([, n]) => n);
+  say(`flush state: range table full (>=4000 ranges) ${rng}, otherwise ${flushAt.length - rng}; arena bytes p10/p50/p90 ${q(al, .1)}/${q(al, .5)}/${q(al, .9)}, ranges p10/p50/p90 ${q(nr, .1)}/${q(nr, .5)}/${q(nr, .9)}`);
+}
 say(`installs: ${sum(all, h => h.installs)} over ${installed.length} heads ` +
   `(traces: ${sum(all, h => h.traces || 0)})   ` +
   `retired poor: ${sum(all, h => h.poor.length)} over ${poorHeads.length} heads   ` +

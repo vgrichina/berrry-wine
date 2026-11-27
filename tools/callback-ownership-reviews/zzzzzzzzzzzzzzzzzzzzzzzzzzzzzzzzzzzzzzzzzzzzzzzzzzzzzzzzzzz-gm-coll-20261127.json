@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/10-helpers-delphi-fold.wat",
+      "name": "$th_delphi_rtti",
+      "baseSHA256": "69400e90f1cb0f4b6ec86971481d4aa708ffd136c58d3343cad920122dd0a2f2",
+      "sha256": "749b18044235c79fee228674ceb45f6fab2d1e1919c804cb36a632c65d908ab0",
+      "reason": "Review 20261127 GM collision fold: handler 395 also runs the Game Maker 8 line/point collision scans' per-instance loop (ids 15/16) natively in $gmf_coll, reached through $gmf_run, which writes no EIP and returns fall-back or a resume address (the loop head or its fallthrough JMP). The handler's only change is the fallback's first instruction for 15/16 (cmp byte [ebp+8],0: flags and the +4 resume) and the id range of the instance reads' push ebx. EIP writes unchanged (same six sites, one $eip = $entry with $branch_end); no callback frame, invocation identity preserved. General callback ownership remains pending."
+    }
+  ]
+}

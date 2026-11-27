@@ -1,0 +1,25 @@
+{
+  "candidateId": "spelunky-classic",
+  "taskId": "opt-gml",
+  "agentId": "claude:c353e8b0",
+  "startedAt": "2026-11-26T00:00:00Z",
+  "finishedAt": "2026-11-26T23:59:00Z",
+  "outcome": "passed",
+  "route": "gameplay (tutorial level, run/jump/whip cycle)",
+  "command": "node test/run.js --app=spelunky_classic --headless-gl --quiet-api --screen=1024x768 --batch-size=100000 --stuck-after=0 --no-close --no-build --max-seconds=20000 --max-batches=10000000 --control=8261 --frozen --value-probe; then route/drive.js to-tutorial + walk.js (Right 150, Left 100, Up 30, step 1000) to the tutorial; probes.js arm A + drive.js cycles 1 (window 30521..~31121, 168 GM steps); probes.js arm B + histwin.js + drive.js cycles 1 (169 GM steps)",
+  "build": {
+    "commit": "bc5f3b2fbd7190c3ceb59845c2836e5181d50892",
+    "dirtyPatchSha256": "d3d74210db7ec9068de0b414ec3393f4902404b64cbb319b19ffe424f70f980f (git diff --binary -- src test docs, before the opt/gml-re commit; that commit holds the change)",
+    "wasmSha256": "fda9b705c708d51ba5ba2b8f265b675fe34f4af8bd14b80e6d6f6a00ec2e753a"
+  },
+  "environment": { "host": "local laptop (loaded)", "mode": "cli", "renderer": "headless-gl", "clock": "default; counts only, no timings" },
+  "summary": "GM8 GML interpreter census. Per GM step: 5.5k node evals, 1.2k statements, 1.3k var-list lookups costing 161k backward-scan iterations. With the uop tier off (probes armed), the var-list scan loop 0x4a8a4c is 21.6% of guest instructions, the object instance table (0x4aeee0) ~12%, the GML tree walk itself ~14%. Numeric-only roots cover 72% of eval entries. Recommendation: (c) targeted folds, var-list lookup first.",
+  "verification": "reviewed",
+  "screenshots": ["route/tutorial.png", "setA/c1795745271905-whipL.png"],
+  "artifacts": [
+    "setA/report.txt", "setA/counts.json", "setA/lookups.txt", "setA/analysis.json",
+    "setB/blocks-hle.txt", "setB/blocks.txt", "setB/callers.txt", "setB/counts.json", "setB/probes.json", "setB/hist.json",
+    "attribution/main-threaded-gml-split.txt",
+    "analyze.js", "blocks.js", "callers.js", "probes.js", "histwin.js", "gml-dump.js", "route/drive.js", "route/walk.js"
+  ]
+}

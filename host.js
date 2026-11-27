@@ -3441,6 +3441,14 @@ class WineAssembly {
     // ?uop-sse: kind 34, the XMM forms in the tier (opt-in, compile-time).
     const uopSse = (uop && window.WineSuperops && window.WineSuperops.uopSse === true) ? 1 : 0;
     if (uopSse && this.instance.exports.set_uop_sse) this.instance.exports.set_uop_sse(1);
+    // ?uop-opt=MASK: the stacked optimizer passes (07d $uop_opt; opt-in,
+    // compile-time, default 0).
+    const uopOpt = (uop && window.WineSuperops && Number.isFinite(window.WineSuperops.uopOpt))
+      ? (window.WineSuperops.uopOpt >>> 0) : 0;
+    if (uopOpt && this.instance.exports.set_uop_opt) this.instance.exports.set_uop_opt(uopOpt);
+    // ?uop-sse-native (with ?uop-sse): the hot XMM forms as native 07d ops.
+    const uopSseNative = (uopSse && window.WineSuperops.uopSseNative === true) ? 1 : 0;
+    if (uopSseNative && this.instance.exports.set_uop_sse_native) this.instance.exports.set_uop_sse_native(1);
     const smcSameBlock = (this.smcSameBlock === true ||
       (window.WineSuperops && window.WineSuperops.smcSameBlock === true)) ? 1 : 0;
     if (this.instance.exports.set_smc_same_block) this.instance.exports.set_smc_same_block(smcSameBlock);
@@ -3546,6 +3554,12 @@ class WineAssembly {
       }
       if (uopSse && this.instance.exports.set_uop_sse) {
         await this.guestWorker.callExport('set_uop_sse', uopSse);
+      }
+      if (uopOpt && this.instance.exports.set_uop_opt) {
+        await this.guestWorker.callExport('set_uop_opt', uopOpt);
+      }
+      if (uopSseNative && this.instance.exports.set_uop_sse_native) {
+        await this.guestWorker.callExport('set_uop_sse_native', uopSseNative);
       }
       if (this.instance.exports.set_smc_same_block) {
         await this.guestWorker.callExport('set_smc_same_block', smcSameBlock);
@@ -3741,6 +3755,8 @@ class WineAssembly {
     this.threadManager.recordInheritedWasmGlobal('set_uop', uop);
     this.threadManager.recordInheritedWasmGlobal('set_aggressive_stack', aggressiveStack);
     this.threadManager.recordInheritedWasmGlobal('set_uop_sse', uopSse);
+    this.threadManager.recordInheritedWasmGlobal('set_uop_opt', uopOpt);
+    this.threadManager.recordInheritedWasmGlobal('set_uop_sse_native', uopSseNative);
     this.threadManager.recordInheritedWasmGlobal('set_smc_same_block', smcSameBlock);
     this.threadManager.recordInheritedWasmGlobal('set_delphi_fold', delphiFold);
     this.threadManager.recordInheritedWasmGlobal('set_uop_trace_heads', uopTraceHeads);
