@@ -42399,5 +42399,59 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 5001,
+    "name": "TransparentBlt",
+    "nargs": 11,
+    "convention": "stdcall",
+    "hash": 2128011313,
+    "args": [
+      {
+        "name": "hdcDest",
+        "type": "HDC"
+      },
+      {
+        "name": "xoriginDest",
+        "type": "int"
+      },
+      {
+        "name": "yoriginDest",
+        "type": "int"
+      },
+      {
+        "name": "wDest",
+        "type": "int"
+      },
+      {
+        "name": "hDest",
+        "type": "int"
+      },
+      {
+        "name": "hdcSrc",
+        "type": "HDC"
+      },
+      {
+        "name": "xoriginSrc",
+        "type": "int"
+      },
+      {
+        "name": "yoriginSrc",
+        "type": "int"
+      },
+      {
+        "name": "wSrc",
+        "type": "int"
+      },
+      {
+        "name": "hSrc",
+        "type": "int"
+      },
+      {
+        "name": "crTransparent",
+        "type": "UINT"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]

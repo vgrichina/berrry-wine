@@ -3697,6 +3697,20 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28))) ;; 6 args + ret
   )
 
+  ;; Public MSIMG32 ABI: eleven DWORD arguments, plus the return address.
+  ;; Keep the nine-argument native-control adapter separate.
+  (func $handle_TransparentBlt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $gdi_hdc_transparent_stretch_blt
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40)))
+        (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 44)))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 48))))
+
   ;; 450: StretchBlt(hdcDest, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, dwRop)
   (func $handle_StretchBlt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dst i32) (local $src i32) (local $src_hdc i32)
