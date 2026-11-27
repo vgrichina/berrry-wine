@@ -27,13 +27,16 @@
 //             wrote through Delphi 2006), linker version, packer sections.
 //   overlay   Game Maker data magic 1234321 (0x0012D591) in the first 1 MB
 //             after the last section; Inno Setup's "rDlPtS" / "zlb\x1a".
-//   arm D     the five bodies -- 1 _LStrClr 2 _LStrAsg 3 _FinalizeRecord
-//             4 _FinalizeArray 5 _CopyRecord -- identified exactly as
-//             src/10-helpers.wat ($delphi_rtti_at, branch fold-bench) does:
+//   arm D     the bodies -- 1 _LStrClr 2 _LStrAsg 3 _FinalizeRecord
+//             4 _FinalizeArray 5 _CopyRecord 6 _InitializeRecord
+//             7 _InitializeArray -- identified exactly as
+//             src/10-helpers-delphi-fold.wat ($dfold_at / $d_check) does:
 //             the first dword, then FNV-1a over the body with every
 //             E8/E9 rel32 left out, then the callees the native form
-//             stands in for (3 -> 4 -> 1, 4 -> 1, 5 -> 2). Plus the
-//             9..32-byte FILD/FISTP System.Move form CopyRecord pays for.
+//             stands in for (3 -> 4 -> 1, 4 -> 1, 5 -> 2, 6 <-> 7). Plus
+//             which System.Move the program links ("move="): the FILD/FISTP
+//             form with its jump table (id 8) or the REP MOVSD form (id 9),
+//             both folded and both what _CopyRecord's leading Move assumes.
 //             "exact" = body and callees match (D would fire); "body" =
 //             body matches, a callee does not (D falls back); "variantNN" =
 //             no exact body, but some body is NN% byte-equal (rel32s left
@@ -71,7 +74,17 @@ const D = {
        masks: [0x3F, 0x4B, 0x50, 0x57, 0x5C, 0x68, 0x71, 0x7D, 0x9A, 0xB0, 0xC0, 0xD1, 0xE1] },
   5: { name: 'CopyRecord', first: 0x55575653, len: 0x11A, fnv: 0xbfece31d,
        masks: [0x28, 0x67, 0x71, 0x82, 0x93, 0xB7, 0xD0, 0xDD, 0xF0, 0x111] },
+  6: { name: 'InitializeRecord', first: 0x8a53c931, len: 0x2F, fnv: 0x9323153d, masks: [0x21] },
+  7: { name: 'InitializeArray', first: 0x840fc985, len: 0x93, fnv: 0x5b56943e, masks: [0x3C, 0x71, 0x87] },
 };
+// System.Move: 8 FILD/FISTP (its jump-table address +0x11 and table
+// +0x38..+0x5C are absolute, left out and checked against the entry),
+// 9 REP MOVSD (Game Maker 5/7 runners).
+const M = {
+  8: { name: 'FILD', first: 0x3174d039, len: 0xFD, fnv: 0xfdefbda4, masks: [0x11], range: [0x38, 0x5C] },
+  9: { name: 'REP', first: 0xc6895756, len: 0x40, fnv: 0xfa2e0fd2, masks: [] },
+};
+const MOVE_TABLE = [0x35, 0xB6, 0xBC, 0xC3, 0xD0, 0xD5, 0xE0, 0xED, 0xF8];
 // The reference bodies those hashes were taken from (Spelunky Classic 1.1,
 // Game Maker 8 runner, at 0x405934 / 0x405988 / 0x4064e8 / 0x406534 /
 // 0x40674c), used only to rate a non-matching body by its byte similarity.
@@ -81,6 +94,8 @@ const REF_HEX = {
   3: '31c9538a4a01565789c38d74110a8b7c11068b168b460401d88b12b901000000e82700000083c6084f7fe789d85f5e5bc3',
   4: '83f9000f84e00000005053565789c389d689cf31d28a068a56013c0a74253c0b743e3c0c74513c0d745c3c0e74763c0f0f84840000003c110f848b000000e99700000083f90189d87f0ae8b1f3ffffe99100000089cae8c9f3ffffe98500000083f90189d87f07e8c8fbffffeb7789cae8d7fbffffeb6e89d883c310e867ffffff4f7ff3eb5f5589d58b542e0a89d8035c2e028b4c2e068b12e862ffffff4f7fe85deb415589d589d8035c2e0289f2e800ffffff4f7ff05deb2b89d883c304e8181000004f7ff3eb1c89d889f283c304e8230900004f7ff1eb0b5f5e5b58b002e9cfc8ffff5f5e5b58c3',
   5: '5356575589c389d631c08a41018d7c080a8b6ffc31c08b4ff8518b4f0429c17e0b89c201f001dae830c9ffff8b47048b178b128a0a80f90a743180f90b743d80f90c744980f90d745580f90e747080f90f0f848000000080f9110f8488000000b0025d5f5e5be931c7ffff8b143001d8e8c7f1ffffb804000000eb7d8b143001d8e8d2f9ffffb804000000eb6c8d143001d8e851ffffffb810000000eb5b31c98a4a01ff741102ff7411068b4c110a8b098d143001d8e86100000058eb3b31c98a4a018b4c11025189d18d143001d8e82cffffff58eb228b143001d8e8fb0d0000b804000000eb1189d18b143001d8e828070000b80400000003470483c7084d0f8514ffffff5929c17e0a8d141801f0e847c8ffff5d5f5e5bc3',
+  6: '31c9538a4a01565789c38d74110a8b7c11068b168b460401d88b12b901000000e80b00000083c6084f7fe75f5e5bc3',
+  7: '85c90f848a00000053565789c389d689cf31d28a068a560131c93c0a74223c0b741e3c0c74243c0d74333c0e744d3c0f740e3c11740ab0025f5e5be960caffff890b83c3044f7ff8eb45890b894b04894b08894b0c83c3104f7fefeb325589d58b542e0a89d8035c2e028b4c2e068b12e88bffffff4f7fe85deb145589d589d8035c2e0289f2e845ffffff4f7ff05d5f5e5bc3',
 };
 const REF = {};
 for (const id in REF_HEX) {
@@ -88,36 +103,46 @@ for (const id in REF_HEX) {
   if (REF[id].length !== D[id].len) throw new Error(`reference body ${id} is ${REF[id].length} bytes, want ${D[id].len}`);
 }
 const VARIANT_MIN = 0.6; // fraction of unmasked bytes equal at the same offset
-const MOVE_FORM = [[0x00, 0x3174d039, 4], [0x04, 0x7720f983, 4], [0x08, 0x08e9837c, 4], [0x0C, 0x24ff077f, 4],
-  [0x10, 0x8d, 1], [0x15, 0xdf012cdf, 4], [0x19, 0x08f98328, 4], [0x1D, 0x68df117e, 4], [0x21, 0x10f98308, 4],
-  [0x25, 0x68df067e, 4], [0x29, 0x107adf10, 4], [0x2D, 0xdf087adf, 4], [0x31, 0x113cdf3a, 4], [0x35, 0xc3, 1]];
 
-// image: { secs: [{rva, vsize, buf}] } -- reads by RVA
+// image: { base, secs: [{rva, vsize, buf}] } -- reads by RVA
 function rd8(img, rva) { for (const s of img.secs) { const o = rva - s.rva; if (o >= 0 && o < s.buf.length) return s.buf[o]; } return -1; }
 function rd32(img, rva) {
   for (const s of img.secs) { const o = rva - s.rva; if (o >= 0 && o + 4 <= s.buf.length) return s.buf.readUInt32LE(o); }
   return -1;
 }
-function masked(id, o) { return D[id].masks.some(m => o - m >= 0 && o - m < 4); }
+const T = id => D[id] || M[id];
+function masked(id, o) {
+  const t = T(id);
+  return t.masks.some(m => o - m >= 0 && o - m < 4) || (t.range && o >= t.range[0] && o < t.range[1]);
+}
 function bodyHash(img, rva, id) {
   let h = 0x811c9dc5;
-  for (let i = 0; i < D[id].len; i++) {
+  for (let i = 0; i < T(id).len; i++) {
     if (masked(id, i)) continue;
     const b = rd8(img, rva + i); if (b < 0) return -1;
     h = Math.imul(h ^ b, 0x01000193) >>> 0;
   }
   return h >>> 0;
 }
-function sig(img, rva, id) { return rd32(img, rva) === D[id].first && bodyHash(img, rva, id) === D[id].fnv; }
+function sig(img, rva, id) { return rd32(img, rva) === T(id).first && bodyHash(img, rva, id) === T(id).fnv; }
 function rel(img, rva, o) { const v = rd32(img, rva + o); return v < 0 ? -1 : (rva + o + 4 + (v | 0)) >>> 0; }
 function calleesOk(img, rva, id) {
   if (id === 3) { const fa = rel(img, rva, 0x21); return sig(img, fa, 4) && sig(img, rel(img, fa, 0x4B), 1); }
   if (id === 4) return sig(img, rel(img, rva, 0x4B), 1);
   if (id === 5) return sig(img, rel(img, rva, 0x71), 2);
+  if (id === 6) return iaPair(img, rel(img, rva, 0x21), rva);
+  if (id === 7) { const ir = rel(img, rva, 0x87); return sig(img, ir, 6) && iaPair(img, rva, ir); }
   return true;
 }
+function iaPair(img, ia, ir) {
+  return sig(img, ia, 7) && rel(img, ia, 0x71) === ia && rel(img, ia, 0x87) === ir && rel(img, ir, 0x21) === ia;
+}
+// which System.Move form starts at rva: 'FILD', 'REP' or null
 function moveForm(img, rva) {
-  return MOVE_FORM.every(([o, v, w]) => (w === 4 ? rd32(img, rva + o) : rd8(img, rva + o)) === v);
+  const va = img.base + rva;   // the two absolute fields hold VAs
+  if (sig(img, rva, 8) && rd32(img, rva + 0x11) === ((va + 0x58) >>> 0)
+      && MOVE_TABLE.every((o, i) => rd32(img, rva + 0x38 + 4 * i) === ((va + o) >>> 0))) return 'FILD';
+  return sig(img, rva, 9) ? 'REP' : null;
 }
 // Similarity of the bytes at b[o..] to reference body id (masked bytes
 // skipped); returns 0 as soon as the threshold can no longer be reached.
@@ -137,13 +162,13 @@ function scanD(img) {
   const out = {};
   for (const id of Object.keys(D).map(Number)) out[id] = { exact: 0, body: 0, variant: 0, best: 0, at: [] };
   const ids = Object.keys(D).map(Number);
-  let moves = 0;
+  const moves = { FILD: 0, REP: 0 };
   for (const s of img.secs) {
     if (!s.exec) continue;
     const b = s.buf;
     for (let o = 0; o + 4 <= b.length; o++) {
       const w = b.readUInt32LE(o);
-      if (w === 0x3174d039 && moveForm(img, s.rva + o)) moves++;
+      if (w === M[8].first || w === M[9].first) { const m = moveForm(img, s.rva + o); if (m) moves[m]++; }
       for (const id of ids) {
         const r = out[id];
         if (w === D[id].first && bodyHash(img, s.rva + o, id) === D[id].fnv) {
@@ -259,7 +284,7 @@ function analyse(file) {
   if (inno) r.inno = true;
   r.packer = packer; r.evidence = ev;
   if (pascal || ALL) {
-    const img = { secs: p.secs.map(s => ({ rva: s.rva, buf: s.buf, exec: s.exec })) };
+    const img = { base: p.imageBase, secs: p.secs.map(s => ({ rva: s.rva, buf: s.buf, exec: s.exec })) };
     const d = scanD(img);
     r.armD = {};
     for (const id in d.ids) {
@@ -267,9 +292,9 @@ function analyse(file) {
       r.armD[D[id].name] = x.exact ? 'exact' : x.body ? 'body' : x.variant ? `variant${Math.round(x.best * 100)}` : '-';
     }
     r.armDExactRVAs = Object.fromEntries(Object.entries(d.ids).filter(([, x]) => x.exact).map(([id, x]) => [D[id].name, x.at.map(a => '0x' + (a + p.imageBase).toString(16))]));
-    r.moveForm = d.moveForm;
-    const v = Object.values(r.armD);
-    r.armDSummary = v.every(x => x === 'exact') ? 'exact(5/5)' : v.some(x => x === 'exact') ? `partial(${v.filter(x => x === 'exact').length}/5)`
+    r.moveForm = Object.entries(d.moveForm).filter(([, n]) => n).map(([k, n]) => `${k}x${n}`).join('+') || '-';
+    const v = Object.values(r.armD), nd = v.length;
+    r.armDSummary = v.every(x => x === 'exact') ? `exact(${nd}/${nd})` : v.some(x => x === 'exact') ? `partial(${v.filter(x => x === 'exact').length}/${nd})`
       : v.some(x => x !== '-') ? 'variant' : 'none';
   }
   let ver = null;
@@ -278,7 +303,7 @@ function analyse(file) {
     // System-unit bodies first: they name the RTL that is actually linked
     // (calibrated on rtl60/rtl70.bpl, vcl50.bpl, the GM7/GM8 runners and
     // Inno Setup 5.5 Unicode); the locale keys only bound it.
-    const a = r.armD || {};
+    const a = Object.fromEntries(Object.entries(r.armD || {}).filter(([k]) => [1, 2, 3, 4, 5].some(id => D[id].name === k)));
     const all5 = Object.values(a).every(x => x === 'exact');
     if (locE) ver = 'Delphi 2010/XE+';
     else if (locC) ver = ustr ? 'Delphi 2009' : 'Delphi 2007/2009';

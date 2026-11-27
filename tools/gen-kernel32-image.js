@@ -14,8 +14,22 @@ const entries = [...manifest.exports].sort((a, b) => {
   return Buffer.compare(Buffer.from(a.name, 'ascii'), Buffer.from(b.name, 'ascii'));
 });
 const named = entries.filter(e => e.name);
-if (entries.length * 8 > 4096 || named.length * 4 > 2048 || named.length * 2 > 2048 ||
-    entries.reduce((n, e) => n + ((Buffer.byteLength(e.api) + 6) & ~3), 32768) > 65536)
+// Image layout, mirrored by $kernel32_ensure_locked / $kernel32_emit_export in
+// 08-pe-loader.wat (98304-byte image):
+//   8192  EAT, one dword per ordinal 1..1024
+//   16384 IMAGE_EXPORT_DIRECTORY + "KERNEL32.DLL"
+//   32768 hint/name strings, to 65536
+//   65536 8-byte JMP stubs, one per export        (2048 max)
+//   81920 AddressOfNames, one dword per name      (2048 max)
+//   90112 AddressOfNameOrdinals, one word per name (2048 max), to 94208
+// The stubs and name tables sat at 4096/12288/14336 with room for 512
+// exports until 2026-11-26, when the implemented surface outgrew them.
+const LAYOUT = { stubs: [65536, 81920], names: [81920, 90112], nameOrdinals: [90112, 94208],
+  strings: [32768, 65536] };
+const span = ([a, b]) => b - a;
+if (entries.length * 8 > span(LAYOUT.stubs) || named.length * 4 > span(LAYOUT.names) ||
+    named.length * 2 > span(LAYOUT.nameOrdinals) ||
+    entries.reduce((n, e) => n + ((Buffer.byteLength(e.api) + 6) & ~3), LAYOUT.strings[0]) > LAYOUT.strings[1])
   throw new Error('KERNEL32 PE export regions overflow');
 if (new Set(named.map(e => e.name)).size !== named.length) throw new Error('Duplicate export name');
 let namedIndex = 0;
@@ -49,4 +63,9 @@ if (stop < start) throw new Error('Reversed KERNEL32 generated section markers')
 const generated = lines.join('\n');
 if (process.argv.includes('--check')) {
   if (source.slice(start, stop) !== generated) throw new Error('Stale KERNEL32 exports');
+  // Every implemented API Wine places in KERNEL32 must be exported: unpackers
+  // resolve their import table through GetProcAddress and exit on a NULL.
+  const { missing } = require('./kernel32-export-census').census(manifest, apis);
+  if (missing.length) throw new Error(`Implemented KERNEL32 APIs not exported: ${missing.join(' ')}\n` +
+    '  fix: node tools/kernel32-export-census.js --fix && node tools/gen-kernel32-image.js');
 } else fs.writeFileSync(out, source.slice(0, start) + generated + source.slice(stop));

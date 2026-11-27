@@ -524,8 +524,9 @@
   ;; fs_search_path(pathWA, fileNameWA, extWA, bufLen, bufGA, filePartPtrGA, isWide) → len or 0
   (import "host" "fs_get_short_path_name" (func $host_fs_get_short_path_name (param i32 i32 i32 i32) (result i32)))
   (import "host" "fs_create_file_mapping" (func $host_fs_create_file_mapping (param i32 i32 i32 i32 i32) (result i32)))
-  (import "host" "fs_create_file_mapping_result" (func $host_fs_create_file_mapping_result (param i32 i32 i32 i32 i32 i32) (result i32)))
+  (import "host" "fs_create_file_mapping_result" (func $host_fs_create_file_mapping_result (param i32 i32 i32 i32 i32 i32 i32) (result i32)))
   ;; fs_create_file_mapping(hFile, protect, sizeHi, sizeLo, nameWA) → mapping handle
+  ;; The _result form adds resultWA (handle out) and wide (nameWA is UTF-16).
   ;; nameWA is 0 for an unnamed section. A named one can be reopened by name,
   ;; which is how an app asks "is my other instance already running?".
   (import "host" "fs_open_file_mapping" (func $host_fs_open_file_mapping (param i32) (result i32)))

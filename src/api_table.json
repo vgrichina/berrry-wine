@@ -42099,5 +42099,271 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 4989,
+    "name": "CreateFileMappingW",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 4289864568,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "lpAttributes",
+        "type": "LPVOID"
+      },
+      {
+        "name": "flProtect",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwMaximumSizeHigh",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwMaximumSizeLow",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpName",
+        "type": "LPCWSTR"
+      }
+    ],
+    "ret": "HANDLE"
+  },
+  {
+    "id": 4990,
+    "name": "LookupPrivilegeValueW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 44817076,
+    "args": [
+      {
+        "name": "lpSystemName",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "lpName",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "lpLuid",
+        "type": "LPVOID"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4991,
+    "name": "VerSetConditionMask",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3946904723,
+    "args": [
+      {
+        "name": "ConditionMaskLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "ConditionMaskHi",
+        "type": "DWORD"
+      },
+      {
+        "name": "TypeMask",
+        "type": "DWORD"
+      },
+      {
+        "name": "Condition",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4992,
+    "name": "UuidFromStringA",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 416456978,
+    "args": [
+      {
+        "name": "StringUuid",
+        "type": "LPCSTR"
+      },
+      {
+        "name": "Uuid",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4993,
+    "name": "VerifyVersionInfoW",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3945885385,
+    "args": [
+      {
+        "name": "lpVersionInformation",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwTypeMask",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwlConditionMaskLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwlConditionMaskHi",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4994,
+    "name": "CharUpperBuffW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4065595103,
+    "args": [
+      {
+        "name": "lpsz",
+        "type": "LPWSTR"
+      },
+      {
+        "name": "cchLength",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4995,
+    "name": "CompareStringOrdinal",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 496110642,
+    "args": [
+      {
+        "name": "lpString1",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "cchCount1",
+        "type": "int"
+      },
+      {
+        "name": "lpString2",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "cchCount2",
+        "type": "int"
+      },
+      {
+        "name": "bIgnoreCase",
+        "type": "BOOL"
+      }
+    ],
+    "ret": "int"
+  },
+  {
+    "id": 4996,
+    "name": "GetFileSizeEx",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4257869773,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "lpFileSize",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4997,
+    "name": "SetFilePointerEx",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3865219911,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "liDistanceToMoveLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "liDistanceToMoveHi",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpNewFilePointer",
+        "type": "LPVOID",
+        "out": true
+      },
+      {
+        "name": "dwMoveMethod",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4998,
+    "name": "GetCPInfoExW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1252489070,
+    "args": [
+      {
+        "name": "CodePage",
+        "type": "UINT"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpCPInfoEx",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4999,
+    "name": "EnumSystemLocalesW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2580403173,
+    "args": [
+      {
+        "name": "lpLocaleEnumProc",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]

@@ -60,6 +60,9 @@ const PARTIAL = new Map([
   // Delegates to $handle_MapVirtualKeyA, which pops ret + 2 args; this pops the
   // third (the locale handle it ignores).
   ['MapVirtualKeyExA', 'delegates to MapVirtualKeyA, pops only the extra locale arg'],
+  // Delegates to $handle_GetCPInfo (ret + 2 args) for the CPINFO prefix; this
+  // pops the third argument.
+  ['GetCPInfoExW', 'delegates to GetCPInfo, pops only the extra third arg'],
 ]);
 // Helpers that redirect EIP or otherwise take over the frame.
 const REDIRECTS = /call \$(crash_unimplemented|host_exit|raise_exception|d3dim_|wnd_send_message|com_|handle_|sub_|com_call_method|dx_handle_method|modal_begin|enter_modal|seh_raise|cpp_operator_|dlg_|win16_|call_guest|invoke_guest|push_guest)/;

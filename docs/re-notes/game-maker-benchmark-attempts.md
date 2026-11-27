@@ -134,3 +134,110 @@ load fmod/jbfmod or Audiere with LoadLibrary.
   from 6.8K to 20.6K. `_CopyRecord` is 0 native in every one of these runs,
   against 286 in Spelunky (GM8). The cause is not investigated. Evidence:
   `scratch/runs/20261125-delphi-corpus/`.
+
+## GM7 crash root cause and fixes (2026-11-25, run 20261125-delphi-corpus-fixes)
+
+- **The GM7 Remar crash was VirtualAlloc, not GM7.** Delphi's memory manager
+  reserves 1MB regions and grows one by calling `VirtualAlloc(end, 1MB,
+  MEM_RESERVE)` at the address just past it, merging on success. Our handler
+  accepted a fixed MEM_RESERVE even when that address was already allocated.
+  `MakeObjectInstance` had committed its 4KB window-procedure thunk page
+  exactly there (`0x0c3f0000` in Herocore/Castle), so the allocator handed the
+  thunk page out, sprite data was copied over it (writer EIP `0x41d223`), and
+  the next message sent to a form (from SetWindowPos) jumped to
+  `0x0c3f0eaa` and executed pixels. It reproduces deterministically with
+  `--no-delphi-fold` (batch 33785 in Herocore); with the fold on, only the
+  timing changes. A fixed MEM_RESERVE now fails with ERROR_INVALID_ADDRESS when
+  any page of the range is owned (`$virtual_reserve_at`, 10-helpers.wat). Seven
+  Minutes' "runtime-generated code at 0x0c3f0e.." row above has the same
+  signature; it has not been re-run yet.
+- After the fix: Castle GM7 reaches its title screen ("Press F1 for help /
+  Enter to start", ~408K batches with `--no-uop`). Herocore GM7 stays on the
+  Remar splash for 1.78M batches without crashing. Its loader is
+  `_LStrCmp`-heavy, at `0x4053b4`. Hero GM7 shows its title art.
+- Hero GM7 loads XeAudiere.dll, which loads Audiere.dll; both are UPX-packed.
+  Audiere's stub resolves RPCRT4 `UuidFromStringA` and fails
+  DLL_PROCESS_ATTACH when GetProcAddress returns 0. That API is now
+  implemented. The "Error Messages" window in the log is GM's hidden error
+  form (style `0x86C80000`, no WS_VISIBLE), created at every start.
+- With the uop tier on, GM7 loading is about 4x slower than `--no-uop`. Castle
+  is still on LOADING after 183K batches. This is reported to the uop-opt
+  owner. **Diagnosed 2026-11-26** (run 20261126-delphi-corpus-fixes-2
+  `gm7uop/`; counts only, no uop source touched). All arms use
+  `--branch-clock` and reach identical API counts (5,367,414 at 200K
+  batches), so they are comparable. The "4x" came from runs on the
+  historical clock.
+
+  | Castle GM7, batches | `--no-uop` | uop (default) | uop `--uop-reguard-span=4096` |
+  |---|---|---|---|
+  | 0-60K | 6.0s | 5.4s | |
+  | 0-150K | 12.1s | 10.2s | |
+  | 0-200K | 18.6s | 28.7s | **12.6s** |
+
+  The loss is all in 150K-200K: 18.5s with uop against 6.5s without. The
+  cause is the widened re-guard (`$uop_reguard_wide`, 64KB default). Counts at
+  200K:
+  - 10.7M enters, 12.0 blocks per enter.
+  - 13.5M re-guards proved 183M pages, 13.6 pages each.
+  - With the one-page span, 18.2M re-guards prove 18.2M pages: 10x fewer
+    page proofs for 35% more re-guards.
+
+  `--uop-win-census`:
+  - 92% of re-guards are sparse (Delphi MM's VirtualAlloc heap; 44 map
+    records, 92% of reservations one affine run).
+  - Only 19.6% follow on into the next page. Most are first touches after
+    the per-enter window reset.
+
+  The hot programs are short Delphi RTL heads that run 4-7 blocks per enter,
+  each ~70K enters by 200K: `_LStrCmp` `0x4053b4`, `0x4023a4`, `0x402200`,
+  `0x40520c`, `0x4050a8`. So a 16-page proof is paid on almost every enter and
+  discarded a few blocks later.
+
+  Other counts are not the cause:
+  - Compile churn is 238 repeat compiles of 1065 (22%; 51 from verdict-map
+    aliasing) with 9 flushes.
+  - No code-write kills (0 retiring guest writes in both arms).
+  - The Delphi fold counts are identical between arms.
+
+  Proposed fix, for the uop owner (07d):
+  - Widen lazily. Prove one page on the first re-guard of a window after an
+    enter's reset, and widen only on the second miss of the same slot within
+    the enter. The 19.6% next-page streams still get the 64KB window.
+  - Or prove the sparse 64KB block with the single bulk `$g2w_affine_span`
+    (100% ok here) plus the 16-bit code-page bitmap load, rather than per
+    page.
+
+  Either should be A/B'd on Diablo and Moorhuhn 3, where widening was
+  measured as a win.
+- `_CopyRecord` native=0: the routine *is* called (Herocore GM7: 0 native,
+  185180 fallback before the fix; 0/288 after it). It falls back on every call
+  because `tools/delphi-detect.js` reports `move=0`: these runners' System.Move
+  is not the FILD/FISTP form `$d_move_form` checks. A record whose string field
+  is not at offset 0 needs that Move for its leading bytes. This is signature
+  variance in Move, not in `_CopyRecord`; the fold is unchanged.
+- **GM5 "Unexpected error" was GetObjectA.** The runner builds each sprite as
+  a TBitmap over a DIB section (`CreateDIBSection` 24bpp), saves it to a
+  TMemoryStream, and loads it back. Delphi's `TBitmap` takes the
+  BITMAPINFOHEADER it saves from `GetObject(h, sizeof(DIBSECTION))`'s
+  `dsBmih`. We answered 24 (BITMAP only), so the saved stream was "BM", a
+  bfSize, and a zero info header. `ReadDIB` (castle gm5 `0x427319`,
+  `cmp word [ebx+0xc],1`, biPlanes) raised through `0x422530` / `0x422518`,
+  and the runner turned that into the generic box. GetObjectA now fills the
+  84-byte DIBSECTION for a DIB section (`$gdi_bitmap_write_object`). Castle
+  GM5 then reaches its game window ("Castle of Elite - F4 for fullscreen")
+  with no exception in 496K batches. The client area was black in that
+  capture; see the next item.
+- **GM5 black client area was the DirectDraw DC's default clip** (2026-11-26,
+  run 20261126-delphi-corpus-fixes-2 `castle5/`). The play loop is plain
+  DDraw at 32bpp: tiles BltFast onto a 480x480 back surface, one Blt to the
+  primary. Every source surface was a single colour (plain ones all zero).
+  Each sprite reaches its surface at batch ~374795 through: 24bpp DIB
+  section -> `StretchBlt` into a screen-compatible DDB (after `PatBlt`
+  WHITENESS) -> `IDirectDrawSurface::GetDC` -> TCanvas selects font/pen/brush
+  and calls `IntersectClipRect(dc, 0, 0, w, h)` -> `StretchBlt` SRCCOPY ->
+  `ReleaseDC`. `$gdi_dc_target_size` had no case for the `0x200000+slot`
+  surface DCs, so their default clip was 0x0. IntersectClipRect returned
+  NULLREGION (1, which reads like TRUE in an API trace), and every later blit
+  returned 1 without writing a pixel. The surface DC now reports the surface's
+  w/h (`test/test-directdraw-gdi-clip.js`). A colour-keyed surface kept its
+  single `Blt` colour fill, which is why those looked "filled".

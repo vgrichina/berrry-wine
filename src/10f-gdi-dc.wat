@@ -1348,6 +1348,15 @@
       (then (return (i32.or (i32.and (i32.load offset=8 (local.get $bmp)) (i32.const 0xFFFF))
         (i32.shl (i32.and (i32.load offset=12 (local.get $bmp)) (i32.const 0xFFFF))
           (i32.const 16))))))
+    ;; An IDirectDrawSurface::GetDC DC is bounded by its surface. Without this
+    ;; its default clip was 0x0, so the first IntersectClipRect left an empty
+    ;; region and every later blit "succeeded" without touching a pixel:
+    ;; Delphi's TCanvas clips to the surface before each StretchBlt, and the
+    ;; Game Maker 5 runners loaded every sprite surface black (Castle GM5).
+    (local.set $surface (call $gdi_dx_surface_entry (local.get $hdc)))
+    (if (local.get $surface)
+      (then (return (i32.or (i32.load16_u offset=12 (local.get $surface))
+        (i32.shl (i32.load16_u offset=14 (local.get $surface)) (i32.const 16))))))
     (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
     (if (local.get $dc)
       (then

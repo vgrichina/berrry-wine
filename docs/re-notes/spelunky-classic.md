@@ -249,6 +249,40 @@ branch `fold-bench`. Evidence is in `scratch/runs/20261125-delphi-fold-land/`.
   FILD/FISTP Move, faults inside a helper, and a `--break` inside a matched
   body. Use `--no-delphi-fold` for those.
 
+### Init and Move fold (ids 6–9), 2026-11-26
+
+Evidence is in `scratch/runs/20261126-delphi-fold-init-move/`.
+
+- **What is matched.**
+  - `_InitializeRecord` 0x406418 (id 6) and `_InitializeArray` 0x406448
+    (id 7) are matched as a mutually recursive pair: each body's signature,
+    plus IA→IA, IA→IR and IR→IA rel32s.
+  - `System.Move` is matched in two forms. Id 8 is the FILD/FISTP form at
+    0x4030a8; its absolute jump table is checked against the entry. Id 9 is
+    the REP MOVSD form that Game Maker 5/7 runners link (Metrojd 0x402a90).
+  - `_CopyRecord`'s leading Move runs the same native copy, and only after
+    that Move's whole body is checked.
+- **Init.** `$di_plan` walks the RTTI before anything is written. It
+  computes the branch count and declines in these cases: an unknown kind, a
+  record with no fields, a walk deeper than the limit, and a walk whose RTTI
+  reads fall inside the span being zeroed.
+- **Move.** Move declines a FILD-form backward copy whose `dst-n` wraps, the
+  REP form under DF=1, and any copy over 1 MB.
+- **Exit state.** Init and Move leave the guest's exit EAX/ECX/EDX and lazy
+  flags as the body would leave them.
+- **Hit counts.** At gameplay 29600:32600, `--branch-clock`
+  (native/fallback): IR 1628860/625, IA 495426/1033, Move-FILD 22835788/1145.
+  `_CopyRecord` fallbacks drop from 554101 to 355099, because the REP-less
+  Move check now passes for more sizes.
+- **Attribution against main D.** Main D is 183.8 M weighted threaded
+  instructions and 352 M uop blocks.
+  - Init IR/IA falls from 1.2 % threaded + 12.7 % uop to 0.2 % + 0.0 %.
+  - `System.Move` falls from 2.2 % threaded to 0.6 %.
+  - `_CopyRecord`'s 3.8 % uop share is gone.
+  - Total uop blocks are ×0.794 and threaded instructions ×0.960.
+- **Fixed-dword collision.** `$dfold_at` now tries every id whose first
+  dword matches (`$d_check`). Before, the first match won.
+
 ## Reproduction
 
 ```sh

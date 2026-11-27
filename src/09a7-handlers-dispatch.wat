@@ -4797,6 +4797,16 @@
 
   ;; 777: CreateFileMappingA(hFile, lpAttr, flProtect, dwMaxHi, dwMaxLo, lpName) — 6 args
   (func $handle_CreateFileMappingA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_create_file_mapping (local.get $arg0) (local.get $arg2) (local.get $arg3)
+      (local.get $arg4) (i32.const 0)))
+
+  ;; CreateFileMappingW: the same section, named in UTF-16 (HeidiSQL's
+  ;; single-instance check). The host reads the name directly; no narrowing.
+  (func $handle_CreateFileMappingW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_create_file_mapping (local.get $arg0) (local.get $arg2) (local.get $arg3)
+      (local.get $arg4) (i32.const 1)))
+
+  (func $handle_create_file_mapping (param $arg0 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $wide i32)
     (local $section i32)
     ;; lpName is the sixth argument, past the five in registers.
     (local.set $section (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
@@ -4804,7 +4814,7 @@
       (local.get $arg0) (local.get $arg2) (local.get $arg3) (local.get $arg4)
       (if (result i32) (local.get $section)
         (then (call $g2w (local.get $section))) (else (i32.const 0)))
-      (global.get $reg_base)))
+      (global.get $reg_base) (local.get $wide)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))  ;; 6 args
   )
 

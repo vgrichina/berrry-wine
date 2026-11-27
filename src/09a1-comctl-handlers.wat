@@ -351,6 +351,67 @@
       (local.get $arg0) (local.get $arg1) (local.get $arg2)
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr)))
 
+  ;; UuidFromStringA(StringUuid, Uuid) -- RPCRT4. The string form has no
+  ;; braces: exactly "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" then NUL. NULL is
+  ;; the nil UUID. Anything else is RPC_S_INVALID_STRING_UUID and leaves the
+  ;; output alone. Audiere 1.9's UPX stub resolves this import while loading
+  ;; and fails DLL_PROCESS_ATTACH when GetProcAddress cannot find it, which
+  ;; is how Hero (Remar, GM7) lost its sound extension.
+  (func $handle_UuidFromStringA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $rc i32)
+    (if (i32.eqz (local.get $arg0))
+      (then
+        (call $gs32 (local.get $arg1) (i32.const 0))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 4)) (i32.const 0))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 8)) (i32.const 0))
+        (call $gs32 (i32.add (local.get $arg1) (i32.const 12)) (i32.const 0)))
+      (else
+        (if (i32.eqz (call $uuid_parse_ansi_g (local.get $arg0) (local.get $arg1)))
+          (then (local.set $rc (i32.const 1705))))))  ;; RPC_S_INVALID_STRING_UUID
+    (i32.store offset=0 (global.get $reg_base) (local.get $rc))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  ;; Unbraced ANSI UUID at guest $src -> 16 bytes at guest $dst; 1 when the
+  ;; whole string is well-formed (then and only then $dst is written).
+  (func $uuid_parse_ansi_g (param $src i32) (param $dst i32) (result i32)
+    (local $i i32) (local $ch i32) (local $v i32) (local $n i32)
+    (local $d1 i32) (local $d2 i32) (local $d3 i32) (local $cur i32) (local $q i64)
+    (block $done (loop $lp
+      (br_if $done (i32.ge_u (local.get $i) (i32.const 36)))
+      (local.set $ch (call $gl8 (i32.add (local.get $src) (local.get $i))))
+      (if (i32.or (i32.or (i32.eq (local.get $i) (i32.const 8)) (i32.eq (local.get $i) (i32.const 13)))
+                  (i32.or (i32.eq (local.get $i) (i32.const 18)) (i32.eq (local.get $i) (i32.const 23))))
+        (then (if (i32.ne (local.get $ch) (i32.const 0x2D)) (then (return (i32.const 0)))))
+        (else
+          (local.set $v (call $hex_digit_wide (local.get $ch)))
+          (if (i32.lt_s (local.get $v) (i32.const 0)) (then (return (i32.const 0))))
+          (if (i32.lt_u (local.get $n) (i32.const 8))
+            (then (local.set $d1 (i32.or (i32.shl (local.get $d1) (i32.const 4)) (local.get $v))))
+          (else (if (i32.lt_u (local.get $n) (i32.const 12))
+            (then (local.set $d2 (i32.or (i32.shl (local.get $d2) (i32.const 4)) (local.get $v))))
+          (else (if (i32.lt_u (local.get $n) (i32.const 16))
+            (then (local.set $d3 (i32.or (i32.shl (local.get $d3) (i32.const 4)) (local.get $v))))
+          (else
+            ;; Data4: bytes in text order, stored in memory order.
+            (if (i32.and (local.get $n) (i32.const 1))
+              (then
+                (local.set $q (i64.or (local.get $q)
+                  (i64.shl (i64.extend_i32_u (i32.or (local.get $cur) (local.get $v)))
+                           (i64.extend_i32_u (i32.shl (i32.shr_u (i32.sub (local.get $n) (i32.const 16)) (i32.const 1))
+                                                      (i32.const 3)))))))
+              (else (local.set $cur (i32.shl (local.get $v) (i32.const 4)))))))))))
+          (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $lp)))
+    (if (call $gl8 (i32.add (local.get $src) (i32.const 36))) (then (return (i32.const 0))))
+    (call $gs32 (local.get $dst) (local.get $d1))
+    (call $gs32 (i32.add (local.get $dst) (i32.const 4))
+      (i32.or (local.get $d2) (i32.shl (local.get $d3) (i32.const 16))))
+    (call $gs32 (i32.add (local.get $dst) (i32.const 8)) (i32.wrap_i64 (local.get $q)))
+    (call $gs32 (i32.add (local.get $dst) (i32.const 12))
+      (i32.wrap_i64 (i64.shr_u (local.get $q) (i64.const 32))))
+    (i32.const 1))
+
   ;; 916: RasEnumConnectionsA(lpRasConn, lpcb, lpcConnections) — 3 args stdcall
   ;; Return 0 (SUCCESS) with *lpcConnections = 0 (no dial-up connections)
   (func $handle_RasEnumConnectionsA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)

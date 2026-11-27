@@ -295,15 +295,22 @@
       (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
   )
 
-  ;; 614: CallWindowProcW — same ABI as CallWindowProcA
+  ;; 614: CallWindowProcW — same ABI as CallWindowProcA. When the previous
+  ;; proc is one of our ANSI native procs, the W payload is converted around
+  ;; the synchronous call ($wmsg_narrow_in); guest procs get it untouched.
   (func $handle_CallWindowProcW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $buf i32)
+    (if (call $cwp_w_target_is_native (local.get $arg0))
+      (then (local.set $buf
+        (call $wmsg_narrow_in (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4)))))
     (call $handle_CallWindowProcA
       (local.get $arg0)
       (local.get $arg1)
       (local.get $arg2)
       (local.get $arg3)
-      (local.get $arg4)
+      (select (local.get $buf) (local.get $arg4) (local.get $buf))
       (local.get $name_ptr))
+    (call $wmsg_widen_out (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $buf))
   )
 
   ;; Is ADDR one of the wndproc markers GetWindowLong/GetClassLong/GetClassInfo

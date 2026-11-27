@@ -3752,7 +3752,7 @@
     (local $win_x i32) (local $win_y i32) (local $win_cx i32) (local $win_cy i32)
     (local $host_win_x i32) (local $host_win_y i32) (local $host_win_cx i32) (local $host_win_cy i32)
     (local $detected_class i32) (local $wat_statusbar i32) (local $wat_tab i32) (local $class_wa i32) (local $title_wa i32)
-    (local $startup_cmd i32)
+    (local $startup_cmd i32) (local $cs_native i32)
     ;; Copy stack parameters that USER32 owns for the whole CreateWindowExA
     ;; operation. Later helper/import calls may use scratch paths; do not keep
     ;; treating the caller's stack frame as the source of truth.
@@ -4353,11 +4353,16 @@
     ;; callback address.
     (if (i32.ge_u (local.get $tmp) (i32.const 0xFFFF0000))
       (then
+        ;; Our procs read CREATESTRUCT text as ANSI; CreateWindowExW's is UTF-16.
+        (local.set $cs_native (call $createstruct_narrow_for_native
+          (i32.add (call $wnd_scratch) (i32.const 0x00))))
         (drop (call $wat_wndproc_dispatch
           (local.get $hwnd)
           (i32.const 0x0001)
           (i32.const 0)
-          (i32.add (call $wnd_scratch) (i32.const 0x00))))
+          (select (local.get $cs_native) (i32.add (call $wnd_scratch) (i32.const 0x00))
+            (local.get $cs_native))))
+        (if (local.get $cs_native) (then (call $heap_free (local.get $cs_native))))
         (call $startup_create_show (local.get $hwnd))
         (i32.store offset=0 (global.get $reg_base) (local.get $hwnd))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 52)))
@@ -4454,9 +4459,14 @@
     (if (i32.eq (call $wnd_table_get (local.get $hwnd)) (global.get $WNDPROC_CTRL_NATIVE))
       (then
         (global.set $pending_child_create (i32.const 0))
+        ;; Our procs read CREATESTRUCT text as ANSI; CreateWindowExW's is UTF-16.
+        (local.set $cs_native (call $createstruct_narrow_for_native
+          (i32.add (call $wnd_scratch) (i32.const 0x00))))
         (drop (call $wat_wndproc_dispatch
           (local.get $hwnd) (i32.const 0x0001) (i32.const 0)
-          (i32.add (call $wnd_scratch) (i32.const 0x00))))))
+          (select (local.get $cs_native) (i32.add (call $wnd_scratch) (i32.const 0x00))
+            (local.get $cs_native))))
+        (if (local.get $cs_native) (then (call $heap_free (local.get $cs_native))))))
     ;; COMCTL32's CreateToolbarEx queries GetWindowLong(hwnd, 0)
     ;; immediately after CreateWindowExA returns. Let the registered toolbar
     ;; wndproc run WM_NCCREATE/WM_CREATE synchronously so it can install that
