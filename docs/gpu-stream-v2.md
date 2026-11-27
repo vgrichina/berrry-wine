@@ -616,6 +616,10 @@ replaces the order listed below where they differ.
    the DIB shows; the producer chooses it and the executors see only a LUT.
    Opaque GDI blits onto a deferred GetDC upload their rect instead of
    reading the target back. Status: gpu-stream-v2-migration.md, D7.
+   Since D8, a lazy Lock that leaves untouched, or is overwritten or
+   materialized, drops the shared deferred-work word. A later barrier
+   therefore reads nothing back, and CPU Blts onto the target are replayed
+   on the GPU again: the gta2_demo menu goes from 1 readback per frame to 0.
 4. OpenGL.
 
 Every step gets a browser fps A/B and a pixel comparison against the commit

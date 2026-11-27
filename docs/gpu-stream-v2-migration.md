@@ -251,6 +251,32 @@ Without this, every new backend would have to reimplement the 846 lines of
     - D3D9 and GL 16-bit back buffers are not quantized. Their PRESENT gamma is 0 or a ramp only.
     - A clipped or update-locked opaque blit still lands.
     - Opaque PatBlt/FillRect onto a deferred DC are not covered: only BitBlt and StretchBlt take the hold.
+- **D8. Lazy-Lock settle; 16-bit GL/D3D9 present and the GDI extensions surveyed (branch gps/d8 = gps/d7 + one commit).**
+  - **Status (2026-11-27): done.** Evidence: `scratch/runs/20261127-gps-d8/`.
+  - **gta2_demo menu readback: not a guest touch, and removed.**
+    - Run the menu headless with `--batch-size=1000 --tick-ms-per-batch=5`; at the default clock it never draws.
+    - Each frame Locks the back buffer twice and Unlocks both untouched (lazy armed 567, touched 0, untouched 567).
+    - Between the two Locks, two opaque Blts (278x480 and 362x480) cover the whole back buffer, then come the draws, the Flip and a colour fill.
+    - Cause: `$d3dim_lock_fence` sets `$D3DIM_LAZY_SHARED`+16 (deferred GPU work), and only a materialize whose result was 1 cleared it. After an untouched Unlock the word stayed set, with these effects:
+      - `$d3g_cpu_write_ok` refused the GPU replay of the Blts. Each frame's first Blt then read the back buffer back, charged to site lazy, only to overwrite it.
+      - Every pixel-free `$d3dim_gpu_barrier` would also have read back every dirty target.
+    - Fix: `$d3dim_lazy_settled_locked` (09ab) drops +16 once no D3DIM entry is armed. It is called from the untouched Unlock, the whole-range overwrite discard and the touched materialize (09a8gv). After a touch, that entry's own fence has been paid.
+    - Ranged fences keep their eager `$d3dim_worker_pending` path. A barrier inside an armed Lock still materializes it.
+    - Results:
+      - gta2 menu: 283 → 0 readbacks (284 frames, syncs 284 → 1), pixels identical on WebGL and software. Upload bytes 159 → 349 MB, because the two Blts now upload their rects (1.2 MB per frame) instead of being diffed after a readback.
+      - mw3: still 3 readbacks, now charged to their real sites (bltSrc 2, lock 1) instead of lazy.
+    - Test: `test/test-d3dim-gps-lazy-settle.js`. It fails on gps/d7 at "untouched Unlock settles the owed word".
+  - **565 quantize for D3D9 and GL: no consumer, skipped.**
+    - GL: `$glg_bind` binds only 32-bpp render targets, and GL window targets are allocated at 32 bpp (09a8g).
+    - D3D9: a D3DFMT_R5G6B5 back buffer exists only on profile 3 (programmable plus software executor). Elsewhere CreateDevice refuses format 23, and an RGB565 render-target texture is widened to X8R8G8B8 (09ae). Pirates on `--d3d9-gps=software` creates an X8R8G8B8 800x600 back buffer.
+    - D3D8 R5G6B5 fullscreen is an X8R8G8B8 backing with a 16-bit Lock view, so the CPU presenter already shows 32-bit, as the GPU does.
+  - **Opaque PatBlt/FillRect and clipped opaque blits on deferred DCs: no consumer, skipped.**
+    - Survey: getDC readbacks 0 and gdiOpaqueLanded 0 on every route that reached GPS frames: forsaken, giants, dx_tunnel, dx_twist, scr_geometry, scr_jazz, dx_globe, thps2, mw3, dx_flip3dtl, dx_boids, incoming, metrojd_gm7, quake2.
+    - dx_flip3dtl's 5225 deferred GetDCs are text, which is already free.
+    - Logs: `survey/`.
+  - Open:
+    - The two items above, for when a corpus app needs them.
+    - gta2's menu Blts could diff against the shadow instead of uploading whole rects, which would cut the extra upload bytes.
 
 **Risks:**
 

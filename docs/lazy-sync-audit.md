@@ -40,6 +40,17 @@ mode, `tools/dev-server.js --isolate`, SwiftShader WebGL and
 
 Evidence: `scratch/runs/20261127-gps-d7/browser/`.
 
+Correction (2026-11-27, gps/d8): the gta2_demo menu row above is wrong
+about the cause. The guest never touches its locked back buffer (headless:
+lazy armed 567, touched 0, untouched 567). The readback came from
+`$D3DIM_LAZY_SHARED`+16 staying set after the untouched Unlock: the
+frame's opaque Blts onto the back buffer were then refused GPU replay
+(`$d3g_cpu_write_ok`) and read it back. `$d3dim_lazy_settled_locked` now
+clears the word whenever the last D3DIM entry leaves the table. The menu
+now takes 0 readbacks with identical pixels (CLI, WebGL and software
+executors; this is not a browser re-smoke). See gpu-stream-v2-migration.md,
+D8.
+
 ## Shared-thread correction (2026-09-29)
 
 Pending Lock range and deferred-work state now live in the allocated

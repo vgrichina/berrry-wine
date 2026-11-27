@@ -876,8 +876,24 @@
   (func $d3dim_lazy_unlock (param $entry i32) (result i32)
     (if (call $gps_lazy_disarm (global.get $GPS_API_D3DIM) (local.get $entry)) (then
       (global.set $d3dim_lazy_untouched (i32.add (global.get $d3dim_lazy_untouched) (i32.const 1)))
+      (call $gps_lazy_enter)
+      (call $d3dim_lazy_settled_locked)
+      (call $gps_lazy_leave)
       (return (i32.const 1))))
     (i32.const 0))
+  ;; An entry left the table: untouched at Unlock, discarded by a whole-range
+  ;; overwrite, or touched and its own range read back. Either way the fence
+  ;; its Lock skipped is paid or no longer owed.
+  ;; With no other D3DIM entry armed, +16 drops too. While it stays set,
+  ;; every pixel-free barrier (Flip's CPU swap, $d3dim_gpu_barrier) reads
+  ;; back every dirty target, and $d3g_cpu_write_ok refuses the GPU replay
+  ;; of a CPU Blt / colour fill, which then reads its destination back --
+  ;; GTA2's menu Locks its back buffer twice a frame, never touches it, then
+  ;; covers it with two opaque Blts: one readback per frame for nothing.
+  ;; Ranged fences keep their eager $d3dim_worker_pending path. Mutex held.
+  (func $d3dim_lazy_settled_locked
+    (if (i32.eqz (call $gps_lazy_find_key (global.get $GPS_API_D3DIM) (i32.const 0)))
+      (then (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 16) (i32.const 0)))))
   (global $d3dim_gpu_desc (mut i32) (i32.const 0))
   (global $d3dim_gpu_scratch (mut i32) (i32.const 0))
   (global $d3dim_gpu_scratch_cap (mut i32) (i32.const 0))
