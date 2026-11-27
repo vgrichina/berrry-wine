@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/guest-worker.js",
+      "name": "host-file",
+      "baseSHA256": "25e3d8fbcf51c39bfb0f170e99702fb64a958a6ed74b53b54647c95d862a85cf",
+      "sha256": "4029bd20d670df4e935d5160c474d16283d83bfb175ce1d417c742e19cda6883",
+      "reason": "Reviewed 20261127 Node shared renderer startup: require the production RenderWorker and D3DCommandStream modules into the same globals that the existing browser importScripts route installs. Two bootstrap bindings only; no callback producer, guest reentry, queue admission, failure handling, execution or retirement change. Fresh actual GuestThreadHost/production guest-worker baseline rejects PublicationQueue access; tracked test-node-shared-render-init.cjs now runs real guest and native d3d-render-worker Workers, enqueues two real PublicationQueue descriptors and replays three native software-GL texture copies with FIFO pixel/guard assertions, rejects failed queue and malformed init, and joins physical Worker exits/clocks. Existing lifecycle/RPC/publication tests retained; broader callback ownership remains pending. Run 20261127-node-render-worker-init-repair-root; no GPU/browser qualification."
+    }
+  ]
+}
