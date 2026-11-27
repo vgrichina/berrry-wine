@@ -113,6 +113,9 @@ async function delphiInstance(img, on, branchClock, gmMask) {
   mem.set([...Array(8).fill([0xD9, 0xE8]).flat(), 0xC3], g2w(FLD8));
   mem.set([0xDB, 0xE3, 0xC3], g2w(FNINIT));
   mem.set([...img(0x4a8a46, 0x1B), 0xC3], g2w(VSCAN));
+  // the collision-event pass; its box test's precise path: xor eax,eax; ret
+  mem.set(img(0x539b00, 0x400), g2w(0x539b00));
+  mem.set([0x31, 0xC0, 0xC3], g2w(0x4a6458));
   // FreeMem stub: [eax-8] (the AnsiString refcount word) = 0xDEAD, eax = 0
   mem.set([0xC7, 0x40, 0xF8, 0xAD, 0xDE, 0, 0, 0x31, 0xC0, 0xC3], g2w(STUB));
   // poke stub: xor byte [edx], 1 ; ret -- a guest store, so it goes through
@@ -462,6 +465,52 @@ coll('point scan hit first', LP, 'f', { shape: PS, inst: pick(PI, ['hit', 's2'])
 coll('point scan deactivated hit', LP, 'n', { shape: PS, inst: pick(PI, ['off', 's2']) });
 coll('point scan NaN shape', LP, 'f', { shape: [NaN, 100], inst: pick(PI, ['s1']) });
 
+// The collision-event pass (0x539bb4), called from its start: the pair count
+// [[0x58fc00]], the pair list [[0x58f550]] (a, b; 8 bytes each), the
+// instance table [[0x58fac4]] = OBJ with per-object counts (a dynarray) at
+// [OBJ+0x7C] and rows at [OBJ+0x78]. Its loop heads are entered on their back
+// edges. The box test's precise path calls 0x4a6458, stubbed `xor eax,eax;
+// ret` (no sprite: the test fails, no event fires).
+const CEV = 0x539bb4, CTEST = 0x4ad1a0, CPREC = 0x4a6458;
+const cevBuf = ({ objs, pairs, insts, nil = [] }) => (w, b) => {
+  w(0x58fc00, BUF + 0x20); w(BUF + 0x20, pairs.length);
+  w(0x58f550, BUF + 0x28); w(BUF + 0x28, BUF + 0x600);
+  pairs.forEach(([pa, pb], k) => { w(BUF + 0x600 + 8 * k, pa); w(BUF + 0x604 + 8 * k, pb); });
+  w(0x58fac4, BUF + 0x10); w(BUF + 0x10, OBJ);
+  const CT = BUF + 0x108, RT = BUF + 0x180;
+  w(OBJ + 0x7C, CT); w(CT - 4, objs.length); w(OBJ + 0x78, RT);
+  objs.forEach((list, x) => {
+    const row = BUF + 0x200 + 0x40 * x;
+    w(CT + 4 * x, list.length); w(RT + 4 * x, row);
+    list.forEach((j, k) => w(row + 4 * k, nil.includes(j) ? 0 : INST(j)));
+  });
+  insts.forEach(([l, t, r, bt, off], j) => {
+    const p = INST(j);
+    w(p + 0xB8, l); w(p + 0xBC, t); w(p + 0xC0, r); w(p + 0xC4, bt); b(p + 0x108, off ? 1 : 0);
+  });
+};
+// object 0: four boxes rejected against each other at compares 1-3 (and
+// itself at 5); object 1: one rejected at 4 against instance 0, one
+// deactivated overlapping it (7, and skipped as A); object 2 empty; object
+// 3 one box overlapping instance 0 (a box hit: the precise test, the guest's)
+const CI = [[0, 0, 10, 10], [20, 0, 30, 10], [0, 20, 10, 30], [-30, -30, -20, -20],
+  [0, -30, 10, -20], [5, 5, 15, 15, 1], [5, 5, 15, 15]];
+const COBJ = [[0, 1, 2, 3], [4, 5], [], [6]];
+// delphi_fold_stat keys: run to the exit / fallen back / stopped at a head,
+// by the head entered (outer, middle, inner)
+const CEV_KEYS = [[49, 50, 51], [59, 60, 61], [69, 70, 71]];
+const cev = (name, want, o) => CASES.push({ name, entry: CEV, want, keys: CEV_KEYS,
+  buf: cevBuf({ objs: COBJ, insts: CI, ...o }), regs: {} });
+cev('event pass mixed', 'n', { pairs: [[0, 1], [0, 0], [1, 0], [2, 0], [0, 2], [1, 1]] });
+cev('event pass same object', 'n', { pairs: [[0, 0]] });
+cev('event pass object out of range', 'n', { pairs: [[0, 1], [-1, 0], [7, 0], [0, -1], [0, 9], [1, 0]] });
+cev('event pass deactivated first', 'n', { pairs: [[1, 0], [1, 1], [0, 1]] });
+cev('event pass box hit in the middle', 'm', { pairs: [[0, 1], [1, 0], [0, 3], [0, 0]] });
+cev('event pass box hit first', 'f', { pairs: [[3, 3]], objs: [[0, 1, 2, 3], [4, 5], [], [6, 7]], insts: [...CI, [6, 6, 14, 14]] });
+cev('event pass nil instance', 'm', { pairs: [[0, 0], [0, 1]], nil: [5] });
+cev('event pass no pairs', '-', { pairs: [] });
+cev('event pass one empty pair', 'n', { pairs: [[0, 2]] });
+
 // withFpu: the x87 state too (the collision scans reproduce it; the FILD
 // Move's scratch registers are not)
 function compare(a, b, withBlocks, withFpu) {
@@ -488,9 +537,13 @@ async function casesUnder(img, branchClock) {
   for (const c of CASES) {
     layoutBuf(off, c.buf); layoutBuf(on, c.buf);
     if (c.fpu) { resetFpu(off); resetFpu(on); }
-    const s0 = [NATIVE, FALLBACK, PARTIAL].map((k) => on.e.delphi_fold_stat(k));
+    // a case with its own keys counts that fold alone (the event pass's
+    // guest trips call the instance reads, which fold on their own)
+    const K = c.keys || [[NATIVE], [FALLBACK], [PARTIAL]];
+    const sum = (ks) => ks.reduce((t, k) => t + on.e.delphi_fold_stat(k), 0);
+    const s0 = K.map(sum);
     const a = call(off, c.entry, c.regs), b = call(on, c.entry, c.regs);
-    const [dn, df, dp] = [NATIVE, FALLBACK, PARTIAL].map((k, i) => on.e.delphi_fold_stat(k) - s0[i]);
+    const [dn, df, dp] = K.map((ks, i) => sum(ks) - s0[i]);
     const diffs = compare(a, b, branchClock, c.fpu);
     if (c.want === 'm' && dn + df + dp < 1) diffs.push('want the fold to run, it did not');
     if (c.want === 'n' && (dn < 1 || df || dp)) diffs.push(`want native, got native=${dn} partial=${dp} fallback=${df}`);
@@ -568,6 +621,14 @@ async function main() {
   const img = peImage(EXE);
   const { off, on } = await casesUnder(img, true);
   everyBudget(off, on, 'branch clock');
+  // the event pass was entered at each of its three heads, and stopped at one
+  {
+    const st = (k) => on.e.delphi_fold_stat(k);
+    const by = [0, 1, 2].map((h) => [49 + h, 59 + h, 69 + h].map(st));
+    const line = `heads ${by.map((x) => x.join('/')).join(' ')}; units ${st(52)} middle ${st(53)} pairs ${st(54)}`;
+    if (by.some((x) => x[0] + x[1] + x[2] < 1) || by.every((x) => x[2] < 1)) fail(`event pass heads: ${line}`);
+    else console.log(`${'event pass heads (native/fallback/stopped)'.padEnd(43)} ok (${line})`);
+  }
   // The default clock counts threaded block cuts, which the fold does not
   // model (any decode-time tier moves that clock: A/Bs use --branch-clock).
   // Its cases still must agree on registers, flags and memory.
@@ -669,6 +730,49 @@ async function main() {
   // the instance read's DynArray length (System unit, another range group):
   // its jz -> jnz
   await smcPair('SMC callee: inst2w via DynArray length', 'inst2w [1][0]', 0x406d64 + 0x2);
+  // the collision-event pass: its middle loop's cmp byte [esi+0x108],0 ->
+  // ,1; its inner loop's jnz -> jz; the box test's first jle -> jg; the two
+  // instance reads' jge / jl; the DynArray length they call (System unit).
+  // The poke drops the groups and the next decode finds no event head.
+  const ALL_CEV = CEV_KEYS.flat();
+  for (const [label, target] of [['SMC mid-loop: event pass +0x89', CEV + 0x89], ['SMC mid-loop: event pass +0xB6', CEV + 0xB6],
+    ['SMC callee: event pass via its box test', CTEST + 0x1B], ['SMC callee: event pass via inst1', I1 + 0x17],
+    ['SMC callee: event pass via inst2b', I2B + 0x1E], ['SMC callee: event pass via DynArray length', 0x406d64 + 0x2]]) {
+    const c = byName('event pass mixed');
+    await pair(img, label, c, async (inst, isOn) => {
+      layoutBuf(inst, c.buf);
+      call(inst, c.entry, c.regs);
+      const sum = () => ALL_CEV.reduce((t, k) => t + inst.e.delphi_fold_stat(k), 0);
+      if (isOn && sum() < 1) fail(`${label}: warm-up was not folded`);
+      const d0 = inst.e.delphi_fold_stat(SMC_DROPS);
+      poke(inst, target);
+      inst.smcDrops = inst.e.delphi_fold_stat(SMC_DROPS) - d0;
+      inst.cev0 = sum();
+      inst.cevSum = sum;
+    }, (d) => {
+      if (!d.on.smcDrops) return 'the poke dropped no range group';
+      if (d.on.cevSum() !== d.on.cev0) return 'the event pass still matched';
+      return '';
+    });
+  }
+  // set_gm_fold without bit 5: the event pass is left alone, the rest folds
+  {
+    const off = await delphiInstance(img, false, true), on = await delphiInstance(img, true, true, 0x1F);
+    const c = byName('event pass mixed');
+    layoutBuf(off, c.buf); layoutBuf(on, c.buf);
+    const sum = () => ALL_CEV.reduce((t, k) => t + on.e.delphi_fold_stat(k), 0);
+    const s0 = sum(), r0 = on.e.delphi_fold_stat(33);
+    const diffs = compare(call(off, c.entry, c.regs), call(on, c.entry, c.regs), true, false);
+    if (sum() !== s0) diffs.push('the event pass folded under set_gm_fold(0x1F)');
+    if (on.e.delphi_fold_stat(33) === r0) diffs.push('the instance reads stopped folding');
+    if (on.e.get_gm_fold() !== 0x1F) diffs.push(`get_gm_fold ${on.e.get_gm_fold()}`);
+    if (diffs.length) fail(`set_gm_fold(0x1F): ${diffs.join(', ')}`);
+    else console.log(`${'set_gm_fold(0x1F) leaves the event pass alone'.padEnd(43)} ok`);
+    const dflt = await delphiInstance(img, true, true);
+    if (dflt.e.get_gm_fold() !== 0x3F) fail(`default gm_fold ${dflt.e.get_gm_fold().toString(16)}, want 3f`);
+    dflt.e.set_gm_fold(0xFF);
+    if (dflt.e.get_gm_fold() !== 0x3F) fail(`set_gm_fold(0xFF) kept ${dflt.e.get_gm_fold().toString(16)}, want 3f`);
+  }
   // x87: one register in use (the scans push into the next, ST0 must
   // survive); a full stack (the first trip's push overflows, IE|SF: that
   // trip is the guest's; its pop frees the slot, so later ones may fold)

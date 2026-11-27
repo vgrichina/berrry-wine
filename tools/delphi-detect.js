@@ -40,7 +40,10 @@
 //   GM fold   "gm=": the Game Maker runner bodies the same handler folds
 //             (varscan, inst2w, inst2b, inst1 with their DynArray-length
 //             callee; lineloop / pointloop, the collision_line/_point scan
-//             over one object's instances, with their reads and bbox tests; "records" = _FinalizeArray whose record loop calls the
+//             over one object's instances, with their reads and bbox tests;
+//             eventpass, the GM8 collision-event pass over the pair list,
+//             with its reads and instance-pair box test; "records" =
+//             _FinalizeArray whose record loop calls the
 //             System _FinalizeRecord back-to-back), with a count each.
 //             "exact" = body and callees match (D would fire); "body" =
 //             body matches, a callee does not (D falls back); "variantNN" =
@@ -112,6 +115,15 @@ const G = {
         reads: [0x12, 0x27, 0x4c], test: [0x55, 18], abs: [0x7, 0x1c, 0x41, 0x5e] },
   17: { name: 'linetest', first: 0x83ec8b55, len: 0x2b3, fnv: 0x2c975ca7, masks: [0x227, 0x230, 0x244, 0x24d, 0x268, 0x271, 0x27a, 0x283, 0x293, 0x2a2] },
   18: { name: 'pointtest', first: 0x51ec8b55, len: 0xfe, fnv: 0xeea92a4b, masks: [0x85, 0x8e, 0xa2, 0xab, 0xc6, 0xcf, 0xdf, 0xee] },
+  // the GM8 collision-event pass (the fold's heads 19/20/21 at +0x24 / +0x6E
+  // / +0xAE): its 1-D reads (+0x55 +0x9C) one id 13, its 2-D reads (+0x7D
+  // +0xCF) one id 12, its instance-pair box test (+0xDC) id 22, the pair
+  // list global at +0x25 = +0x37 and the instance table's at +0x4A = +0x6F =
+  // +0x91 = +0xC2 (A1 absolutes)
+  22: { name: 'pairtest', first: 0x55575653, len: 0x16b, fnv: 0x16e41878, masks: [0x93, 0x9c, 0xbf, 0xc8, 0xe4, 0xed, 0x110, 0x120, 0x129, 0x14b, 0x15a] },
+  23: { name: 'eventpass', first: 0x55575653, len: 0x268, fnv: 0x71836914,
+        masks: [0x55, 0x7d, 0x9c, 0xcf, 0xdc, 0x109, 0x11c, 0x12f, 0x142, 0x157, 0x16c, 0x189, 0x190, 0x1b7, 0x1de, 0x1e9,
+                0x200, 0x213, 0x226, 0x239, 0x8, 0x25, 0x37, 0x4a, 0x6f, 0x91, 0xc2] },
 };
 // The reference bodies those hashes were taken from (Spelunky Classic 1.1,
 // Game Maker 8 runner, at 0x405934 / 0x405988 / 0x4064e8 / 0x406534 /
@@ -194,15 +206,24 @@ function gmLoopOk(img, rva, g) {
   if (!sig(img, rel(img, rva, g.test[0]), g.test[1])) return false;
   return g.abs.every((o) => rd32(img, rva + o) === rd32(img, rva + g.abs[0]));
 }
+function cevOk(img, rva) {
+  const r1 = rel(img, rva, 0x55), r2 = rel(img, rva, 0x7D);
+  if (rel(img, rva, 0x9C) !== r1 || !sig(img, r1, 13) || !sig(img, rel(img, r1, 0x11), 14)) return false;
+  if (rel(img, rva, 0xCF) !== r2 || !sig(img, r2, 12) || !sig(img, rel(img, r2, 0x14), 14)) return false;
+  if (!sig(img, rel(img, rva, 0xDC), 22)) return false;
+  if (rd32(img, rva + 0x25) !== rd32(img, rva + 0x37)) return false;
+  return [0x6F, 0x91, 0xC2].every((o) => rd32(img, rva + o) === rd32(img, rva + 0x4A));
+}
 function scanG(img, faRVAs) {
   const out = {};
-  for (const id of [10, 11, 12, 13, 15, 16]) out[G[id].name] = [];
+  for (const id of [10, 11, 12, 13, 15, 16, 23]) out[G[id].name] = [];
   for (const s of img.secs) {
     if (!s.exec) continue;
     for (let o = 0; o + 4 <= s.buf.length; o++) {
       const w = s.buf.readUInt32LE(o);
-      for (const id of [10, 11, 12, 13, 15, 16]) {
+      for (const id of [10, 11, 12, 13, 15, 16, 23]) {
         if (w !== G[id].first || bodyHash(img, s.rva + o, id) !== G[id].fnv) continue;
+        if (id === 23 && !cevOk(img, s.rva + o)) continue;
         if (G[id].callee && !sig(img, rel(img, s.rva + o, G[id].callee), 14)) continue;
         if (G[id].reads && !gmLoopOk(img, s.rva + o, G[id])) continue;
         out[G[id].name].push(s.rva + o);
