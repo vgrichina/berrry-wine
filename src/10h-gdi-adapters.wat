@@ -188,11 +188,12 @@
       (local.get 10)))
   ;; gdi_stretch_blt(dstDC, dx, dy, dw, dh, srcDC, sx, sy, sw, sh, rop)
 
-  (func $gdi_native_scroll_window (param i32 i32 i32 i32 i32) (result i32)
+  (func $gdi_native_scroll_window (param i32 i32 i32 i32 i32 i32) (result i32)
     (call $gdi_scroll_window
       (local.get 0) (local.get 1) (local.get 2)
       (if (result i32) (local.get 3) (then (call $g2w (local.get 3))) (else (i32.const 0)))
-      (if (result i32) (local.get 4) (then (call $g2w (local.get 4))) (else (i32.const 0)))))
+      (if (result i32) (local.get 4) (then (call $g2w (local.get 4))) (else (i32.const 0)))
+      (local.get 5)))
   ;; gdi_scroll_window(hwnd, dx, dy, prcScroll, prcClip)
 
   (func $gdi_native_load_bitmap (param i32 i32) (result i32)

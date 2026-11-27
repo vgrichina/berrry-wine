@@ -1351,7 +1351,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
   (func $handle_ScrollWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (i32.store offset=0 (global.get $reg_base) (call $gdi_native_scroll_window
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
-        (local.get $arg3) (local.get $arg4)))
+        (local.get $arg3) (local.get $arg4) (i32.const 1)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
 
   ;; 634: AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle) — 4 args stdcall
@@ -2730,7 +2730,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
     (drop
       (call $gdi_native_scroll_window
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
-        (local.get $arg3) (local.get $arg4)))
+        (local.get $arg3) (local.get $arg4) (i32.const 0)))
     (if (local.get $arg3)
       (then
         (local.set $wa (call $g2w (local.get $arg3)))
@@ -2776,11 +2776,17 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (store.field.memarg Rect top (local.get $wa) (local.get $t))
         (store.field.memarg Rect right (local.get $wa) (local.get $r))
         (store.field.memarg Rect bottom (local.get $wa) (local.get $b))))
-    (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
-    (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
-      (then (global.set $paint_pending (i32.const 1)))
-      (else (call $paint_flag_set (local.get $arg0))))
-    (call $host_invalidate (local.get $arg0))
+    ;; flags is the 8th argument at [esp+32]. Without SW_INVALIDATE or
+    ;; SW_ERASE the copy must not create an update region or queue WM_PAINT.
+    (if (i32.and (call $gl32
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32)))
+          (i32.const 6))
+      (then
+        (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
+        (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
+          (then (global.set $paint_pending (i32.const 1)))
+          (else (call $paint_flag_set (local.get $arg0))))
+        (call $host_invalidate (local.get $arg0))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 2)) ;; SIMPLEREGION
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
   )

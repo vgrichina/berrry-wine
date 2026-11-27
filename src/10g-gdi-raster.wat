@@ -3221,7 +3221,7 @@
     (i32.const 1))
 
   (func $gdi_scroll_window (param $hwnd i32) (param $dx i32) (param $dy i32)
-        (param $scroll_rect i32) (param $clip_rect i32) (result i32)
+        (param $scroll_rect i32) (param $clip_rect i32) (param $invalidate i32) (result i32)
     (local $hdc i32) (local $size i32) (local $left i32) (local $top i32)
     (local $right i32) (local $bottom i32) (local $src_x i32) (local $src_y i32)
     (local $dst_x i32) (local $dst_y i32) (local $copy_w i32) (local $copy_h i32)
@@ -3308,9 +3308,12 @@
         (local.get $left) (select (local.get $top) (i32.add (local.get $bottom) (local.get $dy))
           (i32.lt_s (i32.add (local.get $bottom) (local.get $dy)) (local.get $top)))
         (local.get $right) (local.get $bottom) (i32.const 0x30010)))))
-    (call $update_invalidate_rect (local.get $hwnd)
-      (local.get $left) (local.get $top) (local.get $right) (local.get $bottom))
-    (call $paint_flag_set (local.get $hwnd))
+    ;; ScrollWindow always invalidates; ScrollWindowEx owns its flags policy.
+    (if (local.get $invalidate)
+      (then
+        (call $update_invalidate_rect (local.get $hwnd)
+          (local.get $left) (local.get $top) (local.get $right) (local.get $bottom))
+        (call $paint_flag_set (local.get $hwnd))))
     (call $host_invalidate (local.get $hwnd))
     (i32.const 1))
 
@@ -3341,7 +3344,7 @@
   (func (export "test_gdi_scroll_window")
         (param i32) (param i32) (param i32) (param i32) (param i32) (result i32)
     (call $gdi_scroll_window
-      (local.get 0) (local.get 1) (local.get 2) (local.get 3) (local.get 4)))
+      (local.get 0) (local.get 1) (local.get 2) (local.get 3) (local.get 4) (i32.const 1)))
 
   ;; Side-effect-free admission check used to make multi-segment paths atomic:
   ;; every segment must be supported before the first pixel is changed.

@@ -26,9 +26,14 @@ const RegionMap = require('../lib/region-map.generated.js');
 const ROOT = path.join(__dirname, '..');
 const HWND = 0x10001;
 const WHITE = 0x00ffffff;
+let moduleBytes;
+function testedModule() {
+  return moduleBytes || (moduleBytes = process.env.SCROLL_WINDOW_TEST_MODULE
+    ? fs.readFileSync(process.env.SCROLL_WINDOW_TEST_MODULE) : compileSrcWasm());
+}
 
 async function boot(width, height) {
-  const wasm = compileSrcWasm();
+  const wasm = testedModule();
   const renderer = new Win98Renderer(createCanvas(640, 480));
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const ctx = { getMemory: () => memory.buffer, renderer, resourceJson: {}, exports: null };
@@ -82,6 +87,7 @@ function check(label, fn) {
 }
 
 async function main() {
+  await publicFlags();
   {
     const { wat } = await boot(18, 12);
     // Client area inset from the window: 2,3 .. 14,9.
@@ -137,6 +143,96 @@ async function main() {
   }
 
   console.log(`PASS test-gdi-scroll-window-rect (${passed} checks)`);
+}
+
+// Public API regression: a real HWND, DLL exports resolved through the loader,
+// x86 stdcall calls and an application window procedure. No private damage or
+// window-table state is used to decide whether scrolling invalidated a window.
+async function publicFlags() {
+  const { bootRenderHarness } = require('./render-helper');
+  const { makeFixture, iat } = require('../tools/kernel32-native-fixture');
+  const { exports: e, memory } = await bootRenderHarness({ fonts: 'none',
+    prebuiltModule: new WebAssembly.Module(testedModule()) });
+  const pe = makeFixture();
+  new Uint8Array(memory.buffer).set(pe, e.get_staging());
+  assert(e.load_pe(pe.length)); e.set_api_log(0);
+  const alloc = n => e.guest_alloc(n) >>> 0;
+  const w = (p, v) => e.guest_write32(p, v);
+  const r = p => e.guest_read32(p) >>> 0;
+  const str = s => { const p = alloc(s.length + 1);
+    Buffer.from(s + '\0').forEach((v, i) => e.guest_write8(p + i, v)); return p; };
+  const stack = alloc(4096) + 2048;
+  function call(entry, args) {
+    w(stack, 0); args.forEach((v, i) => w(stack + 4 + i * 4, v));
+    e.set_esp(stack); e.clear_yield(); e.set_eip(entry);
+    for (let i = 0; i < 64 && e.get_eip(); i++) e.run(64);
+    assert.strictEqual(e.get_eip(), 0, 'guest returned');
+    assert.strictEqual(e.get_esp() >>> 0, stack + 4 + args.length * 4, 'stdcall ESP');
+    return e.get_eax() >>> 0;
+  }
+  const dlls = {}, entries = {};
+  function api(name, ...args) {
+    if (!entries[name]) {
+      const dll = /^(CreateRectRgn|DeleteObject)$/.test(name) ? 'gdi32.dll' : 'user32.dll';
+      dlls[dll] ||= call(r(iat('LoadLibraryA')), [str(dll)]);
+      entries[name] = call(r(iat('GetProcAddress')), [dlls[dll], str(name)]);
+      assert(entries[name], name);
+    }
+    return call(entries[name], args);
+  }
+  const hwnd = api('CreateWindowExA', 0, str('STATIC'), str('Scroll flags'),
+    0x90000000, 20, 30, 100, 80, 0, 0, 0x400000, 0);
+  assert(hwnd);
+  const child = api('CreateWindowExA', 0, str('STATIC'), str('Child scene'),
+    0x50000000, 0, 0, 90, 70, hwnd, 101, 0x400000, 0);
+  assert(child);
+  const rect = alloc(16), scroll = alloc(16), count = alloc(4), proc = alloc(32);
+  [10, 10, 70, 60].forEach((v, i) => w(scroll + i * 4, v));
+  // cmp [esp+8],WM_PAINT; jne done; inc [count]; done: xor eax,eax; ret 16
+  const code = [0x83, 0x7c, 0x24, 8, 15, 0x75, 6, 0xff, 5,
+    count & 255, count >>> 8 & 255, count >>> 16 & 255, count >>> 24,
+    0x31, 0xc0, 0xc2, 16, 0];
+  code.forEach((v, i) => e.guest_write8(proc + i, v));
+  assert(api('SetWindowLongA', hwnd, -4, proc));
+  assert(api('SetWindowLongA', child, -4, proc));
+  const region = api('CreateRectRgn', 0, 0, 0, 0); assert(region);
+  const failures = [];
+  for (const target of [hwnd, child]) for (const flags of [0, 2]) {
+    api('ValidateRect', target, 0); w(count, 0);
+    assert.strictEqual(api('GetUpdateRect', target, rect, 0), 0, 'clean setup');
+    assert(api('GetWindowRect', target, rect));
+    const geometry = [0, 4, 8, 12].map(o => r(rect + o));
+    const complexity = api('ScrollWindowEx', target, 4, 0, scroll, 0, 0, 0, flags);
+    assert(complexity >= 1 && complexity <= 3, 'ScrollWindowEx succeeds');
+    const updateRect = api('GetUpdateRect', target, rect, 0);
+    const updateRgn = api('GetUpdateRgn', target, region, 0);
+    api('UpdateWindow', target);
+    const paints = r(count);
+    const pass = flags === 0 ? updateRect === 0 && updateRgn === 1 && paints === 0
+      : updateRect === 1 && updateRgn > 1 && paints === 1;
+    console.log(JSON.stringify({ target, flags, updateRect, updateRgn, paints, pass }));
+    if (!pass) failures.push(flags);
+    assert(api('GetWindowRect', target, rect));
+    assert.deepStrictEqual([0, 4, 8, 12].map(o => r(rect + o)), geometry);
+  }
+  // Existing damage outside the scrolled rectangle survives a flags=0 copy.
+  api('ValidateRect', hwnd, 0);
+  [1, 1, 3, 3].forEach((v, i) => w(rect + i * 4, v));
+  api('InvalidateRect', hwnd, rect, 0);
+  api('ScrollWindowEx', hwnd, 4, 0, scroll, 0, 0, 0, 0);
+  assert.strictEqual(api('GetUpdateRect', hwnd, rect, 0), 1);
+  assert.deepStrictEqual([0, 4, 8, 12].map(o => r(rect + o)), [1, 1, 3, 3],
+    'flags=0 must preserve existing unrelated damage without expanding it');
+  // The older API still has unconditional invalidation semantics.
+  api('ValidateRect', hwnd, 0); w(count, 0);
+  assert(api('ScrollWindow', hwnd, 4, 0, scroll, 0));
+  assert.strictEqual(api('GetUpdateRect', hwnd, rect, 0), 1);
+  api('UpdateWindow', hwnd);
+  assert.strictEqual(r(count), 1, 'ScrollWindow still requests paint');
+  api('ValidateRect', hwnd, 0);
+  api('DeleteObject', region); api('DestroyWindow', hwnd);
+  assert.deepStrictEqual(failures, [], 'flags=0 stays valid; SW_INVALIDATE queues public damage and WM_PAINT');
+  console.log('PASS public ScrollWindowEx flags, update queries and WM_PAINT callback');
 }
 
 main().catch(error => {
