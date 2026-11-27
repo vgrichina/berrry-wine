@@ -906,9 +906,12 @@ fold-epoch hook in `$invalidate_code_range` (04). Run evidence:
 | `0x400` | C2 | Iteration copies (§10.8). F1 is a fixed-point pass per table. When the loop redefines a seeded register, up to `--uop-c2` copies (default 4, copies × loop insns ≤ 1200) are emitted, each with its own F1 table and flag flow. Copy *i* is entered only from copy *i−1*, with the facts its back edges agree on, and the last copy's back edges enter the steady copy. C1 in a copy never decides on flags its head inherited. A failed or oversize attempt compiles again without C2. |
 | `0x800` | R2 | Per-call-site contexts (§10.8). Records are keyed (address, context): a call opens a callee context (depth 4, 48 per program, no recursion), and the context's RET has its one return address. Producers, temps and flag recipes are named by pid (`$uc_pid`), so every clone owns its flags. The contexts are kept only when some callee is reached in two of them (`$uc_r2_shared`); otherwise the program is scanned again without. No stack-slot facts. `--aggressive-stack` is off in a program with contexts. |
 | `0x1000` | M1 | Redundant loads (§10.8). Within a straight-line run, a load whose {base, index, scale, disp, width, extension} a full register already holds becomes a MOV from that register. |
-| `0x2000` | C3 | Reserved; nothing built (§10.8). |
+| `0x2000` | — | Unused. C3 was built on `0x20000`/`0x40000` instead (§10.10). |
 | `0x4000` | V2b | `sahf` is inline op 111 SAHFI (`$th_sahf`'s body in `$uop_fast`), and a Jcc straight after it (B/AE, E/NE, BE/A, S/NS, P/NP) tests EAX's bits with ANDI + BNEZ/BEQZ. OF-reading conditions stay on BCC. |
 | `0x8000` | A1 | The main instance's uop arena is `$UOP_ARENA_BIG` (3 MB, code area 0x2CE000, 8192 ranges, start bitmap size/128) instead of `$UOP_ARENA` (1 MB). Workers keep their 256 KB slots, and the per-program cap stays the 1 MB arena's. Flipping the bit swaps arenas (`$uop_arena_pick`), which starts an empty generation. §10.9. |
+| `0x10000` | V2c | x87 compare + `fnstsw ax` + `sahf` fuse into op 143 XSWSAHF: it writes `fpu_sw` and AX and makes SAHF's exact flag record (OF kept). Needs `0x010`. §10.10. |
+| `0x20000` | C3r | A derived flag record (SUB/AND [+ANDI] + REC) becomes one op: 144 RECSUB, 145 RECADD or 146 RECAND, exit stubs included. §10.10. |
+| `0x40000` | C3e | A Jcc block-end merge record goes only on the edge whose successor does not first run a full flag producer, and the branch is inverted when only the taken edge needs it. §10.10. |
 
 Assumption block. It sits after the program's window slots, flagged by header nwin's top bit (`$uop_stamp_at`); it was at header +36 first, which `--uop-census` already owns, and the census's exit counters made every program look stale -- 123K flushes in a 23500-batch census run, not a real limit.
 - **Stamp bits:** 1 = `LOCK_MODE` 0, 2 = `fs_base` (+4), 4 = fold epoch (+8), 8 = branch clock.
@@ -1255,3 +1258,101 @@ Per-bit leave-one-out on `0xffff` (Spelunky, box A, n=4, band 4.1%; StarCraft pa
 - **Engines.** Node 24 (V8 13.6), with jsvu V8 16.0 and SpiderMonkey C162 on the box. Ion C155 and V8 15.4 on arm64.
 
 **Recommended default: `0xffff`** (every built bit plus A1). Direct f64 stays on, and lazy re-guard stays off: it wins on Spelunky and loses on StarCraft, so it is an app-policy candidate rather than a default. R2 (`0x800`) pays on Spelunky in both builds (+3.5–4.5% when removed). R1 is the one bit the leave-one-out resolves. The remaining bits are not shown to cost anything; none is shown to pay on its own at this noise. A quieter box should repeat the leave-one-out before any is dropped.
+
+### 10.10 Fifth pass: V2c and C3, flags (branch `opt/uop-flags`, 2026-11-27)
+
+Evidence: `scratch/runs/20261127-uop-flags/` (`box/{fa,fb,fb2x}/`, `exact-a/`, `exact-b/`, `census/`, `native-arm64/`, `native-x64/`). Base: `dfde581b4` (uop-opt `a0e5e0314` merged with `opt/uop-sse`). Tested: `d235007cb` (code) and `59303d7d0` (one more test, `uop-opt-exact --no-gl`). Three new bits. `set_uop_opt` now takes `0x7FFFF`. The new engine ops are 143–146.
+
+| Bit | Pass | What it does as built |
+|---|---|---|
+| `0x10000` | V2c | `FNSTSW AX` straight after an x87 compare, followed by `SAHF`, becomes one op: 143 XSWSAHF (`$uc_x87_insn` notes the FNSTSW item; the SAHF lowering truncates it and emits 143). The op writes `fpu_sw` with TOP and stores AX. It then writes SAHF's raw flag record: `flag_op` 9, CF/PF/AF/SF packed into `flag_a`, ZF/SF into `flag_res`, `eflags_extra` masked, and OF kept by reading `$get_of` first. The compare stays the native x87 op. Later readers (Jcc, SETcc, ADC/SBB, side exits, a following PUSHFD/LAHF in threaded code) see the threaded state exactly. Needs `0x010`. |
+| `0x20000` | C3 (fused records) | A flag record whose value is derived (SUB [+ANDI] + REC 28, or AND/ANDI + REC) becomes one op: 144 RECSUB a b shift mask, 145 RECADD r b shift mask, or 146 RECAND x y shift. This applies to every `$uc_rec` site, exit stubs included. |
+| `0x40000` | C3 (edge placement) | At a Jcc block end that records for a merge successor (the `rae` materialisation, §10.6 census site 11), the record goes only on the edge into the successor whose first instruction does not start with a full flag producer (`$uc_c3_dead_in`). A full producer is a kind-4 producer, or a kind-1 one that is not ADC/SBB, with no exit or memory access before it. If only the taken edge needs the record, the branch is inverted to the fallthrough and the taken edge records, then GOTOs. If neither edge needs it, no record is made. The other edge's entry state is never observed, so flow and charging do not change. |
+
+`0x2000` stays unused: C3 took bits above `0xffff` so that `0xffff` stays the previous default.
+
+**Why these two.** The §10.6 census on Spelunky Classic found 643M REC (op 28) and 522M SUB in 11.36G ops. 534M of the RECs are Jcc block-end merge materialisations (Delphi `LStrCmp`, which returns in FLAGS into a `pop; ret` merge). FNSTSW/SAHFI ran only 48,572 times there, so V2c is a correctness-complete fusion that matters to x87-compare-heavy code, not to Spelunky.
+
+**Not built:** tail duplication of a merge block such as `LStrCmp`'s `0x405de2`, which would remove the remaining merge records; dead-flag elimination inside a block (the producer writes stay).
+
+**Exactness.**
+- **Unit tests.** `test-uop-compiler.js` has 13 new cases:
+  - `opt-v2c-*` × 7 compare forms (fcomp/fcom m32, fcom/fucomp st1, fucompp, fcompp, ftst). Each runs sixteen FNSTSW/SAHF/Jcc groups (all 16 conditions; the OF ones read the OF an ADD left), then SETcc/ADC/SBB/AX. The operands cycle 0, −0, ±1, ±inf, ±qNaN, a denormal and 2, which covers equal, ordered and unordered both ways.
+  - `opt-v2c-pushf-lahf`: PUSHFD/LAHF after the fused pair, which are side exits.
+  - `opt-v2c-nofuse`: no fusion when TEST AH sits between the FNSTSW and the SAHF.
+  - `opt-c3-*` × 4: merges fed by 32/16/8-bit cmp, test imm8 and add.
+
+  Every case runs under both clocks with 37-block batch cuts, and the ledger must move. The V2c cases are `dynamicEntry` because their block-clock hot stops differ with `0x10` alone, the same as `opt-c1-fold`.
+- **Other unit suites.** `test-uop-opt.js` passes 31 arms × 2 clocks, 7 of them new (`0x10010 0x1ffff 0x20000 0x40000 0x60000 0x6ffff 0x7ffff`). Its `0x4000` FNSTSW/SAHF/Jcc case also runs under V2c (30 fusions). `test-uop-opt-identity` passes: mask unset = mask 0 = the control build `dfde581b4`.
+- **Apps (`tools/uop-opt-exact.js --no-gl`, box, `--uop-sse --uop-sse-native`).** Under the branch clock, every arm (`0xffff 0x1ffff 0x6ffff 0x7ffff`) is identical to mask 0 in API histogram, presents and end frame:
+  - spel 2245487 calls;
+  - spelhd 2332941;
+  - sc 353869;
+  - h2 1520029.
+
+  Under the block clock, `0xffff` already differs from mask 0 (§10.3), and V2c is identical to `0xffff` on all four apps. C3 differs from `0xffff` under the block clock, as any coverage-changing pass does (§10.3). Its smaller programs change what compiles: sc installs 11116 → 8920 with more instructions covered, and spelhd 1427 → 1417.
+- **Timing runs.** All 156 box timing runs use the branch clock and agree per workload on end frame, API count and batches.
+
+**Ledger** (compile-time sites, rep 0 of the timing runs):
+
+| | v2c-fused | c3-edge-recs | c3-fused-recs | uops at 0xffff → 0x7ffff |
+|---|---|---|---|---|
+| spel | 256 | 1818 | 65726 | 350268 → 324090 (−7.5%) |
+| spelhd | 20 | 1689 | 76861 | 369084 → 330127 (−10.6%) |
+| sc | 0 | 2726 | 266729 | 1417224 → 1383522 (−2.4%, with 15% more insns compiled) |
+| h2 | 0 | — | — | 25866 → 23338 (−9.8%) |
+
+**Dynamic ops, Spelunky Classic, 32700 batches, branch clock** (throwaway census build on the box, `census/ophist.tsv`):
+
+| mask | ops dispatched | REC 28 | REC in stubs | SUB | 143 | 144 | 145 | 146 |
+|---|---|---|---|---|---|---|---|---|
+| `0xffff` | 15.518G | 857.6M | 81.1M | 665.3M | 0 | 0 | 0 | 0 |
+| `0x1ffff` | 15.505G | 857.6M | 81.1M | 665.3M | 13.0M | 0 | 0 | 0 |
+| `0x7ffff` | 14.803G (−4.6%) | 271.4M | 60.8M | 100.6M | 13.0M | 401.6M | 44.5M | 13.3M |
+
+**Box timing.** There were two boatbox x86-64 EPYC boxes, one lane each. Each run is fixed work, measured as whole-run `/usr/bin/time` user CPU, with arms interleaved and rotated, n=6. The arms:
+- n1/n2: the control build `dfde581b4` at `0xffff`;
+- c: the tested build at `0xffff`;
+- v: `0x1ffff`;
+- c3: `0x6ffff`;
+- all: `0x7ffff`.
+
+Every arm runs with `--uop-sse --uop-sse-native`. The table gives the median and, in brackets, min-of-n.
+
+| Workload | null band | c vs n1 | v vs c | c3 vs c | all vs c |
+|---|---|---|---|---|---|
+| spel (32700 b) | 1.62% (0.91%) | +1.66% (+0.78%) | 0.00% (−0.68%) | −1.47% (−0.97%) | **−1.73% (−1.41%)** |
+| spelhd (237550 b) | 0.19% (0.21%) | −0.60% (−0.23%) | −0.41% (−0.30%) | +0.13% (+0.22%) | −0.07% (−0.31%) |
+| h2 (1800 b, ~6 s) | 2.06% (2.58%) | +4.75% (+0.99%) | −0.38% (+1.57%) | −2.42% (−1.18%) | −3.63% (−0.59%) |
+| sc (7000 b), box B, n=12 pooled for n1/n2/c/all | 1.24% (1.29%) | −2.28% (−1.23%) | −1.51% (+9.82%), n=6 | +2.17% (+8.31%), n=6 | −5.94% (+2.59%) |
+
+- **Spelunky Classic:** `0x7ffff` is the one result at the edge of the band, and min-of-n is outside it. This agrees with the 4.6% fewer dispatched ops.
+- **spelhd:** flat. Its time is in SSE-native and the audio mixer, not in flag records.
+- **h2:** too short and too noisy to resolve.
+- **StarCraft:** unresolved. Box B's per-arm spread was 20–39% in both passes, though the null medians agree. The `all` median is lower but its min is higher.
+- **V2c:** no workload resolves it, as expected from 13M fused ops in 15.5G.
+
+**Native code.** Tested `d235007cb` against control `dfde581b4`. Indices come from each build's `build/watx-facts.json` (`$uop_fast` #1565, `$uop_run` #1564, `$th_uop_enter` #1596, `$th_uop_enter_opt` #1598). Piece counts are from `scripts/arm-pieces.js`.
+- **Dispatch head.** The `$uop_fast` head is the same shape in all four captures: the interrupt-byte test, the op load, `cmp 0x93` (was 0x8f), and a jump table (V8 `adr`/`ldrsw`/`br` on arm64 and `jmp *(%r10,%rbx,8)` on x86-64; Ion a literal-pool table). The back edges go from 126 to 130.
+- **`$uop_fast` size.**
+
+  | | V8 arm64 | Ion arm64 | V8 x86-64 | Ion x86-64 |
+  |---|---|---|---|---|
+  | instructions | 4918 → 5056 | 4741 → 4889 | 5554 → 6052 | 4545 → 4850 |
+  | back-edge pieces with a stack slot | 28 → 29 | | 41 → 42 | |
+  | stack refs | | | 291 → 305 | |
+
+  Ion keeps `$pc` in a stack slot in every arm, in both builds.
+- **The new arms.**
+  - **RECSUB/RECADD:** 24 V8 arm64 instructions, 17–18 V8 x86-64, with no stack reference.
+  - **XSWSAHF:** the one spilling arm. It calls `$get_of`, which no engine inlines, and spills around the call: V8 arm64 62 instructions / 10 stack refs, V8 x86-64 52 / 14, Ion arm64 63 / 4, Ion x86-64 53 / 10. It runs 13M times per Spelunky run, so it was left as is. Inlining OF for the common `flag_op` values is the fix if an x87-compare-heavy app needs it.
+- **Other functions.** `$uop_run`, `$th_uop_enter` and `$th_uop_enter_opt` are unchanged in size in all four captures.
+- **Engines.**
+  - arm64: SpiderMonkey C155 and V8 15.4.49 shells, node 24.21.
+  - x86-64 box: jsvu SpiderMonkey C162 and V8 16.0.133, node 24.22 (V8 13.6).
+
+**Recommended mask: `0x7ffff`.**
+- Both passes are exact under the branch clock on four apps and in the unit suites, and mask 0 is byte-identical.
+- C3 removes 4.6% of dispatched ops on Spelunky Classic and is the one resolved gain (−1.7%).
+- V2c costs nothing measurable and fixes a real handback for x87-compare code.
+- Like `0xffff` itself, it is not block-clock-exact against mask 0, so the timed default stays `--branch-clock`.
