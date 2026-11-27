@@ -62,6 +62,12 @@ only queries and T1 does everything else.
   shared board lock), and `seq` comes from one device counter, so a device
   driven by two threads in one frame ping-pongs but stays correct.
 - A ring is never bound to its creating thread.
+- On the host there is one consumer (Bridge and executor) per ring per
+  process. A guest thread's host imports reach the main context's bridge
+  through `gpsProcessBridge` (D3DIM, GL, D3D9) or `glideBridge`, both in
+  `PROCESS_SHARED_KEYS`. A second executor would never see the CREATEs
+  another thread's records made. An executor error (GpsError) on a guest
+  thread fails the run instead of being taken as that thread's crash.
 
 ## Ring directory entry
 
@@ -139,8 +145,11 @@ translation of that range settles the entry: D3DIM materializes it, while
 Glide and D3D9 drop the mutex, take their own producer lock and read back.
 A whole-range REP MOVS/STOS discards the entry. An Unlock that finds its
 entry still armed skips both the readback and the upload. Glide
-`grLfbLock` and D3D9 back-buffer LockRect arm unconditionally; D3DIM still
-arms only when the host enables `d3dim_lazy_enable`. The counters are
+`grLfbLock` and D3D9 back-buffer LockRect arm unconditionally. D3DIM arms
+by default too; a host opts out with `d3dim_lazy_enable(0)` (CLI
+`--no-d3dim-lazy-sync`, browser `?no-lazy-sync`). GDI never translates
+guest addresses, so `$gdi_surface_descriptor` settles an armed entry over a
+DX surface's bits before GDI touches them. The counters are
 `gps_stat(api, 8..11)`: armed, touched, untouched and overwritten. Run
 20261121-gps-coherence has the measurements.
 
@@ -157,14 +166,18 @@ A8B8G8R8). Each executor's caps:
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
 | software | VS_IR, STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES, WBUFFER, COPY, DEPTH_READBACK, DS_READBACK | 2048 | 6 (the native VM's stages) | 1 |
-| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
+| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
 
 The WebGL executor keeps two texture units past the samplers: the fog
 table and the logic-op destination copy. GL has no border wrap mode: a
 point-filtered BORDER axis is a test on the coordinate, and any linear
 filtering on a BORDER sampler is done in the fragment shader from NEAREST
 texel fetches (the four taps, the min/mag choice and the mip levels), with
-the software executor's arithmetic.
+the software executor's arithmetic. GL has no mirror-once mode either: any
+MIRRORONCE axis takes the same shader path, folding the coordinate to
+min(|u|, 1) and mirroring an integer tap about texel edge 0 (tap -1 reads
+texel 0) before clamping, as the software executor's native VM does
+(`test-gpu-stream-webgl-mirror-once.js`).
 
 A record that needs a capability the executor did not advertise is refused
 with error 3 (unsupported), never approximated.
@@ -596,7 +609,17 @@ replaces the order listed below where they differ.
 0. Spec, generator, ring, null executor and dump tool. **Done.**
 1. Glide. **Done.**
 2. D3D9.
-3. D3DIM. **Done** (D2a-D2c; the software arm moves in D4).
+3. D3DIM. **Done** (D2a-D2c; the software arm moves in D4). Since D7
+   (2026-11-27), a D3DIM present to a 16-bit 565 primary carries a gamma
+   LUT even with no ramp. The LUT folds in the CPU presenter's 565
+   quantize-and-widen, so the GPU frame equals the frame a CPU present of
+   the DIB shows; the producer chooses it and the executors see only a LUT.
+   Opaque GDI blits onto a deferred GetDC upload their rect instead of
+   reading the target back. Status: gpu-stream-v2-migration.md, D7.
+   Since D8, a lazy Lock that leaves untouched, or is overwritten or
+   materialized, drops the shared deferred-work word. A later barrier
+   therefore reads nothing back, and CPU Blts onto the target are replayed
+   on the GPU again: the gta2_demo menu goes from 1 readback per frame to 0.
 4. OpenGL.
 
 Every step gets a browser fps A/B and a pixel comparison against the commit

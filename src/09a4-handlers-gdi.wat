@@ -415,6 +415,53 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40))))
 
   ;; 158: BitBlt
+  ;; BitBlt / StretchBlt destination descriptor. For a ROP that reads no
+  ;; destination pixel, a deferred DirectDraw DC is held rather than read
+  ;; back (09abg "Opaque GDI blits onto a deferred DC"); the handler then
+  ;; brackets its raster call with $gdi_blt_opaque_begin / _end.
+  (func $gdi_blt_dst_descriptor (param $hdc i32) (param $desc i32) (param $rop3 i32) (result i32)
+    (local $ok i32)
+    (global.set $d3g_gdi_held_t (i32.const 0))
+    (global.set $gdi_dx_opaque (i32.or
+      (i32.or (i32.eqz (local.get $rop3)) (i32.eq (local.get $rop3) (i32.const 0xFF)))
+      (i32.or (i32.eq (local.get $rop3) (i32.const 0x33)) (i32.eq (local.get $rop3) (i32.const 0xCC)))))
+    (local.set $ok (call $gdi_surface_descriptor (local.get $hdc) (local.get $desc)))
+    (global.set $gdi_dx_opaque (i32.const 0))
+    (if (i32.eqz (local.get $ok)) (then (call $d3dim_gps_gdi_land_held)))
+    (local.get $ok))
+
+  ;; Before the raster call: a held target stays held only when the blit
+  ;; writes every pixel of its destination rect: positive extents, a source
+  ;; rect inside the source (for SRCCOPY / NOTSRCCOPY), no clip region and
+  ;; no LockWindowUpdate that could swallow the output.
+  (func $gdi_blt_opaque_begin (param $hdc i32) (param $dw i32) (param $dh i32) (param $src i32)
+      (param $sx i32) (param $sy i32) (param $sw i32) (param $sh i32) (param $rop3 i32)
+    (local $ok i32) (local $locked i32)
+    (if (i32.eqz (global.get $d3g_gdi_held_t)) (then (return)))
+    (block $no
+      (br_if $no (i32.or (i32.le_s (local.get $dw) (i32.const 0)) (i32.le_s (local.get $dh) (i32.const 0))))
+      (if (i32.or (i32.eq (local.get $rop3) (i32.const 0x33)) (i32.eq (local.get $rop3) (i32.const 0xCC))) (then
+        (br_if $no (i32.eqz (local.get $src)))
+        (br_if $no (i32.or (i32.le_s (local.get $sw) (i32.const 0)) (i32.le_s (local.get $sh) (i32.const 0))))
+        (br_if $no (i32.or (i32.lt_s (local.get $sx) (i32.const 0)) (i32.lt_s (local.get $sy) (i32.const 0))))
+        (br_if $no (i64.gt_s (i64.add (i64.extend_i32_s (local.get $sx)) (i64.extend_i32_s (local.get $sw)))
+                             (i64.extend_i32_s (i32.load offset=4 (local.get $src)))))
+        (br_if $no (i64.gt_s (i64.add (i64.extend_i32_s (local.get $sy)) (i64.extend_i32_s (local.get $sh)))
+                             (i64.extend_i32_s (i32.load offset=8 (local.get $src)))))))
+      (br_if $no (i32.eqz (call $gdi_dc_clip_none (local.get $hdc))))
+      (local.set $locked (i32.atomic.load (global.get $WINDOW_UPDATE_LOCK)))
+      (br_if $no (i32.eqz (i32.or (i32.eqz (local.get $locked)) (i32.eq (local.get $locked) (i32.const -1)))))
+      (local.set $ok (i32.const 1)))
+    (if (i32.eqz (local.get $ok)) (then (call $d3dim_gps_gdi_land_held))))
+
+  ;; After it: report the written rect, or land the target if the blit failed.
+  (func $gdi_blt_opaque_end (param $ok i32) (param $dx i32) (param $dy i32) (param $dw i32) (param $dh i32)
+    (if (i32.eqz (global.get $d3g_gdi_held_t)) (then (return)))
+    (if (local.get $ok)
+      (then (call $d3dim_gps_gdi_rect_written (local.get $dx) (local.get $dy)
+        (i32.add (local.get $dx) (local.get $dw)) (i32.add (local.get $dy) (local.get $dh))))
+      (else (call $d3dim_gps_gdi_land_held))))
+
   (func $handle_BitBlt (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $dst i32) (local $src i32) (local $src_hdc i32)
     (local $dw i32) (local $dh i32)
@@ -427,7 +474,7 @@
     (local.set $sy (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 32))))
     (local.set $rop (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36))))
     (local.set $rop3 (i32.and (i32.shr_u (local.get $rop) (i32.const 16)) (i32.const 0xFF)))
-    (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $dst))
+    (if (call $gdi_blt_dst_descriptor (local.get $arg0) (local.get $dst) (local.get $rop3))
       (then
         (local.set $dx (call $gdi_line_map_x (local.get $dst) (local.get $arg1)))
         (local.set $dy (call $gdi_line_map_y (local.get $dst) (local.get $arg2)))
@@ -455,10 +502,13 @@
               (i32.eqz (local.get $src)))
           (then (local.set $ok (i32.const 0)))
           (else
+            (call $gdi_blt_opaque_begin (local.get $arg0) (local.get $dw) (local.get $dh) (local.get $src)
+              (local.get $sx) (local.get $sy) (local.get $dw) (local.get $dh) (local.get $rop3))
             (local.set $ok (call $gdi_raster_bitblt
               (local.get $arg0) (local.get $src_hdc) (local.get $dst) (local.get $dx) (local.get $dy)
               (local.get $dw) (local.get $dh) (local.get $src)
               (local.get $sx) (local.get $sy) (local.get $pattern) (local.get $rop)))))
+        (call $gdi_blt_opaque_end (local.get $ok) (local.get $dx) (local.get $dy) (local.get $dw) (local.get $dh))
         (if (local.get $ok)
           (then
             (if (global.get $win16_in_call32)
@@ -3621,7 +3671,7 @@
     (local.set $sh (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40))))
     (local.set $rop (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 44))))
     (local.set $rop3 (i32.and (i32.shr_u (local.get $rop) (i32.const 16)) (i32.const 0xFF)))
-    (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $dst))
+    (if (call $gdi_blt_dst_descriptor (local.get $arg0) (local.get $dst) (local.get $rop3))
       (then
         (local.set $dx (call $gdi_line_map_x (local.get $dst) (local.get $arg1)))
         (local.set $dy (call $gdi_line_map_y (local.get $dst) (local.get $arg2)))
@@ -3656,11 +3706,14 @@
               (i32.eqz (local.get $src)))
           (then (local.set $ok (i32.const 0)))
           (else
+            (call $gdi_blt_opaque_begin (local.get $arg0) (local.get $dw) (local.get $dh) (local.get $src)
+              (local.get $sx) (local.get $sy) (local.get $sw) (local.get $sh) (local.get $rop3))
             (local.set $ok (call $gdi_raster_stretch_blt
               (local.get $arg0) (local.get $src_hdc) (local.get $dst) (local.get $dx) (local.get $dy)
               (local.get $dw) (local.get $dh) (local.get $src)
               (local.get $sx) (local.get $sy) (local.get $sw) (local.get $sh)
               (local.get $pattern) (local.get $rop)))))
+        (call $gdi_blt_opaque_end (local.get $ok) (local.get $dx) (local.get $dy) (local.get $dw) (local.get $dh))
         (if (local.get $ok)
           (then (call $gdi_geometry_present (local.get $arg0) (local.get $dst)
             (local.get $dx) (local.get $dy)

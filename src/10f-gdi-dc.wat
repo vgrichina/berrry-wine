@@ -2285,6 +2285,14 @@
         (local.set $width (i32.load16_u offset=12 (local.get $dx)))
         (local.set $height (i32.load16_u offset=14 (local.get $dx)))
         (local.set $stride (i32.load16_u offset=18 (local.get $dx)))
+        ;; GDI reads and writes these bits directly, never through a guest
+        ;; translation, so a DC bound before a lazy Lock armed would see
+        ;; stale pixels and its writes would be replaced by the readback.
+        ;; Settle any armed entry over the bits first (a GDI access counts
+        ;; as a guest touch).
+        (if (i32.atomic.load (region.addr $GPS_LAZY 4)) (then
+          (call $gps_lazy_access (local.get $bits)
+            (i32.mul (local.get $stride) (local.get $height)))))
         (local.set $bpp (i32.load16_u offset=16 (local.get $dx)))
         (local.set $top_down (i32.const 1))
         (local.set $surface_id (local.get $hdc)))

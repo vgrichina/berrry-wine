@@ -215,6 +215,25 @@ const extraWat = `
     ex.pr_forget(P2);
   }
 
+  // A 16-bit (565) primary presents what the CPU presenter would show of the
+  // DIB: each channel quantized to 5/6 bits and widened as the page
+  // presenter widens (i*255/31|0, i*255/63|0), not the GPU's 8-bit colour.
+  // 0x80 -> r5 16 -> 131, g6 32 -> 129. Then through a ramp at that index.
+  {
+    const P2 = ex.pr_surface(W, H, 16), T = ex.pr_surface(W, H, 16);
+    assert.strictEqual(ex.pr_paint(T, 0xff808080 | 0), 1);
+    assert.strictEqual(ex.pr_present(P2, T, 0, 0, 1, 1, 0, 0), 1);
+    assert.deepStrictEqual(framePixel(frames.at(-1), 0, 0), [131, 129, 131, 255], 'quantized like the CPU path');
+    const ramp = ex.pr_alloc(1536) >>> 0;
+    for (let c = 0; c < 3; c++) for (let i = 0; i < 256; i++)
+      ex.guest_write16(ramp + c * 512 + i * 2, (255 - i) << 8);
+    ex.pr_gamma(ramp, 10);
+    assert.strictEqual(ex.pr_present(P2, T, 0, 0, 1, 1, 0, 0), 1);
+    assert.deepStrictEqual(framePixel(frames.at(-1), 0, 0), [124, 126, 124, 255], 'ramp at the quantized index');
+    ex.pr_gamma(0, 11);
+    ex.pr_forget(T); ex.pr_forget(P2);
+  }
+
   // Declines: the caller then performs the ordinary CPU Blt.
   {
     const U = ex.pr_surface(W, H, 16), P32 = ex.pr_surface(W, H, 32);

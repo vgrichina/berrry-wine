@@ -270,6 +270,7 @@
           (call $d3dim_lazy_materialize (i32.load (local.get $e)) (i32.atomic.load offset=4 (local.get $e)))
           ;; Materializing the entry's own range always frees it.
           (call $gps_lazy_free_locked (local.get $e))
+          (call $d3dim_lazy_settled_locked)
           (call $gps_lazy_leave))
         (else
           (call $gps_lazy_settle_relocked (local.get $e) (i32.load offset=16 (local.get $e)) (i32.const 0))))
@@ -317,6 +318,7 @@
                 (if (i32.eqz (global.get $d3dim_gpu_cooperative)) (then
                   (if (i32.eq (call $d3dim_gps_discard (local.get $start) (local.get $len)) (i32.const 1)) (then
                     (call $gps_lazy_free_locked (local.get $e))
+                    (call $d3dim_lazy_settled_locked)
                     (call $gps_stat_api (global.get $GPS_API_D3DIM) (global.get $GPS_LAZY_STAT_OVERWRITTEN) (i32.const 1)))))))
               (else
                 ;; Releases the mutex; the scan restarts under a new one.

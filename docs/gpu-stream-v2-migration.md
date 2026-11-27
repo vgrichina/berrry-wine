@@ -155,7 +155,7 @@ Without this, every new backend would have to reimplement the 846 lines of
       encoding; D3DIM W-buffering uses it too.
     - The WebGL executor advertises STENCIL only: no occlusion, mirror-once,
       linear-filtered border or logic op, and max_aniso 1. (Since then it
-      has gained all of them but mirror-once; see the caps table in
+      has gained all of them, mirror-once last in D3; see the caps table in
       `gpu-stream-v2.md`.) The software
       executor has occlusion, mirror-once and linear-filtered border.
     - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/16 px
@@ -197,16 +197,93 @@ Without this, every new backend would have to reimplement the 846 lines of
     Stage-0 operands now follow the software rule, so giants' 17 TFACTOR declines per frame draw on the GPU. Its swDraw readbacks went from 1 per frame to 1 per run. Software declines are counted per reason (`d3dim_gps_stat` 35+). Evidence: `scratch/runs/20261115-gps-d2c/`.
 - **D3. 2D drawing onto GPU surfaces on the GPU.** A Blt or BltFast from a DIB surface becomes an UPLOAD plus a keyed, textured quad. ColorFill becomes a CLEAR. This removes the HUD and sprite readbacks.
   - Apps: gta2_demo, Forsaken, Blood2, Re-Volt.
+  - **Status (2026-11-26, branch gps/d3-2d): Blt lowered; COPY and stretch not done.** Already in: BltFast's UPLOAD/keyed quad and ColorFill's CLEAR. New:
+    - `IDirectDrawSurface::Blt` with a source now takes the BltFast route (`$d3dim_blt_fence` in 09ab-handlers-d3dim-core) for equal-size, unclipped copies with flags within KEYSRC|ASYNC|WAIT|DONOTWAIT, so the destination is no longer read back (site bltDst).
+    - `$d3dim_gps_blt_end` no longer uploads onto a *clean* target: it marks it for the next prepare's shadow diff, as any CPU write does. Only a dirty target gets the rect UPLOAD, or the keyed quad.
+    - Survey and readbacks per frame, base → branch, WebGL executor at fixed batch budgets:
+      - Forsaken: 56 → 16 readbacks (bltDst 48 → 4).
+      - MW3: 0.96 → 0.18 per frame (bltDst 7 → 0). What is left is Lock.
+      - gta2_demo: 173, all Lock(WAIT) of the back buffer. (D6 CORRECTION: the guest never touches them; see D6.)
+      - dx_flip3dtl and dx_boids: 0 → 0.
+    - Pixels: md5-identical on flip3dtl, boids and gta2. MW3 differs by ±1 only: a frame presented from the DIB (565 shift) on base and from the GPU (bit-replicated) on the branch. Forsaken differs in its animated menu elements after 6 fewer flips.
+    - Not done:
+      - a GPU→GPU COPY: a GPU source is still read back (site bltSrc, 3 per MW3 run);
+      - stretched Blt;
+      - Blood2, Re-Volt and MCM were not reached in a short headless run.
+    - Evidence: `scratch/runs/20261126-gps-d3/`.
 - **D4. Move the D3DIM software arm to the v2 software executor.**
   - **Status (2026-11-17, branch retire/d3dim-20261117): done.** `$d3dim_gpu_call` always calls the producer; the WAT software draw entries (29 functions, ~90 KB), `d3dim_gpu_enable`/`set_d3dim_gpu_present`, the 0x20000-0x20004 host forwarding and the render Worker's D3DIM replay are deleted. A state decline traps. Executors: WebGL, software, null (`--d3dim-renderer`). `test-d3dim-native-mip`, `test-d3dim-worker-parity` and `test-d3dim-publication-source-lifetime` were deleted with the paths they tested. Known gaps the software rasterizer covered: DITHERENABLE/ANTIALIAS pixels, near/far clipping of pre-transformed vertices, and the attached Z surface's DIB (depth is executor-private).
 - **D5. DX6/7 multi-stage texture stages and specular through the 09aj cascade.** Removes the software fallback.
+  - **Status (2026-11-26, branch gps/d5-tss): done for what the device carries.** `$d3g_draw` no longer hand-builds a stage-0 shader: `$d3g_stage_key` reads the cascade (stage 0 from describe, later stages raw via `$d3dim_tss_load`) and `$d3g_fixed_shader` lowers it through `$d3d_fixed_compile_cascade6`, the D3D9 fixed-function compiler, then canonicalizes to core IR (executors stay API-neutral). Every DX6/7 COLOROP/ALPHAOP and argument (DIFFUSE, CURRENT, TEXTURE, TFACTOR, SPECULAR, COMPLEMENT, ALPHAREPLICATE) and SPECULARENABLE are honoured; TEXTUREFACTOR is CONSTS c0 (fog colour c7), so a TFACTOR fade reuses one shader; colour-key kill and vertex fog are appended to the core IR / cascade. An out-of-range op or arg traps as decline reason 7.
+  - The census (`scratch/runs/20261126-gps-d5/census/`) found no declines anywhere before D5 either: the gaps were silent approximations, chiefly Giants' 48k MODULATE(TEXTURE, TFACTOR) draws read as MODULATE(TEXTURE, DIFFUSE) and ALPHAOP DISABLE drawn as MODULATE. Giants' loading screen is now drawn at full brightness. `d3dim_gps_stat` 46..49 count multi-stage draws, stage>0 cuts, draws the old lowering approximated, and sixth-stage cuts (`[d3dim-gps] stages` in run.js).
+  - D6 (2026-11-26, branch gps/d6): the D3DIM rows still behind stat 47 stay at 0 on every route measured (mw3, gta2_demo, Forsaken, Re-Volt, dx_flip3dtl, dx_boids, plus the D5 census), so stage>0 textures were not started.
+  - Not done, deliberately: stage>0 textures. SetTexture on stage>0 is still dropped, the vertex path carries one UV set and the caps advertise one stage, so a later stage that samples ends the cascade there (stat 47). No app in the census uses stage>0. Multi-texture needs per-stage texture binding, TEXCOORDINDEX-driven UV sets in the vertex layout and caps raised together. Test: `test/test-d3dim-gps-stages.js` (software and headless-WebGL executors against computed D3D values).
+
+- **D6. Readback cleanup (branch gps/d6 = gps/d3-2d + gps/d5-tss).**
+  - **Status (2026-11-26): done.** Evidence: `scratch/runs/20261126-gps-d6/`.
+    - One D3DIM/GL/D3D9 ring consumer per process. A guest thread's `createHostImports` used to build its own Bridge: a fresh executor that had never seen main's CREATEs. That was Re-Volt's "color target 11 was never created". The thread now kicks main's bridge through `gpsProcessBridge` (PROCESS_SHARED_KEYS), as Glide already did. A GpsError on a cooperative guest thread now fails the run (rc 1). It used to be swallowed as a thread crash while WAT spinlocks were held, and main then spun forever.
+    - D3DIM lazy Lock is the WAT default on every host, as Glide and D3D9 already were. The CLI opts out with `--no-d3dim-lazy-sync`, the browser with `?no-lazy-sync`. GDI on a surface DC bound before the Lock now settles the entry in `$gdi_surface_descriptor` (the audit's retained-DC limitation).
+      - MW3@8000: 55 readbacks → 3 (51 Locks are whole-surface REP MOVS overwrites, discarded), md5 equal to eager at 4 budgets.
+      - gta2_demo@8000: 90 Lock readbacks → 0 (180/180 lazy Locks untouched).
+    - GPU Flip for any chain length (steps 1). `$d3g_flip` rotates every member's DIB as the CPU Flip does. Re-Volt's triple buffer took the CPU path with one cpuPresent readback per Flip. At 55 s: 25407 readbacks (1.8 GB) → 537 (getDC 531), and 0 → 27077 GPU presents.
+    - gta2 and Re-Volt pixels are equal to the eager/CPU path at RGB565 precision only. The GPU present shows the 8-bit target, not the 16-bit surface's quantized DIB (maxDelta 7). The same holds for every app already GPU-presenting a 16-bit chain. A quantize-on-present for 16-bit primaries is open. (D7: done, see below.)
+    - Forsaken's D3 pixel diff is not a rendering difference. Every frame of batches 410-428 on the branch is md5-identical to some base frame: the menu animation cycles through 6 states. A control build, whose only change is an 8 KB larger producer block, diverges from the branch the same way (1357 px, the same bbox). Guest heap addresses shift, the guest's work per batch shifts, and so timeGetTime differs at the same call index.
+    - GPU→GPU COPY for Blt was not done: no route measured issues a bltSrc readback once Locks are lazy. MW3's 2-3 disappear.
+
+- **D7. GDI on deferred DCs, 565 present, lazy-Lock browser smoke (branch gps/d7 = gps/d6 + one commit).**
+  - **Status (2026-11-27): done.** Evidence: `scratch/runs/20261127-gps-d7/`.
+    - Opaque GDI blits onto a deferred GetDC no longer land the target. `$gdi_blt_dst_descriptor` (09a4) marks a BitBlt/StretchBlt whose ROP3 reads no destination pixel (0x00, 0x33, 0xCC, 0xFF). `$d3dim_gps_gdi_access` then holds the target instead of reading it back. If the blit is unclipped (`$gdi_dc_clip_none`), has a positive extent, has a source rect inside the source and runs while the window-update lock is open, `$d3dim_gps_gdi_rect_written` uploads the written rect and subtracts it from the dirty rect R (stat 50). Otherwise the held target lands before the raster runs (stat 51). Any other GDI access lands it as before (site getDC).
+      - Re-Volt (55 s route): getDC readbacks 531 → 0, total 537 → 6, 0.0282 → 0.0003 per frame, frames 19016 in both arms. Re-Volt StretchBlts a full-screen memory bitmap onto its back buffer with SRCCOPY on each GetDC.
+      - Survey of the other routes: dx_flip3dtl's 5225 deferred GetDCs are all text, so they were already free. mw3, gta2_demo and dx_boids issue no GetDC on a GPU target.
+      - Test: `test/test-d3dim-gps-gdi-opaque.js`.
+    - Quantize-on-present for 16-bit primaries. `$d3g_present` passes q = (primary bpp 16 and fmt 565) to `$d3g_gamma`. That LUT maps each channel the way the CPU page presenter widens the quantized DIB: `floor((i>>3)*255/31)` for R and B, `floor((i>>2)*255/63)` for G, with the gamma ramp applied at that index when one is set. It reuses the PRESENT record's existing gamma texture, so the executors are unchanged and both are exact.
+      - Every D3DIM GPU present of a 565 chain now equals the eager CPU path: gta2_demo@7999 is byte-identical to d6's eager capture.
+      - There were two 565 widenings: JS floor and WAT upload/park bit replication. They no longer show through a present.
+      - Cost: one 1 KB LUT upload when the key changes.
+      - Test: the quantize case in `test/test-d3dim-gpu-present.js`.
+    - Lazy-Lock default, smoked in the browser (Threads, `dev-server --isolate`, SwiftShader WebGL), with no page errors:
+      - dx_flip3dtl: 0 readbacks per frame;
+      - gta2_demo gameplay: 2 readbacks in about 600 frames. Its menu takes 1 lazy first-touch readback per frame, because the guest touches its locked back buffer there;
+      - nfs2se_glide_demo (Glide): 0;
+      - quake2_demo (GL): 0.
+    - `tools/audit-d3dim-lazy-sync.js` was deleted. It predated GPS and faked readback through `gpu_gl_call`.
+  - Open:
+    - D3D9 and GL 16-bit back buffers are not quantized. Their PRESENT gamma is 0 or a ramp only.
+    - A clipped or update-locked opaque blit still lands.
+    - Opaque PatBlt/FillRect onto a deferred DC are not covered: only BitBlt and StretchBlt take the hold.
+- **D8. Lazy-Lock settle; 16-bit GL/D3D9 present and the GDI extensions surveyed (branch gps/d8 = gps/d7 + one commit).**
+  - **Status (2026-11-27): done.** Evidence: `scratch/runs/20261127-gps-d8/`.
+  - **gta2_demo menu readback: not a guest touch, and removed.**
+    - Run the menu headless with `--batch-size=1000 --tick-ms-per-batch=5`; at the default clock it never draws.
+    - Each frame Locks the back buffer twice and Unlocks both untouched (lazy armed 567, touched 0, untouched 567).
+    - Between the two Locks, two opaque Blts (278x480 and 362x480) cover the whole back buffer, then come the draws, the Flip and a colour fill.
+    - Cause: `$d3dim_lock_fence` sets `$D3DIM_LAZY_SHARED`+16 (deferred GPU work), and only a materialize whose result was 1 cleared it. After an untouched Unlock the word stayed set, with these effects:
+      - `$d3g_cpu_write_ok` refused the GPU replay of the Blts. Each frame's first Blt then read the back buffer back, charged to site lazy, only to overwrite it.
+      - Every pixel-free `$d3dim_gpu_barrier` would also have read back every dirty target.
+    - Fix: `$d3dim_lazy_settled_locked` (09ab) drops +16 once no D3DIM entry is armed. It is called from the untouched Unlock, the whole-range overwrite discard and the touched materialize (09a8gv). After a touch, that entry's own fence has been paid.
+    - Ranged fences keep their eager `$d3dim_worker_pending` path. A barrier inside an armed Lock still materializes it.
+    - Results:
+      - gta2 menu: 283 → 0 readbacks (284 frames, syncs 284 → 1), pixels identical on WebGL and software. Upload bytes 159 → 349 MB, because the two Blts now upload their rects (1.2 MB per frame) instead of being diffed after a readback.
+      - mw3: still 3 readbacks, now charged to their real sites (bltSrc 2, lock 1) instead of lazy.
+    - Test: `test/test-d3dim-gps-lazy-settle.js`. It fails on gps/d7 at "untouched Unlock settles the owed word".
+  - **565 quantize for D3D9 and GL: no consumer, skipped.**
+    - GL: `$glg_bind` binds only 32-bpp render targets, and GL window targets are allocated at 32 bpp (09a8g).
+    - D3D9: a D3DFMT_R5G6B5 back buffer exists only on profile 3 (programmable plus software executor). Elsewhere CreateDevice refuses format 23, and an RGB565 render-target texture is widened to X8R8G8B8 (09ae). Pirates on `--d3d9-gps=software` creates an X8R8G8B8 800x600 back buffer.
+    - D3D8 R5G6B5 fullscreen is an X8R8G8B8 backing with a 16-bit Lock view, so the CPU presenter already shows 32-bit, as the GPU does.
+  - **Opaque PatBlt/FillRect and clipped opaque blits on deferred DCs: no consumer, skipped.**
+    - Survey: getDC readbacks 0 and gdiOpaqueLanded 0 on every route that reached GPS frames: forsaken, giants, dx_tunnel, dx_twist, scr_geometry, scr_jazz, dx_globe, thps2, mw3, dx_flip3dtl, dx_boids, incoming, metrojd_gm7, quake2.
+    - dx_flip3dtl's 5225 deferred GetDCs are text, which is already free.
+    - Logs: `survey/`.
+  - Open:
+    - The two items above, for when a corpus app needs them.
+    - gta2's menu Blts could diff against the shadow instead of uploading whole rects, which would cut the extra upload bytes.
 
 **Risks:**
 
 - These semantics live only in JS today, and WAT must take them over:
   - the page-watch dirty versions (PageLease);
   - garbage collection of live surfaces;
-  - Flip chains longer than 2;
+  - Flip chains longer than 2 (GPU path since D6);
   - the staleness ordering of GPU and CPU presents.
 - A guest that keeps a pointer after Lock sees stale pixels more often.
 - Mixed GPU and software draws within a frame thrash until D5.

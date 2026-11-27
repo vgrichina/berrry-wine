@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "9233a491c885b5a91e7992a177c4a60191f77f73299eedd20ff41c4a4955664d",
+      "sha256": "cde111c701d96897c8344b66d089cd13f249626ae03f496a3fe79343735d162c",
+      "reason": "Review 20261126 gps-d6: host-imports routes a guest thread's D3DIM/GL/D3D9 ring kicks to the process's one bridge (gpsProcessBridge, process-shared via worker-imports); thread-manager rethrows a GpsError from a cooperative thread instead of retiring only that thread. No guest EIP write, callback frame or invocation identity changes. General callback ownership remains pending."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "45f55a67e3148b47f046f4e509bf52a0e0636a5e46bf2257f10045c9010823b1",
+      "sha256": "879b66400268e55c35fd65dc95777f82cba713f734217abd5bdaba2f27a405e8",
+      "reason": "Review 20261126 gps-d6: host-imports routes a guest thread's D3DIM/GL/D3D9 ring kicks to the process's one bridge (gpsProcessBridge, process-shared via worker-imports); thread-manager rethrows a GpsError from a cooperative thread instead of retiring only that thread. No guest EIP write, callback frame or invocation identity changes. General callback ownership remains pending."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
+      "sha256": "402d80e7af2bd74e3f628098f3078c860b176e29b8a71facc42b4371da26ee27",
+      "reason": "Review 20261126 gps-d6: host-imports routes a guest thread's D3DIM/GL/D3D9 ring kicks to the process's one bridge (gpsProcessBridge, process-shared via worker-imports); thread-manager rethrows a GpsError from a cooperative thread instead of retiring only that thread. No guest EIP write, callback frame or invocation identity changes. General callback ownership remains pending."
+    }
+  ]
+}
