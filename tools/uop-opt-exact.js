@@ -6,13 +6,14 @@
 // default block clock and under --branch-clock.
 //
 //   node tools/uop-opt-exact.js --apps=spel,h2 --arms=0,0x1ff [--clocks=block,branch]
-//        [--out=DIR] [--extra='--flag ...'] [--list] [--timeout=180]
+//        [--out=DIR] [--extra='--flag ...'] [--list] [--timeout=180] [--no-gl]
 //
 // One run at a time, each bounded by --timeout seconds (wall) and a fixed
 // batch count. A headless-GL app gets `caffeinate -u -t 2` before each run (a
 // sleeping display has no GLFW surface). Writes OUT/<app>-<clock>-<arm>.log
 // and .png, and OUT/exact.json with every run's digests and the ledger line.
-// Exit 1 when any arm differs from its control.
+// Exit 1 when any arm differs from its control. --no-gl (a box without a
+// display): GL apps run with --d3d9-gps=null, no --headless-gl, no caffeinate.
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
@@ -72,6 +73,7 @@ const clocks = arg('clocks', 'block,branch').split(',');
 const outDir = path.resolve(arg('out', path.join(ROOT, 'scratch', 'uop-opt-exact')));
 const extra = (arg('extra', '') || '').split(/\s+/).filter(Boolean);
 const timeoutS = +arg('timeout', '180');
+const noGl = process.argv.includes('--no-gl');
 fs.mkdirSync(outDir, { recursive: true });
 
 const sha = (buf) => crypto.createHash('sha256').update(buf).digest('hex');
@@ -98,6 +100,7 @@ let diffs = 0;
 for (const key of apps) {
   const g = APPS[key];
   if (!g) throw new Error(`unknown app ${key} (--list)`);
+  const gl = g.gl && !noGl;
   for (const clock of clocks) {
     let control = null;
     for (const mask of arms) {
@@ -108,7 +111,7 @@ for (const key of apps) {
       const input = [...(g.input || []), ...shots.map(([b, f]) => `${b}:png:${f}`)]
         .sort((x, y) => parseInt(x, 10) - parseInt(y, 10));
       const argv = ['test/run.js', `--app=${g.app}`, '--no-build', '--quiet-api', '--no-close',
-        '--trace-api-counts', '--api-counts-top=100000', ...(g.gl ? ['--headless-gl'] : []),
+        '--trace-api-counts', '--api-counts-top=100000', ...(gl ? ['--headless-gl'] : g.gl ? ['--d3d9-gps=null'] : []),
         ...g.args, ...(clock === 'branch' ? ['--branch-clock'] : []),
         `--uop-opt=0x${mask.toString(16)}`, ...extra, `--max-seconds=${timeoutS - 10}`,
         `--png=${png}`, ...(input.length ? [`--input=${input.join(',')}`] : [])];
@@ -116,14 +119,14 @@ for (const key of apps) {
       // sleeps mid-sweep leaves GLFW with zero displays: a different renderer,
       // so a different frame); one retry if it still came up unusable
       const once = () => {
-        if (!g.gl) return spawnSync(process.execPath, argv, { cwd: ROOT, encoding: 'utf8', timeout: timeoutS * 1000, maxBuffer: 1 << 28 });
+        if (!gl) return spawnSync(process.execPath, argv, { cwd: ROOT, encoding: 'utf8', timeout: timeoutS * 1000, maxBuffer: 1 << 28 });
         spawnSync('caffeinate', ['-u', '-t', '2']);
         return spawnSync('caffeinate', ['-d', '-i', process.execPath, ...argv], { cwd: ROOT, encoding: 'utf8', timeout: timeoutS * 1000, maxBuffer: 1 << 28 });
       };
       const t0 = Date.now();
       let r = once();
       const unusable = (x) => /headless-gl requested but UNUSABLE/.test((x.stdout || '') + (x.stderr || ''));
-      if (g.gl && unusable(r)) r = once();
+      if (gl && unusable(r)) r = once();
       const wall = (Date.now() - t0) / 1000;
       fs.writeFileSync(log, (r.stdout || '') + (r.stderr || ''));
       const d = digest((r.stdout || '') + (r.stderr || ''));
@@ -137,7 +140,7 @@ for (const key of apps) {
       if (r.status !== 0) bad.push(`exit ${r.status}${r.signal ? ' ' + r.signal : ''}`);
       if (!pngSha) bad.push('no png');
       for (const [b, h] of shotShas) if (!h) bad.push(`no frame @${b}`);
-      if (g.gl && unusable(r)) bad.push('GL unusable (display asleep)');
+      if (gl && unusable(r)) bad.push('GL unusable (display asleep)');
       if (control && row !== control) {
         if (row.apiSha !== control.apiSha) bad.push(`api ${row.apiCalls} vs ${control.apiCalls}`);
         if (row.presSha !== control.presSha) bad.push('presents');

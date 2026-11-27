@@ -1252,6 +1252,13 @@ for (const [form, pre, cmp, post] of [
     optWant: { mask: 0x10010, want: { optV2c: '>0' } }, setup: v2cSetup,
     code: [[0xDB, 0xE3], L('l'), ...pre, cmp, ...V2C_GROUPS, ...V2C_READ, ...post, ...V2C_TAIL] });
 }
+// PUSHFD and LAHF straight after the fused pair: the tier leaves them to
+// threaded code (a side exit), which must see SAHF's flags with OF kept.
+CASES.push({ name: 'opt-v2c-pushf-lahf', regs: { ecx: 600 }, head: 'l', declines: true, optCompiles: 0x10, dynamicEntry: true,
+  optWant: { mask: 0x10010, want: { optV2c: '>0' } }, setup: v2cSetup,
+  code: [[0xDB, 0xE3], L('l'), [0xD9, 0x06], [0xD8, 0x5E, 0x04], [0x83, 0xF9, 0x00], [0xDF, 0xE0], 0x9E,
+    J(cc.A, 'a'), [0x83, 0x07, 0x01], L('a'), [0xF6, 0xC1, 0x07], J(cc.NZ, 'n'),
+    [0xDF, 0xE0], 0x9E, 0x9C, [0x8F, 0x47, 0x04], [0xDF, 0xE0], 0x9E, 0x9F, [0x88, 0x67, 0x08], L('n'), ...V2C_TAIL] });
 // FNSTSW AX not followed by SAHF (a TEST AH between): no fusion, exact.
 CASES.push({ name: 'opt-v2c-nofuse', regs: { ecx: 600 }, head: 'l', declines: true, optCompiles: 0x10,
   optWant: { mask: 0x10010, want: { optV2c: 0, optSahf: '>0' } }, setup: v2cSetup,
