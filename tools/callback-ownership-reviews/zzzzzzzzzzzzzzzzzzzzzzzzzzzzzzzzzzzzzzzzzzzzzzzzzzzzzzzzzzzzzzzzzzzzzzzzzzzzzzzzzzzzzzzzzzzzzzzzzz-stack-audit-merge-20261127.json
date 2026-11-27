@@ -16,13 +16,6 @@
       "reason": "Merge review 20261127 opt/stack-audit (origin/main + uop-opt/uop-sse dfde581b4 + opt/gm-fold2 420e05ad1): the branch-side reviews below were written against a pre-merge hash and are re-anchored here unchanged; main-side edits to this producer keep their own reviews. Review 20261126 uop-opt A1: the main thread (tid 0) picks its micro-op arena from --uop-opt bit 0x8000 ($UOP_ARENA_BIG instead of $UOP_ARENA) before the existing $uop_set_arena flush. Data placement only: no guest callback, invocation, context restoration or scheduling change; worker arenas unchanged. Ownership remains pending."
     },
     {
-      "file": "lib/worker-imports.js",
-      "name": "host-file",
-      "baseSHA256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
-      "sha256": "dd3eeb8d65a7c911165059fb6f56464ba677a2c4fd71828400ed8280889125db",
-      "reason": "Merge review 20261127 opt/stack-audit (origin/main + uop-opt/uop-sse dfde581b4 + opt/gm-fold2 420e05ad1): the branch-side reviews below were written against a pre-merge hash and are re-anchored here unchanged; main-side edits to this producer keep their own reviews. Review 20261125 --uop-opt=MASK: set_uop_opt joins the inherited setters, a compile-time choice per instance with the same lifetime as set_uop_sse. Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending. Re-anchored on the uop-opt review at the opt/uop-flags merge (both sides kept: uop-opt ops 111-113 and set_uop_opt, SSE-native ops 120-142 and set_uop_sse_native). Review 20261126 GM fold: worker-imports adds the set_gm_fold/get_gm_fold decode-time mask to the inherited setter list, beside set_delphi_fold; no host entry, run call or callback boundary changes. General callback ownership remains pending. Review 20261127 GM collision fold: comment only -- the set_gm_fold mask's default is now 0x1F; the inherited setter list, host entries, run calls and callback boundaries are unchanged. General callback ownership remains pending."
-    },
-    {
       "file": "host.js",
       "name": "host-file",
       "baseSHA256": "c0e7829da35bf2b529eb004ab6880a0c372b9dfd2bc6ca6e13a392a5012e29c5",
