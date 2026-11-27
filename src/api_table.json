@@ -42453,5 +42453,43 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 5002,
+    "name": "ScrollDC",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 1798695361,
+    "args": [
+      {
+        "name": "hdc",
+        "type": "HDC"
+      },
+      {
+        "name": "dx",
+        "type": "int"
+      },
+      {
+        "name": "dy",
+        "type": "int"
+      },
+      {
+        "name": "scroll",
+        "type": "LPCRECT"
+      },
+      {
+        "name": "clip",
+        "type": "LPCRECT"
+      },
+      {
+        "name": "hrgnUpdate",
+        "type": "HRGN"
+      },
+      {
+        "name": "rectUpdate",
+        "type": "LPRECT"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]
