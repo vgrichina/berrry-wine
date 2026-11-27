@@ -23,6 +23,8 @@
   ;; +20 misc1 (DDSurface: dib_ptr, DSound: DSSCL level, DDraw: focus HWND)
   ;; +24 misc2 (DDSurface: color key low / surface byte size)
   ;; +28 flags (surface type: 1=primary,2=backbuf,4=offscreen; 0x100=has_colorkey;
+  ;;            0x200=client storage,0x400=heap storage,0x800=implicit creation,
+  ;;            0x1000=may share storage after DuplicateSurface;
   ;;            DSound root: initialized speaker configuration plus one)
   ;; D3D9 surface arm: 0x40000000 = guest CPU ownership (not compositor binding).
   ;; 0x20000000 = acquire pending; 0x10000000 = release upload pending.
@@ -1315,13 +1317,30 @@
   ;; lpSurface. Advance only this CPU epoch: sprite Blts after a background
   ;; save are precisely the writes that the later restore is meant to undo.
   (func $dx_surf_note_cpu_write (param $entry_wa i32)
-    (local $state i32)
+    (local $state i32) (local $slot i32) (local $peer i32)
     (if (i32.eqz (local.get $entry_wa)) (then (return)))
     (call $dx_surf_note_write (local.get $entry_wa))
     (local.set $state (call $dx_surf_state_ptr (local.get $entry_wa)))
     (i32.store (local.get $state)
       (i32.add (i32.load (local.get $state)) (i32.const 1)))
-    (i32.store offset=4 (local.get $state) (i32.const 0)))
+    (i32.store offset=4 (local.get $state) (i32.const 0))
+    ;; Lock through any duplicate changes the same CPU pixels. Cursor-save
+    ;; provenance on its peers must see that write too. Ordinary surfaces
+    ;; retain the constant-time path.
+    (if (i32.and (load.field DxObject flags (local.get $entry_wa)) (i32.const 0x1000)) (then
+      (block $done (loop $scan
+        (br_if $done (i32.ge_u (local.get $slot) (global.get $DX_MAX)))
+        (local.set $peer (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+        (if (i32.and
+          (i32.and (i32.ne (local.get $peer) (local.get $entry_wa))
+            (i32.eq (load.field DxObject type (local.get $peer)) (i32.const 2)))
+          (i32.and (i32.gt_s (load.field DxObject refcount (local.get $peer)) (i32.const 0))
+            (i32.eq (load.field DxObject misc1 (local.get $peer)) (load.field DxObject misc1 (local.get $entry_wa))))) (then
+          (local.set $state (call $dx_surf_state_ptr (local.get $peer)))
+          (i32.store (local.get $state) (i32.add (i32.load (local.get $state)) (i32.const 1)))
+          (i32.store offset=4 (local.get $state) (i32.const 0))))
+        (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+        (br $scan))))))
 
   (func $dx_surf_clear_copy (param $entry_wa i32)
     (if (local.get $entry_wa)
@@ -2776,10 +2795,57 @@
       (else (call $dib_alloc (local.get $size)))))
 
   (func $dx_surface_storage_free (param $wa i32) (param $flags i32)
+    (if (i32.eqz (local.get $wa)) (then (return)))
+    ;; Every surface memory retirement (including allocation rollback) passes
+    ;; here. Live objects, rather than COM interface refcounts, own the bytes.
+    ;; Pointer rotations by Flip therefore need no separate ownership updates.
+    (if (call $dx_surface_storage_peer (local.get $wa) (i32.const 0)) (then (return)))
     (if (i32.and (local.get $flags) (i32.const 0x200)) (then (return)))
     (if (i32.and (local.get $flags) (i32.const 0x400))
       (then (call $heap_free (call $w2g (local.get $wa))))
       (else (call $dib_free_wasm (local.get $wa)))))
+
+  ;; Find another live surface referencing these bytes. Retired slots and
+  ;; non-surface DxObject union arms must never keep an allocation alive.
+  (func $dx_surface_storage_peer (param $wa i32) (param $exclude i32) (result i32)
+    (local $slot i32) (local $entry i32)
+    (if (i32.eqz (local.get $wa)) (then (return (i32.const 0))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $slot) (global.get $DX_MAX)))
+      (local.set $entry (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+      (if (i32.and
+            (i32.and (i32.ne (local.get $entry) (local.get $exclude))
+              (i32.eq (load.field DxObject type (local.get $entry)) (i32.const 2)))
+            (i32.and (i32.gt_s (load.field DxObject refcount (local.get $entry)) (i32.const 0))
+              (i32.eq (load.field DxObject misc1 (local.get $entry)) (local.get $wa))))
+        (then (return (local.get $entry))))
+      (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  ;; Detach this object's backing before freeing it. The one allocation bill
+  ;; follows a surviving object; only the last detach refunds it. Object-local
+  ;; colour keys, palette, clipper, DC and interface refs stay on their object.
+  (func $dx_surface_storage_detach (param $entry i32)
+    (local $wa i32) (local $peer i32) (local $bytes i32)
+    (local.set $wa (load.field DxObject misc1 (local.get $entry)))
+    (local.set $bytes (call $dx_surf_billed_get (local.get $entry)))
+    (local.set $peer (call $dx_surface_storage_peer (local.get $wa) (local.get $entry)))
+    (call $dx_surf_billed_set (local.get $entry) (i32.const 0))
+    (if (local.get $peer)
+      (then
+        (call $dx_surf_billed_set (local.get $peer)
+          (i32.add (call $dx_surf_billed_get (local.get $peer)) (local.get $bytes)))
+        ;; SetSurfaceDesc can install the same pointer on a formerly client-
+        ;; backed object. The allocator ownership must follow the bytes too,
+        ;; including zero-billed SYSTEMMEMORY and implicit mip allocations.
+        (if (i32.eqz (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x200))) (then
+          (store.field DxObject flags (local.get $peer)
+            (i32.or (i32.and (load.field DxObject flags (local.get $peer)) (i32.const -1537))
+              (i32.and (load.field DxObject flags (local.get $entry)) (i32.const 0x400)))))))
+      (else (global.set $dx_vidmem_used (i32.sub (global.get $dx_vidmem_used) (local.get $bytes)))))
+    (store.field DxObject misc1 (local.get $entry) (i32.const 0))
+    (call $dx_surface_storage_free (local.get $wa) (load.field DxObject flags (local.get $entry))))
 
   (func $dx_create_mip_chain
       (param $parent_obj i32) (param $owner i32) (param $caps i32)
@@ -2857,7 +2923,7 @@
         ;; misc2 on a surface is its colour key, so a fresh level leaves it 0.
         (store.field DxObject misc2 (local.get $entry) (i32.const 0))
         (store.field DxObject flags (local.get $entry)
-          (i32.or (i32.const 4) (local.get $storage_flags))) ;; offscreen
+          (i32.or (i32.const 0x804) (local.get $storage_flags))) ;; offscreen, implicitly created
         (call $dx_surf_fmt_set (local.get $entry) (local.get $fmt))
         (if (i32.eqz (call $dx_surface_caps2_set (local.get $entry)
               (call $dx_surface_caps2_get (call $dx_from_this (local.get $parent_obj))))) (then
@@ -3233,7 +3299,8 @@
       (global.set $dx_vidmem_used (i32.add (global.get $dx_vidmem_used) (local.get $back_bytes)))
       (call $dx_surf_billed_set (local.get $back_entry) (local.get $back_bytes))
       (store.field DxObject misc1 (local.get $back_entry) (local.get $dib_wa))
-      (store.field DxObject flags (local.get $back_entry) (local.get $back_flags))
+      ;; Creation identity survives release of the implicit chain's parent.
+      (store.field DxObject flags (local.get $back_entry) (i32.or (local.get $back_flags) (i32.const 0x800)))
       (call $dx_surf_fmt_set (local.get $back_entry) (local.get $fmt))
       (store.field DxObject misc0 (local.get $prev_entry) (local.get $back_obj))
       (local.set $prev_entry (local.get $back_entry))
@@ -3272,9 +3339,60 @@
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))) ;; 4 args (this+3)
 
-  ;; DuplicateSurface — stub
+  ;; DuplicateSurface creates an independent object sharing the existing bytes.
+  ;; MS: primary, 3-D and implicitly created surfaces cannot be duplicated.
   (func $handle_IDirectDraw_DuplicateSurface (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (call $crash_unimplemented (local.get $name_ptr)))
+    (local $src i32) (local $obj i32) (local $dst i32) (local $hr i32)
+    (local $state i32) (local $copy i32) (local $ref i32)
+    (local.set $src (call $ddraw_surface_entry_checked (local.get $arg1)))
+    (local.set $hr (i32.const 0x88760082)) ;; DDERR_INVALIDOBJECT
+    (block $done
+      (br_if $done (i32.eqz (call $ddraw_entry_checked (local.get $arg0))))
+      (br_if $done (i32.eqz (local.get $src)))
+      (local.set $hr (i32.const 0x80070057)) ;; DDERR_INVALIDPARAMS
+      (br_if $done (i32.eqz (local.get $arg2)))
+      (local.set $hr (i32.const 0x88760247)) ;; DDERR_CANTDUPLICATE = MAKE_DDHRESULT(583)
+      (br_if $done (i32.and (i32.load (call $dx_surf_meta_ptr (local.get $src))) (i32.const 0x2200))) ;; PRIMARY|3DDEVICE
+      (br_if $done (i32.and (load.field DxObject flags (local.get $src)) (i32.const 0x801)))
+      (call $d3dim_gpu_barrier)
+      (local.set $hr (i32.const 0x8007000e)) ;; DDERR_OUTOFMEMORY
+      (local.set $obj (call $dx_create_com_obj (i32.const 2) (call $dx_surface_vtbl_for_dd (local.get $arg0))))
+      (br_if $done (i32.eqz (local.get $obj)))
+      (local.set $dst (call $dx_from_this (local.get $obj)))
+      (call $zero_memory (call $dx_surf_meta_ptr (local.get $dst)) (i32.const 16))
+      ;; Copy value properties, never ownership of an attachment or auxiliary
+      ;; state record. No AddRef on src: each surface starts with one reference.
+      (memory.copy (i32.add (local.get $dst) (i32.const 12))
+        (i32.add (local.get $src) (i32.const 12)) (i32.const 20))
+      (store.field DxObject flags (local.get $src)
+        (i32.or (load.field DxObject flags (local.get $src)) (i32.const 0x1000)))
+      (store.field DxObject flags (local.get $dst)
+        (i32.or (load.field DxObject flags (local.get $dst)) (i32.const 0x1000)))
+      (i32.store (call $dx_surf_meta_ptr (local.get $dst)) (i32.load (call $dx_surf_meta_ptr (local.get $src))))
+      (i32.store (call $dx_surf_owner_ptr (local.get $dst)) (i32.load (call $dx_surf_owner_ptr (local.get $src))))
+      (i32.store (call $dx_surf_creator_ptr (local.get $dst)) (local.get $arg0))
+      (call $dx_surf_fmt_set (local.get $dst) (call $dx_surf_fmt_get (local.get $src)))
+      (local.set $state (call $vbdd_draw_state_ptr (local.get $src)))
+      (if (local.get $state) (then
+        (local.set $copy (call $vbdd_draw_state_ensure (local.get $dst)))
+        (if (i32.eqz (local.get $copy)) (then
+          (drop (call $dx_surface_release (local.get $obj)))
+          (br $done)))
+        (memory.copy (local.get $copy) (local.get $state) (i32.const 32))
+        ;; A cached VB pen is not a native surface value property.
+        (i32.store offset=4 (local.get $copy) (i32.const 0))))
+      (local.set $ref (call $dx_surf_pal_object (local.get $src)))
+      (if (local.get $ref) (then
+        (drop (call $dx_com_addref (local.get $ref)))
+        (call $dx_surf_pal_set (local.get $dst) (local.get $ref))))
+      (local.set $ref (call $dx_surface_clipper_get (local.get $src)))
+      (if (local.get $ref) (then
+        (drop (call $dx_com_addref (local.get $ref)))
+        (i32.store (call $dx_surface_clipper_ptr (local.get $dst)) (local.get $ref))))
+      (call $gs32 (local.get $arg2) (local.get $obj))
+      (local.set $hr (i32.const 0)))
+    (i32.store (global.get $reg_base) (local.get $hr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))))
 
   ;; EnumDisplayModes(this, dwFlags, lpDDSD, lpContext, lpEnumModesCallback)
   ;; Uses continuation thunk CACA0008 to iterate through a table of modes.
@@ -5395,9 +5513,10 @@
   ;; owning a handler stack frame, so device teardown can release its implicit
   ;; render-target reference directly.
   (func $dx_surface_release (param $this i32) (result i32)
-    (local $entry i32) (local $rc i32) (local $surf_bytes i32) (local $dib_wa i32)
+    (local $entry i32) (local $rc i32)
     (local $clipper i32) (local $attached i32) (local $owner i32) (local $child i32)
-    (local.set $entry (call $dx_from_this (local.get $this)))
+    (local.set $entry (call $ddraw_surface_entry_checked (local.get $this)))
+    (if (i32.eqz (local.get $entry)) (then (return (i32.const 0))))
     ;; A nonfinal reference drop touches no pixels or resource lifetime.
     ;; Final teardown retains its fence.
     (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 1))
@@ -5414,14 +5533,8 @@
     (store.field DxObject refcount (local.get $entry) (local.get $rc))
     (if (i32.le_s (local.get $rc) (i32.const 0))
       (then
-        ;; The billed figure, not misc2: SetColorKey rewrites misc2 on a live
-        ;; surface, so a keyed surface would otherwise refund its colour key.
-        (local.set $surf_bytes (call $dx_surf_billed_get (local.get $entry)))
-        (call $dx_surf_billed_set (local.get $entry) (i32.const 0))
-        (local.set $dib_wa (load.field DxObject misc1 (local.get $entry)))
         ;; Already fenced above: drop the GPU stream resources behind it.
         (call $d3dim_gps_forget (local.get $entry))
-        (global.set $dx_vidmem_used (i32.sub (global.get $dx_vidmem_used) (local.get $surf_bytes)))
         (call $dx_surf_pal_detach (local.get $entry))
         (if (i32.eq (local.get $entry) (global.get $dx_primary_wa))
           (then (global.set $dx_primary_wa (i32.const 0))))
@@ -5434,8 +5547,7 @@
             (i32.store (call $dx_surface_clipper_ptr (local.get $entry)) (i32.const 0))
             (drop (call $dx_com_release_basic (local.get $clipper)))))
         (call $dx_cursor_reset (local.get $entry))
-        (call $dx_surface_storage_free (local.get $dib_wa)
-          (load.field DxObject flags (local.get $entry)))
+        (call $dx_surface_storage_detach (local.get $entry))
         ;; misc0 is the implicit attachment CreateSurface made: a flip
         ;; chain's back buffer or the next mip level. The complex surface
         ;; owns that object's initial reference, and destroying the front
@@ -6995,6 +7107,31 @@
   ;; GetAttachedSurface(this, lpDDSCaps, lplpDDAttachedSurface)
   ;; Resolve only wrappers this runtime actually owns, without dx_from_this's
   ;; invalid-slot clamp (which can alias an unrelated live object in slot 0).
+  ;; Same registered-wrapper validation for the DuplicateSurface receiver.
+  (func $ddraw_entry_checked (param $this i32) (result i32)
+    (local $offset i32) (local $wa i32) (local $slot i32) (local $entry i32)
+    (local.set $offset (i32.sub (local.get $this) (call $w2g (global.get $COM_WRAPPERS))))
+    (if (i32.lt_u (local.get $offset) (global.get $COM_WRAPPERS_SIZE))
+      (then (local.set $wa (i32.add (global.get $COM_WRAPPERS) (local.get $offset))))
+      (else
+        (local.set $offset (i32.sub (local.get $this) (call $w2g (global.get $COM_WRAPPERS_AUX))))
+        (if (i32.ge_u (local.get $offset) (global.get $COM_WRAPPERS_AUX_SIZE))
+          (then (return (i32.const 0))))
+        (if (i32.ge_u (i32.shr_u (local.get $offset) (i32.const 3))
+              (i32.load (global.get $COM_AUX_NEXT_SHARED)))
+          (then (return (i32.const 0))))
+        (local.set $wa (i32.add (global.get $COM_WRAPPERS_AUX) (local.get $offset)))))
+    (if (i32.and (local.get $offset) (i32.const 7)) (then (return (i32.const 0))))
+    (if (i32.eqz (i32.load (local.get $wa))) (then (return (i32.const 0))))
+    (local.set $slot (i32.load offset=4 (local.get $wa)))
+    (if (i32.ge_u (local.get $slot) (global.get $DX_MAX)) (then (return (i32.const 0))))
+    (local.set $entry (i32.add (global.get $DX_OBJECTS) (i32.shl (local.get $slot) (i32.const 5))))
+    (if (i32.ne (load.field DxObject type (local.get $entry)) (i32.const 1))
+      (then (return (i32.const 0))))
+    (if (i32.le_s (load.field DxObject refcount (local.get $entry)) (i32.const 0))
+      (then (return (i32.const 0))))
+    (local.get $entry))
+
   (func $ddraw_surface_entry_checked (param $this i32) (result i32)
     (local $offset i32) (local $wa i32) (local $slot i32) (local $entry i32)
     (local.set $offset (i32.sub (local.get $this) (call $w2g (global.get $COM_WRAPPERS))))
@@ -7876,6 +8013,15 @@
         (if (i32.and (local.get $flags) (i32.const 0x00000800))
           (then
             (local.set $pixels (i32.load offset=36 (local.get $desc)))
+            (if (i32.ne (local.get $pixels)
+                  (select (call $w2g (load.field DxObject misc1 (local.get $entry))) (i32.const 0)
+                    (load.field DxObject misc1 (local.get $entry)))) (then
+              ;; SetSurfaceDesc installs caller-owned memory. Retire the old
+              ;; allocation through the same shared lifetime path as Release.
+              (call $dx_surface_storage_detach (local.get $entry))
+              (store.field DxObject flags (local.get $entry)
+                (i32.or (i32.and (load.field DxObject flags (local.get $entry)) (i32.const -1025))
+                  (i32.const 0x200)))))
             (store.field.memarg DxObject misc1 (local.get $entry) (if (result i32) (local.get $pixels)
                 (then (call $g2w (local.get $pixels)))
                 (else (i32.const 0))))))))
