@@ -2345,10 +2345,9 @@ GetTopWindow(hWnd) — 1 arg stdcall
 
 ;; 657: GetDCEx — STUB: unimplemented
   (func $handle_GetDCEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $hdc i32)
-    ;; GetDCEx(hwnd, hrgnClip, flags). Minimal USER/GDI compatibility:
-    ;; ignore the optional region for now, but honor DCX_WINDOW enough for MFC
-    ;; toolbar/nonclient update code to choose whole-window vs client origin.
+    (local $hdc i32) (local $x i32) (local $y i32)
+    ;; GetDCEx(hwnd, hrgnClip, flags). USER's screen-coordinate request limits
+    ;; visibility independently of the application clip exposed by GetClipRgn.
     ;; hwnd=NULL and the fixed desktop hwnd both use the host screen DC path.
     (if (i32.or
           (i32.eqz (local.get $arg0))
@@ -2369,6 +2368,27 @@ GetTopWindow(hWnd) — 1 arg stdcall
             (if (i32.and (local.get $arg2) (i32.const 0x00000400)) ;; DCX_LOCKWINDOWUPDATE
               (then (call $dc_apply_client_clip_unlocked (local.get $hdc) (local.get $arg0)))
               (else (call $dc_apply_client_clip (local.get $hdc) (local.get $arg0))))))))))
+    (if (i32.and (i32.ne (local.get $hdc) (i32.const 0))
+          (i32.ne (i32.and (local.get $arg2) (i32.const 0xC0)) (i32.const 0)))
+      (then
+        (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
+              (i32.ne (local.get $arg0) (i32.const 0x00010000)))
+          (then
+            (if (i32.and (local.get $arg2) (i32.const 1))
+              (then
+                (local.set $x (call $wnd_window_screen_x (local.get $arg0)))
+                (local.set $y (call $wnd_window_screen_y (local.get $arg0))))
+              (else
+                (local.set $x (call $wnd_client_screen_x (local.get $arg0)))
+                (local.set $y (call $wnd_client_screen_y (local.get $arg0)))))))
+        (if (i32.eqz (call $gdi_getdcex_clip_install
+              (local.get $hdc) (local.get $arg1)
+              (select (i32.const 1) (i32.const 4)
+                (i32.ne (i32.and (local.get $arg2) (i32.const 0x80)) (i32.const 0)))
+              (local.get $x) (local.get $y)))
+          (then
+            (drop (call $host_release_dc (local.get $hdc)))
+            (local.set $hdc (i32.const 0))))))
     (i32.store offset=0 (global.get $reg_base) (local.get $hdc))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )

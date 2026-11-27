@@ -947,6 +947,7 @@
 
   (func $gdi_dc_system_clip_release (param $hdc i32)
     (local $entry i32) (local $clip i32)
+    (call $gdi_getdcex_clip_release (local.get $hdc))
     (local.set $entry (call $gdi_dc_system_clip_entry (local.get $hdc) (i32.const 0)))
     (if (local.get $entry)
       (then
@@ -958,6 +959,12 @@
     (local $entry i32) (local $old i32) (local $clip i32)
     (local.set $clip (call $gdi_dc_clip_default_region (local.get $hdc)))
     (if (i32.eqz (local.get $clip)) (then (return (i32.const 0))))
+    ;; Rebuilding USER visibility must retain the acquisition's region. It is
+    ;; independent of application clipping and is never part of SaveDC.
+    (if (i32.eqz (call $gdi_getdcex_clip_apply (local.get $hdc) (local.get $clip)))
+      (then
+        (drop (call $gdi_rgn_delete (local.get $clip)))
+        (return (i32.const 0))))
     (local.set $entry (call $gdi_dc_system_clip_entry (local.get $hdc) (i32.const 1)))
     (if (i32.eqz (local.get $entry))
       (then
@@ -967,6 +974,105 @@
     (i32.store offset=4 (local.get $entry) (local.get $clip))
     (if (local.get $old) (then (drop (call $gdi_rgn_delete (local.get $old)))))
     (call $gdi_rgn_get_box (local.get $clip) (i32.const 0)))
+
+  ;; A retained GetDCEx operand is an owned immutable HRGN. The region's
+  ;; generation word has spare bits outside the handle generation (0..7),
+  ;; mirror flag (8), and SetWindowRgn owner (16..24). Tag a DC-state slot + 1
+  ;; in bits 9..15/25..27, RGN_DIFF in bit 28, and presence in bit 31. This
+  ;; keeps acquisition state shared with USER visibility and needs no heap or
+  ;; new fixed table. Allocation resets these bits; release deletes the copy.
+  (func $gdi_getdcex_clip_tag (param $hdc i32) (result i32)
+    (local $dc i32) (local $slot i32)
+    (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
+    (if (i32.eqz (local.get $dc)) (then (return (i32.const 0))))
+    (local.set $slot (i32.add (i32.div_u
+      (i32.sub (local.get $dc) (global.get $GDI_DC_STATE_TABLE))
+      (global.get $GDI_DC_STATE_STRIDE)) (i32.const 1)))
+    (i32.or (i32.const 0x80000000) (i32.or
+      (i32.shl (i32.and (local.get $slot) (i32.const 127)) (i32.const 9))
+      (i32.shl (i32.shr_u (local.get $slot) (i32.const 7)) (i32.const 25)))))
+
+  (func $gdi_getdcex_clip_record (param $hdc i32) (result i32)
+    (local $tag i32) (local $i i32) (local $p i32)
+    (local.set $tag (call $gdi_getdcex_clip_tag (local.get $hdc)))
+    (if (i32.eqz (local.get $tag)) (then (return (i32.const 0))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $i) (i32.const 255)))
+      (local.set $p (i32.add (global.get $GDI_REGION_TABLE)
+        (i32.mul (local.get $i) (i32.const 32))))
+      (if (i32.and (i32.ne (i32.load (local.get $p)) (i32.const 0))
+            (i32.eq (i32.and (i32.load offset=4 (local.get $p)) (i32.const 0x8E00FE00))
+              (local.get $tag)))
+        (then (return (local.get $p))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $scan)))
+    (i32.const 0))
+
+  (func $gdi_getdcex_clip_apply (param $hdc i32) (param $clip i32) (result i32)
+    (local $record i32)
+    (local.set $record (call $gdi_getdcex_clip_record (local.get $hdc)))
+    (if (local.get $record)
+      (then (return (call $gdi_rgn_combine
+        (local.get $clip) (local.get $clip) (i32.load offset=24 (local.get $record))
+        (select (i32.const 4) (i32.const 1)
+          (i32.ne (i32.and (i32.load offset=4 (local.get $record))
+            (i32.const 0x10000000)) (i32.const 0)))))))
+    (i32.const 1))
+
+  (func $gdi_getdcex_clip_release (param $hdc i32)
+    (local $record i32)
+    (local.set $record (call $gdi_getdcex_clip_record (local.get $hdc)))
+    (if (local.get $record)
+      (then (drop (call $gdi_rgn_delete (i32.load offset=24 (local.get $record)))))))
+
+  ;; Prepare everything before publishing or consuming source. On failure,
+  ;; the original HRGN and the old system clip remain unchanged. NULL is the
+  ;; empty region: intersect empties visibility, exclude leaves it unchanged.
+  (func $gdi_getdcex_clip_install
+      (param $hdc i32) (param $source i32) (param $mode i32)
+      (param $x i32) (param $y i32) (result i32)
+    (local $copy i32) (local $clip i32) (local $old i32)
+    (local $entry i32) (local $tag i32) (local $p i32)
+    (if (i32.and (i32.ne (local.get $source) (i32.const 0))
+          (i32.eqz (call $gdi_rgn_record (local.get $source))))
+      (then (return (i32.const 0))))
+    (block $fail
+      (local.set $copy (call $gdi_rgn_alloc_rect
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+      (br_if $fail (i32.eqz (local.get $copy)))
+      (if (local.get $source)
+        (then
+          (br_if $fail (i32.eqz (call $gdi_rgn_combine
+            (local.get $copy) (local.get $source) (i32.const 0) (i32.const 5))))
+          (br_if $fail (i32.eqz (call $gdi_rgn_offset (local.get $copy)
+            (i32.sub (i32.const 0) (local.get $x))
+            (i32.sub (i32.const 0) (local.get $y)))))))
+      (local.set $entry (call $gdi_dc_system_clip_entry (local.get $hdc) (i32.const 1)))
+      (br_if $fail (i32.eqz (local.get $entry)))
+      (local.set $old (i32.load offset=4 (local.get $entry)))
+      (local.set $clip (call $gdi_dc_clip_default_region (local.get $hdc)))
+      (br_if $fail (i32.eqz (local.get $clip)))
+      (if (local.get $old)
+        (then (br_if $fail (i32.eqz (call $gdi_rgn_combine
+          (local.get $clip) (local.get $old) (i32.const 0) (i32.const 5))))))
+      (br_if $fail (i32.eqz (call $gdi_rgn_combine
+        (local.get $clip) (local.get $clip) (local.get $copy) (local.get $mode))))
+      (local.set $tag (call $gdi_getdcex_clip_tag (local.get $hdc)))
+      (br_if $fail (i32.eqz (local.get $tag)))
+      (call $gdi_getdcex_clip_release (local.get $hdc))
+      (local.set $p (call $gdi_rgn_record (local.get $copy)))
+      (i32.store offset=4 (local.get $p) (i32.or
+        (i32.load offset=4 (local.get $p))
+        (i32.or (local.get $tag)
+          (select (i32.const 0x10000000) (i32.const 0)
+            (i32.eq (local.get $mode) (i32.const 4))))))
+      (i32.store offset=4 (local.get $entry) (local.get $clip))
+      (if (local.get $old) (then (drop (call $gdi_rgn_delete (local.get $old)))))
+      (if (local.get $source) (then (drop (call $gdi_rgn_delete (local.get $source)))))
+      (return (i32.const 1)))
+    (if (local.get $clip) (then (drop (call $gdi_rgn_delete (local.get $clip)))))
+    (if (local.get $copy) (then (drop (call $gdi_rgn_delete (local.get $copy)))))
+    (i32.const 0))
 
   (func $gdi_dc_system_clip_rect (param $hdc i32)
         (param $left i32) (param $top i32) (param $right i32) (param $bottom i32)
