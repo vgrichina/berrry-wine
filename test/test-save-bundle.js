@@ -23,6 +23,7 @@ const saveBundle = require('../lib/save-bundle');
 const saveSync = require('../lib/save-sync');
 const storage = require('../lib/storage');
 const zipMount = require('../lib/zip-mount');
+const { saveVfsToHost } = require('../lib/vfs-export');
 
 const PATTERNS = ['c:\\save\\*.sav', 'c:\\ui\\uilst.ini'];
 const APP_ID = 'diablo_shareware';
@@ -201,6 +202,82 @@ function testMergeMode(exported) {
   });
   ok(!replaced.files.has('c:\\save\\game99.sav'),
     'replace empties the persistable paths first');
+}
+
+function testImportedFileOwnership() {
+  const source = new VirtualFS();
+  const metadata = { attrs: 0x23, creationTime: { lo: 1, hi: 2 },
+    lastAccessTime: { lo: 3, hi: 4 }, lastWriteTime: { lo: 5, hi: 6 } };
+  for (const [name, data] of [['a.sav', [19, 0, 128, 254]],
+    ['b.sav', [42, 17, 99]], ['empty.sav', []]]) {
+    source.files.set(`c:\\save\\${name}`, { ...metadata, data: Uint8Array.from(data) });
+  }
+  const options = { appId: APP_ID, patterns: PATTERNS, createdAt: CREATED,
+    commit: 'ownership', store: storage.exportStore() };
+  const archive = saveBundle.exportBundle({ ...options, vfs: source });
+  const failures = [];
+  const preserved = (actual, expected, label) => {
+    try { eq(actual, expected, label); }
+    catch (error) { failures.push(error.message); }
+  };
+  const snapshot = vfs => [...vfs.files].map(([p, entry]) =>
+    [p, { ...entry, data: Array.from(entry.data) }]);
+  // Both input classes are public Uint8Array inputs. Buffer.slice aliases its
+  // backing, unlike native Uint8Array.slice; use nonzero-offset guarded views.
+  for (const asBuffer of [false, true]) for (const mode of ['merge', 'replace']) {
+    const label = `${asBuffer ? 'Buffer' : 'Uint8Array'} ${mode}`;
+    const priorFailures = failures.length;
+    const backing = new ArrayBuffer(archive.length + 12);
+    const whole = new Uint8Array(backing);
+    whole.fill(0xa7, 0, 7);
+    whole.set(archive, 7);
+    whole.fill(0xd5, archive.length + 7);
+    const input = asBuffer ? Buffer.from(backing, 7, archive.length)
+      : new Uint8Array(backing, 7, archive.length);
+    const beforeInput = Array.from(whole);
+    const a = new VirtualFS(), b = new VirtualFS();
+    const outputRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'wa-save-ownership-'));
+    try {
+      eq(input.byteOffset, 7, `${label}: guarded input offset`);
+      for (const vfs of [a, b]) {
+        vfs.files.set('c:\\save\\stale.sav', { data: Uint8Array.of(77), attrs: 0x80 });
+        saveBundle.importBundle(input, { vfs, appId: APP_ID, patterns: PATTERNS,
+          mode, applyStore: false });
+        eq(vfs.files.has('c:\\save\\stale.sav'), mode === 'merge', `${label}: mode control`);
+      }
+      const beforeB = structuredClone(snapshot(b));
+      const neighborsA = structuredClone(snapshot(a).filter(([p]) => !p.endsWith('a.sav')));
+      const beforeStore = storage.exportStore();
+      const beforeExport = saveBundle.exportBundle({ ...options, vfs: b });
+      const handle = a.createFile('C:\\Save\\a.sav', 0x40000000, 3);
+      eq(a.setFilePointer(handle, 1, 0), 1, `${label}: real seek`);
+      eq(a.writeFile(handle, Uint8Array.of(85, 170), 2),
+        { ok: true, bytesWritten: 2 }, `${label}: real same-size write`);
+      ok(a.closeHandle(handle), `${label}: real close`);
+      eq(Array.from(a.files.get('c:\\save\\a.sav').data), [19, 85, 170, 254],
+        `${label}: restore A changed`);
+      // Export through the production host path before checking preservation.
+      saveVfsToHost(b, outputRoot);
+      const afterExport = saveBundle.exportBundle({ ...options, vfs: b });
+      preserved(Array.from(fs.readFileSync(path.join(outputRoot, 'save', 'a.sav'))),
+        [19, 0, 128, 254], `${label}: restore B host export stays original`);
+      preserved(snapshot(b), beforeB, `${label}: restore B bytes and all metadata stay original`);
+      preserved(snapshot(a).filter(([p]) => !p.endsWith('a.sav')), neighborsA,
+        `${label}: restore A neighboring and empty files stay original`);
+      preserved(Array.from(whole.subarray(0, 7)), beforeInput.slice(0, 7), `${label}: prefix guard`);
+      preserved(Array.from(whole.subarray(archive.length + 7)), beforeInput.slice(archive.length + 7),
+        `${label}: suffix guard`);
+      preserved(Array.from(whole), beforeInput, `${label}: caller archive and adjacent guards stay original`);
+      preserved(Array.from(afterExport), Array.from(beforeExport), `${label}: restore B re-export stays original`);
+      preserved(storage.exportStore(), beforeStore, `${label}: registry and INI stay original`);
+      if (failures.length === priorFailures) console.log(`PASS imported save ownership: ${label}`);
+    } catch (error) {
+      failures.push(`${label}: ${error.message}`);
+    } finally {
+      fs.rmSync(outputRoot, { recursive: true, force: true });
+    }
+  }
+  eq(failures, [], 'each imported writable save owns its bytes');
 }
 
 // ---------------------------------------------------------------- tampering
@@ -588,6 +665,7 @@ async function main() {
   const exported = testExportShape();
   testRoundTrip(exported);
   testMergeMode(exported);
+  testImportedFileOwnership();
   testTamper(exported);
   testUrls();
   await testSyncDeadline();
