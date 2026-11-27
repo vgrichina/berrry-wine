@@ -112,6 +112,9 @@ async function main() {
     if (existing && shape.scroll === null) continue;
     cases++;
     const label = `${hwnd}/${shape.name}/prior${existing}`;
+    // NULL parent scrolling moves the full-size child; restore its origin
+    // before each independent child case (NOSIZE | NOZORDER | NOREDRAW | NOACTIVATE).
+    if (hwnd === child) assert(api('SetWindowPos', child, 0, 0, 0, 0, 0, 0x1D));
     assert(api('ValidateRect', hwnd, 0));
     const previous = existing ? [[0, 12, 2, 14], [14, 0, 16, 2]] : [];
     for (const band of previous) { put(prior, band); assert(api('InvalidateRect', hwnd, prior, 0)); }
