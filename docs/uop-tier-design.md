@@ -3,6 +3,10 @@
 Status: design + phase-0 prototype, 2026-09-26. Off by default; nothing ships
 from this document until phase 0 says the engine is worth building.
 
+The optimizer passes over this tier (`--uop-opt=MASK`, including the 3 MB
+main arena bit `0x8000` and the recommended mask `0xffff`) are documented in
+[design/uop-optimizer-pipeline.md §10](design/uop-optimizer-pipeline.md).
+
 ## 1. Why the block executor did not pay, measured in machine code
 
 The H454/H458 block executor (`src/07c-block-exec.wat`, `--block-exec`) was
@@ -3270,3 +3274,173 @@ The disassembly rule in CLAUDE.md applies to runtime code-shape variants.
   - pricing StarCraft's boot compile cost per rung (`ladhalve` / `ladhead`
     arms);
   - Diablo counters on a faster box.
+
+## 25. `--uop-sse-native`: hot SSE forms as native 07d ops, and ladder bit 8 (2026-11-26, default off)
+
+Evidence: `scratch/runs/20261126-uop-sse-hd/`. Branch `opt/uop-sse`.
+
+### 25.1 What `--uop-sse` already did, and what it left
+
+- `--uop-sse` (kind 34) admits SSE into compiled programs. It does not
+  compile them:
+  - op 108 SSER (register form) `call_indirect`s the threaded handler;
+  - ops 109/110 SSEM/SSEMS check the memory window and then do the same.
+  Every SSE instruction still pays a handler call plus its decode-word
+  unpacking.
+- `--sse-fast` (handlers 502-511) makes the *threaded* handlers cheaper. It
+  does not change what the uop tier emits.
+- On Spelunky HD (GameMaker:Studio runner), thread T1 is the audio mixer.
+  It is a float loop of MOVSS / CVTSS2SD / ADDSD / MULSD / CVTSD2SS /
+  CVTTSS2SI / ANDPS, and it dominates CPU. The T1 window (batches
+  213550-237550) on the box, in threaded ops:
+  - off: 756.5M;
+  - `--uop-sse`: 175.3M;
+  - `--uop-sse-native`: 175.3M, the same coverage with cheaper ops;
+  - native plus ladder 15: 6.45M (−99.1%). The remaining T1 declines were
+    `loop-too-big`: the mixer's outer loop exceeds UC_MAX_LOOP once its SSE
+    is admitted.
+
+### 25.2 What was added
+
+- **07e** (`$uc_sse_sub`, `$uc_ssen_op`, a change in `$uc_sse_insn`):
+  - When `$uc_sse_native` is set, a kind-34 site whose subop and form map
+    to a native op is emitted as ops 120-142 instead of 108/109/110.
+  - Register forms are `uc_o2`/`uc_o3` with XMM offsets. A GPR operand goes
+    through the normal aR register mapping.
+  - Memory forms keep 109's 32-byte layout, with the subop in code bits
+    8-15.
+  - An imm8 form declines to 108/109.
+  - Ops:
+    - 120 MOVSS rr, 121 MOVSD rr;
+    - 122 CVTSS2SD, 123 CVTSD2SS;
+    - 124 CVTSI2SD, 125 CVTSI2SS;
+    - 126 ADD/MUL/SUBSD, 127 ADD/SUB/MUL/DIVSS;
+    - 128 MOVAPS, 129 ANDPS/ANDNPS/ORPS/XORPS group;
+    - 130 MOVD x←r, 131 CVTTSD2SI;
+    - 132 CVTTSS2SI;
+    - 133 COMISS/UCOMISS/COMISD/UCOMISD;
+    - 142 MOVSD xmm←xmm, high-preserving;
+    - loads 134 MOVSS, 136 MOVSD, 138 MOVUPS/MOVAPS, 140 ss arith m32,
+      141 CVTSS2SD m32;
+    - stores 135 MOVSS, 137 MOVSD, 139 MOVUPS/MOVAPS.
+  - Counter: `uop_cstat 38` counts native sites and prints as
+    `uop sse: sites=… native=…`.
+  - Exports `set_uop_sse_native` / `get_uop_sse_native` (with a flush).
+  - Host plumbing: `--uop-sse-native`, `?uop-sse-native`, and inherited by
+    worker threads.
+- **07d** (`$uop_fast`): one arm per op. Each mirrors the 06c handler it
+  replaces and calls the same helpers:
+  - `$sse_promote_bits`, `$sse_demote_bits`, `$sse_sd_arith`,
+    `$sse_compare_flags(_f64)`, `$sse_cvtt_*`;
+  - ss arithmetic keeps the operand in an f32 local, so an sNaN is never
+    quieted by a promote.
+  - Memory arms reuse 109's window guard. A miss goes `br_if $svc`, and
+    `$uop_run` services 134-141 as it does 109/110.
+- **Ladder bit 8** (`--uop-retry-ladder=15`): `$uc_halve_on` also halves
+  the span on `loop-too-big` (err 5). The old ladder retried only the other
+  failure classes.
+- The callback-ownership census needed a review step
+  (`tools/callback-ownership-reviews/…-uop-sse-native-20261126.json`)
+  because `$uop_fast`, host.js and worker-imports.js changed.
+
+### 25.3 Exactness
+
+- `test/test-uop-compiler.js` runs each program in the uop tier and
+  threaded, and compares registers, flags, XMM and memory bit for bit:
+  - `ssen-scalar-ss`: 18 sites, 13 native;
+  - `ssen-scalar-sd`: 18 sites, 11 native;
+  - `ssen-packed`: 20 sites, 6 native;
+  - `ssen-mix`: Spelunky's mixer shape plus every native form, 37 sites,
+    36 native;
+  - `ssen-mix-wide`: F64 specials;
+  - `ssen-mix-fast`: under `--sse-fast`;
+  - `sse-mix`: 108/109 only;
+  - `ladder-loop-big`: compiles with ladder 15;
+  - `ladder-loop-big-old`: still declines with mask 7.
+- Inputs cover:
+  - qNaN, sNaN and both-NaN operand order;
+  - ±0 and ±inf;
+  - f32 and f64 denormals, including demote-to-denormal;
+  - 0.5 / 1.5 / 2.5 rounding ties;
+  - cvtt out-of-range (the integer indefinite);
+  - inf−inf and 0·inf (the default NaN);
+  - unordered COMISS.
+- Whole file: 335 ok. `test-sse-fast-handlers` 528 ok,
+  `test-dispatch-macro` ok.
+- Mutation probes:
+  - MOVSS load that does not zero bits 32-127: **caught**;
+  - plain `f64.add` in place of `$sse_sd_arith`'s NaN rules: **caught**;
+  - CVTSD2SS as bare `f32.demote`: **not caught**. Wasm's demote already
+    matches SSE for every input tested, so the helper is kept for
+    threaded parity, not because a test proves it is needed.
+
+### 25.4 Timing (box, fixed work, whole-run user CPU)
+
+- Box: 4-core AMD EPYC (family 26), Node v24.22.1, load ≈1.1 (one run at
+  a time).
+- Branch wasm `f04724a5…`; main wasm `d2f8ae5c…` (bc5f3b2fb).
+- Spelunky HD gameplay spec: 237550 batches, 5 rounds of 7 arms,
+  interleaved.
+  - Every run ended on frame sha `28aa1728c441e8b2` with 84 presents.
+  - Control = off + off2 + main, n=15. Null band (spread of the three
+    control medians): whole run 3.4%, T1 window 5.5%.
+
+| arm | flags | whole-run user (median s) | vs control | T1 window user (s) | vs control |
+|---|---|---|---|---|---|
+| off | (branch, SSE off) | 79.53 | +1.6% | 11.737 | +4.4% |
+| off2 | (repeat) | 76.90 | −1.7% | 11.130 | −1.0% |
+| main | main build | 78.26 | 0 | 11.244 | 0 |
+| sse | `--uop-sse` | 72.00 | −8.0% | 10.876 | −3.3% |
+| ssel | `--uop-sse --uop-retry-ladder=15` | 72.20 | −7.7% | 10.696 | −4.9% |
+| native | `--uop-sse --uop-sse-native` | 66.99 | **−14.4%** | 9.219 | **−18.0%** |
+| nativel | native + `--uop-retry-ladder=15` | 63.55 | **−18.8%** | 8.724 | **−22.4%** |
+
+- In every round, every native and nativel run is below every control run.
+  - Worst nativel (67.71) < best control (73.83).
+  - Worst native (68.69) < best control.
+- Ladder bit 8 on its own (ssel vs sse) is inside the band. It pays only
+  once the SSE ops are native: nativel vs native is −5.1%.
+- Non-SSE control, COMI demo (sse sites=0): 4 arms × 10 reps. Control
+  band 0.7%; nativel −0.7% whole, −1.0% window. Neutral.
+- Other SSE apps:
+  - crimsonland and pocket_tanks stop at boot on the box, because the
+    gitignored `test/binaries/dlls` is missing there. They ran 71 and 200
+    batches, with 0 and 5 sites. Their counts are uninformative.
+  - BW2Demo (160k static SSE sites) is too heavy for this pass.
+  - Oni's registered exe has 0 sites.
+
+### 25.5 Native code
+
+Arm64 V8 15.4 (TurboFan) and SpiderMonkey 155 (Ion), `$uop_fast` =
+function 1547 (from `build/watx-facts.json`):
+
+- **Memory arms** (both engines): the 109 window guard, then a direct
+  load/store with no call.
+- **ss arithmetic** (both engines): inline `fadd`/`fsub`/`fmul`/`fdiv s`.
+- **cvt and sd arithmetic:** V8 inlines the promote, demote and sd-arith
+  helpers. Ion keeps one `bl` each, which replaces 108's `call_indirect`
+  into a handler that made the same call.
+- Ion spills `$pc` to a frame slot per arm. This is pre-existing (the x87
+  arms do the same).
+
+**Missing:** x86-64 captures for both engines. The box has no jsvu
+engines.
+
+**Tool bug found:** `tools/wasm-native.js --func` and `tools/func-index.js`
+name functions from `combined.wat`, whose order no longer matches the WATX
+compiler's, so `--func='$uop_fast'` picks the wrong function. Use `--index`
+from `watx-facts.json`.
+
+### 25.6 Verdict
+
+- **Proposed default-on:** `--uop-sse --uop-sse-native` plus ladder mask 15.
+  - Exact on the bit tests and on Spelunky's frame hash.
+  - −18.8% whole-run CPU on Spelunky HD, far outside a 3.4% band.
+  - Neutral on a non-SSE app.
+- Not flipped on main. Before flipping:
+  - x86-64 disassembly;
+  - one more SSE-heavy app that reaches gameplay (crimsonland with the
+    dlls, or a BW2 segment);
+  - a check of ladder bit 8 on the ladder corpus from section 24 (H3,
+    StarCraft, c3), since bit 8 changes what compiles everywhere, not
+    only SSE.

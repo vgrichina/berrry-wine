@@ -55,6 +55,10 @@ const d32 = (v) => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 
 const cc = { O: 0, NO: 1, B: 2, AE: 3, Z: 4, NZ: 5, BE: 6, A: 7, S: 8, NS: 9, L: 12, GE: 13, LE: 14, G: 15 };
 
 const N = 3000;
+// A dword of notepad's .text (RVA 0x1000; bench.layout puts lut at
+// imageBase + 0x100000): a section without IMAGE_SCN_MEM_WRITE, which the
+// --uop-opt 0x080 fold reads at compile time (07e $uc_ro_addr).
+const RO = (a) => a.lut - 0x100000 + 0x1000;
 const BATCH = +(process.env.UOP_BATCH || 37);
 const CASES = [
   {
@@ -140,7 +144,54 @@ const CASES = [
    code:[L('l'),[0x26,0x8B,0x06],[0x2E,0x03,0x46,0x04],[0x36,0x89,0x07],[0x3E,0x01,0x47,0x04],
          [0x83,0xC6,0x04],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
   // FS keeps its base: still declined.
-  {name:'fs-prefix-declines',regs:{ecx:N},head:'l',declines:true,
+  // --uop-opt cases (07d $uop_opt; test-uop-opt.js runs every arm). Under a
+  // mask without `optCompiles`' bit the head declines as on main; with it,
+  // it compiles and must match threaded code like any other case, and
+  // `optWant` names the uop_opt_stat counters the pass must move
+  // (key@clock: only under that clock).
+  // 0x008: LOCK RMW / memory XCHG as plain RMW (LOCK_MODE 0)
+  {name:'opt-lock-add',regs:{ecx:N},head:'l',declines:true,optCompiles:0x08,optWant:{mask:0x08,want:{optLock:'>0'}},
+   code:[L('l'),[0x8B,0x07],[0xF0,0x01,0x06],[0xF0,0xFF,0x46,0x04],[0x83,0xC6,0x08],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  {name:'opt-xchg-mem',regs:{ecx:N},head:'l',declines:true,optCompiles:0x08,optWant:{mask:0x08,want:{optLock:'>0'}},
+   code:[L('l'),[0x89,0xC8],[0x87,0x06],[0x01,0x07],[0x83,0xC6,0x04],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x010: SAHF, CF/ZF/SF/PF/AF from AH, consumed by ADC and SETcc
+  {name:'opt-sahf',regs:{ecx:N},head:'l',declines:true,optCompiles:0x10,optWant:{mask:0x10,want:{optSahf:'>0'}},
+   code:[L('l'),[0x8B,0x06],0x9E,[0x83,0xD2,0x00],[0x0F,0x94,0xC3],[0x00,0x1F],[0x83,0xC6,0x04],[0x83,0xC7,0x01],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x140: F1 lattice + C1 Jcc fold. The cmp's flags stay live into SETG
+  // after the folded JG, so a budget cut at the JG (BATCH-sized batches)
+  // must materialise them exactly. dynamicEntry: the never-taken arm's
+  // target is an in-loop entry threaded code never splits at, so the block
+  // clock's hot comparison differs on main too (mask 0); the branch clock
+  // checks every batch stop.
+  {name:'opt-c1-fold',regs:{ecx:N},head:'l',dynamicEntry:true,optWant:{mask:0x140,want:{optJcc:'>0'}},
+   code:[L('l'),[0xBB,7,0,0,0],[0x83,0xFB,0x03],J(cc.G,'a'),0x40,L('a'),[0x0F,0x9F,0xC2],[0x01,0x17],
+         [0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  {name:'opt-c1-notaken',regs:{ecx:N},head:'l',dynamicEntry:true,optWant:{mask:0x140,want:{optJcc:'>0'}},
+   code:[L('l'),[0x31,0xDB],[0x83,0xC3,0x02],[0x83,0xFB,0x03],J(cc.GE,'a'),[0x83,0xD0,0x01],L('a'),[0x0F,0x92,0xC2],
+         [0x01,0x17],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x080: a dword of notepad's .text (not IMAGE_SCN_MEM_WRITE) folded to a
+  // constant; setup pins its value so every mode reads the same.
+  {name:'opt-f2-fold',regs:{ecx:N},head:'l',optWant:{mask:0x80,want:{optFold:'>0',optFdw:'>0'}},
+   setup:(mem,g2w,a)=>{new DataView(mem.buffer).setUint32(g2w(RO(a)),0x01020304,true);},
+   code:(a)=>[L('l'),[0x8B,0x05,...d32(RO(a))],[0x01,0x07],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x0C0: the folded dword feeds the lattice (and C1 under 0x1C0)
+  {name:'opt-f2-lattice',regs:{ecx:N},head:'l',optWant:{mask:0xC0,want:{optFold:'>0'}},
+   setup:(mem,g2w,a)=>{new DataView(mem.buffer).setUint32(g2w(RO(a)),0x00000010,true);},
+   code:(a)=>[L('l'),[0x8B,0x1D,...d32(RO(a))],[0x89,0xDA],[0x83,0xE2,0x0F],[0x83,0xFA,0x00],J(cc.Z,'a'),0x40,L('a'),
+              [0x01,0x1F],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // 0x080 SMC: the loop itself rewrites the dword it folded. The store
+  // kills the program ($uop_add_range marked the page), so every trip must
+  // see the new value exactly as threaded code does. Its own page (07d
+  // $uop_fold_written then keeps that page unfolded, process-wide).
+  // dynamicEntry: the kill leaves the program at the store, mid-block, as
+  // any code-write kill on main does, and the block clock charges the cut
+  // threaded code later makes there; the branch clock checks every stop.
+  {name:'opt-f2-smc',regs:{ecx:N},head:'l',dynamicEntry:true,
+   setup:(mem,g2w,a)=>{new DataView(mem.buffer).setUint32(g2w(RO(a)+0x1000),5,true);},
+   code:(a)=>[L('l'),[0x8B,0x05,...d32(RO(a)+0x1000)],[0x01,0x07],[0xFF,0x05,...d32(RO(a)+0x1000)],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
+  // optCompiles: under UOP_OPT with that bit (0x020, the FS: prefix) the
+  // head compiles and must match threaded code like any other case.
+  {name:'fs-prefix-declines',regs:{ecx:N},head:'l',declines:true,optCompiles:0x20,optWant:{mask:0x20,want:{optFs:'>0'}},
    code:[L('l'),[0x64,0x8B,0x06],[0x89,0x07],[0x83,0xC6,0x04],[0x83,0xC7,0x04],0x49,J(cc.NZ,'l'),0xC3]},
   {
     name: 'lut8', regs: { ecx: N },
@@ -559,6 +610,44 @@ CASES.push(
            [0x83, 0xC7, 0x10], [0x83, 0xC6, 0x10], 0x49, J(cc.NZ, 'l'),
            ...XMM_SAVE, 0xC3],
   },
+);
+
+// ---- --uop-sse-native (07e $uc_ssen_op, 07d 120-142) ----
+// The same three loops with the hot forms as native ops ('off' is threaded
+// code, so every mode's memory and XMM file must match it bit for bit), and
+// Spelunky HD's mixer shape (0x493830: movss load, cvtps2pd, cvtss2sd,
+// mulsd, addsd, cvtpd2ps, movss store) with every other native form around
+// it: the register and m32 scalar arithmetic, (U)COMISS / (U)COMISD into
+// setcc, CVTTSS2SI / CVTSI2SS / CVTSI2SD, the logic ops, MOVAPS / MOVSS /
+// MOVSD between registers, MOVSD / MOVQ / MOVUPS loads and stores.
+for (const c of CASES.filter((k) => /^sse-(scalar-ss|scalar-sd|packed)$/.test(k.name)).map((k) => ({ ...k }))) {
+  CASES.push({ ...c, name: c.name.replace('sse-', 'ssen-'), sse_native: true, want: { sseSites: '>0', sseNative: '>0' } });
+}
+const SSE_MIX = [...XMM_LOAD, L('l'),
+  [0xF3, 0x0F, 0x10, 0x0E], [0x0F, 0x5A, 0xC9], [0xF3, 0x0F, 0x5A, 0xF8], [0xF2, 0x0F, 0x59, 0xCF],
+  [0xF3, 0x0F, 0x10, 0x7E, 0x04], [0x0F, 0x5A, 0xFF], [0xF2, 0x0F, 0x58, 0xCF], [0x66, 0x0F, 0x5A, 0xC9],
+  [0xF3, 0x0F, 0x11, 0x0F], [0xF2, 0x0F, 0x5A, 0xD1], [0xF2, 0x0F, 0x5C, 0xD7],
+  [0x0F, 0x2F, 0xCA], [0x0F, 0x92, 0xC2], [0x0F, 0x97, 0xC6], [0x01, 0xD5],
+  [0x66, 0x0F, 0x2E, 0xF9], [0x0F, 0x9A, 0xC2], [0x0F, 0x94, 0xC6], [0x01, 0xD3],
+  [0xF3, 0x0F, 0x2C, 0xC2], [0x01, 0xC5], [0xF3, 0x0F, 0x2A, 0xD8], [0xF2, 0x0F, 0x2A, 0xE5],
+  [0xF3, 0x0F, 0x58, 0xD8], [0xF3, 0x0F, 0x59, 0x5E, 0x08], [0xF3, 0x0F, 0x5C, 0xD9], [0xF3, 0x0F, 0x5E, 0x5E, 0x0C],
+  [0xF3, 0x0F, 0x5E, 0xEB], [0xF3, 0x0F, 0x58, 0x6E, 0x04], [0x0F, 0x2E, 0xEB], [0x0F, 0x92, 0xC2], [0x01, 0xD5],
+  [0xF3, 0x0F, 0x5A, 0x76, 0x08], [0x0F, 0x57, 0xF2], [0x0F, 0x54, 0xF5], [0x0F, 0x55, 0xEB], [0x0F, 0x56, 0xD4],
+  [0xF2, 0x0F, 0x10, 0xE1], [0xF3, 0x0F, 0x10, 0xEF], [0xF2, 0x0F, 0x11, 0x67, 0x04],
+  [0xF2, 0x0F, 0x10, 0x76, 0x0C], [0xF3, 0x0F, 0x7E, 0x56, 0x04], [0x0F, 0x10, 0x4E, 0x10], [0x0F, 0x28, 0xC6],
+  [0x0F, 0x11, 0x77, 0x08], [0x66, 0x0F, 0xD6, 0x5F, 0x0C],
+  [0x83, 0xC7, 0x10], [0x83, 0xC6, 0x04], 0x49, JFAR(cc.NZ, 'l'), ...XMM_SAVE, 0xC3];
+CASES.push(
+  { name: 'ssen-mix', regs: { ecx: N }, sse: true, sse_native: true, head: 'l', poke: ssePoke(false),
+    want: { sseSites: '>0', sseNative: '>0' }, code: SSE_MIX },
+  { name: 'ssen-mix-wide', regs: { ecx: N }, sse: true, sse_native: true, head: 'l', poke: ssePoke(true),
+    want: { sseSites: '>0', sseNative: '>0' }, code: SSE_MIX },
+  // the threaded side through --sse-fast's dedicated handlers (502-511)
+  { name: 'ssen-mix-fast', regs: { ecx: N }, sse: true, sse_native: true, sseFast: true, head: 'l', poke: ssePoke(false),
+    want: { sseSites: '>0', sseNative: '>0' }, code: SSE_MIX },
+  // --uop-sse alone over the same loop: no native site
+  { name: 'sse-mix', regs: { ecx: N }, sse: true, head: 'l', poke: ssePoke(true),
+    want: { sseSites: '>0', sseNative: 0 }, code: SSE_MIX },
 );
 
 // ---- --uop-icall / --uop-iat (07e FF /2 as kind 23, 07d ICG) ----
@@ -1186,6 +1275,19 @@ CASES.push(
   { name: 'ladder-head-old', regs: { ecx: N }, trace: true, head: 'main', ladder: 0, modes: ['pre'], declines: true, code: HEADCALL },
 );
 
+// Rung 8 (opt-in, mask 15), halve on loop-too-big: a small inner loop at
+// the head inside an outer loop of 420 three-byte instructions, so the
+// region from the head is past MAX_LOOP at every span that reaches the
+// outer head (Spelunky HD's mixer, 0x493830 in 0x4933e0's loop). At span
+// 0x400 the outer back edge is a side exit and the inner loop compiles; the
+// default mask declines it (loop-too-big).
+const NESTED_BIG = [L('o'), new Array(420).fill([0x83, 0xC3, 0x01]).flat(), [0xBA, 0x04, 0x00, 0x00, 0x00],
+  L('l'), [0x03, 0x04, 0x96], 0x4A, J(cc.NZ, 'l'), [0x83, 0xC6, 0x04], 0x49, JFAR(cc.NZ, 'o'), 0xC3];
+CASES.push(
+  { name: 'ladder-loop-big', regs: { ecx: N }, head: 'l', ladder: 15, code: NESTED_BIG },
+  { name: 'ladder-loop-big-old', regs: { ecx: N }, head: 'l', modes: ['pre'], declines: true, code: NESTED_BIG },
+);
+
 const REGS = ['eax', 'ecx', 'edx', 'ebx', 'ebp', 'esi', 'edi'];
 
 function seed(mem, g2w, a) {
@@ -1239,7 +1341,9 @@ function runCase(inst, c, a, codeAddr, mode) {
   // A known flag state on entry: a sub that sets CF.
   e.set_uop(mode === 'off' ? 0 : 1);
   if (c.aggr) e.set_aggressive_stack(mode === 'off' ? 0 : 1);
-  const feats = ['muldiv', 'icall', 'iat', 'sse'].filter((f) => c[f]);
+  const feats = ['muldiv', 'icall', 'iat', 'sse', 'sse_native'].filter((f) => c[f]);
+  // c.sseFast: 06c's --sse-fast handlers in every mode (a decode-time choice)
+  if (c.sseFast) e.set_sse_fast(1);
   for (const f of feats) e['set_uop_' + f](mode === 'off' ? 0 : 1);
   // c.icgMega: the megamorphic-site threshold for this case (07d
   // $uop_icg_mega), put back to the default after
@@ -1249,6 +1353,7 @@ function runCase(inst, c, a, codeAddr, mode) {
   if (c.ladder !== undefined) e.set_uop_retry_ladder(c.ladder);
   const unfeat = () => {
     for (const f of feats) e['set_uop_' + f](0);
+    if (c.sseFast) e.set_sse_fast(0);
     if (c.icgMega !== undefined) e.set_uop_icg_mega(32);
     if (c.ladder !== undefined) e.set_uop_retry_ladder(7);
   };
@@ -1260,10 +1365,16 @@ function runCase(inst, c, a, codeAddr, mode) {
                 ladN: -32, ladHalved: -33, ladIcut: -34, ladHead: -35, ladNocall: -36,
                 // --uop-sse: kind-34 sites kept
                 sseSites: -37,
+                // --uop-sse-native: of those, the native ones (07d 120-142)
+                sseNative: -38,
                 bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301,
                 // 07d $uop_x87: x87 instructions run through the service path
-                x87svc: 400 };
-  const ctrOf = (i) => (i < 0 ? e.uop_cstat(-i) : i === 400 ? e.uop_x87_ops() >>> 0 : i >= 300 ? e.uop_mcopy_stats(i - 300)
+                x87svc: 400,
+                // 07d uop_opt_stat (the --uop-opt ledger; 0 on a build without it)
+                optStamp: 500, optSeams: 501, optSvc: 502, optDecl: 503, optLock: 504, optSahf: 505,
+                optRetx: 506, optFold: 507, optJcc: 508, optFs: 509, optFdw: 510 };
+  const ctrOf = (i) => (i >= 500 ? (e.uop_opt_stat ? e.uop_opt_stat(i - 500) >>> 0 : 0)
+    : i < 0 ? e.uop_cstat(-i) : i === 400 ? e.uop_x87_ops() >>> 0 : i >= 300 ? e.uop_mcopy_stats(i - 300)
     : i >= 200 ? e.uop_mcopy_cstat(i - 200) : i >= 100 ? e.uop_bulk_stats(i - 100) : e.uop_stats(i));
   const ctr0 = Object.fromEntries(Object.entries(CTR).map(([k, i]) => [k, ctrOf(i)]));
   let sp = null;
@@ -2020,13 +2131,15 @@ function reguardWidenCase(inst, a, nextCode) {
     e.uop_install(Lc, pc);
     return true;
   };
-  const arm = (span) => {
+  const arm = (span, lazy = 0) => {
     // Fresh pages per arm: the previous arm left its code page rewritten.
     let D = nextCode(), P = nextCode();
     while ((D >>> 16) !== (P >>> 16)) { D = P; P = nextCode(); }
     const Lc = nextCode();
     mem.set(loop, g2w(Lc));
     e.set_uop_reguard_span(span);
+    // a control build (test-uop-opt-identity) predates the lazy knob
+    if (e.set_uop_reguard_lazy) e.set_uop_reguard_lazy(lazy);
     e.set_uop(1);
     if (!install(Lc)) return null;
     // 1. A pure data sweep over 16 pages of the buffer, four times.
@@ -2054,6 +2167,17 @@ function reguardWidenCase(inst, a, nextCode) {
   try {
     const narrow = arm(0x1000);
     const wide = arm(0x10000);
+    // --uop-reguard-lazy: the sweep is a walk, so it still widens (after
+    // its second page), ends in the same memory and stops at the code page
+    // not under UOP_DIGEST: test-uop-opt-identity compares the arena with a
+    // control build that has no lazy arm to run
+    const lazy = e.set_uop_reguard_lazy && !process.env.UOP_DIGEST ? arm(0x10000, 1) : null;
+    if (narrow && lazy) {
+      if (narrow.hash !== lazy.hash) errs.push('data sweep: lazy and narrow re-guards left different memory');
+      if (!lazy.widened) errs.push('lazy re-guard never widened on a walk');
+      if (!(lazy.reguards * 2 <= narrow.reguards)) errs.push(`lazy re-guards ${lazy.reguards} not well under narrow ${narrow.reguards}`);
+      if (!errs.length) console.log(`reguard-lazy       ok (data sweep re-guards: ${lazy.reguards} lazy, +${lazy.widened} pages)`);
+    }
     if (narrow && wide) {
       if (narrow.hash !== wide.hash) errs.push('data sweep: wide and narrow re-guards left different memory');
       if (narrow.widened) errs.push(`one-page re-guard widened ${narrow.widened} pages`);
@@ -2064,6 +2188,7 @@ function reguardWidenCase(inst, a, nextCode) {
   } finally {
     e.set_uop(0);
     e.set_uop_reguard_span(0x10000);
+    if (e.set_uop_reguard_lazy) e.set_uop_reguard_lazy(0);
   }
   return errs;
 }
@@ -2213,6 +2338,9 @@ async function main() {
   // UOP_CENSUS=1 BENCH_TRACE_LOOP=1: print the --uop-census records these
   // cases produce (a smoke test for tools/uop-census.js / uop-census-diff.js).
   if (process.env.UOP_CENSUS) e.set_uop_census(1);
+  // UOP_OPT=MASK: every case again with the --uop-opt passes on (07d $uop_opt);
+  // each must still match threaded code exactly. test-uop-opt.js runs it.
+  if (process.env.UOP_OPT) e.set_uop_opt(Number(process.env.UOP_OPT) >>> 0);
   let slot = 0;
   let fails = 0;
   const only = process.env.UOP_CASE;
@@ -2220,11 +2348,21 @@ async function main() {
   for (const clock of clocks) {
   e.set_branch_clock(clock);
   console.log(clock ? '-- branch clock (a block = an executed x86 branch)' : '-- block clock (threaded cuts charge)');
-  for (const original of CASES) {
+  for (const c0 of CASES) {
+    if (only && c0.name !== only) continue;
+    const optMask = Number(process.env.UOP_OPT || 0) >>> 0;
+    let c = (c0.optCompiles & optMask) ? { ...c0, declines: false } : c0;
+    if (c0.optWant && (optMask & c0.optWant.mask) === c0.optWant.mask) {
+      const want = { ...(c.want || {}) };
+      for (const [kk, v] of Object.entries(c0.optWant.want)) {
+        const [k, ck] = kk.split('@');
+        if (ck === undefined || +ck === clock) want[k] = v;
+      }
+      c = { ...c, want };
+    }
     // Direct MMX lowering cannot publish an exact physical image on intermediate faults.
     // Preserve ordinary execution/state comparisons and require the tier to decline.
-    const c = original.name.startsWith('mmx-') ? { ...original, declines: true, trace: false } : original;
-    if (only && c.name !== only) continue;
+    if (c0.name.startsWith('mmx-')) c = { ...c, declines: true, trace: false };
     const at = () => { const x = a.code + 0x1000 * slot; slot += c.pages || 1; return x; };
     const off = runCase(inst, c, a, at(), 'off');
     if (c.foldCheck) {
@@ -2344,6 +2482,14 @@ async function main() {
   const cs = (k) => e.uop_cstat(k);
   const why = WAT_REASONS.map((n, k) => [n, k && e.uop_decline_count(k)]).filter(([, n]) => n).map(([k, n]) => `${k}=${n}`).join(' ');
   if (process.env.UOP_CENSUS) e.uop_census_dump();
+  // UOP_DIGEST=1: the program arena's code area (main's 0xDE000 bytes, 07d
+  // $uop_code_bytes), every program these cases compiled, in compile order
+  // (flushes=0 below). test-uop-opt-identity.js compares it across builds.
+  if (process.env.UOP_DIGEST) {
+    const base = e.uop_arena() >>> 0;
+    const h = require('crypto').createHash('sha256').update(new Uint8Array(e.memory.buffer, base, 0xDE000)).digest('hex');
+    console.log(`arena-digest ${h}`);
+  }
   console.log(`uop compiler: compiled=${cs(0)} declined=${cs(1)} insns=${cs(2)} uops=${cs(3)} flushes=${cs(4)}${why ? '\n  declines: ' + why : ''}`);
   console.log(`reguards=${e.uop_stats(1)} guard-fails=${e.uop_stats(0)} kills=${e.uop_stats(3)}`);
   if (fails) { console.log(`FAIL: ${fails}`); process.exit(1); }

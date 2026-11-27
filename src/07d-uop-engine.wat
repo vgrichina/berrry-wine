@@ -189,7 +189,11 @@
   ;;                                          proved in w, then $uop_sse_mem
   ;;                                          runs h at ga; a miss is a
   ;;                                          service op ($uop_sse_svc)
-  ;;  111 MMX entry                          TOP=0, all x87 tags valid
+  ;;  120-133, 142 native SSE register forms  (--uop-sse-native, 07e
+  ;;          d s [k]                         $uc_ssen_op) 06c's arm for the
+  ;;                                          subop, inline on the XMM file
+  ;;  134-141 native SSE memory forms         109's layout; a miss is 109's
+  ;;                                          service op
 
   ;; The main thread's arena. Each guest thread is its own instance over the
   ;; shared memory and a program names its instance's $reg_base, so every
@@ -211,7 +215,20 @@
   (global $uop_wins_off   (mut i32) (i32.const 0x000E2000)) ;; 1024 x 16 bytes, unused by compiled programs (each owns its slots)
   (global $uop_map_off    (mut i32) (i32.const 0x000E6000)) ;; 2048 sets x 2 ways x {eip, pc}
   (global $uop_ranges_off (mut i32) (i32.const 0x000EE000)) ;; 4096 x {lo, hi, pc}
-  (global $UOP_RANGES_MAX i32 (i32.const 4096))
+  (global $UOP_RANGES_MAX (mut i32) (i32.const 4096))
+  ;; A1 (--uop-opt 0x8000): the main thread's big arena. A bigger arena
+  ;; scales the range table (8192) and the start bitmap with it; a program's
+  ;; own size cap stays the 1MB arena's ($UOP_PROG_CAP), so the bit changes
+  ;; how many programs are live between flushes, never what one compiles to.
+  (global $UOP_ARENA_BIG i32 (region.addr $UOP_ARENA_BIG 0))
+  (global $UOP_ARENA_BIG_SIZE i32 (region.size $UOP_ARENA_BIG))
+  (global $UOP_PROG_CAP i32 (i32.const 0x37800))
+  ;; The biggest program the lowering places: a quarter of the code area,
+  ;; never more than a quarter of the 1MB arena's.
+  (func $uop_prog_cap (result i32)
+    (local $q i32)
+    (local.set $q (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))
+    (select (global.get $UOP_PROG_CAP) (local.get $q) (i32.gt_u (local.get $q) (global.get $UOP_PROG_CAP))))
   ;; The code-write filter, 16KB after the ranges' 4096 x 12 bytes: 2048 i64
   ;; words, one per hashed guest page, bit L set when some range recorded
   ;; since the last rebuild covers 64-byte line L of a page hashing to that
@@ -228,7 +245,7 @@
   ;; the dead header's own head EIP left in that program's padding. See
   ;; $uop_live.
   (global $uop_starts_off (mut i32) (i32.const 0x000FE000))
-  (global $UOP_STARTS_BYTES i32 (i32.const 0x2000))
+  (global $UOP_STARTS_BYTES (mut i32) (i32.const 0x2000))
   ;; A range was removed since the filter was last rebuilt, so it may hold
   ;; bits no live range owns (a conservative, not a wrong, answer).
   (global $uop_cw_stale (mut i32) (i32.const 0))
@@ -301,6 +318,255 @@
   ;; or aliased entry only costs an inline cache, never a wrong answer.
   ;; 0 turns the rule off. Cleared with the verdicts ($uop_flush_all).
   (global $uop_icg_mega (mut i32) (i32.const 32))
+  ;; ===================================================================
+  ;; --uop-opt=MASK / ?uop-opt=MASK (docs/design/uop-optimizer-pipeline.md):
+  ;; the stacked optimizer passes, one bit each, all default off. Mask 0 is
+  ;; byte-identical programs to the tier without them
+  ;; (test/test-uop-opt-identity.js). Compile-time per instance, so it is an
+  ;; inherited global (lib/worker-imports.js); the setter (07e) drops every
+  ;; program and verdict.
+  ;;   0x001 verdict map: a decline is remembered in its own table, never lost
+  ;;         to a set whose two ways are live programs
+  ;;   0x002 RET exit: a RET no call in the region names stays, as an exit
+  ;;         at the RET; REP RET (F3 C3) is RET
+  ;;   0x004 seam elision: the CALL/RET seams 79/80/87 stay in $uop_fast
+  ;;         while neither observer is armed
+  ;;   0x008 LOCK / memory XCHG as plain RMW while LOCK_MODE is 0 (stamp 1)
+  ;;   0x010 SAHF (kind 35) in the tier
+  ;;   0x020 FS: prefixed forms, with the instance's fs_base (stamp 2)
+  ;;   0x040 F1 constant lattice over the loop's registers
+  ;;   0x080 F2 read-only image loads as constants (stamps 1 and 4)
+  ;;   0x100 C1 a Jcc whose flags F1 knows becomes a JMP (needs 0x040)
+  (global $uop_opt (mut i32) (i32.const 0))
+  ;; The ledger (run.js prints it, $uop_opt_stat): enters falling through on
+  ;; a stale stamp, seams stepped over, service exits taken, declines the
+  ;; table answered.
+  (global $uop_opt_stampfail (mut i32) (i32.const 0))
+  (global $uop_opt_seams (mut i32) (i32.const 0))
+  (global $uop_opt_svc (mut i32) (i32.const 0))
+  (global $uop_opt_declhits (mut i32) (i32.const 0))
+  ;; 0x080 across instances. A guest store is checked against the WRITING
+  ;; instance's ranges only ($uop_code_write), so a write from another
+  ;; instance (a cooperative thread, or a Worker) to a dword one instance
+  ;; folded would kill nothing. Every program that folds therefore records
+  ;; the shared fold epoch it read its dwords under (stamp 4, block +8), its
+  ;; dwords' pages go into a shared 4096-bit page set at install, and ANY
+  ;; instance's code write, VirtualProtect or page release over a page in
+  ;; the set bumps the epoch ($uop_fold_hit) -- the folded programs of every
+  ;; instance drop at their next entry. Exact while instances interleave only
+  ;; between batches (LOCK_MODE 0, the only mode F2 folds under: 07e
+  ;; $uc_fold_ok), since a program never spans a batch. The set is never
+  ;; cleared but by set_uop_opt: a stale or aliased bit only costs a drop.
+  (global $UOP_FOLD_EPOCH i32 (region.addr $UOP_CSCRATCH 0x13900C))
+  (global $UOP_FOLD_PAGES i32 (region.addr $UOP_CSCRATCH 0x139200)) ;; 512 bytes
+  (func $uop_fold_page_mark (param $ga i32)
+    (local $p i32)
+    (local.set $p (i32.and (i32.shr_u (local.get $ga) (i32.const 12)) (i32.const 0xFFF)))
+    (drop (i32.atomic.rmw8.or_u
+      (i32.add (global.get $UOP_FOLD_PAGES) (i32.shr_u (local.get $p) (i32.const 3)))
+      (i32.shl (i32.const 1) (i32.and (local.get $p) (i32.const 7))))))
+  (func $uop_fold_page_test (param $ga i32) (result i32)
+    (local $p i32)
+    (local.set $p (i32.and (i32.shr_u (local.get $ga) (i32.const 12)) (i32.const 0xFFF)))
+    (i32.and (i32.shr_u (i32.load8_u (i32.add (global.get $UOP_FOLD_PAGES) (i32.shr_u (local.get $p) (i32.const 3))))
+                        (i32.and (local.get $p) (i32.const 7)))
+             (i32.const 1)))
+  ;; [ga, ga+len) was written, reprotected or released, by this instance or
+  ;; any other. Over 256 pages is every page of the set.
+  (func $uop_fold_hit (param $ga i32) (param $len i32)
+    (local $p i32) (local $end i32)
+    (if (i32.eqz (local.get $len)) (then (return)))
+    (local.set $end (i32.add (local.get $ga) (i32.sub (local.get $len) (i32.const 1))))
+    (if (i32.gt_u (local.get $len) (i32.const 0x100000))
+      (then (drop (i32.atomic.rmw.add (global.get $UOP_FOLD_EPOCH) (i32.const 1))) (return)))
+    (local.set $p (i32.and (local.get $ga) (i32.const 0xFFFFF000)))
+    (block $d (loop $l
+      (if (call $uop_fold_page_test (local.get $p))
+        (then (call $uop_fold_written (local.get $p))
+              (drop (i32.atomic.rmw.add (global.get $UOP_FOLD_EPOCH) (i32.const 1)))
+              (return)))
+      (br_if $d (i32.ge_u (local.get $p) (i32.and (local.get $end) (i32.const 0xFFFFF000))))
+      (local.set $p (i32.add (local.get $p) (i32.const 0x1000)))
+      (br $l))))
+  ;; The program header's stamp (+36) names what the program assumed when
+  ;; it was compiled; $th_uop_enter re-checks it and drops every program
+  ;; when it no longer holds (it changes at most a few times per process).
+  ;;   1 LOCK_MODE was 0   2 fs_base was the block's +4
+  ;;   4 the fold epoch was the block's +8
+  ;;   16 / 32 are not assumptions: S1's profile / variant ($uop_s1_pick)
+  ;;   8 the branch clock was on
+  ;; The block follows the program's window slots; header nwin (+8) has its
+  ;; top bit set when there is one ($uop_stamp_at).
+  (func $uop_stamp_at (param $op i32) (result i32)
+    (i32.add (i32.load offset=12 (local.get $op))
+             (i32.shl (i32.and (i32.load offset=8 (local.get $op)) (i32.const 0xFFFF)) (i32.const 4))))
+  (func $uop_hdr_bad (param $op i32) (result i32)
+    (local $s i32) (local $b i32)
+    (local.set $b (call $uop_stamp_at (local.get $op)))
+    (local.set $s (i32.load (local.get $b)))
+    (i32.or
+      (i32.or
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 1)) (i32.const 0))
+                 (i32.ne (i32.load (global.get $LOCK_MODE)) (i32.const 0)))
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 2)) (i32.const 0))
+                 (i32.ne (global.get $fs_base) (i32.load offset=4 (local.get $b)))))
+      (i32.or
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 4)) (i32.const 0))
+                 (i32.ne (i32.load (global.get $UOP_FOLD_EPOCH)) (i32.load offset=8 (local.get $b))))
+        (i32.and (i32.ne (i32.and (local.get $s) (i32.const 8)) (i32.const 0))
+                 (i32.eqz (global.get $branch_clock))))))
+  ;; 0x080: 64 direct-mapped pages a guest store reached since the mask was
+  ;; set (page | 1), process-wide in $UOP_CSCRATCH's free 0x139100..0x139200,
+  ;; written by any instance ($uop_fold_hit too); an aliased entry only costs
+  ;; a fold.
+  (global $UOP_FOLD_WRITTEN i32 (region.addr $UOP_CSCRATCH 0x139100))
+  (func $uop_fold_wslot (param $ga i32) (result i32)
+    (i32.add (global.get $UOP_FOLD_WRITTEN)
+             (i32.and (i32.shr_u (local.get $ga) (i32.const 10)) (i32.const 0xFC))))
+  (func $uop_fold_written (param $ga i32)
+    (i32.store (call $uop_fold_wslot (local.get $ga))
+               (i32.or (i32.and (local.get $ga) (i32.const 0xFFFFF000)) (i32.const 1))))
+  (func $uop_fold_was_written (param $ga i32) (result i32)
+    (i32.eq (i32.load (call $uop_fold_wslot (local.get $ga)))
+            (i32.or (i32.and (local.get $ga) (i32.const 0xFFFFF000)) (i32.const 1))))
+  ;; 0x001: 256 direct-mapped declined EIPs in the windows area's free
+  ;; 0x3C00..0x4000 (the megamorphic table ends at 0x3C00). An aliased entry
+  ;; only costs a compile; cleared with the verdicts ($uop_flush_all).
+  (func $uop_decl_slot (param $eip i32) (result i32)
+    (i32.add (i32.add (global.get $uop_arena) (global.get $uop_wins_off))
+      (i32.add (i32.const 0x3C00)
+        (i32.shl (i32.shr_u (i32.mul (local.get $eip) (i32.const 0x9E3779B1)) (i32.const 24))
+                 (i32.const 2)))))
+  ;; ---- S1 (0x200): value-specialised variants --------------------------
+  ;; A program the compiler gave wish registers (07e $uc_s1_wish: live-in
+  ;; registers it loads through) has a 48-byte assumption block, stamp 16:
+  ;;   +12 r0 | r1<<8 | nwish<<16 | megamorphic<<24
+  ;;   +16/+20 r0's Misra-Gries candidate and net count, +24/+28 r1's
+  ;;   +32 samples this window  +36 first variant  +40 variants
+  ;;   +44 windows that found no dominant read-only value
+  ;; A variant (stamp 32) is the same head compiled with one register known
+  ;; (07e $uc_seed_r/$uc_seed_v): +12 that register, +16 its value, +36 the
+  ;; next variant. The generic program keeps every statistic; a variant is
+  ;; reached only through it (a flush, a kill of the generic program or its
+  ;; retirement leaves the variants unreachable), and is entered only when
+  ;; its register holds the value it was compiled for.
+  (global $uop_opt_variants (mut i32) (i32.const 0))
+  (global $uop_opt_mega (mut i32) (i32.const 0))
+  (global $uop_opt_vhits (mut i32) (i32.const 0))
+  (global $UOP_S1_MAXV i32 (i32.const 3))
+  (global $UOP_S1_WINDOW i32 (i32.const 64))
+  ;; The program to run for generic program g: a variant whose guard holds,
+  ;; else g after a profiling sample. 0: g died compiling a variant (a flush).
+  (func $uop_s1_pick (param $g i32) (result i32)
+    (local $b i32) (local $v i32) (local $vb i32) (local $w i32) (local $k i32)
+    (local $r i32) (local $x i32) (local $c i32) (local $best i32) (local $bv i32) (local $bc i32)
+    (local $pc i32) (local $dup i32)
+    (local.set $b (call $uop_stamp_at (local.get $g)))
+    (if (i32.eqz (i32.and (i32.load (local.get $b)) (i32.const 16))) (then (return (local.get $g))))
+    (local.set $v (i32.load offset=36 (local.get $b)))
+    (block $vd (loop $vl
+      (br_if $vd (i32.eqz (local.get $v)))
+      (local.set $vb (call $uop_stamp_at (local.get $v)))
+      (if (i32.and (call $uop_live (local.get $v))
+                   (i32.eq (call $get_reg (i32.load offset=12 (local.get $vb))) (i32.load offset=16 (local.get $vb))))
+        (then (if (i32.eqz (call $uop_hdr_bad (local.get $v)))
+                (then (global.set $uop_opt_vhits (i32.add (global.get $uop_opt_vhits) (i32.const 1)))
+                      (return (local.get $v))))))
+      (local.set $v (i32.load offset=36 (local.get $vb)))
+      (br $vl)))
+    (local.set $w (i32.load offset=12 (local.get $b)))
+    (if (i32.and (local.get $w) (i32.const 0xFF000000)) (then (return (local.get $g))))
+    ;; one sample per wished register
+    (block $sd (loop $sl
+      (br_if $sd (i32.ge_u (local.get $k) (i32.and (i32.shr_u (local.get $w) (i32.const 16)) (i32.const 0xFF))))
+      (local.set $r (i32.and (i32.shr_u (local.get $w) (i32.shl (local.get $k) (i32.const 3))) (i32.const 7)))
+      (local.set $x (call $get_reg (local.get $r)))
+      (local.set $vb (i32.add (local.get $b) (i32.add (i32.const 16) (i32.shl (local.get $k) (i32.const 3)))))
+      (local.set $c (i32.load offset=4 (local.get $vb)))
+      (if (i32.eq (i32.load (local.get $vb)) (local.get $x))
+        (then (i32.store offset=4 (local.get $vb) (i32.add (local.get $c) (i32.const 1))))
+        (else (if (i32.eqz (local.get $c))
+                (then (i32.store (local.get $vb) (local.get $x)) (i32.store offset=4 (local.get $vb) (i32.const 1)))
+                (else (i32.store offset=4 (local.get $vb) (i32.sub (local.get $c) (i32.const 1)))))))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $sl)))
+    (i32.store offset=32 (local.get $b) (i32.add (i32.load offset=32 (local.get $b)) (i32.const 1)))
+    (if (i32.lt_u (i32.load offset=32 (local.get $b)) (global.get $UOP_S1_WINDOW)) (then (return (local.get $g))))
+    ;; a window is complete: the register with the strongest dominant value
+    ;; in a read-only section that no variant already has
+    (i32.store offset=32 (local.get $b) (i32.const 0))
+    (local.set $best (i32.const -1))
+    (local.set $k (i32.const 0))
+    (block $dd (loop $dl
+      (br_if $dd (i32.ge_u (local.get $k) (i32.and (i32.shr_u (local.get $w) (i32.const 16)) (i32.const 0xFF))))
+      (local.set $vb (i32.add (local.get $b) (i32.add (i32.const 16) (i32.shl (local.get $k) (i32.const 3)))))
+      (local.set $r (i32.and (i32.shr_u (local.get $w) (i32.shl (local.get $k) (i32.const 3))) (i32.const 7)))
+      (local.set $x (i32.load (local.get $vb)))
+      (local.set $c (i32.load offset=4 (local.get $vb)))
+      (local.set $dup (i32.const 0))
+      (local.set $v (i32.load offset=36 (local.get $b)))
+      (block $ud (loop $ul
+        (br_if $ud (i32.eqz (local.get $v)))
+        (local.set $pc (call $uop_stamp_at (local.get $v)))
+        (if (i32.and (i32.eq (i32.load offset=12 (local.get $pc)) (local.get $r))
+                     (i32.eq (i32.load offset=16 (local.get $pc)) (local.get $x)))
+          (then (local.set $dup (i32.const 1))))
+        (local.set $v (i32.load offset=36 (local.get $pc)))
+        (br $ul)))
+      (if (i32.and (i32.and (i32.ge_u (local.get $c) (i32.shr_u (global.get $UOP_S1_WINDOW) (i32.const 2)))
+                            (i32.gt_s (local.get $c) (local.get $bc)))
+                   (i32.and (i32.eqz (local.get $dup)) (i32.ne (call $uc_ro_addr (local.get $x)) (i32.const 0))))
+        (then (local.set $best (local.get $r)) (local.set $bv (local.get $x)) (local.set $bc (local.get $c))))
+      (i32.store offset=4 (local.get $vb) (i32.const 0))
+      (local.set $k (i32.add (local.get $k) (i32.const 1)))
+      (br $dl)))
+    (if (i32.lt_s (local.get $best) (i32.const 0))
+      (then
+        (i32.store offset=44 (local.get $b) (i32.add (i32.load offset=44 (local.get $b)) (i32.const 1)))
+        (if (i32.ge_u (i32.load offset=44 (local.get $b)) (i32.const 4))
+          (then (call $uop_s1_mega (local.get $b))))
+        (return (local.get $g))))
+    (if (i32.ge_u (i32.load offset=40 (local.get $b)) (global.get $UOP_S1_MAXV))
+      (then (call $uop_s1_mega (local.get $b)) (return (local.get $g))))
+    (global.set $uc_seed_r (local.get $best))
+    (global.set $uc_seed_v (local.get $bv))
+    (local.set $pc (call $uop_compile (i32.load offset=4 (local.get $g))))
+    (global.set $uc_seed_r (i32.const -1))
+    ;; a flush made room for it: g is gone, and so is its block
+    (if (i32.eqz (call $uop_live (local.get $g))) (then (return (i32.const 0))))
+    (if (i32.le_u (local.get $pc) (i32.const 1))
+      (then (if (i32.eqz (local.get $pc)) (then (call $uop_s1_mega (local.get $b))))
+            (return (local.get $g))))
+    ;; linked like an install, but not into the map
+    (i32.store (local.get $pc) (global.get $uop_gen))
+    (i32.store offset=4 (local.get $pc) (i32.load offset=4 (local.get $g)))
+    (local.set $vb (call $uop_start_byte (local.get $pc)))
+    (if (local.get $vb)
+      (then (i32.store8 (local.get $vb)
+              (i32.or (i32.load8_u (local.get $vb)) (call $uop_start_bit (local.get $pc))))))
+    (local.set $vb (call $uop_stamp_at (local.get $pc)))
+    (i32.store offset=36 (local.get $vb) (i32.load offset=36 (local.get $b)))
+    (i32.store offset=36 (local.get $b) (local.get $pc))
+    (i32.store offset=40 (local.get $b) (i32.add (i32.load offset=40 (local.get $b)) (i32.const 1)))
+    (global.set $uop_opt_variants (i32.add (global.get $uop_opt_variants) (i32.const 1)))
+    ;; census 19: head, register, value, folded loads | decided Jccs << 16
+    (if (global.get $uop_census)
+      (then (call $uop_census_ev (i32.const 19) (i32.load offset=4 (local.get $g)) (local.get $best) (local.get $bv)
+              (i32.or (global.get $uc_n_fold) (i32.shl (global.get $uc_n_cfold) (i32.const 16))))))
+    (local.get $g))
+  (func $uop_s1_mega (param $b i32)
+    (if (i32.eqz (i32.and (i32.load offset=12 (local.get $b)) (i32.const 0xFF000000)))
+      (then (global.set $uop_opt_mega (i32.add (global.get $uop_opt_mega) (i32.const 1)))
+            (i32.store offset=12 (local.get $b) (i32.or (i32.load offset=12 (local.get $b)) (i32.const 0x01000000))))))
+  (func (export "uop_opt_stat") (param $k i32) (result i32)
+    (if (i32.eq (local.get $k) (i32.const 11)) (then (return (global.get $uop_opt_variants))))
+    (if (i32.eq (local.get $k) (i32.const 12)) (then (return (global.get $uop_opt_mega))))
+    (if (i32.eq (local.get $k) (i32.const 13)) (then (return (global.get $uop_opt_vhits))))
+    (if (i32.eqz (local.get $k)) (then (return (global.get $uop_opt_stampfail))))
+    (if (i32.eq (local.get $k) (i32.const 1)) (then (return (global.get $uop_opt_seams))))
+    (if (i32.eq (local.get $k) (i32.const 2)) (then (return (global.get $uop_opt_svc))))
+    (if (i32.eq (local.get $k) (i32.const 3)) (then (return (global.get $uop_opt_declhits))))
+    (call $uc_opt_stat (i32.sub (local.get $k) (i32.const 4))))
   (global $uop_icg_retire (mut i32) (i32.const 0))
   (global $uop_icg_megas (mut i32) (i32.const 0))
   (global $uop_icg_mkills (mut i32) (i32.const 0))
@@ -529,7 +795,7 @@
   ;; again -- the error only ever runs toward re-guarding.
   (func $uop_windows_reset (param $op i32) (param $ep i32)
     (local $w i32) (local $n i32)
-    (local.set $n (i32.load offset=8 (local.get $op)))
+    (local.set $n (i32.and (i32.load offset=8 (local.get $op)) (i32.const 0xFFFF)))
     (local.set $w (i32.load offset=12 (local.get $op)))
     (block $d (loop $l
       (br_if $d (i32.eqz (local.get $n)))
@@ -553,7 +819,27 @@
                   (i32.const 0x1000))
       (then (return (i32.const 0))))
     (if (i32.ne (global.get $uop_rg_mask) (i32.const 0xFFFFF000))
-      (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+      (then
+        ;; --uop-reguard-lazy: widen only on evidence of a walk -- the slot's
+        ;; window is one page in the same span-aligned block, or the missed
+        ;; page touches either end of the window. Anything else (a poisoned
+        ;; slot, an object somewhere else in a sparse heap) proves its one
+        ;; page, so a short routine that touches a different heap block on
+        ;; every entry stops paying a 16-page proof it throws away.
+        (if (i32.eqz (global.get $uop_rg_lazy))
+          (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+        ;; --uop-reguard-lazy=sparse (2): lazy only for a page outside the
+        ;; direct window (the sparse VirtualAlloc heap, where GM7's re-guards
+        ;; land); image and direct-window pages keep the wide proof, since
+        ;; lazy there cost Diablo +13% (more kills and recompiles).
+        (if (i32.and (i32.eq (global.get $uop_rg_lazy) (i32.const 2))
+                     (i32.lt_u (i32.add (i32.sub (local.get $pg) (global.get $image_base))
+                                        (global.get $GUEST_BASE))
+                               (region.end $DIRECT_WINDOW)))
+          (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+        (if (call $uop_rg_walking (local.get $w) (local.get $pg))
+          (then (return_call $uop_reguard_wide (local.get $w) (local.get $pg))))
+        (global.set $uop_rg_lazy_one (i32.add (global.get $uop_rg_lazy_one) (i32.const 1)))))
     (call $uop_window_set (local.get $w) (local.get $pg) (i32.const 0x1000)
       (i32.load offset=12 (local.get $w))))
 
@@ -570,6 +856,25 @@
   ;; epoch rules are unchanged: nothing it relied on can change without a
   ;; $uop_win_bump.
   (global $uop_rg_mask (mut i32) (i32.const 0xFFFF0000))
+  ;; --uop-reguard-lazy (off by default) and the re-guards it kept to one page
+  (global $uop_rg_lazy (mut i32) (i32.const 0))
+  (global $uop_rg_lazy_one (mut i32) (i32.const 0))
+  ;; Slot $w missed on page $pg: is it walking? Its window (+0 lo, +4 span;
+  ;; a poisoned slot's span is under a page) is one page in $pg's block, or
+  ;; $pg is the page just past either end.
+  (func $uop_rg_walking (param $w i32) (param $pg i32) (result i32)
+    (local $lo i32) (local $sp i32)
+    (local.set $lo (i32.load (local.get $w)))
+    (local.set $sp (i32.load offset=4 (local.get $w)))
+    (if (i32.lt_u (local.get $sp) (i32.const 0x1000)) (then (return (i32.const 0))))
+    (i32.or
+      (i32.and (i32.eq (local.get $sp) (i32.const 0x1000))
+               (i32.eq (i32.and (local.get $lo) (global.get $uop_rg_mask))
+                       (i32.and (local.get $pg) (global.get $uop_rg_mask))))
+      (i32.or (i32.eq (local.get $pg) (i32.add (local.get $lo) (local.get $sp)))
+              (i32.eq (i32.add (local.get $pg) (i32.const 0x1000)) (local.get $lo)))))
+  (func (export "set_uop_reguard_lazy") (param $on i32) (global.set $uop_rg_lazy (local.get $on)))
+  (func (export "uop_rg_lazy_one") (result i32) (global.get $uop_rg_lazy_one))
   (global $uop_rg_pages (mut i32) (i32.const 0))   ;; pages proved by wide re-guards
   (global $uop_rg_nonadj (mut i32) (i32.const 0))  ;; growth stopped at a non-adjacent backing page
   (func $uop_reguard_wide (param $w i32) (param $pg i32) (result i32)
@@ -1164,6 +1469,7 @@
       (local.set $pc (call $uop_fast (local.get $pc) (local.get $budget)))
       (local.set $budget (global.get $uop_io_budget))
       (if (i32.eqz (global.get $uop_io_kind)) (then (return (local.get $budget))))
+      (global.set $uop_opt_svc (i32.add (global.get $uop_opt_svc) (i32.const 1)))
       (local.set $op (i32.load (local.get $pc)))
       (if (i32.eq (global.get $uop_io_kind) (i32.const 2))
         (then
@@ -1196,7 +1502,9 @@
                       (then (i32.const 24)) (else (i32.const 20))))))))
           (br $L)))
       ;; 109 / 110 an SSE memory form whose window missed
-      (if (i32.lt_u (i32.sub (local.get $op) (i32.const 109)) (i32.const 2))
+      (if (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 109)) (i32.const 2))
+                  ;; 134-141 a native SSE memory form (109's layout)
+                  (i32.lt_u (i32.sub (local.get $op) (i32.const 134)) (i32.const 8)))
         (then (local.set $pc (call $uop_sse_svc (local.get $pc))) (br $L)))
       ;; 88-90 the generic x87 service ops, 91-107 a native x87 op its fast
       ;; arm declined
@@ -1316,6 +1624,27 @@
             (i32.lt_u (local.get $v) $N))))
   (defmacro (ux-wa)
     (i32.add (local.get $ga) (i32.load offset=8 (local.get $w))))
+  ;; Native SSE operands: a register form's d / s XMM byte offsets, a memory
+  ;; form's XMM register (code bits 4-6), as addresses in the XMM file.
+  (defmacro (ux-xd)
+    (i32.add (global.get $xmm_base) (i32.load offset=4 (local.get $pc))))
+  (defmacro (ux-xs)
+    (i32.add (global.get $xmm_base) (i32.load offset=8 (local.get $pc))))
+  (defmacro (ux-xm)
+    (i32.add (global.get $xmm_base) (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 0x70))))
+  ;; lane 0 of the register at $n op= B (an f32), op the subop K: 10 add,
+  ;; 11 mul, 13 div, else (14) sub -- 06c's dedicated scalar handlers.
+  (defmacro (ux-ss-arith $K $B)
+    (local.set $k $K)
+    (local.set $fs $B)
+    (f32.store (local.get $n)
+      (if (result f32) (i32.eq (local.get $k) (i32.const 10))
+        (then (f32.add (f32.load (local.get $n)) (local.get $fs)))
+        (else (if (result f32) (i32.eq (local.get $k) (i32.const 11))
+          (then (f32.mul (f32.load (local.get $n)) (local.get $fs)))
+          (else (if (result f32) (i32.eq (local.get $k) (i32.const 13))
+            (then (f32.div (f32.load (local.get $n)) (local.get $fs)))
+            (else (f32.sub (f32.load (local.get $n)) (local.get $fs))))))))))
   ;; TOP and the tag byte into $t / $k; non-zero while any exact shadow is
   ;; live (06 would move or drop it: this file never touches it).
   (defmacro (ux-state-bad)
@@ -1355,10 +1684,12 @@
     (local $ga i32) (local $w i32) (local $v i32) (local $x i64) (local $y i64) (local $q i64)
     (local $n i32) (local $bw i32) (local $dw i32) (local $sw i32)
     (local $t i32) (local $k i32) (local $p i32) (local $c i32) (local $fa f64) (local $fb f64)
+    (local $fs f32)
     (loop $L
       (block $svc
       (block $miss
-      (block $c111 (block $c109 (block $c108
+      (block $n142 (block $n141 (block $n140 (block $n139 (block $n138 (block $n137 (block $n136 (block $n135 (block $n134 (block $n133 (block $n132 (block $n131 (block $n130 (block $n129 (block $n128 (block $n127 (block $n126 (block $n125 (block $n124 (block $n123 (block $n122 (block $n121 (block $n120
+      (block $c113 (block $c112 (block $c111 (block $c109 (block $c108
       (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
       (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
       (block $c94 (block $c93 (block $c92 (block $c91
@@ -1395,7 +1726,14 @@
                   $svc $svc $svc $svc $svc $svc
                   ;; 108 SSER, 109 SSEM / 110 SSEMS (one arm)
                   $c108 $c109 $c109
+                  ;; 111 SAHFI
                   $c111
+                  ;; 112 RETX 113 EXITR
+                  $c112 $c113
+                  ;; 114-119 not emitted here
+                  $c0 $c0 $c0 $c0 $c0 $c0
+                  ;; 120-142 native SSE (--uop-sse-native)
+                  $n120 $n121 $n122 $n123 $n124 $n125 $n126 $n127 $n128 $n129 $n130 $n131 $n132 $n133 $n134 $n135 $n136 $n137 $n138 $n139 $n140 $n141 $n142
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -2459,15 +2797,175 @@
         (call $uop_sse_mem (i32.load offset=4 (local.get $pc))
           (i32.shr_u (i32.load offset=16 (local.get $pc)) (i32.const 8)) (local.get $ga))
         (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
-        ;; 111 MMX entry: after one complete ordinary instruction.
-        (call $mmx_enter)
+        ;; 111 SAHFI: --uop-opt 0x4000, $th_sahf (handler 212) inline -- SF ZF
+        ;; AF PF CF from AH, every other flag as it was
+        (call $load_eflags (i32.or
+          (i32.and (call $build_eflags) (i32.const 0xFFFFFF2A))
+          (i32.and (i32.shr_u (i32.load (global.get $reg_base)) (i32.const 8)) (i32.const 0xD5))))
         (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
+        ;; 112 RETX a imm x s -- --uop-opt 0x800: a RET whose address (a, read
+        ;; from [esp]) no call in the program named. What $th_ret does
+        ;; besides the pop goes to threaded code at the RET (x, ESP untouched):
+        ;; address 0, and the thread-return, null-transfer, call-stack and
+        ;; callback-feed recorders. Otherwise the pending seam, ESP += 4 + imm,
+        ;; and on to s, the stub that materializes the flags for EXITR.
+        (local.set $v (i32.load (i32.load offset=4 (local.get $pc))))
+        (if (i32.or (i32.or (i32.eqz (local.get $v)) (i32.ne (global.get $thread_return_slot) (i32.const 0)))
+                    (i32.or (i32.ne (global.get $null_transfer_on) (i32.const 0))
+                            (i32.or (i32.ne (global.get $cs_enabled) (i32.const 0))
+                                    (i32.ne (global.get $callback_feed_enabled) (i32.const 0)))))
+          (then (local.set $pc (i32.load offset=12 (local.get $pc))) (br $L)))
+        (if (i32.or (global.get $dao_status) (global.get $pending_armed))
+          (then (call $pending_pop (local.get $v) (i32.load offset=16 (global.get $reg_base)))))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.add (i32.const 4) (i32.load offset=8 (local.get $pc)))))
+        (local.set $pc (i32.load offset=16 (local.get $pc)))
+        (br $L))
+        ;; 113 EXITR a -- leave to the address in a as the RET's transfer:
+        ;; one block spent, as $branch_end would; none left, and threaded
+        ;; code would stop the batch at that address (EXITB's form). With
+        ;; blocks left and a program compiled at that address that its enter
+        ;; op would run ($uop_ret_chain), run it here instead: the same
+        ;; charge, without the round trip through $branch_end and the enter.
+        (global.set $eip (i32.load (i32.load offset=4 (local.get $pc))))
+        (global.set $uop_io_kind (i32.const 0))
+        (if (i32.gt_s (local.get $budget) (i32.const 0))
+          (then (local.set $budget (i32.sub (local.get $budget) (i32.const 1)))
+                (local.set $t (call $uop_ret_chain (global.get $eip)))
+                (if (local.get $t) (then (local.set $pc (local.get $t)) (br $L)))
+                (global.set $uop_io_budget (local.get $budget)))
+          (else (global.set $uop_bexit (i32.const 1))
+                (global.set $uop_io_budget (i32.const 0))))
+        (return (local.get $pc)))
+        ;; ---- native SSE (07e $uc_ssen_op, --uop-sse-native) ----
+        ;; Each arm is the 06c handler's arm for that subop on the XMM file,
+        ;; the same helpers in the same order (see 06c $th_sse_rr / the
+        ;; dedicated and --sse-fast handlers), so the result is the threaded
+        ;; one bit for bit. Register forms: d s the XMM byte offsets in the
+        ;; file, a general register its slot address; k the subop.
+        ;; 120 XMOV d s (sub 0: the whole register)
+        (v128.store (ux-xd) (v128.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 121 XMOVSS d s: lane 0, the upper 96 bits kept
+        (i32.store (ux-xd) (i32.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 122 XCVTSS2SD d s: the low qword, the upper kept
+        (i64.store (ux-xd) (call $sse_promote_bits (i32.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 123 XCVTPS2PD d s
+        (v128.store (ux-xd) (call $sse_promote_pair (v128.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 124 XCVTSD2SS d s: lane 0, the upper kept
+        (i32.store (ux-xd) (call $sse_demote_bits (i64.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 125 XCVTPD2PS d s: both lanes read before the write, upper zeroed
+        (local.set $n (i32.load offset=8 (local.get $pc)))
+        (local.set $x (i64.extend_i32_u (call $sse_demote_bits
+          (i64.load (i32.add (global.get $xmm_base) (local.get $n))))))
+        (local.set $x (i64.or (local.get $x) (i64.shl (i64.extend_i32_u (call $sse_demote_bits
+          (i64.load offset=8 (i32.add (global.get $xmm_base) (local.get $n))))) (i64.const 32))))
+        (local.set $n (ux-xd))
+        (i64.store (local.get $n) (local.get $x))
+        (i64.store offset=8 (local.get $n) (i64.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 126 XSDAR d s k: ADDSD 40 / MULSD 41 / SUBSD 42
+        (call $sse_sd_arith (i32.sub (i32.load offset=12 (local.get $pc)) (i32.const 40)) (ux-xd) (ux-xs))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
+        ;; 127 XSSAR d s k: ADDSS 10 / MULSS 11 / DIVSS 13 / SUBSS 14, lane 0
+        (local.set $n (ux-xd))
+        (ux-ss-arith (i32.load offset=12 (local.get $pc)) (f32.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
+        ;; 128 XCOMISS d s: (U)COMISS
+        (call $sse_compare_flags (f32.load (ux-xd)) (f32.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 129 XCOMISD d s: (U)COMISD
+        (call $sse_compare_flags_f64 (f64.load (ux-xd)) (f64.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 130 XCVTSI2SS d r: lane 0 from the general register's slot
+        (f32.store (ux-xd) (f32.convert_i32_s (i32.load (i32.load offset=8 (local.get $pc)))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 131 XCVTSI2SD d r: the low qword
+        (f64.store (ux-xd) (f64.convert_i32_s (i32.load (i32.load offset=8 (local.get $pc)))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 132 XCVTTSS2SI r s: d is the general register's slot
+        (i32.store (i32.load offset=4 (local.get $pc)) (call $sse_cvtt_f32_i32 (f32.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 133 XLOGIC d s k: XORPS 1 / ANDPS 22 / ANDNPS 23 / ORPS 24
+        (local.set $k (i32.load offset=12 (local.get $pc)))
+        (v128.store (ux-xd)
+          (if (result v128) (i32.eq (local.get $k) (i32.const 1))
+            (then (v128.xor (v128.load (ux-xd)) (v128.load (ux-xs))))
+            (else (if (result v128) (i32.eq (local.get $k) (i32.const 22))
+              (then (v128.and (v128.load (ux-xd)) (v128.load (ux-xs))))
+              (else (if (result v128) (i32.eq (local.get $k) (i32.const 23))
+                (then (v128.andnot (v128.load (ux-xs)) (v128.load (ux-xd))))
+                (else (v128.or (v128.load (ux-xd)) (v128.load (ux-xs))))))))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
+        ;; Memory forms, 109's layout (code base idx sc|h<<8 disp w x; the
+        ;; XMM register in code bits 4-6): proved in the window, else 109's
+        ;; service op runs the handler.
+        ;; 134 XMOVSS_LD: m32 into lane 0, bits 32-127 zeroed
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (local.set $n (ux-xm))
+        (i32.store (local.get $n) (i32.load (ux-wa)))
+        (i32.store offset=4 (local.get $n) (i32.const 0))
+        (i64.store offset=8 (local.get $n) (i64.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 135 XMOVSS_ST: lane 0 to m32
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (i32.store (ux-wa) (i32.load (ux-xm)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 136 XMOVSD_LD (MOVSD / MOVQ xmm, m64): the upper qword zeroed
+        (br_if $svc (ux-ea-miss (i32.const 8)))
+        (local.set $n (ux-xm))
+        (i64.store (local.get $n) (i64.load (ux-wa)))
+        (i64.store offset=8 (local.get $n) (i64.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 137 XMOVSD_ST: the low qword to m64
+        (br_if $svc (ux-ea-miss (i32.const 8)))
+        (i64.store (ux-wa) (i64.load (ux-xm)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 138 XLD128 (sub 0, no alignment check, as 06c's mov arm)
+        (br_if $svc (ux-ea-miss (i32.const 16)))
+        (v128.store (ux-xm) (v128.load (ux-wa)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 139 XST128
+        (br_if $svc (ux-ea-miss (i32.const 16)))
+        (v128.store (ux-wa) (v128.load (ux-xm)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 140 XSSARM: ADD/MUL/DIV/SUBSS xmm, m32 (subop in code bits 8-15)
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (local.set $n (ux-xm))
+        (ux-ss-arith (i32.and (i32.shr_u (i32.load offset=4 (local.get $pc)) (i32.const 8)) (i32.const 0xFF))
+                     (f32.load (ux-wa)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 141 XCVTSS2SDM: CVTSS2SD xmm, m32, the upper qword kept
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (i64.store (ux-xm) (call $sse_promote_bits (i32.load (ux-wa))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 142 XMOVSD d s (sub 37 between registers): the low qword
+        (i64.store (ux-xd) (i64.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))
       (global.set $uop_io_kind (i32.const 2))
       (global.set $uop_io_budget (local.get $budget))
       (return (local.get $pc)))
+      ;; --uop-opt 0x004: the pending CALL/RET seams 79/80/87 are no-ops
+      ;; while neither observer is armed ($pending_push/$pending_pop/
+      ;; $pending_entry return at once), so step over them here instead of
+      ;; leaving $uop_fast for each.
+      (if (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 4)) (i32.const 0))
+                   (i32.eqz (i32.or (global.get $dao_status) (global.get $pending_armed))))
+        (then
+          (local.set $v (i32.load (local.get $pc)))
+          (if (i32.eq (local.get $v) (i32.const 79))
+            (then (global.set $uop_opt_seams (i32.add (global.get $uop_opt_seams) (i32.const 1)))
+                  (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L)))
+          (if (i32.or (i32.eq (local.get $v) (i32.const 80)) (i32.eq (local.get $v) (i32.const 87)))
+            (then (global.set $uop_opt_seams (i32.add (global.get $uop_opt_seams) (i32.const 1)))
+                  (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L)))))
       ;; An op that needs a call, still at $pc.
       (global.set $uop_io_kind (i32.const 1))
       (global.set $uop_io_budget (local.get $budget))
@@ -2582,6 +3080,10 @@
   (func $uop_try (param $eip i32) (result i32)
     (local $pc i32)
     (if (i32.ne (call $uop_map_get (local.get $eip)) (i32.const 0)) (then (return (i32.const 0))))
+    (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 1)) (i32.const 0))
+      (then (if (i32.eq (i32.load (call $uop_decl_slot (local.get $eip))) (local.get $eip))
+              (then (global.set $uop_opt_declhits (i32.add (global.get $uop_opt_declhits) (i32.const 1)))
+                    (return (i32.const 1))))))
     (local.set $pc (call $uop_map_slot (local.get $eip)))
     (if (i32.ne (local.get $pc) (i32.const 0))
       (then (if (i32.eq (i32.load offset=4 (local.get $pc)) (i32.const 1)) (then (return (i32.const 1))))))
@@ -2605,6 +3107,8 @@
   ;; $uop_flush_all (the code itself may have changed) forgets every marker.
   (func $uop_mark_dead (param $eip i32)
     (local $s i32)
+    (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 1)) (i32.const 0))
+      (then (i32.store (call $uop_decl_slot (local.get $eip)) (local.get $eip))))
     (local.set $s (call $uop_map_free_way (local.get $eip)))
     (if (i32.eqz (local.get $s)) (then (return)))
     (i32.store (local.get $s) (local.get $eip))
@@ -2772,6 +3276,13 @@
         (global.set $uop_cw_skipped (i32.add (global.get $uop_cw_skipped) (i32.const 1)))
         (return)))
     (global.set $uop_cw_scans (i32.add (global.get $uop_cw_scans) (i32.const 1)))
+    ;; --uop-opt 0x080: a page a guest store reached is written data, and a
+    ;; read-only section's dword in it is not folded again (07e $uc_fold_ok)
+    ;; -- else a loop that writes what it folded recompiles, folds and is
+    ;; killed on every entry.
+    (if (i32.and (global.get $uop_opt) (i32.const 0x80))
+      (then (call $uop_fold_written (local.get $ga))
+            (call $uop_fold_written (i32.sub (local.get $end) (i32.const 1)))))
     (local.set $n0 (global.get $uop_nranges))
     (call $uop_code_write_scan (local.get $ga) (local.get $end))
     (if (i32.ne (global.get $uop_nranges) (local.get $n0))
@@ -2860,6 +3371,8 @@
                  (i32.const 0) (i32.const 0x8000))
     (memory.fill (call $uop_cut_slot (i32.const 0)) (i32.const 0) (i32.const 1024))
     (memory.fill (call $uop_icg_slot (i32.const 0)) (i32.const 0) (i32.const 2048))
+    (memory.fill (i32.add (i32.add (global.get $uop_arena) (global.get $uop_wins_off)) (i32.const 0x3C00))
+                 (i32.const 0) (i32.const 1024))
     (global.set $uop_icg_retire (i32.const 0)))
 
   ;; Cut-exit landings (docs/uop-tier-design.md section 21.6). A trace's
@@ -2894,15 +3407,42 @@
   ;; carved out of memory that held another thread's threaded code, so the map
   ;; is garbage until this clears it.
   (func $uop_set_arena (param $base i32) (param $size i32)
+    (local $big i32)
+    ;; Up to 1MB (the main arena, a worker's 256KB) the layout is the fixed
+    ;; $UOP_TAIL one. Bigger (A1's $UOP_ARENA_BIG): 8192 ranges and a start
+    ;; bitmap of size/128, so the tail grows with the code it describes.
+    (local.set $big (i32.gt_u (local.get $size) (i32.const 0x00100000)))
+    (global.set $UOP_RANGES_MAX (select (i32.const 8192) (i32.const 4096) (local.get $big)))
+    (global.set $UOP_STARTS_BYTES
+      (select (i32.shr_u (local.get $size) (i32.const 7)) (i32.const 0x2000) (local.get $big)))
     (global.set $uop_arena (local.get $base))
-    (global.set $uop_code_bytes (i32.sub (local.get $size) (global.get $UOP_TAIL)))
+    (global.set $uop_code_bytes
+      (i32.sub (local.get $size)
+        (i32.add (i32.add (i32.const 0x14000) (i32.mul (global.get $UOP_RANGES_MAX) (i32.const 12)))
+                 (global.get $UOP_STARTS_BYTES))))
     (global.set $uop_temps_off (global.get $uop_code_bytes))
     (global.set $uop_wins_off (i32.add (global.get $uop_code_bytes) (i32.const 0x4000)))
     (global.set $uop_map_off (i32.add (global.get $uop_code_bytes) (i32.const 0x8000)))
     (global.set $uop_ranges_off (i32.add (global.get $uop_code_bytes) (i32.const 0x10000)))
-    (global.set $uop_cwmap_off (i32.add (global.get $uop_code_bytes) (i32.const 0x1C000)))
-    (global.set $uop_starts_off (i32.add (global.get $uop_code_bytes) (i32.const 0x20000)))
+    (global.set $uop_cwmap_off (i32.add (global.get $uop_ranges_off)
+                                        (i32.mul (global.get $UOP_RANGES_MAX) (i32.const 12))))
+    (global.set $uop_starts_off (i32.add (global.get $uop_cwmap_off) (global.get $UOP_CWMAP_BYTES)))
     (call $uop_flush_all))
+  ;; A1: the main instance's arena for mask bit 0x8000. A worker's arena is
+  ;; its tid slot and never changes. Answers whether it switched (the switch
+  ;; flushes everything, as $uop_set_arena does).
+  (func $uop_arena_pick (param $mask i32) (result i32)
+    (local $want i32)
+    (if (i32.and (i32.ne (global.get $uop_arena) (global.get $UOP_ARENA))
+                 (i32.ne (global.get $uop_arena) (global.get $UOP_ARENA_BIG)))
+      (then (return (i32.const 0))))
+    (local.set $want (select (global.get $UOP_ARENA_BIG) (global.get $UOP_ARENA)
+                             (i32.ne (i32.and (local.get $mask) (i32.const 0x8000)) (i32.const 0))))
+    (if (i32.eq (local.get $want) (global.get $uop_arena)) (then (return (i32.const 0))))
+    (call $uop_set_arena (local.get $want)
+      (select (global.get $UOP_ARENA_BIG_SIZE) (global.get $UOP_ARENA_SIZE)
+              (i32.eq (local.get $want) (global.get $UOP_ARENA_BIG))))
+    (i32.const 1))
 
   ;; The enter op, first in the head block's threaded code. Its operand is
   ;; the program header. Anything it cannot vouch for falls through into the
@@ -2920,6 +3460,13 @@
           ;; must see the tier running (13-exports.wat $dbg_recompute).
           (i32.eqz (i32.or (global.get $dbg_tier_guard) (global.get $code16))))
       (then
+        ;; --uop-opt: a program compiled with assumptions (nwin top bit,
+        ;; 07e) takes its own enter ($th_uop_enter_opt): stamp check and S1
+        ;; variant pick. Every other program pays this one load and test, so
+        ;; mask 0 runs main's enter.
+        (if (i32.lt_s (i32.load offset=8 (local.get $op)) (i32.const 0))
+          (then (return_call $th_uop_enter_opt (local.get $op))))
+
         ;; Keep the windows the last run proved unless something they depend
         ;; on changed since; else poison them, so the first access through
         ;; each misses and guards its own page.
@@ -2965,6 +3512,157 @@
             (if (global.get $uop_census) (then (call $uop_census_prog (i32.const 12) (local.get $op))))
             (global.set $uop_icg_retire (i32.const 0))
             (global.set $uop_icg_mkills (i32.add (global.get $uop_icg_mkills) (i32.const 1)))
+            (call $uop_kill (local.get $op))
+            (call $uop_drop_ranges (local.get $op))
+            (i32.store offset=16 (local.get $op) (i32.const 0))
+            (local.set $n (i32.const 0))))
+        ;; EXITB: the batch is over, at the transfer target, as in threaded.
+        (if (global.get $uop_bexit)
+          (then
+            (global.set $uop_bexit (i32.const 0))
+            (global.set $block_budget (i32.const 0))
+            (return)))
+        ;; Resume in threaded code through $branch_end, adding back the block
+        ;; it charges: an exit is not a transfer of its own. (An exit to the
+        ;; head falls straight into the threaded head block instead, since
+        ;; $branch_end would re-enter the program.)
+        (if (i32.or (i32.ne (global.get $eip) (i32.load offset=4 (local.get $op)))
+                    (i32.lt_s (local.get $b1) (i32.const 0)))
+          (then
+            (global.set $block_budget (i32.add (local.get $b1) (i32.const 1)))
+            ;; $uop_poor_check's test, inline: the call is only made to retire
+            (if (i32.and (i32.ge_u (local.get $n) (i32.const 256))
+                         (i32.lt_u (local.get $spent) (i32.shl (local.get $n) (i32.const 1))))
+              (then (call $uop_poor_check (local.get $op))))
+            (return_call $branch_end)))
+        (global.set $uop_head_exits (i32.add (global.get $uop_head_exits) (i32.const 1)))
+        (i32.store offset=24 (local.get $op)
+          (i32.add (i32.load offset=24 (local.get $op)) (i32.const 1)))
+        ;; An exit at the head that spent no block did nothing at all: the
+        ;; first access failed its guard (a store into a page holding decoded
+        ;; code, say), and it will fail the same way next time. Such an entry
+        ;; is exactly as poor as a short trip out of a side exit.
+        (if (i32.eq (local.get $b0) (local.get $b1))
+          (then (call $uop_poor_check (local.get $op))))))
+    (dispatch-next))
+
+  ;; --uop-opt 0x800: the program 07d op 113 EXITR may continue into at
+  ;; $eip, the address a RET popped, instead of leaving through $branch_end
+  ;; (which would charge the block EXITR already charged and dispatch the
+  ;; head's enter op): the code to run, or 0 to leave. 0 for everything that
+  ;; would make $branch_end stop or the enter op fall through -- debug and
+  ;; yield guards, the breakpoint and SBH addresses, 16-bit code, the
+  ;; census (it counts exits per program), a pending-context hook to run --
+  ;; and for a program whose stamp is stale or whose S1 pick declines. The
+  ;; windows are re-proved as the enter would. The blocks it spends are
+  ;; credited to the program that was entered.
+  (global $uop_ret_chains (mut i32) (i32.const 0))
+  (func $uop_ret_chain (param $eip i32) (result i32)
+    (local $op i32) (local $run i32) (local $ep i32)
+    (if (i32.or
+          (i32.or (i32.or (global.get $dbg_tier_guard) (global.get $code16))
+                  (i32.or (global.get $yield_flag) (global.get $yield_reason)))
+          (i32.or (i32.or (global.get $uop_census) (i32.or (global.get $dao_status) (global.get $pending_armed)))
+                  (i32.or (i32.eq (local.get $eip) (global.get $bp_addr))
+                          (i32.or (i32.eq (local.get $eip) (global.get $sbh_eip_a))
+                                  (i32.eq (local.get $eip) (global.get $sbh_eip_b))))))
+      (then (return (i32.const 0))))
+    (local.set $op (call $uop_map_get (local.get $eip)))
+    (if (i32.eqz (local.get $op)) (then (return (i32.const 0))))
+    ;; The enter op's own eip test, and not redundant: a map way outlives the
+    ;; flush that freed its program, and the code bump of the next
+    ;; generation can put another head's live program at that very address.
+    ;; $uop_map_get only proves "a live program starts here". Without this,
+    ;; Spelunky's boot chained a RET into another head's program at batch
+    ;; 3022 and returned to a wild EIP.
+    (if (i32.ne (i32.load offset=4 (local.get $op)) (local.get $eip)) (then (return (i32.const 0))))
+    (local.set $run (local.get $op))
+    (if (i32.lt_s (i32.load offset=8 (local.get $op)) (i32.const 0))
+      (then (if (call $uop_hdr_bad (local.get $op)) (then (return (i32.const 0))))
+            (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x200)) (i32.const 0))
+              (then (local.set $run (call $uop_s1_pick (local.get $op)))
+                    (if (i32.eqz (local.get $run)) (then (return (i32.const 0))))))))
+    (local.set $ep (i32.load (global.get $UOP_WIN_EPOCH)))
+    (if (i32.ne (i32.load offset=28 (local.get $run)) (local.get $ep))
+      (then (call $uop_windows_reset (local.get $run) (local.get $ep))))
+    (global.set $uop_ret_chains (i32.add (global.get $uop_ret_chains) (i32.const 1)))
+    (i32.add (local.get $run) (global.get $UOP_HDR)))
+
+  ;; The enter for a program with an assumption block (header +8 top bit):
+  ;; the same steps as $th_uop_enter, after the stamp check and the S1 pick.
+  (func $th_uop_enter_opt (param $op i32)
+    (local $nx_fn i32) (local $nx_op i32)
+    (local $ep i32) (local $b0 i32) (local $b1 i32) (local $n i32) (local $spent i32) (local $run i32)
+    ;; $uop_live, not just the gen word: this op outlives the flush that
+    ;; freed its program, and the bytes it names get reused.
+    (if (i32.and
+          (i32.and (call $uop_live (local.get $op))
+                   (i32.eq (i32.load offset=4 (local.get $op)) (global.get $eip)))
+          ;; $dbg_tier_guard, not $dbg_chain_guard: the handler histogram
+          ;; must see the tier running (13-exports.wat $dbg_recompute).
+          (i32.eqz (i32.or (global.get $dbg_tier_guard) (global.get $code16))))
+      (then
+        ;; --uop-opt: what the program assumed when compiled ($uop_hdr_bad).
+        ;; A stale stamp drops every program (they recompile under the new
+        ;; state) and this entry falls through to the threaded block.
+        ;; S1 (0x200): the variant to run instead, if its guard holds; the
+        ;; generic program ($op) keeps every statistic below.
+        (local.set $run (local.get $op))
+        (if (i32.lt_s (i32.load offset=8 (local.get $op)) (i32.const 0))
+          (then (if (call $uop_hdr_bad (local.get $op))
+                  (then (global.set $uop_opt_stampfail (i32.add (global.get $uop_opt_stampfail) (i32.const 1)))
+                        (call $uop_flush)
+                        (dispatch-next)))
+                (if (i32.and (global.get $uop_opt) (i32.const 0x200))
+                  (then (local.set $run (call $uop_s1_pick (local.get $op)))
+                        (if (i32.eqz (local.get $run)) (then (dispatch-next)))))))
+        ;; Keep the windows the last run proved unless something they depend
+        ;; on changed since; else poison them, so the first access through
+        ;; each misses and guards its own page.
+        ;; A plain load: an atomic one is a full barrier on arm64 (dmb ish
+        ;; either side) on every entry, and orders nothing this needs -- the
+        ;; epoch can move the instant after either load, and a program that
+        ;; then runs on proven windows is exactly as covered by the per-access
+        ;; guards as one that read it a moment earlier.
+        (local.set $ep (i32.load (global.get $UOP_WIN_EPOCH)))
+        (if (i32.eq (i32.load offset=28 (local.get $run)) (local.get $ep))
+          (then (global.set $uop_win_kept (i32.add (global.get $uop_win_kept) (i32.const 1))))
+          (else
+            (global.set $uop_win_reset (i32.add (global.get $uop_win_reset) (i32.const 1)))
+            (call $uop_windows_reset (local.get $run) (local.get $ep))))
+        (local.set $b0 (global.get $block_budget))
+        (local.set $b1 (call $uop_run (i32.add (local.get $run) (global.get $UOP_HDR))
+                                      (local.get $b0)))
+        (global.set $block_budget (local.get $b1))
+        (global.set $uop_enters (i32.add (global.get $uop_enters) (i32.const 1)))
+        (local.set $spent (i32.sub (local.get $b0) (local.get $b1)))
+        (global.set $uop_blocks (i64.add (global.get $uop_blocks)
+          (i64.extend_i32_s (local.get $spent))))
+        ;; Per-program enters/blocks, kept in locals for the poor test below:
+        ;; $spent becomes the running block total.
+        (local.set $n (i32.add (i32.load offset=16 (local.get $op)) (i32.const 1)))
+        (i32.store offset=16 (local.get $op) (local.get $n))
+        (local.set $spent (i32.add (i32.load offset=20 (local.get $op)) (local.get $spent)))
+        (i32.store offset=20 (local.get $op) (local.get $spent))
+        ;; A trace's exit said how far it got (84 WORK); saturating, so a
+        ;; long-lived program's sum never wraps back to "poor".
+        (if (global.get $uop_xwork)
+          (then
+            (local.set $ep (i32.add (i32.load offset=32 (local.get $op)) (global.get $uop_xwork)))
+            (i32.store offset=32 (local.get $op)
+              (select (i32.const 0x40000000) (local.get $ep) (i32.gt_u (local.get $ep) (i32.const 0x40000000))))
+            (global.set $uop_xwork (i32.const 0))))
+        (if (global.get $uop_census) (then (call $uop_census_exit (local.get $op))))
+        ;; It left through a megamorphic site's guard ($uop_icg_count): kill
+        ;; it so the head recompiles without that inline cache. Its enters
+        ;; are zeroed so neither poor test below can mark the head.
+        (if (global.get $uop_icg_retire)
+          (then
+            (if (global.get $uop_census) (then (call $uop_census_prog (i32.const 12) (local.get $op))))
+            (global.set $uop_icg_retire (i32.const 0))
+            (global.set $uop_icg_mkills (i32.add (global.get $uop_icg_mkills) (i32.const 1)))
+            (if (i32.ne (local.get $run) (local.get $op))
+              (then (call $uop_kill (local.get $run)) (call $uop_drop_ranges (local.get $run))))
             (call $uop_kill (local.get $op))
             (call $uop_drop_ranges (local.get $op))
             (i32.store offset=16 (local.get $op) (i32.const 0))

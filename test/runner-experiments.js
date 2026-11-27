@@ -82,8 +82,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   //                 calling the 06c handler the threaded decoder picks, a
   //                 memory form proved in a window first.
   const sseWanted = () => uopWanted() && (hasFlag('uop-sse') || (appPolicy() || {}).uopSse === true);
+  //   --uop-sse-native (with --uop-sse) the hot XMM forms as 07d ops of
+  //                 their own (120-142), the 06c arm inline, no handler call
+  const sseNativeWanted = () => sseWanted() && (hasFlag('uop-sse-native') || (appPolicy() || {}).uopSseNative === true);
   const WIDEN = [['set_uop_muldiv', muldivWanted], ['set_uop_icall', icallWanted], ['set_uop_iat', iatWanted],
-    ['set_uop_sse', sseWanted]];
+    ['set_uop_sse', sseWanted], ['set_uop_sse_native', sseNativeWanted]];
   // MMX (07e kind 27, on by default; --no-uop-mmx or `uopMmx: false` on the
   // app turns it off): MMX instructions lowered into the program over the
   // per-thread $MMX_FILE instead of declining the head.
@@ -138,6 +141,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // tries after a failed calls-followed attempt (a mask: 1 cut only the
   // icall sites, 2 halve the span first, 4 keep a call head's own call in
   // the nocall retry; 0 the pre-section-24 order). docs/uop-tier-design.md §24.
+  // --uop-opt=MASK: the stacked optimizer passes (07d $uop_opt; bits in
+  // docs/design/uop-optimizer-pipeline.md), each its own bit, default 0.
+  // Hex (0x1ff) or decimal. Compile-time per instance, so inherited.
+  const UOP_OPT = (() => { const v = getArg('uop-opt', null); return v === null || v === 'true' ? null : Number(v) >>> 0; })();
+  const uopOptWanted = () => uopWanted() && UOP_OPT !== null;
   const UOP_RETRY_LADDER = hasFlag('no-uop-retry-ladder') ? 0
     : (() => { const v = getArg('uop-retry-ladder', null); return v === null ? null : v === 'true' ? 7 : Number(v) | 0; })();
   // --uop-census: log every head's verdict (installed / declined + reason),
@@ -157,6 +165,15 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // around the page it missed on (07d $uop_reguard_wide; default 64KB, 4096 =
   // the old one-page window). Every instance: each thread re-guards its own.
   const UOP_REGUARD_SPAN = getArg('uop-reguard-span', null);
+  // --uop-reguard-lazy: a re-guard widens only when the slot is walking
+  // (07d $uop_rg_walking); otherwise it proves its one page. Every instance.
+  // --uop-reguard-lazy=sparse: only for pages outside the direct window.
+  const UOP_REGUARD_LAZY = getArg('uop-reguard-lazy', null) === 'sparse' ? 2 : hasFlag('uop-reguard-lazy') ? 1 : 0;
+  // --no-fpu-direct: 06 $fpu_exec_mem's direct-f64 memory forms off (A/B)
+  const NO_FPU_DIRECT = hasFlag('no-fpu-direct');
+  // --uop-r2-window=LO:HI: R2 (0x800) keeps contexts only in the LO..HI-1th
+  // program that would keep them, in compile order -- to bisect a diff.
+  const UOP_R2_WINDOW = getArg('uop-r2-window', null);
   if (UOP_CENSUS) env.DBG_INV = '1';
   // --branch-clock: one guest-clock block per executed x86 branch, not per
   // threaded block cut ($branch_clock in 05-alu). Pass it to BOTH arms of any
@@ -427,7 +444,10 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (UOP_HOT_AGE !== null) inheritWasm('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
     if (UOP_ICG_MEGA !== null) inheritWasm('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
     if (UOP_RETRY_LADDER !== null) inheritWasm('set_uop_retry_ladder', UOP_RETRY_LADDER);
+    if (uopOptWanted()) inheritWasm('set_uop_opt', UOP_OPT);
     if (UOP_REGUARD_SPAN !== null) inheritWasm('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
+    if (UOP_REGUARD_LAZY) inheritWasm('set_uop_reguard_lazy', UOP_REGUARD_LAZY);
+    if (NO_FPU_DIRECT) inheritWasm('set_fpu_direct', 0);
     if (TREE_FOLD || TRACE_TREE_FOLD) inheritWasm('set_tree_fold', 1);
     if (TRACE_TREE_FOLD) inheritWasm('set_tree_trace', 1);
     // The thresholds too: a guest thread decodes in its own instance, so a cap
@@ -445,6 +465,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
     if (sseFastWanted() && available('set_sse_fast')) set('set_sse_fast', 1);
     if (NO_DELPHI_FOLD && available('set_delphi_fold')) set('set_delphi_fold', 0);
+    if (NO_FPU_DIRECT && available('set_fpu_direct')) set('set_fpu_direct', 0);
     if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);
     if (uopWanted() && available('set_uop') && ctx) {
       if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);
@@ -452,6 +473,12 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_WIN_CENSUS && available('set_uop_win_census')) set('set_uop_win_census', 1);
       if (UOP_X87_CENSUS && available('set_uop_x87_census')) set('set_uop_x87_census', 1);
       if (UOP_REGUARD_SPAN !== null && available('set_uop_reguard_span')) set('set_uop_reguard_span', Number(UOP_REGUARD_SPAN) | 0);
+      if (UOP_REGUARD_LAZY && available('set_uop_reguard_lazy')) set('set_uop_reguard_lazy', UOP_REGUARD_LAZY);
+      // main instance only: a diagnostic, not a policy a thread inherits
+      if (UOP_R2_WINDOW !== null && available('set_uop_r2_window')) {
+        const [lo, hi] = UOP_R2_WINDOW.split(':').map(Number);
+        set('set_uop_r2_window', lo >>> 0, hi >>> 0);
+      }
       if (UOP_POOR_WORK !== null && available('set_uop_poor_work')) set('set_uop_poor_work', Number(UOP_POOR_WORK) | 0);
       if (NO_UOP_TRACE_CUT && available('set_uop_trace_cut')) set('set_uop_trace_cut', 0);
       if (NO_UOP_MCOPY && available('set_uop_mcopy')) set('set_uop_mcopy', 0);
@@ -459,6 +486,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       if (UOP_HOT_AGE !== null && available('set_uop_hot_age')) set('set_uop_hot_age', Number(UOP_HOT_AGE) | 0);
       if (UOP_ICG_MEGA !== null && available('set_uop_icg_mega')) set('set_uop_icg_mega', Number(UOP_ICG_MEGA) | 0);
       if (UOP_RETRY_LADDER !== null && available('set_uop_retry_ladder')) set('set_uop_retry_ladder', UOP_RETRY_LADDER);
+      if (uopOptWanted() && available('set_uop_opt')) set('set_uop_opt', UOP_OPT);
       if (aggrWanted() && available('set_aggressive_stack')) set('set_aggressive_stack', 1);
       for (const [setter, wanted] of WIDEN) if (wanted() && available(setter)) set(setter, 1);
       if (available('set_uop_trace_heads')) set('set_uop_trace_heads', traceWanted() ? 1 : 0);
@@ -637,7 +665,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       const why = UOP_REASONS.map((name, k) => [name, k && x.uop_decline_count(k) >>> 0])
         .filter(([, n]) => n).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([k, n]) => `${k}=${n}`).join(' ');
       log(`uop: installs=${st(2)} kills=${st(3)} retired-poor=${st(7)} enters=${st(4)} ` +
-        `blocks=${st(5)} head-exits=${st(6)} reguards=${st(1)} rg-pages=${st(14)} rg-nonadj=${st(15)} win-kept=${st(9)} win-reset=${st(10)} gen=${st(8)} | compiled=${cs(0)} declined=${cs(1)} ` +
+        `blocks=${st(5)} head-exits=${st(6)} reguards=${st(1)} rg-pages=${st(14)} rg-nonadj=${st(15)} ${UOP_REGUARD_LAZY && x.uop_rg_lazy_one ? `rg-lazy-one=${x.uop_rg_lazy_one() >>> 0} ` : ''}win-kept=${st(9)} win-reset=${st(10)} gen=${st(8)} | compiled=${cs(0)} declined=${cs(1)} ` +
         `insns=${cs(2)} uops=${cs(3)} flushes=${cs(4)}` + (traceWanted() ? ` traces=${cs(26)}` : '') + (why ? `\n  declines: ${why}` : ''));
       // $uop_cstat 32..36: the retry ladder (07e $uc_lower_head, section 24)
       if (x.get_uop_retry_ladder) log(`uop ladder: mask=${x.get_uop_retry_ladder()} retried=${cs(32)} ok-halved=${cs(33)} ` +
@@ -653,7 +681,22 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
           `mega-sites=${st(21)} mega-kills=${st(22)} mega-refused=${cs(31)}` + (sites ? `\n  guard-fail sites: ${sites}` : ''));
       }
       // $uop_cstat 37: kind-34 sites kept; uop_sse_svcs: window-miss services
-      if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} miss-services=${x.uop_sse_svcs() >>> 0}`);
+      if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} native=${cs(38)} miss-services=${x.uop_sse_svcs() >>> 0}`);
+      // The --uop-opt ledger (07d uop_opt_stat): printed for every arm,
+      // control included, so arms compare line for line. variants /
+      // variant-hits / megamorphic are S1's (0x200); c2-copies / c2-programs
+      // C2's (0x400): peeled iterations, programs that have any; r2-contexts /
+      // r2-programs R2's (0x800): call-site contexts, programs that kept any.
+      if (x.uop_opt_stat) {
+        const os = (k) => x.uop_opt_stat(k) >>> 0;
+        log(`uop opt: mask=0x${(x.get_uop_opt ? x.get_uop_opt() >>> 0 : 0).toString(16)} enters=${st(4)} ` +
+          `exits=${st(4)} head-exits=${st(6)} charged-blocks=${st(5)} service-calls=${os(2)} ` +
+          `loads-deleted=${os(7)} stores-deleted=0 folds=${os(7)} fold-dwords=${os(10)} jcc-folded=${os(8)} ` +
+          `variants=${os(11)} variant-hits=${os(13)} megamorphic=${os(12)} icg-megamorphic=${st(21)} lock-sites=${os(4)} sahf-sites=${os(5)} ret-exits=${os(6)} ` +
+          `c2-copies=${os(14)} c2-programs=${os(15)} r2-contexts=${os(16)} r2-programs=${os(17)} ` +
+          `sahf-jcc=${os(18)} m1-loads=${os(19)} ret-dyn=${os(20)} ret-chain=${os(21)} fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
+      }
+      if (UOP_R2_WINDOW !== null && x.uop_r2_last_head) log(`uop r2 window: last head 0x${(x.uop_r2_last_head() >>> 0).toString(16)}`);
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
         (x.uop_hot_halvings ? ` halvings=${x.uop_hot_halvings() >>> 0}` : ''));

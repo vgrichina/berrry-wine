@@ -836,6 +836,9 @@
     (global.set $in_code_write (i32.const 0))
     (if (i32.ne (global.get $cache_inval_hits) (local.get $hits0))
       (then (global.set $store_invalidation_pending (i32.const 1))))
+    ;; --uop-opt 0x080: a dword ANY instance folded (07d $uop_fold_hit)
+    (if (i32.and (global.get $uop_opt) (i32.const 0x80))
+      (then (call $uop_fold_hit (local.get $ga) (local.get $len))))
     (if (global.get $uop_nranges)
       (then (call $uop_code_write (local.get $ga) (local.get $len))))
     ;; --trace-code-writes: every write that actually retired decoded code,

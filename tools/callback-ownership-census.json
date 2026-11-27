@@ -2644,7 +2644,7 @@
     {
       "file": "src/07d-uop-engine.wat",
       "name": "$uop_fast",
-      "writes": 2,
+      "writes": 3,
       "boundaryCalls": [],
       "exports": [],
       "targets": [
@@ -2663,11 +2663,22 @@
             "local.get",
             "$pc"
           ]
+        ],
+        [
+          "i32.load",
+          [
+            "i32.load",
+            "offset=4",
+            [
+              "local.get",
+              "$pc"
+            ]
+          ]
         ]
       ],
       "sha256": "4876c8a9013099747ce8ca25dfd010faaa3e9826389fb27b8a39e5a6a9546b12",
       "kind": "guest-control",
-      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).",
+      "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.; Pending-context v1 hooks only observe control/stack or invalidate coverage; guest EIP targets and invocation lifetimes unchanged (20261105-mdk2-native-pending-context).; --uop-opt 0x800 review 20261126 (default off): third write is op 113 EXITR, EIP = the address a compiled RET popped from [ESP] (op 112 RETX read it into a temp), the same guest return word $th_ret transfers to. RETX defers to threaded $th_ret when the word is 0 or any thread-return/null-transfer/call-stack/callback-feed recorder is on, runs $pending_pop under seam op 80's gate, and does ESP += 4 + imm. No invocation enter/leave; ownership remains pending.",
       "ownership": "pending"
     },
     {
