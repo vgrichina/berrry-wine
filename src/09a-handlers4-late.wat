@@ -721,11 +721,37 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
   ;; RDW_FRAME/RDW_UPDATENOW/RDW_NOCHILDREN delivery nuances remain deferred.
   (func $handle_RedrawWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $l i32) (local $t i32) (local $r i32) (local $b i32) (local $wa i32) (local $cs i32) (local $empty i32)
+    (local $ok i32)
     (if (i32.eqz (local.get $arg0))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) (return)))
-    ;; Derive rect: lprcUpdate if set, else hrgnUpdate bbox, else full client.
+    (if (i32.and (i32.eqz (i32.and (local.get $arg3) (i32.const 0x8)))
+          (i32.ne (i32.and (local.get $arg3) (i32.const 0x1)) (i32.const 0)))
+      (then
+        ;; HRGN overrides RECT, including an empty HRGN. Copy the exact clipped
+        ;; bands through the published atomic union; NULL/NULL is full client.
+        (if (i32.or (i32.ne (local.get $arg2) (i32.const 0)) (i32.eqz (local.get $arg1)))
+          (then (local.set $ok (call $update_add_region (local.get $arg0) (local.get $arg2))))
+          (else
+            (local.set $wa (call $g2w (local.get $arg1)))
+            (local.set $ok (call $update_apply_rect (local.get $arg0)
+              (load.field Rect left (local.get $wa)) (load.field.memarg Rect top (local.get $wa))
+              (load.field.memarg Rect right (local.get $wa)) (load.field.memarg Rect bottom (local.get $wa))
+              (i32.const 2)))))
+        ;; Failed capacity checks publish no paint/host state. Empty damage
+        ;; must not create a paint request; delivery otherwise stays deferred.
+        (if (i32.and (i32.ne (local.get $ok) (i32.const 0))
+              (call $update_get_rect (local.get $arg0) (i32.const 0)))
+          (then
+            (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
+              (then (global.set $paint_pending (i32.const 1)))
+              (else (call $paint_flag_set (local.get $arg0))))
+            (call $host_invalidate (local.get $arg0))))
+        (i32.store offset=0 (global.get $reg_base) (local.get $ok))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    ;; Preserve the existing validation path: RECT if supplied, else full client.
     (if (local.get $arg1)
       (then
         (local.set $wa (call $g2w (local.get $arg1)))
@@ -747,16 +773,7 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
           (then
             (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
               (then (global.set $paint_pending (i32.const 0)))
-              (else (call $paint_flag_clear_hwnd (local.get $arg0)))))))
-      (else
-        (if (i32.and (local.get $arg3) (i32.const 0x1)) ;; RDW_INVALIDATE
-          (then
-            (call $update_invalidate_rect (local.get $arg0)
-              (local.get $l) (local.get $t) (local.get $r) (local.get $b))
-            (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
-              (then (global.set $paint_pending (i32.const 1)))
-              (else (call $paint_flag_set (local.get $arg0))))
-            (call $host_invalidate (local.get $arg0))))))
+              (else (call $paint_flag_clear_hwnd (local.get $arg0))))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) (return)
   )
