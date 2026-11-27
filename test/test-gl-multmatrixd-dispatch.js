@@ -39,6 +39,10 @@ function checkSparseAndFailureBoundary() {
       (import "fixture" "alloc" (func $heap_alloc (param i32) (result i32)))
       (import "fixture" "free" (func $heap_free (param i32)))
       (import "fixture" "encode" (func $gl_wat_encode_call (param i32 i32 i32) (result i32)))
+      ;; $gl32/$gl64 test the Win98 shared-heap range first (2ef390475); no
+      ;; fixture address lies there, and the import throws if one ever does.
+      (import "fixture" "sharedHeap" (func $host_shared_heap (param i32 i32 i32 i32 i32) (result i32)))
+      ${extract('shared_heap_address')}
       (global $reg_base i32 (i32.const 256)) (global $image_base i32 (i32.const 4194304))
       (global $GUEST_BASE i32 (i32.const 4096)) (global $NULL_SENTINEL i32 (i32.const 240))
       (global $fault_sync_epoch (mut i32) (i32.const 0))
@@ -49,6 +53,7 @@ function checkSparseAndFailureBoundary() {
         (call $handle_glMultMatrixd (local.get $p) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))`;
     const binary=compile(wat.replace(';;@supply',supply(wat)).replaceAll('(region.end $DIRECT_WINDOW)','(i32.const 65536)'),new Map(),{mode:'production'}).wasmBinary;
     const e=new WebAssembly.Instance(new WebAssembly.Module(binary),{fixture:{g2w:t,
+      sharedHeap:(op,ga)=>{throw Error(`fixture reached the shared heap: op ${op} ga 0x${(ga>>>0).toString(16)}`);},
       alloc:n=>{allocated++;assert.strictEqual(n,72);return failAlloc?0:0x410000;},free:()=>freed++,
       encode:(op,stack,aux)=>{assert.strictEqual(op,109);assert.strictEqual(aux,0);
         captured=Array.from(new Float32Array(memory.buffer,t(v.getUint32(stack+4,true)),16));return 0;}}}).exports;
