@@ -3636,7 +3636,7 @@ class WineAssembly {
       for (const name of [
         'wave_out_open', 'wave_out_write', 'wave_out_schedule_done',
         'wave_out_reset', 'wave_out_close',
-        'voice_open', 'voice_write_stream', 'voice_play_ring',
+        'voice_open', 'voice_write_stream', 'voice_play_ring', 'voice_refresh_ring',
         'voice_stop', 'voice_close',
       ]) {
         const orig = wi.host[name];

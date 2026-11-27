@@ -658,6 +658,8 @@
   ;; voice_write_stream(id, pcmDataWA, byteLength) → 0
   (import "host" "voice_play_ring" (func $host_voice_play_ring (param i32 i32 i32 i32 i32) (result i32)))
   ;; voice_play_ring(id, pcmDataWA, byteLength, startOffset, loop) → 0
+  (import "host" "voice_refresh_ring" (func $host_voice_refresh_ring (param i32 i32 i32 i32 i32) (result i32)))
+  ;; voice_refresh_ring(id, pcmDataWA, byteLength, writeOffset, writeBytes) → 0
   (import "host" "voice_stop" (func $host_voice_stop (param i32) (result i32)))
   (import "host" "voice_close" (func $host_voice_close (param i32) (result i32)))
   (import "host" "voice_get_pos" (func $host_voice_get_pos (param i32) (result i32)))

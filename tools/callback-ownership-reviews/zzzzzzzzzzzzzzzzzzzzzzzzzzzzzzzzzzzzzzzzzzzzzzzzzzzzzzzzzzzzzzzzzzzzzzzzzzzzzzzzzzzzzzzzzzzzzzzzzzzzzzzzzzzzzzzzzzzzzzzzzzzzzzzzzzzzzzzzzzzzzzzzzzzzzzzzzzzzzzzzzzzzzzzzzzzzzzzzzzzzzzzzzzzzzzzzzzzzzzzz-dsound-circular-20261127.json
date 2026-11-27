@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "468919078ffc9fd4408d85b625e4d7662b08a2b50b256b074c46c5cb17a87b89",
+      "sha256": "cd89f1e2a1f7ba17f0f011696448059852ab6d5817154a16344899c431073a48",
+      "reason": "20261127 DirectSound public circular Unlock: forward caller write offset and exact byte count through a synchronous host import; short-ring queue consumes tail then head without cell rounding, unchanged-byte suppression, or discarding its first write. Legacy host callers retain diff inference; worklet descriptor refresh, source splice, queue slack/backlog/suspension policy, callback ownership and voice lifetime remain unchanged. host.js marks the new import as audio-thread activity exactly like voice_play_ring. Public x86 COM and independently acquired/scheduled mono8 and stereo16 samples reproduce stale padding and dropped repeated writes; run 20261127-dsound-circular-lock-root. No Windows or hardware-reference claim. Local overlay preserves foreign MIDI WIP; ownership stays pending."
+    },
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "073edebb0f59b82adb01ceff8d2af77efe278d9ea25dc9db7030986f0592867f",
+      "sha256": "947e2ed7a63aabe8df28696d12f9ac719c4614f853567e20273700cdf8edfe92",
+      "reason": "20261127 DirectSound public circular Unlock: forward caller write offset and exact byte count through a synchronous host import; short-ring queue consumes tail then head without cell rounding, unchanged-byte suppression, or discarding its first write. Legacy host callers retain diff inference; worklet descriptor refresh, source splice, queue slack/backlog/suspension policy, callback ownership and voice lifetime remain unchanged. host.js marks the new import as audio-thread activity exactly like voice_play_ring. Public x86 COM and independently acquired/scheduled mono8 and stereo16 samples reproduce stale padding and dropped repeated writes; run 20261127-dsound-circular-lock-root. No Windows or hardware-reference claim. Local overlay preserves foreign MIDI WIP; ownership stays pending."
+    }
+  ]
+}

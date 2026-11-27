@@ -1,6 +1,6 @@
 {
   "generated_from": "src/main.watx include closure",
-  "count": 309,
+  "count": 310,
   "sigs": {
     "log": {
       "params": [
@@ -2743,6 +2743,18 @@
       ]
     },
     "voice_play_ring": {
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "voice_refresh_ring": {
       "params": [
         "i32",
         "i32",

@@ -29,11 +29,13 @@ function equal(actual, expected, name) {
   const h = await bootRenderHarness({prebuiltModule:await WebAssembly.compile(bytes),fonts:'none',
     beforeInstantiate(ctx,host) {
       ctx.audioClockMs = () => clock;
-      const play = host.voice_play_ring;
-      host.voice_play_ring = (...args) => {
-        snapshots.push({args, pcm:Array.from(new Uint8Array(host.memory.buffer,args[1],args[2]))});
-        return play(...args);
-      };
+      for (const name of ['voice_play_ring','voice_refresh_ring']) {
+        const play = host[name];
+        host[name] = (...args) => {
+          snapshots.push({args, pcm:Array.from(new Uint8Array(host.memory.buffer,args[1],args[2]))});
+          return play(...args);
+        };
+      }
     }});
   const {exports:e,memory,hostCtx} = h;
   const pe = fs.readFileSync(require('node:path').join(__dirname,'binaries/calc.exe'));

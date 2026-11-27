@@ -55,6 +55,7 @@ class FakeAudioWorkletNode {
     const sigs = {
       voice_get_pos: { params: ['i32'], results: ['i32'] },
       voice_play_ring: { params: ['i32', 'i32', 'i32', 'i32', 'i32'], results: ['i32'] },
+      voice_refresh_ring: { params: ['i32', 'i32', 'i32', 'i32', 'i32'], results: ['i32'] },
     };
     const { imports, stats } = RPC.createWorkerImports(memory, sigs, post, { slot: 1 });
     const host = imports.host;
@@ -67,6 +68,17 @@ class FakeAudioWorkletNode {
     assert.strictEqual(posted.length, 1);
     assert.strictEqual(posted[0].t, 'call', 'a routed refresh is posted, not waited on');
     assert.deepStrictEqual(posted[0].args, [VOICE, PTR, LEN, 0, 2]);
+
+    posted.length = 0;
+    assert.strictEqual(host.voice_refresh_ring(VOICE, PTR, LEN, LEN-12, 24), 0);
+    assert.strictEqual(posted[0].t, 'call', 'exact-span routed refresh remains asynchronous');
+    assert.deepStrictEqual(posted[0].args, [VOICE, PTR, LEN, LEN-12, 24]);
+    posted.length = 0;
+    host.voice_refresh_ring(VOICE, PTR, LEN*2, LEN-12, 24);
+    assert.strictEqual(posted[0].t, 'rpc', 'changed exact-span extent blocks');
+    posted.length = 0;
+    host.voice_refresh_ring(VOICE+1, PTR, LEN, 0, 24);
+    assert.strictEqual(posted[0].t, 'rpc', 'unrouted exact-span refresh blocks');
 
     posted.length = 0;
     host.voice_play_ring(VOICE, PTR, LEN * 2, 0, 2);

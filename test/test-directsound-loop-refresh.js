@@ -155,7 +155,7 @@ try {
 
   const directSoundWat = fs.readFileSync(
     path.join(__dirname, '..', 'src', '09a8-handlers-directx.wat'), 'utf8');
-  assert(/\$handle_IDirectSoundBuffer_Unlock[\s\S]*?\$host_voice_play_ring[\s\S]*?\(i32\.const 2\)/.test(directSoundWat),
+  assert(/\$handle_IDirectSoundBuffer_Unlock[\s\S]*?\$host_voice_refresh_ring/.test(directSoundWat),
     'IDirectSoundBuffer::Unlock must request a host ring refresh');
   assert(/\$handle_IDirectSoundBuffer_GetStatus[\s\S]*?\$host_voice_is_playing/.test(directSoundWat),
     'GetStatus must query asynchronous Web Audio source state');

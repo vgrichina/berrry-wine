@@ -10236,9 +10236,10 @@
             (i32.and (i32.ne (local.get $dib_wa) (i32.const 0))
               (i32.ne (local.get $buf_size) (i32.const 0)))))
       (then
-        (drop (call $host_voice_play_ring
+        (drop (call $host_voice_refresh_ring
           (local.get $handle) (local.get $dib_wa) (local.get $buf_size)
-          (i32.const 0) (i32.const 2)))))
+          (i32.sub (call $g2w (local.get $arg1)) (local.get $dib_wa))
+          (i32.add (local.get $arg2) (local.get $arg4))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
 
