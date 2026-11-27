@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "bbe9be7c581fdaa9e52a366074757ff2ae82f7e5d3122028033e3a1d1446b9aa",
+      "sha256": "073edebb0f59b82adb01ceff8d2af77efe278d9ea25dc9db7030986f0592867f",
+      "reason": "Review 20261127 waveOut paused context resume: skip the existing context-resync discard for explicitly paused stream voices. Pause already captures the cursor and stops sources; Restart schedules the retained partial tail and queued headers, while Reset and Close still release them. Running unpaused stream backlog discard, callback registration/submission identity, owner retirement, completion delivery, timers, and guest memory access remain unchanged. Public WinMM x86 calls plus registered gesture unlock and an independent scheduled-PCM consumer reproduce lost samples on committed main; retained-tail, queued-before-consumption, cursor, FIFO reset, reuse, late source/timer and close checks pass after repair. Existing ownership remains pending; no hardware or Windows-reference claim. Run 20261127-waveout-pause-backlog-current-root."
+    }
+  ]
+}
