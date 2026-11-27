@@ -310,6 +310,23 @@ read its bundled font. Startup then **failed in batch 1 on unimplemented
 was observed. This reconstructed VFS is not a measured Windows installation.
 Evidence: `scratch/runs/20261127-civilization4-first-startup-root/`.
 
+The narrow font-change broadcast support was then published in
+`4315df27d7a2e33a4d480cba3a9913efd0bb3e08`, after a clean merged full build
+and focused callback regression passed. One subsequent original startup used
+that published module, SHA-256
+`cad8f2d16ffb55e64f94d4566ee0ff55d41477098bb161f1231958aa56c236c2`,
+with the same original payload, English overlay, D3DX and recovered CRT pair.
+API call 4543, `SendMessageCallbackA(0xffff, 29, 0, 0, NULL, 0)`, returned TRUE.
+The game advanced to API call 10826 and displayed a reviewed **Loading Error**:
+“Caught unhandled exception creating XML parser object”, with an empty current
+XML filename. The harness subsequently reported STUCK at `0x07501728`;
+process exit 0 does not mean startup succeeded. No menu or gameplay was reached.
+This attempt did not trace COM creation, so the underlying XML/COM cause is
+unresolved. Evidence:
+`scratch/runs/20261127-civ4-fontchange-startup-root/`. Runtime pins remained
+stable, but concurrent free disk fell below the required floor during
+finalization; the run therefore retains an overall UNKNOWN resource outcome.
+
 Offline extraction is reproducible, but a runnable installation and prerequisite
 closure are **not established**. Keep corpus acquisition/manual status separate
 from installed-fixture/runtime status. Any reference behavior must come from an
@@ -334,6 +351,7 @@ or full retail/Complete media as a substitute for this corpus candidate.
 Acquisition, complete raw extraction, PE identity, language overlay and original
 CRT recovery are measured. The nested-MSI recovery supersedes the initial
 07:49:39 UTC missing-runtime report. The first emulator startup exposed the
-API failure above; an installed fixture, full prerequisite closure, menu and
+API failure above; the later published fix advances to an XML parser creation
+error. An installed fixture, full prerequisite closure, menu and
 gameplay remain unverified. No boxes were created. Corpus entries retain
 manual preparation status until a complete fixture is established.
