@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "71460c619dd0407b45da5ec87345cb07eeddadf5ff6f358e213b04482de566fc",
+      "sha256": "eb480c01e2e2a678fe9b2045b761ccb59415e19037b0dcba4866f5b2d49897fb",
+      "reason": "Reviewed 20261127 MCI string status options only: search the lowercased token suffix after verb and device, preserving length > position > mode > tracks priority; resolve the first track qualifier in that same suffix using its original token index. No open/type/alias namespace, callback producer, notification delivery, scheduling, export reentry, guest restoration, memory write or ownership lifetime changes. Public createHostImports/mci_string with actual VirtualFS and literal valid format-0 MIDI reproduces keyword-alias failures before repair; guarded return buffers, same-device numeric string and MCI_STATUS controls, ordinary aliases, compound open and close pass after repair (20261127-mci-status-options-repair-root). CD track indexing reviewed statically only; no CD runtime qualification or Windows behavior claim. Existing callback ownership remains pending."
+    }
+  ]
+}
