@@ -405,6 +405,9 @@
                 (if (i32.eq (local.get $control) (i32.const 0x10020001))
                   (then (local.set $kind (i32.const 2)))
                   (else (return (i32.const 1025))))))))))
+    ;; ONEBYID ignores the input dwLineID but returns the control's owner.
+    ;; SndVol32 uses this output to choose the strip for a control refresh.
+    (i32.store offset=4 (local.get $p) (local.get $line_id))
     (call $fill_mixer_control (local.get $ctrl) (local.get $wide) (local.get $line_id) (local.get $kind))
     (i32.const 0))
 

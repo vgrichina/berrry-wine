@@ -39,10 +39,12 @@ const input = [
   '110:mousedown:121:166',
   '111:mousemove:121:220',
   '112:mouseup:121:220',
-  '120:click:109:266',
+  // The stock 8pt font uses 6x13 dialog units (test-dialog-template-font.js).
+  // Wave's mute is at screen (103,241), 67x20; y=266 is below the checkbox.
+  '120:click:109:250',
   '125:sleep-ms:100',
   `130:hwnd-png-pixels:65538:${mutedPng}`,
-  '135:click:109:266',
+  '135:click:109:250',
   '145:mousedown:211:166',
   '146:mousemove:211:205',
   '147:mouseup:211:205',
@@ -68,6 +70,7 @@ try {
   runFailed = true;
   output = `${error.stdout || ''}${error.stderr || ''}`;
 }
+fs.writeFileSync(path.join(OUT, 'run.txt'), output);
 
 async function inspect(file) {
   const image = await loadImage(file);
@@ -127,6 +130,11 @@ async function inspect(file) {
   const muted = filesReady ? await inspect(mutedPng) : null;
   const adjusted = filesReady ? await inspect(adjustedPng) : null;
   const meterColor = meter => meter.green + meter.yellow + meter.red;
+  // Require the complete visible child layout to fit the whole-window capture,
+  // rather than imposing the old fixed minimum height of 300 pixels.
+  const controls = [...output.matchAll(/cls=(\d+) style=0x([0-9a-f]+) xy=\d+,\d+ wh=(\d+),(\d+) screen=(-?\d+),(-?\d+)/g)]
+    .filter(m => (parseInt(m[2], 16) & 0x10000000) !== 0)
+    .map(m => ({ w: +m[3], h: +m[4], x: +m[5], y: +m[6] }));
   const checks = [
     ['emulator run completed', !runFailed],
     ['native mixer exposes master, Wave, and MIDI strips',
@@ -140,15 +148,20 @@ async function inspect(file) {
     ['master slider writes a non-default gain',
       /\[mixer\] master volume=0x(?!ffffffff)[0-9a-f]{8}/.test(output)],
     ['Wave slider writes its own gain',
-      /\[mixer\] wave volume=0x58585858/.test(output)],
+      // Current native trackbar: 91px high, 16px thumb, range 0..255.
+      // y=220 -> floor((220-150-8)*255/75)=210; SndVol32 inverts to 45.
+      /\[mixer\] wave volume=0x2d2d2d2d/.test(output)],
     ['MIDI slider writes a distinct gain',
-      /\[mixer\] midi volume=0x86868686/.test(output)],
+      // y=205 -> floor((205-150-8)*255/75)=159; inverted to 96.
+      /\[mixer\] midi volume=0x60606060/.test(output)],
     ['Wave mute round-trips without replacing its volume',
       /\[mixer\] wave mute=1/.test(output) && /\[mixer\] wave mute=0/.test(output) &&
       !/\[mixer\] wave volume=0x0000000[01]/.test(output)],
     ['four complete screenshots were written', filesReady],
     ['initial screenshot has three labeled, populated strips', !!visual &&
-      visual.width >= 275 && visual.height >= 300 &&
+      visual.width >= 275 && controls.length >= 30 &&
+      controls.every(c => c.x >= 0 && c.y >= 0 &&
+        c.x + c.w <= visual.width && c.y + c.h <= visual.height) &&
       visual.masterHeading >= 20 && visual.waveHeading >= 12 && visual.midiHeading >= 10 &&
       visual.bodyInk >= 400],
     ['speaker glyphs and vertical fader scales are visible', !!visual &&

@@ -249,6 +249,31 @@ const extraWat = String.raw`
   assert.strictEqual(e.test_mixer_get_line_controls_w(secondHandle, lineControlsGuest, 2), 11,
     'Unicode control query rejects the ANSI record size');
 
+  // MIXERLINECONTROLS.dwLineID is an output for ONEBYID, even though its
+  // input value is ignored. SndVol32 uses it to select the strip to refresh.
+  // https://learn.microsoft.com/en-us/windows/win32/api/mmeapi/ns-mmeapi-mixerlinecontrolsa
+  for (const [getControls, size] of [
+    [e.test_mixer_get_line_controls_a, 148],
+    [e.test_mixer_get_line_controls_w, 228],
+  ]) {
+    for (const id of [0x1000, 0x1001, 0x1002, 0x2000, 0x2001, 0x2002, 0x3000, 0x3001, 0x3002]) {
+      dv.setUint32(lineControls + 4, 0xDEADBEEF, true);
+      dv.setUint32(lineControls + 8, id, true);
+      dv.setUint32(lineControls + 16, size, true);
+      assert.strictEqual(getControls(secondHandle, lineControlsGuest, 1), 0,
+        `ONEBYID accepts control ${id.toString(16)} with an ignored input line`);
+      assert.strictEqual(dv.getUint32(lineControls + 4, true), id & 0xFFF,
+        'ONEBYID publishes the owning line for volume, mute, and peak refreshes');
+      assert.strictEqual(dv.getUint32(controls + 4, true), id,
+        'ONEBYID returns the requested control, independently of the input line');
+    }
+    dv.setUint32(lineControls + 4, 0xDEADBEEF, true);
+    dv.setUint32(lineControls + 8, 0x3003, true);
+    assert.strictEqual(getControls(secondHandle, lineControlsGuest, 1), 1025);
+    assert.strictEqual(dv.getUint32(lineControls + 4, true), 0xDEADBEEF,
+      'a rejected ONEBYID query does not publish a line');
+  }
+
   assert.strictEqual(e.test_mixer_message(0, 0x3FFF), 11,
     'mixerMessage rejects messages below MXDM_USER');
   assert.strictEqual(e.test_mixer_message(0, 0x4000), 8,
