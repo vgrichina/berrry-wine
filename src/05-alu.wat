@@ -889,9 +889,9 @@
   (func $th_load32 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))) (call $gl32 (call $read_addr))) (dispatch-next))
   (func $th_store32 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (call $gs32 (call $read_addr) (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))))) (dispatch-next))
   (func $th_load16 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (set-reg16 (local.get $op) (call $gl16 (call $read_addr))) (dispatch-next))
-  (func $th_store16 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (call $gs16 (call $read_addr) (call $get_reg16 (local.get $op))) (dispatch-next))
+  (func $th_store16 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (call $gs16 (call $read_addr) (get-reg16 (local.get $op))) (dispatch-next))
   (func $th_load8 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (set-reg8 (local.get $op) (call $gl8 (call $read_addr))) (dispatch-next))
-  (func $th_store8 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (call $gs8 (call $read_addr) (call $get_reg8 (local.get $op))) (dispatch-next))
+  (func $th_store8 (param $op i32) (local $nx_fn i32) (local $nx_op i32) (call $gs8 (call $read_addr) (get-reg8 (local.get $op))) (dispatch-next))
 
   ;; --- Load/Store reg+offset (operand=dst<<4|base, disp in next word) ---
   (func $th_load32_ro (param $op i32)
@@ -923,7 +923,7 @@
   (func $th_store8_ro (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $disp i32) (local.set $disp (read-thread-word))
     (call $gs8 (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))) (local.get $disp))
-      (call $get_reg8 (i32.shr_u (local.get $op) (i32.const 4))))
+      (get-reg8 (i32.shr_u (local.get $op) (i32.const 4))))
     (dispatch-next))
   (func $th_load16_ro (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (set-reg16 (i32.shr_u (local.get $op) (i32.const 4)) (call $gl16 (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))) (read-thread-word))))
@@ -931,7 +931,7 @@
   (func $th_store16_ro (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $disp i32) (local.set $disp (read-thread-word))
     (call $gs16 (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))) (local.get $disp))
-      (call $get_reg16 (i32.shr_u (local.get $op) (i32.const 4))))
+      (get-reg16 (i32.shr_u (local.get $op) (i32.const 4))))
     (dispatch-next))
   (func $th_load32_ro_base_eax (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))) (call $gl32 (i32.add (i32.load offset=0 (global.get $reg_base)) (read-thread-word))))
@@ -1903,7 +1903,7 @@
     (local.set $addr (call $read_addr))
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 4)))
     (local.set $reg (i32.and (local.get $op) (i32.const 0xF)))
-    (local.set $a (call $gl8 (local.get $addr))) (local.set $b (call $get_reg8 (local.get $reg)))
+    (local.set $a (call $gl8 (local.get $addr))) (local.set $b (get-reg8 (local.get $reg)))
     (local.set $r (call $do_alu_sized (local.get $alu) (local.get $a) (local.get $b) (i32.const 0xFF) (i32.const 7)))
     (if (i32.ne (local.get $alu) (i32.const 7)) (then (call $gs8 (local.get $addr) (local.get $r))))
     (dispatch-next))
@@ -1913,7 +1913,7 @@
     (local.set $addr (call $read_addr))
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 4)))
     (local.set $reg (i32.and (local.get $op) (i32.const 0xF)))
-    (local.set $a (call $get_reg8 (local.get $reg))) (local.set $b (call $gl8 (local.get $addr)))
+    (local.set $a (get-reg8 (local.get $reg))) (local.set $b (call $gl8 (local.get $addr)))
     (local.set $r (call $do_alu_sized (local.get $alu) (local.get $a) (local.get $b) (i32.const 0xFF) (i32.const 7)))
     (if (i32.ne (local.get $alu) (i32.const 7)) (then (set-reg8 (local.get $reg) (local.get $r))))
     (dispatch-next))
@@ -1968,7 +1968,7 @@
     (local.set $count (i32.and (i32.shr_u (local.get $op) (i32.const 16)) (i32.const 0xFF)))
     (if (i32.eq (local.get $count) (i32.const 0xFF))
       (then (local.set $count (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 31)))))
-    (set-reg8 (local.get $reg) (call $do_shift8 (local.get $type) (call $get_reg8 (local.get $reg)) (local.get $count)))
+    (set-reg8 (local.get $reg) (call $do_shift8 (local.get $type) (get-reg8 (local.get $reg)) (local.get $count)))
     ;; A zero masked count preserves the entire lazy flag record.
     (if (i32.and (i32.ge_u (local.get $type) (i32.const 4))
                  (i32.ne (i32.and (local.get $count) (i32.const 31)) (i32.const 0)))
@@ -2363,7 +2363,7 @@
   ;; 214: NEG r8 — 8-bit negate register
   (func $th_neg_r8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $old i32) (local $r i32)
-    (local.set $old (call $get_reg8 (local.get $op)))
+    (local.set $old (get-reg8 (local.get $op)))
     (local.set $r (i32.and (i32.sub (i32.const 0) (local.get $old)) (i32.const 0xFF)))
     (set-reg8 (local.get $op) (local.get $r))
     (global.set $flag_op (i32.const 2)) (global.set $flag_sign_shift (i32.const 7))
@@ -2371,7 +2371,7 @@
     (dispatch-next))
   ;; 215: NOT r8 — 8-bit bitwise NOT register (no flag changes)
   (func $th_not_r8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (set-reg8 (local.get $op) (i32.xor (call $get_reg8 (local.get $op)) (i32.const 0xFF)))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg8 (local.get $op) (i32.xor (get-reg8 (local.get $op)) (i32.const 0xFF)))
     (dispatch-next))
 
   ;; 410/411: NEG/NOT r16 — the 0x66-prefixed register forms. These must touch
@@ -2381,20 +2381,20 @@
   ;; quadrant table about a gigabyte away from the table.
   (func $th_neg_r16 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $old i32) (local $r i32)
-    (local.set $old (call $get_reg16 (local.get $op)))
+    (local.set $old (get-reg16 (local.get $op)))
     (local.set $r (i32.and (i32.sub (i32.const 0) (local.get $old)) (i32.const 0xFFFF)))
     (set-reg16 (local.get $op) (local.get $r))
     (global.set $flag_op (i32.const 2)) (global.set $flag_sign_shift (i32.const 15))
     (global.set $flag_a (i32.const 0)) (global.set $flag_b (local.get $old)) (global.set $flag_res (local.get $r))
     (dispatch-next))
   (func $th_not_r16 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (local.get $op) (i32.xor (call $get_reg16 (local.get $op)) (i32.const 0xFFFF)))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (local.get $op) (i32.xor (get-reg16 (local.get $op)) (i32.const 0xFFFF)))
     (dispatch-next))
 
   ;; 412/413: MOVZX/MOVSX r16, r8 — the 0x66-prefixed register forms of
   ;; 0F B6 / 0F BE. Operand encoding matches handlers 208/209: dst<<4|src.
   (func $th_movzx_r16_r8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (i32.shr_u (local.get $op) (i32.const 4)) (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF))))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (i32.shr_u (local.get $op) (i32.const 4)) (get-reg8 (i32.and (local.get $op) (i32.const 0xF))))
     (dispatch-next))
   ;; 414-417: the memory forms of the same two instructions under 0x66.
   ;; 414/415 take the address in the next word; 416/417 are the [base+disp]
@@ -2412,7 +2412,7 @@
     (dispatch-next))
 
   (func $th_movsx_r16_r8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (i32.shr_u (local.get $op) (i32.const 4)) (i32.and (i32.shr_s (i32.shl (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF)))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (i32.shr_u (local.get $op) (i32.const 4)) (i32.and (i32.shr_s (i32.shl (get-reg8 (i32.and (local.get $op) (i32.const 0xF)))
                                    (i32.const 24)) (i32.const 24)) (i32.const 0xFFFF)))
     (dispatch-next))
 
@@ -2476,9 +2476,9 @@
   ;; next word: the address as $read_addr reads it (absolute or $SIB_SENTINEL).
   (func $lock_get_reg (param $reg i32) (param $wcode i32) (result i32)
     (if (result i32) (i32.eqz (local.get $wcode))
-      (then (call $get_reg8 (local.get $reg)))
+      (then (get-reg8 (local.get $reg)))
       (else (if (result i32) (i32.eq (local.get $wcode) (i32.const 1))
-        (then (call $get_reg16 (local.get $reg)))
+        (then (get-reg16 (local.get $reg)))
         (else (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2)))))))))
   (func $lock_set_reg (param $reg i32) (param $wcode i32) (param $v i32)
     (if (i32.eqz (local.get $wcode))
@@ -2657,8 +2657,8 @@
     (local.set $r2 (i32.and (local.get $op) (i32.const 0xF)))
     (if (i32.and (local.get $op) (i32.const 0x100))
       (then
-        (local.set $a (call $get_reg8 (local.get $r1)))
-        (local.set $b (call $get_reg8 (local.get $r2)))
+        (local.set $a (get-reg8 (local.get $r1)))
+        (local.set $b (get-reg8 (local.get $r2)))
         (set-reg8 (local.get $r1) (local.get $b))
         (set-reg8 (local.get $r2) (local.get $a)))
       (else
@@ -2669,8 +2669,8 @@
     (dispatch-next))
   (func $th_xchg_r8_r8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $a i32) (local $b i32)
-    (local.set $a (call $get_reg8 (i32.shr_u (local.get $op) (i32.const 4))))
-    (local.set $b (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF))))
+    (local.set $a (get-reg8 (i32.shr_u (local.get $op) (i32.const 4))))
+    (local.set $b (get-reg8 (i32.and (local.get $op) (i32.const 0xF))))
     (set-reg8 (i32.shr_u (local.get $op) (i32.const 4)) (local.get $b))
     (set-reg8 (i32.and (local.get $op) (i32.const 0xF)) (local.get $a))
     (dispatch-next))
@@ -2694,7 +2694,7 @@
   ;; 234: INC r8
   (func $th_inc_r8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $old i32) (local $r i32)
-    (local.set $old (call $get_reg8 (local.get $op)))
+    (local.set $old (get-reg8 (local.get $op)))
     (local.set $r (i32.and (i32.add (local.get $old) (i32.const 1)) (i32.const 0xFF)))
     (set-reg8 (local.get $op) (local.get $r))
     (call $set_flags_inc (local.get $old) (local.get $r))
@@ -2702,7 +2702,7 @@
   ;; 235: DEC r8
   (func $th_dec_r8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $old i32) (local $r i32)
-    (local.set $old (call $get_reg8 (local.get $op)))
+    (local.set $old (get-reg8 (local.get $op)))
     (local.set $r (i32.and (i32.sub (local.get $old) (i32.const 1)) (i32.const 0xFF)))
     (set-reg8 (local.get $op) (local.get $r))
     (call $set_flags_dec (local.get $old) (local.get $r))
@@ -2718,7 +2718,7 @@
      (local $nx_fn i32) (local $nx_op i32) (local $addr i32) (local $tmp i32)
     (local.set $addr (call $read_addr))
     (local.set $tmp (call $gl8 (local.get $addr)))
-    (call $gs8 (local.get $addr) (call $get_reg8 (local.get $op)))
+    (call $gs8 (local.get $addr) (get-reg8 (local.get $op)))
     (set-reg8 (local.get $op) (local.get $tmp))
     (dispatch-next))
   ;; 238: XCHG [base+disp], r8
@@ -2726,7 +2726,7 @@
      (local $nx_fn i32) (local $nx_op i32) (local $addr i32) (local $tmp i32)
     (local.set $addr (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))) (read-thread-word)))
     (local.set $tmp (call $gl8 (local.get $addr)))
-    (call $gs8 (local.get $addr) (call $get_reg8 (i32.shr_u (local.get $op) (i32.const 4))))
+    (call $gs8 (local.get $addr) (get-reg8 (i32.shr_u (local.get $op) (i32.const 4))))
     (set-reg8 (i32.shr_u (local.get $op) (i32.const 4)) (local.get $tmp))
     (dispatch-next))
 
@@ -2831,12 +2831,12 @@
     (local.set $src (i32.and (local.get $op) (i32.const 7)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7)))
     (if (i32.ge_u (local.get $op) (i32.const 0x80))
-      (then (local.set $old (call $get_reg8 (local.get $dst))))
+      (then (local.set $old (get-reg8 (local.get $dst))))
       (else
         (local.set $addr (call $read_addr))
         (local.set $old (call $gl8 (local.get $addr)))))
-    (local.set $sum (i32.and (i32.add (local.get $old) (call $get_reg8 (local.get $src))) (i32.const 0xFF)))
-    (call $set_flags_add (local.get $old) (call $get_reg8 (local.get $src)) (local.get $sum))
+    (local.set $sum (i32.and (i32.add (local.get $old) (get-reg8 (local.get $src))) (i32.const 0xFF)))
+    (call $set_flags_add (local.get $old) (get-reg8 (local.get $src)) (local.get $sum))
     (global.set $flag_sign_shift (i32.const 7))
     (set-reg8 (local.get $src) (local.get $old))
     (if (i32.ge_u (local.get $op) (i32.const 0x80))
@@ -2881,7 +2881,7 @@
   ;; 239: MUL AL, r8 → AX = AL * r8 (unsigned)
   (func $th_mul8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $result i32)
-    (local.set $result (i32.mul (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)) (call $get_reg8 (local.get $op))))
+    (local.set $result (i32.mul (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)) (get-reg8 (local.get $op))))
     (set-ax (local.get $result))
     (call $set_flags_mul (i32.ne (i32.and (local.get $result) (i32.const 0xFF00)) (i32.const 0)))
     (dispatch-next))
@@ -2889,7 +2889,7 @@
   (func $th_imul8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $result i32) (local $al_s i32) (local $src_s i32)
     (local.set $al_s (call $sign_ext8 (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF))))
-    (local.set $src_s (call $sign_ext8 (call $get_reg8 (local.get $op))))
+    (local.set $src_s (call $sign_ext8 (get-reg8 (local.get $op))))
     (local.set $result (i32.mul (local.get $al_s) (local.get $src_s)))
     (set-ax (local.get $result))
     (call $set_flags_mul (i32.ne (call $sign_ext8 (i32.and (local.get $result) (i32.const 0xFF))) (local.get $result)))
@@ -2898,7 +2898,7 @@
   (func $th_div8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $dividend i32) (local $divisor i32) (local $quot i32)
     (local.set $dividend (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
-    (local.set $divisor (call $get_reg8 (local.get $op)))
+    (local.set $divisor (get-reg8 (local.get $op)))
     (if (i32.eqz (local.get $divisor)) (then (call $raise_exception (i32.const 0xC0000094)) (return)))
     (local.set $quot (i32.div_u (local.get $dividend) (local.get $divisor)))
     (if (i32.gt_u (local.get $quot) (i32.const 0xFF)) (then (call $raise_exception (i32.const 0xC0000094)) (return)))
@@ -2913,7 +2913,7 @@
     (local.set $dividend (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFFFF)))
     (if (i32.ge_u (local.get $dividend) (i32.const 0x8000))
       (then (local.set $dividend (i32.or (local.get $dividend) (i32.const 0xFFFF0000)))))
-    (local.set $divisor (call $sign_ext8 (call $get_reg8 (local.get $op))))
+    (local.set $divisor (call $sign_ext8 (get-reg8 (local.get $op))))
     (if (i32.eqz (local.get $divisor)) (then (call $raise_exception (i32.const 0xC0000094)) (return)))
     (local.set $quot (i32.div_s (local.get $dividend) (local.get $divisor)))
     (local.set $rem (i32.rem_s (local.get $dividend) (local.get $divisor)))
@@ -3111,13 +3111,13 @@
       (then
         ;; Register mode: op = 0x80 | dst<<4 | src
         (local.set $op (i32.and (local.get $op) (i32.const 0x7F)))
-        (local.set $dst_val (call $get_reg8 (i32.shr_u (local.get $op) (i32.const 4))))
+        (local.set $dst_val (get-reg8 (i32.shr_u (local.get $op) (i32.const 4))))
         (local.set $src_reg (i32.and (local.get $op) (i32.const 0xF)))
         (if (i32.eq (local.get $al) (local.get $dst_val))
           (then
             (call $set_flags_sub (local.get $al) (local.get $dst_val) (i32.const 0))
             (global.set $flag_sign_shift (i32.const 7))
-            (set-reg8 (i32.shr_u (local.get $op) (i32.const 4)) (call $get_reg8 (local.get $src_reg))))
+            (set-reg8 (i32.shr_u (local.get $op) (i32.const 4)) (get-reg8 (local.get $src_reg))))
           (else
             (call $set_flags_sub (local.get $al) (local.get $dst_val) (i32.sub (local.get $al) (local.get $dst_val)))
             (global.set $flag_sign_shift (i32.const 7))
@@ -3131,7 +3131,7 @@
           (then
             (call $set_flags_sub (local.get $al) (local.get $dst_val) (i32.const 0))
             (global.set $flag_sign_shift (i32.const 7))
-            (call $gs8 (local.get $addr) (call $get_reg8 (local.get $src_reg))))
+            (call $gs8 (local.get $addr) (get-reg8 (local.get $src_reg))))
           (else
             (call $set_flags_sub (local.get $al) (local.get $dst_val) (i32.sub (local.get $al) (local.get $dst_val)))
             (global.set $flag_sign_shift (i32.const 7))
@@ -3369,20 +3369,20 @@
   ;; --- TEST byte ---
   (func $th_test_r8_r8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (call $set_flags_logic (i32.and
-      (call $get_reg8 (i32.shr_u (local.get $op) (i32.const 4)))
-      (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF)))))
+      (get-reg8 (i32.shr_u (local.get $op) (i32.const 4)))
+      (get-reg8 (i32.and (local.get $op) (i32.const 0xF)))))
     (global.set $flag_sign_shift (i32.const 7)) (dispatch-next))
   ;; 217: TEST r8, imm8 — operand=byte_reg index, imm in next word
   (func $th_test_r8_i (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $set_flags_logic (i32.and (call $get_reg8 (local.get $op)) (read-thread-word)))
+     (local $nx_fn i32) (local $nx_op i32) (call $set_flags_logic (i32.and (get-reg8 (local.get $op)) (read-thread-word)))
     (global.set $flag_sign_shift (i32.const 7)) (dispatch-next))
   (func $th_test_m8_r (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $set_flags_logic (i32.and (call $gl8 (call $read_addr)) (call $get_reg8 (local.get $op))))
+     (local $nx_fn i32) (local $nx_op i32) (call $set_flags_logic (i32.and (call $gl8 (call $read_addr)) (get-reg8 (local.get $op))))
     (global.set $flag_sign_shift (i32.const 7)) (dispatch-next))
   (func $th_test_m8_r_ro (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $addr i32)
     (local.set $addr (i32.add (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2)))) (read-thread-word)))
-    (call $set_flags_logic (i32.and (call $gl8 (local.get $addr)) (call $get_reg8 (i32.shr_u (local.get $op) (i32.const 4)))))
+    (call $set_flags_logic (i32.and (call $gl8 (local.get $addr)) (get-reg8 (i32.shr_u (local.get $op) (i32.const 4)))))
     (global.set $flag_sign_shift (i32.const 7)) (dispatch-next))
 
   ;; --- Byte register-register ALU (op = alu_op<<8 | dst<<4 | src) ---
@@ -3391,8 +3391,8 @@
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $d (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $s (i32.and (local.get $op) (i32.const 0xF)))
-    (local.set $a (call $get_reg8 (local.get $d)))
-    (local.set $b (call $get_reg8 (local.get $s)))
+    (local.set $a (get-reg8 (local.get $d)))
+    (local.set $b (get-reg8 (local.get $s)))
     (block $done (block $cmp (block $xor (block $sub (block $and (block $sbb (block $adc (block $or (block $add
       (br_table $add $or $adc $sbb $and $sub $xor $cmp (local.get $alu)))
     ;; 0: ADD (after $add block end)
@@ -3433,7 +3433,7 @@
      (local $nx_fn i32) (local $nx_op i32) (local $alu i32) (local $reg i32) (local $a i32) (local $b i32) (local $r i32)
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 8)))
     (local.set $reg (i32.and (local.get $op) (i32.const 0xF)))
-    (local.set $a (call $get_reg8 (local.get $reg)))
+    (local.set $a (get-reg8 (local.get $reg)))
     (local.set $b (i32.and (read-thread-word) (i32.const 0xFF)))
     (block $done (block $cmp (block $xor (block $sub (block $and (block $sbb (block $adc (block $or (block $add
       (br_table $add $or $adc $sbb $and $sub $xor $cmp (local.get $alu)))
@@ -3476,11 +3476,10 @@
   ;; Neither instruction changes flags, so executing the exact pair here is
   ;; indistinguishable while saving one threaded-handler dispatch.
   (func $th_mov_r8_r8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (set-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)) (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF))))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)) (get-reg8 (i32.and (local.get $op) (i32.const 0xF))))
     (if (i32.and (local.get $op) (i32.const 0x100))
       (then
-        (set-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 13)) (i32.const 0xF)) (call $get_reg8
-            (i32.and (i32.shr_u (local.get $op) (i32.const 9)) (i32.const 0xF))))))
+        (set-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 13)) (i32.const 0xF)) (get-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 9)) (i32.const 0xF))))))
     (dispatch-next))
 
   ;; --- Byte MOV reg8, imm8 (op = reg, imm in next word) ---
@@ -4247,12 +4246,12 @@
     (dispatch-next))
   ;; 208: movzx r32, reg8 (op=dst<<4|src_byte_reg)
   (func $th_movzx_r_r8 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (i32.store (i32.add (global.get $reg_base) (i32.shl (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 2))) (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF))))
+     (local $nx_fn i32) (local $nx_op i32) (i32.store (i32.add (global.get $reg_base) (i32.shl (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 2))) (get-reg8 (i32.and (local.get $op) (i32.const 0xF))))
     (dispatch-next))
   ;; 209: movsx r32, reg8 (op=dst<<4|src_byte_reg)
   (func $th_movsx_r_r8 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $v i32)
-    (local.set $v (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF))))
+    (local.set $v (get-reg8 (i32.and (local.get $op) (i32.const 0xF))))
     ;; Sign extend from 8 to 32 bits
     (if (i32.and (local.get $v) (i32.const 0x80))
       (then (local.set $v (i32.or (local.get $v) (i32.const 0xFFFFFF00)))))

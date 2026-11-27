@@ -287,7 +287,7 @@
     (if (i32.and (local.get $op) (i32.const 0x100))
       (then (local.set $sel (call $gl16 (call $read_addr))))
       (else (local.set $sel
-        (call $get_reg16 (i32.and (local.get $op) (i32.const 0xF))))))
+        (get-reg16 (i32.and (local.get $op) (i32.const 0xF))))))
     (local.set $index (call $win16_sel_to_index (local.get $sel)))
     (if (global.get $code16)
       (then
@@ -339,7 +339,7 @@
     (if (i32.and (local.get $op) (i32.const 0x100))
       (then (local.set $sel (call $gl16 (call $read_addr))))
       (else (local.set $sel
-        (call $get_reg16 (i32.and (local.get $op) (i32.const 7))))))
+        (get-reg16 (i32.and (local.get $op) (i32.const 7))))))
     (if (global.get $code16)
       (then
         (local.set $valid

@@ -322,7 +322,7 @@
     (local.set $alu (i32.shr_u (local.get $op) (i32.const 4)))
     (local.set $r (call $do_alu_sized (local.get $alu)
       (call $gl8 (local.get $addr))
-      (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF)))
+      (get-reg8 (i32.and (local.get $op) (i32.const 0xF)))
       (i32.const 0xFF) (i32.const 7)))
     (if (i32.ne (local.get $alu) (i32.const 7)) (then (call $gs8 (local.get $addr) (local.get $r))))
     (dispatch-next))
@@ -388,7 +388,7 @@
     (if (global.get $handler_hist_enabled)
       (then (call $sib_consumer_hist_record (i32.const 25) (local.get $op) (local.get $info))))
     (call $gs8 (call $sib_ea (local.get $info) (read-thread-word))
-      (call $get_reg8 (local.get $op)))
+      (get-reg8 (local.get $op)))
     (dispatch-next))
 
   ;; 402: MOV byte [base+index*scale+disp], imm8 (op = the immediate)
@@ -578,8 +578,8 @@
     (if (i32.and (local.get $op) (i32.const 0x1000))
       (then
         (local.set $r (i32.and
-          (call $get_reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
-          (call $get_reg8 (i32.and (local.get $op) (i32.const 0xF)))))
+          (get-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
+          (get-reg8 (i32.and (local.get $op) (i32.const 0xF)))))
         (call $set_flags_logic (local.get $r))
         (global.set $flag_sign_shift (i32.const 7))
         (local.set $sign (i32.and (i32.shr_u (local.get $r) (i32.const 7)) (i32.const 1))))
@@ -1170,7 +1170,7 @@
     (local.set $addr (call $ea_from_op (local.get $op)))
     (local.set $alu (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 0xF)))
     (local.set $reg (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
-    (local.set $val (call $do_alu_sized (local.get $alu) (call $gl8 (local.get $addr)) (call $get_reg8 (local.get $reg)) (i32.const 0xFF) (i32.const 7)))
+    (local.set $val (call $do_alu_sized (local.get $alu) (call $gl8 (local.get $addr)) (get-reg8 (local.get $reg)) (i32.const 0xFF) (i32.const 7)))
     (if (i32.ne (local.get $alu) (i32.const 7)) (then (call $gs8 (local.get $addr) (local.get $val))))
     (dispatch-next))
 
@@ -1180,7 +1180,7 @@
     (local.set $addr (call $ea_from_op (local.get $op)))
     (local.set $alu (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 0xF)))
     (local.set $reg (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
-    (local.set $val (call $do_alu_sized (local.get $alu) (call $get_reg8 (local.get $reg)) (call $gl8 (local.get $addr)) (i32.const 0xFF) (i32.const 7)))
+    (local.set $val (call $do_alu_sized (local.get $alu) (get-reg8 (local.get $reg)) (call $gl8 (local.get $addr)) (i32.const 0xFF) (i32.const 7)))
     (if (i32.ne (local.get $alu) (i32.const 7)) (then (set-reg8 (local.get $reg) (local.get $val))))
     (dispatch-next))
 

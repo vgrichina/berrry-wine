@@ -1970,7 +1970,7 @@
           "$fall"
         ]
       ],
-      "sha256": "4007b90043c6865a438946fee8aa6be340723ce15737a81e6a82dcaa191afbf5",
+      "sha256": "83de37e5294aa0079b7715b0927e2a02ebb16eb35ca05eee3d700bd163a9a60f",
       "kind": "guest-control",
       "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
       "ownership": "pending"

@@ -89,6 +89,19 @@
       (i32.or (i32.and $V (i32.const 0xFFFF))
               (i32.and (i32.load offset=8 (global.get $reg_base)) (i32.const 0xFFFF0000)))))
 
+  ;; ---- Partial-register READS, expanded in place ----
+  ;; The same load8_u / load16_u as $get_reg8 / $get_reg16 (a narrow load
+  ;; inside an earlier dword store forwards, so the shape stays); only the
+  ;; call goes, for the engines that do not inline it. $R is evaluated twice
+  ;; by get-reg8 and must be pure.
+  (defmacro (get-reg8 $R)
+    (i32.load8_u
+      (i32.add (global.get $reg_base)
+        (i32.add (i32.shl (i32.and $R (i32.const 3)) (i32.const 2))
+                 (i32.shr_u $R (i32.const 2))))))
+  (defmacro (get-reg16 $R)
+    (i32.load16_u (i32.add (global.get $reg_base) (i32.shl $R (i32.const 2)))))
+
   ;; Set byte register (preserves other bits). The function form, for a site
   ;; whose index is not pure; everything else expands set-reg8 in place.
   (func $set_reg8 (param $r i32) (param $v i32)
