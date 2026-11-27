@@ -102,7 +102,7 @@
     (local.set $alu (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0x7)))
     (local.set $val (call $do_alu_sized (local.get $alu) (i32.and (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2)))) (i32.const 0xFFFF)) (call $gl16 (local.get $addr)) (i32.const 0xFFFF) (i32.const 15)))
     (if (i32.ne (local.get $alu) (i32.const 7))
-      (then (i32.store16 (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2))) (local.get $val))))
+      (then (set-reg16 (local.get $reg) (local.get $val))))
     (dispatch-next))
   ;; 160: [addr] OP= r16 (op=alu_op<<4|reg, addr in next word)
   (func $th_alu_m16_r16 (param $op i32)
@@ -122,7 +122,7 @@
     (local.set $alu (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 0x7)))
     (local.set $val (call $do_alu_sized (local.get $alu) (i32.and (i32.load (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2)))) (i32.const 0xFFFF)) (call $gl16 (local.get $addr)) (i32.const 0xFFFF) (i32.const 15)))
     (if (i32.ne (local.get $alu) (i32.const 7))
-      (then (i32.store16 (i32.add (global.get $reg_base) (i32.shl (local.get $reg) (i32.const 2))) (local.get $val))))
+      (then (set-reg16 (local.get $reg) (local.get $val))))
     (dispatch-next))
   ;; 162: [base+disp] OP= r16 (op=alu_op<<8|reg<<4|base, disp in word)
   (func $th_alu_m16_r16_ro (param $op i32)
@@ -141,7 +141,7 @@
   ;; 164: mov r16, [addr] (op=reg, addr in next word)
   (func $th_mov_r16_m16 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $val i32) (local.set $val (call $gl16 (call $read_addr)))
-    (i32.store16 (i32.add (global.get $reg_base) (i32.shl (local.get $op) (i32.const 2))) (local.get $val))
+    (set-reg16 (local.get $op) (local.get $val))
     (dispatch-next))
   ;; 165: mov [base+disp], r16 (op=reg<<4|base, disp in word)
   (func $th_mov_m16_r16_ro (param $op i32)
@@ -156,7 +156,7 @@
     (local.set $addr (call $ea_from_op (local.get $op)))
     (local.set $dst (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $val (call $gl16 (local.get $addr)))
-    (i32.store16 (i32.add (global.get $reg_base) (i32.shl (local.get $dst) (i32.const 2))) (local.get $val))
+    (set-reg16 (local.get $dst) (local.get $val))
     (dispatch-next))
   ;; 167: mov [addr], imm16 (op=0, addr+imm in words)
   (func $th_mov_m16_i16 (param $op i32)
@@ -300,9 +300,7 @@
     (global.set $ea_temp (i32.add (i32.add (local.get $base_val) (local.get $index_val)) (local.get $disp)))
     (if (i32.and (local.get $op) (i32.const 0x100))
       (then
-        (call $set_reg8
-          (i32.and (local.get $op) (i32.const 7))
-          (call $gl8 (global.get $ea_temp)))))
+        (set-reg8 (i32.and (local.get $op) (i32.const 7)) (call $gl8 (global.get $ea_temp)))))
     (dispatch-next))
 
   ;; 465: [base+index*scale+disp] OP= r8 -- handler 149's EA and handler 49's
@@ -558,8 +556,7 @@
     (call $set_flags_inc (local.get $old) (local.get $ptr))
     (if (i32.and (local.get $op) (i32.const 0x100))
       (then
-        (call $set_reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7))
-          (call $gl8 (i32.add (local.get $ptr) (read-thread-word))))))
+        (set-reg8 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7)) (call $gl8 (i32.add (local.get $ptr) (read-thread-word))))))
     (dispatch-next))
 
   ;; 404: TEST r,r (or TEST r8,r8) immediately followed by a Jcc. The branch is
@@ -946,7 +943,7 @@
     (local.set $r (i32.and (i32.add (local.get $old)
       (select (i32.sub (i32.const 0) (local.get $delta)) (local.get $delta)
         (local.get $op))) (i32.const 255)))
-    (i32.store8 (global.get $reg_base) (local.get $r))
+    (set-al (local.get $r))
     (call $load_eflags
       (i32.or (i32.and (local.get $f) (i32.const -214))
         (i32.or (local.get $cf)
@@ -971,8 +968,7 @@
     (if (local.get $adjust)
       (then (local.set $ax (i32.add (local.get $ax)
         (select (i32.const -262) (i32.const 262) (local.get $op))))))
-    (i32.store16 (global.get $reg_base)
-      (i32.and (local.get $ax) (i32.const 65295)))
+    (set-ax (i32.and (local.get $ax) (i32.const 65295)))
     (call $load_eflags
       (i32.or (i32.and (local.get $f) (i32.const -18))
         (i32.mul (local.get $adjust) (i32.const 17))))
@@ -987,7 +983,7 @@
       (i32.load8_u (global.get $reg_base))
       (i32.mul (i32.load8_u offset=1 (global.get $reg_base)) (local.get $op)))
       (i32.const 255)))
-    (i32.store16 (global.get $reg_base) (local.get $r))
+    (set-ax (local.get $r))
     (call $load_eflags
       (i32.or (i32.and (local.get $f) (i32.const -197))
         (i32.or (i32.and (local.get $r) (i32.const 128))
@@ -1008,7 +1004,7 @@
     (local.set $al (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)))
     (local.set $quotient (i32.div_u (local.get $al) (local.get $op)))
     (local.set $remainder (i32.rem_u (local.get $al) (local.get $op)))
-    (i32.store16 (global.get $reg_base) (i32.or
+    (set-ax (i32.or
           (i32.shl (local.get $quotient) (i32.const 8))
           (local.get $remainder)))
     (call $set_flags_logic (local.get $remainder))
@@ -1108,11 +1104,11 @@
                 (i32.shl (i32.and (local.get $port) (i32.const 3)) (i32.const 3))))))
         (if (i32.eqz (local.get $wide))
           (then
-            (i32.store8 (global.get $reg_base) (local.get $value)))
+            (set-al (local.get $value)))
           (else
             (if (local.get $word)
               (then
-                (i32.store16 (global.get $reg_base) (local.get $value)))
+                (set-ax (local.get $value)))
               (else (i32.store offset=0 (global.get $reg_base) (local.get $value)))))))
       (else
         (local.set $value
@@ -1185,7 +1181,7 @@
     (local.set $alu (i32.and (i32.shr_u (local.get $op) (i32.const 8)) (i32.const 0xF)))
     (local.set $reg (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 0xF)))
     (local.set $val (call $do_alu_sized (local.get $alu) (call $get_reg8 (local.get $reg)) (call $gl8 (local.get $addr)) (i32.const 0xFF) (i32.const 7)))
-    (if (i32.ne (local.get $alu) (i32.const 7)) (then (call $set_reg8 (local.get $reg) (local.get $val))))
+    (if (i32.ne (local.get $alu) (i32.const 7)) (then (set-reg8 (local.get $reg) (local.get $val))))
     (dispatch-next))
 
   ;; 131: [base+disp] OP= imm32. operand = alu_op<<8 | base. disp+imm in next words.

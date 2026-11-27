@@ -205,7 +205,7 @@
           ;; Skip the SP/ESP slot without reading or assigning it.
           (if (i32.ne (local.get $reg) (i32.const 4)) (then
             (if (local.get $word)
-              (then (call $set_reg16 (local.get $reg) (call $gl16 (local.get $addr))))
+              (then (set-reg16 (local.get $reg) (call $gl16 (local.get $addr))))
               (else (call $set_reg (local.get $reg) (call $gl32 (local.get $addr)))))))
           (local.set $sp (i32.and (i32.add (local.get $sp) (local.get $width)) (local.get $mask))))
         (else
@@ -268,7 +268,7 @@
                             (i32.shl (i32.and (local.get $op) (i32.const 7)) (i32.const 2)))
                    (local.get $off))
         (dispatch-next)))
-    (call $set_reg16 (local.get $op) (i32.and (local.get $off) (i32.const 0xFFFF)))
+    (set-reg16 (local.get $op) (i32.and (local.get $off) (i32.const 0xFFFF)))
     (dispatch-next))
 
   ;; 442: LAR r16/32, r/m16. The NE loader's selector table is the protected-
@@ -314,9 +314,7 @@
     (if (local.get $valid)
       (then
         (if (i32.and (local.get $op) (i32.const 0x200))
-          (then (call $set_reg16
-            (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7))
-            (local.get $rights)))
+          (then (set-reg16 (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7)) (local.get $rights)))
           (else (i32.store (i32.add (global.get $reg_base) (i32.shl (i32.and (i32.shr_u (local.get $op) (i32.const 4)) (i32.const 7)) (i32.const 2))) (local.get $rights))))))
     ;; LAR defines ZF only. The remaining arithmetic flags are architecturally
     ;; undefined, so materializing the prior lazy word while replacing ZF is a
@@ -546,7 +544,7 @@
   (func $th_load_far_ptr (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (local $addr i32)
     (local.set $addr (call $read_addr))
-    (call $set_reg16 (i32.and (local.get $op) (i32.const 0xF)) (call $gl16 (local.get $addr)))
+    (set-reg16 (i32.and (local.get $op) (i32.const 0xF)) (call $gl16 (local.get $addr)))
     (call $win16_set_sreg (i32.shr_u (local.get $op) (i32.const 4))
       (call $gl16 (i32.add (local.get $addr) (i32.const 2))))
     (dispatch-next))
@@ -565,15 +563,13 @@
      (local $nx_fn i32) (local $nx_op i32) (local $addr i32)
     (local.set $addr (call $read_addr))
     (if (i32.and (local.get $op) (i32.const 0x10))
-      (then (call $set_reg16 (i32.and (local.get $op) (i32.const 0xF))
-              (call $gl16 (local.get $addr))))
+      (then (set-reg16 (i32.and (local.get $op) (i32.const 0xF)) (call $gl16 (local.get $addr))))
       (else (i32.store (i32.add (global.get $reg_base) (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2))) (call $gl32 (local.get $addr)))))
     (dispatch-next))
 
   ;; 377: MOV r16, Sreg — op = sreg<<4 | reg
   (func $th_mov_r16_sreg (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $set_reg16 (i32.and (local.get $op) (i32.const 0xF))
-      (call $seg16_value (i32.shr_u (local.get $op) (i32.const 4))))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg16 (i32.and (local.get $op) (i32.const 0xF)) (call $seg16_value (i32.shr_u (local.get $op) (i32.const 4))))
     (dispatch-next))
 
   ;; 378: MOV m16, Sreg — op = sreg id, address in next word
@@ -819,7 +815,7 @@
   (func $th_enter16 (param $op i32)
      (local $nx_fn i32) (local $nx_op i32) (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 2)))
     (call $gs16 (i32.load offset=16 (global.get $reg_base)) (i32.and (i32.load offset=20 (global.get $reg_base)) (i32.const 0xFFFF)))
-    (call $set_reg16 (i32.const 5) (i32.and (i32.load offset=16 (global.get $reg_base)) (i32.const 0xFFFF)))
+    (set-reg16 (i32.const 5) (i32.and (i32.load offset=16 (global.get $reg_base)) (i32.const 0xFFFF)))
     (i32.store offset=16 (global.get $reg_base) (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.and (local.get $op) (i32.const 0xFFFF))))
     (dispatch-next))
 
@@ -831,7 +827,7 @@
         (then (i32.add (global.get $seg_base_ss)
           (i32.and (i32.load offset=20 (global.get $reg_base)) (i32.const 0xFFFF))))
         (else (i32.load offset=20 (global.get $reg_base)))))
-    (call $set_reg16 (i32.const 5) (call $gl16 (i32.load offset=16 (global.get $reg_base))))
+    (set-reg16 (i32.const 5) (call $gl16 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 2)))
     (dispatch-next))
 
@@ -932,9 +928,9 @@
           (local.set $a (call $str16_load
             (i32.add (local.get $src_base) (local.get $si)) (local.get $size)))
           (if (i32.eq (local.get $size) (i32.const 1))
-            (then (call $set_reg8 (i32.const 0) (local.get $a))))
+            (then (set-reg8 (i32.const 0) (local.get $a))))
           (if (i32.eq (local.get $size) (i32.const 2))
-            (then (call $set_reg16 (i32.const 0) (local.get $a))))
+            (then (set-reg16 (i32.const 0) (local.get $a))))
           (if (i32.eq (local.get $size) (i32.const 4))
             (then (i32.store offset=0 (global.get $reg_base) (local.get $a))))))
       (if (i32.ge_u (local.get $kind) (i32.const 3))          ;; CMPS, SCAS
@@ -969,8 +965,7 @@
       (if (i32.and (local.get $op) (i32.const 0x10000))
         (then (i32.store offset=4 (global.get $reg_base)
           (i32.sub (i32.load offset=4 (global.get $reg_base)) (i32.const 1))))
-        (else (call $set_reg16 (i32.const 1)
-          (i32.sub (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 0xFFFF)) (i32.const 1)))))
+        (else (set-reg16 (i32.const 1) (i32.sub (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 0xFFFF)) (i32.const 1)))))
       ;; A repeated compare also stops on the flag the prefix names: REPE runs
       ;; while equal, REPNE while not.
       (if (i32.ge_u (local.get $kind) (i32.const 3))
@@ -986,15 +981,14 @@
         (i32.store offset=24 (global.get $reg_base) (local.get $si))
         (i32.store offset=28 (global.get $reg_base) (local.get $di)))
       (else
-        (call $set_reg16 (i32.const 6) (local.get $si))
-        (call $set_reg16 (i32.const 7) (local.get $di))))
+        (set-reg16 (i32.const 6) (local.get $si))
+        (set-reg16 (i32.const 7) (local.get $di))))
     (dispatch-next))
 
   ;; 387: XLAT — AL = DS:[BX + AL], with the same segment override the string
   ;; ops take. The operand carries the segment id.
   (func $th_xlat16 (param $op i32)
-     (local $nx_fn i32) (local $nx_op i32) (call $set_reg8 (i32.const 0)
-      (call $gl8 (i32.add (call $seg16_base (local.get $op))
+     (local $nx_fn i32) (local $nx_op i32) (set-reg8 (i32.const 0) (call $gl8 (i32.add (call $seg16_base (local.get $op))
         (i32.and (i32.add (i32.and (i32.load offset=12 (global.get $reg_base)) (i32.const 0xFFFF))
                           (i32.and (i32.load offset=0 (global.get $reg_base)) (i32.const 0xFF)))
                  (i32.const 0xFFFF)))))

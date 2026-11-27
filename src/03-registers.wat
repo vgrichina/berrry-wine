@@ -31,25 +31,77 @@
     (i32.load8_u (call $reg8_addr (local.get $r)))
   )
 
-  ;; Set byte register (preserves other bits)
-  ;; ONE byte store. The read-modify-write this replaces (load, mask, or, store)
-  ;; existed only because a global can be written whole or not at all -- it was
-  ;; never about x86 semantics. i32.store8 already takes the low 8 bits of $v.
-  ;; Safe on the shared memory: each guest thread owns its own $REGFILE stride,
-  ;; so no other thread can be reading the dword this partially writes.
+  ;; ---- Partial-register WRITES: 32-bit load-merge-store, never store8/16 ----
+  ;; A narrow store followed by the next 32-bit load of the same slot (and
+  ;; nearly every handler reads registers 32 bits wide) fails store-to-load
+  ;; forwarding on x86: measured 2.3x slower on every JIT tier than writing
+  ;; the merged dword (docs/design/wat-representation-bench.md sections 3.1
+  ;; and 4; only pure interpreters prefer store8). A byte or word LOAD that
+  ;; sits inside an earlier dword store forwards fine, so the read side keeps
+  ;; load8_u/load16_u. Safe on the shared memory for the same reason the
+  ;; store8 was: each guest thread owns its own $REGFILE stride.
+  ;;
+  ;; These are macros, not calls: SpiderMonkey Ion did not inline the old
+  ;; $set_reg8 at any call site (V8 did). Contract for every one of them:
+  ;;  - $V is evaluated exactly once, BEFORE the slot is re-read, so a $V
+  ;;    with side effects on the same register sees the store8 semantics.
+  ;;  - $R is evaluated more than once and must be pure (locals, constants,
+  ;;    shifts/masks of them). A site with an impure index calls $set_reg8.
+  ;; set-reg8: r = 0..3 is AL..BL (byte 0 of slot r), r = 4..7 is AH..BH
+  ;; (byte 1 of slot r-4) -- byte (r >> 2) of slot (r & 3), exactly the
+  ;; address $reg8_addr names, so any r in 0..15 writes the byte it did.
+  (defmacro (set-reg8 $R $V)
+    (i32.store
+      (i32.add (global.get $reg_base) (i32.shl (i32.and $R (i32.const 3)) (i32.const 2)))
+      (i32.or
+        (i32.shl (i32.and $V (i32.const 0xFF))
+                 (i32.shl (i32.shr_u $R (i32.const 2)) (i32.const 3)))
+        (i32.and
+          (i32.load (i32.add (global.get $reg_base) (i32.shl (i32.and $R (i32.const 3)) (i32.const 2))))
+          (i32.rotl (i32.const 0xFFFFFF00) (i32.shl (i32.shr_u $R (i32.const 2)) (i32.const 3)))))))
+  ;; set-reg16: AX..DI, the low half of slot r.
+  (defmacro (set-reg16 $R $V)
+    (i32.store
+      (i32.add (global.get $reg_base) (i32.shl $R (i32.const 2)))
+      (i32.or
+        (i32.and $V (i32.const 0xFFFF))
+        (i32.and (i32.load (i32.add (global.get $reg_base) (i32.shl $R (i32.const 2))))
+                 (i32.const 0xFFFF0000)))))
+  ;; Fixed registers, with the slot as a constant offset.
+  (defmacro (set-al $V)
+    (i32.store (global.get $reg_base)
+      (i32.or (i32.and $V (i32.const 0xFF))
+              (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFFFF00)))))
+  (defmacro (set-ah $V)
+    (i32.store (global.get $reg_base)
+      (i32.or (i32.shl (i32.and $V (i32.const 0xFF)) (i32.const 8))
+              (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF00FF)))))
+  (defmacro (set-ax $V)
+    (i32.store (global.get $reg_base)
+      (i32.or (i32.and $V (i32.const 0xFFFF))
+              (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF0000)))))
+  (defmacro (set-cx $V)
+    (i32.store offset=4 (global.get $reg_base)
+      (i32.or (i32.and $V (i32.const 0xFFFF))
+              (i32.and (i32.load offset=4 (global.get $reg_base)) (i32.const 0xFFFF0000)))))
+  (defmacro (set-dx $V)
+    (i32.store offset=8 (global.get $reg_base)
+      (i32.or (i32.and $V (i32.const 0xFFFF))
+              (i32.and (i32.load offset=8 (global.get $reg_base)) (i32.const 0xFFFF0000)))))
+
+  ;; Set byte register (preserves other bits). The function form, for a site
+  ;; whose index is not pure; everything else expands set-reg8 in place.
   (func $set_reg8 (param $r i32) (param $v i32)
-    (i32.store8 (call $reg8_addr (local.get $r)) (local.get $v))
+    (set-reg8 (local.get $r) (local.get $v))
   )
 
   ;; Get/set 16-bit register
-  ;; AX..DI are the low half of their slot, so a 16-bit read is one load16_u and
-  ;; a 16-bit write is one store16 -- again a read-modify-write that only ever
-  ;; existed because the register was a global.
+  ;; AX..DI are the low half of their slot, so a 16-bit read is one load16_u.
   (func $get_reg16 (param $r i32) (result i32)
     (i32.load16_u (i32.add (global.get $reg_base) (i32.shl (local.get $r) (i32.const 2))))
   )
   (func $set_reg16 (param $r i32) (param $v i32)
-    (i32.store16 (i32.add (global.get $reg_base) (i32.shl (local.get $r) (i32.const 2))) (local.get $v))
+    (set-reg16 (local.get $r) (local.get $v))
   )
 
   ;; ============================================================

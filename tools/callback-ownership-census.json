@@ -1134,7 +1134,7 @@
           "$fall"
         ]
       ],
-      "sha256": "fff6addb89a254754013a5a812167e06476b48a99ccba64a8e074683fcb29e8e",
+      "sha256": "114aa3adac2a51397b278f63a8afc5ddbd53c6b0ff3a6f773a64eb4bf35adc54",
       "kind": "guest-control",
       "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
       "ownership": "pending"
@@ -1705,7 +1705,7 @@
           "$fall"
         ]
       ],
-      "sha256": "bb902f0b8e82076cf8b111d8dacf26ddf0e9dd666f378f1feea060ff51314142",
+      "sha256": "283dea1adda08a0f2e587c8d50df62a6915ec35c9b5e1b2daecf239e28808ac0",
       "kind": "guest-control",
       "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
       "ownership": "pending"
@@ -2228,7 +2228,7 @@
           ]
         ]
       ],
-      "sha256": "32d387efca732c06c93b7ce8c2249972e08e367de101edee06373a9277e75d7a",
+      "sha256": "f238848bf2377dfbb95d417c274dd7e63a4e044c4be0ad36689946bac5a04f86",
       "kind": "guest-control",
       "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity. Byte COPY_RUN falls back to its original checkpointed stream before code-page writes; folded EIP/clock and invocation identity remain unchanged.",
       "ownership": "pending"
@@ -2611,7 +2611,7 @@
           ]
         ]
       ],
-      "sha256": "d9eafab1c479425faaa5bd4a79fc8a68831f86287a2f55029e5181eeee0ba7d6",
+      "sha256": "66d22346f4039ab523d4fef8e77da6a52ab8a9d5af0d9a033314483015b8ff34",
       "kind": "guest-control",
       "reason": "Interpreter instruction transfer or fused guest execution; ordinary CALL/RET must preserve invocation identity.",
       "ownership": "pending"

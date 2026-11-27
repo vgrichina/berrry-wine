@@ -1795,7 +1795,7 @@
           (then
             (global.set $fpu_sw (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xC7FF))
               (i32.shl (local.get $top) (i32.const 11))))
-            (i32.store16 (global.get $reg_base) (global.get $fpu_sw))
+            (set-ax (global.get $fpu_sw))
             (br $next_op)))
         (br $generic))
       ;; $arith: the D8/DA/DC/DE memory forms and the D8 register form.
@@ -4760,7 +4760,7 @@
     (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $src_reg) (i32.const 2))) (local.get $src))
     (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $dst_reg) (i32.const 2))) (local.get $dst))
     (if (i32.ge_s (local.get $byte_reg) (i32.const 0))
-      (then (call $set_reg8 (local.get $byte_reg) (local.get $b))))
+      (then (set-reg8 (local.get $byte_reg) (local.get $b))))
     (if (i32.eqz (local.get $ctr_kind))
       (then (i32.store (i32.add (global.get $reg_base) (i32.shl (local.get $ctr_loc) (i32.const 2))) (local.get $ctr)))
       (else (if (i32.and
@@ -5464,12 +5464,12 @@
       ;; Preserve the original ordering and alias behavior: the source and
       ;; destination are the same byte, and either may overlap the XLAT table.
       (local.set $byte (call $gl8 (i32.load offset=28 (global.get $reg_base))))
-      (i32.store8 (global.get $reg_base) (local.get $byte))
+      (set-al (local.get $byte))
       ;; Match H280's translation path exactly: XLAT uses DS:[EBX+AL].
       (local.set $byte
         (i32.load8_u (call $g2w
           (i32.add (i32.load offset=12 (global.get $reg_base)) (local.get $byte)))))
-      (i32.store8 (global.get $reg_base) (local.get $byte))
+      (set-al (local.get $byte))
       (call $gs8 (i32.load offset=28 (global.get $reg_base)) (local.get $byte))
       (i32.store offset=28 (global.get $reg_base) (i32.add (i32.load offset=28 (global.get $reg_base)) (local.get $step)))
       (i32.store offset=4 (global.get $reg_base) (i32.sub (i32.load offset=4 (global.get $reg_base)) (i32.const 1)))
