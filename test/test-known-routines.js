@@ -4,8 +4,11 @@
 // threaded handler 396; set_known_routines(mask), off by default).
 //
 // Each registry body (tools/known-routines.json: VC6 memcpy from GTA2, VC7.1
-// memcpy from Black & White 2, VC4 memmove from Heroes II) is relocated to a
-// VA of its own in two instances, one with the entry off and one on. Then:
+// memcpy and VC7.1 strcmp from Black & White 2, VC4 memmove from Heroes II)
+// is relocated to a VA of its own in two instances, one with the entry off
+// and one on. (strcmp's grid is strings: every s1/s2 alignment, lengths over
+// several loop trips, equal, unequal at each early byte and at the end both
+// ways with bytes >= 0x80, either string ending first, across a page.) Then:
 //   * the call grid (tools/kr-clock.js: sizes 0..40 and every class above,
 //     every dst/src alignment, apart both ways, overlapping both ways by 1..33,
 //     equal, across page boundaries, every caller EDX for the memmove) agrees
@@ -97,7 +100,13 @@ async function declines(b) {
   const P = await pairFor(b, true);
   const B = P.off.L.buf;
   const sp = P.off.L.stack - 0x40;
-  const list = [
+  const STR = b.impl === 'strcmp';
+  const list = STR ? [
+    // strcmp(d = s1, s = s2): a string on an unmapped or wrapping page
+    ['unmapped s1', { n: 0, d: 0x7FFF0000, s: B + 0x100 }],
+    ['unmapped s2', { n: 0, d: B + 0x100, s: 0x7FFF0000 }],
+    ['s1 at the top of the address space', { n: 0, d: 0xFFFFFFC0, s: B + 0x100 }],
+  ] : [
     ['unmapped source', { n: 64, d: B + 0x100, s: 0x7FFF0000 }],
     ['unmapped destination', { n: 64, d: 0x7FFF0000, s: B + 0x100 }],
     ['dst over the argument words', { n: 8, d: sp + 8, s: B + 0x100 }],
@@ -105,7 +114,7 @@ async function declines(b) {
     ['wrapped source end', { n: 0x100, d: B + 0x100, s: 0xFFFFFFC0 }],
   ];
   // dst over the body itself (a copy that rewrites the routine mid-run)
-  list.push(['dst over the body', { n: 16, d: P.eo + 0x40, s: B + 0x100, dOn: P.en + 0x40 }]);
+  if (!STR) list.push(['dst over the body', { n: 16, d: P.eo + 0x40, s: B + 0x100, dOn: P.en + 0x40 }]);
   list.forEach(([label, c], i) => {
     K.fill(P.off, i); K.fill(P.on, i);
     const f0 = stat(P.on, 20 + b.id), n0 = stat(P.on, 10 + b.id);
@@ -136,8 +145,10 @@ async function declines(b) {
     const d = K.compare(a, r);
     if (!a.ok) d.push('did not return');
     const df = stat(P.on, 20 + b.id) - f0, dn = stat(P.on, 10 + b.id) - n0;
-    if (df !== 1 || dn) d.push(`want one fallback, got native=${dn} fallback=${df}`);
-    if (d.length) fail(`[${tag}] decline DF=1: ${d.join(', ')}`); else console.log(`[${tag}] decline DF=1`.padEnd(52) + ' ok');
+    // strcmp has no string instruction: DF=1 is no reason to decline
+    if (STR ? (dn !== 1 || df) : (df !== 1 || dn)) d.push(`want one ${STR ? 'native' : 'fallback'}, got native=${dn} fallback=${df}`);
+    const what = STR ? 'DF=1 runs natively' : 'decline DF=1';
+    if (d.length) fail(`[${tag}] ${what}: ${d.join(', ')}`); else console.log(`[${tag}] ${what}`.padEnd(52) + ' ok');
   }
 }
 // Run the DF stub from a stack whose return address is 0.
@@ -223,14 +234,20 @@ async function matching(b) {
   }
 }
 
+// --entry=ID: only that registry entry; --skip-gen-check: skip the two
+// generated-block freshness checks (kr-clock --check replays the whole grid).
+// The full run is what the test tier executes.
+const ONLY = Number((process.argv.find((a) => a.startsWith('--entry=')) || '=0').split('=')[1]);
 async function main() {
   bench.ensureBuilt();
-  for (const [tool, args] of [['kr-sig.js', ['wat', '--check']], ['kr-clock.js', ['--check']]]) {
+  const genChecks = process.argv.includes('--skip-gen-check') ? [] : [['kr-sig.js', ['wat', '--check']], ['kr-clock.js', ['--check']]];
+  for (const [tool, args] of genChecks) {
     try { console.log(execFileSync('node', [path.join(ROOT, 'tools', tool), ...args], { encoding: 'utf8' }).trim().split('\n').pop()); }
     catch (err) { fail(`${tool} ${args.join(' ')}: ${(err.stderr || err.stdout || err.message).toString().trim()}`); }
   }
   const all = K.bodies();
   for (const b of all) {
+    if (ONLY && b.id !== ONLY) continue;
     if (b.missing) { console.log(`SKIP ${b.name}/${b.variant}: ${b.ref.path} absent`); continue; }
     const P = await gridUnder(b, true);
     everyBudget(P, b);

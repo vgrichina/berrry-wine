@@ -13,6 +13,10 @@
     { "id": 3, "name": "memmove", "variant": "msvc4", "impl": "vc4-memmove", "len": "0x14e", "fixups": 12, "k": 1,
       "ref": { "path": "test/binaries/candidates/heroes-2-demo/files/H2DEMOW.EXE", "va": "0x4d35f0",
                "sha256": "d1ae170c8e1138913bcdb9e9e04b59d9b0b4be0c61b93043de6496876d55b87e" },
-      "also": ["H2DEMOW.EXE 0x4d3b90 (memcpy, same bytes)"] }
+      "also": ["H2DEMOW.EXE 0x4d3b90 (memcpy, same bytes)"] },
+    { "id": 4, "name": "strcmp", "variant": "msvc71", "impl": "strcmp", "len": "0x88", "fixups": 0, "k": 4,
+      "ref": { "path": "test/binaries/win98-games-a-d/Black and White 2-DX9-D3D/installed/BW2Demo.exe", "va": "0xaddf00",
+               "sha256": "65130510233cfc9e53758bab8480a3cfeeb6b1043de9774ab6e066191b2bb433" },
+      "differs": "the VC4-6 body (H2DEMOW.EXE) increments with inc; a different entry if ever weighted" }
   ]
 }

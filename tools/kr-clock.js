@@ -6,6 +6,8 @@
 //
 //   node tools/kr-clock.js            measure, rewrite the block (then rebuild)
 //   node tools/kr-clock.js --check    measure, exit 1 if the built table differs
+//   node tools/kr-clock.js --bootstrap  a charge-0 table (a new entry must run
+//                                       natively once to be measured; rebuild)
 //
 // How. Each entry's reference body (tools/known-routines.json) is relocated to
 // a fresh VA in two instances of build/wine-assembly.wasm under the branch
@@ -91,6 +93,7 @@ function call(inst, entry, c, budget) {
   dv.setUint32(g2w(sp + 4), c.d >>> 0, true);
   dv.setUint32(g2w(sp + 8), c.s >>> 0, true);
   dv.setUint32(g2w(sp + 12), c.n >>> 0, true);
+  if (c.setup) c.setup(inst);
   const regs = { eax: 0x11111111, ecx: 0x22222222, edx: (c.edx === undefined ? 0x33333333 : c.edx), ebx: 0x44444444,
     ebp: 0x55555550, esi: 0x66666666, edi: 0x77777777 };
   for (const r of Object.keys(regs)) e['set_' + r](regs[r] >>> 0);
@@ -113,7 +116,46 @@ function compare(a, b, keys = ['ok', 'eip', 'flags', 'blocks', ...REGS, 'mem', '
 
 // ---- the call grid ----------------------------------------------------------
 const SIZES = [...Array(41).keys(), 47, 48, 49, 50, 51, 63, 64, 65, 66, 67, 100, 127, 128, 129, 130, 131, 255, 256, 1000, 4097];
-function grid(inst, body, { quick = false } = {}) {
+// strcmp(s1 = d, s2 = s): strings written by setup() after the buffer fill.
+// Every s1/s2 alignment, lengths around each trip and page boundary, equal
+// strings, a difference at every early byte and at the end both ways
+// (including bytes >= 0x80: the compare is unsigned), one string ending
+// first both ways, the same pointer, and strings across a page boundary.
+const STR_LENS = [...Array(21).keys(), 31, 32, 33, 34, 63, 64, 65, 66, 200];
+function strGrid(inst, { quick = false } = {}) {
+  const B = inst.L.buf, out = [];
+  const ch = (i) => 0x41 + ((i * 7) % 26);
+  const lens = quick ? STR_LENS.filter((n, i) => n < 10 || i % 4 === 0) : STR_LENS;
+  const put = (inst2, ga, bytes) => { inst2.mem.set(bytes, inst2.g2w(ga)); };
+  const mk = (len) => [...Array(len).keys()].map(ch).concat([0]);
+  for (const len of lens) for (let a1 = 0; a1 < 4; a1++) for (let a2 = 0; a2 < 4; a2++) {
+    for (const [base1, base2, rel] of [[B + 0x100, B + 0x3000, 'apart'], [B + 0x5FFA, B + 0x2FFC, 'page']]) {
+      const s1 = base1 + a1, s2 = base2 + a2;
+      const vary = [['equal', (x, y) => {}]];
+      const at = quick ? [0, 1, 2, 3, 5, len - 1, len] : [0, 1, 2, 3, 4, 5, 6, 7, 8, len - 2, len - 1, len];
+      for (const p of [...new Set(at)].filter((p) => p >= 0 && p <= len)) {
+        vary.push([`lt@${p}`, (x, y) => { x[p] = 0x30; y[p] = 0x31; }]);
+        vary.push([`gt@${p}`, (x, y) => { x[p] = 0xE0; y[p] = 0x41; }]);
+        if (p < len) {
+          vary.push([`s1end@${p}`, (x, y) => { x[p] = 0; }]);
+          vary.push([`s2end@${p}`, (x, y) => { y[p] = 0; }]);
+        }
+      }
+      for (const [label, f] of vary) {
+        out.push({ n: 0, d: s1, s: s2, rel: `${rel} len=${len} ${label}`, setup: (i2) => {
+          const x = mk(len), y = mk(len); f(x, y); put(i2, s1, x); put(i2, s2, y);
+        } });
+      }
+    }
+    if (a1 === a2) out.push({ n: 0, d: B + 0x200 + a1, s: B + 0x200 + a1, rel: `same len=${len}`,
+      setup: (i2) => put(i2, B + 0x200 + a1, mk(len)) });
+  }
+  return out;
+}
+
+function grid(inst, body, opts = {}) {
+  if (body.impl === 'strcmp') return strGrid(inst, opts);
+  const { quick = false } = opts;
   const B = inst.L.buf, out = [];
   const sizes = quick ? SIZES.filter((n, i) => n < 20 || i % 3 === 0) : SIZES;
   const deltas = quick ? [1, 3, 4, 9] : [1, 2, 3, 4, 5, 7, 8, 13, 33];
@@ -151,24 +193,37 @@ async function measure() {
       const a = call(off, eo, c), r = call(on, en, c);
       calls++;
       if (on.e.known_routine_stat(10 + b.id) - n0 !== 1) throw new Error(`${b.name}/${b.variant} ${JSON.stringify(c)}: not native in the on instance`);
-      const p = on.e.kr_last_path();
-      const charge = on.e.kr_charge(b.id, p);
+      const p = on.e.kr_last_path(), it = on.e.kr_last_iters();
+      const base = on.e.kr_charge(b.id, p), slope = on.e.kr_slope(b.id, p);
       const d = compare(a, r, ['ok', 'eip', 'flags', ...REGS, 'mem', 'stack']);
-      if (d.length) throw new Error(`${b.name}/${b.variant} path ${p} ${JSON.stringify(c)}: state differs (${d.join(', ')})`);
-      const v = a.blocks - (r.blocks - charge);
-      if (!m.has(p)) m.set(p, new Map());
-      m.get(p).set(v, (m.get(p).get(v) || 0) + 1);
-      cur.set(`${b.id}:${p}`, charge);
+      if (d.length) throw new Error(`${b.name}/${b.variant} path ${p} ${c.rel || ''} ${JSON.stringify(c)}: state differs (${d.join(', ')})`);
+      const v = a.blocks - (r.blocks - (base + slope * it));
+      if (!m.has(p)) m.set(p, []);
+      m.get(p).push([it, v]);
+      cur.set(`${b.id}:${p}`, [base, slope]);
     }
   }
   return { all, need, cur, calls };
 }
 
+// Per path, need = base + slope x loop trips: the slope from the first two
+// distinct trip counts (0 when every call of the path made the same number),
+// then every call must fit it exactly.
 function table(need) {
   const rows = [];
-  for (const [id, m] of need) for (const [p, vs] of m) {
-    if (vs.size !== 1) throw new Error(`id ${id} path ${p}: calls need different charges ${JSON.stringify([...vs])}`);
-    rows.push({ id, p, v: [...vs.keys()][0], calls: [...vs.values()][0] });
+  for (const [id, m] of need) for (const [p, pts] of m) {
+    const byIt = new Map(pts.map(([i, v]) => [i, v]));
+    const its = [...byIt.keys()].sort((a, b) => a - b);
+    let slope = 0;
+    if (its.length > 1) {
+      const [i0, i1] = its;
+      slope = (byIt.get(i1) - byIt.get(i0)) / (i1 - i0);
+      if (!Number.isInteger(slope) || slope < 0) throw new Error(`id ${id} path ${p}: non-integer slope ${slope}`);
+    }
+    const v = byIt.get(its[0]) - slope * its[0];
+    const bad = pts.filter(([i, n]) => n !== v + slope * i);
+    if (bad.length) throw new Error(`id ${id} path ${p}: ${bad.length} of ${pts.length} calls do not fit ${v} + ${slope} x trips (first: trips ${bad[0][0]} needs ${bad[0][1]})`);
+    rows.push({ id, p, v, slope, calls: pts.length, trips: its.length > 1 ? `${its[0]}..${its[its.length - 1]}` : `${its[0]}` });
   }
   return rows.sort((a, b) => a.id - b.id || a.p - b.p);
 }
@@ -182,7 +237,7 @@ function generate(rows) {
   L.push('  ;; GENERATED by `node tools/kr-clock.js` from the interpreter\'s block counts -- do not edit.');
   L.push('  ;; Blocks (executed branches) a path runs before the body\'s RET, per (id, path); -1 for a');
   L.push('  ;; path no measured call took (the handler declines it).');
-  for (const r of rows) L.push(`  ;;   id ${r.id} path ${String(r.p).padStart(2)}: ${r.v}  (${r.calls} calls)`);
+  for (const r of rows) L.push(`  ;;   id ${r.id} path ${String(r.p).padStart(2)}: ${r.v}${r.slope ? ` + ${r.slope} x trips` : ''}  (${r.calls} calls, trips ${r.trips})`);
   L.push('  (func $kr_charge (param $id i32) (param $p i32) (result i32)');
   L.push('    (if (i32.ge_u (local.get $p) (i32.const 64)) (then (return (i32.const -1))))');
   L.push('    (block $none');
@@ -193,29 +248,53 @@ function generate(rows) {
     L.push(`    ${' '.repeat(vals.length - 1 - i)}(return (i32.const ${vals[i]})))`);
   }
   L.push('    (i32.const -1))');
+  // the per-trip slope: 0 for every path not listed
+  L.push('  ;; Blocks per loop trip of a path (strcmp\'s dword loop); 0 elsewhere.');
+  L.push('  (func $kr_slope (param $id i32) (param $p i32) (result i32)');
+  for (const r of rows.filter((x) => x.slope)) {
+    L.push(`    (if (i32.eq (i32.add (i32.shl (local.get $id) (i32.const 6)) (local.get $p)) (i32.const ${r.id * 64 + r.p})) (then (return (i32.const ${r.slope}))))`);
+  }
+  L.push('    (i32.const 0))');
   return L.join('\n') + '\n';
 }
 
+function writeBlock(text) {
+  const src = fs.readFileSync(WAT, 'utf8');
+  const a = src.indexOf(BEGIN), b = src.indexOf(END);
+  if (a < 0 || b < 0) throw new Error('kr-clock markers missing in ' + WAT);
+  fs.writeFileSync(WAT, src.slice(0, a + BEGIN.length) + text + src.slice(b));
+}
+
 async function main() {
+  // --bootstrap: a table that charges 0 on every path, so a NEW entry runs
+  // natively at all and can be measured (rebuild, then run without it).
+  if (process.argv.includes('--bootstrap')) {
+    writeBlock([
+      '  ;; BOOTSTRAP table (node tools/kr-clock.js --bootstrap): charges 0 on every path.',
+      '  ;; Not a measurement -- rebuild, run node tools/kr-clock.js, rebuild.',
+      '  (func $kr_charge (param $id i32) (param $p i32) (result i32)',
+      '    (select (i32.const 0) (i32.const -1) (i32.lt_u (local.get $p) (i32.const 64))))',
+      '  (func $kr_slope (param $id i32) (param $p i32) (result i32) (i32.const 0))',
+    ].join('\n') + '\n');
+    console.log('kr-clock: wrote the bootstrap table; rebuild, then measure');
+    return;
+  }
   bench.ensureBuilt();
   const { all, need, cur, calls } = await measure();
   const rows = table(need);
   console.log(`kr-clock: ${calls} calls over ${all.length} entries, ${rows.length} paths`);
   if (process.argv.includes('--check')) {
-    const bad = rows.filter((r) => cur.get(`${r.id}:${r.p}`) !== r.v);
+    const bad = rows.filter((r) => { const c = cur.get(`${r.id}:${r.p}`); return c[0] !== r.v || c[1] !== r.slope; });
     if (bad.length) {
       console.error(`kr-clock: built charges stale for ${bad.length} path(s): ` +
-        bad.slice(0, 6).map((r) => `id ${r.id} path ${r.p} built ${cur.get(`${r.id}:${r.p}`)} needs ${r.v}`).join('; ') +
+        bad.slice(0, 6).map((r) => `id ${r.id} path ${r.p} built ${cur.get(`${r.id}:${r.p}`).join('+')}/trip needs ${r.v}+${r.slope}/trip`).join('; ') +
         ' -- run node tools/kr-clock.js and rebuild');
       process.exit(1);
     }
     console.log('kr-clock: built charges match the interpreter');
     return;
   }
-  const src = fs.readFileSync(WAT, 'utf8');
-  const a = src.indexOf(BEGIN), b = src.indexOf(END);
-  if (a < 0 || b < 0) throw new Error('kr-clock markers missing in ' + WAT);
-  fs.writeFileSync(WAT, src.slice(0, a + BEGIN.length) + generate(rows) + src.slice(b));
+  writeBlock(generate(rows));
   console.log('kr-clock: wrote the charge table; rebuild');
 }
 

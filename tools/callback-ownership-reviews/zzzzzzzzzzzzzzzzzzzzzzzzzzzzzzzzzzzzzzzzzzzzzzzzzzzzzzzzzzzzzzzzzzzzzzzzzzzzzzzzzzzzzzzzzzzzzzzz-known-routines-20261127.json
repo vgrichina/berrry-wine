@@ -6,14 +6,14 @@
       "name": "host-file",
       "baseSHA256": "c0e7829da35bf2b529eb004ab6880a0c372b9dfd2bc6ca6e13a392a5012e29c5",
       "sha256": "6cb7d77acfca471c05f83f819788beed865c23df81508894d5b686ad8727ae6d",
-      "reason": "Review 20261127 MSVC CRT known routines (off by default, --known-routines=MASK / ?known-routines=MASK): threaded handler 396 (the retired Storm PKWARE slot) runs the static MSVC memcpy/memmove natively and writes EIP only to resume inside the same body after its first instruction (push ebp) on a decline, or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_known_routines like set_delphi_fold. General callback ownership remains pending."
+      "reason": "Review 20261127 MSVC CRT known routines (off by default, --known-routines=MASK / ?known-routines=MASK): threaded handler 396 (the retired Storm PKWARE slot) runs the static MSVC memcpy/memmove/strcmp natively and writes EIP only to resume inside the same body after its first instruction (push ebp, or strcmp's mov edx,[esp+4]; entry + $kr_k) on a decline, or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_known_routines like set_delphi_fold. General callback ownership remains pending."
     },
     {
       "file": "lib/worker-imports.js",
       "name": "host-file",
       "baseSHA256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
       "sha256": "ff36ad3232b8dcc566e84ac323d6b2c167b5ee23330b6e3fa939744987a14e2b",
-      "reason": "Review 20261127 MSVC CRT known routines (off by default, --known-routines=MASK / ?known-routines=MASK): threaded handler 396 (the retired Storm PKWARE slot) runs the static MSVC memcpy/memmove natively and writes EIP only to resume inside the same body after its first instruction (push ebp) on a decline, or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_known_routines like set_delphi_fold. General callback ownership remains pending."
+      "reason": "Review 20261127 MSVC CRT known routines (off by default, --known-routines=MASK / ?known-routines=MASK): threaded handler 396 (the retired Storm PKWARE slot) runs the static MSVC memcpy/memmove/strcmp natively and writes EIP only to resume inside the same body after its first instruction (push ebp, or strcmp's mov edx,[esp+4]; entry + $kr_k) on a decline, or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_known_routines like set_delphi_fold. General callback ownership remains pending."
     }
   ],
   "additions": [
@@ -31,14 +31,18 @@
             "$entry"
           ],
           [
-            "i32.const",
-            "1"
+            "call",
+            "$kr_k",
+            [
+              "local.get",
+              "$id"
+            ]
           ]
         ]
       ],
-      "sha256": "a4c392daebfa2de0d14440d6049cf29dafdb8c1476a33c47c0dc5dcb73bca15d",
+      "sha256": "e092395094e3c081728b511ec694a7d60c23e3c9f550d1000f109dfb8e24df2f",
       "kind": "guest-control",
-      "reason": "Review 20261127 MSVC CRT known routines (off by default, --known-routines=MASK / ?known-routines=MASK): threaded handler 396 (the retired Storm PKWARE slot) runs the static MSVC memcpy/memmove natively and writes EIP only to resume inside the same body after its first instruction (push ebp) on a decline, or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_known_routines like set_delphi_fold. General callback ownership remains pending.",
+      "reason": "Review 20261127 MSVC CRT known routines (off by default, --known-routines=MASK / ?known-routines=MASK): threaded handler 396 (the retired Storm PKWARE slot) runs the static MSVC memcpy/memmove/strcmp natively and writes EIP only to resume inside the same body after its first instruction (push ebp, or strcmp's mov edx,[esp+4]; entry + $kr_k) on a decline, or falls through to the body RET; ordinary RET, no callback frame, invocation identity preserved. The host plumbs set_known_routines like set_delphi_fold. General callback ownership remains pending.",
       "ownership": "pending"
     }
   ]
