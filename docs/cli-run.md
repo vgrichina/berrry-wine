@@ -106,6 +106,28 @@ queues/MSG memory, without instantiating the guest VM.
   and discards their deltas. Volatile installation lasts only for that process
   tree; this provides no durable installation or concurrent shared filesystem.
 
+- **Process desktop polling (`lib/process-desktop.js`).** Every CLI process
+  joins one desktop namespace (the root hosts its authority) so related
+  processes see each other's windows. Its `poll()` runs every batch and from
+  every `check_input`, but costs a synchronous round trip only when there is
+  news: the authority pushes a frame when it queues a post/activation for a
+  session and when the number of live sessions changes, and the client worker
+  mirrors those into shared counters main reads without blocking. A lone
+  process therefore polls nothing and publishes its rows only from the
+  window-changing host imports; once another session is live, rows are
+  published every poll again (a new peer forces one publish on the next poll).
+  Lookups (`FindWindow`, foreign `GetWindow*`) still round-trip on demand.
+- **Batch-loop fast path.** With a local main owner (the default) and neither
+  `--trace-main-scheduler` nor `--d3dim-render-owner`, the batch loop makes the
+  same owner calls in the same order without `await`ing them
+  (`mainExecutionSuspendedSync`, `ThreadManager.noteMainSleepLocal` /
+  `checkMainMessageWaitLocal`), and awaits the COM drain, wave-callback pump,
+  io/timing-wait services, native-fault latch and Worker send resolver only
+  when each has work. It keeps one microtask turn per batch at the top of the
+  loop. Each settled `await` used to suspend and resume the whole (huge,
+  interpreted) `main()` closure. Output is unchanged: same PNGs and API/batch
+  counts (evidence `scratch/runs/20261125-cli-harness-overhead`).
+
 - **Prefer the CLI's own `--max-seconds=N` guard.** Controlled test harnesses
   should launch `run.js` directly and ask it to stop or quit over stdio; do not
   wrap normal runs in `timeout -s KILL`. The internal guard is checked between

@@ -4545,6 +4545,9 @@
   ;; 26: CloseHandle(hObject) — 1 arg stdcall
   (func $handle_CloseHandle (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $console_result i32)
+    ;; A waitable timer's deadline goes with its last handle; the event itself
+    ;; is closed by the sync-object path below.
+    (drop (call $waitable_timer_cancel (local.get $arg0)))
     (if (i32.or
           (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E60000))
           (i32.eq (i32.and (local.get $arg0) (i32.const 0xFFFF0000)) (i32.const 0x00E40000)))
@@ -4765,6 +4768,16 @@
       (i32.ge_u (local.get $ptr) (i32.const 0x00010000))
       (call $security_span_valid (local.get $ptr) (local.get $size))))
 
+  ;; Privilege names arrive as ANSI (LookupPrivilegeValueA) or UTF-16
+  ;; (LookupPrivilegeValueW); the W handler sets this around its lookup so
+  ;; both share the validator, the comparison and the name table. A UTF-16
+  ;; unit above 0xFF can never equal an ASCII table name, so it is kept whole.
+  (global $token_name_wide (mut i32) (i32.const 0))
+  (func $token_name_char (param $ptr i32) (param $i i32) (result i32)
+    (if (result i32) (global.get $token_name_wide)
+      (then (call $gl16 (i32.add (local.get $ptr) (i32.shl (local.get $i) (i32.const 1)))))
+      (else (call $gl8 (i32.add (local.get $ptr) (local.get $i))))))
+
   (func $token_guest_string_valid (param $ptr i32) (result i32)
     (local $i i32)
     (if (i32.eqz (local.get $ptr)) (then (return (i32.const 0))))
@@ -4773,9 +4786,11 @@
         (br_if $too_long (i32.ge_u (local.get $i) (i32.const 64)))
         (if (i32.eqz
               (call $token_guest_span_valid
-                (i32.add (local.get $ptr) (local.get $i)) (i32.const 1)))
+                (i32.add (local.get $ptr)
+                  (i32.shl (local.get $i) (global.get $token_name_wide)))
+                (i32.add (global.get $token_name_wide) (i32.const 1))))
           (then (return (i32.const 0))))
-        (if (i32.eqz (call $gl8 (i32.add (local.get $ptr) (local.get $i))))
+        (if (i32.eqz (call $token_name_char (local.get $ptr) (local.get $i)))
           (then (return (i32.const 1))))
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $scan)))
@@ -4786,7 +4801,7 @@
     (block $different
       (loop $compare
         (br_if $different (i32.ge_u (local.get $i) (i32.const 64)))
-        (local.set $a (call $gl8 (i32.add (local.get $name) (local.get $i))))
+        (local.set $a (call $token_name_char (local.get $name) (local.get $i)))
         (local.set $b (i32.load8_u (i32.add (local.get $known_wa) (local.get $i))))
         (br_if $different
           (i32.ne (call $tolower (local.get $a)) (call $tolower (local.get $b))))
@@ -4846,7 +4861,7 @@
             (global.set $last_error (i32.const 87))
             (i32.store offset=0 (global.get $reg_base) (i32.const 0))
             (return)))
-        (if (call $gl8 (local.get $arg0))
+        (if (call $token_name_char (local.get $arg0) (i32.const 0))
           (then
             (global.set $last_error (i32.const 53)) ;; ERROR_BAD_NETPATH
             (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -4860,6 +4875,181 @@
     (call $gs32 (local.get $arg2) (local.get $luid))
     (call $gs32 (i32.add (local.get $arg2) (i32.const 4)) (i32.const 0))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1)))
+
+  ;; VerSetConditionMask(ULONGLONG ConditionMask, DWORD TypeMask, BYTE
+  ;; Condition) -- stdcall, the 64-bit mask in two stack dwords, result in
+  ;; EDX:EAX. Pure arithmetic: the 3-bit condition lands in the field of the
+  ;; highest VER_* bit present in TypeMask (VER_MINORVERSION 0x01 at bit 0 ...
+  ;; VER_PRODUCT_TYPE 0x80 at bit 21), as kernel32 does; a zero TypeMask or
+  ;; Condition returns the mask unchanged. Inno Setup 6 builds its
+  ;; VerifyVersionInfoW masks with it.
+  (func $handle_VerSetConditionMask (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $cond i32) (local $field i32)
+    (local.set $cond (i32.and (local.get $arg3) (i32.const 7)))
+    (if (i32.and (i32.ne (i32.and (local.get $arg2) (i32.const 0xFF)) (i32.const 0))
+                 (i32.ne (local.get $cond) (i32.const 0)))
+      (then
+        ;; Index of the highest set bit among the eight VER_* type bits.
+        (local.set $field (i32.sub (i32.const 31)
+          (i32.clz (i32.and (local.get $arg2) (i32.const 0xFF)))))
+        (local.set $arg0 (i32.or (local.get $arg0)
+          (i32.shl (local.get $cond) (i32.mul (local.get $field) (i32.const 3)))))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $arg0))
+    (i32.store offset=8 (global.get $reg_base) (local.get $arg1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  ;; GetFileSizeEx(hFile, PLARGE_INTEGER lpFileSize) -> BOOL: GetFileSize's
+  ;; host query with the high dword written straight into LowPart+4. The
+  ;; error code, not the value, says whether it failed (a low dword of
+  ;; 0xFFFFFFFF is a real size). Inno Setup 6 sizes its own exe with it.
+  (func $handle_GetFileSizeEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $error i32)
+    (if (i32.eqz (local.get $arg1))
+      (then (local.set $error (i32.const 998))) ;; ERROR_NOACCESS
+      (else
+        (local.set $error (call $host_fs_file_size_result
+          (local.get $arg0) (global.get $reg_base) (i32.add (local.get $arg1) (i32.const 4))))
+        (if (i32.eqz (local.get $error))
+          (then (call $gs32 (local.get $arg1) (i32.load offset=0 (global.get $reg_base)))))))
+    (if (local.get $error) (then (global.set $last_error (local.get $error))))
+    (i32.store offset=0 (global.get $reg_base) (i32.eqz (local.get $error)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
+  ;; SetFilePointerEx(hFile, LARGE_INTEGER liDistanceToMove (two dwords),
+  ;; PLARGE_INTEGER lpNewFilePointer (optional), dwMoveMethod) -> BOOL, five
+  ;; stdcall dwords. SetFilePointer's host seek, whose high dword is an in/out
+  ;; guest pointer: a heap dword carries it, then the 64-bit position is
+  ;; copied out. The error code decides success, as in GetFileSizeEx.
+  (func $handle_SetFilePointerEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $high i32) (local $error i32)
+    (local.set $high (call $heap_alloc (i32.const 4)))
+    (if (i32.eqz (local.get $high))
+      (then (local.set $error (i32.const 8))) ;; ERROR_NOT_ENOUGH_MEMORY
+      (else
+        (call $gs32 (local.get $high) (local.get $arg2))
+        (local.set $error (call $host_fs_seek_result
+          (local.get $arg0) (local.get $arg1) (local.get $high)
+          (local.get $arg4) (global.get $reg_base)))
+        (if (i32.and (i32.eqz (local.get $error)) (i32.ne (local.get $arg3) (i32.const 0)))
+          (then
+            (call $gs32 (local.get $arg3) (i32.load offset=0 (global.get $reg_base)))
+            (call $gs32 (i32.add (local.get $arg3) (i32.const 4)) (call $gl32 (local.get $high)))))
+        (call $heap_free (local.get $high))))
+    (global.set $last_error (local.get $error))
+    (i32.store offset=0 (global.get $reg_base) (i32.eqz (local.get $error)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+
+  ;; One VER_* comparison: 1 EQUAL, 2 GREATER, 3 GREATER_EQUAL, 4 LESS,
+  ;; 5 LESS_EQUAL. $sys and $req are unsigned.
+  (func $ver_condition_holds (param $sys i32) (param $req i32) (param $cond i32) (result i32)
+    (if (i32.eq (local.get $cond) (i32.const 1)) (then (return (i32.eq (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 2)) (then (return (i32.gt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 3)) (then (return (i32.ge_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 4)) (then (return (i32.lt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 5)) (then (return (i32.le_u (local.get $sys) (local.get $req)))))
+    (i32.const 0))
+
+  (func $ver_condition_holds64 (param $sys i64) (param $req i64) (param $cond i32) (result i32)
+    (if (i32.eq (local.get $cond) (i32.const 1)) (then (return (i64.eq (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 2)) (then (return (i64.gt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 3)) (then (return (i64.ge_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 4)) (then (return (i64.lt_u (local.get $sys) (local.get $req)))))
+    (if (i32.eq (local.get $cond) (i32.const 5)) (then (return (i64.le_u (local.get $sys) (local.get $req)))))
+    (i32.const 0))
+
+  ;; VerifyVersionInfoW(OSVERSIONINFOEXW*, dwTypeMask, ULONGLONG
+  ;; dwlConditionMask) -- 4 stdcall dwords. The running system is $winver
+  ;; (the same source as GetVersionEx) with no service pack, no suite bits and
+  ;; product type VER_NT_WORKSTATION. As kernel32 does, major, minor and the
+  ;; service-pack pair are one lexicographic version compared under the
+  ;; condition of the highest of them present; build, platform, suite (AND/OR)
+  ;; and product type are separate tests. A mismatch is ERROR_OLD_WIN_VERSION,
+  ;; an empty type or condition mask ERROR_BAD_ARGUMENTS. Inno Setup 6 asks it
+  ;; for its minimum Windows version at startup.
+  (func $handle_VerifyVersionInfoW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $ok i32) (local $cond i32) (local $sys i64) (local $req i64) (local $mask i64)
+    (local $nt i32)
+    (local.set $mask (i64.or (i64.extend_i32_u (local.get $arg2))
+      (i64.shl (i64.extend_i32_u (local.get $arg3)) (i64.const 32))))
+    (local.set $ok (i32.const 1))
+    (if (i32.or (i32.eqz (i32.and (local.get $arg1) (i32.const 0xFF)))
+                (i64.eqz (local.get $mask)))
+      (then
+        (global.set $last_error (i32.const 160)) ;; ERROR_BAD_ARGUMENTS
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+        (return)))
+    (local.set $nt (i32.eqz (i32.and (global.get $winver) (i32.const 0x80000000))))
+    ;; Version tuple: major(0x02) > minor(0x01) > SP major(0x20) > SP minor
+    ;; (0x10), 16 bits each, most significant first; a field not in the type
+    ;; mask stays 0 on both sides. The system has no service pack. Condition
+    ;; fields sit at 3*bit: major 3, minor 0, SP major 15, SP minor 12.
+    (if (i32.and (local.get $arg1) (i32.const 0x02))
+      (then
+        (local.set $cond (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 3)) (i64.const 7))))
+        (local.set $sys (i64.shl (i64.extend_i32_u (i32.and (global.get $winver) (i32.const 0xFF))) (i64.const 48)))
+        (local.set $req (i64.shl (i64.extend_i32_u (i32.and (call $gl32 (i32.add (local.get $arg0) (i32.const 4))) (i32.const 0xFFFF))) (i64.const 48)))))
+    (if (i32.and (local.get $arg1) (i32.const 0x01))
+      (then
+        (if (i32.eqz (local.get $cond))
+          (then (local.set $cond (i32.wrap_i64 (i64.and (local.get $mask) (i64.const 7))))))
+        (local.set $sys (i64.or (local.get $sys) (i64.shl (i64.extend_i32_u
+          (i32.and (i32.shr_u (global.get $winver) (i32.const 8)) (i32.const 0xFF))) (i64.const 32))))
+        (local.set $req (i64.or (local.get $req) (i64.shl (i64.extend_i32_u
+          (i32.and (call $gl32 (i32.add (local.get $arg0) (i32.const 8))) (i32.const 0xFFFF))) (i64.const 32))))))
+    (if (i32.and (local.get $arg1) (i32.const 0x20))
+      (then
+        (if (i32.eqz (local.get $cond))
+          (then (local.set $cond (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 15)) (i64.const 7))))))
+        (local.set $req (i64.or (local.get $req) (i64.shl (i64.extend_i32_u
+          (call $gl16 (i32.add (local.get $arg0) (i32.const 276)))) (i64.const 16))))))
+    (if (i32.and (local.get $arg1) (i32.const 0x10))
+      (then
+        (if (i32.eqz (local.get $cond))
+          (then (local.set $cond (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 12)) (i64.const 7))))))
+        (local.set $req (i64.or (local.get $req) (i64.extend_i32_u
+          (call $gl16 (i32.add (local.get $arg0) (i32.const 278))))))))
+    (if (i32.and (local.get $arg1) (i32.const 0x33))
+      (then
+        (if (i32.eqz (call $ver_condition_holds64 (local.get $sys) (local.get $req) (local.get $cond)))
+          (then (local.set $ok (i32.const 0))))))
+    ;; VER_BUILDNUMBER (0x04, condition at bit 6).
+    (if (i32.and (local.get $arg1) (i32.const 0x04))
+      (then (if (i32.eqz (call $ver_condition_holds
+              (i32.and (i32.shr_u (global.get $winver) (i32.const 16)) (i32.const 0x7FFF))
+              (call $gl32 (i32.add (local.get $arg0) (i32.const 12)))
+              (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 6)) (i64.const 7)))))
+        (then (local.set $ok (i32.const 0))))))
+    ;; VER_PLATFORMID (0x08, bit 9): 1 Win9x, 2 NT.
+    (if (i32.and (local.get $arg1) (i32.const 0x08))
+      (then (if (i32.eqz (call $ver_condition_holds
+              (select (i32.const 2) (i32.const 1) (local.get $nt))
+              (call $gl32 (i32.add (local.get $arg0) (i32.const 16)))
+              (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 9)) (i64.const 7)))))
+        (then (local.set $ok (i32.const 0))))))
+    ;; VER_SUITENAME (0x40, bit 18): 6 VER_AND = all requested bits, 7 VER_OR
+    ;; = any; the system reports no suite bits.
+    (if (i32.and (i32.ne (i32.and (local.get $arg1) (i32.const 0x40)) (i32.const 0))
+          (i32.ne (call $gl16 (i32.add (local.get $arg0) (i32.const 280))) (i32.const 0)))
+      (then (local.set $ok (i32.const 0))))
+    ;; VER_PRODUCT_TYPE (0x80, bit 21): VER_NT_WORKSTATION (1).
+    (if (i32.and (local.get $arg1) (i32.const 0x80))
+      (then (if (i32.eqz (call $ver_condition_holds (i32.const 1)
+              (call $gl8 (i32.add (local.get $arg0) (i32.const 282)))
+              (i32.wrap_i64 (i64.and (i64.shr_u (local.get $mask) (i64.const 21)) (i64.const 7)))))
+        (then (local.set $ok (i32.const 0))))))
+    (if (i32.eqz (local.get $ok))
+      (then (global.set $last_error (i32.const 1150)))) ;; ERROR_OLD_WIN_VERSION
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))))
+
+  ;; LookupPrivilegeValueW(lpSystemName, lpName, lpLuid): the A lookup over
+  ;; UTF-16 names (Double Commander asks for SeShutdownPrivilege at startup).
+  (func $handle_LookupPrivilegeValueW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (global.set $token_name_wide (i32.const 1))
+    (call $handle_LookupPrivilegeValueA (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+    (global.set $token_name_wide (i32.const 0)))
 
   ;; OpenProcessToken(ProcessHandle, DesiredAccess, TokenHandle).  The browser
   ;; hosts one elevated process token.  Each open gets a distinct closeable
@@ -5748,9 +5938,28 @@
       (then
         (if (i32.ge_u (local.get $arg0) (call $virtual_alloc_min))
           (then
+            ;; MEM_RESERVE at an address is a claim on free address space:
+            ;; it fails when any part of the range is already allocated. See
+            ;; $virtual_reserve_at for the Delphi allocator that relies on it.
+            (if (i32.and (local.get $arg2) (i32.const 0x2000))
+              (then
+                (if (i32.eqz (call $virtual_reserve_at
+                      (local.get $arg0) (local.get $size) (local.get $arg3)))
+                  (then
+                    (global.set $last_error (i32.const 487)) ;; ERROR_INVALID_ADDRESS
+                    (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+                    (i32.store offset=16 (global.get $reg_base)
+                      (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+                    (return)))))
             ;; Commit into a sparse high guest reserve.
             (i32.store offset=0 (global.get $reg_base) (call $virtual_map_commit_protect
-              (local.get $arg0) (local.get $size) (local.get $arg3))))
+              (local.get $arg0) (local.get $size) (local.get $arg3)))
+            (if (i32.and (i32.ne (i32.and (local.get $arg2) (i32.const 0x2000)) (i32.const 0))
+                  (i32.eqz (i32.load (global.get $reg_base))))
+              (then
+                (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+                (call $virtual_reserve_forget_locked (local.get $arg0))
+                (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))))
           (else
             ;; MEM_COMMIT at an existing low address. Refuse commits that would
             ;; map into emulator-private decoded-code/cache memory.
@@ -5969,11 +6178,59 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; GetCPInfoExW(CodePage, dwFlags, lpCPInfoEx) -> BOOL. CPINFOEXW is CPINFO's
+  ;; 18 bytes followed by UnicodeDefaultChar (+18), the resolved CodePage (+20)
+  ;; and CodePageName[260] (+24), so GetCPInfo fills the prefix and decides
+  ;; success. The name is the code page number in decimal. Windows uses a
+  ;; descriptive string; no caller here reads it. Packed HeidiSQL's
+  ;; unpacker resolves this by GetProcAddress and calls ExitProcess(0) when it
+  ;; gets NULL.
+  (func $handle_GetCPInfoExW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $cp i32) (local $n i32) (local $digits i32) (local $at i32)
+    (call $handle_GetCPInfo (local.get $arg0) (local.get $arg2) (i32.const 0) (i32.const 0) (i32.const 0) (local.get $name_ptr))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+    (if (i32.eqz (i32.load offset=0 (global.get $reg_base))) (then (return)))
+    (local.set $cp (call $resolve_code_page (local.get $arg0)))
+    (call $gs16 (i32.add (local.get $arg2) (i32.const 18)) (i32.const 0x3F))
+    (call $gs32 (i32.add (local.get $arg2) (i32.const 20)) (local.get $cp))
+    (local.set $n (local.get $cp))
+    (loop $count
+      (local.set $digits (i32.add (local.get $digits) (i32.const 1)))
+      (local.set $n (i32.div_u (local.get $n) (i32.const 10)))
+      (br_if $count (local.get $n)))
+    (local.set $at (i32.add (local.get $arg2) (i32.add (i32.const 24) (i32.shl (local.get $digits) (i32.const 1)))))
+    (call $gs16 (local.get $at) (i32.const 0))
+    (local.set $n (local.get $cp))
+    (loop $emit
+      (local.set $at (i32.sub (local.get $at) (i32.const 2)))
+      (call $gs16 (local.get $at) (i32.add (i32.const 0x30) (i32.rem_u (local.get $n) (i32.const 10))))
+      (local.set $n (i32.div_u (local.get $n) (i32.const 10)))
+      (br_if $emit (local.get $n))))
+
   ;; 42: GetCPInfo
-  (func $handle_GetCPInfo (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+  (func $handle_GetCPInfo(param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $cp i32) (local $info i32)
     ;; CPINFO struct: MaxCharSize(4), DefaultChar[2](2), LeadByte[12](12)
     (local.set $cp (call $resolve_code_page (local.get $arg0)))
+    ;; CP_UTF7 (65000) / CP_UTF8 (65001): the fixed Windows answer, MaxCharSize
+    ;; 5 / 4, DefaultChar "?", no lead-byte ranges. Delphi 2009+ builds
+    ;; TEncoding.UTF7/UTF8 through TMBCSEncoding.Create, which raises
+    ;; EEncodingError "Invalid code page" when GetCPInfo fails -- Inno Setup
+    ;; 5.3.11 Unicode stopped there before its first window. IsDBCSLeadByteEx
+    ;; accepts the same two pages.
+    (if (i32.and (i32.ne (local.get $arg1) (i32.const 0))
+          (i32.or (i32.eq (local.get $cp) (i32.const 65000))
+                  (i32.eq (local.get $cp) (i32.const 65001))))
+      (then
+        (local.set $info (call $guest_span_in (local.get $arg1) (i32.const 20)))
+        (call $zero_memory (local.get $info) (i32.const 20))
+        (i32.store (local.get $info)
+          (select (i32.const 5) (i32.const 4) (i32.eq (local.get $cp) (i32.const 65000))))
+        (i32.store8 offset=4 (local.get $info) (i32.const 0x3F))
+        (call $guest_span_writeback (local.get $arg1) (local.get $info) (i32.const 20))
+        (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
     ;; Do not publish a plausible SBCS description for a code page the
     ;; conversion layer cannot actually provide. Validate before translating
     ;; or mutating the caller's output structure.

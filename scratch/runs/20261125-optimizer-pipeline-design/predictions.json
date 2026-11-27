@@ -1,0 +1,24 @@
+{
+  "doc": "docs/design/uop-optimizer-pipeline.md#8",
+  "windows": {
+    "sc1": "Spelunky Classic gameplay 29600:32600 --branch-clock --d3d9-gps=null (band 0.2%)",
+    "shd": "Spelunky HD gameplay 213550:237550 (band 1.5%)",
+    "h2": "Heroes II demo 1000:1800 (band 0.7%)",
+    "sc": "StarCraft fast route in-mission"
+  },
+  "predictions": [
+    {"id": "P-1", "claim": "closure-LOO(R1) from full stack loses >= 2/3 of full-stack SC1 gain", "flips": "A neutral -> prerequisite"},
+    {"id": "P-2", "claim": "with F1, RO folds on SC1 hot heads >= 10x fold-bench C's 2261; pure-LOO(F2) >= 4 points on SC1", "flips": "C neutral -> yes"},
+    {"id": "P-3", "claim": "pure-LOO(R3) in stack <= 1.5% on SC1", "flips": "no (shrinks)"},
+    {"id": "P-4", "claim": "after R2, enters per x86 insn -30% vs S1; th_uop_enter+uop_run self time -1.5 points", "flips": "entry ~1% -> partly"},
+    {"id": "P-5", "claim": "full stack without D -10..-14% SC1; full+D -17..-19%; pure-LOO(D) from full+D < 6 points", "flips": "A+B+C family -> yes"},
+    {"id": "P-6", "claim": "S1 specialisation -1..-3% SC1 in stack, ~0 alone", "flips": "new"},
+    {"id": "P-7", "claim": "M1 executed loads -15% on SC1 programs; pure-LOO <= 1.5%", "flips": "no"},
+    {"id": "P-8", "claim": "threaded CMP+Jcc fusion and next-dispatch stay neutral/negative", "flips": "no"},
+    {"id": "P-9", "claim": "page compile stays dead even", "flips": "no"},
+    {"id": "P-10", "claim": "V5 SSE native arms -3..-6% on SHD on top of --uop-sse; uop_sse_svcs -80%", "flips": "extends"},
+    {"id": "P-11", "claim": "E1 residency -1..-3% SC1/SHD at end of stack", "flips": "no"},
+    {"id": "P-12", "claim": "Heroes II inside 0.7% band in every arm", "flips": "control"},
+    {"id": "P-13", "claim": "StarCraft -2..-5% from S2 (R2+R3), nothing measurable from S3..S6", "flips": "new"}
+  ]
+}

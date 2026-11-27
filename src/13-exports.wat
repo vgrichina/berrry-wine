@@ -576,6 +576,8 @@
       (then (call $win16_task_boot)))
     ;; Animate controls playing on comctl32's "thread" (09c3-wndprocs6).
     (call $anim_service)
+    ;; DirectMusic segments playing on the performance (09a7m-directmusic).
+    (call $dmusic_service)
     ;; Resuming from an alertable SleepEx with an APC queued: run it first.
     (call $apc_resume_alert_sleep)
     ;; FlushInstructionCache broadcasts through shared memory because decoded
@@ -2420,7 +2422,14 @@
     (call $invocation_thread_begin (local.get $tid))
     (call $getmessage_hook_reset (global.get $current_thread_id))
     (call $getmessage_hook_open_owner (global.get $current_thread_id))
-    (call $shared_post_queue_reset_tid (global.get $current_thread_id))
+    ;; A worker's shared USER queue is NOT reset here. It belongs to the Win32
+    ;; thread id, which the creator already holds (CreateThread returned it
+    ;; and ThreadManager.createThread cleared the queue then); with the Worker
+    ;; backend this init runs later, asynchronously, and a reset here dropped
+    ;; messages posted in between (UT's splash thread lost its WM_QUIT, issue
+    ;; #30). The main thread (tid 0) still starts from an empty queue.
+    (if (i32.eqz (local.get $tid))
+      (then (call $shared_post_queue_reset_tid (global.get $current_thread_id))))
     (global.set $post_queue_count (i32.const 0))
     (global.set $pq_read_off (i32.const 0))
     (global.set $sync_msg_depth (i32.const 0))
@@ -2864,6 +2873,8 @@
     (if (call $paint_flag_any) (then (return (i32.const 1))))
     (if (call $timer_check_due (call $paint_scratch_take) (i32.const 0))
       (then (return (i32.const 1))))
+    ;; A WM_MOUSELEAVE/WM_MOUSEHOVER the next GetMessage would post.
+    (if (call $tme_poll (i32.const 0)) (then (return (i32.const 1))))
     (i32.const 0))
 
   ;; next_timer_due_ms() — milliseconds until the soonest timer this thread owns
@@ -2935,6 +2946,8 @@
         (local.set $i (i32.add (local.get $i) (i32.const 1)))
         (br $mm_loop)))
     ;; A playing MCI avivideo device wants its next frame.
+    ;; A TrackMouseEvent hover deadline, or the leave check's poll interval.
+    (local.set $best (call $tme_due_ms (local.get $best)))
     (call $mciavi_due_ms (local.get $best)))
 
   (func (export "get_com_dll_name") (result i32) (global.get $com_dll_name))

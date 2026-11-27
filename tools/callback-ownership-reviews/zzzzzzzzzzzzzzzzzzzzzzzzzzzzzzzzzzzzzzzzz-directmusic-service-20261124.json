@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "3b7a3da6a0b32c81a5654b1acb755552c8f35f52ac5e6382b44216566f009e56",
+      "sha256": "47a412c8028db6238f732af81747e22a5875ea0a4b360d67f7dea0438aa971e7",
+      "reason": "run() calls $dmusic_service once per slice next to $anim_service. It returns at once unless a DirectMusic performance has been initialized, then sends due MIDI channel messages of playing segments through the existing host midiOut short-message import (no callback, the device is opened with CALLBACK_NULL). It reads only performance/segment records in the guest heap, never writes EIP, registers or the guest stack, retains no pointer past the call and adds no callback, exception boundary or target."
+    }
+  ]
+}

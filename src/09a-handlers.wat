@@ -405,10 +405,17 @@
     (i32.const 0))
 
   ;; Charge one period to a due slot, retiring it if it was a one-shot.
+  ;; A periodic waitable timer (flag 0x40, see SetWaitableTimer) runs its
+  ;; first interval as the due time and every later one as lPeriod, kept in
+  ;; +12 where a timeSetEvent slot keeps dwUser.
   (func $mm_timer_consume_slot (param $slot i32)
     (call $mm_timer_consume_due_tick (local.get $slot))
     (if (i32.and (i32.load offset=20 (local.get $slot)) (i32.const 1))
-      (then (i32.store (local.get $slot) (i32.const 0)))))
+      (then (i32.store (local.get $slot) (i32.const 0))))
+    (if (i32.and
+          (i32.ne (i32.and (i32.load offset=20 (local.get $slot)) (i32.const 0x40)) (i32.const 0))
+          (i32.ne (i32.load offset=12 (local.get $slot)) (i32.const 0)))
+      (then (i32.store offset=4 (local.get $slot) (i32.load offset=12 (local.get $slot))))))
 
   ;; Milliseconds until the earliest multimedia timer is due: 0 when one is
   ;; already due, -1 when there is no timer at all. The host shortens its run
@@ -1055,6 +1062,9 @@
     (global.set $user_queue_raw_msg (local.get $msg))
     (global.set $user_queue_input_flags
       (i32.and (local.get $flags) (global.get $USER_QUEUE_FLAG_INPUT)))
+    (if (i32.and (i32.ne (local.get $remove) (i32.const 0))
+                 (i32.ne (global.get $user_queue_input_flags) (i32.const 0)))
+      (then (call $input_sync_note (local.get $msg) (local.get $wparam))))
     ;; A null pointer is an internal USER probe: publish only the four fields
     ;; its caller needs in instance-private globals. Full guest MSG writes also
     ;; synthesize time/pt; they must receive a real 28-byte output buffer.

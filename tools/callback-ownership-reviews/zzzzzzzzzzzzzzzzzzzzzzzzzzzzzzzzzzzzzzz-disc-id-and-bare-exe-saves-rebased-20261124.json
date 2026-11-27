@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "baseSHA256": "ef6b498b6698e3e92b60fea131c8f4f29b0d650432c64ae26ee53080b88c7ace",
+      "sha256": "46fe01a34b346d026dc6f7902872637622770c5781242b5fe271983155d2c627",
+      "reason": "Review 20261124 PR #33 rebased onto main d529dcfd7: attachDynamicOverlay gives a session disc or bare-EXE import a durable OPFS journal keyed by its fingerprint (media-import.js overlayScopeFor: disc:v1:<sha256 of the file listing> or exe:v1:<sha256 of the EXE bytes>), with the same checkpoint and stop flush kept imports already use; imports with no fingerprint log once and keep the memory store. Replaces the PR's two earlier reviews (disc-id-session-saves-20261121, bare-exe-session-saves-20261124), which anchored before main's manifest-space-free review. No scheduler, renderer or callback lifetime change. Covered by test/test-media-disc-id.js (13/13). General callback ownership remains pending."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "additions": [
+    {
+      "file": "src/09a5c-handlers-wide.wat",
+      "name": "$handle_EnumSystemLocalesW",
+      "writes": 3,
+      "boundaryCalls": [],
+      "exports": [],
+      "targets": [
+        ["local.get", "$ret"],
+        ["local.get", "$ret"],
+        ["local.get", "$arg0"]
+      ],
+      "sha256": "45a5d922fe3b48e0ba63c236b1c357070495830be150c2822fe5d0664d162db8",
+      "kind": "mixed-dispatch",
+      "reason": "Review 20261126 EnumSystemLocalesW: the UTF-16 twin of $system_string_enum_a. Error paths (NULL callback, allocation failure) return to the API caller; otherwise it enters the guest callback once with L\"00000409\" and the same SYS1 typed frame (marker, heap string, API return) that the CACA0011 continuation in 09b-dispatch.wat frees and resumes. No new continuation or retained pointer beyond that existing frame. Ownership remains pending.",
+      "ownership": "pending"
+    }
+  ],
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_CreateWindowExA",
+      "baseSHA256": "0ec587e3cd5f67564918c165bb97551ba9ab980b96ae2daf98e9fa5351a83dc7",
+      "sha256": "7ad42959e1719e40b03acbb7083220bc04357e0698b1ba7ad6fa261fdb903c71",
+      "reason": "Review 20261126 Unicode native-control text: the two synchronous WAT-native WM_CREATE dispatches (system-class top level, native child control) now pass an ANSI copy of CREATESTRUCTW from $createstruct_narrow_for_native when the call came through CreateWindowExW, and free it after the synchronous $wat_wndproc_dispatch returns. No guest callback, EIP write or frame change is added; the guest-visible CREATESTRUCTW at wnd_scratch is unchanged."
+    }
+  ]
+}

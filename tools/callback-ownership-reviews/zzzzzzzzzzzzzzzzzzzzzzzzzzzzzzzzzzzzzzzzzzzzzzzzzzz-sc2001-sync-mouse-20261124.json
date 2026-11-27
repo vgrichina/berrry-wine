@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "32073ad2ebf484c033e36e07a3a1fee6e5a645686159061b7d352ae154eb21da",
+      "sha256": "f5c418ce7c59d15c49aecc785cadec2ac2b83cc886f35d4f71398c7126fa5b70",
+      "reason": "Review 20261124 SimCity 2001 tool buttons: when PM_REMOVE takes a host input message, $input_sync_note records its MK_* button flags into an instance-private global that GetKeyState reads (queue-synchronous mouse-button state). No EIP write, callback frame, stack, HWND lifetime, hook, message delivery or focus changed; callback ownership remains pending."
+    }
+  ]
+}

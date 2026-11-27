@@ -182,14 +182,14 @@ const has = (modes, w, h, bpp) =>
     'W enumerates the same number of modes');
   e.test_enum_display_settings_w(dense - 1, buf);
   const lastRaw = e.test_dense_to_raw(dense - 1);
-  ok(view.getUint32(wasmBuf + 140, true) === e.test_mode_w((lastRaw / 3) | 0) &&
-     view.getUint32(wasmBuf + 144, true) === e.test_mode_h((lastRaw / 3) | 0) &&
-     view.getUint32(wasmBuf + 136, true) === e.test_raw_bpp(lastRaw),
+  ok(view.getUint32(wasmBuf + 172, true) === e.test_mode_w((lastRaw / 3) | 0) &&
+     view.getUint32(wasmBuf + 176, true) === e.test_mode_h((lastRaw / 3) | 0) &&
+     view.getUint32(wasmBuf + 168, true) === e.test_raw_bpp(lastRaw),
     'and fills DEVMODEW from the same row');
   ok(e.test_enum_display_settings_w(-1, buf) === 1 &&
-     view.getUint32(wasmBuf + 140, true) === 640 &&
-     view.getUint32(wasmBuf + 144, true) === 480 &&
-     view.getUint32(wasmBuf + 136, true) === 32,
+     view.getUint32(wasmBuf + 172, true) === 640 &&
+     view.getUint32(wasmBuf + 176, true) === 480 &&
+     view.getUint32(wasmBuf + 168, true) === 32,
     'W ENUM_CURRENT_SETTINGS is unchanged too');
 
   console.log(`\n${pass} passed, ${fail} failed`);

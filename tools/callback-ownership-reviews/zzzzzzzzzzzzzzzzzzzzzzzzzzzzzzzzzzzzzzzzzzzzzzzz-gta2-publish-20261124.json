@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/apps.js",
+      "name": "host-file",
+      "baseSHA256": "b091f550a7b38343b6dafdc2a2099aa566e3e33f66766b224b4670f421c4cd15",
+      "sha256": "d9ecc0c52337044622efdda99acf7e51dda1eb78cca6b51bde27d9c5cf46816a",
+      "reason": "Review 20261124: gta2_demo moves from LOCAL_CANDIDATE_APPS to DESKTOP_APPS (owner's publish decision) and its payload comment says so; the registry entry, files and touch controls are unchanged. Data-only; no scheduler, renderer or callback lifetime change. Covered by test/test-deploy-gta2-demo-assets.js. General callback ownership remains pending."
+    }
+  ]
+}

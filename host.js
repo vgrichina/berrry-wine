@@ -3438,9 +3438,16 @@ class WineAssembly {
     const aggressiveStack = (uop && (this.aggressiveStack === true ||
       (window.WineSuperops && window.WineSuperops.aggressiveStack === true))) ? 1 : 0;
     if (this.instance.exports.set_aggressive_stack) this.instance.exports.set_aggressive_stack(aggressiveStack);
+    // ?uop-sse: kind 34, the XMM forms in the tier (opt-in, compile-time).
+    const uopSse = (uop && window.WineSuperops && window.WineSuperops.uopSse === true) ? 1 : 0;
+    if (uopSse && this.instance.exports.set_uop_sse) this.instance.exports.set_uop_sse(1);
     const smcSameBlock = (this.smcSameBlock === true ||
       (window.WineSuperops && window.WineSuperops.smcSameBlock === true)) ? 1 : 0;
     if (this.instance.exports.set_smc_same_block) this.instance.exports.set_smc_same_block(smcSameBlock);
+    // The Delphi RTTI/LStr helper fold (handler 395): on by default,
+    // ?no-delphi-fold turns it off. Decode-time.
+    const delphiFold = (window.WineSuperops && window.WineSuperops.delphiFold === false) ? 0 : 1;
+    if (this.instance.exports.set_delphi_fold) this.instance.exports.set_delphi_fold(delphiFold);
     // Trace heads: hot heads with no back edge become forward traces
     // (07e $uc_form_trace) instead of no-backedge declines. On by default;
     // ?no-uop-trace-heads turns them off.
@@ -3537,8 +3544,14 @@ class WineAssembly {
       if (this.instance.exports.set_aggressive_stack) {
         await this.guestWorker.callExport('set_aggressive_stack', aggressiveStack);
       }
+      if (uopSse && this.instance.exports.set_uop_sse) {
+        await this.guestWorker.callExport('set_uop_sse', uopSse);
+      }
       if (this.instance.exports.set_smc_same_block) {
         await this.guestWorker.callExport('set_smc_same_block', smcSameBlock);
+      }
+      if (this.instance.exports.set_delphi_fold) {
+        await this.guestWorker.callExport('set_delphi_fold', delphiFold);
       }
       if (this.instance.exports.set_uop_trace_heads) {
         await this.guestWorker.callExport('set_uop_trace_heads', uopTraceHeads);
@@ -3727,7 +3740,9 @@ class WineAssembly {
     this.threadManager.recordInheritedWasmGlobal('set_x87_affine_fusion', x87Fusion);
     this.threadManager.recordInheritedWasmGlobal('set_uop', uop);
     this.threadManager.recordInheritedWasmGlobal('set_aggressive_stack', aggressiveStack);
+    this.threadManager.recordInheritedWasmGlobal('set_uop_sse', uopSse);
     this.threadManager.recordInheritedWasmGlobal('set_smc_same_block', smcSameBlock);
+    this.threadManager.recordInheritedWasmGlobal('set_delphi_fold', delphiFold);
     this.threadManager.recordInheritedWasmGlobal('set_uop_trace_heads', uopTraceHeads);
     // The bisect mask has to reach every guest thread for the same reason the
     // fold flags do: a thread decodes in its own instance, so a mask set only

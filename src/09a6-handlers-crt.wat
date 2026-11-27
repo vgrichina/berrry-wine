@@ -856,6 +856,54 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; MSVCR110+ /arch:SSE2 math helpers (__libm_sse2_*_precise; the import
+  ;; name drops one leading underscore). The compiler calls them directly
+  ;; with the double in XMM0's low qword and takes the result from there
+  ;; (glxgears 401181: cvtps2pd xmm0,xmm0 / call / cvtsd2ss xmm0,xmm0). No
+  ;; stack arguments: only the return address is popped. x87 state, GPRs and
+  ;; the other XMM registers are left alone; XMM0's upper qword is kept.
+  ;; A NaN argument comes back quieted with its sign and payload; an invalid
+  ;; argument (sin/cos of an infinity, sqrt of x < -0) returns the x86 QNaN
+  ;; indefinite and sets errno EDOM, as the CRT's _handle_error path does.
+  ;; $kind: 0 sin, 1 cos, 2 sqrt.
+  (func $libm_sse2_precise (param $kind i32)
+    (local $b i64) (local $x f64) (local $r i64)
+    (local.set $b (i64x2.extract_lane 0 (call $xmm_get (i32.const 0))))
+    (local.set $x (f64.reinterpret_i64 (local.get $b)))
+    (block $done
+      (if (call $sse_is_nan64 (local.get $b)) (then
+        (local.set $r (i64.or (local.get $b) (i64.const 0x0008000000000000)))
+        (br $done)))
+      (if (i32.eq (local.get $kind) (i32.const 2)) (then
+        (if (f64.lt (local.get $x) (f64.const 0)) (then
+          (local.set $r (i64.const 0xfff8000000000000))
+          (call $msvcrt_set_errno (i32.const 33))
+          (br $done)))
+        (local.set $r (i64.reinterpret_f64 (f64.sqrt (local.get $x))))
+        (br $done)))
+      (if (f64.eq (f64.abs (local.get $x)) (f64.const inf)) (then
+        (local.set $r (i64.const 0xfff8000000000000))
+        (call $msvcrt_set_errno (i32.const 33))
+        (br $done)))
+      (local.set $r (i64.reinterpret_f64
+        (if (result f64) (i32.eqz (local.get $kind))
+          (then (call $host_math_sin (local.get $x)))
+          (else (call $host_math_cos (local.get $x)))))))
+    (call $xmm_set (i32.const 0)
+      (i64x2.replace_lane 0 (call $xmm_get (i32.const 0)) (local.get $r))))
+
+  (func $handle__libm_sse2_sin_precise (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $libm_sse2_precise (i32.const 0))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle__libm_sse2_cos_precise (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $libm_sse2_precise (i32.const 1))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
+  (func $handle__libm_sse2_sqrt_precise (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $libm_sse2_precise (i32.const 2))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))
+
   (func $handle_tan (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (call $fpu_push (call $host_math_tan (f64.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4))))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))

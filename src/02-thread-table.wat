@@ -11,7 +11,7 @@
   ;; For byte regs: 0=al,1=cl,2=dl,3=bl,4=ah,5=ch,6=dh,7=bh
 
   (type $handler_t (func (param i32)))
-  (table $handlers 505 funcref)
+  (table $handlers 515 funcref)
 
   (elem (i32.const 0)
     ;; -- Core --
@@ -456,7 +456,7 @@
     $th_add_edx_eax_load_test ;; 392: ADD EDX,EAX + MOV EAX,[EDX] + TEST EAX,imm32
     $th_dec_m8_abs_jnz        ;; 393: DEC byte [abs] + JNZ rel8
     $th_shr_ebp_1_jcc_b       ;; 394: SHR EBP,1 + JB/JAE rel8 (op=0/1)
-    $th_retired_fold          ;; 395: retired (was SMACK_HUFF, Smacker Huffman node walk; uop runs it)
+    $th_delphi_rtti           ;; 395: Delphi System RTTI/LStr helper, native (10-helpers-delphi-fold; was SMACK_HUFF, retired)
     $th_retired_fold          ;; 396: retired (was Storm PKWARE bit-reservoir helper; uop tier is as fast)
     $th_aam                   ;; 397: AAM imm8
     $th_port_io               ;; 398: IN/OUT accumulator, imm8/DX port
@@ -571,7 +571,17 @@
     $th_lock_rmw               ;; 499: LOCK RMW / memory XCHG as atomic CAS, threaded only (05)
     $th_ftol_native            ;; 500: statically linked MSVC _ftol body, native (06)
     $th_store_continue         ;; 501: instruction-boundary store continuation
-    $th_decimal_adjust        ;; 502: DAA/DAS, operand 0=add 1=subtract
-    $th_ascii_adjust          ;; 503: AAA/AAS, operand 0=add 1=subtract
-    $th_aad                   ;; 504: AAD imm8
+    $th_cvtss2sd_rr            ;; 502: --sse-fast dedicated SSE2 register form (06c)
+    $th_cvtps2pd_rr            ;; 503: --sse-fast (06c)
+    $th_cvtsd2ss_rr            ;; 504: --sse-fast (06c)
+    $th_cvtpd2ps_rr            ;; 505: --sse-fast (06c)
+    $th_addsd_rr               ;; 506: --sse-fast (06c)
+    $th_mulsd_rr               ;; 507: --sse-fast (06c)
+    $th_subsd_rr               ;; 508: --sse-fast (06c)
+    $th_comisd_rr              ;; 509: --sse-fast (06c)
+    $th_cvtsi2ss_rr            ;; 510: --sse-fast (06c)
+    $th_cvtsi2sd_rr            ;; 511: --sse-fast (06c)
+    $th_decimal_adjust        ;; 512: DAA/DAS, operand 0=add 1=subtract
+    $th_ascii_adjust          ;; 513: AAA/AAS, operand 0=add 1=subtract
+    $th_aad                   ;; 514: AAD imm8
   )

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_CreateWindowExA",
+      "baseSHA256": "ac6309c957315ed834ca183829fb0d15ae4adfb5082dedf9daf81e65a2d945cf",
+      "sha256": "0ec587e3cd5f67564918c165bb97551ba9ab980b96ae2daf98e9fa5351a83dc7",
+      "reason": "Review 20261124 SimCity 2001 white map: a new WS_CHILD is linked at HWND_BOTTOM of its siblings (USER semantics; first child is topmost) via the existing $wnd_z_set_after table operation right after the parent is recorded. Only the sibling Z rank changes. No EIP write, callback frame, stack, HWND lifetime, hook, message delivery or focus changed; callback ownership remains pending."
+    }
+  ]
+}

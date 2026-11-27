@@ -150,3 +150,41 @@ stores callback `0x424ce0` into the caller descriptor at `+0x18`; `0x424c64`
 reads descriptor `+0x1c`, saved to `0x48e7fc` at `0x424c7c`. Call cadence and
 any timer association are unobserved. Note `set_trace_eip_range` disables the
 optimized paths, so traced wall time cannot measure normal mixer cost.
+
+## Interpreter loop: SCUMM v8 opcode dispatch (2026-11-24)
+
+`runScript` at `0x41a720`; its opcode loop is a central loop with an indirect
+call through a 256-entry function-pointer table:
+
+```asm
+0041a743  mov eax,[0x4d2c20]      ; current slot
+0041a748  test eax,eax ; jz 0x41a76d
+0041a74c  call 0x41a7e0           ; fetchScriptByte (slot base via 5-way jmp table 0x41a8dc)
+0041a751  mov [0x48ccf8],al       ; _opcode
+0041a758  movzx eax, byte [0x48ccf8]
+0041a75d  call [0x45c030+eax*4]   ; opcode handler table (.data)
+0041a764  call 0x41a3a0           ; script still running?
+0041a769  test eax,eax ; jz 0x41a743
+```
+
+Every opcode costs three calls (fetch, indirect handler, continue check) plus the
+SCUMM stack helpers `push 0x41c040` / `pop 0x41c060` inside handlers, so it is a
+call/return-heavy shape — the target for `--uop-icall` and a return-address stack.
+
+Hold scene, frozen-route settings without the control session:
+
+```
+node test/run.js --app=curse_monkey_island_demo --no-threads --quiet-api --quiet-blocks \
+  --no-close --batch-size=100000 --tick-ms-per-batch=200 --max-batches=420 \
+  --input=150:keydown:27,152:keyup:27 \
+  --handler-hist --handler-hist-thread=0 --handler-hist-start=240 --handler-hist-stop=420 \
+  --hist-json=hist-240-420.json --edge-hist
+```
+
+The hold is up after Escape (~batch 232, 4.5 s wall for 420 batches). Over
+240..420: the loop blocks `0x41a751`/`0x41a764` each ran 37,849 times (one per
+opcode); the loop alone is 6.5% of block entries and the VM core
+`0x41a3a0..0x41c100` (loop, fetch, slot switch, stack push/pop) is **27.0%**,
+handlers excluded. The other hot code is the blend LUT above and `0x40e1c1`
+(object/actor walk, 5.4%). Evidence:
+`scratch/runs/20261124-interp-bench/curse_monkey_island_demo/`.

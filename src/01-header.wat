@@ -524,8 +524,9 @@
   ;; fs_search_path(pathWA, fileNameWA, extWA, bufLen, bufGA, filePartPtrGA, isWide) → len or 0
   (import "host" "fs_get_short_path_name" (func $host_fs_get_short_path_name (param i32 i32 i32 i32) (result i32)))
   (import "host" "fs_create_file_mapping" (func $host_fs_create_file_mapping (param i32 i32 i32 i32 i32) (result i32)))
-  (import "host" "fs_create_file_mapping_result" (func $host_fs_create_file_mapping_result (param i32 i32 i32 i32 i32 i32) (result i32)))
+  (import "host" "fs_create_file_mapping_result" (func $host_fs_create_file_mapping_result (param i32 i32 i32 i32 i32 i32 i32) (result i32)))
   ;; fs_create_file_mapping(hFile, protect, sizeHi, sizeLo, nameWA) → mapping handle
+  ;; The _result form adds resultWA (handle out) and wide (nameWA is UTF-16).
   ;; nameWA is 0 for an unnamed section. A named one can be reopened by name,
   ;; which is how an app asks "is my other instance already running?".
   (import "host" "fs_open_file_mapping" (func $host_fs_open_file_mapping (param i32) (result i32)))
@@ -2072,7 +2073,7 @@
   ;; table size in 02-thread-table.wat -- $handler_hist_record drops any pair
   ;; involving a handler at or above it, so a stale cap silently hides every
   ;; fused superinstruction from the very table used to pick the next fusion.
-  ;; tools/check-handler-count.js enforces this. 512*512*4 = 1MB.
+  ;; tools/check-handler-count.js enforces this. 515*515*4 fits the page-aligned 0x104000-byte pair region.
   (global $HANDLER_HIST_COUNTS i32 (region.addr $HANDLER_HIST_COUNTS 0))
   (global $HANDLER_HIST_COUNTS_SIZE i32 (region.size $HANDLER_HIST_COUNTS))
   ;; Decode-time op-start index (see docs/loop-idiom-superops-design.md 6.1).
@@ -2108,7 +2109,7 @@
   (global $CODE_PAGE_BITMAP_PAGES i32 (i32.const 65536))
   (global $HANDLER_PAIR_HIST_COUNTS i32 (region.addr $HANDLER_PAIR_HIST_COUNTS 0))
   (global $HANDLER_PAIR_HIST_COUNTS_SIZE i32 (region.size $HANDLER_PAIR_HIST_COUNTS))
-  (global $HANDLER_HIST_COUNT i32 (i32.const 512))
+  (global $HANDLER_HIST_COUNT i32 (i32.const 515))
   (global $BRANCH_CMP_JCC_HIST i32 (region.addr $BRANCH_CMP_JCC_HIST 0))
   (global $BRANCH_CMP_JCC_HIST_SIZE i32 (region.size $BRANCH_CMP_JCC_HIST))
   (global $BRANCH_TEST_JCC_HIST i32 (region.addr $BRANCH_TEST_JCC_HIST 0))
@@ -3138,6 +3139,8 @@
   (global $capture_hwnd (mut i32) (i32.const 0))      ;; hwnd that has mouse capture (SetCapture/ReleaseCapture)
   (global $CURSOR_THREAD_STATE i32 (region.addr $CURSOR_THREAD_STATE 0))
   (global $CURSOR_THREAD_STATE_SIZE i32 (i32.const 0x110))
+  (global $TME_THREAD_STATE i32 (region.addr $TME_THREAD_STATE 0))  ;; TrackMouseEvent, 09a5 $tme_addr
+  (global $TME_THREAD_STATE_SIZE i32 (i32.const 0x440))
   (global $caret_hwnd (mut i32) (i32.const 0))        ;; USER caret owner hwnd
   (global $caret_x (mut i32) (i32.const 0))           ;; USER caret client x
   (global $caret_y (mut i32) (i32.const 0))           ;; USER caret client y

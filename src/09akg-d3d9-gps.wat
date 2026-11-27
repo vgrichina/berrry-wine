@@ -122,14 +122,20 @@
   ;; a later one, 79 colour surface locks that needed no readback, 80
   ;; (retired), 81 back buffer RTs seeded from the DIB, 82 draws
   ;; blended on the CPU (d9cpu), 83 draws expanded on the CPU into list
-  ;; DRAW_UPs, 84 DRAW_UP chunks those emitted (d9cpu), 120..125 d9fv (its block).
+  ;; DRAW_UPs, 84 DRAW_UP chunks those emitted (d9cpu), 88 windowed Presents
+  ;; stretched from source to destination rect ($d9g_present), 89 stretched
+  ;; Presents shown unscaled (no COPY cap), 70 CLI captures that left a
+  ;; placed Present on screen (d3d9_gps_sync_front), 120..125 d9fv (its block).
   ;;
   ;; Block $d9g_mem: +0 stats (128 words), +512 RASTER stage, +608 its
   ;; cache, +704 viewport cache (24), +768 bind cache {n, 6 x {slot, tex,
   ;; sampler}}, +864 PS consts cache (128), +1024 layout cache 32 x {fvf,
   ;; stride, texmap, id}, +1536 sampler cache 32 x {k0, k1, k2, k3, id, -},
   ;; +2304 guest PS cache 32 x {ptr, len, sum, id}, +2816 clear rect
-  ;; scratch, +2848 BIND staging (6 x 12), +4096 fixed scratch (DFX1 288 +
+  ;; scratch, +2848 BIND staging (6 x 12), +2944 Present stretch RT {id,
+  ;; w, h} ($d9g_present_target), +2956 last Present placed (1: the window
+  ;; shows the source rect moved and/or stretched, not the whole back buffer
+  ;; at 0,0 -- d3d9_gps_present_placed), +4096 fixed scratch (DFX1 288 +
   ;; 6 x 192 rows), +5632 fixed PS cache 32 x {id, len, key 1440}, +52224
   ;; texture cache 256 x 80 {t, id, w, h, levels, fmt, seq[13], -},
   ;; +72704 buffer cache 64 x {buf, seq, len, id}, +73728 VS constant
@@ -618,6 +624,7 @@
   ;; The back buffer RT goes (another device takes the ring, a resize).
   (func $d9g_drop_bb
     (call $d9g_release (global.get $d9g_rt))
+    (call $d9g_drop_present_target)
     (global.set $d9g_rt (i32.const 0))
     (global.set $d9g_dev (i32.const 0))
     (global.set $d9g_cpu (i32.const 0))
@@ -4798,10 +4805,48 @@
         (global.set $d9g_cpu_rgba (local.get $rgba))))))
     (i32.const 0))
 
+  ;; The Present stretch target (d9g_mem +2944 {id, w, h}) goes with the
+  ;; back buffer RT it is copied from.
+  (func $d9g_drop_present_target
+    (local $m i32)
+    (local.set $m (i32.add (call $d9g_m) (i32.const 2944)))
+    (call $d9g_release (i32.load (local.get $m)))
+    (i32.store (local.get $m) (i32.const 0))
+    (i32.store offset=4 (local.get $m) (i32.const 0))
+    (i32.store offset=8 (local.get $m) (i32.const 0)))
+
+  ;; An executor RT of $w x $hgt that a stretched Present lands in, kept
+  ;; across frames and remade when the destination size changes.
+  (func $d9g_present_target (param $w i32) (param $hgt i32) (result i32)
+    (local $m i32)
+    (local.set $m (i32.add (call $d9g_m) (i32.const 2944)))
+    (if (i32.and (i32.ne (i32.load (local.get $m)) (i32.const 0))
+          (i32.and (i32.eq (i32.load offset=4 (local.get $m)) (local.get $w))
+            (i32.eq (i32.load offset=8 (local.get $m)) (local.get $hgt))))
+      (then (return (i32.load (local.get $m)))))
+    (call $d9g_drop_present_target)
+    (i32.store (local.get $m) (call $d9g_id))
+    (i32.store offset=4 (local.get $m) (local.get $w))
+    (i32.store offset=8 (local.get $m) (local.get $hgt))
+    (call $gps_create (global.get $d9g_h) (i32.load (local.get $m)) (global.get $GPS_KIND_RT)
+      (global.get $GPS_FMT_A8B8G8R8) (i32.const 1) (local.get $w) (local.get $hgt) (i32.const 0))
+    (i32.load (local.get $m)))
+
   ;; Device / swap-chain Present: a PRESENT of the back buffer RT, made from
   ;; the DIB first if nothing drew yet. 1 = presented.
-  (func $d9g_present (param $device i32) (result i32)
+  ;; $srect / $drect are the guest RECT pointers of Present (0 = NULL). On a
+  ;; windowed device, as on Windows: the source rect is clipped to the back
+  ;; buffer, a NULL destination is the whole client area of the device
+  ;; window, and when the two differ in size the picture is stretched
+  ;; (linear, as the runtime's StretchRect-style blit does). GameMaker 8
+  ;; keeps a 640x480 back buffer and presents (0,0,960,720) -> (0,0,960,720)
+  ;; once Spelunky's settings.cfg scale 3 resizes its window. A fullscreen
+  ;; device owns the whole screen at the back buffer's size: no rects.
+  (func $d9g_present (param $device i32) (param $srect i32) (param $drect i32) (result i32)
     (local $h i32) (local $p i32) (local $seq i32) (local $hwnd i32) (local $state i32)
+    (local $sx i32) (local $sy i32) (local $sw i32) (local $sh i32)
+    (local $dx i32) (local $dy i32) (local $dw i32) (local $dh i32)
+    (local $rt i32) (local $cs i32) (local $v i32)
     (local.set $state (call $d3d9_program_state (local.get $device)))
     (local.set $hwnd (if (result i32) (local.get $state)
       (then (call $gl32 (i32.add (local.get $state) (i32.const 1684)))) (else (i32.const 0))))
@@ -4809,6 +4854,82 @@
     (if (i32.eqz (local.get $hwnd)) (then (call $d9g_stat (i32.const 67) (i32.const 1)) (call $d9g_fail (i32.const 12))))
     (if (i32.eqz (call $d9g_bb_ensure (local.get $device))) (then (call $d9g_fail (i32.const 13))))
     (call $d9g_flush)
+    ;; Source and destination rects (whole back buffer at 0,0 by default).
+    (local.set $sw (global.get $d9g_rt_w))
+    (local.set $sh (global.get $d9g_rt_h))
+    (local.set $dw (local.get $sw))
+    (local.set $dh (local.get $sh))
+    (if (i32.and (i32.ne (call $d3d9_windowed_hwnd_get) (i32.const 0))
+          (i32.eq (call $d3d9_windowed_hwnd_get) (local.get $hwnd)))
+      (then
+        (if (local.get $srect) (then
+          (local.set $sx (call $gl32 (local.get $srect)))
+          (local.set $sy (call $gl32 (i32.add (local.get $srect) (i32.const 4))))
+          (local.set $sw (call $gl32 (i32.add (local.get $srect) (i32.const 8))))
+          (local.set $sh (call $gl32 (i32.add (local.get $srect) (i32.const 12))))
+          (if (i32.lt_s (local.get $sx) (i32.const 0)) (then (local.set $sx (i32.const 0))))
+          (if (i32.lt_s (local.get $sy) (i32.const 0)) (then (local.set $sy (i32.const 0))))
+          (if (i32.gt_s (local.get $sw) (global.get $d9g_rt_w)) (then (local.set $sw (global.get $d9g_rt_w))))
+          (if (i32.gt_s (local.get $sh) (global.get $d9g_rt_h)) (then (local.set $sh (global.get $d9g_rt_h))))
+          ;; right/bottom -> width/height
+          (local.set $sw (i32.sub (local.get $sw) (local.get $sx)))
+          (local.set $sh (i32.sub (local.get $sh) (local.get $sy)))))
+        (if (local.get $drect)
+          (then
+            (local.set $dx (call $gl32 (local.get $drect)))
+            (local.set $dy (call $gl32 (i32.add (local.get $drect) (i32.const 4))))
+            (local.set $dw (i32.sub (call $gl32 (i32.add (local.get $drect) (i32.const 8))) (local.get $dx)))
+            (local.set $dh (i32.sub (call $gl32 (i32.add (local.get $drect) (i32.const 12))) (local.get $dy))))
+          (else
+            (local.set $cs (call $host_get_window_client_size (local.get $hwnd)))
+            (local.set $dw (i32.and (local.get $cs) (i32.const 0xFFFF)))
+            (local.set $dh (i32.shr_u (local.get $cs) (i32.const 16)))
+            ;; A window with no client area yet shows the source as it is.
+            (if (i32.or (i32.eqz (local.get $dw)) (i32.eqz (local.get $dh))) (then
+              (local.set $dw (local.get $sw))
+              (local.set $dh (local.get $sh))))))))
+    ;; An empty source or destination shows nothing (D3D presents no pixels).
+    (if (i32.or (i32.or (i32.le_s (local.get $sw) (i32.const 0)) (i32.le_s (local.get $sh) (i32.const 0)))
+          (i32.or (i32.le_s (local.get $dw) (i32.const 0)) (i32.le_s (local.get $dh) (i32.const 0))))
+      (then (return (i32.const 0))))
+    ;; What the window now shows is not the back buffer as it stands: a
+    ;; source sub-rect, a destination offset or a stretch. GameMaker 7
+    ;; (Metrojd) draws its 448x448 room into a 640x480 back buffer and
+    ;; presents (0,0,448,448) -> (80,0,560,480), aspect-fit in the client.
+    (i32.store offset=2956 (call $d9g_m)
+      (i32.or
+        (i32.or (i32.ne (i32.or (local.get $sx) (local.get $sy)) (i32.const 0))
+          (i32.ne (i32.or (local.get $dx) (local.get $dy)) (i32.const 0)))
+        (i32.or
+          (i32.or (i32.ne (local.get $sw) (global.get $d9g_rt_w)) (i32.ne (local.get $sh) (global.get $d9g_rt_h)))
+          (i32.or (i32.ne (local.get $dw) (local.get $sw)) (i32.ne (local.get $dh) (local.get $sh))))))
+    (local.set $rt (global.get $d9g_rt))
+    (if (i32.or (i32.ne (local.get $sw) (local.get $dw)) (i32.ne (local.get $sh) (local.get $dh))) (then
+      (if (i32.and (i32.ne (i32.and (global.get $d9g_caps) (global.get $GPS_CAP_COPY)) (i32.const 0))
+            (i32.and (i32.le_u (local.get $dw) (i32.const 4096)) (i32.le_u (local.get $dh) (i32.const 4096))))
+        (then
+          (local.set $v (call $d9g_present_target (local.get $dw) (local.get $dh)))
+          (local.set $p (call $d9g_begin (global.get $GPS_OP_COPY) (size-of GpsCopy)))
+          (store.field GpsCopy src (local.get $p) (local.get $rt))
+          (store.field GpsCopy dst (local.get $p) (local.get $v))
+          (store.field GpsCopy sx (local.get $p) (local.get $sx))
+          (store.field GpsCopy sy (local.get $p) (local.get $sy))
+          (store.field GpsCopy sw (local.get $p) (local.get $sw))
+          (store.field GpsCopy sh (local.get $p) (local.get $sh))
+          (store.field GpsCopy dx (local.get $p) (i32.const 0))
+          (store.field GpsCopy dy (local.get $p) (i32.const 0))
+          (store.field GpsCopy dw (local.get $p) (local.get $dw))
+          (store.field GpsCopy dh (local.get $p) (local.get $dh))
+          ;; Linear; the window shows no alpha.
+          (store.field GpsCopy filter (local.get $p) (i32.const 0x1000002))
+          (drop (call $d9g_end (local.get $p)))
+          (call $d9g_stat (i32.const 88) (i32.const 1))
+          (local.set $rt (local.get $v))
+          (local.set $sx (i32.const 0))
+          (local.set $sy (i32.const 0))
+          (local.set $sw (local.get $dw))
+          (local.set $sh (local.get $dh)))
+        (else (call $d9g_stat (i32.const 89) (i32.const 1))))))
     (local.set $h (global.get $d9g_h))
     ;; At most two PRESENTs in flight.
     (if (i32.and (i32.ne (global.get $d9g_pseq0) (i32.const 0))
@@ -4818,15 +4939,15 @@
         (if (i32.ne (call $d9g_kick (global.get $GPS_KICK_SYNC)) (i32.const 1)) (then (call $d9g_fail (i32.const 4))))))
     (call $gps_mark (local.get $h) (global.get $d9g_frame) (i32.const 0x44394650))
     (local.set $p (call $d9g_begin (global.get $GPS_OP_PRESENT) (size-of GpsPresent)))
-    (store.field GpsPresent rt (local.get $p) (global.get $d9g_rt))
+    (store.field GpsPresent rt (local.get $p) (local.get $rt))
     (store.field GpsPresent gamma (local.get $p) (i32.const 0))
-    (store.field GpsPresent x (local.get $p) (i32.const 0))
-    (store.field GpsPresent y (local.get $p) (i32.const 0))
-    (store.field GpsPresent w (local.get $p) (global.get $d9g_rt_w))
-    (store.field GpsPresent h (local.get $p) (global.get $d9g_rt_h))
+    (store.field GpsPresent x (local.get $p) (local.get $sx))
+    (store.field GpsPresent y (local.get $p) (local.get $sy))
+    (store.field GpsPresent w (local.get $p) (local.get $sw))
+    (store.field GpsPresent h (local.get $p) (local.get $sh))
     (store.field GpsPresent surface (local.get $p) (local.get $hwnd))
-    (store.field GpsPresent dst_x (local.get $p) (i32.const 0))
-    (store.field GpsPresent dst_y (local.get $p) (i32.const 0))
+    (store.field GpsPresent dst_x (local.get $p) (local.get $dx))
+    (store.field GpsPresent dst_y (local.get $p) (local.get $dy))
     (store.field GpsPresent stamp (local.get $p) (global.get $d9g_frame))
     (local.set $seq (call $d9g_end (local.get $p)))
     (global.set $d9g_pseq0 (global.get $d9g_pseq1))
@@ -5074,7 +5195,13 @@
     (call $d9g_drop_targets))
 
   ;; CLI capture: land the executor's picture in the back buffer DIB (the
-  ;; ring presented it; the DIB is only the CPU's copy) and present that.
+  ;; ring presented it; the DIB is only the CPU's copy) and present that --
+  ;; unless the last Present was placed (moved, cropped or stretched). Then
+  ;; the back buffer is not the picture: re-presenting it whole at 0,0 laid
+  ;; the raw buffer over the window, and a capture of the DIB showed it too
+  ;; (Metrojd's room in the top-left 448x448 of a 640x480 frame). The
+  ;; window keeps the ring's placed frame; the host captures the screen
+  ;; (d3d9_gps_present_placed).
   ;; Skipped (stat 68 + k): 0 executor not coherent, 1 no target entry.
   (func (export "d3d9_gps_sync_front")
     ;; A synchronous host capture cannot return success with stale pixels.
@@ -5094,7 +5221,14 @@
     (global.set $d9g_cpu_bits (load.field DxObject misc1 (local.get $rt)))
     (global.set $d9g_cpu_pitch (load.field DxObject pitch (local.get $rt)))
     (global.set $d9g_cpu (i32.const 1))
-    (call $dx_present (local.get $rt)))
+    (if (i32.load offset=2956 (call $d9g_m))
+      (then (call $d9g_stat (i32.const 70) (i32.const 1)))
+      (else (call $dx_present (local.get $rt)))))
+  ;; 1 when the last ring Present showed something other than the whole back
+  ;; buffer at the window's client origin (see $d9g_present).
+  (func (export "d3d9_gps_present_placed") (result i32)
+    (if (i32.eqz (global.get $d9g_mem)) (then (return (i32.const 0))))
+    (i32.load offset=2956 (global.get $d9g_mem)))
 
   ;; ---- d9rt: render targets and surfaces begin --------------------------------
   ;; Colour surfaces (0xd3d90006 records: CreateRenderTarget, offscreen plain

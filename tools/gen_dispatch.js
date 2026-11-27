@@ -90,6 +90,16 @@ const namedApiIds = [
   ['IDirect3DCubeTexture8_QueryInterface', 'API_ID_IDirect3DCubeTexture8_BASE'],
   ['IDirect3DTexture8_QueryInterface', 'API_ID_IDirect3DTexture8_BASE'],
   ['IDirect3DSurface8_QueryInterface', 'API_ID_IDirect3DSurface8_BASE'],
+  ['WebBrowserOleObject_QueryInterface', 'API_ID_WebBrowserOleObject_BASE'],
+  ['WebBrowserPersistStreamInit_QueryInterface', 'API_ID_WebBrowserPersistStreamInit_BASE'],
+  ['WebBrowserOleControl_QueryInterface', 'API_ID_WebBrowserOleControl_BASE'],
+  ['IWebBrowser2_QueryInterface', 'API_ID_IWebBrowser2_BASE'],
+  ['IDirectMusicPerformance8_QueryInterface', 'API_ID_IDirectMusicPerformance8_BASE'],
+  ['IDirectMusicLoader8_QueryInterface', 'API_ID_IDirectMusicLoader8_BASE'],
+  ['IDirectMusicSegment8_QueryInterface', 'API_ID_IDirectMusicSegment8_BASE'],
+  ['IDirectMusicAudioPath8_QueryInterface', 'API_ID_IDirectMusicAudioPath8_BASE'],
+  ['IDirectMusicSegmentState8_QueryInterface', 'API_ID_IDirectMusicSegmentState8_BASE'],
+  ['IDirectMusicPathBuffer8_QueryInterface', 'API_ID_IDirectMusicPathBuffer8_BASE'],
 ];
 
 out.push('  ;; Named API ids consumed by hand-written dispatch fast paths.');

@@ -877,16 +877,51 @@
   ;; 97: GetCursorPos
   (func $handle_GetCursorPos (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $pos i32)
-    (local $x i32)
-    (local $y i32)
-    (local.set $pos (call $host_get_mouse_position))
-    (local.set $x (i32.extend16_s (local.get $pos)))
-    (local.set $y (i32.shr_s (local.get $pos) (i32.const 16)))
-    (call $gs32 (local.get $arg0) (local.get $x))
-    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (local.get $y))
+    (local.set $pos (call $cursor_screen_pos))
+    (call $gs32 (local.get $arg0) (i32.extend16_s (local.get $pos)))
+    (call $gs32 (i32.add (local.get $arg0) (i32.const 4)) (i32.shr_s (local.get $pos) (i32.const 16)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) (return)
   )
+
+  ;; The cursor's screen position as USER reports it, packed (y << 16) | x:
+  ;; GetCursorPos and the TrackMouseEvent leave/hover checks read the same
+  ;; clamped point.
+  (func $cursor_screen_pos (result i32)
+    (local $pos i32)
+    (local $x i32)
+    (local $y i32)
+    (local $lim i32)
+    (local.set $pos (call $host_get_mouse_position))
+    (local.set $x (i32.extend16_s (local.get $pos)))
+    (local.set $y (i32.shr_s (local.get $pos) (i32.const 16)))
+    ;; The Windows cursor never leaves the screen (SM_CXSCREEN x SM_CYSCREEN,
+    ;; the DirectDraw mode while one is set) or an active ClipCursor
+    ;; rectangle, and games index framebuffers with it unchecked. A browser
+    ;; pointer can: Red Alert dragged a selection box past the picture, drew a
+    ;; vertical line of length -3 and its pixel loop (0x5a3033) ran down 1.25M
+    ;; rows into the shared arena (berrry.wine crash report 2026-11-24).
+    (local.set $lim (call $screen_metric_w))
+    (if (i32.gt_s (local.get $lim) (i32.const 0)) (then
+      (if (i32.ge_s (local.get $x) (local.get $lim))
+        (then (local.set $x (i32.sub (local.get $lim) (i32.const 1)))))
+      (if (i32.lt_s (local.get $x) (i32.const 0)) (then (local.set $x (i32.const 0))))))
+    (local.set $lim (call $screen_metric_h))
+    (if (i32.gt_s (local.get $lim) (i32.const 0)) (then
+      (if (i32.ge_s (local.get $y) (local.get $lim))
+        (then (local.set $y (i32.sub (local.get $lim) (i32.const 1)))))
+      (if (i32.lt_s (local.get $y) (i32.const 0)) (then (local.set $y (i32.const 0))))))
+    (if (global.get $clip_cursor_active) (then
+      (if (i32.lt_s (local.get $x) (global.get $clip_cursor_l))
+        (then (local.set $x (global.get $clip_cursor_l))))
+      (if (i32.ge_s (local.get $x) (global.get $clip_cursor_r))
+        (then (local.set $x (i32.sub (global.get $clip_cursor_r) (i32.const 1)))))
+      (if (i32.lt_s (local.get $y) (global.get $clip_cursor_t))
+        (then (local.set $y (global.get $clip_cursor_t))))
+      (if (i32.ge_s (local.get $y) (global.get $clip_cursor_b))
+        (then (local.set $y (i32.sub (global.get $clip_cursor_b) (i32.const 1)))))))
+    (i32.or (i32.and (local.get $x) (i32.const 0xFFFF))
+            (i32.shl (local.get $y) (i32.const 16))))
 
   ;; 98: GetLastActivePopup(hWnd) — 1 arg stdcall. USER remembers the last
   ;; active direct owned popup; child/owned windows and empty groups return hWnd.

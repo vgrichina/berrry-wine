@@ -253,7 +253,7 @@
   ;; map is the middle of $D3DIM_AUX. Nothing hand-places bytes in here and no
   ;; offset into it is ever written down — that is the entire point. Growing it
   ;; is a one-line edit and the compiler says exactly how many bytes short it is.
-  (region.declare $WATX_STRING_POOL (size 0x00001B00) (align 0x00000010)
+  (region.declare $WATX_STRING_POOL (size 0x00002400) (align 0x00000010)
     (owner "01-header.wat:$WATX_STRING_POOL"))
   (region.declare $DI_DIK_VK_TABLE (size 0x00000100) (align 0x00000100)
     (owner "09a8-handlers-directx.wat:$DI_DIK_VK_TABLE"))
@@ -286,7 +286,8 @@
   ;; one chunk, which is a broken emulator, not a broken declaration.
   (region.declare-derived $GUEST_HEAP_BASE (base (g2w 0x04100000)) (size 0x003EE000) (align 0x00001000)
     (owner "01-header.wat:$GUEST_HEAP_BASE"))
-  (region.declare $HANDLER_PAIR_HIST_COUNTS (size 0x00100000) (align 0x00001000)
+  ;; 515 handlers require 515 * 515 * 4 bytes, rounded up to a page.
+  (region.declare $HANDLER_PAIR_HIST_COUNTS (size 0x00104000) (align 0x00001000)
     (owner "04-cache.wat:$handler_hist_record"))
   ;; Split like $THREAD_CACHE_BASE below, and for the same reason: the main
   ;; thread compiles nearly every page an app ever runs, and a worker compiles
@@ -645,7 +646,7 @@
     (owner "09a0-handlers-base.wat:$mapped_view_register"))
   (region.declare $VIRTUAL_RESERVE_TABLE (size 0x00010000) (align 0x00000010)
     (stride 8 (count $MAX_VIRTUAL_RESERVES))
-    (owner "10-helpers.wat:$virtual_reserve_record"))
+    (owner "10-helpers.wat:$virtual_reserve_record_locked"))
   (region.declare $VIRTUAL_HOLE_TABLE (size 0x00008000) (align 0x00000010)
     (stride 8 (count $MAX_VIRTUAL_HOLES))
     (owner "10-helpers.wat:$virtual_hole_add"))
@@ -1180,3 +1181,10 @@
   ;; Exact image metadata: u16 SE[8], u32 valid at +16, 12 reserved bytes.
   (region.declare $FPU_IMAGE_META (size 512) (align 64)
     (stride 32 (count $REGFILE_THREADS)) (owner "01-header.wat:$FPU_IMAGE_META"))
+
+  ;; TrackMouseEvent: one tracking record per guest thread (tid 0..16), as
+  ;; USER keeps one per queue. Shared memory so a destroy on any instance can
+  ;; end tracking of the dying window; appended to preserve old bases.
+  (region.declare $TME_THREAD_STATE (size 0x440) (align 0x10)
+    (stride 0x40 (count 17))
+    (owner "09a5-handlers-window.wat:$tme_addr"))

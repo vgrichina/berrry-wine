@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "b8c39d87fd89472fde90c499ca69b2d41f672b3d42bdd35424b8f1640a13161c",
+      "sha256": "186cff6e19750a796324846127a06f6fa783ad39d96e288d4b9ac15c30e645d7",
+      "reason": "Review 20261125 --uop-sse (opt-in, off by default): the uop tier gains SSE ops 108-110 that call the 06c SSE handler with $steps at 0 (its dispatch-next returns), and the host plumbs set_uop_sse like set_aggressive_stack. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "caf31452a7c222a7c99e0913331f71642d940d0d26b75b7c0ab824d1c3aaee2f",
+      "sha256": "572eb8ce1ced16af8e819c15aefad110a908ee60403661660233da0e50ab9039",
+      "reason": "Review 20261125 --uop-sse (opt-in, off by default): the uop tier gains SSE ops 108-110 that call the 06c SSE handler with $steps at 0 (its dispatch-next returns), and the host plumbs set_uop_sse like set_aggressive_stack. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending. Also inherits set_sse_fast (06c --sse-fast dedicated SSE2 register handlers): a decode-time choice per instance, same lifetime as the other setters."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "542f68e23467077e66b863fcc805d4807e5ae738ee0019cdfb69a65efee0bdec",
+      "sha256": "b8958487f09d76a28f1e44200a0969696c470be44d702c10c2bb1cad9bf0b85a",
+      "reason": "Review 20261125 --uop-sse (opt-in, off by default): the uop tier gains SSE ops 108-110 that call the 06c SSE handler with $steps at 0 (its dispatch-next returns), and the host plumbs set_uop_sse like set_aggressive_stack. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending. Merge review 20261127 follows MMX physical alias repair: native x8791..107 still leave through existing central service, SSE108..110 retain dedicated calls, MMX completion uses111. Default MMX lowering remains disabled. Existing EIP targets and callback/ownership shape unchanged; general ownership pending."
+    }
+  ]
+}

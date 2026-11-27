@@ -106,6 +106,27 @@ which is a DOS program. For reference:
 - Individual volumes: `https://archive.org/details/000777-WindowsEntertainmentPack1` (1-4)
 - Best of WEP floppy: `https://archive.org/details/wep_best-of`
 
+### Best of WEP floppy, in `candidates/bowep/` (local only)
+
+Archive.org item `wep_best-of`, file `wep_best-of.img` (1,474,560 bytes,
+SHA-256 `e9d34d3aa61364167d7bb7f85caa8c26a7804b7ac71f57b1148401f38cfe91fe`,
+SHA-1 `50fc84b9d58ad9c2e01bb4ad666e3dbd8deb58c0`), a 1.44 MB FAT image of the
+1994 "Best of Microsoft Entertainment Pack" setup disk. Unlike the WEP 1-4
+floppies its files are plain SZDD (`COMPRESS.EXE`), not `WEPBINXZ`:
+
+```bash
+7z x -ocandidates/bowep/floppy candidates/bowep/wep_best-of.img
+# each *.EX_/*.DL_/*.HL_/*.WA_/... through tools/szdd.js, '_' -> the real
+# extension (EXE, DLL, HLP, WAV, MID, DAT, VBX, MST, INF), into candidates/bowep/game/
+node tools/szdd.js candidates/bowep/floppy/TETRIS.EX_ candidates/bowep/game/TETRIS.EXE
+```
+
+Executables on it: BLAKJAK, CHIPS, FREECELL, GOLF, JEZZBALL, PIPE, RODENT, SKI,
+TETRAVEX, TETRIS, TP, TRIPEAKS, TUTSTOMB (plus SETUP and `_MSTEST`). `TETRIS.EXE` (SHA-256 `7f240d18e2c52cea58c14cfc83fb4fdc176cfb77c3827e671c705d0146848e2b`)
+and `ABOUTTET.DLL` (`8342f654f023e587bc00c13037142b3ddf817327f33e15f4a772f0be53aab756`)
+are byte-identical to `wep16/WEP1`, so `wep16_tetris` covers it (GitHub
+issue #32, docs/re-notes/wep16-tetris.md).
+
 Two runtimes have to be staged beside them and are not part of the pack —
 `VBRUN100.DLL` for the five Visual Basic 1 games and `WIN87EM.DLL` for the four
 that link the 80x87 emulator. Both are recorded in `dlls/SOURCES.md`.
@@ -461,6 +482,20 @@ ship; Moorhuhn 2, Winter-Edition, 3, Tennis, the puzzles, the Best Of extras and
 Gallinelle remain local-only candidates, and the files are still ignored by
 git.
 
+## Command & Conquer: Red Alert demo (`win98-games-a-d/CnC-Red Alert Demo-SW/`)
+
+From the Win98 Games A-D archive above. Westwood's 1997 Win95 demo, v1.19:
+the CD's `INSTALL\` directory is the game and runs without an installer.
+`RA95.EXE` SHA-256
+`52d282523555cba978a1d90ec739abb5035fdb32e5bc1f63e8225914599f2580`. The app
+`red_alert_95_demo` mounts the files its `.wine-assembly-browser.json` names.
+
+**Terms and the publishing decision.** Westwood gave the demo away free on
+magazine CDs and online; its `README.WRI` carries only a copyright line and
+states no redistribution terms either way. On 2026-11-24 the project owner
+decided to publish it on the desktop on that footing, unmodified. The files
+are still ignored by git.
+
 ## Hexen II demo (`candidates/hexen-2-demo/`)
 
 Source: archive.org `win-98-games-e-j.-7z`, member
@@ -487,6 +522,160 @@ installer and `sources/` stay local, and the files are still ignored by git.
 mission pack) and [Steam](https://store.steampowered.com/app/9060/); the
 compat page
 (`tools/site-compat.json`, slug `hexen-ii`) links both.
+
+## Spelunky Classic v1.1 (`candidates/spelunky-classic/`)
+
+Source: the official page `https://spelunkyworld.com/original.html` links
+`http://www.derekyu.com/games/spelunky_1_1.zip`, Derek Yu's own host, fetched
+2026-11-24 as `spelunky_1_1.zip` (10,012,564 bytes, SHA-256
+`572f0a1976e76ebbd295daae651b8b6f00c6b9cf960d3e1c2cc57128d6437727`, SHA-1
+`a37e92bfbebff5a55531f42f023d28693325f1ec`; `spelunky_1_1.zip.sha256` sits
+beside it). `extracted/` is its unzip (77 files, 13,837,405 bytes):
+`Spelunky.exe` (Game Maker 8 runner with the game appended, SHA-256
+`56b913745d3507104ed851b46d1da1670c8474bc8a85dd576c1f0d1fbb907aa5`), its audio
+extension `supersound.dll` (SHA-256
+`6b58ed998f71dd4b705c357f453607b93b00c157bcb27a826e0c2571655d2007`),
+`config.exe`, the `*.cfg` files, `sound/`, `levels/`, `readme.txt` and the
+licence `COPYING.txt`. The licence is also kept as fetched from
+`https://www.spelunkyworld.com/files/COPYING.txt` (the same v1.1b text with LF
+line endings). App id `spelunky_classic`, local-only
+(`LOCAL_CANDIDATE_APPS`); the registry mounts the tree through
+`extracted/.wine-assembly-browser.json`. Details in
+`docs/re-notes/spelunky-classic.md`.
+
+**Terms.** The bundled Spelunky User License v1.1b (Copyright (c) 2008, 2009
+Derek Yu and Mossmouth, LLC, dated 2009-12-25) lets anyone "modify and
+redistribute the Game and its Source Code" on four conditions: the licence and
+copyright notices stay intact; Covered Works are not sold; an appropriate
+copyright notice is displayed "somewhere in the beginning" of the work and in
+accompanying documentation; and a modified version must not be presented as
+unmodified or official. Free public hosting of the unmodified tree fits those
+terms if `COPYING.txt` ships with it, nothing about it is paid for, and the
+app page shows the Derek Yu / Mossmouth copyright line. Publishing remains the project owner's decision; until
+then the files are ignored by git and the app stays local-only.
+
+## Spelunky Classic HD 1.1.7 (`candidates/spelunky-classic-hd/`)
+
+Source: yancharkin's release page `https://yancharkin.itch.io/spelunky-classic-hd`,
+which points at the GitHub release asset
+`https://github.com/yancharkin/SpelunkyClassicHD/releases/download/1.1.7/spelunky_classic_hd-windows.zip`,
+fetched 2026-11-24 and kept as `spelunky_classic_hd-1.1.7-windows.zip`
+(63,544,008 bytes, SHA-256
+`bcf3bfe7fe236e1b59982d1b4ef7dfbfe6a0ccb134503d7b6c7191eb589c2ed0`;
+`SHA256SUMS` sits beside it). 1.1.7 is the last 32-bit Windows build; the
+1.2.2 x86-64 zip beside it is not used. `extracted-1.1.7/` is its unzip (81
+files): `SpelunkyClassicHD.exe` (GameMaker:Studio 1.4 runner, SHA-256
+`7b96f134a88702bb876518190ec7fa512076ac0443043381bcc1ec3677f3752e`),
+`data.win` (the game, SHA-256
+`00dc8b67a6654500bdd963706aa3c7181452588a28f5da62207ee9bd349f8773`),
+`options.ini`, `spelunky.ini`, `locale/`, and the `D3DX9_43.dll` the zip
+itself ships (byte-identical to Microsoft's June 2010 redist copy below).
+One file is added: `D3DCompiler_43.dll` from that redist. The game's licence
+is not in the zip; `LICENSE.repo.txt` is the repository's `LICENSE` as
+fetched. App id `spelunky_classic_hd`, local-only (`LOCAL_CANDIDATE_APPS`),
+mounted through `extracted-1.1.7/.wine-assembly-browser.json`. Details in
+`docs/re-notes/spelunky-classic-hd.md`.
+
+**Terms.** The repository is under the same Spelunky User License v1.1b as
+Spelunky Classic (Copyright (c) 2008, 2009 Derek Yu and Mossmouth, LLC), and
+this remake is a Covered Work under it: non-commercial redistribution is
+allowed if the licence and copyright notices stay intact, nothing is sold, a
+copyright notice is shown at the start of the work and in its documentation
+(the title screen shows "V1.1 COPYRIGHT 2008, 2009 MOSSMOUTH, LLC"), and it is presented
+as a mod, not the official game. Free public hosting fits those terms only
+with `LICENSE.repo.txt` shipped in the mounted tree (the zip omits it), the
+app page naming it as yancharkin's unofficial remake, and the Derek Yu /
+Mossmouth copyright line shown. The bundled fonts under `locale/fonts/` carry
+their own `license.txt` files, which ship unchanged with them. The two
+Microsoft DLLs are covered by the redist terms in the next section.
+Publishing remains the project owner's decision; until then the files are
+ignored by git and the app stays local-only.
+
+## DirectX End-User Runtimes, June 2010 (`candidates/directx-jun2010/`)
+
+Source: Microsoft's
+`https://download.microsoft.com/download/8/4/A/84A35BF1-DAFE-4AE8-82AF-AD2AE20B6B14/directx_Jun2010_redist.exe`,
+fetched 2026-11-24 (100,275,120 bytes, SHA-256
+`053f76dcbb28802e23341b6a787e3b0791c0fa5c8d4d011b1044172dbf89c73b`). That is
+the file as Microsoft serves it now, re-signed, and matches the hashes
+Chocolatey, npackd and Winetricks pin; the SHA-1 `f8f1217f…` quoted in 2010
+belongs to the original signing. `redist/` is `7z x` of it; `x86/` is
+`cabextract` of `Jun2010_d3dx9_43_x86.cab` and
+`Jun2010_D3DCompiler_43_x86.cab`: `d3dx9_43.dll` (SHA-256
+`0b28546be22c71834501f7d7185ede5d79742457331c7ee09efc14490dd64f5f`) and
+`D3DCompiler_43.dll` (SHA-256
+`2f23182ec6f4889397ac4bf03d62536136c5bdba825c7d2c4ef08c827f3a8a1c`).
+These go beside the application that needs them through its manifest, never
+into the shared `dlls/` directory.
+
+**Terms.** The DirectX SDK redistributable licence lets a developer
+distribute these files only as part of, and with, their own application, not
+on their own. For public hosting that means the DLLs may be served only
+inside a published app's own tree (as Spelunky Classic HD's zip already does
+with `D3DX9_43.dll`), never as a standalone download or a shared runtime
+directory, and the redist installer itself stays local. The files are
+ignored by git.
+
+## Rude Awakening, AGS 2.70 (`candidates/ags-rude-awakening/`)
+
+Source: `https://archive.org/details/rude-awakening` (collection
+`adventuregamestudio`; creator Randy Davis, dated 2006-01-06, linking AGS
+database game 669), fetched 2026-11-24 as `download/rude-awakening.zip`
+(661,196 bytes, SHA-1 `26290041cbf3de19245cebb9b0ff6bfe7d4bd4dc` as the item
+lists it, SHA-256
+`c3415ab82a4dd32d94fa9fc453304f88e167fa5513f066c2df1734c9e2b0b889`).
+`extracted/` is its unzip: `RudeAwakening.exe` (8,038,257 bytes, UPX-packed
+AGS 2.70.864 runtime with the game appended, SHA-256
+`5c5012f3ddf3aec6fdc7a955a046df383f9ffa0671d61651dee2b03e384a470f`),
+`acsetup.cfg` (SHA-256
+`77da719284262797dc1e9c5d0ed52468880fbadaf1c1155f965ca403480f002b`),
+`winsetup.exe` (SHA-256
+`0676fd06ab9f4648bd8e250490f01a096e882bc0fa12a44a020ea07abf56ce57`) and
+`Read Me.txt` (SHA-256
+`c551e2bc649b603416d10725e484569bddbcb85a1b0987ed4d40ed17f0086f2a`);
+`extracted/.wine-assembly-browser.json` is generated by
+`tools/gen-tree-manifest.js`. App id `rude_awakening_ags`, local-only.
+Notes: `docs/re-notes/rude-awakening-ags.md`.
+
+**Terms.** None stated: the readme names the author and AGS 2.7 and points
+to his site for "more of my games"; the item carries no licence field. It is a
+free AGS community release. Treat it as local benchmarking material only
+until a licence is found.
+
+## SimCity 2001, VB6 p-code (`candidates/vb-simcity2001/`)
+
+Source: `https://archive.org/details/sim2001` (collection `classicpcgames`,
+item licence field `freeware`, year 2000, no author named; "Made in Visual
+Basic 6.0"), fetched 2026-11-24 as `download/sim2001.zip` (1,475,580 bytes,
+SHA-1 `2f128b0fb213094769da0db044db6f2885303471` as the item lists it,
+SHA-256 `56266e32238b015ee3d18e6ff9041b525ab1c06dfd21b59becd9d536799f67a8`).
+`extracted/` is its unzip (VB6 Package & Deployment setup): `setup.exe`
+(`978123c86b1cbc981770fbd8bdfc58ef4030f8d9b3adf06b71b928cc0394c073`),
+`SETUP.LST` (`d627a2f8bac14014315c5d4e262871a309ec8dd9c86b0b78705ef6ea316714e4`),
+`simcity2001.CAB` (`07fa2a83e7224cae1770077e6068f622bdd3d4f0d4e825340c543d11b63b22fc`)
+and `readme.txt` (`3c73c2e3c1900e2b2deadc1a6d7439137c89f142cb519169eed3c9b7f5eb1940`).
+`installed/` is the CAB
+expanded with 7-Zip on the host instead of running the installer:
+`simcity2001.exe` (180,224 bytes, SHA-256
+`37267d0d8dab7b889620914ee5ffd4e08047e031c2556c16e4a2a618fc201fe3`; imports
+`ProcCallEngine`/`MethCallEngine` and a single `__vba*` function, so it is
+p-code) and the runtime the CAB ships, `MSVBVM60.DLL` 6.00.8268 (SHA-256
+`e043c59c66ba2dc549bf5ac104c70279ec05931d531de2971458eab91871f7b6`), which
+the app entry loads, plus these unused files (SHA-256):
+`ASYCFILT.DLL` `de83c9d9203050b40c098e4143ef8f577aa90016c7a64d4f2931b57a4c43e566`,
+`COMCAT.DLL` `96d04cdfaf4f4d7b8722b139a15074975d4c244302f78034b7be65df1a92fd03`,
+`OLEAUT32.DLL` `0f6b0455d3bf568729781cea10bfa67d3417536b35609a0ce7b4b9d2e4e5fcbf`,
+`OLEPRO32.DLL` `789c3c45eda1749bd939f4a96616e1e9ef1b7dcc62a2889f65088954c64d0938`,
+`STDOLE2.TLB` `6ea525bface5467c1045c3708f339a4b92a3a273f70656e061c7f7322c56d667`,
+`VB6STKIT.DLL` `85546690351f6c2f5e37dd2026ec4b9c7d0440bdd7e87933c624ed71fd0bc33f`,
+`SETUP1.EXE` `6a15b76e1526e1fd6ebaecacc59c3e954d0feb0b566c81538ea6dad2edcffe16`,
+`ST6UNST.EXE` `7e60c894a8cead6880fd3ed040504d02304a0b961304e40741340e31f5fa973d`. App id `simcity_2001_vb`, local-only. Notes:
+`docs/re-notes/simcity-2001-vb.md`.
+
+**Terms.** Only archive.org's `freeware` label; the package names no author
+and has no licence text. The Microsoft runtime files carry the VB6
+redistribution terms (redistributable only with an application). Local
+benchmarking material; not for public hosting.
 
 ## Age of Empires trial (`shareware/aoe/aoe_ex/`)
 
@@ -721,3 +910,88 @@ The same CAB holds `mingliu.ttc` (8,637,684 bytes, SHA-256
 `a3345ee1dd9335555ea3a32311cba5a1c1912a7ca378623f2cb1e82cf2349d94`), which is
 what `node tools/fetch-fonts.js --mingliu <path>` takes; the font itself is
 never committed or copied here.
+
+## Metrojd, Game Maker 5 and 7 (`candidates/metrojd/`, local only)
+
+Source: `https://archive.org/details/Metrojd` (Daniel Remar's platformer;
+the readme names him for design, code and graphics), fetched
+2026-11-24 as `download/Metrojd/Metrojd.zip` (4,652,773 bytes, SHA-1
+`9b542dbcd1e3ed5f353732e22f523ab5ad5f17fe` as the item lists it, SHA-256
+`1705b62c903ac6f037569096142a8f8806b2e53e85d7bd497de36088eed3b829`). Its
+unzip: `metrojd_gm7.exe` (3,693,624 bytes, SHA-256
+`3f15814a8e3f0b800393516c117b97021baa454367f228c19fdafd7e02ebef56`; the
+Game Maker 7 runner with the game appended, the one the app entry loads),
+`metrojd.exe` (2,869,091 bytes, SHA-256
+`2256ac5195b2811e6b6a43f15bf623b02f75d9974a05f1d56096b0d4095d40ad`; the
+Game Maker 5 build, not registered) and `metrojd.txt` (591 bytes, SHA-256
+`942e85820dbb9279b8b9af3457502696801f1a407daebaa4844d1b8d79b7de4e`). App id
+`metrojd_gm7`, local-only. Notes:
+`docs/re-notes/game-maker-benchmark-attempts.md`.
+
+**Terms.** Neither the archive.org item nor the readme states a licence.
+Not committed and not published.
+
+## Delphi corpus for the fold-bench arm D check (2026-11-25, local only)
+
+Fetched 2026-11-25 as test inputs for the Delphi System-helper fast path
+(branch `fold-bench`, arm D). Each lives in its own
+`candidates/<name>/download/` (as fetched) with `extracted/` beside it; none
+is committed or published, and nothing was run natively. Compiler/RTL
+buckets are `tools/delphi-detect.js` guesses. Run evidence:
+`scratch/runs/20261125-delphi-corpus/`.
+
+**Inno Setup installers** (Jordan Russell / Martijn Laan; Inno Setup
+License: free of charge, redistribution of the unmodified installer
+permitted). Each loader extracts and spawns its Delphi `setup.tmp` wizard.
+
+| Directory | URL | Bytes | SHA-256 | RTL bucket |
+|---|---|---|---|---|
+| `delphi-inno-isetup-1.3.26/` | `https://files.jrsoftware.org/is/1.3/isetup-1.3.26.exe` | 765,774 | `581fc5d936d2c88717091ce34018c7f8f5a14dc8a1be71d1df658ae8f1bbe46a` | Delphi 2-4 |
+| `delphi-inno-isetup-2.0.19/` | `https://files.jrsoftware.org/is/2/isetup-2.0.19.exe` | 1,125,846 | `3ecf561c3100694df4ffe48a5fd2a28c72cb40f4b251bdb8e591ee80d931765a` | Delphi 2-4 |
+| `delphi-inno-isetup-3.0.7/` | `https://files.jrsoftware.org/is/3/isetup-3.0.7.exe` | 943,005 | `a572866b311a9646b980c1965f5660b9eb13feb57cd4f99a907876786c632695` | Delphi 2-4 |
+| `delphi-inno-isetup-4.2.7/` | `https://files.jrsoftware.org/is/4/isetup-4.2.7.exe` | 1,011,323 | `43f5154b1300c7547f482762c604ae286b345e3974ec294232f609d2f9139d7e` | Delphi 2-4 |
+| `delphi-inno-isetup-5.1.14/` | `https://files.jrsoftware.org/is/5/isetup-5.1.14.exe` | 1,411,792 | `0241c4fa5fae606c3db00981764224f622dc8e1d7c90cee05be68294839b0615` | Delphi 2-4 |
+| `delphi-inno-innosetup-5.6.1/` | `https://files.jrsoftware.org/is/5/innosetup-5.6.1.exe` | 1,963,136 | `96fd6a5eaab473c61a19affff89618764b940ee3f15837c2944a5595aed5fde6` | Delphi 2-4 |
+| `delphi-inno-isetup-5.3.11-unicode/` | `https://files.jrsoftware.org/is/5/isetup-5.3.11-unicode.exe` | 1,990,288 | `c8180d6c4f87ff6c66bbf299bebfd69c808b3e67a793e38d7ba05c5cc4057069` | Delphi 2009+ Unicode, FastMM |
+| `delphi-inno-innosetup-6.7.4/` | `https://github.com/jrsoftware/issrc/releases/download/is-6_7_4/innosetup-6.7.4.exe` | 10,604,576 | `a549929319f9120716677c685535ca4671e4b937b5fdc87e2585f32d8eb30e8c` | Delphi 2009+ Unicode (Embarcadero) |
+
+**Game Maker games.** Daniel Remar's freeware from
+`https://www.remargames.se/games.php` ("Free Windows games I've made with
+Game Maker"; each readme: "This game is entirely free. Bundling this game
+with adware ... or selling it for money is illegal." -- no redistribution
+grant). Each zip has a GM 5.3A and a GM7 exe; all eight exes link the
+Delphi 6-7 System unit and match arm D 5/5.
+
+| Directory | URL | Zip bytes | Zip SHA-256 | Exes (SHA-256) |
+|---|---|---|---|---|
+| `gm-remar-herocore/` | `https://www.remargames.se/games/herocore.zip` | 7,141,852 | `ae5fa0a1ddf9550bdb824f916e5bd4824e3b79d681d731c4b1c2bd7d232eac5d` | `herocore gm7.exe` `9146fc64eb6704cf99ed5eb1728312a9571a6c472a300415c9261d32fcbd62ec`, `herocore gm5.exe` `be411b8b64cf821470e17e1dc913410b14f1eaab46187c5ab57c8da03d09a8ce` |
+| `gm-remar-castle/` | `https://www.remargames.se/games/castle.zip` | 5,997,973 | `dd64cdfc815f4b4bb81407dd0f92869255513ac68ea2589751ed18ccdd83f26e` | `castle gm7.exe` `d518661cd1b9a0ee39c13f1b07bd43cf552f773cd938fa2c72941351d7ca992b`, `castle gm5.exe` `1e693f46501c72d38db098c548dfed3852031b0a9b3e9b9531266ce6eaa822a7` |
+| `gm-remar-retrobattle/` | `https://www.remargames.se/games/retrobattle.zip` | 6,528,776 | `95f16a1e7f5830c4f69e8f8781a025e4b5e44e448bbfa4b8a091b7564ec23463` | `retrobattle gm7.exe` `4ff48d1f850ef66959b339ec16628387f2ec65ebf1b337ae30548ed8b870c676`, `retrobattle gm5.exe` `0ef6ae1699366338f9c7f5c92f38898920b779685ef67cbb090132736430a6ec` |
+| `gm-remar-hero/` | `https://www.remargames.se/games/hero.zip` | 5,398,318 | `342b3ff6dcbb5fc7fa8927c54f90dedd3c91f6b150372bf1a8a56346bd020046` | `hero gm7.exe` `a37f9c204fc3f2dbc509f27edc5f10d212611e6d47889685b7a6ef7dc57c3751`, `hero gm5.exe` `4b69f4b3fe878f1f280da2222fdccde3990681f2cba9deefafb38925399c57fd` |
+
+Also: `gm-seiklus/` -- Seiklus 1.7 (clysm, freeware), archive.org item
+`Seiklus`, `https://archive.org/download/Seiklus/Seiklus17.zip` (2,705,517
+bytes, SHA-256 `1f110afea558fdf2dce9673d11fbd9cedf6693949b50e8d652b4697d77259b0a`;
+`seiklus/seiklus.exe` 4,042,567 bytes, SHA-256
+`8f4acaed7807c1881f7d2f6b4f5a670623c9f8856ee8d0c25387bc3a4f8ce7b9`); the item
+states no licence. `gm-robo-logan-quick-draw/` -- Robo-Logan Quick Draw
+1.0.1.13, archive.org item `robo-logan_quick-draw`, licence CC0 1.0 (item
+metadata), `https://archive.org/download/robo-logan_quick-draw/robo-logan_quick-draw.exe`
+(2,495,385 bytes, SHA-256
+`d31426f0a7b1a882608f0b42865ab0bede5bc80a495af0fc7b9d7e3f2f49b088`).
+
+**Tools.** `delphi-heidisql-10.0-portable/` -- HeidiSQL 10.0 32-bit
+portable (GPL-2.0), `https://github.com/HeidiSQL/HeidiSQL/releases/download/10.0/HeidiSQL_10.0_32_Portable.zip`
+(10,524,311 bytes, SHA-256
+`95e161114da3e03783329783c0d48ec581fc51d97e5b80c4708425b7a8988cd8`).
+`heidisql.exe` is UPX-packed (7,791,671 bytes, SHA-256
+`bad7f78a467478161978f7cb5ef030794462566d750bbb3e786aa8efd4ee7e4b`);
+`unpacked/heidisql.exe` is `upx -d` of a copy (14,520,375 bytes, SHA-256
+`15c9d13307705502f7d6c63118002460d4beea50d3fd6d02f7f2d300e7a3b6f4`), Delphi
+2009+ Unicode RTL. `fpc-doublecmd-1.2.11/` -- Double Commander 1.2.11 i386
+(GPL-2.0; Lazarus / FPC 3.2.2, the negative control),
+`https://github.com/doublecmd/doublecmd/releases/download/v1.2.11/doublecmd-1.2.11.i386-win32.zip`
+(15,645,809 bytes, SHA-256
+`e098095364fb1aea95bfd713af1373ab002c667478b3df24d397a49a10bb83a1`;
+`doublecmd/doublecmd.exe` SHA-256
+`609d9609fd6662b4f702c622bb2576bd67154915d1bb1ea0d3433ef30b01aa03`).

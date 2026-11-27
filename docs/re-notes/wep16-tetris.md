@@ -80,3 +80,33 @@ Gameplay A/B on `--tick-ms-per-batch=20` (About OK at batch 40, F2 at 55):
   over 1.6 s and 5 s windows.
 
 Evidence: `scratch/runs/20261010-wep16_tetris-drop-ab`.
+
+## Line clear crashed in GDI.42 InvertRgn (fixed 2026-11-24, issue #32)
+
+GitHub issue #32 reported Best of Windows Entertainment Pack (BOWEP) Tetris
+trapping with `RuntimeError: unreachable` the moment a row completes
+(prev_eip `0x001068cf`). The BOWEP floppy (`archive.org/details/wep_best-of`,
+SZDD-compressed `TETRIS.EX_`) expands to **the same binary** as WEP1's
+`TETRIS.EXE` (SHA-256 `7f240d18…48e2b`), as does `ABOUTTET.DLL`; see
+`test/binaries/SOURCES.md`.
+
+- Cause: Tetris flashes the completed row with `GDI.42 InvertRgn(hDC, hRgn)`
+  (the call at `0x001068d3`, returning to `0x001068d8`). `$win16_gdi` had FrameRgn
+  (41) and CombineRgn (47) but no 42, so the call fell to `$crash_unimplemented`.
+  The last log line before the trap is `[win16] GDI.42 INVERTRGN ret=0x001068d8`.
+- Fix: `$win16_InvertRgn` in `src/09e-win16-api.wat` widens both handles and
+  forwards to the 32-bit `$handle_InvertRgn` (`$gdi_hdc_invert_rgn`, XOR per
+  region band); Pascal epilogue pops 4 argument bytes, AX = BOOL.
+- Test: `test/test-win16-invert-rgn.js` drives ordinal 42 through `$win16_gdi`
+  on a real 16-bit frame (fails before: ordinal unhandled).
+
+Line-clear route (deterministic, `--tick-ms-per-batch=20 --batch-size=20000`):
+About OK at 40, F2 at 55, then 9 hand-placed pieces; the 10th (an L, rotated
+once and moved 4 right) fills columns 8-9 of row 0 at batch 1039. The exact
+`--input=` list is `route-input.txt` in the run folder; it was built from a
+`run.js --control --frozen` + `tools/ctl.js` session log. After the fix Lines
+goes 0 -> 1 and play continues. The BOWEP copy run without `TETRIS.INI` starts
+at level 6 but gets the same piece sequence and clears the same row.
+
+Evidence: `scratch/runs/20261124-issue32-bowep-tetris` (repro-crash.log before;
+after-fix-*.png, bowep-after-fix-1080.png after).

@@ -2979,11 +2979,15 @@
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
         (return (load.field.memarg EditState max_length (call $g2w (local.get $state))))))
 
-    ;; ---------- RichEdit 2.0+ extended range/limit messages ----------
-    ;; RichEdit 1.0 intentionally leaves these unsupported and continues to
-    ;; expose EM_GETSEL/EM_SETSEL/EM_LIMITTEXT, which are shared with EDIT.
+    ;; ---------- RichEdit extended range/limit messages ----------
+    ;; EM_EXGETSEL / EM_EXLIMITTEXT / EM_EXSETSEL are RichEdit 1.0 messages
+    ;; (Riched32's richedit.h), not 2.0 additions: Delphi's TRichEdit drives
+    ;; the RICHEDIT class with them, and TRichEditStrings.Insert raises
+    ;; "RichEdit line insertion error" when EM_EXGETSEL leaves its CHARRANGE
+    ;; untouched (Spelunky Classic's SplashEdit). Plain EDIT has none of them.
     (if (i32.and
-          (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 25))
+          (i32.or (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 24))
+                  (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 25)))
           (i32.eq (local.get $msg) (i32.const 0x0434))) ;; EM_EXGETSEL
       (then
         (if (i32.or (i32.eqz (local.get $state)) (i32.eqz (local.get $lParam)))
@@ -2995,7 +2999,8 @@
         (return (i32.const 0))))
 
     (if (i32.and
-          (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 25))
+          (i32.or (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 24))
+                  (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 25)))
           (i32.eq (local.get $msg) (i32.const 0x0435))) ;; EM_EXLIMITTEXT
       (then
         (if (i32.eqz (local.get $state)) (then (return (i32.const 0))))
@@ -3006,7 +3011,8 @@
         (return (i32.const 0))))
 
     (if (i32.and
-          (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 25))
+          (i32.or (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 24))
+                  (i32.eq (call $ctrl_table_get_class (local.get $hwnd)) (i32.const 25)))
           (i32.eq (local.get $msg) (i32.const 0x0437))) ;; EM_EXSETSEL
       (then
         (if (i32.or (i32.eqz (local.get $state)) (i32.eqz (local.get $lParam)))

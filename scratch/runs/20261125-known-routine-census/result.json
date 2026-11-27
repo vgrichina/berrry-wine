@@ -1,0 +1,19 @@
+{
+  "candidateId": "corpus-known-routine-census",
+  "taskId": null,
+  "agentId": "claude:krf",
+  "startedAt": "2026-11-25T22:20:00Z",
+  "finishedAt": "2026-11-25T22:58:00Z",
+  "outcome": "passed",
+  "route": "research: static signature census over test/binaries + short --no-uop handler-hist windows (heroes2_demo 1000:1800, metrojd_gm7 1500:3000) + attribution of existing hists (spelunky_classic run-b, quake2 uop-coverage q2, simcity_2001_vb interp-bench)",
+  "command": "zsh scripts/extract-all.sh; node scripts/krsig.js scan --sigs=sigs/all.json --root=<main>/test/binaries --out=scan.json --max-mb=24; node test/run.js --app=heroes2_demo --quiet-api --quiet-blocks --batch-size=100000 --stuck-after=0 --no-close --no-build --no-uop --max-batches=1800 --max-seconds=60 --handler-hist --handler-hist-thread=0 --handler-hist-start=1000 --hist-json=runs/heroes2-1000-1800.json --hist-json-blocks=0 --edge-hist; node test/run.js --app=metrojd_gm7 --d3d9-gps=null --quiet-api --quiet-blocks --batch-size=100000 --stuck-after=0 --no-close --no-build --no-uop --max-batches=3000 --max-seconds=60 --handler-hist --handler-hist-thread=0 --handler-hist-start=1500 --hist-json=runs/metrojd-1500-3000.json --hist-json-blocks=0; node scripts/krsig.js weigh ... (see runs/*-weigh.txt headers)",
+  "build": {
+    "commit": "2b5a55f46f5c2658d9884f7b648cec2dc6d48837",
+    "dirtyPatchSha256": null,
+    "wasmSha256": "bc165957cdae76058b8c4f26b5679e4696255ebb92eaf43e087193ac03a057e4"
+  },
+  "environment": { "host": "local (M1 macOS)", "mode": "headless CLI test/run.js, --no-uop", "threads": "cooperative", "node": "v24.21.0" },
+  "summary": "2186 distinct PE images scanned. Full masked-body matches: _allmul 846, _aulldiv 824, _chkstk 788, static memcpy 640, strchr 619, _ftol 549, strlen 486, memset 458, memmove 308; Delphi System _LStrClr 45, _LStrAsg 43, _FinalizeRecord/_FinalizeArray 30, _CopyRecord 29. Share of threaded block entries: Spelunky Classic Delphi System 50.3% (Move over-counted by extent), metrojd 20.6%, Heroes II memmove+memset 0.9% (game code 99%), Quake 2 _ftol+_chkstk 0.8%, SimCity 2001 VB ProcCallEngine 68% (out of scope). Threaded-entry shares exclude uop-tier blocks (lower bounds). scan.json (4.6 MB) not kept; scan-full-matches.json.gz holds per-image full matches.",
+  "verification": "reviewed",
+  "artifacts": ["scan-summary.txt", "scan-full-matches.json.gz", "build.log", "sigs/all.json", "sigs/msvc.json", "sigs/static.json", "sigs/delphi.json", "scripts/krsig.js", "scripts/extract-all.sh", "runs/heroes2.log", "runs/heroes2-1000-1800.json", "runs/heroes2-weigh.txt", "runs/heroes2-weigh.json", "runs/metrojd.log", "runs/metrojd-1500-3000.json", "runs/metrojd-weigh.txt", "runs/metrojd-weigh.json", "runs/q2-weigh.txt", "runs/q2-weigh.json", "runs/spelunky-weigh.txt", "runs/spelunky-weigh.json", "runs/sc2001vb-weigh.txt", "runs/sc2001vb-weigh.json", "runs/uptime-h2.txt"]
+}

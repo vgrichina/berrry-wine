@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/06c-mmx.wat",
+      "name": "$th_sse_rm",
+      "baseSHA256": "e6c1e7075fb5a01ba1118eedaf5fdcc90dff360d962591ea2ff81a70c030d447",
+      "sha256": "8fa6c37501975e6656242deb1cdc144fd02ca7fbae5bfb5a8c2143e9c3d69e93",
+      "reason": "SSE2 subops 53..77 (Spelunky Classic HD runner) read their exact operand width (m32/m64/m128) through the existing gl32/gl64/gl128 helpers after normal decoded segment addressing, then $sse2_exec writes one XMM register, one GPR or the lazy compare flags. The read finishes before any state is committed. No new callback, retained pointer, invocation state, exception boundary, EIP write or target; the existing alignment-fault EIP write is unchanged. Merge review 20261127: follows the MMX-alias review; retains its sub51 mmx_commit after both translated operand reads. SSE2 sub53..77 exact-width reads and existing alignment fault EIP/return remain intact. Combined source adds no callback or retained invocation state; general ownership remains pending."
+    }
+  ]
+}

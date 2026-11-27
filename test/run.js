@@ -1088,7 +1088,8 @@ const ZIP_LAUNCH = (() => {
       fs.mkdirSync(path.dirname(out), { recursive: true });
       fs.writeFileSync(out, zipMount.extractSync(bytes, m.entry));
     }
-    return { exePath: path.join(dir, ...hit.rel.split('\\')), root: plan.root, zipPath, dir };
+    return { exePath: path.join(dir, ...hit.rel.split('\\')), root: plan.root, zipPath, dir,
+      guestPath: path.win32.join(plan.root, hit.rel) };
   }
   throw new Error(`--zip-exe=${ZIP_EXE} not found in ${ZIP_MOUNTS.join(', ')}`);
 })();
@@ -1300,8 +1301,14 @@ const EXE_GUEST_PATH = (() => {
   // D:\Setup.exe, not the host temp copy reported as C:\Setup.exe.
   // A registry app's exeGuestPath is the same thing for an installed tree
   // (lib/apps.js), and the browser honours it too.
+  // A --zip-exe launch is likewise the exe's place in the mounted archive, as
+  // the page's upload/import reports it. Without it the mounted-private-DLL
+  // admission (lib/cli-mounted-private-dll.js) has no directory to look in, and
+  // Unreal Tournament out of a ZIP bound Core/Engine/Window.dll to stubs and
+  // trapped on Core!?appPackage@@YAPBGXZ, the issue #30 trap the page had.
   const requested = getArg('exe-guest-path', null) || (ISO_LAUNCH
     ? path.win32.join(ISO_LAUNCH.guestDir, path.basename(ISO_LAUNCH.exePath))
+    : ZIP_LAUNCH && !getArg('exe', null) ? ZIP_LAUNCH.guestPath
     : (APP_ENTRY && !getArg('exe', null) && APP_ENTRY.exeGuestPath) || null);
   if (!requested) return null;
   const rooted = /^[a-z]:[\\/]/i.test(requested) ? requested : `c:\\${requested}`;
@@ -2961,10 +2968,14 @@ async function main() {
     ctx.vfs.dirs.add('c:\\windows');
     ctx.vfs.dirs.add('c:\\windows\\system');
     ctx.vfs.dirs.add('c:\\windows\\fonts');
-    mountSystemDataFiles(ctx.vfs, SYSTEM_DATA_FILES.map(file => ({
-      ...file,
-      bytes: new Uint8Array(fs.readFileSync(path.join(ROOT, file.url))),
-    })));
+    // Match the browser: a `localOnly` system file is never published and a
+    // fresh clone does not carry it, so its absence is not fatal (issue #31).
+    mountSystemDataFiles(ctx.vfs, SYSTEM_DATA_FILES
+      .filter(file => !file.localOnly || fs.existsSync(path.join(ROOT, file.url)))
+      .map(file => ({
+        ...file,
+        bytes: new Uint8Array(fs.readFileSync(path.join(ROOT, file.url))),
+      })));
     for (const name of BUNDLED_BITMAP_FONTS) {
       const bundledFon = path.join(ROOT, 'fonts', name);
       if (!fs.existsSync(bundledFon)) {
@@ -5363,6 +5374,14 @@ async function main() {
   // D3D9/D3D8 presents so far (09akg stat 4), for --cpu-window.
   const d3d9Frames = () => instance.exports.d3d9_gps_stat
     ? instance.exports.d3d9_gps_stat(4) >>> 0 : 0;
+  // D3D9/D3D8 draws so far (stat 0): draws per present, for --cpu-window.
+  const d3d9Draws = () => instance.exports.d3d9_gps_stat
+    ? instance.exports.d3d9_gps_stat(0) >>> 0 : 0;
+  // Main-instance retired guest blocks, for --cpu-window: a batch can end
+  // early on a yield, so batches are not a unit of guest work; this is, and
+  // tools/page-probes/measure-guest-rate.js reads the same counter in a browser.
+  const guestBlocks = () => instance.exports.get_blocks_now
+    ? instance.exports.get_blocks_now() >>> 0 : 0;
   // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
   // turns it off there); the WAT default and the CLI default are off.
   if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
@@ -7381,6 +7400,37 @@ async function main() {
     return finish(!(await mainOwner.optionalCall('is_mm_timer_callback_active') | 0),
       'suspend-count-or-mm-timer');
   };
+  // The batch loop's synchronous fast path. With a local main owner every
+  // owner call above is a plain export call and settles at once, yet each
+  // `await` still suspends and resumes this whole closure -- about 0.57 ms of
+  // interpreter time a batch on Spelunky HD across the ~15 settled awaits.
+  // syncMain selects the same calls, in the same order, without the awaits;
+  // it is off whenever an owner can actually be asynchronous (a Worker main,
+  // the --d3dim-render-owner run wrapper) or --trace-main-scheduler wraps it.
+  const syncMain = mainOwner.kind === 'local' && !mainSchedulerObserver && !d3dimExecutionOwner;
+  const mainExecutionSuspendedSync = () => {
+    const ex = instance.exports;
+    if (threadManager.isMainNamedEventWaiting()) return true;
+    let yieldReason = mainOwner.call('get_yield_reason');
+    if (serviceClock && (yieldReason === 13 || yieldReason === 14)) {
+      const deadline = yieldReason === 13 ? ex.get_vblank_deadline_ms() : ex.get_spin_deadline_ms();
+      if (batchClock.batchTicks() <= (deadline >>> 0)) return true;
+      ex.clear_yield();
+      yieldReason = 0;
+    }
+    if (threadManager._renderSendTargets.has(ex)) return true;
+    yieldReason = mainOwner.call('get_yield_reason');
+    if (yieldReason === 10 && (threadManager.backend === 'worker' ||
+        !threadManager.resolveCooperativeThreadSend(ex))) return true;
+    threadManager.noteMainSleepLocal(mainOwner);
+    if (!serviceClock && !REAL_TICK_SLEEPS && threadManager.isMainSleeping() &&
+        !threadManager.hasLiveThreads()) {
+      tickState.pausedMs += threadManager.mainSleepRemaining();
+    }
+    if (threadManager.isMainSleeping()) return true;
+    if (!threadManager.isMainThreadSuspended()) return false;
+    return !(mainOwner.optionalCall('is_mm_timer_callback_active') | 0);
+  };
 
   let lastSchedSig = null;
   let lastSchedAt = 0;
@@ -8364,7 +8414,14 @@ async function main() {
   const executionStartedAt = performance.now();
   for (let batch = 0; batch < MAX_BATCHES && !stopped; batch++) {
     processDesktop.poll();
-    if (mainOwner.kind === 'local') await ctx.comInterfaces.drain();
+    // drain() is a no-op until a COM runtime exists. The fast path skips the
+    // settled await but keeps one microtask turn per batch, here, where the
+    // first of the old settled awaits gave it: promise continuations a host
+    // import started during the previous batch still run before this one.
+    if (mainOwner.kind === 'local') {
+      if (!syncMain || ctx.comInterfaces.runtime) await ctx.comInterfaces.drain();
+      else await null;
+    }
     traceGateBatch = batch;
     if (deadlineMs && Date.now() >= deadlineMs) {
       traceGateBatch = -1; // why the run stopped is not per-batch trace output
@@ -8372,11 +8429,11 @@ async function main() {
       break;
     }
     for (const w of CPU_WINDOWS) {
-      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); w.d9 = d3d9Frames(); }
+      if (!w.cpu && !w.done && batch >= w.start) { w.cpu = process.cpuUsage(); w.wall = performance.now(); w.d9 = d3d9Frames(); w.draws = d3d9Draws(); w.blocks = guestBlocks(); }
       else if (w.cpu && !w.done && batch >= w.stop) {
         const d = process.cpuUsage(w.cpu);
         w.done = true;
-        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
+        console.log(`[cpu-window] batches ${w.start}..${w.stop}: user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9} draws ${d3d9Draws() - w.draws} blocks ${(guestBlocks() - w.blocks) >>> 0}`);
       }
     }
     if (cpuProf) {
@@ -8432,7 +8489,7 @@ async function main() {
     tickState.callsInBatch = 0;
     waveCallbackRouting.restoreMainWait();
     if (ctx.pumpAudioCompletions) ctx.pumpAudioCompletions();
-    if (ctx.pumpWaveCallbacks) await ctx.pumpWaveCallbacks();
+    if (ctx.pumpWaveCallbacks && (!syncMain || !ctx.waveCallbacksIdle?.())) await ctx.pumpWaveCallbacks();
     // --control: give the event loop a turn every batch so the control
     // server's socket callbacks fire and settled replies flush. Without this
     // the loop is synchronous end to end — the same mechanism that keeps
@@ -11287,13 +11344,15 @@ async function main() {
       // first: the [input] markers are buffered, and output the guest prints
       // directly (--trace-host) while handling that input must follow them.
       flushLogs();
-      if (await mainOwner.call('get_yield_reason') === 7) {
+      if (syncMain) {
+        if (mainOwner.call('get_yield_reason') === 7) threadManager.checkMainMessageWaitLocal(mainOwner);
+      } else if (await mainOwner.call('get_yield_reason') === 7) {
         await threadManager.checkMainMessageWaitOwned(mainOwner);
       }
-      if (!await mainExecutionSuspended('ordinary')) {
+      if (syncMain ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended('ordinary')) {
         if (stopped) break;
         try {
-        const slice = mainSchedulerObserver
+        const slice = syncMain ? mainOwner.run(BATCH_SIZE) : mainSchedulerObserver
           ? await mainSchedulerObserver.run('ordinary', () => mainOwner.run(BATCH_SIZE))
           : await mainOwner.run(BATCH_SIZE);
         if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
@@ -11303,7 +11362,7 @@ async function main() {
           if (!nativeFault.capture(error, instance.exports,
             { schedulerSlot: 0, main: true }, 'ordinary')) throw error;
         }
-        await nativeFault.wait();
+        if (nativeFault.isHeld()) await nativeFault.wait();
         if (stopped) break;
       }
     } catch (e) {
@@ -11557,10 +11616,14 @@ async function main() {
     // for a chunk the host has not read yet. ReadFile parked with its stdcall
     // frame restored and EIP on the thunk, so filling the chunk and clearing
     // the yield re-enters the same call, which then takes the cache hit.
-    await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
+    // Fast path: both helpers begin by reading the yield and return false for
+    // any other reason; read it here and await only when one will act.
+    if (!syncMain || mainOwner.call('get_yield_reason') === 12)
+      await serviceMainIoWait(mainOwner, ctx.vfs, TRACE_YIELD ? console.log : null);
 
-    await serviceMainTimingWait(mainOwner, {batchClock, tickState, serviceClock,
-      vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
+    if (!syncMain || [13, 14, 15].includes(mainOwner.call('get_yield_reason')))
+      await serviceMainTimingWait(mainOwner, {batchClock, tickState, serviceClock,
+        vblank: VBLANK, spin: SPIN_PARK, trace: TRACE_YIELD ? console.log : null});
 
     // Handle the virtual LAN net_wait yield (yield_reason=8). The guest is
     // parked inside a blocking socket call with EIP still on the thunk, so
@@ -11694,13 +11757,14 @@ async function main() {
         // --threads-serial means nothing runs beside a guest thread, main
         // included, or the switch would not answer the question it exists for.
         if (THREADS_SERIAL) await workerSlices;
-        else if (s < THREAD_SLICES - 1 && !stopped && !await mainExecutionSuspended('worker-interleaved')) {
+        else if (s < THREAD_SLICES - 1 && !stopped && (syncMain
+            ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended('worker-interleaved'))) {
           if (stopped) break;
           // Main keeps running WHILE they do — the CLI's version of host.js
           // awaiting the main slice and the thread slices together.
           try {
             try {
-            const slice = mainSchedulerObserver
+            const slice = syncMain ? mainOwner.run(BATCH_SIZE) : mainSchedulerObserver
               ? await mainSchedulerObserver.run('worker-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
             if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
@@ -11710,7 +11774,7 @@ async function main() {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'worker-interleaved')) throw error;
             }
-            await nativeFault.wait();
+            if (nativeFault.isHeld()) await nativeFault.wait();
             if (stopped) break;
           } catch (e) { throw e; /* never continue a guest whose handler unwound */ }
         }
@@ -11750,8 +11814,8 @@ async function main() {
       const workerStartMs = TRACE_BATCH_TIMING ? Date.now() : 0;
       for (let s = 0; s < slices; s++) {
         const sliceStats = threadManager.runSlice(BATCH_SIZE);
-        await d3dimExecutionOwner?.turn();
-        await nativeFault.wait();
+        if (d3dimExecutionOwner) await d3dimExecutionOwner.turn();
+        if (nativeFault.isHeld()) await nativeFault.wait();
         if (stopped) break;
         if (sliceStats && sliceStats.steps) workerStepsTotal += sliceStats.steps;
         // Re-run main between live worker slices so producer/consumer pairs
@@ -11759,11 +11823,11 @@ async function main() {
         // loop; repeatedly re-entering the main message pump here can drain
         // creation-time paints before an app has finished its first layout.
         if (s < slices - 1 && !stopped && threadManager.hasActiveThreads() &&
-            !await mainExecutionSuspended('cooperative-interleaved')) {
+            (syncMain ? !mainExecutionSuspendedSync() : !await mainExecutionSuspended('cooperative-interleaved'))) {
           if (stopped) break;
           try {
             try {
-            const slice = mainSchedulerObserver
+            const slice = syncMain ? mainOwner.run(BATCH_SIZE) : mainSchedulerObserver
               ? await mainSchedulerObserver.run('cooperative-interleaved', () => mainOwner.run(BATCH_SIZE))
               : await mainOwner.run(BATCH_SIZE);
             if (mainOwner.kind === 'local' && ctx.exports.get_yield_reason() === 23)
@@ -11773,7 +11837,7 @@ async function main() {
               if (!nativeFault.capture(error, instance.exports,
                 { schedulerSlot: 0, main: true }, 'cooperative-interleaved')) throw error;
             }
-            await nativeFault.wait();
+            if (nativeFault.isHeld()) await nativeFault.wait();
             if (stopped) break;
           } catch (e) {
             // Never swallow a host error thrown through the guest: the wasm
@@ -11910,8 +11974,12 @@ async function main() {
         batchClock.advanceIdle(Math.ceil(inputDue) - now);
     }
     // Check if main thread is waiting on an event
-    await threadManager.resolveMainThreadSend();
-    if (await mainOwner.call('get_yield_reason') === 7
+    // resolveMainThreadSend() returns false at once without a Worker backend.
+    if (!syncMain || threadManager.workerBackend) await threadManager.resolveMainThreadSend();
+    if (syncMain) {
+      if (mainOwner.call('get_yield_reason') === 7) threadManager.checkMainMessageWaitLocal(mainOwner);
+      else threadManager.checkMainYield();
+    } else if (await mainOwner.call('get_yield_reason') === 7
         ? await threadManager.checkMainMessageWaitOwned(mainOwner)
         : threadManager.checkMainYield()) {
       // Main thread still waiting — don't advance EIP check
@@ -12080,7 +12148,7 @@ if (VERBOSE) {
     if (!w.cpu || w.done) continue;
     const d = process.cpuUsage(w.cpu);
     w.done = true;
-    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9}`);
+    console.log(`[cpu-window] batches ${w.start}..run end (asked ${w.stop}): user ${(d.user / 1e6).toFixed(3)}s sys ${(d.system / 1e6).toFixed(3)}s wall ${((performance.now() - w.wall) / 1000).toFixed(3)}s d3d9-presents ${d3d9Frames() - w.d9} draws ${d3d9Draws() - w.draws} blocks ${(guestBlocks() - w.blocks) >>> 0}`);
   }
   // The control server would otherwise hold the process open; unref lets a
   // reply resolved in the final batch still flush while the exit path prints.
@@ -12908,6 +12976,15 @@ if (VERBOSE) {
   }
 
   reportHitCounts('Hit counts:');
+  // The Delphi helper fold (on unless --no-delphi-fold): printed only when it
+  // fired, so a non-Delphi app's log is unchanged.
+  if (instance.exports.delphi_fold_stat && (instance.exports.delphi_fold_stat(0) || instance.exports.delphi_fold_stat(1) || instance.exports.delphi_fold_stat(2))) {
+    const f = (k) => instance.exports.delphi_fold_stat(k) >>> 0;
+    console.log(`Delphi fold: native=${f(0)} fallback=${f(1)} partial=${f(2)} cas_lost=${f(3)} smc_drops=${f(4)} ` +
+      `by-id native/fallback (1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord ` +
+      `6 InitializeRecord 7 InitializeArray 8 Move-FILD 9 Move-REP) ` +
+      [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => `${k}:${f(10 + k)}/${f(20 + k)}`).join(' '));
+  }
 
   if (DUMP_VFS && ctx.vfs) {
     console.log('\n[VFS] Files (' + ctx.vfs.files.size + '):');
@@ -13377,7 +13454,7 @@ if (VERBOSE) {
     if (instance.exports.d3d9_gps_stat && instance.exports.d3d9_gps_stat(14)) {
       instance.exports.d3d9_gps_sync_front();
       const st = i => instance.exports.d3d9_gps_stat(i) >>> 0;
-      console.log(`[d3d9-gps] capture: executor-readback=${st(51)}`);
+      console.log(`[d3d9-gps] capture: executor-readback=${st(51)} placed-present-kept=${st(70)}`);
     }
     const { mem, surfaces } = getDxSurfaceManifest();
     const wantSlot = DX_SLOT === null ? null : (parseInt(DX_SLOT, 10) | 0);
@@ -13395,7 +13472,11 @@ if (VERBOSE) {
       && ex.gl_sw_front()) ? (ex.gl_sw_slot() | 0) : null;
     const glFront = glFrontSlot === null ? null
       : (surfaces.find(s => s.slot === glFrontSlot) || null);
-    const surface = (PNG_CANVAS || (glBitmapOnly && wantSlot === null)) ? null
+    // A windowed D3D8/9 Present that moved, cropped or stretched its source
+    // (GameMaker 7 aspect-fits a 448x448 room into a 640x480 client) leaves
+    // the back buffer unlike the window: capture the screen, not the DIB.
+    const d3dPlaced = wantSlot === null && !!(ex.d3d9_gps_present_placed && ex.d3d9_gps_present_placed());
+    const surface = (PNG_CANVAS || d3dPlaced || (glBitmapOnly && wantSlot === null)) ? null
       : (wantSlot === null ? (glFront || chooseDxPresentationSurface(surfaces, mem))
         : (surfaces.find(s => s.slot === wantSlot) || null));
     if (wantSlot !== null && !surface) {

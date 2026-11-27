@@ -1,0 +1,4132 @@
+[
+  {
+    "name": "memcpy",
+    "tag": "vc6",
+    "refVa": "0x780015fd",
+    "len": 58,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........f7c703000000751bc1e90283e20383f9087307ff248d........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 298
+  },
+  {
+    "name": "memmove",
+    "tag": "vc6",
+    "refVa": "0x78005802",
+    "len": 80,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe0f86........3bf80f83........8d7431fc8d7c39fcf7c7030000000f85........c1e90283e20383f9080f83........f7d9ff248d........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 223
+  },
+  {
+    "name": "memset",
+    "tag": "vc6",
+    "refVa": "0x78001000",
+    "len": 77,
+    "prefix": 32,
+    "firstRet": 77,
+    "hex": "8b54240c8b4c240485d20f84........33c08a442408578bf983fa04722ff7d983e1030f85........8bc8c1e00803c18bc8c1e01003c18bca83e203c1e902740cf3ab85d275068b4424085fc3",
+    "anchor": {
+      "off": 16,
+      "len": 16
+    },
+    "extent": 85
+  },
+  {
+    "name": "memcmp",
+    "tag": "vc6",
+    "refVa": "0x7800157b",
+    "len": 56,
+    "prefix": 31,
+    "firstRet": 56,
+    "hex": "8b44240c85c0742f8b54240456578bf28b7c24100bd783e2030f85........8bc883e003c1e9027404f3a7750b85c00f85........5f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 89
+  },
+  {
+    "name": "memchr",
+    "tag": "vc6",
+    "refVa": "0x78025d74",
+    "len": 137,
+    "prefix": 32,
+    "firstRet": 137,
+    "hex": "8b44240c5385c0747e8b54240833db8a5c240cf7c20300000074128a0a4232cb7468487462f7c20300000075ee83e8047246578bfbc1e30803df8bfbc1e31003df8b0a33cbbffffefe7e03f983f1ff33cf83c20481e10001018174168b4afc32cb743832eb742ec1e91032cb742132eb741783e80473ca5f83c004740a8a0a4232cb74064875f65bc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 301
+  },
+  {
+    "name": "strlen",
+    "tag": "vc6",
+    "refVa": "0x7800270e",
+    "len": 84,
+    "prefix": 32,
+    "firstRet": 84,
+    "hex": "8b4c2404f7c10300000074148a014184c07448f7c10300000075f105000000008b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0743084e47422a90000ff00750a8d41fe8b4c24042bc1c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 121
+  },
+  {
+    "name": "strcmp",
+    "tag": "vc6",
+    "refVa": "0x78002a53",
+    "len": 71,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "8b5424048b4c2408f7c2030000000f85........8b023a0175300ac074293a610175270ae47420c1e8103a4102751b0ac074143a6103751283c10483c2040ae475d2e9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 532
+  },
+  {
+    "name": "strcpy",
+    "tag": "vc6",
+    "refVa": "0x78002787",
+    "len": 58,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "578b7c24088b4c240cf7c1030000000f85........bafffefe7e8b0103d083f0ff33c28b1183c104a9000101810f85........891783c704ebdb",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 58
+  },
+  {
+    "name": "strcat",
+    "tag": "vc6",
+    "refVa": "0x78002dde",
+    "len": 67,
+    "prefix": 31,
+    "firstRet": null,
+    "hex": "8b4c240457f7c1030000000f85........8b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0742a84e4741ea90000ff0075088d79fee9........",
+    "anchor": {
+      "off": 17,
+      "len": 14
+    },
+    "extent": 957
+  },
+  {
+    "name": "strchr",
+    "tag": "vc6",
+    "refVa": "0x7801060a",
+    "len": 120,
+    "prefix": 31,
+    "firstRet": 120,
+    "hex": "33c08a442408538bd8c1e0088b542408f7c20300000074138a0a4238d974dc84c97451f7c20300000075ed0bd8578bc3c1e310560bd88b0abffffefe7e8bc18bf733cb03f003f983f1ff83f0ff33cf33c683c20481e100010181751c250001018174d32500010101750881e60000008075c45e5f5b33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 188
+  },
+  {
+    "name": "strrchr",
+    "tag": "vc6",
+    "refVa": "0x78025f70",
+    "len": 35,
+    "prefix": 32,
+    "firstRet": 35,
+    "hex": "558bec578b7d0833c083c9fff2ae41f7d94f8a450cfdf2ae473807740633c0fc5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "strncpy",
+    "tag": "vc6",
+    "refVa": "0x7800511e",
+    "len": 99,
+    "prefix": 27,
+    "firstRet": null,
+    "hex": "8b4c240c5785c9746356538bd98b742414f7c6030000008b7c24100f85........c1e902742bbafffefe7e8b0603d083f0ff33c28b1683c604a9000101817532891783c7044975de83e3030f84........8a064688074784c074084b75f3e9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 238
+  },
+  {
+    "name": "strncmp",
+    "tag": "vc6",
+    "refVa": "0x78010746",
+    "len": 56,
+    "prefix": 31,
+    "firstRet": 56,
+    "hex": "558bec5756538b4d10e3268bd98b7d088bf733c0f2aef7d903cb8bfe8b750cf3a68a46ff33c93a47ff770474044949f7d18bc15b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 75
+  },
+  {
+    "name": "strstr",
+    "tag": "vc6",
+    "refVa": "0x780106c6",
+    "len": 58,
+    "prefix": 32,
+    "firstRet": 58,
+    "hex": "8b4c24085753568a118b7c241084d274698a710184f6744f8bf78b4c24148a074638d0741584c0740b8a064638d0740a84c075f55e5b5f33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 128
+  },
+  {
+    "name": "_strnicmp",
+    "tag": "vc6",
+    "refVa": "0x780134bd",
+    "len": 103,
+    "prefix": 31,
+    "firstRet": 103,
+    "hex": "558bec5756538b4d100bc974538b75088b7d0c8d05........837808007548b741b35ab6208d49008a260ae48a0774210ac0741d464738fc720638dc770202e638f8720638d8770202c638c475094975d733c938c47409b9ffffffff7202f7d98bc15b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 245
+  },
+  {
+    "name": "_stricmp",
+    "tag": "vc6",
+    "refVa": "0x780107cb",
+    "len": 86,
+    "prefix": 32,
+    "firstRet": 86,
+    "hex": "558bec5756538b750c8b7d088d05........83780800753eb0ff8bff0ac0742e8a06468a274738c474f22c413c1a1ac980e12002c1044186e02c413c1a1ac980e12002c1044138e074d21ac01cff0fbec05b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 14
+    },
+    "extent": 208
+  },
+  {
+    "name": "_strcmpi",
+    "tag": "vc6",
+    "refVa": "0x780107cb",
+    "len": 86,
+    "prefix": 32,
+    "firstRet": 86,
+    "hex": "558bec5756538b750c8b7d088d05........83780800753eb0ff8bff0ac0742e8a06468a274738c474f22c413c1a1ac980e12002c1044186e02c413c1a1ac980e12002c1044138e074d21ac01cff0fbec05b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 14
+    },
+    "extent": 208
+  },
+  {
+    "name": "_ftol",
+    "tag": "vc6",
+    "refVa": "0x78001f14",
+    "len": 39,
+    "prefix": 31,
+    "firstRet": 39,
+    "hex": "558bec83c4f49bd97dfe9b668b45fe80cc0c668945fcd96dfcdf7df4d96dfe8b45f48b55f8c9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 148
+  },
+  {
+    "name": "_CIsqrt",
+    "tag": "vc6",
+    "refVa": "0x78028cf4",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec08dd1424e8........e8........83c408c3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIpow",
+    "tag": "vc6",
+    "refVa": "0x780289ce",
+    "len": 25,
+    "prefix": 25,
+    "firstRet": 25,
+    "hex": "83ec10d9c9dd1c24dd5424088b44240ce8........83c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 25
+  },
+  {
+    "name": "_CIsin",
+    "tag": "vc6",
+    "refVa": "0x78028c46",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec08dd1424e8........e8........83c408c3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIcos",
+    "tag": "vc6",
+    "refVa": "0x780286b3",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec08dd1424e8........e8........83c408c3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIatan2",
+    "tag": "vc6",
+    "refVa": "0x7802867b",
+    "len": 56,
+    "prefix": 30,
+    "firstRet": 56,
+    "hex": "ba........558bec81c430fdffff539bd9bd5cffffff9b833d........000f84........e8........808d38fdffff03e8........5bc9c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 56
+  },
+  {
+    "name": "floor",
+    "tag": "vc6",
+    "refVa": "0x7802b7a1",
+    "len": 93,
+    "prefix": 30,
+    "firstRet": 93,
+    "hex": "558bec51515356beffff000056ff35........e8........dd4508598bd88b450e59516625f07f51663df07fdd1c24755fe8........5985c0597e2f83f8027e1c83f8037525dd4508535151dd1c246a0be8........83c4105e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 207
+  },
+  {
+    "name": "ceil",
+    "tag": "vc6",
+    "refVa": "0x7802b61d",
+    "len": 93,
+    "prefix": 30,
+    "firstRet": 93,
+    "hex": "558bec51515356beffff000056ff35........e8........dd4508598bd88b450e59516625f07f51663df07fdd1c24755fe8........5985c0597e2f83f8027e1c83f8037525dd4508535151dd1c246a0ce8........83c4105e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 207
+  },
+  {
+    "name": "malloc",
+    "tag": "vc6",
+    "refVa": "0x780012b1",
+    "len": 18,
+    "prefix": 18,
+    "firstRet": 18,
+    "hex": "ff35........ff742408e8........5959c3",
+    "anchor": {
+      "off": 6,
+      "len": 5
+    },
+    "extent": 221
+  },
+  {
+    "name": "free",
+    "tag": "vc6",
+    "refVa": "0x7800138e",
+    "len": 149,
+    "prefix": 32,
+    "firstRet": 149,
+    "hex": "558bec6aff68........68........64a100000000506489250000000083ec185356578b750885f6745ca1........83f8030f84........83f8020f85........6a09e8........59c745fc010000008d45e0508d45d85056e8........83c40c8945dc85c0740f50ff75e0ff75d8e8........83c40c834dfcffe8........837ddc00740f8b4df064890d000000005f5e5bc9c3",
+    "anchor": {
+      "off": 15,
+      "len": 16
+    },
+    "extent": 262
+  },
+  {
+    "name": "realloc",
+    "tag": "vc6",
+    "refVa": "0x7800361c",
+    "len": 253,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec6aff68........68........64a100000000506489250000000083ec285356578b5d0833ff3bdf0f84........8b750c3bf70f84........a1........83f8030f84........83f8020f85........83fee077113bf70f86........83c60f83e6f089750c897ddc83fee00f87........6a09e8........59c745fc010000008d45d4508d45c85053e8........83c40c8bf8897dd085ff0f84........3b35........73548bdec1eb045357ff75d4ff75c8e8........83c41085c0756853e8........598945dc85c0742a0fb607c1e0048945cc3bc672028bc650ff7508ff75dce8........57ff75d4ff75c8e8........83c4188b5d08",
+    "anchor": {
+      "off": 15,
+      "len": 16
+    },
+    "extent": 338
+  },
+  {
+    "name": "calloc",
+    "tag": "vc6",
+    "refVa": "0x78003524",
+    "len": 191,
+    "prefix": 32,
+    "firstRet": 191,
+    "hex": "558bec6aff68........68........64a100000000506489250000000083ec185356578b75080faf750c89750c8975e483fee00f87........33db3bf30f84........83c60f83e6f089750c895de083fee0777da1........83f8030f84........83f80275413b35........77396a09e8........59c745fc010000008bc6c1e80450e8........598945e0834dfcffe8........395de074245653ff75e0e8........83c40c395de074128b45e08b4df064890d000000005f5e5bc9c3",
+    "anchor": {
+      "off": 15,
+      "len": 16
+    },
+    "extent": 248
+  },
+  {
+    "name": "rand",
+    "tag": "vc6",
+    "refVa": "0x7801eed2",
+    "len": 34,
+    "prefix": 28,
+    "firstRet": 34,
+    "hex": "e8........8b481469c9fd43030081c1c39e26008948148bc1c1e81025ff7f0000c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 34
+  },
+  {
+    "name": "srand",
+    "tag": "vc6",
+    "refVa": "0x7801eec5",
+    "len": 13,
+    "prefix": 13,
+    "firstRet": 13,
+    "hex": "e8........8b4c2404894814c3",
+    "anchor": {
+      "off": 5,
+      "len": 8
+    },
+    "extent": 13
+  },
+  {
+    "name": "sprintf",
+    "tag": "vc6",
+    "refVa": "0x78022661",
+    "len": 67,
+    "prefix": 30,
+    "firstRet": 67,
+    "hex": "558bec83ec208b4508568945e88945e08d4510c745ec42000000508d45e0ff750cc745e4ffffff7f50e8........83c40cff4de48bf0780b8b45e08020008bc65ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 82
+  },
+  {
+    "name": "vsprintf",
+    "tag": "vc6",
+    "refVa": "0x78022ba4",
+    "len": 66,
+    "prefix": 32,
+    "firstRet": 66,
+    "hex": "558bec83ec208b450856ff75108945e88945e08d45e0ff750cc745ec42000000c745e4ffffff7f50e8........83c40cff4de48bf0780b8b45e08020008bc65ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 81
+  },
+  {
+    "name": "qsort",
+    "tag": "vc6",
+    "refVa": "0x7801ecf7",
+    "len": 256,
+    "prefix": 28,
+    "firstRet": null,
+    "hex": "558bec81ecf800000053568b750c5783fe020f82........837d10000f84........8365fc004e0faf75108b5d088d45808945088d8508ffffff03f389450c8b7d108bc62bc333d2f7f74083f808772fff7514575653e8........83c410ff4dfc836d0c04836d0804837dfc000f8c........8b450c8b188b45088b30ebc0d1e80fafc75703c35350e8........83c40c895df803fe8b45f80345103bc68945f8770b5350ff55145985c0597ee82b7d103bfb760b5357ff55145985c0597deeff75103b7df857720dff75f8e8........83c40cebc053e8........8b45f88bcf2bcb8bd683c40c492bd03bca7c308b4d108d140b3bd773178b550c83450c04",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 462
+  },
+  {
+    "name": "wcslen",
+    "tag": "vc6",
+    "refVa": "0x7800155e",
+    "len": 29,
+    "prefix": 29,
+    "firstRet": 29,
+    "hex": "8b4c2404668339008d4102740a668b1040406685d275f62bc1d1f848c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 29
+  },
+  {
+    "name": "toupper",
+    "tag": "vc6",
+    "refVa": "0x7801138d",
+    "len": 30,
+    "prefix": 30,
+    "firstRet": 30,
+    "hex": "5333db391d........75138b44240883f8617c5483f87a7f4f83e8205bc3",
+    "anchor": {
+      "off": 9,
+      "len": 16
+    },
+    "extent": 350
+  },
+  {
+    "name": "tolower",
+    "tag": "vc6",
+    "refVa": "0x78011250",
+    "len": 30,
+    "prefix": 30,
+    "firstRet": 30,
+    "hex": "5333db391d........75138b44240883f8417c5483f85a7f4f83c0205bc3",
+    "anchor": {
+      "off": 9,
+      "len": 16
+    },
+    "extent": 309
+  },
+  {
+    "name": "atoi",
+    "tag": "vc6",
+    "refVa": "0x7800c283",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "ff742404e8........59c3",
+    "anchor": {
+      "off": 0,
+      "len": 5
+    },
+    "extent": 11
+  },
+  {
+    "name": "atol",
+    "tag": "vc6",
+    "refVa": "0x78002c67",
+    "len": 128,
+    "prefix": 30,
+    "firstRet": 128,
+    "hex": "535556578b7c2414833d........010f8f........0fb6078b0d........8a044183e00885c00f85........0fb6374783fe2d8bee0f84........9083fe2b0f84........33db833d........010f8f........a1........8a047083e00485c0740d8d049b8d5c46d00fb63747ebd783fd2d8bc30f84........5f5e5d5bc3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 128
+  },
+  {
+    "name": "strtol",
+    "tag": "vc6",
+    "refVa": "0x78010e13",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": 23,
+    "hex": "6a00ff742410ff742410ff742410e8........83c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 588
+  },
+  {
+    "name": "_itoa",
+    "tag": "vc6",
+    "refVa": "0x78002ce7",
+    "len": 43,
+    "prefix": 30,
+    "firstRet": 43,
+    "hex": "558bec837d100a750a837d08000f8c........6a00ff7510ff750cff7508e8........8b450c83c4105dc3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 247
+  },
+  {
+    "name": "fread",
+    "tag": "vc6",
+    "refVa": "0x78021f20",
+    "len": 47,
+    "prefix": 32,
+    "firstRet": 47,
+    "hex": "558bec56ff7514e8........ff7514ff7510ff750cff7508e8........ff75148bf0e8........83c4188bc65e5dc3",
+    "anchor": {
+      "off": 12,
+      "len": 13
+    },
+    "extent": 275
+  },
+  {
+    "name": "fwrite",
+    "tag": "vc6",
+    "refVa": "0x78022327",
+    "len": 47,
+    "prefix": 32,
+    "firstRet": 47,
+    "hex": "558bec56ff7514e8........ff7514ff7510ff750cff7508e8........ff75148bf0e8........83c4188bc65e5dc3",
+    "anchor": {
+      "off": 12,
+      "len": 13
+    },
+    "extent": 314
+  },
+  {
+    "name": "fopen",
+    "tag": "vc6",
+    "refVa": "0x7802071f",
+    "len": 19,
+    "prefix": 19,
+    "firstRet": 19,
+    "hex": "6a40ff74240cff74240ce8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 19
+  },
+  {
+    "name": "fseek",
+    "tag": "vc6",
+    "refVa": "0x780220a7",
+    "len": 44,
+    "prefix": 31,
+    "firstRet": 44,
+    "hex": "558bec56ff7508e8........ff7510ff750cff7508e8........ff75088bf0e8........83c4148bc65e5dc3",
+    "anchor": {
+      "off": 12,
+      "len": 10
+    },
+    "extent": 185
+  },
+  {
+    "name": "abs",
+    "tag": "vc6",
+    "refVa": "0x7801eb6e",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "labs",
+    "tag": "vc6",
+    "refVa": "0x7801ec2a",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "_purecall",
+    "tag": "vc6",
+    "refVa": "0x7800e8c5",
+    "len": 9,
+    "prefix": 9,
+    "firstRet": 9,
+    "hex": "6a19e8........59c3",
+    "anchor": {
+      "off": 0,
+      "len": 3
+    },
+    "extent": 9
+  },
+  {
+    "name": "_EH_prolog",
+    "tag": "vc6",
+    "refVa": "0x78001494",
+    "len": 31,
+    "prefix": 31,
+    "firstRet": 31,
+    "hex": "6aff5064a100000000508b44240c64892500000000896c240c8d6c240c50c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 31
+  },
+  {
+    "name": "__CxxFrameHandler",
+    "tag": "vc6",
+    "refVa": "0x7800a796",
+    "len": 54,
+    "prefix": 30,
+    "firstRet": 54,
+    "hex": "558bec83ec04535657fc8945fc33c0505050ff75fcff7514ff7510ff750cff7508e8........83c4208945145f5e5b8b45148be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 54
+  },
+  {
+    "name": "_except_handler3",
+    "tag": "vc6",
+    "refVa": "0x7800e9bc",
+    "len": 159,
+    "prefix": 30,
+    "firstRet": 159,
+    "hex": "558bec83ec0853565755fc8b5d0c8b4508f74004060000000f85........8945f88b45108945fc8d45f88943fc8b730c8b7b0883feff74678d0c76837c8f0400744556558d6b10ff548f045d5e8b5d0c0bc07433783c8b7b0853e8........83c4048d6b105653e8........83c4088d0c766a018b448f08e8........8b048f89430cff548f088b7b088d0c768b348feba1b8000000005d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 189
+  },
+  {
+    "name": "_global_unwind2",
+    "tag": "vc6",
+    "refVa": "0x7800e8ce",
+    "len": 32,
+    "prefix": 32,
+    "firstRet": 32,
+    "hex": "558bec535657556a006a0068........ff7508e8........5d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 66
+  },
+  {
+    "name": "_local_unwind2",
+    "tag": "vc6",
+    "refVa": "0x7800e910",
+    "len": 104,
+    "prefix": 29,
+    "firstRet": 104,
+    "hex": "5356578b442410506afe68........64ff3500000000648925000000008b4424208b58088b700c83feff742e3b74242474288d34768b0cb3894c240889480c837cb3040075d768010100008b44b308e8........ff54b308ebc3648f050000000083c40c5f5e5bc3",
+    "anchor": {
+      "off": 15,
+      "len": 14
+    },
+    "extent": 104
+  },
+  {
+    "name": "_onexit",
+    "tag": "vc6",
+    "refVa": "0x78004d34",
+    "len": 69,
+    "prefix": 32,
+    "firstRet": 69,
+    "hex": "56e8........ff35........e8........8b15........598b0d........8bf12bf283c6043bc60f82........8b44240889018305........048bf0e8........8bc65ec3",
+    "anchor": {
+      "off": 23,
+      "len": 3
+    },
+    "extent": 1002
+  },
+  {
+    "name": "_initterm",
+    "tag": "vc6",
+    "refVa": "0x78001fa8",
+    "len": 28,
+    "prefix": 28,
+    "firstRet": 28,
+    "hex": "568b742408eb0383c6043b74240c730a8b0685c074f1ffd0ebed5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 37
+  },
+  {
+    "name": "memcpy",
+    "tag": "vc2",
+    "refVa": "0x7fc31581",
+    "len": 55,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b7d088b4d103bfe760c8bc603c13bf80f82........f7c703000000754c8bd183e203c1e902f3a5ff2495........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 1483
+  },
+  {
+    "name": "memmove",
+    "tag": "vc2",
+    "refVa": "0x7fc343ce",
+    "len": 66,
+    "prefix": 31,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b7d088b4d103bfe76308bc603c13bf87328fd03f103f9f7c7030000000f85........8bd183e20383ee0483ef04c1e902f3a5ff2495........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 186
+  },
+  {
+    "name": "memset",
+    "tag": "vc2",
+    "refVa": "0x7fc31be4",
+    "len": 58,
+    "prefix": 32,
+    "firstRet": 58,
+    "hex": "558bec578b4d10e32b8a450c8ae08bd0c1c810668bc28b7d088bd7f7da83e2030f85........8bd1c1e902f3ab8bca83e103f3aa8b45085fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 58
+  },
+  {
+    "name": "memcmp",
+    "tag": "vc2",
+    "refVa": "0x7fc31c2d",
+    "len": 31,
+    "prefix": 31,
+    "firstRet": 31,
+    "hex": "558bec57568b75088b7d0c33c08b4d10e309f3a674051bc083d8ff5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 327
+  },
+  {
+    "name": "memchr",
+    "tag": "vc2",
+    "refVa": "0x7fc501b3",
+    "len": 32,
+    "prefix": 32,
+    "firstRet": 32,
+    "hex": "558bec33c08b4d10e314578b7d088a450cf2aeb80000000075038d47ff5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 32
+  },
+  {
+    "name": "strlen",
+    "tag": "vc2",
+    "refVa": "0x7fc33c1c",
+    "len": 61,
+    "prefix": 32,
+    "firstRet": 61,
+    "hex": "8b5424048bca33c0f7c201000000752df7c202000000752e8b020ac0741a0ae47415a90000ff00740d83c204a9000000ff75e583ea0342428bc22bc1c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 79
+  },
+  {
+    "name": "strcmp",
+    "tag": "vc2",
+    "refVa": "0x7fc507b8",
+    "len": 67,
+    "prefix": 31,
+    "firstRet": 67,
+    "hex": "8b5424048b4c2408f7c20300000075398b023a01752d0ac074263a610175240ae4741dc1e8103a410275180ac074113a6103750f83c10483c2040ae475d28bc033c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 129
+  },
+  {
+    "name": "strcpy",
+    "tag": "vc2",
+    "refVa": "0x7fc35afa",
+    "len": 33,
+    "prefix": 28,
+    "firstRet": null,
+    "hex": "f92e8bc0578b7c2408570f83........8b4c2410f7c103000000740be9........",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 88
+  },
+  {
+    "name": "strchr",
+    "tag": "vc2",
+    "refVa": "0x7fc33c6b",
+    "len": 35,
+    "prefix": 32,
+    "firstRet": 35,
+    "hex": "558bec578b7d085733c0b9fffffffff2aef7d18a450c5ff2ae4f380775058bc75fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "strrchr",
+    "tag": "vc2",
+    "refVa": "0x7fc33bd1",
+    "len": 39,
+    "prefix": 27,
+    "firstRet": 39,
+    "hex": "558bec578b7d0833c083c9fff2ae41f7d94f8a450cfdf2ae4738070f85........8bc7fc5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "strncpy",
+    "tag": "vc2",
+    "refVa": "0x7fc33bf8",
+    "len": 36,
+    "prefix": 32,
+    "firstRet": 36,
+    "hex": "558bec57568b7d088b750c8bd78b4d10e30cac0ac07403aae2f832c0f3aa8bc25e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 36
+  },
+  {
+    "name": "strncmp",
+    "tag": "vc2",
+    "refVa": "0x7fc512ff",
+    "len": 56,
+    "prefix": 31,
+    "firstRet": 56,
+    "hex": "558bec5756538b4d10e3268bd98b7d088bf733c0f2aef7d903cb8bfe8b750cf3a68a46ff33c93a47ff770474044949f7d18bc15b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 56
+  },
+  {
+    "name": "strstr",
+    "tag": "vc2",
+    "refVa": "0x7fc513af",
+    "len": 85,
+    "prefix": 31,
+    "firstRet": 85,
+    "hex": "558bec83c4fc5657538b7d0c33c083c9fff2aef7d149e33d49894dfc8b7d088bdf33c083c9fff2aef7d1498bd12b55fc76288bfb8b750cac8bfb8bcaf2ae751a8bd18bdf8b4dfce304f3a675e78d43ff5b5f5ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 94
+  },
+  {
+    "name": "_strnicmp",
+    "tag": "vc2",
+    "refVa": "0x7fc4ab9d",
+    "len": 103,
+    "prefix": 31,
+    "firstRet": 103,
+    "hex": "558bec5756538b4d100bc974538b75088b7d0c8d05........837808007548b741b35ab6202e8bc08a260ae48a0774210ac0741d464738fc720638dc770202e638f8720638d8770202c638c475094975d733c938c47409b9ffffffff7202f7d98bc15b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 195
+  },
+  {
+    "name": "_stricmp",
+    "tag": "vc2",
+    "refVa": "0x7fc4a704",
+    "len": 86,
+    "prefix": 32,
+    "firstRet": 86,
+    "hex": "558bec5756538b750c8b7d088d05........83780800753eb0ff8bc00ac0742e8a06468a274738c474f22c413c1a1ac980e12002c1044186e02c413c1a1ac980e12002c1044138e074d21ac01cff0fbec05b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 14
+    },
+    "extent": 162
+  },
+  {
+    "name": "_strcmpi",
+    "tag": "vc2",
+    "refVa": "0x7fc4a704",
+    "len": 86,
+    "prefix": 32,
+    "firstRet": 86,
+    "hex": "558bec5756538b750c8b7d088d05........83780800753eb0ff8bc00ac0742e8a06468a274738c474f22c413c1a1ac980e12002c1044186e02c413c1a1ac980e12002c1044138e074d21ac01cff0fbec05b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 14
+    },
+    "extent": 162
+  },
+  {
+    "name": "_ftol",
+    "tag": "vc2",
+    "refVa": "0x7fc35b52",
+    "len": 39,
+    "prefix": 31,
+    "firstRet": 39,
+    "hex": "558bec83c4f49bd97dfe9b668b45fe80cc0c668945fcd96dfcdf7df4d96dfe8b45f48b55f8c9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "_CIsqrt",
+    "tag": "vc2",
+    "refVa": "0x7fc58c9c",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 287
+  },
+  {
+    "name": "_CIpow",
+    "tag": "vc2",
+    "refVa": "0x7fc58c38",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 10
+  },
+  {
+    "name": "_CIsin",
+    "tag": "vc2",
+    "refVa": "0x7fc58bb6",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 10
+  },
+  {
+    "name": "_CIcos",
+    "tag": "vc2",
+    "refVa": "0x7fc58bc0",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 10
+  },
+  {
+    "name": "_CIatan2",
+    "tag": "vc2",
+    "refVa": "0x7fc58b60",
+    "len": 56,
+    "prefix": 30,
+    "firstRet": 56,
+    "hex": "ba........558bec81c430fdffff539bd9bd5cffffff9b833d........000f84........e8........808d38fdffff03e8........5bc9c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 56
+  },
+  {
+    "name": "floor",
+    "tag": "vc2",
+    "refVa": "0x7fc5b743",
+    "len": 150,
+    "prefix": 31,
+    "firstRet": 150,
+    "hex": "55a1........8bec83ec085668ffff000050e8........83c4088bf0ff750c668b450e6625f07fff7508663df07f7566e8........83c40883f8017c0a83f8027e2583f8037439d9e8dc45085683ec08dd1c24ff750cff75086a0b6a08e8........83c41ceb2a56a1........50ff35........ff750cff75086a0b6a08ebdd56ff750cff75086a0be8........83c4105e8be55dc3",
+    "anchor": {
+      "off": 6,
+      "len": 13
+    },
+    "extent": 237
+  },
+  {
+    "name": "ceil",
+    "tag": "vc2",
+    "refVa": "0x7fc5b5ac",
+    "len": 150,
+    "prefix": 31,
+    "firstRet": 150,
+    "hex": "55a1........8bec83ec085668ffff000050e8........83c4088bf0ff750c668b450e6625f07fff7508663df07f7566e8........83c40883f8017c0a83f8027e2583f8037439d9e8dc45085683ec08dd1c24ff750cff75086a0c6a08e8........83c41ceb2a56a1........50ff35........ff750cff75086a0c6a08ebdd56ff750cff75086a0ce8........83c4105e8be55dc3",
+    "anchor": {
+      "off": 6,
+      "len": 13
+    },
+    "extent": 237
+  },
+  {
+    "name": "malloc",
+    "tag": "vc2",
+    "refVa": "0x7fc31bc4",
+    "len": 19,
+    "prefix": 19,
+    "firstRet": 19,
+    "hex": "a1........50ff742408e8........83c408c3",
+    "anchor": {
+      "off": 5,
+      "len": 6
+    },
+    "extent": 19
+  },
+  {
+    "name": "free",
+    "tag": "vc2",
+    "refVa": "0x7fc31d9b",
+    "len": 33,
+    "prefix": 32,
+    "firstRet": 33,
+    "hex": "6a09e8........83c404ff742404e8........83c4046a09e8........83c404c3",
+    "anchor": {
+      "off": 7,
+      "len": 8
+    },
+    "extent": 50
+  },
+  {
+    "name": "realloc",
+    "tag": "vc2",
+    "refVa": "0x7fc43600",
+    "len": 35,
+    "prefix": 31,
+    "firstRet": 35,
+    "hex": "83ec0853568b5c2414575585db7514ff742420e8........83c4045d5f5e5b83c408c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 260
+  },
+  {
+    "name": "calloc",
+    "tag": "vc2",
+    "refVa": "0x7fc346a9",
+    "len": 80,
+    "prefix": 31,
+    "firstRet": 80,
+    "hex": "5356576a09e8........8b74241883c4040faf74241056e8........83c4048bd885db741b83c60383e6fc8d0c1e3bcb760e2bcb8bfb83c10333c0c1e902f3ab6a09e8........83c4048bc35f5e5bc3",
+    "anchor": {
+      "off": 10,
+      "len": 14
+    },
+    "extent": 325
+  },
+  {
+    "name": "rand",
+    "tag": "vc2",
+    "refVa": "0x7fc50536",
+    "len": 34,
+    "prefix": 30,
+    "firstRet": 34,
+    "hex": "e8........8b481469c9fd43030081c1c39e26008948148bc1250000ff7fc1e810c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 34
+  },
+  {
+    "name": "srand",
+    "tag": "vc2",
+    "refVa": "0x7fc50529",
+    "len": 13,
+    "prefix": 13,
+    "firstRet": 13,
+    "hex": "e8........8b4c2404894814c3",
+    "anchor": {
+      "off": 5,
+      "len": 8
+    },
+    "extent": 13
+  },
+  {
+    "name": "sprintf",
+    "tag": "vc2",
+    "refVa": "0x7fc33c92",
+    "len": 77,
+    "prefix": 31,
+    "firstRet": 77,
+    "hex": "558b4424088bec83ec20568d4d10c745ec42000000518945e88945e08d45e0c745e4ffffff7fff750c50e8........83c40c8bf0ff4de40f88........8b45e0c60000ff45e08bc65e8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 1132
+  },
+  {
+    "name": "vsprintf",
+    "tag": "vc2",
+    "refVa": "0x7fc52106",
+    "len": 72,
+    "prefix": 30,
+    "firstRet": 72,
+    "hex": "558b4424088bec83ec20c745ec42000000568945e8ff7510ff750c8945e08d45e0c745e4ffffff7f50e8........83c40c8bf0ff4de478108b45e0c60000ff45e08bc65e8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 88
+  },
+  {
+    "name": "qsort",
+    "tag": "vc2",
+    "refVa": "0x7fc50359",
+    "len": 256,
+    "prefix": 29,
+    "firstRet": null,
+    "hex": "558b44240c8bec81ecf800000083f8025356570f82........837d10000f84........8b750848c745f8000000000faf451003c68945fc8b45fc2bd22bc6f775104083f808772eff7514ff7510ff75fc56e8........83c410ff4df80f88........8b45f88bb48508ffffff8b4c8580894dfcebc2d1e88bfeff7510560faf451003c650e8........83c40c8b5dfc035d10037d103b7dfc770c5657ff551483c40885c07eec2b5d103bde760c5653ff551483c40885c07dedff7510533bdf720b57e8........83c40cebc656e8........83c40c8bc32bc68b4dfc482bcf3bc17c2d8b451003c63bc373148b45f82b5d10ff45f889b48508ffffff895c8580",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 464
+  },
+  {
+    "name": "wcslen",
+    "tag": "vc2",
+    "refVa": "0x7fc33bba",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": 23,
+    "hex": "8b4c24048bc18bd083c00266833a0075f52bc1d1f848c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 23
+  },
+  {
+    "name": "toupper",
+    "tag": "vc2",
+    "refVa": "0x7fc4b56f",
+    "len": 29,
+    "prefix": 29,
+    "firstRet": 29,
+    "hex": "833d........005675138b44240883f8617c0883f87a7f0383e8205ec3",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 274
+  },
+  {
+    "name": "tolower",
+    "tag": "vc2",
+    "refVa": "0x7fc4b455",
+    "len": 29,
+    "prefix": 29,
+    "firstRet": 29,
+    "hex": "833d........005675138b44240883f8417c0883f85a7f0383c0205ec3",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 274
+  },
+  {
+    "name": "atoi",
+    "tag": "vc2",
+    "refVa": "0x7fc4ee1f",
+    "len": 13,
+    "prefix": 13,
+    "firstRet": 13,
+    "hex": "ff742404e8........83c404c3",
+    "anchor": {
+      "off": 0,
+      "len": 5
+    },
+    "extent": 13
+  },
+  {
+    "name": "atol",
+    "tag": "vc2",
+    "refVa": "0x7fc4ed8a",
+    "len": 149,
+    "prefix": 32,
+    "firstRet": 149,
+    "hex": "53568b74240c5755bf01000000393d........7e150fb6066a0850e8........83c40885c0741546ebe38b0d........0fb606668b044183e008ebe70fb63e468bef83ff2d740583ff2b75040fb63e4633db833d........017e1c6a0457e8........83c40885c0741b6bdb0a8d5c3bd00fb63e46ebdba1........668b047883e004ebe18bc383fd2d7504f7db8bc35d5f5e5bc3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 149
+  },
+  {
+    "name": "strtol",
+    "tag": "vc2",
+    "refVa": "0x7fc51732",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": 23,
+    "hex": "6a00ff742410ff742410ff742410e8........83c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 23
+  },
+  {
+    "name": "_itoa",
+    "tag": "vc2",
+    "refVa": "0x7fc3490d",
+    "len": 42,
+    "prefix": 29,
+    "firstRet": 42,
+    "hex": "8b44240c8b4c240483f80a750885c90f8c........6a0050ff74241051e8........8b44241883c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 1161
+  },
+  {
+    "name": "fread",
+    "tag": "vc2",
+    "refVa": "0x7fc4f633",
+    "len": 66,
+    "prefix": 30,
+    "firstRet": 66,
+    "hex": "56578b7c24188bf781ee........c1fe0583c61a56e8........83c40457ff742418ff742418ff742418e8........83c4108bf856e8........83c4048bc75f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 365
+  },
+  {
+    "name": "fwrite",
+    "tag": "vc2",
+    "refVa": "0x7fc4fae6",
+    "len": 66,
+    "prefix": 30,
+    "firstRet": 66,
+    "hex": "56578b7c24188bf781ee........c1fe0583c61a56e8........83c40457ff742418ff742418ff742418e8........83c4108bf856e8........83c4048bc75f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 410
+  },
+  {
+    "name": "fopen",
+    "tag": "vc2",
+    "refVa": "0x7fc43f6e",
+    "len": 19,
+    "prefix": 19,
+    "firstRet": 19,
+    "hex": "6a40ff74240cff74240ce8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 19
+  },
+  {
+    "name": "fseek",
+    "tag": "vc2",
+    "refVa": "0x7fc4f83b",
+    "len": 62,
+    "prefix": 29,
+    "firstRet": 62,
+    "hex": "56578b74240c8bfe81ef........c1ff0583c71a57e8........83c404ff742414ff74241456e8........83c40c8bf057e8........83c4048bc65f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 211
+  },
+  {
+    "name": "abs",
+    "tag": "vc2",
+    "refVa": "0x7fc4ec10",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": 10,
+    "hex": "8b4424049933c22bc2c3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 56
+  },
+  {
+    "name": "labs",
+    "tag": "vc2",
+    "refVa": "0x7fc4fe30",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": 10,
+    "hex": "8b4424049933c22bc2c3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 10
+  },
+  {
+    "name": "_purecall",
+    "tag": "vc2",
+    "refVa": "0x7fc494e5",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "6a19e8........83c404c3",
+    "anchor": {
+      "off": 7,
+      "len": 4
+    },
+    "extent": 11
+  },
+  {
+    "name": "__CxxFrameHandler",
+    "tag": "vc2",
+    "refVa": "0x7fc39c75",
+    "len": 55,
+    "prefix": 31,
+    "firstRet": 55,
+    "hex": "558bec83ec08535657fc8945f86a006a006a00ff75f8ff7514ff7510ff750cff7508e8........83c4208945fc5f5e5b8b45fc8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 55
+  },
+  {
+    "name": "_except_handler3",
+    "tag": "vc2",
+    "refVa": "0x7fc43055",
+    "len": 144,
+    "prefix": 32,
+    "firstRet": 144,
+    "hex": "558bec83ec0853565755fc8b5d0c8b4508f7400406000000757d8945f88b45108945fc8d45f88943fc8b730c8b7b0883feff745c8d0c76837c8f0400743a56558d6b10ff548f045d5e8b5d0c0bc0742878318b7b0853e8........83c4048d6b105653e8........83c4088d0c768b048f89430cff548f088b7b088d0c768b348febacb8000000005d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 174
+  },
+  {
+    "name": "_global_unwind2",
+    "tag": "vc2",
+    "refVa": "0x7fc40e98",
+    "len": 32,
+    "prefix": 32,
+    "firstRet": 32,
+    "hex": "558bec535657556a006a0068........ff7508e8........5d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 66
+  },
+  {
+    "name": "_local_unwind2",
+    "tag": "vc2",
+    "refVa": "0x7fc40eda",
+    "len": 90,
+    "prefix": 29,
+    "firstRet": 90,
+    "hex": "5356578b442410506afe68........64ff3500000000648925000000008b4424208b58088b700c83feff74203b742424741a8d34768b0cb3894c240889480c837cb3040075d7ff54b308ebd1648f050000000083c40c5f5e5bc3",
+    "anchor": {
+      "off": 15,
+      "len": 14
+    },
+    "extent": 90
+  },
+  {
+    "name": "_onexit",
+    "tag": "vc2",
+    "refVa": "0x7fc351a0",
+    "len": 67,
+    "prefix": 32,
+    "firstRet": 67,
+    "hex": "56e8........a1........50e8........83c4048b0d........2b0d........3bc10f86........a1........8b74240889308305........04e8........8bc65ec3",
+    "anchor": {
+      "off": 17,
+      "len": 5
+    },
+    "extent": 126
+  },
+  {
+    "name": "_initterm",
+    "tag": "vc2",
+    "refVa": "0x7fc31dcd",
+    "len": 17,
+    "prefix": 17,
+    "firstRet": 17,
+    "hex": "56578b7c24108b74240c3bfe770a5f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 34
+  },
+  {
+    "name": "memcpy",
+    "tag": "vc70",
+    "refVa": "0x7c00126b",
+    "len": 62,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........f7c703000000758fc1e90283e20383f9080f83........ff248d........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 226
+  },
+  {
+    "name": "memmove",
+    "tag": "vc70",
+    "refVa": "0x7c003f12",
+    "len": 62,
+    "prefix": 28,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe0f87........f7c7030000000f85........c1e90283e20383f9080f83........ff248d........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 309
+  },
+  {
+    "name": "memset",
+    "tag": "vc70",
+    "refVa": "0x7c0010fd",
+    "len": 77,
+    "prefix": 32,
+    "firstRet": 77,
+    "hex": "8b54240c8b4c240485d20f84........33c08a442408578bf983fa04722ff7d983e1030f85........8bc8c1e00803c18bc8c1e01003c18bca83e203c1e902740cf3ab85d275068b4424085fc3",
+    "anchor": {
+      "off": 16,
+      "len": 16
+    },
+    "extent": 89
+  },
+  {
+    "name": "memcmp",
+    "tag": "vc70",
+    "refVa": "0x7c00149a",
+    "len": 52,
+    "prefix": 31,
+    "firstRet": 52,
+    "hex": "8b44240c85c0742b8b54240456578bf28b7c24100bd783e2030f85........8bc883e003c1e9027404f3a7750785c075b25f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 145
+  },
+  {
+    "name": "memchr",
+    "tag": "vc70",
+    "refVa": "0x7c007d4d",
+    "len": 93,
+    "prefix": 32,
+    "firstRet": 93,
+    "hex": "8b44240c5385c074528b54240833db8a5c240cf7c20300000074168a0a83c20132cb747083e8017432f7c20300000075ea83e8047212578bfbc1e30803df8bfbc1e31003dfeb1b5f83c004740e8a0a83c20132cb743e83e80175f25bc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 171
+  },
+  {
+    "name": "strlen",
+    "tag": "vc70",
+    "refVa": "0x7c002493",
+    "len": 97,
+    "prefix": 32,
+    "firstRet": 97,
+    "hex": "8b4c2404f7c103000000741a8a0183c10184c07442f7c10300000075ef83c0008d24248d24248b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c074b184e47418a90000ff00749ca9000000ff75cf8d41ff8b4c24042bc1c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 107
+  },
+  {
+    "name": "strcmp",
+    "tag": "vc70",
+    "refVa": "0x7c006182",
+    "len": 83,
+    "prefix": 28,
+    "firstRet": null,
+    "hex": "8b5424048b4c2408f7c2030000000f85........8b023a0175390ac00f84........3a6101752c0ae40f84........c1e8103a4102751c0ac00f84........3a6103750f83c10483c2040ae475c6e9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 141
+  },
+  {
+    "name": "strcpy",
+    "tag": "vc70",
+    "refVa": "0x7c004b3a",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "578b7c2408e9........",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 381
+  },
+  {
+    "name": "strcat",
+    "tag": "vc70",
+    "refVa": "0x7c001d57",
+    "len": 147,
+    "prefix": 31,
+    "firstRet": 147,
+    "hex": "8b4c240457f7c1030000000f85........8b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0749e84e47495a90000ff0075828d79fe8b4c240cf7c103000000759ebafffefe7e8b0103d083f0ff33c28b1183c104a9000101817507891783c704ebdf84d20f84........84f6741cf7c20000ff000f84........f7c2000000ff75d989178b4424085fc3",
+    "anchor": {
+      "off": 17,
+      "len": 14
+    },
+    "extent": 156
+  },
+  {
+    "name": "strchr",
+    "tag": "vc70",
+    "refVa": "0x7c007106",
+    "len": 122,
+    "prefix": 31,
+    "firstRet": 122,
+    "hex": "33c08a442408538bd8c1e0088b542408f7c20300000074158a0a83c2013acb74da84c97451f7c20300000075eb0bd8578bc3c1e310560bd88b0abffffefe7e8bc18bf733cb03f003f983f1ff83f0ff33cf33c683c20481e100010181751c250001018174d32500010101750881e60000008075c45e5f5b33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 190
+  },
+  {
+    "name": "strrchr",
+    "tag": "vc70",
+    "refVa": "0x7c006e16",
+    "len": 41,
+    "prefix": 31,
+    "firstRet": 41,
+    "hex": "558bec578b7d0833c083c9fff2ae83c101f7d983ef018a450cfdf2ae83c7013807740633c0fc5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 45
+  },
+  {
+    "name": "strncpy",
+    "tag": "vc70",
+    "refVa": "0x7c0053f1",
+    "len": 110,
+    "prefix": 27,
+    "firstRet": 110,
+    "hex": "8b4c240c5785c9745f56538bd98b742414f7c6030000008b7c24100f85........c1e902742dbafffefe7e8b0603d083f0ff33c28b1683c604a900010181752e891783c70483e90175dc83e3030f84........8a0683c601880783c70184c0759583eb0175805b5e8b4424085fc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 462
+  },
+  {
+    "name": "strncmp",
+    "tag": "vc70",
+    "refVa": "0x7c001a52",
+    "len": 52,
+    "prefix": 31,
+    "firstRet": 52,
+    "hex": "558bec5756538b4d10e3228bd98b7d088bf733c0f2aef7d903cb8bfe8b750cf3a68a46ff33c93a47ff7609f7d18bc15b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 67
+  },
+  {
+    "name": "strstr",
+    "tag": "vc70",
+    "refVa": "0x7c0071c4",
+    "len": 62,
+    "prefix": 32,
+    "firstRet": 62,
+    "hex": "8b4c24085753568a118b7c241084d2746f8a710184f674558bf78b4c24148a0783c6013ac2741784c0740d8a0683c6013ac2740a84c075f35e5b5f33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 778
+  },
+  {
+    "name": "_strnicmp",
+    "tag": "vc70",
+    "refVa": "0x7c0145c7",
+    "len": 127,
+    "prefix": 32,
+    "firstRet": 127,
+    "hex": "558bec5153e8........8b58643b1d........7407e8........8bd8837d10007458837b14007513ff7510ff750cff7508e8........83c40ceb41568b7508578b7d0c0fb6065053e8........8945fc0fb607505346e8........83c41047ff4d108bc8740b837dfc007405394dfc74d28b45fc5f2bc15eeb0233c05bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 127
+  },
+  {
+    "name": "_stricmp",
+    "tag": "vc70",
+    "refVa": "0x7c001bd4",
+    "len": 91,
+    "prefix": 29,
+    "firstRet": 91,
+    "hex": "558bec5153e8........8b58643b1d........0f85........837b14000f84........568b7508578b7d0c0fb6065053e8........8945fc0fb607505346e8........83c4108bc88b45fc4785c074043bc174d75f2bc15e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 162
+  },
+  {
+    "name": "_strcmpi",
+    "tag": "vc70",
+    "refVa": "0x7c001bd4",
+    "len": 91,
+    "prefix": 29,
+    "firstRet": 91,
+    "hex": "558bec5153e8........8b58643b1d........0f85........837b14000f84........568b7508578b7d0c0fb6065053e8........8945fc0fb607505346e8........83c4108bc88b45fc4785c074043bc174d75f2bc15e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 162
+  },
+  {
+    "name": "_ftol",
+    "tag": "vc70",
+    "refVa": "0x7c002ccc",
+    "len": 39,
+    "prefix": 31,
+    "firstRet": 39,
+    "hex": "558bec83c4f49bd97dfe9b668b45fe80cc0c668945fcd96dfcdf7df4d96dfe8b45f48b55f8c9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 1203
+  },
+  {
+    "name": "_CIsqrt",
+    "tag": "vc70",
+    "refVa": "0x7c0088c9",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIpow",
+    "tag": "vc70",
+    "refVa": "0x7c0085d2",
+    "len": 83,
+    "prefix": 31,
+    "firstRet": 83,
+    "hex": "833d........00743183ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b042466257f00663d7f008d6424080f84........83ec14d9c9dd1c24dd5424088b44240ce8........83c414c3",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 585
+  },
+  {
+    "name": "_CIsin",
+    "tag": "vc70",
+    "refVa": "0x7c00881b",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIcos",
+    "tag": "vc70",
+    "refVa": "0x7c008151",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIatan2",
+    "tag": "vc70",
+    "refVa": "0x7c008147",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 10
+  },
+  {
+    "name": "floor",
+    "tag": "vc70",
+    "refVa": "0x7c0098db",
+    "len": 145,
+    "prefix": 30,
+    "firstRet": 145,
+    "hex": "833d........000f84........83ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b042466257f00663d7f008d6424080f85........f30f7e442404660f2815........660f28c8660f28f8660f73d034660f7ec0660f5405........660ffad0660fd3caa900080000754c3dff0300007c7d660ff3ca3d320400007f0b660fd64c2404dd442404c3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 287
+  },
+  {
+    "name": "ceil",
+    "tag": "vc70",
+    "refVa": "0x7c0097c0",
+    "len": 145,
+    "prefix": 30,
+    "firstRet": 145,
+    "hex": "833d........000f84........83ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b042466257f00663d7f008d6424080f85........f30f7e442404660f2815........660f28c8660f28f8660f73d034660f7ec0660f5405........660ffad0660fd3caa900080000744c3dff0b00007c7d660ff3ca3d320c00007f0b660fd64c2404dd442404c3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 283
+  },
+  {
+    "name": "malloc",
+    "tag": "vc70",
+    "refVa": "0x7c0010eb",
+    "len": 18,
+    "prefix": 18,
+    "firstRet": 18,
+    "hex": "ff35........ff742408e8........5959c3",
+    "anchor": {
+      "off": 6,
+      "len": 5
+    },
+    "extent": 18
+  },
+  {
+    "name": "free",
+    "tag": "vc70",
+    "refVa": "0x7c001156",
+    "len": 63,
+    "prefix": 27,
+    "firstRet": 63,
+    "hex": "6a1868........e8........8b750885f67426a1........83f8030f84........83f8020f84........566a00ff35........ff15........e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 8
+    },
+    "extent": 63
+  },
+  {
+    "name": "realloc",
+    "tag": "vc70",
+    "refVa": "0x7c001c76",
+    "len": 99,
+    "prefix": 32,
+    "firstRet": 99,
+    "hex": "6a2468........e8........8b5d0833ff3bdf74e08b750c3bf70f84........a1........83f8030f84........83f8020f84........33c083fee077173bf70f84........565357ff35........ff15........3bc70f84........e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 16
+    },
+    "extent": 225
+  },
+  {
+    "name": "calloc",
+    "tag": "vc70",
+    "refVa": "0x7c0016cb",
+    "len": 105,
+    "prefix": 27,
+    "firstRet": 105,
+    "hex": "6a1068........e8........8b75080faf750c908975e433db3bf30f84........895de083fee0772ea1........83f8030f84........83f8020f84........395de0751b566a08ff35........ff15........8945e0395de00f84........8b45e0e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 15
+    },
+    "extent": 633
+  },
+  {
+    "name": "rand",
+    "tag": "vc70",
+    "refVa": "0x7c02836d",
+    "len": 34,
+    "prefix": 28,
+    "firstRet": 34,
+    "hex": "e8........8b481469c9fd43030081c1c39e26008948148bc1c1e81025ff7f0000c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 34
+  },
+  {
+    "name": "srand",
+    "tag": "vc70",
+    "refVa": "0x7c028360",
+    "len": 13,
+    "prefix": 13,
+    "firstRet": 13,
+    "hex": "e8........8b4c2404894814c3",
+    "anchor": {
+      "off": 5,
+      "len": 8
+    },
+    "extent": 13
+  },
+  {
+    "name": "sprintf",
+    "tag": "vc70",
+    "refVa": "0x7c02b5eb",
+    "len": 88,
+    "prefix": 29,
+    "firstRet": 88,
+    "hex": "558bec83ec20568b7508578d451050ff750c8d45e050c745e4ffffff7fc745ec420000008975e88975e0e8........83c40c85f68bf8741aff4de478088b45e0802000eb0d8d45e0506a00e8........59598bc75f5ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 88
+  },
+  {
+    "name": "vsprintf",
+    "tag": "vc70",
+    "refVa": "0x7c02b977",
+    "len": 87,
+    "prefix": 28,
+    "firstRet": 87,
+    "hex": "558bec83ec20568b750857ff75108d45e0ff750cc745e4ffffff7f50c745ec420000008975e88975e0e8........83c40c85f68bf8741aff4de478088b45e0802000eb0d8d45e0506a00e8........59598bc75f5ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 87
+  },
+  {
+    "name": "qsort",
+    "tag": "vc70",
+    "refVa": "0x7c00317f",
+    "len": 217,
+    "prefix": 32,
+    "firstRet": 217,
+    "hex": "8b44240881ec0001000083f8020f82........53558bac241401000085ed56570f84........8b9c24140100008d70ff0faff59003f3c744241800000000895c2410897424148bc62bc333d2f7f54083f8080f87........8b8424200100005055538bc6e8........83c40c8b44241848894424180f88........8b5484208b84849800000089542410894424148bda8bf0ebb28b4c2404558b6c240c578bf83bf9763253568d34293bf78bd977195356ff54242483c40885c07e028bde03f53bf776eb8b4c24143bdf8bc7750b2bfd3bf977d25e5b5f5dc3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 1011
+  },
+  {
+    "name": "wcslen",
+    "tag": "vc70",
+    "refVa": "0x7c0013b8",
+    "len": 22,
+    "prefix": 22,
+    "firstRet": 22,
+    "hex": "8b442404668b0840406685c975f62b442404d1f848c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 22
+  },
+  {
+    "name": "toupper",
+    "tag": "vc70",
+    "refVa": "0x7c006e75",
+    "len": 29,
+    "prefix": 29,
+    "firstRet": 29,
+    "hex": "e8........8b40643b05........75e9ff74240450e8........5959c3",
+    "anchor": {
+      "off": 14,
+      "len": 8
+    },
+    "extent": 72
+  },
+  {
+    "name": "tolower",
+    "tag": "vc70",
+    "refVa": "0x7c015644",
+    "len": 34,
+    "prefix": 32,
+    "firstRet": 34,
+    "hex": "e8........8b40643b05........7405e8........ff74240450e8........5959c3",
+    "anchor": {
+      "off": 21,
+      "len": 6
+    },
+    "extent": 153
+  },
+  {
+    "name": "atol",
+    "tag": "vc70",
+    "refVa": "0x7c00643e",
+    "len": 252,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "5657e8........8b78643b3d........0f85........8b74240c837f28010fb6060f8f........8b4f480fb6044183e00885c00f85........0fb60e4683f92d8bd1742e83f92b742933c083f9307c1d83f9397f1883e93083f9ff0f84........8d04808d04410fb60e46ebde83c9ffebe60fb60e46ebd1558bec51535633f63935........570f84........6a306a01e8........8bd83bde59590f84........6a04e8........8bf83bfe59897dfc0f84........89373935........0f84........6a04e8........3bc659a3........0f84........89300fb735........8d430c506a15566a01e8........8bf88d4310506a14566a01",
+    "anchor": {
+      "off": 22,
+      "len": 8
+    },
+    "extent": 1636
+  },
+  {
+    "name": "strtol",
+    "tag": "vc70",
+    "refVa": "0x7c01796b",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": 23,
+    "hex": "6a00ff742410ff742410ff742410e8........83c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 23
+  },
+  {
+    "name": "_itoa",
+    "tag": "vc70",
+    "refVa": "0x7c006aa2",
+    "len": 40,
+    "prefix": 28,
+    "firstRet": 40,
+    "hex": "558bec837d100a8b4508750885c00f8c........6a00ff75108b4d0ce8........8b450c59595dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 385
+  },
+  {
+    "name": "fread",
+    "tag": "vc70",
+    "refVa": "0x7c02ca7e",
+    "len": 66,
+    "prefix": 31,
+    "firstRet": 66,
+    "hex": "6a0c68........e8........ff7514e8........598365fc00ff7514ff7510ff750cff7508e8........83c4108945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 20,
+      "len": 11
+    },
+    "extent": 76
+  },
+  {
+    "name": "fwrite",
+    "tag": "vc70",
+    "refVa": "0x7c02cf72",
+    "len": 66,
+    "prefix": 31,
+    "firstRet": 66,
+    "hex": "6a0c68........e8........ff7514e8........598365fc00ff7514ff7510ff750cff7508e8........83c4108945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 20,
+      "len": 11
+    },
+    "extent": 76
+  },
+  {
+    "name": "fopen",
+    "tag": "vc70",
+    "refVa": "0x7c02ae09",
+    "len": 19,
+    "prefix": 19,
+    "firstRet": 19,
+    "hex": "6a40ff74240cff74240ce8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 19
+  },
+  {
+    "name": "fseek",
+    "tag": "vc70",
+    "refVa": "0x7c02cc09",
+    "len": 63,
+    "prefix": 31,
+    "firstRet": 63,
+    "hex": "6a0c68........e8........ff7508e8........598365fc00ff7510ff750cff7508e8........83c40c8945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 20,
+      "len": 11
+    },
+    "extent": 73
+  },
+  {
+    "name": "abs",
+    "tag": "vc70",
+    "refVa": "0x7c02828e",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "labs",
+    "tag": "vc70",
+    "refVa": "0x7c02828e",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "_purecall",
+    "tag": "vc70",
+    "refVa": "0x7c0276f0",
+    "len": 9,
+    "prefix": 9,
+    "firstRet": 9,
+    "hex": "6a19e8........59c3",
+    "anchor": {
+      "off": 0,
+      "len": 3
+    },
+    "extent": 169
+  },
+  {
+    "name": "_EH_prolog",
+    "tag": "vc70",
+    "refVa": "0x7c001000",
+    "len": 31,
+    "prefix": 31,
+    "firstRet": 31,
+    "hex": "6aff5064a100000000508b44240c64892500000000896c240c8d6c240c50c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 235
+  },
+  {
+    "name": "__CxxFrameHandler",
+    "tag": "vc70",
+    "refVa": "0x7c01ba8f",
+    "len": 54,
+    "prefix": 30,
+    "firstRet": 54,
+    "hex": "558bec83ec04535657fc8945fc33c0505050ff75fcff7514ff7510ff750cff7508e8........83c4208945fc5f5e5b8b45fc8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 54
+  },
+  {
+    "name": "_except_handler3",
+    "tag": "vc70",
+    "refVa": "0x7c006ebd",
+    "len": 189,
+    "prefix": 30,
+    "firstRet": 189,
+    "hex": "558bec83ec0853565755fc8b5d0c8b4508f74004060000000f85........8945f88b45108945fc8d45f88943fc8b730c8b7b0883feff74618d0c76837c8f0400744556558d6b10ff548f045d5e8b5d0c0bc07433783c8b7b0853e8........83c4048d6b105653e8........83c4088d0c766a018b448f08e8........8b048f89430cff548f088b7b088d0c768b348feba1b800000000eb1cb801000000eb15558d6b106aff53e8........83c4085db8010000005d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 189
+  },
+  {
+    "name": "_global_unwind2",
+    "tag": "vc70",
+    "refVa": "0x7c006f95",
+    "len": 32,
+    "prefix": 32,
+    "firstRet": 32,
+    "hex": "558bec535657556a006a0068........ff7508e8........5d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 66
+  },
+  {
+    "name": "_local_unwind2",
+    "tag": "vc70",
+    "refVa": "0x7c006fd7",
+    "len": 104,
+    "prefix": 29,
+    "firstRet": 104,
+    "hex": "5356578b442410506afe68........64ff3500000000648925000000008b4424208b58088b700c83feff742e3b74242474288d34768b0cb3894c240889480c837cb3040075d768010100008b44b308e8........ff54b308ebc3648f050000000083c40c5f5e5bc3",
+    "anchor": {
+      "off": 15,
+      "len": 14
+    },
+    "extent": 303
+  },
+  {
+    "name": "_onexit",
+    "tag": "vc70",
+    "refVa": "0x7c004cc9",
+    "len": 50,
+    "prefix": 32,
+    "firstRet": 50,
+    "hex": "6a0c68........e8........e8........8365fc008b7d08e8........8945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 17,
+      "len": 8
+    },
+    "extent": 97
+  },
+  {
+    "name": "_initterm",
+    "tag": "vc70",
+    "refVa": "0x7c0011ee",
+    "len": 26,
+    "prefix": 26,
+    "firstRet": 26,
+    "hex": "568b7424083b74240c730d8b0685c07402ffd083c604ebed5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 26
+  },
+  {
+    "name": "memcpy",
+    "tag": "vc71",
+    "refVa": "0x7c342ebb",
+    "len": 60,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........f7c7030000007514c1e90283e20383f9087228f3a5ff2495........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 821
+  },
+  {
+    "name": "memmove",
+    "tag": "vc71",
+    "refVa": "0x7c34298e",
+    "len": 60,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........f7c7030000007514c1e90283e20383f9087228f3a5ff2495........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 818
+  },
+  {
+    "name": "memset",
+    "tag": "vc71",
+    "refVa": "0x7c341222",
+    "len": 89,
+    "prefix": 28,
+    "firstRet": 89,
+    "hex": "8b54240c8b4c240485d20f84........33c08a442408578bf983fa040f82........f7d983e1030f85........8bc8c1e00803c18bc8c1e01003c18bca83e203c1e9020f84........f3ab85d20f85........8b4424085fc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 396
+  },
+  {
+    "name": "memcmp",
+    "tag": "vc71",
+    "refVa": "0x7c343234",
+    "len": 83,
+    "prefix": 32,
+    "firstRet": 83,
+    "hex": "8b44240c85c0744a8b54240456578bf28b7c24100bd783e2037438a90100000074118a0e3a0f755883c60183c70183e801741d8a0e8a173aca75458a4e018a57013aca753b83c70283c60283e80275e35f5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 516
+  },
+  {
+    "name": "memchr",
+    "tag": "vc71",
+    "refVa": "0x7c3437bd",
+    "len": 93,
+    "prefix": 32,
+    "firstRet": 93,
+    "hex": "8b44240c5385c074528b54240833db8a5c240cf7c20300000074168a0a83c20132cb747083e8017432f7c20300000075ea83e8047212578bfbc1e30803df8bfbc1e31003dfeb1b5f83c004740e8a0a83c20132cb743e83e80175f25bc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 171
+  },
+  {
+    "name": "strlen",
+    "tag": "vc71",
+    "refVa": "0x7c3417d5",
+    "len": 94,
+    "prefix": 32,
+    "firstRet": 94,
+    "hex": "8b4c2404f7c103000000741a8a0183c10184c074e1f7c10300000075ef83c0008d24248d24248b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c00f84........84e47411a90000ff00759b8d41fe8b4c24042bc1c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 967
+  },
+  {
+    "name": "strcmp",
+    "tag": "vc71",
+    "refVa": "0x7c342cc0",
+    "len": 67,
+    "prefix": 31,
+    "firstRet": 67,
+    "hex": "8b5424048b4c2408f7c203000000753b8b023a01752d0ac074263a610175240ae4741dc1e8103a410275180ac074113a6103750f83c10483c2040ae475d28bff33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 135
+  },
+  {
+    "name": "strcpy",
+    "tag": "vc71",
+    "refVa": "0x7c34174a",
+    "len": 113,
+    "prefix": 32,
+    "firstRet": 113,
+    "hex": "578b7c24088b4c240cf7c103000000741a8a1183c10184d20f84........881783c701f7c10300000075e6bafffefe7e8b0103d083f0ff33c28b1183c104a9000101817507891783c704ebdf84d20f84........84f67419f7c20000ff000f85........6689178b442408c64702005fc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 139
+  },
+  {
+    "name": "strcat",
+    "tag": "vc71",
+    "refVa": "0x7c342652",
+    "len": 89,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "8b4c240457f7c10300000074138a0183c10184c0743bf7c10300000075ef8bff8b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0742a84e4741ea90000ff00740fa9000000ff75cf8d79ffe9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 113
+  },
+  {
+    "name": "strchr",
+    "tag": "vc71",
+    "refVa": "0x7c342811",
+    "len": 122,
+    "prefix": 31,
+    "firstRet": 122,
+    "hex": "33c08a442408538bd8c1e0088b542408f7c20300000074158a0a83c2013acb74da84c97451f7c20300000075eb0bd8578bc3c1e310560bd88b0abffffefe7e8bc18bf733cb03f003f983f1ff83f0ff33cf33c683c20481e100010181751c250001018174d32500010101750881e60000008075c45e5f5b33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 190
+  },
+  {
+    "name": "strrchr",
+    "tag": "vc71",
+    "refVa": "0x7c343868",
+    "len": 45,
+    "prefix": 31,
+    "firstRet": 45,
+    "hex": "558bec578b7d0833c083c9fff2ae83c101f7d983ef018a450cfdf2ae83c7013807740433c0eb028bc7fc5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 45
+  },
+  {
+    "name": "strncpy",
+    "tag": "vc71",
+    "refVa": "0x7c3426c3",
+    "len": 110,
+    "prefix": 31,
+    "firstRet": 110,
+    "hex": "8b4c240c5785c90f84........56538bd98b742414f7c6030000008b7c2410750bc1e9020f85........eb278a0683c601880783c70183e901742b84c0742ff7c60300000075e58bd9c1e902756183e30374138a0683c601880783c70184c0743783eb0175ed8b4424105b5e5fc3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 334
+  },
+  {
+    "name": "strncmp",
+    "tag": "vc71",
+    "refVa": "0x7c342955",
+    "len": 57,
+    "prefix": 31,
+    "firstRet": 57,
+    "hex": "558bec5756538b4d10e3278bd98b7d088bf733c0f2aef7d903cb8bfe8b750cf3a68a46ff33c93a47ff7705740583e902f7d18bc15b5e5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 57
+  },
+  {
+    "name": "strstr",
+    "tag": "vc71",
+    "refVa": "0x7c3428cf",
+    "len": 62,
+    "prefix": 32,
+    "firstRet": 62,
+    "hex": "8b4c24085753568a118b7c241084d2746f8a710184f674558bf78b4c24148a0783c6013ac2741784c0740d8a0683c6013ac2740a84c075f35e5b5f33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 134
+  },
+  {
+    "name": "_strnicmp",
+    "tag": "vc71",
+    "refVa": "0x7c350724",
+    "len": 127,
+    "prefix": 32,
+    "firstRet": 127,
+    "hex": "558bec5153e8........8b58643b1d........7407e8........8bd8837d10007458837b14007513ff7510ff750cff7508e8........83c40ceb41568b7508578b7d0c0fb6065053e8........8945fc0fb607505346e8........83c41047ff4d108bc8740b837dfc007405394dfc74d28b45fc5f2bc15eeb0233c05bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 127
+  },
+  {
+    "name": "_stricmp",
+    "tag": "vc71",
+    "refVa": "0x7c3505dc",
+    "len": 105,
+    "prefix": 32,
+    "firstRet": 105,
+    "hex": "558bec5153e8........8b58643b1d........7407e8........8bd8837b1400750fff750cff7508e8........5959eb35568b7508578b7d0c0fb6065053e8........8945fc0fb607505346e8........83c4108bc88b45fc4785c074043bc174d75f2bc15e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 105
+  },
+  {
+    "name": "_strcmpi",
+    "tag": "vc71",
+    "refVa": "0x7c3505dc",
+    "len": 105,
+    "prefix": 32,
+    "firstRet": 105,
+    "hex": "558bec5153e8........8b58643b1d........7407e8........8bd8837b1400750fff750cff7508e8........5959eb35568b7508578b7d0c0fb6065053e8........8945fc0fb607505346e8........83c4108bc88b45fc4785c074043bc174d75f2bc15e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 6
+    },
+    "extent": 105
+  },
+  {
+    "name": "_ftol",
+    "tag": "vc71",
+    "refVa": "0x7c34525d",
+    "len": 39,
+    "prefix": 31,
+    "firstRet": 39,
+    "hex": "558bec83c4f49bd97dfe9b668b45fe80cc0c668945fcd96dfcdf7df4d96dfe8b45f48b55f8c9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "_CIsqrt",
+    "tag": "vc71",
+    "refVa": "0x7c344366",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIpow",
+    "tag": "vc71",
+    "refVa": "0x7c34406f",
+    "len": 83,
+    "prefix": 31,
+    "firstRet": 83,
+    "hex": "833d........00743183ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b042466257f00663d7f008d6424080f84........83ec14d9c9dd1c24dd5424088b44240ce8........83c414c3",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 585
+  },
+  {
+    "name": "_CIsin",
+    "tag": "vc71",
+    "refVa": "0x7c3442b8",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIcos",
+    "tag": "vc71",
+    "refVa": "0x7c343bee",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIatan2",
+    "tag": "vc71",
+    "refVa": "0x7c343be4",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 10
+  },
+  {
+    "name": "floor",
+    "tag": "vc71",
+    "refVa": "0x7c34539f",
+    "len": 145,
+    "prefix": 30,
+    "firstRet": 145,
+    "hex": "833d........000f84........83ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b042466257f00663d7f008d6424080f85........f30f7e442404660f2815........660f28c8660f28f8660f73d034660f7ec0660f5405........660ffad0660fd3caa900080000754c3dff0300007c7d660ff3ca3d320400007f0b660fd64c2404dd442404c3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 287
+  },
+  {
+    "name": "ceil",
+    "tag": "vc71",
+    "refVa": "0x7c345284",
+    "len": 145,
+    "prefix": 30,
+    "firstRet": 145,
+    "hex": "833d........000f84........83ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b042466257f00663d7f008d6424080f85........f30f7e442404660f2815........660f28c8660f28f8660f73d034660f7ec0660f5405........660ffad0660fd3caa900080000744c3dff0b00007c7d660ff3ca3d320c00007f0b660fd64c2404dd442404c3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 283
+  },
+  {
+    "name": "malloc",
+    "tag": "vc71",
+    "refVa": "0x7c3416e9",
+    "len": 18,
+    "prefix": 18,
+    "firstRet": 18,
+    "hex": "ff35........ff742408e8........5959c3",
+    "anchor": {
+      "off": 6,
+      "len": 5
+    },
+    "extent": 97
+  },
+  {
+    "name": "free",
+    "tag": "vc71",
+    "refVa": "0x7c342151",
+    "len": 63,
+    "prefix": 27,
+    "firstRet": 63,
+    "hex": "6a1868........e8........8b750885f67426a1........83f8030f84........83f8020f84........566a00ff35........ff15........e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 8
+    },
+    "extent": 518
+  },
+  {
+    "name": "realloc",
+    "tag": "vc71",
+    "refVa": "0x7c3524ff",
+    "len": 35,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "6a2468........e8........8b5d0833ff3bdf750eff750ce8........59e9........",
+    "anchor": {
+      "off": 12,
+      "len": 13
+    },
+    "extent": 777
+  },
+  {
+    "name": "calloc",
+    "tag": "vc71",
+    "refVa": "0x7c342357",
+    "len": 104,
+    "prefix": 32,
+    "firstRet": 104,
+    "hex": "6a1068........e8........8b75080faf750c8975e033db3bf30f84........895de483fee0772ea1........83f8030f84........83f8020f84........395de4751b566a08ff35........ff15........8945e4395de40f84........8b45e4e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 16
+    },
+    "extent": 182
+  },
+  {
+    "name": "rand",
+    "tag": "vc71",
+    "refVa": "0x7c366be9",
+    "len": 34,
+    "prefix": 28,
+    "firstRet": 34,
+    "hex": "e8........8b481469c9fd43030081c1c39e26008948148bc1c1e81025ff7f0000c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 34
+  },
+  {
+    "name": "srand",
+    "tag": "vc71",
+    "refVa": "0x7c366bdc",
+    "len": 13,
+    "prefix": 13,
+    "firstRet": 13,
+    "hex": "e8........8b4c2404894814c3",
+    "anchor": {
+      "off": 5,
+      "len": 8
+    },
+    "extent": 13
+  },
+  {
+    "name": "sprintf",
+    "tag": "vc71",
+    "refVa": "0x7c36a42b",
+    "len": 88,
+    "prefix": 29,
+    "firstRet": 88,
+    "hex": "558bec83ec20568b7508578d451050ff750c8d45e050c745e4ffffff7fc745ec420000008975e88975e0e8........83c40c85f68bf8741aff4de478088b45e0c60000eb0d8d45e0506a00e8........59598bc75f5ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 88
+  },
+  {
+    "name": "vsprintf",
+    "tag": "vc71",
+    "refVa": "0x7c36a896",
+    "len": 87,
+    "prefix": 28,
+    "firstRet": 87,
+    "hex": "558bec83ec20568b750857ff75108d45e0ff750cc745e4ffffff7f50c745ec420000008975e88975e0e8........83c40c85f68bf8741aff4de478088b45e0c60000eb0d8d45e0506a00e8........59598bc75f5ec9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 87
+  },
+  {
+    "name": "qsort",
+    "tag": "vc71",
+    "refVa": "0x7c36695f",
+    "len": 254,
+    "prefix": 29,
+    "firstRet": null,
+    "hex": "8b44240881ec0001000083f8020f82........558bac241001000085ed0f84........538b9c240c010000568d70ff0faff503f3c744241400000000895c240c89742410578bc62bc333d2f7f54083f808773c8b8424200100005055538bc6e8........83c40c8b44241848894424180f88........8b5484208b84849800000089542410894424148bda8bf0ebb6d1e80fafc503c38bf85753ff94242801000083c40885c07e223bdf8bc7741c8bcb2bcf8bf58a188a1401881c018810404e75f28b5c24108b7424145653ff94242801000083c40885c07e223bde8bc6741c8bcb2bce8bf58a188a1401881c018810404e75f28b5c24108b7424145657",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 637
+  },
+  {
+    "name": "wcslen",
+    "tag": "vc71",
+    "refVa": "0x7c35043c",
+    "len": 22,
+    "prefix": 22,
+    "firstRet": 22,
+    "hex": "8b442404668b0840406685c975f62b442404d1f848c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 22
+  },
+  {
+    "name": "toupper",
+    "tag": "vc71",
+    "refVa": "0x7c3549d4",
+    "len": 34,
+    "prefix": 32,
+    "firstRet": 34,
+    "hex": "e8........8b40643b05........7405e8........ff74240450e8........5959c3",
+    "anchor": {
+      "off": 21,
+      "len": 6
+    },
+    "extent": 629
+  },
+  {
+    "name": "tolower",
+    "tag": "vc71",
+    "refVa": "0x7c352396",
+    "len": 34,
+    "prefix": 32,
+    "firstRet": 34,
+    "hex": "e8........8b40643b05........7405e8........ff74240450e8........5959c3",
+    "anchor": {
+      "off": 21,
+      "len": 6
+    },
+    "extent": 153
+  },
+  {
+    "name": "atol",
+    "tag": "vc71",
+    "refVa": "0x7c351d80",
+    "len": 136,
+    "prefix": 29,
+    "firstRet": 136,
+    "hex": "5657e8........8b78643b3d........7407e8........8bf88b74240c837f28010fb6067e0e6a085057e8........83c40ceb0a8b4f480fb6044183e00885c0740346ebd80fb60e4683f92d8bd1740583f92b75040fb60e4633c083f9307c0a83f9397f0583e930eb0383c9ff83f9ff740c8d04808d04410fb60e46ebdd83fa2d5f5e7502f7d8c3",
+    "anchor": {
+      "off": 23,
+      "len": 6
+    },
+    "extent": 136
+  },
+  {
+    "name": "strtol",
+    "tag": "vc71",
+    "refVa": "0x7c355426",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": 23,
+    "hex": "6a00ff742410ff742410ff742410e8........83c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 23
+  },
+  {
+    "name": "_itoa",
+    "tag": "vc71",
+    "refVa": "0x7c351c5c",
+    "len": 42,
+    "prefix": 30,
+    "firstRet": 42,
+    "hex": "558bec837d100a8b4508750a85c07d066a016a0aeb056a00ff75108b4d0ce8........8b450c59595dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 42
+  },
+  {
+    "name": "fread",
+    "tag": "vc71",
+    "refVa": "0x7c36ba07",
+    "len": 66,
+    "prefix": 31,
+    "firstRet": 66,
+    "hex": "6a0c68........e8........ff7514e8........598365fc00ff7514ff7510ff750cff7508e8........83c4108945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 20,
+      "len": 11
+    },
+    "extent": 76
+  },
+  {
+    "name": "fwrite",
+    "tag": "vc71",
+    "refVa": "0x7c36befb",
+    "len": 66,
+    "prefix": 31,
+    "firstRet": 66,
+    "hex": "6a0c68........e8........ff7514e8........598365fc00ff7514ff7510ff750cff7508e8........83c4108945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 20,
+      "len": 11
+    },
+    "extent": 76
+  },
+  {
+    "name": "fopen",
+    "tag": "vc71",
+    "refVa": "0x7c369cbd",
+    "len": 19,
+    "prefix": 19,
+    "firstRet": 19,
+    "hex": "6a40ff74240cff74240ce8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 19
+  },
+  {
+    "name": "fseek",
+    "tag": "vc71",
+    "refVa": "0x7c36bb92",
+    "len": 63,
+    "prefix": 31,
+    "firstRet": 63,
+    "hex": "6a0c68........e8........ff7508e8........598365fc00ff7510ff750cff7508e8........83c40c8945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 20,
+      "len": 11
+    },
+    "extent": 73
+  },
+  {
+    "name": "abs",
+    "tag": "vc71",
+    "refVa": "0x7c366843",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "labs",
+    "tag": "vc71",
+    "refVa": "0x7c366843",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "_purecall",
+    "tag": "vc71",
+    "refVa": "0x7c365be2",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "a1........85c07402ffd06a19e8........59c3",
+    "anchor": {
+      "off": 5,
+      "len": 9
+    },
+    "extent": 20
+  },
+  {
+    "name": "_EH_prolog",
+    "tag": "vc71",
+    "refVa": "0x7c343438",
+    "len": 31,
+    "prefix": 31,
+    "firstRet": 31,
+    "hex": "6aff5064a100000000508b44240c64892500000000896c240c8d6c240c50c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 107
+  },
+  {
+    "name": "__CxxFrameHandler",
+    "tag": "vc71",
+    "refVa": "0x7c359b77",
+    "len": 54,
+    "prefix": 30,
+    "firstRet": 54,
+    "hex": "558bec83ec04535657fc8945fc33c0505050ff75fcff7514ff7510ff750cff7508e8........83c4208945fc5f5e5b8b45fc8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 54
+  },
+  {
+    "name": "_except_handler3",
+    "tag": "vc71",
+    "refVa": "0x7c34240d",
+    "len": 230,
+    "prefix": 30,
+    "firstRet": 230,
+    "hex": "558bec83ec0853565755fc8b5d0c8b4508f74004060000000f85........8945f88b45108945fc8d45f88943fc8b730c8b7b0853e8........83c4040bc0747b83feff747d8d0c768b448f040bc0745956558d6b1033db33c933d233f633ffffd05d5e8b5d0c0bc0743f78488b7b0853e8........83c4048d6b105653e8........83c4088d0c766a018b448f08e8........8b048f89430c8b448f0833db33c933d233f633ffffd08b7b088d0c768b348feb8cb800000000eb238b450883480408b801000000eb15558d6b106aff53e8........83c4085db8010000005d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 230
+  },
+  {
+    "name": "_global_unwind2",
+    "tag": "vc71",
+    "refVa": "0x7c34250e",
+    "len": 32,
+    "prefix": 32,
+    "firstRet": 32,
+    "hex": "558bec535657556a006a0068........ff7508e8........5d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 66
+  },
+  {
+    "name": "_local_unwind2",
+    "tag": "vc71",
+    "refVa": "0x7c342550",
+    "len": 104,
+    "prefix": 29,
+    "firstRet": 104,
+    "hex": "5356578b442410506afe68........64ff3500000000648925000000008b4424208b58088b700c83feff742e3b74242474288d34768b0cb3894c240889480c837cb3040075d768010100008b44b308e8........ff54b308ebc3648f050000000083c40c5f5e5bc3",
+    "anchor": {
+      "off": 15,
+      "len": 14
+    },
+    "extent": 104
+  },
+  {
+    "name": "_onexit",
+    "tag": "vc71",
+    "refVa": "0x7c341d5f",
+    "len": 50,
+    "prefix": 32,
+    "firstRet": 50,
+    "hex": "6a0c68........e8........e8........8365fc008b7d08e8........8945e4834dfcffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 17,
+      "len": 8
+    },
+    "extent": 50
+  },
+  {
+    "name": "_initterm",
+    "tag": "vc71",
+    "refVa": "0x7c341cbe",
+    "len": 28,
+    "prefix": 28,
+    "firstRet": 28,
+    "hex": "568b742408eb0383c6043b74240c730a8b0685c074f1ffd0ebed5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 161
+  },
+  {
+    "name": "memcpy",
+    "tag": "vc80",
+    "refVa": "0x78144ce0",
+    "len": 71,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........81f900010000721f833d........007416575683e70f83e60f3bfe5e5f75085e5f5de9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 880
+  },
+  {
+    "name": "memmove",
+    "tag": "vc80",
+    "refVa": "0x78145050",
+    "len": 71,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........81f900010000721f833d........007416575683e70f83e60f3bfe5e5f75085e5f5de9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 922
+  },
+  {
+    "name": "memset",
+    "tag": "vc80",
+    "refVa": "0x781447f0",
+    "len": 44,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "8b54240c8b4c240485d2746933c08a44240884c0751681fa00010000720e833d........007405e9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 122
+  },
+  {
+    "name": "memcmp",
+    "tag": "vc80",
+    "refVa": "0x781456a6",
+    "len": 62,
+    "prefix": 27,
+    "firstRet": null,
+    "hex": "558bec56578b7d108bc783e8000f84........480f84........480f84........480f84........480f84........8b4d0c8b4508536a205ae9........",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 2048
+  },
+  {
+    "name": "memchr",
+    "tag": "vc80",
+    "refVa": "0x7817fe00",
+    "len": 93,
+    "prefix": 32,
+    "firstRet": 93,
+    "hex": "8b44240c5385c074528b54240833db8a5c240cf7c20300000074168a0a83c20132cb747283e8017432f7c20300000075ea83e8047212578bfbc1e30803df8bfbc1e31003dfeb1b5f83c004740e8a0a83c20132cb744083e80175f25bc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 173
+  },
+  {
+    "name": "strlen",
+    "tag": "vc80",
+    "refVa": "0x781442a0",
+    "len": 109,
+    "prefix": 29,
+    "firstRet": 109,
+    "hex": "8b4c2404f7c10300000074248a0183c10184c0744ef7c10300000075ef05000000008da424000000008da424000000008b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0743284e47424a90000ff007413a9000000ff7402ebcd8d41ff8b4c24042bc1c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 139
+  },
+  {
+    "name": "strcmp",
+    "tag": "vc80",
+    "refVa": "0x78145510",
+    "len": 67,
+    "prefix": 31,
+    "firstRet": 67,
+    "hex": "8b5424048b4c2408f7c203000000753c8b023a01752e0ac074263a610175250ae4741dc1e8103a410275190ac074113a6103751083c10483c2040ae475d28bff33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 144
+  },
+  {
+    "name": "strcpy",
+    "tag": "vc80",
+    "refVa": "0x7817ff90",
+    "len": 16,
+    "prefix": 16,
+    "firstRet": null,
+    "hex": "578b7c2408eb6e8da424000000008bff",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 16
+  },
+  {
+    "name": "strcat",
+    "tag": "vc80",
+    "refVa": "0x7817ffa0",
+    "len": 202,
+    "prefix": 32,
+    "firstRet": 202,
+    "hex": "8b4c240457f7c10300000074138a0183c10184c0743df7c10300000075ef8bff8b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0742384e4741aa90000ff00740ea9000000ff7402ebcd8d79ffeb0d8d79feeb088d79fdeb038d79fc8b4c240cf7c103000000741d8a1183c10184d27466881783c701f7c10300000075eaeb05891783c704bafffefe7e8b0103d083f0ff33c28b1183c104a90001018174e184d2743484f67427f7c20000ff007412f7c2000000ff7402ebc789178b4424085fc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 240
+  },
+  {
+    "name": "strchr",
+    "tag": "vc80",
+    "refVa": "0x78144ad0",
+    "len": 122,
+    "prefix": 31,
+    "firstRet": 122,
+    "hex": "33c08a442408538bd8c1e0088b542408f7c20300000074158a0a83c2013acb74cf84c97451f7c20300000075eb0bd8578bc3c1e310560bd88b0abffffefe7e8bc18bf733cb03f003f983f1ff83f0ff33cf33c683c20481e100010181751c250001018174d32500010101750881e60000008075c45e5f5b33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 192
+  },
+  {
+    "name": "strrchr",
+    "tag": "vc80",
+    "refVa": "0x78150000",
+    "len": 45,
+    "prefix": 31,
+    "firstRet": 45,
+    "hex": "558bec578b7d0833c083c9fff2ae83c101f7d983ef018a450cfdf2ae83c7013807740433c0eb028bc7fc5fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 45
+  },
+  {
+    "name": "strncpy",
+    "tag": "vc80",
+    "refVa": "0x781801d0",
+    "len": 110,
+    "prefix": 31,
+    "firstRet": 110,
+    "hex": "8b4c240c5785c90f84........56538bd98b742414f7c6030000008b7c2410750bc1e9020f85........eb278a0683c601880783c70183e901742b84c0742ff7c60300000075e58bd9c1e902756183e30374138a0683c601880783c70184c0743783eb0175ed8b4424105b5e5fc3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 304
+  },
+  {
+    "name": "strncmp",
+    "tag": "vc80",
+    "refVa": "0x78144c16",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": null,
+    "hex": "558bec518365fc00538b5d1085db750733c0e9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 202
+  },
+  {
+    "name": "strstr",
+    "tag": "vc80",
+    "refVa": "0x78144b90",
+    "len": 62,
+    "prefix": 32,
+    "firstRet": 62,
+    "hex": "8b4c24085753568a118b7c241084d2746f8a710184f674558bf78b4c24148a0783c6013ac2741784c0740d8a0683c6013ac2740a84c075f35e5b5f33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 134
+  },
+  {
+    "name": "_strnicmp",
+    "tag": "vc80",
+    "refVa": "0x7814701b",
+    "len": 71,
+    "prefix": 29,
+    "firstRet": null,
+    "hex": "558bec5633f63935........7539397508751fe8........5656565656c70016000000e8........83c414b8ffffff7feb2739750c74dc817d10ffffff7f77d35e5de9........",
+    "anchor": {
+      "off": 0,
+      "len": 8
+    },
+    "extent": 790
+  },
+  {
+    "name": "_stricmp",
+    "tag": "vc80",
+    "refVa": "0x781454bd",
+    "len": 62,
+    "prefix": 29,
+    "firstRet": null,
+    "hex": "558bec5633f63935........7530397508751fe8........5656565656c70016000000e8........83c414b8ffffff7feb1b39750c74dc5e5de9........",
+    "anchor": {
+      "off": 0,
+      "len": 8
+    },
+    "extent": 83
+  },
+  {
+    "name": "_ftol",
+    "tag": "vc80",
+    "refVa": "0x7818a410",
+    "len": 39,
+    "prefix": 31,
+    "firstRet": 39,
+    "hex": "558bec83c4f49bd97dfe9b668b45fe80cc0c668945fcd96dfcdf7df4d96dfe8b45f48b55f8c9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "_CIsqrt",
+    "tag": "vc80",
+    "refVa": "0x78184310",
+    "len": 20,
+    "prefix": 20,
+    "firstRet": 20,
+    "hex": "83ec0cdd1424e8........e8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 7
+    },
+    "extent": 20
+  },
+  {
+    "name": "_CIpow",
+    "tag": "vc80",
+    "refVa": "0x78183f90",
+    "len": 59,
+    "prefix": 31,
+    "firstRet": null,
+    "hex": "833d........00743283ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b04246683e07f6683f87f8d6424087505e9........",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 592
+  },
+  {
+    "name": "_CIsin",
+    "tag": "vc80",
+    "refVa": "0x78184220",
+    "len": 59,
+    "prefix": 31,
+    "firstRet": null,
+    "hex": "833d........00743283ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b04246683e07f6683f87f8d6424087505e9........",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 240
+  },
+  {
+    "name": "_CIcos",
+    "tag": "vc80",
+    "refVa": "0x78183ac0",
+    "len": 59,
+    "prefix": 31,
+    "firstRet": null,
+    "hex": "833d........00743283ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b04246683e07f6683f87f8d6424087505e9........",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 240
+  },
+  {
+    "name": "_CIatan2",
+    "tag": "vc80",
+    "refVa": "0x78183a6a",
+    "len": 10,
+    "prefix": 10,
+    "firstRet": null,
+    "hex": "ba........e9........",
+    "anchor": {
+      "off": 0,
+      "len": 1
+    },
+    "extent": 22
+  },
+  {
+    "name": "floor",
+    "tag": "vc80",
+    "refVa": "0x7818ae10",
+    "len": 147,
+    "prefix": 30,
+    "firstRet": 147,
+    "hex": "833d........000f84........83ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b04246683e07f6683f87f8d6424080f85........eb00f30f7e442404660f2815........660f28c8660f28f8660f73d034660f7ec0660f5405........660ffad0660fd3caa900080000754c3dff0300007c7d660ff3ca3d320400007f0b660fd64c2404dd442404c3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 289
+  },
+  {
+    "name": "ceil",
+    "tag": "vc80",
+    "refVa": "0x7818ac30",
+    "len": 147,
+    "prefix": 30,
+    "firstRet": 147,
+    "hex": "833d........000f84........83ec080fae5c24048b44240425801f00003d801f0000750fd93c24668b04246683e07f6683f87f8d6424080f85........eb00f30f7e442404660f2815........660f28c8660f28f8660f73d034660f7ec0660f5405........660ffad0660fd3caa900080000744c3dff0b00007c7d660ff3ca3d320c00007f0b660fd64c2404dd442404c3",
+    "anchor": {
+      "off": 13,
+      "len": 16
+    },
+    "extent": 285
+  },
+  {
+    "name": "malloc",
+    "tag": "vc80",
+    "refVa": "0x78134c6f",
+    "len": 186,
+    "prefix": 31,
+    "firstRet": 186,
+    "hex": "538b5c240883fbe00f87........558b2d........565733f63935........8bfb7518e8........6a1ee8........68ff000000e8........5959a1........83f801750e3bde74048bc3eb0333c04050eb1e83f803754053e8........3bc65975173bde750333ff4783c70f83e7f05756ff35........ffd58bf085f675333905........6a0c5f741a53e8........85c0597581eb1483f80275c653e8........ebb9e8........8938e8........89385f8bc65e5d5bc3",
+    "anchor": {
+      "off": 0,
+      "len": 10
+    },
+    "extent": 591
+  },
+  {
+    "name": "free",
+    "tag": "vc80",
+    "refVa": "0x78134ad2",
+    "len": 104,
+    "prefix": 31,
+    "firstRet": 104,
+    "hex": "6a1868........e8........8b750885f60f84........a1........83f80375476a04e8........598365fc0056e8........598945e485c074095650e8........5959c745fcfeffffffe8........837de4000f85........ff7508eb606a04e8........59c3",
+    "anchor": {
+      "off": 12,
+      "len": 7
+    },
+    "extent": 413
+  },
+  {
+    "name": "realloc",
+    "tag": "vc80",
+    "refVa": "0x78134efd",
+    "len": 33,
+    "prefix": 28,
+    "firstRet": null,
+    "hex": "6a1c68........e8........8b7d0885ff750eff750ce8........59e9........",
+    "anchor": {
+      "off": 12,
+      "len": 11
+    },
+    "extent": 959
+  },
+  {
+    "name": "calloc",
+    "tag": "vc80",
+    "refVa": "0x78134ebe",
+    "len": 63,
+    "prefix": 31,
+    "firstRet": 63,
+    "hex": "558bec518365fc00578d45fc50ff750cff7508e8........8bf883c40c85ff7519568b75fc85f67410e8........85c07407e8........89305e8bc75fc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 63
+  },
+  {
+    "name": "rand",
+    "tag": "vc80",
+    "refVa": "0x7816d2e0",
+    "len": 34,
+    "prefix": 28,
+    "firstRet": 34,
+    "hex": "e8........8b481469c9fd43030081c1c39e26008948148bc1c1e81025ff7f0000c3",
+    "anchor": {
+      "off": 5,
+      "len": 16
+    },
+    "extent": 34
+  },
+  {
+    "name": "srand",
+    "tag": "vc80",
+    "refVa": "0x7816d2d3",
+    "len": 13,
+    "prefix": 13,
+    "firstRet": 13,
+    "hex": "e8........8b4c2404894814c3",
+    "anchor": {
+      "off": 5,
+      "len": 8
+    },
+    "extent": 13
+  },
+  {
+    "name": "sprintf",
+    "tag": "vc80",
+    "refVa": "0x781771de",
+    "len": 123,
+    "prefix": 30,
+    "firstRet": 123,
+    "hex": "558bec83ec205333db395d0c751de8........5353535353c70016000000e8........83c41483c8ffeb4d8b45083bc374dc568945e88945e08d45105053ff750c8d45e050c745e4ffffff7fc745ec42000000e8........83c410ff4de48bf078078b45e08818eb0c8d45e05053e8........59598bc65e5bc9c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 123
+  },
+  {
+    "name": "vsprintf",
+    "tag": "vc80",
+    "refVa": "0x78178139",
+    "len": 23,
+    "prefix": 23,
+    "firstRet": 23,
+    "hex": "ff74240c6a00ff742410ff742410e8........83c410c3",
+    "anchor": {
+      "off": 0,
+      "len": 15
+    },
+    "extent": 108
+  },
+  {
+    "name": "qsort",
+    "tag": "vc80",
+    "refVa": "0x7816cbf0",
+    "len": 68,
+    "prefix": 30,
+    "firstRet": 68,
+    "hex": "81ec00010000538b9c240801000085db568bb42410010000752a85f67426e8........6a006a006a006a006a00c70016000000e8........83c4145e5b81c400010000c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 880
+  },
+  {
+    "name": "wcslen",
+    "tag": "vc80",
+    "refVa": "0x7814479d",
+    "len": 22,
+    "prefix": 22,
+    "firstRet": 22,
+    "hex": "8b442404668b0840406685c975f62b442404d1f848c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 22
+  },
+  {
+    "name": "toupper",
+    "tag": "vc80",
+    "refVa": "0x78152bd3",
+    "len": 25,
+    "prefix": 25,
+    "firstRet": 25,
+    "hex": "833d........0075108b4424048d489f83f919771183c0e0c3",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "tolower",
+    "tag": "vc80",
+    "refVa": "0x7814d0d7",
+    "len": 25,
+    "prefix": 25,
+    "firstRet": 25,
+    "hex": "833d........0075108b4424048d48bf83f919771183c020c3",
+    "anchor": {
+      "off": 6,
+      "len": 16
+    },
+    "extent": 39
+  },
+  {
+    "name": "atol",
+    "tag": "vc80",
+    "refVa": "0x7814c3e9",
+    "len": 17,
+    "prefix": 17,
+    "firstRet": 17,
+    "hex": "6a0a6a00ff74240ce8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 9
+    },
+    "extent": 17
+  },
+  {
+    "name": "strtol",
+    "tag": "vc80",
+    "refVa": "0x7814ce74",
+    "len": 41,
+    "prefix": 31,
+    "firstRet": 41,
+    "hex": "558bec33c03905........50ff7510ff750cff7508750768........eb0150e8........83c4145dc3",
+    "anchor": {
+      "off": 11,
+      "len": 13
+    },
+    "extent": 41
+  },
+  {
+    "name": "_itoa",
+    "tag": "vc80",
+    "refVa": "0x78152122",
+    "len": 40,
+    "prefix": 30,
+    "firstRet": 40,
+    "hex": "558bec837d100a8b4508750a85c07d066a016a0aeb056a00ff75108b4d0ce8........8b450c5dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 40
+  },
+  {
+    "name": "fread",
+    "tag": "vc80",
+    "refVa": "0x78175997",
+    "len": 27,
+    "prefix": 27,
+    "firstRet": 27,
+    "hex": "ff742410ff742410ff7424106affff742414e8........83c414c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 344
+  },
+  {
+    "name": "fwrite",
+    "tag": "vc80",
+    "refVa": "0x781763a0",
+    "len": 131,
+    "prefix": 31,
+    "firstRet": 131,
+    "hex": "6a0c68........e8........8b450c0faf451085c0750433c0eb6233c033f63975140f95c03bc67516e8........89305656565656e8........83c414ebd833c03975080f95c03bc674deff7514e8........598975fcff7514ff7510ff750cff7508e8........83c4108945e4c745fcfeffffffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 16
+    },
+    "extent": 272
+  },
+  {
+    "name": "fopen",
+    "tag": "vc80",
+    "refVa": "0x78175e1f",
+    "len": 19,
+    "prefix": 19,
+    "firstRet": 19,
+    "hex": "6a40ff74240cff74240ce8........83c40cc3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 19
+  },
+  {
+    "name": "fseek",
+    "tag": "vc80",
+    "refVa": "0x78175bee",
+    "len": 123,
+    "prefix": 31,
+    "firstRet": 123,
+    "hex": "6a0c68........e8........33c033f63975080f95c03bc6751de8........c700160000005656565656e8........83c41483c8ffeb3e8b7d103bfe740a83ff01740583ff0275d2ff7508e8........598975fc57ff750cff7508e8........83c40c8945e4c745fcfeffffffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 12,
+      "len": 15
+    },
+    "extent": 133
+  },
+  {
+    "name": "abs",
+    "tag": "vc80",
+    "refVa": "0x7816a14c",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "labs",
+    "tag": "vc80",
+    "refVa": "0x7816a14c",
+    "len": 11,
+    "prefix": 11,
+    "firstRet": 11,
+    "hex": "8b44240485c07d02f7d8c3",
+    "anchor": {
+      "off": 0,
+      "len": 11
+    },
+    "extent": 11
+  },
+  {
+    "name": "_purecall",
+    "tag": "vc80",
+    "refVa": "0x7816a42d",
+    "len": 42,
+    "prefix": 29,
+    "firstRet": null,
+    "hex": "ff35........e8........85c0597402ffd06a19e8........6a016a00e8........83c40ce9........",
+    "anchor": {
+      "off": 11,
+      "len": 10
+    },
+    "extent": 42
+  },
+  {
+    "name": "_EH_prolog",
+    "tag": "vc80",
+    "refVa": "0x78158dd8",
+    "len": 31,
+    "prefix": 31,
+    "firstRet": 31,
+    "hex": "6aff5064a100000000508b44240c64892500000000896c240c8d6c240c50c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 79
+  },
+  {
+    "name": "__CxxFrameHandler",
+    "tag": "vc80",
+    "refVa": "0x78158a35",
+    "len": 54,
+    "prefix": 30,
+    "firstRet": 54,
+    "hex": "558bec83ec08535657fc8945fc33c0505050ff75fcff7514ff7510ff750cff7508e8........83c4208945f85f5e5b8b45f88be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 54
+  },
+  {
+    "name": "_except_handler3",
+    "tag": "vc80",
+    "refVa": "0x7816a314",
+    "len": 204,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "558bec83ec0853565755fc8b5d0c8b4508f74004060000000f85........8945f88b45108945fc8d45f88943fc8b730c8b7b0853e8........83c4040bc00f8e........83feff0f84........8d0c768b448f040bc0746656558d6b1033db33c933d233f633ffffd05d5e8b5d0c0bc0744c78586a01ff7508e8........83c4088b7b0853e8........83c4048d6b105653e8........83c4088d0c766a018b448f08e8........8b048f89430c8b448f0833db33c933d233f633ffffd08b7b088d0c768b348fe9........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 254
+  },
+  {
+    "name": "_global_unwind2",
+    "tag": "vc80",
+    "refVa": "0x7813e060",
+    "len": 32,
+    "prefix": 32,
+    "firstRet": 32,
+    "hex": "558bec535657556a006a0068........ff7508e8........5d5f5e5b8be55dc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 101
+  },
+  {
+    "name": "_local_unwind2",
+    "tag": "vc80",
+    "refVa": "0x7813e0c5",
+    "len": 132,
+    "prefix": 31,
+    "firstRet": 132,
+    "hex": "5356578b44241055506afe68........64ff3500000000a1........33c4508d44240464a3000000008b4424288b58088b700c83feff743a837c242cff74063b74242c762d8d34768b0cb3894c240c89480c837cb30400751768010100008b44b308e8........8b44b308e8........ebb78b4c240464890d0000000083c4185f5e5bc3",
+    "anchor": {
+      "off": 0,
+      "len": 12
+    },
+    "extent": 132
+  },
+  {
+    "name": "_onexit",
+    "tag": "vc80",
+    "refVa": "0x781389e6",
+    "len": 54,
+    "prefix": 30,
+    "firstRet": 54,
+    "hex": "6a0c68........e8........e8........8365fc00ff7508e8........598945e4c745fcfeffffffe8........8b45e4e8........c3",
+    "anchor": {
+      "off": 17,
+      "len": 8
+    },
+    "extent": 60
+  },
+  {
+    "name": "_initterm",
+    "tag": "vc80",
+    "refVa": "0x78131733",
+    "len": 26,
+    "prefix": 26,
+    "firstRet": 26,
+    "hex": "568b742408eb0b8b0685c07402ffd083c6043b74240c72ef5ec3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 26
+  },
+  {
+    "name": "_allmul",
+    "tag": "s-gta2",
+    "refVa": "0x5de950",
+    "len": 25,
+    "prefix": 25,
+    "firstRet": 25,
+    "hex": "8b4424088b4c24100bc88b4c240c75098b442404f7e1c21000",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 64
+  },
+  {
+    "name": "_allshr",
+    "tag": "s-gta2",
+    "refVa": "0x5de920",
+    "len": 16,
+    "prefix": 16,
+    "firstRet": 16,
+    "hex": "80f940731680f92073060fadd0d3fac3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 48
+  },
+  {
+    "name": "_ftol",
+    "tag": "s-gta2",
+    "refVa": "0x5deb40",
+    "len": 39,
+    "prefix": 31,
+    "firstRet": 39,
+    "hex": "558bec83c4f49bd97dfe9b668b45fe80cc0c668945fcd96dfcdf7df4d96dfe8b45f48b55f8c9c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 48
+  },
+  {
+    "name": "_chkstk",
+    "tag": "s-gta2",
+    "refVa": "0x5e06c0",
+    "len": 47,
+    "prefix": 32,
+    "firstRet": 47,
+    "hex": "513d001000008d4c2408721481e9001000002d0010000085013d0010000073ec2bc88bc485018be18b088b400450c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "memcpy",
+    "tag": "s-gta2",
+    "refVa": "0x5deb70",
+    "len": 60,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b4d108b7d088bc18bd103c63bfe76083bf80f82........f7c7030000007514c1e90283e20383f9087229f3a5ff2495........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "_aulldiv",
+    "tag": "s-gta2",
+    "refVa": "0x5e6700",
+    "len": 104,
+    "prefix": 32,
+    "firstRet": 104,
+    "hex": "53568b4424180bc075188b4c24148b44241033d2f7f18bd88b44240cf7f18bd3eb418bc88b5c24148b5424108b44240cd1e9d1dbd1ead1d80bc975f4f7f38bf0f76424188bc88b442414f7e603d1720e3b542410770872073b44240c76014e33d28bc65e5bc21000",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 112
+  },
+  {
+    "name": "_alldiv",
+    "tag": "s-gta2",
+    "refVa": "0x5de990",
+    "len": 170,
+    "prefix": 29,
+    "firstRet": 170,
+    "hex": "57565333ff8b4424140bc07d14478b542410f7d8f7da83d80089442414895424108b44241c0bc07d14478b542418f7d8f7da83d8008944241c895424180bc075188b4c24188b44241433d2f7f18bd88b442410f7f18bd3eb418bd88b4c24188b5424148b442410d1ebd1d9d1ead1d80bdb75f4f7f18bf0f764241c8bc88b442418f7e603d1720e3b542414770872073b44241076014e33d28bc64f7507f7daf7d883da005b5e5fc21000",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 176
+  },
+  {
+    "name": "_aullrem",
+    "tag": "s-gta2",
+    "refVa": "0x5e6770",
+    "len": 117,
+    "prefix": 31,
+    "firstRet": 117,
+    "hex": "538b4424140bc075188b4c24108b44240c33d2f7f18b442408f7f18bc233d2eb508bc88b5c24108b54240c8b442408d1e9d1dbd1ead1d80bc975f4f7f38bc8f764241491f764241003d1720e3b54240c7708720e3b44240876082b4424101b5424142b4424081b54240cf7daf7d883da005bc21000",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "strchr",
+    "tag": "s-gta2",
+    "refVa": "0x5eca50",
+    "len": 120,
+    "prefix": 31,
+    "firstRet": 120,
+    "hex": "33c08a442408538bd8c1e0088b542408f7c20300000074138a0a4238d974d184c97451f7c20300000075ed0bd8578bc3c1e310560bd88b0abffffefe7e8bc18bf733cb03f003f983f1ff83f0ff33cf33c683c20481e100010181751c250001018174d32500010101750881e60000008075c45e5f5b33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 512
+  },
+  {
+    "name": "_allshl",
+    "tag": "s-gta2",
+    "refVa": "0x5dea40",
+    "len": 16,
+    "prefix": 16,
+    "firstRet": 16,
+    "hex": "80f940731580f92073060fa5c2d3e0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 256
+  },
+  {
+    "name": "memmove",
+    "tag": "s-h2",
+    "refVa": "0x4d35f0",
+    "len": 55,
+    "prefix": 30,
+    "firstRet": null,
+    "hex": "558bec57568b750c8b7d088b4d103bfe760c8bc603c13bf80f82........f7c70300000075528bd183e203c1e902f3a5ff2495........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 448
+  },
+  {
+    "name": "memset",
+    "tag": "s-h2",
+    "refVa": "0x4d39e0",
+    "len": 83,
+    "prefix": 31,
+    "firstRet": 83,
+    "hex": "8b54240c8b4c240485d2744733c08a442408578bf983fa04722df7d983e10374082bd18807474975fa8bc8c1e00803c18bc8c1e01003c18bca83e203c1e9027406f3ab85d274068807474a75fa8b4424085fc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 1072
+  },
+  {
+    "name": "strlen",
+    "tag": "s-h2",
+    "refVa": "0x4d37b0",
+    "len": 93,
+    "prefix": 32,
+    "firstRet": 93,
+    "hex": "8b4c2404f7c10300000074148a014184c07440f7c10300000075f105000000008b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0743284e47424a90000ff007413a9000000ff7402ebcd8d41ff8b4c24042bc1c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 144
+  },
+  {
+    "name": "strcmp",
+    "tag": "s-h2",
+    "refVa": "0x4d3e10",
+    "len": 67,
+    "prefix": 31,
+    "firstRet": 67,
+    "hex": "8b5424048b4c2408f7c203000000753c8b023a01752e0ac074263a610175250ae4741dc1e8103a410275190ac074113a6103751083c10483c2040ae475d28bc033c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "_chkstk",
+    "tag": "s-h2",
+    "refVa": "0x4dc2e0",
+    "len": 47,
+    "prefix": 32,
+    "firstRet": 47,
+    "hex": "513d001000008d4c2408721481e9001000002d0010000085013d0010000073ec2bc88bc485018be18b088b400450c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "_aulldiv",
+    "tag": "s-h2",
+    "refVa": "0x4da290",
+    "len": 104,
+    "prefix": 32,
+    "firstRet": 104,
+    "hex": "53568b4424180bc075188b4c24148b44241033d2f7f18bd88b44240cf7f18bd3eb418bc88b5c24148b5424108b44240cd1e9d1dbd1ead1d80bc975f4f7f38bf0f76424188bc88b442414f7e603d1720e3b542410770872073b44240c76014e33d28bc65e5bc21000",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 112
+  },
+  {
+    "name": "_aullrem",
+    "tag": "s-h2",
+    "refVa": "0x4da300",
+    "len": 117,
+    "prefix": 31,
+    "firstRet": 117,
+    "hex": "538b4424140bc075188b4c24108b44240c33d2f7f18b442408f7f18bc233d2eb508bc88b5c24108b54240c8b442408d1e9d1dbd1ead1d80bc975f4f7f38bc8f764241491f764241003d1720e3b54240c7708720e3b44240876082b4424101b5424142b4424081b54240cf7daf7d883da005bc21000",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "strcpy",
+    "tag": "s-h2",
+    "refVa": "0x4d3840",
+    "len": 210,
+    "prefix": 32,
+    "firstRet": 210,
+    "hex": "578b7c2408eb6a2e8bc02e8bc02e8bc08b4c240457f7c103000000740f8a014184c0743bf7c10300000075f18b01bafffefe7e03d083f0ff33c283c104a90001018174e88b41fc84c0742384e4741aa90000ff00740ea9000000ff7402ebcd8d79ffeb0d8d79feeb088d79fdeb038d79fc8b4c240cf7c10300000074198a114184d27464881747f7c10300000075eeeb05891783c704bafffefe7e8b0103d083f0ff33c28b1183c104a90001018174e184d2743484f67427f7c20000ff007412f7c2000000ff7402ebc789178b4424085fc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 416
+  },
+  {
+    "name": "strchr",
+    "tag": "s-h2",
+    "refVa": "0x4df330",
+    "len": 120,
+    "prefix": 31,
+    "firstRet": 120,
+    "hex": "33c08a442408538bd8c1e0088b542408f7c20300000074138a0a4238d974d184c97451f7c20300000075ed0bd8578bc3c1e310560bd88b0abffffefe7e8bc18bf733cb03f003f983f1ff83f0ff33cf33c683c20481e100010181751c250001018174d32500010101750881e60000008075c45e5f5b33c0c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 512
+  },
+  {
+    "name": "Move",
+    "tag": "d-gm8",
+    "refVa": "0x4030a8",
+    "len": 21,
+    "prefix": 21,
+    "firstRet": null,
+    "hex": "39d0743183f920777c83e9087f07ff248d........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "_LStrClr",
+    "tag": "d-gm8",
+    "refVa": "0x405934",
+    "len": 35,
+    "prefix": 28,
+    "firstRet": 35,
+    "hex": "8b1085d2741cc700000000008b4af8497c10f0ff4af8750a508d42f8e8........58c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 84
+  },
+  {
+    "name": "_LStrAsg",
+    "tag": "d-gm8",
+    "refVa": "0x405988",
+    "len": 67,
+    "prefix": 32,
+    "firstRet": 67,
+    "hex": "85d274248b4af8417f1a50528b42fce8........89c258528b48fce8........5a58eb04f0ff42f8871085d274148b4af8497c0ef0ff4af875088d42f8e8........c3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 2048
+  },
+  {
+    "name": "_InitializeRecord",
+    "tag": "d-gm8",
+    "refVa": "0x406448",
+    "len": 64,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "85c90f84........53565789c389d689cf31d28a068a560131c93c0a74223c0b741e3c0c74243c0d74333c0e744d3c0f740e3c11740ab0025f5e5be9........",
+    "anchor": {
+      "off": 8,
+      "len": 16
+    },
+    "extent": 160
+  },
+  {
+    "name": "_FinalizeRecord",
+    "tag": "d-gm8",
+    "refVa": "0x4064e8",
+    "len": 49,
+    "prefix": 32,
+    "firstRet": 49,
+    "hex": "31c9538a4a01565789c38d74110a8b7c11068b168b460401d88b12b901000000e8........83c6084f7fe789d85f5e5bc3",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 76
+  },
+  {
+    "name": "_FinalizeArray",
+    "tag": "d-gm8",
+    "refVa": "0x406534",
+    "len": 67,
+    "prefix": 32,
+    "firstRet": null,
+    "hex": "83f9000f84........5053565789c389d689cf31d28a068a56013c0a74253c0b743e3c0c74513c0d745c3c0e74763c0f0f84........3c110f84........e9........",
+    "anchor": {
+      "off": 9,
+      "len": 16
+    },
+    "extent": 536
+  },
+  {
+    "name": "_CopyRecord",
+    "tag": "d-gm8",
+    "refVa": "0x40674c",
+    "len": 96,
+    "prefix": 31,
+    "firstRet": null,
+    "hex": "5356575589c389d631c08a41018d7c080a8b6ffc31c08b4ff8518b4f0429c17e0b89c201f001dae8........8b47048b178b128a0a80f90a743180f90b743d80f90c744980f90d745580f90e747080f90f0f84........80f9110f84........",
+    "anchor": {
+      "off": 0,
+      "len": 16
+    },
+    "extent": 512
+  }
+]

@@ -831,6 +831,8 @@
                 (br $os)))))))
       (local.set $page (i32.add (local.get $page) (i32.const 0x1000)))
       (br $ps)))
+    ;; the bytes a Delphi helper's native form rests on (10-helpers-delphi-fold)
+    (call $dfold_code_write (local.get $ga) (local.get $len))
     (global.set $in_code_write (i32.const 0))
     (if (i32.ne (global.get $cache_inval_hits) (local.get $hits0))
       (then (global.set $store_invalidation_pending (i32.const 1))))
@@ -2648,7 +2650,7 @@
     ;; whole cache and restart at $eip. The fresh decode will produce
     ;; valid threaded code. This recovers from rare corruption rather
     ;; than trapping with wasm "table index out of bounds".
-    (if (i32.ge_u (local.get $nx_fn) (i32.const 505))
+    (if (i32.ge_u (local.get $nx_fn) (i32.const 515))
       (then
         (return_call $dispatch_bad (local.get $nx_fn))))
     (if (global.get $handler_hist_enabled)

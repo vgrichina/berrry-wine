@@ -78,7 +78,12 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   const muldivWanted = () => uopWanted() && (hasFlag('uop-muldiv') || (appPolicy() || {}).uopMuldiv === true);
   const icallWanted = () => uopWanted() && (hasFlag('uop-icall') || (appPolicy() || {}).uopIcall === true);
   const iatWanted = () => uopWanted() && (hasFlag('uop-iat') || (appPolicy() || {}).uopIat === true);
-  const WIDEN = [['set_uop_muldiv', muldivWanted], ['set_uop_icall', icallWanted], ['set_uop_iat', iatWanted]];
+  //   --uop-sse     the XMM forms (07e kind 34): each instruction one 07d op
+  //                 calling the 06c handler the threaded decoder picks, a
+  //                 memory form proved in a window first.
+  const sseWanted = () => uopWanted() && (hasFlag('uop-sse') || (appPolicy() || {}).uopSse === true);
+  const WIDEN = [['set_uop_muldiv', muldivWanted], ['set_uop_icall', icallWanted], ['set_uop_iat', iatWanted],
+    ['set_uop_sse', sseWanted]];
   // MMX (07e kind 27, on by default; --no-uop-mmx or `uopMmx: false` on the
   // app turns it off): MMX instructions lowered into the program over the
   // per-thread $MMX_FILE instead of declining the head.
@@ -165,6 +170,14 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // so a store that rewrites a later instruction of its own running block is
   // seen at once (04-cache $smc_same_block). Opt-in; costs a dispatch per store.
   const smcWanted = () => hasFlag('smc-same-block') || (appPolicy() || {}).smcSameBlock === true;
+  // --sse-fast (or `sseFast: true` on the app): dedicated threaded handlers
+  // for the SSE2 double-runtime register forms (06c 502-511), decode-time.
+  const sseFastWanted = () => hasFlag('sse-fast') || (appPolicy() || {}).sseFast === true;
+  // --no-delphi-fold: the Delphi System RTTI/LStr helpers (_LStrClr, _LStrAsg,
+  // _FinalizeRecord, _FinalizeArray, _CopyRecord) run as their guest bodies
+  // instead of handler 395 (10-helpers-delphi-fold.wat). On by default;
+  // decode-time, so set before the first decode and on every thread.
+  const NO_DELPHI_FOLD = hasFlag('no-delphi-fold');
   // --no-uop-nobump: turn off the page index's no-bump mark (01-header
   // PAGE_INDEX_NOBUMP) -- heads with a settled uop verdict stop counting
   // toward hotness and taken Jccs into them keep the inline fast path.
@@ -391,6 +404,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (BRANCH_CLOCK) inheritWasm('set_branch_clock', 1);
     if (CODE_WRITE_LEGACY) inheritWasm('set_code_write_legacy', 1);
     if (smcWanted()) inheritWasm('set_smc_same_block', 1);
+    if (sseFastWanted()) inheritWasm('set_sse_fast', 1);
+    if (NO_DELPHI_FOLD) inheritWasm('set_delphi_fold', 0);
     if (uopWanted()) inheritWasm('set_uop', 1);
     if (NO_UOP_NOBUMP) inheritWasm('set_uop_nobump', 0);
     if (aggrWanted()) inheritWasm('set_aggressive_stack', 1);
@@ -428,6 +443,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (BRANCH_CLOCK && available('set_branch_clock')) set('set_branch_clock', 1);
     if (CODE_WRITE_LEGACY && available('set_code_write_legacy')) set('set_code_write_legacy', 1);
     if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
+    if (sseFastWanted() && available('set_sse_fast')) set('set_sse_fast', 1);
+    if (NO_DELPHI_FOLD && available('set_delphi_fold')) set('set_delphi_fold', 0);
     if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);
     if (uopWanted() && available('set_uop') && ctx) {
       if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);
@@ -635,6 +652,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
           `iat-sites=${cs(29)} pass=${st(19)} fail=${st(20)} | rejected=${cs(30)} | ` +
           `mega-sites=${st(21)} mega-kills=${st(22)} mega-refused=${cs(31)}` + (sites ? `\n  guard-fail sites: ${sites}` : ''));
       }
+      // $uop_cstat 37: kind-34 sites kept; uop_sse_svcs: window-miss services
+      if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} miss-services=${x.uop_sse_svcs() >>> 0}`);
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
         (x.uop_hot_halvings ? ` halvings=${x.uop_hot_halvings() >>> 0}` : ''));

@@ -15,7 +15,7 @@ const extraWat = String.raw`
     (local.set $entry (call $dx_from_this (local.get $dev)))
     (i32.store offset=8 (local.get $entry)
       (call $dx_slot_of (call $dx_from_this (local.get $surf))))
-    (global.set $d3d9_windowed_hwnd (i32.const 0x10001))
+    (call $d3d9_windowed_hwnd_set (i32.const 0x10001))
     (local.get $dev))
 
   (func (export "test_d3d9_get_swap_chain") (param $dev i32) (param $out i32) (result i64)

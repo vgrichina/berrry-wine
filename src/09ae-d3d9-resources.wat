@@ -1866,6 +1866,27 @@
                 (i32.or (i32.eq (local.get $format) (i32.const 24))
                         (i32.eq (local.get $format) (i32.const 25)))))))
 
+  ;; The storage format a D3DUSAGE_RENDERTARGET texture of $format gets, or 0
+  ;; when the texture path refuses one. CreateTexture and D3D8's
+  ;; CheckDeviceFormat(RENDERTARGET, TEXTURE) both read it, so a D3DX format
+  ;; walk is told yes for exactly the targets create then makes. Before it,
+  ;; D3D8 refused every render-target texture format and Spelunky Classic's
+  ;; GM8 runner, finding no surface format, ended the game after one frame.
+  (func $d3d9_render_target_texture_format (param $format i32) (result i32)
+    (if (call $d3d9_texture_block_bytes (local.get $format)) (then (return (i32.const 0))))
+    (if (i32.eqz (call $d3d9_texture_format_supported (local.get $format))) (then (return (i32.const 0))))
+    ;; RGB565 render targets retain packed texture/alias storage on the
+    ;; software backend. Preserve historical widening on other backends: BW2
+    ;; dereferences a NULL texture if this previously accepted request fails.
+    ;; This fallback is not a claim of native RGB565 destination precision.
+    ;; A4R4G4B4 widening likewise remains a compatibility limitation.
+    (if (i32.and (i32.eq (local.get $format) (i32.const 23))
+      (i32.eqz (call $d3d9_rgb565_supported)))
+      (then (local.set $format (i32.const 22))))
+    (if (i32.eq (local.get $format) (i32.const 26))
+      (then (local.set $format (i32.const 21))))
+    (select (local.get $format) (i32.const 0) (call $d3d9_color_target_format (local.get $format))))
+
   (func $d3d9_texture_pitch (param $width i32) (param $format i32) (result i32)
     (local $block i32)
     (local.set $block (call $d3d9_texture_block_bytes (local.get $format)))
@@ -1899,21 +1920,12 @@
     ;; Render-target textures share native storage identities with their surface
     ;; views. Autogen/depth textures and dynamic render targets remain gated.
     (if (i32.and (local.get $usage) (i32.const -514)) (then (return)))
-    ;; RGB565 render targets retain packed texture/alias storage on the
-    ;; software backend. Preserve historical widening on other backends: BW2
-    ;; dereferences a NULL texture if this previously accepted request fails.
-    ;; This fallback is not a claim of native RGB565 destination precision.
-    ;; A4R4G4B4 widening likewise remains a compatibility limitation.
-    (if (i32.and (local.get $usage) (i32.const 1)) (then
-      (if (i32.and (i32.eq (local.get $format) (i32.const 23))
-        (i32.eqz (call $d3d9_rgb565_supported)))
-        (then (local.set $format (i32.const 22))))
-      (if (i32.eq (local.get $format) (i32.const 26))
-        (then (local.set $format (i32.const 21))))))
+    ;; $d3d9_render_target_texture_format owns the RGB565/A4R4G4B4 widening.
     (if (i32.and (local.get $usage) (i32.const 1)) (then
       (if (local.get $pool) (then (return)))
       (if (i32.ne (local.get $usage) (i32.const 1)) (then (return)))
-      (if (i32.eqz (call $d3d9_color_target_format (local.get $format))) (then (return)))))
+      (local.set $format (call $d3d9_render_target_texture_format (local.get $format)))
+      (if (i32.eqz (local.get $format)) (then (return)))))
     (local.set $w (local.get $width)) (local.set $h (local.get $height))
     (local.set $max (i32.const 1))
     (block $counted (loop $count

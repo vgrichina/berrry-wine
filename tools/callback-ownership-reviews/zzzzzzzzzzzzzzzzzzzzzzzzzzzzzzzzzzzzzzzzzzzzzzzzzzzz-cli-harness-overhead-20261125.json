@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "d09b08e9bbaa978ecc8c05a812aa105fe10af1847846749e3c1deee871d286d9",
+      "sha256": "f2816a965f630807c33c22b3b2321f82feb8a648adcd90249884431e4a49bdf1",
+      "reason": "Review 20261125 CLI harness overhead: thread-manager gains synchronous local-owner twins noteMainSleepLocal/checkMainMessageWaitLocal (same owner calls in the same order as the async versions, used only by test/run.js's local-owner batch fast path); host-audio exposes waveCallbacksIdle(), a read-only predicate over the wave/MIDI callback queues, and host-imports forwards it on ctx. No EIP write, callback frame, guest stack, HWND lifetime or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "66283292123f448c8dc05c989660257e14a503c1cc5ae43587ba6cd982d90c23",
+      "sha256": "9233a491c885b5a91e7992a177c4a60191f77f73299eedd20ff41c4a4955664d",
+      "reason": "Review 20261125 CLI harness overhead: thread-manager gains synchronous local-owner twins noteMainSleepLocal/checkMainMessageWaitLocal (same owner calls in the same order as the async versions, used only by test/run.js's local-owner batch fast path); host-audio exposes waveCallbacksIdle(), a read-only predicate over the wave/MIDI callback queues, and host-imports forwards it on ctx. No EIP write, callback frame, guest stack, HWND lifetime or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "ff11af8eb32d67d5b15e7a8c1a93745d52bb254fce91efdec94ba34437b7d451",
+      "sha256": "45f55a67e3148b47f046f4e509bf52a0e0636a5e46bf2257f10045c9010823b1",
+      "reason": "Review 20261125 CLI harness overhead: thread-manager gains synchronous local-owner twins noteMainSleepLocal/checkMainMessageWaitLocal (same owner calls in the same order as the async versions, used only by test/run.js's local-owner batch fast path); host-audio exposes waveCallbacksIdle(), a read-only predicate over the wave/MIDI callback queues, and host-imports forwards it on ctx. No EIP write, callback frame, guest stack, HWND lifetime or message delivery changed; callback ownership remains pending."
+    }
+  ]
+}

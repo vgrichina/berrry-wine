@@ -89,6 +89,17 @@
   ;; prefix on a string op or a rep declines.
   ;; Kind 33 LEAVE ($uc_leave, --no-uop-leave): O1 = [ebp], loaded into a
   ;; scratch before ESP/EBP change, so a deopt re-runs the whole leave.
+  ;; Kind 34 SSE ($uc_sse, --uop-sse): one XMM instruction, +12 the operand
+  ;; word 07-decoder gives 06c's handler (sub<<8 | dst<<4 | src, imm8 at
+  ;; 16), +28 the form (0 register, 1 memory source, 2 memory destination),
+  ;; +32 the handler index ($te_sse's choice: the dedicated scalar handler
+  ;; where one exists), +36 the memory access in bytes | 0x100 when it
+  ;; writes the flags (COMISS/UCOMISS/COMISD/UCOMISD: flag class 3, the
+  ;; record lands in the globals exactly as the handler writes it). O0 the
+  ;; destination, O1 the source: an XMM register is t 4 (w 128), a general
+  ;; register t 1, memory t 2 at its access width. Lowered to 07d SSER (108)
+  ;; / SSEM (109) / SSEMS (110), which call that very handler: the XMM file
+  ;; is never cached in the program, so every result is the threaded one.
 
   (global $UOP_CSCRATCH i32 (region.addr $UOP_CSCRATCH 0))
   (global $UOP_CSCRATCH_SIZE i32 (region.size $UOP_CSCRATCH))
@@ -197,6 +208,10 @@
   (global $uc_muldiv   (mut i32) (i32.const 0))
   (global $uc_icall    (mut i32) (i32.const 0))
   (global $uc_iat      (mut i32) (i32.const 0))
+  ;; --uop-sse: the XMM forms 06c runs (kind 34, $uc_sse_decode). Off by
+  ;; default; uop_cstat 37 counts the sites installed programs kept.
+  (global $uc_sse      (mut i32) (i32.const 0))
+  (global $uc_n_sse    (mut i32) (i32.const 0))
   ;; --no-uop-mmx turns kind 27 (MMX) off: on by default.
   (global $uc_mmx      (mut i32) (i32.const 1))
   ;; --no-uop-x87 turns kind 32 (x87) off, and with it the ES/CS/SS/DS
@@ -467,6 +482,257 @@
     (i32.store offset=52 (local.get $R) (i32.sub (local.get $end) (i32.load (local.get $R))))
     (i32.store offset=4 (local.get $R) (local.get $end)))
 
+  ;; ---- kind 34: SSE ----
+  ;; An XMM register operand: t 4 like an MMX one, 128 bits wide, so
+  ;; $uc_regbit and the stack-slot analysis see no general register in it.
+  (func $uc_opx (param $o i32) (param $r i32)
+    (call $uc_opm (local.get $o) (local.get $r))
+    (i32.store offset=20 (local.get $o) (i32.const 128)))
+
+  ;; What 07-decoder makes of 0F op under mandatory prefix pfx (0 none, 1 66,
+  ;; 2 F3, 3 F2) with ModRM reg field `reg`, `mem` set for a memory r/m:
+  ;; the 06c subop | 0x100 the r/m is the destination | 0x200 an imm8
+  ;; follows | 0x400 a register r/m is a general register (source)
+  ;; | 0x800 the reg field is a general register (destination) | 0x1000 a
+  ;; register r/m is a general register (destination) | 0x2000 the r/m is
+  ;; source and destination (the 66 0F 73 shift group) | 0x4000 writes the
+  ;; flags. -1: a form the tier leaves to threaded code -- one 07-decoder
+  ;; does not take, one whose handler can raise (the m128 alignment checks
+  ;; of CVTDQ2PS / CVTPD2PS / UNPCKHPS, MOVNTPS), and the MMX-register
+  ;; conversions (CVTTPS2PI, CVTPS2PI, CVTPI2PS), which move x87 TOP/tags.
+  ;; Every mapping is the decoder's, gate by gate: the SSE2 table
+  ;; ($sse2_form) first for any prefix, then the 66/F2/F3 conversions, then
+  ;; the SSE1 forms. test/test-uop-compiler.js's sse-* cases run them
+  ;; through both paths.
+  (func $uc_sse_desc (param $pfx i32) (param $op i32) (param $reg i32) (param $mem i32) (result i32)
+    (local $d i32)
+    (if (i32.eq (local.get $pfx) (i32.const 1))
+      (then
+        (local.set $d (call $sse2_form (i32.const 1) (local.get $op) (local.get $reg)))
+        (if (i32.ne (local.get $d) (i32.const -1))
+          (then
+            (if (i32.and (i32.ne (i32.and (local.get $d) (i32.const 0x400)) (i32.const 0)) (local.get $mem))
+              (then (return (i32.const -1))))
+            (if (i32.and (i32.ne (i32.and (local.get $d) (i32.const 0x800)) (i32.const 0)) (i32.eqz (local.get $mem)))
+              (then (return (i32.const -1))))
+            (return (i32.or (i32.or (i32.and (local.get $d) (i32.const 0x3FF))
+                                    (select (i32.const 0x2000) (i32.const 0)
+                                            (i32.ne (i32.and (local.get $d) (i32.const 0x1000)) (i32.const 0))))
+                            (i32.or (select (i32.const 0x800) (i32.const 0)
+                                            (i32.eq (i32.and (local.get $d) (i32.const 0xFF)) (i32.const 67)))
+                                    (select (i32.const 0x4000) (i32.const 0)
+                                            (i32.eq (i32.and (local.get $d) (i32.const 0xFF)) (i32.const 56))))))))
+        (if (i32.eq (local.get $op) (i32.const 0x6E)) (then (return (i32.const 0x422))))
+        (if (i32.eq (local.get $op) (i32.const 0x7E)) (then (return (i32.const 0x1123))))
+        (if (i32.and (i32.eq (local.get $op) (i32.const 0x5A)) (i32.eqz (local.get $mem)))
+          (then (return (i32.const 44))))
+        (return (i32.const -1))))
+    (if (i32.eq (local.get $pfx) (i32.const 3))
+      (then
+        (if (i32.eq (local.get $op) (i32.const 0x2A)) (then (return (i32.const 0x448))))
+        (if (i32.eq (local.get $op) (i32.const 0x2C)) (then (return (i32.const 0x849))))
+        (if (i32.eq (local.get $op) (i32.const 0x2D)) (then (return (i32.const 0x84A))))
+        (if (i32.eq (local.get $op) (i32.const 0x51)) (then (return (i32.const 75))))
+        (if (i32.eq (local.get $op) (i32.const 0x5A)) (then (return (i32.const 76))))
+        (if (i32.eq (local.get $op) (i32.const 0xC2)) (then (return (i32.const 0x24D))))
+        (if (i32.eq (local.get $op) (i32.const 0x10)) (then (return (i32.const 37))))
+        (if (i32.eq (local.get $op) (i32.const 0x11)) (then (return (i32.const 0x125))))
+        (if (i32.eq (local.get $op) (i32.const 0x58)) (then (return (i32.const 40))))
+        (if (i32.eq (local.get $op) (i32.const 0x59)) (then (return (i32.const 41))))
+        (if (i32.eq (local.get $op) (i32.const 0x5C)) (then (return (i32.const 42))))
+        (if (i32.eq (local.get $op) (i32.const 0x5E)) (then (return (i32.const 43))))
+        (return (i32.const -1))))
+    (if (i32.eq (local.get $pfx) (i32.const 2))
+      (then
+        (if (i32.eq (local.get $op) (i32.const 0x7E)) (then (return (i32.const 53))))
+        (if (i32.eq (local.get $op) (i32.const 0x5A)) (then (return (i32.const 39))))
+        (if (i32.eq (local.get $op) (i32.const 0xE6)) (then (return (i32.const 45))))
+        (if (i32.eq (local.get $op) (i32.const 0xC2)) (then (return (i32.const 0x230))))
+        (if (i32.eq (local.get $op) (i32.const 0x2D)) (then (return (i32.const 0x812))))
+        (if (i32.eq (local.get $op) (i32.const 0x2A)) (then (return (i32.const 0x411))))
+        (if (i32.eq (local.get $op) (i32.const 0x2C)) (then (return (i32.const 0x806))))
+        (if (i32.eq (local.get $op) (i32.const 0x10)) (then (return (i32.const 2))))
+        (if (i32.eq (local.get $op) (i32.const 0x11)) (then (return (i32.const 0x102))))
+        (if (i32.eq (local.get $op) (i32.const 0x51)) (then (return (i32.const 27))))
+        (if (i32.eq (local.get $op) (i32.const 0x52)) (then (return (i32.const 28))))
+        (if (i32.eq (local.get $op) (i32.const 0x53)) (then (return (i32.const 29))))
+        (if (i32.eq (local.get $op) (i32.const 0x58)) (then (return (i32.const 10))))
+        (if (i32.eq (local.get $op) (i32.const 0x59)) (then (return (i32.const 11))))
+        (if (i32.eq (local.get $op) (i32.const 0x5C)) (then (return (i32.const 14))))
+        (if (i32.eq (local.get $op) (i32.const 0x5D)) (then (return (i32.const 46))))
+        (if (i32.eq (local.get $op) (i32.const 0x5E)) (then (return (i32.const 13))))
+        (if (i32.eq (local.get $op) (i32.const 0x5F)) (then (return (i32.const 47))))
+        (return (i32.const -1))))
+    ;; no prefix
+    (if (i32.or (i32.eq (local.get $op) (i32.const 0x10)) (i32.eq (local.get $op) (i32.const 0x28)))
+      (then (return (i32.const 0))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 0x11)) (i32.eq (local.get $op) (i32.const 0x29)))
+      (then (return (i32.const 0x100))))
+    (if (i32.eq (local.get $op) (i32.const 0x12))
+      (then (return (select (i32.const 30) (i32.const 50) (local.get $mem)))))
+    (if (i32.eq (local.get $op) (i32.const 0x13))
+      (then (return (select (i32.const 0x11E) (i32.const -1) (local.get $mem)))))
+    (if (i32.eq (local.get $op) (i32.const 0x14)) (then (return (i32.const 3))))
+    (if (i32.eq (local.get $op) (i32.const 0x16)) (then (return (i32.const 4))))
+    (if (i32.eq (local.get $op) (i32.const 0x17))
+      (then (return (select (i32.const 0x104) (i32.const -1) (local.get $mem)))))
+    (if (i32.or (i32.eq (local.get $op) (i32.const 0x2E)) (i32.eq (local.get $op) (i32.const 0x2F)))
+      (then (return (i32.const 0x400C))))
+    (if (i32.eq (local.get $op) (i32.const 0x50))
+      (then (return (select (i32.const -1) (i32.const 0x820) (local.get $mem)))))
+    (if (i32.and (i32.ge_u (local.get $op) (i32.const 0x51)) (i32.le_u (local.get $op) (i32.const 0x56)))
+      (then (return (i32.add (i32.sub (local.get $op) (i32.const 0x51)) (i32.const 19)))))
+    (if (i32.eq (local.get $op) (i32.const 0x57)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $op) (i32.const 0x58)) (then (return (i32.const 8))))
+    (if (i32.eq (local.get $op) (i32.const 0x59)) (then (return (i32.const 9))))
+    (if (i32.eq (local.get $op) (i32.const 0x5A)) (then (return (i32.const 38))))
+    (if (i32.eq (local.get $op) (i32.const 0x5B))
+      (then (return (select (i32.const -1) (i32.const 36) (local.get $mem)))))
+    (if (i32.eq (local.get $op) (i32.const 0x5C)) (then (return (i32.const 16))))
+    (if (i32.eq (local.get $op) (i32.const 0x5D)) (then (return (i32.const 26))))
+    (if (i32.eq (local.get $op) (i32.const 0x5E)) (then (return (i32.const 15))))
+    (if (i32.eq (local.get $op) (i32.const 0x5F)) (then (return (i32.const 25))))
+    (if (i32.eq (local.get $op) (i32.const 0xC2)) (then (return (i32.const 0x21F))))
+    (if (i32.eq (local.get $op) (i32.const 0xC6)) (then (return (i32.const 0x207))))
+    (i32.const -1))
+
+  ;; Bytes a memory form of subop sub touches (st: it stores), as 06c's
+  ;; $th_sse_rm / $th_sse_mr / $sse2_load read and write them.
+  (func $uc_sse_size (param $sub i32) (param $st i32) (result i32)
+    (if (local.get $st)
+      (then
+        (if (i32.or (i32.eq (local.get $sub) (i32.const 2)) (i32.eq (local.get $sub) (i32.const 35)))
+          (then (return (i32.const 4))))
+        (if (i32.or (i32.or (i32.eq (local.get $sub) (i32.const 4)) (i32.eq (local.get $sub) (i32.const 30)))
+                    (i32.eq (local.get $sub) (i32.const 37)))
+          (then (return (i32.const 8))))
+        (return (i32.const 16))))
+    (if (i32.or (i32.or (i32.or (i32.eq (local.get $sub) (i32.const 72)) (i32.eq (local.get $sub) (i32.const 34)))
+                        (i32.or (i32.eq (local.get $sub) (i32.const 2)) (i32.eq (local.get $sub) (i32.const 6))))
+                (i32.or (i32.or (i32.and (i32.ge_u (local.get $sub) (i32.const 10)) (i32.le_u (local.get $sub) (i32.const 14)))
+                                (i32.or (i32.eq (local.get $sub) (i32.const 17)) (i32.eq (local.get $sub) (i32.const 18))))
+                        (i32.or (i32.and (i32.ge_u (local.get $sub) (i32.const 27)) (i32.le_u (local.get $sub) (i32.const 29)))
+                                (i32.or (i32.eq (local.get $sub) (i32.const 39))
+                                        (i32.and (i32.ge_u (local.get $sub) (i32.const 46)) (i32.le_u (local.get $sub) (i32.const 48)))))))
+      (then (return (i32.const 4))))
+    (if (i32.or (i32.or (i32.or (i32.eq (local.get $sub) (i32.const 53)) (i32.eq (local.get $sub) (i32.const 56)))
+                        (i32.and (i32.ge_u (local.get $sub) (i32.const 73)) (i32.le_u (local.get $sub) (i32.const 77))))
+                (i32.or (i32.or (i32.eq (local.get $sub) (i32.const 4)) (i32.eq (local.get $sub) (i32.const 30)))
+                        (i32.and (i32.ge_u (local.get $sub) (i32.const 37)) (i32.le_u (local.get $sub) (i32.const 45)))))
+      (then (return (i32.const 8))))
+    (i32.const 16))
+
+  ;; One SSE instruction at p (b its first byte past the 66s and the one F3
+  ;; the prefix loop took) into R as kind 34, or 0 when it is not one.
+  (func $uc_sse_decode (param $R i32) (param $p i32) (param $b i32) (param $rep i32) (param $v i32) (result i32)
+    (local $pfx i32) (local $q i32) (local $op i32) (local $m i32) (local $mem i32) (local $reg i32)
+    (local $rm i32) (local $d i32) (local $sub i32) (local $st i32) (local $size i32) (local $e i32)
+    (local $word i32) (local $h i32) (local $O0 i32) (local $O1 i32) (local $Om i32)
+    (if (global.get $code16) (then (return (i32.const 0))))
+    (local.set $O0 (i32.add (local.get $R) (i32.const 56)))
+    (local.set $O1 (i32.add (local.get $R) (i32.const 80)))
+    (local.set $q (local.get $p))
+    ;; exactly one mandatory prefix, or none
+    (if (i32.eq (local.get $b) (i32.const 0xF2))
+      (then
+        (if (i32.or (local.get $rep) (i32.eq (local.get $v) (i32.const 16))) (then (return (i32.const 0))))
+        (local.set $pfx (i32.const 3))
+        (local.set $q (i32.add (local.get $q) (i32.const 1))))
+      (else
+        (if (local.get $rep)
+          (then
+            (if (i32.eq (local.get $v) (i32.const 16)) (then (return (i32.const 0))))
+            (local.set $pfx (i32.const 2)))
+          (else
+            (if (i32.eq (local.get $v) (i32.const 16)) (then (local.set $pfx (i32.const 1))))))))
+    (if (i32.ne (call $uc_rd8 (local.get $q)) (i32.const 0x0F)) (then (return (i32.const 0))))
+    (local.set $op (call $uc_rd8 (i32.add (local.get $q) (i32.const 1))))
+    (local.set $m (call $uc_rd8 (i32.add (local.get $q) (i32.const 2))))
+    (local.set $mem (i32.ne (i32.shr_u (local.get $m) (i32.const 6)) (i32.const 3)))
+    (local.set $reg (i32.and (i32.shr_u (local.get $m) (i32.const 3)) (i32.const 7)))
+    (local.set $rm (i32.and (local.get $m) (i32.const 7)))
+    (local.set $d (call $uc_sse_desc (local.get $pfx) (local.get $op) (local.get $reg) (local.get $mem)))
+    (if (i32.lt_s (local.get $d) (i32.const 0)) (then (return (i32.const 0))))
+    (local.set $sub (i32.and (local.get $d) (i32.const 0xFF)))
+    (local.set $st (i32.ne (i32.and (local.get $d) (i32.const 0x100)) (i32.const 0)))
+    ;; MOVQ m64, xmm (66 0F D6) stores through the low-qword store, 37
+    (if (i32.and (i32.and (local.get $mem) (local.get $st)) (i32.eq (local.get $sub) (i32.const 53)))
+      (then (local.set $sub (i32.const 37))))
+    (local.set $size (if (result i32) (local.get $mem)
+                       (then (call $uc_sse_size (local.get $sub) (local.get $st))) (else (i32.const 0))))
+    (if (local.get $mem)
+      (then
+        (local.set $Om (select (local.get $O0) (local.get $O1) (local.get $st)))
+        (local.set $e (call $uc_modrm (i32.add (local.get $q) (i32.const 2)) (i32.shl (local.get $size) (i32.const 3))
+                                      (local.get $Om)))
+        ;; the register side: the reg field, an XMM register unless 0x800
+        (if (i32.and (local.get $d) (i32.const 0x800))
+          (then (call $uc_opr (select (local.get $O1) (local.get $O0) (local.get $st)) (local.get $reg) (i32.const 32)))
+          (else (call $uc_opx (select (local.get $O1) (local.get $O0) (local.get $st)) (local.get $reg))))
+        (local.set $word (i32.or (i32.shl (local.get $sub) (i32.const 8)) (i32.shl (local.get $reg) (i32.const 4))))
+        (i32.store offset=28 (local.get $R) (select (i32.const 2) (i32.const 1) (local.get $st))))
+      (else
+        (local.set $e (i32.add (local.get $q) (i32.const 3)))
+        (if (i32.and (local.get $d) (i32.const 0x2000))
+          (then
+            (call $uc_opx (local.get $O0) (local.get $rm))
+            (call $uc_opx (local.get $O1) (local.get $rm))
+            (local.set $word (i32.or (i32.shl (local.get $rm) (i32.const 4)) (local.get $rm))))
+          (else
+            (if (local.get $st)
+              (then
+                ;; r/m is the destination: an XMM register, or (movd r32,
+                ;; xmm) a general one; the reg field is the XMM source
+                (if (i32.and (local.get $d) (i32.const 0x1000))
+                  (then (call $uc_opr (local.get $O0) (local.get $rm) (i32.const 32)))
+                  (else (call $uc_opx (local.get $O0) (local.get $rm))))
+                (call $uc_opx (local.get $O1) (local.get $reg))
+                (local.set $word (i32.or (i32.shl (local.get $rm) (i32.const 4)) (local.get $reg))))
+              (else
+                (if (i32.and (local.get $d) (i32.const 0x800))
+                  (then (call $uc_opr (local.get $O0) (local.get $reg) (i32.const 32)))
+                  (else (call $uc_opx (local.get $O0) (local.get $reg))))
+                (if (i32.and (local.get $d) (i32.const 0x400))
+                  (then (call $uc_opr (local.get $O1) (local.get $rm) (i32.const 32)))
+                  (else (call $uc_opx (local.get $O1) (local.get $rm))))
+                (local.set $word (i32.or (i32.shl (local.get $reg) (i32.const 4)) (local.get $rm)))))))
+        (local.set $word (i32.or (local.get $word) (i32.shl (local.get $sub) (i32.const 8))))
+        (i32.store offset=28 (local.get $R) (i32.const 0))))
+    (if (i32.and (local.get $d) (i32.const 0x200))
+      (then
+        (local.set $word (i32.or (local.get $word) (i32.shl (call $uc_rd8 (local.get $e)) (i32.const 16))))
+        (local.set $e (i32.add (local.get $e) (i32.const 1)))))
+    ;; $te_sse: the dedicated scalar handlers, which read the low byte only
+    (local.set $h (select (select (i32.const 434) (i32.const 433) (local.get $st)) (i32.const 432) (local.get $mem)))
+    (if (i32.eqz (local.get $mem))
+      (then
+        (if (i32.eq (local.get $sub) (i32.const 2))  (then (local.set $h (i32.const 486))))
+        (if (i32.eq (local.get $sub) (i32.const 10)) (then (local.set $h (i32.const 478))))
+        (if (i32.eq (local.get $sub) (i32.const 11)) (then (local.set $h (i32.const 482))))
+        (if (i32.eq (local.get $sub) (i32.const 12)) (then (local.set $h (i32.const 489))))
+        (if (i32.eq (local.get $sub) (i32.const 13)) (then (local.set $h (i32.const 484))))
+        (if (i32.eq (local.get $sub) (i32.const 14)) (then (local.set $h (i32.const 480))))))
+    (if (i32.and (local.get $mem) (i32.eqz (local.get $st)))
+      (then
+        (if (i32.eq (local.get $sub) (i32.const 2))  (then (local.set $h (i32.const 487))))
+        (if (i32.eq (local.get $sub) (i32.const 10)) (then (local.set $h (i32.const 479))))
+        (if (i32.eq (local.get $sub) (i32.const 11)) (then (local.set $h (i32.const 483))))
+        (if (i32.eq (local.get $sub) (i32.const 12)) (then (local.set $h (i32.const 490))))
+        (if (i32.eq (local.get $sub) (i32.const 13)) (then (local.set $h (i32.const 485))))
+        (if (i32.eq (local.get $sub) (i32.const 14)) (then (local.set $h (i32.const 481))))))
+    (if (i32.and (local.get $st) (i32.eq (local.get $sub) (i32.const 2)))
+      (then (if (local.get $mem) (then (local.set $h (i32.const 488))))))
+    (if (i32.ne (local.get $h) (select (select (i32.const 434) (i32.const 433) (local.get $st)) (i32.const 432) (local.get $mem)))
+      (then (local.set $word (i32.and (local.get $word) (i32.const 0xFF)))))
+    (i32.store offset=12 (local.get $R) (local.get $word))
+    (i32.store offset=16 (local.get $R) (i32.const 128))
+    (i32.store offset=32 (local.get $R) (local.get $h))
+    (i32.store offset=36 (local.get $R)
+      (i32.or (local.get $size) (select (i32.const 0x100) (i32.const 0)
+                                        (i32.ne (i32.and (local.get $d) (i32.const 0x4000)) (i32.const 0)))))
+    (call $uc_fin (local.get $R) (i32.const 34) (local.get $e))
+    (i32.const 1))
+
   ;; One instruction at addr into record R. What the lowering cannot take is
   ;; kind 0 (unsup), one byte long.
   (func $uc_decode (param $addr i32) (param $R i32)
@@ -510,6 +776,12 @@
       (local.set $p (i32.add (local.get $p) (i32.const 1)))
       (local.set $b (call $uc_rd8 (local.get $p)))
       (br $pl)))
+    ;; 34 SSE: a mandatory 66 / F3 / F2 (or none) and 0F, before the REP
+    ;; and F2 refusals below
+    (if (global.get $uc_sse)
+      (then
+        (if (call $uc_sse_decode (local.get $R) (local.get $p) (local.get $b) (local.get $rep) (local.get $v))
+          (then (return)))))
     ;; 30 REP MOVS{B,W,D} / REP STOS{B,W,D}, 32-bit addressing, no segment
     ;; override (either would have stopped the loop above on an unsupported
     ;; prefix byte below). +12 is 0 movs / 1 stos, +16 the element width in
@@ -1215,8 +1487,9 @@
     (if (i32.eq (local.get $k) (i32.const 32))
       (then (return (i32.and (i32.eqz (i32.load offset=28 (local.get $R)))
                              (i32.eq (i32.load offset=12 (local.get $R)) (i32.const 0x740))))))
-    ;; MMX: only movd r32,mm names a general register as its destination
-    (if (i32.eq (local.get $k) (i32.const 27))
+    ;; MMX: only movd r32,mm names a general register as its destination;
+    ;; SSE: the r32 conversions, movd r32,xmm and the movmsk forms
+    (if (i32.or (i32.eq (local.get $k) (i32.const 27)) (i32.eq (local.get $k) (i32.const 34)))
       (then (return (call $uc_regbit (i32.add (local.get $R) (i32.const 56))))))
     (if (i32.or (i32.eq (local.get $k) (i32.const 25)) (i32.eq (local.get $k) (i32.const 26)))
       (then (return (i32.const 5))))
@@ -1240,7 +1513,8 @@
       (then (return (i32.or (local.get $a) (local.get $b)))))
     (if (i32.eq (local.get $k) (i32.const 4)) (then (return (local.get $a))))
     (if (i32.eq (local.get $k) (i32.const 17)) (then (return (local.get $b))))
-    (if (i32.eq (local.get $k) (i32.const 27)) (then (return (i32.or (local.get $a) (local.get $b)))))
+    (if (i32.or (i32.eq (local.get $k) (i32.const 27)) (i32.eq (local.get $k) (i32.const 34)))
+      (then (return (i32.or (local.get $a) (local.get $b)))))
     (if (i32.eq (local.get $k) (i32.const 32)) (then (return (local.get $a))))
     (if (i32.eq (local.get $k) (i32.const 33)) (then (return (i32.const 1))))
     (if (i32.or (i32.or (i32.eq (local.get $k) (i32.const 2)) (i32.eq (local.get $k) (i32.const 3)))
@@ -1273,6 +1547,10 @@
     (if (i32.or (i32.or (i32.eq (local.get $k) (i32.const 18)) (i32.eq (local.get $k) (i32.const 20)))
                 (i32.eq (local.get $k) (i32.const 25)))
       (then (return (i32.const 3))))
+    ;; (U)COMISS / (U)COMISD write the whole record into the globals
+    (if (i32.eq (local.get $k) (i32.const 34))
+      (then (return (select (i32.const 3) (i32.const 0)
+                            (i32.ne (i32.and (i32.load offset=36 (local.get $R)) (i32.const 0x100)) (i32.const 0))))))
     (if (i32.or (i32.or (i32.eq (local.get $k) (i32.const 1)) (i32.eq (local.get $k) (i32.const 4)))
                 (i32.or (i32.eq (local.get $k) (i32.const 13))
                         (i32.or (i32.eq (local.get $k) (i32.const 11))
@@ -1720,6 +1998,10 @@
       ;; its marker paces it (09a8 $th_logical_frame): never inside a program.
       ;; A head there is declined; a loop reaching it exits to it.
       (if (i32.eq (local.get $a) (global.get $logical_frame_addr))
+        (then (call $uc_unsup (local.get $R))))
+      ;; A Delphi helper entry runs as its native threaded op (10-helpers-
+      ;; delphi-fold.wat), so a program exits to it rather than lowering it.
+      (if (call $dfold_at (local.get $a))
         (then (call $uc_unsup (local.get $R))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 28))
         (then (call $uc_jt_targets (local.get $R))))
@@ -3176,6 +3458,8 @@
       (then (return (call $uc_mmx_insn (local.get $R)))))
     (if (i32.eq (local.get $k) (i32.const 32))
       (then (return (call $uc_x87_insn (local.get $R)))))
+    (if (i32.eq (local.get $k) (i32.const 34))
+      (then (return (call $uc_sse_insn (local.get $R)))))
     ;; leave: the load into a scratch first (its deopt re-runs the leave
     ;; with nothing changed), then ESP and EBP
     (if (i32.eq (local.get $k) (i32.const 33))
@@ -3228,6 +3512,34 @@
       (call $uc_mbase (local.get $O0)) (call $uc_midx (local.get $O0))
       (call $uc_aN (i32.load offset=12 (local.get $O0))) (call $uc_aN (i32.load offset=16 (local.get $O0)))
       (call $uc_win (local.get $O0) (i32.eq (local.get $form) (i32.const 2))) (call $uc_xstub))
+    (i32.const 0))
+
+  ;; Kind 34: one 07d op per SSE instruction, calling the 06c handler
+  ;; 07-decoder would have emitted for it. A memory form proves its access
+  ;; in a window first (07d: a miss re-guards, else exits to this
+  ;; instruction's stub with nothing changed), so the handler never faults
+  ;; and a deopt re-runs the whole instruction threaded. The code word is
+  ;; the handler's operand word | bytes << 24; the handler index rides in
+  ;; the scale word above the scale (sc | h << 8: wasm's shift count is
+  ;; taken mod 32, so the shared guard reads the scale unchanged).
+  (func $uc_sse_insn (param $R i32) (result i32)
+    (local $O i32) (local $form i32) (local $code i32) (local $h i32)
+    (if (global.get $uc_fwd_kind) (then (return (i32.const 22))))
+    (local.set $form (i32.load offset=28 (local.get $R)))
+    (local.set $h (i32.load offset=32 (local.get $R)))
+    (local.set $code (i32.or (i32.and (i32.load offset=12 (local.get $R)) (i32.const 0xFFFFFF))
+                             (i32.shl (i32.and (i32.load offset=36 (local.get $R)) (i32.const 0xFF)) (i32.const 24))))
+    (if (i32.eqz (local.get $form))
+      (then (call $uc_o2 (i32.const 108) (call $uc_aN (local.get $code)) (call $uc_aN (local.get $h)))
+            (return (i32.const 0))))
+    (local.set $O (i32.add (local.get $R) (select (i32.const 56) (i32.const 80) (i32.eq (local.get $form) (i32.const 2)))))
+    (call $uc_emit (select (i32.const 110) (i32.const 109) (i32.eq (local.get $form) (i32.const 2)))
+      (i32.const 7)
+      (call $uc_aN (local.get $code))
+      (call $uc_mbase (local.get $O)) (call $uc_midx (local.get $O))
+      (call $uc_aN (i32.or (i32.load offset=12 (local.get $O)) (i32.shl (local.get $h) (i32.const 8))))
+      (call $uc_aN (i32.load offset=16 (local.get $O)))
+      (call $uc_win (local.get $O) (i32.eq (local.get $form) (i32.const 2))) (call $uc_xstub))
     (i32.const 0))
 
   ;; Kind 27. Each form makes at most one guest memory access, and makes it
@@ -4782,8 +5094,10 @@
                     (i32.lt_u (i32.sub (local.get $op) (i32.const 38)) (i32.const 3)))
             (i32.or (i32.or (i32.eq (local.get $op) (i32.const 73)) (i32.eq (local.get $op) (i32.const 89)))
                     ;; native x87 stores: 94-97 FST/FIST m32/m64, 101 FNSTCW
-                    (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 94)) (i32.const 4))
-                            (i32.eq (local.get $op) (i32.const 101))))))
+                    (i32.or (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 94)) (i32.const 4))
+                                    (i32.eq (local.get $op) (i32.const 101)))
+                            ;; 110 SSEMS
+                            (i32.eq (local.get $op) (i32.const 110))))))
 
   (func $uc_encode_write (param $code i32)
     (local $p i32) (local $end i32) (local $o i32) (local $j i32) (local $a i64) (local $ty i32)
@@ -5164,6 +5478,8 @@
       (if (i32.or (i32.eq (call $uc_kind (local.get $R)) (i32.const 25))
                   (i32.eq (call $uc_kind (local.get $R)) (i32.const 26)))
         (then (global.set $uc_n_muldiv (i32.add (global.get $uc_n_muldiv) (i32.const 1)))))
+      (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 34))
+        (then (global.set $uc_n_sse (i32.add (global.get $uc_n_sse) (i32.const 1)))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 23))
         (then
           (if (i32.eq (i32.load offset=12 (local.get $R)) (i32.const 1))
@@ -5239,6 +5555,8 @@
     (if (i32.eq (local.get $which) (i32.const 34)) (then (return (global.get $uc_ladder_ok1))))
     (if (i32.eq (local.get $which) (i32.const 35)) (then (return (global.get $uc_ladder_ok2))))
     (if (i32.eq (local.get $which) (i32.const 36)) (then (return (global.get $uc_ladder_ok3))))
+    ;; 37: kind-34 SSE instructions in installed programs (--uop-sse)
+    (if (i32.eq (local.get $which) (i32.const 37)) (then (return (global.get $uc_n_sse))))
     (i32.const 0))
   ;; --no-uop-retry-ladder (0) / --uop-retry-ladder=N: $uc_lower_head's retry
   ;; order after a failed calls-followed attempt (mask, $uc_ladder). Takes
@@ -5281,6 +5599,11 @@
     (global.set $uc_iat (i32.ne (local.get $flag) (i32.const 0)))
     (call $uop_flush))
   (func (export "get_uop_iat") (result i32) (global.get $uc_iat))
+  ;; --uop-sse: kind 34 for programs compiled from now on (drops the rest).
+  (func (export "set_uop_sse") (param $flag i32)
+    (global.set $uc_sse (i32.ne (local.get $flag) (i32.const 0)))
+    (call $uop_flush))
+  (func (export "get_uop_sse") (result i32) (global.get $uc_sse))
   ;; --no-uop-mmx: kind 27 off for programs compiled from now on.
   (func (export "set_uop_mmx") (param $flag i32)
     (global.set $uc_mmx (i32.ne (local.get $flag) (i32.const 0)))

@@ -74,14 +74,49 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) (return)
   )
 
+  ;; GetKeyState is the key state as of the last input message this thread
+  ;; removed from its queue, not the state of the device now. For the mouse
+  ;; buttons that state is exactly the MK_* flags of the last hardware mouse
+  ;; message retrieved: a WM_LBUTTONDOWN carries MK_LBUTTON, its WM_LBUTTONUP
+  ;; does not. A program that is busy when the user clicks retrieves the
+  ;; down after the device is already up, and USER still reports the button
+  ;; down while it handles that message. VB6 asks GetKeyState(VK_LBUTTON)
+  ;; when a control sees WM_LBUTTONDOWN and only captures the mouse (and so
+  ;; only raises Click on the up) when it reads down: every tool button in
+  ;; SimCity 2001, whose timer redraw keeps it busy, ignored quick clicks.
+  ;; Per instance, so per guest thread like USER's per-queue state.
+  (global $input_sync_mk (mut i32) (i32.const 0))
+
+  ;; Called where a hardware input message is removed from the queue.
+  (func $input_sync_note (param $msg i32) (param $wparam i32)
+    (if (i32.and (i32.ge_u (local.get $msg) (i32.const 0x0200))
+                 (i32.le_u (local.get $msg) (i32.const 0x020D)))
+      (then (global.set $input_sync_mk
+        (i32.and (local.get $wparam) (i32.const 0x73))))))
+
+  ;; MK_* bit for a mouse-button VK, or 0 for any other key.
+  (func $input_sync_vk_mk (param $vk i32) (result i32)
+    (if (i32.eq (local.get $vk) (i32.const 1)) (then (return (i32.const 0x01))))
+    (if (i32.eq (local.get $vk) (i32.const 2)) (then (return (i32.const 0x02))))
+    (if (i32.eq (local.get $vk) (i32.const 4)) (then (return (i32.const 0x10))))
+    (if (i32.eq (local.get $vk) (i32.const 5)) (then (return (i32.const 0x20))))
+    (if (i32.eq (local.get $vk) (i32.const 6)) (then (return (i32.const 0x40))))
+    (i32.const 0))
+
   ;; 302: GetKeyState(nVirtKey) → SHORT — 1 arg stdcall
   (func $handle_GetKeyState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     ;; Return the current high-bit down state without consuming
     ;; GetAsyncKeyState's one-shot press latch. Toggle-key low bits are not
-    ;; tracked yet.
-    (i32.store offset=0 (global.get $reg_base) (i32.and
-        (call $host_get_key_down_state (local.get $arg0))
-        (i32.const 0x8000)))
+    ;; tracked yet. Keyboard keys still read the device; mouse buttons are
+    ;; also down while the last retrieved mouse message says so (above).
+    (i32.store offset=0 (global.get $reg_base) (i32.or
+        (i32.and
+          (call $host_get_key_down_state (local.get $arg0))
+          (i32.const 0x8000))
+        (select (i32.const 0x8000) (i32.const 0)
+          (i32.ne (i32.and (global.get $input_sync_mk)
+                    (call $input_sync_vk_mk (local.get $arg0)))
+                  (i32.const 0)))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 

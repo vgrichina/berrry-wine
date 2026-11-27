@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/10-helpers-delphi-fold.wat",
+      "name": "$th_delphi_rtti",
+      "baseSHA256": "217068817ea5295d1d8a5e87a3d846e966e533c7f103fdabc0a714950416bb33",
+      "sha256": "708f0a24cd0bd60493cd28edb193f66e6fd425bf5ce36b83423b858f7bb27322",
+      "reason": "Review 20261126 Delphi fold Init/Move: handler 395 also runs _InitializeRecord, _InitializeArray and System.Move (FILD and REP forms) natively. EIP writes are unchanged (same six targets): the new paths finish through the body RET or fall back after the first instruction via the existing local $entry resume; no callback frame, invocation identity preserved. General callback ownership remains pending."
+    }
+  ]
+}

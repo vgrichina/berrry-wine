@@ -1559,6 +1559,7 @@
     (call $lock_wnd_release)
     (if (i32.ne (local.get $previous) (i32.const 0))
       (then
+        (global.set $capture_lost_hwnd (local.get $previous))
         (drop (call $wnd_send_message
           (local.get $previous) (i32.const 0x0215) ;; WM_CAPTURECHANGED
           (i32.const 0) (local.get $next)))))

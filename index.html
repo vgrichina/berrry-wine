@@ -2702,9 +2702,16 @@ Resource-aware Win98 emulator
     // ?aggressive-stack: the uop tier also elides push/pop pairs nothing can
     // observe (opt-in, compile-time; read at launch, host.js).
     if (new URLSearchParams(location.search).has('aggressive-stack')) window.WineSuperops.aggressiveStack = true;
+    // ?uop-sse: the uop tier also takes the XMM forms (07e kind 34; opt-in,
+    // compile-time; read at launch, host.js).
+    if (new URLSearchParams(location.search).has('uop-sse')) window.WineSuperops.uopSse = true;
     // ?smc-same-block: decoder checkpoints for a store that rewrites its own
     // running block (opt-in, decode-time; read at launch, host.js).
     if (new URLSearchParams(location.search).has('smc-same-block')) window.WineSuperops.smcSameBlock = true;
+    // ?no-delphi-fold: the Delphi System RTTI/LStr helpers run as their guest
+    // bodies instead of natively (on by default, decode-time; read at launch,
+    // host.js; src/10-helpers-delphi-fold.wat).
+    if (new URLSearchParams(location.search).has('no-delphi-fold')) window.WineSuperops.delphiFold = false;
     // Trace heads: hot heads with no back edge become forward traces (on by
     // default, compile-time; read at launch, host.js). ?no-uop-trace-heads
     // turns them off; ?uop-trace-heads is still accepted and changes nothing.

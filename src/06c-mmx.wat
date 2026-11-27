@@ -232,6 +232,248 @@
       (call $sse_cmp_lane (f32x4.extract_lane 3 (local.get $a))
         (f32x4.extract_lane 3 (local.get $b)) (local.get $pred))))
 
+  ;; ---- SSE2 XMM forms (GameMaker:Studio runner, Spelunky Classic HD) ----
+  ;; Decoder table: mandatory prefix (1=66, 2=F3, 3=F2), secondary opcode and
+  ;; ModRM reg field -> descriptor sub | flags, or -1 for a form we do not
+  ;; implement (it then falls through to the old fail-fast gates).
+  ;;   0x100 STORE    r/m operand is the destination (434 for memory)
+  ;;   0x200 IMM8     an immediate follows the ModRM operand
+  ;;   0x400 REGONLY  memory form is invalid      0x800 MEMONLY register invalid
+  ;;   0x1000 GROUP   0F73 shift group: r/m is both source and destination
+  ;; Bitwise and whole-register moves reuse the SSE1 subops (0 move, 1 xor,
+  ;; 22 and, 23 andn, 24 or, 30 low-qword load/store). New subops 53..77:
+  ;;   53 MOVQ (low qword, upper zeroed)  54/55 UNPCKLPD/UNPCKHPD
+  ;;   56 UCOMISD/COMISD  57/58/59 ADDPD/MULPD/SUBPD  60 PSHUFD
+  ;;   61/62 PSRLQ/PSLLQ imm  63 PCMPEQD  64 SHUFPD  65 PSRLQ xmm  66 PADDQ
+  ;;   67 PMOVMSKB r32  68 PMAXSW  69 PSLLQ xmm  70 PSUBD  71 PSUBQ
+  ;;   72 CVTSI2SD  73 CVTTSD2SI  74 CVTSD2SI  75 SQRTSD  76 CVTSD2SS  77 CMPSD
+  ;; Packed m128 operands are not alignment-checked (MOVAPS already is not).
+  (func $sse2_form (param $pfx i32) (param $op i32) (param $reg i32) (result i32)
+    (if (i32.eq (local.get $pfx) (i32.const 1)) (then
+      (if (i32.eq (local.get $op) (i32.const 0x12)) (then (return (i32.const 0x81E))))
+      (if (i32.eq (local.get $op) (i32.const 0x13)) (then (return (i32.const 0x91E))))
+      (if (i32.eq (local.get $op) (i32.const 0x14)) (then (return (i32.const 54))))
+      (if (i32.eq (local.get $op) (i32.const 0x15)) (then (return (i32.const 55))))
+      (if (i32.eq (local.get $op) (i32.const 0x28)) (then (return (i32.const 0))))
+      (if (i32.eq (local.get $op) (i32.const 0x29)) (then (return (i32.const 0x100))))
+      (if (i32.eq (local.get $op) (i32.const 0x2E)) (then (return (i32.const 56))))
+      (if (i32.eq (local.get $op) (i32.const 0x2F)) (then (return (i32.const 56))))
+      (if (i32.eq (local.get $op) (i32.const 0x54)) (then (return (i32.const 22))))
+      (if (i32.eq (local.get $op) (i32.const 0x55)) (then (return (i32.const 23))))
+      (if (i32.eq (local.get $op) (i32.const 0x56)) (then (return (i32.const 24))))
+      (if (i32.eq (local.get $op) (i32.const 0x57)) (then (return (i32.const 1))))
+      (if (i32.eq (local.get $op) (i32.const 0x58)) (then (return (i32.const 57))))
+      (if (i32.eq (local.get $op) (i32.const 0x59)) (then (return (i32.const 58))))
+      (if (i32.eq (local.get $op) (i32.const 0x5C)) (then (return (i32.const 59))))
+      (if (i32.eq (local.get $op) (i32.const 0x6F)) (then (return (i32.const 0))))
+      (if (i32.eq (local.get $op) (i32.const 0x70)) (then (return (i32.const 0x23C))))
+      (if (i32.eq (local.get $op) (i32.const 0x73)) (then
+        (if (i32.eq (local.get $reg) (i32.const 2)) (then (return (i32.const 0x163D))))
+        (if (i32.eq (local.get $reg) (i32.const 6)) (then (return (i32.const 0x163E))))
+        (return (i32.const -1))))
+      (if (i32.eq (local.get $op) (i32.const 0x76)) (then (return (i32.const 63))))
+      (if (i32.eq (local.get $op) (i32.const 0x7F)) (then (return (i32.const 0x100))))
+      (if (i32.eq (local.get $op) (i32.const 0xC6)) (then (return (i32.const 0x240))))
+      (if (i32.eq (local.get $op) (i32.const 0xD3)) (then (return (i32.const 65))))
+      (if (i32.eq (local.get $op) (i32.const 0xD4)) (then (return (i32.const 66))))
+      (if (i32.eq (local.get $op) (i32.const 0xD6)) (then (return (i32.const 0x135))))
+      (if (i32.eq (local.get $op) (i32.const 0xD7)) (then (return (i32.const 0x443))))
+      (if (i32.eq (local.get $op) (i32.const 0xDB)) (then (return (i32.const 22))))
+      (if (i32.eq (local.get $op) (i32.const 0xDF)) (then (return (i32.const 23))))
+      (if (i32.eq (local.get $op) (i32.const 0xEB)) (then (return (i32.const 24))))
+      (if (i32.eq (local.get $op) (i32.const 0xEE)) (then (return (i32.const 68))))
+      (if (i32.eq (local.get $op) (i32.const 0xEF)) (then (return (i32.const 1))))
+      (if (i32.eq (local.get $op) (i32.const 0xF3)) (then (return (i32.const 69))))
+      (if (i32.eq (local.get $op) (i32.const 0xFA)) (then (return (i32.const 70))))
+      (if (i32.eq (local.get $op) (i32.const 0xFB)) (then (return (i32.const 71))))
+      (return (i32.const -1))))
+    (if (i32.eq (local.get $pfx) (i32.const 2)) (then
+      (if (i32.eq (local.get $op) (i32.const 0x7E)) (then (return (i32.const 53))))
+      (return (i32.const -1))))
+    (if (i32.eq (local.get $pfx) (i32.const 3)) (then
+      (if (i32.eq (local.get $op) (i32.const 0x2A)) (then (return (i32.const 72))))
+      (if (i32.eq (local.get $op) (i32.const 0x2C)) (then (return (i32.const 73))))
+      (if (i32.eq (local.get $op) (i32.const 0x2D)) (then (return (i32.const 74))))
+      (if (i32.eq (local.get $op) (i32.const 0x51)) (then (return (i32.const 75))))
+      (if (i32.eq (local.get $op) (i32.const 0x5A)) (then (return (i32.const 76))))
+      (if (i32.eq (local.get $op) (i32.const 0xC2)) (then (return (i32.const 0x24D))))))
+    (i32.const -1))
+
+  ;; Exact memory operand width per SSE2 subop: m32 for CVTSI2SD, m64 for
+  ;; the scalar-double and MOVQ forms, m128 otherwise.
+  (func $sse2_load (param $sub i32) (param $addr i32) (result v128)
+    (if (i32.eq (local.get $sub) (i32.const 72))
+      (then (return (i32x4.replace_lane 0 (v128.const i32x4 0 0 0 0)
+        (call $gl32 (local.get $addr))))))
+    (if (i32.or (i32.eq (local.get $sub) (i32.const 53))
+          (i32.or (i32.eq (local.get $sub) (i32.const 56))
+                  (i32.and (i32.ge_u (local.get $sub) (i32.const 73))
+                           (i32.le_u (local.get $sub) (i32.const 77)))))
+      (then (return (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+        (call $gl64 (local.get $addr))))))
+    (call $gl128 (local.get $addr)))
+
+  ;; Scalar double arithmetic with x86 NaN rules (see $sse_double_result):
+  ;; first NaN operand wins, quieted; invalid gives the negative indefinite.
+  ;; $k: 0 add, 1 mul, 2 sub.
+  (func $sse_f64_arith (param $k i32) (param $a i64) (param $b i64) (result i64)
+    (local $r f64)
+    (if (call $sse_is_nan64 (local.get $a))
+      (then (return (i64.or (local.get $a) (i64.const 0x0008000000000000)))))
+    (if (call $sse_is_nan64 (local.get $b))
+      (then (return (i64.or (local.get $b) (i64.const 0x0008000000000000)))))
+    (local.set $r
+      (if (result f64) (i32.eqz (local.get $k))
+        (then (f64.add (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))
+        (else (if (result f64) (i32.eq (local.get $k) (i32.const 1))
+          (then (f64.mul (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))
+          (else (f64.sub (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))))))
+    (if (result i64) (f64.ne (local.get $r) (local.get $r))
+      (then (i64.const 0xfff8000000000000))
+      (else (i64.reinterpret_f64 (local.get $r)))))
+
+  ;; COMISD/UCOMISD: the double-precision twin of $sse_compare_flags.
+  (func $sse_compare_flags_f64 (param $a f64) (param $b f64)
+    (local $un i32)
+    (local.set $un (i32.or (f64.ne (local.get $a) (local.get $a))
+                           (f64.ne (local.get $b) (local.get $b))))
+    (global.set $flag_op (i32.const 9))
+    (global.set $flag_sign_shift (i32.const 31))
+    (global.set $flag_a (i32.or
+      (i32.or (f64.lt (local.get $a) (local.get $b)) (local.get $un))
+      (i32.shl (local.get $un) (i32.const 1))))
+    (global.set $flag_b (i32.const 0))
+    (global.set $flag_res (i32.eqz (i32.or (f64.eq (local.get $a) (local.get $b))
+                                           (local.get $un)))))
+
+  ;; CMPSD predicates 0..7, as $sse_cmp_lane: true is all ones.
+  (func $sse_cmp_f64 (param $a f64) (param $b f64) (param $pred i32) (result i64)
+    (local $u i32) (local $t i32)
+    (local.set $pred (i32.and (local.get $pred) (i32.const 7)))
+    (local.set $u (i32.or (f64.ne (local.get $a) (local.get $a))
+                          (f64.ne (local.get $b) (local.get $b))))
+    (local.set $t (i32.eqz (local.get $u)))
+    (if (i32.eq (local.get $pred) (i32.const 0))
+      (then (local.set $t (i32.and (i32.eqz (local.get $u)) (f64.eq (local.get $a) (local.get $b))))))
+    (if (i32.eq (local.get $pred) (i32.const 1))
+      (then (local.set $t (i32.and (i32.eqz (local.get $u)) (f64.lt (local.get $a) (local.get $b))))))
+    (if (i32.eq (local.get $pred) (i32.const 2))
+      (then (local.set $t (i32.and (i32.eqz (local.get $u)) (f64.le (local.get $a) (local.get $b))))))
+    (if (i32.eq (local.get $pred) (i32.const 3)) (then (local.set $t (local.get $u))))
+    (if (i32.eq (local.get $pred) (i32.const 4))
+      (then (local.set $t (i32.or (local.get $u) (f64.ne (local.get $a) (local.get $b))))))
+    (if (i32.eq (local.get $pred) (i32.const 5))
+      (then (local.set $t (i32.or (local.get $u) (f64.ge (local.get $a) (local.get $b))))))
+    (if (i32.eq (local.get $pred) (i32.const 6))
+      (then (local.set $t (i32.or (local.get $u) (f64.gt (local.get $a) (local.get $b))))))
+    (select (i64.const -1) (i64.const 0) (local.get $t)))
+
+  ;; Double to int32 with x86's integer indefinite for NaN/out of range.
+  ;; $round: 0 truncate (CVTTSD2SI), 1 nearest-even (CVTSD2SI, reset MXCSR).
+  (func $sse_f64_to_i32 (param $v f64) (param $round i32) (result i32)
+    (if (local.get $round) (then (local.set $v (f64.nearest (local.get $v)))))
+    (if (i32.or (f64.ne (local.get $v) (local.get $v))
+          (i32.or (f64.ge (local.get $v) (f64.const 2147483648))
+                  (f64.le (local.get $v) (f64.const -2147483649))))
+      (then (return (i32.const 0x80000000))))
+    (i32.trunc_sat_f64_s (local.get $v)))
+
+  ;; 64-bit lane shift with x86's count semantics: counts above 63 clear.
+  (func $sse_q_shift (param $v v128) (param $count i64) (param $left i32) (result v128)
+    (if (i64.gt_u (local.get $count) (i64.const 63))
+      (then (return (v128.const i32x4 0 0 0 0))))
+    (if (result v128) (local.get $left)
+      (then (i64x2.shl (local.get $v) (i32.wrap_i64 (local.get $count))))
+      (else (i64x2.shr_u (local.get $v) (i32.wrap_i64 (local.get $count))))))
+
+  ;; Execute SSE2 subops 53..77. $d is the destination's old value, $s the
+  ;; source (register value or the exact-width memory read); for 72 the
+  ;; caller has already placed the GPR/m32 integer in lane 0.
+  (func $sse2_exec (param $sub i32) (param $dst i32) (param $d v128) (param $s v128) (param $imm i32)
+    (local $v v128) (local $sq f64) (local $b i64)
+    (if (i32.eq (local.get $sub) (i32.const 53)) (then
+      (local.set $v (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+        (i64x2.extract_lane 0 (local.get $s))))))
+    (if (i32.eq (local.get $sub) (i32.const 54)) (then
+      (local.set $v (i8x16.shuffle 0 1 2 3 4 5 6 7 16 17 18 19 20 21 22 23
+        (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 55)) (then
+      (local.set $v (i8x16.shuffle 8 9 10 11 12 13 14 15 24 25 26 27 28 29 30 31
+        (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 56)) (then
+      (call $sse_compare_flags_f64 (f64x2.extract_lane 0 (local.get $d))
+        (f64x2.extract_lane 0 (local.get $s)))
+      (return)))
+    (if (i32.and (i32.ge_u (local.get $sub) (i32.const 57))
+                 (i32.le_u (local.get $sub) (i32.const 59))) (then
+      (local.set $v (i64x2.replace_lane 1
+        (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+          (call $sse_f64_arith (i32.sub (local.get $sub) (i32.const 57))
+            (i64x2.extract_lane 0 (local.get $d)) (i64x2.extract_lane 0 (local.get $s))))
+        (call $sse_f64_arith (i32.sub (local.get $sub) (i32.const 57))
+          (i64x2.extract_lane 1 (local.get $d)) (i64x2.extract_lane 1 (local.get $s)))))))
+    (if (i32.eq (local.get $sub) (i32.const 60)) (then
+      (local.set $v (call $sse_shufps (local.get $s) (local.get $s) (local.get $imm)))))
+    (if (i32.eq (local.get $sub) (i32.const 61)) (then
+      (local.set $v (call $sse_q_shift (local.get $d)
+        (i64.extend_i32_u (i32.and (local.get $imm) (i32.const 0xFF))) (i32.const 0)))))
+    (if (i32.eq (local.get $sub) (i32.const 62)) (then
+      (local.set $v (call $sse_q_shift (local.get $d)
+        (i64.extend_i32_u (i32.and (local.get $imm) (i32.const 0xFF))) (i32.const 1)))))
+    (if (i32.eq (local.get $sub) (i32.const 63)) (then
+      (local.set $v (i32x4.eq (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 64)) (then
+      (local.set $v (i64x2.replace_lane 1
+        (i64x2.replace_lane 0 (v128.const i32x4 0 0 0 0)
+          (select (i64x2.extract_lane 1 (local.get $d)) (i64x2.extract_lane 0 (local.get $d))
+            (i32.and (local.get $imm) (i32.const 1))))
+        (select (i64x2.extract_lane 1 (local.get $s)) (i64x2.extract_lane 0 (local.get $s))
+          (i32.and (local.get $imm) (i32.const 2)))))))
+    (if (i32.eq (local.get $sub) (i32.const 65)) (then
+      (local.set $v (call $sse_q_shift (local.get $d)
+        (i64x2.extract_lane 0 (local.get $s)) (i32.const 0)))))
+    (if (i32.eq (local.get $sub) (i32.const 66)) (then
+      (local.set $v (i64x2.add (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 67)) (then
+      (call $set_reg (local.get $dst) (i8x16.bitmask (local.get $s)))
+      (return)))
+    (if (i32.eq (local.get $sub) (i32.const 68)) (then
+      (local.set $v (i16x8.max_s (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 69)) (then
+      (local.set $v (call $sse_q_shift (local.get $d)
+        (i64x2.extract_lane 0 (local.get $s)) (i32.const 1)))))
+    (if (i32.eq (local.get $sub) (i32.const 70)) (then
+      (local.set $v (i32x4.sub (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 71)) (then
+      (local.set $v (i64x2.sub (local.get $d) (local.get $s)))))
+    (if (i32.eq (local.get $sub) (i32.const 72)) (then
+      (local.set $v (f64x2.replace_lane 0 (local.get $d)
+        (f64.convert_i32_s (i32x4.extract_lane 0 (local.get $s)))))))
+    (if (i32.or (i32.eq (local.get $sub) (i32.const 73))
+                (i32.eq (local.get $sub) (i32.const 74))) (then
+      (call $set_reg (local.get $dst)
+        (call $sse_f64_to_i32 (f64x2.extract_lane 0 (local.get $s))
+          (i32.eq (local.get $sub) (i32.const 74))))
+      (return)))
+    (if (i32.eq (local.get $sub) (i32.const 75)) (then
+      ;; NaN source: quieted source. Negative non-zero: indefinite. -0 stays.
+      (local.set $b (i64x2.extract_lane 0 (local.get $s)))
+      (local.set $sq (f64.sqrt (f64.reinterpret_i64 (local.get $b))))
+      (local.set $v (i64x2.replace_lane 0 (local.get $d)
+        (if (result i64) (call $sse_is_nan64 (local.get $b))
+          (then (i64.or (local.get $b) (i64.const 0x0008000000000000)))
+          (else (if (result i64) (f64.ne (local.get $sq) (local.get $sq))
+            (then (i64.const 0xfff8000000000000))
+            (else (i64.reinterpret_f64 (local.get $sq))))))))))
+    (if (i32.eq (local.get $sub) (i32.const 76)) (then
+      (local.set $v (i32x4.replace_lane 0 (local.get $d)
+        (call $sse_demote_bits (i64x2.extract_lane 0 (local.get $s)))))))
+    (if (i32.eq (local.get $sub) (i32.const 77)) (then
+      (local.set $v (i64x2.replace_lane 0 (local.get $d)
+        (call $sse_cmp_f64 (f64x2.extract_lane 0 (local.get $d))
+          (f64x2.extract_lane 0 (local.get $s)) (local.get $imm))))))
+    (call $xmm_set (local.get $dst) (local.get $v)))
+
   ;; One threaded handler per operand shape, one br_table over the subop.
   ;; Subops (op bits 8..15), shared by all three shapes:
   ;;   0 move (MOVAPS/MOVUPS)  1 XORPS  2 MOVSS  3 UNPCKLPS  4 MOVLHPS/MOVHPS
@@ -270,6 +512,13 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     (local.set $s (call $xmm_get (local.get $src)))
+    (if (i32.ge_u (local.get $sub) (i32.const 53)) (then
+      ;; CVTSI2SD's register source is a GPR, not an XMM register.
+      (if (i32.eq (local.get $sub) (i32.const 72))
+        (then (local.set $s (i32x4.splat (call $get_reg (local.get $src))))))
+      (call $sse2_exec (local.get $sub) (local.get $dst) (local.get $d) (local.get $s)
+        (i32.shr_u (local.get $op) (i32.const 16)))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 52)) (then
       ;; The ModRM source is MMX, independent of XMM/GPR with the same number.
       (local.set $s (i64x2.splat (call $mmx_get (local.get $src))))
@@ -505,6 +754,11 @@
     (local.set $dp (call $xmm_addr (local.get $dst)))
     (local.set $d (v128.load (local.get $dp)))
     ;; Read exactly the architectural operand width before writing XMM state.
+    (if (i32.ge_u (local.get $sub) (i32.const 53)) (then
+      (call $sse2_exec (local.get $sub) (local.get $dst) (local.get $d)
+        (call $sse2_load (local.get $sub) (local.get $addr))
+        (i32.shr_u (local.get $op) (i32.const 16)))
+      (dispatch-next)))
     (if (i32.eq (local.get $sub) (i32.const 52)) (then
       ;; Unaligned m64: finish both translated dword reads before committing
       ;; the low64 result. Upper64 raw bits and x87 TOP/tags stay unchanged.
@@ -869,6 +1123,102 @@
     (call $gs32 (call $read_addr) (local.get $v))
     (dispatch-next))
 
+  ;; ---- --sse-fast: dedicated register forms of the SSE2 double runtime ----
+  ;; GameMaker:Studio's runner does its arithmetic in doubles over single
+  ;; storage, so Spelunky Classic HD's hot SSE is cvtss2sd / cvtps2pd /
+  ;; cvtsd2ss / cvtpd2ps / addsd / subsd / mulsd / comisd / cvtsi2ss /
+  ;; cvtsi2sd between registers -- all of which went through $th_sse_rr's
+  ;; if-chain (subops >= 38 are tested before its br_table) with the whole
+  ;; v128 pair live across helper calls. Each handler below is that arm of
+  ;; $th_sse_rr, alone: the same helpers in the same order, so the result
+  ;; is bit-identical (test/test-sse-fast-handlers.js runs both). Opt-in
+  ;; ($sse_fast, set before the code is decoded): $te_sse picks these only
+  ;; then. Operand word: the low byte, dst<<4 | src.
+  (global $sse_fast (mut i32) (i32.const 0))
+  (func (export "set_sse_fast") (param $on i32)
+    (global.set $sse_fast (i32.ne (local.get $on) (i32.const 0))))
+  (func (export "get_sse_fast") (result i32) (global.get $sse_fast))
+  (func $th_cvtss2sd_rr (param $op i32)                      ;; 502 (sub 39)
+    (local $nx_fn i32) (local $nx_op i32) (local $dp i32)
+    (local.set $dp (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4))))
+    (i64.store (local.get $dp)
+      (call $sse_promote_bits (i32.load (call $xmm_addr (local.get $op)))))
+    (dispatch-next))
+  (func $th_cvtps2pd_rr (param $op i32)                      ;; 503 (sub 38)
+    (local $nx_fn i32) (local $nx_op i32)
+    (call $xmm_set (i32.shr_u (local.get $op) (i32.const 4))
+      (call $sse_promote_pair (call $xmm_get (local.get $op))))
+    (dispatch-next))
+  (func $th_cvtsd2ss_rr (param $op i32)                      ;; 504 (sub 76)
+    (local $nx_fn i32) (local $nx_op i32) (local $dp i32)
+    (local.set $dp (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4))))
+    (i32.store (local.get $dp)
+      (call $sse_demote_bits (i64.load (call $xmm_addr (local.get $op)))))
+    (dispatch-next))
+  (func $th_cvtpd2ps_rr (param $op i32)                      ;; 505 (sub 44)
+    (local $nx_fn i32) (local $nx_op i32) (local $sp i32)
+    (local.set $sp (call $xmm_addr (local.get $op)))
+    (call $xmm_set (i32.shr_u (local.get $op) (i32.const 4))
+      (i32x4.replace_lane 1
+        (i32x4.replace_lane 0 (v128.const i32x4 0 0 0 0)
+          (call $sse_demote_bits (i64.load (local.get $sp))))
+        (call $sse_demote_bits (i64.load offset=8 (local.get $sp)))))
+    (dispatch-next))
+  ;; $sse_double_result's scalar arms (40 add, 41 mul, 42 sub): the first NaN
+  ;; operand wins, quieted; an invalid result is the negative indefinite.
+  (func $sse_sd_arith (param $k i32) (param $dp i32) (param $sp i32)
+    (local $a i64) (local $b i64) (local $r f64)
+    (local.set $a (i64.load (local.get $dp)))
+    (local.set $b (i64.load (local.get $sp)))
+    (if (call $sse_is_nan64 (local.get $a)) (then
+      (i64.store (local.get $dp) (i64.or (local.get $a) (i64.const 0x0008000000000000)))
+      (return)))
+    (if (call $sse_is_nan64 (local.get $b)) (then
+      (i64.store (local.get $dp) (i64.or (local.get $b) (i64.const 0x0008000000000000)))
+      (return)))
+    (local.set $r
+      (if (result f64) (i32.eqz (local.get $k))
+        (then (f64.add (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))
+        (else (if (result f64) (i32.eq (local.get $k) (i32.const 1))
+          (then (f64.mul (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))
+          (else (f64.sub (f64.reinterpret_i64 (local.get $a)) (f64.reinterpret_i64 (local.get $b))))))))
+    (i64.store (local.get $dp)
+      (if (result i64) (f64.ne (local.get $r) (local.get $r))
+        (then (i64.const 0xfff8000000000000))
+        (else (i64.reinterpret_f64 (local.get $r))))))
+  (func $th_addsd_rr (param $op i32)                         ;; 506 (sub 40)
+    (local $nx_fn i32) (local $nx_op i32)
+    (call $sse_sd_arith (i32.const 0) (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4)))
+      (call $xmm_addr (local.get $op)))
+    (dispatch-next))
+  (func $th_mulsd_rr (param $op i32)                         ;; 507 (sub 41)
+    (local $nx_fn i32) (local $nx_op i32)
+    (call $sse_sd_arith (i32.const 1) (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4)))
+      (call $xmm_addr (local.get $op)))
+    (dispatch-next))
+  (func $th_subsd_rr (param $op i32)                         ;; 508 (sub 42)
+    (local $nx_fn i32) (local $nx_op i32)
+    (call $sse_sd_arith (i32.const 2) (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4)))
+      (call $xmm_addr (local.get $op)))
+    (dispatch-next))
+  (func $th_comisd_rr (param $op i32)                        ;; 509 (sub 56)
+    (local $nx_fn i32) (local $nx_op i32)
+    (call $sse_compare_flags_f64
+      (f64.load (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4))))
+      (f64.load (call $xmm_addr (local.get $op))))
+    (dispatch-next))
+  (func $th_cvtsi2ss_rr (param $op i32)                      ;; 510 (sub 17)
+    (local $nx_fn i32) (local $nx_op i32)
+    (f32.store (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4)))
+      (f32.convert_i32_s (i32.load (i32.add (global.get $reg_base)
+        (i32.shl (i32.and (local.get $op) (i32.const 0xF)) (i32.const 2))))))
+    (dispatch-next))
+  (func $th_cvtsi2sd_rr (param $op i32)                      ;; 511 (sub 72)
+    (local $nx_fn i32) (local $nx_op i32)
+    (f64.store (call $xmm_addr (i32.shr_u (local.get $op) (i32.const 4)))
+      (f64.convert_i32_s (call $get_reg (i32.and (local.get $op) (i32.const 0xF)))))
+    (dispatch-next))
+
   (func $th_comiss_rr (param $op i32)
     (local $nx_fn i32) (local $nx_op i32)
     (call $sse_compare_flags
@@ -993,7 +1343,20 @@
         (if (i32.eq (local.get $sub) (i32.const 11)) (then (local.set $d (i32.const 482))))
         (if (i32.eq (local.get $sub) (i32.const 12)) (then (local.set $d (i32.const 489))))
         (if (i32.eq (local.get $sub) (i32.const 13)) (then (local.set $d (i32.const 484))))
-        (if (i32.eq (local.get $sub) (i32.const 14)) (then (local.set $d (i32.const 480))))))
+        (if (i32.eq (local.get $sub) (i32.const 14)) (then (local.set $d (i32.const 480))))
+        ;; --sse-fast (502-511)
+        (if (global.get $sse_fast)
+          (then
+            (if (i32.eq (local.get $sub) (i32.const 39)) (then (local.set $d (i32.const 502))))
+            (if (i32.eq (local.get $sub) (i32.const 38)) (then (local.set $d (i32.const 503))))
+            (if (i32.eq (local.get $sub) (i32.const 76)) (then (local.set $d (i32.const 504))))
+            (if (i32.eq (local.get $sub) (i32.const 44)) (then (local.set $d (i32.const 505))))
+            (if (i32.eq (local.get $sub) (i32.const 40)) (then (local.set $d (i32.const 506))))
+            (if (i32.eq (local.get $sub) (i32.const 41)) (then (local.set $d (i32.const 507))))
+            (if (i32.eq (local.get $sub) (i32.const 42)) (then (local.set $d (i32.const 508))))
+            (if (i32.eq (local.get $sub) (i32.const 56)) (then (local.set $d (i32.const 509))))
+            (if (i32.eq (local.get $sub) (i32.const 17)) (then (local.set $d (i32.const 510))))
+            (if (i32.eq (local.get $sub) (i32.const 72)) (then (local.set $d (i32.const 511))))))))
     (if (i32.eq (local.get $h) (i32.const 433))
       (then
         (if (i32.eq (local.get $sub) (i32.const 2))  (then (local.set $d (i32.const 487))))

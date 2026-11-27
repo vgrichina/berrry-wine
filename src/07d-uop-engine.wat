@@ -181,6 +181,15 @@
   ;;                                          Any case 06 treats specially
   ;;                                          falls back to $uop_x87 (see the
   ;;                                          "native x87" header at $uop_fast)
+  ;;  108 SSER code h                         one SSE register form: 06c's
+  ;;                                          handler h on its operand word
+  ;;                                          (code & 0xFFFFFF), $uop_sse_rr
+  ;;  109 SSEM / 110 SSEMS code base idx      an SSE memory source / store,
+  ;;          sc|h<<8 disp w x                88's layout; code>>24 bytes are
+  ;;                                          proved in w, then $uop_sse_mem
+  ;;                                          runs h at ga; a miss is a
+  ;;                                          service op ($uop_sse_svc)
+  ;;  111 MMX entry                          TOP=0, all x87 tags valid
 
   ;; The main thread's arena. Each guest thread is its own instance over the
   ;; shared memory and a program names its instance's $reg_base, so every
@@ -1084,6 +1093,66 @@
       (br_if $L (i32.lt_u (i32.sub (i32.load (local.get $pc)) (i32.const 88)) (i32.const 3))))
     (local.get $pc))
 
+  ;; ---- SSE (ops 108-110, 07e kind 34, --uop-sse) ----
+  ;; Each op runs the very 06c handler 07-decoder emits for the instruction,
+  ;; called directly: with $steps at 0 the handler's (dispatch-next) returns
+  ;; instead of dispatching (parking $ip in $resume_ip, which is put back),
+  ;; so the result -- NaN payloads, the scalar forms' upper lanes, the
+  ;; (U)COMIS* record, the cvt* indefinite -- is the threaded one by
+  ;; construction. A memory form's handler reads its address word through
+  ;; $read_addr: $ip points at a word holding $SIB_SENTINEL and $ea_temp
+  ;; holds the guest address, the H149 convention 07c's fallback uses. The
+  ;; sentinel word is in the windows area's unused 0x2D00-0x3000 (between
+  ;; the x87 census and the cut slots); every instance writes the same
+  ;; constant there, so sharing it is harmless.
+  (global $uop_sse_svcs (mut i32) (i32.const 0))
+  (func (export "uop_sse_svcs") (result i32) (global.get $uop_sse_svcs))
+  (func $uop_sse_rr (param $code i32) (param $h i32)
+    (local $steps i32) (local $rip i32)
+    (local.set $steps (global.get $steps))
+    (local.set $rip (global.get $resume_ip))
+    (global.set $steps (i32.const 0))
+    (call_indirect (type $handler_t) (i32.and (local.get $code) (i32.const 0xFFFFFF)) (local.get $h))
+    (global.set $steps (local.get $steps))
+    (global.set $resume_ip (local.get $rip)))
+  (func $uop_sse_mem (param $code i32) (param $h i32) (param $ga i32)
+    (local $steps i32) (local $rip i32) (local $ip i32) (local $ea i32) (local $s i32)
+    (local.set $steps (global.get $steps))
+    (local.set $rip (global.get $resume_ip))
+    (local.set $ip (global.get $ip))
+    (local.set $ea (global.get $ea_temp))
+    (local.set $s (i32.add (i32.add (global.get $uop_arena) (global.get $uop_wins_off)) (i32.const 0x2FFC)))
+    (i32.store (local.get $s) (global.get $SIB_SENTINEL))
+    (global.set $ea_temp (local.get $ga))
+    (global.set $ip (local.get $s))
+    (global.set $steps (i32.const 0))
+    (call_indirect (type $handler_t) (i32.and (local.get $code) (i32.const 0xFFFFFF)) (local.get $h))
+    (global.set $steps (local.get $steps))
+    (global.set $resume_ip (local.get $rip))
+    (global.set $ip (local.get $ip))
+    (global.set $ea_temp (local.get $ea)))
+  ;; 109 / 110 after a window miss: re-guard [ga, ga+code>>24) or exit to x
+  ;; with nothing changed, as $uop_x87 does.
+  (func $uop_sse_svc (param $pc i32) (result i32)
+    (local $ga i32) (local $w i32) (local $n i32) (local $v i32) (local $sc i32)
+    (global.set $uop_sse_svcs (i32.add (global.get $uop_sse_svcs) (i32.const 1)))
+    (local.set $sc (i32.load offset=16 (local.get $pc)))
+    (local.set $ga (i32.add (i32.add (i32.load (i32.load offset=8 (local.get $pc)))
+                                     (i32.shl (i32.load (i32.load offset=12 (local.get $pc)))
+                                              (i32.and (local.get $sc) (i32.const 3))))
+                            (i32.load offset=20 (local.get $pc))))
+    (local.set $w (i32.load offset=24 (local.get $pc)))
+    (local.set $n (i32.shr_u (i32.load offset=4 (local.get $pc)) (i32.const 24)))
+    (local.set $v (i32.load offset=4 (local.get $w)))
+    (if (i32.or (i32.gt_u (i32.sub (local.get $ga) (i32.load (local.get $w)))
+                          (i32.sub (local.get $v) (local.get $n)))
+                (i32.lt_u (local.get $v) (local.get $n)))
+      (then
+        (if (i32.eqz (call $uop_reguard (local.get $w) (local.get $ga) (local.get $n)))
+          (then (return (i32.load offset=28 (local.get $pc)))))))
+    (call $uop_sse_mem (i32.load offset=4 (local.get $pc)) (i32.shr_u (local.get $sc) (i32.const 8)) (local.get $ga))
+    (i32.add (local.get $pc) (i32.const 32)))
+
   (global $uop_io_kind   (mut i32) (i32.const 0)) ;; 0 exited, 1 service op at pc, 2 window miss
   (global $uop_io_budget (mut i32) (i32.const 0))
   (global $uop_io_ga     (mut i32) (i32.const 0))
@@ -1126,6 +1195,9 @@
                                              (i32.eq (local.get $op) (i32.const 16)))
                       (then (i32.const 24)) (else (i32.const 20))))))))
           (br $L)))
+      ;; 109 / 110 an SSE memory form whose window missed
+      (if (i32.lt_u (i32.sub (local.get $op) (i32.const 109)) (i32.const 2))
+        (then (local.set $pc (call $uop_sse_svc (local.get $pc))) (br $L)))
       ;; 88-90 the generic x87 service ops, 91-107 a native x87 op its fast
       ;; arm declined
       (if (i32.lt_u (i32.sub (local.get $op) (i32.const 88)) (i32.const 20))
@@ -1286,7 +1358,8 @@
     (loop $L
       (block $svc
       (block $miss
-      (block $c108 (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
+      (block $c111 (block $c109 (block $c108
+      (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
       (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
       (block $c94 (block $c93 (block $c92 (block $c91
       (block $c86 (block $c85 (block $c84 (block $c83 (block $c82 (block $c81 (block $c78
@@ -1320,7 +1393,10 @@
                   ;; Exact images require the central x87 service, including old native op layouts.
                   $svc $svc $svc $svc $svc $svc $svc $svc $svc $svc $svc
                   $svc $svc $svc $svc $svc $svc
-                  $c108 $c0
+                  ;; 108 SSER, 109 SSEM / 110 SSEMS (one arm)
+                  $c108 $c109 $c109
+                  $c111
+                  $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
         (global.set $eip (i32.load offset=4 (local.get $pc)))
@@ -2374,7 +2450,16 @@
                                     (i32.shl (global.get $fpu_top) (i32.const 11))))
         (i32.store16 (global.get $reg_base) (global.get $fpu_sw))
         (local.set $pc (i32.add (local.get $pc) (i32.const 8))) (br $L))
-        ;; 108 MMX entry: emitted after one complete ordinary instruction.
+        ;; 108 SSER code h
+        (call $uop_sse_rr (i32.load offset=4 (local.get $pc)) (i32.load offset=8 (local.get $pc)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 109 SSEM / 110 SSEMS code base idx sc|h<<8 disp w x: the access
+        ;; proved in its window, else the service op re-guards or exits
+        (br_if $svc (ux-ea-miss (i32.shr_u (i32.load offset=4 (local.get $pc)) (i32.const 24))))
+        (call $uop_sse_mem (i32.load offset=4 (local.get $pc))
+          (i32.shr_u (i32.load offset=16 (local.get $pc)) (i32.const 8)) (local.get $ga))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 111 MMX entry: after one complete ordinary instruction.
         (call $mmx_enter)
         (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).

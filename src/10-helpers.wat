@@ -674,8 +674,42 @@
   ;; allocation contract even before any page in the reservation is committed.
   (func $virtual_reserve_record
       (param $guest i32) (param $size i32) (param $protect i32)
-    (local $count i32) (local $floor i32) (local $i i32) (local $ent i32)
     (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+    (call $virtual_reserve_record_locked
+      (local.get $guest) (local.get $size) (local.get $protect))
+    (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
+
+  ;; VirtualAlloc(lpAddress != NULL, MEM_RESERVE): Windows reserves exactly
+  ;; there or fails with ERROR_INVALID_ADDRESS when any page of the range
+  ;; already belongs to another allocation. Check and publish under one lock.
+  ;; Windows also rounds the base down to the 64KB granule and refuses a
+  ;; granule another allocation started in; that half is not enforced here,
+  ;; because fixed page-adjacent sparse reservations are how the fault and
+  ;; MMX fixtures (test-fault-null-raise, test-mmx-pinsrw) lay out backing. Returns 1 when the
+  ;; range is now this caller's reservation, 0 when something owns part of it.
+  ;; Delphi's memory manager grows a full 1MB region by reserving the address
+  ;; right after it and merging on success; that address can hold the 4KB
+  ;; MakeObjectInstance block (window-procedure thunks). Accepting the reserve
+  ;; handed the thunk page to the allocator, sprite data was copied over it,
+  ;; and the next message to a form jumped into pixels (Game Maker 7 runners).
+  (func $virtual_reserve_at
+      (param $guest i32) (param $size i32) (param $protect i32) (result i32)
+    (local $lo i32)
+    (local.set $lo (i32.and (local.get $guest) (i32.const 0xFFFFF000)))
+    (call $lock_acquire (global.get $LOCK_VIRTUAL_MAP))
+    (if (call $virtual_range_blocker_locked (local.get $lo)
+          (i32.sub (i32.add (local.get $guest) (local.get $size)) (local.get $lo)))
+      (then
+        (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
+        (return (i32.const 0))))
+    (call $virtual_reserve_record_locked
+      (local.get $guest) (local.get $size) (local.get $protect))
+    (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
+    (i32.const 1))
+
+  (func $virtual_reserve_record_locked
+      (param $guest i32) (param $size i32) (param $protect i32)
+    (local $count i32) (local $floor i32) (local $i i32) (local $ent i32)
     (local.set $count (i32.load offset=16 (global.get $VIRTUAL_MAP_STATE)))
     ;; Placement publishes ownership before unlocking. Older callers still
     ;; supply the final protection afterward; update that entry, never append
@@ -689,7 +723,6 @@
         (then
           (i32.store (local.get $ent) (i32.or (local.get $guest)
             (i32.and (local.get $protect) (global.get $GUEST_PTE_PROTECT_MASK))))
-          (call $lock_release (global.get $LOCK_VIRTUAL_MAP))
           (return)))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $scan)))
@@ -710,8 +743,7 @@
             (i32.shl (local.get $count) (i32.const 3)))
           (local.get $size))
         (i32.store offset=16 (global.get $VIRTUAL_MAP_STATE)
-          (i32.add (local.get $count) (i32.const 1)))))
-    (call $lock_release (global.get $LOCK_VIRTUAL_MAP)))
+          (i32.add (local.get $count) (i32.const 1))))))
 
   ;; MEM_RELEASE names the reservation base. Drop the entry by swapping the last
   ;; one down, the same compaction the map table uses.
@@ -6728,15 +6760,14 @@
       ;; Dialog combos must remain eligible: guest-worker input queues the
       ;; selected HWND instead of invoking the synchronous dialog router.
       ;; Skipping the combo there routed Turok's selector click to its frame.
+      ;; Transparent means the decoration's own pixels, not its children: a
+      ;; group box answers HTTRANSPARENT, but USER finds the deepest child
+      ;; under the point before it hit-tests, so a control parented to a
+      ;; group box still takes its click. VB6's Frame is a BS_GROUPBOX
+      ;; superclass that parents its controls -- every SimCity 2001 tool
+      ;; button sits in one, and skipping the frame routed those clicks to
+      ;; the form. Such a decoration competes only when a child is hit.
       (local.set $cls (call $ctrl_table_get_class (local.get $ch)))
-      (if (i32.or
-            (i32.or (i32.eq (local.get $cls) (i32.const 3))
-                    (i32.eq (local.get $cls) (i32.const 6)))
-            (i32.and (i32.eq (local.get $cls) (i32.const 1))
-              (i32.eq (i32.and (local.get $style) (i32.const 15)) (i32.const 7))))
-        (then
-          (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
-          (br $scan)))
       (local.set $x (call $wnd_window_screen_x (local.get $ch)))
       (local.set $y (call $wnd_window_screen_y (local.get $ch)))
       (local.set $w (call $wnd_screen_w (local.get $ch)))
@@ -6745,6 +6776,23 @@
       ;; window it was created with; see $combobox_hit_h.
       (if (i32.eq (local.get $cls) (i32.const 5))
         (then (local.set $h (call $combobox_hit_h (local.get $ch) (local.get $h)))))
+      (if (i32.and
+            (i32.and (i32.ge_s (local.get $sx) (local.get $x))
+                     (i32.lt_s (local.get $sx) (i32.add (local.get $x) (local.get $w))))
+            (i32.and (i32.ge_s (local.get $sy) (local.get $y))
+                     (i32.lt_s (local.get $sy) (i32.add (local.get $y) (local.get $h)))))
+        (then
+          (if (i32.and
+                (i32.or
+                  (i32.or (i32.eq (local.get $cls) (i32.const 3))
+                          (i32.eq (local.get $cls) (i32.const 6)))
+                  (i32.and (i32.eq (local.get $cls) (i32.const 1))
+                    (i32.eq (i32.and (local.get $style) (i32.const 15)) (i32.const 7))))
+                (i32.eqz (call $wnd_child_from_point_deep
+                  (local.get $ch) (local.get $sx) (local.get $sy))))
+            (then
+              (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+              (br $scan)))))
       (if (i32.and
             (i32.and (i32.ge_s (local.get $sx) (local.get $x))
                      (i32.lt_s (local.get $sx) (i32.add (local.get $x) (local.get $w))))
@@ -9861,6 +9909,45 @@
     (call $heap_free (local.get $tmp))
     (call $heap_free (local.get $scratch))
     (local.get $required))
+
+  ;; ExpandEnvironmentStringsW core: the ANSI expansion of the source taken
+  ;; through the process code page both ways, so %NAME% lookup is the same
+  ;; $env_expand_a path. Returns required WCHARs including the NUL; the
+  ;; destination is written only when $size (WCHARs) holds all of it.
+  (func $env_expand_w (param $src i32) (param $dst i32) (param $size i32) (result i32)
+    (local $wlen i32) (local $asrc i32) (local $areq i32) (local $abuf i32)
+    (local $wtmp i32) (local $required i32)
+    (if (i32.eqz (local.get $src)) (then (return (i32.const 0))))
+    (local.set $wlen (call $guest_wcslen (local.get $src)))
+    (local.set $asrc (call $heap_alloc (i32.add (i32.shl (local.get $wlen) (i32.const 1)) (i32.const 1))))
+    (if (i32.eqz (local.get $asrc)) (then (return (i32.const 0))))
+    (drop (call $wide_to_ansi (local.get $src) (local.get $asrc)
+      (i32.add (i32.shl (local.get $wlen) (i32.const 1)) (i32.const 1))))
+    (local.set $areq (call $env_expand_a (local.get $asrc) (i32.const 0) (i32.const 0)))
+    (local.set $abuf (call $heap_alloc (i32.add (local.get $areq) (i32.const 1))))
+    (local.set $wtmp (call $heap_alloc (i32.shl (i32.add (local.get $areq) (i32.const 1)) (i32.const 1))))
+    (if (i32.or (i32.eqz (local.get $areq))
+          (i32.or (i32.eqz (local.get $abuf)) (i32.eqz (local.get $wtmp)))) (then
+      (call $heap_free (local.get $asrc))
+      (if (local.get $abuf) (then (call $heap_free (local.get $abuf))))
+      (if (local.get $wtmp) (then (call $heap_free (local.get $wtmp))))
+      (return (i32.const 0))))
+    (drop (call $env_expand_a (local.get $asrc) (local.get $abuf) (local.get $areq)))
+    (local.set $required (i32.add (call $ansi_to_wide (local.get $abuf) (local.get $wtmp)
+      (i32.add (local.get $areq) (i32.const 1))) (i32.const 1)))
+    (if (i32.and (i32.ne (local.get $dst) (i32.const 0))
+                 (i32.ge_u (local.get $size) (local.get $required)))
+      (then (drop (call $ansi_to_wide (local.get $abuf) (local.get $dst) (local.get $required)))))
+    (call $heap_free (local.get $wtmp))
+    (call $heap_free (local.get $abuf))
+    (call $heap_free (local.get $asrc))
+    (local.get $required))
+
+  ;; ExpandEnvironmentStrings entry shared by both spellings.
+  (func $env_expand (param $src i32) (param $dst i32) (param $size i32) (param $wide i32) (result i32)
+    (if (result i32) (local.get $wide)
+      (then (call $env_expand_w (local.get $src) (local.get $dst) (local.get $size)))
+      (else (call $env_expand_a (local.get $src) (local.get $dst) (local.get $size)))))
 
   ;; SetEnvironmentVariable: replaces or removes one entry. A NULL value
   ;; deletes. Returns TRUE unless the block has no room left.

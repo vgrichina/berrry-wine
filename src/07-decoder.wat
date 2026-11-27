@@ -2974,6 +2974,7 @@
     (local $insn_start i32)  ;; d_pc before prefixes/opcode for interior matchers
     (local $mmxsub i32)        ;; MMX subop id, or -1 when this 0F op is not MMX
     (local $mmxpc i32)         ;; d_pc before an MMX ModRM, to rewind on a reject
+    (local $sse2 i32)          ;; $sse2_form descriptor, or -1
     (local $uop_pc i32)        ;; installed micro-op program at this head (07d)
 
     (call $decode_reserve_headroom)
@@ -3014,6 +3015,17 @@
         (return
           (call $publish_block (local.get $start_eip) (local.get $tstart)
                 (i32.add (local.get $start_eip) (i32.const 39))))))
+
+    ;; A Delphi System RTTI/LStr helper body becomes handler 395 and the body's
+    ;; RET (10-helpers-delphi-fold.wat $dfold_emit, which also registers the
+    ;; body's bytes for code-write invalidation).
+    (if (i32.eqz (global.get $instruction_watch))
+      (then
+        (if (call $dfold_emit (local.get $start_eip))
+          (then
+            (return
+              (call $publish_block (local.get $start_eip) (local.get $tstart)
+                    (global.get $dfold_cover_end)))))))
 
     ;; A 16-bit task can only execute inside the selector arena. Landing
     ;; outside it means a far pointer was used as a linear address somewhere,
@@ -3261,6 +3273,67 @@
           (br_if $supported (i32.eq (local.get $op) (i32.const 195)))
           (br_if $supported (i32.eq (local.get $op) (i32.const 235)))
           (unreachable))))
+
+          ;; SSE2 XMM forms ($sse2_form in 06c-mmx.wat) in 32-bit code. This
+          ;; gate runs ahead of the MMX/SSE1 gates below, which reject an
+          ;; actual 66/F2/F3 on the same secondary opcodes. Forms the table
+          ;; does not name return -1 and keep falling through to those traps.
+          (if (i32.and (i32.eq (local.get $op) (i32.const 0x0F))
+                (i32.and (i32.eqz (global.get $code16))
+                         (i32.eqz (local.get $prefix_lock)))) (then
+            (local.set $sse2 (call $sse2_form
+              (if (result i32) (local.get $prefix_66)
+                (then (select (i32.const 1) (i32.const -1) (i32.eqz (local.get $prefix_rep))))
+                (else (select (i32.const 2) (i32.const 3) (i32.eq (local.get $prefix_rep) (i32.const 1)))))
+              (call $gl8 (global.get $d_pc))
+              (i32.and (i32.shr_u (call $gl8 (i32.add (global.get $d_pc) (i32.const 1)))
+                                  (i32.const 3)) (i32.const 7))))
+            (if (i32.and (i32.ne (local.get $sse2) (i32.const -1))
+                         (i32.ne (i32.or (local.get $prefix_66) (local.get $prefix_rep))
+                                 (i32.const 0))) (then
+              (drop (call $d_fetch8))
+              (call $decode_modrm)
+              (if (i32.eq (global.get $mr_mod) (i32.const 3)) (then
+                (if (i32.and (local.get $sse2) (i32.const 0x800)) (then
+                  (call $host_log_i32 (i32.const 0xCA5E5E20))
+                  (call $host_log_i32 (local.get $sse2))
+                  (unreachable)))
+                (local.set $imm (i32.const 0))
+                (if (i32.and (local.get $sse2) (i32.const 0x200))
+                  (then (local.set $imm (call $d_fetch8))))
+                (call $te_sse (i32.const 432)
+                  (i32.or (i32.shl (local.get $imm) (i32.const 16))
+                    (i32.or (i32.shl (i32.and (local.get $sse2) (i32.const 0xFF)) (i32.const 8))
+                      (if (result i32) (i32.and (local.get $sse2) (i32.const 0x1000))
+                        (then (i32.or (i32.shl (global.get $mr_val) (i32.const 4)) (global.get $mr_val)))
+                        (else (if (result i32) (i32.and (local.get $sse2) (i32.const 0x100))
+                          (then (i32.or (i32.shl (global.get $mr_val) (i32.const 4)) (global.get $mr_reg)))
+                          (else (i32.or (i32.shl (global.get $mr_reg) (i32.const 4)) (global.get $mr_val)))))))))
+                (br $decode)))
+              (if (i32.and (local.get $sse2) (i32.const 0x400)) (then
+                (call $host_log_i32 (i32.const 0xCA5E5E21))
+                (call $host_log_i32 (local.get $sse2))
+                (unreachable)))
+              (call $apply_seg_override)
+              (local.set $a (call $emit_sib_or_abs))
+              (local.set $imm (i32.const 0))
+              (if (i32.and (local.get $sse2) (i32.const 0x200))
+                (then (local.set $imm (call $d_fetch8))))
+              (if (i32.and (local.get $sse2) (i32.const 0x100))
+                (then
+                  ;; Memory MOVQ m64,xmm is the existing low-qword store (37).
+                  (call $te_sse (i32.const 434)
+                    (i32.or (i32.shl (select (i32.const 37) (i32.and (local.get $sse2) (i32.const 0xFF))
+                                       (i32.eq (i32.and (local.get $sse2) (i32.const 0xFF)) (i32.const 53)))
+                                     (i32.const 8))
+                            (i32.shl (global.get $mr_reg) (i32.const 4)))))
+                (else
+                  (call $te_sse (i32.const 433)
+                    (i32.or (i32.shl (local.get $imm) (i32.const 16))
+                      (i32.or (i32.shl (i32.and (local.get $sse2) (i32.const 0xFF)) (i32.const 8))
+                              (i32.shl (global.get $mr_reg) (i32.const 4)))))))
+              (call $te_raw (local.get $a))
+              (br $decode)))))
 
           ;; Before the coarse address-size guard: only this NP0FC4 family
           ;; admits the existing address16 absolute decoder here.
@@ -3762,14 +3835,20 @@
       ;; 67 guard. Actual 66 selects SSE2 even under code16 inversion.
       ;; Reuse the MMX move handlers; stores reverse the register roles.
       ;; Plain code32 NP retains the existing exact-copy matcher below.
+      ;; Valid code32 66 MOVD forms belong to the later SSE reshape selector.
       (if (i32.eq (local.get $op) (i32.const 0x0F)) (then
         (if (i32.and
               (i32.eq (i32.and (call $gl8 (global.get $d_pc)) (i32.const 0xEE))
                       (i32.const 0x6E))
-              (i32.ne (i32.or (global.get $code16)
+              (i32.and (i32.ne (i32.or (global.get $code16)
                 (i32.or (local.get $prefix_67) (i32.or (local.get $prefix_66)
                   (i32.or (local.get $prefix_rep) (local.get $prefix_lock)))))
-                (i32.const 0))) (then
+                (i32.const 0))
+                (i32.eqz (i32.and (i32.eqz (global.get $code16))
+                  (i32.and (local.get $prefix_66)
+                    (i32.and (i32.eqz (i32.or (local.get $prefix_rep) (local.get $prefix_lock)))
+                      (i32.eq (i32.and (call $gl8 (global.get $d_pc)) (i32.const 0xEF))
+                              (i32.const 0x6E)))))))) (then
           (if (i32.or (i32.ne (local.get $prefix_66)
                 (i32.and (i32.ne (global.get $code16) (i32.const 0))
                          (i32.eqz (global.get $cs_big))))
@@ -5161,7 +5240,7 @@
       (if (i32.and (i32.eqz (local.get $prefix_lock))
         (i32.or (i32.eq (local.get $op) (i32.const 0x27))
           (i32.eq (local.get $op) (i32.const 0x2F))))
-        (then (call $te (i32.const 502)
+        (then (call $te (i32.const 512)
           (i32.eq (local.get $op) (i32.const 0x2F))) (br $decode)))
 
       ;; AAA/AAS have fixed AX/AL operands, independent of operand size.
@@ -5169,12 +5248,12 @@
       (if (i32.and (i32.eqz (local.get $prefix_lock))
         (i32.or (i32.eq (local.get $op) (i32.const 0x37))
           (i32.eq (local.get $op) (i32.const 0x3F))))
-        (then (call $te (i32.const 503)
+        (then (call $te (i32.const 513)
           (i32.eq (local.get $op) (i32.const 0x3F))) (br $decode)))
 
       (if (i32.and (i32.eqz (local.get $prefix_lock))
         (i32.eq (local.get $op) (i32.const 0xD5)))
-        (then (call $te (i32.const 504) (call $d_fetch8)) (br $decode))) ;; AAD imm8
+        (then (call $te (i32.const 514) (call $d_fetch8)) (br $decode))) ;; AAD imm8
 
       ;; ---- Misc single-byte ----
       (if (i32.eq (local.get $op) (i32.const 0x60)) (then (call $te (i32.const 35) (local.get $prefix_66)) (br $decode))) ;; PUSHA / PUSHAD

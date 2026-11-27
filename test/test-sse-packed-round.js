@@ -109,12 +109,22 @@ async function main(){
  }
  for(let dst=0;dst<8;dst++)for(let src=0;src<8;src++)for(const cached of [false,true])execute({row:(dst+src)%vectors.length,dst,src,cached,patch:true});
  const negativeFailures=[];let rejected=0;
- // F3 is separately supported CVTSS2SI, covered by scalar regression tests.
- for(const prefix of [[0x66],[0xf2],[0xf0],[0x66,0xf3],[0xf3,0x66]])for(const operand of [[0xc1],[5,...le(input)]]){
+ // F3 CVTSS2SI and F2 CVTSD2SI are supported scalar conversions.
+ // Check the formerly rejected F2 forms with a literal binary64 2.5 input.
+ for(const operand of [[0xc1],[5,...le(input)]]){
+  write(input,[0,0x40040000,0x12345678,0x87654321]);
+  const pc=0x37f0000+(operand.length===1?0:64);
+  mem.set([0xdb,0xe3,0x0f,0x10,0x0d,...le(input),0xf2,0x0f,0x2d,...operand,0xc3],g(pc));
+  e.set_eax(0xdeadbeef);e.set_esp(stack);e.guest_write32(stack,0);e.set_eip(pc);e.run(1000);
+  assert.equal(e.get_eax()>>>0,2,'CVTSD2SI nearest-even register/memory');
+  assert.equal(e.get_eip(),0);assert.equal(e.get_esp(),stack+4);
+  assert.deepEqual(read(input,4),[0,0x40040000,0x12345678,0x87654321]);
+ }
+ for(const prefix of [[0x66],[0xf0],[0x66,0xf3],[0xf3,0x66]])for(const operand of [[0xc1],[5,...le(input)]]){
   const pc=0x3800000+rejected++*64;mem.set([...prefix,0x0f,0x2d,...operand,0xc3],g(pc));e.set_esp(stack);e.guest_write32(stack,0);e.set_eip(pc);
   let trapped=false;try{e.run(1000);}catch(err){trapped=err instanceof WebAssembly.RuntimeError;}if(!trapped)negativeFailures.push({prefix,operand});
  }
  const result={...seal,moduleSha256:sha(bytes),moduleSize:bytes.length,count,failed,groups,failures,rejected,negativeFailures,
-  limits:'Reset masked nearest-even only; no MXCSR runtime/status or unmasked exception claims; separate MMX/x87 values do not alias; no Windows/hardware/gameplay claim'};
+  limits:'Reset masked nearest-even only; no MXCSR runtime/status or unmasked exception claims; no Windows/hardware/gameplay claim'};
  if(process.env.PROBE_OUT)fs.writeFileSync(process.env.PROBE_OUT,JSON.stringify(result,null,2));console.log(JSON.stringify(result));process.exitCode=failed||negativeFailures.length?1:0;
 }

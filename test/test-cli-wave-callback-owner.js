@@ -12,7 +12,9 @@ const baseline = process.env.CLI_WAVE_BASELINE === '1';
 const cli = fs.readFileSync(path.join(__dirname, 'run.js'), 'utf8');
 assert.match(cli, /get: \(\) => waveCallbackRouting.owner\(ctx.exports\)/);
 assert.match(cli, /get: \(\) => waveCallbackRouting.owner\(workerInstance\?\.exports, tid, WORKER_THREADS\)/);
-assert.match(cli, /pumpAudioCompletions\(\);\n    if \(ctx.pumpWaveCallbacks\) await ctx.pumpWaveCallbacks\(\);/);
+// The batch loop's fast path skips the await only when waveCallbacksIdle()
+// says the pump would return untouched; the slow path always pumps.
+assert.match(cli, /pumpAudioCompletions\(\);\n    if \(ctx.pumpWaveCallbacks && \(!syncMain \|\| !ctx.waveCallbacksIdle\?\.\(\)\)\) await ctx.pumpWaveCallbacks\(\);/);
 const extra = `
  (export "test_waveOutOpen" (func $handle_waveOutOpen))
  (func (export "test_wait")
@@ -32,7 +34,10 @@ async function main(workerBackend) {
   dv.setUint32(BASE.WAVE_OUT_SHARED+4,0xa3e990,true);dv.setUint32(BASE.WAVE_OUT_SHARED+12,3,true);
   dv.setUint32(0x24010,0x12,true);h.wave_out_write(hwo,0x1000,22048);h.wave_out_schedule_done(hwo,0x24000,0x405000,22048);
   ctx.pumpAudioCompletions();assert.equal(ctx.sharedAudio.waveFunctionDoneQueue.length,0);
-  now=3400;assert.equal(ctx.pumpAudioCompletions(),1);await ctx.pumpWaveCallbacks();
+  assert.equal(ctx.waveCallbacksIdle(),true,'empty queue: pump would be a no-op');
+  now=3400;assert.equal(ctx.pumpAudioCompletions(),1);
+  if (!baseline) assert.equal(ctx.waveCallbacksIdle(),false,'a queued completion is work for the pump');
+  await ctx.pumpWaveCallbacks();
   assert.equal(admitted,0);busy=false;ctx.pumpAudioCompletions();await ctx.pumpWaveCallbacks();
   const stranded=baseline && !!workerBackend;
   assert.equal(admitted,stranded?0:1);assert.equal(ctx.sharedAudio.waveFunctionDoneQueue.length,stranded?1:0);

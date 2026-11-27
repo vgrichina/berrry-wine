@@ -1,0 +1,100 @@
+[
+ {
+  "name": "Move",
+  "tag": "d-gm8",
+  "refVa": "0x4030a8",
+  "len": 21,
+  "prefix": 21,
+  "firstRet": null,
+  "hex": "39d0743183f920777c83e9087f07ff248d........",
+  "anchor": {
+   "off": 0,
+   "len": 16
+  },
+  "extent": 2048
+ },
+ {
+  "name": "_LStrClr",
+  "tag": "d-gm8",
+  "refVa": "0x405934",
+  "len": 35,
+  "prefix": 28,
+  "firstRet": 35,
+  "hex": "8b1085d2741cc700000000008b4af8497c10f0ff4af8750a508d42f8e8........58c3",
+  "anchor": {
+   "off": 0,
+   "len": 16
+  },
+  "extent": 84
+ },
+ {
+  "name": "_LStrAsg",
+  "tag": "d-gm8",
+  "refVa": "0x405988",
+  "len": 67,
+  "prefix": 32,
+  "firstRet": 67,
+  "hex": "85d274248b4af8417f1a50528b42fce8........89c258528b48fce8........5a58eb04f0ff42f8871085d274148b4af8497c0ef0ff4af875088d42f8e8........c3",
+  "anchor": {
+   "off": 0,
+   "len": 16
+  },
+  "extent": 2048
+ },
+ {
+  "name": "_InitializeRecord",
+  "tag": "d-gm8",
+  "refVa": "0x406448",
+  "len": 64,
+  "prefix": 32,
+  "firstRet": null,
+  "hex": "85c90f84........53565789c389d689cf31d28a068a560131c93c0a74223c0b741e3c0c74243c0d74333c0e744d3c0f740e3c11740ab0025f5e5be9........",
+  "anchor": {
+   "off": 8,
+   "len": 16
+  },
+  "extent": 160
+ },
+ {
+  "name": "_FinalizeRecord",
+  "tag": "d-gm8",
+  "refVa": "0x4064e8",
+  "len": 49,
+  "prefix": 32,
+  "firstRet": 49,
+  "hex": "31c9538a4a01565789c38d74110a8b7c11068b168b460401d88b12b901000000e8........83c6084f7fe789d85f5e5bc3",
+  "anchor": {
+   "off": 0,
+   "len": 16
+  },
+  "extent": 76
+ },
+ {
+  "name": "_FinalizeArray",
+  "tag": "d-gm8",
+  "refVa": "0x406534",
+  "len": 67,
+  "prefix": 32,
+  "firstRet": null,
+  "hex": "83f9000f84........5053565789c389d689cf31d28a068a56013c0a74253c0b743e3c0c74513c0d745c3c0e74763c0f0f84........3c110f84........e9........",
+  "anchor": {
+   "off": 9,
+   "len": 16
+  },
+  "extent": 536
+ },
+ {
+  "name": "_CopyRecord",
+  "tag": "d-gm8",
+  "refVa": "0x40674c",
+  "len": 96,
+  "prefix": 31,
+  "firstRet": null,
+  "hex": "5356575589c389d631c08a41018d7c080a8b6ffc31c08b4ff8518b4f0429c17e0b89c201f001dae8........8b47048b178b128a0a80f90a743180f90b743d80f90c744980f90d745580f90e747080f90f0f84........80f9110f84........",
+  "anchor": {
+   "off": 0,
+   "len": 16
+  },
+  "extent": 512
+ }
+]

@@ -35,6 +35,7 @@
   "nfs3_glide_demo": "The arrow keys drive: Up accelerates, Down brakes and reverses, Left and Right steer, and Space is the handbrake. Enter and Esc work the menus. On a phone there are Gas, Brake and Handbrake buttons and an eight-way pad.",
   "simcity2000_demo": "The mouse does everything: pick a tool from the floating toolbar and click or drag on the map to zone, build roads and place buildings. The scroll bars and the centering tool move the view.",
   "moorhuhn": "Space starts a round, then type a name and press Enter. Aim with the mouse, left-click to shoot and right-click to reload. On a phone, tap to shoot and tap the lower-right corner to reload.",
+  "red_alert_95_demo": "The mouse does it all: left-click a unit or drag a box around several to select them, then left-click the ground to send them there. The sidebar on the right holds the radar and the build lists, and Options at the top left opens the game menu.",
   "aoe1": "The mouse does most of it: left-click a unit to select it, right-click the ground to move it or a tree to cut wood, and pick buildings from the command panel at the bottom. The arrow keys scroll the map and F10 opens the game menu. On a phone, dragging scrolls the map and a Menu button stands in for F10.",
   "wep16_jezzball": "Left-click on the field to start a wall from that point; right-click switches between horizontal and vertical walls. A wall the atoms hit before it is finished costs a life.",
   "_sound_comment": "Per-app answer to 'Does sound work?'. Measured 2026-09-06 by a headless sweep (pe-imports + --trace-api on the audio APIs) and a read of lib/host-audio.js: the wave, DirectSound, MCI and MIDI paths all reach Web Audio; PlaySoundA only plays SND_RESOURCE sounds. Apps not listed get the generic wave/DirectSound sentence.",
@@ -75,6 +76,7 @@
     "nfs3_glide_demo": "Yes. The demo opens DirectSound, creates its sound buffers and plays them through the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
     "simcity2000_demo": "Yes. The music is MIDI, opened through the MCI sequencer and played by a General MIDI synthesizer built into the page (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
     "moorhuhn": "Yes. Moorhuhn loads DirectSound and plays its sound effects as DirectSound buffers, which go to the browser's Web Audio (traced 2026-10-30). Browsers only allow audio after a click or a key press.",
+    "red_alert_95_demo": "Not verified yet. Nobody has listened to this demo's sound or music in the browser, so this page does not claim sound works.",
     "aoe1": "Not verified yet. The title music (open.mid) is opened and played through the MCI sequencer, which feeds a General MIDI synthesizer built into the page, and the page's audio output runs during play (2026-11-15), but nobody has yet listened for it, so this page does not claim sound works.",
     "wep16_jezzball": "Its effects are WAV files (bounce, level won, game lost and others) that ship beside it here, and the 16-bit sndPlaySound call that plays them is routed to Web Audio. That path has not yet been traced in a running game."
   },

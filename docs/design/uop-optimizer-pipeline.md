@@ -1,0 +1,861 @@
+# The uop optimizer as one pass stack: value specialisation plus an optimising region pipeline
+
+Status: design only, 2026-11-25. No emulator code is written here. Evidence is in
+`scratch/runs/20261125-optimizer-pipeline-design/`. The measurements it builds on
+are in `scratch/runs/20261125-fold-arms-bench/` (fold-bench arms A/B/C/D),
+`scratch/runs/20261125-spelunky-classic-gameplay-profile/` (Spelunky Classic
+gameplay profile and uop census) and `scratch/runs/20261125-uop-sse/` (SSE in
+the tier). The tier itself is described in `docs/uop-tier-design.md`. This
+document cites that file by section number and does not restate it.
+
+## 0. Thesis and one-paragraph answer
+
+Our compiler optimisations keep measuring neutral because each one has been
+tested alone, and most of them only pay when a pass before them has already
+run. The clearest case has been measured, on the fold-bench branch (Spelunky
+Classic gameplay, x86_64 box, window 29600:32600, null band 0.2 %):
+
+| Arm | What it does | Result |
+|---|---|---|
+| A | Helper bodies become programs | +0.4 % |
+| A+B | Adds seam elision | −3.5 % |
+| A+B+C | Adds read-only folding at absolute addresses | −2.4 % |
+| D | Hand-written native bodies for the same Delphi RTTI helpers | **−16.2 %** |
+
+D wins because it does five things at once:
+- it removes the call/ret round trips and the entry/exit cost;
+- it knows the TypeInfo record is constant;
+- it resolves the kind ladder;
+- it runs the field loop the known number of times;
+- it executes `lock inc`/`xchg` natively.
+
+A, B and C each do one of those things, and each needs at least one of the
+others first. C cannot fold anything inside `_CopyRecord`, because the address
+it would need, `[ecx+6]`, is constant only after ECX is known. ECX is known
+only after a lattice carries the caller's `mov ecx,[0x5436f0]` into the inlined
+callee. And the callee's facts are per call site only after inlining clones the
+callee per site. Today the tier shares one body between call sites (§1.3).
+
+This document designs the passes as one ordered stack, with each dependency
+explicit:
+
+1. vocabulary
+2. region formation with per-context inlining
+3. a constant/copy lattice with read-only folding
+4. value specialisation, which seeds the lattice
+5. branch folding
+6. unrolling
+7. memory forwarding
+8. residency in locals
+
+It also defines a measurement protocol that only tests a pass with its
+prerequisites present: cumulative prefixes, plus leave-one-out from the full
+stack. §8 makes the predictions this design stands or falls on, including
+which earlier "neutral" verdicts should flip.
+
+## 1. What the tier has today
+
+### 1.1 Shape
+
+- **Engine (07d).** `$uop_fast` and `$uop_run` form one `br_table` loop over a
+  program that is *data* in the per-instance arena. There is no runtime wasm
+  codegen, which is a hard constraint (`feedback_no_runtime_wasm_codegen`).
+  - Operand words are vreg byte addresses. Vregs 0–7 *are* the guest
+    registers in `$REGFILE`, so entry and exit move nothing.
+  - Temps live in scratch memory.
+  - `$uop_fast` makes no call. Any op that needs a call (window miss, GUARD,
+    GETCF, BCC, x87/SSE service, MMX) hands back to `$uop_run`, which keeps
+    `pc` in a machine register (§8 of the tier doc).
+- **Compiler (07e, in WAT).** It is a single forward lowering, not an IR with
+  passes:
+  1. `$uc_decode` produces 256-byte x86 instruction records, keyed by
+     **address** in `UC_HM_INSN`.
+  2. `$uc_form_loop` keeps everything reachable from the head that can reach
+     it again. It follows calls within `UC_SPAN`.
+  3. If that fails, `$uc_form_trace` builds a forward trace of 8–160
+     instructions with cut exits (§13, §21.3).
+  4. `$uc_build_blocks` builds the blocks.
+  5. `$uc_liveness` / `$uc_flow` run the flag dataflow, with merge
+     materialisation and first-iteration peeling.
+  6. Snapshots are demand-driven and iterated to a fixed point.
+  7. The emitter writes a symbolic item stream with deopt stubs, then encodes
+     it in three passes.
+
+  Optional sub-passes:
+  - `$uc_sp_block`, the push/pop elision of `--aggressive-stack`, opt-in;
+  - `$uc_try_mcopy`, which coalesces load/store pairs;
+  - jump tables (kind 28), the `FF /2` inline cache (`--uop-icall`, off),
+    MMX, native x87 forms, and SSE as handler calls (`--uop-sse`, off).
+- **What "passes" exist, by toyvm's list (§4):**
+  - promote: implicit, since registers are vregs;
+  - flag forwarding (`cmp/test/dec + jcc` to compare-and-branch) and flag
+    liveness;
+  - window guard hoisting;
+  - clock;
+  - mcopy and stack elision.
+
+  **There is no value lattice.** `$uc_valof` knows a constant only when the
+  operand is an immediate. **There is no branch folding** beyond the flag
+  forwarder, **no unrolling** (peeling is the one duplication), **no
+  load/store forwarding** in the tier, and **no LICM**.
+
+### 1.2 Guards and side exits
+
+**Guards:**
+- **Window GUARD.** A `$g2w_affine_span` proof is made per address stream,
+  re-guarded per page and kept across entries under `$UOP_WIN_EPOCH` (§9).
+- **Code-page test** for store windows.
+- **ICG** is the indirect-call target guard.
+- **RET candidate check.** A RET is kept only if
+  `$uc_ret_targets` gives it one or two candidate return addresses. It
+  compares the popped address and deopts on any other.
+- **CHK** before every charged branch.
+
+**Exits:**
+- Every exit is a stub that sets EIP and materialises the lazy flag record
+  exactly as threaded code would. A failed access exits *before* its effect.
+- **Retirement.** A program is retired as "poor" when
+  `enters >= 256 && blocks < 2*enters`.
+- **Kills.** A code write into any of a program's guest byte ranges
+  (`$uop_add_range`, which also marks the pages as code) kills the program.
+
+### 1.3 Calls today: one shared body, return dispatched
+
+The scan follows `E8` calls within span, so a callee's records join the
+region **once per address**. A RET returns to at most two candidate addresses
+by compare-and-branch. Callee code reached from two call sites is therefore
+one body. That is correct, and it is cheap to compile. But any per-call-site
+fact meets at the callee entry: `System.Move` is called with ECX = 16 from one
+`_CopyRecord` site and ECX = 4 from the other (§3.1), and a lattice over a
+shared body sees ⊤. **Per-context cloning is the first structural change the
+pipeline needs** (§2, R2). It is not an optimisation in its own right.
+
+Fold-bench's "B, inline small callees" did not inline anything. It steps over
+the pending CALL/RET seam ops 79/80/87 in `$uop_fast` when no observer is armed
+(`dao_status | pending_armed == 0`). Its −3.5 % is the price of those seams,
+which is worth knowing on its own (§8, P-3).
+
+### 1.4 Clock charging
+
+**Branch clock.** Under `--branch-clock`, a batch is a count of executed x86
+branches. A program charges one block per branch op (B*, JMP, BCC) and per
+threaded block end it replaces. Each charge is preceded by a CHK. When the
+budget is gone, the CHK's stub materialises the flags, takes the transfer and
+ends in EXITB at the target, so the batch stops on the same instruction with
+the tier on or off.
+
+**Historical clock** (the default). It also charges cuts, which depend on
+decode history. Features that cannot match it (trace cut exits) are restricted
+to the branch clock. Every A/B runs `--branch-clock` in both arms (§8, §13).
+
+### 1.5 What it declines, measured on Spelunky Classic gameplay
+
+From `20261125-spelunky-classic-gameplay-profile/headless/run-b/uop-census.txt`,
+window 29600..32600, 398 M threaded block entries:
+
+**Untaken entries, by the head's verdict:**
+
+| Verdict | Share |
+|---|---|
+| declined: no-backedge | **54.7 %** |
+| live | 17.9 % |
+| declined: head-unsupported | 9.8 % |
+| poor | 8.4 % |
+| no-verdict | 7.5 % |
+| installed | 1.2 % |
+| declined: call-indirect | 0.5 % |
+
+**Unsupported forms in declined scans.** The weight is block entries at the
+head:
+
+| Form | Weight | Note |
+|---|---|---|
+| `ret` | 141 M | 121 M of it is no-backedge |
+| `call` | 80 M | |
+| `sahf` | 20 M | GML real compares: `fcomp / fnstsw ax / sahf / jcc` |
+| `ret imm` | 12 M | |
+| `jmp` (as a head) | 7.4 M | |
+| `xchg r/m` | 6.8 M | `_LStrAsg` |
+| `fs:` forms (`pfx64 mov/push/pop`) | ~9.2 M | Delphi SEH frames |
+| `push` | 5.2 M | |
+| `lock dec` / `lock inc` / `lock cmpxchg` | ~1.6 M combined | |
+
+**Other counters:**
+- 5308 compiles over 1694 heads, **68.1 % of them repeats**, caused by
+  verdict-map aliasing. `exe+0x4abf8d` was compiled 471 times.
+- Profile buckets:
+  - `uop_fast` is 33.0 % of all samples;
+  - `th_uop_enter` is 2.4 %, from 87.8 M enters at 48.9 ns self each, the
+    most expensive threaded handler per call;
+  - `uop_run` is 2.0 %;
+  - threaded handlers are 16.3 %;
+  - x87 is 10.5 %.
+- Guest code split by function:
+
+  | Code | Threaded instructions | uop live blocks |
+  |---|---|---|
+  | Delphi record RTTI | 33 % | 27 % |
+  | GML interpreter | 18 % | 28 % |
+  | GM instance core | 22 % | 22 % |
+  | Collision | 13 % | 12 % |
+
+**Why the shape is "no-backedge".** The RTTI helpers are called from about 22
+sites each. The hot head is the helper entry. Its region has no cycle through
+the head, and its final RET has no in-region return candidate, so the trace
+is trimmed and declined. Arm A (RET as an exit) fixes the decline, but each
+helper then becomes a short program paying ~49 ns to enter. That is the
+measured +0.4 %.
+
+## 2. The target pass stack
+
+The passes are grouped by what they produce. Running order and dependency
+order differ in one place: value specialisation runs first, to seed the
+lattice, but it is *designed* after the lattice, because the lattice is what
+picks its keys and makes it worth anything.
+
+```
+                         ┌──────────────────────────── vocabulary (lowering coverage) ───────────────────────────┐
+                         │ V1 lock/xchg (LOCK_MODE 0)   V2 sahf, fnstsw+sahf+jcc   V3 fs: base   V4 rep ret     │
+                         │ V5 SSE native arms (scalar)                                                             │
+                         └──────────────┬──────────────────────────────────────────────────────────┬───────────────┘
+                                        │ (a region can no longer be broken by these forms)        │
+                                        ▼                                                          │
+   R1 RET exit (fold-bench A) ──► R2 per-context inlining: records keyed (address, context) ──► R3 seam elision (B)
+                                        │  context = call-site chain ≤3 | peel copy | unroll iteration
+                                        │  + stack-slot facts (push/pop pairs, callee-saved regs, stack args)
+                                        ▼
+   S1 value specialisation ═══seeds═══► F1 constant/copy lattice over guest regs, ESP-relative slots, FS base
+      (guarded variants, VPROF)            │            ▲                     │
+      ▲ keys chosen by F1's                │            │ new facts           ▼
+      │ "what-if" (wish list)              ▼            │            F2 read-only memory fold (C generalised:
+      └────────────────────────────── C1 branch folding + CFG prune + region re-formation   address is any lattice
+                                           │   (iterate R2→F1→F2→C1 to a fixed point, ≤3 rounds)   constant, SMC-guarded)
+                                           ▼
+                                      C2 unrolling of known-trip-count loops (per-iteration context → F1/F2/C1 again)
+                                           │
+                                           ▼
+                                      M1 store→load forwarding + redundant-load removal (facts by value number;
+                                           │   window-disjointness guard; reloaded values become F1 facts)
+                                           ▼
+                                      C3 dead-flag / dead-snapshot elimination (consumes everything C1/C2/M1 deleted)
+                                           │
+                                           ▼
+                                      E1 residency in wasm locals (last; only if native disasm says vreg traffic dominates)
+```
+
+### 2.1 Passes, prerequisites, expected effect
+
+The workload columns are **predicted** effects on the measured window, in
+user CPU on the x86_64 box. "Alone" is the pass with nothing above it on
+today's tier. "Stacked" is the pass's marginal effect when everything before
+it is present. The workloads are:
+- SC1, Spelunky Classic tutorial gameplay, 29600:32600;
+- SHD, Spelunky Classic HD, gameplay 1-1, 213550:237550 (from the uop-sse run);
+- H2/SC, Heroes II demo map 1000:1800 (the control) and StarCraft fast-route
+  gameplay.
+
+| Pass | Needs | SC1 alone → stacked | SHD | H2 / SC |
+|---|---|---|---|---|
+| V1 lock/xchg plain RMW while `$LOCK_MODE == 0` | none | ~0 → −1..−2 % (LStrAsg/LStrClr bodies stay in a program) | 0..−1 % | 0 / 0 |
+| V2 `sahf`, `fnstsw ax+sahf+jcc` → x87 compare-branch | x87 natives (have) | −0.5 → −1..−2 % (20 M weight of GML real compares) | small | 0 / 0 |
+| V3 `fs:` forms (base = per-instance constant) | none | ~0 → −0.5 % (SEH frames in Delphi try/finally) | small | 0 |
+| V4 `rep ret` | none | ~0 | ~0 | 0 |
+| V5 SSE scalar native arms (movss/movsd, cvtss2sd/cvtsd2ss/cvtsi2ss, add/sub/mul/div sd/ss, comis* → branch) | `--uop-sse` coverage (have) | n/a | **−3..−6 %** on top of −4.6 % | 0 |
+| R1 RET exit | none | +0.4 % measured → prerequisite | 0..−1 % | ±0.5 % |
+| R2 per-context inlining + stack-slot facts | R1, V1 | **+1..+3 % alone** (compile cost, bigger programs) → −2..−4 % (enters per x86 insn drop ≥30 %) | −1..−3 % | 0 / −1..−3 % (Storm call chains) |
+| R3 seam elision | R2 | −3.1 % measured (A+B − A) → −2..−3 % | −1 % | 0 |
+| F1 lattice | R2 | ~0 alone (no consumer) | ~0 | 0 |
+| F2 RO fold | F1 | −0.5 % (absolute only, as C) → **−4..−7 %** with F1 | −0..−1 % | 0 |
+| S1 value specialisation | F1, F2, C1 | ~0 alone → −1..−3 % (helper heads entered from threaded code) | 0..−1 % | 0 |
+| C1 branch folding / prune | F1/F2 (+S1) | ~0 alone → −2..−4 % (RTTI kind ladders, Move size ladder) | small | 0 |
+| C2 unrolling (trip ≤ 8) | C1, F1 | ~0 alone → −1..−3 % (field loop, Move qword loop) | small | 0 |
+| M1 STLF / redundant loads | F1 (value numbers), windows | ~0 alone (toyvm: loads −28..−42 %, time flat) → −0.5..−1.5 % | −0.5 % | 0 / −0.5 % |
+| C3 dead flags / snapshots | C1, C2 | 0 → −0.5 % | 0 | 0 |
+| E1 residency in locals | all | toyvm +14..22 % on loops; predicted −1..−3 % here | −1..−3 % | −1 % |
+| **Full stack** | | **−10..−14 %** (D alone: −16.2 %; full stack + D: −17..−19 %) | **−6..−10 %** (incl. V5) | H2 within null band; SC −2..−5 % |
+
+Each prerequisite edge in the diagram has a concrete reason:
+
+- **V → R.** An unsupported instruction ends the region. `_LStrAsg` contains
+  `lock inc` and `xchg`, so without V1 a region rooted at `_CopyRecord`
+  stops at its first string field. `_FinalizeArray` calls `_LStrClr`
+  (`lock dec`).
+- **R1 → R2.** A callee-rooted region needs a RET that may leave the program.
+  Without R1, a helper head declines no-backedge, and an inlined callee has to
+  return into the region.
+- **R2 → F1.** Facts are per context. A shared callee body meets the
+  constants of its call sites into ⊤ (§1.3). R2 also brings the stack-slot
+  facts. Every Delphi helper opens with `push ebx/esi/edi` and closes with the
+  matching pops, and Delphi's register convention passes the first three
+  arguments in EAX/EDX/ECX. A callee-saved register pushed and popped around
+  an inlined body is a fact the lattice must see through.
+- **F1 → F2.** C folds a load only when its address is a bare disp32. Inside
+  the helpers every RTTI read is `[reg + k]` (`mov cl,[edx+0x1]`,
+  `mov edi,[ecx+edx+6]`, `mov ebp,[edi-4]`). It becomes `[const]` only from
+  F1.
+- **F2 → F1 (cycle).** A folded load produces a new constant, such as the
+  field count, the field typeinfo pointer or the field offset. That is a new
+  fact. F1 and F2 are one fixed-point iteration, not two passes.
+- **F1/F2 → C1.** `cmp al,0x0a / jz` folds only when AL is known.
+- **C1 → R2 (re-formation).** Pruned arms free scan and record budget
+  (`UC_MAX_SCAN` 600, `UC_MAX_LOOP` 400) that the dead ladder arms were
+  using. The region is formed again over the live CFG. Bounded to three
+  rounds.
+- **C1 → C2.** A trip count is known only when the loop's entry test and
+  bound are folded. Unrolling then gives each iteration its own context, so
+  F1/F2/C1 run again per iteration. That is where field i's kind and offset
+  become constants.
+- **F1 → S1.** The lattice's symbolic element `entry(r) + k` says which
+  entry inputs would unlock folds. That is how S1 picks keys (§3.2). Without
+  the lattice, specialisation has no consumer.
+- **F1 → M1.** Forwarding compares addresses by value number, which F1
+  provides. M1 also feeds F1: a stack argument stored and reloaded becomes a
+  fact.
+- **C1/C2/M1 → C3.** Flag producers whose only consumer was a folded branch
+  die. Snapshots demanded by exits that no longer exist die.
+- **everything → E1.** Residency is worth doing only on what remains. toyvm
+  measured +14..22 % on loops and a store-forward stall on narrow writes
+  (`project_toyvm_resident_vregs`), so it goes last and is gated by native
+  disassembly.
+
+### 2.2 Worked example: `_CopyRecord(RValue)` through the stack
+
+The bytes are in `static/rtti-helpers.asm`, `static/copyrecord-callsites.asm`
+and `static/typeinfo-bytes.txt` of this run. Every caller does
+`mov ecx,[0x5436f0]` (`8b 0d f0 36 54 00`) and then `call 0x40674c`.
+
+The TypeInfo record at 0x5436f4 is in `.text`, a non-writable section:
+- `0e` = tkRecord;
+- `06 'RValue'` = the name;
+- `18 00 00 00` = size 24;
+- `01 00 00 00` = 1 field;
+- `cc 10 40 00` = the field's PPTypeInfo, where `[0x4010cc]` = 0x4010d0, the
+  tkLString `string`;
+- `10 00 00 00` = the field's offset, 16.
+
+| Step | Pass | What becomes known or disappears |
+|---|---|---|
+| 1 | F2 (as C today) | `ecx = [0x5436f0]` folds to 0x5436f4 |
+| 2 | R2 | the call is inlined into the caller's context. Without R2 the fact stops at the call |
+| 3 | F1+F2 | `al=[ecx+1]`=6, `edi=ecx+6+0xa`=0x543704, `ebp=[edi-4]`=1 (count), `ecx=[edi-8]`=0x18 (size), `ecx=[edi+4]`=0x10 (offset). Five loads fold |
+| 4 | C1 | `sub ecx,eax / jle` (16 > 0) folds. `System.Move` is called with ECX=16, a per-context constant |
+| 5 | R2+F1+C1 in Move | `cmp ecx,0x20 / ja` and `sub ecx,8 / jg` fold. The `jmp [0x403100+ecx*4]` is never reached for 16. The FILD/FISTP qword copy at 0x4030bd remains, with its count known |
+| 6 | F1+F2+C1 | `edx=[[edi]]`=0x4010d0, `cl=[edx]`=0x0a: the 7-way kind ladder (`cmp cl,0xa..0x11`) folds to the tkLString arm 0x4067b7 |
+| 7 | R2+V1 | `_LStrAsg` is inlined. Its refcount tests, `lock inc` and `xchg` stay, because they are data |
+| 8 | C1+C2 | `dec ebp / jnz 0x406766` with EBP=1: the loop runs once and the back edge disappears |
+| 9 | F1+C1 | tail: `ecx = 24 − (16+4)` = 4 > 0, so `System.Move(…, 4)` takes Move's small-size arm, folded the same way |
+| 10 | R2 stack facts | the four callee-saved `push`es and `pop`s around the body become slot facts, spilled only at exits |
+
+**What remains:** two qword loads and stores (Move 16), one dword copy
+(Move 4), `_LStrAsg`'s ~10 data-dependent ops, the RET guard, and the charge
+for the branches the body would have executed.
+
+**What threaded code ran:** ~55 instructions with ~12 branch ends, three
+calls and three returns.
+
+That residue is D's native body, derived without a signature. The same chain
+applies to `_FinalizeRecord`, which reaches FinalizeArray with EDX=0x4010d0
+and ECX=1 (the 93.6 % case), so it folds to "`_LStrClr(rec+16)`". It also
+applies to `_InitializeRecord`.
+
+## 3. Value specialisation
+
+### 3.1 Why both mechanisms, specialisation and context constants
+
+`scripts/arg-profile.js` reads fold-bench's passive `--count-census` logs
+(window from batch 29600). The values are the register at helper entry,
+keyed with the return address. Output in `arg-profile.txt`:
+
+| Helper | Reg | Calls | Top-1 value (share, call sites) | Top-2 cum. |
+|---|---|---|---|---|
+| `_CopyRecord` | ECX (TypeInfo) | 420,164 | 0x5436f4 **97.7 %** (22 sites) | 100 % |
+| `_FinalizeRecord` | EDX (TypeInfo) | 670,634 | 0x5436f4 **98.5 %** (21 sites) | 100 % |
+| `_FinalizeArray` | EDX (elem TypeInfo) | 706,051 | 0x4010d0 **93.6 %** (1 site) | 100 % |
+| `_InitializeRecord` | EDX | 681,763 | 0x4010d0 93.4 % (1 site) | 100 % |
+| `System.Move` | ECX (count) | 842,828 | 0x10 51.0 % (2 sites), 0x4 48.7 % (1 site) | 99.7 % |
+
+Two lessons for the design:
+
+1. **The outer helpers are monomorphic across many call sites.**
+   `_CopyRecord` takes the same TypeInfo from 22 sites. One guarded variant at
+   the callee head serves every caller entering from threaded code. Cloning
+   `_CopyRecord` into 22 caller regions would multiply compile work for no
+   new fact.
+2. **The inner callees are polymorphic per callee but monomorphic per call
+   site.** `System.Move` is 51/49 % between 16 and 4, and each value comes
+   from one call site inside `_CopyRecord`. Specialising Move at its head
+   would need two variants and two guards. R2's per-context clone gets both
+   values from the lattice with **zero** guards.
+
+**Design rule: specialise at program heads, propagate inside programs.** A
+guard is paid once, at the boundary where threaded code enters. Inside a
+program, the lattice carries everything.
+
+The census also shows what *not* to key on. `_LStrAsg`'s ECX is 0x0a in
+98.2 % of calls, but that is the kind byte CopyRecord left in CL; LStrAsg
+writes ECX before reading it. `_LStrClr`'s EDX is 6, also dead. A
+profile-first design would waste variants on both. So the compiler, not the
+profiler, picks the keys (§3.2).
+
+### 3.2 Where profiles come from, and keying
+
+**1. Wish list at tier-1 compile.** When a head compiles for the first time
+(tier 1, no specialisation), F1 runs with every entry input symbolic:
+- EAX..EDI as `entry(r)`;
+- the first four dwords above the return address as `entry([esp+4k])`.
+
+Every load, branch, jump-table index or loop bound whose operand is
+`entry(x) + k`, or is derived from such a value through folds, is charged to
+input x, with a weight:
+
+| Event | Weight |
+|---|---|
+| a load at `entry(x) + k` that would fold if x pointed into a read-only image section | 1 |
+| a branch | 2 |
+| a loop bound | 4 × the static body size |
+
+Inputs with weight ≥ 4 make the **wish list**: at most two inputs, in weight
+order. The analysis is static and costs one extra lattice run.
+
+**2. VPROF in the tier-1 program.** If the wish list is non-empty, the tier-1
+program begins with one `VPROF` op per wish-list input.
+- The op updates a 4-entry value sketch in the program header: Misra–Gries
+  counters over (value, count), plus an `other` count.
+- It costs two loads, a compare chain of at most 4 and one store per entry.
+- This is the "cheap counter". It sits at the callee **entry**, not at each
+  call site, because the entry is where the guard will go. The return address
+  may be recorded as a fifth word, but only for the census tool.
+- VPROF is a fast-path op with no call, so it costs `$uop_fast` nothing.
+
+**3. Tier 2.** After `V` profiled entries (default 256), the head recompiles.
+- **Key.** A value becomes a variant key when its share is ≥ 1/8 and
+  re-running F1/F2/C1/C2 with it bound would delete at least `G` dynamic ops
+  per entry (default 6 uops, or any loop trip or kind ladder).
+- **Variant identity** is `(head eip, input location, value)`, with at most
+  two inputs per variant. Value equality is exact. Equality alone is enough,
+  because the folds come from the value pointing into read-only memory.
+
+### 3.3 Guards, layout, cap
+
+- **One compound program per head.** The layout is
+  `[header][key dispatch][variant 1][variant 2][variant 3][generic]`, with
+  one window table and one range set for all of them.
+- **Guard.** The dispatch is a chain of existing ops: `BNE reg, pool(k) →
+  next`. That is two loads and one compare per key, about 3–4 native
+  instructions on the fast path, and needs no new op.
+  - Variants live in **one** program because a jump into another program
+    would skip that program's enter-op epoch check (§9). The compound layout
+    avoids new engine mechanics entirely.
+- **Cap.** Three variants plus generic, which Spelunky needs at most (two
+  values cover ≥ 99.7 % on every helper above). The compound program must also
+  fit `uop_code_bytes / 4` (decline 24). A head that would need more is
+  **megamorphic**:
+  - it keeps the generic body only;
+  - it is marked so VPROF is not re-armed;
+  - this mirrors `--uop-icg-mega` (§23.4).
+- **Guard-failure accounting.** Each variant entry and the generic
+  fallthrough get a counter in the header. If, after 4096 entries, the
+  generic share exceeds 50 %, the head re-profiles once, then goes
+  megamorphic.
+
+### 3.4 Invalidation
+
+**Code writes.** A specialised variant depends on code bytes, exactly like
+today's programs, so the existing range kill covers it.
+
+**Read-only data.**
+- Every read-only dword F2 folded, in any variant, is registered as a
+  program range. This is fold-bench C's soundness rule, kept: soundness rests
+  on the write-kill, never on the section flag.
+- Ranges are coalesced per contiguous run, so one TypeInfo record is one
+  range, not five. That keeps `UOP_RANGES_MAX` (decline 25) from binding.
+- `$uop_add_range` marks those pages as code, so a store to them takes
+  `$code_write_hit` and kills the compound program.
+- Read-only pages are written only after `VirtualProtect`, so the cost on
+  writable data stays nil.
+
+**Mapping and protection changes.**
+- An unmap or protection change of a page holding folded data is not a store,
+  so it does not trip the range kill.
+- The `$guest_page_clear_range` path and VirtualProtect on image pages must
+  kill programs with ranges there. Today they only bump the window epoch.
+- A page made writable by VirtualProtect is also removed from F2's
+  foldable set for the rest of the run.
+
+**Profiles.** These are hints, not premises. A stale profile costs guard
+failures, never correctness.
+
+**Code flush** (`uop_flush`). Variants die with their program. The head
+re-profiles from tier 1 next time, which is cheap compared to correctness
+risk.
+
+## 4. Exactness
+
+### 4.1 The clock: charge the block ends the body would have executed
+
+Fold-bench D made a native helper exact under `--branch-clock`:
+- every native path charges the branch ends its body would have executed;
+- a partial path charges up to its resume point;
+- a path the budget cannot pay for falls back to the body's first instruction.
+
+The general form for an optimised program:
+
+- **Segments.** A *segment* is a maximal run of the optimised program with
+  no runtime branch and no exit. Branches folded by C1, back edges removed by
+  C2, and inlined CALL/RET/JMP all live *inside* segments.
+- **Charge per segment.** The charge `C(s)` is the number of block ends the
+  threaded execution of the same x86 path would charge:
+  - every executed x86 Jcc/JMP/CALL/RET and every resolved loop trip;
+  - under the historical clock, also every cut the tier's per-instruction
+    block-end model (`$uc_block_ends`) places on that path.
+
+  `C(s)` is a compile-time constant. Folding removes *work*, never *charge*.
+- **Emission.** One `CHK n` at segment entry, then one `BUDGET n`. A runtime
+  branch that remains still charges itself as today.
+- **Running out mid-segment.** If the budget left is below `n`, the CHK stub
+  exits to the **segment's entry instruction** in the state the threaded code
+  would have there, and threaded code runs the segment. It stops at the exact
+  transfer where the budget runs out.
+  - This is D's "a path the budget cannot pay for falls back", generalised.
+  - It is exact by construction, because a segment entry is always a precise
+    x86 instruction boundary with a materialisable state (§4.2).
+  - It costs at most one deopt per batch.
+- **Per-budget exactness test.** For every unit-test program, run batches cut
+  at every budget `1 .. blocks + 1`. Registers, flags, memory hash and EIP
+  must be identical to threaded code. That is `test-fold-arms.js`'s check,
+  promoted to a property of the optimiser.
+- **Which clock.** A pass computes `C(s)` from the same block-end model the
+  tier uses today, so it is exact under whichever clock the tier is exact
+  under. Wherever today's tier restricts a feature to `--branch-clock` (trace
+  cut exits), the new passes inherit the restriction.
+
+### 4.2 Precise side-exit state
+
+**Registers.** The core invariant: **the optimiser removes computation, never
+a guest-visible write.**
+- Vregs 0–7 are the guest registers, so every guest register write still
+  lands.
+- A constant-folded write becomes `MOVI r, k`.
+- An unrolled induction variable is written with its per-iteration constant
+  before any exit of that iteration.
+- So every stub sees architected registers without reconstruction. A future
+  write-sinking pass would need a per-stub materialisation list. The existing
+  demand-snapshot machinery is the model for one.
+
+**Flags.**
+- A folded compare whose flags are live at an exit gets its record
+  materialised in the stub from pooled constants. The REC operands are
+  vregs, and constants are pool vregs already.
+- Folded `sahf`: the stub materialises what `sahf` writes (SF, ZF, AF, PF,
+  CF from AH) on top of the lazy state, as the threaded `$th_sahf` does.
+
+**Stack.**
+- Push/pop pairs elided by R2's slot facts spill at every exit they span.
+  `$uc_spill_at` already does this for `--aggressive-stack`.
+- An inlined CALL still writes its return address to the guest stack, unless
+  an elided pair spills it at exits.
+- An inlined RET checks the popped address against its context's return
+  address, and deopts on any other.
+
+**Memory.**
+- M1 removes loads, never stores.
+- No dead-store elimination of guest memory is in scope, except stack
+  push/pop pairs.
+
+**Faults.**
+- A folded read-only load cannot fault: its page was mapped at compile time,
+  and an unmap kills the program (§3.4).
+- Each remaining memory access keeps its own deopt stub. That includes each
+  unrolled copy, whose stub writes its iteration's constants first.
+- `#DE`, window misses and ICG mismatches work as today.
+
+**Locks.** V1 lowers `lock inc/dec/add/xadd/cmpxchg [m]` and `xchg [m],r` to
+plain read-modify-write.
+- This is exactly what threaded code does when `$LOCK_MODE == 0`: the
+  cooperative scheduler interleaves instances only at slice boundaries, so the
+  ordinary handlers run (05-alu.wat, handler 499 comment).
+- The program records the `$LOCK_MODE` it was compiled under, and the enter
+  op compares it, a single global load.
+- Under `$LOCK_MODE == 1` (Worker threads), V1 declines in phase 1. Phase 2
+  is a CAS op over the aligned qword, the same as handler 499, with
+  split-lock fallback to the service path.
+
+### 4.3 Self-modifying code and threads
+
+**Self-modifying code.**
+- A compound program's ranges cover:
+  - every x86 byte of every context, including all inlined callee bodies and
+    each unrolled copy's source bytes;
+  - every folded read-only dword.
+- A write to any of them kills all variants together.
+- A region that stores to a constant address inside its own bytes is refused
+  at build time, as toyvm's `patchesItself` refuses it.
+
+**Threads.**
+- Arenas, compiled programs and VPROF sketches are per instance. The compile
+  scratch is shared under the existing try-lock.
+- Cross-instance invalidation of folded data follows the same path as code
+  writes today: the shared code-page bitmap, plus the writer's
+  `$uop_code_write`.
+- **Open item to verify before stage 5:** check that a Worker's store into a
+  folded page kills another instance's programs, not only its own. If it does
+  not, F2 is restricted to `$LOCK_MODE == 0` until it does. The §3 gap in
+  `docs/uop-tier-design.md` (another instance modifying code *during* a run)
+  applies to folded data too, and is documented the same way.
+
+**Determinism.** Every compile decision depends on entry counts and guest
+bytes, never on wall time, so headless runs stay deterministic per arm. They
+are not identical across arms (§5.3).
+
+## 5. Measurement plan
+
+### 5.1 Arms: cumulative, leave-one-out, oracle, null
+
+- **One build for all arms.** Every pass is a bit in one flag,
+  `--uop-opt=MASK`, inherited by workers. All arms run **one wasm module**
+  (one SHA-256), so build variance cannot enter. `MASK=0` must emit
+  byte-identical programs to today's tier. The gate is a program-hash
+  equality test over the `test-uop-compiler.js` corpus and the Spelunky
+  census heads.
+- **Cumulative arms.** The arms follow dependency order:
+  - S0 = today;
+  - S1 = +V1..V4+R1;
+  - S2 = +R2+R3;
+  - S3 = +F1+F2;
+  - S4 = +C1;
+  - S5 = +C2;
+  - S6 = +S1 (specialisation);
+  - S7 = +M1+C3;
+  - S8 = +V5;
+  - S9 = +E1.
+- **Leave-one-out from the full stack.** For each pass P, run full − P.
+  There are two variants, and both are reported:
+  - **pure LOO:** dependents still run on weaker input, which is the number
+    the user asked for;
+  - **closure LOO:** P and everything that needs it are off, which shows how
+    much P is an enabler.
+- **Oracle and null.** D (fold-bench's known-routine arm) runs alone and on
+  top of the full stack, which measures overlap. Two control arms give the
+  null band.
+- **Smoke screen.** Single-pass arms are run only as a smoke screen. Their
+  numbers are not verdicts, which is the trap this plan exists to avoid.
+
+### 5.2 Ledger, not uop counts
+
+Fewer uops is not a time proxy:
+- toyvm: −18 % µops, run time flat;
+- CMP+Jcc: one dispatch less per site, neutral;
+- page compile: 30 M lookups less, dead even.
+
+A pass is credited for what it deletes from the work that does cost time:
+- dynamic **memory loads and stores** executed by the program;
+- **enters + exits**, at ~49 ns per enter on Spelunky;
+- **service calls**, meaning `$uop_run` handbacks: x87/SSE/MMX service and
+  window misses;
+- **charged branches** that remain as runtime ops.
+
+The ledger comes from a **counting run** with `--uop-census` plus the new
+per-program engine counters, which are compiled in but off by default. It is
+never taken from the timed run. Each arm's ledger delta must be monotone in
+the cumulative sequence. A pass that deletes nothing in its stacked position
+is not timed further.
+
+### 5.3 Box protocol
+
+- **One disposable ascii.dev box per sweep, created by the main session.**
+  Subagent box creation is denied (`reference_ascii_bench_box`).
+  - Clone from the public remote; do not upload the tree.
+  - rsync only gitignored assets: Spelunky, `test/binaries/dlls` for HD, and
+    StarCraft's assets.
+  - Delete the box with `X-Ascii-Confirm-Delete` at the end.
+- **Fixed work.** `--branch-clock` in every arm, and fixed batch windows:
+  - Spelunky Classic 29600:32600 (band 0.2 %) and 21000:29000 (band 3.9 %),
+    `--d3d9-gps=null`, route from fold-bench `scripts/fold-sweep.sh`;
+  - Spelunky HD 213550:237550 (band 1.5 %);
+  - Heroes II 1000:1800 (band 0.7 %);
+  - StarCraft fast route in-mission.
+- **Rounds.** Five alternating rounds, arm order rotated per round. The
+  statistic is median user CPU over the window (`--cpu-window`). The null
+  band is |ctl − null| on the same box.
+- **Exactness per arm.** API call count, batches and presents must be
+  identical to control. Frames must be md5-identical within the box, from a
+  separate frames pass with the software executor, as fold-bench did. A
+  mismatch voids the arm. Frames are not compared across machines.
+- **Decision rule.** A pass ships default-on only if:
+  - its closure-LOO from the full stack is outside the null band on at least
+    one workload;
+  - no workload regresses outside its band, and Heroes II is the control.
+
+### 5.4 Native disassembly (CLAUDE.md requirement)
+
+For every stage that adds or changes engine ops (VPROF, the guard chain, V1's
+RMW arms, V2's x87 compare-branch, V5's SSE arms, KCALL, E1's local-slot
+variants), and for `$uop_fast` after each stage:
+
+- Capture `tools/wasm-native.js --engine=v8` and `--engine=sm` on:
+  - the laptop (arm64);
+  - the box (x86_64, `OBJDUMP=/usr/bin/objdump`).
+- Compare against the same capture of the control module, using the same
+  function indices from the named wasm.
+- Check:
+  - `$pc` and `$budget` stay in registers, with zero stack references in the
+    loop (§8 of the tier doc);
+  - no new spills;
+  - per-op instruction counts for the new arms;
+  - no `call` added to `$uop_fast`. Two calling arms were enough to make Ion
+    spill `$pc` in toyvm E1.
+- Record module hashes, engine versions and tiers. Fold-bench noted d8 15.4
+  and 16.0 against node's V8 13.6. That is a version mismatch, and it must be
+  reported explicitly, not silently mixed.
+- Disassembly shows structure. Time attribution comes from `--cpu-prof`
+  buckets.
+
+## 6. Staged implementation plan
+
+Every stage lands behind its `--uop-opt` bits, default off. Each has unit
+tests in `test/test-uop-opt.js`, a generalisation of `test-fold-arms.js`: a
+differential against threaded code, plus a per-budget exactness sweep.
+
+| Stage | Content | Reuse | Exit criteria |
+|---|---|---|---|
+| **0 Hygiene** | Fix verdict-map aliasing. Add the `--uop-opt` mask and the per-program ledger counters (census-only). | — | Spelunky repeat compiles 68 % → < 15 %; `MASK=0` program hashes identical; ledger printed by `tools/uop-census.js` |
+| **1 Vocabulary + R1** | V1 (LOCK_MODE 0), V2 (`sahf`, fused `fnstsw/sahf/jcc`), V3 (`fs:` base constant per instance), V4 (`rep ret`), R1 | **A verbatim:** `rep ret` decode; RET-without-candidate exit as GOTO to the deopt stub with the bd4c09da0 clock fix | Declines in the Spelunky census: `ret`/`xchg`/`lock`/`sahf`/`fs:` rows → ~0; API/frames identical; box numbers recorded, not gated |
+| **2 Contexts (R2) + R3** | Records keyed `(address, context)`; peeling re-expressed as a context; inline clone budget; stack-slot facts (promote `$uc_sp_block`'s analysis); seam elision decided at compile time (entry guard on `dao_status/pending_armed`) | **B's** runtime seam step stays as the fallback path | `_CopyRecord` and `_FinalizeRecord` compile as one program each, callees cloned; enters per x86 insn ↓ ≥ 30 % vs S1; per-budget exactness on all cases |
+| **3 Lattice F1 + RO fold F2** | Forward dataflow over contexts, with an element per reg/slot of ⊥, const k, `entry(x)+k`, ⊤; F2 on any lattice-constant address | **C's** `$uc_ro_addr` section walk and range-registration rule; the fold table grows from 4 globals to a scratch array, ranges coalesced | Folded loads per program on the Spelunky helpers match the hand trace in §2.2 (5 in `_CopyRecord` per field); unmap/protect kill tests |
+| **4 Branch fold C1 + re-formation** | Resolve Jcc / jump-table index; prune; re-form (≤ 3 rounds); segment charges | **D's** branch-count tables, as the oracle for `C(s)` | Kind ladders folded; per-budget exactness; compile µs per head within 2× of S0 |
+| **5 Unroll C2** | Full unroll of trip ≤ 8 with body ≤ 64 insns; each iteration a context | — | `_CopyRecord(RValue)` residue = §2.2's list; Move(16)/Move(4) fixed copies |
+| **6 Specialisation S1** | Wish list, VPROF, compound program, guard chain, megamorphic marking, invalidation | `--count-census` as the cross-check for VPROF sketches | ≥ 90 % of `_CopyRecord`/`_FinalizeRecord` entries take a variant; guard-failure share reported |
+| **— Sweep 1** | Box: cumulative S0..S6, LOO, D oracle, null | fold-bench `scripts/` harness | §8 predictions P-1..P-6 confirmed or refuted |
+| **7 Memory M1 + C3** | STLF / redundant loads by value number; `sdisj`-style window-disjointness guard; dead flags/snapshots over the folded program | — | Ledger loads ↓; frames identical |
+| **8 SSE native V5** | Native arms for the hot scalar forms (`movss` rm/mr, `cvtss2sd`, `cvtps2pd`, `cvtsi2ss`, `comisd` → branch, add/sub/mul sd) over the XMM file in memory, service path as fallback (like x87 91–107) | uop-sse's SSER/SSEM as the fallback | Spelunky HD service calls ↓ ≥ 80 %; bit-exact against 06c on the uop-sse equivalence tests |
+| **9 Residency E1** | Only if stage-8 disassembly shows vreg load/store dominating `$uop_fast`; a fixed build-time set of local-slot op variants (toyvm's corpus-union idea), full-width only (no narrow store into a 32-bit-read slot) | toyvm `allRP` model | Native: fewer memory ops per register uop with no spill; box: outside band, or drop it |
+| **10 Known-routine integration** | KCALL op and summaries (§7) | D as the first client | Full stack + D ≥ max(full stack, D) |
+| **— Sweep 2** | Full cumulative + LOO across all four workloads | | Default-on decision per pass |
+
+## 7. Boundary with the known-routine (FLIRT-style) framework
+
+`docs/design/known-routine-framework.md` is being written by another agent
+and is not on main yet, so this section proposes the interface rather than
+quoting it.
+
+**Division of labour.**
+- **The known-routine framework:** routines identified by signature, whose
+  behaviour is fixed by a library's contract and whose cost is dominated by
+  data-dependent work. Examples: `System.Move` of unknown size, `_LStrCmp`,
+  memcpy/memset/strlen, CRT math, FastMM.
+  - Each gets a native WAT body with a declared clock charge function, as D
+    has.
+  - The pipeline cannot beat a native body on data-dependent loops.
+- **The pipeline:** everything else, *and* library routines whose cost is
+  interpreting constant arguments. The RTTI walkers are the overlap case.
+  With the typeinfo constant, the pipeline derives D's residue generically
+  (§2.2), and it does so for any Delphi version or Game Maker build, not only
+  the signature-matched one. D needed a callee-bytes check because metrojd
+  links a different Move under the same CopyRecord.
+
+**The interface the pipeline needs, so that the two compose instead of
+overlapping.** Fold-bench measured an overlap: D −16.2 %, D + A+B+C −17.2 %.
+Part of the reason is that D's helper addresses are `$uc_unsup` to the tier,
+so every program ends at them. The proposal:
+
+1. **A claimed routine is an op, not an exit.** A call to a claimed entry
+   lowers to `KCALL id` with these properties:
+   - it is a service op, so the handback costs nothing on the fast path;
+   - it charges the routine's declared clock function;
+   - its summary is declared: registers read and clobbered, flags written,
+     memory read and written (by argument), whether it may free, call out or
+     fault.
+
+   The region continues after it. That removes the region break D causes
+   today.
+2. **Pure summaries feed the lattice.** A known routine marked pure on
+   read-only input (`strlen` of a read-only string, a CRC table lookup) may
+   be folded by F1/F2 to a constant at compile time.
+3. **Precedence at a call site.** When both could apply:
+   - if C1/C2 can fold the routine's control flow with the context's
+     constants, so that the inlined residue has no loop and no more than 16
+     uops, the pipeline inlines it;
+   - otherwise the claimed routine's KCALL is used.
+
+   This is decided per call site, at compile time. Both outcomes are
+   measurable, as arm "pipeline" against "D" against "both" (§5.1).
+4. **Clock contract.** Both sides use §4.1's rule. A KCALL that cannot pay its
+   charge falls back to the guest body's first instruction.
+
+## 8. Risks and testable predictions
+
+### 8.1 Predictions, including which earlier verdicts flip
+
+The workloads are Spelunky Classic (SC1), Spelunky HD (SHD), Heroes II (H2)
+and StarCraft (SC). Each prediction is checked by the §5 sweep. A miss
+refutes the stated mechanism.
+
+| # | Prediction | Earlier verdict | Flips? |
+|---|---|---|---|
+| P-1 | R1 (fold-bench A) is +0.4 % alone, but closure-LOO of R1 from the full stack loses **≥ 2/3** of the full stack's SC1 gain | A neutral | **Yes**: A is a prerequisite, not a lever |
+| P-2 | RO folding: fold-bench C made 2,261 static folds and measured ≈ 0 (A+B+C − A+B = +1.1 %). With F1, folds on SC1's hot heads grow **≥ 10×**, and pure-LOO of F2 from the full stack costs **≥ 4 points** on SC1 | C neutral | **Yes** |
+| P-3 | Seam elision (B) keeps its −3 % in the stack (it is independent). R2's cloning makes most seams compile-time-absent, so pure-LOO(R3) shrinks to **≤ 1.5 %** | B positive | No (shrinks) |
+| P-4 | Entry cost. toyvm priced the round trip at ~1 %. In the main emulator `th_uop_enter` is 2.4 % of SC1 samples (87.8 M enters). After R2, enters per x86 insn fall **≥ 30 %** vs S1, and `th_uop_enter + uop_run` self time falls by **≥ 1.5 points** | uop entry "~1 %" | **Partly**: entry is a lever for call-chain code, through inlining, not chaining |
+| P-5 | Full stack without D is **−10..−14 %** on SC1 29600:32600 (D alone −16.2 %). Full stack + D is −17..−19 %. Pure-LOO of D from (full + D) is **< 6 points**: the pipeline makes most of D redundant | D −16 %, A+B+C −2.4 % | **Yes** for A+B+C as a family |
+| P-6 | Specialisation S1 is worth −1..−3 % on SC1 in the stack and ~0 alone. Its gain comes only from helper heads entered by threaded code; heads inlined into caller programs get their constants from contexts | (new) | — |
+| P-7 | Load forwarding (M1) cuts executed loads by ≥ 15 % on SC1 programs, but its time effect alone stays inside the band (toyvm: loads −28..−42 %, time flat). In the stack its pure-LOO is ≤ 1.5 %, and any gain comes from facts it feeds F1, visible as fewer folds when M1 is off | toyvm load forwarding flat | **No** (stays small) |
+| P-8 | CMP+Jcc fusion (threaded) and next-dispatch stay neutral or negative. They delete dispatches, not memory traffic, entries, service calls or charged work. This design does not resurrect them | neutral / negative | **No** |
+| P-9 | Page compile stays dead even. The pipeline acts inside programs, not on lookups | dead even | **No** |
+| P-10 | SSE: V5 native arms on top of `--uop-sse` give a further **−3..−6 %** on SHD gameplay. `uop_sse_svcs` falls ≥ 80 % | uop-sse −4.6 % (coverage only) | **Extends** |
+| P-11 | Residency in locals (E1) at the end of the stack is −1..−3 % on SC1 and SHD, and has no effect on narrow-register code if full-width only | toyvm slots "not the lever" | **No** (small, as toyvm said) |
+| P-12 | Heroes II stays inside its 0.7 % band in every arm, because it has no Delphi RTTI and no SSE. A regression above the band means compile cost, so check `uc` compile µs and repeat compiles | fold-bench: all arms in band | — (control) |
+| P-13 | StarCraft gains −2..−5 % from S2 (R2+R3) and nothing measurable from S3..S6. Its untaken entries are call/ret chains (Storm), not constant interpretation | (new) | — |
+
+### 8.2 Risks
+
+1. **Compile cost.** Spelunky already compiles 5,308 times in the window, 68 %
+   of them repeats. Every pass multiplies that. Stage 0's aliasing fix is a
+   hard prerequisite. Compile µs per head is a gate in stages 4–6.
+2. **Program size and region caps.** Cloning and unrolling grow programs.
+   Decline 24 (program too big), `UC_MAX_LOOP`, `UC_MAX_STUBS` 2048 and
+   `UOP_RANGES_MAX` will bind before the lattice does. Coalesced ranges and
+   the re-formation budget address the last two.
+3. **Arena churn.** Compound programs are bigger, so there are more
+   `uop_flush` calls. `flushes: 32` in the Spelunky window today. Watch it in
+   the ledger.
+4. **The fixed engine's native shape.** Every new op is an arm in
+   `$uop_fast`. One call in the wrong arm makes Ion spill `$pc` for the whole
+   loop (toyvm E1, `callSafe`). That is why the disassembly check runs on
+   every stage, not at the end.
+5. **Cross-instance invalidation of folded data** (§4.3, open item). If a
+   Worker store does not kill another instance's program, F2 must stay
+   `$LOCK_MODE == 0` only.
+6. **Clock divergence that looks like a semantic bug.** A frame diff between
+   arms is a clock question first (`project_x87_fusion_mcm`,
+   `region_jit_payoff`). Use the per-budget exactness test and the API-count
+   identity before chasing semantics.
+7. **The pipeline is tuned to one app.** Delphi RTTI is Spelunky Classic's
+   third. SHD, StarCraft and Heroes II are in every sweep to catch that. The
+   decision rule requires that no workload regress.
+8. **V1 under Worker threads.** Plain read-modify-write is exact only while
+   `$LOCK_MODE == 0`. The compile-time stamp plus the enter-op check is the
+   guard. A program with lock ops must never run when the mode has changed.
+
+## 9. Evidence index
+
+In `scratch/runs/20261125-optimizer-pipeline-design/`:
+
+- `static/rtti-helpers.asm`, `static/rtti-helper-cases.asm`,
+  `static/lstr-move.asm`, `static/copyrecord-callsites.asm`: disassembly of
+  the Delphi helpers, their call sites, `_LStrAsg`, `_LStrClr` and
+  `System.Move`. Made with `tools/disasm_fn.js` on
+  `test/binaries/candidates/spelunky-classic/extracted/Spelunky.exe`, whose
+  SHA-256 is in `static/spelunky-exe.sha256`.
+- `static/typeinfo-bytes.txt`, `static/sections.txt`: the RValue/RToken
+  TypeInfo records, the string TypeInfo, Move's jump table and the section
+  map (`tools/dump_va.js`, `tools/pe-sections.js`).
+- `scripts/arg-profile.js` and `arg-profile.txt`: argument concentration
+  from fold-bench's passive count census.
+- `predictions.json`: §8's predictions in machine-readable form, for the
+  sweep to score.
+
+The numbers cited from other runs are the fold-bench summary
+(`20261125-fold-arms-bench/box/slim/summary.txt`), the Spelunky uop census,
+attribution and cpuprofile buckets
+(`20261125-spelunky-classic-gameplay-profile/headless/run-b`, `run-c`), and
+the SSE census and A/B (`20261125-uop-sse/census`, `remote/`).

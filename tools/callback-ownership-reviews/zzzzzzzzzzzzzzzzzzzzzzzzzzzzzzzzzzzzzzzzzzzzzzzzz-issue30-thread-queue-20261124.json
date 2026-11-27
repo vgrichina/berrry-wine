@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/thread-manager.js",
+      "name": "host-file",
+      "baseSHA256": "f65ea01ca918e5eab42c89820a3efff303603b0debcf9fafcad981f2fa5a0615",
+      "sha256": "ff11af8eb32d67d5b15e7a8c1a93745d52bb254fce91efdec94ba34437b7d451",
+      "reason": "Review 20261124 (issue #30): createThread clears the new Win32 thread id's shared USER queue (existing reset_thread_message_queue export, the same call exit cleanup makes) synchronously when the slot is allocated, before the id is published. No callback, continuation, scheduler or guest-context lifetime change. Covered by test/test-post-thread-message-before-start.js. General callback ownership remains pending."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:init_thread",
+      "baseSHA256": "d4de4992bd1e51e8bfe83f60f18928d56d57cd6ef965ba77c416c4231291702e",
+      "sha256": "a814b6018fde816198318ca9282c4417bab71bbad8ce3138944d4b2aa401a38a",
+      "reason": "Review 20261124 (issue #30): init_thread no longer resets a worker's shared post queue (only tid 0's); the queue is cleared at CreateThread instead, so a message posted before an asynchronous Worker start survives (UT splash WM_QUIT). No callback, continuation or guest-context lifetime change. Covered by test/test-post-thread-message-before-start.js. General callback ownership remains pending. Merge review 20261127 follows the MMX-alias review: exact current init_thread preserves tid-strided FPU metadata/environment reset and tid0-only posted-message queue reset. No new guest callback or continuation boundary; invocation ownership remains pending."
+    }
+  ]
+}

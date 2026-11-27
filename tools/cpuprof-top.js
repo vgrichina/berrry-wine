@@ -48,7 +48,9 @@ const wasmNames = (() => {
   const { execFileSync } = require('child_process');
   const path = require('path');
   const out = execFileSync('node',
-    [path.join(__dirname, 'wasm-func-name.js'), '--dump'], { encoding: 'utf8' });
+    // The dump lists every function (~16k lines, >1 MB): execFileSync's 1 MB
+    // default maxBuffer killed it with ENOBUFS.
+    [path.join(__dirname, 'wasm-func-name.js'), '--dump'], { encoding: 'utf8', maxBuffer: 256 << 20 });
   const map = new Map();
   for (const line of out.split('\n')) {
     const m = line.match(/^\[(\d+)\] (.+?) \(/);
@@ -68,7 +70,13 @@ const label = n => {
     return resolved;
   }
   const url = (f.url || '').replace(/^file:\/\//, '').split('/').slice(-1)[0];
-  return url ? `${name} @ ${url}:${f.lineNumber + 1}` : name;
+  const labelled = url ? `${name} @ ${url}:${f.lineNumber + 1}` : name;
+  // A module with a name section (build/wine-assembly.named.wasm) reports its
+  // frames by $name under a script url such as `wine-assembly-00b0df8a` or
+  // `wasm://wasm/...`, not as wasm-function[N]; without this the split below
+  // calls every one of them JS and prints "wasm: 0.0%".
+  if (/^wasm:\/\//.test(f.url || '') || /^wine-assembly-[0-9a-f]+$/.test(url)) wasmLabels.add(labelled);
+  return labelled;
 };
 
 const agg = new Map();

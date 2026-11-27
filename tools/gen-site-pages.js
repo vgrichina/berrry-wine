@@ -900,6 +900,8 @@ function generatePages({ progress = () => {} } = {}) {
   const started = Date.now();
   const history = createGitDates(ROOT, { progress });
   const gitDate = (rel, which) => history.get(rel)[which === 'first' ? 'published' : 'modified'];
+  // Nearly every date lookup is a doc or an article; answer them in one go.
+  history.prefetch([...listDocs().map(d => d.rel), ...listArticles().map(a => a.rel)]);
   progress('rendering static pages');
   const pages = [];
   const urls = [{ loc: `${SITE}/`, priority: '1.0', changefreq: 'weekly' }];

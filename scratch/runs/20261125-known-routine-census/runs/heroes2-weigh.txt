@@ -1,0 +1,6 @@
+runs/heroes2-1000-1800.json
+  threaded block entries 110593288, uop blocks 0 (not attributable), listed blocks 273
+    0.82%      906105  s-h2:memmove
+    0.08%       93624  s-h2:memset
+    0.07%       78020  mss32.dll!_AIL_serve@0
+  unmatched by module: h2demow.exe 99.0%, mss32.dll 0.0%

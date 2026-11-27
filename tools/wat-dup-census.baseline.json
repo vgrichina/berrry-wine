@@ -149,6 +149,7 @@
     "09a7d-handlers-shell-file.wat:$handle_win_sparkle_set_appcast_url",
     "09a7d-handlers-shell-file.wat:$handle_win_sparkle_set_automatic_check_for_updates",
     "09a7d-handlers-shell-file.wat:$handle_win_sparkle_set_update_check_interval",
+    "09a7l-webbrowser.wat:$handle_WebBrowserOleControl_OnAmbientPropertyChange",
     "09a8-handlers-directx.wat:$dx_com_addref",
     "09a8-handlers-directx.wat:$handle_DirectXSetup",
     "09a8-handlers-directx.wat:$handle_IDirect3D3_CreateLight",

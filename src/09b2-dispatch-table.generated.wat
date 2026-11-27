@@ -30,6 +30,16 @@
   (global $API_ID_IDirect3DCubeTexture8_BASE i32 (i32.const 4504))
   (global $API_ID_IDirect3DTexture8_BASE i32 (i32.const 3560))
   (global $API_ID_IDirect3DSurface8_BASE i32 (i32.const 3653))
+  (global $API_ID_WebBrowserOleObject_BASE i32 (i32.const 4723))
+  (global $API_ID_WebBrowserPersistStreamInit_BASE i32 (i32.const 4747))
+  (global $API_ID_WebBrowserOleControl_BASE i32 (i32.const 4756))
+  (global $API_ID_IWebBrowser2_BASE i32 (i32.const 4763))
+  (global $API_ID_IDirectMusicPerformance8_BASE i32 (i32.const 4842))
+  (global $API_ID_IDirectMusicLoader8_BASE i32 (i32.const 4896))
+  (global $API_ID_IDirectMusicSegment8_BASE i32 (i32.const 4911))
+  (global $API_ID_IDirectMusicAudioPath8_BASE i32 (i32.const 4942))
+  (global $API_ID_IDirectMusicSegmentState8_BASE i32 (i32.const 4949))
+  (global $API_ID_IDirectMusicPathBuffer8_BASE i32 (i32.const 4963))
 
   ;; ============================================================
   ;; CONSTANT API STUBS — GENERATED, do not edit
@@ -4224,7 +4234,7 @@
     (block $abi8
     (block $abi4
     (block $abiunknown
-      (br_table $abi4 $abiunknown $abi8 $abi20 $abi16 $abi20 $abi20 $abi40 $abi40 $abi12 $abi8 $abi12 $abi40 $abi8 $abi12 $abi20 $abi24 $abi24 $abi12 $abi8 $abi8 $abi12 $abi8 $abi16 $abi16 $abi24 $abi20 $abi16 $abi8 $abi12 $abi8 $abi4 $abi8 $abi8 $abi24 $abi8 $abi12 $abi8 $abi8 $abi4 $abi20 $abi4 $abi12 $abi28 $abi28 $abi16 $abi16 $abi16 $abi12 $abi12 $abi4 $abi24 $abi16 $abi8 $abi24 $abi20 $abi20 $abi12 $abi28 $abi28 $abi24 $abi24 $abi24 $abi12 $abi12 $abi20 $abi20 $abi32 $abi28 $abi32 $abi60 $abi8 $abi8 $abi60 $abi8 $abi12 $abi20 $abi20 $abi4 $abi8 $abi16 $abi8 $abi8 $abi16 $abi20 $abi16 $abi44 $abi44 $abi20 $abi8 $abi20 $abi8 $abi28 $abi52 $abi52 $abi16 $abi24 $abi20 $abi20 $abi20 $abi36 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi24 $abi24 $abi8 $abi8 $abi8 $abi12 $abi8 $abi20 $abi20 $abi12 $abi8 $abi24 $abi24 $abi32 $abi24 $abi16 $abi16 $abi12 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi16 $abi24 $abi20 $abi20 $abi12 $abi12 $abi24 $abi24 $abi8 $abi8 $abi24 $abi24 $abi16 $abi36 $abi16 $abi16 $abi12 $abi12 $abi24 $abi24 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi20 $abi20 $abi16 $abi8 $abi12 $abi12 $abi8 $abi32 $abi32 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi8 $abi8 $abi8 $abi12 $abi4 $abi8 $abi20 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi8 $abi4 $abi4 $abi4 $abi12 $abi12 $abi4 $abi12 $abi12 $abi12 $abi12 $abi4 $abi4 $abi4 $abi4 $abi8 $abi8 $abi16 $abi12 $abi20 $abi32 $abi28 $abi4 $abi12 $abi4 $abi24 $abi24 $abi8 $abi12 $abi20 $abi20 $abi20 $abi8 $abi8 $abi4 $abi4 $abi4 $abi16 $abi12 $abi12 $abi8 $abi8 $abi12 $abi12 $abi20 $abi16 $abi8 $abi4 $abi4 $abi20 $abi20 $abi16 $abi8 $abi8 $abi8 $abi4 $abi8 $abi8 $abi20 $abi20 $abi4 $abi8 $abi8 $abi4 $abi8 $abi12 $abi20 $abi16 $abi24 $abi20 $abi4 $abi4 $abi20 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi12 $abi4 $abi16 $abi8 $abi16 $abi8 $abi20 $abi8 $abi16 $abi8 $abi20 $abi20 $abi28 $abi28 $abi12 $abi4 $abi8 $abi16 $abi16 $abi24 $abi12 $abi12 $abi8 $abi8 $abi16 $abi12 $abi20 $abi4 $abi16 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi24 $abi24 $abi20 $abi12 $abi8 $abi8 $abi12 $abi12 $abi8 $abi20 $abi8 $abi8 $abi24 $abi24 $abi20 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi20 $abi20 $abi20 $abi20 $abi16 $abi12 $abi12 $abi4 $abi4 $abi28 $abi8 $abi8 $abi16 $abi4 $abi4 $abi4 $abi8 $abi8 $abi12 $abi12 $abi36 $abi36 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi8 $abi16 $abi12 $abi12 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi40 $abi16 $abi12 $abi16 $abi8 $abi16 $abi20 $abi16 $abi16 $abi12 $abi4 $abi16 $abi8 $abi8 $abi24 $abi8 $abi12 $abi8 $abi24 $abi16 $abi16 $abi16 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi8 $abi4 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi12 $abi28 $abi28 $abi16 $abi8 $abi28 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi28 $abi8 $abi8 $abi12 $abi12 $abi12 $abi20 $abi20 $abi12 $abi12 $abi8 $abi8 $abi16 $abi8 $abi24 $abi8 $abi8 $abi12 $abi24 $abi12 $abi20 $abi8 $abi20 $abi20 $abi24 $abi12 $abi16 $abi16 $abi12 $abi20 $abi28 $abi24 $abi16 $abi28 $abi16 $abi16 $abi16 $abi20 $abi20 $abi8 $abi4 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi28 $abi8 $abi8 $abi20 $abi24 $abi24 $abi28 $abi12 $abi20 $abi16 $abi16 $abi20 $abi16 $abi16 $abi16 $abi20 $abi20 $abi8 $abi20 $abi16 $abi16 $abi8 $abi8 $abi20 $abi24 $abi20 $abi20 $abi24 $abi24 $abi24 $abi24 $abi8 $abi12 $abi24 $abi20 $abi8 $abi16 $abi40 $abi40 $abi16 $abi20 $abi16 $abi24 $abi24 $abi16 $abi20 $abi28 $abi28 $abi24 $abi28 $abi28 $abi24 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi4 $abi12 $abi8 $abi16 $abi8 $abi8 $abi16 $abi12 $abi8 $abi12 $abi12 $abi8 $abi24 $abi32 $abi16 $abi20 $abi12 $abi24 $abi12 $abi16 $abi20 $abi36 $abi8 $abi28 $abi28 $abi12 $abi24 $abi24 $abi36 $abi28 $abi12 $abi12 $abi12 $abi16 $abi24 $abi24 $abi20 $abi20 $abi12 $abi8 $abi12 $abi12 $abi12 $abi20 $abi8 $abi16 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi8 $abi8 $abi8 $abi12 $abi20 $abi32 $abi52 $abi20 $abi16 $abi16 $abi8 $abi12 $abi12 $abi8 $abi8 $abi12 $abi12 $abi20 $abi20 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi12 $abi12 $abi12 $abi24 $abi12 $abi20 $abi12 $abi20 $abi12 $abi16 $abi16 $abi12 $abi24 $abi8 $abi24 $abi20 $abi20 $abi24 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi20 $abi8 $abi20 $abi20 $abi12 $abi20 $abi16 $abi16 $abi20 $abi12 $abi32 $abi12 $abi12 $abi20 $abi20 $abi12 $abi20 $abi20 $abi28 $abi8 $abi12 $abi16 $abi12 $abi12 $abi8 $abi12 $abi12 $abi8 $abi12 $abi12 $abi48 $abi56 $abi12 $abi16 $abi8 $abi20 $abi20 $abi12 $abi36 $abi36 $abi12 $abi24 $abi24 $abi28 $abi4 $abi8 $abi8 $abi12 $abi32 $abi28 $abi16 $abi16 $abi12 $abi8 $abi8 $abi8 $abi16 $abi24 $abi8 $abi20 $abi8 $abi12 $abi12 $abi8 $abi12 $abi20 $abi16 $abi20 $abi20 $abi12 $abi4 $abi36 $abi20 $abi20 $abi8 $abi12 $abi12 $abi24 $abi20 $abi24 $abi24 $abi24 $abi24 $abi24 $abi16 $abi20 $abi20 $abi16 $abi12 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi8 $abi12 $abi16 $abi12 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi8 $abi8 $abiunknown $abi20 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi4 $abi16 $abi12 $abi20 $abi16 $abi16 $abiunknown $abiunknown $abi12 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi4 $abiunknown $abi8 $abi16 $abi4 $abi16 $abi20 $abi28 $abi8 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi12 $abi20 $abi12 $abi12 $abi28 $abi8 $abi8 $abi8 $abi8 $abi16 $abi16 $abi16 $abi4 $abi8 $abi16 $abi28 $abi8 $abi20 $abi24 $abi24 $abi12 $abi8 $abi8 $abi8 $abi28 $abi8 $abi12 $abi24 $abi4 $abi24 $abi8 $abi32 $abi32 $abi20 $abi56 $abi52 $abi16 $abi20 $abi20 $abi32 $abi16 $abi24 $abi8 $abi8 $abi12 $abi8 $abi20 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi16 $abi12 $abi16 $abi12 $abi8 $abi8 $abi12 $abi16 $abi12 $abi8 $abi8 $abi20 $abi4 $abi28 $abi16 $abi8 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi4 $abi4 $abi16 $abi8 $abi16 $abi20 $abi20 $abi8 $abi8 $abi8 $abi24 $abi24 $abi16 $abi12 $abi16 $abiunknown $abiunknown $abi12 $abi8 $abi12 $abi40 $abi8 $abi24 $abi20 $abi20 $abi36 $abi20 $abi24 $abi8 $abi8 $abi4 $abi16 $abi12 $abi8 $abi8 $abi20 $abi24 $abi12 $abi8 $abi16 $abi4 $abi8 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi4 $abi16 $abi16 $abi20 $abi16 $abi8 $abi8 $abi8 $abi16 $abi20 $abi20 $abi16 $abi24 $abi24 $abi8 $abi16 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi20 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi24 $abi16 $abi24 $abi16 $abi16 $abi20 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi16 $abi8 $abi24 $abi12 $abi8 $abi12 $abi16 $abi16 $abi12 $abi12 $abi24 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi16 $abi24 $abi16 $abi8 $abi8 $abi20 $abi12 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi16 $abi8 $abi8 $abi12 $abi16 $abi20 $abi12 $abi12 $abi12 $abi12 $abi16 $abi24 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi24 $abi8 $abi16 $abi8 $abi8 $abi20 $abi24 $abi12 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi20 $abi16 $abi16 $abi8 $abi8 $abi16 $abi24 $abi12 $abi12 $abi16 $abi20 $abi12 $abi16 $abi24 $abi20 $abi4 $abi16 $abi24 $abi8 $abi12 $abi8 $abi12 $abi4 $abi12 $abi20 $abi20 $abi12 $abi16 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi8 $abi12 $abi16 $abi16 $abi8 $abi8 $abi28 $abi12 $abi12 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi24 $abi8 $abi12 $abi12 $abi16 $abi12 $abi12 $abi24 $abi12 $abi20 $abi12 $abi12 $abi16 $abi16 $abi12 $abi8 $abi8 $abi12 $abi8 $abi12 $abi28 $abi8 $abi24 $abi8 $abi20 $abi20 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi16 $abi12 $abi16 $abi16 $abi16 $abi16 $abi8 $abi8 $abi8 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi16 $abi4 $abi16 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi12 $abi12 $abi12 $abi12 $abiunknown $abi16 $abi12 $abi12 $abi12 $abi12 $abi8 $abi12 $abi16 $abi12 $abi16 $abi8 $abi12 $abi32 $abi20 $abi16 $abi8 $abi28 $abi8 $abi12 $abi24 $abi4 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi8 $abi28 $abi28 $abi16 $abi8 $abi8 $abi16 $abi8 $abi28 $abi32 $abi16 $abi12 $abi12 $abi28 $abi24 $abi24 $abi28 $abi16 $abi24 $abi20 $abi16 $abi20 $abi20 $abi24 $abi20 $abi16 $abi12 $abi16 $abi28 $abi28 $abi24 $abi20 $abi24 $abi20 $abi16 $abi16 $abi32 $abi16 $abi24 $abi28 $abi24 $abi16 $abi24 $abi24 $abi20 $abi16 $abi16 $abi16 $abi24 $abi16 $abi16 $abi8 $abi8 $abi20 $abi32 $abi24 $abi24 $abi20 $abi20 $abi28 $abi24 $abi24 $abi20 $abi20 $abi24 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi20 $abi24 $abi16 $abi16 $abi12 $abi8 $abi28 $abi28 $abi20 $abi16 $abi8 $abi16 $abi12 $abi12 $abi12 $abi8 $abi12 $abi8 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi20 $abi8 $abi8 $abi8 $abi24 $abi8 $abi8 $abi12 $abi8 $abi12 $abi8 $abi8 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi12 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi16 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi4 $abi4 $abi16 $abi20 $abi16 $abi16 $abi16 $abi16 $abi20 $abi4 $abi8 $abi8 $abi12 $abi8 $abi8 $abi24 $abi24 $abi16 $abi16 $abi20 $abi4 $abi12 $abi4 $abi12 $abi12 $abi12 $abi8 $abi28 $abi20 $abi28 $abi12 $abi8 $abi16 $abi16 $abi8 $abi8 $abi24 $abi12 $abi12 $abi16 $abi16 $abi16 $abi12 $abi24 $abi20 $abi20 $abi36 $abi36 $abi52 $abi52 $abi16 $abi8 $abi12 $abi8 $abi8 $abi24 $abi24 $abi8 $abi8 $abi16 $abi16 $abi24 $abi24 $abi8 $abi20 $abi28 $abi16 $abi8 $abi8 $abi28 $abi28 $abi8 $abi16 $abi28 $abi28 $abi16 $abi16 $abi8 $abi8 $abi20 $abi20 $abi24 $abi16 $abi28 $abi12 $abi8 $abi28 $abi28 $abi16 $abi12 $abi16 $abi8 $abi8 $abi28 $abi28 $abi28 $abi32 $abi24 $abi24 $abi12 $abi8 $abi24 $abi12 $abi16 $abi24 $abi12 $abi16 $abi16 $abi8 $abi8 $abi4 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi12 $abi16 $abi20 $abi16 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi12 $abi16 $abi20 $abi20 $abi16 $abi32 $abi12 $abi8 $abi8 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi8 $abi12 $abi12 $abi16 $abi12 $abi8 $abi32 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi12 $abi12 $abi20 $abi16 $abi8 $abi8 $abi48 $abi32 $abi24 $abi12 $abi20 $abi20 $abi24 $abi20 $abi20 $abi16 $abi8 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi12 $abi20 $abi8 $abi20 $abi28 $abi16 $abi12 $abi12 $abi16 $abi52 $abi16 $abi16 $abi20 $abi12 $abi20 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi8 $abi8 $abi20 $abi20 $abi24 $abi32 $abi32 $abi32 $abi8 $abi12 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi24 $abi16 $abi12 $abi12 $abi12 $abi20 $abi16 $abi16 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi12 $abi16 $abi12 $abi24 $abi24 $abi24 $abi20 $abi16 $abi12 $abi12 $abi20 $abi20 $abi12 $abi16 $abi16 $abi20 $abi28 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi8 $abi12 $abi12 $abi12 $abi16 $abi16 $abi12 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi16 $abi12 $abi8 $abi16 $abi20 $abi16 $abi20 $abi12 $abi8 $abi16 $abi16 $abi8 $abi16 $abi8 $abi28 $abi16 $abi16 $abi16 $abi8 $abi16 $abi20 $abi8 $abi16 $abi12 $abi12 $abi16 $abi20 $abi20 $abi28 $abi12 $abi20 $abi12 $abi20 $abi24 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi16 $abi12 $abi12 $abi8 $abi8 $abi12 $abi8 $abi28 $abi40 $abi40 $abi8 $abi8 $abi16 $abi8 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abi20 $abi20 $abiunknown $abi32 $abi20 $abi16 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abi12 $abi8 $abi20 $abi8 $abi12 $abi12 $abi12 $abi8 $abi28 $abi4 $abi8 $abi12 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi28 $abi28 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi4 $abi16 $abi16 $abi16 $abi16 $abi24 $abi8 $abi40 $abi8 $abi8 $abi8 $abi16 $abi32 $abi16 $abi12 $abi8 $abi16 $abi24 $abi8 $abi16 $abi8 $abi20 $abi12 $abi16 $abi28 $abi12 $abi12 $abiunknown $abiunknown $abi16 $abi16 $abi8 $abi16 $abi8 $abi8 $abi32 $abi20 $abi24 $abi24 $abi20 $abi20 $abi20 $abi32 $abi20 $abi28 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi16 $abi8 $abi32 $abi8 $abi24 $abi16 $abi8 $abi8 $abi20 $abi12 $abi16 $abi8 $abi8 $abi8 $abi4 $abi8 $abi12 $abi8 $abi4 $abi16 $abi8 $abi8 $abi8 $abi16 $abi12 $abi16 $abi8 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi20 $abi16 $abi20 $abi24 $abi16 $abi8 $abi16 $abi16 $abi12 $abi12 $abi20 $abi12 $abi16 $abi12 $abi12 $abi12 $abi16 $abi16 $abi20 $abi12 $abi16 $abi8 $abi8 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi16 $abi32 $abi20 $abi12 $abi20 $abi16 $abi8 $abi28 $abi24 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi20 $abi24 $abi16 $abi16 $abi16 $abi16 $abi24 $abi24 $abi8 $abi24 $abi8 $abi28 $abi24 $abi28 $abi16 $abi16 $abi12 $abi28 $abi32 $abi24 $abi16 $abi16 $abi20 $abi40 $abi8 $abi28 $abi12 $abi16 $abi24 $abi16 $abi16 $abi16 $abi20 $abi8 $abi36 $abi8 $abi8 $abi20 $abi12 $abi48 $abi16 $abi8 $abi12 $abi16 $abi8 $abi28 $abi20 $abi20 $abi20 $abi12 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi20 $abi16 $abi24 $abi16 $abi28 $abi32 $abi32 $abi28 $abi24 $abi20 $abi12 $abi32 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi12 $abi20 $abi20 $abi12 $abi16 $abi16 $abi8 $abi12 $abi24 $abi24 $abi16 $abi12 $abi20 $abi16 $abi40 $abi44 $abi36 $abi32 $abi32 $abi40 $abi40 $abi24 $abi16 $abi16 $abi16 $abi28 $abi20 $abi32 $abi16 $abi16 $abi12 $abi12 $abi8 $abi8 $abi32 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi16 $abi16 $abi20 $abi20 $abi20 $abi20 $abi12 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi12 $abi8 $abi20 $abi32 $abi24 $abi40 $abi32 $abi16 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi24 $abi24 $abi16 $abi16 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi16 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi16 $abi12 $abi20 $abi8 $abi12 $abi12 $abi24 $abi24 $abi24 $abi12 $abi8 $abi8 $abi24 $abi20 $abi16 $abi12 $abi12 $abi20 $abi12 $abi8 $abi24 $abi16 $abi16 $abi16 $abi32 $abi20 $abi8 $abi12 $abi8 $abi16 $abi24 $abi12 $abi36 $abi36 $abiunknown $abi16 $abi16 $abi8 $abi12 $abiunknown $abiunknown $abi12 $abi12 $abi8 $abi20 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi4 $abi4 $abi12 $abi8 $abi8 $abi12 $abi32 $abi20 $abi8 $abi20 $abi8 $abi4 $abi16 $abi8 $abi20 $abi8 $abi8 $abi12 $abi12 $abi16 $abi8 $abi28 $abi4 $abi8 $abi8 $abi28 $abi4 $abi4 $abi20 $abi16 $abi16 $abi12 $abi12 $abi16 $abi40 $abi16 $abi40 $abi8 $abi8 $abi8 $abi12 $abi12 $abi20 $abi16 $abi12 $abi16 $abi16 $abi8 $abi8 $abi4 $abi16 $abi4 $abi4 $abi8 $abi24 $abi8 $abi20 $abi20 $abi12 $abi20 $abi20 $abi20 $abi16 $abi24 $abi12 $abi12 $abi8 $abi8 $abi32 $abi12 $abi12 $abi16 $abi12 $abi32 $abi8 $abi16 $abi20 $abi16 $abi20 $abi16 $abi16 $abi8 $abi12 $abi28 $abi12 $abi12 $abi8 $abi12 $abi8 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi16 $abi60 $abi8 $abi28 $abi8 $abi24 $abi12 $abi12 $abi12 $abi8 $abi8 $abi24 $abi20 $abi16 $abi28 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi4 $abi16 $abi8 $abi8 $abi28 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi20 $abi4 $abi16 $abi20 $abi24 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi16 $abi16 $abi16 $abi36 $abi24 $abi16 $abi24 $abi8 $abi20 $abi8 $abi12 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi4 $abi4 $abi4 $abi24 $abi8 $abi8 $abi16 $abi16 $abi8 $abi12 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi8 $abi8 $abi16 $abi20 $abi16 $abi36 $abi8 $abi8 $abi24 $abi12 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi20 $abi24 $abi12 $abi4 $abi12 $abi32 $abi12 $abi8 $abi32 $abi8 $abi32 $abi8 $abi12 $abi8 $abi16 $abi20 $abi4 $abi4 $abi12 $abi8 $abi8 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi20 $abi12 $abiunknown $abi12 $abi4 $abi8 $abi56 $abi20 $abi40 $abi32 $abi20 $abi12 $abi12 $abiunknown $abiunknown $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi24 $abi16 $abi20 $abi12 $abi8 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi16 $abi16 $abi12 $abi12 $abi16 $abi16 $abi12 $abi12 $abi12 $abi8 $abi4 $abi12 $abi12 $abi12 $abi8 $abi16 $abi16 $abi16 $abi16 $abi8 $abi16 $abi8 $abi8 $abi24 $abi12 $abi12 $abi16 $abi12 $abi16 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi16 $abi16 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi8 $abi16 $abi16 $abi12 $abi12 $abi12 $abi24 $abi16 $abi20 $abi20 $abi12 $abi12 $abi20 $abi16 $abi12 $abi8 $abi20 $abi16 $abi16 $abi8 $abi12 $abi4 $abi8 $abi4 $abi16 $abi12 $abi8 $abi24 $abi24 $abi16 $abi20 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi24 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi8 $abi8 $abi24 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi8 $abi12 $abi20 $abi20 $abi8 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi20 $abi28 $abi16 $abi16 $abi8 $abi16 $abi16 $abi16 $abi16 $abi44 $abi28 $abi16 $abi20 $abi24 $abi16 $abi16 $abi12 $abi8 $abi8 $abi20 $abi16 $abi36 $abi8 $abi16 $abi4 $abi8 $abi8 $abi16 $abi12 $abi28 $abi8 $abi8 $abi20 $abi24 $abi12 $abi20 $abi20 $abi24 $abi8 $abi20 $abi20 $abi20 $abi12 $abi8 $abi8 $abi12 $abi16 $abi16 $abi20 $abi20 $abi8 $abi8 $abi16 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi20 $abi12 $abi20 $abi16 $abi28 $abi32 $abi28 $abi28 $abi20 $abi12 $abi32 $abi24 $abi24 $abi16 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi20 $abi12 $abi16 $abi12 $abi24 $abi20 $abi12 $abi16 $abi12 $abi36 $abi40 $abi32 $abi28 $abi28 $abi32 $abi28 $abi24 $abi28 $abi16 $abi12 $abi16 $abi12 $abi12 $abi8 $abi8 $abi32 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi16 $abi20 $abi20 $abi12 $abi20 $abi16 $abi16 $abi12 $abi12 $abi20 $abi28 $abi24 $abi40 $abi28 $abi24 $abi12 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi12 $abi8 $abi16 $abi4 $abi8 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi16 $abi24 $abi12 $abi12 $abi16 $abi28 $abi28 $abi24 $abi16 $abi8 $abi8 $abi12 $abi20 $abi20 $abi16 $abi8 $abi8 $abi16 $abi20 $abi16 $abi8 $abi16 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi32 $abi32 $abi28 $abi16 $abi28 $abi8 $abi20 $abi20 $abi20 $abi12 $abi12 $abi24 $abi16 $abiunknown $abi8 $abi16 $abi16 $abi20 $abi24 $abi24 $abi8 $abi20 $abi20 $abi16 $abi16 $abi20 $abi20 $abi20 $abi16 $abi16 $abi20 $abi36 $abi12 $abi12 $abi16 $abi32 $abi8 $abi8 $abi20 $abi16 $abi16 $abi32 $abi20 $abi8 $abi4 $abi4 $abi24 $abi20 $abi4 $abi4 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi16 $abi12 $abi20 $abi8 $abi8 $abi16 $abi8 $abi12 $abi8 $abi20 $abi12 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi32 $abi32 $abi32 $abi20 $abi12 $abi12 $abi8 $abi20 $abi12 $abi16 $abi24 $abi24 $abi24 $abi12 $abi20 $abi24 $abi36 $abi12 $abi20 $abi16 $abi16 $abi16 $abi16 $abi24 $abi36 $abi36 $abi8 $abi20 $abi24 $abi12 $abi36 $abi8 $abi12 $abi16 $abi4 $abi8 $abi16 $abi16 $abi16 $abi28 $abi44 $abi44 $abi16 $abi16 $abi12 $abi24 $abi20 $abi24 $abiunknown $abi16 $abi20 $abi20 $abi8 $abi28 $abi8 $abi16 $abi8 $abi8 $abi20 $abi32 $abi16 $abi12 $abi12 $abi24 $abiunknown $abiunknown $abi24 $abi8 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi4 $abi8 $abiunknown $abiunknown $abiunknown $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi8 $abi8 $abi8 $abi8 $abi32 $abi32 $abi24 $abi24 $abi24 $abi24 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi32 $abi32 $abi16 $abi16 $abi8 $abi8 $abi8 $abi8 $abi20 $abi20 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi16 $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi28 $abi28 $abi12 $abi12 $abi8 $abi8 $abi28 $abi28 $abi12 $abi12 $abi32 $abi32 $abi36 $abi36 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi16 $abi16 $abi8 $abi8 $abi16 $abi16 $abi20 $abi20 $abi16 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi4 $abi4 $abi20 $abi20 $abi16 $abi16 $abi20 $abi20 $abi12 $abi12 $abi12 $abi12 $abi20 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi8 $abi8 $abi4 $abi8 $abi8 $abi12 $abi12 $abi40 $abi40 $abi16 $abi20 $abi24 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi28 $abi20 $abi32 $abi32 $abi20 $abi8 $abi12 $abi24 $abi20 $abi24 $abi24 $abi32 $abi24 $abi16 $abi16 $abi12 $abi16 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi24 $abi12 $abi8 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi24 $abi16 $abi16 $abi16 $abi16 $abi28 $abi16 $abi8 $abi8 $abi12 $abi16 $abi12 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi24 $abi28 $abi16 $abi20 $abi20 $abi24 $abi20 $abi20 $abi20 $abi16 $abi12 $abi12 $abi20 $abi24 $abi20 $abi20 $abi16 $abi16 $abi16 $abi16 $abi28 $abi20 $abi24 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi12 $abi12 $abi44 $abi40 $abi44 $abi16 $abi12 $abiunknown $abi12 $abi8 $abi16 $abi28 $abi12 $abi20 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abiunknown $abi8 $abi12 $abi12 $abi12 $abi8 $abi16 $abi8 $abi8 $abi16 $abi8 $abi28 $abi32 $abi16 $abi12 $abi12 $abi28 $abi24 $abi24 $abi28 $abi16 $abi24 $abi20 $abi16 $abi20 $abi20 $abi24 $abi20 $abi16 $abi12 $abi16 $abi28 $abi28 $abi24 $abi20 $abi24 $abi20 $abi16 $abi16 $abi32 $abi16 $abi24 $abi28 $abi24 $abi16 $abi24 $abi24 $abi20 $abi16 $abi16 $abi16 $abi24 $abi16 $abi16 $abi16 $abi44 $abi28 $abi16 $abi20 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi4 $abi12 $abi4 $abi12 $abi16 $abi4 $abi16 $abi20 $abi12 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi8 $abi36 $abi36 $abi44 $abi44 $abi12 $abi16 $abi8 $abi8 $abi20 $abi32 $abi24 $abi24 $abi20 $abi20 $abi28 $abi24 $abi24 $abi20 $abi20 $abi24 $abi24 $abi16 $abi16 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi16 $abi32 $abi8 $abi16 $abi20 $abi12 $abi8 $abi8 $abi12 $abi16 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi16 $abi16 $abi8 $abi16 $abi8 $abi20 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi28 $abi28 $abi24 $abi32 $abi36 $abi28 $abi36 $abi12 $abi24 $abi8 $abi12 $abi8 $abi4 $abi12 $abi8 $abi8 $abi8 $abi20 $abi8 $abi12 $abi8 $abi16 $abi24 $abi8 $abi12 $abi16 $abi12 $abi8 $abi12 $abi12 $abi20 $abi16 $abi16 $abi12 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi24 $abi20 $abi20 $abi16 $abi16 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi16 $abi8 $abi8 $abi16 $abi16 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi36 $abi28 $abi60 $abi44 $abi24 $abi16 $abi44 $abi28 $abi16 $abi12 $abi12 $abi12 $abi20 $abi12 $abi24 $abi12 $abi8 $abi8 $abi12 $abi16 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi8 $abi4 $abi4 $abi16 $abi8 $abi8 $abi20 $abi8 $abi12 $abi8 $abi12 $abi8 $abi12 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi16 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi36 $abi12 $abi20 $abi12 $abi20 $abi12 $abi20 $abi12 $abi8 $abi28 $abi12 $abi16 $abi8 $abi16 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi12 $abi8 $abi12 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi16 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi16 $abi16 $abi20 $abi16 $abi16 $abi36 $abi16 $abi16 $abi32 $abi28 $abi4 $abi20 $abi8 $abi8 $abi12 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi4 $abi4 $abi12 $abi16 $abi12 $abi8 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi24 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi8 $abi24 $abi12 $abi24 $abi24 $abi16 $abi8 $abi8 $abi16 $abi16 $abi8 $abi8 $abi36 $abi32 $abi20 $abi12 $abi12 $abi40 $abi40 $abi28 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi20 $abi28 $abi16 $abi16 $abi24 $abi16 $abi12 $abi16 $abi20 $abi20 $abi24 $abi8 $abi8 $abi4 $abi4 $abi48 $abi24 $abi24 $abi24 $abi16 $abi20 $abi36 $abi32 $abi4 $abi8 $abi8 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi32 $abi32 $abi28 $abi28 $abi28 $abiunknown $abi16 $abi16 $abi8 $abi4 $abi16 $abi20 $abi36 $abi16 $abi12 $abi20 $abi20 $abi24 $abi8 $abi8 $abi8 $abi12 $abi4 $abiunknown $abiunknown $abiunknown $abiunknown $abi12 $abi12 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi12 $abi8 $abi40 $abiunknown $abiunknown $abi20 $abi32 $abiunknown $abi16 $abi20 $abi12 $abi8 $abi12 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi12 $abi12 $abi4 $abi8 $abi12 $abi12 $abi28 $abi16 $abi8 $abi12 $abi12 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi12 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi16 $abi16 $abi16 $abi8 $abi8 $abi8 $abi16 $abi16 $abi16 $abi12 $abi12 $abi28 $abi20 $abi28 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi24 $abi16 $abi16 $abi20 $abi36 $abi28 $abi28 $abi16 $abi20 $abi20 $abi16 $abi16 $abi12 $abi12 $abi12 $abi4 $abi16 $abi36 $abi20 $abi24 $abi20 $abi16 $abi16 $abi12 $abi16 $abi8 $abi16 $abi16 $abi12 $abiunknown $abi8 $abi8 $abiunknown $abiunknown $abi8 $abi28 $abi8 $abi16 $abi12 $abi32 $abi8 $abi8 $abiunknown (local.get $id))
+      (br_table $abi4 $abiunknown $abi8 $abi20 $abi16 $abi20 $abi20 $abi40 $abi40 $abi12 $abi8 $abi12 $abi40 $abi8 $abi12 $abi20 $abi24 $abi24 $abi12 $abi8 $abi8 $abi12 $abi8 $abi16 $abi16 $abi24 $abi20 $abi16 $abi8 $abi12 $abi8 $abi4 $abi8 $abi8 $abi24 $abi8 $abi12 $abi8 $abi8 $abi4 $abi20 $abi4 $abi12 $abi28 $abi28 $abi16 $abi16 $abi16 $abi12 $abi12 $abi4 $abi24 $abi16 $abi8 $abi24 $abi20 $abi20 $abi12 $abi28 $abi28 $abi24 $abi24 $abi24 $abi12 $abi12 $abi20 $abi20 $abi32 $abi28 $abi32 $abi60 $abi8 $abi8 $abi60 $abi8 $abi12 $abi20 $abi20 $abi4 $abi8 $abi16 $abi8 $abi8 $abi16 $abi20 $abi16 $abi44 $abi44 $abi20 $abi8 $abi20 $abi8 $abi28 $abi52 $abi52 $abi16 $abi24 $abi20 $abi20 $abi20 $abi36 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi24 $abi24 $abi8 $abi8 $abi8 $abi12 $abi8 $abi20 $abi20 $abi12 $abi8 $abi24 $abi24 $abi32 $abi24 $abi16 $abi16 $abi12 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi16 $abi24 $abi20 $abi20 $abi12 $abi12 $abi24 $abi24 $abi8 $abi8 $abi24 $abi24 $abi16 $abi36 $abi16 $abi16 $abi12 $abi12 $abi24 $abi24 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi20 $abi20 $abi16 $abi8 $abi12 $abi12 $abi8 $abi32 $abi32 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi8 $abi8 $abi8 $abi12 $abi4 $abi8 $abi20 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi8 $abi4 $abi4 $abi4 $abi12 $abi12 $abi4 $abi12 $abi12 $abi12 $abi12 $abi4 $abi4 $abi4 $abi4 $abi8 $abi8 $abi16 $abi12 $abi20 $abi32 $abi28 $abi4 $abi12 $abi4 $abi24 $abi24 $abi8 $abi12 $abi20 $abi20 $abi20 $abi8 $abi8 $abi4 $abi4 $abi4 $abi16 $abi12 $abi12 $abi8 $abi8 $abi12 $abi12 $abi20 $abi16 $abi8 $abi4 $abi4 $abi20 $abi20 $abi16 $abi8 $abi8 $abi8 $abi4 $abi8 $abi8 $abi20 $abi20 $abi4 $abi8 $abi8 $abi4 $abi8 $abi12 $abi20 $abi16 $abi24 $abi20 $abi4 $abi4 $abi20 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi12 $abi4 $abi16 $abi8 $abi16 $abi8 $abi20 $abi8 $abi16 $abi8 $abi20 $abi20 $abi28 $abi28 $abi12 $abi4 $abi8 $abi16 $abi16 $abi24 $abi12 $abi12 $abi8 $abi8 $abi16 $abi12 $abi20 $abi4 $abi16 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi24 $abi24 $abi20 $abi12 $abi8 $abi8 $abi12 $abi12 $abi8 $abi20 $abi8 $abi8 $abi24 $abi24 $abi20 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi20 $abi20 $abi20 $abi20 $abi16 $abi12 $abi12 $abi4 $abi4 $abi28 $abi8 $abi8 $abi16 $abi4 $abi4 $abi4 $abi8 $abi8 $abi12 $abi12 $abi36 $abi36 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi8 $abi16 $abi12 $abi12 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi40 $abi16 $abi12 $abi16 $abi8 $abi16 $abi20 $abi16 $abi16 $abi12 $abi4 $abi16 $abi8 $abi8 $abi24 $abi8 $abi12 $abi8 $abi24 $abi16 $abi16 $abi16 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi8 $abi4 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi12 $abi28 $abi28 $abi16 $abi8 $abi28 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi28 $abi8 $abi8 $abi12 $abi12 $abi12 $abi20 $abi20 $abi12 $abi12 $abi8 $abi8 $abi16 $abi8 $abi24 $abi8 $abi8 $abi12 $abi24 $abi12 $abi20 $abi8 $abi20 $abi20 $abi24 $abi12 $abi16 $abi16 $abi12 $abi20 $abi28 $abi24 $abi16 $abi28 $abi16 $abi16 $abi16 $abi20 $abi20 $abi8 $abi4 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi28 $abi8 $abi8 $abi20 $abi24 $abi24 $abi28 $abi12 $abi20 $abi16 $abi16 $abi20 $abi16 $abi16 $abi16 $abi20 $abi20 $abi8 $abi20 $abi16 $abi16 $abi8 $abi8 $abi20 $abi24 $abi20 $abi20 $abi24 $abi24 $abi24 $abi24 $abi8 $abi12 $abi24 $abi20 $abi8 $abi16 $abi40 $abi40 $abi16 $abi20 $abi16 $abi24 $abi24 $abi16 $abi20 $abi28 $abi28 $abi24 $abi28 $abi28 $abi24 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi4 $abi12 $abi8 $abi16 $abi8 $abi8 $abi16 $abi12 $abi8 $abi12 $abi12 $abi8 $abi24 $abi32 $abi16 $abi20 $abi12 $abi24 $abi12 $abi16 $abi20 $abi36 $abi8 $abi28 $abi28 $abi12 $abi24 $abi24 $abi36 $abi28 $abi12 $abi12 $abi12 $abi16 $abi24 $abi24 $abi20 $abi20 $abi12 $abi8 $abi12 $abi12 $abi12 $abi20 $abi8 $abi16 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi8 $abi8 $abi8 $abi12 $abi20 $abi32 $abi52 $abi20 $abi16 $abi16 $abi8 $abi12 $abi12 $abi8 $abi8 $abi12 $abi12 $abi20 $abi20 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi12 $abi12 $abi12 $abi24 $abi12 $abi20 $abi12 $abi20 $abi12 $abi16 $abi16 $abi12 $abi24 $abi8 $abi24 $abi20 $abi20 $abi24 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi20 $abi8 $abi20 $abi20 $abi12 $abi20 $abi16 $abi16 $abi20 $abi12 $abi32 $abi12 $abi12 $abi20 $abi20 $abi12 $abi20 $abi20 $abi28 $abi8 $abi12 $abi16 $abi12 $abi12 $abi8 $abi12 $abi12 $abi8 $abi12 $abi12 $abi48 $abi56 $abi12 $abi16 $abi8 $abi20 $abi20 $abi12 $abi36 $abi36 $abi12 $abi24 $abi24 $abi28 $abi4 $abi8 $abi8 $abi12 $abi32 $abi28 $abi16 $abi16 $abi12 $abi8 $abi8 $abi8 $abi16 $abi24 $abi8 $abi20 $abi8 $abi12 $abi12 $abi8 $abi12 $abi20 $abi16 $abi20 $abi20 $abi12 $abi4 $abi36 $abi20 $abi20 $abi8 $abi12 $abi12 $abi24 $abi20 $abi24 $abi24 $abi24 $abi24 $abi24 $abi16 $abi20 $abi20 $abi16 $abi12 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi8 $abi12 $abi16 $abi12 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi8 $abi8 $abiunknown $abi20 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi4 $abi16 $abi12 $abi20 $abi16 $abi16 $abiunknown $abiunknown $abi12 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi4 $abiunknown $abi8 $abi16 $abi4 $abi16 $abi20 $abi28 $abi8 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi12 $abi20 $abi12 $abi12 $abi28 $abi8 $abi8 $abi8 $abi8 $abi16 $abi16 $abi16 $abi4 $abi8 $abi16 $abi28 $abi8 $abi20 $abi24 $abi24 $abi12 $abi8 $abi8 $abi8 $abi28 $abi8 $abi12 $abi24 $abi4 $abi24 $abi8 $abi32 $abi32 $abi20 $abi56 $abi52 $abi16 $abi20 $abi20 $abi32 $abi16 $abi24 $abi8 $abi8 $abi12 $abi8 $abi20 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi16 $abi12 $abi16 $abi12 $abi8 $abi8 $abi12 $abi16 $abi12 $abi8 $abi8 $abi20 $abi4 $abi28 $abi16 $abi8 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi4 $abi4 $abi16 $abi8 $abi16 $abi20 $abi20 $abi8 $abi8 $abi8 $abi24 $abi24 $abi16 $abi12 $abi16 $abiunknown $abiunknown $abi12 $abi8 $abi12 $abi40 $abi8 $abi24 $abi20 $abi20 $abi36 $abi20 $abi24 $abi8 $abi8 $abi4 $abi16 $abi12 $abi8 $abi8 $abi20 $abi24 $abi12 $abi8 $abi16 $abi4 $abi8 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi4 $abi16 $abi16 $abi20 $abi16 $abi8 $abi8 $abi8 $abi16 $abi20 $abi20 $abi16 $abi24 $abi24 $abi8 $abi16 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi20 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi24 $abi16 $abi24 $abi16 $abi16 $abi20 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi16 $abi8 $abi24 $abi12 $abi8 $abi12 $abi16 $abi16 $abi12 $abi12 $abi24 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi16 $abi24 $abi16 $abi8 $abi8 $abi20 $abi12 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi16 $abi8 $abi8 $abi12 $abi16 $abi20 $abi12 $abi12 $abi12 $abi12 $abi16 $abi24 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi24 $abi8 $abi16 $abi8 $abi8 $abi20 $abi24 $abi12 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi20 $abi16 $abi16 $abi8 $abi8 $abi16 $abi24 $abi12 $abi12 $abi16 $abi20 $abi12 $abi16 $abi24 $abi20 $abi4 $abi16 $abi24 $abi8 $abi12 $abi8 $abi12 $abi4 $abi12 $abi20 $abi20 $abi12 $abi16 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi8 $abi12 $abi16 $abi16 $abi8 $abi8 $abi28 $abi12 $abi12 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi24 $abi8 $abi12 $abi12 $abi16 $abi12 $abi12 $abi24 $abi12 $abi20 $abi12 $abi12 $abi16 $abi16 $abi12 $abi8 $abi8 $abi12 $abi8 $abi12 $abi28 $abi8 $abi24 $abi8 $abi20 $abi20 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi16 $abi12 $abi16 $abi16 $abi16 $abi16 $abi8 $abi8 $abi8 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi24 $abi16 $abi4 $abi16 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi12 $abi12 $abi12 $abi12 $abiunknown $abi16 $abi12 $abi12 $abi12 $abi12 $abi8 $abi12 $abi16 $abi12 $abi16 $abi8 $abi12 $abi32 $abi20 $abi16 $abi8 $abi28 $abi8 $abi12 $abi24 $abi4 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi8 $abi28 $abi28 $abi16 $abi8 $abi8 $abi16 $abi8 $abi28 $abi32 $abi16 $abi12 $abi12 $abi28 $abi24 $abi24 $abi28 $abi16 $abi24 $abi20 $abi16 $abi20 $abi20 $abi24 $abi20 $abi16 $abi12 $abi16 $abi28 $abi28 $abi24 $abi20 $abi24 $abi20 $abi16 $abi16 $abi32 $abi16 $abi24 $abi28 $abi24 $abi16 $abi24 $abi24 $abi20 $abi16 $abi16 $abi16 $abi24 $abi16 $abi16 $abi8 $abi8 $abi20 $abi32 $abi24 $abi24 $abi20 $abi20 $abi28 $abi24 $abi24 $abi20 $abi20 $abi24 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi20 $abi24 $abi16 $abi16 $abi12 $abi8 $abi28 $abi28 $abi20 $abi16 $abi8 $abi16 $abi12 $abi12 $abi12 $abi8 $abi12 $abi8 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi20 $abi8 $abi8 $abi8 $abi24 $abi8 $abi8 $abi12 $abi8 $abi12 $abi8 $abi8 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi12 $abi8 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi16 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi4 $abi4 $abi16 $abi20 $abi16 $abi16 $abi16 $abi16 $abi20 $abi4 $abi8 $abi8 $abi12 $abi8 $abi8 $abi24 $abi24 $abi16 $abi16 $abi20 $abi4 $abi12 $abi4 $abi12 $abi12 $abi12 $abi8 $abi28 $abi20 $abi28 $abi12 $abi8 $abi16 $abi16 $abi8 $abi8 $abi24 $abi12 $abi12 $abi16 $abi16 $abi16 $abi12 $abi24 $abi20 $abi20 $abi36 $abi36 $abi52 $abi52 $abi16 $abi8 $abi12 $abi8 $abi8 $abi24 $abi24 $abi8 $abi8 $abi16 $abi16 $abi24 $abi24 $abi8 $abi20 $abi28 $abi16 $abi8 $abi8 $abi28 $abi28 $abi8 $abi16 $abi28 $abi28 $abi16 $abi16 $abi8 $abi8 $abi20 $abi20 $abi24 $abi16 $abi28 $abi12 $abi8 $abi28 $abi28 $abi16 $abi12 $abi16 $abi8 $abi8 $abi28 $abi28 $abi28 $abi32 $abi24 $abi24 $abi12 $abi8 $abi24 $abi12 $abi16 $abi24 $abi12 $abi16 $abi16 $abi8 $abi8 $abi4 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi12 $abi16 $abi20 $abi16 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi12 $abi16 $abi20 $abi20 $abi16 $abi32 $abi12 $abi8 $abi8 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi8 $abi12 $abi12 $abi16 $abi12 $abi8 $abi32 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi12 $abi12 $abi20 $abi16 $abi8 $abi8 $abi48 $abi32 $abi24 $abi12 $abi20 $abi20 $abi24 $abi20 $abi20 $abi16 $abi8 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi12 $abi20 $abi8 $abi20 $abi28 $abi16 $abi12 $abi12 $abi16 $abi52 $abi16 $abi16 $abi20 $abi12 $abi20 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi8 $abi8 $abi20 $abi20 $abi24 $abi32 $abi32 $abi32 $abi8 $abi12 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi24 $abi16 $abi12 $abi12 $abi12 $abi20 $abi16 $abi16 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi12 $abi16 $abi12 $abi24 $abi24 $abi24 $abi20 $abi16 $abi12 $abi12 $abi20 $abi20 $abi12 $abi16 $abi16 $abi20 $abi28 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi8 $abi12 $abi12 $abi12 $abi16 $abi16 $abi12 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abi16 $abi12 $abi8 $abi16 $abi20 $abi16 $abi20 $abi12 $abi8 $abi16 $abi16 $abi8 $abi16 $abi8 $abi28 $abi16 $abi16 $abi16 $abi8 $abi16 $abi20 $abi8 $abi16 $abi12 $abi12 $abi16 $abi20 $abi20 $abi28 $abi12 $abi20 $abi12 $abi20 $abi24 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi16 $abi12 $abi12 $abi8 $abi8 $abi12 $abi8 $abi28 $abi40 $abi40 $abi8 $abi8 $abi16 $abi8 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abi20 $abi20 $abiunknown $abi32 $abi20 $abi16 $abi16 $abi16 $abiunknown $abiunknown $abiunknown $abi12 $abi8 $abi20 $abi8 $abi12 $abi12 $abi12 $abi8 $abi28 $abi4 $abi8 $abi12 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi28 $abi28 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi4 $abi16 $abi16 $abi16 $abi16 $abi24 $abi8 $abi40 $abi8 $abi8 $abi8 $abi16 $abi32 $abi16 $abi12 $abi8 $abi16 $abi24 $abi8 $abi16 $abi8 $abi20 $abi12 $abi16 $abi28 $abi12 $abi12 $abiunknown $abiunknown $abi16 $abi16 $abi8 $abi16 $abi8 $abi8 $abi32 $abi20 $abi24 $abi24 $abi20 $abi20 $abi20 $abi32 $abi20 $abi28 $abi16 $abi8 $abi8 $abi20 $abi12 $abi8 $abi12 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi16 $abi8 $abi32 $abi8 $abi24 $abi16 $abi8 $abi8 $abi20 $abi12 $abi16 $abi8 $abi8 $abi8 $abi4 $abi8 $abi12 $abi8 $abi4 $abi16 $abi8 $abi8 $abi8 $abi16 $abi12 $abi16 $abi8 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi20 $abi16 $abi20 $abi24 $abi16 $abi8 $abi16 $abi16 $abi12 $abi12 $abi20 $abi12 $abi16 $abi12 $abi12 $abi12 $abi16 $abi16 $abi20 $abi12 $abi16 $abi8 $abi8 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi16 $abi32 $abi20 $abi12 $abi20 $abi16 $abi8 $abi28 $abi24 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi20 $abi24 $abi16 $abi16 $abi16 $abi16 $abi24 $abi24 $abi8 $abi24 $abi8 $abi28 $abi24 $abi28 $abi16 $abi16 $abi12 $abi28 $abi32 $abi24 $abi16 $abi16 $abi20 $abi40 $abi8 $abi28 $abi12 $abi16 $abi24 $abi16 $abi16 $abi16 $abi20 $abi8 $abi36 $abi8 $abi8 $abi20 $abi12 $abi48 $abi16 $abi8 $abi12 $abi16 $abi8 $abi28 $abi20 $abi20 $abi20 $abi12 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi20 $abi16 $abi24 $abi16 $abi28 $abi32 $abi32 $abi28 $abi24 $abi20 $abi12 $abi32 $abi16 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi12 $abi20 $abi20 $abi12 $abi16 $abi16 $abi8 $abi12 $abi24 $abi24 $abi16 $abi12 $abi20 $abi16 $abi40 $abi44 $abi36 $abi32 $abi32 $abi40 $abi40 $abi24 $abi16 $abi16 $abi16 $abi28 $abi20 $abi32 $abi16 $abi16 $abi12 $abi12 $abi8 $abi8 $abi32 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi16 $abi16 $abi20 $abi20 $abi20 $abi20 $abi12 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi12 $abi8 $abi20 $abi32 $abi24 $abi40 $abi32 $abi16 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi24 $abi24 $abi16 $abi16 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi16 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi16 $abi12 $abi20 $abi8 $abi12 $abi12 $abi24 $abi24 $abi24 $abi12 $abi8 $abi8 $abi24 $abi20 $abi16 $abi12 $abi12 $abi20 $abi12 $abi8 $abi24 $abi16 $abi16 $abi16 $abi32 $abi20 $abi8 $abi12 $abi8 $abi16 $abi24 $abi12 $abi36 $abi36 $abiunknown $abi16 $abi16 $abi8 $abi12 $abiunknown $abiunknown $abi12 $abi12 $abi8 $abi20 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi8 $abi4 $abi4 $abi12 $abi8 $abi8 $abi12 $abi32 $abi20 $abi8 $abi20 $abi8 $abi4 $abi16 $abi8 $abi20 $abi8 $abi8 $abi12 $abi12 $abi16 $abi8 $abi28 $abi4 $abi8 $abi8 $abi28 $abi4 $abi4 $abi20 $abi16 $abi16 $abi12 $abi12 $abi16 $abi40 $abi16 $abi40 $abi8 $abi8 $abi8 $abi12 $abi12 $abi20 $abi16 $abi12 $abi16 $abi16 $abi8 $abi8 $abi4 $abi16 $abi4 $abi4 $abi8 $abi24 $abi8 $abi20 $abi20 $abi12 $abi20 $abi20 $abi20 $abi16 $abi24 $abi12 $abi12 $abi8 $abi8 $abi32 $abi12 $abi12 $abi16 $abi12 $abi32 $abi8 $abi16 $abi20 $abi16 $abi20 $abi16 $abi16 $abi8 $abi12 $abi28 $abi12 $abi12 $abi8 $abi12 $abi8 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi16 $abi60 $abi8 $abi28 $abi8 $abi24 $abi12 $abi12 $abi12 $abi8 $abi8 $abi24 $abi20 $abi16 $abi28 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi4 $abi16 $abi8 $abi8 $abi28 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi20 $abi4 $abi16 $abi20 $abi24 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi16 $abi16 $abi16 $abi36 $abi24 $abi16 $abi24 $abi8 $abi20 $abi8 $abi12 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi4 $abi4 $abi4 $abi24 $abi8 $abi8 $abi16 $abi16 $abi8 $abi12 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi8 $abi8 $abi16 $abi20 $abi16 $abi36 $abi8 $abi8 $abi24 $abi12 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi20 $abi24 $abi12 $abi4 $abi12 $abi32 $abi12 $abi8 $abi32 $abi8 $abi32 $abi8 $abi12 $abi8 $abi16 $abi20 $abi4 $abi4 $abi12 $abi8 $abi8 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi20 $abi12 $abiunknown $abi12 $abi4 $abi8 $abi56 $abi20 $abi40 $abi32 $abi20 $abi12 $abi12 $abiunknown $abiunknown $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi24 $abi16 $abi20 $abi12 $abi8 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi16 $abi16 $abi12 $abi12 $abi16 $abi16 $abi12 $abi12 $abi12 $abi8 $abi4 $abi12 $abi12 $abi12 $abi8 $abi16 $abi16 $abi16 $abi16 $abi8 $abi16 $abi8 $abi8 $abi24 $abi12 $abi12 $abi16 $abi12 $abi16 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi16 $abi16 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi8 $abi16 $abi16 $abi12 $abi12 $abi12 $abi24 $abi16 $abi20 $abi20 $abi12 $abi12 $abi20 $abi16 $abi12 $abi8 $abi20 $abi16 $abi16 $abi8 $abi12 $abi4 $abi8 $abi4 $abi16 $abi12 $abi8 $abi24 $abi24 $abi16 $abi20 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi24 $abi8 $abi12 $abi16 $abi8 $abi8 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi8 $abi8 $abi24 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi8 $abi12 $abi20 $abi20 $abi8 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi20 $abi28 $abi16 $abi16 $abi8 $abi16 $abi16 $abi16 $abi16 $abi44 $abi28 $abi16 $abi20 $abi24 $abi16 $abi16 $abi12 $abi8 $abi8 $abi20 $abi16 $abi36 $abi8 $abi16 $abi4 $abi8 $abi8 $abi16 $abi12 $abi28 $abi8 $abi8 $abi20 $abi24 $abi12 $abi20 $abi20 $abi24 $abi8 $abi20 $abi20 $abi20 $abi12 $abi8 $abi8 $abi12 $abi16 $abi16 $abi20 $abi20 $abi8 $abi8 $abi16 $abi8 $abi16 $abi8 $abi8 $abi12 $abi8 $abi20 $abi12 $abi20 $abi16 $abi28 $abi32 $abi28 $abi28 $abi20 $abi12 $abi32 $abi24 $abi24 $abi16 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi20 $abi12 $abi16 $abi12 $abi24 $abi20 $abi12 $abi16 $abi12 $abi36 $abi40 $abi32 $abi28 $abi28 $abi32 $abi28 $abi24 $abi28 $abi16 $abi12 $abi16 $abi12 $abi12 $abi8 $abi8 $abi32 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi16 $abi20 $abi20 $abi12 $abi20 $abi16 $abi16 $abi12 $abi12 $abi20 $abi28 $abi24 $abi40 $abi28 $abi24 $abi12 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi20 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi20 $abi12 $abi8 $abi16 $abi4 $abi8 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi16 $abi24 $abi12 $abi12 $abi16 $abi28 $abi28 $abi24 $abi16 $abi8 $abi8 $abi12 $abi20 $abi20 $abi16 $abi8 $abi8 $abi16 $abi20 $abi16 $abi8 $abi16 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi32 $abi32 $abi28 $abi16 $abi28 $abi8 $abi20 $abi20 $abi20 $abi12 $abi12 $abi24 $abi16 $abiunknown $abi8 $abi16 $abi16 $abi20 $abi24 $abi24 $abi8 $abi20 $abi20 $abi16 $abi16 $abi20 $abi20 $abi20 $abi16 $abi16 $abi20 $abi36 $abi12 $abi12 $abi16 $abi32 $abi8 $abi8 $abi20 $abi16 $abi16 $abi32 $abi20 $abi8 $abi4 $abi4 $abi24 $abi20 $abi4 $abi4 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi16 $abi12 $abi20 $abi8 $abi8 $abi16 $abi8 $abi12 $abi8 $abi20 $abi12 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi32 $abi32 $abi32 $abi20 $abi12 $abi12 $abi8 $abi20 $abi12 $abi16 $abi24 $abi24 $abi24 $abi12 $abi20 $abi24 $abi36 $abi12 $abi20 $abi16 $abi16 $abi16 $abi16 $abi24 $abi36 $abi36 $abi8 $abi20 $abi24 $abi12 $abi36 $abi8 $abi12 $abi16 $abi4 $abi8 $abi16 $abi16 $abi16 $abi28 $abi44 $abi44 $abi16 $abi16 $abi12 $abi24 $abi20 $abi24 $abiunknown $abi16 $abi20 $abi20 $abi8 $abi28 $abi8 $abi16 $abi8 $abi8 $abi20 $abi32 $abi16 $abi12 $abi12 $abi24 $abiunknown $abiunknown $abi24 $abi8 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi4 $abi8 $abiunknown $abiunknown $abiunknown $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi8 $abi8 $abi8 $abi8 $abi32 $abi32 $abi24 $abi24 $abi24 $abi24 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi32 $abi32 $abi16 $abi16 $abi8 $abi8 $abi8 $abi8 $abi20 $abi20 $abi12 $abi12 $abi20 $abi20 $abi20 $abi20 $abi16 $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi28 $abi28 $abi12 $abi12 $abi8 $abi8 $abi28 $abi28 $abi12 $abi12 $abi32 $abi32 $abi36 $abi36 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi16 $abi16 $abi8 $abi8 $abi16 $abi16 $abi20 $abi20 $abi16 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi4 $abi4 $abi20 $abi20 $abi16 $abi16 $abi20 $abi20 $abi12 $abi12 $abi12 $abi12 $abi20 $abi20 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi8 $abi8 $abi4 $abi8 $abi8 $abi12 $abi12 $abi40 $abi40 $abi16 $abi20 $abi24 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi28 $abi20 $abi32 $abi32 $abi20 $abi8 $abi12 $abi24 $abi20 $abi24 $abi24 $abi32 $abi24 $abi16 $abi16 $abi12 $abi16 $abi12 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi24 $abi12 $abi8 $abi12 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi24 $abi16 $abi16 $abi16 $abi16 $abi28 $abi16 $abi8 $abi8 $abi12 $abi16 $abi12 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi12 $abi12 $abi16 $abi16 $abi16 $abi16 $abi24 $abi28 $abi16 $abi20 $abi20 $abi24 $abi20 $abi20 $abi20 $abi16 $abi12 $abi12 $abi20 $abi24 $abi20 $abi20 $abi16 $abi16 $abi16 $abi16 $abi28 $abi20 $abi24 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi12 $abi12 $abi44 $abi40 $abi44 $abi16 $abi12 $abiunknown $abi12 $abi8 $abi16 $abi28 $abi12 $abi20 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abiunknown $abi8 $abi12 $abi12 $abi12 $abi8 $abi16 $abi8 $abi8 $abi16 $abi8 $abi28 $abi32 $abi16 $abi12 $abi12 $abi28 $abi24 $abi24 $abi28 $abi16 $abi24 $abi20 $abi16 $abi20 $abi20 $abi24 $abi20 $abi16 $abi12 $abi16 $abi28 $abi28 $abi24 $abi20 $abi24 $abi20 $abi16 $abi16 $abi32 $abi16 $abi24 $abi28 $abi24 $abi16 $abi24 $abi24 $abi20 $abi16 $abi16 $abi16 $abi24 $abi16 $abi16 $abi16 $abi44 $abi28 $abi16 $abi20 $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi4 $abi12 $abi4 $abi12 $abi16 $abi4 $abi16 $abi20 $abi12 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi8 $abi36 $abi36 $abi44 $abi44 $abi12 $abi16 $abi8 $abi8 $abi20 $abi32 $abi24 $abi24 $abi20 $abi20 $abi28 $abi24 $abi24 $abi20 $abi20 $abi24 $abi24 $abi16 $abi16 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi16 $abi32 $abi8 $abi16 $abi20 $abi12 $abi8 $abi8 $abi12 $abi16 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi16 $abi16 $abi8 $abi16 $abi8 $abi20 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi28 $abi28 $abi24 $abi32 $abi36 $abi28 $abi36 $abi12 $abi24 $abi8 $abi12 $abi8 $abi4 $abi12 $abi8 $abi8 $abi8 $abi20 $abi8 $abi12 $abi8 $abi16 $abi24 $abi8 $abi12 $abi16 $abi12 $abi8 $abi12 $abi12 $abi20 $abi16 $abi16 $abi12 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi24 $abi20 $abi20 $abi16 $abi16 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi16 $abi8 $abi8 $abi16 $abi16 $abi12 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi36 $abi28 $abi60 $abi44 $abi24 $abi16 $abi44 $abi28 $abi16 $abi12 $abi12 $abi12 $abi20 $abi12 $abi24 $abi12 $abi8 $abi8 $abi12 $abi16 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi12 $abi8 $abi4 $abi4 $abi16 $abi8 $abi8 $abi20 $abi8 $abi12 $abi8 $abi12 $abi8 $abi12 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi16 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi36 $abi12 $abi20 $abi12 $abi20 $abi12 $abi20 $abi12 $abi8 $abi28 $abi12 $abi16 $abi8 $abi16 $abi12 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi8 $abi20 $abi8 $abi12 $abi8 $abi12 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi16 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi16 $abi16 $abi20 $abi16 $abi16 $abi36 $abi16 $abi16 $abi32 $abi28 $abi4 $abi20 $abi8 $abi8 $abi12 $abi8 $abi28 $abi8 $abi16 $abi8 $abi16 $abi8 $abi36 $abi8 $abi20 $abi8 $abi20 $abi8 $abi20 $abi8 $abi4 $abi4 $abi12 $abi16 $abi12 $abi8 $abiunknown $abiunknown $abiunknown $abi16 $abi16 $abi24 $abi16 $abi16 $abi12 $abi12 $abi12 $abi16 $abi8 $abi24 $abi12 $abi24 $abi24 $abi16 $abi8 $abi8 $abi16 $abi16 $abi8 $abi8 $abi36 $abi32 $abi20 $abi12 $abi12 $abi40 $abi40 $abi28 $abi16 $abi8 $abi8 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi8 $abi8 $abi12 $abi8 $abi8 $abi16 $abi20 $abi28 $abi16 $abi16 $abi24 $abi16 $abi12 $abi16 $abi20 $abi20 $abi24 $abi8 $abi8 $abi4 $abi4 $abi48 $abi24 $abi24 $abi24 $abi16 $abi20 $abi36 $abi32 $abi4 $abi8 $abi8 $abi8 $abi16 $abi16 $abi16 $abi16 $abi16 $abi32 $abi32 $abi28 $abi28 $abi28 $abiunknown $abi16 $abi16 $abi8 $abi4 $abi16 $abi20 $abi36 $abi16 $abi12 $abi20 $abi20 $abi24 $abi8 $abi8 $abi8 $abi12 $abi4 $abiunknown $abiunknown $abiunknown $abiunknown $abi12 $abi12 $abi12 $abi24 $abi20 $abi12 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi16 $abi12 $abi8 $abi40 $abiunknown $abiunknown $abi20 $abi32 $abiunknown $abi16 $abi20 $abi12 $abi8 $abi12 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi12 $abi12 $abi4 $abi8 $abi12 $abi12 $abi28 $abi16 $abi8 $abi12 $abi12 $abi16 $abi8 $abi8 $abi16 $abi8 $abi8 $abi16 $abi16 $abi12 $abi16 $abi8 $abi8 $abi8 $abi8 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi4 $abi16 $abi16 $abi16 $abi8 $abi8 $abi8 $abi16 $abi16 $abi16 $abi12 $abi12 $abi28 $abi20 $abi28 $abi12 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi16 $abi24 $abi16 $abi16 $abi20 $abi36 $abi28 $abi28 $abi16 $abi20 $abi20 $abi16 $abi16 $abi12 $abi12 $abi12 $abi4 $abi16 $abi36 $abi20 $abi24 $abi20 $abi16 $abi16 $abi12 $abi16 $abi8 $abi16 $abi16 $abi12 $abiunknown $abi8 $abi8 $abiunknown $abiunknown $abi8 $abi28 $abi8 $abi16 $abi12 $abi32 $abi8 $abi8 $abi16 $abi8 $abi8 $abi12 $abi12 $abi16 $abi12 $abi16 $abi20 $abi20 $abi16 $abi32 $abi12 $abi8 $abi8 $abi12 $abi16 $abi16 $abi16 $abi16 $abi12 $abi12 $abi16 $abi12 $abi16 $abi8 $abi8 $abi12 $abi8 $abi12 $abi16 $abi12 $abi8 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi16 $abi8 $abi8 $abi12 $abi20 $abi28 $abi40 $abi8 $abi8 $abi8 $abi8 $abi28 $abi8 $abi12 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi16 $abi28 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi28 $abi16 $abi24 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi4 $abi12 $abi12 $abi20 $abi16 $abi28 $abi8 $abi16 $abi8 $abi8 $abi20 $abi28 $abi24 $abi16 $abi12 $abi12 $abi12 $abi12 $abi12 $abi16 $abi20 $abi16 $abi16 $abi16 $abi12 $abi12 $abi12 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi20 $abi24 $abi24 $abi32 $abi16 $abi32 $abi28 $abi20 $abi20 $abi12 $abi12 $abi16 $abi8 $abi24 $abi28 $abi28 $abi32 $abi32 $abi36 $abi44 $abi24 $abi16 $abi20 $abi24 $abi12 $abi12 $abi36 $abi32 $abi16 $abi8 $abi8 $abi20 $abi12 $abi20 $abi20 $abi12 $abi12 $abi12 $abi16 $abi20 $abi8 $abi12 $abi24 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi12 $abi24 $abi16 $abi16 $abi12 $abi24 $abi12 $abi12 $abi12 $abi12 $abi32 $abi28 $abi20 $abi12 $abi12 $abi16 $abi16 $abi16 $abi32 $abi12 $abi24 $abi12 $abi12 $abi16 $abi8 $abi8 $abi36 $abi12 $abi16 $abi16 $abi16 $abi8 $abi8 $abi12 $abi12 $abi12 $abi12 $abi12 $abi32 $abi36 $abiunknown $abiunknown $abiunknown $abiunknown $abi16 $abi8 $abi8 $abi12 $abi16 $abi20 $abi12 $abi12 $abi12 $abi12 $abi16 $abi40 $abi20 $abi12 $abi12 $abi12 $abi12 $abi12 $abi8 $abi24 $abi8 $abi20 $abi20 $abi24 $abi8 $abi8 $abi28 $abi16 $abi20 $abi12 $abi20 $abi12 $abi24 $abi12 $abi24 $abi16 $abi12 $abiunknown (local.get $id))
     ) (return (i32.const -1))
     ) (return (i32.const 4))
     ) (return (i32.const 8))
@@ -4317,9 +4327,13 @@
       (then
         (call $dispatch_api_table_page_17 (i32.sub (local.get $api_id) (i32.const 4352)) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
         (return)))
-    (if (i32.lt_u (local.get $api_id) (i32.const 4723))
+    (if (i32.lt_u (local.get $api_id) (i32.const 4864))
       (then
         (call $dispatch_api_table_page_18 (i32.sub (local.get $api_id) (i32.const 4608)) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+        (return)))
+    (if (i32.lt_u (local.get $api_id) (i32.const 5000))
+      (then
+        (call $dispatch_api_table_page_19 (i32.sub (local.get $api_id) (i32.const 4864)) (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
         (return)))
     (call $handle_fallback (local.get $name_ptr) (local.get $api_id))
   )
@@ -24467,8 +24481,149 @@
   )
 
   (func $dispatch_api_table_page_18 (param $api_id i32) (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; api ids 4608..4722
+    ;; api ids 4608..4863
     (block $fallback
+    (block $api_255
+    (block $api_254
+    (block $api_253
+    (block $api_252
+    (block $api_251
+    (block $api_250
+    (block $api_249
+    (block $api_248
+    (block $api_247
+    (block $api_246
+    (block $api_245
+    (block $api_244
+    (block $api_243
+    (block $api_242
+    (block $api_241
+    (block $api_240
+    (block $api_239
+    (block $api_238
+    (block $api_237
+    (block $api_236
+    (block $api_235
+    (block $api_234
+    (block $api_233
+    (block $api_232
+    (block $api_231
+    (block $api_230
+    (block $api_229
+    (block $api_228
+    (block $api_227
+    (block $api_226
+    (block $api_225
+    (block $api_224
+    (block $api_223
+    (block $api_222
+    (block $api_221
+    (block $api_220
+    (block $api_219
+    (block $api_218
+    (block $api_217
+    (block $api_216
+    (block $api_215
+    (block $api_214
+    (block $api_213
+    (block $api_212
+    (block $api_211
+    (block $api_210
+    (block $api_209
+    (block $api_208
+    (block $api_207
+    (block $api_206
+    (block $api_205
+    (block $api_204
+    (block $api_203
+    (block $api_202
+    (block $api_201
+    (block $api_200
+    (block $api_199
+    (block $api_198
+    (block $api_197
+    (block $api_196
+    (block $api_195
+    (block $api_194
+    (block $api_193
+    (block $api_192
+    (block $api_191
+    (block $api_190
+    (block $api_189
+    (block $api_188
+    (block $api_187
+    (block $api_186
+    (block $api_185
+    (block $api_184
+    (block $api_183
+    (block $api_182
+    (block $api_181
+    (block $api_180
+    (block $api_179
+    (block $api_178
+    (block $api_177
+    (block $api_176
+    (block $api_175
+    (block $api_174
+    (block $api_173
+    (block $api_172
+    (block $api_171
+    (block $api_170
+    (block $api_169
+    (block $api_168
+    (block $api_167
+    (block $api_166
+    (block $api_165
+    (block $api_164
+    (block $api_163
+    (block $api_162
+    (block $api_161
+    (block $api_160
+    (block $api_159
+    (block $api_158
+    (block $api_157
+    (block $api_156
+    (block $api_155
+    (block $api_154
+    (block $api_153
+    (block $api_152
+    (block $api_151
+    (block $api_150
+    (block $api_149
+    (block $api_148
+    (block $api_147
+    (block $api_146
+    (block $api_145
+    (block $api_144
+    (block $api_143
+    (block $api_142
+    (block $api_141
+    (block $api_140
+    (block $api_139
+    (block $api_138
+    (block $api_137
+    (block $api_136
+    (block $api_135
+    (block $api_134
+    (block $api_133
+    (block $api_132
+    (block $api_131
+    (block $api_130
+    (block $api_129
+    (block $api_128
+    (block $api_127
+    (block $api_126
+    (block $api_125
+    (block $api_124
+    (block $api_123
+    (block $api_122
+    (block $api_121
+    (block $api_120
+    (block $api_119
+    (block $api_118
+    (block $api_117
+    (block $api_116
+    (block $api_115
     (block $api_114
     (block $api_113
     (block $api_112
@@ -24584,7 +24739,7 @@
     (block $api_2
     (block $api_1
     (block $api_0
-      (br_table $api_0 $api_1 $api_2 $api_3 $api_4 $api_5 $api_6 $api_7 $api_8 $api_9 $api_10 $api_11 $api_12 $api_13 $api_14 $api_15 $api_16 $api_17 $api_18 $api_19 $api_20 $api_21 $api_22 $api_23 $api_24 $api_25 $api_26 $api_27 $api_28 $api_29 $api_30 $api_31 $api_32 $api_33 $api_34 $api_35 $api_36 $api_37 $api_38 $api_39 $api_40 $api_41 $api_42 $api_43 $api_44 $api_45 $api_46 $api_47 $api_48 $api_49 $api_50 $api_51 $api_52 $api_53 $api_54 $api_55 $api_56 $api_57 $api_58 $api_59 $api_60 $api_61 $api_62 $api_63 $api_64 $api_65 $api_66 $api_67 $api_68 $api_69 $api_70 $api_71 $api_72 $api_73 $api_74 $api_75 $api_76 $api_77 $api_78 $api_79 $api_80 $api_81 $api_82 $api_83 $api_84 $api_85 $api_86 $api_87 $api_88 $api_89 $api_90 $api_91 $api_92 $api_93 $api_94 $api_95 $api_96 $api_97 $api_98 $api_99 $api_100 $api_101 $api_102 $api_103 $api_104 $api_105 $api_106 $api_107 $api_108 $api_109 $api_110 $api_111 $api_112 $api_113 $api_114 $fallback (local.get $api_id))
+      (br_table $api_0 $api_1 $api_2 $api_3 $api_4 $api_5 $api_6 $api_7 $api_8 $api_9 $api_10 $api_11 $api_12 $api_13 $api_14 $api_15 $api_16 $api_17 $api_18 $api_19 $api_20 $api_21 $api_22 $api_23 $api_24 $api_25 $api_26 $api_27 $api_28 $api_29 $api_30 $api_31 $api_32 $api_33 $api_34 $api_35 $api_36 $api_37 $api_38 $api_39 $api_40 $api_41 $api_42 $api_43 $api_44 $api_45 $api_46 $api_47 $api_48 $api_49 $api_50 $api_51 $api_52 $api_53 $api_54 $api_55 $api_56 $api_57 $api_58 $api_59 $api_60 $api_61 $api_62 $api_63 $api_64 $api_65 $api_66 $api_67 $api_68 $api_69 $api_70 $api_71 $api_72 $api_73 $api_74 $api_75 $api_76 $api_77 $api_78 $api_79 $api_80 $api_81 $api_82 $api_83 $api_84 $api_85 $api_86 $api_87 $api_88 $api_89 $api_90 $api_91 $api_92 $api_93 $api_94 $api_95 $api_96 $api_97 $api_98 $api_99 $api_100 $api_101 $api_102 $api_103 $api_104 $api_105 $api_106 $api_107 $api_108 $api_109 $api_110 $api_111 $api_112 $api_113 $api_114 $api_115 $api_116 $api_117 $api_118 $api_119 $api_120 $api_121 $api_122 $api_123 $api_124 $api_125 $api_126 $api_127 $api_128 $api_129 $api_130 $api_131 $api_132 $api_133 $api_134 $api_135 $api_136 $api_137 $api_138 $api_139 $api_140 $api_141 $api_142 $api_143 $api_144 $api_145 $api_146 $api_147 $api_148 $api_149 $api_150 $api_151 $api_152 $api_153 $api_154 $api_155 $api_156 $api_157 $api_158 $api_159 $api_160 $api_161 $api_162 $api_163 $api_164 $api_165 $api_166 $api_167 $api_168 $api_169 $api_170 $api_171 $api_172 $api_173 $api_174 $api_175 $api_176 $api_177 $api_178 $api_179 $api_180 $api_181 $api_182 $api_183 $api_184 $api_185 $api_186 $api_187 $api_188 $api_189 $api_190 $api_191 $api_192 $api_193 $api_194 $api_195 $api_196 $api_197 $api_198 $api_199 $api_200 $api_201 $api_202 $api_203 $api_204 $api_205 $api_206 $api_207 $api_208 $api_209 $api_210 $api_211 $api_212 $api_213 $api_214 $api_215 $api_216 $api_217 $api_218 $api_219 $api_220 $api_221 $api_222 $api_223 $api_224 $api_225 $api_226 $api_227 $api_228 $api_229 $api_230 $api_231 $api_232 $api_233 $api_234 $api_235 $api_236 $api_237 $api_238 $api_239 $api_240 $api_241 $api_242 $api_243 $api_244 $api_245 $api_246 $api_247 $api_248 $api_249 $api_250 $api_251 $api_252 $api_253 $api_254 $api_255 $fallback (local.get $api_id))
     ) ;; 4608: FT_Exit4
       (call $handle_FT_Exit4 (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
@@ -24930,8 +25085,983 @@
     ) ;; 4722: GetArcDirection
       (call $handle_GetArcDirection (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
       (return)
+    ) ;; 4723: WebBrowserOleObject_QueryInterface
+      (call $handle_WebBrowser_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4724: WebBrowserOleObject_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4725: WebBrowserOleObject_Release
+      (call $handle_WebBrowser_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4726: WebBrowserOleObject_SetClientSite
+      (call $handle_WebBrowserOleObject_SetClientSite (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4727: WebBrowserOleObject_GetClientSite
+      (call $handle_WebBrowserOleObject_GetClientSite (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4728: WebBrowserOleObject_SetHostNames
+      (call $handle_WebBrowserOleObject_SetHostNames (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4729: WebBrowserOleObject_Close
+      (call $handle_WebBrowserOleObject_Close (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4730: WebBrowserOleObject_SetMoniker
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4731: WebBrowserOleObject_GetMoniker
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4732: WebBrowserOleObject_InitFromData
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4733: WebBrowserOleObject_GetClipboardData
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4734: WebBrowserOleObject_DoVerb
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4735: WebBrowserOleObject_EnumVerbs
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4736: WebBrowserOleObject_Update
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4737: WebBrowserOleObject_IsUpToDate
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4738: WebBrowserOleObject_GetUserClassID
+      (call $handle_WebBrowserOleObject_GetUserClassID (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4739: WebBrowserOleObject_GetUserType
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4740: WebBrowserOleObject_SetExtent
+      (call $handle_WebBrowserOleObject_SetExtent (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4741: WebBrowserOleObject_GetExtent
+      (call $handle_WebBrowserOleObject_GetExtent (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4742: WebBrowserOleObject_Advise
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4743: WebBrowserOleObject_Unadvise
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4744: WebBrowserOleObject_EnumAdvise
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4745: WebBrowserOleObject_GetMiscStatus
+      (call $handle_WebBrowserOleObject_GetMiscStatus (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4746: WebBrowserOleObject_SetColorScheme
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4747: WebBrowserPersistStreamInit_QueryInterface
+      (call $handle_WebBrowser_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4748: WebBrowserPersistStreamInit_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4749: WebBrowserPersistStreamInit_Release
+      (call $handle_WebBrowser_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4750: WebBrowserPersistStreamInit_GetClassID
+      (call $handle_WebBrowserOleObject_GetUserClassID (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4751: WebBrowserPersistStreamInit_IsDirty
+      (call $handle_WebBrowserPersistStreamInit_IsDirty (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4752: WebBrowserPersistStreamInit_Load
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4753: WebBrowserPersistStreamInit_Save
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4754: WebBrowserPersistStreamInit_GetSizeMax
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4755: WebBrowserPersistStreamInit_InitNew
+      (call $handle_WebBrowserPersistStreamInit_InitNew (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4756: WebBrowserOleControl_QueryInterface
+      (call $handle_WebBrowser_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4757: WebBrowserOleControl_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4758: WebBrowserOleControl_Release
+      (call $handle_WebBrowser_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4759: WebBrowserOleControl_GetControlInfo
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4760: WebBrowserOleControl_OnMnemonic
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4761: WebBrowserOleControl_OnAmbientPropertyChange
+      (call $handle_WebBrowserOleControl_OnAmbientPropertyChange (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4762: WebBrowserOleControl_FreezeEvents
+      (call $handle_WebBrowserOleControl_OnAmbientPropertyChange (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4763: IWebBrowser2_QueryInterface
+      (call $handle_WebBrowser_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4764: IWebBrowser2_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4765: IWebBrowser2_Release
+      (call $handle_WebBrowser_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4766: IWebBrowser2_GetTypeInfoCount
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4767: IWebBrowser2_GetTypeInfo
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4768: IWebBrowser2_GetIDsOfNames
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4769: IWebBrowser2_Invoke
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4770: IWebBrowser2_GoBack
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4771: IWebBrowser2_GoForward
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4772: IWebBrowser2_GoHome
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4773: IWebBrowser2_GoSearch
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4774: IWebBrowser2_Navigate
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4775: IWebBrowser2_Refresh
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4776: IWebBrowser2_Refresh2
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4777: IWebBrowser2_Stop
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4778: IWebBrowser2_get_Application
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4779: IWebBrowser2_get_Parent
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4780: IWebBrowser2_get_Container
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4781: IWebBrowser2_get_Document
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4782: IWebBrowser2_get_TopLevelContainer
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4783: IWebBrowser2_get_Type
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4784: IWebBrowser2_get_Left
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4785: IWebBrowser2_put_Left
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4786: IWebBrowser2_get_Top
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4787: IWebBrowser2_put_Top
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4788: IWebBrowser2_get_Width
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4789: IWebBrowser2_put_Width
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4790: IWebBrowser2_get_Height
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4791: IWebBrowser2_put_Height
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4792: IWebBrowser2_get_LocationName
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4793: IWebBrowser2_get_LocationURL
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4794: IWebBrowser2_get_Busy
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4795: IWebBrowser2_Quit
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4796: IWebBrowser2_ClientToWindow
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4797: IWebBrowser2_PutProperty
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4798: IWebBrowser2_GetProperty
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4799: IWebBrowser2_get_Name
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4800: IWebBrowser2_get_HWND
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4801: IWebBrowser2_get_FullName
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4802: IWebBrowser2_get_Path
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4803: IWebBrowser2_get_Visible
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4804: IWebBrowser2_put_Visible
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4805: IWebBrowser2_get_StatusBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4806: IWebBrowser2_put_StatusBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4807: IWebBrowser2_get_StatusText
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4808: IWebBrowser2_put_StatusText
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4809: IWebBrowser2_get_ToolBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4810: IWebBrowser2_put_ToolBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4811: IWebBrowser2_get_MenuBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4812: IWebBrowser2_put_MenuBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4813: IWebBrowser2_get_FullScreen
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4814: IWebBrowser2_put_FullScreen
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4815: IWebBrowser2_Navigate2
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4816: IWebBrowser2_QueryStatusWB
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4817: IWebBrowser2_ExecWB
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4818: IWebBrowser2_ShowBrowserBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4819: IWebBrowser2_get_ReadyState
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4820: IWebBrowser2_get_Offline
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4821: IWebBrowser2_put_Offline
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4822: IWebBrowser2_get_Silent
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4823: IWebBrowser2_put_Silent
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4824: IWebBrowser2_get_RegisterAsBrowser
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4825: IWebBrowser2_put_RegisterAsBrowser
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4826: IWebBrowser2_get_RegisterAsDropTarget
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4827: IWebBrowser2_put_RegisterAsDropTarget
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4828: IWebBrowser2_get_TheaterMode
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4829: IWebBrowser2_put_TheaterMode
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4830: IWebBrowser2_get_AddressBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4831: IWebBrowser2_put_AddressBar
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4832: IWebBrowser2_get_Resizable
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4833: IWebBrowser2_put_Resizable
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4834: ExpandEnvironmentStringsW
+      (call $handle_ExpandEnvironmentStringsW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4835: GetConsoleWindow
+      (call $handle_GetConsoleWindow (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4836: GetMonitorInfoW
+      (call $handle_GetMonitorInfoW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4837: ChangeDisplaySettingsW
+      (call $handle_ChangeDisplaySettingsW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4838: EnumDisplaySettingsExW
+      (call $handle_EnumDisplaySettingsExW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4839: CreateWaitableTimerW
+      (call $handle_CreateWaitableTimerW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4840: SetWaitableTimer
+      (call $handle_SetWaitableTimer (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4841: CancelWaitableTimer
+      (call $handle_CancelWaitableTimer (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4842: IDirectMusicPerformance8_QueryInterface
+      (call $handle_IDirectMusicPerformance8_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4843: IDirectMusicPerformance8_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4844: IDirectMusicPerformance8_Release
+      (call $handle_IDirectMusicPerformance8_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4845: IDirectMusicPerformance8_Init
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4846: IDirectMusicPerformance8_PlaySegment
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4847: IDirectMusicPerformance8_Stop
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4848: IDirectMusicPerformance8_GetSegmentState
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4849: IDirectMusicPerformance8_SetPrepareTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4850: IDirectMusicPerformance8_GetPrepareTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4851: IDirectMusicPerformance8_SetBumperLength
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4852: IDirectMusicPerformance8_GetBumperLength
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4853: IDirectMusicPerformance8_SendPMsg
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4854: IDirectMusicPerformance8_MusicToReferenceTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4855: IDirectMusicPerformance8_ReferenceToMusicTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4856: IDirectMusicPerformance8_IsPlaying
+      (call $handle_IDirectMusicPerformance8_IsPlaying (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4857: IDirectMusicPerformance8_GetTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4858: IDirectMusicPerformance8_AllocPMsg
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4859: IDirectMusicPerformance8_FreePMsg
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4860: IDirectMusicPerformance8_GetGraph
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4861: IDirectMusicPerformance8_SetGraph
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4862: IDirectMusicPerformance8_SetNotificationHandle
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4863: IDirectMusicPerformance8_GetNotificationPMsg
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
     ) ;; fallback
     (call $handle_fallback (local.get $name_ptr) (i32.add (local.get $api_id) (i32.const 4608)))
+  )
+
+  (func $dispatch_api_table_page_19 (param $api_id i32) (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    ;; api ids 4864..4999
+    (block $fallback
+    (block $api_135
+    (block $api_134
+    (block $api_133
+    (block $api_132
+    (block $api_131
+    (block $api_130
+    (block $api_129
+    (block $api_128
+    (block $api_127
+    (block $api_126
+    (block $api_125
+    (block $api_124
+    (block $api_123
+    (block $api_122
+    (block $api_121
+    (block $api_120
+    (block $api_119
+    (block $api_118
+    (block $api_117
+    (block $api_116
+    (block $api_115
+    (block $api_114
+    (block $api_113
+    (block $api_112
+    (block $api_111
+    (block $api_110
+    (block $api_109
+    (block $api_108
+    (block $api_107
+    (block $api_106
+    (block $api_105
+    (block $api_104
+    (block $api_103
+    (block $api_102
+    (block $api_101
+    (block $api_100
+    (block $api_99
+    (block $api_98
+    (block $api_97
+    (block $api_96
+    (block $api_95
+    (block $api_94
+    (block $api_93
+    (block $api_92
+    (block $api_91
+    (block $api_90
+    (block $api_89
+    (block $api_88
+    (block $api_87
+    (block $api_86
+    (block $api_85
+    (block $api_84
+    (block $api_83
+    (block $api_82
+    (block $api_81
+    (block $api_80
+    (block $api_79
+    (block $api_78
+    (block $api_77
+    (block $api_76
+    (block $api_75
+    (block $api_74
+    (block $api_73
+    (block $api_72
+    (block $api_71
+    (block $api_70
+    (block $api_69
+    (block $api_68
+    (block $api_67
+    (block $api_66
+    (block $api_65
+    (block $api_64
+    (block $api_63
+    (block $api_62
+    (block $api_61
+    (block $api_60
+    (block $api_59
+    (block $api_58
+    (block $api_57
+    (block $api_56
+    (block $api_55
+    (block $api_54
+    (block $api_53
+    (block $api_52
+    (block $api_51
+    (block $api_50
+    (block $api_49
+    (block $api_48
+    (block $api_47
+    (block $api_46
+    (block $api_45
+    (block $api_44
+    (block $api_43
+    (block $api_42
+    (block $api_41
+    (block $api_40
+    (block $api_39
+    (block $api_38
+    (block $api_37
+    (block $api_36
+    (block $api_35
+    (block $api_34
+    (block $api_33
+    (block $api_32
+    (block $api_31
+    (block $api_30
+    (block $api_29
+    (block $api_28
+    (block $api_27
+    (block $api_26
+    (block $api_25
+    (block $api_24
+    (block $api_23
+    (block $api_22
+    (block $api_21
+    (block $api_20
+    (block $api_19
+    (block $api_18
+    (block $api_17
+    (block $api_16
+    (block $api_15
+    (block $api_14
+    (block $api_13
+    (block $api_12
+    (block $api_11
+    (block $api_10
+    (block $api_9
+    (block $api_8
+    (block $api_7
+    (block $api_6
+    (block $api_5
+    (block $api_4
+    (block $api_3
+    (block $api_2
+    (block $api_1
+    (block $api_0
+      (br_table $api_0 $api_1 $api_2 $api_3 $api_4 $api_5 $api_6 $api_7 $api_8 $api_9 $api_10 $api_11 $api_12 $api_13 $api_14 $api_15 $api_16 $api_17 $api_18 $api_19 $api_20 $api_21 $api_22 $api_23 $api_24 $api_25 $api_26 $api_27 $api_28 $api_29 $api_30 $api_31 $api_32 $api_33 $api_34 $api_35 $api_36 $api_37 $api_38 $api_39 $api_40 $api_41 $api_42 $api_43 $api_44 $api_45 $api_46 $api_47 $api_48 $api_49 $api_50 $api_51 $api_52 $api_53 $api_54 $api_55 $api_56 $api_57 $api_58 $api_59 $api_60 $api_61 $api_62 $api_63 $api_64 $api_65 $api_66 $api_67 $api_68 $api_69 $api_70 $api_71 $api_72 $api_73 $api_74 $api_75 $api_76 $api_77 $api_78 $api_79 $api_80 $api_81 $api_82 $api_83 $api_84 $api_85 $api_86 $api_87 $api_88 $api_89 $api_90 $api_91 $api_92 $api_93 $api_94 $api_95 $api_96 $api_97 $api_98 $api_99 $api_100 $api_101 $api_102 $api_103 $api_104 $api_105 $api_106 $api_107 $api_108 $api_109 $api_110 $api_111 $api_112 $api_113 $api_114 $api_115 $api_116 $api_117 $api_118 $api_119 $api_120 $api_121 $api_122 $api_123 $api_124 $api_125 $api_126 $api_127 $api_128 $api_129 $api_130 $api_131 $api_132 $api_133 $api_134 $api_135 $fallback (local.get $api_id))
+    ) ;; 4864: IDirectMusicPerformance8_AddNotificationType
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4865: IDirectMusicPerformance8_RemoveNotificationType
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4866: IDirectMusicPerformance8_AddPort
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4867: IDirectMusicPerformance8_RemovePort
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4868: IDirectMusicPerformance8_AssignPChannelBlock
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4869: IDirectMusicPerformance8_AssignPChannel
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4870: IDirectMusicPerformance8_PChannelInfo
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4871: IDirectMusicPerformance8_DownloadInstrument
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4872: IDirectMusicPerformance8_Invalidate
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4873: IDirectMusicPerformance8_GetParam
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4874: IDirectMusicPerformance8_SetParam
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4875: IDirectMusicPerformance8_GetGlobalParam
+      (call $handle_IDirectMusicPerformance8_GetGlobalParam (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4876: IDirectMusicPerformance8_SetGlobalParam
+      (call $handle_IDirectMusicPerformance8_SetGlobalParam (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4877: IDirectMusicPerformance8_GetLatencyTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4878: IDirectMusicPerformance8_GetQueueTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4879: IDirectMusicPerformance8_AdjustTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4880: IDirectMusicPerformance8_CloseDown
+      (call $handle_IDirectMusicPerformance8_CloseDown (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4881: IDirectMusicPerformance8_GetResolvedTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4882: IDirectMusicPerformance8_MIDIToMusic
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4883: IDirectMusicPerformance8_MusicToMIDI
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4884: IDirectMusicPerformance8_TimeToRhythm
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4885: IDirectMusicPerformance8_RhythmToTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4886: IDirectMusicPerformance8_InitAudio
+      (call $handle_IDirectMusicPerformance8_InitAudio (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4887: IDirectMusicPerformance8_PlaySegmentEx
+      (call $handle_IDirectMusicPerformance8_PlaySegmentEx (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4888: IDirectMusicPerformance8_StopEx
+      (call $handle_IDirectMusicPerformance8_StopEx (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4889: IDirectMusicPerformance8_ClonePMsg
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4890: IDirectMusicPerformance8_CreateAudioPath
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4891: IDirectMusicPerformance8_CreateStandardAudioPath
+      (call $handle_IDirectMusicPerformance8_CreateStandardAudioPath (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4892: IDirectMusicPerformance8_SetDefaultAudioPath
+      (call $handle_IDirectMusicPerformance8_SetDefaultAudioPath (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4893: IDirectMusicPerformance8_GetDefaultAudioPath
+      (call $handle_IDirectMusicPerformance8_GetDefaultAudioPath (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4894: IDirectMusicPerformance8_GetParamEx
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4895: IDirectMusicPerformance8_SetParamEx
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4896: IDirectMusicLoader8_QueryInterface
+      (call $handle_IDirectMusicLoader8_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4897: IDirectMusicLoader8_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4898: IDirectMusicLoader8_Release
+      (call $handle_IDirectMusicLoader8_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4899: IDirectMusicLoader8_GetObject
+      (call $handle_IDirectMusicLoader8_GetObject (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4900: IDirectMusicLoader8_SetObject
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4901: IDirectMusicLoader8_SetSearchDirectory
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4902: IDirectMusicLoader8_ScanDirectory
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4903: IDirectMusicLoader8_CacheObject
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4904: IDirectMusicLoader8_ReleaseObject
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4905: IDirectMusicLoader8_ClearCache
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4906: IDirectMusicLoader8_EnableCache
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4907: IDirectMusicLoader8_EnumObject
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4908: IDirectMusicLoader8_CollectGarbage
+      (call $handle_IDirectMusicLoader8_CollectGarbage (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4909: IDirectMusicLoader8_ReleaseObjectByUnknown
+      (call $handle_IDirectMusicLoader8_ReleaseObjectByUnknown (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4910: IDirectMusicLoader8_LoadObjectFromFile
+      (call $handle_IDirectMusicLoader8_LoadObjectFromFile (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4911: IDirectMusicSegment8_QueryInterface
+      (call $handle_IDirectMusicSegment8_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4912: IDirectMusicSegment8_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4913: IDirectMusicSegment8_Release
+      (call $handle_IDirectMusicSegment8_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4914: IDirectMusicSegment8_GetLength
+      (call $handle_IDirectMusicSegment8_GetLength (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4915: IDirectMusicSegment8_SetLength
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4916: IDirectMusicSegment8_GetRepeats
+      (call $handle_IDirectMusicSegment8_GetRepeats (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4917: IDirectMusicSegment8_SetRepeats
+      (call $handle_IDirectMusicSegment8_SetRepeats (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4918: IDirectMusicSegment8_GetDefaultResolution
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4919: IDirectMusicSegment8_SetDefaultResolution
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4920: IDirectMusicSegment8_GetTrack
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4921: IDirectMusicSegment8_GetTrackGroup
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4922: IDirectMusicSegment8_InsertTrack
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4923: IDirectMusicSegment8_RemoveTrack
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4924: IDirectMusicSegment8_InitPlay
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4925: IDirectMusicSegment8_GetGraph
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4926: IDirectMusicSegment8_SetGraph
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4927: IDirectMusicSegment8_AddNotificationType
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4928: IDirectMusicSegment8_RemoveNotificationType
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4929: IDirectMusicSegment8_GetParam
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4930: IDirectMusicSegment8_SetParam
+      (call $handle_IDirectMusicSegment8_SetParam (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4931: IDirectMusicSegment8_Clone
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4932: IDirectMusicSegment8_SetStartPoint
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4933: IDirectMusicSegment8_GetStartPoint
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4934: IDirectMusicSegment8_SetLoopPoints
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4935: IDirectMusicSegment8_GetLoopPoints
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4936: IDirectMusicSegment8_SetPChannelsUsed
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4937: IDirectMusicSegment8_SetTrackConfig
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4938: IDirectMusicSegment8_GetAudioPathConfig
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4939: IDirectMusicSegment8_Compose
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4940: IDirectMusicSegment8_Download
+      (call $handle_IDirectMusicSegment8_Download (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4941: IDirectMusicSegment8_Unload
+      (call $handle_IDirectMusicSegment8_Unload (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4942: IDirectMusicAudioPath8_QueryInterface
+      (call $handle_IDirectMusicAudioPath8_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4943: IDirectMusicAudioPath8_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4944: IDirectMusicAudioPath8_Release
+      (call $handle_IDirectMusicAudioPath8_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4945: IDirectMusicAudioPath8_GetObjectInPath
+      (call $handle_IDirectMusicAudioPath8_GetObjectInPath (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4946: IDirectMusicAudioPath8_Activate
+      (call $handle_IDirectMusicAudioPath8_Activate (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4947: IDirectMusicAudioPath8_SetVolume
+      (call $handle_IDirectMusicAudioPath8_SetVolume (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4948: IDirectMusicAudioPath8_ConvertPChannel
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4949: IDirectMusicSegmentState8_QueryInterface
+      (call $handle_IDirectMusicSegmentState8_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4950: IDirectMusicSegmentState8_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4951: IDirectMusicSegmentState8_Release
+      (call $handle_dx_com_release_basic (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4952: IDirectMusicSegmentState8_GetRepeats
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4953: IDirectMusicSegmentState8_GetSegment
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4954: IDirectMusicSegmentState8_GetStartTime
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4955: IDirectMusicSegmentState8_GetSeek
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4956: IDirectMusicSegmentState8_GetStartPoint
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4957: IDirectMusicSegmentState8_SetTrackConfig
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4958: IDirectMusicSegmentState8_GetObjectInPath
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4959: _libm_sse2_sin_precise
+      (call $handle__libm_sse2_sin_precise (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4960: _libm_sse2_cos_precise
+      (call $handle__libm_sse2_cos_precise (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4961: _libm_sse2_sqrt_precise
+      (call $handle__libm_sse2_sqrt_precise (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4962: _time64
+      (call $handle__time64 (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4963: IDirectMusicPathBuffer8_QueryInterface
+      (call $handle_IDirectMusicPathBuffer8_QueryInterface (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4964: IDirectMusicPathBuffer8_AddRef
+      (call $handle_dx_com_addref (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4965: IDirectMusicPathBuffer8_Release
+      (call $handle_IDirectMusicPathBuffer8_Release (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4966: IDirectMusicPathBuffer8_GetCaps
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4967: IDirectMusicPathBuffer8_GetCurrentPosition
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4968: IDirectMusicPathBuffer8_GetFormat
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4969: IDirectMusicPathBuffer8_GetVolume
+      (call $handle_IDirectMusicPathBuffer8_GetVolume (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4970: IDirectMusicPathBuffer8_GetPan
+      (call $handle_IDirectMusicPathBuffer8_GetPan (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4971: IDirectMusicPathBuffer8_GetFrequency
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4972: IDirectMusicPathBuffer8_GetStatus
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4973: IDirectMusicPathBuffer8_Initialize
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4974: IDirectMusicPathBuffer8_Lock
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4975: IDirectMusicPathBuffer8_Play
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4976: IDirectMusicPathBuffer8_SetCurrentPosition
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4977: IDirectMusicPathBuffer8_SetFormat
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4978: IDirectMusicPathBuffer8_SetVolume
+      (call $handle_IDirectMusicPathBuffer8_SetVolume (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4979: IDirectMusicPathBuffer8_SetPan
+      (call $handle_IDirectMusicPathBuffer8_SetPan (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4980: IDirectMusicPathBuffer8_SetFrequency
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4981: IDirectMusicPathBuffer8_Stop
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4982: IDirectMusicPathBuffer8_Unlock
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4983: IDirectMusicPathBuffer8_Restore
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4984: IDirectMusicPathBuffer8_SetFX
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4985: IDirectMusicPathBuffer8_AcquireResources
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4986: IDirectMusicPathBuffer8_GetObjectInPath
+      (call $handle_ftm_unimplemented (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4987: TrackMouseEvent
+      (call $handle_TrackMouseEvent (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4988: _TrackMouseEvent
+      (call $handle__TrackMouseEvent (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4989: CreateFileMappingW
+      (call $handle_CreateFileMappingW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4990: LookupPrivilegeValueW
+      (call $handle_LookupPrivilegeValueW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4991: VerSetConditionMask
+      (call $handle_VerSetConditionMask (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4992: UuidFromStringA
+      (call $handle_UuidFromStringA (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4993: VerifyVersionInfoW
+      (call $handle_VerifyVersionInfoW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4994: CharUpperBuffW
+      (call $handle_CharUpperBuffW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4995: CompareStringOrdinal
+      (call $handle_CompareStringOrdinal (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4996: GetFileSizeEx
+      (call $handle_GetFileSizeEx (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4997: SetFilePointerEx
+      (call $handle_SetFilePointerEx (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4998: GetCPInfoExW
+      (call $handle_GetCPInfoExW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; 4999: EnumSystemLocalesW
+      (call $handle_EnumSystemLocalesW (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (return)
+    ) ;; fallback
+    (call $handle_fallback (local.get $name_ptr) (i32.add (local.get $api_id) (i32.const 4864)))
   )
 
   ;; ============================================================

@@ -247,7 +247,12 @@ async function render(gps, extra = []) {
     assert.strictEqual(old.frames.length, ring.frames.length);
     for (let i = 0; i < old.frames.length; i++) {
       const a = old.frames[i].px, b = ring.frames[i].px;
-      const diff = a.findIndex((v, k) => v !== b[k]);
+      // WebGL draws a StretchRect(LINEAR) with the GPU sampler, whose
+      // fixed-point weights may round one step away from the old path's
+      // float weights: one per channel there, exact everywhere else.
+      const slack = gps === 'webgl' && /stretch/.test(old.frames[i].what) ? 1 : 0;
+      const diff = a.findIndex((v, k) => v !== b[k] && (!slack ||
+        [0, 8, 16, 24].some(sh => Math.abs(((v >>> sh) & 255) - ((b[k] >>> sh) & 255)) > slack)));
       assert.strictEqual(diff, -1, `${gps} ${old.frames[i].what} pixel ${diff}: old ${(a[diff] >>> 0).toString(16)} ring ${(b[diff] >>> 0).toString(16)}`);
       lines.push(`${gps} ${old.frames[i].what}: ${new Set(a).size} colours, [0] ${(a[0] >>> 0).toString(16)} [last] ${(a[a.length - 1] >>> 0).toString(16)}`);
     }

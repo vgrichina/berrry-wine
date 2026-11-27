@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/browser-shell.js",
+      "name": "host-file",
+      "baseSHA256": "54040ead9d0331fbbc6c8286de96119ae1b24ab755dc5d1917645e12740913b2",
+      "sha256": "ef6b498b6698e3e92b60fea131c8f4f29b0d650432c64ae26ee53080b88c7ace",
+      "reason": "2026-11-24 the local-file-manifest fetch retries a 404 once under WineAssembly._spaceFreeUrl, the deployer's space-free published name, as asset downloads already do. Same awaited fetch and abort signal inside the launch; no callback, listener, timer or retained reference added. No invocation ownership claim."
+    }
+  ]
+}

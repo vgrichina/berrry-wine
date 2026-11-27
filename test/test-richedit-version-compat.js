@@ -21,6 +21,8 @@ const EM_GETLIMITTEXT = 0x00D5;
 const EM_EXGETSEL = 0x0434;
 const EM_EXLIMITTEXT = 0x0435;
 const EM_EXSETSEL = 0x0437;
+const EM_LINEINDEX = 0x00BB;
+const EM_REPLACESEL = 0x00C2;
 
 async function main() {
   const wasm = compileSrcWasm();
@@ -101,12 +103,50 @@ async function main() {
     setResult === 11 && e.guest_read32(range) === 3 && e.guest_read32(range + 4) === 11,
     `set=${setResult} range=${e.guest_read32(range)},${e.guest_read32(range + 4)}`);
 
+  // EM_EXSETSEL/EM_EXGETSEL/EM_EXLIMITTEXT are RichEdit 1.0 messages too
+  // (Riched32's richedit.h); Delphi's TRichEdit drives the RICHEDIT class
+  // with them.
   e.guest_write32(range, 1);
   e.guest_write32(range + 4, 4);
   const v1Extended = e.send_message(v1, EM_EXSETSEL, 0, range);
   const v1PackedAfter = e.send_message(v1, EM_GETSEL, 0, 0) >>> 0;
-  check('RichEdit 1.0 leaves RichEdit 2.0 extended selection unsupported',
-    v1Extended === 0 && v1PackedAfter === packed);
+  e.guest_write32(range, 0x55);
+  e.guest_write32(range + 4, 0x55);
+  e.send_message(v1, EM_EXGETSEL, 0, range);
+  check('RichEdit 1.0 supports EM_EXSETSEL/EM_EXGETSEL CHARRANGE selection',
+    v1Extended === 4 && v1PackedAfter === ((4 << 16) | 1) &&
+    e.guest_read32(range) === 1 && e.guest_read32(range + 4) === 4,
+    `set=${v1Extended} packed=0x${v1PackedAfter.toString(16)} range=${e.guest_read32(range)},${e.guest_read32(range + 4)}`);
+
+  // Delphi TRichEditStrings.Insert, as a Game Maker 8 runner loading
+  // SplashEdit.Lines from its form resource: caret to EM_LINEINDEX(Index),
+  // EM_REPLACESEL "S\r\n", then EM_EXGETSEL must report the caret right after
+  // the inserted text, or it raises "RichEdit line insertion error".
+  const delphi = e.test_create_richedit(1, style, allocAscii(''));
+  const lines = ['Spelunky', 'by Derek Yu', ''];
+  let insertOk = true;
+  let insertDetail = '';
+  for (let i = 0; i < lines.length; i++) {
+    const start = e.send_message(delphi, EM_LINEINDEX, i, 0);
+    e.guest_write32(range, start);
+    e.guest_write32(range + 4, start);
+    e.send_message(delphi, EM_EXSETSEL, 0, range);
+    const str = lines[i] + '\r\n';
+    e.send_message(delphi, EM_REPLACESEL, 0, allocAscii(str));
+    e.guest_write32(range, -1);
+    e.send_message(delphi, EM_EXGETSEL, 0, range);
+    if (e.guest_read32(range) !== start + str.length) {
+      insertOk = false;
+      insertDetail = `line ${i}: start=${start} selStart=${e.guest_read32(range)}`;
+      break;
+    }
+  }
+  check('RichEdit 1.0 passes the Delphi TRichEditStrings.Insert caret check',
+    insertOk, insertDetail);
+
+  e.send_message(v1, EM_EXLIMITTEXT, 0, 100000);
+  check('RichEdit 1.0 EM_EXLIMITTEXT sets the limit',
+    e.send_message(v1, EM_GETLIMITTEXT, 0, 0) === 100000);
 
   e.send_message(v2, EM_EXLIMITTEXT, 0, 100000);
   check('RichEdit 2.0 EM_EXLIMITTEXT accepts limits above 64K',

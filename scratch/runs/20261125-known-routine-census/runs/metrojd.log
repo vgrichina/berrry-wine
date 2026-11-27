@@ -1,0 +1,172 @@
+PE loaded. Entry: 0x005841a4
+[files] policy eager: small app: 0 eager (0 bytes), 0 on demand (0 bytes) -- mounted eager without --lazy-ranges
+[dll] oleaut32.dll is loaded as a real PE but is not on disk (oleaut32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] oleaut32.dll is loaded as a real PE but is not on disk (oleaut32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] ole32.dll is loaded as a real PE but is not on disk (ole32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] oleaut32.dll is loaded as a real PE but is not on disk (oleaut32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] comctl32.dll is loaded as a real PE but is not on disk (comctl32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[dll] shell32.dll is loaded as a real PE but is not on disk (shell32.dll); its imports fall to WAT stubs and an ordinal import from it crashes as "<ord>". test/binaries/dlls is gitignored: copy it into a fresh worktree.
+[ThreadManager] CreateThread handle=0xe1000 start=0x404f24 param=0x83f1f1c flags=0x4 suspendCount=1
+[ThreadManager] Spawned thread 1 handle=0xe1000 EIP=0x404f24 ESP=0x7efffff8
+[CreateWindow] hwnd=0x10001 title="metrojd_gm7" style=0x-7b360000 pos=320,240 size=0x0 menu=0
+[CreateWindow] hwnd=0x10002 title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[CreateWindow] hwnd=0x10003 title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[CreateWindow] hwnd=0x10004 title="" style=0x-7a000000 pos=976,133 size=320x240 menu=0
+[SetMenu] hwnd=0x10004 menu=0
+[CreateWindow] hwnd=0x10005 title="Game Information" style=0x6cf0000 pos=360,125 size=587x367 menu=0
+[SetMenu] hwnd=0x10005 menu=0
+[CreateWindow] hwnd=0x10006 title="" style=0x44010044 pos=0,0 size=579x333 menu=0
+[SetWindowText] ""
+[CreateWindow] hwnd=0x10007 title="Debug Information" style=0x6ce0000 pos=277,222 size=260x400 menu=0
+[SetMenu] hwnd=0x10007 menu=0
+[CreateWindow] hwnd=0x10008 title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[SetMenu] hwnd=0x10007 menu=6804052
+[CreateWindow] hwnd=0x10009 title="High Scores" style=0x-79380000 pos=125,134 size=320x240 menu=0
+[SetMenu] hwnd=0x10009 menu=0
+[CreateWindow] hwnd=0x1000a title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[CreateWindow] hwnd=0x1000b title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[CreateWindow] hwnd=0x1000c title="SplashForm" style=0x6ca0000 pos=290,164 size=320x240 menu=0
+[SetMenu] hwnd=0x1000c menu=0
+[CreateWindow] hwnd=0x1000d title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[CreateWindow] hwnd=0x1000e title="" style=0x46000000 pos=0,0 size=632x453 menu=0
+[CreateWindow] hwnd=0x1000f title="" style=0x46018044 pos=0,0 size=185x89 menu=0
+[SetWindowText] ""
+[SetWindowText] ""
+[SetWindowText] ""
+[CreateWindow] hwnd=0x10010 title="LoadForm" style=0x-7a000000 pos=218,188 size=320x240 menu=0
+[SetMenu] hwnd=0x10010 menu=0
+[CreateWindow] hwnd=0x10011 title="" style=0x-7a000000 pos=422,329 size=320x240 menu=0
+[SetMenu] hwnd=0x10011 menu=0
+[CreateWindow] hwnd=0x10012 title="ParticleForm" style=0x6cf0000 pos=232,236 size=870x640 menu=0
+[SetMenu] hwnd=0x10012 menu=0
+[CreateWindow] hwnd=0x10013 title="Error Messages" style=0x-79380000 pos=401,481 size=320x240 menu=0
+[SetMenu] hwnd=0x10013 menu=0
+[CreateWindow] hwnd=0x10014 title="LogoForm" style=0x-7a000000 pos=478,359 size=320x240 menu=0
+[SetMenu] hwnd=0x10014 menu=0
+[ShowWindow] hwnd=0x10004 cmd=1
+[ShowWindow] hwnd=0x10004 cmd=0
+[ShowWindow] hwnd=0x10010 cmd=1
+Calling DllMain at 0xe560d9...
+DllMain returned, EAX=0x1
+[CreateWindow] hwnd=0x10015 title="" style=0x44310844 pos=0,0 size=579x333 menu=0
+[SetWindowText] ""
+[SetWindowText] ""
+[SetWindowText] ""
+[CreateWindow] hwnd=0x10016 title="" style=0x-80000000 pos=0,0 size=0x0 menu=0
+[CreateWindow] hwnd=0x10017 title="" style=0x6cf0000 pos=0,0 size=0x0 menu=0
+[SetMenu] hwnd=0x10017 menu=0
+[CreateWindow] hwnd=0x10018 title="" style=0x6ca0000 pos=96,76 size=112x27 menu=0
+[SetMenu] hwnd=0x10018 menu=0
+[CreateWindow] hwnd=0x10019 title="" style=0x-7a000000 pos=0,0 size=640x480 menu=0
+[SetMenu] hwnd=0x10019 menu=0
+[ShowWindow] hwnd=0x10010 cmd=0
+[SetMenu] hwnd=0x10007 menu=0
+[ShowWindow] hwnd=0x10019 cmd=1
+[handler-hist] armed T0 at batch 1500
+[gps] d3d9 frames=629 draws=337236 readbacks=0 readbackBytes=0 uploads=64 uploadBytes=1712128 declines=0 syncs=1 readbacks/frame=0.00 uploads/frame=0.10
+[handler-hist] T0 batches=1500..3000 total=284260959
+  H11 $th_mov_r_r 36733172 (12.92%)
+  H467 $th_load32_rop: mov r,[base+disp], disp packed in the operand 25739429 (9.05%)
+  H39 $th_call_rel: operand=ret_addr, target in next word 16976063 (5.97%)
+  H404 $th_test_jcc: TEST r,r / TEST r8,r8 + Jcc 16561331 (5.83%)
+  H472 $th_push_run: 2-6 PUSH r32/imm (+ mov ebp,esp) as one op 11215363 (3.95%)
+  H18 $th_xor_r_r 10421491 (3.67%)
+  H475 $th_pop_run_ret: POP run + RET / RET imm16 (imm word) 9633079 (3.39%)
+  H41 $th_ret 7867198 (2.77%)
+  H3 $th_add_r_i32 7643007 (2.69%)
+  H468 $th_store32_rop: mov [base+disp],r, disp packed in the operand 7588766 (2.67%)
+  H20 $th_load32: reg = [addr] 7566317 (2.66%)
+  H320 $th_jcc_ge: JGE/JNL 7091922 (2.49%)
+  H389 $th_load32_sib: MOV r32,[base+index*scale+disp] 6755465 (2.38%)
+  H190 $th_fpu_mem_ro 6175851 (2.17%)
+  H312 $th_jcc_nz: JNZ/JNE 5968810 (2.10%)
+  H65 $th_dec_r 5811760 (2.04%)
+  H451 $th_x87_island: contiguous x87 micro-op island 5019714 (1.77%)
+  H28 $th_load8_ro 4889556 (1.72%)
+  H311 $th_jcc_z: JZ/JE 4763975 (1.68%)
+  H32 $th_push_r: push reg 4691138 (1.65%)
+  H322 $th_jcc_g: JG/JNLE 4670096 (1.64%)
+  H128 $th_alu_r_m32_ro: reg OP= [base+disp] (runtime EA) 4412439 (1.55%)
+  H449 $th_x87_pipeline4: bounded straight-line x87 expression region 4407486 (1.55%)
+  H10 $th_cmp_r_i32 3760381 (1.32%)
+  x87: raw 8229089 (2.89%) [H188 618318 H189 1434920 H190 6175851] fused-dispatches 9427200 (3.32%) [H449 4407486 H450 0 H451 5019714 H452 0 H453 0] H439 3080
+  top pairs:
+    H11->H11 $th_mov_r_r -> $th_mov_r_r 8577445 (4.32%)
+    H11->H39 $th_mov_r_r -> $th_call_rel: operand=ret_addr, target in next word 6640850 (3.35%)
+    H472->H11 $th_push_run: 2-6 PUSH r32/imm (+ mov ebp,esp) as one op -> $th_mov_r_r 6291345 (3.17%)
+    H18->H404 $th_xor_r_r -> $th_test_jcc: TEST r,r / TEST r8,r8 + Jcc 4562146 (2.30%)
+    H11->H475 $th_mov_r_r -> $th_pop_run_ret: POP run + RET / RET imm16 (imm word) 3655714 (1.84%)
+    H389->H11 $th_load32_sib: MOV r32,[base+index*scale+disp] -> $th_mov_r_r 3460226 (1.74%)
+    H11->H41 $th_mov_r_r -> $th_ret 3445582 (1.74%)
+    H467->H39 $th_load32_rop: mov r,[base+disp], disp packed in the operand -> $th_call_rel: operand=ret_addr, target in next word 3345973 (1.69%)
+    H128->H320 $th_alu_r_m32_ro: reg OP= [base+disp] (runtime EA) -> $th_jcc_ge: JGE/JNL 3258750 (1.64%)
+    H20->H467 $th_load32: reg = [addr] -> $th_load32_rop: mov r,[base+disp], disp packed in the operand 3117466 (1.57%)
+    H467->H389 $th_load32_rop: mov r,[base+disp], disp packed in the operand -> $th_load32_sib: MOV r32,[base+index*scale+disp] 3068186 (1.55%)
+    H11->H18 $th_mov_r_r -> $th_xor_r_r 2993240 (1.51%)
+  top blocks (distinct=1676 collisions=3469):
+    0x004aec50 1838483 (2.14%)
+    0x004aec56 1838483 (2.14%)
+    0x004aec5b 1838483 (2.14%)
+    0x00406318 1154493 (1.35%)
+    0x0040631f 1154493 (1.35%)
+    0x00405aa4 633199 (0.74%)
+    0x00405aad 633199 (0.74%)
+    0x00405b89 633199 (0.74%)
+    0x004a8424 613359 (0.71%)
+    0x004a842a 613359 (0.71%)
+    0x004a8432 613359 (0.71%)
+    0x004a8338 607199 (0.71%)
+    0x004a833c 606814 (0.71%)
+    0x004a8344 606814 (0.71%)
+    0x004a8353 606814 (0.71%)
+    0x004059b8 602781 (0.70%)
+    0x004059c0 602781 (0.70%)
+    0x00405a47 602781 (0.70%)
+    0x00405a58 602011 (0.70%)
+    0x00405a6a 602011 (0.70%)
+  wrote histogram JSON to scratch/runs/20261125-known-routine-census/runs/metrojd-1500-3000.json
+  top SIB consumers (recorded=2993362, collisions=0):
+    H51 $th_alu_m32_i32: [addr] OP= imm32 (op, addr, imm in words) op=0x7 [edx+eax*4+disp] 974104 (32.54%)
+    H48 $th_alu_r_m32: reg OP= [addr] op=0x3 [esi+ebp*1+disp] 917936 (30.67%)
+    H48 $th_alu_r_m32: reg OP= [addr] op=0x77 [eax+esi*4+disp] 312240 (10.43%)
+    H52 $th_alu_m8_i8: [addr] OP= imm8 op=0x7 [edx+eax*8+disp] 206745 (6.91%)
+    H21 $th_store32: [addr] = reg op=0x0 [edx+ebp*4+disp] 202125 (6.75%)
+    H499 $th_lock_rmw: LOCK RMW / memory XCHG as atomic CAS, threaded only (05) op=0x5 [eax+none*8+disp] 161146 (5.38%)
+    H48 $th_alu_r_m32: reg OP= [addr] op=0x72 [edi+ebx*8+disp] 141387 (4.72%)
+    H24 $th_load8: load byte, zero-extend into reg op=0x3 [eax+esi*1+disp] 30229 (1.01%)
+    H48 $th_alu_r_m32: reg OP= [addr] op=0x77 [ecx+edx*8+disp] 24345 (0.81%)
+    H21 $th_store32: [addr] = reg op=0x3 [ecx+edx*8+disp] 6160 (0.21%)
+    H52 $th_alu_m8_i8: [addr] OP= imm8 op=0x7 [none+edi*8+disp] 4235 (0.14%)
+    H52 $th_alu_m8_i8: [addr] OP= imm8 op=0x7 [none+edx*8+disp] 3080 (0.10%)
+
+--- Final state ---
+EIP=0x004078ac EAX=0x000e0004 ECX=0x00000000 EDX=0x00000000 EBX=0x084c51bc ESP=0x074ffe80 EBP=0x074ffea4 ESI=0x00436d10 EDI=0x074fff90
+wndproc: 0x00407c64
+thunk_base: 0x07500000 thunk_end: 0x07505e38 num_thunks: 3015
+heap_ptr: 0x02712068
+free_list: 0x0067cd38
+heap stats: allocs=2472 frees=2176 steps=84875 (34.3/alloc) misses=421 missSteps=74016 freeList=1337 [16:254 32:293 64:79 128:43 256:159 512:124 1024:4 2048:15 4096:17 8192:47 16384:32 32768:93 65536:116 131072:60 262144:1]
+heap_sparse_ptr: 0x00000000
+heap_sparse_end: 0x00000000
+virtual_alloc_top: 0x7d0a0000
+heap_base: 0x00ed2000
+cache: full clears M 2  T1 2
+cache[T1]: block decodes 0 evicted-live 0 | pages compiled 0 index-arena-full 0 | invalidations 0 dropped 0 last 0x00000000
+cache: block decodes 20695 of which evicted a live block 0
+cache: page evictions by cause: index arena full 0 | directory slot collision 0
+pages: compiled 295 | index hits 175357678 misses 35167 (100.0% hit) | desk trips skipped 87534097
+runs:  extended 2289 | blocks chained 3367 | free fall-throughs 14764762
+       fall-through branches 17958437 | free 14764762 | paid 3193675 (17.8% of fall-throughs are the defrag headroom)
+chunks: samples 0 | used mean 0 max 0 | <=4K 0 <=8K 0 <=12K 0 <=16K 0 | grows 115 reuses 107 unpublished 7
+cache: page invalidations 5653 that dropped a block 622 last 0x00540000
+       blocks retired one at a time 622 | whole-page drops (write too wide to walk) 0 (100.0% exact)
+gdi: dc_states 0 / 512   objects 87 / 512   dc_mark 5
+gdi: dib arena pages used 15066 free 1062 largest free run 578 of 16128
+
+Stats: 3203848 API calls, 3000 batches in 17.471s (172 batches/s)
+MMX: 0 instructions retired (cpuid mmx bit on)
+
+Threads (final state):
+  T1 h=0xe1000 state=active eip=0x404f24 esp=0x7efffff8 ebp=0x0 yield=0 waitH=0x0 sleepCount=0 csPark/steal=0/0
+[d3d9-gps] draws=337236 prims=674472 clears=1257 presents=629 gpu-frames=629 readbacks=0 rt-uploads=0 tex-uploads=25 tex-hits=337211 shaders=2 syncs=0 declines=0 opens=1 dead=0 decline-reasons=none readback-sites=none buffer-draws=0 buffer-uploads=0 buffer-hits=0 lock-current=0 lock-fills=0 uploads-folded=0 active=1

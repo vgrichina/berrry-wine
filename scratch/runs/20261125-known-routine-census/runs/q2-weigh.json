@@ -1,0 +1,57 @@
+{
+ "hist": "/Users/vg/Documents/projects/phone/wine-assembly/scratch/runs/20261120-uop-coverage/census/q2-hist.json",
+ "total": 20946219,
+ "uopBlocks": 16122924,
+ "rows": [
+  [
+   "s-gta2:_chkstk",
+   70837
+  ],
+  [
+   "vc6:_ftol",
+   69336
+  ],
+  [
+   "vc2:_ftol",
+   24835
+  ],
+  [
+   "vc6:_CIsqrt",
+   8784
+  ],
+  [
+   "s-gta2:_aulldiv",
+   1647
+  ],
+  [
+   "s-gta2:_aullrem",
+   1647
+  ],
+  [
+   "s-gta2:memcpy",
+   1449
+  ],
+  [
+   "s-gta2:strchr",
+   1196
+  ],
+  [
+   "gamex86.dll!GetGameAPI",
+   420
+  ]
+ ],
+ "unmatchedByMod": [
+  [
+   "ref_gl.dll",
+   12926737
+  ],
+  [
+   "quake2.exe",
+   7578673
+  ],
+  [
+   "gamex86.dll",
+   260658
+  ]
+ ]
+}

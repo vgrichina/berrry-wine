@@ -39910,5 +39910,2460 @@
     "nargs": 1,
     "convention": "stdcall",
     "hash": 3263732878
+  },
+  {
+    "id": 4723,
+    "name": "WebBrowserOleObject_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3401490702,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4724,
+    "name": "WebBrowserOleObject_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 832039293,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4725,
+    "name": "WebBrowserOleObject_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3360955098,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4726,
+    "name": "WebBrowserOleObject_SetClientSite",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2256842267
+  },
+  {
+    "id": 4727,
+    "name": "WebBrowserOleObject_GetClientSite",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2157258887
+  },
+  {
+    "id": 4728,
+    "name": "WebBrowserOleObject_SetHostNames",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2973488883
+  },
+  {
+    "id": 4729,
+    "name": "WebBrowserOleObject_Close",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3320152375
+  },
+  {
+    "id": 4730,
+    "name": "WebBrowserOleObject_SetMoniker",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3102057032,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4731,
+    "name": "WebBrowserOleObject_GetMoniker",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1508417916,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4732,
+    "name": "WebBrowserOleObject_InitFromData",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3566474819,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4733,
+    "name": "WebBrowserOleObject_GetClipboardData",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3082090059,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4734,
+    "name": "WebBrowserOleObject_DoVerb",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 2555426381,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4735,
+    "name": "WebBrowserOleObject_EnumVerbs",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2384284606,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4736,
+    "name": "WebBrowserOleObject_Update",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1079089656,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4737,
+    "name": "WebBrowserOleObject_IsUpToDate",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3966268937,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4738,
+    "name": "WebBrowserOleObject_GetUserClassID",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 594748653
+  },
+  {
+    "id": 4739,
+    "name": "WebBrowserOleObject_GetUserType",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2460913712,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4740,
+    "name": "WebBrowserOleObject_SetExtent",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1972558383
+  },
+  {
+    "id": 4741,
+    "name": "WebBrowserOleObject_GetExtent",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1431355587
+  },
+  {
+    "id": 4742,
+    "name": "WebBrowserOleObject_Advise",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2774233869,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4743,
+    "name": "WebBrowserOleObject_Unadvise",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1848729914,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4744,
+    "name": "WebBrowserOleObject_EnumAdvise",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1153654208,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4745,
+    "name": "WebBrowserOleObject_GetMiscStatus",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3141378697
+  },
+  {
+    "id": 4746,
+    "name": "WebBrowserOleObject_SetColorScheme",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 758752645,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4747,
+    "name": "WebBrowserPersistStreamInit_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3809137295,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4748,
+    "name": "WebBrowserPersistStreamInit_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 658814628,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4749,
+    "name": "WebBrowserPersistStreamInit_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 386641413,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4750,
+    "name": "WebBrowserPersistStreamInit_GetClassID",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2623583249,
+    "handler": "WebBrowserOleObject_GetUserClassID"
+  },
+  {
+    "id": 4751,
+    "name": "WebBrowserPersistStreamInit_IsDirty",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2783713760
+  },
+  {
+    "id": 4752,
+    "name": "WebBrowserPersistStreamInit_Load",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1883553444,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4753,
+    "name": "WebBrowserPersistStreamInit_Save",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 313836741,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4754,
+    "name": "WebBrowserPersistStreamInit_GetSizeMax",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3714810033,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4755,
+    "name": "WebBrowserPersistStreamInit_InitNew",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 509887140
+  },
+  {
+    "id": 4756,
+    "name": "WebBrowserOleControl_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4028707290,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4757,
+    "name": "WebBrowserOleControl_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2244685761,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4758,
+    "name": "WebBrowserOleControl_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 4201033910,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4759,
+    "name": "WebBrowserOleControl_GetControlInfo",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3503047436,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4760,
+    "name": "WebBrowserOleControl_OnMnemonic",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2814007680,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4761,
+    "name": "WebBrowserOleControl_OnAmbientPropertyChange",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2653041121
+  },
+  {
+    "id": 4762,
+    "name": "WebBrowserOleControl_FreezeEvents",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 24016111,
+    "handler": "WebBrowserOleControl_OnAmbientPropertyChange"
+  },
+  {
+    "id": 4763,
+    "name": "IWebBrowser2_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3337915710,
+    "handler": "WebBrowser_QueryInterface"
+  },
+  {
+    "id": 4764,
+    "name": "IWebBrowser2_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3634221325,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4765,
+    "name": "IWebBrowser2_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 580343466,
+    "handler": "WebBrowser_Release"
+  },
+  {
+    "id": 4766,
+    "name": "IWebBrowser2_GetTypeInfoCount",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1971067902,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4767,
+    "name": "IWebBrowser2_GetTypeInfo",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1400917351,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4768,
+    "name": "IWebBrowser2_GetIDsOfNames",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 165806878,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4769,
+    "name": "IWebBrowser2_Invoke",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 1979320673,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4770,
+    "name": "IWebBrowser2_GoBack",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3829127672,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4771,
+    "name": "IWebBrowser2_GoForward",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2530249324,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4772,
+    "name": "IWebBrowser2_GoHome",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1048718548,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4773,
+    "name": "IWebBrowser2_GoSearch",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2482268367,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4774,
+    "name": "IWebBrowser2_Navigate",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 4231761778,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4775,
+    "name": "IWebBrowser2_Refresh",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3981189688,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4776,
+    "name": "IWebBrowser2_Refresh2",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2564396478,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4777,
+    "name": "IWebBrowser2_Stop",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3242836985,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4778,
+    "name": "IWebBrowser2_get_Application",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 110354434,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4779,
+    "name": "IWebBrowser2_get_Parent",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3663907316,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4780,
+    "name": "IWebBrowser2_get_Container",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1501023571,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4781,
+    "name": "IWebBrowser2_get_Document",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2238470861,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4782,
+    "name": "IWebBrowser2_get_TopLevelContainer",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2270666394,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4783,
+    "name": "IWebBrowser2_get_Type",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 814488404,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4784,
+    "name": "IWebBrowser2_get_Left",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2825988653,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4785,
+    "name": "IWebBrowser2_put_Left",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1690145846,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4786,
+    "name": "IWebBrowser2_get_Top",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2877198079,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4787,
+    "name": "IWebBrowser2_put_Top",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2383804670,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4788,
+    "name": "IWebBrowser2_get_Width",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1991451400,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4789,
+    "name": "IWebBrowser2_put_Width",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4168970865,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4790,
+    "name": "IWebBrowser2_get_Height",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3416970527,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4791,
+    "name": "IWebBrowser2_put_Height",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3231400640,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4792,
+    "name": "IWebBrowser2_get_LocationName",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3946198368,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4793,
+    "name": "IWebBrowser2_get_LocationURL",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 386333196,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4794,
+    "name": "IWebBrowser2_get_Busy",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4217073193,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4795,
+    "name": "IWebBrowser2_Quit",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2241455386,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4796,
+    "name": "IWebBrowser2_ClientToWindow",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2981519655,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4797,
+    "name": "IWebBrowser2_PutProperty",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2465009839,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4798,
+    "name": "IWebBrowser2_GetProperty",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2390605202,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4799,
+    "name": "IWebBrowser2_get_Name",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 965047,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4800,
+    "name": "IWebBrowser2_get_HWND",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1344556235,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4801,
+    "name": "IWebBrowser2_get_FullName",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 407792570,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4802,
+    "name": "IWebBrowser2_get_Path",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2136726747,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4803,
+    "name": "IWebBrowser2_get_Visible",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 240894462,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4804,
+    "name": "IWebBrowser2_put_Visible",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2954540643,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4805,
+    "name": "IWebBrowser2_get_StatusBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1595798367,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4806,
+    "name": "IWebBrowser2_put_StatusBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1803366022,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4807,
+    "name": "IWebBrowser2_get_StatusText",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1379344405,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4808,
+    "name": "IWebBrowser2_put_StatusText",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4018635402,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4809,
+    "name": "IWebBrowser2_get_ToolBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3806493119,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4810,
+    "name": "IWebBrowser2_put_ToolBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1210138710,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4811,
+    "name": "IWebBrowser2_get_MenuBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1328646940,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4812,
+    "name": "IWebBrowser2_put_MenuBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 875478949,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4813,
+    "name": "IWebBrowser2_get_FullScreen",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 813957461,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4814,
+    "name": "IWebBrowser2_put_FullScreen",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3762515910,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4815,
+    "name": "IWebBrowser2_Navigate2",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 1371701696,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4816,
+    "name": "IWebBrowser2_QueryStatusWB",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 4149399688,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4817,
+    "name": "IWebBrowser2_ExecWB",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 513913013,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4818,
+    "name": "IWebBrowser2_ShowBrowserBar",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2605751165,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4819,
+    "name": "IWebBrowser2_get_ReadyState",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3929134540,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4820,
+    "name": "IWebBrowser2_get_Offline",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1576576411,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4821,
+    "name": "IWebBrowser2_put_Offline",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1247738926,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4822,
+    "name": "IWebBrowser2_get_Silent",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 604783077,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4823,
+    "name": "IWebBrowser2_put_Silent",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2916117558,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4824,
+    "name": "IWebBrowser2_get_RegisterAsBrowser",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 210695111,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4825,
+    "name": "IWebBrowser2_put_RegisterAsBrowser",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2339239170,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4826,
+    "name": "IWebBrowser2_get_RegisterAsDropTarget",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 7173309,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4827,
+    "name": "IWebBrowser2_put_RegisterAsDropTarget",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2960636342,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4828,
+    "name": "IWebBrowser2_get_TheaterMode",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3372061658,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4829,
+    "name": "IWebBrowser2_put_TheaterMode",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 764461735,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4830,
+    "name": "IWebBrowser2_get_AddressBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1202664025,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4831,
+    "name": "IWebBrowser2_put_AddressBar",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 424143746,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4832,
+    "name": "IWebBrowser2_get_Resizable",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 613041929,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4833,
+    "name": "IWebBrowser2_put_Resizable",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3198896032,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4834,
+    "name": "ExpandEnvironmentStringsW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 71498497,
+    "args": [
+      {
+        "name": "src",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "dst",
+        "type": "LPWSTR",
+        "out": true
+      },
+      {
+        "name": "size",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4835,
+    "name": "GetConsoleWindow",
+    "nargs": 0,
+    "convention": "stdcall",
+    "hash": 2564324880,
+    "args": [],
+    "ret": "HWND"
+  },
+  {
+    "id": 4836,
+    "name": "GetMonitorInfoW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 788589276,
+    "args": [
+      {
+        "name": "hMonitor",
+        "type": "HMONITOR"
+      },
+      {
+        "name": "lpmi",
+        "type": "LPMONITORINFO",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4837,
+    "name": "ChangeDisplaySettingsW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 546891941,
+    "args": [
+      {
+        "name": "lpDevMode",
+        "type": "LPDEVMODEW"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "LONG"
+  },
+  {
+    "id": 4838,
+    "name": "EnumDisplaySettingsExW",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2557598563,
+    "args": [
+      {
+        "name": "lpszDeviceName",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "iModeNum",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpDevMode",
+        "type": "LPDEVMODEW",
+        "out": true
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4839,
+    "name": "CreateWaitableTimerW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2622544754,
+    "args": [
+      {
+        "name": "lpTimerAttributes",
+        "type": "LPVOID"
+      },
+      {
+        "name": "bManualReset",
+        "type": "BOOL"
+      },
+      {
+        "name": "lpTimerName",
+        "type": "LPCWSTR"
+      }
+    ],
+    "ret": "HANDLE"
+  },
+  {
+    "id": 4840,
+    "name": "SetWaitableTimer",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2414140191,
+    "args": [
+      {
+        "name": "hTimer",
+        "type": "HANDLE"
+      },
+      {
+        "name": "pDueTime",
+        "type": "LPVOID"
+      },
+      {
+        "name": "lPeriod",
+        "type": "LONG"
+      },
+      {
+        "name": "pfnCompletionRoutine",
+        "type": "LPVOID"
+      },
+      {
+        "name": "lpArgToCompletionRoutine",
+        "type": "LPVOID"
+      },
+      {
+        "name": "fResume",
+        "type": "BOOL"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4841,
+    "name": "CancelWaitableTimer",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3264337543,
+    "args": [
+      {
+        "name": "hTimer",
+        "type": "HANDLE"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4842,
+    "name": "IDirectMusicPerformance8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 53727124
+  },
+  {
+    "id": 4843,
+    "name": "IDirectMusicPerformance8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3191877967,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4844,
+    "name": "IDirectMusicPerformance8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1327366680
+  },
+  {
+    "id": 4845,
+    "name": "IDirectMusicPerformance8_Init",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2318754997,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4846,
+    "name": "IDirectMusicPerformance8_PlaySegment",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2868017722,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4847,
+    "name": "IDirectMusicPerformance8_Stop",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3603323299,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4848,
+    "name": "IDirectMusicPerformance8_GetSegmentState",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1670599963,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4849,
+    "name": "IDirectMusicPerformance8_SetPrepareTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1016459825,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4850,
+    "name": "IDirectMusicPerformance8_GetPrepareTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3377467453,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4851,
+    "name": "IDirectMusicPerformance8_SetBumperLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1841072790,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4852,
+    "name": "IDirectMusicPerformance8_GetBumperLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2635063826,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4853,
+    "name": "IDirectMusicPerformance8_SendPMsg",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2298537104,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4854,
+    "name": "IDirectMusicPerformance8_MusicToReferenceTime",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 43035113,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4855,
+    "name": "IDirectMusicPerformance8_ReferenceToMusicTime",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 202949801,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4856,
+    "name": "IDirectMusicPerformance8_IsPlaying",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2515419619
+  },
+  {
+    "id": 4857,
+    "name": "IDirectMusicPerformance8_GetTime",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2427063268,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4858,
+    "name": "IDirectMusicPerformance8_AllocPMsg",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2260893265,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4859,
+    "name": "IDirectMusicPerformance8_FreePMsg",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1827249348,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4860,
+    "name": "IDirectMusicPerformance8_GetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2931775047,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4861,
+    "name": "IDirectMusicPerformance8_SetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2167828091,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4862,
+    "name": "IDirectMusicPerformance8_SetNotificationHandle",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1833747212,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4863,
+    "name": "IDirectMusicPerformance8_GetNotificationPMsg",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 237890647,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4864,
+    "name": "IDirectMusicPerformance8_AddNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 628389757,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4865,
+    "name": "IDirectMusicPerformance8_RemoveNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 458963616,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4866,
+    "name": "IDirectMusicPerformance8_AddPort",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 190408153,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4867,
+    "name": "IDirectMusicPerformance8_RemovePort",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3263763184,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4868,
+    "name": "IDirectMusicPerformance8_AssignPChannelBlock",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 287125910,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4869,
+    "name": "IDirectMusicPerformance8_AssignPChannel",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1706856513,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4870,
+    "name": "IDirectMusicPerformance8_PChannelInfo",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1090277140,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4871,
+    "name": "IDirectMusicPerformance8_DownloadInstrument",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3280202050,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4872,
+    "name": "IDirectMusicPerformance8_Invalidate",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 600642126,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4873,
+    "name": "IDirectMusicPerformance8_GetParam",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 1129678386,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4874,
+    "name": "IDirectMusicPerformance8_SetParam",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2475531318,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4875,
+    "name": "IDirectMusicPerformance8_GetGlobalParam",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2665185839
+  },
+  {
+    "id": 4876,
+    "name": "IDirectMusicPerformance8_SetGlobalParam",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 58948867
+  },
+  {
+    "id": 4877,
+    "name": "IDirectMusicPerformance8_GetLatencyTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2580521136,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4878,
+    "name": "IDirectMusicPerformance8_GetQueueTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1290739313,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4879,
+    "name": "IDirectMusicPerformance8_AdjustTime",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3993421285,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4880,
+    "name": "IDirectMusicPerformance8_CloseDown",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2729576097
+  },
+  {
+    "id": 4881,
+    "name": "IDirectMusicPerformance8_GetResolvedTime",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 750442820,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4882,
+    "name": "IDirectMusicPerformance8_MIDIToMusic",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 2265541194,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4883,
+    "name": "IDirectMusicPerformance8_MusicToMIDI",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 1741901282,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4884,
+    "name": "IDirectMusicPerformance8_TimeToRhythm",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3330644799,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4885,
+    "name": "IDirectMusicPerformance8_RhythmToTime",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 2387156023,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4886,
+    "name": "IDirectMusicPerformance8_InitAudio",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 3840283497
+  },
+  {
+    "id": 4887,
+    "name": "IDirectMusicPerformance8_PlaySegmentEx",
+    "nargs": 10,
+    "convention": "stdcall",
+    "hash": 584202639
+  },
+  {
+    "id": 4888,
+    "name": "IDirectMusicPerformance8_StopEx",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3456042462
+  },
+  {
+    "id": 4889,
+    "name": "IDirectMusicPerformance8_ClonePMsg",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1008719137,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4890,
+    "name": "IDirectMusicPerformance8_CreateAudioPath",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1480125408,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4891,
+    "name": "IDirectMusicPerformance8_CreateStandardAudioPath",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 394571555
+  },
+  {
+    "id": 4892,
+    "name": "IDirectMusicPerformance8_SetDefaultAudioPath",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3844360243
+  },
+  {
+    "id": 4893,
+    "name": "IDirectMusicPerformance8_GetDefaultAudioPath",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3996316191
+  },
+  {
+    "id": 4894,
+    "name": "IDirectMusicPerformance8_GetParamEx",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 4011236823,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4895,
+    "name": "IDirectMusicPerformance8_SetParamEx",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3028983011,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4896,
+    "name": "IDirectMusicLoader8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1981458673
+  },
+  {
+    "id": 4897,
+    "name": "IDirectMusicLoader8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2499317522,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4898,
+    "name": "IDirectMusicLoader8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 1764464783
+  },
+  {
+    "id": 4899,
+    "name": "IDirectMusicLoader8_GetObject",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1941202681
+  },
+  {
+    "id": 4900,
+    "name": "IDirectMusicLoader8_SetObject",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1021067229,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4901,
+    "name": "IDirectMusicLoader8_SetSearchDirectory",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 997564149,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4902,
+    "name": "IDirectMusicLoader8_ScanDirectory",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 2064393474,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4903,
+    "name": "IDirectMusicLoader8_CacheObject",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3877212531,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4904,
+    "name": "IDirectMusicLoader8_ReleaseObject",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2040914124,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4905,
+    "name": "IDirectMusicLoader8_ClearCache",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2337615819,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4906,
+    "name": "IDirectMusicLoader8_EnableCache",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3042425413,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4907,
+    "name": "IDirectMusicLoader8_EnumObject",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3336023732,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4908,
+    "name": "IDirectMusicLoader8_CollectGarbage",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3826427483
+  },
+  {
+    "id": 4909,
+    "name": "IDirectMusicLoader8_ReleaseObjectByUnknown",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4071998373
+  },
+  {
+    "id": 4910,
+    "name": "IDirectMusicLoader8_LoadObjectFromFile",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1623841907
+  },
+  {
+    "id": 4911,
+    "name": "IDirectMusicSegment8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1431088687
+  },
+  {
+    "id": 4912,
+    "name": "IDirectMusicSegment8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 4241344964,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4913,
+    "name": "IDirectMusicSegment8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 919109989
+  },
+  {
+    "id": 4914,
+    "name": "IDirectMusicSegment8_GetLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1275608504
+  },
+  {
+    "id": 4915,
+    "name": "IDirectMusicSegment8_SetLength",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 764885492,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4916,
+    "name": "IDirectMusicSegment8_GetRepeats",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3075225320
+  },
+  {
+    "id": 4917,
+    "name": "IDirectMusicSegment8_SetRepeats",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3105450156
+  },
+  {
+    "id": 4918,
+    "name": "IDirectMusicSegment8_GetDefaultResolution",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1486389243,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4919,
+    "name": "IDirectMusicSegment8_SetDefaultResolution",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 519163823,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4920,
+    "name": "IDirectMusicSegment8_GetTrack",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 1062428107,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4921,
+    "name": "IDirectMusicSegment8_GetTrackGroup",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 522567842,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4922,
+    "name": "IDirectMusicSegment8_InsertTrack",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3616069476,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4923,
+    "name": "IDirectMusicSegment8_RemoveTrack",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 780836247,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4924,
+    "name": "IDirectMusicSegment8_InitPlay",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3533018820,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4925,
+    "name": "IDirectMusicSegment8_GetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2356701672,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4926,
+    "name": "IDirectMusicSegment8_SetGraph",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3521068012,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4927,
+    "name": "IDirectMusicSegment8_AddNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 204080172,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4928,
+    "name": "IDirectMusicSegment8_RemoveNotificationType",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2503670999,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4929,
+    "name": "IDirectMusicSegment8_GetParam",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 3266705621,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4930,
+    "name": "IDirectMusicSegment8_SetParam",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 3480996121
+  },
+  {
+    "id": 4931,
+    "name": "IDirectMusicSegment8_Clone",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 1435795237,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4932,
+    "name": "IDirectMusicSegment8_SetStartPoint",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2654095434,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4933,
+    "name": "IDirectMusicSegment8_GetStartPoint",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 106083662,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4934,
+    "name": "IDirectMusicSegment8_SetLoopPoints",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3523795681,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4935,
+    "name": "IDirectMusicSegment8_GetLoopPoints",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2621325757,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4936,
+    "name": "IDirectMusicSegment8_SetPChannelsUsed",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 937415093,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4937,
+    "name": "IDirectMusicSegment8_SetTrackConfig",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 162111901,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4938,
+    "name": "IDirectMusicSegment8_GetAudioPathConfig",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1027734279,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4939,
+    "name": "IDirectMusicSegment8_Compose",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 2809480436,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4940,
+    "name": "IDirectMusicSegment8_Download",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3904428696
+  },
+  {
+    "id": 4941,
+    "name": "IDirectMusicSegment8_Unload",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 828443531
+  },
+  {
+    "id": 4942,
+    "name": "IDirectMusicAudioPath8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2486317799
+  },
+  {
+    "id": 4943,
+    "name": "IDirectMusicAudioPath8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 630196588,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4944,
+    "name": "IDirectMusicAudioPath8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2757905101
+  },
+  {
+    "id": 4945,
+    "name": "IDirectMusicAudioPath8_GetObjectInPath",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 112756255
+  },
+  {
+    "id": 4946,
+    "name": "IDirectMusicAudioPath8_Activate",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3281006289
+  },
+  {
+    "id": 4947,
+    "name": "IDirectMusicAudioPath8_SetVolume",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3298971666
+  },
+  {
+    "id": 4948,
+    "name": "IDirectMusicAudioPath8_ConvertPChannel",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1183516428,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4949,
+    "name": "IDirectMusicSegmentState8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 109078752
+  },
+  {
+    "id": 4950,
+    "name": "IDirectMusicSegmentState8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 807005539,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4951,
+    "name": "IDirectMusicSegmentState8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 4237366180,
+    "handler": "dx_com_release_basic"
+  },
+  {
+    "id": 4952,
+    "name": "IDirectMusicSegmentState8_GetRepeats",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1721965759,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4953,
+    "name": "IDirectMusicSegmentState8_GetSegment",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 62208082,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4954,
+    "name": "IDirectMusicSegmentState8_GetStartTime",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2281302306,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4955,
+    "name": "IDirectMusicSegmentState8_GetSeek",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 26196565,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4956,
+    "name": "IDirectMusicSegmentState8_GetStartPoint",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2602810227,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4957,
+    "name": "IDirectMusicSegmentState8_SetTrackConfig",
+    "nargs": 7,
+    "convention": "stdcall",
+    "hash": 1105006170,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4958,
+    "name": "IDirectMusicSegmentState8_GetObjectInPath",
+    "nargs": 8,
+    "convention": "stdcall",
+    "hash": 2584528050,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4959,
+    "name": "_libm_sse2_sin_precise",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 3888437131
+  },
+  {
+    "id": 4960,
+    "name": "_libm_sse2_cos_precise",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 1094220510
+  },
+  {
+    "id": 4961,
+    "name": "_libm_sse2_sqrt_precise",
+    "nargs": 0,
+    "convention": "cdecl",
+    "hash": 464167077
+  },
+  {
+    "id": 4962,
+    "name": "_time64",
+    "nargs": 1,
+    "convention": "cdecl",
+    "hash": 1250867989
+  },
+  {
+    "id": 4963,
+    "name": "IDirectMusicPathBuffer8_QueryInterface",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 2131315723
+  },
+  {
+    "id": 4964,
+    "name": "IDirectMusicPathBuffer8_AddRef",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3927200104,
+    "handler": "dx_com_addref"
+  },
+  {
+    "id": 4965,
+    "name": "IDirectMusicPathBuffer8_Release",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 339782609
+  },
+  {
+    "id": 4966,
+    "name": "IDirectMusicPathBuffer8_GetCaps",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 515589577,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4967,
+    "name": "IDirectMusicPathBuffer8_GetCurrentPosition",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 971270146,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4968,
+    "name": "IDirectMusicPathBuffer8_GetFormat",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3426893675,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4969,
+    "name": "IDirectMusicPathBuffer8_GetVolume",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2919014026
+  },
+  {
+    "id": 4970,
+    "name": "IDirectMusicPathBuffer8_GetPan",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 86295583
+  },
+  {
+    "id": 4971,
+    "name": "IDirectMusicPathBuffer8_GetFrequency",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2947024150,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4972,
+    "name": "IDirectMusicPathBuffer8_GetStatus",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1012218986,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4973,
+    "name": "IDirectMusicPathBuffer8_Initialize",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 3184202706,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4974,
+    "name": "IDirectMusicPathBuffer8_Lock",
+    "nargs": 9,
+    "convention": "stdcall",
+    "hash": 4011952691,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4975,
+    "name": "IDirectMusicPathBuffer8_Play",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 4146876806,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4976,
+    "name": "IDirectMusicPathBuffer8_SetCurrentPosition",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4149423926,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4977,
+    "name": "IDirectMusicPathBuffer8_SetFormat",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2554006151,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4978,
+    "name": "IDirectMusicPathBuffer8_SetVolume",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 3983774502
+  },
+  {
+    "id": 4979,
+    "name": "IDirectMusicPathBuffer8_SetPan",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 911347995
+  },
+  {
+    "id": 4980,
+    "name": "IDirectMusicPathBuffer8_SetFrequency",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 1771449330,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4981,
+    "name": "IDirectMusicPathBuffer8_Stop",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3264075828,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4982,
+    "name": "IDirectMusicPathBuffer8_Unlock",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3173207416,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4983,
+    "name": "IDirectMusicPathBuffer8_Restore",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 2110200454,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4984,
+    "name": "IDirectMusicPathBuffer8_SetFX",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3738328362,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4985,
+    "name": "IDirectMusicPathBuffer8_AcquireResources",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3382213373,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4986,
+    "name": "IDirectMusicPathBuffer8_GetObjectInPath",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3424530739,
+    "handler": "ftm_unimplemented"
+  },
+  {
+    "id": 4987,
+    "name": "TrackMouseEvent",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 3265892589,
+    "args": [
+      {
+        "name": "lpEventTrack",
+        "type": "LPTRACKMOUSEEVENT"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4988,
+    "name": "_TrackMouseEvent",
+    "nargs": 1,
+    "convention": "stdcall",
+    "hash": 734949508,
+    "args": [
+      {
+        "name": "lpEventTrack",
+        "type": "LPTRACKMOUSEEVENT"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4989,
+    "name": "CreateFileMappingW",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 4289864568,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "lpAttributes",
+        "type": "LPVOID"
+      },
+      {
+        "name": "flProtect",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwMaximumSizeHigh",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwMaximumSizeLow",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpName",
+        "type": "LPCWSTR"
+      }
+    ],
+    "ret": "HANDLE"
+  },
+  {
+    "id": 4990,
+    "name": "LookupPrivilegeValueW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 44817076,
+    "args": [
+      {
+        "name": "lpSystemName",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "lpName",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "lpLuid",
+        "type": "LPVOID"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4991,
+    "name": "VerSetConditionMask",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3946904723,
+    "args": [
+      {
+        "name": "ConditionMaskLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "ConditionMaskHi",
+        "type": "DWORD"
+      },
+      {
+        "name": "TypeMask",
+        "type": "DWORD"
+      },
+      {
+        "name": "Condition",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4992,
+    "name": "UuidFromStringA",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 416456978,
+    "args": [
+      {
+        "name": "StringUuid",
+        "type": "LPCSTR"
+      },
+      {
+        "name": "Uuid",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4993,
+    "name": "VerifyVersionInfoW",
+    "nargs": 4,
+    "convention": "stdcall",
+    "hash": 3945885385,
+    "args": [
+      {
+        "name": "lpVersionInformation",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwTypeMask",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwlConditionMaskLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "dwlConditionMaskHi",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4994,
+    "name": "CharUpperBuffW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4065595103,
+    "args": [
+      {
+        "name": "lpsz",
+        "type": "LPWSTR"
+      },
+      {
+        "name": "cchLength",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "DWORD"
+  },
+  {
+    "id": 4995,
+    "name": "CompareStringOrdinal",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 496110642,
+    "args": [
+      {
+        "name": "lpString1",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "cchCount1",
+        "type": "int"
+      },
+      {
+        "name": "lpString2",
+        "type": "LPCWSTR"
+      },
+      {
+        "name": "cchCount2",
+        "type": "int"
+      },
+      {
+        "name": "bIgnoreCase",
+        "type": "BOOL"
+      }
+    ],
+    "ret": "int"
+  },
+  {
+    "id": 4996,
+    "name": "GetFileSizeEx",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 4257869773,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "lpFileSize",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4997,
+    "name": "SetFilePointerEx",
+    "nargs": 5,
+    "convention": "stdcall",
+    "hash": 3865219911,
+    "args": [
+      {
+        "name": "hFile",
+        "type": "HANDLE"
+      },
+      {
+        "name": "liDistanceToMoveLo",
+        "type": "DWORD"
+      },
+      {
+        "name": "liDistanceToMoveHi",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpNewFilePointer",
+        "type": "LPVOID",
+        "out": true
+      },
+      {
+        "name": "dwMoveMethod",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4998,
+    "name": "GetCPInfoExW",
+    "nargs": 3,
+    "convention": "stdcall",
+    "hash": 1252489070,
+    "args": [
+      {
+        "name": "CodePage",
+        "type": "UINT"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      },
+      {
+        "name": "lpCPInfoEx",
+        "type": "LPVOID",
+        "out": true
+      }
+    ],
+    "ret": "BOOL"
+  },
+  {
+    "id": 4999,
+    "name": "EnumSystemLocalesW",
+    "nargs": 2,
+    "convention": "stdcall",
+    "hash": 2580403173,
+    "args": [
+      {
+        "name": "lpLocaleEnumProc",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwFlags",
+        "type": "DWORD"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]

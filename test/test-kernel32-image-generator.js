@@ -11,7 +11,8 @@ const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kernel32-generator-'));
 try {
   for (const folder of ['src', 'tools']) fs.mkdirSync(path.join(dir, folder));
   const files = ['src/kernel32-exports.json', 'src/api_table.json',
-    'src/08-pe-loader.wat', 'tools/gen-kernel32-image.js'];
+    'src/08-pe-loader.wat', 'tools/gen-kernel32-image.js', 'tools/kernel32-export-census.js',
+    'tools/aw-census.js', 'tools/kernel32-wine-names.json'];
   for (const file of files) fs.copyFileSync(path.join(root, file), path.join(dir, file));
   const original = fs.readFileSync(path.join(dir, 'src/08-pe-loader.wat'), 'utf8');
   const manifest = require('../src/kernel32-exports.json');
@@ -41,7 +42,7 @@ try {
     ['unknown API', m => { m.exports[0].api = 'MissingKernelAPI'; }],
     ['invalid ordinal', m => { m.exports[0].ordinal = 1025; }],
     ['duplicate name', m => { const named=m.exports.filter(e=>e.name); named[1].name = named[0].name; }],
-    ['code overflow', m => { while (m.exports.length <= 512) m.exports.push({ ...m.exports[0] }); }],
+    ['code overflow', m => { while (m.exports.length <= 2048) m.exports.push({ ...m.exports[0] }); }],
   ]) {
     const mutated = structuredClone(manifest); mutate(mutated);
     fs.writeFileSync(path.join(dir, 'src/kernel32-exports.json'), JSON.stringify(mutated));

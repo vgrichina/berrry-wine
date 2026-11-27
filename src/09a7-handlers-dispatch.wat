@@ -572,6 +572,21 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
   )
 
+  ;; _time64(__time64_t *timer) — cdecl, MSVCR80+ (time() is an inline
+  ;; wrapper over it in those headers). Same calendar clock as time(), but the
+  ;; full 64-bit second count comes back in EDX:EAX and is stored as a qword.
+  (func $handle__time64 (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $t i64)
+    (local.set $t (i64.div_s
+      (i64.sub (call $wall_clock_read64 (i32.const 2)) (i64.const 116444736000000000))
+      (i64.const 10000000)))
+    (i32.store offset=0 (global.get $reg_base) (i32.wrap_i64 (local.get $t)))
+    (i32.store offset=8 (global.get $reg_base) (i32.wrap_i64 (i64.shr_u (local.get $t) (i64.const 32))))
+    (if (local.get $arg0)
+      (then (call $gs64 (local.get $arg0) (local.get $t))))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
+  )
+
   ;; 746: atol(str) — convert ASCII string to long integer
   (func $handle_atol (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $ptr i32) (local $val i32) (local $ch i32) (local $neg i32)
@@ -3323,7 +3338,25 @@
       (if (call $guid_words_equal (local.get $clsid_wa)
             (i32.const 0x25E609E0) (i32.const 0x11CFB259)
             (i32.const 0x4544C7BF) (i32.const 0x00005453))
-        (then (local.set $local_class (i32.const 11))))))
+        (then (local.set $local_class (i32.const 11))))
+      ;; CLSID_WebBrowser {8856F961-340A-11D0-A96B-00C04FD705A2}: the blank
+      ;; control in 09a7l-webbrowser.wat (Game Maker runners' TWebBrowser).
+      (if (call $guid_words_equal (local.get $clsid_wa)
+            (i32.const 0x8856F961) (i32.const 0x11D0340A)
+            (i32.const 0xC0006BA9) (i32.const 0xA205D74F))
+        (then (local.set $local_class (i32.const 12))))
+      ;; CLSID_DirectMusicPerformance {D2AC2881-...} / CLSID_DirectMusicLoader
+      ;; {D2AC2892-...} (09a7m-directmusic.wat), activated only for the
+      ;; DirectX 8 interfaces that file implements; a DirectX 6/7 caller keeps
+      ;; REGDB_E_CLASSNOTREG and its own no-music path.
+      (if (i32.ne (local.get $iid_wa) (i32.const 0))
+        (then
+          (if (i32.and (call $dm_is_d2ac (local.get $clsid_wa) (i32.const 0xD2AC2881))
+                (call $dm_is_perf8_iid (local.get $iid_wa)))
+            (then (local.set $local_class (i32.const 13))))
+          (if (i32.and (call $dm_is_d2ac (local.get $clsid_wa) (i32.const 0xD2AC2892))
+                (call $dm_is_loader8_iid (local.get $iid_wa)))
+            (then (local.set $local_class (i32.const 14))))))))
 
     (if (local.get $local_class) (then
       (if (i32.eqz (local.get $arg4))
@@ -3380,6 +3413,12 @@
       (if (i32.eq (local.get $local_class) (i32.const 11))
         (then (local.set $obj_guest (call $dx_create_com_obj
           (i32.const 6) (global.get $DX_VTBL_DINPUT)))))
+      (if (i32.eq (local.get $local_class) (i32.const 12))
+        (then (local.set $obj_guest (call $webbrowser_create))))
+      (if (i32.eq (local.get $local_class) (i32.const 13))
+        (then (local.set $obj_guest (call $dmusic_perf_create))))
+      (if (i32.eq (local.get $local_class) (i32.const 14))
+        (then (local.set $obj_guest (call $dmusic_loader_create))))
       (if (i32.eqz (local.get $obj_guest))
         (then
           (i32.store offset=0 (global.get $reg_base) (i32.const 0x8007000E)) ;; E_OUTOFMEMORY
@@ -3436,7 +3475,18 @@
       (if (i32.eq (local.get $local_class) (i32.const 11))
         (then (local.set $hr (call $dinput_cocreate_query_wa
           (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
-      (drop (call $dx_com_release_basic (local.get $obj_guest)))
+      (if (i32.eq (local.get $local_class) (i32.const 12))
+        (then (local.set $hr (call $webbrowser_query_interface_wa
+          (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
+      (if (i32.eq (local.get $local_class) (i32.const 13))
+        (then (local.set $hr (call $dm_perf_qi_wa
+          (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
+      (if (i32.eq (local.get $local_class) (i32.const 14))
+        (then (local.set $hr (call $dm_loader_qi_wa
+          (local.get $obj_guest) (local.get $iid_wa) (local.get $arg4)))))
+      (if (i32.ge_u (local.get $local_class) (i32.const 13))
+        (then (drop (call $dmusic_release (local.get $obj_guest))))
+        (else (drop (call $dx_com_release_basic (local.get $obj_guest)))))
       (i32.store offset=0 (global.get $reg_base) (local.get $hr))
       (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
       (return)))
@@ -4747,6 +4797,16 @@
 
   ;; 777: CreateFileMappingA(hFile, lpAttr, flProtect, dwMaxHi, dwMaxLo, lpName) — 6 args
   (func $handle_CreateFileMappingA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_create_file_mapping (local.get $arg0) (local.get $arg2) (local.get $arg3)
+      (local.get $arg4) (i32.const 0)))
+
+  ;; CreateFileMappingW: the same section, named in UTF-16 (HeidiSQL's
+  ;; single-instance check). The host reads the name directly; no narrowing.
+  (func $handle_CreateFileMappingW (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $handle_create_file_mapping (local.get $arg0) (local.get $arg2) (local.get $arg3)
+      (local.get $arg4) (i32.const 1)))
+
+  (func $handle_create_file_mapping (param $arg0 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $wide i32)
     (local $section i32)
     ;; lpName is the sixth argument, past the five in registers.
     (local.set $section (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
@@ -4754,7 +4814,7 @@
       (local.get $arg0) (local.get $arg2) (local.get $arg3) (local.get $arg4)
       (if (result i32) (local.get $section)
         (then (call $g2w (local.get $section))) (else (i32.const 0)))
-      (global.get $reg_base)))
+      (global.get $reg_base) (local.get $wide)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 28)))  ;; 6 args
   )
 

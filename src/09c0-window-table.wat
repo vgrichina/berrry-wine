@@ -561,6 +561,9 @@
       (then (global.set $active_hwnd (i32.const 0))))
     (if (i32.eq (call $capture_live) (local.get $hwnd))
       (then (call $capture_store (i32.const 0))))
+    ;; Mouse tracking on a dying window ends with it; the WM_MOUSELEAVE USER
+    ;; would post has no window left to be retrieved for (purged below).
+    (call $tme_window_destroyed (local.get $hwnd))
     (call $post_queue_purge_hwnd (local.get $hwnd))
     ;; Notify host to remove from its table (for each child too)
     (call $host_destroy_window (local.get $hwnd))

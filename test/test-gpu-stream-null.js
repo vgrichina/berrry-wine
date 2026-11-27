@@ -190,10 +190,26 @@ expectFail((p) => { p.emit('CREATE', { id: 1, kind: KIND.RT }); p.emit('READBACK
   const solid = (w, h, rgba) => { const a = new Uint8Array(w * h * 4); for (let i = 0; i < w * h; i++) a.set(rgba, i * 4); return a; };
   const win = { hwnd: 1, w: 10, h: 8, clientRect: { x: 0, y: 0, w: 8, h: 6 }, _backCanvas: {} };
   const renderer = { windows: { 1: win }, scheduleRepaint() {} };
-  for (const kind of ['pixels', 'bitmap']) {
+  // 'surface': the in-page WebGL route. The frame is a rect (srcX,srcY) of a
+  // real browser canvas, drawn from directly; its lazy `pixels` (a readPixels
+  // in lib/gpu-stream-webgl.js) must not be touched.
+  const hadOffscreen = Object.prototype.hasOwnProperty.call(globalThis, 'OffscreenCanvas');
+  const savedOffscreen = globalThis.OffscreenCanvas;
+  class FakeOffscreen {}
+  globalThis.OffscreenCanvas = FakeOffscreen;
+  for (const kind of ['pixels', 'bitmap', 'surface']) {
     const pr = new Presenter({ api: 'test', renderer, createCanvas: fakeCanvas });
     const frame = (w, h, rgba, dstX, dstY, stamp) => {
       const px = solid(w, h, rgba);
+      if (kind === 'surface') {
+        // The frame sits at (3,2) inside a larger GL drawable.
+        const sw = w + 5, sh = h + 4, big = new Uint8Array(sw * sh * 4);
+        for (let y = 0; y < h; y++) big.set(px.subarray(y * w * 4, (y + 1) * w * 4), ((y + 2) * sw + 3) * 4);
+        const surface = Object.assign(new FakeOffscreen(), { width: sw, height: sh, px: big });
+        const f = { surface, srcX: 3, srcY: 2, width: w, height: h, hwnd: 1, dstX, dstY, stamp };
+        Object.defineProperty(f, 'pixels', { get() { throw new Error('surface frame read back its pixels'); } });
+        return f;
+      }
       return kind === 'pixels' ? { pixels: px, width: w, height: h, hwnd: 1, dstX, dstY, stamp }
         : { bitmap: { width: w, height: h, px, close() {} }, width: w, height: h, hwnd: 1, dstX, dstY, stamp };
     };
@@ -216,6 +232,8 @@ expectFail((p) => { p.emit('CREATE', { id: 1, kind: KIND.RT }); p.emit('READBACK
     assert.strictEqual(pr.stale, 1, `${kind}: stale stamp dropped before placement`);
     assert.deepStrictEqual(at(1, 1), [0, 0, 255, 255]);
   }
+  if (hadOffscreen) globalThis.OffscreenCanvas = savedOffscreen;
+  else delete globalThis.OffscreenCanvas;
 }
 
 console.log('test-gpu-stream-null: PASS');

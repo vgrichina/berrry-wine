@@ -298,6 +298,11 @@ const PUBLISHABLE_OUTSIDE_BINARIES = [
   // way; publishing it as a promotional demo is the owner's decision
   // (2026-09-24, test/binaries/SOURCES.md). Only its manifest's files ship.
   'test/binaries/candidates/simcity-2000-demo/',
+  // GTA2 Wild Demo: the payload its own InstallShield wizard copied. The demo
+  // licence permits playing it but grants no redistribution right, and
+  // Rockstar's free full-game release forbade mirroring; publishing it anyway
+  // is the owner's decision (2026-11-24). Only the registry's file list ships.
+  'test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/',
   // Moorhuhn (Die Original Moorhuhn Jagd): Phenomedia/Art Department's 1999
   // Johnnie Walker promotion, given away free and passed around by its own
   // design. Only Moorhuhn.exe + MOORHUHN.DAT (its manifest) ship; publishing
@@ -315,6 +320,13 @@ const PUBLISHABLE_OUTSIDE_BINARIES = [
   // download sites. Their packaging grants no redistribution right either
   // way; publishing them as promotional demos is the owner's decision
   // (2026-09-30, test/binaries/SOURCES.md). Only each manifest's files ship.
+  // Command & Conquer: Red Alert Win95 demo v1.19: Westwood's own February
+  // 1997 promotional demo, given away free on its site and magazine discs.
+  // Its README states copyright and no redistribution terms either way;
+  // publishing it is the owner's decision (2026-11-24, test/binaries/SOURCES.md).
+  // Only the CD's INSTALL\ tree ships (RA95.EXE plus its manifest's files);
+  // the rest of the Win98 Games A-D archive stays local.
+  'test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/',
   'test/binaries/candidates/need-for-speed-2-demo/',
   'test/binaries/candidates/need-for-speed-3-demo/',
   'build/nfs2se-browser.json',

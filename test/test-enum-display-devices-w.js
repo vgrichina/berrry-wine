@@ -78,20 +78,20 @@ function utf16z(view, offset, maxChars) {
   assert.strictEqual(Number(result & 0xffffffffn), 0, 'adapter enumeration ends after zero');
 
   bytes.fill(0xa5, wasmBuf, wasmBuf + 0x348);
-  result = e.test_enum_display_settings_w(-1, buf, 156);
+  result = e.test_enum_display_settings_w(-1, buf, 188);
   assert.strictEqual(Number(result & 0xffffffffn), 1, 'current Unicode display mode exists');
   assert.strictEqual(Number(result >> 32n), 0x00300010,
     'three-argument stdcall pops return plus arguments');
-  assert.strictEqual(view.getUint16(wasmBuf + 68, true), 156, 'legal old DEVMODEW size is retained');
+  assert.strictEqual(view.getUint16(wasmBuf + 68, true), 188, 'legal Win95 DEVMODEW size (DEVMODEA 124 + two doubled CHAR[32]) is retained');
   assert.strictEqual(view.getUint32(wasmBuf + 72, true), 0x5c0000, 'display fields are present');
-  assert.strictEqual(view.getUint32(wasmBuf + 136, true), 32, 'mode is 32 bpp');
-  assert.strictEqual(view.getUint32(wasmBuf + 140, true), 640, 'mode width follows host surface');
-  assert.strictEqual(view.getUint32(wasmBuf + 144, true), 480, 'mode height follows host surface');
-  assert.strictEqual(view.getUint32(wasmBuf + 152, true), 60, 'mode is 60 Hz');
-  assert.strictEqual(bytes[wasmBuf + 156], 0xa5, 'DEVMODEW write stops at caller size');
+  assert.strictEqual(view.getUint32(wasmBuf + 168, true), 32, 'mode is 32 bpp');
+  assert.strictEqual(view.getUint32(wasmBuf + 172, true), 640, 'mode width follows host surface');
+  assert.strictEqual(view.getUint32(wasmBuf + 176, true), 480, 'mode height follows host surface');
+  assert.strictEqual(view.getUint32(wasmBuf + 184, true), 60, 'mode is 60 Hz');
+  assert.strictEqual(bytes[wasmBuf + 188], 0xa5, 'DEVMODEW write stops at caller size');
 
   bytes.fill(0xa5, wasmBuf, wasmBuf + 0x348);
-  result = e.test_enum_display_settings_w(-1, buf, 155);
+  result = e.test_enum_display_settings_w(-1, buf, 187);
   assert.strictEqual(Number(result & 0xffffffffn), 0, 'undersized DEVMODEW is rejected');
   assert.strictEqual(bytes[wasmBuf + 69], 0, 'caller-written dmSize is retained on rejection');
   assert.strictEqual(bytes[wasmBuf + 72], 0xa5, 'rejected DEVMODEW payload is untouched');

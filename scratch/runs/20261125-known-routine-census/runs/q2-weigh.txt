@@ -1,0 +1,12 @@
+/Users/vg/Documents/projects/phone/wine-assembly/scratch/runs/20261120-uop-coverage/census/q2-hist.json
+  threaded block entries 20946219, uop blocks 16122924 (not attributable), listed blocks 4215
+    0.34%       70837  s-gta2:_chkstk
+    0.33%       69336  vc6:_ftol
+    0.12%       24835  vc2:_ftol
+    0.04%        8784  vc6:_CIsqrt
+    0.01%        1647  s-gta2:_aulldiv
+    0.01%        1647  s-gta2:_aullrem
+    0.01%        1449  s-gta2:memcpy
+    0.01%        1196  s-gta2:strchr
+    0.00%         420  gamex86.dll!GetGameAPI
+  unmatched by module: ref_gl.dll 61.7%, quake2.exe 36.2%, gamex86.dll 1.2%

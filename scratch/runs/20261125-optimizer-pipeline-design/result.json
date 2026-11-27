@@ -1,0 +1,33 @@
+{
+  "candidateId": "spelunky_classic",
+  "agentId": "claude:opt-pipeline-subagent",
+  "startedAt": "2026-11-25T22:31:02Z",
+  "finishedAt": "2026-11-25T22:44:35Z",
+  "outcome": "passed",
+  "route": "design-analysis (static; no emulator run)",
+  "command": "node scripts/arg-profile.js ../20261125-fold-arms-bench/census/census-ecx.log ../20261125-fold-arms-bench/census/census-edx.log; node tools/disasm_fn.js test/binaries/candidates/spelunky-classic/extracted/Spelunky.exe 0x40674c (and 0x4064e8, 0x406534, 0x406448, 0x405934, 0x405988, 0x4030a8)",
+  "build": {
+    "commit": "2b5a55f46f5c2658d9884f7b648cec2dc6d48837",
+    "dirtyPatchSha256": null,
+    "wasmSha256": null
+  },
+  "environment": {
+    "host": "local",
+    "mode": "static-analysis",
+    "timing": "none"
+  },
+  "summary": "Design evidence for docs/design/uop-optimizer-pipeline.md: disassembly of the Delphi RTTI helpers and TypeInfo bytes (RValue at 0x5436f4 in read-only .text, 1 tkLString field at offset 16), and argument concentration from fold-bench's passive census (CopyRecord ECX 0x5436f4 97.7% over 22 call sites; FinalizeRecord EDX 98.5%; FinalizeArray EDX 0x4010d0 93.6%; Move ECX 16/4 split 51/49 by call site). No timing; predictions for the stacked sweep in predictions.json.",
+  "verification": "reviewed",
+  "artifacts": [
+    "arg-profile.txt",
+    "scripts/arg-profile.js",
+    "predictions.json",
+    "static/rtti-helpers.asm",
+    "static/rtti-helper-cases.asm",
+    "static/lstr-move.asm",
+    "static/copyrecord-callsites.asm",
+    "static/typeinfo-bytes.txt",
+    "static/sections.txt",
+    "static/spelunky-exe.sha256"
+  ]
+}
