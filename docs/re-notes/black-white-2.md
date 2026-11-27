@@ -9087,3 +9087,33 @@ Run `scratch/runs/20261023T1720Z-black_white_2_demo-claude84e-drawctx-reuse` (bo
 What remains of the allocator is `$heap_free` (4.8%) plus `$heap_arena_find` validation. The worker is now mostly rasterizing.
 
 `test/test-d3d-software-compaction.js` fails identically on the control (main's code) and the fix, at line 91. When a context constructor is made to fail mid-draw (`failAt`), the multi-batch draw has already written pixels, so `readPixels()` differs from `before`. That failure is already on main, not caused by this change.
+
+## Static memcpy as a known routine (2026-11-27, opt/known-routines)
+
+`BW2Demo.exe` links the **VC7.1 static `memcpy`** at `0xad50d0` (len
+`0x33d`, 46 in-body absolute fixups). A second copy sits at `0xad9400`. It
+differs from the VC6 body in GTA2/StarCraft by `add esi,1`-style increments,
+so it is its own registry entry: 2, `memcpy-msvc71` in
+`tools/known-routines.json`, run natively under `--known-routines=4`.
+
+- **Weight.** In the headless boot window (55 s, `--no-uop --branch-clock`)
+  memcpy-shaped extents are **13.5% of threaded block entries**. This comes
+  from the VC6 prefix-match attribution in `tools/kr-sig.js weigh`, which is
+  lossy here.
+- **Other candidates.** `strcmp` (prefix match) 3.5% and `tolower` 2.6%
+  are next. The `strlen` at `0x9a8780` above is inline code, not a CRT
+  body.
+- **Calls are small.** The first 400000 batches make 153715 native calls,
+  under 1 MB in total, with 873 declines, mostly short-budget.
+- **Exactness.** On vs off under `--branch-clock`: identical API histogram
+  (685752 calls), batches and end PNG.
+- **Caveat.** Headless without `--headless-gl`, the boot ends at the
+  "Pixel Shader 1.1" fatal dialog, so this window is load work only.
+- Evidence: `scratch/runs/20261127-known-routines/`.
+
+### Static strcmp (known routine id 4) — no dynamic weight on the boot route (2026-11-27)
+
+- `0xaddf00` is the VC7.1 `strcmp` (0x88 bytes, `mov edx,[esp+4]` first, dword loop at +0x20). It is entry 4 of `tools/known-routines.json` (`--known-routines=16`); 39 bodies in 39 images in the corpus.
+- On the `black_white_2_demo` boot route (400000 branch-clock batches, 685752 API calls) it is called **0 times**: `--count=0xaddf00` stays at zero, and mask 30 vs 0 is identical (148 histogram rows, PNG md5 1368b4f3…).
+- The earlier census row "3.51 % s-h2:strcmp~" was a **weigher artifact**: a prefix-only (`~`) signature range in `tools/kr-sig.js weigh` absorbs the nearest hot blocks up to the signature's extent. The blocks were `0xae257c`/`0xae2583` (188169 hits each), the tail of an unrelated function (`push ebx; call [0xc122c8]; mov eax,esi; ret`). Trust only full matches (no `~`) for weight.
+- The real hot routines on that route: VC7.1 memcpy (13.5 %, entry 2) and `tolower` (2.6 %).

@@ -317,6 +317,23 @@ Overlap check, `rep movsd`, then `jmp [0x4d3628+edx*4]` into a 0/1/2/3-byte
 tail table. Four of its blocks sit at 1.36% each. Already efficient; nothing
 to do.
 
+**CORRECTION / known routine (2026-11-27, opt/known-routines).** The body
+at `0x004d35f0` (len `0x14e`, 12 in-body absolute fixups; a second copy
+at `0x004d3b90`) is the **VC4 static `memmove`**. It is overlap-aware: it
+copies backward with `std` when dst > src and the spans overlap. It is
+registry entry 3 (`memmove-msvc4`) in `tools/known-routines.json`, run
+natively under `--known-routines=8`.
+
+- **Weight.** It is **6.12% of threaded block entries** in the gameplay
+  window 1400:2600 of the route
+  `--batch-size=20000 --input=400:click:535:225,700:click:528:68,1200:click:283:373`,
+  and 0.67% in the menu window 1000:1800 (`--no-uop`, `--handler-hist`).
+- **Calls.** The route makes 1.68 M calls in 2600 batches, 46 MB copied,
+  380 declines.
+- **Exactness.** On vs off under `--branch-clock`: identical API histogram
+  (714673 calls), batches and end PNG.
+- Evidence: `scratch/runs/20261127-known-routines/`.
+
 ### `MSS32.DLL 0x2000d9d0` — Miles mixer voice scan.
 
 Hot blocks `0x2000da61` (runtime `0x54ea61`) and `0x2000dae8` (`0x54eae8`),

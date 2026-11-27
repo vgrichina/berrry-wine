@@ -478,6 +478,42 @@ This adopts `uop-optimizer-pipeline.md` §7.
 | 9 | 64-bit helpers `_allmul`/`_alldiv`/`_aulldiv`/`_aullrem`/`_allshr`/`_allshl` | ~850 images; GTA2 ~5.6 % combined | probably small (control-flow class) | measure before landing; candidates for pipeline pure summaries instead |
 | 10 | VB6 msvbvm60 helpers by export (`__vbaVarCat`, `__vbaVar2Vec`, `__vbaStrCopy`, …) | SimCity 2001 VB ~16 % in helpers by nearest-export attribution | unknown | bind matcher; `ProcCallEngine` (68 %) is out of scope |
 
+### Entries 4 and 6: status (2026-11-27, branch `opt/known-routines`)
+
+Built as threaded handler 396 in `src/10-helpers-msvc-routines.wat`, matched on
+the whole body (16 head bytes + masked FNV-1a, in-body absolute fixups checked
+equal to entry + rel) at any VA, behind `--known-routines=MASK` (bit = id).
+**Off by default.** Registry `tools/known-routines.json`; charges derived by
+`tools/kr-clock.js` (per path, plus a per-trip slope for strcmp), never by hand.
+
+| id | body | corpus (images / sites) | measured weight |
+|---|---|---|---|
+| 1 | memcpy VC6 (GTA2 `0x5deb70`, StarCraft `0x4b66b0`) | 275 / 338 | GTA2 2.0 %; StarCraft mission 18.6 K calls, menu 0 |
+| 2 | memcpy VC7.1 (BW2 `0xad50d0`) | 23 / 42 | BW2 boot 13.5 % (153.7 K calls) |
+| 3 | memmove VC4 (Heroes II `0x4d35f0`) | 310 / 386 | H2 gameplay 6.1 % (1.68 M calls, 46 MB) |
+| 4 | strcmp VC7.1 (BW2 `0xaddf00`) | 39 / 39 | **0 calls** on every measured route |
+
+Entry 6's `strlen` is 0.03 % of BW2 boot (vc80 body) and `strchr`/`memset`
+had no weight in the measured windows, so only strcmp was built, as the
+template for data-dependent scans (per-trip slope). The earlier "BW2 strcmp
+3.5 %" was a `kr-sig weigh` prefix-match (`~`) artifact (see the BW2 re-note).
+
+Exactness: `test/test-known-routines.js` (grid under both clocks, every
+budget cut, unaligned heads/tails, overlap both ways, zero length, page
+straddle, declines, own-bit-clear, patched bodies, second VA, SMC) and app
+runs on vs off under `--branch-clock` with identical API histograms, batches
+and PNG md5 (H2 gameplay + long, BW2, StarCraft, Spelunky).
+
+Box timing (AMD EPYC 4 vCPU, whole-run user CPU, n=6 interleaved; on vs off,
+null band = main vs main): H2 gameplay −4.4 % median / −6.3 % min (band
+3.7 / 8.4); H2 long −2.4 / +0.6 (band 3.6 / 3.9); BW2 −9.0 / −5.3 (band
+3.0 / 1.0); StarCraft −0.2 / −3.5 (band 0.0 / 4.5); Spelunky control (no
+routine fires) +5.9 / 0.0 — the control shows the real noise is ~6 %, so
+only BW2 clears it, on 6-second runs with ~30 % spread. Not enough to
+default on. Native: V8 inlines the helpers into the handler (9.7 KB → 13.1
+KB with strcmp, 107+ spill stores); SpiderMonkey keeps them as calls
+(2.2 KB). Evidence: `scratch/runs/20261127-known-routines/`.
+
 Not in the list: zlib `inflate` (113 images, no hot measurement yet), D3DX
 math (needs a census on a D3DX app run), FastMM (0.7 % in Spelunky).
 

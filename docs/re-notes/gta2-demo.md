@@ -144,3 +144,17 @@ The builtin sheet is still wizard-style even for tabbed (non-`PSH_WIZARD`)
 headers; tabbed mode is not implemented. Regression test:
 `test/test-property-sheet-mfc-host.js`. Evidence:
 `scratch/runs/20261121-gta2-options/` (before, after, Next/Next/Back).
+
+## Static memcpy as a known routine (2026-11-27, opt/known-routines)
+
+`gta2.exe` links the **VC6 static `memcpy`** at `0x5deb70` (len `0x335`,
+46 in-body absolute fixups). It is the reference body for registry entry 1,
+`memcpy-msvc6` in `tools/known-routines.json`, run natively under
+`--known-routines=2`. The StarCraft shareware `starcraft.exe` has the
+byte-identical body at `0x4b66b0`.
+
+- **Weight.** It is 1.97% of threaded block entries in the census window
+  (`scratch/runs/20261127-known-routines/census/gta2-weigh.txt`).
+- **Pre-existing blocker.** With `--branch-clock`, GTA2 crashes in a
+  DllMain on a divide by zero at `0xaf6941`, on main as well. So no GTA2
+  exactness or timing run exists under the branch clock.

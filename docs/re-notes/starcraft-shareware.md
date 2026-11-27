@@ -1283,3 +1283,17 @@ What the numbers say:
   run on, and the sleep then landed at the next `$run` halt, inside the step.
   Before the fix, 145 of 269 step sleeps were at the step; after, 263 of 263.
   `$present_pump` still uses the same flag test.
+
+## Static memcpy as a known routine (2026-11-27, opt/known-routines)
+
+`starcraft.exe` `0x4b66b0` is the VC6 static `memcpy`, byte-identical to
+GTA2's. It is registry entry 1 in `tools/known-routines.json`, run natively
+under `--known-routines=2`.
+
+- **Weight.** It is light:
+  - the menu route (1400 batches) never calls it;
+  - the 7000-batch mission route makes 18.6 K native calls, under 1 MB in
+    total.
+- **Exactness.** On vs off under `--branch-clock`, 1400 batches: identical
+  API histogram, batches and end PNG.
+- Evidence: `scratch/runs/20261127-known-routines/`.
