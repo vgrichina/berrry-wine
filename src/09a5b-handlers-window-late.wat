@@ -1350,25 +1350,104 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; are clipped/intersected host-side.
   (func $handle_ScrollWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $copied i32) (local $exposure i32)
+    (local $damage i32) (local $record i32) (local $slot i32) (local $child i32)
+    (local $x i32) (local $y i32) (local $pending i32)
     ;; Keep the native copy, but publish uncovered bands rather than its
     ;; bounding scroll rectangle. Share ScrollWindowEx's atomic exact union.
-    (local.set $copied (call $gdi_native_scroll_window
+    ;; NULL additionally translates existing damage. Prepare the entire union
+    ;; first, so bounded-store failure moves neither pixels nor children.
+    (if (i32.eqz (local.get $arg3)) (then
+      (local.set $damage (call $scroll_window_null_damage
+        (local.get $arg0) (local.get $arg1) (local.get $arg2) (local.get $arg4)))))
+    (if (i32.or (i32.ne (local.get $arg3) (i32.const 0))
+                (i32.ne (local.get $damage) (i32.const 0))) (then
+      (local.set $copied (call $gdi_native_scroll_window
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
-        (local.get $arg3) (local.get $arg4) (i32.const 0)))
+        (local.get $arg3) (local.get $arg4) (i32.const 0)))))
     (if (local.get $copied) (then
-      (local.set $exposure (call $scroll_window_ex_outputs
-        (local.get $arg0) (local.get $arg1) (local.get $arg2)
-        (local.get $arg3) (local.get $arg4)
-        (i32.const 0) (i32.const 0) (i32.const 2)))
+      (if (local.get $arg3)
+        (then
+          (local.set $exposure (call $scroll_window_ex_outputs
+            (local.get $arg0) (local.get $arg1) (local.get $arg2)
+            (local.get $arg3) (local.get $arg4)
+            (i32.const 0) (i32.const 0) (i32.const 2))))
+        (else
+          (local.set $record (call $gdi_rgn_record (local.get $damage)))
+          ;; The private region already passed the canonical capacity check.
+          ;; Publish bbox, bands and count together without callbacks or any
+          ;; further fallible operation; retained erase/paint state survives.
+          (local.set $pending (call $update_rect_addr_for_slot (call $wnd_table_find (local.get $arg0))))
+          (memory.copy (local.get $pending) (i32.add (local.get $record) (i32.const 8)) (i32.const 16))
+          (memory.copy (i32.add (local.get $pending) (i32.const 16))
+            (call $gdi_rgn_bands (local.get $record))
+            (i32.shl (i32.load offset=28 (local.get $record)) (i32.const 4)))
+          (i32.store8 (call $update_flag_addr_for_slot (call $wnd_table_find (local.get $arg0)))
+            (i32.load offset=28 (local.get $record)))
+          (local.set $exposure (call $gdi_rgn_complexity_record (local.get $record)))
+          ;; Microsoft ScrollWindow: ALL child positions offset for NULL
+          ;; lpRect, independently of the device-bit clip or intersection.
+          ;; Move direct WS_CHILD windows only; descendants inherit origins.
+          (block $children_done (loop $children
+            (local.set $slot (call $wnd_next_child_slot (local.get $arg0) (local.get $slot)))
+            (br_if $children_done (i32.lt_s (local.get $slot) (i32.const 0)))
+            (local.set $child (call $wnd_slot_hwnd (local.get $slot)))
+            (if (i32.ne (i32.and (call $wnd_get_style (local.get $child))
+                  (i32.const 0x40000000)) (i32.const 0)) (then
+              (local.set $x (i32.add (call $ctrl_get_x_s (local.get $child)) (local.get $arg1)))
+              (local.set $y (i32.add (call $ctrl_get_y_s (local.get $child)) (local.get $arg2)))
+              ;; NOSIZE | NOZORDER | NOREDRAW | NOACTIVATE; preserve copy.
+              (call $host_move_window (local.get $child) (local.get $x) (local.get $y)
+                (i32.const 0) (i32.const 0) (i32.const 0x1D))
+              (call $ctrl_geom_sync (local.get $child) (local.get $x) (local.get $y)
+                (i32.const 0) (i32.const 0) (i32.const 0x1D))))
+            (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+            (br $children)))))
       (if (i32.gt_u (local.get $exposure) (i32.const 1)) (then
         (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
           (then (global.set $paint_pending (i32.const 1)))
           (else (call $paint_flag_set (local.get $arg0))))))))
+    (if (local.get $damage) (then (drop (call $gdi_rgn_delete (local.get $damage)))))
     ;; The shared helper returns region complexity; this API returns BOOL.
     (i32.store offset=0 (global.get $reg_base)
       (i32.and (i32.ne (local.get $copied) (i32.const 0))
         (i32.ne (local.get $exposure) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
+
+  ;; Microsoft ScrollWindow's NULL-lpRect rule offsets invalid areas, whereas
+  ;; lpClipRect restricts device bits. Clip translated damage to the client,
+  ;; not to lpClipRect, then add the published exact exposure. All temporary
+  ;; regions are private snapshots. No pending store is changed here; every
+  ;; allocation/208-band failure releases temporaries and returns FALSE.
+  (func $scroll_window_null_damage (param $hwnd i32) (param $dx i32)
+      (param $dy i32) (param $clip i32) (result i32)
+    (local $damage i32) (local $client i32) (local $exposed i32) (local $cs i32)
+    (local $ok i32)
+    (if (i32.lt_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0))
+      (then (return (i32.const 0))))
+    (block $failed
+      (local.set $damage (call $gdi_rgn_alloc_rect (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+      (br_if $failed (i32.eqz (local.get $damage)))
+      (br_if $failed (i32.eqz (call $update_copy_rgn (local.get $hwnd) (local.get $damage))))
+      (drop (call $gdi_rgn_offset (local.get $damage) (local.get $dx) (local.get $dy)))
+      (local.set $cs (call $host_get_window_client_size (local.get $hwnd)))
+      (local.set $client (call $gdi_rgn_alloc_rect (i32.const 0) (i32.const 0)
+        (i32.and (local.get $cs) (i32.const 0xFFFF)) (i32.shr_u (local.get $cs) (i32.const 16))))
+      (br_if $failed (i32.eqz (local.get $client)))
+      (br_if $failed (i32.eqz (call $gdi_rgn_combine
+        (local.get $damage) (local.get $damage) (local.get $client) (i32.const 1))))
+      (local.set $exposed (call $gdi_rgn_alloc_rect (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+      (br_if $failed (i32.eqz (local.get $exposed)))
+      (br_if $failed (i32.eqz (call $scroll_window_ex_outputs
+        (local.get $hwnd) (local.get $dx) (local.get $dy) (i32.const 0) (local.get $clip)
+        (local.get $exposed) (i32.const 0) (i32.const 0))))
+      (local.set $ok (call $gdi_rgn_combine
+        (local.get $damage) (local.get $damage) (local.get $exposed) (i32.const 2))))
+    (if (local.get $client) (then (drop (call $gdi_rgn_delete (local.get $client)))))
+    (if (local.get $exposed) (then (drop (call $gdi_rgn_delete (local.get $exposed)))))
+    (if (i32.eqz (local.get $ok)) (then
+      (if (local.get $damage) (then (drop (call $gdi_rgn_delete (local.get $damage)))))
+      (return (i32.const 0))))
+    (local.get $damage))
 
   ;; 634: AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle) — 4 args stdcall
   ;; Same as AdjustWindowRect but with extended style (ignored for now)
