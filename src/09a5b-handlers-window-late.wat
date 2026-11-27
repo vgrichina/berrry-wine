@@ -2424,7 +2424,8 @@ GetTopWindow(hWnd) — 1 arg stdcall
 
 ;; 657: GetDCEx — STUB: unimplemented
   (func $handle_GetDCEx (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $hdc i32) (local $x i32) (local $y i32)
+    (local $hdc i32) (local $x i32) (local $y i32) (local $parentclip i32)
+    (local.set $parentclip (call $gdi_getdcex_parentclip_requested (local.get $arg0) (local.get $arg2)))
     ;; GetDCEx(hwnd, hrgnClip, flags). USER's screen-coordinate request limits
     ;; visibility independently of the application clip exposed by GetClipRgn.
     ;; hwnd=NULL and the fixed desktop hwnd both use the host screen DC path.
@@ -2436,7 +2437,8 @@ GetTopWindow(hWnd) — 1 arg stdcall
       (else
         (if (i32.eq (call $wnd_table_find (local.get $arg0)) (i32.const -1))
           (then (local.set $hdc (i32.const 0)))
-          (else (if (i32.and (local.get $arg2) (i32.const 0x00000001)) ;; DCX_WINDOW
+          (else (if (i32.or (local.get $parentclip)
+              (i32.ne (i32.and (local.get $arg2) (i32.const 0x00000001)) (i32.const 0))) ;; DCX_WINDOW / parent origin
           (then
             (local.set $hdc (call $host_alloc_window_dc (local.get $arg0) (i32.const 1)))
             (if (i32.and (local.get $arg2) (i32.const 0x00000400)) ;; DCX_LOCKWINDOWUPDATE
@@ -2447,6 +2449,15 @@ GetTopWindow(hWnd) — 1 arg stdcall
             (if (i32.and (local.get $arg2) (i32.const 0x00000400)) ;; DCX_LOCKWINDOWUPDATE
               (then (call $dc_apply_client_clip_unlocked (local.get $hdc) (local.get $arg0)))
               (else (call $dc_apply_client_clip (local.get $hdc) (local.get $arg0))))))))))
+    ;; Prepare parent visibility before accepting a supplied HRGN. Failure
+    ;; releases only the newly acquired DC and retains caller region ownership.
+    (if (i32.and (i32.ne (local.get $hdc) (i32.const 0)) (i32.ne (local.get $parentclip) (i32.const 0)))
+      (then
+        (if (i32.eqz (call $gdi_getdcex_parentclip_retain (local.get $hdc) (local.get $arg2)))
+          (then (drop (call $host_release_dc (local.get $hdc))) (local.set $hdc (i32.const 0)))
+          (else
+            (if (i32.eqz (call $gdi_dc_system_clip_reset (local.get $hdc)))
+              (then (drop (call $host_release_dc (local.get $hdc))) (local.set $hdc (i32.const 0))))))))
     (if (i32.and (i32.ne (local.get $hdc) (i32.const 0))
           (i32.ne (i32.and (local.get $arg2) (i32.const 24)) (i32.const 0)))
       (then
@@ -2461,7 +2472,8 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
               (i32.ne (local.get $arg0) (i32.const 0x00010000)))
           (then
-            (if (i32.and (local.get $arg2) (i32.const 1))
+            (if (i32.or (local.get $parentclip)
+                  (i32.ne (i32.and (local.get $arg2) (i32.const 1)) (i32.const 0)))
               (then
                 (local.set $x (call $wnd_window_screen_x (local.get $arg0)))
                 (local.set $y (call $wnd_window_screen_y (local.get $arg0))))
@@ -2476,6 +2488,8 @@ GetTopWindow(hWnd) — 1 arg stdcall
           (then
             (drop (call $host_release_dc (local.get $hdc)))
             (local.set $hdc (i32.const 0))))))
+    (if (i32.and (i32.ne (local.get $hdc) (i32.const 0)) (i32.ne (local.get $parentclip) (i32.const 0)))
+      (then (drop (call $gdi_getdcex_parentclip_retain (local.get $hdc) (local.get $arg2)))))
     (if (local.get $hdc)
       (then
         (if (i32.eqz (call $gdi_getdcex_hierarchy_retain (local.get $hdc) (local.get $arg2)))
