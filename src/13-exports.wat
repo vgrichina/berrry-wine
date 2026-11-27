@@ -706,6 +706,11 @@
               (then
                 (i32.store offset=4 (local.get $hc_slot)
                   (i32.add (i32.load offset=4 (local.get $hc_slot)) (i32.const 1)))
+                ;; --value-probe: a probed slot also hands the block-entry
+                ;; state to the host (tag -256-slot), which keys a histogram
+                ;; on registers and guest memory (lib/value-probe.js).
+                (if (i32.and (i32.shr_u (global.get $count_probe_mask) (local.get $hc_i)) (i32.const 1))
+                  (then (call $host_log_eip (i32.sub (i32.const -256) (local.get $hc_i)))))
                 (if (i32.eqz (local.get $hc_i))
                   (then
                     (if (i32.eqz (global.get $hit0_first_caller))
@@ -2319,7 +2324,10 @@
         (global.set $THREAD_BASE (region.addr $THREAD_CACHE_BASE 0))
         (global.set $THREAD_END (i32.add (global.get $THREAD_BASE)
           (global.get $THREAD_CACHE_MAIN_BYTES)))
-        (call $uop_set_arena (global.get $UOP_ARENA) (global.get $UOP_ARENA_SIZE))
+        ;; --uop-opt 0x8000 (A1): the big main arena
+        (if (i32.and (global.get $uop_opt) (i32.const 0x8000))
+          (then (call $uop_set_arena (global.get $UOP_ARENA_BIG) (global.get $UOP_ARENA_BIG_SIZE)))
+          (else (call $uop_set_arena (global.get $UOP_ARENA) (global.get $UOP_ARENA_SIZE))))
         (global.set $spill_base (region.addr $THREAD_SPILL 0))
         (global.set $spill_end (region.addr $THREAD_SPILL 0x80000))))
     (global.set $spill_active (i32.const 0))
@@ -3207,6 +3215,7 @@
     (i32.load offset=4 (i32.add (global.get $HIT_COUNT_BASE)
                                 (i32.shl (local.get $slot) (i32.const 3)))))
   (func (export "clear_counts") (global.set $hit_count_n (i32.const 0)) (call $dbg_recompute))
+  (func (export "set_count_probe_mask") (param $mask i32) (global.set $count_probe_mask (local.get $mask)))
   ;; Who reached slot 0's address (see $hit0_first_caller in 01-header.wat).
   (func (export "get_hit0_first_caller") (result i32) (global.get $hit0_first_caller))
   (func (export "get_hit0_last_caller")  (result i32) (global.get $hit0_last_caller))

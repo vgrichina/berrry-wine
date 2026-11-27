@@ -411,6 +411,19 @@
   (region.declare $XMM_FILE (size 0x00000800) (align 0x00000040)
     (stride 0x80 (count $REGFILE_THREADS))
     (owner "01-header.wat:$XMM_FILE"))
+  ;; --uop-opt C2 (07e): the compiler's per-iteration copies -- seven more
+  ;; flag-flow slots and eight lattice tables -- and R2's call-site context
+  ;; table and context work stack (+0x63100, +0x64000), and M1's load table
+  ;; (+0x63800, 384 bytes). Its own region after the
+  ;; register files, so nothing placed before it moves.
+  (region.declare $UOP_C2SCRATCH (size 0x00066000) (align 0x00001000)
+    (owner "07e-uop-compiler.wat:$UOP_C2SCRATCH"))
+  ;; --uop-opt 0x8000 (A1): the main thread's arena when the bit is set,
+  ;; three times $UOP_ARENA (07d $uop_arena_pick). Declared last of the uop
+  ;; regions so nothing placed before it moves; it fills the gap below
+  ;; $GUEST_FIXED_POOL_B that $PE_STAGING is too big for.
+  (region.declare $UOP_ARENA_BIG (size 0x00300000) (align 0x00001000)
+    (owner "07d-uop-engine.wat:$UOP_ARENA_BIG"))
   (region.declare-derived $GUEST_STACK (base (g2w 0x07400000)) (size 0x00100000) (align 0x00001000)
     (owner "01-header.wat:$GUEST_STACK"))
   (region.declare-derived $THUNK_BASE (base (g2w 0x07500000)) (size 0x00040000) (align 0x00001000)

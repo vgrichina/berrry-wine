@@ -1,0 +1,39 @@
+{
+ "0x406448": {
+  "name": "_InitializeArray",
+  "hits": 156858
+ },
+ "0x4064e8": {
+  "name": "_FinalizeRecord",
+  "hits": 3018350
+ },
+ "0x406534": {
+  "name": "_FinalizeArray",
+  "hits": 213481
+ },
+ "0x40674c": {
+  "name": "_CopyRecord",
+  "hits": 1928827
+ },
+ "0x4a8a4c": {
+  "name": "var-list scan iteration",
+  "hits": 26998678
+ },
+ "0x4aceec": {
+  "name": "collision bbox test",
+  "hits": 566442
+ },
+ "0x4aee7c": {
+  "name": "nth instance",
+  "hits": 648484
+ },
+ "0x526fc0": {
+  "name": "call node eval",
+  "hits": 106350
+ },
+ "0x53e53c": {
+  "name": "GM step+draw",
+  "hits": 168
+ },
+ "presents": 6410
+}

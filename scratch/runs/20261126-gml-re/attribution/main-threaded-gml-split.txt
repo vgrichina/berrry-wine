@@ -1,0 +1,56 @@
+threaded weighted insns 218074266; named GML-side functions  25.03%
+    3.67%  eval dispatch 0x52786c
+    3.49%  var read node 0x527530
+    2.64%  extension call 0x5290fc
+    2.55%  binary node 0x5277c0
+    2.01%  binary op 0x5265a4
+    1.72%  call node 0x526fc0
+    1.47%  repeat/if/while/do/for
+    1.22%  assignment 0x527920
+    1.14%  code exec 0x528b3c
+    1.02%  switch/block/var
+    0.79%  global get/set wrappers 0x525b24/0x525b34
+    0.65%  var list lookup 0x4a8a30 (backward scan, i*32000+j)
+    0.64%  instance var get 0x525de8
+    0.54%  statement dispatch 0x5288ac
+    0.47%  var list: other (set 0x4a88d4 ...)
+    0.35%  interp other
+    0.22%  instance var set 0x525e20
+    0.13%  var owner/index eval 0x527280
+    0.12%  owner var get/set (all / object / id)
+    0.11%  unary op 0x52649c
+    0.09%  unary node 0x52777c
+    0.01%  with 0x528358
+    0.00%  var list: add/set/remove
+
+top blocks
+    1.30%  0x52786c  entries 314004 x 9  eval dispatch 0x52786c
+    1.20%  0x5278f4  entries 524203 x 5  eval dispatch 0x52786c
+    0.80%  0x52770d  entries 193410 x 9  var read node 0x527530
+    0.78%  0x5277de  entries 154173 x 11  binary node 0x5277c0
+    0.64%  0x52783d  entries 154173 x 9  binary node 0x5277c0
+    0.62%  0x52772f  entries 193410 x 7  var read node 0x527530
+    0.61%  0x527564  entries 189686 x 7  var read node 0x527530
+    0.58%  0x526cd8  entries 157081 x 8  binary op 0x5265a4
+    0.56%  0x5291a7  entries 307104 x 4  extension call 0x5290fc
+    0.56%  0x529297  entries 307104 x 4  extension call 0x5290fc
+    0.56%  0x5292a6  entries 307104 x 4  extension call 0x5290fc
+    0.49%  0x527860  entries 154173 x 7  binary node 0x5277c0
+    0.47%  0x4a8b02  entries 127871 x 8  var list lookup 0x4a8a30 (backward scan, i*32000+j)
+    0.44%  0x527557  entries 193410 x 5  var read node 0x527530
+    0.44%  0x527712  entries 193410 x 5  var read node 0x527530
+    0.41%  0x528848  entries 80499 x 11  switch/block/var
+    0.34%  0x525e18  entries 186524 x 4  instance var get 0x525de8
+    0.34%  0x52703e  entries 48971 x 15  call node 0x526fc0
+    0.32%  0x525b16  entries 115997 x 6  global get/set wrappers 0x525b24/0x525b34
+    0.31%  0x52701a  entries 56016 x 12  call node 0x526fc0
+    0.30%  0x527886  entries 221025 x 3  eval dispatch 0x52786c
+    0.29%  0x527f46  entries 57019 x 11  repeat/if/while/do/for
+    0.24%  0x525de8  entries 73267 x 7  instance var get 0x525de8
+    0.23%  0x5271f9  entries 56016 x 9  call node 0x526fc0
+    0.23%  0x527f28  entries 41028 x 12  repeat/if/while/do/for
+    0.21%  0x525b1f  entries 115998 x 4  global get/set wrappers 0x525b24/0x525b34
+    0.21%  0x5277fd  entries 154173 x 3  binary node 0x5277c0
+    0.21%  0x527815  entries 154173 x 3  binary node 0x5277c0
+    0.20%  0x528a46  entries 108673 x 4  statement dispatch 0x5288ac
+    0.20%  0x527920  entries 25173 x 17  assignment 0x527920

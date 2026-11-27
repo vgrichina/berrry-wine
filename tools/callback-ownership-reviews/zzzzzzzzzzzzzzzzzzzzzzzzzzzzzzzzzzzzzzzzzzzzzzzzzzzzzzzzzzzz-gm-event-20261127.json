@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/10-helpers-delphi-fold.wat",
+      "name": "$th_delphi_rtti",
+      "baseSHA256": "749b18044235c79fee228674ceb45f6fab2d1e1919c804cb36a632c65d908ab0",
+      "sha256": "8337f8372a556b63d6ad144645a292b51f15f09a37becfa7f59f6a0320c93cc5",
+      "reason": "Review 20261127 GM collision-event fold: handler 395 also runs the Game Maker 8 collision-event pass (ids 19/20/21, its three loop heads) natively in $gmf_cev, reached through $gmf_run, which writes no EIP and returns fall-back or a resume address (a loop head or the function's epilogue). The handler's only change is the fallback's first instruction for 19-21 (mov eax,[abs32] / mov eax,[esp+8]: EAX and the +5/+4 resume) and the cmp-byte fallback narrowed to 15/16. EIP writes unchanged (same six sites, one $eip = $entry with $branch_end); no callback frame, invocation identity preserved. General callback ownership remains pending."
+    }
+  ]
+}

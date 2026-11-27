@@ -602,6 +602,24 @@ plain read-modify-write.
   not, F2 is restricted to `$LOCK_MODE == 0` until it does. The §3 gap in
   `docs/uop-tier-design.md` (another instance modifying code *during* a run)
   applies to folded data too, and is documented the same way.
+- **Answer (as built, §10): no.** `$uop_code_write` walks only the writing
+  instance's range table. Every guest thread is its own instance, Worker or
+  cooperative, each with its own arena and ranges. The shared code-page
+  bitmap only makes the writer *look*; it never reaches another instance's
+  programs.
+  - **First build (superseded):** F2 folded only while one instance existed
+    (`$UOP_MULTI_INST`, set by `init_thread`). That rule silently made F2
+    fold **nothing** on any app that starts a thread at init -- Spelunky
+    Classic does, and the thread never even enters a program (§10.7).
+  - **As built now:** a shared fold epoch (`$UOP_FOLD_EPOCH`) and a shared
+    4096-bit set of folded pages (`$UOP_FOLD_PAGES`, marked at install).
+    Every instance's `$invalidate_code_range`, VirtualProtect and page
+    release calls `$uop_fold_hit`, which bumps the epoch when the range
+    touches a page in the set. A folded program records the epoch it read
+    its dwords under (read before lowering) in its assumption block; stamp 4
+    drops it at the next entry when the epoch has moved. F2 still requires
+    `$LOCK_MODE == 0` (stamp 1): instances then interleave only between
+    batches and a program never spans a batch, so the drop is exact.
 
 **Determinism.** Every compile decision depends on entry counts and guest
 bytes, never on wall time, so headless runs stay deterministic per arm. They
@@ -859,3 +877,381 @@ The numbers cited from other runs are the fold-bench summary
 attribution and cpuprofile buckets
 (`20261125-spelunky-classic-gameplay-profile/headless/run-b`, `run-c`), and
 the SSE census and A/B (`20261125-uop-sse/census`, `remote/`).
+
+## 10. As built: branch `uop-opt` (2026-11-25)
+
+Stages 0–4 landed first, then S1 and the cross-instance F2 (§10.7), behind `--uop-opt=MASK` (browser
+`?uop-opt=MASK`), default 0, inherited by every Worker and cooperative
+instance through `set_uop_opt`. Stages 5–8 and the stage-1/4 parts listed
+under "Cut" were not built. No threaded handler was added: everything lives
+in `src/07d-uop-engine.wat` and `src/07e-uop-compiler.wat`, plus two kill
+hooks (`$guest_page_clear_range` in 03, VirtualProtect in 09a0b) and the
+fold-epoch hook in `$invalidate_code_range` (04). Run evidence:
+`scratch/runs/20261125-uop-opt/`.
+
+### 10.1 Bits
+
+| Bit | Pass | What it does as built |
+|---|---|---|
+| `0x001` | stage 0 decline table | Fixes the verdict-map aliasing: a declined head is recorded in a direct-mapped table keyed by the full address (`$uop_decl_slot`), so a colliding head no longer re-compiles a decline. Cleared by `mark_dead` / `flush_all`. |
+| `0x002` | R1 + V4 | `rep ret` decodes as `ret`. A RET with no candidate target exits the program as a charged GOTO to the deopt stub. **Branch clock only** (`$uc_retx_on`, header stamp 8): see §10.3. |
+| `0x004` | R3 seam elision | A runtime decision, not the compile-time entry guard of §6: the seam ops (79/80/87) are skipped in `$uop_fast` when `dao_status \| pending_armed` is 0. |
+| `0x008` | V1 | `LOCK` ALU/INC/DEC/NOT/NEG and memory `XCHG` lower as the plain RMW while `$LOCK_MODE` is 0. A guard leaves any address ≥ `0x80000000` (the shared heap, whose CAS the host serialises) to threaded code before it reads. Stamp 1 drops the program if `LOCK_MODE` changes. |
+| `0x010` | V2 (`sahf` only) | `sahf` compiles as the SSER service op (op 108, calling threaded handler 212), so it no longer declines the region. It is still a handback, not a native op. |
+| `0x020` | V3 | `fs:` integer forms fold `fs_base` into the displacement, recorded at header +40. Stamp 2 drops the program when the instance's `fs_base` differs. No ESP-based operand, LEA or string op. |
+| `0x040` | F1 | Forward constant lattice over the region (`$uc_lat_xfer`): ⊥ / const / ⊤ per register, joined at merge points. A MOV into part of a known register merges; a byte MOV into an unknown register makes its low byte alone known (mask bit 8+r), enough for a byte compare. |
+| `0x080` | F2 | A load from a lattice-constant address in a non-writable image section folds to its value. Adjacent folded dwords are coalesced into SMC ranges (`$uc_fold_ranges` → `$uop_add_range`, which also code-marks the page). Stamp 4 re-checks the shared fold epoch (§4.3). A page that ever took a guest store is recorded in `$UOP_FOLD_WRITTEN` (64 entries, process-wide) and is never folded again. |
+| `0x100` | C1 | A Jcc whose flags the lattice resolves becomes an unconditional edge, and the dead arm is pruned. The clock is charged per pruned segment, so the batch stop is unchanged. 8-, 16- and 32-bit producers (operands shifted to the top, PF from the shifted-back byte). Needs `0x040`. |
+| `0x200` | S1 | Value variants (§10.7). The compiler names up to two *wish* registers: live-in registers the program loads through (`$uc_s1_wish`). The generic program samples them on entry (Misra-Gries, 64-entry windows) in its assumption block. A dominant value that points into a read-only image section gets a variant compiled with that register seeded into F1 at block 0. The seed is kept only if every back edge into block 0 brings the same value (a fixed point in `$uc_lat_run`). `$th_uop_enter` walks the variants (at most 3, `$uop_s1_pick`) and runs the first whose register holds its value, otherwise the generic program; statistics stay on the generic program. Four windows with no usable value, or a 4th wish, mark the head megamorphic and profiling stops. Needs `0x040`; useful with `0x080`/`0x100`. |
+| `0x400` | C2 | Iteration copies (§10.8). F1 is a fixed-point pass per table. When the loop redefines a seeded register, up to `--uop-c2` copies (default 4, copies × loop insns ≤ 1200) are emitted, each with its own F1 table and flag flow. Copy *i* is entered only from copy *i−1*, with the facts its back edges agree on, and the last copy's back edges enter the steady copy. C1 in a copy never decides on flags its head inherited. A failed or oversize attempt compiles again without C2. |
+| `0x800` | R2 | Per-call-site contexts (§10.8). Records are keyed (address, context): a call opens a callee context (depth 4, 48 per program, no recursion), and the context's RET has its one return address. Producers, temps and flag recipes are named by pid (`$uc_pid`), so every clone owns its flags. The contexts are kept only when some callee is reached in two of them (`$uc_r2_shared`); otherwise the program is scanned again without. No stack-slot facts. `--aggressive-stack` is off in a program with contexts. |
+| `0x1000` | M1 | Redundant loads (§10.8). Within a straight-line run, a load whose {base, index, scale, disp, width, extension} a full register already holds becomes a MOV from that register. |
+| `0x2000` | C3 | Reserved; nothing built (§10.8). |
+| `0x4000` | V2b | `sahf` is inline op 111 SAHFI (`$th_sahf`'s body in `$uop_fast`), and a Jcc straight after it (B/AE, E/NE, BE/A, S/NS, P/NP) tests EAX's bits with ANDI + BNEZ/BEQZ. OF-reading conditions stay on BCC. |
+| `0x8000` | A1 | The main instance's uop arena is `$UOP_ARENA_BIG` (3 MB, code area 0x2CE000, 8192 ranges, start bitmap size/128) instead of `$UOP_ARENA` (1 MB). Workers keep their 256 KB slots, and the per-program cap stays the 1 MB arena's. Flipping the bit swaps arenas (`$uop_arena_pick`), which starts an empty generation. §10.9. |
+
+Assumption block. It sits after the program's window slots, flagged by header nwin's top bit (`$uop_stamp_at`); it was at header +36 first, which `--uop-census` already owns, and the census's exit counters made every program look stale -- 123K flushes in a 23500-batch census run, not a real limit.
+- **Stamp bits:** 1 = `LOCK_MODE` 0, 2 = `fs_base` (+4), 4 = fold epoch (+8), 8 = branch clock.
+- **Not assumptions:** 16 = S1 profile and 32 = S1 variant, which use a 48-byte block (+12 wish or guard register, +16 value, +36 variant chain).
+
+The stamp bits are checked by `$uop_hdr_bad` in `$th_uop_enter`, and only when the block exists. A failure counts
+`stampfail`, flushes, and continues in threaded code.
+
+### 10.2 Not built yet, and why
+
+- **R2 contexts / inlining.** Built afterwards, without stack-slot facts (§10.8). At the time of this list it was not built. The first build's ledger
+  (folds 0) was read as "F2 needs R2", but the cause was the one-instance
+  rule (§10.7). Once F2 crossed instances, the helper-head variant of S1
+  delivered the per-call-site constant R2 was meant to provide for
+  `_CopyRecord`: its callers pass one of two TypeInfo pointers in ECX, so a
+  variant at the helper head is the call-site context. R2 is still needed
+  for what a head variant cannot reach: stack-slot facts, a constant that
+  differs per call site but is not a register at the helper's head, and
+  callee code that is not its own program head.
+- **C2 unroll.** Built afterwards (§10.8). At the time of this list it was the next blocker on this route.
+  `_CopyRecord`'s field loop (head 0x406773) and `_InitializeRecord`'s
+  loop (0x406448/0x406418) get variants whose seed F1 correctly drops: the
+  back edge advances the seeded register (EDI += 8) or redefines it
+  (`xor edx,edx; mov dl,[esi+1]`). Keeping the first iteration's facts
+  needs a peeled or unrolled iteration (§10.7).
+- **C1 re-formation rounds, M1 (store→load forwarding, redundant loads),
+  C3 (dead flags and snapshots).** Not built in this pass. M1's redundant-load half was built later; store→load forwarding, C3 and re-formation were not (§10.8).
+- **The fused `fnstsw/sahf/jcc` → f64 compare-branch.** Only the `sahf`
+  decline was removed. `0x4000` later made `sahf` inline and the Jcc read AH (§10.8); there is still no f64 compare-branch. The WAT microbench (`docs/design/wat-representation-bench.md`)
+  measures the fusion at 2–3× everywhere, so it is the next V2 step.
+- **V5 SSE native ops.** These overlap the landed `--uop-sse` / `--sse-fast`
+  arms (796e017da). The microbench says the representation matters more
+  than the op list: `$xmm_addr` calls are the worst form measured, inline
+  const-offset `v128.load` is 9×, and ss/sd lane-0 loads are 5×. V5 should
+  be built on that, as its own change.
+- **E1, KCALL:** out of scope (stages 9–10).
+
+### 10.3 Exactness, as measured
+
+- **The branch clock is the exactness clock.** Under `--branch-clock` the
+  tier off (`--no-uop`), mask 0 and every arm give identical API histograms,
+  present lines and end frames.
+- **The block clock is not tier-exact on main.** Its cuts follow threaded
+  decode history, so any change in what compiles moves the batch stop.
+  - metrojd_gm7, 70000 batches: `--no-uop` 1148493 API calls, mask 0
+    1133243, main's own `--uop-icall` 1130214.
+  - heroes2_demo, 2400 batches: `--no-uop` 1348459, mask 0 1077776.
+  - So block-clock runs of a coverage-changing arm (`0x008`, `0x010`) differ
+    from mask 0 exactly as main's widenings do: same presents count, a
+    different amount of work drawn in the window. That is not a pass bug.
+  - It is why §5.3 already fixes `--branch-clock` for every timed arm.
+- **The RET exit made the block clock worse than that.** A mid-block deopt
+  at a RET creates a threaded block head that tier-off code never makes, and
+  four suite cases changed their batch stop under the block clock. R1 is
+  therefore gated on the branch clock (stamp 8 drops such a program if the
+  clock changes). A block-clock-exact R1 would need dynamic-target budget
+  stubs.
+- **Unit level:** `test/test-uop-opt.js` runs every arm over the
+  `test-uop-compiler.js` corpus under both clocks. Each 37-block batch stop,
+  register, flag and byte must match threaded code. That covers clock
+  charging at budget cuts, C1's segment charges, and the flags each cut
+  materialises. On top of that, seven invalidation checks:
+  - `.data` is not folded;
+  - VirtualProtect kills;
+  - page release kills;
+  - a guest store kills, and the page is never refolded;
+  - a `LOCK_MODE` flip drops the program;
+  - an `fs_base` change drops it;
+  - a second instance drops it.
+- **Mask 0 is main:** `test/test-uop-opt-identity.js` hashes the program
+  arena over the whole corpus. Unset equals `set_uop_opt(0)`, and both equal
+  control builds of 5ac21c5f8 and of main 28b658ece, which has D.
+
+### 10.4 Notes for the sweep
+
+- **R1 can lower coverage.** test-uop-compiler's trace-callee case: 256
+  enters over 360 blocks, against 2736 over 10204. The ledger's enters and
+  charged blocks show it per app.
+- **A once-folded page stays code-marked.** A store to it exits every
+  program entry that reaches it. F2 only folds non-writable sections, so
+  this needs a VirtualProtect'd section.
+- **`sahf` is a service op,** so `service-calls` rises with `0x010`. Fusing it
+  is §10.2's next step.
+- The `service-calls` counter runs at mask 0 too: it is the tier's own
+  handback count.
+- **F2 folds nothing on Spelunky Classic** (`folds=0` at `0x1ff`). The
+  constant addresses §2.2 counts on are TypeInfo pointers *passed in* to
+  `_CopyRecord` / `_FinalizeRecord`. Those become lattice constants only
+  inside an inlined context (R2) or a specialised variant (S1), and both
+  were cut. On their own, F1 and F2 are the plumbing for those passes. C1
+  does fold on its own lattice: 706 Jcc sites at `0x140`.
+- **R3 is the biggest single ledger delta on Spelunky Classic.** It skips
+  309M seam ops and halves service calls, from 620.7M to 311.5M. The seam
+  ops were handbacks.
+- **Microbench guidance taken:** clock charged at exits and back edges only
+  (C1 charges per segment at the exit), and LOCK as plain RMW (8–9× over
+  CAS). Not yet taken: inline `$gl32`/`$g2w` fast paths in program ops, and
+  dead-flag elimination (C3, cut).
+
+### 10.5 App exactness matrix (`tools/uop-opt-exact.js`)
+
+Each cell compares the run with mask-0 control on the same clock and the
+same D setting. The comparison covers the whole API histogram
+(`--trace-api-counts`), the present/GPS lines with wall-clock fields
+stripped, and the end-frame PNG's SHA-256. Every run is serial, under 3
+minutes, and headless GL held awake by `caffeinate -d -i`.
+
+Routes:
+- `spel`: Spelunky Classic, title room, 23500 batches.
+- `spelhd`: Spelunky Classic HD rope route, 181000.
+- `metro`: metrojd_gm7, Delphi 6-7 by `tools/delphi-detect.js`, first room,
+  run and jump, 70000.
+- `h2`: Heroes II demo, scenario and scroll, 2400.
+- `sc`: StarCraft shareware, `--no-threads`, Terran base, 3500.
+
+| Arms | Clock | D | spel | spelhd | metro | h2 | sc |
+|---|---|---|---|---|---|---|---|
+| each bit alone (0x1 … 0x80), 0x140, 0x1ff | branch | absent (pre-rebase) | identical | identical | identical | identical | identical |
+| each bit alone, 0x140, 0x1ff | branch | `--no-delphi-fold` | 0x1ff identical | 0x1ff identical | identical | identical | identical |
+| 0x1ff | branch | on (default) | identical | identical | identical | identical | identical |
+| 0x1ff | block | off | differs (timing) | differs (timing) | differs (timing) | identical | identical |
+
+Notes on the table:
+- **Branch clock:** the control hashes are equal across D off, D on and the
+  pre-D build:
+  - spel 2245487 calls, frame 6a4436d8;
+  - spelhd 2333089, 78cf8e1d;
+  - metro 1213199, c8cbac72;
+  - h2 1520029, 55aaf300;
+  - sc 353869, c821b6c5.
+  `--no-uop` gives the same on metro and h2.
+- **Block clock, metro:** single bits `0x008` and `0x010` differ (§10.3).
+  The other bits are identical.
+- **Mid-route frames are compared too.** Under the branch clock the guest is further along at a
+  given batch, and the Spelunky Classic end frame is a black fade. So the
+  driver also captures `B:png` frames mid-route and compares their hashes:
+  - spel at 15000/19000/21000/22500 (title, intro);
+  - spelhd at 100000/140000/170000;
+  - metro at 61000/63000/66000/69000.
+
+  All of them are identical at `0x1ff` vs 0, with D off and with D on
+  (`exact/frames-d-off`, `exact/frames-d-on`).
+- **Two runs were rejected as invalid, not counted as divergences.** The
+  laptop display slept in the middle of a sweep, so `--headless-gl` reported
+  zero displays. The driver now holds the display awake and fails such a run
+  as "GL unusable".
+
+### 10.6 Ledger on Spelunky Classic (branch clock, D off, 23500 batches)
+
+| Mask | enters | charged blocks | service calls | seams skipped | ret-exits | jcc-folded | lock | sahf | fs | decl-hits | folds |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 97.65M | 1704.9M | 620.7M | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x001 | 100.55M | 1700.1M | 616.7M | 0 | 0 | 0 | 0 | 0 | 0 | 248 | 0 |
+| 0x002 | 91.57M | 1727.6M | 638.3M | 0 | 6858 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x004 | 97.65M | 1704.9M | 311.5M | 309.1M | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x008 | 101.73M | 1744.7M | 652.5M | 0 | 0 | 0 | 3652 | 0 | 0 | 0 | 0 |
+| 0x010 | 98.25M | 1711.1M | 632.3M | 0 | 0 | 0 | 0 | 470 | 0 | 0 | 0 |
+| 0x020 | 100.53M | 1708.4M | 624.7M | 0 | 0 | 0 | 0 | 0 | 1848 | 0 | 0 |
+| 0x040 | = 0 | = 0 | = 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x080 | = 0 | = 0 | = 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x140 | 100.41M | 1698.9M | 615.7M | 0 | 0 | 706 | 0 | 0 | 0 | 0 | 0 |
+| 0x1ff | 99.91M | 1744.8M | 334.8M | 325.0M | 7592 | 1114 | 4518 | 464 | 1964 | 326 | 0 |
+| 0 + D on | 84.50M | 1647.7M | 584.0M | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x1ff + D on | 84.15M | 1657.1M | 289.8M | 302.6M | 3764 | 744 | 1405 | 506 | 1432 | 193 | 0 |
+
+How to read it:
+- **Charged blocks are the tier's coverage, not work.** More blocks inside
+  programs means more x86 executed by the tier.
+- **Enters go up when coverage widens.** Newly accepted regions add their
+  own enters.
+- **R1 (`0x002`) cuts enters by 6 %.** Programs that used to stop at a RET
+  now continue through it.
+- **R3 (`0x004`) cuts service calls by 50 %.** It is the one pass the ledger
+  says is worth timing alone.
+- **F1/F2 alone do nothing on this route** (§10.4).
+- **With D on, R3 still removes 294M service calls.** D removes the helper
+  bodies; it does not remove the seams.
+- **Wall time on the laptop is not a measurement.** The box sweep times these
+  arms.
+
+### 10.7 Why F2 folded nothing, and S1 on `_CopyRecord` (2026-11-25, second pass)
+
+Route: Spelunky Classic, branch clock, `--no-delphi-fold`, 23500 batches. Evidence is in `scratch/runs/20261125-uop-opt/r2/`.
+
+**The diagnosis: the one-instance rule.** The first build's ledger showed folds = 0 at `0x1ff`. That was read as "F2 needs R2's contexts". It was not the cause:
+- Spelunky starts a second guest thread at init (tid 1, which never enters a program).
+- `init_thread` set `$UOP_MULTI_INST`, and from then on `$uc_fold_ok` refused every fold, process-wide.
+
+With the cross-instance epoch (§4.3), F2 alone folds 1656 load sites over 750 dwords (`0x80`), with 2 stamp drops on the route.
+
+**A census artefact found on the way.** The first assumption stamp lived at header +36, and `--uop-census` uses +36/+40 for its exit counters. The census therefore turned every program "stale": 123441 flushes in a 23500-batch census run. With the block moved, the same census flushes 35 times, which is arena-full, as on main. Runs without `--uop-census` (every exactness run) were never affected.
+
+**S1 at the helper head instead of R2 at the call site.** `_CopyRecord` (0x40674c) is reached from 22 call sites, and every one loads ECX from a TypeInfo slot in `.text`. A variant guarded on ECX is therefore the call-site context for this helper.
+
+Census, `0x3ff`, D off:
+
+| head | variant | folded loads | Jccs decided |
+|---|---|---|---|
+| 0x40674c `_CopyRecord` | ecx=0x5436f4 (RValue) | 22 | 16 |
+| 0x40674c `_CopyRecord` | ecx=0x543710 | 22 | 16 |
+| 0x406534 `_FinalizeArray` | edx=0x5436f4 / 0x4010d0 | 14 / 12 | 14 / 14 |
+| 0x406773 `_CopyRecord` field loop | edi=0x543704 | 0 | 0 (seed dropped: EDI += 8 on the back edge) |
+| 0x406448 / 0x406418 init-record loops | edx=… | 0 | 0 (seed dropped: EDX redefined in the loop) |
+
+- **`_CopyRecord`:** the TypeInfo loads (size, field count, field PPTypeInfo, the field's kind byte) fold. The `jle` on the field count and the whole `cmp cl,0x0a..0x11` kind ladder are decided: 16 Jccs.
+- **`_FinalizeArray`:** its ladder is decided only since F1 learned the low byte of an otherwise unknown register (`mov al,[esi]` with EAX's upper bytes unknown).
+- **The field loop:** not folded. That needs a peeled or unrolled iteration (C2, §10.2).
+
+Ledger, D off, branch clock (identical frames, API counts and presents to mask 0; §10.5):
+
+| Mask | enters | charged blocks | service calls | loads folded (sites) | fold dwords | jcc folded | variants | variant hits | megamorphic |
+|---|---|---|---|---|---|---|---|---|---|
+| 0 | 97.65M | 1704.9M | 620.7M | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0x80 | 99.96M | 1699.7M | 618.5M | 1656 | 750 | 0 | 0 | 0 | 0 |
+| 0x240 | 96.43M | 1700.6M | 618.8M | 0 | 0 | 0 | 424 | 6.28M | 2533 |
+| 0x3ff | 99.98M | 1736.8M | 333.2M | 9156 | 3283 | 4146 | 649 | 6.25M | 2716 |
+
+How to read it:
+- **No column times anything.** Folded loads and decided Jccs are static compile counts, and variant hits are dynamic entries (6.3% of all entries at 0x3ff).
+- **Enters per charged block** are 0.0573 at mask 0 and 0.0576 at 0x3ff. No guest instruction-retired counter exists, so "enters per instruction" cannot be stated directly.
+- **Variant compiles recur after every arena-full flush** (51 flushes on this route), which is why there are 649 variants over 67 distinct (head, register, value) keys.
+
+### 10.8 Third pass: enter split, C2, R2, M1, SAHFI, RETX, re-guard, x87 (2026-11-26)
+
+Evidence: `scratch/runs/20261125-uop-opt/` (`r2-retx/gp2/`, `r2-retx/gp2-lazy/`, `final/`, `rglazy/`, `native-enter-f685e78e0/`, `native-fpu/`).
+
+**Mask 0 is free.** S1's variant pick and the assumption-stamp check left `$th_uop_enter` for `$th_uop_enter_opt`, reached only when header +8 is negative (a program with an assumption block or variants). Native code against main 28b658ece, arm64:
+- V8, `$th_uop_enter` not inlined: 298 → 308 instructions.
+- SpiderMonkey Ion: 360 → 378.
+- V8 with `$uop_run` inlined into it: 1542 → 1771 instructions, but stack references fall from 450 to 239.
+
+**C2 (`0x400`), iteration copies.** On Spelunky (D off) the loops that S1 could not hold now fold: `_CopyRecord`'s field loop 0x406773 goes from 0 to 14 folded loads, and the `_InitializeRecord` loops 0x406448 / 0x406418 from 0 to 4 each (`0x7ff`). Unit tests cover the copy bound (copies × loop instructions ≤ 1200) and the fallback compile without C2.
+
+**R2 (`0x800`), per-call-site contexts.** The recipe for a flag producer was named by address, so two clones of one callee shared it. Producers, temps and recipes are now named by pid (`$uc_pid`, bfe5f8579). The exact matrix found the bug; the unit test now has a two-context case.
+
+**RETX / EXITR and RET chaining (part of `0x800`).** A RET whose address no call in the program named used to end the program at the RET.
+- Op 112 RETX reads the address, pops it, and goes on to an exit stub that materializes the flags.
+- Op 113 EXITR leaves as the RET's transfer, charging one block as `$branch_end` would.
+- With budget left, `$uop_ret_chain` looks up a program at the return address and runs it in the same `$uop_run` loop. It applies the enter op's guards (debug tier, code16, yield, census, pending seam, breakpoint, SBH addresses), the stamp and S1 pick, and the window epoch.
+- Any recorder that `$th_ret` feeds (thread-return slot, null transfer, call stack, callback feed) sends the RET to threaded code instead.
+
+**Bug found on the way: a map way after a flush.** After `uop_flush` (generation bump, bump allocator back to the arena base), `uop_map_get(X)` can return a live program whose header names another head Y, because X's way survived the flush. The enter op checks the header's eip and so never ran it. The first chaining build did not check, and Spelunky crashed at batch 3022 with a wild EIP. `$uop_ret_chain` now repeats the check. `test-uop-opt` has a flush-reuse case, and removing the check fails it.
+
+A latent cost remains: `$uop_try` refuses to compile X while such a way exists. Not fixed.
+
+**M1 (`0x1000`), redundant loads.** Within a straight-line run, a load that a full register already holds becomes a MOV. Spelunky: 214 sites (D on), 216 (D off). Store→load forwarding is not built.
+
+**C3 (`0x2000`).** Not built. Flag records are already materialized only at exits (`$uc_liveness`, `$uc_rec_skip`). What is left is the per-exit snapshot, and no profile so far puts it on the hot path.
+
+**SAHFI (`0x4000`).** `sahf` is op 111, `$th_sahf`'s body inline. A following B/AE, E/NE, BE/A, S/NS or P/NP Jcc tests EAX bits directly (ANDI + BNEZ/BEQZ): 587 sites on Spelunky D off, 539 D on.
+
+The full f64 compare-branch (FCOM + FNSTSW + SAHF + Jcc as one op) is still not built. In compiled code the compare is already native f64 (op 98/99/105) and the branch already reads AH. What is left is the dispatch of ops 107/111 and `$build_eflags`/`$load_eflags`. The pre-D profile's threaded `th_sahf` (18.5M × 12.5 ns) bounds that at well under 1% of wasm time.
+
+**Direct f64 for x87 memory operands (06, `--no-fpu-direct` to turn off).** Measured on the pre-D Spelunky profile (`scratch/runs/20261125-spelunky-classic-gameplay-profile/headless/run-c/top.txt`): threaded x87 cost about 12% of wasm self time, including `th_fpu_mem_ro` 2.27 s, `fpu_exec_mem` 1.67 s, and `fpu_push`/`pop`/`set`/`arith` about 2.95 s.
+- `$fpu_exec_mem` now writes ST(0), the C bits, the pop and the push inline for D8/DC m32/m64 and FLD m64 / FLD m32 / FILD m32. It keeps the original order and every `$fpu_set_exc`.
+- The knob keeps the old path for the box A/B.
+- `test-x87-island-predecode` compares a `--no-fpu-direct` arm on every field.
+- Native code (`native-fpu/CAPTURE.txt`): V8 had already inlined most of the helpers into `$fpu_exec_mem` (2691 instructions). The rewrite grows it to 3840. Ion: 580 → 731. So whether this is a win is a box question.
+
+**Lazy re-guard (`--uop-reguard-lazy`, off by default).** A re-guard widens to the 64 KB block only when the slot is walking:
+- its window is one page in the same block; or
+- the missed page touches either end of the window.
+
+Otherwise it proves one page. Counts, all with identical API counts and frames to the wide arm:
+
+| Route (branch clock) | re-guards wide → lazy | pages proved wide → lazy |
+|---|---|---|
+| Castle GM7 200K batches (main d0f236a7b + this change) | 13.49M → 14.50M | 183.1M → 19.5M |
+| Spelunky Classic gameplay [29600, 31400), `0x7fff`, D on | 187.8M → 193.7M | 3.00G → 115.5M |
+| Diablo shareware 25K batches (main + this change) | 1.21M → 1.38M | 18.0M → 3.23M |
+| Moorhuhn 3 60K batches (main + this change) | 1.70M → 1.80M | 27.2M → 2.56M |
+
+On Spelunky every re-guard proved 16.0 pages under the wide rule. Diablo and Moorhuhn 3 are where the wide rule won wall time. Lazy costs them 14% and 6% more re-guards for 82% and 91% fewer pages proved, so the default stays wide until the box times them. (A first Diablo pair bounded by wall time instead of batches is not comparable and is not used.)
+
+**R2's effect on the Spelunky gameplay window** [29600, 31400), branch clock:
+- `th_uop_enter` and `th_pop_run_ret` are threaded handler counts in the window.
+- Coverage is uop blocks / (uop blocks + threaded blocks).
+- ret-chain is cumulative from batch 0.
+
+| Arm | ops | th_uop_enter | th_pop_run_ret | coverage | ret-chain |
+|---|---|---|---|---|---|
+| D on `0x7ff` | 61.95M | 8.23M | 1.05M | 74.4% | 0 |
+| D on `0x7fff` | 52.69M | 6.36M | 2.08M | 79.9% | 61.0M |
+| D on `0x7fff` + lazy | 47.48M | 7.19M | 2.01M | 81.0% | — |
+| D off `0x7ff` | 91.84M | 11.67M | 2.13M | 70.3% | 0 |
+| D off `0x7fff` | 79.84M | 9.42M | 3.04M | 75.5% | 51.5M |
+
+`th_uop_enter` falls by 23% (D on) and 19% (D off). `th_pop_run_ret` rises (1.05M → 2.08M with D on). This is not explained yet. The per-block diff of threaded hits between the two arms shows programs ending at different places, not one new hot block.
+
+Exact matrix, branch clock, spel/spelhd/metro/h2/sc (`final/`). Every arm's API counts and frame are identical to the arm-0 control:
+- arms 0, `0x7ff`, `0xfff` and `0x7fff` on a1f726227, D on and D off;
+- `--uop-reguard-lazy` arms 0 and `0x7fff` (spel, h2, sc);
+- arms 0 and `0x7fff` on the final 6d34dd458, which adds direct f64 (`final/head.log`).
+
+The arm-0 frames and API counts are also equal across all builds, and with `--no-uop`. `test-uop-opt-identity` against main 28b658ece passes (arena 2d5f694d7ec61b34).
+
+### 10.9 Fourth pass: R2's compile blow-up, A1, and the box leave-one-out (2026-11-27)
+
+Evidence: `scratch/runs/20261126-uop-opt-r2/` (`counts1.tsv` … `counts3.tsv`, `box/{ra,rb,rai,rbi,raj}/`, `native-arm64/`, `native-x64/`).
+
+**The blow-up was flush thrash, not R2.** Spelunky Classic's hot working set is about 1050 installed heads of about 7.5 KB each. The 1 MB main arena holds about 120 programs per generation, so every arena-full flush recompiles the hot set. Even `0x77ff` has 56% repeat compiles (census). RETX and ret chaining reach more code per second and so raise the flush rate. The call-site contexts are not the cause: `--uop-r2-window=0:0` compiles more, not less.
+
+All rows below: Spelunky Classic, 32700 batches, branch clock. Every row has 3413254 API calls and end frame `6a4436d8e792d22f`. *Threaded ops* is the threaded-handler histogram from batch 21000.
+
+| Arm | compiled | flushes | ret-chain | th_uop_enter | th_pop_run_ret | threaded ops |
+|---|---|---|---|---|---|---|
+| `0x7ff` | 3702 | 20 | 0 | 64.5M | 11.3M | 524M |
+| `0x77ff` | 3349 | 18 | 0 | 69.2M | 11.4M | 541M |
+| `0x7fff` | 5167 | 30 | 60.5M | 51.3M | 15.0M | 449M |
+| `0xffff` (A1) | 1175 | **0** | 65.7M | 51.6M | 13.5M | **334M** |
+| `0xf7ff` | 1082 | 0 | 0 | 64.1M | 12.0M | 443M |
+| `0xffff`, R2 window 0:0 | 1192 | 0 | 65.3M | 44.0M | 13.5M | 317M |
+
+**A1 (`0x8000`)** is the fix (§10.1). It is a 3 MB `$UOP_ARENA_BIG`, placed in the gap below `GUEST_FIXED_POOL_B`, so no other region moves. The 1 MB layout is unchanged, which keeps mask 0 byte-identical (`test-uop-opt-identity`). `test-uop-opt` has an A1 case: switch arenas, place programs in the big one, switch back.
+
+**Box timing** (two ascii.dev boxes, x86-64, one lane each). Each arm is fixed work, measured as whole-run `/usr/bin/time` user CPU, with arms interleaved and rotated. Both boxes were noisy this time, with per-arm spreads of 10–40% against about 3% on earlier boxes. So only large effects resolve. The tables give the median and, in brackets, min-of-n, both against the reference arm.
+
+Spelunky Classic (box A, null band 3.3% median / 2.3% min):
+
+| Arm | n | vs null n1 | vs reference |
+|---|---|---|---|
+| `0x7ff` | 6 | −9.4% (−3.1%) | |
+| `0x7fff` | 6 | −14.2% (−5.0%) | |
+| `0x77ff` (−R2) | 6 | | vs `0x7fff` +4.5% (+3.2%) |
+| `0x7fff` + lazy | 6 | | vs `0x7fff` +0.1% (−2.9%) |
+| `0xffff` | 6 | −15.2% (−7.3%) | vs `0x7fff` on the same build −1.9% (−3.0%) |
+| `0xf7ff` (−R2) | 6 | | vs `0xffff` +3.5% (+2.9%) |
+| `0x87ff` (−M1, −SAHFI) | 6 | | vs `0xffff` +3.5% (+3.2%) |
+| `0xffff` + lazy | 6 | −18.2% (−11.7%) | vs `0xffff` −3.5% (−4.7%) |
+| `0xffff` `--no-fpu-direct` | 6 | | vs `0xffff` +2.5% (−1.0%) |
+
+StarCraft (box B, null band 5.3% / 8.1%): no arm is outside the band against null. `0xffff` is +0.7% (+4.6%), and `0xffff` against `0x7fff` on the same build is −4.8% (−2.6%). Lazy re-guard costs +5.6% (+7.7%) against `0xffff`, as in the earlier sweep (+3.9%). `--no-fpu-direct` is +3.1% (+4.2%).
+
+Per-bit leave-one-out on `0xffff` (Spelunky, box A, n=4, band 4.1%; StarCraft partial): only R1 (`0x002`) resolves. Removing it costs +9.4% (+11.8%) on Spelunky. Every other single bit is inside the band on both workloads. The second, tighter Spelunky pass (`raj`) was cut short at n=1–2 when the boxes were released, so it is not used.
+
+**Exactness.** Every box run of every arm has the same end frame per workload: Spelunky `6a4436d8e792d22f` across 86 + 64 runs, StarCraft `81ef8c8536c09d9f` across all runs. Each also has the same API and batch count, and the null builds (main bc5f3b2fb) agree. All runs use `--branch-clock`. `test-uop-opt` passes on 24 arms × 2 clocks, including `0x8000` and `0xffff`. `test-uop-opt-identity` gives mask unset = mask 0.
+
+**Native code**, tested a87cf7e23 against main bc5f3b2fb. Mask arms share one module.
+- **Dispatch head.** The `$uop_fast` head has the same shape in both engines and on both architectures: the interrupt-flag test, the op load, the bounds check against 0x72 (was 0x6f), and a jump table. Every arm jumps straight back to it.
+- **V8 x86-64 `$uop_fast`.** It grows from 4077 to 5121 instructions, and its stack references from 143 to 287. The added spills are in the long arms: back-edge pieces with a stack slot go from 18 to 25. Short arms (≤16 instructions) with a stack slot fall from 11 to 4.
+- **SpiderMonkey x86-64 `$uop_fast`.** 4043 → 3695 instructions.
+- **`$th_uop_enter`.** V8 x86-64 1454 → 1559 instructions, and stack references fall from 303 to 240. arm64 V8 1542 → 1771.
+- **New and grown functions.** `$uop_ret_chain` is new: 313 V8 / 101 Ion instructions on x86-64. `$fpu_exec_mem` V8 x86-64 grows 2417 → 3473 (direct f64, §10.8).
+- **Engines.** Node 24 (V8 13.6), with jsvu V8 16.0 and SpiderMonkey C162 on the box. Ion C155 and V8 15.4 on arm64.
+
+**Recommended default: `0xffff`** (every built bit plus A1). Direct f64 stays on, and lazy re-guard stays off: it wins on Spelunky and loses on StarCraft, so it is an app-policy candidate rather than a default. R2 (`0x800`) pays on Spelunky in both builds (+3.5–4.5% when removed). R1 is the one bit the leave-one-out resolves. The remaining bits are not shown to cost anything; none is shown to pay on its own at this noise. A quieter box should repeat the leave-one-out before any is dropped.

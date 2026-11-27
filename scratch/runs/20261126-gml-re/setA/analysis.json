@@ -1,0 +1,446 @@
+{
+ "codes": [
+  {
+   "code": "c7dc3e0",
+   "execs": 168,
+   "work": 181932,
+   "root": "block"
+  },
+  {
+   "code": "c7dc038",
+   "execs": 5303,
+   "work": 159602,
+   "root": "block"
+  },
+  {
+   "code": "c7dcf40",
+   "execs": 14736,
+   "work": 103152,
+   "root": "block"
+  },
+  {
+   "code": "c7dbc28",
+   "execs": 3767,
+   "work": 60272,
+   "root": "block"
+  },
+  {
+   "code": "c7dfd90",
+   "execs": 167,
+   "work": 59376,
+   "root": "block"
+  },
+  {
+   "code": "c7dfd28",
+   "execs": 168,
+   "work": 49755,
+   "root": "block"
+  },
+  {
+   "code": "e209fd8",
+   "execs": 168,
+   "work": 44016,
+   "root": "block"
+  },
+  {
+   "code": "c7dfdf8",
+   "execs": 167,
+   "work": 39245,
+   "root": "block"
+  },
+  {
+   "code": "c7dd280",
+   "execs": 1673,
+   "work": 33460,
+   "root": "block"
+  },
+  {
+   "code": "c7dbe30",
+   "execs": 335,
+   "work": 33083,
+   "root": "block"
+  },
+  {
+   "code": "c7dbfd0",
+   "execs": 786,
+   "work": 22008,
+   "root": "block"
+  },
+  {
+   "code": "e20e480",
+   "execs": 167,
+   "work": 21073,
+   "root": "block"
+  },
+  {
+   "code": "c7ddf18",
+   "execs": 168,
+   "work": 20832,
+   "root": "block"
+  },
+  {
+   "code": "e4a1900",
+   "execs": 168,
+   "work": 20685,
+   "root": "block"
+  },
+  {
+   "code": "c7dff30",
+   "execs": 167,
+   "work": 20207,
+   "root": "block"
+  },
+  {
+   "code": "c7df7e0",
+   "execs": 168,
+   "work": 16464,
+   "root": "block"
+  },
+  {
+   "code": "c7dbf68",
+   "execs": 552,
+   "work": 13248,
+   "root": "block"
+  },
+  {
+   "code": "c7dc310",
+   "execs": 448,
+   "work": 12544,
+   "root": "block"
+  },
+  {
+   "code": "c7dc448",
+   "execs": 168,
+   "work": 12424,
+   "root": "block"
+  },
+  {
+   "code": "e562060",
+   "execs": 1512,
+   "work": 12096,
+   "root": "block"
+  },
+  {
+   "code": "c7dea78",
+   "execs": 167,
+   "work": 12074,
+   "root": "block"
+  },
+  {
+   "code": "e20e550",
+   "execs": 168,
+   "work": 11901,
+   "root": "block"
+  },
+  {
+   "code": "c7dbbc0",
+   "execs": 1084,
+   "work": 10840,
+   "root": "block"
+  },
+  {
+   "code": "c7dbf00",
+   "execs": 336,
+   "work": 9460,
+   "root": "block"
+  },
+  {
+   "code": "c7dbe98",
+   "execs": 336,
+   "work": 8121,
+   "root": "block"
+  },
+  {
+   "code": "e210568",
+   "execs": 168,
+   "work": 7392,
+   "root": "block"
+  },
+  {
+   "code": "c7dc378",
+   "execs": 448,
+   "work": 7168,
+   "root": "block"
+  },
+  {
+   "code": "c7e06e8",
+   "execs": 167,
+   "work": 7014,
+   "root": "block"
+  },
+  {
+   "code": "e20e3b0",
+   "execs": 167,
+   "work": 6680,
+   "root": "block"
+  },
+  {
+   "code": "c7dc0a0",
+   "execs": 168,
+   "work": 6552,
+   "root": "block"
+  },
+  {
+   "code": "c7dcac8",
+   "execs": 336,
+   "work": 5376,
+   "root": "block"
+  },
+  {
+   "code": "c7dcb30",
+   "execs": 336,
+   "work": 5376,
+   "root": "block"
+  },
+  {
+   "code": "c7dc858",
+   "execs": 168,
+   "work": 5040,
+   "root": "block"
+  },
+  {
+   "code": "c7dc650",
+   "execs": 168,
+   "work": 4704,
+   "root": "block"
+  },
+  {
+   "code": "c7dfe60",
+   "execs": 167,
+   "work": 4509,
+   "root": "block"
+  },
+  {
+   "code": "c7dd1b0",
+   "execs": 168,
+   "work": 4032,
+   "root": "block"
+  },
+  {
+   "code": "c7dc5e8",
+   "execs": 168,
+   "work": 4032,
+   "root": "block"
+  },
+  {
+   "code": "c7dc6b8",
+   "execs": 168,
+   "work": 4032,
+   "root": "block"
+  },
+  {
+   "code": "c7dff98",
+   "execs": 168,
+   "work": 3024,
+   "root": "block"
+  },
+  {
+   "code": "c7dc580",
+   "execs": 104,
+   "work": 2704,
+   "root": "block"
+  },
+  {
+   "code": "c7e08f0",
+   "execs": 168,
+   "work": 2688,
+   "root": "block"
+  },
+  {
+   "code": "c7df8b0",
+   "execs": 168,
+   "work": 2688,
+   "root": "block"
+  },
+  {
+   "code": "c7dbc90",
+   "execs": 334,
+   "work": 2672,
+   "root": "block"
+  },
+  {
+   "code": "c7e0068",
+   "execs": 74,
+   "work": 2626,
+   "root": "block"
+  },
+  {
+   "code": "c7dc928",
+   "execs": 280,
+   "work": 2520,
+   "root": "block"
+  },
+  {
+   "code": "c7df368",
+   "execs": 168,
+   "work": 2352,
+   "root": "block"
+  },
+  {
+   "code": "e20a040",
+   "execs": 168,
+   "work": 2352,
+   "root": "block"
+  },
+  {
+   "code": "c7dfec8",
+   "execs": 167,
+   "work": 2171,
+   "root": "block"
+  },
+  {
+   "code": "c7de6d0",
+   "execs": 336,
+   "work": 2016,
+   "root": "block"
+  },
+  {
+   "code": "c7de598",
+   "execs": 335,
+   "work": 2010,
+   "root": "block"
+  }
+ ],
+ "kinds": {
+  "binary": 263529,
+  "call": 90684,
+  "var(simple)": 328426,
+  "const": 206969,
+  "var(owner/index expr)": 10567,
+  "unary": 18316,
+  "kind 0": 168
+ },
+ "stKinds": {
+  "if": 96447,
+  "return": 32070,
+  "assign": 44586,
+  "call": 15666,
+  "block": 9577,
+  "with": 961,
+  "for": 190,
+  "break": 22
+ },
+ "calls": {
+  "room_get_name": 14736,
+  "script#211": 14736,
+  "round": 13380,
+  "collision_point": 6622,
+  "instance_exists": 5543,
+  "script#56": 5303,
+  "script#20": 3767,
+  "collision_rectangle": 3273,
+  "collision_line": 3151,
+  "abs": 2689,
+  "draw_sprite": 2520,
+  "keyboard_check_pressed": 2179,
+  "instance_activate_object": 2174,
+  "script#219": 1673,
+  "keyboard_check": 1344,
+  "draw_text": 1332,
+  "script#3": 1084,
+  "draw_set_color": 834,
+  "instance_number": 833,
+  "script#55": 786,
+  "keyboard_check_released": 672,
+  "frac": 670,
+  "floor": 670,
+  "draw_set_font": 666,
+  "string_length": 660,
+  "ceil": 660,
+  "string": 660,
+  "script#54": 552,
+  "surface_exists": 504,
+  "draw_sprite_ext": 504,
+  "script#82": 448,
+  "script#81": 448,
+  "script#199": 336,
+  "script#200": 336,
+  "script#52": 336,
+  "script#53": 336,
+  "script#279": 336,
+  "surface_set_target": 336,
+  "surface_reset_target": 336,
+  "draw_set_blend_mode_ext": 336,
+  "draw_set_blend_mode": 336,
+  "script#276": 335,
+  "script#277": 335,
+  "script#282": 335,
+  "script#273": 335,
+  "instance_activate_region": 335,
+  "script#51": 335,
+  "script#21": 334,
+  "object_get_parent": 320,
+  "script#191": 280,
+  "script#313": 168,
+  "script#217": 168,
+  "script#262": 168,
+  "script#265": 168,
+  "script#264": 168,
+  "script#263": 168,
+  "script#266": 168,
+  "script#267": 168,
+  "script#268": 168,
+  "script#269": 168,
+  "script#270": 168,
+  "script#261": 168,
+  "script#271": 168,
+  "script#285": 168,
+  "script#275": 168,
+  "script#181": 168,
+  "script#182": 168,
+  "script#59": 168,
+  "script#184": 168,
+  "script#278": 168,
+  "draw_clear": 168,
+  "script#256": 168,
+  "draw_rectangle": 168,
+  "draw_surface_stretched": 168,
+  "screen_refresh": 168,
+  "script#87": 168,
+  "script#286": 167,
+  "script#289": 167,
+  "instance_nearest": 167,
+  "instance_deactivate_region": 167,
+  "script#93": 104,
+  "script#92": 85,
+  "point_distance": 40,
+  "script#190": 20,
+  "is_real": 4,
+  "external_call": 4,
+  "instance_create": 4,
+  "script#223": 4,
+  "script#250": 4,
+  "instance_destroy": 4
+ },
+ "ops": {
+  "binary ==": 32714,
+  "binary &&": 58981,
+  "binary = (cmp)": 39366,
+  "binary ||": 37302,
+  "binary +": 33084,
+  "binary >": 18043,
+  "binary <": 8991,
+  "binary -": 23183,
+  "binary >=": 1581,
+  "binary !=": 7087,
+  "unary !": 17659,
+  "binary *": 2041,
+  "binary /": 936,
+  "unary -u": 657,
+  "binary <=": 167,
+  "binary 215": 53
+ },
+ "varOwner": {
+  "global-or-self(-6)": 308190,
+  "object (owner expr / index)": 10567,
+  "global": 17455,
+  "object": 2781
+ },
+ "numeric": {
+  "evTotal": 918659,
+  "allNumeric": 743843,
+  "rootEvals": 206803,
+  "rootNumeric": 145089,
+  "rootNumericNodes": 660338
+ }
+}
