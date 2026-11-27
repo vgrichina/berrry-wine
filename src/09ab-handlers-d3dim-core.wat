@@ -303,6 +303,48 @@
     (call $d3dim_site_fence (local.get $dst) (i32.const 3))
     (i32.const 0))
 
+  ;; Blt($dst <- $src, $drect, $srect, dwFlags) will copy on the CPU: the
+  ;; $d3dim_blt_fast_fence contract for the Blt shapes $d3dim_gps_blt_end
+  ;; replays exactly. Equal-size rects (a stretch is nearest-neighbour on
+  ;; the CPU), no clipper (a region list skips pixels), flags within
+  ;; DDBLT_KEYSRC | ASYNC | WAIT | DONOTWAIT (no DDFX, ROP, override keys or
+  ;; fills), and not the keyed 32x32 copy that first saves a software
+  ;; cursor's background out of the destination's DIB.
+  (func $d3dim_blt_fence (param $dst i32) (param $src i32) (param $drect i32) (param $srect i32)
+      (param $flags i32) (result i32)
+    (local $dw i32) (local $dh i32) (local $sw i32) (local $sh i32) (local $trans i32)
+    (call $d3dim_site_fence (local.get $src) (i32.const 2))
+    (block $no
+      (br_if $no (i32.ne (i32.and (local.get $flags) (i32.const 0xF6FF7DFF)) (i32.const 0)))
+      (br_if $no (i32.ne (call $dx_surface_clipper_get (local.get $dst)) (i32.const 0)))
+      (if (local.get $drect)
+        (then
+          (local.set $dw (i32.sub (call $gl32 (i32.add (local.get $drect) (i32.const 8))) (call $gl32 (local.get $drect))))
+          (local.set $dh (i32.sub (call $gl32 (i32.add (local.get $drect) (i32.const 12)))
+            (call $gl32 (i32.add (local.get $drect) (i32.const 4))))))
+        (else
+          (local.set $dw (load.field DxObject width (local.get $dst)))
+          (local.set $dh (load.field DxObject height (local.get $dst)))))
+      (if (local.get $srect)
+        (then
+          (local.set $sw (i32.sub (call $gl32 (i32.add (local.get $srect) (i32.const 8))) (call $gl32 (local.get $srect))))
+          (local.set $sh (i32.sub (call $gl32 (i32.add (local.get $srect) (i32.const 12)))
+            (call $gl32 (i32.add (local.get $srect) (i32.const 4))))))
+        (else
+          (local.set $sw (load.field DxObject width (local.get $src)))
+          (local.set $sh (load.field DxObject height (local.get $src)))))
+      (br_if $no (i32.or (i32.ne (local.get $dw) (local.get $sw)) (i32.ne (local.get $dh) (local.get $sh))))
+      ;; The CPU keys only when the source has a key: DDBLTFAST_SRCCOLORKEY's bit.
+      (local.set $trans (i32.and
+        (i32.ne (i32.and (local.get $flags) (i32.const 0x8000)) (i32.const 0))
+        (i32.ne (i32.and (load.field DxObject flags (local.get $src)) (i32.const 0x100)) (i32.const 0))))
+      (br_if $no (i32.and (local.get $trans)
+        (i32.and (i32.eq (local.get $dw) (i32.const 32)) (i32.eq (local.get $dh) (i32.const 32)))))
+      (br_if $no (i32.eqz (call $d3dim_gps_blt_begin (local.get $dst) (local.get $src) (local.get $trans))))
+      (return (i32.const 1)))
+    (call $d3dim_site_fence (local.get $dst) (i32.const 3))
+    (i32.const 0))
+
   ;; Queue a flip-chain DIB swap behind the draws still on the render Worker,
   ;; so the frame keeps rasterizing into the buffer it started in while the
   ;; guest runs on. Only worth it with draws outstanding: with none, the

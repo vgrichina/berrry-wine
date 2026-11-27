@@ -155,7 +155,7 @@ Without this, every new backend would have to reimplement the 846 lines of
       encoding; D3DIM W-buffering uses it too.
     - The WebGL executor advertises STENCIL only: no occlusion, mirror-once,
       linear-filtered border or logic op, and max_aniso 1. (Since then it
-      has gained all of them but mirror-once; see the caps table in
+      has gained all of them, mirror-once last in D3; see the caps table in
       `gpu-stream-v2.md`.) The software
       executor has occlusion, mirror-once and linear-filtered border.
     - WebGL perspective-mode (`linear 0`) rasterization lifts y by 1/16 px
@@ -197,6 +197,20 @@ Without this, every new backend would have to reimplement the 846 lines of
     Stage-0 operands now follow the software rule, so giants' 17 TFACTOR declines per frame draw on the GPU. Its swDraw readbacks went from 1 per frame to 1 per run. Software declines are counted per reason (`d3dim_gps_stat` 35+). Evidence: `scratch/runs/20261115-gps-d2c/`.
 - **D3. 2D drawing onto GPU surfaces on the GPU.** A Blt or BltFast from a DIB surface becomes an UPLOAD plus a keyed, textured quad. ColorFill becomes a CLEAR. This removes the HUD and sprite readbacks.
   - Apps: gta2_demo, Forsaken, Blood2, Re-Volt.
+  - **Status (2026-11-26, branch gps/d3-2d): Blt lowered; COPY and stretch not done.** Already in: BltFast's UPLOAD/keyed quad and ColorFill's CLEAR. New:
+    - `IDirectDrawSurface::Blt` with a source now takes the BltFast route (`$d3dim_blt_fence` in 09ab-handlers-d3dim-core) for equal-size, unclipped copies with flags within KEYSRC|ASYNC|WAIT|DONOTWAIT, so the destination is no longer read back (site bltDst).
+    - `$d3dim_gps_blt_end` no longer uploads onto a *clean* target: it marks it for the next prepare's shadow diff, as any CPU write does. Only a dirty target gets the rect UPLOAD, or the keyed quad.
+    - Survey and readbacks per frame, base → branch, WebGL executor at fixed batch budgets:
+      - Forsaken: 56 → 16 readbacks (bltDst 48 → 4).
+      - MW3: 0.96 → 0.18 per frame (bltDst 7 → 0). What is left is Lock.
+      - gta2_demo: 173, all Lock(WAIT) of the back buffer, which the guest genuinely reads.
+      - dx_flip3dtl and dx_boids: 0 → 0.
+    - Pixels: md5-identical on flip3dtl, boids and gta2. MW3 differs by ±1 only: a frame presented from the DIB (565 shift) on base and from the GPU (bit-replicated) on the branch. Forsaken differs in its animated menu elements after 6 fewer flips.
+    - Not done:
+      - a GPU→GPU COPY: a GPU source is still read back (site bltSrc, 3 per MW3 run);
+      - stretched Blt;
+      - Blood2, Re-Volt and MCM were not reached in a short headless run.
+    - Evidence: `scratch/runs/20261126-gps-d3/`.
 - **D4. Move the D3DIM software arm to the v2 software executor.**
   - **Status (2026-11-17, branch retire/d3dim-20261117): done.** `$d3dim_gpu_call` always calls the producer; the WAT software draw entries (29 functions, ~90 KB), `d3dim_gpu_enable`/`set_d3dim_gpu_present`, the 0x20000-0x20004 host forwarding and the render Worker's D3DIM replay are deleted. A state decline traps. Executors: WebGL, software, null (`--d3dim-renderer`). `test-d3dim-native-mip`, `test-d3dim-worker-parity` and `test-d3dim-publication-source-lifetime` were deleted with the paths they tested. Known gaps the software rasterizer covered: DITHERENABLE/ANTIALIAS pixels, near/far clipping of pre-transformed vertices, and the attached Z surface's DIB (depth is executor-private).
 - **D5. DX6/7 multi-stage texture stages and specular through the 09aj cascade.** Removes the software fallback.

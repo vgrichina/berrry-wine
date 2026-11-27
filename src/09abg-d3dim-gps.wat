@@ -2545,6 +2545,15 @@
                           (i32.or (i32.le_s (local.get $w) (i32.const 0)) (i32.le_s (local.get $hgt) (i32.const 0)))))
       (br_if $out (i32.or (i32.gt_s (i32.add (local.get $dx) (local.get $w)) (local.get $tw))
                           (i32.gt_s (i32.add (local.get $dy) (local.get $hgt)) (local.get $th))))
+      ;; A clean target: the GPU holds what the DIB held, so the DIB is now
+      ;; the newer copy everywhere. Leave the rect to the next prepare's diff
+      ;; against the shadow, as for any CPU write to a clean target; an app
+      ;; that Blts many times per frame (Forsaken's full-screen copies) pays
+      ;; one upload of the changed rows, not one per copy.
+      (if (i32.eqz (i32.and (i32.load offset=32 (local.get $t)) (i32.const 1))) (then
+        (i32.store offset=32 (local.get $t) (i32.or (i32.load offset=32 (local.get $t)) (i32.const 2)))
+        (i32.store offset=23284 (local.get $pb) (i32.add (i32.load offset=23284 (local.get $pb)) (i32.const 1)))
+        (br $out)))
       (if (i32.or (i32.eqz (i32.and (local.get $trans) (i32.const 1)))
                   (i32.eqz (i32.and (i32.load offset=32 (local.get $t)) (i32.const 1)))) (then
         (call $d3g_upload_target_rect (local.get $pb) (local.get $t) (local.get $dx) (local.get $dy)

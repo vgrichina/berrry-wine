@@ -157,14 +157,18 @@ A8B8G8R8). Each executor's caps:
 |---|---|---|---|---|
 | null | all | 16384 | 16 | 16 |
 | software | VS_IR, STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES, WBUFFER, COPY, DEPTH_READBACK, DS_READBACK | 2048 | 6 (the native VM's stages) | 1 |
-| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
+| webgl | STENCIL, LOGIC_OP, OCCLUSION, BORDER_LINEAR, MIRRORONCE, CLIP_PLANES (with VS_IR, 266 vertex uniform vectors and 12 varyings), WBUFFER (WebGL2, desktop GL or EXT_frag_depth) | MAX_TEXTURE_SIZE | min(8, units − 2) | 1 |
 
 The WebGL executor keeps two texture units past the samplers: the fog
 table and the logic-op destination copy. GL has no border wrap mode: a
 point-filtered BORDER axis is a test on the coordinate, and any linear
 filtering on a BORDER sampler is done in the fragment shader from NEAREST
 texel fetches (the four taps, the min/mag choice and the mip levels), with
-the software executor's arithmetic.
+the software executor's arithmetic. GL has no mirror-once mode either: any
+MIRRORONCE axis takes the same shader path, folding the coordinate to
+min(|u|, 1) and mirroring an integer tap about texel edge 0 (tap -1 reads
+texel 0) before clamping, as the software executor's native VM does
+(`test-gpu-stream-webgl-mirror-once.js`).
 
 A record that needs a capability the executor did not advertise is refused
 with error 3 (unsupported), never approximated.

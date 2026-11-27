@@ -5684,7 +5684,7 @@
     (local $ckey i32) (local $col i32)
     (local $drblt_flags i32) (local $src_keyed i32)
     (local $clipper i32) (local $clip_entry i32) (local $clip_data i32)
-    (local $scroll_viewport i32) (local $gps_fill i32)
+    (local $scroll_viewport i32) (local $gps_fill i32) (local $gps_blt i32)
     (local.set $dst_entry (call $dx_from_this (local.get $arg0)))
     (call $host_dx_trace (i32.const 12) (call $dx_slot_of (local.get $dst_entry))
       (if (result i32) (local.get $arg2)
@@ -5713,10 +5713,13 @@
     (if (i32.and (i32.eqz (local.get $arg2))
           (i32.eq (i32.and (local.get $arg4) (i32.const 0x02000400)) (i32.const 0x400)))
       (then (local.set $gps_fill (call $d3dim_gps_fill_begin (local.get $dst_entry)))))
-    (if (i32.eqz (local.get $gps_fill))
-      (then (call $d3dim_site_fence (local.get $dst_entry) (i32.const 3))))
-    (if (local.get $arg2) (then
-      (call $d3dim_site_fence (call $dx_from_this (local.get $arg2)) (i32.const 2))))
+    ;; A copy into a GPU target the stream can replay leaves the target on
+    ;; the GPU ($gps_blt: $d3dim_gps_blt_end after the CPU copy below).
+    (if (local.get $arg2)
+      (then (local.set $gps_blt (call $d3dim_blt_fence (local.get $dst_entry)
+        (call $dx_from_this (local.get $arg2)) (local.get $arg1) (local.get $arg3) (local.get $arg4))))
+      (else (if (i32.eqz (local.get $gps_fill))
+        (then (call $d3dim_site_fence (local.get $dst_entry) (i32.const 3))))))
     (local.set $dst_dib (load.field DxObject misc1 (local.get $dst_entry)))
     (local.set $dst_w (load.field DxObject width (local.get $dst_entry)))
     (local.set $dst_h (load.field DxObject height (local.get $dst_entry)))
@@ -6159,6 +6162,10 @@
                 (br $ckblit_col)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
               (br $ckblit_row)))
+            (if (local.get $gps_blt)
+              (then (call $d3dim_gps_blt_end (local.get $dst_entry) (local.get $src_entry)
+                (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+                (local.get $dw) (local.get $dh) (i32.const 1))))
             ;; A primary copy may still contain a map-only intermediate frame.
             (if (i32.and (load.field DxObject flags (local.get $dst_entry)) (i32.const 1))
               (then
@@ -6327,6 +6334,11 @@
                 (br $str_col)))
               (local.set $row (i32.add (local.get $row) (i32.const 1)))
               (br $str_row)))))))
+    ;; Only an equal-size copy is accepted, so $sw/$sh never differ here.
+    (if (local.get $gps_blt)
+      (then (call $d3dim_gps_blt_end (local.get $dst_entry) (local.get $src_entry)
+        (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
+        (local.get $dw) (local.get $dh) (local.get $src_keyed))))
     (call $dx_surf_note_copy
       (local.get $dst_entry) (local.get $src_entry)
       (local.get $dx) (local.get $dy) (local.get $sx) (local.get $sy)
