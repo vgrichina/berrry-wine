@@ -13008,10 +13008,11 @@ if (VERBOSE) {
       `by-id native/fallback (1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord ` +
       `6 InitializeRecord 7 InitializeArray 8 Move-FILD 9 Move-REP) ` +
       [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => `${k}:${f(10 + k)}/${f(20 + k)}`).join(' '));
-    if (f(30) + f(31) + f(32) + f(33) + f(34) + f(35) + f(40) + f(41) + f(42) + f(43)) {
+    if (f(30) + f(31) + f(32) + f(33) + f(34) + f(35) + f(40) + f(41) + f(42) + f(43) + f(45) + f(46) + f(55) + f(56)) {
       console.log(`GM fold (mask ${instance.exports.get_gm_fold ? instance.exports.get_gm_fold() : '?'}): ` +
         `varscan ${f(30)}/${f(40)} trips=${f(36)} inst2w ${f(31)}/${f(41)} inst2b ${f(32)}/${f(42)} ` +
-        `inst1 ${f(33)}/${f(43)} record-arrays native=${f(34)} resumed=${f(35)}`);
+        `inst1 ${f(33)}/${f(43)} record-arrays native=${f(34)} resumed=${f(35)} ` +
+        `line-scan ${f(45)}/${f(55)}/${f(65)} point-scan ${f(46)}/${f(56)}/${f(66)} (end/fallback/head) coll-trips=${f(47)}`);
     }
   }
 
