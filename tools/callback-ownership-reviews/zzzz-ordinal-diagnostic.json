@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09b-dispatch.wat",
+      "name": "$win32_dispatch_inner",
+      "baseSHA256": "ffaa595e5f9b89e0b71475b06b3a7a45e2cb578b5379e1fd13bcf9faf6061629",
+      "sha256": "b82dd103b92276feb90468d7996d08cec689dbb97ab84775342f55eae4bf24ed",
+      "reason": "Unsupported ordinal dispatch reads a process-lifetime copied diagnostic name from its ORD record instead of overwriting the fixed KERNEL32 buffer. It logs that name and calls the same crash_unimplemented boundary, whose unreachable still traps even when the host callback returns. No guest callback, continuation identity, stack restoration or ownership admission changes. Synthetic EXE and DLL import/dispatch regressions retain numeric ordinals, distinct DLL names, existing resolved/named execution and fail-fast behavior. General callback ownership remains pending."
+    }
+  ]
+}

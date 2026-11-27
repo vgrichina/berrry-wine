@@ -301,7 +301,17 @@
                 ;; ...and as a linear-memory address
                 (i32.add (global.get $GUEST_BASE) (i32.load (i32.add (local.get $desc_ptr) (i32.const 12))))
                 ;; ordinal = entry & 0xFFFF
-                (i32.and (local.get $entry) (i32.const 0xFFFF))))))
+                (i32.and (local.get $entry) (i32.const 0xFFFF))))
+            (if (i32.eq (i32.load offset=4
+                  (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8))))
+                  (i32.const -1))
+              (then
+                (i32.store (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))
+                  (i32.const 0x4F524400))
+                (i32.store offset=4 (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))
+                  (call $unresolved_ordinal_record
+                    (i32.add (global.get $GUEST_BASE) (i32.load offset=12 (local.get $desc_ptr)))
+                    (i32.and (local.get $entry) (i32.const 0xFFFF))))))))
         (global.set $num_thunks (i32.add (global.get $num_thunks) (i32.const 1)))
         (call $update_thunk_end)
         (local.set $ilt_ptr (i32.add (local.get $ilt_ptr) (i32.const 4)))

@@ -1093,6 +1093,29 @@
     (if (i32.ne (local.get $id) (i32.const -1)) (then (return (local.get $id))))
     (call $host_resolve_ordinal (local.get $dll_name_wa) (local.get $ordinal)))
 
+  ;; An unresolved ORD thunk keeps a process-lifetime diagnostic record:
+  ;; {ordinal:u32, name:"<originating DLL>.#NNNNN\0"}. Copy the name now,
+  ;; rather than borrowing the importer's image or a shared crash buffer.
+  (func $unresolved_ordinal_record (param $dll_name_wa i32) (param $ordinal i32) (result i32)
+    (local $len i32) (local $record i32) (local $name i32) (local $digit i32)
+    (local.set $len (call $strlen (local.get $dll_name_wa)))
+    (local.set $record (call $heap_alloc (i32.add (local.get $len) (i32.const 12))))
+    (if (i32.eqz (local.get $record)) (then (unreachable)))
+    (i32.store (call $g2w (local.get $record)) (local.get $ordinal))
+    (local.set $name (call $g2w (i32.add (local.get $record) (i32.const 4))))
+    (memory.copy (local.get $name) (local.get $dll_name_wa) (local.get $len))
+    (i32.store8 (i32.add (local.get $name) (local.get $len)) (i32.const 46))
+    (i32.store8 offset=1 (i32.add (local.get $name) (local.get $len)) (i32.const 35))
+    (i32.store8 offset=7 (i32.add (local.get $name) (local.get $len)) (i32.const 0))
+    (local.set $digit (i32.add (local.get $len) (i32.const 6)))
+    (loop $digits
+      (i32.store8 (i32.add (local.get $name) (local.get $digit))
+        (i32.add (i32.const 48) (i32.rem_u (local.get $ordinal) (i32.const 10))))
+      (local.set $ordinal (i32.div_u (local.get $ordinal) (i32.const 10)))
+      (local.set $digit (i32.sub (local.get $digit) (i32.const 1)))
+      (br_if $digits (i32.gt_u (local.get $digit) (i32.add (local.get $len) (i32.const 1)))))
+    (local.get $record))
+
   ;; Process a loaded DLL's imports — create thunks for system DLLs,
   ;; resolve against other loaded DLLs if found.
   (func $process_dll_imports (param $load_addr i32) (param $import_rva i32)
@@ -1213,7 +1236,9 @@
                     (i32.store (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8)))
                       (i32.const 0x4F524400)) ;; "ORD\0" marker
                     (i32.store (i32.add (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8))) (i32.const 4))
-                      (i32.and (local.get $entry) (i32.const 0xFFFF)))))))
+                      (call $unresolved_ordinal_record
+                        (call $g2w (local.get $dll_name_ptr))
+                        (i32.and (local.get $entry) (i32.const 0xFFFF))))))))
             ;; Preserve the reserved thunk slot/index, but point a CRTDLL _iob
             ;; IAT entry at the shared FILE array. Loaded DLL exports above
             ;; remain authoritative; this is only the system fallback path.
