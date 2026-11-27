@@ -2884,9 +2884,9 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (i32.store offset=0 (global.get $reg_base) (local.get $output))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))
         (return)))
-    ;; flags is the 8th argument at [esp+32]. Without SW_INVALIDATE or
-    ;; SW_ERASE the copy must not create an update region or queue WM_PAINT.
-    (if (i32.and (local.get $flags) (i32.const 6))
+    ;; flags is the 8th argument at [esp+32]. Only SW_INVALIDATE creates
+    ;; damage/queues WM_PAINT; SW_ERASE alone must preserve existing damage.
+    (if (i32.and (local.get $flags) (i32.const 2))
       (then
         (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
         (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
