@@ -82,8 +82,11 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   //                 calling the 06c handler the threaded decoder picks, a
   //                 memory form proved in a window first.
   const sseWanted = () => uopWanted() && (hasFlag('uop-sse') || (appPolicy() || {}).uopSse === true);
+  //   --uop-sse-native (with --uop-sse) the hot XMM forms as 07d ops of
+  //                 their own (120-142), the 06c arm inline, no handler call
+  const sseNativeWanted = () => sseWanted() && (hasFlag('uop-sse-native') || (appPolicy() || {}).uopSseNative === true);
   const WIDEN = [['set_uop_muldiv', muldivWanted], ['set_uop_icall', icallWanted], ['set_uop_iat', iatWanted],
-    ['set_uop_sse', sseWanted]];
+    ['set_uop_sse', sseWanted], ['set_uop_sse_native', sseNativeWanted]];
   // MMX (07e kind 27, on by default; --no-uop-mmx or `uopMmx: false` on the
   // app turns it off): MMX instructions lowered into the program over the
   // per-thread $MMX_FILE instead of declining the head.
@@ -653,7 +656,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
           `mega-sites=${st(21)} mega-kills=${st(22)} mega-refused=${cs(31)}` + (sites ? `\n  guard-fail sites: ${sites}` : ''));
       }
       // $uop_cstat 37: kind-34 sites kept; uop_sse_svcs: window-miss services
-      if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} miss-services=${x.uop_sse_svcs() >>> 0}`);
+      if (sseWanted() && x.uop_sse_svcs) log(`uop sse: sites=${cs(37)} native=${cs(38)} miss-services=${x.uop_sse_svcs() >>> 0}`);
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);
       if (x.uop_hot_decays) log(`uop hot: decays=${x.uop_hot_decays() >>> 0}` +
         (x.uop_hot_halvings ? ` halvings=${x.uop_hot_halvings() >>> 0}` : ''));

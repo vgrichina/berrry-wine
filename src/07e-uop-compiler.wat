@@ -212,6 +212,11 @@
   ;; default; uop_cstat 37 counts the sites installed programs kept.
   (global $uc_sse      (mut i32) (i32.const 0))
   (global $uc_n_sse    (mut i32) (i32.const 0))
+  ;; --uop-sse-native (with --uop-sse): the hot forms as native 07d ops
+  ;; 120-141 ($uc_ssen_op) instead of 108-110's handler call. Off by
+  ;; default; uop_cstat 38 counts the native sites installed programs kept.
+  (global $uc_sse_native (mut i32) (i32.const 0))
+  (global $uc_n_ssen   (mut i32) (i32.const 0))
   ;; --no-uop-mmx turns kind 27 (MMX) off: on by default.
   (global $uc_mmx      (mut i32) (i32.const 1))
   ;; --no-uop-x87 turns kind 32 (x87) off, and with it the ES/CS/SS/DS
@@ -3608,18 +3613,116 @@
   ;; the handler's operand word | bytes << 24; the handler index rides in
   ;; the scale word above the scale (sc | h << 8: wasm's shift count is
   ;; taken mod 32, so the shared guard reads the scale unchanged).
+  ;; ---- --uop-sse-native: the hot forms as 07d ops of their own ----
+  ;; The subop of a kind-34 record: the operand word's bits 8-15, except
+  ;; where $uc_sse_decode chose a dedicated scalar handler, whose word keeps
+  ;; only the low byte -- the handler names the subop then.
+  (func $uc_sse_sub (param $R i32) (result i32)
+    (local $h i32)
+    (local.set $h (i32.load offset=32 (local.get $R)))
+    (if (i32.lt_u (i32.sub (local.get $h) (i32.const 486)) (i32.const 3)) (then (return (i32.const 2))))
+    (if (i32.lt_u (i32.sub (local.get $h) (i32.const 478)) (i32.const 2)) (then (return (i32.const 10))))
+    (if (i32.lt_u (i32.sub (local.get $h) (i32.const 480)) (i32.const 2)) (then (return (i32.const 14))))
+    (if (i32.lt_u (i32.sub (local.get $h) (i32.const 482)) (i32.const 2)) (then (return (i32.const 11))))
+    (if (i32.lt_u (i32.sub (local.get $h) (i32.const 484)) (i32.const 2)) (then (return (i32.const 13))))
+    (if (i32.lt_u (i32.sub (local.get $h) (i32.const 489)) (i32.const 2)) (then (return (i32.const 12))))
+    (i32.and (i32.shr_u (i32.load offset=12 (local.get $R)) (i32.const 8)) (i32.const 0xFF)))
+
+  ;; The 07d native op for a kind-34 record, or 0 (the handler-calling
+  ;; 108-110). Each native op is the arm of the handler $uc_sse_decode
+  ;; picked, written out on the XMM file (see 07d "native SSE"), so the
+  ;; result is the threaded one bit for bit; test-uop-compiler's
+  ;; sse-native-* cases and test-uop-sse-native.js check it. Register forms:
+  ;;   120 mov 0 (MOVAPS/MOVUPS/MOVAPD/MOVDQA)  121 MOVSS 2  122 CVTSS2SD 39
+  ;;   123 CVTPS2PD 38  124 CVTSD2SS 76  125 CVTPD2PS 44  126 ADD/MUL/SUBSD
+  ;;   40-42  127 ADD/MUL/DIV/SUBSS 10 11 13 14  128 (U)COMISS 12
+  ;;   129 (U)COMISD 56  130 CVTSI2SS 17  131 CVTSI2SD 72  132 CVTTSS2SI 6
+  ;;   133 XORPS/ANDPS/ANDNPS/ORPS 1 22 23 24  142 MOVSD/MOVQ 37
+  ;; memory forms (109's layout, so a window miss is 109's service op):
+  ;;   134 MOVSS load 2  135 MOVSS store 2  136 MOVSD/MOVQ load 37
+  ;;   137 MOVSD/MOVQ store 37  138 m128 load 0  139 m128 store 0
+  ;;   140 ADD/MUL/DIV/SUBSS m32 10 11 13 14  141 CVTSS2SD m32 39
+  (func $uc_ssen_op (param $R i32) (result i32)
+    (local $sub i32) (local $form i32)
+    (if (i32.eqz (global.get $uc_sse_native)) (then (return (i32.const 0))))
+    (local.set $sub (call $uc_sse_sub (local.get $R)))
+    (local.set $form (i32.load offset=28 (local.get $R)))
+    ;; an imm8 form (none of the subops below takes one) keeps the handler
+    (if (i32.ne (i32.and (i32.load offset=12 (local.get $R)) (i32.const 0xFF0000)) (i32.const 0))
+      (then (return (i32.const 0))))
+    (if (i32.eqz (local.get $form))
+      (then
+        (if (i32.eqz (local.get $sub)) (then (return (i32.const 120))))
+        (if (i32.eq (local.get $sub) (i32.const 2)) (then (return (i32.const 121))))
+        (if (i32.eq (local.get $sub) (i32.const 39)) (then (return (i32.const 122))))
+        (if (i32.eq (local.get $sub) (i32.const 38)) (then (return (i32.const 123))))
+        (if (i32.eq (local.get $sub) (i32.const 76)) (then (return (i32.const 124))))
+        (if (i32.eq (local.get $sub) (i32.const 44)) (then (return (i32.const 125))))
+        (if (i32.lt_u (i32.sub (local.get $sub) (i32.const 40)) (i32.const 3)) (then (return (i32.const 126))))
+        (if (i32.or (i32.lt_u (i32.sub (local.get $sub) (i32.const 10)) (i32.const 2))
+                    (i32.lt_u (i32.sub (local.get $sub) (i32.const 13)) (i32.const 2)))
+          (then (return (i32.const 127))))
+        (if (i32.eq (local.get $sub) (i32.const 12)) (then (return (i32.const 128))))
+        (if (i32.eq (local.get $sub) (i32.const 56)) (then (return (i32.const 129))))
+        (if (i32.eq (local.get $sub) (i32.const 17)) (then (return (i32.const 130))))
+        (if (i32.eq (local.get $sub) (i32.const 72)) (then (return (i32.const 131))))
+        (if (i32.eq (local.get $sub) (i32.const 6)) (then (return (i32.const 132))))
+        (if (i32.eq (local.get $sub) (i32.const 37)) (then (return (i32.const 142))))
+        (if (i32.or (i32.eq (local.get $sub) (i32.const 1))
+                    (i32.lt_u (i32.sub (local.get $sub) (i32.const 22)) (i32.const 3)))
+          (then (return (i32.const 133))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $form) (i32.const 2))
+      (then
+        (if (i32.eq (local.get $sub) (i32.const 2)) (then (return (i32.const 135))))
+        (if (i32.eq (local.get $sub) (i32.const 37)) (then (return (i32.const 137))))
+        (if (i32.eqz (local.get $sub)) (then (return (i32.const 139))))
+        (return (i32.const 0))))
+    (if (i32.eq (local.get $sub) (i32.const 2)) (then (return (i32.const 134))))
+    (if (i32.eq (local.get $sub) (i32.const 37)) (then (return (i32.const 136))))
+    (if (i32.eqz (local.get $sub)) (then (return (i32.const 138))))
+    (if (i32.or (i32.lt_u (i32.sub (local.get $sub) (i32.const 10)) (i32.const 2))
+                (i32.lt_u (i32.sub (local.get $sub) (i32.const 13)) (i32.const 2)))
+      (then (return (i32.const 140))))
+    (if (i32.eq (local.get $sub) (i32.const 39)) (then (return (i32.const 141))))
+    (i32.const 0))
+
   (func $uc_sse_insn (param $R i32) (result i32)
-    (local $O i32) (local $form i32) (local $code i32) (local $h i32)
+    (local $O i32) (local $form i32) (local $code i32) (local $h i32) (local $nat i32) (local $w i32)
+    (local $sub i32) (local $a i64) (local $b i64)
     (if (global.get $uc_fwd_kind) (then (return (i32.const 22))))
     (local.set $form (i32.load offset=28 (local.get $R)))
     (local.set $h (i32.load offset=32 (local.get $R)))
     (local.set $code (i32.or (i32.and (i32.load offset=12 (local.get $R)) (i32.const 0xFFFFFF))
                              (i32.shl (i32.and (i32.load offset=36 (local.get $R)) (i32.const 0xFF)) (i32.const 24))))
+    (local.set $nat (call $uc_ssen_op (local.get $R)))
+    (local.set $sub (call $uc_sse_sub (local.get $R)))
+    ;; native register form: op d s [k], d / s the XMM byte offsets in the
+    ;; file (n * 16), a general register as its slot (aR); k the subop
+    (if (i32.and (i32.eqz (local.get $form)) (i32.ne (local.get $nat) (i32.const 0)))
+      (then
+        (local.set $w (i32.load offset=12 (local.get $R)))
+        (local.set $a (call $uc_aN (i32.and (local.get $w) (i32.const 0x70))))
+        (local.set $b (call $uc_aN (i32.shl (i32.and (local.get $w) (i32.const 7)) (i32.const 4))))
+        (if (i32.eq (local.get $nat) (i32.const 132))
+          (then (local.set $a (call $uc_aR (i32.and (i32.shr_u (local.get $w) (i32.const 4)) (i32.const 7))))))
+        (if (i32.or (i32.eq (local.get $nat) (i32.const 130)) (i32.eq (local.get $nat) (i32.const 131)))
+          (then (local.set $b (call $uc_aR (i32.and (local.get $w) (i32.const 7))))))
+        (if (i32.or (i32.or (i32.eq (local.get $nat) (i32.const 126)) (i32.eq (local.get $nat) (i32.const 127)))
+                    (i32.eq (local.get $nat) (i32.const 133)))
+          (then (call $uc_o3 (local.get $nat) (local.get $a) (local.get $b) (call $uc_aN (local.get $sub))))
+          (else (call $uc_o2 (local.get $nat) (local.get $a) (local.get $b))))
+        (return (i32.const 0))))
+    ;; a native memory form names its subop in the code word's bits 8-15,
+    ;; where a dedicated handler's word (low byte only) has nothing
+    (if (local.get $nat)
+      (then (local.set $code (i32.or (local.get $code) (i32.shl (local.get $sub) (i32.const 8))))))
     (if (i32.eqz (local.get $form))
       (then (call $uc_o2 (i32.const 108) (call $uc_aN (local.get $code)) (call $uc_aN (local.get $h)))
             (return (i32.const 0))))
     (local.set $O (i32.add (local.get $R) (select (i32.const 56) (i32.const 80) (i32.eq (local.get $form) (i32.const 2)))))
-    (call $uc_emit (select (i32.const 110) (i32.const 109) (i32.eq (local.get $form) (i32.const 2)))
+    (call $uc_emit (if (result i32) (local.get $nat) (then (local.get $nat))
+                     (else (select (i32.const 110) (i32.const 109) (i32.eq (local.get $form) (i32.const 2)))))
       (i32.const 7)
       (call $uc_aN (local.get $code))
       (call $uc_mbase (local.get $O)) (call $uc_midx (local.get $O))
@@ -5175,8 +5278,10 @@
                     ;; native x87 stores: 94-97 FST/FIST m32/m64, 101 FNSTCW
                     (i32.or (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 94)) (i32.const 4))
                                     (i32.eq (local.get $op) (i32.const 101)))
-                            ;; 110 SSEMS
-                            (i32.eq (local.get $op) (i32.const 110))))))
+                            ;; 110 SSEMS; native SSE stores 135 137 139
+                            (i32.or (i32.eq (local.get $op) (i32.const 110))
+                                    (i32.and (i32.lt_u (i32.sub (local.get $op) (i32.const 135)) (i32.const 5))
+                                             (i32.ne (i32.and (local.get $op) (i32.const 1)) (i32.const 0))))))))
 
   (func $uc_encode_write (param $code i32)
     (local $p i32) (local $end i32) (local $o i32) (local $j i32) (local $a i64) (local $ty i32)
@@ -5257,6 +5362,10 @@
   ;;   4  the nocall retry keeps the head's own call (mode 2), so a head that
   ;;      IS a call compiles, its callee followed and every other call cut,
   ;;      instead of declining head-unsupported
+  ;;   8  (opt-in, --uop-retry-ladder=15) halve on loop-too-big too: a hot
+  ;;      inner loop nested in an outer one whose region passes MAX_LOOP
+  ;;      (Spelunky HD's mixer, 0x493830 inside 0x4933e0's channel loop)
+  ;;      compiles once the outer back edge is past the span, a side exit
   ;; 0 is the pre-section-24 order exactly: calls followed, then every call
   ;; cut, at each span, halving on scan-limit only.
   (global $uc_ladder (mut i32) (i32.const 7))
@@ -5276,9 +5385,11 @@
     (if (global.get $uop_census)
       (then (call $uop_census_ev (i32.const 18) (local.get $eip) (local.get $mode) (local.get $err) (global.get $uc_span)))))
   (func $uc_halve_on (param $err i32) (result i32)
-    (i32.or (i32.eq (local.get $err) (i32.const 1))
-            (i32.and (i32.eq (local.get $err) (i32.const 8))
-                     (i32.ne (i32.and (global.get $uc_ladder) (i32.const 2)) (i32.const 0)))))
+    (i32.or (i32.or (i32.eq (local.get $err) (i32.const 1))
+                    (i32.and (i32.eq (local.get $err) (i32.const 8))
+                             (i32.ne (i32.and (global.get $uc_ladder) (i32.const 2)) (i32.const 0))))
+            (i32.and (i32.eq (local.get $err) (i32.const 5))
+                     (i32.ne (i32.and (global.get $uc_ladder) (i32.const 8)) (i32.const 0)))))
 
   ;; formLoop + lower for the head at eip: 0, or a decline reason.
   (func $uc_lower_head (param $eip i32) (result i32)
@@ -5558,7 +5669,9 @@
                   (i32.eq (call $uc_kind (local.get $R)) (i32.const 26)))
         (then (global.set $uc_n_muldiv (i32.add (global.get $uc_n_muldiv) (i32.const 1)))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 34))
-        (then (global.set $uc_n_sse (i32.add (global.get $uc_n_sse) (i32.const 1)))))
+        (then (global.set $uc_n_sse (i32.add (global.get $uc_n_sse) (i32.const 1)))
+              (if (call $uc_ssen_op (local.get $R))
+                (then (global.set $uc_n_ssen (i32.add (global.get $uc_n_ssen) (i32.const 1)))))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 23))
         (then
           (if (i32.eq (i32.load offset=12 (local.get $R)) (i32.const 1))
@@ -5636,12 +5749,14 @@
     (if (i32.eq (local.get $which) (i32.const 36)) (then (return (global.get $uc_ladder_ok3))))
     ;; 37: kind-34 SSE instructions in installed programs (--uop-sse)
     (if (i32.eq (local.get $which) (i32.const 37)) (then (return (global.get $uc_n_sse))))
+    ;; 38: of those, the ones lowered to a native 07d op (--uop-sse-native)
+    (if (i32.eq (local.get $which) (i32.const 38)) (then (return (global.get $uc_n_ssen))))
     (i32.const 0))
   ;; --no-uop-retry-ladder (0) / --uop-retry-ladder=N: $uc_lower_head's retry
   ;; order after a failed calls-followed attempt (mask, $uc_ladder). Takes
   ;; effect for programs compiled from now on.
   (func (export "set_uop_retry_ladder") (param $mask i32)
-    (global.set $uc_ladder (i32.and (local.get $mask) (i32.const 7))))
+    (global.set $uc_ladder (i32.and (local.get $mask) (i32.const 15))))
   (func (export "get_uop_retry_ladder") (result i32) (global.get $uc_ladder))
   ;; Trace heads (on by default; --no-uop-trace-heads / ?no-uop-trace-heads):
   ;; a hot head with no back edge is
@@ -5683,6 +5798,12 @@
     (global.set $uc_sse (i32.ne (local.get $flag) (i32.const 0)))
     (call $uop_flush))
   (func (export "get_uop_sse") (result i32) (global.get $uc_sse))
+  ;; --uop-sse-native: $uc_ssen_op's native ops for programs compiled from
+  ;; now on (drops the rest). Only meaningful with --uop-sse.
+  (func (export "set_uop_sse_native") (param $flag i32)
+    (global.set $uc_sse_native (i32.ne (local.get $flag) (i32.const 0)))
+    (call $uop_flush))
+  (func (export "get_uop_sse_native") (result i32) (global.get $uc_sse_native))
   ;; --no-uop-mmx: kind 27 off for programs compiled from now on.
   (func (export "set_uop_mmx") (param $flag i32)
     (global.set $uc_mmx (i32.ne (local.get $flag) (i32.const 0)))

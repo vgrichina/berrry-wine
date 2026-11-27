@@ -561,6 +561,44 @@ CASES.push(
   },
 );
 
+// ---- --uop-sse-native (07e $uc_ssen_op, 07d 120-142) ----
+// The same three loops with the hot forms as native ops ('off' is threaded
+// code, so every mode's memory and XMM file must match it bit for bit), and
+// Spelunky HD's mixer shape (0x493830: movss load, cvtps2pd, cvtss2sd,
+// mulsd, addsd, cvtpd2ps, movss store) with every other native form around
+// it: the register and m32 scalar arithmetic, (U)COMISS / (U)COMISD into
+// setcc, CVTTSS2SI / CVTSI2SS / CVTSI2SD, the logic ops, MOVAPS / MOVSS /
+// MOVSD between registers, MOVSD / MOVQ / MOVUPS loads and stores.
+for (const c of CASES.filter((k) => /^sse-(scalar-ss|scalar-sd|packed)$/.test(k.name)).map((k) => ({ ...k }))) {
+  CASES.push({ ...c, name: c.name.replace('sse-', 'ssen-'), sse_native: true, want: { sseSites: '>0', sseNative: '>0' } });
+}
+const SSE_MIX = [...XMM_LOAD, L('l'),
+  [0xF3, 0x0F, 0x10, 0x0E], [0x0F, 0x5A, 0xC9], [0xF3, 0x0F, 0x5A, 0xF8], [0xF2, 0x0F, 0x59, 0xCF],
+  [0xF3, 0x0F, 0x10, 0x7E, 0x04], [0x0F, 0x5A, 0xFF], [0xF2, 0x0F, 0x58, 0xCF], [0x66, 0x0F, 0x5A, 0xC9],
+  [0xF3, 0x0F, 0x11, 0x0F], [0xF2, 0x0F, 0x5A, 0xD1], [0xF2, 0x0F, 0x5C, 0xD7],
+  [0x0F, 0x2F, 0xCA], [0x0F, 0x92, 0xC2], [0x0F, 0x97, 0xC6], [0x01, 0xD5],
+  [0x66, 0x0F, 0x2E, 0xF9], [0x0F, 0x9A, 0xC2], [0x0F, 0x94, 0xC6], [0x01, 0xD3],
+  [0xF3, 0x0F, 0x2C, 0xC2], [0x01, 0xC5], [0xF3, 0x0F, 0x2A, 0xD8], [0xF2, 0x0F, 0x2A, 0xE5],
+  [0xF3, 0x0F, 0x58, 0xD8], [0xF3, 0x0F, 0x59, 0x5E, 0x08], [0xF3, 0x0F, 0x5C, 0xD9], [0xF3, 0x0F, 0x5E, 0x5E, 0x0C],
+  [0xF3, 0x0F, 0x5E, 0xEB], [0xF3, 0x0F, 0x58, 0x6E, 0x04], [0x0F, 0x2E, 0xEB], [0x0F, 0x92, 0xC2], [0x01, 0xD5],
+  [0xF3, 0x0F, 0x5A, 0x76, 0x08], [0x0F, 0x57, 0xF2], [0x0F, 0x54, 0xF5], [0x0F, 0x55, 0xEB], [0x0F, 0x56, 0xD4],
+  [0xF2, 0x0F, 0x10, 0xE1], [0xF3, 0x0F, 0x10, 0xEF], [0xF2, 0x0F, 0x11, 0x67, 0x04],
+  [0xF2, 0x0F, 0x10, 0x76, 0x0C], [0xF3, 0x0F, 0x7E, 0x56, 0x04], [0x0F, 0x10, 0x4E, 0x10], [0x0F, 0x28, 0xC6],
+  [0x0F, 0x11, 0x77, 0x08], [0x66, 0x0F, 0xD6, 0x5F, 0x0C],
+  [0x83, 0xC7, 0x10], [0x83, 0xC6, 0x04], 0x49, JFAR(cc.NZ, 'l'), ...XMM_SAVE, 0xC3];
+CASES.push(
+  { name: 'ssen-mix', regs: { ecx: N }, sse: true, sse_native: true, head: 'l', poke: ssePoke(false),
+    want: { sseSites: '>0', sseNative: '>0' }, code: SSE_MIX },
+  { name: 'ssen-mix-wide', regs: { ecx: N }, sse: true, sse_native: true, head: 'l', poke: ssePoke(true),
+    want: { sseSites: '>0', sseNative: '>0' }, code: SSE_MIX },
+  // the threaded side through --sse-fast's dedicated handlers (502-511)
+  { name: 'ssen-mix-fast', regs: { ecx: N }, sse: true, sse_native: true, sseFast: true, head: 'l', poke: ssePoke(false),
+    want: { sseSites: '>0', sseNative: '>0' }, code: SSE_MIX },
+  // --uop-sse alone over the same loop: no native site
+  { name: 'sse-mix', regs: { ecx: N }, sse: true, head: 'l', poke: ssePoke(true),
+    want: { sseSites: '>0', sseNative: 0 }, code: SSE_MIX },
+);
+
 // ---- --uop-icall / --uop-iat (07e FF /2 as kind 23, 07d ICG) ----
 // A callee's address is only known once the code is placed, so each is put
 // right after a CALL, which pushes it; the pop takes it. The "vtable" is a
@@ -1186,6 +1224,19 @@ CASES.push(
   { name: 'ladder-head-old', regs: { ecx: N }, trace: true, head: 'main', ladder: 0, modes: ['pre'], declines: true, code: HEADCALL },
 );
 
+// Rung 8 (opt-in, mask 15), halve on loop-too-big: a small inner loop at
+// the head inside an outer loop of 420 three-byte instructions, so the
+// region from the head is past MAX_LOOP at every span that reaches the
+// outer head (Spelunky HD's mixer, 0x493830 in 0x4933e0's loop). At span
+// 0x400 the outer back edge is a side exit and the inner loop compiles; the
+// default mask declines it (loop-too-big).
+const NESTED_BIG = [L('o'), new Array(420).fill([0x83, 0xC3, 0x01]).flat(), [0xBA, 0x04, 0x00, 0x00, 0x00],
+  L('l'), [0x03, 0x04, 0x96], 0x4A, J(cc.NZ, 'l'), [0x83, 0xC6, 0x04], 0x49, JFAR(cc.NZ, 'o'), 0xC3];
+CASES.push(
+  { name: 'ladder-loop-big', regs: { ecx: N }, head: 'l', ladder: 15, code: NESTED_BIG },
+  { name: 'ladder-loop-big-old', regs: { ecx: N }, head: 'l', modes: ['pre'], declines: true, code: NESTED_BIG },
+);
+
 const REGS = ['eax', 'ecx', 'edx', 'ebx', 'ebp', 'esi', 'edi'];
 
 function seed(mem, g2w, a) {
@@ -1239,7 +1290,9 @@ function runCase(inst, c, a, codeAddr, mode) {
   // A known flag state on entry: a sub that sets CF.
   e.set_uop(mode === 'off' ? 0 : 1);
   if (c.aggr) e.set_aggressive_stack(mode === 'off' ? 0 : 1);
-  const feats = ['muldiv', 'icall', 'iat', 'sse'].filter((f) => c[f]);
+  const feats = ['muldiv', 'icall', 'iat', 'sse', 'sse_native'].filter((f) => c[f]);
+  // c.sseFast: 06c's --sse-fast handlers in every mode (a decode-time choice)
+  if (c.sseFast) e.set_sse_fast(1);
   for (const f of feats) e['set_uop_' + f](mode === 'off' ? 0 : 1);
   // c.icgMega: the megamorphic-site threshold for this case (07d
   // $uop_icg_mega), put back to the default after
@@ -1249,6 +1302,7 @@ function runCase(inst, c, a, codeAddr, mode) {
   if (c.ladder !== undefined) e.set_uop_retry_ladder(c.ladder);
   const unfeat = () => {
     for (const f of feats) e['set_uop_' + f](0);
+    if (c.sseFast) e.set_sse_fast(0);
     if (c.icgMega !== undefined) e.set_uop_icg_mega(32);
     if (c.ladder !== undefined) e.set_uop_retry_ladder(7);
   };
@@ -1260,6 +1314,8 @@ function runCase(inst, c, a, codeAddr, mode) {
                 ladN: -32, ladHalved: -33, ladIcut: -34, ladHead: -35, ladNocall: -36,
                 // --uop-sse: kind-34 sites kept
                 sseSites: -37,
+                // --uop-sse-native: of those, the native ones (07d 120-142)
+                sseNative: -38,
                 bulkSlow: 100, bulkDeopt: 101, mcopyRuns: 200, mcopySlow: 300, mcopyDeopt: 301,
                 // 07d $uop_x87: x87 instructions run through the service path
                 x87svc: 400 };

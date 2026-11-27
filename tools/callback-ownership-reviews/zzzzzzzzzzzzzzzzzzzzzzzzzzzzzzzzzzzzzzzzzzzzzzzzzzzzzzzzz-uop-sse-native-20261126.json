@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "dcdbb21c82a03a4a58154ddde7c72237876a14d36b135afa7396b3696d143176",
+      "sha256": "c01485715213cbc8a8cad739866a46d62519de9d8abc6f0f09bef9eb1e2a8feb",
+      "reason": "Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
+      "sha256": "b278aba4987591daabf433dfabfaffbe48484ecd4de03f1993e9248175ccbd4d",
+      "reason": "Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending."
+    },
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "dac6da8926895f070199ba0596bfe90ef3177f56693b6b753829c4413e18f1bd",
+      "sha256": "38590f77a7d888fa3d06a30f0b597ee0167071c8a8cc6f35a20b872e4fefdaed",
+      "reason": "Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending."
+    }
+  ]
+}
