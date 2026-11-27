@@ -1143,8 +1143,8 @@
 
   ;; Test one destination point against a prepared clipper. For an explicit
   ;; list, data_wa is the translated canonical RGNDATA copy. HWND-backed lists
-  ;; use the cached client RECT and never enter this loop on the ordinary Blt
-  ;; path: the compositor already clips that common path at window granularity.
+  ;; use the client RECT refreshed at the start of each Blt. Composition alone
+  ;; cannot preserve the destination surface's pixels outside that rectangle.
   (func $dx_clipper_contains (param $entry_wa i32) (param $data_wa i32)
       (param $x i32) (param $y i32) (result i32)
     (local $i i32) (local $count i32) (local $rect i32)
@@ -5840,22 +5840,23 @@
     (call $dx_surf_note_write (local.get $dst_entry))
     (local.set $bps (i32.div_u (local.get $bpp) (i32.const 8)))
     (local.set $drblt_flags (local.get $arg4))
-    ;; HWND-backed clipping is enforced by the window compositor and stays on
-    ;; the bulk-copy path. Only an attached explicit RGNDATA list needs
-    ;; per-pixel membership checks inside the private surface framebuffer.
+    ;; Clip the surface writes themselves, including HWND-backed clippers.
+    ;; Refresh before each Blt: movement, resizing or retirement must take
+    ;; effect even when the caller never asks GetClipList for a new snapshot.
     (local.set $clipper (call $dx_surface_clipper_get (local.get $dst_entry)))
     (if (local.get $clipper)
       (then
         (local.set $clip_entry (call $dx_from_this (local.get $clipper)))
-        (if (i32.or
-              (i32.ne (load.field DxObject type (local.get $clip_entry)) (i32.const 10))
-              (i32.ne (load.field DxObject misc0 (local.get $clip_entry)) (i32.const 0)))
+        (if (i32.ne (load.field DxObject type (local.get $clip_entry)) (i32.const 10))
           (then (local.set $clip_entry (i32.const 0)))
           (else
-            (if (load.field DxObject misc1 (local.get $clip_entry))
-              (then (local.set $clip_data
-                (call $g2w (load.field DxObject misc1 (local.get $clip_entry)))))
-              (else (local.set $clip_entry (i32.const 0))))))))
+            (if (load.field DxObject misc0 (local.get $clip_entry))
+              (then (call $dx_clipper_refresh_hwnd (local.get $clip_entry)))
+              (else
+                (if (load.field DxObject misc1 (local.get $clip_entry))
+                  (then (local.set $clip_data
+                    (call $g2w (load.field DxObject misc1 (local.get $clip_entry)))))
+                  (else (local.set $clip_entry (i32.const 0))))))))))
     ;; Parse dest rect
     (if (local.get $arg1)
       (then
