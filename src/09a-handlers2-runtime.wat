@@ -769,6 +769,19 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) (return)
   )
 
+  ;; Consume only this erase request before entering the wndproc. Both
+  ;; BeginPaint and nonvalidating update queries use the same synchronous
+  ;; delivery; a callback's new invalidation must retain its own erase bit.
+  (func $paint_send_erase (param $hwnd i32) (param $hdc i32) (result i32)
+    (local $handled i32)
+    (call $nc_flags_clear (local.get $hwnd) (i32.const 2))
+    (local.set $handled (call $wnd_send_message (local.get $hwnd) (i32.const 0x14)
+      (local.get $hdc) (i32.const 0)))
+    (if (i32.and (i32.eqz (local.get $handled))
+          (i32.ge_s (call $wnd_table_find (local.get $hwnd)) (i32.const 0)))
+      (then (call $nc_flags_set (local.get $hwnd) (i32.const 2))))
+    (local.get $handled))
+
   ;; Shared paint preparation; the ABI caller owns its frame and result.
   ;; win16_bridge selects the far caller's clip preparation and leaves erase
   ;; dispatch to its continuation, without a mutable global ABI mode.
@@ -873,15 +886,8 @@
       (then
         (if (local.get $erase_pending)
           (then
-            (call $nc_flags_clear (local.get $arg0) (i32.const 2))
-            (local.set $erase_result (call $wnd_send_message (local.get $arg0) (i32.const 0x14)
-              (local.get $hdc) (i32.const 0)))
-            (call $gs32 (i32.add (local.get $arg1) (i32.const 4)) (i32.eqz (local.get $erase_result)))
-            ;; Returning zero explicitly leaves the window marked for erase.
-            ;; Do not discard that state when the current paint completes.
-            (if (i32.and (i32.eqz (local.get $erase_result))
-                  (i32.ge_s (call $wnd_table_find (local.get $arg0)) (i32.const 0)))
-              (then (call $nc_flags_set (local.get $arg0) (i32.const 2))))))
+            (local.set $erase_result (call $paint_send_erase (local.get $arg0) (local.get $hdc)))
+            (call $gs32 (i32.add (local.get $arg1) (i32.const 4)) (i32.eqz (local.get $erase_result)))))
         (return (local.get $hdc))))
     (local.get $hdc))
 
