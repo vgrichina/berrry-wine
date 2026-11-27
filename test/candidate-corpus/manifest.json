@@ -3445,6 +3445,37 @@
       }
     },
     {
+      "id": "civilization-3-demo",
+      "name": "Civilization III Game of the Year (trial)",
+      "kind": "game",
+      "version": "Game of the Year 60-minute Windows trial (listed May 2003); exact game build unverified",
+      "executables": [
+        "Civ3-GameoftheYear.exe",
+        "CIVILIZATION3.EXE"
+      ],
+      "sourcePage": "https://www.gamepressure.com/download/sid-meiers-civilization-iii-game-of-the-year-edition-demo/zfaf8",
+      "license": "Proprietary time-limited trial; local research only, redistribution rights not verified",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Corpus fixture preparation pending. Refresh the Gamepressure download form to obtain its session-generated gameplay.pl URL for Civ3-GameoftheYear.exe; verify 398157168 bytes, SHA-1 f9dfca4e525df25ce0667588da6fb51246fb3ba1 and SHA-256 d0207027cf0ace1818d299db8c2b65f3a57067867cbe756d4dc6fa6d3aa96aad (root measured the complete installer on 2026-11-27; retained copy is volatile tmpfs, not a corpus fixture). Inspect the complete payload before preparing a fixture. The endpoint rejects HEAD and ignores Range. See docs/re-notes/civilization-3-demo.md for the source page and form workflow.",
+      "notes": "Candidate registration only. Root identified a Wise installer with embedded ZIP (3480 records) and extracted CIVILIZATION3.EXE (1787905 bytes, no version resource). Both executable names are discovery hints; installed paths are unverified. This GOTY 60-minute trial is distinct from the Gold three-hour trial; embedded EULA mentions Play the World and README mentions v1.29f, neither establishes the game PE version. Wise script mapping recovered 3465 unique relative game paths; full reconstruction and a decoder post-copy transformation of 635 assets remain unverified. Preserve the original trial components and path mapping. Full 7z integrity testing exits 2 with data-after-payload errors on 22 embedded entries; selected executable extraction succeeded, but complete installed-media integrity is unverified. No local corpus fixture, file inventory, launch registration, runtime or gameplay qualification is established. Exact game build, dependency closure, installed-game reconstruction and present-day trial activation remain unknown."
+    },
+    {
+      "id": "civilization-4-demo",
+      "name": "Sid Meier's Civilization IV Demo",
+      "kind": "game",
+      "version": "2005 base-game demo; PE version strings 0, 21, 0, 1688, (40976); fixed file 0.21.1.0 / product 0.21.0.1688",
+      "executables": [
+        "Civilization4.exe"
+      ],
+      "sourcePage": "https://archive.org/details/SidMeiersCivilizationIvDemo",
+      "license": "Proprietary publisher demo; local research only, redistribution rights not verified",
+      "localOnly": true,
+      "packages": [],
+      "manual": "Corpus fixture preparation pending. Recover https://archive.org/download/SidMeiersCivilizationIvDemo/Civ4_Demo.zip and verify 329530194 bytes, SHA-1 4fd521d55c312c357ed415e6b2e5ca49fa42e765 and SHA-256 a4e125748ddf2ece6e25c91a8fc0ae68d833654d9abbd63bb92e68ca998d9ce1 (root measured the complete archive on 2026-11-27; retained copy is volatile tmpfs, not a corpus fixture). Reconstruct and verify the complete InstallShield payload before preparing a fixture. Do not substitute the differently sized ModDB Civilization4_Demo.zip. See docs/re-notes/civilization-4-demo.md.",
+      "notes": "Candidate registration only for the base-game demo, not an expansion. Root extracted Civ4DemoComponent/Civilization4.exe (12357632 bytes, PE32/i386) from the preserved InstallShield cabinets; Civilization4.exe remains a basename discovery hint, not a registered installed path. Static imports include d3dx9_26.dll, MSVCR71.dll, MSVCP71.dll, python24.dll and boost_python-vc71-mt-1_32.dll. No installed corpus fixture, launch registration, runtime or gameplay qualification is established. Offline full InstallShield extraction and raw file inventory succeeded (3484 files); an installed fixture remains pending, including missing MSVCR71/MSVCP71 prerequisites and verified layout/setup."
+    },
+    {
       "id": "civilization-2-win16",
       "name": "Sid Meier's Civilization II",
       "kind": "game",
