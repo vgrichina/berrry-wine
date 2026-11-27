@@ -282,6 +282,11 @@ const extraWat = String.raw`
   assert.strictEqual(msg.getUint32(4, true), 0x0102);
   assert.strictEqual(msg.getUint32(8, true), 13);
 
+  // SetTimer requires a live HWND owned by the calling thread. Register it
+  // before PM_NOREMOVE generates the WM_TIMER in that window's owner queue.
+  // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-settimer
+  e.test_filter_window(0x4444, 0, 0);
+  assert.strictEqual(e.get_window_thread(0x4444), 1, 'the timer window belongs to the pumping thread');
   e.test_timer_set(0x4444, 7, 10, 0);
   now = 110;
   msg.setUint32(16, 0xFFFFFFFF, true);
