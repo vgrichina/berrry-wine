@@ -2030,7 +2030,8 @@
         (param $text_g i32) (param $count i32) (param $tab_count i32)
         (param $stops_g i32) (param $origin i32) (param $wide i32)
         (param $draw i32) (result i32)
-    (local $text i32) (local $stops i32) (local $metrics i32)
+    (local $text i32) (local $metrics i32)
+    (local $text_bytes i32) (local $text_copy i32) (local $copy_i i32)
     (local $height i32) (local $average i32) (local $default_tab i32)
     (local $i i32) (local $run_start i32) (local $run_count i32)
     (local $cursor i32) (local $run_width i32) (local $ch i32)
@@ -2044,8 +2045,24 @@
     (if (i32.and (i32.gt_s (local.get $tab_count) (i32.const 0))
           (i32.eqz (local.get $stops_g)))
       (then (return (i32.const 0))))
-    (if (local.get $text_g) (then (local.set $text (call $g2w (local.get $text_g)))))
-    (if (local.get $stops_g) (then (local.set $stops (call $g2w (local.get $stops_g)))))
+    ;; Parsing and the text backend use physical pointers. Guest neighbors
+    ;; may have nonadjacent backing, including a split UTF-16 code unit.
+    (local.set $text_bytes (i32.shl (local.get $count) (local.get $wide)))
+    (if (local.get $text_bytes) (then
+      (local.set $text (call $g2w_affine_span (local.get $text_g) (local.get $text_bytes)))
+      (if (i32.eq (local.get $text) (global.get $NULL_SENTINEL)) (then
+        (if (i32.le_u (local.get $text_bytes)
+              (i32.sub (global.get $GUEST_SPAN_SCRATCH_SIZE) (global.get $guest_span_cursor)))
+          (then (local.set $text (call $guest_span_in (local.get $text_g) (local.get $text_bytes))))
+          (else
+            (local.set $text_copy (call $heap_alloc (local.get $text_bytes)))
+            (if (i32.eqz (local.get $text_copy)) (then (return (i32.const 0))))
+            (local.set $text (call $g2w (local.get $text_copy)))
+            (loop $copy_text
+              (i32.store8 (i32.add (local.get $text) (local.get $copy_i))
+                (call $gl8 (i32.add (local.get $text_g) (local.get $copy_i))))
+              (local.set $copy_i (i32.add (local.get $copy_i) (i32.const 1)))
+              (br_if $copy_text (i32.lt_u (local.get $copy_i) (local.get $text_bytes))))))))))
     (local.set $metrics (call $host_get_text_metrics (local.get $hdc)))
     (local.set $height (i32.and (local.get $metrics) (i32.const 0xFFFF)))
     (local.set $average (i32.shr_u (local.get $metrics) (i32.const 16)))
@@ -2099,7 +2116,7 @@
       (local.set $next (i32.const 0x7FFFFFFF))
       (if (i32.eq (local.get $tab_count) (i32.const 1))
         (then
-          (local.set $ch (i32.load (local.get $stops)))
+          (local.set $ch (call $gl32 (local.get $stops_g)))
           (if (i32.gt_s (local.get $ch) (i32.const 0))
             (then (local.set $next (i32.mul
               (i32.add (i32.div_s (select (local.get $relative) (i32.const 0)
@@ -2110,7 +2127,7 @@
           (local.set $tab_i (i32.const 0))
           (block $stops_done (loop $stops_loop
             (br_if $stops_done (i32.ge_s (local.get $tab_i) (local.get $tab_count)))
-            (local.set $ch (i32.load (i32.add (local.get $stops)
+            (local.set $ch (call $gl32 (i32.add (local.get $stops_g)
               (i32.shl (local.get $tab_i) (i32.const 2)))))
             (if (i32.and (i32.gt_s (local.get $ch) (local.get $relative))
                   (i32.lt_s (local.get $ch) (local.get $next)))
@@ -2134,6 +2151,9 @@
           (local.get $cursor) (i32.const 0)))
         (drop (call $gdi_dc_set_field (local.get $hdc) (i32.const 16)
           (local.get $y) (i32.const 0)))))
+    (if (local.get $text_copy)
+      (then (call $heap_free (local.get $text_copy)))
+      (else (call $guest_span_release (local.get $text) (local.get $text_bytes))))
     (i32.or (i32.and (i32.sub (local.get $cursor) (local.get $x)) (i32.const 0xFFFF))
       (i32.shl (i32.and (local.get $height) (i32.const 0xFFFF)) (i32.const 16))))
   (func $gdi_native_ext_text_out (param $hdc i32) (param $x i32) (param $y i32)
