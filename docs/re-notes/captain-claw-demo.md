@@ -104,3 +104,28 @@ malformed inputs: **13 checks PASS**. This is a scratch decoder for these
 installed records, not a general WWD library. Recovery uses the pinned local
 REZ plus `probe.cjs`/`validate.cjs`; no extracted media or source snapshots
 are retained.
+
+## Visible Officer encounter (2026-11-27)
+
+Run `20261127-claw-placed-officer-root` reached the actual purple, plumed
+Officer in the lower corridor beside the crate and paired kegs, using ordinary
+Right/Left and Space jump input. `jump-check.png` identifies that Officer below
+Claw before any attack input; `officer-before-attack.png` shows close contact
+with health **90**. Ordinary DirectInput Ctrl (VK 17), held for four batches,
+is followed by `officer-attack.png` at health **80** and
+`officer-after-attack.png` at health **70**, with the Officer still beside
+Claw and a visible impact on Claw. Ammunition stays **10**. This establishes
+a player-health consequence in an identified Officer encounter; Officer
+damage or removal is not established.
+
+The initial approach also lost health 100→60 and then respawned, consuming a
+life before reaching the identified Officer. That earlier loss is not credited
+to the Officer. The complete attempt used one original registered-app runtime,
+**61.126 seconds**, under finite `native-supervise.cjs`, exit 0, no leaked
+processes. No second runtime, game patch, guest-memory manipulation or emulator
+repair was used. Exact module/source/host/media pins were prepared before
+launch; the tested module SHA-256 is
+`88874dad968765cadfa2a9d355716483dd5378b135c5f62cefa9517265addfe3`.
+The run retains selected before/after screenshots, the module and exact
+timestamped production-input/reply logs. These adaptive inputs are evidence
+of this encounter, not a reusable frozen route or a no-damage traversal.
