@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer.js",
+      "name": "host-file",
+      "baseSHA256": "5fe5591cbead4188dbde1b4f7766bd24254845923690f5e23e945d2d1fc96d1a",
+      "sha256": "2222610d17498c925e693eea8901839a4c61fe0f757dea004e085aae2607bb85",
+      "reason": "Reviewed 20261127 open menu checked-state paint cache: only sample checked bit4 via existing menu_child_count/flags and menu_child_sub_count/subchild_flags for currently displayed groups and add those values to the existing composite key. Reads occur after overlay preparation under the existing wasm/memory try/finally scope. No callback producer, export reentry, invocation lifetime, scheduler, overlay allocation/retirement or publication boundary changes. Public PE/x86 CheckMenuItem host invalidation and real WAT/RasterCanvas open dropdown/cascade pixels, neighbor isolation, unchanged key reuse and closed/destroyed owner controls pass (20261127-menu-check-paint-repair-root)."
+    }
+  ]
+}
