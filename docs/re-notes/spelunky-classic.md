@@ -719,6 +719,108 @@ On main, the uop tier runs the scan loop as a resident program (the 20261126 cen
    - Revisit only after items 1–2.
 5. **(b) Partial evaluation**: no. Its targets are tree shape and constants, while the cost is in lookups and instance loops.
 
+## GM fold (branch opt/gm-fold), 2026-11-26
+
+Evidence: `scratch/runs/20261126-gm-fold/`. Items 1–3 of the recommendation
+above, as extra paths of the Delphi fold's handler 395 under a separate
+mask (`$gm_fold`, `--gm-fold=N`, default 7; `set_gm_fold` export). The
+native code is `$gmf_run` (10-helpers-delphi-fold.wat), which writes no EIP;
+the handler applies its result.
+
+- **Matching.** By body signature, never by address: first dword, FNV-1a
+  over the body with rel32 bytes masked, plus callee checks. The same bodies
+  are in all 13 GM5/GM7/GM8 runner PEs in `test/binaries/candidates`
+  (`node tools/delphi-detect.js DIR` prints `gm=`). Metrojd GM7 has them at
+  0x4aa378 / 0x4b04f0 / 0x4b048c / 0x4b0464.
+
+| Mask bit | Id | Spelunky VA | What |
+|---|---|---|---|
+| 1 | 10 | 0x4a8a4c | var-list backward scan loop (21 bytes, 40-byte rows); exit at +0x15 |
+| 2 | 11 | 0x4aeee0 | 2-D instance read, fields +0x84 (counts) / +0x80 (rows) |
+| 2 | 12 | 0x4aee7c | 2-D instance read, disp8 fields +0x7C / +0x78 |
+| 2 | 13 | 0x4aee54 | 1-D instance read, +0x7C |
+| — | 14 | 0x406d64 | DynArray length, the callee of 11–13 (checked, registered for SMC) |
+| 4 | 4+0x400 | 0x406534 | `_FinalizeArray` kind 0x0E (records) whose only managed field is one AnsiString |
+
+- **Why FinalizeArray fell back.** The id-4 native path took only `ecx == 1`
+  with kind 0x0A (one AnsiString). The 16-Value GML argument arrays are kind
+  0x0E (RValue records, string at +0x10) with n = 16, so every call fell
+  back. The record path is gated at decode on `_FinalizeArray`'s record loop
+  (+0xB0) calling the id-3 `_FinalizeRecord` that calls it back (+0x21).
+  A last reference mid-array (a free) hands the element to the guest: the
+  path rebuilds the record loop's state at its top (+0xA7) after k elements
+  and resumes there; k = 0 falls back.
+- **Branch clock.** Var scan: 2 per trip; it stops at the loop head after
+  any whole trip, where the threaded loop stops when the budget runs out.
+  Instance reads: 1 / 5 / 6 / 7 before the RET. Records: 6 + Σ(12 +
+  `_LStrClr`'s own) + 1.
+- **Latent bug fixed in id 1.** The released path of `_LStrClr` did not set
+  CF = 0 (its TEST does), so a caller's CF = 1 leaked through.
+- **Index hint: not done.** Checking a hint needs "no later duplicate", which
+  is the scan of the rows above it anyway.
+- **Exactness** (`--branch-clock`, fold vs `--gm-fold=0`):
+  - Spelunky Classic, the sweep2 `spel` route (32700 batches, 6 gameplay
+    cycles) on the box: every arm (control module twice, fold module mask
+    0 and 7, the split module mask 0 and 7) gives 3413254 API calls, and
+    the same digest of the 2 MB runner image hexdumped at 29000 and 32600.
+  - Metrojd GM7 (`--d3d9-gps=null --batch-size=100000`, 4000 batches): masks
+    7/0/1/2/4 give the same 4407516 API calls; 7 vs 0 give the same image
+    dumps at 2000 and 4000.
+  - A single headless-GL pair once differed by a diagonal line. Every rerun
+    of the same mask matched mask 0, and the image dumps match, so this is
+    attributed to headless GL rather than the fold.
+  - `test/test-delphi-fold.js` covers var-scan hits, duplicates, misses and
+    page-straddling rows; every instance-read branch; record arrays; SMC
+    mid-loop, mid-body and callee writes; `set_gm_fold(0)`; and every
+    budget.
+- **Hit counts, Spelunky route (mask 7).**
+  - Var scan: 452999 native / 430 fallback, 45.3 M trips (≈100 rows per
+    lookup).
+  - Instance reads 2-D wide / 2-D byte / 1-D: 9.65 M / 4.14 M / 6.69 M native.
+  - Record arrays: 1.15 M native, 840 resumed.
+  - uop blocks fall from 1.84 G to 1.60 G (fold entries leave uop programs).
+- **First layout cost.** With the GM paths inline in `$th_delphi_rtti`,
+  the handler grew from 9.8 KB to 13.7 KB of Ion code (V8: 20.6 KB to
+  23.8 KB). The GM paths now run in `$gmf_run` (commit 7a8196ba6), so Ion
+  is back to 10.5 KB. Single box runs had suggested the inline layout cost
+  ~10%; the 6-rep lane put both layouts inside the box's noise.
+- **Guest-instruction shares.** Method: `blocks.js` on one gameplay cycle
+  (29000..29600, `--no-uop --handler-hist-*`, box); fold entries weigh 1.
+
+| | control | fold (7a8196ba6) |
+|---|---|---|
+| threaded weighted insns / cycle | 111.7 M | 61.2 M (−45%) |
+| var-list scan loop | 20.4% | 0.05% |
+| object instance table | 16.9% | 1.35% |
+| RTL record init/finalize/copy | 4.5% | 3.6% of the smaller total |
+| top of the list now | — | collision bbox 0x4aceec 7.2%, collision scan 0x4e3ed0 7.0%, var-read node 4.5%, eval dispatch 4.3% |
+
+- **Timing.** One box: Boat 4 vCPU AMD EPYC, node 24.22.1, x86-64.
+  - Method: sweep2 harness, `--branch-clock`, whole-run `/usr/bin/time`
+    user CPU, 6 interleaved reps.
+  - Arms: n1/n2 are the control d4cb724ef built twice; ctl2/fold2 are
+    7a8196ba6 at `--gm-fold=0` / default.
+  - The box was noisy: per-arm spread was 8–33%.
+
+| Workload | Measure | n1 median | null band (n2) | fold2 vs ctl2 | fold2 vs n1 |
+|---|---|---|---|---|---|
+| spel30 (30 gameplay cycles, 47100 batches) | whole run | 66.24 s | +0.52% | **−5.15%** (min −6.21%) | −4.72% |
+| spel30 | window 29600:47000 (gameplay) | 16.53 s | +0.97% | **−18.66%** (min −16.19%) | −16.33% |
+| spel30 | window 21000:29000 (title → tutorial) | 14.20 s | +0.13% | −11.95% | −12.26% |
+| spel (6 cycles) | whole run | 54.95 s | −0.47% | −6.05% (min −3.60%) | −3.27% |
+| heroes2_demo (non-GM control) | whole run | 5.06 s | −0.40% | +1.57% | −3.85% (inside the ±20% spread) |
+
+- **Native code** (V8 and SpiderMonkey, arm64 laptop and x86-64 box).
+  - The var-scan loop's fast path (same page) has no call.
+  - V8 keeps most of the loop in registers; one stack reload per trip on
+    x86-64.
+  - Ion keeps every loop variable in stack slots, on both architectures.
+    Moving the loop into its own small function did not change that (Ion,
+    arm64; variant not landed). The likely cause is the cold `$g2w`/`$gl32`
+    calls inside the loop: SpiderMonkey's wasm ABI has no callee-saved
+    registers.
+  - Next lever for Firefox: a call-free inner loop per guest page.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash
