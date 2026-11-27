@@ -47,3 +47,60 @@ an enlarged HUD comparison, exact input/reply logs, Git/diff identity, and the
 exact tested module (`d4e95883e44848490831d279a8231cc51a36315bab60462e4fa28b3721fc3615`).
 All three installer-produced media hashes matched the gameplay test pins.
 No emulator change or guest-memory state modification was needed.
+
+## Static La Roca enemy approach (2026-11-27)
+
+Run `20261127-claw-object-route-root` decoded the existing installed REZ,
+without executing the game. `/LEVEL1/WORLDS/DEMO.WWD` is the Level1 map:
+archive offset **7076709**, length **12982**, SHA-256
+`6def736462f45ad2519734177248c33c544fe6e05f93d5c4bc89f3b37f7b91de`.
+Its 1524-byte header supplies **startX=588, startY=4723** at offsets
+720/724. There is no `PlayerStart` object; the start is a header property.
+
+The compressed body expands to 358771 bytes. Its main `Action` plane has
+384×96 tiles of 64×64 pixels and **561 placed object records**, beginning
+at decoded WWD offset **163302** and ending exactly at the tile-description
+section, **340843**. Each object has 284 fixed bytes followed by its four
+declared string lengths. Record index 63 (zero based), **ID 3429**, occupies
+**[183318,183622)**: logic `Officer`, image set `LEVEL_OFFICER`, position
+**(1556,4732)**, minX/maxX **1160/1622**. The next Officers are ID 3431 at
+(1916,4412) and ID 3432 at (2364,4540), on higher terrain. Serialized
+objectType/hitTypeFlags are zero; do not interpret that as absence of enemies.
+The original EXE registers `Officer` (string VA `0x510d30`) to handler
+`0x460e20` at `0x40120b`; classification is through the logic initializer.
+
+The first Officer is **968 pixels right of the start on the same lower
+corridor**. Action row 74, columns 9–25 (x=576–1663), uses tile 404 followed
+by tile 304. Both specify clear outside/solid inside rect (0,55,63,63),
+giving continuous floor at **y=4791**, without a pit. The space
+x=576–1663, y=4550–4790 has only clear/climb attributes; a ladder at x≈1408
+does not require climbing to reach this Officer. Solid terrain closes the
+right end near x=1704. No upper-platform route is needed.
+
+Concrete ordinary approach: move **Right** from (588,4723) along this floor.
+Near x≈900, use **Jump+Right** to pass the PowderKeg at **(986,4725)**;
+continue Right, using jumps over/onto the crate objects around **x=1101,
+1207 and 1399**, toward **x≈1250–1450** in the Officer's corridor. Stop on
+landing and face the actual Officer: Right while it is ahead, Left if it
+passed underneath during a jump. Its authored horizontal limits are
+1160–1622. Do not continue into the kegs at x=1622/1666 or the right wall
+to find this target. Treat the Officer sprite as the target, not the blue
+floor object from the ammunition-only run.
+
+This is a **static geometric route**, not an executed input schedule or proof
+of an enemy consequence. Dynamic keg/crate collision boxes, stack expansion,
+jump timing/range, AI position at arrival, projectile obstruction and health
+effects were not established. Tile geometry requires no jump; the suggested
+jumps address placed objects conservatively and need ordinary visual control,
+not frozen batch counts. The prior ammunition-only captures do not identify
+this Officer or establish its removal.
+
+Format layout was checked against primary parser source
+[`libwap/WwdFile.cpp`](https://github.com/pjasicek/OpenClaw/blob/5ee5740ca98377c76b13b50c84f610b0066a4717/libwap/WwdFile.cpp),
+`RezArchiveFile.cpp` and `libwap.h` at that same commit. The scratch probe
+validates both real demo maps (561/715 objects), every section boundary and
+tile ID, direct byte anchors for four real records, floor geometry, and nine
+malformed inputs: **13 checks PASS**. This is a scratch decoder for these
+installed records, not a general WWD library. Recovery uses the pinned local
+REZ plus `probe.cjs`/`validate.cjs`; no extracted media or source snapshots
+are retained.
