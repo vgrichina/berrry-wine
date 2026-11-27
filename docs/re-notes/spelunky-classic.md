@@ -944,6 +944,139 @@ the handler applies its result.
      script call: about 29% together now) is the next large block. It needs a numeric
      subtree evaluator with fallback, not more single-function folds.
 
+### Collision-event pass fold and call-free reads (opt/gm-fold3, run 20261127-gm-fold3)
+
+- **What.** `--gm-fold` bit 5 (default mask now 0x3F) runs the GM8
+  collision-event pass 0x539bb4 natively in `$gmf_cev`, entered at any of
+  its three loop heads: outer +0x24 (sig id 19), middle +0x6E (20), inner
+  +0xAE (21). The fallback performs the head's first instruction
+  (`mov eax,[abs32]`, resume +5; `mov eax,[esp+8]` for the inner head,
+  resume +4).
+  - Signature: the 0x268-byte body (id 23, 20 rel32 + 7 abs fields
+    masked). The two instance reads it calls must be ids 13 and 12. Its
+    pair test 0x4ad1a0 (id 22, 0x16B bytes) is checked too. The abs
+    operands must agree pairwise (0x25 == 0x37 for the pair list; 0x4A ==
+    0x6F == 0x91 == 0xC2 for the object table). SMC ranges are registered
+    for the body, both reads' trees and the test. The SMC group limit went
+    from 4 to 6.
+  - Units run head to head. The working state is committed only when a
+    whole unit completes. Stops are at a head, on: a box hit, a nil
+    instance, NaN, a bad read, or when the budget is used up. A pair that
+    gets through rejects R1 (3 or 7 branches) and R2 (9) and reaches TEST
+    (2+k for reject k) is charged as the threaded code charges it.
+  - Exit writes EAX..EDI, the changed frame dwords, the flags (CF source,
+    then the INC and DEC) and `d_charge(acc-1)`.
+- **Call-free guest reads** in `$gmf_coll`, the var scan and `$gmf_cev`.
+  - The `gmf-wa`/`gmf-ld` macros keep one translated page per stream: a
+    page tag plus a wasm-minus-guest delta. The miss path is `$gmf_xl`.
+    - It treats the direct window as affine.
+    - It rejects the shared heap and the DIB window.
+    - Otherwise it calls `$guest_page_translate`.
+    - A page straddle or a NULL translation sets `$gmf_bad` and reads the
+      NULL sentinel. The trip is then discarded and the guest makes the
+      access from the head.
+  - `$gmf_coll` keeps three streams: misc, row and instance.
+- **Hits (spelx route, 32700 batches).**
+  - Units: 6.10 M, plus 4.10 M middle trips.
+  - By head (end/fallback/stopped at a head): outer 257/133/951, middle
+    807/757/0.
+  - **The pair test never ran natively (`pairs=0`).** Every unit in this
+    route either ended at R1/R2, or stopped or fell back before a TEST
+    trip.
+  - The id 12/13 guest-called reads drop from 6.29 M and 9.97 M native
+    (mask 0x1F, spel30) to 64 k and 785 k, because the pass's calls to
+    them are now inside the fold.
+- **Exactness** (`--branch-clock`, box bx_fnceb6w6).
+  - spelx: masks 0x3F, 0x1F, 0x20 and 0, `--no-delphi-fold`, and the
+    previous branch's module 420e05ad1 all give 3,413,254 API calls,
+    runner-image digest c50420bc4282c74f and end frame 6a4436d8e792d22f.
+  - spel30: all 30 runs (6 exactness arms, 24 timing runs) give 4,845,761
+    API calls and the same end frame.
+  - Metrojd GM7 (laptop, 4000 batches): masks 0x3F, 0x1F and 0 and
+    `--no-delphi-fold` give 4,407,516 API calls and digest
+    34483b6f817da97d. It has no event-pass match.
+  - `test/test-delphi-fold.js` covers:
+    - event cases for the mixed, same-object, out-of-range,
+      deactivated-first, empty-pair, middle-hit, nil, first-hit and
+      no-pairs cases, under every budget;
+    - entry at each head;
+    - SMC in the body, the test and both reads;
+    - the mask (0x1F leaves the pass alone, 0xFF clamps to 0x3F).
+- **Guest-instruction shares** (one cycle 29000..29600, `--no-uop`, box; e1
+  at `--gm-fold=0x1F` vs default; blocks.js HLE set as above plus
+  0x539bd8/0x539c22/0x539c62).
+
+| | mask 0x1F (before) | mask 0x3F (after) |
+|---|---|---|
+| threaded weighted insns / cycle | 44.82 M | 42.81 M (−4.5%) |
+| page 0x539000 (event pass) | 3.97% | 0.01% |
+| object instance table reads 0x4aee7c.. | 0.58% | 0.38% |
+| var-read node 0x527530 | 6.08% | 6.37% |
+| eval dispatch 0x52786c | 5.90% | 6.17% |
+| page 0x406000 (System) | 5.13% | 5.37% |
+| RTL record init/finalize/copy | 4.97% | 5.20% |
+| extension call 0x5290fc | 4.80% | 5.03% |
+| binary node + op | 9.16% | 9.59% |
+
+- **Native code** (`wasm-native.js --index` from `build/watx-facts.json`).
+  - Captured on the box (x86-64; SM 162 Ion, node V8 13.6 TurboFan) and on
+    the laptop (arm64; SM 155 Ion, V8 13.6).
+  - wasm-native's own call labels come from a `combined.wat` walk that
+    drifts from the compiled index space. Callees are therefore named by
+    run-local tools:
+    - `native-calls.js` maps a label back to its walk index, then to
+      watx-facts.
+    - `v8-calls.js` fits V8's jump-table slot offset against SM's callee
+      set.
+  - Both architectures agree:
+
+| function | before (420e05ad1) | after (eb7e6df9e) |
+|---|---|---|
+| `$gmf_coll` Ion | 18 `$gl32`, 4 `$gl64`, 3 `$gl8` | 0; 25 `$gmf_xl` miss-path calls |
+| `$gmf_coll` V8 | 21 `$gl32`, 3 `$gl64`, 3 `$gl8`, 2 `$g2w` | 0; 5 `$gmf_xl` |
+| `$gmf_cev` Ion / V8 | — | 0 `$gl*`; 38 / 18 `$gmf_xl`, 6 `$gs32` (exit) |
+| `$gmf_run` Ion | 11 `$gl32`, 3 `$gl8`, 1 `$g2w` | 9 `$gl32`, 3 `$gl8` |
+
+  - The `$gl*` calls left in `$gmf_run` are the record-array (id 9) and
+    instance-read (ids 11–13) paths. The var scan in it is call-free.
+  - Each `$gmf_xl` call sits behind a page-tag/offset compare and `cbz`
+    (`jz` on x64). The in-page path is a plain load. Ion keeps `$gx` in a
+    stack slot.
+- **Timing.** One box: Boat bx_fnceb6w6, 4 vCPU AMD EPYC, node 24.22.1,
+  deleted after the runs (GET 404).
+  - Arms: n1/n2 = eb7e6df9e built twice (default 0x3F); m31 = n1 at
+    0x1F; old = 420e05ad1.
+  - 6 interleaved reps on spel30 and on Heroes II.
+  - **The box was noisy and the effect is not resolved.** The same n1
+    configuration took 90.6 s in the exactness lane and 55–62 s in the
+    timing lane. The null pair differs by 7% (paired n2/n1 median, range
+    −5..+15%).
+
+| Workload | Measure | n1 median | n2/n1 (null) | m31/n1 | old/n1 |
+|---|---|---|---|---|---|
+| spel30 | whole run | 56.89 s | +7.0% | +7.8% | +7.5% |
+| spel30 | window 21000:29000 | 10.57 s | +6.9% | +5.8% | +7.6% |
+| spel30 | window 29600:47000 (gameplay) | 10.20 s | +3.9% | +11.0% | +9.3% |
+| heroes2_demo | whole run | 4.64 s | −4.8% | −3.3% | −1.4% |
+
+  - Against n2 instead, m31 is −1.7% / +4.8% (whole run / gameplay window)
+    and old is +1.0% / +5.2%. Both are inside the band.
+  - The −4.5% instruction drop predicts at most a few percent of CPU,
+    which this box cannot separate. Its earlier −24.6% window result was
+    for a 25% instruction drop.
+- **What next, by share after this fold.**
+  1. The GML tree walk: var-read node, eval dispatch, binary node/op,
+     call node, script call, var-list other. That is about 35% together
+     now, and needs a numeric subtree evaluator with fallback (see the
+     recommendation above).
+  2. RTL record init/finalize/copy and System page (about 10.5%):
+     callers of the already-folded helpers whose own prologues still run
+     threaded.
+  3. The event pass's TEST stage never ran natively here. The 1.5 k
+     fallbacks / 950 head stops per route are where its remaining
+     threaded work goes. Count why each unit stops before widening the
+     fold.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash

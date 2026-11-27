@@ -197,8 +197,8 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   const NO_DELPHI_FOLD = hasFlag('no-delphi-fold');
   // --gm-fold=MASK: the Game Maker runner part of that fold (bit 0 the
   // variable-list scan, 1 the instance-table reads, 2 _FinalizeArray over
-  // records, 3 the line collision scan, 4 the point collision scan);
-  // default 0x1F. Decode-time, every thread.
+  // records, 3 the line collision scan, 4 the point collision scan, 5 the
+  // collision-event pass); default 0x3F. Decode-time, every thread.
   const GM_FOLD = getArg('gm-fold', null);
   // --no-uop-nobump: turn off the page index's no-bump mark (01-header
   // PAGE_INDEX_NOBUMP) -- heads with a settled uop verdict stop counting

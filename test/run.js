@@ -13015,11 +13015,13 @@ if (VERBOSE) {
       `by-id native/fallback (1 LStrClr 2 LStrAsg 3 FinalizeRecord 4 FinalizeArray 5 CopyRecord ` +
       `6 InitializeRecord 7 InitializeArray 8 Move-FILD 9 Move-REP) ` +
       [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => `${k}:${f(10 + k)}/${f(20 + k)}`).join(' '));
-    if (f(30) + f(31) + f(32) + f(33) + f(34) + f(35) + f(40) + f(41) + f(42) + f(43) + f(45) + f(46) + f(55) + f(56)) {
+    if ([30, 31, 32, 33, 34, 35, 40, 41, 42, 43, 45, 46, 55, 56, 49, 50, 51, 59, 60, 61].some((k) => f(k))) {
       console.log(`GM fold (mask ${instance.exports.get_gm_fold ? instance.exports.get_gm_fold() : '?'}): ` +
         `varscan ${f(30)}/${f(40)} trips=${f(36)} inst2w ${f(31)}/${f(41)} inst2b ${f(32)}/${f(42)} ` +
         `inst1 ${f(33)}/${f(43)} record-arrays native=${f(34)} resumed=${f(35)} ` +
-        `line-scan ${f(45)}/${f(55)}/${f(65)} point-scan ${f(46)}/${f(56)}/${f(66)} (end/fallback/head) coll-trips=${f(47)}`);
+        `line-scan ${f(45)}/${f(55)}/${f(65)} point-scan ${f(46)}/${f(56)}/${f(66)} (end/fallback/head) coll-trips=${f(47)} ` +
+        `event-pass outer ${f(49)}/${f(59)}/${f(69)} middle ${f(50)}/${f(60)}/${f(70)} inner ${f(51)}/${f(61)}/${f(71)} ` +
+        `(end/fallback/head) units=${f(52)} middle-trips=${f(53)} pairs=${f(54)}`);
     }
   }
 
