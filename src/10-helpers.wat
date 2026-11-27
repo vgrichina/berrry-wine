@@ -5584,12 +5584,62 @@
       (br $scan)))
     (i32.const 0))
 
+  ;; Internal WM_PAINT is independent of update damage. NC_FLAGS bits 4/5
+  ;; (values 16/32) are private pending/returned-empty state, separate from
+  ;; the existing low four NC bits. The existing slot reset owns their
+  ;; destruction/reuse lifetime. Neither bit implies damage or erase.
+  (func $internalpaint_pending_slot (param $slot i32) (result i32)
+    (i32.ne (i32.and (i32.load
+      (i32.add (global.get $NC_FLAGS) (i32.shl (local.get $slot) (i32.const 2))))
+      (i32.const 16)) (i32.const 0)))
+
+  (func $internalpaint_pending (param $hwnd i32) (result i32)
+    (i32.ne (i32.and (call $nc_flags_test (local.get $hwnd)) (i32.const 16)) (i32.const 0)))
+
+  (func $internalpaint_request (param $hwnd i32) (param $flags i32)
+    (if (i32.and (local.get $flags) (i32.const 2))
+      (then (call $nc_flags_set (local.get $hwnd) (i32.const 16))))
+    (if (i32.and (local.get $flags) (i32.const 16))
+      (then (call $nc_flags_clear (local.get $hwnd) (i32.const 16)))))
+
+  ;; Consume before entering any guest callback. A new request made inside
+  ;; that callback belongs to the next cycle and is never cleared on return.
+  (func $internalpaint_consume (param $hwnd i32)
+    (if (call $internalpaint_pending (local.get $hwnd))
+      (then
+        (if (i32.eqz (call $update_get_rect (local.get $hwnd) (i32.const 0)))
+          (then (call $nc_flags_set (local.get $hwnd) (i32.const 32))))
+        (call $nc_flags_clear (local.get $hwnd) (i32.const 16)))))
+
+  (func $internalpaint_empty (param $hwnd i32) (result i32)
+    (i32.and
+      (i32.ne (i32.and (call $nc_flags_test (local.get $hwnd)) (i32.const 48)) (i32.const 0))
+      (i32.eqz (call $update_get_rect (local.get $hwnd) (i32.const 0)))))
+
+  ;; A pump scopes these fields to one fetch and saves/restores the outer
+  ;; values in WAT locals, including on redirects/yields. Nested pumps cannot
+  ;; replace their caller's filters. No guest continuation retains them.
+  (global $internalpaint_filter (mut i32) (i32.const 0))
+  (global $internalpaint_min (mut i32) (i32.const 0))
+  (global $internalpaint_max (mut i32) (i32.const 0))
+  (global $internalpaint_remove (mut i32) (i32.const 1))
+
+  ;; Consume only at a removing selection, before any guest callback. The
+  ;; existing pumps still own PAINT_FLAGS, damage, child seeding and MSG.
+  (func $paint_select_next_dirty (result i32)
+    (local $hwnd i32)
+    (local.set $hwnd (call $paint_select_next_dirty_filtered
+      (global.get $internalpaint_filter) (global.get $internalpaint_min) (global.get $internalpaint_max)))
+    (if (global.get $internalpaint_remove)
+      (then (call $internalpaint_consume (local.get $hwnd))))
+    (local.get $hwnd))
+
   ;; $paint_select_next_dirty(): WAT-owned WM_PAINT selection.
   ;; A window is paintable when WAT marked its paint bit and its WAT-owned
   ;; update rect is non-empty.
-  (func $paint_select_next_dirty (result i32)
+  (func $paint_select_next_dirty_filtered (param $filter i32) (param $min i32) (param $max i32) (result i32)
     (local $i i32) (local $hwnd i32) (local $style i32) (local $cs i32) (local $ctrl_wh i32)
-    (local $status_fallback i32)
+    (local $status_fallback i32) (local $internal i32)
     ;; Main-window invalidation historically used $paint_pending while child
     ;; windows used PAINT_FLAGS. The region-driven selector is the single
     ;; paint source now, so mirror main pending into the same flag table.
@@ -5597,12 +5647,19 @@
           (i32.ne (global.get $paint_pending) (i32.const 0))
           (i32.ne (global.get $main_hwnd) (i32.const 0)))
       (then (call $paint_flag_set (global.get $main_hwnd))))
-    ;; Nothing dirty on any thread: the walk below cannot select or clear
-    ;; anything. This is the common answer for a game polling PeekMessage.
-    (if (i32.eqz (call $paint_dirty_count)) (then (return (i32.const 0))))
+    ;; Internal requests need no PAINT_FLAGS/update entry. Scan their shared
+    ;; slot state too, respecting the same owner and public message filters.
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
-      (if (call $paint_flag_mine (local.get $i))
+      (local.set $hwnd (i32.load (call $wnd_record_addr (local.get $i))))
+      (local.set $internal (call $internalpaint_pending_slot (local.get $i)))
+      (if (i32.and
+            (i32.or (call $paint_flag_mine (local.get $i))
+              (i32.and (local.get $internal)
+                (i32.or (i32.eqz (i32.load (call $wnd_thread_addr (local.get $i))))
+                  (i32.eq (i32.load (call $wnd_thread_addr (local.get $i))) (global.get $current_thread_id)))))
+            (call $shared_post_queue_matches (local.get $hwnd) (i32.const 15)
+              (local.get $filter) (local.get $min) (local.get $max)))
         (then
           (local.set $hwnd (i32.load (call $wnd_record_addr (local.get $i))))
           (local.set $style (call $wnd_get_style (local.get $hwnd)))
@@ -5630,7 +5687,8 @@
                   (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
                     (then (global.set $paint_pending (i32.const 0)))))
                 (else
-                  (if (call $update_get_rect (local.get $hwnd) (call $paint_scratch_take))
+                  (if (i32.or (local.get $internal)
+                        (call $update_get_rect (local.get $hwnd) (call $paint_scratch_take)))
                     (then
                       ;; Native status bars paint after their guest-owned
                       ;; siblings so late non-client work cannot cover them.
@@ -5828,6 +5886,7 @@
                     (br $found)))
                 (if (call $update_get_rect (local.get $hwnd) (call $paint_scratch_take))
                   (then
+                    (call $internalpaint_consume (local.get $hwnd))
                     (if (local.get $native_status)
                       (then
                         ;; Status bars bypass the ordinary control dispatcher.

@@ -753,6 +753,8 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
               (then (global.set $paint_pending (i32.const 1)))
               (else (call $paint_flag_set (local.get $arg0))))
             (call $host_invalidate (local.get $arg0))))
+        (if (local.get $ok)
+          (then (call $internalpaint_request (local.get $arg0) (local.get $arg3))))
         (i32.store offset=0 (global.get $reg_base) (local.get $ok))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
@@ -781,6 +783,7 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
     ;; after validation succeeds so capacity failure preserves the transaction.
     (if (i32.and (local.get $arg3) (i32.const 0x20))
       (then (call $nc_flags_clear (local.get $arg0) (i32.const 2))))
+    (call $internalpaint_request (local.get $arg0) (local.get $arg3))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) (return)
   )

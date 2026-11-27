@@ -788,6 +788,8 @@
   (func $begin_paint_core (param $arg0 i32) (param $arg1 i32) (param $win16_bridge i32) (result i32)
     (local $cs i32) (local $hdc i32) (local $wa i32) (local $partial i32)
     (local $erase_pending i32) (local $erase_result i32)
+    (local $internal_empty i32)
+    (local.set $internal_empty (call $internalpaint_empty (local.get $arg0)))
     ;; The window procedure, not the class brush alone, decides whether an
     ;; outstanding erase is handled. Its default procedure owns brush lookup.
     (local.set $erase_pending
@@ -805,7 +807,7 @@
     ;; update exists, return the full client rect like Win32's empty fallback.
     (local.set $wa (i32.add (local.get $wa) (i32.const 8)))
     (local.set $partial (call $update_get_rect (local.get $arg0) (local.get $wa)))
-	    (if (i32.eqz (local.get $partial))
+	    (if (i32.and (i32.eqz (local.get $partial)) (i32.eqz (local.get $internal_empty)))
 	      (then
 	        ;; Empty update rect: rcPaint = full client.
 	        (local.set $cs (call $host_get_window_client_size (local.get $arg0)))
@@ -852,6 +854,16 @@
     ;; rectangle at a time; keeping rcPaint in the app clip let those selects
     ;; erase Hearts' three already-dealt opponent hands outside the update.
     (call $dc_apply_client_clip (local.get $hdc) (local.get $arg0))
+    (if (local.get $internal_empty)
+      (then
+        (if (i32.eqz (call $gdi_dc_system_clip_rect (local.get $hdc)
+              (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 1)))
+          (then
+            (drop (call $host_release_dc (local.get $hdc)))
+            (if (local.get $hdc) (then (call $host_paint_end (local.get $arg0))))
+            (call $gs32 (local.get $arg1) (i32.const 0))
+            (return (i32.const 0))))
+        (local.set $erase_pending (i32.const 0))))
     (if (i32.and
           (i32.eqz
             (i32.or (global.get $code16) (local.get $win16_bridge)))
@@ -871,6 +883,7 @@
     ;; EndPaint must not erase them using this snapshot's rectangle.
     (if (local.get $hdc)
       (then
+        (call $nc_flags_clear (local.get $arg0) (i32.const 48))
         (call $update_clear_hwnd (local.get $arg0))
         (call $paint_flag_clear_hwnd (local.get $arg0))
         (if (i32.eq (local.get $arg0) (global.get $main_hwnd))

@@ -5465,7 +5465,8 @@
     ;; UpdateWindow consumes existing damage; it is not InvalidateRect.
     ;; In particular a clean window sends no WM_PAINT, and a partial update
     ;; must not be expanded to the entire client before BeginPaint sees it.
-    (if (i32.eqz (call $update_get_rect (local.get $arg0) (call $paint_scratch_take)))
+    (if (i32.eqz (i32.or (call $internalpaint_pending (local.get $arg0))
+          (call $update_get_rect (local.get $arg0) (call $paint_scratch_take))))
       (then (return (i32.const 0))))
     (call $paint_flag_set (local.get $arg0))
     (call $defwndproc_do_ncpaint (local.get $arg0))
@@ -5478,11 +5479,13 @@
             (i32.eqz (call $ctrl_is_subclassed (local.get $arg0))))
           (call $wnd_is_effectively_visible (local.get $arg0)))
       (then
+        (call $internalpaint_consume (local.get $arg0))
         (drop (call $control_wndproc_dispatch
           (local.get $arg0) (i32.const 0x000F) (i32.const 0) (i32.const 0)))
         (return (i32.const 0))))
     (if (i32.eqz (call $wnd_is_effectively_visible (local.get $arg0)))
       (then (return (i32.const 0))))
+    (call $internalpaint_consume (local.get $arg0))
     (call $wnd_table_get (local.get $arg0)))
 
   ;; Shared by UpdateWindow and MoveWindow(TRUE); no API stack cleanup here.
@@ -5848,6 +5851,7 @@
 
   (func $handle_GetMessageA_pump (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32) (local $eat i32) (local $receipt i32)
+    (local $paint_filter i32) (local $paint_min i32) (local $paint_max i32) (local $paint_remove i32)
     (if (call $incoming_send_yield) (then (return)))
     ;; A capped frame is paced at the pump that closes it (09a8 $present_pump).
     (if (call $present_pump) (then (return)))
@@ -5856,8 +5860,20 @@
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $sp)))
     (loop $fetch
+      (local.set $paint_filter (global.get $internalpaint_filter))
+      (local.set $paint_min (global.get $internalpaint_min))
+      (local.set $paint_max (global.get $internalpaint_max))
+      (local.set $paint_remove (global.get $internalpaint_remove))
+      (global.set $internalpaint_filter (local.get $arg1))
+      (global.set $internalpaint_min (local.get $arg2))
+      (global.set $internalpaint_max (local.get $arg3))
+      (global.set $internalpaint_remove (i32.const 1))
       (call $handle_GetMessageA_fetch (local.get $arg0) (local.get $arg1) (local.get $arg2)
         (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (global.set $internalpaint_filter (local.get $paint_filter))
+      (global.set $internalpaint_min (local.get $paint_min))
+      (global.set $internalpaint_max (local.get $paint_max))
+      (global.set $internalpaint_remove (local.get $paint_remove))
       (if (global.get $code16) (then (return)))
       (if (i32.eqz (global.get $user_queue_input_flags)) (then (return)))
       (if (i32.ne (i32.load (global.get $reg_base)) (i32.const 1)) (then (return)))
@@ -6222,6 +6238,7 @@
 
   (func $handle_PeekMessageA_pump (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $sp i32) (local $ret i32) (local $eat i32) (local $receipt i32)
+    (local $paint_filter i32) (local $paint_min i32) (local $paint_max i32) (local $paint_remove i32)
     (if (call $incoming_send_yield) (then (return)))
     ;; A capped frame is paced at the pump that closes it (09a8 $present_pump).
     (if (call $present_pump) (then (return)))
@@ -6230,8 +6247,20 @@
     (local.set $sp (i32.load offset=16 (global.get $reg_base)))
     (local.set $ret (call $gl32 (local.get $sp)))
     (loop $fetch
+      (local.set $paint_filter (global.get $internalpaint_filter))
+      (local.set $paint_min (global.get $internalpaint_min))
+      (local.set $paint_max (global.get $internalpaint_max))
+      (local.set $paint_remove (global.get $internalpaint_remove))
+      (global.set $internalpaint_filter (local.get $arg1))
+      (global.set $internalpaint_min (local.get $arg2))
+      (global.set $internalpaint_max (local.get $arg3))
+      (global.set $internalpaint_remove (i32.and (local.get $arg4) (i32.const 1)))
       (call $handle_PeekMessageA_fetch (local.get $arg0) (local.get $arg1) (local.get $arg2)
         (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+      (global.set $internalpaint_filter (local.get $paint_filter))
+      (global.set $internalpaint_min (local.get $paint_min))
+      (global.set $internalpaint_max (local.get $paint_max))
+      (global.set $internalpaint_remove (local.get $paint_remove))
       (if (global.get $code16) (then (return)))
       (if (i32.eqz (i32.and (local.get $arg4) (i32.const 1))) (then (return)))
       (if (i32.eqz (global.get $user_queue_input_flags)) (then (return)))
