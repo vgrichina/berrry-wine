@@ -2889,6 +2889,10 @@ GetTopWindow(hWnd) — 1 arg stdcall
     (if (i32.and (local.get $flags) (i32.const 2))
       (then
         (call $update_invalidate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
+        ;; SW_ERASE requests BeginPaint erasure only with SW_INVALIDATE.
+        ;; Reuse InvalidateRect's retained bit; do not clear an earlier request.
+        (if (i32.and (local.get $flags) (i32.const 4))
+          (then (call $nc_flags_set (local.get $arg0) (i32.const 2))))
         (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
           (then (global.set $paint_pending (i32.const 1)))
           (else (call $paint_flag_set (local.get $arg0))))
