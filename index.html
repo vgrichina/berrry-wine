@@ -2711,6 +2711,8 @@ Resource-aware Win98 emulator
       const uopOptArg = Number(new URLSearchParams(location.search).get('uop-opt'));
       if (Number.isFinite(uopOptArg)) window.WineSuperops.uopOpt = uopOptArg >>> 0;
     }
+    // ?uop-sse-native (with ?uop-sse): the hot XMM forms as native 07d ops.
+    if (new URLSearchParams(location.search).has('uop-sse-native')) window.WineSuperops.uopSseNative = true;
     // ?smc-same-block: decoder checkpoints for a store that rewrites its own
     // running block (opt-in, decode-time; read at launch, host.js).
     if (new URLSearchParams(location.search).has('smc-same-block')) window.WineSuperops.smcSameBlock = true;

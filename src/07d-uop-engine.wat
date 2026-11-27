@@ -189,6 +189,11 @@
   ;;                                          proved in w, then $uop_sse_mem
   ;;                                          runs h at ga; a miss is a
   ;;                                          service op ($uop_sse_svc)
+  ;;  120-133, 142 native SSE register forms  (--uop-sse-native, 07e
+  ;;          d s [k]                         $uc_ssen_op) 06c's arm for the
+  ;;                                          subop, inline on the XMM file
+  ;;  134-141 native SSE memory forms         109's layout; a miss is 109's
+  ;;                                          service op
 
   ;; The main thread's arena. Each guest thread is its own instance over the
   ;; shared memory and a program names its instance's $reg_base, so every
@@ -1497,7 +1502,9 @@
                       (then (i32.const 24)) (else (i32.const 20))))))))
           (br $L)))
       ;; 109 / 110 an SSE memory form whose window missed
-      (if (i32.lt_u (i32.sub (local.get $op) (i32.const 109)) (i32.const 2))
+      (if (i32.or (i32.lt_u (i32.sub (local.get $op) (i32.const 109)) (i32.const 2))
+                  ;; 134-141 a native SSE memory form (109's layout)
+                  (i32.lt_u (i32.sub (local.get $op) (i32.const 134)) (i32.const 8)))
         (then (local.set $pc (call $uop_sse_svc (local.get $pc))) (br $L)))
       ;; 88-90 the generic x87 service ops, 91-107 a native x87 op its fast
       ;; arm declined
@@ -1617,6 +1624,27 @@
             (i32.lt_u (local.get $v) $N))))
   (defmacro (ux-wa)
     (i32.add (local.get $ga) (i32.load offset=8 (local.get $w))))
+  ;; Native SSE operands: a register form's d / s XMM byte offsets, a memory
+  ;; form's XMM register (code bits 4-6), as addresses in the XMM file.
+  (defmacro (ux-xd)
+    (i32.add (global.get $xmm_base) (i32.load offset=4 (local.get $pc))))
+  (defmacro (ux-xs)
+    (i32.add (global.get $xmm_base) (i32.load offset=8 (local.get $pc))))
+  (defmacro (ux-xm)
+    (i32.add (global.get $xmm_base) (i32.and (i32.load offset=4 (local.get $pc)) (i32.const 0x70))))
+  ;; lane 0 of the register at $n op= B (an f32), op the subop K: 10 add,
+  ;; 11 mul, 13 div, else (14) sub -- 06c's dedicated scalar handlers.
+  (defmacro (ux-ss-arith $K $B)
+    (local.set $k $K)
+    (local.set $fs $B)
+    (f32.store (local.get $n)
+      (if (result f32) (i32.eq (local.get $k) (i32.const 10))
+        (then (f32.add (f32.load (local.get $n)) (local.get $fs)))
+        (else (if (result f32) (i32.eq (local.get $k) (i32.const 11))
+          (then (f32.mul (f32.load (local.get $n)) (local.get $fs)))
+          (else (if (result f32) (i32.eq (local.get $k) (i32.const 13))
+            (then (f32.div (f32.load (local.get $n)) (local.get $fs)))
+            (else (f32.sub (f32.load (local.get $n)) (local.get $fs))))))))))
   ;; TOP and the tag byte into $t / $k; non-zero while any exact shadow is
   ;; live (06 would move or drop it: this file never touches it).
   (defmacro (ux-state-bad)
@@ -1656,9 +1684,11 @@
     (local $ga i32) (local $w i32) (local $v i32) (local $x i64) (local $y i64) (local $q i64)
     (local $n i32) (local $bw i32) (local $dw i32) (local $sw i32)
     (local $t i32) (local $k i32) (local $p i32) (local $c i32) (local $fa f64) (local $fb f64)
+    (local $fs f32)
     (loop $L
       (block $svc
       (block $miss
+      (block $n142 (block $n141 (block $n140 (block $n139 (block $n138 (block $n137 (block $n136 (block $n135 (block $n134 (block $n133 (block $n132 (block $n131 (block $n130 (block $n129 (block $n128 (block $n127 (block $n126 (block $n125 (block $n124 (block $n123 (block $n122 (block $n121 (block $n120
       (block $c113 (block $c112 (block $c111 (block $c109 (block $c108
       (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
       (block $c101 (block $c100 (block $c99 (block $c98 (block $c97 (block $c96 (block $c95
@@ -1699,6 +1729,10 @@
                   $c111
                   ;; 112 RETX 113 EXITR
                   $c112 $c113
+                  ;; 114-119 not emitted here
+                  $c0 $c0 $c0 $c0 $c0 $c0
+                  ;; 120-142 native SSE (--uop-sse-native)
+                  $n120 $n121 $n122 $n123 $n124 $n125 $n126 $n127 $n128 $n129 $n130 $n131 $n132 $n133 $n134 $n135 $n136 $n137 $n138 $n139 $n140 $n141 $n142
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -2802,6 +2836,115 @@
           (else (global.set $uop_bexit (i32.const 1))
                 (global.set $uop_io_budget (i32.const 0))))
         (return (local.get $pc)))
+        ;; ---- native SSE (07e $uc_ssen_op, --uop-sse-native) ----
+        ;; Each arm is the 06c handler's arm for that subop on the XMM file,
+        ;; the same helpers in the same order (see 06c $th_sse_rr / the
+        ;; dedicated and --sse-fast handlers), so the result is the threaded
+        ;; one bit for bit. Register forms: d s the XMM byte offsets in the
+        ;; file, a general register its slot address; k the subop.
+        ;; 120 XMOV d s (sub 0: the whole register)
+        (v128.store (ux-xd) (v128.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 121 XMOVSS d s: lane 0, the upper 96 bits kept
+        (i32.store (ux-xd) (i32.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 122 XCVTSS2SD d s: the low qword, the upper kept
+        (i64.store (ux-xd) (call $sse_promote_bits (i32.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 123 XCVTPS2PD d s
+        (v128.store (ux-xd) (call $sse_promote_pair (v128.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 124 XCVTSD2SS d s: lane 0, the upper kept
+        (i32.store (ux-xd) (call $sse_demote_bits (i64.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 125 XCVTPD2PS d s: both lanes read before the write, upper zeroed
+        (local.set $n (i32.load offset=8 (local.get $pc)))
+        (local.set $x (i64.extend_i32_u (call $sse_demote_bits
+          (i64.load (i32.add (global.get $xmm_base) (local.get $n))))))
+        (local.set $x (i64.or (local.get $x) (i64.shl (i64.extend_i32_u (call $sse_demote_bits
+          (i64.load offset=8 (i32.add (global.get $xmm_base) (local.get $n))))) (i64.const 32))))
+        (local.set $n (ux-xd))
+        (i64.store (local.get $n) (local.get $x))
+        (i64.store offset=8 (local.get $n) (i64.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 126 XSDAR d s k: ADDSD 40 / MULSD 41 / SUBSD 42
+        (call $sse_sd_arith (i32.sub (i32.load offset=12 (local.get $pc)) (i32.const 40)) (ux-xd) (ux-xs))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
+        ;; 127 XSSAR d s k: ADDSS 10 / MULSS 11 / DIVSS 13 / SUBSS 14, lane 0
+        (local.set $n (ux-xd))
+        (ux-ss-arith (i32.load offset=12 (local.get $pc)) (f32.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
+        ;; 128 XCOMISS d s: (U)COMISS
+        (call $sse_compare_flags (f32.load (ux-xd)) (f32.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 129 XCOMISD d s: (U)COMISD
+        (call $sse_compare_flags_f64 (f64.load (ux-xd)) (f64.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 130 XCVTSI2SS d r: lane 0 from the general register's slot
+        (f32.store (ux-xd) (f32.convert_i32_s (i32.load (i32.load offset=8 (local.get $pc)))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 131 XCVTSI2SD d r: the low qword
+        (f64.store (ux-xd) (f64.convert_i32_s (i32.load (i32.load offset=8 (local.get $pc)))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 132 XCVTTSS2SI r s: d is the general register's slot
+        (i32.store (i32.load offset=4 (local.get $pc)) (call $sse_cvtt_f32_i32 (f32.load (ux-xs))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 133 XLOGIC d s k: XORPS 1 / ANDPS 22 / ANDNPS 23 / ORPS 24
+        (local.set $k (i32.load offset=12 (local.get $pc)))
+        (v128.store (ux-xd)
+          (if (result v128) (i32.eq (local.get $k) (i32.const 1))
+            (then (v128.xor (v128.load (ux-xd)) (v128.load (ux-xs))))
+            (else (if (result v128) (i32.eq (local.get $k) (i32.const 22))
+              (then (v128.and (v128.load (ux-xd)) (v128.load (ux-xs))))
+              (else (if (result v128) (i32.eq (local.get $k) (i32.const 23))
+                (then (v128.andnot (v128.load (ux-xs)) (v128.load (ux-xd))))
+                (else (v128.or (v128.load (ux-xd)) (v128.load (ux-xs))))))))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
+        ;; Memory forms, 109's layout (code base idx sc|h<<8 disp w x; the
+        ;; XMM register in code bits 4-6): proved in the window, else 109's
+        ;; service op runs the handler.
+        ;; 134 XMOVSS_LD: m32 into lane 0, bits 32-127 zeroed
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (local.set $n (ux-xm))
+        (i32.store (local.get $n) (i32.load (ux-wa)))
+        (i32.store offset=4 (local.get $n) (i32.const 0))
+        (i64.store offset=8 (local.get $n) (i64.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 135 XMOVSS_ST: lane 0 to m32
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (i32.store (ux-wa) (i32.load (ux-xm)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 136 XMOVSD_LD (MOVSD / MOVQ xmm, m64): the upper qword zeroed
+        (br_if $svc (ux-ea-miss (i32.const 8)))
+        (local.set $n (ux-xm))
+        (i64.store (local.get $n) (i64.load (ux-wa)))
+        (i64.store offset=8 (local.get $n) (i64.const 0))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 137 XMOVSD_ST: the low qword to m64
+        (br_if $svc (ux-ea-miss (i32.const 8)))
+        (i64.store (ux-wa) (i64.load (ux-xm)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 138 XLD128 (sub 0, no alignment check, as 06c's mov arm)
+        (br_if $svc (ux-ea-miss (i32.const 16)))
+        (v128.store (ux-xm) (v128.load (ux-wa)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 139 XST128
+        (br_if $svc (ux-ea-miss (i32.const 16)))
+        (v128.store (ux-wa) (v128.load (ux-xm)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 140 XSSARM: ADD/MUL/DIV/SUBSS xmm, m32 (subop in code bits 8-15)
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (local.set $n (ux-xm))
+        (ux-ss-arith (i32.and (i32.shr_u (i32.load offset=4 (local.get $pc)) (i32.const 8)) (i32.const 0xFF))
+                     (f32.load (ux-wa)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 141 XCVTSS2SDM: CVTSS2SD xmm, m32, the upper qword kept
+        (br_if $svc (ux-ea-miss (i32.const 4)))
+        (i64.store (ux-xm) (call $sse_promote_bits (i32.load (ux-wa))))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 32))) (br $L))
+        ;; 142 XMOVSD d s (sub 37 between registers): the low qword
+        (i64.store (ux-xd) (i64.load (ux-xs)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))
