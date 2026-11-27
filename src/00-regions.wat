@@ -71,7 +71,8 @@
     (owner "01-header.wat:$STRING_CONSTANTS"))
   (region.declare $VK_SCAN_TABLES (size 0x00000080) (align 0x00000080)
     (owner "09a7-handlers-dispatch.wat:$VK_SCAN_TABLES"))
-  (region.declare $UPDATE_RECT (size 0x00001000) (align 0x00001000)
+  ;; 256 slots: bounding RECT followed by 208 canonical region RECTs.
+  (region.declare $UPDATE_RECT (size 0x000D1000) (align 0x00001000)
     (owner "01-header.wat:$UPDATE_RECT"))
   (region.declare $UPDATE_FLAGS (size 0x00000100) (align 0x00001000)
     (owner "01-header.wat:$UPDATE_FLAGS"))

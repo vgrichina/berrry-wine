@@ -5004,7 +5004,8 @@
     (i32.const 0))
 
   (func $update_rect_addr_for_slot (param $slot i32) (result i32)
-    (i32.add (global.get $UPDATE_RECT) (i32.mul (local.get $slot) (i32.const 16))))
+    (i32.add (global.get $UPDATE_RECT)
+      (i32.mul (local.get $slot) (i32.add (i32.const 16) (global.get $GDI_REGION_RECT_STRIDE)))))
 
   (func $update_flag_addr_for_slot (param $slot i32) (result i32)
     (i32.add (global.get $UPDATE_FLAGS) (local.get $slot)))
@@ -5025,32 +5026,86 @@
     (i64.store offset=8 (local.get $p) (i64.const 0))
     (i32.store8 (call $update_flag_addr_for_slot (local.get $slot)) (i32.const 0)))
 
-  (func $update_invalidate_rect (param $hwnd i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32)
-    (local $slot i32) (local $p i32)
-    (if (i32.or
-          (i32.eqz (local.get $hwnd))
-          (i32.or (i32.le_s (local.get $r) (local.get $l))
-                  (i32.le_s (local.get $b) (local.get $t))))
-      (then (return)))
+  ;; Reuse GDI's canonical Boolean sweep without allocating public handles.
+  ;; Publish only a complete result: overflow leaves bands, bbox and count
+  ;; unchanged. The public APIs report failure; void internal callers fail
+  ;; explicitly rather than silently losing damage or widening it to a bbox.
+  (func $update_apply_rect (param $hwnd i32) (param $l i32) (param $t i32)
+        (param $r i32) (param $b i32) (param $mode i32) (result i32)
+    (local $slot i32) (local $p i32) (local $rect i32) (local $count i32)
+    (local $i i32) (local $q i32)
+    (if (i32.or (i32.le_s (local.get $r) (local.get $l))
+                (i32.le_s (local.get $b) (local.get $t)))
+      (then (return (i32.const 1))))
     (local.set $slot (call $wnd_table_find (local.get $hwnd)))
-    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return)))
+    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return (i32.const 1))))
     (local.set $p (call $update_rect_addr_for_slot (local.get $slot)))
-    (if (i32.eqz (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot))))
+    (local.set $rect (call $paint_scratch_take))
+    (store.field PaintRect left (local.get $rect) (local.get $l))
+    (store.field.memarg PaintRect top (local.get $rect) (local.get $t))
+    (store.field.memarg PaintRect right (local.get $rect) (local.get $r))
+    (store.field.memarg PaintRect bottom (local.get $rect) (local.get $b))
+    (local.set $count (call $gdi_rgn_boolean_sweep
+      (i32.add (local.get $p) (i32.const 16))
+      (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))
+      (local.get $rect) (i32.const 1) (local.get $mode)))
+    (if (i32.lt_s (local.get $count) (i32.const 0)) (then (return (i32.const 0))))
+    (memory.copy (i32.add (local.get $p) (i32.const 16)) (global.get $GDI_REGION_WORK)
+      (i32.shl (local.get $count) (i32.const 4)))
+    (i64.store (local.get $p) (i64.const 0))
+    (i64.store offset=8 (local.get $p) (i64.const 0))
+    (if (local.get $count)
       (then
-        (i32.store (local.get $p) (local.get $l))
-        (i32.store offset=4 (local.get $p) (local.get $t))
-        (i32.store offset=8 (local.get $p) (local.get $r))
-        (i32.store offset=12 (local.get $p) (local.get $b)))
-      (else
-        (if (i32.lt_s (local.get $l) (i32.load (local.get $p)))
-          (then (i32.store (local.get $p) (local.get $l))))
-        (if (i32.lt_s (local.get $t) (i32.load offset=4 (local.get $p)))
-          (then (i32.store offset=4 (local.get $p) (local.get $t))))
-        (if (i32.gt_s (local.get $r) (i32.load offset=8 (local.get $p)))
-          (then (i32.store offset=8 (local.get $p) (local.get $r))))
-        (if (i32.gt_s (local.get $b) (i32.load offset=12 (local.get $p)))
-          (then (i32.store offset=12 (local.get $p) (local.get $b))))))
-    (i32.store8 (call $update_flag_addr_for_slot (local.get $slot)) (i32.const 1)))
+        (memory.copy (local.get $p) (global.get $GDI_REGION_WORK) (i32.const 16))
+        (local.set $i (i32.const 1))
+        (block $done (loop $bbox
+          (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+          (local.set $q (i32.add (global.get $GDI_REGION_WORK) (i32.shl (local.get $i) (i32.const 4))))
+          (if (i32.lt_s (i32.load (local.get $q)) (i32.load (local.get $p)))
+            (then (i32.store (local.get $p) (i32.load (local.get $q)))))
+          (if (i32.lt_s (i32.load offset=4 (local.get $q)) (i32.load offset=4 (local.get $p)))
+            (then (i32.store offset=4 (local.get $p) (i32.load offset=4 (local.get $q)))))
+          (if (i32.gt_s (i32.load offset=8 (local.get $q)) (i32.load offset=8 (local.get $p)))
+            (then (i32.store offset=8 (local.get $p) (i32.load offset=8 (local.get $q)))))
+          (if (i32.gt_s (i32.load offset=12 (local.get $q)) (i32.load offset=12 (local.get $p)))
+            (then (i32.store offset=12 (local.get $p) (i32.load offset=12 (local.get $q)))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $bbox)))))
+    (i32.store8 (call $update_flag_addr_for_slot (local.get $slot)) (local.get $count))
+    (i32.const 1))
+
+  (func $update_invalidate_rect (param $hwnd i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32)
+    (if (i32.eqz (call $update_apply_rect (local.get $hwnd) (local.get $l) (local.get $t)
+          (local.get $r) (local.get $b) (i32.const 2)))
+      (then (unreachable))))
+
+  ;; Copy exact pending damage into an existing HRGN. No callbacks or handles
+  ;; are retained; the caller's output remains a snapshot after later changes.
+  (func $update_copy_rgn (param $hwnd i32) (param $hrgn i32) (result i32)
+    (local $slot i32) (local $record i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (local.set $record (call $gdi_rgn_record (local.get $hrgn)))
+    (if (i32.or (i32.lt_s (local.get $slot) (i32.const 0)) (i32.eqz (local.get $record)))
+      (then (return (i32.const 0))))
+    (call $gdi_rgn_set_buffer (local.get $record)
+      (i32.add (call $update_rect_addr_for_slot (local.get $slot)) (i32.const 16))
+      (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))))
+
+  ;; Intersect the already prepared USER clip with this window's exact bands.
+  ;; set_buffer copies the sweep result, so clearing pending damage cannot
+  ;; affect an in-flight DC, including across nested erase/paint callbacks.
+  (func $update_clip_dc (param $hwnd i32) (param $hdc i32) (result i32)
+    (local $slot i32) (local $record i32) (local $count i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (local.set $record (call $gdi_rgn_record (call $gdi_dc_system_clip_handle (local.get $hdc))))
+    (if (i32.or (i32.lt_s (local.get $slot) (i32.const 0)) (i32.eqz (local.get $record)))
+      (then (return (i32.const 0))))
+    (local.set $count (call $gdi_rgn_boolean_sweep
+      (call $gdi_rgn_bands (local.get $record)) (i32.load offset=28 (local.get $record))
+      (i32.add (call $update_rect_addr_for_slot (local.get $slot)) (i32.const 16))
+      (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot))) (i32.const 1)))
+    (if (i32.lt_s (local.get $count) (i32.const 0)) (then (return (i32.const 0))))
+    (call $gdi_rgn_set_buffer (local.get $record) (global.get $GDI_REGION_WORK) (local.get $count)))
 
   ;; Client size for the paint paths: the recorded client rect when there is
   ;; one, and only then the host. Same reasoning as $client_rect_wh_packed —
@@ -5133,37 +5188,24 @@
         (i32.store offset=12 (local.get $dst) (i32.load offset=12 (local.get $p)))))
     (i32.const 1))
 
-  ;; Bounding-rect approximation of ValidateRect. Full validation clears the
-  ;; WAT update state; partial validation only shrinks simple edge strips.
+  ;; Existing internal callers interpret only 0/1. They must not mistake a
+  ;; capacity failure for an empty region and discard its paint notification.
   (func $update_validate_rect (param $hwnd i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32) (result i32)
-    (local $slot i32) (local $p i32) (local $ul i32) (local $ut i32) (local $ur i32) (local $ub i32)
+    (local $empty i32)
+    (local.set $empty (call $update_try_validate_rect (local.get $hwnd) (local.get $l) (local.get $t)
+      (local.get $r) (local.get $b)))
+    (if (i32.lt_s (local.get $empty) (i32.const 0)) (then (unreachable)))
+    (local.get $empty))
+
+  ;; Exact subtraction; 1 means empty, 0 still pending, -1 capacity failure.
+  (func $update_try_validate_rect (param $hwnd i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32) (result i32)
+    (local $slot i32)
     (local.set $slot (call $wnd_table_find (local.get $hwnd)))
     (if (i32.eq (local.get $slot) (i32.const -1)) (then (return (i32.const 1))))
-    (if (i32.eqz (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot))))
-      (then (return (i32.const 1))))
-    (local.set $p (call $update_rect_addr_for_slot (local.get $slot)))
-    (local.set $ul (i32.load (local.get $p)))
-    (local.set $ut (i32.load offset=4 (local.get $p)))
-    (local.set $ur (i32.load offset=8 (local.get $p)))
-    (local.set $ub (i32.load offset=12 (local.get $p)))
-    (if (i32.and
-          (i32.and (i32.le_s (local.get $l) (local.get $ul))
-                   (i32.le_s (local.get $t) (local.get $ut)))
-          (i32.and (i32.ge_s (local.get $r) (local.get $ur))
-                   (i32.ge_s (local.get $b) (local.get $ub))))
-      (then
-        (call $update_clear_hwnd (local.get $hwnd))
-        (return (i32.const 1))))
-    (if (i32.and (i32.le_s (local.get $l) (local.get $ul))
-                 (i32.and (i32.ge_s (local.get $r) (local.get $ur))
-                          (i32.le_s (local.get $t) (local.get $ut))))
-      (then
-        (if (i32.gt_s (local.get $b) (local.get $ut))
-          (then (i32.store offset=4 (local.get $p) (local.get $b))))))
-    (if (call $update_rect_is_empty_slot (local.get $slot))
-      (then (call $update_clear_hwnd (local.get $hwnd))))
-    (select (i32.const 0) (i32.const 1)
-      (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))))
+    (if (i32.eqz (call $update_apply_rect (local.get $hwnd) (local.get $l) (local.get $t)
+          (local.get $r) (local.get $b) (i32.const 4)))
+      (then (return (i32.const -1))))
+    (i32.eqz (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))))
 
   ;; $invalidate_hwnd(hwnd): mark $hwnd dirty so a WM_PAINT gets delivered on
   ;; the next GetMessageA cycle. For the main top-level, GetMessageA reads

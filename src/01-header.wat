@@ -1718,8 +1718,9 @@
   ;; its own", so the default handler must leave it alone.
   (global $WND_CLASS_CURSOR_TABLE i32 (region.addr $WND_CLASS_CURSOR_TABLE 0))
   (global $WND_CLASS_CURSOR_TABLE_SIZE i32 (region.size $WND_CLASS_CURSOR_TABLE))
-  ;; UPDATE_RECT / UPDATE_FLAGS: WAT-owned Win32 update-region state. We store
-  ;; a bounding RECT per hwnd slot; JS is only asked to schedule canvas work.
+  ;; UPDATE_RECT / UPDATE_FLAGS: each slot holds a bbox plus 208 canonical
+  ;; band RECTs; its byte is the band count (0..208), also the dirty predicate.
+  ;; Slot reset invalidates the bands by zeroing this count. No HRGN is owned.
   (global $UPDATE_RECT    i32 (region.addr $UPDATE_RECT 0))
   (global $UPDATE_RECT_SIZE i32 (region.size $UPDATE_RECT))
   (global $UPDATE_FLAGS   i32 (region.addr $UPDATE_FLAGS 0))

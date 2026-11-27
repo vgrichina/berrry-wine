@@ -263,10 +263,11 @@
 
   ;; 1266: GetUpdateRgn(hWnd, hRgn, bErase) — copy updateRgn into hRgn.
   (func $handle_GetUpdateRgn (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $rv i32) (local $rect i32) (local $hdc i32)
+    (local $rv i32) (local $rect i32) (local $hdc i32) (local $kind i32)
     (local.set $rect (call $paint_scratch_take))
     (local.set $rv (call $update_get_rect (local.get $arg0) (local.get $rect)))
-    (if (i32.and (i32.ne (local.get $rv) (i32.const 0)) (i32.ne (local.get $arg1) (i32.const 0)))
+    (if (i32.and (i32.ne (global.get $code16) (i32.const 0))
+          (i32.and (i32.ne (local.get $rv) (i32.const 0)) (i32.ne (local.get $arg1) (i32.const 0))))
       (then
         (drop (call $gdi_rgn_set_rect
           (local.get $arg1)
@@ -282,22 +283,18 @@
         (i32.store offset=0 (global.get $reg_base) (select (i32.const 1) (i32.const 0) (local.get $rv)))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
-    ;; Win32 returns a region type: SIMPLEREGION (2) for the one rectangle we
-    ;; track, NULLREGION (1) when nothing is pending. ERROR (0) is reserved for
-    ;; a bad window, and Storm treats anything else as pending content.
+    ;; Win32 returns canonical region complexity, including COMPLEXREGION.
     (if (i32.eqz (call $wnd_table_get (local.get $arg0)))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
-    ;; A clean Win32 window still copies its empty update region to hRgn.
-    (if (i32.eqz (local.get $rv))
-      (then (drop (call $gdi_rgn_set_rect (local.get $arg1)
-        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))))
+    ;; A clean Win32 window also replaces the destination with an empty region.
+    (local.set $kind (call $update_copy_rgn (local.get $arg0) (local.get $arg1)))
     ;; Unlike BeginPaint this query does not validate damage. Erase only an
     ;; outstanding marked request, using the snapshotted update/system clip.
     ;; Copying hRgn above also keeps nested queries from replacing our output.
-    (if (i32.and (i32.ne (local.get $rv) (i32.const 0))
+    (if (i32.and (i32.gt_u (local.get $kind) (i32.const 1))
           (i32.and (i32.ne (local.get $arg2) (i32.const 0))
             (i32.ne (i32.and (call $nc_flags_test (local.get $arg0)) (i32.const 2)) (i32.const 0))))
       (then
@@ -305,14 +302,11 @@
         (if (local.get $hdc)
           (then
             (call $dc_apply_client_clip (local.get $hdc) (local.get $arg0))
-            (drop (call $gdi_dc_system_clip_rect (local.get $hdc)
-              (load.field PaintRect left (local.get $rect))
-              (load.field.memarg PaintRect top (local.get $rect))
-              (load.field.memarg PaintRect right (local.get $rect))
-              (load.field.memarg PaintRect bottom (local.get $rect)) (i32.const 1)))
-            (drop (call $paint_send_erase (local.get $arg0) (local.get $hdc)))
+            (if (call $update_clip_dc (local.get $arg0) (local.get $hdc))
+              (then (drop (call $paint_send_erase (local.get $arg0) (local.get $hdc))))
+              (else (local.set $kind (i32.const 0))))
             (drop (call $host_release_dc (local.get $hdc)))))))
-    (i32.store offset=0 (global.get $reg_base) (select (i32.const 2) (i32.const 1) (local.get $rv)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $kind))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
 
@@ -781,12 +775,17 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
         (local.set $t (load.field.memarg Rect top (local.get $wa)))
         (local.set $r (load.field.memarg Rect right (local.get $wa)))
         (local.set $b (load.field.memarg Rect bottom (local.get $wa)))
-        (local.set $empty (call $update_validate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))))
+        (local.set $empty (call $update_try_validate_rect (local.get $arg0) (local.get $l) (local.get $t) (local.get $r) (local.get $b))))
       (else
         ;; NULL validates the entire update region, independent of host
         ;; geometry (which may belong to another instance during callbacks).
         (call $update_clear_hwnd (local.get $arg0))
         (local.set $empty (i32.const 1))))
+    (if (i32.lt_s (local.get $empty) (i32.const 0))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+        (return)))
     (if (local.get $empty)
       (then
         (call $paint_flag_clear_hwnd (local.get $arg0))

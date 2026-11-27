@@ -857,13 +857,14 @@
             (i32.or (global.get $code16) (local.get $win16_bridge)))
           (local.get $partial))
       (then
-        (drop (call $gdi_dc_system_clip_rect
-          (local.get $hdc)
-          (i32.load (local.get $wa))
-          (i32.load offset=4 (local.get $wa))
-          (i32.load offset=8 (local.get $wa))
-          (i32.load offset=12 (local.get $wa))
-          (i32.const 1))))) ;; RGN_AND
+        (if (i32.eqz (call $update_clip_dc (local.get $arg0) (local.get $hdc)))
+          (then
+            ;; Clip capacity/allocation failure must leave pending damage
+            ;; intact and must never expose an unclipped painting DC.
+            (drop (call $host_release_dc (local.get $hdc)))
+            (if (local.get $hdc) (then (call $host_paint_end (local.get $arg0))))
+            (call $gs32 (local.get $arg1) (i32.const 0))
+            (return (i32.const 0))))))
     ;; Snapshot damage into PAINTSTRUCT/DC, then validate before entering any
     ;; callback. UpdateWindow from inside WM_PAINT must not recursively paint
     ;; this same damage. Later invalidations belong to a new paint cycle and

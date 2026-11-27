@@ -1585,7 +1585,15 @@
   ;; that shortcut is gone and its BeginPaint now owns the far callback.
   (func $invalidate_rect_core (param $hwnd i32)
     (param $l i32) (param $t i32) (param $r i32) (param $b i32) (param $erase i32)
-    (call $update_invalidate_rect (local.get $hwnd) (local.get $l) (local.get $t) (local.get $r) (local.get $b))
+    (if (i32.eqz (call $invalidate_rect_try_core (local.get $hwnd)
+          (local.get $l) (local.get $t) (local.get $r) (local.get $b) (local.get $erase)))
+      (then (unreachable))))
+
+  (func $invalidate_rect_try_core (param $hwnd i32)
+    (param $l i32) (param $t i32) (param $r i32) (param $b i32) (param $erase i32) (result i32)
+    (if (i32.eqz (call $update_apply_rect (local.get $hwnd) (local.get $l) (local.get $t)
+          (local.get $r) (local.get $b) (i32.const 2)))
+      (then (return (i32.const 0))))
     (if (local.get $erase)
       (then
         (call $nc_flags_set (local.get $hwnd) (i32.const 2))
@@ -1594,7 +1602,8 @@
     (if (i32.eq (local.get $hwnd) (global.get $main_hwnd))
       (then (global.set $paint_pending (i32.const 1)))
       (else (call $paint_flag_set (local.get $hwnd))))
-    (call $host_invalidate (local.get $hwnd)))
+    (call $host_invalidate (local.get $hwnd))
+    (i32.const 1))
 
   ;; 115: InvalidateRect(hwnd, lprc, bErase). lprc=NULL → full client rect.
   (func $handle_InvalidateRect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
@@ -1615,9 +1624,9 @@
         (local.set $l (i32.const 0)) (local.set $t (i32.const 0))
         (local.set $r (i32.and (local.get $cs) (i32.const 0xFFFF)))
         (local.set $b (i32.shr_u (local.get $cs) (i32.const 16)))))
-    (call $invalidate_rect_core (local.get $arg0)
-      (local.get $l) (local.get $t) (local.get $r) (local.get $b) (local.get $arg2))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=0 (global.get $reg_base)
+      (call $invalidate_rect_try_core (local.get $arg0)
+        (local.get $l) (local.get $t) (local.get $r) (local.get $b) (local.get $arg2)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
 
