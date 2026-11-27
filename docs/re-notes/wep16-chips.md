@@ -75,3 +75,43 @@ Run the maintained regression with:
 ```sh
 node test/test-win16-wep4-gameplay.js chips
 ```
+
+## Keyboard after a board click — 2026-11-27
+
+The September observation that a board click transfers keyboard focus to
+`BoardClass` does **not** reproduce on current main. On commit
+`5733f5c9615b0845f89b917489765b0cd5c444e5`, with published module SHA-256
+`11a470569b6decdc5cd9527ca1513d23c156bdd6cdf6a9faddf5271e2e162cff`,
+ordinary Enter at 50/51 followed by an ordinary board click at (200,310) at
+batch 100 sends mouse messages to `BoardClass` (HWND `0x10002`) while focus
+stays on `MainClass` (`0x10001`). Right at batch 170 routes to that main
+window. Bounded Win16 tracing records the actual `USER.114 DISPATCHMESSAGE`
+argument as `WM_KEYDOWN`, wParam `0x27`, Win16 HWND `0x108`, matching the
+main-window Enter route. The guest main procedure handles arrows at segment
+2:0x2540 (Right branch 2:0x25ea); the board procedure at 2:0x274e handles
+paint, timer and left-button-down, with other messages sent to DefWindowProc.
+
+Matched runs use the maintained test's deterministic clock, batch size and
+board ROI. Enter-only stays still (0 changed board pixels); Enter plus Right
+at 170 changes 30,516 pixels at 280. With the board click, the no-arrow arm
+already changes 26,164 pixels from 150 to 280. Adding Right changes only 353
+pixels relative to that control at 280, and both arms have identical board
+pixels at 500. That early motion remains dominated by click steering.
+
+A second matched pair waits until batch 550 before measuring, then presses
+Right at 600, captures at 680, releases at 690 and captures at 900. Both
+starting boards match exactly. The no-arrow board stays unchanged through
+900; the Right arm differs by 32,429 pixels at 680 and 32,078 at 900. Selected
+captures show horizontal scrolling after the settled click; routing and
+Win16 dispatch evidence independently confirm the key's recipient. Thus
+keyboard movement after this ordinary board click works on the tested build.
+No emulator input/focus fix is justified, and all existing test assertions
+remain unchanged. The original `test/test-win16-wep4-gameplay.js chips` passes.
+This establishes current emulator behavior, not Windows equivalence or native
+correctness of click/keyboard priority; no Windows or Wine reference was used.
+
+Evidence: `scratch/runs/20261127-chips-keyboard-after-click-root/` contains
+commands, compressed bounded traces, routing extracts, selected captures,
+pixel comparisons, module identity/recovery recipe and `REPORT.md`.
+The initial unbounded trace attempt was stopped for excessive log growth;
+its finite termination receipt is retained and it supplies no gameplay claim.

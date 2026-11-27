@@ -30,16 +30,17 @@ for (const p of [dialogPng, typedPng, afterPng]) {
 }
 
 const inputSpec = [
-  '50:0x111:103',                         // Game > Select Game
+  '50:keydown:114',                       // F3: Game > Select Game
+  '55:keyup:114',
   '80:wait-title:Game_Number:400',
   `100:png:${dialogPng}`,
   '120:keypress:49',                      // "1" replaces selected default text
   '130:keypress:50',                      // "2"
   `140:png:${typedPng}`,
-  // Real mouse click on OK. The button is x 123..183, y 176..198 -- this
-  // used to be 150,200, which stopped landing on it when the dialog DLU
-  // height was corrected from 7/4 to 13/8 and everything moved up ~13px.
-  '160:click:153:187',
+  // Real renderer mouse click on OK. Registered FreeCell's dlg-dump reports
+  // id=1 at screen=147,238 wh=60,23; click its center (177,249).
+  // dlg-click sends control messages directly and skips this hit-test.
+  '160:click:177:249',
   `280:png:${afterPng}`,
   '300:slot-count:after',
   '320:stop',
