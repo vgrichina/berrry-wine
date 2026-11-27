@@ -609,7 +609,13 @@ replaces the order listed below where they differ.
 0. Spec, generator, ring, null executor and dump tool. **Done.**
 1. Glide. **Done.**
 2. D3D9.
-3. D3DIM. **Done** (D2a-D2c; the software arm moves in D4).
+3. D3DIM. **Done** (D2a-D2c; the software arm moves in D4). Since D7
+   (2026-11-27), a D3DIM present to a 16-bit 565 primary carries a gamma
+   LUT even with no ramp. The LUT folds in the CPU presenter's 565
+   quantize-and-widen, so the GPU frame equals the frame a CPU present of
+   the DIB shows; the producer chooses it and the executors see only a LUT.
+   Opaque GDI blits onto a deferred GetDC upload their rect instead of
+   reading the target back. Status: gpu-stream-v2-migration.md, D7.
 4. OpenGL.
 
 Every step gets a browser fps A/B and a pixel comparison against the commit

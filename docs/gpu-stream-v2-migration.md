@@ -226,9 +226,31 @@ Without this, every new backend would have to reimplement the 846 lines of
       - MW3@8000: 55 readbacks → 3 (51 Locks are whole-surface REP MOVS overwrites, discarded), md5 equal to eager at 4 budgets.
       - gta2_demo@8000: 90 Lock readbacks → 0 (180/180 lazy Locks untouched).
     - GPU Flip for any chain length (steps 1). `$d3g_flip` rotates every member's DIB as the CPU Flip does. Re-Volt's triple buffer took the CPU path with one cpuPresent readback per Flip. At 55 s: 25407 readbacks (1.8 GB) → 537 (getDC 531), and 0 → 27077 GPU presents.
-    - gta2 and Re-Volt pixels are equal to the eager/CPU path at RGB565 precision only. The GPU present shows the 8-bit target, not the 16-bit surface's quantized DIB (maxDelta 7). The same holds for every app already GPU-presenting a 16-bit chain. A quantize-on-present for 16-bit primaries is open.
+    - gta2 and Re-Volt pixels are equal to the eager/CPU path at RGB565 precision only. The GPU present shows the 8-bit target, not the 16-bit surface's quantized DIB (maxDelta 7). The same holds for every app already GPU-presenting a 16-bit chain. A quantize-on-present for 16-bit primaries is open. (D7: done, see below.)
     - Forsaken's D3 pixel diff is not a rendering difference. Every frame of batches 410-428 on the branch is md5-identical to some base frame: the menu animation cycles through 6 states. A control build, whose only change is an 8 KB larger producer block, diverges from the branch the same way (1357 px, the same bbox). Guest heap addresses shift, the guest's work per batch shifts, and so timeGetTime differs at the same call index.
     - GPU→GPU COPY for Blt was not done: no route measured issues a bltSrc readback once Locks are lazy. MW3's 2-3 disappear.
+
+- **D7. GDI on deferred DCs, 565 present, lazy-Lock browser smoke (branch gps/d7 = gps/d6 + one commit).**
+  - **Status (2026-11-27): done.** Evidence: `scratch/runs/20261127-gps-d7/`.
+    - Opaque GDI blits onto a deferred GetDC no longer land the target. `$gdi_blt_dst_descriptor` (09a4) marks a BitBlt/StretchBlt whose ROP3 reads no destination pixel (0x00, 0x33, 0xCC, 0xFF). `$d3dim_gps_gdi_access` then holds the target instead of reading it back. If the blit is unclipped (`$gdi_dc_clip_none`), has a positive extent, has a source rect inside the source and runs while the window-update lock is open, `$d3dim_gps_gdi_rect_written` uploads the written rect and subtracts it from the dirty rect R (stat 50). Otherwise the held target lands before the raster runs (stat 51). Any other GDI access lands it as before (site getDC).
+      - Re-Volt (55 s route): getDC readbacks 531 → 0, total 537 → 6, 0.0282 → 0.0003 per frame, frames 19016 in both arms. Re-Volt StretchBlts a full-screen memory bitmap onto its back buffer with SRCCOPY on each GetDC.
+      - Survey of the other routes: dx_flip3dtl's 5225 deferred GetDCs are all text, so they were already free. mw3, gta2_demo and dx_boids issue no GetDC on a GPU target.
+      - Test: `test/test-d3dim-gps-gdi-opaque.js`.
+    - Quantize-on-present for 16-bit primaries. `$d3g_present` passes q = (primary bpp 16 and fmt 565) to `$d3g_gamma`. That LUT maps each channel the way the CPU page presenter widens the quantized DIB: `floor((i>>3)*255/31)` for R and B, `floor((i>>2)*255/63)` for G, with the gamma ramp applied at that index when one is set. It reuses the PRESENT record's existing gamma texture, so the executors are unchanged and both are exact.
+      - Every D3DIM GPU present of a 565 chain now equals the eager CPU path: gta2_demo@7999 is byte-identical to d6's eager capture.
+      - There were two 565 widenings: JS floor and WAT upload/park bit replication. They no longer show through a present.
+      - Cost: one 1 KB LUT upload when the key changes.
+      - Test: the quantize case in `test/test-d3dim-gpu-present.js`.
+    - Lazy-Lock default, smoked in the browser (Threads, `dev-server --isolate`, SwiftShader WebGL), with no page errors:
+      - dx_flip3dtl: 0 readbacks per frame;
+      - gta2_demo gameplay: 2 readbacks in about 600 frames. Its menu takes 1 lazy first-touch readback per frame, because the guest touches its locked back buffer there;
+      - nfs2se_glide_demo (Glide): 0;
+      - quake2_demo (GL): 0.
+    - `tools/audit-d3dim-lazy-sync.js` was deleted. It predated GPS and faked readback through `gpu_gl_call`.
+  - Open:
+    - D3D9 and GL 16-bit back buffers are not quantized. Their PRESENT gamma is 0 or a ramp only.
+    - A clipped or update-locked opaque blit still lands.
+    - Opaque PatBlt/FillRect onto a deferred DC are not covered: only BitBlt and StretchBlt take the hold.
 
 **Risks:**
 

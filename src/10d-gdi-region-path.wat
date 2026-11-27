@@ -3799,6 +3799,16 @@
           (then (return (i32.const 0))))))
     (i32.const 1))
 
+  ;; 1 when nothing but the surface bounds clips $hdc: no application clip
+  ;; region and no system clip, so a rect output writes every pixel of its
+  ;; rect inside the surface ($gdi_blt_opaque_ok).
+  (func $gdi_dc_clip_none (param $hdc i32) (result i32)
+    (local $entry i32)
+    (local.set $entry (call $gdi_dc_clip_entry (local.get $hdc) (i32.const 0)))
+    (if (local.get $entry) (then
+      (if (i32.load offset=4 (local.get $entry)) (then (return (i32.const 0))))))
+    (i32.eqz (call $gdi_dc_system_clip_handle (local.get $hdc))))
+
   (func $gdi_dc_clip_point_visible (param $hdc i32) (param $x i32) (param $y i32) (result i32)
     (call $gdi_dc_clip_device_point_visible (local.get $hdc)
       (call $gdi_dc_clip_map_x (local.get $hdc) (local.get $x))

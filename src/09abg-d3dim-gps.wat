@@ -2132,25 +2132,49 @@
 
   ;; ---- Presentation ------------------------------------------------------
   ;; DirectDraw's process gamma ramp as a 256x1 lookup texture (0 = identity).
-  (func $d3g_gamma (param $pb i32) (result i32)
+  ;; $q = 1: the primary is RGB565, so the CPU path would show the frame as
+  ;; its 565 DIB ($d3g_rgba_to_row truncates each channel) widened by the
+  ;; page presenter (lib/host-imports.js _rgb5to8 / _rgb6to8: i * 255 / max,
+  ;; floored), then the gamma ramp. The table folds that quantization in:
+  ;; entry c = ramp(floor((c >> 3) * 255 / 31)) for red and blue and
+  ;; ramp(floor((c >> 2) * 255 / 63)) for green, so a GPU PRESENT of the
+  ;; 8-bit target shows exactly the pixels the guest-visible 16-bit surface
+  ;; holds. A target uploaded from a 565 DIB (bit replication) maps back to
+  ;; the same 565 value, so it is shown exactly as the CPU path shows it too.
+  ;; No executor change: both apply PRESENT's gamma table per channel.
+  ;; Cache: +52 id, +56 ramp generation, +60 not identity, +76 the key the
+  ;; table was built for (0 none, else 1 + q + 2 * no ramp).
+  (func $d3g_gamma (param $pb i32) (param $q i32) (result i32)
     (local $guest i32) (local $wa i32) (local $gen i32) (local $i i32) (local $r i32) (local $g i32) (local $b i32)
-    (local $ident i32) (local $pos i32) (local $dst i32) (local $id i32)
+    (local $ident i32) (local $pos i32) (local $dst i32) (local $id i32) (local $key i32)
+    (local $ir i32) (local $ig i32)
     (local.set $guest (i32.atomic.load offset=28 (global.get $SHARED_COUNTERS)))
-    (if (i32.eqz (local.get $guest)) (then (return (i32.const 0))))
+    (if (i32.and (i32.eqz (local.get $guest)) (i32.eqz (local.get $q))) (then (return (i32.const 0))))
     (local.set $gen (i32.atomic.load offset=24 (global.get $SHARED_COUNTERS)))
-    (if (i32.and (i32.ne (i32.load offset=76 (local.get $pb)) (i32.const 0))
-                 (i32.eq (i32.load offset=56 (local.get $pb)) (local.get $gen)))
+    (local.set $key (i32.add (i32.add (i32.const 1) (local.get $q))
+      (select (i32.const 0) (i32.const 2) (local.get $guest))))
+    (if (i32.and (i32.eq (i32.load offset=76 (local.get $pb)) (local.get $key))
+                 (i32.or (i32.eqz (local.get $guest)) (i32.eq (i32.load offset=56 (local.get $pb)) (local.get $gen))))
       (then (return (select (i32.load offset=52 (local.get $pb)) (i32.const 0) (i32.load offset=60 (local.get $pb))))))
-    (i32.store offset=76 (local.get $pb) (i32.const 1))
+    (i32.store offset=76 (local.get $pb) (local.get $key))
     (i32.store offset=56 (local.get $pb) (local.get $gen))
-    (local.set $wa (call $g2w (local.get $guest)))
+    (if (local.get $guest) (then (local.set $wa (call $g2w (local.get $guest)))))
     (local.set $pos (call $d3g_arena (i32.const 1024)))
     (local.set $dst (call $d3g_aptr (local.get $pos)))
     (local.set $ident (i32.const 1))
     (loop $entries
-      (local.set $r (i32.shr_u (i32.load16_u (i32.add (local.get $wa) (i32.shl (local.get $i) (i32.const 1)))) (i32.const 8)))
-      (local.set $g (i32.shr_u (i32.load16_u offset=512 (i32.add (local.get $wa) (i32.shl (local.get $i) (i32.const 1)))) (i32.const 8)))
-      (local.set $b (i32.shr_u (i32.load16_u offset=1024 (i32.add (local.get $wa) (i32.shl (local.get $i) (i32.const 1)))) (i32.const 8)))
+      (local.set $ir (local.get $i))
+      (local.set $ig (local.get $i))
+      (if (local.get $q) (then
+        (local.set $ir (i32.div_u (i32.mul (i32.shr_u (local.get $i) (i32.const 3)) (i32.const 255)) (i32.const 31)))
+        (local.set $ig (i32.div_u (i32.mul (i32.shr_u (local.get $i) (i32.const 2)) (i32.const 255)) (i32.const 63)))))
+      (local.set $r (local.get $ir))
+      (local.set $g (local.get $ig))
+      (local.set $b (local.get $ir))
+      (if (local.get $guest) (then
+        (local.set $r (i32.shr_u (i32.load16_u (i32.add (local.get $wa) (i32.shl (local.get $ir) (i32.const 1)))) (i32.const 8)))
+        (local.set $g (i32.shr_u (i32.load16_u offset=512 (i32.add (local.get $wa) (i32.shl (local.get $ig) (i32.const 1)))) (i32.const 8)))
+        (local.set $b (i32.shr_u (i32.load16_u offset=1024 (i32.add (local.get $wa) (i32.shl (local.get $ir) (i32.const 1)))) (i32.const 8)))))
       (if (i32.or (i32.or (i32.ne (local.get $r) (local.get $i)) (i32.ne (local.get $g) (local.get $i))) (i32.ne (local.get $b) (local.get $i)))
         (then (local.set $ident (i32.const 0))))
       (i32.store (i32.add (local.get $dst) (i32.shl (local.get $i) (i32.const 2)))
@@ -2244,7 +2268,10 @@
       (param $hwnd i32) (param $dx i32) (param $dy i32) (param $primary i32)
     (local $h i32) (local $p i32) (local $seq i32) (local $gamma i32) (local $owner i32)
     (local.set $h (call $d3g_h))
-    (local.set $gamma (call $d3g_gamma (local.get $pb)))
+    ;; Shown as the primary's pixels: an RGB565 primary is quantized.
+    (local.set $gamma (call $d3g_gamma (local.get $pb)
+      (i32.and (i32.eq (load.field DxObject bpp (local.get $primary)) (i32.const 16))
+               (i32.eq (call $dx_surf_fmt_get (local.get $primary)) (i32.const 1)))))
     (call $d3g_present_ready (local.get $pb))
     (call $gps_mark (local.get $h) (i32.load offset=20 (local.get $pb)) (i32.const 0x44334450))
     (i32.store offset=20 (local.get $pb) (i32.add (i32.load offset=20 (local.get $pb)) (i32.const 1)))
@@ -3093,7 +3120,90 @@
       (if (i32.and (i32.load offset=32 (local.get $t)) (i32.const 16)) (then
         (if (global.get $gdi_dx_bounded)
           (then (global.set $d3g_gdi_text_t (local.get $t)))
-          (else (call $d3g_gdi_land (local.get $pb) (local.get $t))))))))
+          (else
+            (if (global.get $gdi_dx_opaque)
+              (then (global.set $d3g_gdi_held_t (local.get $t)))
+              (else (call $d3g_gdi_land (local.get $pb) (local.get $t))))))))))
+    (call $lock_release (global.get $D3DIM_GPS)))
+
+  ;; ---- Opaque GDI blits onto a deferred DC ------------------------------
+  ;; BitBlt / StretchBlt with a ROP that reads no destination pixel
+  ;; (BLACKNESS, NOTSRCCOPY, SRCCOPY, WHITENESS) write every pixel of their
+  ;; clamped destination rect O when the DC has no clip region and the
+  ;; source rect lies inside the source: the DIB is then exact inside O, so
+  ;; no readback is needed for it. Re-Volt StretchBlts a whole 640x480
+  ;; memory bitmap onto its back buffer's DC this way (one 640x480 readback
+  ;; each, 531 in 55 s). The blit handler sets $gdi_dx_opaque around its
+  ;; destination descriptor, so $d3dim_gps_gdi_access holds the deferred
+  ;; target ($d3g_gdi_held_t) instead of landing it; before the raster call
+  ;; the handler either lands it ($d3dim_gps_gdi_land_held: the old
+  ;; behaviour, nothing written yet) or, when the blit qualifies, lets it
+  ;; run and reports O afterwards ($d3dim_gps_gdi_rect_written): O is
+  ;; uploaded, and the GPU-only rect R loses whatever O covers (all of it:
+  ;; the target is clean). A failed blit lands the target. A source on a
+  ;; deferred target is read through its own descriptor, which lands it.
+  ;; Counted at $D3DIM_GPS+32 (d3dim_gps_stat 50, blits kept on the GPU)
+  ;; and +36 (stat 51, held blits landed because they did not qualify).
+  (global $gdi_dx_opaque (mut i32) (i32.const 0))
+  (global $d3g_gdi_held_t (mut i32) (i32.const 0))
+
+  (func $d3dim_gps_gdi_land_held
+    (local $pb i32) (local $t i32)
+    (local.set $t (global.get $d3g_gdi_held_t))
+    (global.set $d3g_gdi_held_t (i32.const 0))
+    (if (i32.eqz (local.get $t)) (then (return)))
+    (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
+    (call $lock_acquire (global.get $D3DIM_GPS))
+    (if (i32.and (i32.load offset=32 (local.get $t)) (i32.const 16)) (then
+      (i32.atomic.store (region.addr $D3DIM_GPS 36)
+        (i32.add (i32.atomic.load (region.addr $D3DIM_GPS 36)) (i32.const 1)))
+      (call $d3g_gdi_land (local.get $pb) (local.get $t))))
+    (call $lock_release (global.get $D3DIM_GPS)))
+
+  ;; GDI wrote every pixel of [l, r) x [tp, b) of the held target's DIB.
+  (func $d3dim_gps_gdi_rect_written (param $l i32) (param $tp i32) (param $r i32) (param $b i32)
+    (local $pb i32) (local $t i32)
+    (local.set $t (global.get $d3g_gdi_held_t))
+    (global.set $d3g_gdi_held_t (i32.const 0))
+    (if (i32.eqz (local.get $t)) (then (return)))
+    (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
+    (call $lock_acquire (global.get $D3DIM_GPS))
+    (block $out
+      ;; Landed meanwhile (the source was this target): the DIB is the truth.
+      (br_if $out (i32.eqz (i32.and (i32.load offset=32 (local.get $t)) (i32.const 16))))
+      (if (i32.lt_s (local.get $l) (i32.const 0)) (then (local.set $l (i32.const 0))))
+      (if (i32.lt_s (local.get $tp) (i32.const 0)) (then (local.set $tp (i32.const 0))))
+      (if (i32.gt_s (local.get $r) (i32.load offset=8 (local.get $t))) (then (local.set $r (i32.load offset=8 (local.get $t)))))
+      (if (i32.gt_s (local.get $b) (i32.load offset=12 (local.get $t))) (then (local.set $b (i32.load offset=12 (local.get $t)))))
+      (br_if $out (i32.or (i32.le_s (local.get $r) (local.get $l)) (i32.le_s (local.get $b) (local.get $tp))))
+      (call $d3g_upload_target_rect (local.get $pb) (local.get $t) (local.get $l) (local.get $tp)
+        (i32.sub (local.get $r) (local.get $l)) (i32.sub (local.get $b) (local.get $tp)))
+      (i32.atomic.store (region.addr $D3DIM_GPS 32)
+        (i32.add (i32.atomic.load (region.addr $D3DIM_GPS 32)) (i32.const 1)))
+      (br_if $out (i32.eqz (i32.and (i32.load offset=32 (local.get $t)) (i32.const 1))))
+      ;; R minus O, kept a rectangle: O spanning R's width cuts its top or
+      ;; bottom band, O spanning its height its left or right band.
+      (if (i32.and (i32.le_s (local.get $l) (i32.load offset=36 (local.get $t)))
+                   (i32.ge_s (local.get $r) (i32.load offset=44 (local.get $t)))) (then
+        (if (i32.and (i32.le_s (local.get $tp) (i32.load offset=40 (local.get $t)))
+                     (i32.gt_s (local.get $b) (i32.load offset=40 (local.get $t))))
+          (then (i32.store offset=40 (local.get $t) (local.get $b))))
+        (if (i32.and (i32.ge_s (local.get $b) (i32.load offset=48 (local.get $t)))
+                     (i32.lt_s (local.get $tp) (i32.load offset=48 (local.get $t))))
+          (then (i32.store offset=48 (local.get $t) (local.get $tp))))))
+      (if (i32.and (i32.le_s (local.get $tp) (i32.load offset=40 (local.get $t)))
+                   (i32.ge_s (local.get $b) (i32.load offset=48 (local.get $t)))) (then
+        (if (i32.and (i32.le_s (local.get $l) (i32.load offset=36 (local.get $t)))
+                     (i32.gt_s (local.get $r) (i32.load offset=36 (local.get $t))))
+          (then (i32.store offset=36 (local.get $t) (local.get $r))))
+        (if (i32.and (i32.ge_s (local.get $r) (i32.load offset=44 (local.get $t)))
+                     (i32.lt_s (local.get $l) (i32.load offset=44 (local.get $t))))
+          (then (i32.store offset=44 (local.get $t) (local.get $l))))))
+      (if (i32.or (i32.ge_s (i32.load offset=36 (local.get $t)) (i32.load offset=44 (local.get $t)))
+                  (i32.ge_s (i32.load offset=40 (local.get $t)) (i32.load offset=48 (local.get $t))))
+        (then
+          (i32.store offset=32 (local.get $t) (i32.and (i32.load offset=32 (local.get $t)) (i32.const -2)))
+          (i32.store offset=88 (local.get $t) (i32.const 0)))))
     (call $lock_release (global.get $D3DIM_GPS)))
 
   ;; Text is about to write pixel (x, y) of the deferred target
@@ -3333,11 +3443,19 @@
   ;; target re-create, 13 host capture, 14 lazy Lock first touch, 15 other).
   ;; 32 keyed GPU BltFasts, 33 uploaded GPU BltFasts, 34 readback bytes.
   ;; 35 + reason: software declines by reason ($d3g_decline), 35..42.
-  ;; 43 lazy Lock readbacks dropped for a whole-range overwrite.
+  ;; 43 lazy Lock readbacks dropped for a whole-range overwrite. 44, 45
+  ;; texture edge-byte hits / deferred. 46..49 texture-stage stats.
+  ;; 50 opaque GDI blits onto a deferred DC kept on the GPU (no readback),
+  ;; 51 held opaque blits that failed a precondition and landed (region
+  ;; $D3DIM_GPS +32/+36, so they are not in the producer block).
   (func (export "d3dim_gps_stat") (param $i i32) (result i32)
     (local $pb i32)
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
-    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 50))) (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 52))) (then (return (i32.const 0))))
+    ;; 50, 51: opaque GDI blits kept deferred / landed ($d3dim_gps_gdi_rect_written).
+    (if (i32.ge_u (local.get $i) (i32.const 50))
+      (then (return (i32.atomic.load (i32.add (global.get $D3DIM_GPS)
+        (i32.shl (i32.sub (local.get $i) (i32.const 42)) (i32.const 2)))))))
     ;; 46..49: texture-stage stats ($d3g_stage_stat).
     (if (i32.ge_u (local.get $i) (i32.const 46))
       (then (return (i32.load (i32.add (i32.add (local.get $pb) (i32.const 24392))
