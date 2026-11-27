@@ -1804,7 +1804,7 @@
     (local $dst i32) (local $src i32) (local $mask i32) (local $src_hdc i32)
     (local $sx i32) (local $sy i32) (local $mask_bitmap i32)
     (local $mx i32) (local $my i32) (local $rop4 i32)
-    (local $dx i32) (local $dy i32) (local $ok i32) (local $locked i32)
+    (local $dx i32) (local $dy i32) (local $ok i32) (local $locked i32) (local $esp i32)
     (local.set $dst (global.get $GDI_BLIT_DST_DESC))
     (local.set $src (global.get $GDI_BLIT_SRC_DESC))
     (local.set $mask (global.get $GDI_BRUSH_DESC))
@@ -1815,6 +1815,20 @@
     (local.set $mx (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40))))
     (local.set $my (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 44))))
     (local.set $rop4 (call $gl32 (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 48))))
+    ;; With no mask, Microsoft specifies exactly BitBlt with the foreground
+    ;; ROP3 (bits 16..23). Borrow its matching first eight arguments and ROP
+    ;; stack slot, then restore that slot and account for our extra arguments.
+    (if (i32.eqz (local.get $mask_bitmap))
+      (then
+        (local.set $esp (i32.load offset=16 (global.get $reg_base)))
+        (call $gs32 (i32.add (local.get $esp) (i32.const 36))
+          (i32.and (local.get $rop4) (i32.const 0x00FF0000)))
+        (call $handle_BitBlt (local.get $arg0) (local.get $arg1) (local.get $arg2)
+          (local.get $arg3) (local.get $arg4) (local.get $name_ptr))
+        (call $gs32 (i32.add (local.get $esp) (i32.const 36)) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base)
+          (i32.add (local.get $esp) (i32.const 52)))
+        (return)))
     (if (i32.and
           (i32.and (call $gdi_surface_descriptor (local.get $arg0) (local.get $dst))
             (call $gdi_surface_descriptor (local.get $src_hdc) (local.get $src)))
