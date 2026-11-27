@@ -1349,9 +1349,25 @@ GetTopWindow(hWnd) — 1 arg stdcall
   ;; delta and fills exposed strips. lpRect/lpClipRect are client-relative and
   ;; are clipped/intersected host-side.
   (func $handle_ScrollWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_scroll_window
+    (local $copied i32) (local $exposure i32)
+    ;; Keep the native copy, but publish uncovered bands rather than its
+    ;; bounding scroll rectangle. Share ScrollWindowEx's atomic exact union.
+    (local.set $copied (call $gdi_native_scroll_window
         (local.get $arg0) (local.get $arg1) (local.get $arg2)
-        (local.get $arg3) (local.get $arg4) (i32.const 1)))
+        (local.get $arg3) (local.get $arg4) (i32.const 0)))
+    (if (local.get $copied) (then
+      (local.set $exposure (call $scroll_window_ex_outputs
+        (local.get $arg0) (local.get $arg1) (local.get $arg2)
+        (local.get $arg3) (local.get $arg4)
+        (i32.const 0) (i32.const 0) (i32.const 2)))
+      (if (i32.gt_u (local.get $exposure) (i32.const 1)) (then
+        (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
+          (then (global.set $paint_pending (i32.const 1)))
+          (else (call $paint_flag_set (local.get $arg0))))))))
+    ;; The shared helper returns region complexity; this API returns BOOL.
+    (i32.store offset=0 (global.get $reg_base)
+      (i32.and (i32.ne (local.get $copied) (i32.const 0))
+        (i32.ne (local.get $exposure) (i32.const 0))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
 
   ;; 634: AdjustWindowRectEx(lpRect, dwStyle, bMenu, dwExStyle) — 4 args stdcall
