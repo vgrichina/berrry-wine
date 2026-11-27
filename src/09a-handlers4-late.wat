@@ -720,7 +720,7 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
   ;; process work already created by its child layout changes.
   ;; RDW_FRAME/RDW_UPDATENOW/RDW_NOCHILDREN delivery nuances remain deferred.
   (func $handle_RedrawWindow (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $l i32) (local $t i32) (local $r i32) (local $b i32) (local $wa i32) (local $cs i32) (local $empty i32)
+    (local $wa i32) (local $empty i32)
     (local $ok i32)
     (if (i32.eqz (local.get $arg0))
       (then
@@ -751,24 +751,22 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
         (i32.store offset=0 (global.get $reg_base) (local.get $ok))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
-    ;; Preserve the existing validation path: RECT if supplied, else full client.
-    (if (local.get $arg1)
-      (then
-        (local.set $wa (call $g2w (local.get $arg1)))
-        (local.set $l (load.field Rect left (local.get $wa)))
-        (local.set $t (load.field.memarg Rect top (local.get $wa)))
-        (local.set $r (load.field.memarg Rect right (local.get $wa)))
-        (local.set $b (load.field.memarg Rect bottom (local.get $wa))))
-      (else
-        (local.set $cs (call $host_get_window_client_size (local.get $arg0)))
-        (local.set $l (i32.const 0)) (local.set $t (i32.const 0))
-        (local.set $r (i32.and (local.get $cs) (i32.const 0xFFFF)))
-        (local.set $b (i32.shr_u (local.get $cs) (i32.const 16)))))
     (if (i32.and (local.get $arg3) (i32.const 0x8))  ;; RDW_VALIDATE
       (then
-        (local.set $empty
-          (call $update_validate_rect (local.get $arg0)
-            (local.get $l) (local.get $t) (local.get $r) (local.get $b)))
+        ;; HRGN takes precedence even when empty; NULL/NULL selects the client.
+        ;; Both published subtractors return -1 without committing on overflow.
+        (if (i32.or (i32.ne (local.get $arg2) (i32.const 0)) (i32.eqz (local.get $arg1)))
+          (then (local.set $empty (call $update_subtract_region (local.get $arg0) (local.get $arg2))))
+          (else
+            (local.set $wa (call $g2w (local.get $arg1)))
+            (local.set $empty (call $update_try_validate_rect (local.get $arg0)
+              (load.field Rect left (local.get $wa)) (load.field.memarg Rect top (local.get $wa))
+              (load.field.memarg Rect right (local.get $wa)) (load.field.memarg Rect bottom (local.get $wa))))))
+        (if (i32.lt_s (local.get $empty) (i32.const 0))
+          (then
+            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
+            (return)))
         (if (local.get $empty)
           (then
             (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
