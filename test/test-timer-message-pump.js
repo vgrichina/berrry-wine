@@ -51,7 +51,7 @@ async function checkPublicThreadTimers(module) {
   const apis = require('../src/api_table.json');
   const memory = new WebAssembly.Memory({ initial: 8192, maximum: 8192, shared: true });
   const view = new DataView(memory.buffer);
-  const names = ['SetTimer', 'KillTimer', 'PeekMessageA', 'GetMessageA', 'DispatchMessageA'];
+  const names = ['SetTimer', 'KillTimer', 'PeekMessageA', 'GetMessageA', 'DispatchMessageA', 'PostMessageA', 'timeSetEvent'];
   const image = 0x400000, thunk = 0x7500000;
   let now = 0;
   function thread(slot) {
@@ -159,6 +159,80 @@ async function checkPublicThreadTimers(module) {
       [++callbacks, 0, 0x113, timer, now]);
     a.kill(timer);
   }
+  // KillTimer stops future generation; it does not retract a WM_TIMER that
+  // PeekMessage(PM_NOREMOVE) already generated. Nor may replacement rewrite
+  // the queued TIMERPROC address. All registration/pumping/dispatch here uses
+  // public guest thunks; callbacks execute real x86 code.
+  // https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-killtimer
+  // https://devblogs.microsoft.com/oldnewthing/20141205-00/?p=43463
+  const cb2 = cb + 0x100, out2 = out + 0x100;
+  new Uint8Array(memory.buffer, a.wa(cb2), 9).set([0xff, 0x05, ...u32(out2), 0xc2, 0x10, 0]);
+  const wndOut = out + 0x200;
+  new Uint8Array(memory.buffer, a.wa(0x401000), 9).set([0xff, 0x05, ...u32(wndOut), 0xc2, 0x10, 0]);
+  for (const owner of [0, hwnd]) {
+    for (const callback of [0, cb]) {
+      now += 1000;
+      const timer = a.set(owner ? id : 0, 100, callback, owner);
+      now += 100;
+      const expected = [owner, 0x113, timer, callback];
+      check('PM_NOREMOVE generates timer before kill', a.pump(0), expected);
+      now += 225;
+      check('repeated PM_NOREMOVE retains one message', a.pump(0), expected);
+      check('kill generated timer', a.kill(timer, owner), 1);
+      check('queued timer stays with its thread', b.pump(), null);
+      check('generated timer survives kill', a.pump(1, true), expected);
+      if (callback) {
+        a.call('DispatchMessageA', [a.msg]);
+        check('stale TIMERPROC runs after kill', view.getUint32(a.wa(out), true), ++callbacks);
+      } else if (owner) {
+        a.call('DispatchMessageA', [a.msg]);
+        check('stale WM_TIMER reaches WndProc after kill', view.getUint32(a.wa(wndOut), true), 1);
+      }
+      check('killed timer has no duplicate', a.pump(), null);
+      now += 1000;
+      check('killed timer cannot generate again', a.pump(), null);
+    }
+    now += 1000;
+    const timer = a.set(owner ? id : 0, 100, cb, owner);
+    now += 100;
+    check('old callback generated before replacement', a.pump(0), [owner, 0x113, timer, cb]);
+    now += 25;
+    check('replacement retains identity', a.set(timer, 200, cb2, owner), timer);
+    check('replacement preserves queued old callback', a.pump(), [owner, 0x113, timer, cb]);
+    a.call('DispatchMessageA', [a.msg]);
+    check('old callback runs once after replacement', view.getUint32(a.wa(out), true), ++callbacks);
+    check('new callback did not run early', view.getUint32(a.wa(out2), true), owner ? 1 : 0);
+    check('replacement starts a fresh deadline', a.pump(), null);
+    now += 199;
+    check('replacement not due one ms early', a.pump(), null);
+    now += 1;
+    check('replacement generates new callback', a.pump(), [owner, 0x113, timer, cb2]);
+    // A retrieved MSG also remains dispatchable after its timer is destroyed.
+    a.kill(timer, owner);
+    a.call('DispatchMessageA', [a.msg]);
+    check('retrieved new callback survives kill', view.getUint32(a.wa(out2), true), owner ? 2 : 1);
+    check('replacement timer stopped', a.pump(), null);
+    now += 1000;
+    const ungenerated = a.set(owner ? id : 0, 100, cb, owner);
+    now += 100;
+    a.kill(ungenerated, owner);
+    check('kill before first peek prevents generation', a.pump(), null);
+    now += 1000;
+    const filtered = a.set(owner ? id : 0, 100, cb, owner);
+    now += 100;
+    check('excluded PeekMessage range does not generate timer',
+      a.call('PeekMessageA', [a.msg, 0, 0x400, 0x400, 0]), 0);
+    a.kill(filtered, owner);
+    check('excluded timer leaves no stale message', a.pump(), null);
+    now += 1000;
+    const posted = a.set(owner ? id : 0, 100, cb, owner);
+    a.call('PostMessageA', [owner, 0x113, posted, cb]);
+    a.kill(posted, owner);
+    check('explicitly posted WM_TIMER survives kill', a.pump(), [owner, 0x113, posted, cb]);
+    a.call('DispatchMessageA', [a.msg]);
+    check('posted stale TIMERPROC runs after kill', view.getUint32(a.wa(out), true), ++callbacks);
+    check('posted stale message removed once', a.pump(), null);
+  }
   // A callback-shaped lParam on an ordinary NULL message is still a no-op,
   // as is WM_TIMER without TIMERPROC. Never route either into a WndProc.
   for (const message of [0, 0x401, 0x113]) {
@@ -167,7 +241,23 @@ async function checkPublicThreadTimers(module) {
     check('ordinary NULL dispatch returns zero', a.call('DispatchMessageA', [a.msg]), 0);
     check('ordinary NULL dispatch does not invoke callback', view.getUint32(a.wa(out), true), callbacks);
   }
-  console.log('PASS public USER timers: thread isolation, allocation, windows, callback, phase, message pumping');
+  // The shared scanner also serves the cooperative multimedia timer path.
+  // Its one-shot must still retire on REMOVE, never on the new USER
+  // generation mode used by PM_NOREMOVE.
+  now += 1000;
+  const mm = a.call('timeSetEvent', [100, 0, cb, 123, 0]);
+  assert.ok(mm);
+  now += 100;
+  for (const remove of [0, 0, 1]) {
+    check('multimedia one-shot peek/remove',
+      a.call('PeekMessageA', [a.msg, 0, 0x7ff0, 0x7ff0, remove]), 1);
+    check('multimedia one-shot payload',
+      Array.from({ length: 4 }, (_, i) => view.getUint32(a.wa(a.msg) + i * 4, true)),
+      [123, 0x7ff0, mm, cb]);
+  }
+  check('multimedia one-shot retired once',
+    a.call('PeekMessageA', [a.msg, 0, 0x7ff0, 0x7ff0, 1]), 0);
+  console.log('PASS public USER timers: thread isolation, allocation, cancellation/replacement, stale dispatch, phase, message pumping; multimedia peek/remove');
   function u32(v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, v >>> 24]; }
 
 }

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "6813328b7222f5882869508beb8d58d099dd5954a28edfe103a2f60f6a141d34",
+      "sha256": "7280d76439c01a272b0a80d20169c1a7dd4cb663cf76a2667707c360d1cb6a59",
+      "reason": "Review 20261127 timer cancellation contract: PM_NOREMOVE requests USER timer generation mode 2. The scanner snapshots hwnd/id/TIMERPROC under LOCK_WND, advances the period, releases the lock, then retains that MSG in the existing owning-thread USER queue. KillTimer and replacement stop/reset future generation without retracting the queued snapshot. DispatchMessage continues to use MSG.lParam, with unchanged EIP targets, callback frames, stdcall restoration and ownership writes. Readiness probes remain nonconsuming; multimedia one-shots still retire only on removal. Public guest thunk regression covers NULL/window timers, repeated peeks, cross-thread nonconsumption, cancellation before/after generation, replacement deadlines and both old/new real x86 callback dispatch after cancellation; multimedia peek/remove also passes. General callback ownership remains pending."
+    }
+  ]
+}

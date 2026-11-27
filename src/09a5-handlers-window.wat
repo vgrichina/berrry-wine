@@ -6629,7 +6629,9 @@
             (i32.and (i32.le_u (local.get $arg2) (i32.const 0x7FF0))
                      (i32.ge_u (local.get $arg3) (i32.const 0x7FF0)))))
       (then
-        (if (call $timer_check_due (local.get $arg0) (i32.and (local.get $arg4) (i32.const 1)))
+        (if (call $timer_check_due (local.get $arg0)
+              (select (i32.const 1) (i32.const 2)
+                (i32.and (local.get $arg4) (i32.const 1))))
           (then
             (i32.store offset=0 (global.get $reg_base) (i32.const 1))
             (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))) (return)))))

@@ -572,7 +572,9 @@
                      (local.get $interval)))))))
 
   ;; $timer_check_due(msg_ptr, consume) — scan timer table, fill MSG with first due timer, return 1 if found
-  ;; $consume: 1 = update last_tick (PM_REMOVE/GetMessage), 0 = peek only (PM_NOREMOVE)
+  ;; $consume: 0 = readiness probe, 1 = retrieve, 2 = generate for PM_NOREMOVE.
+  ;; Generation advances the USER timer period but retains the resulting MSG
+  ;; in the queue. KillTimer/SetTimer cannot retract that already generated MSG.
   (func $timer_check_due (param $msg_ptr i32) (param $consume i32) (result i32)
     (local $i i32)
     (local $addr i32)
@@ -601,7 +603,7 @@
             (local.set $elapsed (i32.sub (global.get $tick_count) (i32.load (i32.add (local.get $addr) (i32.const 12)))))
             (if (i32.ge_u (local.get $elapsed) (i32.load (i32.add (local.get $addr) (i32.const 8))))
               (then
-                ;; Timer is due — only advance last_tick if consuming. It
+                ;; Timer is due — advance last_tick on retrieval/generation. It
                 ;; advances by whole intervals, not to the delivery time:
                 ;; USER's timer stays on its own period, so a 1000ms timer
                 ;; noticed 150ms late is next due 850ms later, not 1000ms.
@@ -636,7 +638,18 @@
       )
     )
     (call $lock_wnd_release)
-    (if (local.get $found) (then (return (i32.const 1))))
+    (if (local.get $found)
+      (then
+        ;; Enqueue outside LOCK_WND: the shared queue takes the same lock and
+        ;; may allocate overflow storage. Use the captured MSG, never reread a
+        ;; slot that another thread could have killed or replaced meanwhile.
+        (if (i32.eq (local.get $consume) (i32.const 2))
+          (then
+            (return (call $post_queue_push
+              (call $gl32 (local.get $msg_ptr)) (i32.const 0x0113)
+              (call $gl32 (i32.add (local.get $msg_ptr) (i32.const 8)))
+              (call $gl32 (i32.add (local.get $msg_ptr) (i32.const 12)))))))
+        (return (i32.const 1))))
     ;; Check multimedia timers (timeSetEvent) -- unless the winmm timer
     ;; thread owns them, in which case no application thread delivers them.
     (if (call $mm_timer_thread_owned) (then (return (i32.const 0))))
@@ -657,7 +670,7 @@
           (i32.load offset=8 (local.get $addr)))
         ;; Retire the one-shot only when the caller is really taking the
         ;; message; a PM_NOREMOVE peek must still see it next time.
-        (if (local.get $consume)
+        (if (i32.eq (local.get $consume) (i32.const 1))
           (then (call $mm_timer_consume_slot (local.get $addr))))
         (return (i32.const 1))))
     (i32.const 0)
