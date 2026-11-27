@@ -290,6 +290,10 @@
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
         (return)))
+    ;; A clean Win32 window still copies its empty update region to hRgn.
+    (if (i32.eqz (local.get $rv))
+      (then (drop (call $gdi_rgn_set_rect (local.get $arg1)
+        (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))))
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 2) (i32.const 1) (local.get $rv)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
