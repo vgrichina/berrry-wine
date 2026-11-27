@@ -1177,6 +1177,7 @@ GetTopWindow(hWnd) — 1 arg stdcall
   (func $handle_SetScrollInfo (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $slot i32) (local $base i32) (local $aux i32) (local $lpsi i32) (local $fMask i32)
     (local $smin i32) (local $smax i32) (local $page i32) (local $pos i32) (local $max_pos i32)
+    (local $range_size i64)
     (local $style i32) (local $new_style i32) (local $bar_bit i32)
     (local $is_ctl i32) (local $vert i32) (local $scrollable i32) (local $arrows_changed i32)
     (local.set $slot (call $wnd_table_find (local.get $arg0)))
@@ -1220,6 +1221,19 @@ GetTopWindow(hWnd) — 1 arg stdcall
         (local.set $smin (i32.load offset=4 (local.get $base)))
         (local.set $smax (i32.load offset=8 (local.get $base)))
         (local.set $page (i32.load (local.get $aux)))
+        ;; Signed endpoints give an inclusive size of 1..2^32 for an ordered
+        ;; range. Widen before subtracting; nPage is unsigned (0..2^32-1).
+        ;; A full i32 range therefore never clamps/wraps the page to zero.
+        ;; Leave the existing handling of inverted ranges alone.
+        (local.set $range_size
+          (i64.add (i64.sub (i64.extend_i32_s (local.get $smax))
+                            (i64.extend_i32_s (local.get $smin))) (i64.const 1)))
+        (if (i32.and
+              (i32.le_s (local.get $smin) (local.get $smax))
+              (i64.gt_u (i64.extend_i32_u (local.get $page)) (local.get $range_size)))
+          (then
+            (local.set $page (i32.wrap_i64 (local.get $range_size)))
+            (i32.store (local.get $aux) (local.get $page))))
         (local.set $max_pos (local.get $smax))
         (if (i32.gt_u (local.get $page) (i32.const 1))
           (then
