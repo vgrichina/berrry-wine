@@ -160,8 +160,9 @@ and reports unexpected EOF, as expected for an intentional prefix. Complete
 early entries include the EULA and small Wise DAT records; extracting those
 does not establish that all game data can be reconstructed with 7-Zip.
 Use full-installer `7z l`/`7z t` and a Wise-aware extractor first; retain the
-original tree and trial wrapper. If static extraction cannot reconstruct it,
-request an owner-provided real Windows VM installation/reference run.
+original tree and trial wrapper. Complete raw recovery has since succeeded by
+the independent method below; measured Windows installation behavior still
+requires an owner-provided real Windows VM reference run.
 
 The coordinator's full `civ3-installer-list.txt` confirms **`CIVILIZATION3.EXE`,
 1787905 bytes**, and `README.TXT`, 61793 bytes. Its full archive has 3480
@@ -184,12 +185,38 @@ script's mapping to **3465 unique `%MAINDIR%` game destinations**, including
 3464 game records match the script's basename, size and CRC, while the license
 record uses a zero script CRC and passes its archive CRC. The original
 installer must remain the source for those relative paths. A user-selected
-absolute installation directory and complete reconstructed payload remain
-unverified.
+absolute installation directory remains unverified.
+
+Complete raw recovery subsequently succeeded in
+`scratch/runs/20261127-civilization3-payload-root/`. Its `extract.cjs`
+independently parses the original local headers and Wise destination mapping,
+rejects traversal and case-insensitive collisions, and validates every output.
+All **3480 records, 534931311 bytes**, passed expanded-size and CRC32 checks,
+then on-disk size/CRC32/SHA-256 readback. The game tree contains 3465 files
+(534146615 bytes); 15 installer-only records contain the remaining 784696
+bytes. Duplicate basenames retain distinct mapped directories. Each of the
+22 suffix-bearing compressed records has exactly one trailing zero byte;
+its expected expanded size and CRC pass. The earlier `7z t` exit 2 remains
+a failed 7-Zip check, separate from this independently verified recovery.
 
 The script also invokes `decoder.exe -f lfiles.lsy -p .` for **635 assets**,
-then removes decoder components. That post-copy transformation has not been
-run or reproduced. ActiveMARK installer hooks and purchase shortcuts identify
+then removes decoder components. All 635 manifest entries are Ogg Vorbis
+audio jobs with mode `a` and output depth `16`; paths end in `.wav.ogg`.
+Static decoder analysis identifies RIFF/WAVE PCM output with the original
+channel count and sample rate (22050 or 44100 Hz), dropping the final `.ogg`
+suffix. These are audio jobs, with no image conversions in this manifest.
+The original decoder has not been executed. A separate host FFmpeg recovery
+produced all 635 destination WAVs (103750098 bytes); independent JS RIFF and
+Ogg CRC checks, source hashes, decoded frame counts and output SHA-256
+readback passed. All outputs are PCM16 with original channels/rates. Exact
+historical decoder sample/frame identity remains unknown: host output frame
+counts differ from EOS granules for 123 files, and three cross-decoder samples
+have rounding differences of up to two sample units. No trimming or padding
+was invented. These are validated host reconstructions, not proven original
+installer output or complete installation. Evidence:
+`scratch/runs/20261127-civilization3-asset-processing-root/` and
+`scratch/runs/20261127-civilization3-audio-assets-root/`.
+ActiveMARK installer hooks and purchase shortcuts identify
 trial machinery; its present-day activation behavior remains unknown. The
 recovered raw paths alone do not establish a ready-to-run fixture.
 

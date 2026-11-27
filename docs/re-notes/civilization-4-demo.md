@@ -7,7 +7,9 @@ plus shared WIP. Source-discovery evidence:
 and PE evidence: `scratch/runs/20261127-civilization4-payload-root/`.
 The complete ZIP was acquired and hashed by root, then independently rehashed
 and its full InstallShield payload extracted offline by the payload worker.
-No installation, launch, runtime/compiler/test replay, or Wine run was performed.
+Acquisition and extraction executed no supplied binaries. The subsequent first
+emulator startup and its API failure are recorded below; no Windows installation
+or Wine reference run was performed.
 
 ## Edition and provenance
 
@@ -246,9 +248,48 @@ included x86 D3DX cabinet extracted successfully: `d3dx9_26.dll` is
 6,848 trailing bytes, then completed without errors; this is not a signature
 verification. Select x86 for this i386 game, not the included x64 cabinet.
 
-**MSVCR71.dll and MSVCP71.dll are absent** from the full cabinet listing and
-ZIP, despite being direct EXE imports. A static scan of all 40 common-group
-EXE/DLL/PYD files, plus D3DX, also finds `python23.dll` missing for bundled wx
+**Both MSVCR71.dll and MSVCP71.dll are included**, inside `MsiData1.cab` in
+the embedded `Sid Meier's Civilization 4 Demo.msi`. The earlier absence claim
+only inspected outer filenames and missed this nested cabinet. Recovery from
+the pinned original ZIP was measured in
+`scratch/runs/20261127-civilization4-msi-runtime-root/`:
+
+| File | Bytes | Version string | SHA-256 |
+| --- | ---: | --- | --- |
+| `msvcr71.dll` | 348160 | 7.10.3052.4 | `8094af5ee310714caebccaeee7769ffb08048503ba478b879edfef5f1a24fefe` |
+| `msvcp71.dll` | 499712 | 7.10.3077.0 | `df96156f6a548fd6fe5672918de5ae4509d3c810a57bffd2a91de45a3ed5b23b` |
+
+Both are i386 PE32. Their exports match all 145 MSVCR71 and 72 MSVCP71
+exact-name imports from the game EXE; the latter DLL's 93 CRT imports also
+match the recovered MSVCR71 exports. This establishes static symbol coverage,
+not execution compatibility. No external runtime download is needed for this
+pair. Neither PE contains an embedded Authenticode certificate; these hashes
+identify the recovered bytes and do not authenticate their publisher.
+
+With the three original InstallShield cabinet/header files adjacent, recover
+the nested MSI and two DLLs without executing any installer:
+
+```bash
+unshield -j -d civ4-demo-msi x civ4-demo-installer/data1.cab '*.msi'
+7z e -ociv4-demo-crt "civ4-demo-msi/Sid Meier's Civilization 4 Demo.msi" \
+  FL_msvcr71_dll_3_____X86.3643236F_FC70_11D3_A536_0090278A1BB8 \
+  FL_msvcp71_dll_2_____X86.3643236F_FC70_11D3_A536_0090278A1BB8
+mv civ4-demo-crt/FL_msvcr71_dll_3_____X86.3643236F_FC70_11D3_A536_0090278A1BB8 civ4-demo-crt/msvcr71.dll
+mv civ4-demo-crt/FL_msvcp71_dll_2_____X86.3643236F_FC70_11D3_A536_0090278A1BB8 civ4-demo-crt/msvcp71.dll
+```
+
+The MSI is 2089984 bytes, SHA-256
+`e8b6f5d9b0db540ad0eb34abb62bf492802b1dc0911e00d536a1a5442edff11a`.
+Its File/Component tables target both CRT DLLs to `INSTALLDIR`, with no
+component condition, in the selected feature. The outer installer's evaluated
+absolute target and stage order remain unmeasured. The MSI also includes
+conditional MSXML3 components; the separate DirectX INF targets the Windows
+system directory. Do not infer that every nested component belongs beside the
+game EXE. Setup-table evidence is retained in
+`scratch/runs/20261127-civilization4-setup-sequence-root/`.
+
+A static scan of all 40 common-group EXE/DLL/PYD files, plus D3DX,
+finds `python23.dll` missing for bundled wx
 `_iewin.pyd` and `_ogl.pyd`; `_iewin.pyd` additionally imports absent
 `MSVCP60.dll`. Whether those older optional modules execute is unknown. The
 remaining unresolved names are Windows platform DLLs listed in
@@ -256,6 +297,18 @@ remaining unresolved names are Windows platform DLLs listed in
 File presence alone does not establish loader search paths, symbol coverage,
 dynamic loads, Direct3D capability, registry/settings creation or runtime closure.
 No substitute DLLs were downloaded or copied from unrelated fixtures.
+
+One actual bounded emulator startup was subsequently performed with the
+complete common payload, one English overlay, original x86 D3DX and the two
+recovered CRT DLLs mounted app-local. The clean published WASM was 2553420
+bytes, SHA-256
+`11a470569b6decdc5cd9527ca1513d23c156bdd6cdf6a9faddf5271e2e162cff`;
+existing dirty host/harness bytes were pinned separately. Both CRT DLLs and
+D3DX mapped, the eleven invoked DLL entry points returned 1, and the game
+read its bundled font. Startup then **failed in batch 1 on unimplemented
+`SendMessageCallbackA`**, EIP `0x00823ec1`, exit 1. No meaningful screen or menu
+was observed. This reconstructed VFS is not a measured Windows installation.
+Evidence: `scratch/runs/20261127-civilization4-first-startup-root/`.
 
 Offline extraction is reproducible, but a runnable installation and prerequisite
 closure are **not established**. Keep corpus acquisition/manual status separate
@@ -278,12 +331,9 @@ or full retail/Complete media as a substitute for this corpus candidate.
 
 ## Scope and handoff
 
-Source details were sent through `messageboard.txt` at 07:43:44 UTC; measured
-full extraction, runtime basename, language-overlay recipe and missing runtime
-DLLs were sent to civilization-corpus/coordinator at 07:49:39 UTC. Acquisition,
-archive hashes and PE identity are now known; installed fixture, prerequisite
-closure and runtime behavior remain unverified. No app registry, emulator,
-tests, corpus manifest, or Git index was edited by this worker. Documentation
-and offline metadata only; no build or tests were run. Git/index publication
-belongs exclusively to root. No boxes were created: ID/state/expiry/stop receipt
-are all null.
+Acquisition, complete raw extraction, PE identity, language overlay and original
+CRT recovery are measured. The nested-MSI recovery supersedes the initial
+07:49:39 UTC missing-runtime report. The first emulator startup exposed the
+API failure above; an installed fixture, full prerequisite closure, menu and
+gameplay remain unverified. No boxes were created. Corpus entries retain
+manual preparation status until a complete fixture is established.
