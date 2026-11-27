@@ -1,0 +1,1107 @@
+test/binaries/candidates/caesar-3-demo/installed/Briefing1a.555
+test/binaries/candidates/caesar-3-demo/installed/C3.555
+test/binaries/candidates/caesar-3-demo/installed/C3_mm.eng
+test/binaries/candidates/caesar-3-demo/installed/C3title.555
+test/binaries/candidates/caesar-3-demo/installed/Caesar3.ini
+test/binaries/candidates/caesar-3-demo/installed/Demo1.555
+test/binaries/candidates/caesar-3-demo/installed/Demo2.555
+test/binaries/candidates/caesar-3-demo/installed/Demo3.555
+test/binaries/candidates/caesar-3-demo/installed/Map_panels.555
+test/binaries/candidates/caesar-3-demo/installed/Picture0.555
+test/binaries/candidates/caesar-3-demo/installed/Picture1.555
+test/binaries/candidates/caesar-3-demo/installed/Picture2.555
+test/binaries/candidates/caesar-3-demo/installed/Picture3.555
+test/binaries/candidates/caesar-3-demo/installed/Picture4.555
+test/binaries/candidates/caesar-3-demo/installed/Picture5.555
+test/binaries/candidates/caesar-3-demo/installed/Readme.doc
+test/binaries/candidates/caesar-3-demo/installed/SMACKW32.DLL
+test/binaries/candidates/caesar-3-demo/installed/Senate.555
+test/binaries/candidates/caesar-3-demo/installed/Sierra.inf
+test/binaries/candidates/caesar-3-demo/installed/The_empire.555
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Baths.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Build1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Colloseum.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Fountain1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Fountain2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Granary.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Hippodrome.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Icon1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Oracle.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/PANEL1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/PANEL2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Park.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Plebs.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Pupils_starv2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Resevoir.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Rioter_exact1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Rioter_exact2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Rioter_exact3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/School.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Setup.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/Theatre.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/academy.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/ampitheatre.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/barber.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/burning_ruin.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/char_pit.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/clay.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/dock1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/dock2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/empty_land.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/explo1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/fanfare.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/fanfare2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/fort1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/forum.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/furniture_workshop.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/gardens1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/gardens2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/gardens3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/gardens4.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/glad_pit.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/glad_pit2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/granary1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/granary2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/hospital.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_mid1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_mid2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_mid3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_poor1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_poor2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_poor3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_poor4.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_slum1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_slum2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_slum3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/house_slum4.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/library.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/lion_pit.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/market1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/market2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/market3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/market4.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/meat_farm.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/mine.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/panel3.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/pottery_workshop.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/rome1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/shipyard1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/shipyard2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/timber.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/warehouse1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/warehouse2.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/weapons_workshop.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/wharf1.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/wheat.wav
+test/binaries/candidates/caesar-3-demo/installed/Wavs/wine_workshop.wav
+test/binaries/candidates/caesar-3-demo/installed/bigpeople.555
+test/binaries/candidates/caesar-3-demo/installed/c3.emp
+test/binaries/candidates/caesar-3-demo/installed/c3.eng
+test/binaries/candidates/caesar-3-demo/installed/c3.exe
+test/binaries/candidates/caesar-3-demo/installed/c3.inf
+test/binaries/candidates/caesar-3-demo/installed/c3.sg2
+test/binaries/candidates/caesar-3-demo/installed/c3_model.txt
+test/binaries/candidates/caesar-3-demo/installed/c3map.inf
+test/binaries/candidates/caesar-3-demo/installed/carthage.555
+test/binaries/candidates/caesar-3-demo/installed/carthage.sg2
+test/binaries/candidates/caesar-3-demo/installed/language.inf
+test/binaries/candidates/caesar-3-demo/installed/mission1.pak
+test/binaries/candidates/caesar-3-demo/installed/panelwindows.555
+test/binaries/candidates/caesar-3-demo/installed/rclick wavs.txt
+test/binaries/candidates/caesar-3-demo/installed/readme.txt
+test/binaries/candidates/caesar-3-demo/installed/scoreb.555
+test/binaries/candidates/caesar-3-demo/installed/status.txt
+test/binaries/candidates/caesar-3-demo/installed/title.555
+test/binaries/candidates/gm-remar-castle/extracted/castle gm5.exe
+test/binaries/candidates/gm-remar-castle/extracted/castle.xm
+test/binaries/candidates/gm-remar-castle/extracted/castle2.xm
+test/binaries/candidates/gm-remar-castle/extracted/fmod.dll
+test/binaries/candidates/gm-remar-castle/extracted/jbfmod.dll
+test/binaries/candidates/heroes-2-demo/files/DATA/CAMPAIGN.HS
+test/binaries/candidates/heroes-2-demo/files/DATA/H2OFFER.SMK
+test/binaries/candidates/heroes-2-demo/files/DATA/HEROES2.AGG
+test/binaries/candidates/heroes-2-demo/files/DATA/STANDARD.HS
+test/binaries/candidates/heroes-2-demo/files/FILE_ID.DIZ
+test/binaries/candidates/heroes-2-demo/files/GAMES/TUTORIAL.GM1
+test/binaries/candidates/heroes-2-demo/files/H2DEMOW.EXE
+test/binaries/candidates/heroes-2-demo/files/HELP/HEROES2.CNT
+test/binaries/candidates/heroes-2-demo/files/HELP/HEROES2.HLP
+test/binaries/candidates/heroes-2-demo/files/MAPS/BROKENA.MP2
+test/binaries/candidates/heroes-2-demo/files/MSS32.DLL
+test/binaries/candidates/heroes-2-demo/files/README.TXT
+test/binaries/candidates/heroes-2-demo/files/SMACKW32.DLL
+test/binaries/candidates/heroes-2-demo/files/license.txt
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/BINKW32.DLL
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/Data/H3BITMAP.LOD
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/Data/H3SPRITE.LOD
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/Data/HEROES3.SND
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/Data/VIDEO.VID
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/AITHEME0.MP3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/COMBAT01.MP3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/DIRT.MP3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/Defend Castle.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/LoseCastle.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/LoseCombat.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/MAINMENU.MP3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/Retreat Battle.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/StrongHold.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/Surrender Battle.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/UltimateLose.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/WATER.MP3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/Win Battle.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3/Win Scenario.mp3
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MP3DEC.ASI
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/MSS32.DLL
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/Maps/H3demo.h3m
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/SMACKW32.DLL
+test/binaries/candidates/heroes-3-demo-installer/installed-extracted/Program_Files/h3demo.exe
+test/binaries/candidates/metrojd/metrojd_gm7.exe
+test/binaries/candidates/simcity-2000-demo/.wine-assembly-browser.json
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/128.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/400.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/401.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/402.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/403.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/404.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/405.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/406.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/407.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/408.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/409.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/410.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/411.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/about.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/advisbtn.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/bookbtn.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/neighbor.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/pal_load.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/pal_mac.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/pal_mstr.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/pal_sttc.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/presnts.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/terrain.bmp
+test/binaries/candidates/simcity-2000-demo/installed/bitmaps/titlescr.bmp
+test/binaries/candidates/simcity-2000-demo/installed/cities/democity.sc2
+test/binaries/candidates/simcity-2000-demo/installed/data/data_usa.dat
+test/binaries/candidates/simcity-2000-demo/installed/data/data_usa.idx
+test/binaries/candidates/simcity-2000-demo/installed/data/large.dat
+test/binaries/candidates/simcity-2000-demo/installed/data/smallmed.dat
+test/binaries/candidates/simcity-2000-demo/installed/data/special.dat
+test/binaries/candidates/simcity-2000-demo/installed/data/text_usa.dat
+test/binaries/candidates/simcity-2000-demo/installed/data/text_usa.idx
+test/binaries/candidates/simcity-2000-demo/installed/deisl1.isu
+test/binaries/candidates/simcity-2000-demo/installed/sc2usa.hlp
+test/binaries/candidates/simcity-2000-demo/installed/simdemo.exe
+test/binaries/candidates/simcity-2000-demo/installed/sounds/10001.mid
+test/binaries/candidates/simcity-2000-demo/installed/sounds/10004.mid
+test/binaries/candidates/simcity-2000-demo/installed/sounds/10008.mid
+test/binaries/candidates/simcity-2000-demo/installed/sounds/10012.mid
+test/binaries/candidates/simcity-2000-demo/installed/sounds/10018.mid
+test/binaries/candidates/simcity-2000-demo/installed/sounds/500.wav
+test/binaries/candidates/simcity-2000-demo/installed/sounds/501.wav
+test/binaries/candidates/simcity-2000-demo/installed/sounds/504.wav
+test/binaries/candidates/simcity-2000-demo/installed/sounds/505.wav
+test/binaries/candidates/simcity-2000-demo/installed/sounds/508.wav
+test/binaries/candidates/simcity-2000-demo/installed/sounds/514.wav
+test/binaries/candidates/spelunky-classic/extracted/.wine-assembly-browser.json
+test/binaries/candidates/spelunky-classic/extracted/COPYING.txt
+test/binaries/candidates/spelunky-classic/extracted/Spelunky.exe
+test/binaries/candidates/spelunky-classic/extracted/config.exe
+test/binaries/candidates/spelunky-classic/extracted/gamepad.cfg
+test/binaries/candidates/spelunky-classic/extracted/keys.cfg
+test/binaries/candidates/spelunky-classic/extracted/readme.txt
+test/binaries/candidates/spelunky-classic/extracted/settings.cfg
+test/binaries/candidates/spelunky-classic/extracted/sound/alert.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/alien.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/arrowtrap.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/bat.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/bigjump.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/blink1.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/blink2.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/boing.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/bombready.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/boss.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/bowpull.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/break.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/cave.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/cavemandie.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/chestopen.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/click.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/climb1.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/climb2.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/coin.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/credits.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/crunch.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/damsel.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/die.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/explosion.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/flame.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/frog.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/gem.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/ghost.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/giantspider.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/gspiderjump.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/hit.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/hurt.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/ice.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/ignite.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/jetpack.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/jump.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/kiss.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/land.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/laser.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/lasercharge.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/letsexplore.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/lush.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/mattockbreak.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/monkey.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/pause.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/pfall.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/pickup.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/psychic.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/push.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/shotgun.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/slam.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/smallexplode.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/spiderjump.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/splash.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/steps.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/teleport.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/temple.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/tfall.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/throw.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/thud.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/thump.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/title.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/trap.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/victory.ogg
+test/binaries/candidates/spelunky-classic/extracted/sound/whip.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/yetiyell.wav
+test/binaries/candidates/spelunky-classic/extracted/sound/zombie.wav
+test/binaries/candidates/spelunky-classic/extracted/supersound.dll
+test/binaries/dlls/SOURCES.md
+test/binaries/dlls/_d3drm_candidates
+test/binaries/dlls/asycfilt.dll
+test/binaries/dlls/cabinet.dll
+test/binaries/dlls/cards.dll
+test/binaries/dlls/comcat.dll
+test/binaries/dlls/comctl32.dll
+test/binaries/dlls/comctl32.dll.pre-redist
+test/binaries/dlls/commctrl.dll
+test/binaries/dlls/d3drm.dll
+test/binaries/dlls/d3dxof.dll
+test/binaries/dlls/imagehlp.dll
+test/binaries/dlls/mfc30.dll
+test/binaries/dlls/mfc42.dll
+test/binaries/dlls/mfc42.dll.pre-redist
+test/binaries/dlls/mfc42u.dll
+test/binaries/dlls/mmsys.cpl
+test/binaries/dlls/msvbvm60.dll
+test/binaries/dlls/msvcirt.dll
+test/binaries/dlls/msvcp60.dll
+test/binaries/dlls/msvcrt.dll
+test/binaries/dlls/msvcrt20.dll
+test/binaries/dlls/oleaut32.dll
+test/binaries/dlls/olepro32.dll
+test/binaries/dlls/redist
+test/binaries/dlls/riched20.dll
+test/binaries/dlls/shfolder.dll
+test/binaries/dlls/usp10.dll
+test/binaries/wep16/WEP2/FIELD100.DLL
+test/binaries/wep16/WEP2/RATTLER.EXE
+test/binaries/wep16/WEP2/RATTLER.HLP
+test/binaries/wep16/WEP3/LIFEGEN.EXE
+test/binaries/wep16/WEP3/LIFEGEN.HLP
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/.wine-assembly-browser.json
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aow.exe
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aowdplay.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aowepack.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aowint.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aowsetup.exe
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aowtcpck.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/aowtools.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/dcpack.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/enginep.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/galaxy.dll
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/gfxepack.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/hsepack.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/ilpack.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/iltoolsp.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_death.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_deatha.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_fire.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_ice.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_lghtn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_lghtna.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_life.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_pest.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/a_pestan.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/amshell.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/border.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/city1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/city2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/city3.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/city4.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/combat.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/cursors.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/demo.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/earthhex.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/age_edit.set
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/destr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/explbig.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/explsmll.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/expltc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/firelg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/firesm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/firesm2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/lightn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/magic.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/msparks.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/particle.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/poisncld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/razrac.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/solarfl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/stormd.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/swarm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/swrath.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/effects/twinkgr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_cas2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_casr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_dng2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_dung.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_mons.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_pmid.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/epl_zig.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/faces/h_faces.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/faces/l_faces.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/faces/r_faces.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/faces/units.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/fhole.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/flags.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/general.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/gnd_holy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/gnd_pois.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/gnduholy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/hextrans.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/icehex.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_attack.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_body.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_defend.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_head.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_rings.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_scroll.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/items/i_use.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mg_blk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mg_cha.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mg_nat.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mg_sor.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mg_wht.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/misc_obj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mountain/mountain.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mountain/wl_volcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/mountain/wl_volcs.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pad1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pad2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pad3.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pad4.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pro_drgn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pro_fire.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pro_gate.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pro_grov.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/pro_syrd.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/razrac.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rdarkelf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rdwarf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/relf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rfrostl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rgoblin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rhalflng.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rhighman.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rhuman.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rlizards.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rorc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/races/rundead.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/rockhex.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/smoke.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/spellicn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_amgic.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_aren.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_bldg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_blds.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_cave.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_elvc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_farm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_inn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_mage.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_mine.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_node.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_nrck.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_pod.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_rf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_sant.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_signs.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_sol.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_tele.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_towr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/str_wtwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/targhex.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/ctranshx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_de.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_dedr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_dr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_earth.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_gr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_grdr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_ic.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_la.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_sn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_sndr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_st.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_stdr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_ugic.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_ugwa.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_wa.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_wl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/base_hex/h_wldr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_gen1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_swall1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_swall2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_swall3.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_tile.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_wwall1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_wwall2.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/c_wwall3.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/cgr_wpad.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_delf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_dwrf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_elf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_evil.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_frost.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_gen.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_gob.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_half.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_humn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_liz.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_neutr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/city/zc_orc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_bone.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_brk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_cact.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_crops.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_dtree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_hill.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_srk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_ston.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/de/zde_tree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/cr_floor.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/cr_obj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/cr_wall.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/drk_floor.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/drk_obj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/drk_wall.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/dung_obj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/ml_wall.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/torch.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/zig_floor.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/zig_obj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/expl/zig_wall.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/fleeobj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_bone.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_brk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_brks.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_crop.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_dtree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_flwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_hill.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_pine.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_shdw.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_shrb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_srk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_srks.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_ston.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_toad.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_tre.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_tres.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/gr/zgr_wllw.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/misc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/arrow.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/balls.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bfbig1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bfmed1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bfsml1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bhbig1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bhmed1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bhsml1.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/bolts.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/gndblood.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/seffect.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/objects/tcuicon.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_bone.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_brk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_crops.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_dtree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_hill.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_lveg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_pine.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_shrb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_srk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/sn/zsn_ston.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_bone.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_brk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_crops.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_dtree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_hill.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_lveg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_shrb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_srk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_ston.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/st/zst_tree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_bg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_brdge.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_fhole.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_firpit.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_grove.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_inn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_mine.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/struct/zs_water.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/tcanim.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/treeshdw.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_bone.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_brk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_crop.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_grave.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_lveg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_srk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_ston.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/ug/zug_toad.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_bone.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_brk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_dtree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_grave.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_hill.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_lveg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_shrb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_srk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_ston.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcombat/wl/zwl_tree.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/tcunits.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/animals/boary.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/animals/eagle.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/animals/frogy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/animals/wolfy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/arzld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrav.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrhr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/azrwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/bhldr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/djinn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/eleph.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/scorp.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/azr/wormy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/deadunit.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfex.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfhr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlflp.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfsh.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfsq.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dlf/dlfwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwras.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrbr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrbz.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrfb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrmo.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/dwrwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/dwr/giant.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/element/elmar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/element/elmer.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/element/elmfr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/element/elmwt.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvhr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvrn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/elvwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/fairy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/natsp.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/nymph.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/elv/unicn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/froar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frocl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frodr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frohe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frohx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frokp.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frold.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frosq.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frosw.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frowf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/frowr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/fro/norb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnbb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnbg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnbm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbncl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnwf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/gbnwy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/monst.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/gbn/troll.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/astra.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghch.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghdr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghhr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/hghwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/puppt.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/titan.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hgm/valky.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/centr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfer.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfpr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfrg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfsl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/hlfwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/leprc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hlf/satyr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnas.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnch.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmncl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnhr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnms.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnpl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnsp.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/hmnwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/hmn/sdrgn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/baslk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizcf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizdr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizfr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizlk.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizsm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizwm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/liz/lizwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/blsta.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/btram.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/build.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/canon.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/crbow.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/ctplt.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/drill.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/flthr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/frezr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/sbtrm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/spult.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/tcrbw.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/machines/tpult.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/bldrg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/ghost.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/mermd.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/mummy.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/sargn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/seadr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/spidr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/monsters/yldrg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/kobld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcas.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcbt.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orccl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcdr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orche.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orchr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orchx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcwl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/orc/orcwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/ships/dship.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/ships/galln.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/ships/gally.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/ships/sloop.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/demon.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undar.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undcl.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undgh.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undhe.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undhh.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undhr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undhx.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undld.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undpr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undrp.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undwr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/und/undww.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/units/ushadow.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/ushadow.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/wateranm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/images/waterhex.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/ims.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/audioimg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/bookwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/celtdeco.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/dragmenu.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/eventicn.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fcwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age10.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age10b.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age10bs.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age10lb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age10s.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age10tb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age14g.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age15blbr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age15whgr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age15whin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age16s.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age8.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/fonts/age8s.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/genericb.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/generice.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/genericf.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/generici.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/generics.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/generict.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/iconmove.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/icons.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/lbicon.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/menus.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/misc.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/miscart.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/prodicon.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/prodwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/pyrewin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scanfog.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scanhili.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scanobj.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scantile.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scanwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/bookwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/citywin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/ctrans.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/endscene.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/factions.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/fsmap.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/lsetup.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/pyrefrm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/relfr.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/title.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/titlem.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/victory.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/scenes/wmbackg.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/shieldsm.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/tbturnbt.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/tbwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/unitbgs.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/units.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/unitwin.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/int/winticon.ilb
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/localize.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/network.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/readme.txt
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/ability.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/comb_res.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/faceres.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/general.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/heroes.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/herores.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/itemgfx.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/items.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/release.hss
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/spells.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/text.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/unitgfx.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/release/unitres.pfs
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/scenario/custom/first conflict.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/scenario/custom/tutorial.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_claw1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_claw2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_force1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_force2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_miss1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_miss2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_miss3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_monst.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_monst2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_monst3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_punch1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_punch2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_sword1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_sword2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/a_sword3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/arblow01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/arblow02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/arrhit.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/arrow01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/arrow02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/ballista.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/blast.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/cannon.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/catapult.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/charge.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/dbreath.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/dragon1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/dragon2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/earth.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/enchn01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/enchp01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/enchp02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/enchp03.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/explod1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/firebs.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/fireloop.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/firestrt.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/flamea.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/ice.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/iceloop.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/lightng.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic03.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic04.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic05.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic06.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic07.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic08.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic09.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic10.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic11.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic12.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magic13.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magica01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magica02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magica03.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magica04.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magicb01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magicb02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magicc01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magicc02.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/magict01.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/manarchy.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/monster1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/monster2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/musket1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/musket2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/parry.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/seduce.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/sling.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/storm.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/stormbig.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/turnund.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/attack/wind.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/clock.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/gems.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/gold.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/info1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/info2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/mana.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/message.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/newevent.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/newturn.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/events/roll.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/birdscr.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_elfm2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_femn1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_femn2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_gek.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_norm1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_norm2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_norm3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_rough1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_rough2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_small1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_small2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_undead.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_wolf.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_woodlg.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_woodmd.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/d_woodsm.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/elepdie.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/elephit.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_femn1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_femn2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_gek.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_norm1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_norm2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_norm3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_rough1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_rough2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_slijm.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_slijm2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_small1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_small2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_small3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_undead.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/h_wolf.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/horsedie.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/horsehit.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/m1die.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/m1hit.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/m2die.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/m2hit.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/screech1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/screech2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/hit_death/screech3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/bookclse.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/btn1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/btn2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/btn3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/btn4.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/btn5.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/btn6.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/center.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/int/pagef1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/air1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/air2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/crawl1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/crawl2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/flutter.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/fstep1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/fstep2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/fstep3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/fstep4.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/horse1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/horse2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/hvywh1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/hvywh2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/hvywh3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/insect1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/insect2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/m_swim1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/m_swim2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sfstep1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sfstep2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sfstep3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sfstep4.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sftstep1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sftstep2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sftstep3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/sftstep4.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/slimes1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/slimes2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/slimes3.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/slimes4.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/waterlg.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/wing1.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/moves/wing2.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/adark.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/bguild.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/farm.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/gate.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/mine.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/mlair.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/node.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/sgrove.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/solife.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/sfx/places/teleport.wav
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/songs/carved.s3m
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/songs/combat/defend.it
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/songs/company.s3m
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/songs/love&dea.s3m
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/songs/special/end2.s3m
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/songs/title.it
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/soundp.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/0126c000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/012xc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/023xc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/02xxc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/0345c000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/034xc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/056xc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/05xxc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/0xxxc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/base_struct.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bguil000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/blank000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brica000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bricb000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bricc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brlaa000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brlab000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brlac000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bruia000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bruib000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bruic000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bruwa000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bruwb000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/bruwc000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brwaa000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brwab000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/brwac000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/cavee000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/caven000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/ciyw1.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/ecrpt000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/edung000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/emrlr000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/eruin000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/ezigg000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/farmx000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/fnode000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/innxx000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/minex000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/nodea000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/nodec000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/noded000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/nodee000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/nodef000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/nodel000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/nodew000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/rpool000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/slife000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/syard000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/telen000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/telep000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/tcmaps/tfort000.hsm
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/uninst.isu
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/vcl30.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/vcladdon.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/vcldb30.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/vclx30.dpl
+test/binaries/win98-games-a-d/Age Of Wonders demo-SW/installed/videop.dpl
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/.wine-assembly-browser.json
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/MAIN.MIX
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/RA95.EXE
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/RANOTES.ICO
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/README.WRI
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/REDALERT.INI
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/REDALERT.MIX
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/RESLIB.DLL
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/THIPX16.DLL
+test/binaries/win98-games-a-d/CnC-Red Alert Demo-SW/INSTALL/THIPX32.DLL

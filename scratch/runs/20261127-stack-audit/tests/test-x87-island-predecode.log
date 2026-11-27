@@ -1,0 +1,11 @@
+AssertionError [ERR_ASSERTION]: case 7 (seed state 0xe9571083): fast vs nodirect differ in sw
+  fast: 67
+  nodirect: 65
+  fpu trace fast: 3404726273,65,1,0,3404726273,65,1,0,3404726273,2,1,0
+  fpu trace nodirect: 3404726273,65,1,0,3404726273,65,1,0
+  ops (shrunk):
+    d9 46 f8
+    df 2d 5b 00 45 00
+    d9 46 88
+    d8 d2
+    at main (/private/tmp/wa-stack/test/test-x87-island-predecode.js:320:14)

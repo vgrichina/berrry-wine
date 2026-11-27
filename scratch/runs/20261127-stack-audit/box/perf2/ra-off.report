@@ -1,0 +1,120 @@
+    34.08%  [.] JS:wasm-function[1597]-1597-turbofan
+     4.82%  [.] JS:wasm-function[1628]-1628-turbofan
+     4.23%  [.] JS:wasm-function[1566]-1566-turbofan
+     2.79%  [.] JS:wasm-function[340]-340-turbofan
+     2.51%  [.] JS:wasm-function[1596]-1596-turbofan
+     1.98%  [.] Builtins_LoadIC
+     1.95%  [.] JS:wasm-function[1111]-1111-turbofan
+     1.91%  [.] JS:wasm-function[15699]-15699-turbofan
+     1.87%  [.] JS:*'getPos /home/user/s/lib/host-audio.js:2029:13
+     1.84%  [.] JS:+' /home/user/s/test/run.js:1766:32
+     1.71%  [.] JS:wasm-function[638]-638-turbofan
+     1.30%  [.] JS:wasm-function[492]-492-turbofan
+     1.24%  [.] JS:wasm-function[483]-483-turbofan
+     1.16%  [.] JS:wasm-function[428]-428-turbofan
+     1.14%  [.] JS:wasm-function[646]-646-turbofan
+     1.07%  [.] JS:wasm-function[579]-579-turbofan
+     1.06%  [.] JS:wasm-function[10095]-10095-turbofan
+     1.05%  [.] JS:wasm-function[692]-692-turbofan
+     1.05%  [.] JS:wasm-function[338]-338-turbofan
+     1.03%  [.] JS:wasm-function[10594]-10594-turbofan
+     1.00%  [.] JS:wasm-function[17142]-17142-turbofan
+     0.95%  [.] Builtins_AtomicsAdd
+     0.92%  [.] JS:wasm-function[1144]-1144-turbofan
+     0.80%  [.] JS:wasm-function[645]-645-turbofan
+     0.77%  [.] JS:wasm-function[597]-597-turbofan
+     0.72%  [.] JS:wasm-function[10094]-10094-turbofan
+     0.72%  [.] Stub:js-to-wasm::i
+     0.66%  [.] JS:wasm-function[1131]-1131-turbofan
+     0.62%  [.] JS:wasm-function[586]-586-turbofan
+     0.60%  [.] JS:wasm-function[1085]-1085-turbofan
+     0.55%  [.] JS:wasm-function[1096]-1096-turbofan
+     0.55%  [.] JS:wasm-function[598]-598-turbofan
+     0.53%  [.] JS:wasm-function[682]-682-turbofan
+     0.53%  [.] JS:wasm-function[415]-415-turbofan
+     0.49%  [.] Builtins_CallFunction_ReceiverIsNotNullOrUndefined
+     0.48%  [.] JS:wasm-function[631]-631-turbofan
+     0.48%  [.] JS:wasm-function[656]-656-turbofan
+     0.44%  [.] Builtins_AtomicsLoad
+     0.42%  [.] JS:wasm-function[373]-373-turbofan
+     0.41%  [.] JS:wasm-to-js-<anonymous>-none
+     0.41%  [.] JS:wasm-function[571]-571-turbofan
+     0.41%  [.] JS:*exports.<computed> /home/user/s/lib/batch-clock.js:101:66
+     0.40%  [.] JS:wasm-function[348]-348-turbofan
+     0.39%  [.] JS:wasm-function[677]-677-turbofan
+     0.37%  [.] JS:wasm-function[1631]-1631-turbofan
+     0.37%  [.] v8::internal::BigInt::ToNumber(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::BigInt>)
+     0.36%  [.] JS:wasm-function[665]-665-turbofan
+     0.36%  [.] JS:wasm-function[585]-585-turbofan
+     0.35%  [.] halfsiphash(unsigned int, unsigned long)
+     0.32%  [.] JS:wasm-function[570]-570-turbofan
+     0.32%  [.] JS:wasm-function[576]-576-turbofan
+     0.30%  [.] JS:wasm-function[657]-657-turbofan
+     0.28%  [.] Builtins_ToNumberConvertBigInt
+     0.27%  [.] JS:wasm-function[1484]-1484-turbofan
+     0.26%  [.] JS:*'runSlice /home/user/s/lib/thread-manager.js:3569:11
+     0.25%  [.] Builtins_KeyedLoadIC
+     0.25%  [.] JS:wasm-function[567]-567-turbofan
+     0.24%  [.] JS:wasm-function[550]-550-turbofan
+     0.23%  [.] Builtins_CallFunction_ReceiverIsAny
+     0.23%  [.] JS:wasm-function[1075]-1075-turbofan
+     0.22%  [.] JS:*host.<computed> /home/user/s/lib/batch-clock.js:115:20
+     0.22%  [.] v8::internal::Scanner::Next()
+     0.21%  [.] Builtins_LoadICTrampoline
+     0.20%  [.] JS:wasm-function[672]-672-turbofan
+     0.20%  [.] 0x00000000001a1544
+     0.19%  [.] v8::internal::Runtime_BigIntToNumber(int, unsigned long*, v8::internal::Isolate*)
+     0.19%  [.] JS:wasm-function[789]-789-turbofan
+     0.18%  [.] JS:wasm-function[599]-599-turbofan
+     0.18%  [.] Builtins_Call_ReceiverIsNotNullOrUndefined
+     0.18%  [.] JS:wasm-function[575]-575-turbofan
+     0.16%  [.] JS:*voice_get_pos /home/user/s/lib/host-audio.js:4373:20
+     0.15%  [.] JS:wasm-function[392]-392-turbofan
+     0.15%  [.] Builtins_WasmLiftoffFrameSetup
+     0.13%  [.] Builtins_NumberPrototypeToString
+     0.12%  [.] JS:wasm-function[10588]-10588-turbofan
+     0.11%  [.] JS:*'_syncMainHelpCallback /home/user/s/lib/thread-manager.js:4618:24
+     0.10%  [.] JS:wasm-function[539]-539-turbofan
+     0.10%  [.] Builtins_Call_ReceiverIsAny
+     0.10%  [.] JS:*'batchTicks /home/user/s/lib/batch-clock.js:86:22
+     0.09%  [.] JS:*'adoptMainGlobals /home/user/s/lib/thread-manager.js:4306:19
+     0.09%  [.] JS:wasm-function[342]-342-turbofan
+     0.08%  [.] JS:wasm-function[410]-410-turbofan
+     0.08%  [.] JS:*'mainExecutionSuspendedSync /home/user/s/test/run.js:7426:38
+     0.08%  [.] JS:wasm-function[389]-389-turbofan
+     0.08%  [.] JS:wasm-function[15663]-15663-turbofan
+     0.08%  [.] JS:wasm-function[649]-649-turbofan
+     0.08%  [.] Builtins_StringAdd_CheckNone
+     0.07%  [.] JS:wasm-function[1742]-1742-turbofan
+     0.07%  [.] Builtins_GetProperty
+     0.07%  [.] Builtins_CEntry_Return1_ArgvOnStack_NoBuiltinExit
+     0.07%  [.] JS:wasm-function[10589]-10589-turbofan
+     0.07%  [.] void v8::internal::CalculateLineEndsImpl<unsigned char>(v8::base::SmallVector<int, 32ul, std::allocator<int> >*, v8::base::Vector<unsigned char const>, bool)
+     0.06%  [.] JS:*'notifyPump /home/user/s/lib/host-audio.js:1391:17
+     0.06%  [.] JS:wasm-function[3417]-3417-turbofan
+     0.06%  [.] v8::internal::String::ComputeAndSetRawHash(v8::internal::SharedStringAccessGuardIfNeeded const&)
+     0.05%  [.] malloc
+     0.05%  [.] void v8::internal::MarkingVisitorBase<v8::internal::ConcurrentMarkingVisitor>::ProcessStrongHeapObject<v8::internal::FullHeapObjectSlot>(v8::internal::Tagged<v8::internal::HeapObject>, v8::internal::FullHeapObjectSlot, v8::internal::Tagged<v8::internal::HeapObject>)
+     0.05%  [.] Builtins_KeyedLoadIC_Megamorphic
+     0.05%  [.] heap::base::SlotCallbackResult v8::internal::Scavenger::ScavengeObject<v8::internal::FullHeapObjectSlot>(v8::internal::FullHeapObjectSlot, v8::internal::Tagged<v8::internal::HeapObject>)
+     0.05%  [.] 0x0000226b89706848
+     0.05%  [.] Builtins_SetDataProperties
+     0.05%  [.] v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Utf8DecoderBase(v8::base::Vector<unsigned char const>)
+     0.05%  [.] JS:*get_ticks /home/user/s/lib/host-imports.js:2779:16
+     0.05%  [.] v8::internal::compiler::GraphReducer::ReduceTop()
+     0.05%  [.] v8::internal::AstValueFactory::GetOneByteStringInternal(v8::base::Vector<unsigned char const>)
+     0.05%  [.] v8::internal::wasm::memory_copy_wrapper(unsigned long, unsigned int, unsigned int, unsigned long, unsigned long, unsigned long)
+     0.05%  [.] JS:wasm-function[543]-543-turbofan
+     0.04%  [.] JS:wasm-function[548]-548-turbofan
+     0.04%  [.] JS:wasm-function[1347]-1347-turbofan
+     0.04%  [.] Builtins_SuspendGeneratorBaseline
+     0.04%  [.] v8::internal::LookupIterator::State v8::internal::LookupIterator::LookupInRegularHolder<false>(v8::internal::Tagged<v8::internal::Map>, v8::internal::Tagged<v8::internal::JSReceiver>)
+     0.04%  [.] v8::internal::AstValueFactory::GetString(unsigned int, bool, v8::base::Vector<unsigned char const>)
+     0.04%  [.] JS:wasm-function[17093]-17093-turbofan
+     0.04%  [.] v8::internal::FrameTranslationBuilder::StoreOptimizedOut()
+     0.03%  [.] Stub:js-to-wasm:i:
+     0.03%  [.] Builtins_ArrayIteratorPrototypeNext
+     0.03%  [.] Builtins_CallForwardVarargs
+     0.03%  [.] Builtins_KeyedLoadICTrampoline
+     0.03%  [.] int v8::internal::Deserializer<v8::internal::Isolate>::ReadSingleBytecodeData<v8::internal::SlotAccessorForHeapObject>(unsigned char, v8::internal::SlotAccessorForHeapObject)
+     0.03%  [.] v8::internal::Object::SetPropertyWithAccessor(v8::internal::LookupIterator*, v8::internal::DirectHandle<v8::internal::Object>, v8::Maybe<v8::internal::ShouldThrow>)

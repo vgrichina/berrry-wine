@@ -1,0 +1,2402 @@
+{
+ "apps": {
+  "spelunky_classic": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "3440064/32700/6a4436d8e792d22f"
+     ],
+     "user": 66.55,
+     "userSpread": 0.09271224643125472,
+     "ins": 1091789393182,
+     "insSpread": 0.00038931676077305904,
+     "cyc": 284700074111,
+     "cycSpread": 0.04992592283083924,
+     "bmiss": 459877019,
+     "bmissSpread": 0.05969442017279841,
+     "startUser": 13.884,
+     "startUserSpread": 0.16011235955056172,
+     "rssKB": 599608,
+     "rssKBSpread": 0.17948392950060707,
+     "uop": "uop: installs=1935 kills=196 retired-poor=196 enters=108109558 blocks=1847447253 head-exits=4 reguards=143486715 rg-pages=2295727490 rg-nonadj=0 win-kept=108105910 win-reset=3648 gen=16 | compiled=1935 declined=790 insns=124548 uops=587280 flushes=10 traces=1525",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=567 ok-halved=140 ok-icut=0 ok-nocall-head=83 ok-nocall=202",
+     "declines": "  declines: no-backedge=464 head-unsupported=284 call-indirect=49 unreached-block=13"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "3440064/32700/6a4436d8e792d22f"
+     ],
+     "user": 67.52,
+     "userSpread": 0.06946090047393383,
+     "ins": 1125722516468,
+     "insSpread": 0.0004109333625584897,
+     "cyc": 287840523803,
+     "cycSpread": 0.0257509697803112,
+     "bmiss": 479826326,
+     "bmissSpread": 0.055433569520318485,
+     "startUser": 13.912,
+     "startUserSpread": 0.07604945370902816,
+     "rssKB": 585976,
+     "rssKBSpread": 0.16326265922153807,
+     "uop": "uop: installs=1935 kills=196 retired-poor=196 enters=108109558 blocks=1847447253 head-exits=4 reguards=143486715 rg-pages=2295727490 rg-nonadj=0 win-kept=108105910 win-reset=3648 gen=16 | compiled=1935 declined=790 insns=124548 uops=587280 flushes=10 traces=1525",
+     "opt": "uop opt: mask=0x0 enters=108109558 exits=108109558 head-exits=4 charged-blocks=1847447253 service-calls=605395127 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=567 ok-halved=140 ok-icut=0 ok-nocall-head=83 ok-nocall=202",
+     "declines": "  declines: no-backedge=464 head-unsupported=284 call-indirect=49 unreached-block=13"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "3440064/32700/6a4436d8e792d22f"
+     ],
+     "user": 66.9,
+     "userSpread": 0.06905829596412562,
+     "ins": 1125646684459,
+     "insSpread": 0.00018974606681549692,
+     "cyc": 286721061650,
+     "cycSpread": 0.01968602349795324,
+     "bmiss": 467096398,
+     "bmissSpread": 0.03244175948451651,
+     "startUser": 13.802,
+     "startUserSpread": 0.11172293870453556,
+     "rssKB": 601444,
+     "rssKBSpread": 0.16864745512466664,
+     "uop": "uop: installs=1935 kills=196 retired-poor=196 enters=108109558 blocks=1847447253 head-exits=4 reguards=143486715 rg-pages=2295727490 rg-nonadj=0 win-kept=108105910 win-reset=3648 gen=16 | compiled=1935 declined=790 insns=124548 uops=587280 flushes=10 traces=1525",
+     "opt": "uop opt: mask=0x0 enters=108109558 exits=108109558 head-exits=4 charged-blocks=1847447253 service-calls=605395127 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=567 ok-halved=140 ok-icut=0 ok-nocall-head=83 ok-nocall=202",
+     "declines": "  declines: no-backedge=464 head-unsupported=284 call-indirect=49 unreached-block=13"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "3440064/32700/6a4436d8e792d22f"
+     ],
+     "user": 59.01,
+     "userSpread": 0.03863751906456535,
+     "ins": 1012994540191,
+     "insSpread": 0.00027447873603304374,
+     "cyc": 255160147302,
+     "cycSpread": 0.020102141773453177,
+     "bmiss": 501718980,
+     "bmissSpread": 0.11994344323987903,
+     "startUser": 13.506,
+     "startUserSpread": 0.06545239152969053,
+     "rssKB": 599168,
+     "rssKBSpread": 0.10575998718222603,
+     "uop": "uop: installs=1364 kills=135 retired-poor=135 enters=106096603 blocks=1790341085 head-exits=38 reguards=159009731 rg-pages=2542783613 rg-nonadj=0 win-kept=106092011 win-reset=4592 gen=13 | compiled=1419 declined=554 insns=91999 uops=427854 flushes=0 traces=1117",
+     "opt": "uop opt: mask=0xffff enters=106096603 exits=106096603 head-exits=38 charged-blocks=1790341085 service-calls=296481008 loads-deleted=1649 stores-deleted=0 folds=1649 fold-dwords=801 jcc-folded=743 variants=55 variant-hits=1419707 megamorphic=758 icg-megamorphic=0 lock-sites=670 sahf-sites=291 ret-exits=1643 c2-copies=15 c2-programs=7 r2-contexts=921 r2-programs=53 sahf-jcc=263 m1-loads=255 ret-dyn=1643 ret-chain=48518056 fs-programs=461 seams-skipped=289351263 decline-hits=34 stamp-drops=4",
+     "ladder": "uop ladder: mask=15 retried=419 ok-halved=90 ok-icut=0 ok-nocall-head=45 ok-nocall=155",
+     "declines": "  declines: no-backedge=418 head-unsupported=95 call-indirect=47 unreached-block=13"
+    }
+   },
+   "exact": {
+    "m": "3440064/32700/6a4436d8e792d22f",
+    "off": "3440064/32700/6a4436d8e792d22f",
+    "off2": "3440064/32700/6a4436d8e792d22f",
+    "all": "3440064/32700/6a4436d8e792d22f"
+   },
+   "failed": [],
+   "band": {
+    "user": 0.918246445497616,
+    "ins": 0.006736296724163074,
+    "cyc": 0.38891749438524764,
+    "bmiss": 2.653028254227135,
+    "startUser": 0.7906843013226078,
+    "rssKB": 2.6396985542069986
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "metrojd_gm7": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "795191/1500000/308622198db314d0"
+     ],
+     "user": 14.73,
+     "userSpread": 0.028513238289205697,
+     "ins": 192200609987,
+     "insSpread": 0.024450112261963433,
+     "cyc": 63722355641,
+     "cycSpread": 0.027981093229591393,
+     "bmiss": 60455751,
+     "bmissSpread": 0.1433770295897904,
+     "startUser": 4.696,
+     "startUserSpread": 0.019591141396933673,
+     "rssKB": 688228,
+     "rssKBSpread": 0.19853304428183682,
+     "uop": "uop: installs=418 kills=65 retired-poor=65 enters=1253631 blocks=32623167 head-exits=0 reguards=2188539 rg-pages=29523918 rg-nonadj=120132 win-kept=1248666 win-reset=4965 gen=8 | compiled=418 declined=269 insns=28617 uops=131001 flushes=2 traces=297",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=184 ok-halved=18 ok-icut=0 ok-nocall-head=17 ok-nocall=81",
+     "declines": "  declines: no-backedge=163 head-unsupported=89 call-indirect=15 unreached-block=2"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "795191/1500000/308622198db314d0"
+     ],
+     "user": 15.16,
+     "userSpread": 0.05343007915567274,
+     "ins": 191859066239,
+     "insSpread": 0.019052813753645488,
+     "cyc": 64929651199,
+     "cycSpread": 0.04309718631359438,
+     "bmiss": 62347831,
+     "bmissSpread": 0.07276391058415488,
+     "startUser": 4.777,
+     "startUserSpread": 0.06866234038099213,
+     "rssKB": 688732,
+     "rssKBSpread": 0.13344522978458964,
+     "uop": "uop: installs=418 kills=65 retired-poor=65 enters=1253631 blocks=32623167 head-exits=0 reguards=2188539 rg-pages=29523918 rg-nonadj=120132 win-kept=1248666 win-reset=4965 gen=8 | compiled=418 declined=269 insns=28617 uops=131001 flushes=2 traces=297",
+     "opt": "uop opt: mask=0x0 enters=1253631 exits=1253631 head-exits=0 charged-blocks=32623167 service-calls=9907912 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=184 ok-halved=18 ok-icut=0 ok-nocall-head=17 ok-nocall=81",
+     "declines": "  declines: no-backedge=163 head-unsupported=89 call-indirect=15 unreached-block=2"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "795191/1500000/308622198db314d0"
+     ],
+     "user": 14.97,
+     "userSpread": 0.08016032064128263,
+     "ins": 192648452830,
+     "insSpread": 0.009560602506500804,
+     "cyc": 65474198686,
+     "cycSpread": 0.07402068034833834,
+     "bmiss": 62289201,
+     "bmissSpread": 0.11131411045070236,
+     "startUser": 4.845,
+     "startUserSpread": 0.02600619195046428,
+     "rssKB": 719304,
+     "rssKBSpread": 0.13705470844038126,
+     "uop": "uop: installs=418 kills=65 retired-poor=65 enters=1253631 blocks=32623167 head-exits=0 reguards=2188539 rg-pages=29523918 rg-nonadj=120132 win-kept=1248666 win-reset=4965 gen=8 | compiled=418 declined=269 insns=28617 uops=131001 flushes=2 traces=297",
+     "opt": "uop opt: mask=0x0 enters=1253631 exits=1253631 head-exits=0 charged-blocks=32623167 service-calls=9907912 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=184 ok-halved=18 ok-icut=0 ok-nocall-head=17 ok-nocall=81",
+     "declines": "  declines: no-backedge=163 head-unsupported=89 call-indirect=15 unreached-block=2"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "795191/1500000/308622198db314d0"
+     ],
+     "user": 14.97,
+     "userSpread": 0.046760187040748115,
+     "ins": 194114436625,
+     "insSpread": 0.008188023130245118,
+     "cyc": 65686295159,
+     "cycSpread": 0.02199629678462743,
+     "bmiss": 65276021,
+     "bmissSpread": 0.06263083958502924,
+     "startUser": 4.84,
+     "startUserSpread": 0.09049586776859499,
+     "rssKB": 686580,
+     "rssKBSpread": 0.24639808907920416,
+     "uop": "uop: installs=381 kills=51 retired-poor=51 enters=1321810 blocks=33933110 head-exits=0 reguards=2181133 rg-pages=29465005 rg-nonadj=126438 win-kept=1315561 win-reset=6249 gen=10 | compiled=399 declined=211 insns=26647 uops=122799 flushes=0 traces=285",
+     "opt": "uop opt: mask=0xffff enters=1321810 exits=1321810 head-exits=0 charged-blocks=33933110 service-calls=8318741 loads-deleted=307 stores-deleted=0 folds=307 fold-dwords=124 jcc-folded=170 variants=18 variant-hits=11421 megamorphic=176 icg-megamorphic=0 lock-sites=101 sahf-sites=48 ret-exits=373 c2-copies=5 c2-programs=3 r2-contexts=352 r2-programs=12 sahf-jcc=48 m1-loads=277 ret-dyn=373 ret-chain=222607 fs-programs=99 seams-skipped=1911145 decline-hits=5 stamp-drops=1",
+     "ladder": "uop ladder: mask=15 retried=171 ok-halved=18 ok-icut=0 ok-nocall-head=18 ok-nocall=74",
+     "declines": "  declines: no-backedge=158 head-unsupported=33 call-indirect=18 unreached-block=2"
+    }
+   },
+   "exact": {
+    "m": "795191/1500000/308622198db314d0",
+    "off": "795191/1500000/308622198db314d0",
+    "off2": "795191/1500000/308622198db314d0",
+    "all": "795191/1500000/308622198db314d0"
+   },
+   "failed": [],
+   "band": {
+    "user": 1.2532981530342975,
+    "ins": 0.41144085941534625,
+    "cyc": 0.838673051439997,
+    "bmiss": 0.09403695214353167,
+    "startUser": 1.4234875444839776,
+    "rssKB": 4.4388818872943325
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "castle_gm5": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "6087808/280000/d003795ccfd0a88c"
+     ],
+     "user": 11.02,
+     "userSpread": 0.06533575317604362,
+     "ins": 146790177084,
+     "insSpread": 0.0032015436069068185,
+     "cyc": 46510847960,
+     "cycSpread": 0.02912971668814098,
+     "bmiss": 109320284,
+     "bmissSpread": 0.058728945490115994,
+     "startUser": 2.549,
+     "startUserSpread": 0.05256963515103959,
+     "rssKB": 447852,
+     "rssKBSpread": 0.10835722515473861,
+     "uop": "uop: installs=510 kills=102 retired-poor=102 enters=10487724 blocks=187113591 head-exits=0 reguards=13238887 rg-pages=164961648 rg-nonadj=2489337 win-kept=10443379 win-reset=44345 gen=8 | compiled=510 declined=341 insns=31870 uops=149223 flushes=2 traces=411",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=222 ok-halved=21 ok-icut=0 ok-nocall-head=24 ok-nocall=98",
+     "declines": "  declines: no-backedge=198 head-unsupported=119 call-indirect=17 unreached-block=7"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "6087808/280000/d003795ccfd0a88c"
+     ],
+     "user": 10.88,
+     "userSpread": 0.10937500000000011,
+     "ins": 149615457479,
+     "insSpread": 0.004460385880206716,
+     "cyc": 47409300649,
+     "cycSpread": 0.04046447255577613,
+     "bmiss": 111315702,
+     "bmissSpread": 0.026191111834339417,
+     "startUser": 2.604,
+     "startUserSpread": 0.10675883256528418,
+     "rssKB": 443012,
+     "rssKBSpread": 0.2110462019087519,
+     "uop": "uop: installs=510 kills=102 retired-poor=102 enters=10487724 blocks=187113591 head-exits=0 reguards=13238887 rg-pages=164961648 rg-nonadj=2489337 win-kept=10443379 win-reset=44345 gen=8 | compiled=510 declined=341 insns=31870 uops=149223 flushes=2 traces=411",
+     "opt": "uop opt: mask=0x0 enters=10487724 exits=10487724 head-exits=0 charged-blocks=187113591 service-calls=38729671 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=222 ok-halved=21 ok-icut=0 ok-nocall-head=24 ok-nocall=98",
+     "declines": "  declines: no-backedge=198 head-unsupported=119 call-indirect=17 unreached-block=7"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "6087808/280000/d003795ccfd0a88c"
+     ],
+     "user": 11.06,
+     "userSpread": 0.14104882459312842,
+     "ins": 149238379077,
+     "insSpread": 0.0070953407196526755,
+     "cyc": 47534829866,
+     "cycSpread": 0.053768084838105516,
+     "bmiss": 110415495,
+     "bmissSpread": 0.04383743422967945,
+     "startUser": 2.616,
+     "startUserSpread": 0.18042813455657492,
+     "rssKB": 444240,
+     "rssKBSpread": 0.11243471997118674,
+     "uop": "uop: installs=510 kills=102 retired-poor=102 enters=10487724 blocks=187113591 head-exits=0 reguards=13238887 rg-pages=164961648 rg-nonadj=2489337 win-kept=10443379 win-reset=44345 gen=8 | compiled=510 declined=341 insns=31870 uops=149223 flushes=2 traces=411",
+     "opt": "uop opt: mask=0x0 enters=10487724 exits=10487724 head-exits=0 charged-blocks=187113591 service-calls=38729671 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=222 ok-halved=21 ok-icut=0 ok-nocall-head=24 ok-nocall=98",
+     "declines": "  declines: no-backedge=198 head-unsupported=119 call-indirect=17 unreached-block=7"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "6087808/280000/d003795ccfd0a88c"
+     ],
+     "user": 11.53,
+     "userSpread": 0.10234171725932348,
+     "ins": 149744666649,
+     "insSpread": 0.004703118232923744,
+     "cyc": 48882058442,
+     "cycSpread": 0.0438797874795929,
+     "bmiss": 120987341,
+     "bmissSpread": 0.0490145080550204,
+     "startUser": 2.723,
+     "startUserSpread": 0.1090708777084099,
+     "rssKB": 448684,
+     "rssKBSpread": 0.1113032780308636,
+     "uop": "uop: installs=941 kills=83 retired-poor=83 enters=10399350 blocks=196127481 head-exits=3 reguards=13178534 rg-pages=165903978 rg-nonadj=2494627 win-kept=10353933 win-reset=45417 gen=20 | compiled=970 declined=268 insns=60054 uops=276777 flushes=0 traces=808",
+     "opt": "uop opt: mask=0xffff enters=10399350 exits=10399350 head-exits=3 charged-blocks=196127481 service-calls=21113434 loads-deleted=1139 stores-deleted=0 folds=1139 fold-dwords=478 jcc-folded=600 variants=29 variant-hits=98350 megamorphic=404 icg-megamorphic=0 lock-sites=319 sahf-sites=61 ret-exits=1285 c2-copies=5 c2-programs=5 r2-contexts=657 r2-programs=38 sahf-jcc=61 m1-loads=232 ret-dyn=1285 ret-chain=1777789 fs-programs=368 seams-skipped=20462188 decline-hits=15 stamp-drops=11",
+     "ladder": "uop ladder: mask=15 retried=337 ok-halved=52 ok-icut=0 ok-nocall-head=58 ok-nocall=147",
+     "declines": "  declines: no-backedge=207 head-unsupported=36 call-indirect=19 unreached-block=6"
+    }
+   },
+   "exact": {
+    "m": "6087808/280000/d003795ccfd0a88c",
+    "off": "6087808/280000/d003795ccfd0a88c",
+    "off2": "6087808/280000/d003795ccfd0a88c",
+    "all": "6087808/280000/d003795ccfd0a88c"
+   },
+   "failed": [],
+   "band": {
+    "user": 1.6544117647058796,
+    "ins": 0.2520317140713396,
+    "cyc": 0.2647776180656396,
+    "bmiss": 0.8086972312315831,
+    "startUser": 0.46082949308755805,
+    "rssKB": 0.2771933943098607
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "age_of_wonders_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "36565/80000/cf54108b7650531a"
+     ],
+     "user": 4.53,
+     "userSpread": 0.07064017660044136,
+     "ins": 55843331510,
+     "insSpread": 0.0029300160748951705,
+     "cyc": 19581327118,
+     "cycSpread": 0.046602082662781444,
+     "bmiss": 85634000,
+     "bmissSpread": 0.024166826260597428,
+     "startUser": 0.992,
+     "startUserSpread": 0.11693548387096785,
+     "rssKB": 479608,
+     "rssKBSpread": 0.11465196577204717,
+     "uop": "uop: installs=407 kills=105 retired-poor=105 enters=4977963 blocks=50515361 head-exits=0 reguards=3609650 rg-pages=53966397 rg-nonadj=1570 win-kept=4973959 win-reset=4004 gen=7 | compiled=407 declined=482 insns=14843 uops=70866 flushes=1 traces=362",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=101 ok-halved=4 ok-icut=0 ok-nocall-head=8 ok-nocall=36",
+     "declines": "  declines: no-backedge=206 head-unsupported=160 call-indirect=113 unreached-block=3"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "36565/80000/cf54108b7650531a"
+     ],
+     "user": 4.6,
+     "userSpread": 0.05869565217391315,
+     "ins": 56818864256,
+     "insSpread": 0.0029044085826226904,
+     "cyc": 19785989725,
+     "cycSpread": 0.031362425869247236,
+     "bmiss": 87455149,
+     "bmissSpread": 0.03341789515446369,
+     "startUser": 1.049,
+     "startUserSpread": 0.06863679694947565,
+     "rssKB": 525100,
+     "rssKBSpread": 0.09092363359360121,
+     "uop": "uop: installs=407 kills=105 retired-poor=105 enters=4977963 blocks=50515361 head-exits=0 reguards=3609650 rg-pages=53966397 rg-nonadj=1570 win-kept=4973959 win-reset=4004 gen=7 | compiled=407 declined=482 insns=14843 uops=70866 flushes=1 traces=362",
+     "opt": "uop opt: mask=0x0 enters=4977963 exits=4977963 head-exits=0 charged-blocks=50515361 service-calls=12842739 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=101 ok-halved=4 ok-icut=0 ok-nocall-head=8 ok-nocall=36",
+     "declines": "  declines: no-backedge=206 head-unsupported=160 call-indirect=113 unreached-block=3"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "36565/80000/cf54108b7650531a"
+     ],
+     "user": 4.48,
+     "userSpread": 0.15848214285714282,
+     "ins": 57056302805,
+     "insSpread": 0.0028183727317485445,
+     "cyc": 19706886433,
+     "cycSpread": 0.0835507011520007,
+     "bmiss": 87301338,
+     "bmissSpread": 0.035788019652115755,
+     "startUser": 1.009,
+     "startUserSpread": 0.13776015857284454,
+     "rssKB": 524860,
+     "rssKBSpread": 0.09293906946614336,
+     "uop": "uop: installs=407 kills=105 retired-poor=105 enters=4977963 blocks=50515361 head-exits=0 reguards=3609650 rg-pages=53966397 rg-nonadj=1570 win-kept=4973959 win-reset=4004 gen=7 | compiled=407 declined=482 insns=14843 uops=70866 flushes=1 traces=362",
+     "opt": "uop opt: mask=0x0 enters=4977963 exits=4977963 head-exits=0 charged-blocks=50515361 service-calls=12842739 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=101 ok-halved=4 ok-icut=0 ok-nocall-head=8 ok-nocall=36",
+     "declines": "  declines: no-backedge=206 head-unsupported=160 call-indirect=113 unreached-block=3"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "36565/80000/cf54108b7650531a"
+     ],
+     "user": 4.68,
+     "userSpread": 0.08119658119658119,
+     "ins": 55836926437,
+     "insSpread": 0.011328614312496278,
+     "cyc": 19771985474,
+     "cycSpread": 0.03909785742137755,
+     "bmiss": 94997781,
+     "bmissSpread": 0.01778498384083308,
+     "startUser": 1.062,
+     "startUserSpread": 0.08757062146892652,
+     "rssKB": 481336,
+     "rssKBSpread": 0.19851413565575815,
+     "uop": "uop: installs=364 kills=74 retired-poor=74 enters=6425886 blocks=60303708 head-exits=0 reguards=3880044 rg-pages=57847249 rg-nonadj=14131 win-kept=6421108 win-reset=4778 gen=9 | compiled=367 declined=377 insns=13233 uops=62847 flushes=0 traces=331",
+     "opt": "uop opt: mask=0xffff enters=6425886 exits=6425886 head-exits=0 charged-blocks=60303708 service-calls=7483384 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=3 jcc-folded=52 variants=3 variant-hits=212 megamorphic=240 icg-megamorphic=0 lock-sites=18 sahf-sites=9 ret-exits=377 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=9 m1-loads=43 ret-dyn=377 ret-chain=1572356 fs-programs=65 seams-skipped=7746460 decline-hits=6 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=88 ok-halved=2 ok-icut=0 ok-nocall-head=6 ok-nocall=33",
+     "declines": "  declines: no-backedge=184 call-indirect=115 head-unsupported=75 unreached-block=3"
+    }
+   },
+   "exact": {
+    "m": "36565/80000/cf54108b7650531a",
+    "off": "36565/80000/cf54108b7650531a",
+    "off2": "36565/80000/cf54108b7650531a",
+    "all": "36565/80000/cf54108b7650531a"
+   },
+   "failed": [],
+   "band": {
+    "user": 2.608695652173896,
+    "ins": 0.4178868270407689,
+    "cyc": 0.39979446618256037,
+    "bmiss": 0.17587415007434268,
+    "startUser": 3.8131553860819865,
+    "rssKB": 0.04570557988954485
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "heroes2_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "1187408/1800/0149f985b3195806"
+     ],
+     "user": 4.81,
+     "userSpread": 0.0665280665280664,
+     "ins": 73570949927,
+     "insSpread": 0.009535235560993465,
+     "cyc": 20567848035,
+     "cycSpread": 0.03251473464127041,
+     "bmiss": 70901695,
+     "bmissSpread": 0.02302582469995957,
+     "startUser": 1.211,
+     "startUserSpread": 0.07927332782824119,
+     "rssKB": 287572,
+     "rssKBSpread": 0.00997315454912161,
+     "uop": "uop: installs=83 kills=16 retired-poor=16 enters=1784528 blocks=139903128 head-exits=0 reguards=1145982 rg-pages=18335696 rg-nonadj=0 win-kept=1784500 win-reset=28 gen=6 | compiled=83 declined=78 insns=5798 uops=26527 flushes=0 traces=73",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=61 ok-halved=23 ok-icut=0 ok-nocall-head=6 ok-nocall=17",
+     "declines": "  declines: no-backedge=41 call-indirect=29 head-unsupported=16"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "1187408/1800/0149f985b3195806"
+     ],
+     "user": 4.92,
+     "userSpread": 0.06910569105691072,
+     "ins": 75065684814,
+     "insSpread": 0.0262842996888509,
+     "cyc": 20999219247,
+     "cycSpread": 0.0330106851519745,
+     "bmiss": 73166251,
+     "bmissSpread": 0.06325673294371745,
+     "startUser": 1.294,
+     "startUserSpread": 0.10819165378670798,
+     "rssKB": 288192,
+     "rssKBSpread": 0.016516766600044416,
+     "uop": "uop: installs=83 kills=16 retired-poor=16 enters=1784528 blocks=139903128 head-exits=0 reguards=1145982 rg-pages=18335696 rg-nonadj=0 win-kept=1784500 win-reset=28 gen=6 | compiled=83 declined=78 insns=5798 uops=26527 flushes=0 traces=73",
+     "opt": "uop opt: mask=0x0 enters=1784528 exits=1784528 head-exits=0 charged-blocks=139903128 service-calls=2938709 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=61 ok-halved=23 ok-icut=0 ok-nocall-head=6 ok-nocall=17",
+     "declines": "  declines: no-backedge=41 call-indirect=29 head-unsupported=16"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "1187408/1800/0149f985b3195806"
+     ],
+     "user": 4.87,
+     "userSpread": 0.04928131416837787,
+     "ins": 74968690132,
+     "insSpread": 0.017578713455972218,
+     "cyc": 20998715479,
+     "cycSpread": 0.032744047496030174,
+     "bmiss": 72914174,
+     "bmissSpread": 0.05563294182006368,
+     "startUser": 1.238,
+     "startUserSpread": 0.0686591276252019,
+     "rssKB": 286456,
+     "rssKBSpread": 0.017315050129862876,
+     "uop": "uop: installs=83 kills=16 retired-poor=16 enters=1784528 blocks=139903128 head-exits=0 reguards=1145982 rg-pages=18335696 rg-nonadj=0 win-kept=1784500 win-reset=28 gen=6 | compiled=83 declined=78 insns=5798 uops=26527 flushes=0 traces=73",
+     "opt": "uop opt: mask=0x0 enters=1784528 exits=1784528 head-exits=0 charged-blocks=139903128 service-calls=2938709 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=61 ok-halved=23 ok-icut=0 ok-nocall-head=6 ok-nocall=17",
+     "declines": "  declines: no-backedge=41 call-indirect=29 head-unsupported=16"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "1187408/1800/0149f985b3195806"
+     ],
+     "user": 4.92,
+     "userSpread": 0.0955284552845528,
+     "ins": 75056236272,
+     "insSpread": 0.018492161610264228,
+     "cyc": 20962636551,
+     "cycSpread": 0.06384760565512702,
+     "bmiss": 74224590,
+     "bmissSpread": 0.04543666728236559,
+     "startUser": 1.31,
+     "startUserSpread": 0.15877862595419845,
+     "rssKB": 289640,
+     "rssKBSpread": 0.01526032315978456,
+     "uop": "uop: installs=83 kills=11 retired-poor=11 enters=1813538 blocks=140572159 head-exits=0 reguards=1147466 rg-pages=18359440 rg-nonadj=0 win-kept=1813510 win-reset=28 gen=9 | compiled=83 declined=68 insns=5720 uops=25866 flushes=0 traces=72",
+     "opt": "uop opt: mask=0xffff enters=1813538 exits=1813538 head-exits=0 charged-blocks=140572159 service-calls=1654844 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=12 variants=0 variant-hits=0 megamorphic=37 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=118 c2-copies=0 c2-programs=0 r2-contexts=19 r2-programs=1 sahf-jcc=0 m1-loads=4 ret-dyn=118 ret-chain=161098 fs-programs=0 seams-skipped=1088232 decline-hits=405 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=62 ok-halved=25 ok-icut=0 ok-nocall-head=5 ok-nocall=16",
+     "declines": "  declines: no-backedge=45 call-indirect=28 head-unsupported=3"
+    }
+   },
+   "exact": {
+    "m": "1187408/1800/0149f985b3195806",
+    "off": "1187408/1800/0149f985b3195806",
+    "off2": "1187408/1800/0149f985b3195806",
+    "all": "1187408/1800/0149f985b3195806"
+   },
+   "failed": [],
+   "band": {
+    "user": 1.0162601626016223,
+    "ins": 0.12921307817325098,
+    "cyc": 0.002398984429251909,
+    "bmiss": 0.3445263308625721,
+    "startUser": 4.3276661514683195,
+    "rssKB": 0.6023761936486787
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "heroes3_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "78096/31000/2b2f5ba406fcd59a"
+     ],
+     "user": 9.72,
+     "userSpread": 0.05041152263374469,
+     "ins": 145526905879,
+     "insSpread": 0.005222412868668505,
+     "cyc": 41557675673,
+     "cycSpread": 0.029361529253975126,
+     "bmiss": 127833739,
+     "bmissSpread": 0.02861908779809687,
+     "startUser": 0.521,
+     "startUserSpread": 0.19961612284069094,
+     "rssKB": 580588,
+     "rssKBSpread": 0.09048757466568376,
+     "uop": "uop: installs=259 kills=41 retired-poor=41 enters=3371562 blocks=60047908 head-exits=1 reguards=535301 rg-pages=7142148 rg-nonadj=13 win-kept=3371156 win-reset=406 gen=6 | compiled=259 declined=188 insns=11928 uops=51387 flushes=0 traces=137",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=55 ok-halved=3 ok-icut=0 ok-nocall-head=4 ok-nocall=29",
+     "declines": "  declines: no-backedge=100 head-unsupported=77 arg=36 call-indirect=19 unreached-block=3"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "78096/31000/2b2f5ba406fcd59a"
+     ],
+     "user": 9.97,
+     "userSpread": 0.06920762286860577,
+     "ins": 152291296900,
+     "insSpread": 0.0024673294708806174,
+     "cyc": 42801688393,
+     "cycSpread": 0.02248861888722643,
+     "bmiss": 129637831,
+     "bmissSpread": 0.011422599318249932,
+     "startUser": 0.514,
+     "startUserSpread": 0.09143968871595338,
+     "rssKB": 537912,
+     "rssKBSpread": 0.19948244322491412,
+     "uop": "uop: installs=259 kills=41 retired-poor=41 enters=3371562 blocks=60047908 head-exits=1 reguards=535301 rg-pages=7142148 rg-nonadj=13 win-kept=3371156 win-reset=406 gen=6 | compiled=259 declined=188 insns=11928 uops=51387 flushes=0 traces=137",
+     "opt": "uop opt: mask=0x0 enters=3371562 exits=3371562 head-exits=1 charged-blocks=60047908 service-calls=14460848 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=55 ok-halved=3 ok-icut=0 ok-nocall-head=4 ok-nocall=29",
+     "declines": "  declines: no-backedge=100 head-unsupported=77 arg=36 call-indirect=19 unreached-block=3"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "78096/31000/2b2f5ba406fcd59a"
+     ],
+     "user": 9.78,
+     "userSpread": 0.05725971370143155,
+     "ins": 152553178952,
+     "insSpread": 0.004367575101202208,
+     "cyc": 42708956370,
+     "cycSpread": 0.03006599460955173,
+     "bmiss": 130137939,
+     "bmissSpread": 0.010037441886950431,
+     "startUser": 0.564,
+     "startUserSpread": 0.15070921985815597,
+     "rssKB": 573416,
+     "rssKBSpread": 0.09239365486836781,
+     "uop": "uop: installs=259 kills=41 retired-poor=41 enters=3371562 blocks=60047908 head-exits=1 reguards=535301 rg-pages=7142148 rg-nonadj=13 win-kept=3371156 win-reset=406 gen=6 | compiled=259 declined=188 insns=11928 uops=51387 flushes=0 traces=137",
+     "opt": "uop opt: mask=0x0 enters=3371562 exits=3371562 head-exits=1 charged-blocks=60047908 service-calls=14460848 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=55 ok-halved=3 ok-icut=0 ok-nocall-head=4 ok-nocall=29",
+     "declines": "  declines: no-backedge=100 head-unsupported=77 arg=36 call-indirect=19 unreached-block=3"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "78096/31000/2b2f5ba406fcd59a"
+     ],
+     "user": 9.67,
+     "userSpread": 0.039296794208893385,
+     "ins": 150076207867,
+     "insSpread": 0.0036103455551074154,
+     "cyc": 42065080958,
+     "cycSpread": 0.024996583247987956,
+     "bmiss": 130195877,
+     "bmissSpread": 0.027787308502864497,
+     "startUser": 0.559,
+     "startUserSpread": 0.18962432915921285,
+     "rssKB": 587360,
+     "rssKBSpread": 0.25968400980659223,
+     "uop": "uop: installs=285 kills=33 retired-poor=33 enters=3338846 blocks=60202484 head-exits=1 reguards=536073 rg-pages=7155196 rg-nonadj=9 win-kept=3338413 win-reset=433 gen=10 | compiled=285 declined=162 insns=14790 uops=63649 flushes=0 traces=144",
+     "opt": "uop opt: mask=0xffff enters=3338846 exits=3338846 head-exits=1 charged-blocks=60202484 service-calls=14289601 loads-deleted=10 stores-deleted=0 folds=10 fold-dwords=5 jcc-folded=21 variants=0 variant-hits=0 megamorphic=119 icg-megamorphic=0 lock-sites=36 sahf-sites=4 ret-exits=178 c2-copies=0 c2-programs=0 r2-contexts=30 r2-programs=6 sahf-jcc=0 m1-loads=52 ret-dyn=178 ret-chain=71481 fs-programs=34 seams-skipped=188518 decline-hits=7 stamp-drops=1",
+     "ladder": "uop ladder: mask=15 retried=69 ok-halved=8 ok-icut=0 ok-nocall-head=8 ok-nocall=33",
+     "declines": "  declines: no-backedge=100 head-unsupported=40 arg=36 call-indirect=23 unreached-block=2"
+    }
+   },
+   "exact": {
+    "m": "78096/31000/2b2f5ba406fcd59a",
+    "off": "78096/31000/2b2f5ba406fcd59a",
+    "off2": "78096/31000/2b2f5ba406fcd59a",
+    "all": "78096/31000/2b2f5ba406fcd59a"
+   },
+   "failed": [],
+   "band": {
+    "user": 1.905717151454376,
+    "ins": 0.17196127246323292,
+    "cyc": 0.21665505843728783,
+    "bmiss": 0.3857731930118455,
+    "startUser": 9.727626459143956,
+    "rssKB": 6.6003361144573836
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "caesar3_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "1226726/95000/db4815a4af49f6c2"
+     ],
+     "user": 12.37,
+     "userSpread": 0.06709781729991916,
+     "ins": 141531512658,
+     "insSpread": 0.014326278154742734,
+     "cyc": 53233422910,
+     "cycSpread": 0.07168923008110958,
+     "bmiss": 87452733,
+     "bmissSpread": 0.11705044140816045,
+     "startUser": 0.632,
+     "startUserSpread": 0.10126582278481022,
+     "rssKB": 393976,
+     "rssKBSpread": 0.10632119723028814,
+     "uop": "uop: installs=82 kills=5 retired-poor=5 enters=1571930 blocks=246284242 head-exits=17 reguards=4296 rg-pages=67062 rg-nonadj=0 win-kept=1571888 win-reset=42 gen=6 | compiled=82 declined=18 insns=2944 uops=14028 flushes=0 traces=31",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=19 ok-halved=0 ok-icut=0 ok-nocall-head=5 ok-nocall=14",
+     "declines": "  declines: no-backedge=18 call-indirect=10 head-unsupported=7"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "1226726/95000/db4815a4af49f6c2"
+     ],
+     "user": 12.49,
+     "userSpread": 0.04803843074459579,
+     "ins": 143348685928,
+     "insSpread": 0.005394564540259606,
+     "cyc": 54320689778,
+     "cycSpread": 0.020752382096159473,
+     "bmiss": 89194452,
+     "bmissSpread": 0.046829571866196344,
+     "startUser": 0.603,
+     "startUserSpread": 0.26036484245439473,
+     "rssKB": 348680,
+     "rssKBSpread": 0.15021222897785935,
+     "uop": "uop: installs=82 kills=5 retired-poor=5 enters=1571930 blocks=246284242 head-exits=17 reguards=4296 rg-pages=67062 rg-nonadj=0 win-kept=1571888 win-reset=42 gen=6 | compiled=82 declined=18 insns=2944 uops=14028 flushes=0 traces=31",
+     "opt": "uop opt: mask=0x0 enters=1571930 exits=1571930 head-exits=17 charged-blocks=246284242 service-calls=344035 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=19 ok-halved=0 ok-icut=0 ok-nocall-head=5 ok-nocall=14",
+     "declines": "  declines: no-backedge=18 call-indirect=10 head-unsupported=7"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "1226726/95000/db4815a4af49f6c2"
+     ],
+     "user": 12.32,
+     "userSpread": 0.021915584415584523,
+     "ins": 143333084664,
+     "insSpread": 0.0032217451056921463,
+     "cyc": 53517828221,
+     "cycSpread": 0.011147544731008003,
+     "bmiss": 90222191,
+     "bmissSpread": 0.04223383358092024,
+     "startUser": 0.622,
+     "startUserSpread": 0.1543408360128619,
+     "rssKB": 347104,
+     "rssKBSpread": 0.26538443809348206,
+     "uop": "uop: installs=82 kills=5 retired-poor=5 enters=1571930 blocks=246284242 head-exits=17 reguards=4296 rg-pages=67062 rg-nonadj=0 win-kept=1571888 win-reset=42 gen=6 | compiled=82 declined=18 insns=2944 uops=14028 flushes=0 traces=31",
+     "opt": "uop opt: mask=0x0 enters=1571930 exits=1571930 head-exits=17 charged-blocks=246284242 service-calls=344035 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=19 ok-halved=0 ok-icut=0 ok-nocall-head=5 ok-nocall=14",
+     "declines": "  declines: no-backedge=18 call-indirect=10 head-unsupported=7"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "1226726/95000/db4815a4af49f6c2"
+     ],
+     "user": 12.29,
+     "userSpread": 0.1122864117168429,
+     "ins": 144054804798,
+     "insSpread": 0.0036537524085923966,
+     "cyc": 53596473459,
+     "cycSpread": 0.05061591197926954,
+     "bmiss": 88469064,
+     "bmissSpread": 0.13142071899845126,
+     "startUser": 0.583,
+     "startUserSpread": 0.14579759862778743,
+     "rssKB": 393812,
+     "rssKBSpread": 0.11736564655216195,
+     "uop": "uop: installs=75 kills=3 retired-poor=3 enters=1564814 blocks=246290860 head-exits=110 reguards=4059 rg-pages=63686 rg-nonadj=0 win-kept=1564772 win-reset=42 gen=9 | compiled=75 declined=11 insns=4080 uops=17721 flushes=0 traces=22",
+     "opt": "uop opt: mask=0xffff enters=1564814 exits=1564814 head-exits=110 charged-blocks=246290860 service-calls=154526 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=27 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=16 c2-copies=0 c2-programs=0 r2-contexts=45 r2-programs=9 sahf-jcc=0 m1-loads=16 ret-dyn=16 ret-chain=2580 fs-programs=0 seams-skipped=191298 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=9 ok-halved=0 ok-icut=0 ok-nocall-head=1 ok-nocall=8",
+     "declines": "  declines: no-backedge=16 call-indirect=10 head-unsupported=2"
+    }
+   },
+   "exact": {
+    "m": "1226726/95000/db4815a4af49f6c2",
+    "off": "1226726/95000/db4815a4af49f6c2",
+    "off2": "1226726/95000/db4815a4af49f6c2",
+    "all": "1226726/95000/db4815a4af49f6c2"
+   },
+   "failed": [],
+   "band": {
+    "user": 1.361088871096877,
+    "ins": 0.010883437053504679,
+    "cyc": 1.4780032438490143,
+    "bmiss": 1.152245433381888,
+    "startUser": 3.1509121061359897,
+    "rssKB": 0.45199036365722156
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "simcity2000_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "1299848/270000/bf377911093f6103"
+     ],
+     "user": 14.86,
+     "userSpread": 0.08277254374158807,
+     "ins": 184512160854,
+     "insSpread": 0.004965159162191555,
+     "cyc": 64117531618,
+     "cycSpread": 0.044369500575118036,
+     "bmiss": 71011638,
+     "bmissSpread": 0.08283499952500743,
+     "startUser": 2.979,
+     "startUserSpread": 0.17992614971466936,
+     "rssKB": 442644,
+     "rssKBSpread": 0.09473979089290717,
+     "uop": "uop: installs=99 kills=27 retired-poor=27 enters=2375501 blocks=918982602 head-exits=0 reguards=4328191 rg-pages=49812790 rg-nonadj=2275888 win-kept=2375330 win-reset=171 gen=6 | compiled=99 declined=120 insns=2647 uops=12796 flushes=0 traces=68",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=12 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=2",
+     "declines": "  declines: no-backedge=69 head-unsupported=45 call-indirect=8"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "1299848/270000/bf377911093f6103"
+     ],
+     "user": 14.65,
+     "userSpread": 0.06962457337883957,
+     "ins": 187643143276,
+     "insSpread": 0.015960120267197862,
+     "cyc": 63699101619,
+     "cycSpread": 0.024161427318166964,
+     "bmiss": 68467071,
+     "bmissSpread": 0.10367312193039484,
+     "startUser": 2.915,
+     "startUserSpread": 0.049399656946826805,
+     "rssKB": 443104,
+     "rssKBSpread": 0.1114681880551744,
+     "uop": "uop: installs=99 kills=27 retired-poor=27 enters=2375501 blocks=918982602 head-exits=0 reguards=4328191 rg-pages=49812790 rg-nonadj=2275888 win-kept=2375330 win-reset=171 gen=6 | compiled=99 declined=120 insns=2647 uops=12796 flushes=0 traces=68",
+     "opt": "uop opt: mask=0x0 enters=2375501 exits=2375501 head-exits=0 charged-blocks=918982602 service-calls=6726243 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=12 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=2",
+     "declines": "  declines: no-backedge=69 head-unsupported=45 call-indirect=8"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "1299848/270000/bf377911093f6103"
+     ],
+     "user": 15.04,
+     "userSpread": 0.08045212765957441,
+     "ins": 188090577185,
+     "insSpread": 0.007284324268155124,
+     "cyc": 64463660884,
+     "cycSpread": 0.0419542183753214,
+     "bmiss": 71797133,
+     "bmissSpread": 0.10973461851185617,
+     "startUser": 2.939,
+     "startUserSpread": 0.08676420551207906,
+     "rssKB": 441584,
+     "rssKBSpread": 0.1013533099025327,
+     "uop": "uop: installs=99 kills=27 retired-poor=27 enters=2375501 blocks=918982602 head-exits=0 reguards=4328191 rg-pages=49812790 rg-nonadj=2275888 win-kept=2375330 win-reset=171 gen=6 | compiled=99 declined=120 insns=2647 uops=12796 flushes=0 traces=68",
+     "opt": "uop opt: mask=0x0 enters=2375501 exits=2375501 head-exits=0 charged-blocks=918982602 service-calls=6726243 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=12 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=2",
+     "declines": "  declines: no-backedge=69 head-unsupported=45 call-indirect=8"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "1299848/270000/bf377911093f6103"
+     ],
+     "user": 15.03,
+     "userSpread": 0.07052561543579511,
+     "ins": 187503555557,
+     "insSpread": 0.026708974883826075,
+     "cyc": 65151884481,
+     "cycSpread": 0.05397663079147858,
+     "bmiss": 74535717,
+     "bmissSpread": 0.05805218188214383,
+     "startUser": 2.902,
+     "startUserSpread": 0.06443831840110263,
+     "rssKB": 439944,
+     "rssKBSpread": 0.11494190169657957,
+     "uop": "uop: installs=101 kills=17 retired-poor=17 enters=2471823 blocks=921974782 head-exits=0 reguards=4442059 rg-pages=51617610 rg-nonadj=2275953 win-kept=2471621 win-reset=202 gen=9 | compiled=102 declined=87 insns=2814 uops=13564 flushes=0 traces=71",
+     "opt": "uop opt: mask=0xffff enters=2471823 exits=2471823 head-exits=0 charged-blocks=921974782 service-calls=5415497 loads-deleted=3 stores-deleted=0 folds=3 fold-dwords=2 jcc-folded=3 variants=1 variant-hits=49612 megamorphic=41 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=74 c2-copies=0 c2-programs=0 r2-contexts=38 r2-programs=3 sahf-jcc=0 m1-loads=0 ret-dyn=74 ret-chain=855215 fs-programs=26 seams-skipped=1847083 decline-hits=148 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=9 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=2",
+     "declines": "  declines: no-backedge=62 head-unsupported=18 call-indirect=9"
+    }
+   },
+   "exact": {
+    "m": "1299848/270000/bf377911093f6103",
+    "off": "1299848/270000/bf377911093f6103",
+    "off2": "1299848/270000/bf377911093f6103",
+    "all": "1299848/270000/bf377911093f6103"
+   },
+   "failed": [],
+   "band": {
+    "user": 2.662116040955623,
+    "ins": 0.2384493785322492,
+    "cyc": 1.2002669512876603,
+    "bmiss": 4.863742455113933,
+    "startUser": 0.8233276157804467,
+    "rssKB": 0.3430345923304687
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "red_alert_95_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "5568899/75000/4a9d9340a5964f7d"
+     ],
+     "user": 12.96,
+     "userSpread": 0.06095679012345686,
+     "ins": 203611267659,
+     "insSpread": 0.004030241230923979,
+     "cyc": 56455034946,
+     "cycSpread": 0.012662289903527005,
+     "bmiss": 42592516,
+     "bmissSpread": 0.23720350307551683,
+     "startUser": 1.632,
+     "startUserSpread": 0.10906862745098037,
+     "rssKB": 353580,
+     "rssKBSpread": 0.16466994739521465,
+     "uop": "uop: installs=243 kills=49 retired-poor=49 enters=33974641 blocks=218413246 head-exits=0 reguards=11197158 rg-pages=95487030 rg-nonadj=0 win-kept=33973676 win-reset=965 gen=7 | compiled=243 declined=142 insns=14559 uops=62942 flushes=1 traces=159",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=26 ok-halved=14 ok-icut=0 ok-nocall-head=2 ok-nocall=9",
+     "declines": "  declines: no-backedge=62 head-unsupported=56 call-indirect=26"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "5568899/75000/4a9d9340a5964f7d"
+     ],
+     "user": 12.93,
+     "userSpread": 0.05723124516627999,
+     "ins": 207625682627,
+     "insSpread": 0.006127469814442688,
+     "cyc": 56756974501,
+     "cycSpread": 0.025759420650130684,
+     "bmiss": 43497895,
+     "bmissSpread": 0.23514489609209824,
+     "startUser": 1.715,
+     "startUserSpread": 0.09620991253644316,
+     "rssKB": 303012,
+     "rssKBSpread": 0.18157696724882183,
+     "uop": "uop: installs=243 kills=49 retired-poor=49 enters=33974641 blocks=218413246 head-exits=0 reguards=11197158 rg-pages=95487030 rg-nonadj=0 win-kept=33973676 win-reset=965 gen=7 | compiled=243 declined=142 insns=14559 uops=62942 flushes=1 traces=159",
+     "opt": "uop opt: mask=0x0 enters=33974641 exits=33974641 head-exits=0 charged-blocks=218413246 service-calls=70495274 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=26 ok-halved=14 ok-icut=0 ok-nocall-head=2 ok-nocall=9",
+     "declines": "  declines: no-backedge=62 head-unsupported=56 call-indirect=26"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "5568899/75000/4a9d9340a5964f7d"
+     ],
+     "user": 13.27,
+     "userSpread": 0.07083647324792762,
+     "ins": 206988801743,
+     "insSpread": 0.009025385495586008,
+     "cyc": 57275389221,
+     "cycSpread": 0.027424146555150655,
+     "bmiss": 43858211,
+     "bmissSpread": 0.08409032005432232,
+     "startUser": 1.754,
+     "startUserSpread": 0.08836944127708098,
+     "rssKB": 346776,
+     "rssKBSpread": 0.15981498142893394,
+     "uop": "uop: installs=243 kills=49 retired-poor=49 enters=33974641 blocks=218413246 head-exits=0 reguards=11197158 rg-pages=95487030 rg-nonadj=0 win-kept=33973676 win-reset=965 gen=7 | compiled=243 declined=142 insns=14559 uops=62942 flushes=1 traces=159",
+     "opt": "uop opt: mask=0x0 enters=33974641 exits=33974641 head-exits=0 charged-blocks=218413246 service-calls=70495274 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=26 ok-halved=14 ok-icut=0 ok-nocall-head=2 ok-nocall=9",
+     "declines": "  declines: no-backedge=62 head-unsupported=56 call-indirect=26"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "5568899/75000/4a9d9340a5964f7d"
+     ],
+     "user": 13.45,
+     "userSpread": 0.07211895910780675,
+     "ins": 208362423028,
+     "insSpread": 0.002702521149527664,
+     "cyc": 57996482994,
+     "cycSpread": 0.02698880506533358,
+     "bmiss": 55036864,
+     "bmissSpread": 0.09904437869134404,
+     "startUser": 1.615,
+     "startUserSpread": 0.11578947368421057,
+     "rssKB": 346800,
+     "rssKBSpread": 0.15986159169550174,
+     "uop": "uop: installs=237 kills=27 retired-poor=27 enters=22861714 blocks=246586025 head-exits=0 reguards=11197538 rg-pages=95492799 rg-nonadj=0 win-kept=22860687 win-reset=1027 gen=9 | compiled=237 declined=102 insns=14260 uops=61079 flushes=0 traces=155",
+     "opt": "uop opt: mask=0xffff enters=22861714 exits=22861714 head-exits=0 charged-blocks=246586025 service-calls=16951005 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=89 variants=0 variant-hits=0 megamorphic=117 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=211 c2-copies=0 c2-programs=0 r2-contexts=180 r2-programs=20 sahf-jcc=0 m1-loads=86 ret-dyn=211 ret-chain=16753506 fs-programs=0 seams-skipped=53575225 decline-hits=5 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=26 ok-halved=13 ok-icut=0 ok-nocall-head=2 ok-nocall=10",
+     "declines": "  declines: no-backedge=56 call-indirect=28 head-unsupported=20"
+    }
+   },
+   "exact": {
+    "m": "5568899/75000/4a9d9340a5964f7d",
+    "off": "5568899/75000/4a9d9340a5964f7d",
+    "off2": "5568899/75000/4a9d9340a5964f7d",
+    "all": "5568899/75000/4a9d9340a5964f7d"
+   },
+   "failed": [],
+   "band": {
+    "user": 2.629543696829079,
+    "ins": 0.3067447513919354,
+    "cyc": 0.9133938596231307,
+    "bmiss": 0.8283527283331756,
+    "startUser": 2.2740524781341063,
+    "rssKB": 14.442992356738346
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "wep16_lifegen": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "0/800000/9abd4b02bbd6911d"
+     ],
+     "user": 12.92,
+     "userSpread": 0.14009287925696598,
+     "ins": 218332754538,
+     "insSpread": 0.036560142498503194,
+     "cyc": 56356565112,
+     "cycSpread": 0.03558729911970722,
+     "bmiss": 31766947,
+     "bmissSpread": 0.15012925226966256,
+     "startUser": 2.728,
+     "startUserSpread": 0.14296187683284461,
+     "rssKB": 278336,
+     "rssKBSpread": 0.14217348815819728,
+     "uop": "uop: installs=0 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=6 | compiled=0 declined=3 insns=0 uops=0 flushes=0 traces=0",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=2 head-unsupported=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "0/800000/9abd4b02bbd6911d"
+     ],
+     "user": 12.93,
+     "userSpread": 0.1747873163186388,
+     "ins": 221239288103,
+     "insSpread": 0.05986527143331738,
+     "cyc": 56176061429,
+     "cycSpread": 0.07805721875931196,
+     "bmiss": 27091202,
+     "bmissSpread": 0.14366232255032463,
+     "startUser": 2.659,
+     "startUserSpread": 0.15494546822113575,
+     "rssKB": 277548,
+     "rssKBSpread": 0.17527778978771238,
+     "uop": "uop: installs=0 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=6 | compiled=0 declined=3 insns=0 uops=0 flushes=0 traces=0",
+     "opt": "uop opt: mask=0x0 enters=0 exits=0 head-exits=0 charged-blocks=0 service-calls=0 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=2 head-unsupported=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "0/800000/9abd4b02bbd6911d"
+     ],
+     "user": 12.89,
+     "userSpread": 0.11792086889061285,
+     "ins": 217983665893,
+     "insSpread": 0.02741084817764722,
+     "cyc": 56640445886,
+     "cycSpread": 0.03667528977757313,
+     "bmiss": 28558763,
+     "bmissSpread": 0.04324935222159307,
+     "startUser": 2.683,
+     "startUserSpread": 0.0879612374207977,
+     "rssKB": 279892,
+     "rssKBSpread": 0.038014662798507994,
+     "uop": "uop: installs=0 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=6 | compiled=0 declined=3 insns=0 uops=0 flushes=0 traces=0",
+     "opt": "uop opt: mask=0x0 enters=0 exits=0 head-exits=0 charged-blocks=0 service-calls=0 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=2 head-unsupported=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "0/800000/9abd4b02bbd6911d"
+     ],
+     "user": 12.82,
+     "userSpread": 0.24882995319812787,
+     "ins": 213442078406,
+     "insSpread": 0.2513361993222232,
+     "cyc": 56300726138,
+     "cycSpread": 0.17909951417472428,
+     "bmiss": 28555609,
+     "bmissSpread": 0.1708393261723117,
+     "startUser": 2.66,
+     "startUserSpread": 0.2146616541353384,
+     "rssKB": 274856,
+     "rssKBSpread": 0.20886573332945252,
+     "uop": "uop: installs=0 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=9 | compiled=0 declined=3 insns=0 uops=0 flushes=0 traces=0",
+     "opt": "uop opt: mask=0xffff enters=0 exits=0 head-exits=0 charged-blocks=0 service-calls=0 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=6248 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=2 head-unsupported=1"
+    }
+   },
+   "exact": {
+    "m": "0/800000/9abd4b02bbd6911d",
+    "off": "0/800000/9abd4b02bbd6911d",
+    "off2": "0/800000/9abd4b02bbd6911d",
+    "all": "0/800000/9abd4b02bbd6911d"
+   },
+   "failed": [],
+   "band": {
+    "user": 0.3093580819798851,
+    "ins": 1.471538910613523,
+    "cyc": 0.8266589810446713,
+    "bmiss": 5.417112906249047,
+    "startUser": 0.9025949605114714,
+    "rssKB": 0.8445386023318489
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "wep16_rattler": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "0/250000/aeea0fefb087a785"
+     ],
+     "user": 14.22,
+     "userSpread": 0.10900140646976095,
+     "ins": 178282803769,
+     "insSpread": 0.01961458597280627,
+     "cyc": 61332363722,
+     "cycSpread": 0.03139360352598543,
+     "bmiss": 227544572,
+     "bmissSpread": 0.025826570804774022,
+     "startUser": 3.144,
+     "startUserSpread": 0.16539440203562342,
+     "rssKB": 324244,
+     "rssKBSpread": 0.1320240312850816,
+     "uop": "uop: installs=29 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=6 | compiled=29 declined=121 insns=1831 uops=16929 flushes=0 traces=29",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=15 ok-halved=10 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=69 head-unsupported=42 overlap=9 call-indirect=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "0/250000/aeea0fefb087a785"
+     ],
+     "user": 13.85,
+     "userSpread": 0.10541516245487371,
+     "ins": 178744576449,
+     "insSpread": 0.014738759605115496,
+     "cyc": 60504630071,
+     "cycSpread": 0.023907432543634633,
+     "bmiss": 224187445,
+     "bmissSpread": 0.02728817842587037,
+     "startUser": 3.152,
+     "startUserSpread": 0.10723350253807108,
+     "rssKB": 320780,
+     "rssKBSpread": 0.15206683708460628,
+     "uop": "uop: installs=29 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=6 | compiled=29 declined=121 insns=1831 uops=16929 flushes=0 traces=29",
+     "opt": "uop opt: mask=0x0 enters=0 exits=0 head-exits=0 charged-blocks=0 service-calls=0 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=15 ok-halved=10 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=69 head-unsupported=42 overlap=9 call-indirect=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "0/250000/aeea0fefb087a785"
+     ],
+     "user": 13.88,
+     "userSpread": 0.14697406340057642,
+     "ins": 178535596455,
+     "insSpread": 0.0013235835580808742,
+     "cyc": 60076833241,
+     "cycSpread": 0.05465631393765095,
+     "bmiss": 228210514,
+     "bmissSpread": 0.03949340388409975,
+     "startUser": 3.085,
+     "startUserSpread": 0.13225283630470028,
+     "rssKB": 321216,
+     "rssKBSpread": 0.1386979477983662,
+     "uop": "uop: installs=29 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=6 | compiled=29 declined=121 insns=1831 uops=16929 flushes=0 traces=29",
+     "opt": "uop opt: mask=0x0 enters=0 exits=0 head-exits=0 charged-blocks=0 service-calls=0 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=15 ok-halved=10 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": "  declines: no-backedge=69 head-unsupported=42 overlap=9 call-indirect=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "0/250000/aeea0fefb087a785"
+     ],
+     "user": 14.33,
+     "userSpread": 0.12491277041172359,
+     "ins": 178881598029,
+     "insSpread": 0.0081323644747637,
+     "cyc": 61279789676,
+     "cycSpread": 0.06394027172280858,
+     "bmiss": 227219596,
+     "bmissSpread": 0.1560710811227743,
+     "startUser": 3.277,
+     "startUserSpread": 0.1699725358559658,
+     "rssKB": 362964,
+     "rssKBSpread": 0.14490693291896717,
+     "uop": "uop: installs=30 kills=0 retired-poor=0 enters=0 blocks=0 head-exits=0 reguards=0 rg-pages=0 rg-nonadj=0 win-kept=0 win-reset=0 gen=9 | compiled=30 declined=120 insns=1844 uops=16986 flushes=0 traces=30",
+     "opt": "uop opt: mask=0xffff enters=0 exits=0 head-exits=0 charged-blocks=0 service-calls=0 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=10 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=10 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=91783 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=15 ok-halved=10 ok-icut=0 ok-nocall-head=0 ok-nocall=1",
+     "declines": "  declines: no-backedge=71 head-unsupported=39 overlap=9 call-indirect=1"
+    }
+   },
+   "exact": {
+    "m": "0/250000/aeea0fefb087a785",
+    "off": "0/250000/aeea0fefb087a785",
+    "off2": "0/250000/aeea0fefb087a785",
+    "all": "0/250000/aeea0fefb087a785"
+   },
+   "failed": [],
+   "band": {
+    "user": 0.21660649819495403,
+    "ins": 0.11691543214998015,
+    "cyc": 0.7070480878868209,
+    "bmiss": 1.7945112849651328,
+    "startUser": 2.125634517766503,
+    "rssKB": 0.13591869817320282
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "starcraft_shareware": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "1612304/7000/81ef8c8536c09d9f"
+     ],
+     "user": 70.24,
+     "userSpread": 0.21910592255125289,
+     "ins": 1278801499306,
+     "insSpread": 0.001305707625386865,
+     "cyc": 365603746880,
+     "cycSpread": 0.18472082129170983,
+     "bmiss": 1102415118,
+     "bmissSpread": 0.14391753288709888,
+     "startUser": 8.604,
+     "startUserSpread": 0.1720130172013017,
+     "rssKB": 372448,
+     "rssKBSpread": 0.021082137640690782,
+     "uop": "uop: installs=14978 kills=11482 retired-poor=114 enters=16708634 blocks=579095677 head-exits=21 reguards=8037491 rg-pages=104981737 rg-nonadj=1705482 win-kept=16300823 win-reset=407811 gen=43 | compiled=14978 declined=316 insns=574725 uops=1980611 flushes=37 traces=12805",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=961 ok-halved=287 ok-icut=0 ok-nocall-head=54 ok-nocall=577",
+     "declines": "  declines: head-unsupported=150 no-backedge=126 call-indirect=32 arg=24 unreached-block=9 loop-too-big=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "1612304/7000/81ef8c8536c09d9f"
+     ],
+     "user": 71.67,
+     "userSpread": 0.15431840379517234,
+     "ins": 1316586355357,
+     "insSpread": 0.001266720841526404,
+     "cyc": 372048246858,
+     "cycSpread": 0.1068802791622265,
+     "bmiss": 1119484800,
+     "bmissSpread": 0.08996836044580507,
+     "startUser": 8.33,
+     "startUserSpread": 0.4575030012004802,
+     "rssKB": 372088,
+     "rssKBSpread": 0.026509857883081422,
+     "uop": "uop: installs=14978 kills=11482 retired-poor=114 enters=16708634 blocks=579095677 head-exits=21 reguards=8037491 rg-pages=104981737 rg-nonadj=1705482 win-kept=16300823 win-reset=407811 gen=43 | compiled=14978 declined=316 insns=574725 uops=1980611 flushes=37 traces=12805",
+     "opt": "uop opt: mask=0x0 enters=16708634 exits=16708634 head-exits=21 charged-blocks=579095677 service-calls=51289113 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=961 ok-halved=287 ok-icut=0 ok-nocall-head=54 ok-nocall=577",
+     "declines": "  declines: head-unsupported=150 no-backedge=126 call-indirect=32 arg=24 unreached-block=9 loop-too-big=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "1612304/7000/81ef8c8536c09d9f"
+     ],
+     "user": 75.44,
+     "userSpread": 0.4227200424178155,
+     "ins": 1316609104144,
+     "insSpread": 0.000354004927151881,
+     "cyc": 385913769191,
+     "cycSpread": 0.34991420914076377,
+     "bmiss": 1150747954,
+     "bmissSpread": 0.18668429368330644,
+     "startUser": 9.31,
+     "startUserSpread": 0.4692803437164339,
+     "rssKB": 373748,
+     "rssKBSpread": 0.026531245652150648,
+     "uop": "uop: installs=14978 kills=11482 retired-poor=114 enters=16708634 blocks=579095677 head-exits=21 reguards=8037491 rg-pages=104981737 rg-nonadj=1705482 win-kept=16300823 win-reset=407811 gen=43 | compiled=14978 declined=316 insns=574725 uops=1980611 flushes=37 traces=12805",
+     "opt": "uop opt: mask=0x0 enters=16708634 exits=16708634 head-exits=21 charged-blocks=579095677 service-calls=51289113 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=961 ok-halved=287 ok-icut=0 ok-nocall-head=54 ok-nocall=577",
+     "declines": "  declines: head-unsupported=150 no-backedge=126 call-indirect=32 arg=24 unreached-block=9 loop-too-big=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "1612304/7000/81ef8c8536c09d9f"
+     ],
+     "user": 72.32,
+     "userSpread": 0.7376935840707967,
+     "ins": 1318471811334,
+     "insSpread": 0.0030278200729683315,
+     "cyc": 376116601832,
+     "cycSpread": 0.6831032029310988,
+     "bmiss": 1138054371,
+     "bmissSpread": 0.19500638427757508,
+     "startUser": 8.822,
+     "startUserSpread": 0.4420766266152801,
+     "rssKB": 375816,
+     "rssKBSpread": 0.02692807118377078,
+     "uop": "uop: installs=13371 kills=11710 retired-poor=103 enters=18056097 blocks=596225352 head-exits=188 reguards=8748357 rg-pages=115613792 rg-nonadj=1722044 win-kept=17590872 win-reset=465225 gen=18 | compiled=13371 declined=248 insns=479927 uops=1597903 flushes=9 traces=12435",
+     "opt": "uop opt: mask=0xffff enters=18056097 exits=18056097 head-exits=188 charged-blocks=596225352 service-calls=41644144 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=16 jcc-folded=264 variants=0 variant-hits=0 megamorphic=852 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=1624 c2-copies=0 c2-programs=0 r2-contexts=502 r2-programs=96 sahf-jcc=0 m1-loads=54 ret-dyn=1624 ret-chain=1445705 fs-programs=0 seams-skipped=10650862 decline-hits=1140 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=581 ok-halved=236 ok-icut=0 ok-nocall-head=30 ok-nocall=277",
+     "declines": "  declines: no-backedge=119 head-unsupported=83 call-indirect=32 arg=24 unreached-block=9"
+    }
+   },
+   "exact": {
+    "m": "1612304/7000/81ef8c8536c09d9f",
+    "off": "1612304/7000/81ef8c8536c09d9f",
+    "off2": "1612304/7000/81ef8c8536c09d9f",
+    "all": "1612304/7000/81ef8c8536c09d9f"
+   },
+   "failed": [],
+   "band": {
+    "user": 5.260220454862559,
+    "ins": 0.0017278613671969532,
+    "cyc": 3.7268075982339104,
+    "bmiss": 2.792637649032841,
+    "startUser": 11.764705882352947,
+    "rssKB": 0.4461310227688074
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "spelunky_classic_hd": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "348124/47000/28aa1728c441e8b2"
+     ],
+     "user": 4.15,
+     "userSpread": 0.21686746987951802,
+     "ins": 60890196628,
+     "insSpread": 0.0022904164828377043,
+     "cyc": 21376131466,
+     "cycSpread": 0.15636480531177513,
+     "bmiss": 68576681,
+     "bmissSpread": 0.07451461525237711,
+     "startUser": 0.614,
+     "startUserSpread": 0.2198697068403909,
+     "rssKB": 809232,
+     "rssKBSpread": 0.06386302074065286,
+     "uop": "uop: installs=936 kills=96 retired-poor=96 enters=3745865 blocks=76140617 head-exits=0 reguards=9152110 rg-pages=146433741 rg-nonadj=0 win-kept=3744316 win-reset=1549 gen=10 | compiled=936 declined=466 insns=59100 uops=267199 flushes=4 traces=630",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=338 ok-halved=117 ok-icut=0 ok-nocall-head=17 ok-nocall=136",
+     "declines": "  declines: no-backedge=266 head-unsupported=180 call-indirect=22 unreached-block=2"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "348124/47000/28aa1728c441e8b2"
+     ],
+     "user": 4.18,
+     "userSpread": 0.222488038277512,
+     "ins": 62502447400,
+     "insSpread": 0.004338957069383495,
+     "cyc": 21095022936,
+     "cycSpread": 0.13596648781572104,
+     "bmiss": 68543800,
+     "bmissSpread": 0.08346393109223592,
+     "startUser": 0.62,
+     "startUserSpread": 0.27741935483870955,
+     "rssKB": 772384,
+     "rssKBSpread": 0.12107967021585118,
+     "uop": "uop: installs=936 kills=96 retired-poor=96 enters=3745865 blocks=76140617 head-exits=0 reguards=9152110 rg-pages=146433741 rg-nonadj=0 win-kept=3744316 win-reset=1549 gen=10 | compiled=936 declined=466 insns=59100 uops=267199 flushes=4 traces=630",
+     "opt": "uop opt: mask=0x0 enters=3745865 exits=3745865 head-exits=0 charged-blocks=76140617 service-calls=31133020 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=338 ok-halved=117 ok-icut=0 ok-nocall-head=17 ok-nocall=136",
+     "declines": "  declines: no-backedge=266 head-unsupported=180 call-indirect=22 unreached-block=2"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "348124/47000/28aa1728c441e8b2"
+     ],
+     "user": 4.28,
+     "userSpread": 0.2009345794392524,
+     "ins": 62652423169,
+     "insSpread": 0.004860673483905741,
+     "cyc": 21466907057,
+     "cycSpread": 0.12679988760245742,
+     "bmiss": 69209189,
+     "bmissSpread": 0.06322450910384168,
+     "startUser": 0.569,
+     "startUserSpread": 0.2776801405975394,
+     "rssKB": 815672,
+     "rssKBSpread": 0.10952441667729185,
+     "uop": "uop: installs=936 kills=96 retired-poor=96 enters=3745865 blocks=76140617 head-exits=0 reguards=9152110 rg-pages=146433741 rg-nonadj=0 win-kept=3744316 win-reset=1549 gen=10 | compiled=936 declined=466 insns=59100 uops=267199 flushes=4 traces=630",
+     "opt": "uop opt: mask=0x0 enters=3745865 exits=3745865 head-exits=0 charged-blocks=76140617 service-calls=31133020 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=338 ok-halved=117 ok-icut=0 ok-nocall-head=17 ok-nocall=136",
+     "declines": "  declines: no-backedge=266 head-unsupported=180 call-indirect=22 unreached-block=2"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "348124/47000/28aa1728c441e8b2"
+     ],
+     "user": 4.27,
+     "userSpread": 0.18032786885245894,
+     "ins": 59788740157,
+     "insSpread": 0.002829620636858204,
+     "cyc": 21341450868,
+     "cycSpread": 0.11293437090605213,
+     "bmiss": 78712370,
+     "bmissSpread": 0.05507121688751082,
+     "startUser": 0.763,
+     "startUserSpread": 0.2660550458715596,
+     "rssKB": 774364,
+     "rssKBSpread": 0.10798022635349784,
+     "uop": "uop: installs=1010 kills=85 retired-poor=85 enters=2835639 blocks=80299150 head-exits=1384 reguards=9120838 rg-pages=145933358 rg-nonadj=0 win-kept=2834200 win-reset=1439 gen=14 | compiled=1013 declined=311 insns=56108 uops=253714 flushes=0 traces=710",
+     "opt": "uop opt: mask=0xffff enters=2835639 exits=2835639 head-exits=1384 charged-blocks=80299150 service-calls=26838144 loads-deleted=55 stores-deleted=0 folds=55 fold-dwords=33 jcc-folded=45 variants=3 variant-hits=1186 megamorphic=321 icg-megamorphic=0 lock-sites=0 sahf-sites=24 ret-exits=1091 c2-copies=1 c2-programs=1 r2-contexts=111 r2-programs=19 sahf-jcc=24 m1-loads=12 ret-dyn=1091 ret-chain=1088648 fs-programs=200 seams-skipped=5963560 decline-hits=15 stamp-drops=5",
+     "ladder": "uop ladder: mask=15 retried=560 ok-halved=132 ok-icut=0 ok-nocall-head=46 ok-nocall=292",
+     "declines": "  declines: no-backedge=245 head-unsupported=44 call-indirect=22 unreached-block=3"
+    }
+   },
+   "exact": {
+    "m": "348124/47000/28aa1728c441e8b2",
+    "off": "348124/47000/28aa1728c441e8b2",
+    "off2": "348124/47000/28aa1728c441e8b2",
+    "all": "348124/47000/28aa1728c441e8b2"
+   },
+   "failed": [],
+   "band": {
+    "user": 2.3923444976076684,
+    "ins": 0.2399518342700929,
+    "cyc": 1.762899818256922,
+    "bmiss": 0.9707500897236512,
+    "startUser": 8.225806451612911,
+    "rssKB": 5.604466172266644
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "diablo_shareware": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "19252/22000/8cc941f9dfaac83b"
+     ],
+     "user": 2.54,
+     "userSpread": 0.07480314960629919,
+     "ins": 35927986074,
+     "insSpread": 0.009092496204133327,
+     "cyc": 12991312912,
+     "cycSpread": 0.07559548604920864,
+     "bmiss": 49537373,
+     "bmissSpread": 0.0573764579724484,
+     "startUser": 0.677,
+     "startUserSpread": 0.11521418020679478,
+     "rssKB": 448732,
+     "rssKBSpread": 0.21870515140440175,
+     "uop": "uop: installs=183 kills=19 retired-poor=14 enters=3000639 blocks=74000850 head-exits=503 reguards=1211194 rg-pages=18021112 rg-nonadj=0 win-kept=3000490 win-reset=149 gen=6 | compiled=183 declined=72 insns=12372 uops=49125 flushes=0 traces=105",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=19 ok-halved=2 ok-icut=0 ok-nocall-head=1 ok-nocall=14",
+     "declines": "  declines: no-backedge=42 head-unsupported=21 call-indirect=8 unreached-block=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "19252/22000/8cc941f9dfaac83b"
+     ],
+     "user": 2.47,
+     "userSpread": 0.09716599190283391,
+     "ins": 36837184307,
+     "insSpread": 0.01881020308787088,
+     "cyc": 12657965207,
+     "cycSpread": 0.07097624833912217,
+     "bmiss": 49197559,
+     "bmissSpread": 0.07697538408358838,
+     "startUser": 0.654,
+     "startUserSpread": 0.12538226299694183,
+     "rssKB": 449428,
+     "rssKBSpread": 0.21226981852488053,
+     "uop": "uop: installs=183 kills=19 retired-poor=14 enters=3000639 blocks=74000850 head-exits=503 reguards=1211194 rg-pages=18021112 rg-nonadj=0 win-kept=3000490 win-reset=149 gen=6 | compiled=183 declined=72 insns=12372 uops=49125 flushes=0 traces=105",
+     "opt": "uop opt: mask=0x0 enters=3000639 exits=3000639 head-exits=503 charged-blocks=74000850 service-calls=7196567 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=19 ok-halved=2 ok-icut=0 ok-nocall-head=1 ok-nocall=14",
+     "declines": "  declines: no-backedge=42 head-unsupported=21 call-indirect=8 unreached-block=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "19252/22000/8cc941f9dfaac83b"
+     ],
+     "user": 2.45,
+     "userSpread": 0.0734693877551021,
+     "ins": 36831680068,
+     "insSpread": 0.008165763506978995,
+     "cyc": 12556324884,
+     "cycSpread": 0.0273705242716305,
+     "bmiss": 49131335,
+     "bmissSpread": 0.0059959290745916025,
+     "startUser": 0.644,
+     "startUserSpread": 0.08850931677018624,
+     "rssKB": 403124,
+     "rssKBSpread": 0.24150385489328346,
+     "uop": "uop: installs=183 kills=19 retired-poor=14 enters=3000639 blocks=74000850 head-exits=503 reguards=1211194 rg-pages=18021112 rg-nonadj=0 win-kept=3000490 win-reset=149 gen=6 | compiled=183 declined=72 insns=12372 uops=49125 flushes=0 traces=105",
+     "opt": "uop opt: mask=0x0 enters=3000639 exits=3000639 head-exits=503 charged-blocks=74000850 service-calls=7196567 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=19 ok-halved=2 ok-icut=0 ok-nocall-head=1 ok-nocall=14",
+     "declines": "  declines: no-backedge=42 head-unsupported=21 call-indirect=8 unreached-block=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "19252/22000/8cc941f9dfaac83b"
+     ],
+     "user": 2.5,
+     "userSpread": 0.10800000000000001,
+     "ins": 36854936917,
+     "insSpread": 0.012015257494464483,
+     "cyc": 12688157326,
+     "cycSpread": 0.08296110530116231,
+     "bmiss": 49717027,
+     "bmissSpread": 0.06691838190565981,
+     "startUser": 0.702,
+     "startUserSpread": 0.22792022792022798,
+     "rssKB": 446732,
+     "rssKBSpread": 0.018068998862852896,
+     "uop": "uop: installs=188 kills=20 retired-poor=14 enters=1733120 blocks=75706390 head-exits=449 reguards=1210998 rg-pages=18018811 rg-nonadj=0 win-kept=1732994 win-reset=126 gen=9 | compiled=188 declined=63 insns=13316 uops=52664 flushes=0 traces=109",
+     "opt": "uop opt: mask=0xffff enters=1733120 exits=1733120 head-exits=449 charged-blocks=75706390 service-calls=5450113 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=18 variants=0 variant-hits=0 megamorphic=120 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=104 c2-copies=0 c2-programs=0 r2-contexts=52 r2-programs=9 sahf-jcc=0 m1-loads=20 ret-dyn=104 ret-chain=1473438 fs-programs=0 seams-skipped=1749632 decline-hits=4 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=19 ok-halved=3 ok-icut=0 ok-nocall-head=1 ok-nocall=12",
+     "declines": "  declines: no-backedge=39 head-unsupported=13 call-indirect=9 unreached-block=2"
+    }
+   },
+   "exact": {
+    "m": "19252/22000/8cc941f9dfaac83b",
+    "off": "19252/22000/8cc941f9dfaac83b",
+    "off2": "19252/22000/8cc941f9dfaac83b",
+    "all": "19252/22000/8cc941f9dfaac83b"
+   },
+   "failed": [],
+   "band": {
+    "user": 0.8097165991902842,
+    "ins": 0.014942073080634598,
+    "cyc": 0.8029752123492307,
+    "bmiss": 0.13460830444860078,
+    "startUser": 1.5290519877675854,
+    "rssKB": 10.302873875236967
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "gta2_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "2230137/37000/59d66b9769efdf14"
+     ],
+     "user": 13.52,
+     "userSpread": 0.09689349112426039,
+     "ins": 249514013611,
+     "insSpread": 0.001790366014056639,
+     "cyc": 70429651546,
+     "cycSpread": 0.05415837565955746,
+     "bmiss": 146832173,
+     "bmissSpread": 0.23538908601454805,
+     "startUser": 2.905,
+     "startUserSpread": 0.08055077452667814,
+     "rssKB": 450252,
+     "rssKBSpread": 0.10834821388911099,
+     "uop": "uop: installs=111 kills=15 retired-poor=15 enters=9858333 blocks=118189022 head-exits=0 reguards=2274628 rg-pages=36393957 rg-nonadj=0 win-kept=9858281 win-reset=52 gen=6 | compiled=111 declined=99 insns=6776 uops=34697 flushes=0 traces=73",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=85 ok-halved=24 ok-icut=0 ok-nocall-head=2 ok-nocall=20",
+     "declines": "  declines: no-backedge=93 call-indirect=18 head-unsupported=7"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "2230137/37000/59d66b9769efdf14"
+     ],
+     "user": 13.62,
+     "userSpread": 0.32672540381791493,
+     "ins": 252465522555,
+     "insSpread": 0.0018887887548927264,
+     "cyc": 69460051344,
+     "cycSpread": 0.27032853991148065,
+     "bmiss": 146372546,
+     "bmissSpread": 0.7640095704832517,
+     "startUser": 2.922,
+     "startUserSpread": 0.22689938398357298,
+     "rssKB": 447288,
+     "rssKBSpread": 0.11259859419434458,
+     "uop": "uop: installs=111 kills=15 retired-poor=15 enters=9858333 blocks=118189022 head-exits=0 reguards=2274628 rg-pages=36393957 rg-nonadj=0 win-kept=9858281 win-reset=52 gen=6 | compiled=111 declined=99 insns=6776 uops=34697 flushes=0 traces=73",
+     "opt": "uop opt: mask=0x0 enters=9858333 exits=9858333 head-exits=0 charged-blocks=118189022 service-calls=16743421 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=85 ok-halved=24 ok-icut=0 ok-nocall-head=2 ok-nocall=20",
+     "declines": "  declines: no-backedge=93 call-indirect=18 head-unsupported=7"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "2230137/37000/59d66b9769efdf14"
+     ],
+     "user": 13.21,
+     "userSpread": 0.17259651778955332,
+     "ins": 252458170575,
+     "insSpread": 0.0013498332901004783,
+     "cyc": 67838477317,
+     "cycSpread": 0.10492825926410083,
+     "bmiss": 137531264,
+     "bmissSpread": 0.41664434931682154,
+     "startUser": 2.836,
+     "startUserSpread": 0.18088857545839207,
+     "rssKB": 449788,
+     "rssKBSpread": 0.11639261163036808,
+     "uop": "uop: installs=111 kills=15 retired-poor=15 enters=9858333 blocks=118189022 head-exits=0 reguards=2274628 rg-pages=36393957 rg-nonadj=0 win-kept=9858281 win-reset=52 gen=6 | compiled=111 declined=99 insns=6776 uops=34697 flushes=0 traces=73",
+     "opt": "uop opt: mask=0x0 enters=9858333 exits=9858333 head-exits=0 charged-blocks=118189022 service-calls=16743421 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=85 ok-halved=24 ok-icut=0 ok-nocall-head=2 ok-nocall=20",
+     "declines": "  declines: no-backedge=93 call-indirect=18 head-unsupported=7"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "2229993/37000/59d66b9769efdf14"
+     ],
+     "user": 13.74,
+     "userSpread": 0.15138282387190685,
+     "ins": 252206652907,
+     "insSpread": 0.0032659134939780118,
+     "cyc": 70655481468,
+     "cycSpread": 0.10700250788644163,
+     "bmiss": 151057935,
+     "bmissSpread": 0.34581036077316957,
+     "startUser": 2.936,
+     "startUserSpread": 0.14271117166212535,
+     "rssKB": 447952,
+     "rssKBSpread": 0.09775154480837232,
+     "uop": "uop: installs=108 kills=15 retired-poor=15 enters=9115266 blocks=112252568 head-exits=0 reguards=2273252 rg-pages=36371941 rg-nonadj=0 win-kept=9115214 win-reset=52 gen=9 | compiled=108 declined=105 insns=7551 uops=36865 flushes=0 traces=70",
+     "opt": "uop opt: mask=0xffff enters=9115266 exits=9115266 head-exits=0 charged-blocks=112252568 service-calls=2384163 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=44 variants=0 variant-hits=0 megamorphic=48 icg-megamorphic=0 lock-sites=0 sahf-sites=8 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=24 r2-programs=6 sahf-jcc=0 m1-loads=2 ret-dyn=0 ret-chain=0 fs-programs=10 seams-skipped=12873872 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=85 ok-halved=22 ok-icut=0 ok-nocall-head=2 ok-nocall=18",
+     "declines": "  declines: no-backedge=95 call-indirect=19 head-unsupported=3"
+    }
+   },
+   "exact": {
+    "m": "2230137/37000/59d66b9769efdf14",
+    "off": "2230137/37000/59d66b9769efdf14",
+    "off2": "2230137/37000/59d66b9769efdf14",
+    "all": "2229993/37000/59d66b9769efdf14"
+   },
+   "failed": [],
+   "band": {
+    "user": 3.0102790014684166,
+    "ins": 0.0029120728745836415,
+    "cyc": 2.3345419354344785,
+    "bmiss": 6.040259762920295,
+    "startUser": 2.943189596167019,
+    "rssKB": 0.5589240042209941
+   },
+   "divergent": true,
+   "mDiffers": false
+  },
+  "mw3": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "166335/330000/c045f5035641cf9f"
+     ],
+     "user": 13.76,
+     "userSpread": 0.1773255813953488,
+     "ins": 300920160576,
+     "insSpread": 0.002217851880453996,
+     "cyc": 72242890352,
+     "cycSpread": 0.14452035511216169,
+     "bmiss": 86113479,
+     "bmissSpread": 0.11703717138172992,
+     "startUser": 6.35,
+     "startUserSpread": 0.19165354330708656,
+     "rssKB": 459144,
+     "rssKBSpread": 0.12493683898733295,
+     "uop": "uop: installs=127 kills=34 retired-poor=34 enters=483175 blocks=328120356 head-exits=0 reguards=527972 rg-pages=8386392 rg-nonadj=0 win-kept=482614 win-reset=561 gen=6 | compiled=127 declined=119 insns=5345 uops=24776 flushes=0 traces=81",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=9 ok-halved=1 ok-icut=0 ok-nocall-head=0 ok-nocall=1",
+     "declines": "  declines: no-backedge=49 call-indirect=43 head-unsupported=26 unreached-block=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "166335/330000/c045f5035641cf9f"
+     ],
+     "user": 14.85,
+     "userSpread": 0.21885521885521886,
+     "ins": 306339562297,
+     "insSpread": 0.0035921288153214037,
+     "cyc": 73921817440,
+     "cycSpread": 0.18973954635766865,
+     "bmiss": 91301539,
+     "bmissSpread": 0.15278616497362657,
+     "startUser": 6.493,
+     "startUserSpread": 0.2752194671184352,
+     "rssKB": 463864,
+     "rssKBSpread": 0.1167928530776262,
+     "uop": "uop: installs=127 kills=34 retired-poor=34 enters=483175 blocks=328120356 head-exits=0 reguards=527972 rg-pages=8386392 rg-nonadj=0 win-kept=482614 win-reset=561 gen=6 | compiled=127 declined=119 insns=5345 uops=24776 flushes=0 traces=81",
+     "opt": "uop opt: mask=0x0 enters=483175 exits=483175 head-exits=0 charged-blocks=328120356 service-calls=1319977 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=9 ok-halved=1 ok-icut=0 ok-nocall-head=0 ok-nocall=1",
+     "declines": "  declines: no-backedge=49 call-indirect=43 head-unsupported=26 unreached-block=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "166335/330000/c045f5035641cf9f"
+     ],
+     "user": 14.88,
+     "userSpread": 0.29435483870967744,
+     "ins": 306460347332,
+     "insSpread": 0.009859069867615821,
+     "cyc": 74739751848,
+     "cycSpread": 0.25855061133063023,
+     "bmiss": 89223355,
+     "bmissSpread": 0.226264603029106,
+     "startUser": 6.885,
+     "startUserSpread": 0.23950617283950618,
+     "rssKB": 465732,
+     "rssKBSpread": 0.1037506548830658,
+     "uop": "uop: installs=127 kills=34 retired-poor=34 enters=483175 blocks=328120356 head-exits=0 reguards=527972 rg-pages=8386392 rg-nonadj=0 win-kept=482614 win-reset=561 gen=6 | compiled=127 declined=119 insns=5345 uops=24776 flushes=0 traces=81",
+     "opt": "uop opt: mask=0x0 enters=483175 exits=483175 head-exits=0 charged-blocks=328120356 service-calls=1319977 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=9 ok-halved=1 ok-icut=0 ok-nocall-head=0 ok-nocall=1",
+     "declines": "  declines: no-backedge=49 call-indirect=43 head-unsupported=26 unreached-block=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "166335/330000/c045f5035641cf9f"
+     ],
+     "user": 14.32,
+     "userSpread": 0.11033519553072627,
+     "ins": 307485650149,
+     "insSpread": 0.004167922754700844,
+     "cyc": 74199586122,
+     "cycSpread": 0.09002964817103404,
+     "bmiss": 91603111,
+     "bmissSpread": 0.11228120844061726,
+     "startUser": 6.732,
+     "startUserSpread": 0.07976827094474152,
+     "rssKB": 468748,
+     "rssKBSpread": 0.10156416667377781,
+     "uop": "uop: installs=246 kills=18 retired-poor=18 enters=490339 blocks=328178913 head-exits=0 reguards=526660 rg-pages=8365409 rg-nonadj=0 win-kept=489941 win-reset=398 gen=12 | compiled=246 declined=105 insns=10658 uops=51891 flushes=0 traces=150",
+     "opt": "uop opt: mask=0xffff enters=490339 exits=490339 head-exits=0 charged-blocks=328178913 service-calls=1045491 loads-deleted=28 stores-deleted=0 folds=28 fold-dwords=14 jcc-folded=0 variants=0 variant-hits=0 megamorphic=94 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=235 c2-copies=0 c2-programs=0 r2-contexts=25 r2-programs=8 sahf-jcc=0 m1-loads=2 ret-dyn=235 ret-chain=22385 fs-programs=28 seams-skipped=255010 decline-hits=6 stamp-drops=3",
+     "ladder": "uop ladder: mask=15 retried=16 ok-halved=7 ok-icut=0 ok-nocall-head=0 ok-nocall=2",
+     "declines": "  declines: no-backedge=55 call-indirect=39 head-unsupported=10 unreached-block=1"
+    }
+   },
+   "exact": {
+    "m": "166335/330000/c045f5035641cf9f",
+    "off": "166335/330000/c045f5035641cf9f",
+    "off2": "166335/330000/c045f5035641cf9f",
+    "all": "166335/330000/c045f5035641cf9f"
+   },
+   "failed": [],
+   "band": {
+    "user": 0.2020202020202097,
+    "ins": 0.03942848063577809,
+    "cyc": 1.1064857931339303,
+    "bmiss": 2.276176308484789,
+    "startUser": 6.037270907130748,
+    "rssKB": 0.4027042408981943
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "quake2_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "741796/7800/7116b2b056b3da2f"
+     ],
+     "user": 12.38,
+     "userSpread": 0.20113085621970922,
+     "ins": 311776131062,
+     "insSpread": 0.0009237299822119119,
+     "cyc": 63337883481,
+     "cycSpread": 0.1726915396577964,
+     "bmiss": 63398581,
+     "bmissSpread": 0.1408193820615638,
+     "startUser": 0.201,
+     "startUserSpread": 0.3233830845771144,
+     "rssKB": 379672,
+     "rssKBSpread": 0.019659074148212143,
+     "uop": "uop: installs=143 kills=25 retired-poor=25 enters=158607 blocks=4904675 head-exits=0 reguards=222144 rg-pages=3554302 rg-nonadj=0 win-kept=158346 win-reset=261 gen=6 | compiled=143 declined=68 insns=7546 uops=30735 flushes=0 traces=79",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=70 ok-halved=10 ok-icut=0 ok-nocall-head=3 ok-nocall=45",
+     "declines": "  declines: no-backedge=38 head-unsupported=17 call-indirect=11 unreached-block=2"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "741796/7800/7116b2b056b3da2f"
+     ],
+     "user": 12.19,
+     "userSpread": 0.39786710418375715,
+     "ins": 311881913883,
+     "insSpread": 0.001197593814754255,
+     "cyc": 62058969057,
+     "cycSpread": 0.37179918103066534,
+     "bmiss": 65079102,
+     "bmissSpread": 0.2044826617306428,
+     "startUser": 0.23,
+     "startUserSpread": 0.6173913043478261,
+     "rssKB": 376740,
+     "rssKBSpread": 0.03712905452035887,
+     "uop": "uop: installs=143 kills=25 retired-poor=25 enters=158607 blocks=4904675 head-exits=0 reguards=222144 rg-pages=3554302 rg-nonadj=0 win-kept=158346 win-reset=261 gen=6 | compiled=143 declined=68 insns=7546 uops=30735 flushes=0 traces=79",
+     "opt": "uop opt: mask=0x0 enters=158607 exits=158607 head-exits=0 charged-blocks=4904675 service-calls=906472 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=70 ok-halved=10 ok-icut=0 ok-nocall-head=3 ok-nocall=45",
+     "declines": "  declines: no-backedge=38 head-unsupported=17 call-indirect=11 unreached-block=2"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "741796/7800/7116b2b056b3da2f"
+     ],
+     "user": 11.72,
+     "userSpread": 0.3250853242320819,
+     "ins": 311656419470,
+     "insSpread": 0.0018094130323353804,
+     "cyc": 61047245030,
+     "cycSpread": 0.27953867154224304,
+     "bmiss": 61748434,
+     "bmissSpread": 0.16390635914750487,
+     "startUser": 0.221,
+     "startUserSpread": 0.4524886877828053,
+     "rssKB": 372796,
+     "rssKBSpread": 0.051277374220753444,
+     "uop": "uop: installs=143 kills=25 retired-poor=25 enters=158607 blocks=4904675 head-exits=0 reguards=222144 rg-pages=3554302 rg-nonadj=0 win-kept=158346 win-reset=261 gen=6 | compiled=143 declined=68 insns=7546 uops=30735 flushes=0 traces=79",
+     "opt": "uop opt: mask=0x0 enters=158607 exits=158607 head-exits=0 charged-blocks=4904675 service-calls=906472 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=70 ok-halved=10 ok-icut=0 ok-nocall-head=3 ok-nocall=45",
+     "declines": "  declines: no-backedge=38 head-unsupported=17 call-indirect=11 unreached-block=2"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "741796/7800/7116b2b056b3da2f"
+     ],
+     "user": 12.17,
+     "userSpread": 0.35825801150369774,
+     "ins": 311936099600,
+     "insSpread": 0.0015755547742958315,
+     "cyc": 61956391791,
+     "cycSpread": 0.3143091403658659,
+     "bmiss": 64576359,
+     "bmissSpread": 0.17858504534143835,
+     "startUser": 0.242,
+     "startUserSpread": 0.5743801652892562,
+     "rssKB": 368656,
+     "rssKBSpread": 0.042391823271559395,
+     "uop": "uop: installs=121 kills=10 retired-poor=10 enters=487919 blocks=5711525 head-exits=0 reguards=218288 rg-pages=3492604 rg-nonadj=0 win-kept=487635 win-reset=284 gen=9 | compiled=121 declined=40 insns=6702 uops=26236 flushes=0 traces=60",
+     "opt": "uop opt: mask=0xffff enters=487919 exits=487919 head-exits=0 charged-blocks=5711525 service-calls=615773 loads-deleted=2 stores-deleted=0 folds=2 fold-dwords=1 jcc-folded=32 variants=0 variant-hits=0 megamorphic=27 icg-megamorphic=0 lock-sites=0 sahf-sites=4 ret-exits=81 c2-copies=0 c2-programs=0 r2-contexts=51 r2-programs=8 sahf-jcc=0 m1-loads=0 ret-dyn=81 ret-chain=26815 fs-programs=2 seams-skipped=275259 decline-hits=2 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=55 ok-halved=9 ok-icut=0 ok-nocall-head=3 ok-nocall=34",
+     "declines": "  declines: no-backedge=25 call-indirect=11 head-unsupported=2 unreached-block=2"
+    }
+   },
+   "exact": {
+    "m": "741796/7800/7116b2b056b3da2f",
+    "off": "741796/7800/7116b2b056b3da2f",
+    "off2": "741796/7800/7116b2b056b3da2f",
+    "all": "741796/7800/7116b2b056b3da2f"
+   },
+   "failed": [],
+   "band": {
+    "user": 3.855619360131246,
+    "ins": 0.07230121496708283,
+    "cyc": 1.6302623816885364,
+    "bmiss": 5.117876396020338,
+    "startUser": 3.9130434782608727,
+    "rssKB": 1.046875829484525
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "hexen2_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "37/23000/775b3ef7c22d54eb"
+     ],
+     "user": 0.94,
+     "userSpread": 0.5744680851063829,
+     "ins": 14797882596,
+     "insSpread": 0.0331872547855427,
+     "cyc": 4827830887,
+     "cycSpread": 0.49132327778655266,
+     "bmiss": 17646227,
+     "bmissSpread": 0.08569599609026904,
+     "startUser": 0.228,
+     "startUserSpread": 0.6403508771929824,
+     "rssKB": 296140,
+     "rssKBSpread": 0.15874924022421827,
+     "uop": "uop: installs=2 kills=0 retired-poor=0 enters=23000 blocks=22974920 head-exits=0 reguards=2817 rg-pages=45027 rg-nonadj=0 win-kept=23000 win-reset=0 gen=6 | compiled=2 declined=0 insns=26 uops=91 flushes=0 traces=0",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": ""
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "37/23000/775b3ef7c22d54eb"
+     ],
+     "user": 0.94,
+     "userSpread": 0.27659574468085096,
+     "ins": 15187697050,
+     "insSpread": 0.008941304764832665,
+     "cyc": 4861741442,
+     "cycSpread": 0.21195099992320818,
+     "bmiss": 18029191,
+     "bmissSpread": 0.053423140283998326,
+     "startUser": 0.243,
+     "startUserSpread": 0.33744855967078186,
+     "rssKB": 297300,
+     "rssKBSpread": 0.004291960982172889,
+     "uop": "uop: installs=2 kills=0 retired-poor=0 enters=23000 blocks=22974920 head-exits=0 reguards=2817 rg-pages=45027 rg-nonadj=0 win-kept=23000 win-reset=0 gen=6 | compiled=2 declined=0 insns=26 uops=91 flushes=0 traces=0",
+     "opt": "uop opt: mask=0x0 enters=23000 exits=23000 head-exits=0 charged-blocks=22974920 service-calls=25816 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": ""
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "37/23000/775b3ef7c22d54eb"
+     ],
+     "user": 0.91,
+     "userSpread": 0.6373626373626373,
+     "ins": 15166999801,
+     "insSpread": 0.008983456833105289,
+     "cyc": 4808522262,
+     "cycSpread": 0.47890387431464077,
+     "bmiss": 17655394,
+     "bmissSpread": 0.0652607356142831,
+     "startUser": 0.237,
+     "startUserSpread": 0.949367088607595,
+     "rssKB": 297040,
+     "rssKBSpread": 0.004403447347158632,
+     "uop": "uop: installs=2 kills=0 retired-poor=0 enters=23000 blocks=22974920 head-exits=0 reguards=2817 rg-pages=45027 rg-nonadj=0 win-kept=23000 win-reset=0 gen=6 | compiled=2 declined=0 insns=26 uops=91 flushes=0 traces=0",
+     "opt": "uop opt: mask=0x0 enters=23000 exits=23000 head-exits=0 charged-blocks=22974920 service-calls=25816 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": ""
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "37/23000/775b3ef7c22d54eb"
+     ],
+     "user": 0.89,
+     "userSpread": 0.595505617977528,
+     "ins": 15194925784,
+     "insSpread": 0.025589721629929615,
+     "cyc": 4717711998,
+     "cycSpread": 0.5081256227629519,
+     "bmiss": 17785904,
+     "bmissSpread": 0.07640106457338351,
+     "startUser": 0.21,
+     "startUserSpread": 0.7761904761904762,
+     "rssKB": 296280,
+     "rssKBSpread": 0.1513973268529769,
+     "uop": "uop: installs=2 kills=0 retired-poor=0 enters=23000 blocks=22974920 head-exits=0 reguards=2817 rg-pages=45027 rg-nonadj=0 win-kept=23000 win-reset=0 gen=9 | compiled=2 declined=0 insns=26 uops=91 flushes=0 traces=0",
+     "opt": "uop opt: mask=0xffff enters=23000 exits=23000 head-exits=0 charged-blocks=22974920 service-calls=25816 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=1 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=0 ok-halved=0 ok-icut=0 ok-nocall-head=0 ok-nocall=0",
+     "declines": ""
+    }
+   },
+   "exact": {
+    "m": "37/23000/775b3ef7c22d54eb",
+    "off": "37/23000/775b3ef7c22d54eb",
+    "off2": "37/23000/775b3ef7c22d54eb",
+    "all": "37/23000/775b3ef7c22d54eb"
+   },
+   "failed": [],
+   "band": {
+    "user": 3.191489361702119,
+    "ins": 0.136276414599671,
+    "cyc": 1.0946526185092014,
+    "bmiss": 2.0732877032585657,
+    "startUser": 2.469135802469138,
+    "rssKB": 0.08745375042045073
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "halflife_uplink": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "336049/4000/25e210f6b3a2e5a9"
+     ],
+     "user": 13.48,
+     "userSpread": 0.5022255192878339,
+     "ins": 270612321243,
+     "insSpread": 0.00658067176623823,
+     "cyc": 68073070202,
+     "cycSpread": 0.4298569297252041,
+     "bmiss": 134564419,
+     "bmissSpread": 0.12668331737827368,
+     "startUser": 0.467,
+     "startUserSpread": 1.518201284796574,
+     "rssKB": 595724,
+     "rssKBSpread": 0.08091666610712343,
+     "uop": "uop: installs=142 kills=24 retired-poor=24 enters=555455 blocks=30898645 head-exits=0 reguards=28498 rg-pages=455818 rg-nonadj=0 win-kept=555241 win-reset=214 gen=6 | compiled=142 declined=101 insns=7946 uops=31248 flushes=0 traces=104",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=72 ok-halved=15 ok-icut=0 ok-nocall-head=10 ok-nocall=33",
+     "declines": "  declines: no-backedge=59 head-unsupported=34 call-indirect=7 unreached-block=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "336049/4000/25e210f6b3a2e5a9"
+     ],
+     "user": 13.41,
+     "userSpread": 0.586875466070097,
+     "ins": 271079168836,
+     "insSpread": 0.0036365554654492656,
+     "cyc": 68771902922,
+     "cycSpread": 0.5240747854960162,
+     "bmiss": 128902880,
+     "bmissSpread": 0.21275894689086855,
+     "startUser": 0.456,
+     "startUserSpread": 0.506578947368421,
+     "rssKB": 596128,
+     "rssKBSpread": 0.007448064845133931,
+     "uop": "uop: installs=142 kills=24 retired-poor=24 enters=555455 blocks=30898645 head-exits=0 reguards=28498 rg-pages=455818 rg-nonadj=0 win-kept=555241 win-reset=214 gen=6 | compiled=142 declined=101 insns=7946 uops=31248 flushes=0 traces=104",
+     "opt": "uop opt: mask=0x0 enters=555455 exits=555455 head-exits=0 charged-blocks=30898645 service-calls=635115 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=72 ok-halved=15 ok-icut=0 ok-nocall-head=10 ok-nocall=33",
+     "declines": "  declines: no-backedge=59 head-unsupported=34 call-indirect=7 unreached-block=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "336049/4000/25e210f6b3a2e5a9"
+     ],
+     "user": 12.94,
+     "userSpread": 0.33539412673879443,
+     "ins": 271525470780,
+     "insSpread": 0.009958991280751624,
+     "cyc": 66569462266,
+     "cycSpread": 0.2946379582822271,
+     "bmiss": 125275093,
+     "bmissSpread": 0.09673780884760548,
+     "startUser": 0.412,
+     "startUserSpread": 0.37378640776699035,
+     "rssKB": 596452,
+     "rssKBSpread": 0.08896608612260501,
+     "uop": "uop: installs=142 kills=24 retired-poor=24 enters=555455 blocks=30898645 head-exits=0 reguards=28498 rg-pages=455818 rg-nonadj=0 win-kept=555241 win-reset=214 gen=6 | compiled=142 declined=101 insns=7946 uops=31248 flushes=0 traces=104",
+     "opt": "uop opt: mask=0x0 enters=555455 exits=555455 head-exits=0 charged-blocks=30898645 service-calls=635115 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=72 ok-halved=15 ok-icut=0 ok-nocall-head=10 ok-nocall=33",
+     "declines": "  declines: no-backedge=59 head-unsupported=34 call-indirect=7 unreached-block=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "336049/4000/25e210f6b3a2e5a9"
+     ],
+     "user": 13.54,
+     "userSpread": 0.430576070901034,
+     "ins": 271145062392,
+     "insSpread": 0.002010250322065544,
+     "cyc": 67998919807,
+     "cycSpread": 0.3966673679752091,
+     "bmiss": 128993645,
+     "bmissSpread": 0.10236308153010173,
+     "startUser": 0.502,
+     "startUserSpread": 0.22509960159362558,
+     "rssKB": 595756,
+     "rssKBSpread": 0.00823155788611445,
+     "uop": "uop: installs=152 kills=24 retired-poor=24 enters=514450 blocks=31866282 head-exits=0 reguards=186270 rg-pages=2980170 rg-nonadj=0 win-kept=514245 win-reset=205 gen=9 | compiled=154 declined=72 insns=8703 uops=35365 flushes=0 traces=121",
+     "opt": "uop opt: mask=0xffff enters=514450 exits=514450 head-exits=0 charged-blocks=31866282 service-calls=218917 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=32 variants=2 variant-hits=199 megamorphic=56 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=170 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=45 ret-dyn=170 ret-chain=228278 fs-programs=25 seams-skipped=927719 decline-hits=2 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=69 ok-halved=16 ok-icut=0 ok-nocall-head=10 ok-nocall=35",
+     "declines": "  declines: no-backedge=51 head-unsupported=13 call-indirect=7 unreached-block=1"
+    }
+   },
+   "exact": {
+    "m": "336049/4000/25e210f6b3a2e5a9",
+    "off": "336049/4000/25e210f6b3a2e5a9",
+    "off2": "336049/4000/25e210f6b3a2e5a9",
+    "all": "336049/4000/25e210f6b3a2e5a9"
+   },
+   "failed": [],
+   "band": {
+    "user": 3.5048471290082075,
+    "ins": 0.16463896724945615,
+    "cyc": 3.202529757680216,
+    "bmiss": 2.8143568243005896,
+    "startUser": 9.649122807017552,
+    "rssKB": 0.05435074346449084
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "jazz2_demo": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "5432/20000/007bc758e298430f"
+     ],
+     "user": 9.21,
+     "userSpread": 0.20738327904451684,
+     "ins": 175877257650,
+     "insSpread": 0.001249090706412888,
+     "cyc": 47224855341,
+     "cycSpread": 0.16790985617092397,
+     "bmiss": 73647320,
+     "bmissSpread": 0.15228281219194398,
+     "startUser": 1.021,
+     "startUserSpread": 0.32419196865817823,
+     "rssKB": 426280,
+     "rssKBSpread": 0.11880454161583935,
+     "uop": "uop: installs=169 kills=15 retired-poor=15 enters=177878 blocks=22317362 head-exits=0 reguards=1361397 rg-pages=21780284 rg-nonadj=0 win-kept=177666 win-reset=212 gen=6 | compiled=169 declined=42 insns=11399 uops=44003 flushes=0 traces=80",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=84 ok-halved=49 ok-icut=0 ok-nocall-head=3 ok-nocall=18",
+     "declines": "  declines: no-backedge=19 head-unsupported=16 loop-too-big=10 arg=9 call-indirect=7"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "5432/20000/007bc758e298430f"
+     ],
+     "user": 10.08,
+     "userSpread": 0.22718253968253976,
+     "ins": 179685519243,
+     "insSpread": 0.0012618718912644547,
+     "cyc": 50930271827,
+     "cycSpread": 0.19224058986485723,
+     "bmiss": 80704330,
+     "bmissSpread": 0.21414599439707882,
+     "startUser": 1.202,
+     "startUserSpread": 0.21630615640599002,
+     "rssKB": 423468,
+     "rssKBSpread": 0.12312618663039473,
+     "uop": "uop: installs=169 kills=15 retired-poor=15 enters=177878 blocks=22317362 head-exits=0 reguards=1361397 rg-pages=21780284 rg-nonadj=0 win-kept=177666 win-reset=212 gen=6 | compiled=169 declined=42 insns=11399 uops=44003 flushes=0 traces=80",
+     "opt": "uop opt: mask=0x0 enters=177878 exits=177878 head-exits=0 charged-blocks=22317362 service-calls=26902514 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=84 ok-halved=49 ok-icut=0 ok-nocall-head=3 ok-nocall=18",
+     "declines": "  declines: no-backedge=19 head-unsupported=16 loop-too-big=10 arg=9 call-indirect=7"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "5432/20000/007bc758e298430f"
+     ],
+     "user": 8.82,
+     "userSpread": 0.2573696145124716,
+     "ins": 179622592132,
+     "insSpread": 0.0007850404468964275,
+     "cyc": 46111681505,
+     "cycSpread": 0.19610999585906339,
+     "bmiss": 72798815,
+     "bmissSpread": 0.13085031672562253,
+     "startUser": 0.995,
+     "startUserSpread": 0.39798994974874363,
+     "rssKB": 427220,
+     "rssKBSpread": 0.12047188802022377,
+     "uop": "uop: installs=169 kills=15 retired-poor=15 enters=177878 blocks=22317362 head-exits=0 reguards=1361397 rg-pages=21780284 rg-nonadj=0 win-kept=177666 win-reset=212 gen=6 | compiled=169 declined=42 insns=11399 uops=44003 flushes=0 traces=80",
+     "opt": "uop opt: mask=0x0 enters=177878 exits=177878 head-exits=0 charged-blocks=22317362 service-calls=26902514 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=84 ok-halved=49 ok-icut=0 ok-nocall-head=3 ok-nocall=18",
+     "declines": "  declines: no-backedge=19 head-unsupported=16 loop-too-big=10 arg=9 call-indirect=7"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "5432/20000/007bc758e298430f"
+     ],
+     "user": 9.57,
+     "userSpread": 0.09822361546499472,
+     "ins": 178841906149,
+     "insSpread": 0.00039512343343694074,
+     "cyc": 48582370074,
+     "cycSpread": 0.0760620868304985,
+     "bmiss": 77179980,
+     "bmissSpread": 0.08018861886204169,
+     "startUser": 1.259,
+     "startUserSpread": 0.340746624305004,
+     "rssKB": 425496,
+     "rssKBSpread": 0.1217402748791998,
+     "uop": "uop: installs=174 kills=9 retired-poor=9 enters=148923 blocks=22536815 head-exits=0 reguards=1361900 rg-pages=21788331 rg-nonadj=0 win-kept=148702 win-reset=221 gen=9 | compiled=174 declined=21 insns=12247 uops=47189 flushes=0 traces=86",
+     "opt": "uop opt: mask=0xffff enters=148923 exits=148923 head-exits=0 charged-blocks=22536815 service-calls=26880959 loads-deleted=10 stores-deleted=0 folds=10 fold-dwords=5 jcc-folded=25 variants=0 variant-hits=0 megamorphic=39 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=120 c2-copies=0 c2-programs=0 r2-contexts=39 r2-programs=7 sahf-jcc=0 m1-loads=0 ret-dyn=120 ret-chain=60800 fs-programs=0 seams-skipped=32140 decline-hits=1 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=82 ok-halved=56 ok-icut=0 ok-nocall-head=3 ok-nocall=18",
+     "declines": "  declines: no-backedge=22 arg=9 call-indirect=6 head-unsupported=5"
+    }
+   },
+   "exact": {
+    "m": "5432/20000/007bc758e298430f",
+    "off": "5432/20000/007bc758e298430f",
+    "off2": "5432/20000/007bc758e298430f",
+    "all": "5432/20000/007bc758e298430f"
+   },
+   "failed": [],
+   "band": {
+    "user": 12.499999999999996,
+    "ins": 0.03502069129727684,
+    "cyc": 9.461151784871271,
+    "bmiss": 9.79565160877985,
+    "startUser": 17.221297836938433,
+    "rssKB": 0.8860173614062928
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "pinball": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "2427784/140000/79fb6bc141af001d"
+     ],
+     "user": 9.95,
+     "userSpread": 0.6763819095477389,
+     "ins": 133219219272,
+     "insSpread": 0.00532448265254986,
+     "cyc": 50675689857,
+     "cycSpread": 0.5222591660948881,
+     "bmiss": 229075845,
+     "bmissSpread": 0.4535872169324531,
+     "startUser": 2.403,
+     "startUserSpread": 0.8897211818560135,
+     "rssKB": 427928,
+     "rssKBSpread": 0.11444915967172048,
+     "uop": "uop: installs=161 kills=44 retired-poor=44 enters=5093414 blocks=113022735 head-exits=0 reguards=8553704 rg-pages=136855444 rg-nonadj=0 win-kept=5093196 win-reset=218 gen=6 | compiled=161 declined=136 insns=6298 uops=29343 flushes=0 traces=110",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=29 ok-halved=6 ok-icut=0 ok-nocall-head=3 ok-nocall=13",
+     "declines": "  declines: no-backedge=68 head-unsupported=49 call-indirect=19"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "2427784/140000/79fb6bc141af001d"
+     ],
+     "user": 9.66,
+     "userSpread": 0.3654244306418219,
+     "ins": 136512732833,
+     "insSpread": 0.0071245770619053125,
+     "cyc": 48509837431,
+     "cycSpread": 0.25997129953152326,
+     "bmiss": 224743080,
+     "bmissSpread": 0.1532419863606034,
+     "startUser": 2.423,
+     "startUserSpread": 0.6562113082955013,
+     "rssKB": 427504,
+     "rssKBSpread": 0.1036715445937348,
+     "uop": "uop: installs=161 kills=44 retired-poor=44 enters=5093414 blocks=113022735 head-exits=0 reguards=8553704 rg-pages=136855444 rg-nonadj=0 win-kept=5093196 win-reset=218 gen=6 | compiled=161 declined=136 insns=6298 uops=29343 flushes=0 traces=110",
+     "opt": "uop opt: mask=0x0 enters=5093414 exits=5093414 head-exits=0 charged-blocks=113022735 service-calls=42161782 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=29 ok-halved=6 ok-icut=0 ok-nocall-head=3 ok-nocall=13",
+     "declines": "  declines: no-backedge=68 head-unsupported=49 call-indirect=19"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "2427784/140000/79fb6bc141af001d"
+     ],
+     "user": 11.04,
+     "userSpread": 0.31431159420289845,
+     "ins": 136308276545,
+     "insSpread": 0.006271138926166371,
+     "cyc": 55395770598,
+     "cycSpread": 0.2691195286583528,
+     "bmiss": 250967774,
+     "bmissSpread": 0.2832175815529208,
+     "startUser": 2.296,
+     "startUserSpread": 0.462979094076655,
+     "rssKB": 428904,
+     "rssKBSpread": 0.1078469774121948,
+     "uop": "uop: installs=161 kills=44 retired-poor=44 enters=5093414 blocks=113022735 head-exits=0 reguards=8553704 rg-pages=136855444 rg-nonadj=0 win-kept=5093196 win-reset=218 gen=6 | compiled=161 declined=136 insns=6298 uops=29343 flushes=0 traces=110",
+     "opt": "uop opt: mask=0x0 enters=5093414 exits=5093414 head-exits=0 charged-blocks=113022735 service-calls=42161782 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=29 ok-halved=6 ok-icut=0 ok-nocall-head=3 ok-nocall=13",
+     "declines": "  declines: no-backedge=68 head-unsupported=49 call-indirect=19"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "2427784/140000/79fb6bc141af001d"
+     ],
+     "user": 10.26,
+     "userSpread": 0.7115009746588693,
+     "ins": 136256571746,
+     "insSpread": 0.0020355904559013855,
+     "cyc": 51556836395,
+     "cycSpread": 0.584524845301071,
+     "bmiss": 234488834,
+     "bmissSpread": 0.5991999516701934,
+     "startUser": 2.344,
+     "startUserSpread": 0.6331058020477816,
+     "rssKB": 428468,
+     "rssKBSpread": 0.10876891623178393,
+     "uop": "uop: installs=177 kills=42 retired-poor=42 enters=4550117 blocks=114709837 head-exits=0 reguards=8017966 rg-pages=128283584 rg-nonadj=0 win-kept=4549894 win-reset=223 gen=9 | compiled=177 declined=113 insns=7257 uops=34315 flushes=0 traces=126",
+     "opt": "uop opt: mask=0xffff enters=4550117 exits=4550117 head-exits=0 charged-blocks=114709837 service-calls=37867162 loads-deleted=2 stores-deleted=0 folds=2 fold-dwords=1 jcc-folded=0 variants=0 variant-hits=0 megamorphic=93 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=122 c2-copies=0 c2-programs=0 r2-contexts=40 r2-programs=5 sahf-jcc=0 m1-loads=4 ret-dyn=122 ret-chain=419147 fs-programs=3 seams-skipped=3547177 decline-hits=4 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=34 ok-halved=9 ok-icut=0 ok-nocall-head=3 ok-nocall=13",
+     "declines": "  declines: no-backedge=66 head-unsupported=27 call-indirect=20"
+    }
+   },
+   "exact": {
+    "m": "2427784/140000/79fb6bc141af001d",
+    "off": "2427784/140000/79fb6bc141af001d",
+    "off2": "2427784/140000/79fb6bc141af001d",
+    "all": "2427784/140000/79fb6bc141af001d"
+   },
+   "failed": [],
+   "band": {
+    "user": 14.285714285714274,
+    "ins": 0.14977085562422762,
+    "cyc": 14.19492113696422,
+    "bmiss": 11.668743705034212,
+    "startUser": 5.241436236070996,
+    "rssKB": 0.32748231595493843
+   },
+   "divergent": false,
+   "mDiffers": false
+  },
+  "moorhuhn_3": {
+   "arms": {
+    "m": {
+     "n": 5,
+     "keys": [
+      "5038/215000/21de97e778f1d193"
+     ],
+     "user": 7.53,
+     "userSpread": 0.2775564409030544,
+     "ins": 119387244457,
+     "insSpread": 0.014484779491018788,
+     "cyc": 38271454592,
+     "cycSpread": 0.25611667550908646,
+     "bmiss": 95710609,
+     "bmissSpread": 0.16600358273762525,
+     "startUser": 1.55,
+     "startUserSpread": 0.2941935483870967,
+     "rssKB": 335436,
+     "rssKBSpread": 0.4409783088279135,
+     "uop": "uop: installs=1378 kills=21 retired-poor=19 enters=1959467 blocks=209907793 head-exits=0 reguards=5598632 rg-pages=88339444 rg-nonadj=0 win-kept=1959384 win-reset=83 gen=21 | compiled=1378 declined=77 insns=173523 uops=786486 flushes=15 traces=581",
+     "opt": "",
+     "ladder": "uop ladder: mask=7 retried=585 ok-halved=241 ok-icut=0 ok-nocall-head=30 ok-nocall=303",
+     "declines": "  declines: no-backedge=40 head-unsupported=26 call-indirect=10 unreached-block=1"
+    },
+    "off": {
+     "n": 5,
+     "keys": [
+      "5038/215000/21de97e778f1d193"
+     ],
+     "user": 7.11,
+     "userSpread": 0.5822784810126581,
+     "ins": 123785759232,
+     "insSpread": 0.01466606642204676,
+     "cyc": 36352646608,
+     "cycSpread": 0.4812156891253765,
+     "bmiss": 92227459,
+     "bmissSpread": 0.5707275422171177,
+     "startUser": 1.562,
+     "startUserSpread": 0.47631241997439167,
+     "rssKB": 333612,
+     "rssKBSpread": 0.14162560099756605,
+     "uop": "uop: installs=1378 kills=21 retired-poor=19 enters=1959467 blocks=209907793 head-exits=0 reguards=5598632 rg-pages=88339444 rg-nonadj=0 win-kept=1959384 win-reset=83 gen=21 | compiled=1378 declined=77 insns=173523 uops=786486 flushes=15 traces=581",
+     "opt": "uop opt: mask=0x0 enters=1959467 exits=1959467 head-exits=0 charged-blocks=209907793 service-calls=6345266 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=585 ok-halved=241 ok-icut=0 ok-nocall-head=30 ok-nocall=303",
+     "declines": "  declines: no-backedge=40 head-unsupported=26 call-indirect=10 unreached-block=1"
+    },
+    "off2": {
+     "n": 5,
+     "keys": [
+      "5038/215000/21de97e778f1d193"
+     ],
+     "user": 7.3,
+     "userSpread": 0.33150684931506863,
+     "ins": 123463798019,
+     "insSpread": 0.003750693907283954,
+     "cyc": 37011663484,
+     "cycSpread": 0.2679885785000671,
+     "bmiss": 96300413,
+     "bmissSpread": 0.2766893118101165,
+     "startUser": 1.579,
+     "startUserSpread": 0.4857504749841673,
+     "rssKB": 333784,
+     "rssKBSpread": 0.1338350550056324,
+     "uop": "uop: installs=1378 kills=21 retired-poor=19 enters=1959467 blocks=209907793 head-exits=0 reguards=5598632 rg-pages=88339444 rg-nonadj=0 win-kept=1959384 win-reset=83 gen=21 | compiled=1378 declined=77 insns=173523 uops=786486 flushes=15 traces=581",
+     "opt": "uop opt: mask=0x0 enters=1959467 exits=1959467 head-exits=0 charged-blocks=209907793 service-calls=6345266 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=0 variants=0 variant-hits=0 megamorphic=0 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=0 c2-copies=0 c2-programs=0 r2-contexts=0 r2-programs=0 sahf-jcc=0 m1-loads=0 ret-dyn=0 ret-chain=0 fs-programs=0 seams-skipped=0 decline-hits=0 stamp-drops=0",
+     "ladder": "uop ladder: mask=7 retried=585 ok-halved=241 ok-icut=0 ok-nocall-head=30 ok-nocall=303",
+     "declines": "  declines: no-backedge=40 head-unsupported=26 call-indirect=10 unreached-block=1"
+    },
+    "all": {
+     "n": 5,
+     "keys": [
+      "5038/215000/21de97e778f1d193"
+     ],
+     "user": 7.42,
+     "userSpread": 0.5404312668463611,
+     "ins": 119060972544,
+     "insSpread": 0.012739024615639544,
+     "cyc": 37294063840,
+     "cycSpread": 0.4336449278733256,
+     "bmiss": 93208182,
+     "bmissSpread": 0.5976153896017412,
+     "startUser": 1.607,
+     "startUserSpread": 0.8238954573739888,
+     "rssKB": 292556,
+     "rssKBSpread": 0.1666689454326693,
+     "uop": "uop: installs=249 kills=15 retired-poor=13 enters=1692070 blocks=211154407 head-exits=0 reguards=5707297 rg-pages=89998513 rg-nonadj=0 win-kept=1691917 win-reset=153 gen=9 | compiled=249 declined=55 insns=28931 uops=131816 flushes=0 traces=109",
+     "opt": "uop opt: mask=0xffff enters=1692070 exits=1692070 head-exits=0 charged-blocks=211154407 service-calls=5932572 loads-deleted=0 stores-deleted=0 folds=0 fold-dwords=0 jcc-folded=4 variants=0 variant-hits=0 megamorphic=163 icg-megamorphic=0 lock-sites=0 sahf-sites=0 ret-exits=98 c2-copies=0 c2-programs=0 r2-contexts=168 r2-programs=12 sahf-jcc=0 m1-loads=1510 ret-dyn=98 ret-chain=332210 fs-programs=0 seams-skipped=671369 decline-hits=19 stamp-drops=0",
+     "ladder": "uop ladder: mask=15 retried=107 ok-halved=39 ok-icut=0 ok-nocall-head=4 ok-nocall=56",
+     "declines": "  declines: no-backedge=34 head-unsupported=11 call-indirect=10"
+    }
+   },
+   "exact": {
+    "m": "5038/215000/21de97e778f1d193",
+    "off": "5038/215000/21de97e778f1d193",
+    "off2": "5038/215000/21de97e778f1d193",
+    "all": "5038/215000/21de97e778f1d193"
+   },
+   "failed": [],
+   "band": {
+    "user": 2.67229254571026,
+    "ins": 0.260095519062559,
+    "cyc": 1.812844283681322,
+    "bmiss": 4.416205373282592,
+    "startUser": 1.0883482714468569,
+    "rssKB": 0.05155689843291009
+   },
+   "divergent": false,
+   "mDiffers": false
+  }
+ }
+}

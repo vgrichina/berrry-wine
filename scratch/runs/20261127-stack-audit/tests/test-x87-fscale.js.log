@@ -1,0 +1,21 @@
+fscale:
+  ok   1.5 * 2^10
+  ok   2.75 * 2^trunc(2.9)
+  ok   8 * 2^trunc(-2.9)
+  ok   0 * 2^1536 is 0, not NaN
+  ok   -0 * 2^1536 keeps the sign
+  ok   0 * 2^-1536
+  ok   denormal 2^-1070 * 2^1536
+  ok   3 * 2^-1080
+  ok   2^-1000 * 2^1500
+  ok   1 * 2^5000 overflows to +Inf
+  ok   -1 * 2^5000 overflows to -Inf
+  ok   1 * 2^-5000 underflows to 0
+  ok   Inf * 2^3
+  ok   0 * 2^+Inf is invalid (NaN)
+  ok   Inf * 2^-Inf is invalid (NaN)
+  ok   0 * 2^-Inf is 0
+  ok   NaN scale propagates
+  ok   MSVC underflow fix-up on 0.0 returns 0.0
+
+PASS

@@ -1,0 +1,1 @@
+PASS x87 island fast == generic == unfused: 400 sequences, 7178 ops, 0 with islands

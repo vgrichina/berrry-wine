@@ -1,0 +1,21 @@
+spel30-dA-r1                       rc=0 user=111.87 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=10.94 wall=112
+spel30-dZE-r1                      rc=0 user=99.34 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.64 wall=100
+spel30-dZ-r1                       rc=0 user=137 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.20 wall=137
+spel30-dG-r1                       rc=0 user=79.93 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.15 wall=80
+spel30-dF-r1                       rc=0 user=89.73 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.22 wall=90
+spel30-dE-r1                       rc=0 user=83.15 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.17 wall=84
+spel30-dD-r1                       rc=0 user=102.54 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.26 wall=103
+spel30-dC-r1                       rc=0 user=99.3 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=7.54 wall=100
+spel30-dB-r1                       rc=0 user=81.97 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=6.29 wall=82
+spel30-dA2-r1                      rc=0 user=108.03 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=5.10 wall=108
+spel30-dD-r5                       rc=0 user=105.92 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=7.24 wall=106
+spel30-dC-r5                       rc=0 user=112.94 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=7.96 wall=113
+spel30-dB-r5                       rc=0 user=95.66 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.05 wall=96
+spel30-dA2-r5                      rc=0 user=111.92 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.11 wall=112
+spel30-dA-r5                       rc=0 user=112.27 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.25 wall=113
+spel30-dZE-r5                      rc=0 user=99.05 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.10 wall=99
+spel30-dZ-r5                       rc=0 user=137.17 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.23 wall=138
+spel30-dG-r5                       rc=0 user=80.44 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.11 wall=81
+spel30-dF-r5                       rc=0 user=89.93 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.36 wall=90
+spel30-dE-r5                       rc=0 user=83.79 ins=null api=4842860 b=47100 sha=6a4436d8e792d22f load=8.25 wall=84
+ALLDONE

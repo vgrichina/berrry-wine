@@ -1,0 +1,46 @@
+fucomip st,st(1):
+  ok   fucomip less: ZF
+  ok   fucomip less: PF
+  ok   fucomip less: CF
+  ok   fucomip less: jp taken (not equal)
+  ok   fucomip equal: ZF
+  ok   fucomip equal: PF
+  ok   fucomip equal: CF
+  ok   fucomip equal: jp NOT taken
+  ok   fucomip greater: ZF
+  ok   fucomip greater: PF
+  ok   fucomip greater: CF
+  ok   fucomip greater: jp taken (not equal)
+  ok   fucomip unordered: ZF
+  ok   fucomip unordered: PF
+  ok   fucomip unordered: CF
+  ok   fucomip unordered: jp taken
+  ok   fucomip 0 == 0: ZF
+  ok   fucomip 0 == 0: PF
+  ok   fucomip 0 == 0: jp NOT taken
+  ok   fucomip -0 == +0: ZF
+  ok   fucomip -0 == +0: jp NOT taken
+fcomip st,st(1):
+  ok   fcomip less: ZF
+  ok   fcomip less: PF
+  ok   fcomip less: CF
+  ok   fcomip less: jp taken (not equal)
+  ok   fcomip equal: ZF
+  ok   fcomip equal: PF
+  ok   fcomip equal: CF
+  ok   fcomip equal: jp NOT taken
+  ok   fcomip greater: ZF
+  ok   fcomip greater: PF
+  ok   fcomip greater: CF
+  ok   fcomip greater: jp taken (not equal)
+  ok   fcomip unordered: ZF
+  ok   fcomip unordered: PF
+  ok   fcomip unordered: CF
+  ok   fcomip unordered: jp taken
+  ok   fcomip 0 == 0: ZF
+  ok   fcomip 0 == 0: PF
+  ok   fcomip 0 == 0: jp NOT taken
+  ok   fcomip -0 == +0: ZF
+  ok   fcomip -0 == +0: jp NOT taken
+
+PASS

@@ -1,0 +1,120 @@
+    13.28%  [.] JS:wasm-function[1579]-1579-turbofan
+     8.35%  [.] JS:wasm-function[1029]-1029-turbofan
+     4.13%  [.] JS:wasm-function[996]-996-turbofan
+     3.61%  [.] JS:wasm-function[1573]-1573-turbofan
+     2.39%  [.] JS:wasm-function[1034]-1034-turbofan
+     2.31%  [.] JS:wasm-function[1030]-1030-turbofan
+     2.07%  [.] JS:wasm-function[17044]-17044-turbofan
+     2.03%  [.] v8::internal::SourcePositionTableIterator::Advance()
+     1.73%  [.] JS:*host.<computed> /home/user/m/lib/batch-clock.js:115:20
+     1.50%  [.] v8::internal::TranslatedState::TranslatedState(v8::internal::JavaScriptFrame const*)
+     1.38%  [.] Stub:js-to-wasm::i
+     1.35%  [.] JS:wasm-function[492]-492-turbofan
+     1.33%  [.] JS:wasm-function[1609]-1609-turbofan
+     1.31%  [.] JS:wasm-function[348]-348-turbofan
+     1.29%  [.] JS:wasm-function[597]-597-turbofan
+     1.21%  [.] JS:wasm-function[349]-349-turbofan
+     1.16%  [.] Builtins_LoadIC
+     1.10%  [.] Builtins_CallFunction_ReceiverIsNotNullOrUndefined
+     0.98%  [.] JS:wasm-function[682]-682-turbofan
+     0.92%  [.] JS:wasm-function[1231]-1231-turbofan
+     0.82%  [.] JS:wasm-function[589]-589-turbofan
+     0.75%  [.] JS:wasm-function[598]-598-turbofan
+     0.61%  [.] JS:*math_pow2 /home/user/m/lib/host-imports.js:3524:16
+     0.61%  [.] JS:wasm-function[1096]-1096-turbofan
+     0.59%  [.] JS:+' /home/user/m/test/run.js:1758:32
+     0.56%  [.] JS:wasm-function[1031]-1031-turbofan
+     0.51%  [.] JS:wasm-function[579]-579-turbofan
+     0.51%  [.] JS:wasm-function[995]-995-turbofan
+     0.50%  [.] JS:wasm-function[575]-575-turbofan
+     0.49%  [.] JS:wasm-function[657]-657-turbofan
+     0.49%  [.] JS:wasm-function[1032]-1032-turbofan
+     0.47%  [.] JS:wasm-function[1578]-1578-turbofan
+     0.46%  [.] Builtins_CallFunction_ReceiverIsAny
+     0.45%  [.] JS:wasm-function[15602]-15602-turbofan
+     0.45%  [.] JS:wasm-function[656]-656-turbofan
+     0.42%  [k] 0xffffffff98c00f30
+     0.41%  [.] JS:wasm-function[373]-373-turbofan
+     0.41%  [.] JS:wasm-function[1345]-1345-turbofan
+     0.40%  [.] JS:wasm-function[677]-677-turbofan
+     0.38%  [.] JS:*exports.<computed> /home/user/m/lib/batch-clock.js:101:66
+     0.38%  [.] JS:wasm-function[997]-997-turbofan
+     0.38%  [.] pow
+     0.37%  [.] JS:wasm-function[659]-659-turbofan
+     0.37%  [.] malloc
+     0.37%  [.] JS:wasm-function[1704]-1704-turbofan
+     0.36%  [.] JS:wasm-function[1098]-1098-turbofan
+     0.36%  [.] JS:wasm-function[539]-539-turbofan
+     0.36%  [.] JS:wasm-function[1053]-1053-turbofan
+     0.34%  [.] JS:wasm-to-js-<anonymous>-none
+     0.33%  [.] v8::internal::TranslatedFrame::Handlify(v8::internal::Isolate*)
+     0.32%  [.] JS:wasm-function[1120]-1120-turbofan
+     0.30%  [.] JS:wasm-function[1109]-1109-turbofan
+     0.30%  [.] JS:wasm-function[1042]-1042-turbofan
+     0.30%  [.] JS:wasm-function[1128]-1128-turbofan
+     0.28%  [.] JS:wasm-function[342]-342-turbofan
+     0.28%  [.] v8::internal::SafepointTable::TryFindEntry(unsigned long) const
+     0.28%  [.] JS:wasm-function[793]-793-turbofan
+     0.27%  [.] Builtins_WasmLiftoffFrameSetup
+     0.26%  [.] Builtins_AtomicsAdd
+     0.25%  [.] v8::internal::math::pow(double, double)
+     0.25%  [.] Builtins_WasmFloat64ToNumber
+     0.25%  [.] Builtins_SuspendGeneratorBaseline
+     0.25%  [.] JS:wasm-function[580]-580-turbofan
+     0.24%  [.] 0x000000000007a2e6
+     0.24%  [.] 0x000000000007a39e
+     0.23%  [.] v8::internal::Map::TryGetMapRootIdxFor(v8::internal::InstanceType)
+     0.23%  [.] JS:wasm-function[672]-672-turbofan
+     0.22%  [.] JS:wasm-function[1049]-1049-turbofan
+     0.22%  [.] JS:wasm-function[586]-586-turbofan
+     0.22%  [.] 0x000000000007a31d
+     0.21%  [.] 0x000000000007a3b4
+     0.20%  [.] v8::internal::Scanner::Next()
+     0.20%  [.] JS:wasm-function[729]-729-turbofan
+     0.20%  [.] v8::internal::(anonymous namespace)::CaptureSimpleStackTrace(v8::internal::Isolate*, int, v8::internal::FrameSkipMode, v8::internal::Handle<v8::internal::Object>)
+     0.20%  [.] JS:wasm-function[1018]-1018-turbofan
+     0.20%  [.] JS:wasm-function[1234]-1234-turbofan
+     0.20%  [.] v8::internal::wasm::WasmCodeLookupCache::GetCacheEntry(unsigned long)
+     0.20%  [.] JS:wasm-function[410]-410-turbofan
+     0.19%  [.] JS:wasm-function[868]-868-turbofan
+     0.19%  [.] 0x000000000007a30a
+     0.19%  [.] JS:wasm-function[633]-633-turbofan
+     0.19%  [.] JS:wasm-function[594]-594-turbofan
+     0.19%  [.] unsigned long v8::internal::StringTable::Data::TryStringToIndexOrLookupExisting<unsigned char>(v8::internal::Isolate*, v8::internal::Tagged<v8::internal::String>, v8::internal::Tagged<v8::internal::String>, unsigned long)
+     0.18%  [.] v8::internal::wasm::WasmCode::GetSourcePositionBefore(int)
+     0.17%  [.] JS:wasm-function[570]-570-turbofan
+     0.17%  [.] JS:*'runSlice /home/user/m/lib/thread-manager.js:3569:11
+     0.17%  [.] Builtins_CallForwardVarargs
+     0.16%  [.] Builtins_SetDataProperties
+     0.16%  [.] JS:wasm-function[638]-638-turbofan
+     0.16%  [.] v8::internal::HandlerTable::LookupHandlerIndexForRange(int) const
+     0.16%  [.] JS:wasm-function[645]-645-turbofan
+     0.16%  [.] JS:wasm-function[792]-792-turbofan
+     0.16%  [.] JS:wasm-function[1224]-1224-turbofan
+     0.16%  [.] cfree
+     0.15%  [.] JS:wasm-function[1114]-1114-turbofan
+     0.15%  [.] v8::internal::FrameTranslationBuilder::StoreOptimizedOut()
+     0.15%  [.] Builtins_LoadICTrampoline
+     0.15%  [.] v8::internal::StackFrameIterator::ComputeStackFrameType(v8::internal::StackFrame::State*) const
+     0.15%  [.] v8::internal::FrameSummary::native_context() const
+     0.15%  [.] JS:wasm-function[483]-483-turbofan
+     0.15%  [.] 0x000000000007a3c5
+     0.15%  [.] Builtins_Call_ReceiverIsAny
+     0.15%  [.] JS:wasm-function[648]-648-turbofan
+     0.15%  [.] Builtins_Call_ReceiverIsNotNullOrUndefined
+     0.14%  [.] JS:wasm-function[481]-481-turbofan
+     0.14%  [.] v8::internal::Debug::TryGetDebugInfo(v8::internal::Tagged<v8::internal::SharedFunctionInfo>)
+     0.13%  [.] JS:*'runSlice /home/user/m/lib/thread-manager.js:3569:11
+     0.13%  [.] v8::internal::OptimizedJSFrame::Summarize() const
+     0.13%  [.] 0x000000000007a2bf
+     0.13%  [.] JS:+' /home/user/m/test/run.js:1758:32
+     0.13%  [.] JS:wasm-function[620]-620-turbofan
+     0.13%  [.] JS:wasm-function[1718]-1718-turbofan
+     0.13%  [.] JS:wasm-function[383]-383-turbofan
+     0.13%  [.] JS:wasm-function[576]-576-turbofan
+     0.13%  [.] JS:wasm-function[1145]-1145-turbofan
+     0.13%  [.] 0x00001f5965b14688
+     0.12%  [.] JS:wasm-function[1081]-1081-turbofan
+     0.12%  [.] JS:wasm-function[1040]-1040-turbofan
+     0.12%  [.] JS:wasm-function[571]-571-turbofan
+     0.12%  [.] 0x000000000007a385

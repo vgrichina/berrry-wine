@@ -1,0 +1,7 @@
+Fri Nov 27 09:01:41 AM UTC 2026
+ 09:01:41 up 975 days,  2:29,  9 users,  load average: 10.94, 8.80, 5.18
+Model name:                         13th Gen Intel(R) Core(TM) i9-13900
+CPU max MHz:                        5600.0000
+CPU min MHz:                        800.0000
+powersave
+v24.22.1

@@ -1,0 +1,155 @@
+== spelunky_classic
+   band(|off2-off|): user +0.92% ins +0.01% cyc +0.39% bmiss +2.65% start +0.79%   off spread user +6.95% ins +0.04%
+   m      n=5 user 66.55s (-1.44%) ins 1091.789G (-3.01%) cyc -1.09% bmiss -4.16% start -0.20% rss 586MB (+2.33%) spread +9.27%/+0.04%  3440064/32700/6a4436d8e792d22f
+   off    n=5 user 67.52s (+0.00%) ins 1125.723G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 572MB (+0.00%) spread +6.95%/+0.04%  3440064/32700/6a4436d8e792d22f
+   off2   n=5 user 66.90s (-0.92%) ins 1125.647G (-0.01%) cyc -0.39% bmiss -2.65% start -0.79% rss 587MB (+2.64%) spread +6.91%/+0.02%  3440064/32700/6a4436d8e792d22f
+   all    n=5 user 59.01s (-12.60%) ins 1012.995G (-10.01%) cyc -11.35% bmiss +4.56% start -2.92% rss 585MB (+2.25%) spread +3.86%/+0.03%  3440064/32700/6a4436d8e792d22f
+   all vs m: user -11.33% ins -7.22% cyc -10.38%
+== metrojd_gm7
+   band(|off2-off|): user +1.25% ins +0.41% cyc +0.84% bmiss +0.09% start +1.42%   off spread user +5.34% ins +1.91%
+   m      n=5 user 14.73s (-2.84%) ins 192.201G (+0.18%) cyc -1.86% bmiss -3.03% start -1.70% rss 672MB (-0.07%) spread +2.85%/+2.45%  795191/1500000/308622198db314d0
+   off    n=5 user 15.16s (+0.00%) ins 191.859G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 673MB (+0.00%) spread +5.34%/+1.91%  795191/1500000/308622198db314d0
+   off2   n=5 user 14.97s (-1.25%) ins 192.648G (+0.41%) cyc +0.84% bmiss -0.09% start +1.42% rss 702MB (+4.44%) spread +8.02%/+0.96%  795191/1500000/308622198db314d0
+   all    n=5 user 14.97s (-1.25%) ins 194.114G (+1.18%) cyc +1.17% bmiss +4.70% start +1.32% rss 670MB (-0.31%) spread +4.68%/+0.82%  795191/1500000/308622198db314d0
+   all vs m: user +1.63% ins +1.00% cyc +3.08%
+== castle_gm5
+   band(|off2-off|): user +1.65% ins +0.25% cyc +0.26% bmiss +0.81% start +0.46%   off spread user +10.94% ins +0.45%
+   m      n=5 user 11.02s (+1.29%) ins 146.790G (-1.89%) cyc -1.90% bmiss -1.79% start -2.11% rss 437MB (+1.09%) spread +6.53%/+0.32%  6087808/280000/d003795ccfd0a88c
+   off    n=5 user 10.88s (+0.00%) ins 149.615G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 433MB (+0.00%) spread +10.94%/+0.45%  6087808/280000/d003795ccfd0a88c
+   off2   n=5 user 11.06s (+1.65%) ins 149.238G (-0.25%) cyc +0.26% bmiss -0.81% start +0.46% rss 434MB (+0.28%) spread +14.10%/+0.71%  6087808/280000/d003795ccfd0a88c
+   all    n=5 user 11.53s (+5.97%) ins 149.745G (+0.09%) cyc +3.11% bmiss +8.69% start +4.57% rss 438MB (+1.28%) spread +10.23%/+0.47%  6087808/280000/d003795ccfd0a88c
+   all vs m: user +4.63% ins +2.01% cyc +5.10%
+== age_of_wonders_demo
+   band(|off2-off|): user +2.61% ins +0.42% cyc +0.40% bmiss +0.18% start +3.81%   off spread user +5.87% ins +0.29%
+   m      n=5 user 4.53s (-1.52%) ins 55.843G (-1.72%) cyc -1.03% bmiss -2.08% start -5.43% rss 468MB (-8.66%) spread +7.06%/+0.29%  36565/80000/cf54108b7650531a
+   off    n=5 user 4.60s (+0.00%) ins 56.819G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 513MB (+0.00%) spread +5.87%/+0.29%  36565/80000/cf54108b7650531a
+   off2   n=5 user 4.48s (-2.61%) ins 57.056G (+0.42%) cyc -0.40% bmiss -0.18% start -3.81% rss 513MB (-0.05%) spread +15.85%/+0.28%  36565/80000/cf54108b7650531a
+   all    n=5 user 4.68s (+1.74%) ins 55.837G (-1.73%) cyc -0.07% bmiss +8.62% start +1.24% rss 470MB (-8.33%) spread +8.12%/+1.13%  36565/80000/cf54108b7650531a
+   all vs m: user +3.31% ins -0.01% cyc +0.97%
+== heroes2_demo
+   band(|off2-off|): user +1.02% ins +0.13% cyc +0.00% bmiss +0.34% start +4.33%   off spread user +6.91% ins +2.63%
+   m      n=5 user 4.81s (-2.24%) ins 73.571G (-1.99%) cyc -2.05% bmiss -3.10% start -6.41% rss 281MB (-0.22%) spread +6.65%/+0.95%  1187408/1800/0149f985b3195806
+   off    n=5 user 4.92s (+0.00%) ins 75.066G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 281MB (+0.00%) spread +6.91%/+2.63%  1187408/1800/0149f985b3195806
+   off2   n=5 user 4.87s (-1.02%) ins 74.969G (-0.13%) cyc -0.00% bmiss -0.34% start -4.33% rss 280MB (-0.60%) spread +4.93%/+1.76%  1187408/1800/0149f985b3195806
+   all    n=5 user 4.92s (+0.00%) ins 75.056G (-0.01%) cyc -0.17% bmiss +1.45% start +1.24% rss 283MB (+0.50%) spread +9.55%/+1.85%  1187408/1800/0149f985b3195806
+   all vs m: user +2.29% ins +2.02% cyc +1.92%
+== heroes3_demo
+   band(|off2-off|): user +1.91% ins +0.17% cyc +0.22% bmiss +0.39% start +9.73%   off spread user +6.92% ins +0.25%
+   m      n=5 user 9.72s (-2.51%) ins 145.527G (-4.44%) cyc -2.91% bmiss -1.39% start +1.36% rss 567MB (+7.93%) spread +5.04%/+0.52%  78096/31000/2b2f5ba406fcd59a
+   off    n=5 user 9.97s (+0.00%) ins 152.291G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 525MB (+0.00%) spread +6.92%/+0.25%  78096/31000/2b2f5ba406fcd59a
+   off2   n=5 user 9.78s (-1.91%) ins 152.553G (+0.17%) cyc -0.22% bmiss +0.39% start +9.73% rss 560MB (+6.60%) spread +5.73%/+0.44%  78096/31000/2b2f5ba406fcd59a
+   all    n=5 user 9.67s (-3.01%) ins 150.076G (-1.45%) cyc -1.72% bmiss +0.43% start +8.75% rss 574MB (+9.19%) spread +3.93%/+0.36%  78096/31000/2b2f5ba406fcd59a
+   all vs m: user -0.51% ins +3.13% cyc +1.22%
+== caesar3_demo
+   band(|off2-off|): user +1.36% ins +0.01% cyc +1.48% bmiss +1.15% start +3.15%   off spread user +4.80% ins +0.54%
+   m      n=5 user 12.37s (-0.96%) ins 141.532G (-1.27%) cyc -2.00% bmiss -1.95% start +4.81% rss 385MB (+12.99%) spread +6.71%/+1.43%  1226726/95000/db4815a4af49f6c2
+   off    n=5 user 12.49s (+0.00%) ins 143.349G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 341MB (+0.00%) spread +4.80%/+0.54%  1226726/95000/db4815a4af49f6c2
+   off2   n=5 user 12.32s (-1.36%) ins 143.333G (-0.01%) cyc -1.48% bmiss +1.15% start +3.15% rss 339MB (-0.45%) spread +2.19%/+0.32%  1226726/95000/db4815a4af49f6c2
+   all    n=5 user 12.29s (-1.60%) ins 144.055G (+0.49%) cyc -1.33% bmiss -0.81% start -3.32% rss 385MB (+12.94%) spread +11.23%/+0.37%  1226726/95000/db4815a4af49f6c2
+   all vs m: user -0.65% ins +1.78% cyc +0.68%
+== simcity2000_demo
+   band(|off2-off|): user +2.66% ins +0.24% cyc +1.20% bmiss +4.86% start +0.82%   off spread user +6.96% ins +1.60%
+   m      n=5 user 14.86s (+1.43%) ins 184.512G (-1.67%) cyc +0.66% bmiss +3.72% start +2.20% rss 432MB (-0.10%) spread +8.28%/+0.50%  1299848/270000/bf377911093f6103
+   off    n=5 user 14.65s (+0.00%) ins 187.643G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 433MB (+0.00%) spread +6.96%/+1.60%  1299848/270000/bf377911093f6103
+   off2   n=5 user 15.04s (+2.66%) ins 188.091G (+0.24%) cyc +1.20% bmiss +4.86% start +0.82% rss 431MB (-0.34%) spread +8.05%/+0.73%  1299848/270000/bf377911093f6103
+   all    n=5 user 15.03s (+2.59%) ins 187.504G (-0.07%) cyc +2.28% bmiss +8.86% start -0.45% rss 430MB (-0.71%) spread +7.05%/+2.67%  1299848/270000/bf377911093f6103
+   all vs m: user +1.14% ins +1.62% cyc +1.61%
+== red_alert_95_demo
+   band(|off2-off|): user +2.63% ins +0.31% cyc +0.91% bmiss +0.83% start +2.27%   off spread user +5.72% ins +0.61%
+   m      n=5 user 12.96s (+0.23%) ins 203.611G (-1.93%) cyc -0.53% bmiss -2.08% start -4.84% rss 345MB (+16.69%) spread +6.10%/+0.40%  5568899/75000/4a9d9340a5964f7d
+   off    n=5 user 12.93s (+0.00%) ins 207.626G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 296MB (+0.00%) spread +5.72%/+0.61%  5568899/75000/4a9d9340a5964f7d
+   off2   n=5 user 13.27s (+2.63%) ins 206.989G (-0.31%) cyc +0.91% bmiss +0.83% start +2.27% rss 339MB (+14.44%) spread +7.08%/+0.90%  5568899/75000/4a9d9340a5964f7d
+   all    n=5 user 13.45s (+4.02%) ins 208.362G (+0.35%) cyc +2.18% bmiss +26.53% start -5.83% rss 339MB (+14.45%) spread +7.21%/+0.27%  5568899/75000/4a9d9340a5964f7d
+   all vs m: user +3.78% ins +2.33% cyc +2.73%
+== wep16_lifegen
+   band(|off2-off|): user +0.31% ins +1.47% cyc +0.83% bmiss +5.42% start +0.90%   off spread user +17.48% ins +5.99%
+   m      n=5 user 12.92s (-0.08%) ins 218.333G (-1.31%) cyc +0.32% bmiss +17.26% start +2.59% rss 272MB (+0.28%) spread +14.01%/+3.66%  0/800000/9abd4b02bbd6911d
+   off    n=5 user 12.93s (+0.00%) ins 221.239G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 271MB (+0.00%) spread +17.48%/+5.99%  0/800000/9abd4b02bbd6911d
+   off2   n=5 user 12.89s (-0.31%) ins 217.984G (-1.47%) cyc +0.83% bmiss +5.42% start +0.90% rss 273MB (+0.84%) spread +11.79%/+2.74%  0/800000/9abd4b02bbd6911d
+   all    n=5 user 12.82s (-0.85%) ins 213.442G (-3.52%) cyc +0.22% bmiss +5.41% start +0.04% rss 268MB (-0.97%) spread +24.88%/+25.13%  0/800000/9abd4b02bbd6911d
+   all vs m: user -0.77% ins -2.24% cyc -0.10%
+== wep16_rattler
+   band(|off2-off|): user +0.22% ins +0.12% cyc +0.71% bmiss +1.79% start +2.13%   off spread user +10.54% ins +1.47%
+   m      n=5 user 14.22s (+2.67%) ins 178.283G (-0.26%) cyc +1.37% bmiss +1.50% start -0.25% rss 317MB (+1.08%) spread +10.90%/+1.96%  0/250000/aeea0fefb087a785
+   off    n=5 user 13.85s (+0.00%) ins 178.745G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 313MB (+0.00%) spread +10.54%/+1.47%  0/250000/aeea0fefb087a785
+   off2   n=5 user 13.88s (+0.22%) ins 178.536G (-0.12%) cyc -0.71% bmiss +1.79% start -2.13% rss 314MB (+0.14%) spread +14.70%/+0.13%  0/250000/aeea0fefb087a785
+   all    n=5 user 14.33s (+3.47%) ins 178.882G (+0.08%) cyc +1.28% bmiss +1.35% start +3.97% rss 354MB (+13.15%) spread +12.49%/+0.81%  0/250000/aeea0fefb087a785
+   all vs m: user +0.77% ins +0.34% cyc -0.09%
+== starcraft_shareware
+   band(|off2-off|): user +5.26% ins +0.00% cyc +3.73% bmiss +2.79% start +11.76%   off spread user +15.43% ins +0.13%
+   m      n=5 user 70.24s (-2.00%) ins 1278.801G (-2.87%) cyc -1.73% bmiss -1.52% start +3.29% rss 364MB (+0.10%) spread +21.91%/+0.13%  1612304/7000/81ef8c8536c09d9f
+   off    n=5 user 71.67s (+0.00%) ins 1316.586G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 363MB (+0.00%) spread +15.43%/+0.13%  1612304/7000/81ef8c8536c09d9f
+   off2   n=5 user 75.44s (+5.26%) ins 1316.609G (+0.00%) cyc +3.73% bmiss +2.79% start +11.76% rss 365MB (+0.45%) spread +42.27%/+0.04%  1612304/7000/81ef8c8536c09d9f
+   all    n=5 user 72.32s (+0.91%) ins 1318.472G (+0.14%) cyc +1.09% bmiss +1.66% start +5.91% rss 367MB (+1.00%) spread +73.77%/+0.30%  1612304/7000/81ef8c8536c09d9f
+   all vs m: user +2.96% ins +3.10% cyc +2.88%
+== spelunky_classic_hd
+   band(|off2-off|): user +2.39% ins +0.24% cyc +1.76% bmiss +0.97% start +8.23%   off spread user +22.25% ins +0.43%
+   m      n=5 user 4.15s (-0.72%) ins 60.890G (-2.58%) cyc +1.33% bmiss +0.05% start -0.97% rss 790MB (+4.77%) spread +21.69%/+0.23%  348124/47000/28aa1728c441e8b2
+   off    n=5 user 4.18s (+0.00%) ins 62.502G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 754MB (+0.00%) spread +22.25%/+0.43%  348124/47000/28aa1728c441e8b2
+   off2   n=5 user 4.28s (+2.39%) ins 62.652G (+0.24%) cyc +1.76% bmiss +0.97% start -8.23% rss 797MB (+5.60%) spread +20.09%/+0.49%  348124/47000/28aa1728c441e8b2
+   all    n=5 user 4.27s (+2.15%) ins 59.789G (-4.34%) cyc +1.17% bmiss +14.84% start +23.06% rss 756MB (+0.26%) spread +18.03%/+0.28%  348124/47000/28aa1728c441e8b2
+   all vs m: user +2.89% ins -1.81% cyc -0.16%
+== diablo_shareware
+   band(|off2-off|): user +0.81% ins +0.01% cyc +0.80% bmiss +0.13% start +1.53%   off spread user +9.72% ins +1.88%
+   m      n=5 user 2.54s (+2.83%) ins 35.928G (-2.47%) cyc +2.63% bmiss +0.69% start +3.52% rss 438MB (-0.15%) spread +7.48%/+0.91%  19252/22000/8cc941f9dfaac83b
+   off    n=5 user 2.47s (+0.00%) ins 36.837G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 439MB (+0.00%) spread +9.72%/+1.88%  19252/22000/8cc941f9dfaac83b
+   off2   n=5 user 2.45s (-0.81%) ins 36.832G (-0.01%) cyc -0.80% bmiss -0.13% start -1.53% rss 394MB (-10.30%) spread +7.35%/+0.82%  19252/22000/8cc941f9dfaac83b
+   all    n=5 user 2.50s (+1.21%) ins 36.855G (+0.05%) cyc +0.24% bmiss +1.06% start +7.34% rss 436MB (-0.60%) spread +10.80%/+1.20%  19252/22000/8cc941f9dfaac83b
+   all vs m: user -1.57% ins +2.58% cyc -2.33%
+== gta2_demo
+   band(|off2-off|): user +3.01% ins +0.00% cyc +2.33% bmiss +6.04% start +2.94%   off spread user +32.67% ins +0.19%
+   m      n=5 user 13.52s (-0.73%) ins 249.514G (-1.17%) cyc +1.40% bmiss +0.31% start -0.58% rss 440MB (+0.66%) spread +9.69%/+0.18%  2230137/37000/59d66b9769efdf14
+   off    n=5 user 13.62s (+0.00%) ins 252.466G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 437MB (+0.00%) spread +32.67%/+0.19%  2230137/37000/59d66b9769efdf14
+   off2   n=5 user 13.21s (-3.01%) ins 252.458G (-0.00%) cyc -2.33% bmiss -6.04% start -2.94% rss 439MB (+0.56%) spread +17.26%/+0.13%  2230137/37000/59d66b9769efdf14
+   all    n=5 user 13.74s (+0.88%) ins 252.207G (-0.10%) cyc +1.72% bmiss +3.20% start +0.48% rss 437MB (+0.15%) spread +15.14%/+0.33%  2229993/37000/59d66b9769efdf14
+   all vs m: user +1.63% ins +1.08% cyc +0.32%
+   !! DIVERGENT across branch arms
+== mw3
+   band(|off2-off|): user +0.20% ins +0.04% cyc +1.11% bmiss +2.28% start +6.04%   off spread user +21.89% ins +0.36%
+   m      n=5 user 13.76s (-7.34%) ins 300.920G (-1.77%) cyc -2.27% bmiss -5.68% start -2.20% rss 448MB (-1.02%) spread +17.73%/+0.22%  166335/330000/c045f5035641cf9f
+   off    n=5 user 14.85s (+0.00%) ins 306.340G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 453MB (+0.00%) spread +21.89%/+0.36%  166335/330000/c045f5035641cf9f
+   off2   n=5 user 14.88s (+0.20%) ins 306.460G (+0.04%) cyc +1.11% bmiss -2.28% start +6.04% rss 455MB (+0.40%) spread +29.44%/+0.99%  166335/330000/c045f5035641cf9f
+   all    n=5 user 14.32s (-3.57%) ins 307.486G (+0.37%) cyc +0.38% bmiss +0.33% start +3.68% rss 458MB (+1.05%) spread +11.03%/+0.42%  166335/330000/c045f5035641cf9f
+   all vs m: user +4.07% ins +2.18% cyc +2.71%
+== quake2_demo
+   band(|off2-off|): user +3.86% ins +0.07% cyc +1.63% bmiss +5.12% start +3.91%   off spread user +39.79% ins +0.12%
+   m      n=5 user 12.38s (+1.56%) ins 311.776G (-0.03%) cyc +2.06% bmiss -2.58% start -12.61% rss 371MB (+0.78%) spread +20.11%/+0.09%  741796/7800/7116b2b056b3da2f
+   off    n=5 user 12.19s (+0.00%) ins 311.882G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 368MB (+0.00%) spread +39.79%/+0.12%  741796/7800/7116b2b056b3da2f
+   off2   n=5 user 11.72s (-3.86%) ins 311.656G (-0.07%) cyc -1.63% bmiss -5.12% start -3.91% rss 364MB (-1.05%) spread +32.51%/+0.18%  741796/7800/7116b2b056b3da2f
+   all    n=5 user 12.17s (-0.16%) ins 311.936G (+0.02%) cyc -0.17% bmiss -0.77% start +5.22% rss 360MB (-2.15%) spread +35.83%/+0.16%  741796/7800/7116b2b056b3da2f
+   all vs m: user -1.70% ins +0.05% cyc -2.18%
+== hexen2_demo
+   band(|off2-off|): user +3.19% ins +0.14% cyc +1.09% bmiss +2.07% start +2.47%   off spread user +27.66% ins +0.89%
+   m      n=5 user 0.94s (+0.00%) ins 14.798G (-2.57%) cyc -0.70% bmiss -2.12% start -6.17% rss 289MB (-0.39%) spread +57.45%/+3.32%  37/23000/775b3ef7c22d54eb
+   off    n=5 user 0.94s (+0.00%) ins 15.188G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 290MB (+0.00%) spread +27.66%/+0.89%  37/23000/775b3ef7c22d54eb
+   off2   n=5 user 0.91s (-3.19%) ins 15.167G (-0.14%) cyc -1.09% bmiss -2.07% start -2.47% rss 290MB (-0.09%) spread +63.74%/+0.90%  37/23000/775b3ef7c22d54eb
+   all    n=5 user 0.89s (-5.32%) ins 15.195G (+0.05%) cyc -2.96% bmiss -1.35% start -13.58% rss 289MB (-0.34%) spread +59.55%/+2.56%  37/23000/775b3ef7c22d54eb
+   all vs m: user -5.32% ins +2.68% cyc -2.28%
+== halflife_uplink
+   band(|off2-off|): user +3.50% ins +0.16% cyc +3.20% bmiss +2.81% start +9.65%   off spread user +58.69% ins +0.36%
+   m      n=5 user 13.48s (+0.52%) ins 270.612G (-0.17%) cyc -1.02% bmiss +4.39% start +2.41% rss 582MB (-0.07%) spread +50.22%/+0.66%  336049/4000/25e210f6b3a2e5a9
+   off    n=5 user 13.41s (+0.00%) ins 271.079G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 582MB (+0.00%) spread +58.69%/+0.36%  336049/4000/25e210f6b3a2e5a9
+   off2   n=5 user 12.94s (-3.50%) ins 271.525G (+0.16%) cyc -3.20% bmiss -2.81% start -9.65% rss 582MB (+0.05%) spread +33.54%/+1.00%  336049/4000/25e210f6b3a2e5a9
+   all    n=5 user 13.54s (+0.97%) ins 271.145G (+0.02%) cyc -1.12% bmiss +0.07% start +10.09% rss 582MB (-0.06%) spread +43.06%/+0.20%  336049/4000/25e210f6b3a2e5a9
+   all vs m: user +0.45% ins +0.20% cyc -0.11%
+== jazz2_demo
+   band(|off2-off|): user +12.50% ins +0.04% cyc +9.46% bmiss +9.80% start +17.22%   off spread user +22.72% ins +0.13%
+   m      n=5 user 9.21s (-8.63%) ins 175.877G (-2.12%) cyc -7.28% bmiss -8.74% start -15.06% rss 416MB (+0.66%) spread +20.74%/+0.12%  5432/20000/007bc758e298430f
+   off    n=5 user 10.08s (+0.00%) ins 179.686G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 414MB (+0.00%) spread +22.72%/+0.13%  5432/20000/007bc758e298430f
+   off2   n=5 user 8.82s (-12.50%) ins 179.623G (-0.04%) cyc -9.46% bmiss -9.80% start -17.22% rss 417MB (+0.89%) spread +25.74%/+0.08%  5432/20000/007bc758e298430f
+   all    n=5 user 9.57s (-5.06%) ins 178.842G (-0.47%) cyc -4.61% bmiss -4.37% start +4.74% rss 416MB (+0.48%) spread +9.82%/+0.04%  5432/20000/007bc758e298430f
+   all vs m: user +3.91% ins +1.69% cyc +2.87%
+== pinball
+   band(|off2-off|): user +14.29% ins +0.15% cyc +14.19% bmiss +11.67% start +5.24%   off spread user +36.54% ins +0.71%
+   m      n=5 user 9.95s (+3.00%) ins 133.219G (-2.41%) cyc +4.46% bmiss +1.93% start -0.83% rss 418MB (+0.10%) spread +67.64%/+0.53%  2427784/140000/79fb6bc141af001d
+   off    n=5 user 9.66s (+0.00%) ins 136.513G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 417MB (+0.00%) spread +36.54%/+0.71%  2427784/140000/79fb6bc141af001d
+   off2   n=5 user 11.04s (+14.29%) ins 136.308G (-0.15%) cyc +14.19% bmiss +11.67% start -5.24% rss 419MB (+0.33%) spread +31.43%/+0.63%  2427784/140000/79fb6bc141af001d
+   all    n=5 user 10.26s (+6.21%) ins 136.257G (-0.19%) cyc +6.28% bmiss +4.34% start -3.26% rss 418MB (+0.23%) spread +71.15%/+0.20%  2427784/140000/79fb6bc141af001d
+   all vs m: user +3.12% ins +2.28% cyc +1.74%
+== moorhuhn_3
+   band(|off2-off|): user +2.67% ins +0.26% cyc +1.81% bmiss +4.42% start +1.09%   off spread user +58.23% ins +1.47%
+   m      n=5 user 7.53s (+5.91%) ins 119.387G (-3.55%) cyc +5.28% bmiss +3.78% start -0.77% rss 328MB (+0.55%) spread +27.76%/+1.45%  5038/215000/21de97e778f1d193
+   off    n=5 user 7.11s (+0.00%) ins 123.786G (+0.00%) cyc +0.00% bmiss +0.00% start +0.00% rss 326MB (+0.00%) spread +58.23%/+1.47%  5038/215000/21de97e778f1d193
+   off2   n=5 user 7.30s (+2.67%) ins 123.464G (-0.26%) cyc +1.81% bmiss +4.42% start +1.09% rss 326MB (+0.05%) spread +33.15%/+0.38%  5038/215000/21de97e778f1d193
+   all    n=5 user 7.42s (+4.36%) ins 119.061G (-3.82%) cyc +2.59% bmiss +1.06% start +2.88% rss 286MB (-12.31%) spread +54.04%/+1.27%  5038/215000/21de97e778f1d193
+   all vs m: user -1.46% ins -0.27% cyc -2.55%

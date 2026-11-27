@@ -1,0 +1,28 @@
+
+## spelhd  (metric deltas vs A; negative = less work/time)
+null band |A2-A|: ins - cyc - user - win[213550..run end (asked 237550)] -; A spread user +17.5% ins +0.0% win +17.8%
+| arm | n | ins G | Δins | Δcyc | user s | Δuser | win 213550..run end (asked 237550) s | Δwin | uop compiled/enters | GM varscan/inst2b/inst1 | Delphi native/fallback | key |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A all off | 5 | 1187.7 | +0.0% | +0.0% | 88.5 | +0.0% | 11.83 | +0.0% | 1827/65504189 | -/-/- | -/- | 2515923/237550/28aa1728c441e8b2 |
+| D uop | 5 | 1171.6 | -1.4% | -5.5% | 84.0 | -5.1% | 11.76 | -0.5% | 1374/56606603 | -/-/- | -/- | 2515923/237550/28aa1728c441e8b2 |
+| G uop+Delphi+GM | 4 | 1174.4 | -1.1% | +4.1% | 93.6 | +5.8% | 11.76 | -0.6% | 1374/56606603 | -/-/- | -/- | 2515923/237550/28aa1728c441e8b2 |
+| D uop +SSE | 5 | 1023.8 | -13.8% | -11.0% | 80.6 | -8.9% | 10.95 | -7.4% | 1437/58164421 | -/-/- | -/- | 2515923/237550/28aa1728c441e8b2 |
+| G full +SSE | 5 | 1026.9 | -13.5% | -11.0% | 79.1 | -10.6% | 11.00 | -7.0% | 1437/58164421 | -/-/- | -/- | 2515923/237550/28aa1728c441e8b2 |
+
+marginal (X vs Y):
+  uop alone                                dD vs dA: ins -1.4% cyc -5.5% user -5.1% win[213550..run end (asked 237550)] -0.5%
+  both folds on top of uop                 dG vs dD: ins +0.2% cyc +10.2% user +11.5% win[213550..run end (asked 237550)] -0.0%
+  SSE on uop                               dDs vs dD: ins -12.6% cyc -5.7% user -4.0% win[213550..run end (asked 237550)] -6.9%
+  SSE on full stack                        dGs vs dG: ins -12.6% cyc -14.5% user -15.5% win[213550..run end (asked 237550)] -6.4%
+
+## metrojd_gm7  (metric deltas vs A; negative = less work/time)
+null band |A2-A|: ins - cyc - user - win[0..300000] -; A spread user +129.9% ins +5.4% win +152.4%
+| arm | n | ins G | Δins | Δcyc | user s | Δuser | win 0..300000 s | Δwin | uop compiled/enters | GM varscan/inst2b/inst1 | Delphi native/fallback | key |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| A all off | 6 | 191.5 | +0.0% | +0.0% | 14.6 | +0.0% | 4.97 | +0.0% | 430/1484406 | -/-/- | -/- | 795191/1500000/308622198db314d0 |
+| D uop | 6 | 194.3 | +1.5% | +2.3% | 14.9 | +2.2% | 5.42 | +9.2% | 462/1652568 | -/-/- | -/- | 795191/1500000/308622198db314d0 |
+| G uop+Delphi+GM | 6 | 193.4 | +1.0% | +12.9% | 16.4 | +12.6% | 6.39 | +28.7% | 399/1321810 | 0/0/0 | 315982/15653 | 795191/1500000/308622198db314d0 |
+
+marginal (X vs Y):
+  uop alone                                dD vs dA: ins +1.5% cyc +2.3% user +2.2% win[0..300000] +9.2%
+  both folds on top of uop                 dG vs dD: ins -0.4% cyc +10.3% user +10.3% win[0..300000] +17.9%

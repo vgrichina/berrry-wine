@@ -1,0 +1,120 @@
+    14.44%  [.] $uop_fast
+     5.07%  [.] $fpu_exec_mem
+     4.69%  [.] $phys80_materialize
+     2.18%  [.] $uop_x87
+     2.07%  [.] v8::internal::SourcePositionTableIterator::Advance()
+     2.06%  [.] $th_fpu_mem_ro
+     1.78%  [.] $__anonymous_1712
+     1.71%  [.] $fpu_exec_reg
+     1.57%  [.] $phys80_invalidate
+     1.55%  [.] v8::internal::TranslatedState::TranslatedState(v8::internal::JavaScriptFrame const*)
+     1.44%  [.] JS:*host.<computed> /home/user/s/lib/batch-clock.js:115:20
+     1.35%  [.] $branch_end_at
+     1.21%  [.] $th_uop_enter
+     1.18%  [.] Stub:js-to-wasm::i
+     1.17%  [.] $th_load32_rop
+     1.17%  [.] Builtins_LoadIC
+     1.16%  [.] $gl32
+     1.02%  [.] $th_shift_r
+     0.97%  [.] $gl32_native
+     0.91%  [.] Builtins_CallFunction_ReceiverIsNotNullOrUndefined
+     0.88%  [.] $th_load32
+     0.83%  [.] $th_mmx_rr
+     0.82%  [.] $th_store32_rop
+     0.57%  [.] $uop_run
+     0.56%  [.] $uc_form_loop
+     0.56%  [.] JS:+' /home/user/s/test/run.js:1766:32
+     0.53%  [.] $run
+     0.53%  [.] $th_fpu_mem
+     0.52%  [.] $th_mov_r_r
+     0.50%  [.] $th_jcc_nz
+     0.49%  [.] $fpu_arith
+     0.48%  [.] $th_jcc_z
+     0.46%  [.] $gs32
+     0.46%  [.] $th_and_r_i32
+     0.46%  [.] $fpu_set
+     0.43%  [.] $th_compute_ea_sib
+     0.42%  [.] malloc
+     0.41%  [.] $th_fpu_reg
+     0.41%  [.] $th_load32_sib
+     0.40%  [.] Builtins_CallFunction_ReceiverIsAny
+     0.40%  [.] v8::internal::Scanner::Next()
+     0.39%  [.] $do_shift
+     0.39%  [.] $th_alu_r_m32
+     0.39%  [.] Builtins_WasmLiftoffFrameSetup
+     0.38%  [.] JS:*math_pow2 /home/user/s/lib/host-imports.js:3524:16
+     0.38%  [.] $decode_block
+     0.36%  [.] $th_jcc_a
+     0.36%  [.] Builtins_SuspendGeneratorBaseline
+     0.36%  [.] JS:*exports.<computed> /home/user/s/lib/batch-clock.js:101:66
+     0.33%  [.] v8::internal::SafepointTable::TryFindEntry(unsigned long) const
+     0.33%  [.] v8::internal::TranslatedFrame::Handlify(v8::internal::Isolate*)
+     0.33%  [.] $th_test_jcc
+     0.31%  [.] JS:wasm-to-js-<anonymous>-none
+     0.31%  [.] $phys80_fist
+     0.30%  [.] $th_shr_ebp_1_jcc_b
+     0.30%  [.] pow
+     0.26%  [.] $th_alu_r8_i8
+     0.25%  [.] $g2w_slow
+     0.23%  [.] $th_lock_rmw
+     0.23%  [.] Builtins_AtomicsAdd
+     0.23%  [.] v8::internal::wasm::WasmCodeLookupCache::GetCacheEntry(unsigned long)
+     0.22%  [.] $th_alu_m32_r_ro
+     0.21%  [.] $page_watch_cell
+     0.20%  [.] Builtins_SetDataProperties
+     0.19%  [.] $th_pop_run_ret
+     0.19%  [.] v8::internal::StackFrameIterator::ComputeStackFrameType(v8::internal::StackFrame::State*) const
+     0.19%  [.] $th_mmx_ri
+     0.19%  [.] v8::internal::HandlerTable::LookupHandlerIndexForRange(int) const
+     0.19%  [.] v8::internal::Map::TryGetMapRootIdxFor(v8::internal::InstanceType)
+     0.19%  [.] $th_store8
+     0.19%  [.] $th_alu_r16_r16
+     0.19%  [.] v8::internal::(anonymous namespace)::CaptureSimpleStackTrace(v8::internal::Isolate*, int, v8::internal::FrameSkipMode, v8::internal::Handle<v8::internal::Object>)
+     0.19%  [.] JS:*'runSlice /home/user/s/lib/thread-manager.js:3569:11
+     0.19%  [.] $th_add_r_r
+     0.18%  [.] $mmx_binop
+     0.18%  [.] v8::internal::wasm::WasmCode::GetSourcePositionBefore(int)
+     0.18%  [.] Builtins_Call_ReceiverIsNotNullOrUndefined
+     0.18%  [.] $th_block_end
+     0.17%  [.] $th_call_ind
+     0.17%  [.] v8::internal::FrameTranslationBuilder::StoreOptimizedOut()
+     0.17%  [.] v8::internal::math::pow(double, double)
+     0.17%  [.] $th_load8
+     0.17%  [.] 0x000000000007a2e6
+     0.17%  [.] $page_resolve
+     0.17%  [.] $fpu_push
+     0.16%  [.] v8::internal::OptimizedJSFrame::Summarize() const
+     0.16%  [.] $th_mov_r16_m16
+     0.16%  [.] $th_alu_r8_r8
+     0.16%  [.] $th_ret
+     0.16%  [.] cfree
+     0.16%  [.] unsigned long v8::internal::StringTable::Data::TryStringToIndexOrLookupExisting<unsigned char>(v8::internal::Isolate*, v8::internal::Tagged<v8::internal::String>, v8::internal::Tagged<v8::internal::String>, unsigned long)
+     0.15%  [.] Builtins_ResumeGeneratorBaseline
+     0.15%  [.] Builtins_Call_ReceiverIsAny
+     0.15%  [.] $th_push_run
+     0.15%  [.] 0x000000000007a39e
+     0.15%  [.] Builtins_LoadICTrampoline
+     0.15%  [.] 0x000000000007a2bf
+     0.14%  [.] v8::internal::Debug::TryGetDebugInfo(v8::internal::Tagged<v8::internal::SharedFunctionInfo>)
+     0.14%  [.] v8::internal::compiler::GraphReducer::ReduceTop()
+     0.14%  [.] void v8::internal::CalculateLineEndsImpl<unsigned char>(v8::base::SmallVector<int, 32ul, std::allocator<int> >*, v8::base::Vector<unsigned char const>, bool)
+     0.14%  [.] 0x000000000007a31d
+     0.14%  [.] v8::internal::String::ComputeAndSetRawHash(v8::internal::SharedStringAccessGuardIfNeeded const&)
+     0.14%  [.] $page_publish
+     0.14%  [.] v8::internal::StackFrame::GcSafeLookupCodeAndOffset() const
+     0.13%  [.] $th_xor_r_r
+     0.13%  [.] 0x000000000007a30a
+     0.13%  [.] $th_mov_r_i32
+     0.13%  [.] $th_push_r
+     0.13%  [.] $th_dec_r8
+     0.13%  [.] v8::internal::DeoptTranslationIterator::NextOperand()
+     0.13%  [.] 0x000000000007a3b4
+     0.13%  [.] v8::internal::FrameSummary::native_context() const
+     0.13%  [.] Builtins_CallForwardVarargs
+     0.13%  [.] $th_mov_r8_r8
+     0.13%  [.] $set_flags_rotate
+     0.12%  [.] 0x000000000007a332
+     0.12%  [.] 0x000000000007a3fc
+     0.12%  [.] Builtins_AtomicsLoad
+     0.12%  [.] Builtins_WasmFloat64ToNumber
+     0.12%  [.] int v8::internal::Deserializer<v8::internal::Isolate>::ReadSingleBytecodeData<v8::internal::SlotAccessorForHeapObject>(unsigned char, v8::internal::SlotAccessorForHeapObject)

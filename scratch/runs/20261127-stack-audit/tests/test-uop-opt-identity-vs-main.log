@@ -1,0 +1,3 @@
+mask unset vs set_uop_opt(0): ok (arena 1a0e189cb0ab9073, 336 lines)
+control wine-assembly.wasm vs mask 0: FAIL suite failed (false, true)TypeError: e[("set_uop_" + f)] is not a function     at runCase (/private/tmp/wa-stack/test/test-uop-compiler.js:1347:43)     at main (/private/tmp/wa-stack/test/test-uop-compiler.js:2367:17); arena digest  vs 1a0e189cb0ab9073; 75 vs 336 case lines
+FAIL: 3

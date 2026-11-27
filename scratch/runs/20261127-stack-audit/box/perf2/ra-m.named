@@ -1,0 +1,120 @@
+    33.75%  [.] $uop_fast
+     5.70%  [.] $th_uop_enter
+     3.39%  [.] $uop_rg_grow
+     2.50%  [.] $g2w
+     2.39%  [.] $uop_run
+     2.36%  [.] $run
+     2.11%  [.] $th_ret
+     2.06%  [.] JS:*'getPos /home/user/m/lib/host-audio.js:2029:13
+     2.01%  [.] JS:+' /home/user/m/test/run.js:1758:32
+     1.70%  [.] Builtins_LoadIC
+     1.56%  [.] $th_test_jcc
+     1.24%  [.] $branch_end_at
+     1.21%  [.] Builtins_AtomicsAdd
+     1.20%  [.] $code_page_test
+     1.10%  [.] $th_mov_r_r
+     1.08%  [.] $guest_page_affine_span
+     1.00%  [.] $th_call_ind_ro
+     1.00%  [.] $__anonymous_1699
+     0.98%  [.] $win32_dispatch_inner
+     0.94%  [.] $th_pop_run
+     0.93%  [.] $th_load32_rop
+     0.90%  [.] $th_div32
+     0.85%  [.] $page_resolve
+     0.85%  [.] $dispatch_api_table_page_4
+     0.85%  [.] $th_xor_r_r
+     0.80%  [.] Stub:js-to-wasm::i
+     0.79%  [.] $th_alu_r_m32_ro
+     0.67%  [.] $page_watch_is_watched
+     0.62%  [.] $th_lea_ro
+     0.62%  [.] $th_shift_r
+     0.60%  [.] $th_mov_r16_m16_ro
+     0.58%  [.] $th_store32_rop
+     0.54%  [.] $th_call_rel
+     0.52%  [.] $win32_dispatch
+     0.50%  [.] $th_push_run
+     0.49%  [.] Builtins_CallFunction_ReceiverIsNotNullOrUndefined
+     0.47%  [.] Builtins_AtomicsLoad
+     0.45%  [.] $gl32
+     0.45%  [.] $gs32
+     0.44%  [.] JS:*exports.<computed> /home/user/m/lib/batch-clock.js:101:66
+     0.42%  [.] $th_add_r_i32
+     0.39%  [.] $th_jcc_z
+     0.37%  [.] $th_mov_r_i32
+     0.34%  [.] $th_jcc_ge
+     0.33%  [.] JS:wasm-to-js-<anonymous>-none
+     0.32%  [.] $th_and_r_i32
+     0.32%  [.] $uop_poor_check
+     0.31%  [.] Builtins_ToNumberConvertBigInt
+     0.30%  [.] $th_test_r8_i
+     0.30%  [.] v8::internal::BigInt::ToNumber(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::BigInt>)
+     0.27%  [.] JS:*'runSlice /home/user/m/lib/thread-manager.js:3569:11
+     0.26%  [.] $th_alu_r_m32
+     0.26%  [.] JS:*host.<computed> /home/user/m/lib/batch-clock.js:115:20
+     0.26%  [.] $th_sub_r_i32
+     0.26%  [.] $pending_pop
+     0.25%  [.] $bx_hot_bump
+     0.25%  [.] halfsiphash(unsigned int, unsigned long)
+     0.23%  [.] $get_cf
+     0.23%  [.] Builtins_CallFunction_ReceiverIsAny
+     0.23%  [.] $th_jcc_nz
+     0.22%  [.] Builtins_LoadICTrampoline
+     0.22%  [.] $pending_entry
+     0.22%  [.] v8::internal::Runtime_BigIntToNumber(int, unsigned long*, v8::internal::Isolate*)
+     0.21%  [.] v8::internal::Scanner::Next()
+     0.21%  [.] $th_jmp
+     0.21%  [.] 0x00000000001a1544
+     0.19%  [.] $th_block_end
+     0.19%  [.] $th_load8_ro
+     0.18%  [.] Builtins_NumberPrototypeToString
+     0.17%  [.] Builtins_KeyedLoadIC
+     0.17%  [.] $api_stdcall_stack_bytes
+     0.16%  [.] $do_shift
+     0.15%  [.] Builtins_Call_ReceiverIsNotNullOrUndefined
+     0.14%  [.] JS:*'_syncMainHelpCallback /home/user/m/lib/thread-manager.js:4618:24
+     0.14%  [.] $th_imul_r_r
+     0.14%  [.] $th_sub_r_r
+     0.13%  [.] Builtins_WasmLiftoffFrameSetup
+     0.12%  [.] JS:*voice_get_pos /home/user/m/lib/host-audio.js:4373:20
+     0.12%  [.] Builtins_Call_ReceiverIsAny
+     0.12%  [.] JS:*'adoptMainGlobals /home/user/m/lib/thread-manager.js:4306:19
+     0.10%  [.] JS:*'batchTicks /home/user/m/lib/batch-clock.js:86:22
+     0.09%  [.] $page_watch_cell
+     0.08%  [.] JS:*'notifyPump /home/user/m/lib/host-audio.js:1391:17
+     0.08%  [.] Builtins_StringAdd_CheckNone
+     0.08%  [.] $eval_cc
+     0.08%  [.] JS:*'mainExecutionSuspendedSync /home/user/m/test/run.js:7411:38
+     0.08%  [.] $null_transfer_record
+     0.07%  [.] $g2w_slow
+     0.07%  [.] Builtins_GetProperty
+     0.07%  [.] void v8::internal::CalculateLineEndsImpl<unsigned char>(v8::base::SmallVector<int, 32ul, std::allocator<int> >*, v8::base::Vector<unsigned char const>, bool)
+     0.07%  [.] $__anonymous_1481
+     0.06%  [.] $cs_push
+     0.06%  [.] $dispatch_api_table
+     0.06%  [.] Builtins_CEntry_Return1_ArgvOnStack_NoBuiltinExit
+     0.06%  [.] $__anonymous_1650
+     0.06%  [.] malloc
+     0.06%  [.] void v8::internal::MarkingVisitorBase<v8::internal::ConcurrentMarkingVisitor>::ProcessStrongHeapObject<v8::internal::FullHeapObjectSlot>(v8::internal::Tagged<v8::internal::HeapObject>, v8::internal::FullHeapObjectSlot, v8::internal::Tagged<v8::internal::HeapObject>)
+     0.06%  [.] Builtins_KeyedLoadIC_Megamorphic
+     0.06%  [.] Builtins_SetDataProperties
+     0.06%  [.] $thunk_patch_record
+     0.05%  [.] $pending_valid
+     0.05%  [.] v8::internal::compiler::GraphReducer::ReduceTop()
+     0.05%  [.] JS:*get_ticks /home/user/m/lib/host-imports.js:2779:16
+     0.05%  [.] $uc_form_loop
+     0.05%  [.] Builtins_KeyedLoadICTrampoline
+     0.05%  [.] Builtins_SuspendGeneratorBaseline
+     0.05%  [.] v8::internal::Utf8DecoderBase<v8::internal::Utf8Decoder>::Utf8DecoderBase(v8::base::Vector<unsigned char const>)
+     0.05%  [.] JS:*_pumpWaveOutCompletions /home/user/m/lib/host-audio.js:793:35
+     0.05%  [.] v8::internal::AstValueFactory::GetOneByteStringInternal(v8::base::Vector<unsigned char const>)
+     0.05%  [.] Stub:js-to-wasm:i:
+     0.05%  [.] v8::internal::LookupIterator::State v8::internal::LookupIterator::LookupInRegularHolder<false>(v8::internal::Tagged<v8::internal::Map>, v8::internal::Tagged<v8::internal::JSReceiver>)
+     0.05%  [.] v8::internal::String::ComputeAndSetRawHash(v8::internal::SharedStringAccessGuardIfNeeded const&)
+     0.04%  [.] heap::base::SlotCallbackResult v8::internal::Scavenger::ScavengeObject<v8::internal::FullHeapObjectSlot>(v8::internal::FullHeapObjectSlot, v8::internal::Tagged<v8::internal::HeapObject>)
+     0.04%  [.] v8::internal::(anonymous namespace)::ElementsAccessorBase<v8::internal::(anonymous namespace)::FastPackedObjectElementsAccessor, v8::internal::(anonymous namespace)::ElementsKindTraits<(v8::internal::ElementsKind)2> >::SetLengthImpl(v8::internal::Isolate*, v8::internal::DirectHandle<v8::internal::JSArray>, unsigned int, v8::internal::DirectHandle<v8::internal::FixedArrayBase>)
+     0.04%  [.] v8::internal::AstValueFactory::GetString(unsigned int, bool, v8::base::Vector<unsigned char const>)
+     0.04%  [.] v8::internal::FrameTranslationBuilder::StoreOptimizedOut()
+     0.04%  [.] $th_store32_sib
+     0.04%  [.] v8::internal::compiler::LinearScanAllocator::FindFreeRegistersForRange(v8::internal::compiler::LiveRange*, v8::base::Vector<v8::internal::compiler::LifetimePosition>)
+     0.04%  [.] Builtins_ObjectAssign
+     0.04%  [.] v8::internal::compiler::LiveRangeBuilder::ProcessInstructions(v8::internal::compiler::InstructionBlock const*, v8::internal::SparseBitVector*)

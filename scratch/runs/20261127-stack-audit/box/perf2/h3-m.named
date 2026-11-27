@@ -1,0 +1,120 @@
+    13.28%  [.] $uop_fast
+     8.35%  [.] $fpu_exec_mem
+     4.13%  [.] $fpu_push
+     3.61%  [.] $uop_x87
+     2.39%  [.] $th_fpu_mem_ro
+     2.31%  [.] $fpu_exec_reg
+     2.07%  [.] $__anonymous_1699
+     2.03%  [.] v8::internal::SourcePositionTableIterator::Advance()
+     1.73%  [.] JS:*host.<computed> /home/user/m/lib/batch-clock.js:115:20
+     1.50%  [.] v8::internal::TranslatedState::TranslatedState(v8::internal::JavaScriptFrame const*)
+     1.38%  [.] Stub:js-to-wasm::i
+     1.35%  [.] $branch_end_at
+     1.33%  [.] $th_uop_enter
+     1.31%  [.] $gl32
+     1.29%  [.] $th_load32_rop
+     1.21%  [.] $gl32_native
+     1.16%  [.] Builtins_LoadIC
+     1.10%  [.] Builtins_CallFunction_ReceiverIsNotNullOrUndefined
+     0.98%  [.] $th_shift_r
+     0.92%  [.] $th_mmx_rr
+     0.82%  [.] $th_load32
+     0.75%  [.] $th_store32_rop
+     0.61%  [.] JS:*math_pow2 /home/user/m/lib/host-imports.js:3524:16
+     0.61%  [.] $th_compute_ea_sib
+     0.59%  [.] JS:+' /home/user/m/test/run.js:1758:32
+     0.56%  [.] $th_fpu_mem
+     0.51%  [.] $th_mov_r_r
+     0.51%  [.] $fpu_set
+     0.50%  [.] $th_and_r_i32
+     0.49%  [.] $th_jcc_nz
+     0.49%  [.] $th_fpu_reg
+     0.47%  [.] $uop_run
+     0.46%  [.] Builtins_CallFunction_ReceiverIsAny
+     0.45%  [.] $run
+     0.45%  [.] $th_jcc_z
+     0.42%  [k] 0xffffffff98c00f30
+     0.41%  [.] $gs32
+     0.41%  [.] $decode_block
+     0.40%  [.] $th_alu_r_m32
+     0.38%  [.] JS:*exports.<computed> /home/user/m/lib/batch-clock.js:101:66
+     0.38%  [.] $fpu_pop
+     0.38%  [.] pow
+     0.37%  [.] $th_jcc_a
+     0.37%  [.] malloc
+     0.37%  [.] $uc_form_loop
+     0.36%  [.] $th_load32_sib
+     0.36%  [.] $do_shift
+     0.36%  [.] $phys80_fist
+     0.34%  [.] JS:wasm-to-js-<anonymous>-none
+     0.33%  [.] v8::internal::TranslatedFrame::Handlify(v8::internal::Isolate*)
+     0.32%  [.] $th_shr_ebp_1_jcc_b
+     0.30%  [.] $th_test_jcc
+     0.30%  [.] $phys80_materialize
+     0.30%  [.] $th_alu_m32_r_ro
+     0.28%  [.] $g2w_slow
+     0.28%  [.] v8::internal::SafepointTable::TryFindEntry(unsigned long) const
+     0.28%  [.] $th_alu_r8_i8
+     0.27%  [.] Builtins_WasmLiftoffFrameSetup
+     0.26%  [.] Builtins_AtomicsAdd
+     0.25%  [.] v8::internal::math::pow(double, double)
+     0.25%  [.] Builtins_WasmFloat64ToNumber
+     0.25%  [.] Builtins_SuspendGeneratorBaseline
+     0.25%  [.] $th_add_r_r
+     0.24%  [.] 0x000000000007a2e6
+     0.24%  [.] 0x000000000007a39e
+     0.23%  [.] v8::internal::Map::TryGetMapRootIdxFor(v8::internal::InstanceType)
+     0.23%  [.] $th_block_end
+     0.22%  [.] $phys80_push_copy
+     0.22%  [.] $th_xor_r_r
+     0.22%  [.] 0x000000000007a31d
+     0.21%  [.] 0x000000000007a3b4
+     0.20%  [.] v8::internal::Scanner::Next()
+     0.20%  [.] $th_lock_rmw
+     0.20%  [.] v8::internal::(anonymous namespace)::CaptureSimpleStackTrace(v8::internal::Isolate*, int, v8::internal::FrameSkipMode, v8::internal::Handle<v8::internal::Object>)
+     0.20%  [.] $phys80_decode
+     0.20%  [.] $th_mmx_ri
+     0.20%  [.] v8::internal::wasm::WasmCodeLookupCache::GetCacheEntry(unsigned long)
+     0.20%  [.] $page_watch_cell
+     0.19%  [.] $th_alu_r16_r16
+     0.19%  [.] 0x000000000007a30a
+     0.19%  [.] $th_call_ind
+     0.19%  [.] $th_store8
+     0.19%  [.] unsigned long v8::internal::StringTable::Data::TryStringToIndexOrLookupExisting<unsigned char>(v8::internal::Isolate*, v8::internal::Tagged<v8::internal::String>, v8::internal::Tagged<v8::internal::String>, unsigned long)
+     0.18%  [.] v8::internal::wasm::WasmCode::GetSourcePositionBefore(int)
+     0.17%  [.] $th_mov_r_i32
+     0.17%  [.] JS:*'runSlice /home/user/m/lib/thread-manager.js:3569:11
+     0.17%  [.] Builtins_CallForwardVarargs
+     0.16%  [.] Builtins_SetDataProperties
+     0.16%  [.] $th_ret
+     0.16%  [.] v8::internal::HandlerTable::LookupHandlerIndexForRange(int) const
+     0.16%  [.] $th_push_run
+     0.16%  [.] $th_alu_r8_r8
+     0.16%  [.] $mmx_binop
+     0.16%  [.] cfree
+     0.15%  [.] $th_load32_base_run
+     0.15%  [.] v8::internal::FrameTranslationBuilder::StoreOptimizedOut()
+     0.15%  [.] Builtins_LoadICTrampoline
+     0.15%  [.] v8::internal::StackFrameIterator::ComputeStackFrameType(v8::internal::StackFrame::State*) const
+     0.15%  [.] v8::internal::FrameSummary::native_context() const
+     0.15%  [.] $page_resolve
+     0.15%  [.] 0x000000000007a3c5
+     0.15%  [.] Builtins_Call_ReceiverIsAny
+     0.15%  [.] $th_pop_run_ret
+     0.15%  [.] Builtins_Call_ReceiverIsNotNullOrUndefined
+     0.14%  [.] $page_publish
+     0.14%  [.] v8::internal::Debug::TryGetDebugInfo(v8::internal::Tagged<v8::internal::SharedFunctionInfo>)
+     0.13%  [.] JS:*'runSlice /home/user/m/lib/thread-manager.js:3569:11
+     0.13%  [.] v8::internal::OptimizedJSFrame::Summarize() const
+     0.13%  [.] 0x000000000007a2bf
+     0.13%  [.] JS:+' /home/user/m/test/run.js:1758:32
+     0.13%  [.] $th_push_r
+     0.13%  [.] $uc_flow
+     0.13%  [.] $set_flags_rotate
+     0.13%  [.] $th_sub_r_i32
+     0.13%  [.] $th_jmp_tbl
+     0.13%  [.] 0x00001f5965b14688
+     0.12%  [.] $th_mov_r16_m16
+     0.12%  [.] $phys80_publish
+     0.12%  [.] $th_add_r_i32
+     0.12%  [.] 0x000000000007a385

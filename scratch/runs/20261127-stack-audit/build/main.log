@@ -1,0 +1,59 @@
+WAT manifest OK: src/main.watx includes all 151 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+api_table OK: 5000 entries, id === index, append-only vs HEAD.
+gen_big5_table --check: 01c-big5-tables.generated.wat is current (20193 encode entries; header + invariants (sources not cached: offline check))
+dispatch table OK: 09b2-dispatch-table.generated.wat matches api_table.json (5000 APIs).
+gen_api_table --check: api_table.json and 01b-api-hashes.generated.wat are current (5000 APIs)
+check-watx-provenance: OK (all 23 required files present and matching, manifest sealed against CHANGELOG.md)
+CLAUDE.md size: 23201/32768 bytes
+region declarations OK: 297 declared, all agree with their $NAME/$NAME_SIZE globals
+test-scratch-deps: ok (no tracked test reads scratch/runs)
+check-wat-fragments: 151 fragments OK (all self-balanced, no exceptions)
+no-python: ok (791 legacy .py, 8 legacy callers; allowlist only shrinks)
+aw-census: ratchet ok — STUB 0, DIVERGENT 3, BOTH_STUB 0
+check-region-decls: owners ok — 297 symbol owners verified
+region-census OK: 53 raw region literal(s), 7 fewer than the baseline (run --record to bank it)
+gen-region-map: lib/region-map.generated.js is current (297 regions)
+callback ownership census: 477 source boundaries unchanged; nonlocal APIs remain disabled (ownership pending)
+  gap          places, 0x00000C00 free below 0x08000000
+  pad          places, 0x00004C00 free below 0x08000000
+  rotate       places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+  reverse      places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+  0x9E3779B9   places, 0x00000000 free below 0x08000000  <-- AT THE CEILING, nothing may grow
+region-alloc --shake-all: all 5 shake modes place
+check-wat-js-constants: OK (16384 DX slots, 184 GPU opcodes, vlan room 10.0.0.0/24)
+region-census OK: no JS file copies an allocated region address (305 value(s) checked at or above 0x00020000)
+region-census OK: no embedded WAT fragment addresses the map by hand (1144 fragment(s), 283 allocated region(s))
+region-census OK: 0 within-region duplicate payload(s) across 314 declared payload(s), none above baseline
+region-census OK: 11 hand-rolled region address(es) in 3 file(s), none above the 12-site baseline (288 region base globals checked)
+gpu stream mirror OK — 21 ops, 23 layouts
+app file sizes: OK (3402 recorded, 140 absent and unrecorded)
+data strings OK: no annotated hand-addressed string constants (12404 strings indexed; unannotated address sites are not visible to this check).
+test tiers: OK (2595 files: 2139 unit, 450 e2e, 6 smoke, 0 quarantined)
+check-test-timeouts: OK (2595 listed tests, default 300s, 9 explicit overrides)
+check-test-manifest: OK (all discovered tests accounted for)
+[check-handler-count] OK handler table=515 elem entries=515 cache guard=515 hist_count=515 pair_bytes=1064960
+wat-dup-census: ratchet ok — 112/115 exact groups, 414/460 members
+PASS  straight-line silent-handler inventory is pinned (230 manual + 143 metadata)
+PASS  D3D9 resource/output stubs fail loudly
+gl barriers: OK (25 barriers, 12 argued exemptions, 184 GL entry points)
+[check-handler-esp] OK — 1955 of 3635 handler(s) inspected
+Browser cache versions: one build-info/WINE_BUILD authority, 98 page scripts, 21 worker scripts
+host import signatures up to date (308 imports)
+docs/dos-corpus/live/toyvm-bundle.js: up to date (2591KB)
+docs/dos-corpus/live/toyvm-jit-bundle.js: up to date (2591KB)
+[esp-epilogue] OK — 1748 of 2054 handler(s), 2313 epilogue line(s) match nargs
+Wrote build/combined.wat from 151 parts (src/main.watx include order, (module ...) wrapper added here)
+PASS  WAT logical i32.and operands are boolean-normalized
+build-calibrate: 86.08 ms per unit (3 parses of 1048610 bytes; median of 11 samples 200 ms apart)
+Compiler: watx (from default)
+WATX entry: src/main.watx
+Region layout: CANONICAL — 298 regions (14 pinned/derived, 283 allocated, 1 span), floor 0x00000100
+Region layout hash: d4b63a767d11341e
+Build complete: build/wine-assembly.wasm (2553420 bytes)
+Build complete: build/wine-assembly.compat.wasm (2556385 bytes)
+Facts: build/watx-facts.json
+wasm-data: 333 data segments, no overlaps
+layout offsets OK — 63 layouts, 2 frozen
+check-build-budget: WARNING build wall 62.8 s > 1.5 x budget 18.1 s (warning only: wall time measures the box as much as the build)
+check-build-budget: OK (55 procs, compiler 461.2 MB, src read x50.12, compile 325.87 units (28.1 s / 86.08 ms), wall 62.8 s, load 31.46 28.55 24.66)
+-rw-r--r--@ 1 vg  wheel  2553420 Nov 26 23:27 build/wine-assembly.wasm

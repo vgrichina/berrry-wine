@@ -1,0 +1,43 @@
+{
+  "candidateId": "starcraft-shareware",
+  "agentId": "claude:regress-cpu",
+  "startedAt": "2026-11-26T22:30:00Z",
+  "finishedAt": "2026-11-27T11:15:00Z",
+  "outcome": "passed",
+  "route": "fixed-work benchmark (--branch-clock, fixed --max-batches) over 22 apps; StarCraft is the candidate of record, the rest are in box/res",
+  "command": "node box/scripts/sweep.js --apps=... --arms=m,off,off2,all[,lX,pLazy,def,dA..dZE,u0xMASK] --reps=N (perf stat -e instructions:u,cycles:u,branch-misses:u -- taskset -c 1-3 node test/run.js --no-build --branch-clock ...)",
+  "build": {
+    "commit": "9862ed624 (opt/stack-audit; 74bed0a57 adds tools only, wasm unchanged)",
+    "wasmSha256": "47607797ed7c4b9c6d62c6e2ebe6f9dc57afc9d2972a80e1e4295b18ef266d17",
+    "control": "origin/main f60235c94, wasm 11a470569b6d"
+  },
+  "environment": {
+    "boat": "box-node x2 (bx_b86yx6bp, bx_5jze62f9, now deleted), Node 24.22.1, perf 6.8.12, taskset 1-3",
+    "hetzner": "fast-near-3tb-1 i9-13900, CPUs 0/2/4/6, Node 24 at ~/wa-bench/node, no perf",
+    "mode": "headless CLI, software rendering"
+  },
+  "verification": "reviewed",
+  "summary": "Trusted metric: boat instructions:u (null band 0-0.47%) and Hetzner user CPU (0.4-0.8% on 112 s runs). Every arm is exact on 21/22 apps; gta2 runs without branch-clock. The full stack does LESS work than main only on spelunky_classic (-7.2%), spelunky_classic_hd (-1.8%) and lifegen. On 14 apps it does 1.0-3.1% MORE work than main: this is a module tax from merged code in $uop_fast/$uop_rg_grow that is present with every opt off. Lazy re-guard: -9/-12% on castle/RA, +4.25% on SC. uop-opt 0xffff: +1.7-2.1% on H3 (bits 0x40/0x200/0x800). Ladder bit 8 is inert. Moorhuhn 3: 20/20 pass, no bug. Decomposition caveat: the spel30 gameplay window is ~82% GM8 frame-pacing spin.",
+  "findings": [
+    {"app": "14 of 22 (castle, h2, h3, caesar, simcity, RA, SC, diablo, mw3, hexen2, jazz2, pinball, metro, gta2)", "arm": "all vs main", "delta": "+1.0..+3.1% ins; Hetzner user +0.9..+2.5%", "band": "<=0.47% ins", "n": "5 (+8 Hetzner)", "mechanism": "module tax: with every opt off the branch runs 0.2-4.4% more instructions than main, with identical uop ledgers. perf on RA: $uop_fast +1.5% and $uop_rg_grow +1.0% of total samples. V8 arm64 $uop_fast 2358->4190 insns, stack refs 123->235", "recommendation": "fix before merge: move uop-opt/SSE-native/svc paths out of $uop_fast into cold helpers; split the cost between the dfde and gm-fold2 merges"},
+    {"app": "heroes3_demo, moorhuhn_3", "arm": "--no-fpu-direct", "delta": "H3 +3.19% ins", "band": "0.17%", "n": 5, "mechanism": "generic path spends 6.3% of samples in $phys80_materialize/$phys80_invalidate", "recommendation": "keep fpu-direct on"},
+    {"app": "spelunky_classic", "arm": "all", "delta": "-7.22% ins vs main; spel30 G -28.3% whole / -54.3% gameplay CPU vs all-off", "band": "0.01% / 0.8%", "n": "5 / 8", "mechanism": "Delphi + GM folds; the base tier's gameplay gain drops to -0.3% once the folds are on", "recommendation": "keep"},
+    {"app": "spelunky_classic_hd", "arm": "uop-sse + native", "delta": "-12.6% ins on uop; -13.5% full stack vs all-off", "band": "0.24%", "n": 5, "mechanism": "native SSE; no fold fires", "recommendation": "keep"},
+    {"app": "starcraft_shareware", "arm": "pLazy", "delta": "+4.25% ins, Hetzner +5.3% user", "band": "0.28%", "n": "6 / 8", "mechanism": "lazy re-guard costs more than it saves", "recommendation": "keep default off"},
+    {"app": "castle_gm5, red_alert_95_demo", "arm": "pLazy", "delta": "-9.4% / -12.0% ins; Hetzner -5.3% / -11.7% user", "band": "0.65% / 0.34%", "n": "5 / 8", "mechanism": "$uop_rg_grow work removed", "recommendation": "per-app opt-in in lib/apps.js, or an adaptive policy"},
+    {"app": "heroes3_demo", "arm": "uop-opt 0xffff vs 0", "delta": "+1.7..+2.1% ins", "band": "0.35%", "n": "5+3", "mechanism": "dropping bit 0x40, 0x200 or 0x800 each removes ~1%", "recommendation": "keep default 0; drop those bits for x87-heavy apps"},
+    {"app": "starcraft_shareware", "arm": "uop-opt 0xffff vs 0", "delta": "-0.46% ins", "band": "0.28%", "n": 6, "mechanism": "small real gain", "recommendation": "neutral"},
+    {"app": "metrojd_gm7", "arm": "uop-opt", "delta": "+1.5% ins (decomposition); +0.23% (bit lane)", "band": "0.41%", "n": "6/3", "mechanism": "no single bit; GM fold 0 hits", "recommendation": "neutral"},
+    {"app": "castle, RA, h2, h3, caesar, SC", "arm": "ladder bit 8", "delta": "0.00-0.07%", "band": "-", "n": "5-6", "mechanism": "ledger byte-identical with/without bit 8", "recommendation": "inert; leave off or drop"},
+    {"app": "castle_gm5", "arm": "all (R2 compile volume)", "delta": "compiled heads 970 vs 510, ins +0.1%", "band": "0.25%", "n": 5, "mechanism": "more compiles, same work", "recommendation": "none"},
+    {"app": "gta2_demo", "arm": "--branch-clock", "delta": "DLL initializer did not return (module=0xaf0000)", "band": "-", "n": "-", "mechanism": "pre-existing on main", "recommendation": "separate bug"},
+    {"app": "moorhuhn_3", "arm": "m/off/off2/all", "delta": "20/20 rc=0, exact", "band": "0.26%", "n": 5, "mechanism": "earlier failures were a missing asset manifest on the box", "recommendation": "no bug"}
+  ],
+  "startupMemory": "startUser (first fifth of the run) all vs main is within that metric's 10-26% spread on every app, so not resolvable. RSS is within 2% on 18 apps; H3/Caesar/RA/rattler are bimodal, and uop-opt may add 40-90 MB on H3 (unresolved). wasm +20.6 KB (+0.8%). Whole-module native code: TurboFan +0.7%, Ion +0.7%. x86-64 native disassembly is missing (arm64 only).",
+  "caveats": [
+    "In the spel30 gameplay window, ~82% of threaded instructions are GM8's frame-pacing wait (0x49a64c, per spel-browser). The decomposition is equal-work CPU but mostly measures the spin. Browser cross-check: folds 25-27 steps/s vs 11 without the Delphi fold.",
+    "The off arm includes --no-fpu-direct, so 'main vs off' mixes the fpu-direct cost (H3, moorhuhn) with the module tax; 'all vs main' is the clean comparison.",
+    "Boat cycles:u and user CPU are not trusted (5-70% spread)."
+  ],
+  "artifacts": ["decomp-spel30.txt", "decomp-spelhd-metro.txt", "box/res/breadth.summary.txt", "box/res/breadth.summary.json", "native-arm64/summary.txt"]
+}

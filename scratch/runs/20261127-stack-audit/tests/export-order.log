@@ -1,0 +1,103 @@
+[watx] [WATX] Compiled successfully: 75 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $first
+  [1] $second
+  PASS interleaved func/memory/func compiles
+  PASS ...emits declaration order, not kind-grouped
+[watx] [WATX] Compiled successfully: 59 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $a
+  [1] $b
+  PASS memory-first module compiles
+  PASS ...memory is export #0
+  PASS ...and the funcs follow in written order
+[watx] [WATX] Compiled successfully: 59 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $a
+  [1] $b
+  PASS memory-last module compiles
+  PASS ...memory is the LAST export
+[watx] [WATX] Compiled successfully: 77 bytes, 0 imports, 3 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..2]
+[watx] [WATX] User functions:   [0] $one
+  [1] $two
+  [2] $three
+  PASS inline + top-level export forms compile
+  PASS ...interleave by declaration position
+[watx] [WATX] Compiled successfully: 68 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $a
+  [1] $b
+  PASS func/global/memory/func module compiles
+  PASS ...all four kinds keep declaration order
+[watx] [WATX] Compiled successfully: 65 bytes, 0 imports, 1 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..0]
+[watx] [WATX] User functions:   [0] $a
+  PASS multiple inline exports on one func compile
+  PASS ...tie on form index and keep written order (stable sort)
+[watx] [WATX] Compiled successfully: 72 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $add2
+  [1] $add5
+  PASS reordered module compiles
+  PASS ...and validates
+  PASS ...each export still points at its own function
+  PASS ...and the memory export is a real Memory
+[watx] [WATX] Compiled successfully: 65 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $init
+  [1] $get
+  PASS a module with (start $f) compiles
+  PASS ...and emits a start section (id 8)
+  PASS ...in ascending section order
+  PASS ...and the module instantiates
+  PASS ...and the start function RAN before any call
+[watx] [WATX] Compilation failed at stage EMIT: (start $nope): unknown function '$nope'
+  PASS (start …) rejects an unknown function
+[watx] [WATX] Compilation failed at stage EMIT: Only one (start …) declaration is allowed
+  PASS (start …) rejects two (start …) forms
+[watx] [WATX] Compilation failed at stage EMIT: (start $a): a start function must take no parameters and return nothing, but '$a' is declared (param —) (result i32)
+  PASS (start …) rejects a start function with a result
+[watx] [WATX] Compilation failed at stage EMIT: (start $a): a start function must take no parameters and return nothing, but '$a' is declared (param i32) (result —)
+  PASS (start …) rejects a start function with a parameter
+[watx] [WATX] Compilation failed at stage EMIT: memory declaration: an inline (data …) on a memory is not supported — it also implies the memory's size, and ignoring it silently produced a default-sized memory with none of its bytes. Write the limits on the memory and a separate (data (i32.const OFFSET) "…") segment
+  PASS memory declaration rejects (memory (data "…")) — the inline-data spelling
+[watx] [WATX] Compilation failed at stage EMIT: memory declaration: an inline (data …) on a memory is not supported — it also implies the memory's size, and ignoring it silently produced a default-sized memory with none of its bytes. Write the limits on the memory and a separate (data (i32.const OFFSET) "…") segment
+  PASS memory declaration rejects (memory 1 (data "…")) — inline data beside real limits
+[watx] [WATX] Compilation failed at stage EMIT: memory declaration: an inline (export …) on a memory is not supported — write a top-level (export "name" (memory 0))
+  PASS memory declaration rejects an inline (export …) on a memory
+[watx] [WATX] Compilation failed at stage EMIT: memory declaration: unexpected token 'wibble'; a memory takes an optional $name, its limits, and an optional 'shared'
+  PASS memory declaration rejects an unrecognised token in a memory form
+[watx] [WATX] Compiled successfully: 43 bytes, 0 imports, 1 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..0]
+[watx] [WATX] User functions:   [0] $f
+  PASS NO REGRESSION: (memory 1 1) still compiles
+[watx] [WATX] Compiled successfully: 42 bytes, 0 imports, 1 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..0]
+[watx] [WATX] User functions:   [0] $f
+  PASS NO REGRESSION: (memory 1) with no maximum still compiles
+[watx] [WATX] Compiled successfully: 43 bytes, 0 imports, 1 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..0]
+[watx] [WATX] User functions:   [0] $f
+  PASS NO REGRESSION: (memory $m 1 2 shared) still compiles
+[watx] [WATX] Compiled successfully: 51 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $inner_helper
+  [1] $outer_thing
+[watx] [WATX] Compiled successfully: 51 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $inner_helper
+  [1] $outer_thing
+[watx] [WATX] Compiled successfully: 104 bytes, 0 imports, 2 user funcs
+[watx] [WATX] Function index map: imports[0..-1] builtins=0 user[0..1]
+[watx] [WATX] User functions:   [0] $inner_helper
+  [1] $outer_thing
+  PASS nameSection defaults OFF: the bytes are unchanged
+  PASS nameSection:true compiles
+  PASS ...and emits exactly one custom section called "name"
+  PASS ...which is not empty
+  PASS ...and a trap stack names the function that trapped
+  PASS ...and its caller
+  PASS NEGATIVE: without the section the same frames are unnamed
+
+watx-compiler-export-order: 40 passed, 0 failed

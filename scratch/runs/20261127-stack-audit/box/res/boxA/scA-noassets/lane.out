@@ -1,0 +1,29 @@
+starcraft_shareware-m-r0           rc=1 user=0.09 ins=875909319 api=null b=null sha=null load=0.44 wall=0
+starcraft_shareware-off-r0         rc=1 user=0.08 ins=873289757 api=null b=null sha=null load=0.44 wall=0
+starcraft_shareware-all-r0         rc=1 user=0.09 ins=871602381 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lUo-r0         rc=1 user=0.08 ins=882851935 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lLad-r0        rc=1 user=0.08 ins=878902433 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lSse-r0        rc=1 user=0.08 ins=879344921 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-pLazy-r0       rc=1 user=0.08 ins=872042157 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-def-r0         rc=1 user=0.08 ins=878705159 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-m-r1           rc=1 user=0.08 ins=869180486 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-def-r1         rc=1 user=0.08 ins=871089774 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-pLazy-r1       rc=1 user=0.08 ins=872982136 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lSse-r1        rc=1 user=0.09 ins=870335865 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lLad-r1        rc=1 user=0.09 ins=874474092 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lUo-r1         rc=1 user=0.09 ins=875255545 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-all-r1         rc=1 user=0.08 ins=879939033 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-off-r1         rc=1 user=0.08 ins=875423071 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-all-r2         rc=1 user=0.09 ins=879133820 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lUo-r2         rc=1 user=0.09 ins=875520652 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lLad-r2        rc=1 user=0.08 ins=876021936 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-lSse-r2        rc=1 user=0.09 ins=873230654 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-pLazy-r2       rc=1 user=0.08 ins=878340950 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-def-r2         rc=1 user=0.08 ins=872603287 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-m-r2           rc=1 user=0.08 ins=874049835 api=null b=null sha=null load=0.49 wall=0
+starcraft_shareware-off-r2         rc=1 user=0.1 ins=873033469 api=null b=null sha=null load=0.49 wall=0
+ALLDONE
+Fri Nov 27 10:25:17 AM UTC 2026
+ 10:25:17 up  2:55,  2 users,  load average: 0.49, 0.96, 0.99
+cpu  970936 1464 60191 3163600 4551 0 1332 118 0 0
+LANEDONE

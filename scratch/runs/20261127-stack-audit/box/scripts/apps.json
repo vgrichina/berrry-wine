@@ -1,0 +1,171 @@
+{
+  "spelunky_classic": {
+    "b": 32700,
+    "args": [
+      "--app=spelunky_classic",
+      "--d3d9-gps=null",
+      "--screen=1024x768",
+      "--batch-size=100000"
+    ],
+    "input": "classic"
+  },
+  "metrojd_gm7": {
+    "b": 1500000,
+    "args": [
+      "--app=metrojd_gm7"
+    ]
+  },
+  "castle_gm5": {
+    "b": 280000,
+    "args": [
+      "--app=castle_gm5"
+    ]
+  },
+  "age_of_wonders_demo": {
+    "b": 80000,
+    "args": [
+      "--app=age_of_wonders_demo"
+    ]
+  },
+  "heroes2_demo": {
+    "b": 1800,
+    "args": [
+      "--app=heroes2_demo",
+      "--batch-size=100000"
+    ]
+  },
+  "heroes3_demo": {
+    "b": 31000,
+    "args": [
+      "--app=heroes3_demo"
+    ]
+  },
+  "caesar3_demo": {
+    "b": 95000,
+    "args": [
+      "--app=caesar3_demo"
+    ]
+  },
+  "simcity2000_demo": {
+    "b": 270000,
+    "args": [
+      "--app=simcity2000_demo"
+    ]
+  },
+  "red_alert_95_demo": {
+    "b": 75000,
+    "args": [
+      "--app=red_alert_95_demo"
+    ]
+  },
+  "wep16_lifegen": {
+    "b": 800000,
+    "args": [
+      "--app=wep16_lifegen"
+    ]
+  },
+  "wep16_rattler": {
+    "b": 250000,
+    "args": [
+      "--app=wep16_rattler"
+    ]
+  },
+  "starcraft_shareware": {
+    "b": 7000,
+    "args": [
+      "--app=starcraft_shareware",
+      "--no-threads",
+      "--batch-size=100000"
+    ],
+    "input": "sc"
+  },
+  "spelunky_classic_hd": {
+    "b": 47000,
+    "args": [
+      "--app=spelunky_classic_hd",
+      "--d3d9-gps=null",
+      "--screen=1024x768",
+      "--quiet-blocks",
+      "--tick-ms-per-batch=5"
+    ]
+  },
+  "diablo_shareware": {
+    "b": 22000,
+    "args": [
+      "--app=diablo_shareware"
+    ]
+  },
+  "gta2_demo": {
+    "b": 37000,
+    "args": [
+      "--app=gta2_demo"
+    ],
+    "noBranchClock": true
+  },
+  "mw3": {
+    "b": 330000,
+    "args": [
+      "--app=mw3"
+    ]
+  },
+  "quake2_demo": {
+    "b": 7800,
+    "args": [
+      "--app=quake2_demo"
+    ]
+  },
+  "hexen2_demo": {
+    "b": 23000,
+    "args": [
+      "--app=hexen2_demo"
+    ]
+  },
+  "halflife_uplink": {
+    "b": 4000,
+    "args": [
+      "--app=halflife_uplink"
+    ]
+  },
+  "jazz2_demo": {
+    "b": 20000,
+    "args": [
+      "--app=jazz2_demo"
+    ]
+  },
+  "pinball": {
+    "b": 140000,
+    "args": [
+      "--app=pinball"
+    ]
+  },
+  "moorhuhn_3": {
+    "b": 215000,
+    "args": [
+      "--app=moorhuhn_3"
+    ]
+  },
+  "spel30": {
+    "b": 47100,
+    "win": "21000:29000,29600:47000",
+    "cycles": 30,
+    "input": "classic",
+    "args": [
+      "--app=spelunky_classic",
+      "--d3d9-gps=null",
+      "--screen=1024x768",
+      "--batch-size=100000"
+    ]
+  },
+  "spelhd": {
+    "b": 237550,
+    "win": "213550:237550",
+    "input": "spelhd",
+    "args": [
+      "--app=spelunky_classic_hd",
+      "--d3d9-gps=null",
+      "--quiet-blocks",
+      "--screen=1024x768",
+      "--tick-ms-per-batch=5"
+    ]
+  }
+}

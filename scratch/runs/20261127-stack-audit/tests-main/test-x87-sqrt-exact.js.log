@@ -1,0 +1,11 @@
+AssertionError [ERR_ASSERTION]: HOME disk floor
+    at flush (/private/tmp/wa-stack-main/test/test-x87-sqrt-exact.js:44:302)
+    at executeCase (/private/tmp/wa-stack-main/test/test-x87-sqrt-exact.js:71:292)
+    at main (/private/tmp/wa-stack-main/test/test-x87-sqrt-exact.js:80:28) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}

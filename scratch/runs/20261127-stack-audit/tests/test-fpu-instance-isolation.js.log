@@ -1,0 +1,24 @@
+PASS interleaved FLD keeps A physical register 0
+PASS interleaved FLD keeps B physical register 0
+PASS interleaved FLD keeps A physical register 1
+PASS interleaved FLD keeps B physical register 1
+PASS interleaved FLD keeps A physical register 2
+PASS interleaved FLD keeps B physical register 2
+PASS interleaved FLD keeps A physical register 3
+PASS interleaved FLD keeps B physical register 3
+PASS interleaved FLD keeps A physical register 4
+PASS interleaved FLD keeps B physical register 4
+PASS interleaved FLD keeps A physical register 5
+PASS interleaved FLD keeps B physical register 5
+PASS interleaved FLD keeps A physical register 6
+PASS interleaved FLD keeps B physical register 6
+PASS interleaved FLD keeps A physical register 7
+PASS interleaved FLD keeps B physical register 7
+PASS all eight A registers survive B writes
+PASS all eight B registers retain their own values
+PASS FNSAVE initializes only saving instance tags
+PASS FRSTOR restores A saved physical bank
+PASS FRSTOR of B cannot overwrite restored A
+PASS FRSTOR restores B saved physical bank
+PASS interleaved FILD/FISTP preserves A raw integer above2^53
+PASS interleaved FILD/FISTP preserves B raw integer below-2^53

@@ -1,0 +1,16 @@
+DC D8+i = FCOMP ST(i):
+  ok   fcomp st(1) runs
+  ok   1 < 2 sets C0
+  ok   pops once: the next value is b
+  ok   3 > 2 clears C3/C2/C0
+  ok   2 == 2 sets C3
+DC D8 = FCOMP ST(0) (Trespasser):
+  ok   runs
+  ok   ST(0) equals itself: C3
+  ok   pops once: the next value is b
+DC D0+i = FCOM ST(i):
+  ok   runs
+  ok   1 < 2 sets C0
+  ok   does not pop: ST(0) is still a
+
+PASS

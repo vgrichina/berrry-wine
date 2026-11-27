@@ -1,0 +1,35 @@
+spelhd-dA-r0                       rc=0 user=79.2 ins=1187637215377 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.10 wall=79
+spelhd-dD-r0                       rc=0 user=77.75 ins=1171511750520 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.02 wall=77
+spelhd-dDs-r0                      rc=0 user=82.73 ins=1023885722176 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=82
+spelhd-dG-r0                       rc=0 user=102.27 ins=1174913550331 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.18 wall=101
+spelhd-dGs-r0                      rc=0 user=81.58 ins=1027112660189 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.16 wall=81
+spelhd-dA-r1                       rc=0 user=94.67 ins=1187721624931 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.04 wall=93
+spelhd-dGs-r1                      rc=0 user=79.1 ins=1026940677293 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.01 wall=78
+spelhd-dG-r1                       rc=0 user=83.41 ins=1174015527377 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=83
+spelhd-dDs-r1                      rc=0 user=93.76 ins=1023714822564 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.13 wall=93
+spelhd-dD-r1                       rc=0 user=96.7 ins=1171637953598 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.09 wall=96
+spelhd-dDs-r2                      rc=0 user=80.57 ins=1024054017217 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.02 wall=79
+spelhd-dG-r2                       rc=0 user=102.41 ins=1174601265690 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=101
+spelhd-dGs-r2                      rc=0 user=93.4 ins=1026659630408 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=92
+spelhd-dA-r2                       rc=0 user=88.47 ins=1187973803631 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.05 wall=87
+spelhd-dD-r2                       rc=0 user=83.96 ins=1171792081719 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.09 wall=83
+spelhd-dDs-r3                      rc=0 user=77.88 ins=1023810304059 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.08 wall=77
+spelhd-dD-r3                       rc=0 user=87.1 ins=1171879574545 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.05 wall=86
+spelhd-dA-r3                       rc=0 user=92.18 ins=1187603799299 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.08 wall=91
+spelhd-dGs-r3                      rc=0 user=77.25 ins=1027137788163 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.02 wall=76
+spelhd-dG-r3                       rc=0 user=84.89 ins=1174190340201 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=84
+spelhd-dGs-r4                      rc=0 user=69.68 ins=1026926790737 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.06 wall=69
+spelhd-dA-r4                       rc=0 user=80.3 ins=1188164629004 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.02 wall=80
+spelhd-dD-r4                       rc=0 user=79.45 ins=1171331610246 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=79
+spelhd-dDs-r4                      rc=0 user=69.94 ins=1023575535434 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=69
+spelhd-dG-r4                       rc=0 user=83.69 ins=1174375409477 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=83
+spelhd-dGs-r5                      rc=0 user=90.28 ins=1026672287207 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=89
+spelhd-dG-r5                       rc=0 user=91.54 ins=1174709306598 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.03 wall=92
+spelhd-dDs-r5                      rc=0 user=90.45 ins=1024063073301 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.02 wall=89
+spelhd-dD-r5                       rc=0 user=95.65 ins=1171790945176 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.00 wall=94
+spelhd-dA-r5                       rc=0 user=99.74 ins=1188246063382 api=2515923 b=237550 sha=28aa1728c441e8b2 load=1.03 wall=99
+ALLDONE
+Fri Nov 27 09:44:43 AM UTC 2026
+ 09:44:43 up  2:15,  2 users,  load average: 1.08, 1.05, 1.01
+cpu  730703 1174 24077 2469100 4758 0 1359 10750 0 0
+LANEDONE

@@ -1,0 +1,29 @@
+starcraft_shareware-m-r0           rc=0 user=79.23 ins=1279872505109 api=1612304 b=7000 sha=81ef8c8536c09d9f load=0.02 wall=78
+starcraft_shareware-off-r0         rc=0 user=82.8 ins=1315269679515 api=1612304 b=7000 sha=81ef8c8536c09d9f load=0.75 wall=82
+starcraft_shareware-all-r0         rc=0 user=82.16 ins=1315039092263 api=1612304 b=7000 sha=81ef8c8536c09d9f load=0.98 wall=81
+starcraft_shareware-lUo-r0         rc=0 user=76.41 ins=1325035050648 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.08 wall=75
+starcraft_shareware-lLad-r0        rc=0 user=75.55 ins=1316205468720 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.02 wall=75
+starcraft_shareware-lSse-r0        rc=0 user=67.21 ins=1316096854917 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.04 wall=66
+starcraft_shareware-pLazy-r0       rc=0 user=74.04 ins=1373632149270 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.01 wall=73
+starcraft_shareware-def-r0         rc=0 user=76.1 ins=1317052567448 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.06 wall=75
+starcraft_shareware-m-r1           rc=0 user=92.81 ins=1279898730955 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.11 wall=92
+starcraft_shareware-def-r1         rc=0 user=121.1 ins=1316758583470 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.02 wall=119
+starcraft_shareware-pLazy-r1       rc=0 user=113.33 ins=1373026380853 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.24 wall=112
+starcraft_shareware-lSse-r1        rc=0 user=82.21 ins=1317891066634 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.08 wall=81
+starcraft_shareware-lLad-r1        rc=0 user=88.23 ins=1316270487180 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.08 wall=87
+starcraft_shareware-lUo-r1         rc=0 user=77.81 ins=1323680199433 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.02 wall=77
+starcraft_shareware-all-r1         rc=0 user=75.99 ins=1318749422847 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=75
+starcraft_shareware-off-r1         rc=0 user=72.82 ins=1315249678870 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=72
+starcraft_shareware-all-r2         rc=0 user=73.57 ins=1316511206511 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=73
+starcraft_shareware-lUo-r2         rc=0 user=82.09 ins=1325274867355 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=81
+starcraft_shareware-lLad-r2        rc=0 user=90.83 ins=1318151594946 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.04 wall=90
+starcraft_shareware-lSse-r2        rc=0 user=107.62 ins=1318242057745 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.01 wall=106
+starcraft_shareware-pLazy-r2       rc=0 user=102.3 ins=1373572909238 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=101
+starcraft_shareware-def-r2         rc=0 user=102 ins=1316581046449 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=101
+starcraft_shareware-m-r2           rc=0 user=102.2 ins=1279976975823 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.04 wall=101
+starcraft_shareware-off-r2         rc=0 user=120.16 ins=1317424299910 api=1612304 b=7000 sha=81ef8c8536c09d9f load=1.00 wall=119
+ALLDONE
+Fri Nov 27 11:05:34 AM UTC 2026
+ 11:05:34 up  3:36,  2 users,  load average: 1.56, 1.23, 1.08
+cpu  1203341 1327 38933 3908112 5510 0 1757 20255 0 0
+LANEDONE

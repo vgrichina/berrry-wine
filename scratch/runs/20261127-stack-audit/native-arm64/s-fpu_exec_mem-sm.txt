@@ -1,0 +1,755 @@
+build/wine-assembly.wasm: 17582 functions, 6620KB of ion code for 2514KB of wasm (2.63x)
+
+#1030 $th_clc: 3004 bytes of ion code, host arch arm64
+
+     0:  a9bf7bfd 	stp	x29, x30, [sp, #-16]!
+     4:  910003fd 	mov	x29, sp
+     8:  910003f4 	mov	x20, sp
+     c:  f94012e9 	ldr	x9, [x23, #32]
+    10:  d1008294 	sub	x20, x20, #0x20
+    14:  9100029f 	mov	sp, x20
+    18:  f943f530 	ldr	x16, [x9, #2024]
+    1c:  eb10029f 	cmp	x20, x16
+    20:  54005c83 	b.cc	0x5aac0  // b.lo, b.ul, b.last
+    24:  b9403af0 	ldr	w16, [x23, #56]
+    28:  35005c70 	cbnz	w16, 0x5aac4
+    2c:  2a0003e5 	mov	w5, w0
+    30:  b9001e81 	str	w1, [x20, #28]
+    34:  b9001a82 	str	w2, [x20, #24]
+    38:  d2995d90 	mov	x16, #0xcaec                	// #51948
+    3c:  b8706ae0 	ldr	w0, [x23, x16]
+    40:  7100001f 	cmp	w0, #0x0
+    44:  9a9f07e0 	cset	x0, ne	// ne = any
+    48:  2a0503e1 	mov	w1, w5
+    4c:  12000421 	and	w1, w1, #0x3
+    50:  7100003f 	cmp	w1, #0x0
+    54:  9a9f17e1 	cset	x1, eq	// eq = none
+    58:  0a010000 	and	w0, w0, w1
+    5c:  34000ec0 	cbz	w0, 0x5a144
+    60:  2a0503e0 	mov	w0, w5
+    64:  35000140 	cbnz	w0, 0x59f9c
+    68:  b9401a80 	ldr	w0, [x20, #24]
+    6c:  9100029f 	mov	sp, x20
+    70:  97fe98c8 	bl	0x2a0   ; $gl32_native
+    74:  d10083b4 	sub	x20, x29, #0x20
+    78:  9100029f 	mov	sp, x20
+    7c:  d3407c00 	ubfx	x0, x0, #0, #32
+    80:  1e270000 	fmov	s0, w0
+    84:  1e22c001 	fcvt	d1, s0
+    88:  14000007 	b	0x59fb4
+    8c:  b9401a80 	ldr	w0, [x20, #24]
+    90:  9100029f 	mov	sp, x20
+    94:  97fe98e3 	bl	0x330   ; $gl64
+    98:  d10083b4 	sub	x20, x29, #0x20
+    9c:  9100029f 	mov	sp, x20
+    a0:  9e670001 	fmov	d1, x0
+    a4:  d2990190 	mov	x16, #0xc80c                	// #51212
+    a8:  b8706ae0 	ldr	w0, [x23, x16]
+    ac:  b9001a80 	str	w0, [x20, #24]
+    b0:  d297db10 	mov	x16, #0xbed8                	// #48856
+    b4:  b8706ae1 	ldr	w1, [x23, x16]
+    b8:  0b000c22 	add	w2, w1, w0, lsl #3
+    bc:  fc626aa0 	ldr	d0, [x21, x2]
+    c0:  b9401e80 	ldr	w0, [x20, #28]
+    c4:  51000800 	sub	w0, w0, #0x2
+    c8:  7100081f 	cmp	w0, #0x2
+    cc:  54000502 	b.cs	0x5a07c  // b.hs, b.nlast
+    d0:  12800000 	mov	w0, #0xffffffff            	// #-1
+    d4:  52800001 	mov	w1, #0x0                   	// #0
+    d8:  9100029f 	mov	sp, x20
+    dc:  94001571 	bl	0x5f5b0   ; $th_lea_ro
+    e0:  d10083b4 	sub	x20, x29, #0x20
+    e4:  9100029f 	mov	sp, x20
+    e8:  b9401e80 	ldr	w0, [x20, #28]
+    ec:  71000c1f 	cmp	w0, #0x3
+    f0:  540003c1 	b.ne	0x5a078  // b.any
+    f4:  d2990310 	mov	x16, #0xc818                	// #51224
+    f8:  b8706ae0 	ldr	w0, [x23, x16]
+    fc:  b9401a81 	ldr	w1, [x20, #24]
+   100:  1ac12400 	lsr	w0, w0, w1
+   104:  12000000 	and	w0, w0, #0x1
+   108:  350000c0 	cbnz	w0, 0x5a030
+   10c:  52800820 	mov	w0, #0x41                  	// #65
+   110:  9100029f 	mov	sp, x20
+   114:  97fff13f 	bl	0x56520   ; $fpu_unpack_tag_word
+   118:  d10083b4 	sub	x20, x29, #0x20
+   11c:  9100029f 	mov	sp, x20
+   120:  52800021 	mov	w1, #0x1                   	// #1
+   124:  b9401a80 	ldr	w0, [x20, #24]
+   128:  1ac02021 	lsl	w1, w1, w0
+   12c:  52001c21 	eor	w1, w1, #0xff
+   130:  d2990390 	mov	x16, #0xc81c                	// #51228
+   134:  b8706ae2 	ldr	w2, [x23, x16]
+   138:  0a010042 	and	w2, w2, w1
+   13c:  d2990390 	mov	x16, #0xc81c                	// #51228
+   140:  b8306ae2 	str	w2, [x23, x16]
+   144:  d2990310 	mov	x16, #0xc818                	// #51224
+   148:  b8706ae2 	ldr	w2, [x23, x16]
+   14c:  0a010041 	and	w1, w2, w1
+   150:  d2990310 	mov	x16, #0xc818                	// #51224
+   154:  b8306ae1 	str	w1, [x23, x16]
+   158:  11000400 	add	w0, w0, #0x1
+   15c:  12000800 	and	w0, w0, #0x7
+   160:  d2990190 	mov	x16, #0xc80c                	// #51212
+   164:  b8306ae0 	str	w0, [x23, x16]
+   168:  1400028d 	b	0x5aaac
+   16c:  b9401e80 	ldr	w0, [x20, #28]
+   170:  35000060 	cbnz	w0, 0x5a08c
+   174:  1e612800 	fadd	d0, d0, d1
+   178:  1400000d 	b	0x5a0bc
+   17c:  7100101f 	cmp	w0, #0x4
+   180:  54000061 	b.ne	0x5a09c  // b.any
+   184:  1e613800 	fsub	d0, d0, d1
+   188:  14000009 	b	0x5a0bc
+   18c:  7100141f 	cmp	w0, #0x5
+   190:  54000061 	b.ne	0x5a0ac  // b.any
+   194:  1e603820 	fsub	d0, d1, d0
+   198:  14000005 	b	0x5a0bc
+   19c:  9100029f 	mov	sp, x20
+   1a0:  94000cf4 	bl	0x5d480   ; $phys80_push_mem
+   1a4:  d10083b4 	sub	x20, x29, #0x20
+   1a8:  9100029f 	mov	sp, x20
+   1ac:  d297c090 	mov	x16, #0xbe04                	// #48644
+   1b0:  b8706ae0 	ldr	w0, [x23, x16]
+   1b4:  34000040 	cbz	w0, 0x5a0cc
+   1b8:  14000279 	b	0x5aaac
+   1bc:  d2990190 	mov	x16, #0xc80c                	// #51212
+   1c0:  b8706ae0 	ldr	w0, [x23, x16]
+   1c4:  b9001a80 	str	w0, [x20, #24]
+   1c8:  d297db10 	mov	x16, #0xbed8                	// #48856
+   1cc:  b8706ae1 	ldr	w1, [x23, x16]
+   1d0:  0b000c22 	add	w2, w1, w0, lsl #3
+   1d4:  fc226aa0 	str	d0, [x21, x2]
+   1d8:  52800021 	mov	w1, #0x1                   	// #1
+   1dc:  1ac02021 	lsl	w1, w1, w0
+   1e0:  d2990390 	mov	x16, #0xc81c                	// #51228
+   1e4:  b8706ae2 	ldr	w2, [x23, x16]
+   1e8:  52001c23 	eor	w3, w1, #0xff
+   1ec:  0a030042 	and	w2, w2, w3
+   1f0:  d2990390 	mov	x16, #0xc81c                	// #51228
+   1f4:  b8306ae2 	str	w2, [x23, x16]
+   1f8:  d2990310 	mov	x16, #0xc818                	// #51224
+   1fc:  b8706ae2 	ldr	w2, [x23, x16]
+   200:  2a010041 	orr	w1, w2, w1
+   204:  d2990310 	mov	x16, #0xc818                	// #51224
+   208:  b8306ae1 	str	w1, [x23, x16]
+   20c:  9100029f 	mov	sp, x20
+   210:  94002ad0 	bl	0x64c60   ; $th_imul_r_m_ro
+   214:  d10083b4 	sub	x20, x29, #0x20
+   218:  9100029f 	mov	sp, x20
+   21c:  b9401a80 	ldr	w0, [x20, #24]
+   220:  9100029f 	mov	sp, x20
+   224:  94002b43 	bl	0x64e40   ; $th_alu_m16_r16
+   228:  d10083b4 	sub	x20, x29, #0x20
+   22c:  9100029f 	mov	sp, x20
+   230:  1400025b 	b	0x5aaac
+   234:  d2995d90 	mov	x16, #0xcaec                	// #51948
+   238:  b8706ae0 	ldr	w0, [x23, x16]
+   23c:  7100001f 	cmp	w0, #0x0
+   240:  9a9f07e0 	cset	x0, ne	// ne = any
+   244:  b9401e81 	ldr	w1, [x20, #28]
+   248:  7100003f 	cmp	w1, #0x0
+   24c:  9a9f17e1 	cset	x1, eq	// eq = none
+   250:  0a010003 	and	w3, w0, w1
+   254:  2a0503e0 	mov	w0, w5
+   258:  7100141f 	cmp	w0, #0x5
+   25c:  9a9f17e0 	cset	x0, eq	// eq = none
+   260:  2a0503e1 	mov	w1, w5
+   264:  7100043f 	cmp	w1, #0x1
+   268:  9a9f17e1 	cset	x1, eq	// eq = none
+   26c:  2a0503e2 	mov	w2, w5
+   270:  71000c5f 	cmp	w2, #0x3
+   274:  9a9f17e2 	cset	x2, eq	// eq = none
+   278:  2a020024 	orr	w4, w1, w2
+   27c:  2a000084 	orr	w4, w4, w0
+   280:  0a040063 	and	w3, w3, w4
+   284:  34000a03 	cbz	w3, 0x5a2d4
+   288:  34000120 	cbz	w0, 0x5a1bc
+   28c:  b9401a80 	ldr	w0, [x20, #24]
+   290:  9100029f 	mov	sp, x20
+   294:  97fe9863 	bl	0x330   ; $gl64
+   298:  d10083b4 	sub	x20, x29, #0x20
+   29c:  9100029f 	mov	sp, x20
+   2a0:  9e670000 	fmov	d0, x0
+   2a4:  fd000a80 	str	d0, [x20, #16]
+   2a8:  14000014 	b	0x5a208
+   2ac:  34000161 	cbz	w1, 0x5a1e8
+   2b0:  b9401a80 	ldr	w0, [x20, #24]
+   2b4:  9100029f 	mov	sp, x20
+   2b8:  97fe9836 	bl	0x2a0   ; $gl32_native
+   2bc:  d10083b4 	sub	x20, x29, #0x20
+   2c0:  9100029f 	mov	sp, x20
+   2c4:  d3407c00 	ubfx	x0, x0, #0, #32
+   2c8:  1e270000 	fmov	s0, w0
+   2cc:  1e22c000 	fcvt	d0, s0
+   2d0:  fd000a80 	str	d0, [x20, #16]
+   2d4:  14000009 	b	0x5a208
+   2d8:  b9401a80 	ldr	w0, [x20, #24]
+   2dc:  9100029f 	mov	sp, x20
+   2e0:  97fe9784 	bl	0x0   ; $gl32
+   2e4:  d10083b4 	sub	x20, x29, #0x20
+   2e8:  9100029f 	mov	sp, x20
+   2ec:  d3407c00 	ubfx	x0, x0, #0, #32
+   2f0:  1e620000 	scvtf	d0, w0
+   2f4:  fd000a80 	str	d0, [x20, #16]
+   2f8:  d297c090 	mov	x16, #0xbe04                	// #48644
+   2fc:  b8706ae0 	ldr	w0, [x23, x16]
+   300:  34000040 	cbz	w0, 0x5a218
+   304:  14000226 	b	0x5aaac
+   308:  d2990190 	mov	x16, #0xc80c                	// #51212
+   30c:  b8706ae0 	ldr	w0, [x23, x16]
+   310:  51000400 	sub	w0, w0, #0x1
+   314:  12000800 	and	w0, w0, #0x7
+   318:  b9001a80 	str	w0, [x20, #24]
+   31c:  d2990190 	mov	x16, #0xc80c                	// #51212
+   320:  b8306ae0 	str	w0, [x23, x16]
+   324:  52800021 	mov	w1, #0x1                   	// #1
+   328:  1ac02020 	lsl	w0, w1, w0
+   32c:  b9001e80 	str	w0, [x20, #28]
+   330:  d2990310 	mov	x16, #0xc818                	// #51224
+   334:  b8706ae1 	ldr	w1, [x23, x16]
+   338:  6a00003f 	tst	w1, w0
+   33c:  540000c0 	b.eq	0x5a264  // b.none
+   340:  52800820 	mov	w0, #0x41                  	// #65
+   344:  9100029f 	mov	sp, x20
+   348:  97fff0b2 	bl	0x56520   ; $fpu_unpack_tag_word
+   34c:  d10083b4 	sub	x20, x29, #0x20
+   350:  9100029f 	mov	sp, x20
+   354:  d297db10 	mov	x16, #0xbed8                	// #48856
+   358:  b8706ae1 	ldr	w1, [x23, x16]
+   35c:  b9401a80 	ldr	w0, [x20, #24]
+   360:  0b000c22 	add	w2, w1, w0, lsl #3
+   364:  fd400a80 	ldr	d0, [x20, #16]
+   368:  fc226aa0 	str	d0, [x21, x2]
+   36c:  d2990390 	mov	x16, #0xc81c                	// #51228
+   370:  b8706ae2 	ldr	w2, [x23, x16]
+   374:  b9401e81 	ldr	w1, [x20, #28]
+   378:  52001c23 	eor	w3, w1, #0xff
+   37c:  0a030042 	and	w2, w2, w3
+   380:  d2990390 	mov	x16, #0xc81c                	// #51228
+   384:  b8306ae2 	str	w2, [x23, x16]
+   388:  d2990310 	mov	x16, #0xc818                	// #51224
+   38c:  b8706ae2 	ldr	w2, [x23, x16]
+   390:  2a010041 	orr	w1, w2, w1
+   394:  d2990310 	mov	x16, #0xc818                	// #51224
+   398:  b8306ae1 	str	w1, [x23, x16]
+   39c:  9100029f 	mov	sp, x20
+   3a0:  94002a6c 	bl	0x64c60   ; $th_imul_r_m_ro
+   3a4:  d10083b4 	sub	x20, x29, #0x20
+   3a8:  9100029f 	mov	sp, x20
+   3ac:  b9401a80 	ldr	w0, [x20, #24]
+   3b0:  9100029f 	mov	sp, x20
+   3b4:  94002adf 	bl	0x64e40   ; $th_alu_m16_r16
+   3b8:  d10083b4 	sub	x20, x29, #0x20
+   3bc:  9100029f 	mov	sp, x20
+   3c0:  140001f7 	b	0x5aaac
+   3c4:  2a0503e3 	mov	w3, w5
+   3c8:  7100007f 	cmp	w3, #0x0
+   3cc:  9a9f17e3 	cset	x3, eq	// eq = none
+   3d0:  2a0503e4 	mov	w4, w5
+   3d4:  7100109f 	cmp	w4, #0x4
+   3d8:  9a9f17e4 	cset	x4, eq	// eq = none
+   3dc:  2a040063 	orr	w3, w3, w4
+   3e0:  34000783 	cbz	w3, 0x5a3e0
+   3e4:  b9401a80 	ldr	w0, [x20, #24]
+   3e8:  2a0503e1 	mov	w1, w5
+   3ec:  9100029f 	mov	sp, x20
+   3f0:  94000d98 	bl	0x5d960   ; $phys80_push_copy
+   3f4:  d10083b4 	sub	x20, x29, #0x20
+   3f8:  9100029f 	mov	sp, x20
+   3fc:  fd000a80 	str	d0, [x20, #16]
+   400:  b9401e80 	ldr	w0, [x20, #28]
+   404:  7100081f 	cmp	w0, #0x2
+   408:  540001c1 	b.ne	0x5a350  // b.any
+   40c:  52800000 	mov	w0, #0x0                   	// #0
+   410:  9100029f 	mov	sp, x20
+   414:  97fffcf3 	bl	0x596f0   ; $fpu_bstp
+   418:  d10083b4 	sub	x20, x29, #0x20
+   41c:  9100029f 	mov	sp, x20
+   420:  12800000 	mov	w0, #0xffffffff            	// #-1
+   424:  52800001 	mov	w1, #0x0                   	// #0
+   428:  fd400a81 	ldr	d1, [x20, #16]
+   42c:  9100029f 	mov	sp, x20
+   430:  9400149c 	bl	0x5f5b0   ; $th_lea_ro
+   434:  d10083b4 	sub	x20, x29, #0x20
+   438:  9100029f 	mov	sp, x20
+   43c:  140001d8 	b	0x5aaac
+   440:  71000c1f 	cmp	w0, #0x3
+   444:  54000241 	b.ne	0x5a39c  // b.any
+   448:  52800000 	mov	w0, #0x0                   	// #0
+   44c:  9100029f 	mov	sp, x20
+   450:  97fffce4 	bl	0x596f0   ; $fpu_bstp
+   454:  d10083b4 	sub	x20, x29, #0x20
+   458:  9100029f 	mov	sp, x20
+   45c:  12800000 	mov	w0, #0xffffffff            	// #-1
+   460:  52800001 	mov	w1, #0x0                   	// #0
+   464:  fd400a81 	ldr	d1, [x20, #16]
+   468:  9100029f 	mov	sp, x20
+   46c:  9400148d 	bl	0x5f5b0   ; $th_lea_ro
+   470:  d10083b4 	sub	x20, x29, #0x20
+   474:  9100029f 	mov	sp, x20
+   478:  9100029f 	mov	sp, x20
+   47c:  97fffd69 	bl	0x59930   ; $fpu_exec_reg
+   480:  d10083b4 	sub	x20, x29, #0x20
+   484:  9100029f 	mov	sp, x20
+   488:  140001c5 	b	0x5aaac
+   48c:  52800000 	mov	w0, #0x0                   	// #0
+   490:  9100029f 	mov	sp, x20
+   494:  97fffcd3 	bl	0x596f0   ; $fpu_bstp
+   498:  d10083b4 	sub	x20, x29, #0x20
+   49c:  9100029f 	mov	sp, x20
+   4a0:  fd400a81 	ldr	d1, [x20, #16]
+   4a4:  b9401e80 	ldr	w0, [x20, #28]
+   4a8:  9100029f 	mov	sp, x20
+   4ac:  94000c31 	bl	0x5d480   ; $phys80_push_mem
+   4b0:  d10083b4 	sub	x20, x29, #0x20
+   4b4:  9100029f 	mov	sp, x20
+   4b8:  52800000 	mov	w0, #0x0                   	// #0
+   4bc:  9100029f 	mov	sp, x20
+   4c0:  97fffcd8 	bl	0x59730   ; (export "set_fpu_direct")
+   4c4:  d10083b4 	sub	x20, x29, #0x20
+   4c8:  9100029f 	mov	sp, x20
+   4cc:  140001b4 	b	0x5aaac
+   4d0:  2a0503e3 	mov	w3, w5
+   4d4:  7100087f 	cmp	w3, #0x2
+   4d8:  9a9f17e3 	cset	x3, eq	// eq = none
+   4dc:  2a0503e4 	mov	w4, w5
+   4e0:  7100189f 	cmp	w4, #0x6
+   4e4:  9a9f17e4 	cset	x4, eq	// eq = none
+   4e8:  2a040063 	orr	w3, w3, w4
+   4ec:  34000783 	cbz	w3, 0x5a4ec
+   4f0:  b9401a80 	ldr	w0, [x20, #24]
+   4f4:  2a0503e1 	mov	w1, w5
+   4f8:  9100029f 	mov	sp, x20
+   4fc:  94000d55 	bl	0x5d960   ; $phys80_push_copy
+   500:  d10083b4 	sub	x20, x29, #0x20
+   504:  9100029f 	mov	sp, x20
+   508:  fd000a80 	str	d0, [x20, #16]
+   50c:  b9401e80 	ldr	w0, [x20, #28]
+   510:  7100081f 	cmp	w0, #0x2
+   514:  540001c1 	b.ne	0x5a45c  // b.any
+   518:  52800000 	mov	w0, #0x0                   	// #0
+   51c:  9100029f 	mov	sp, x20
+   520:  97fffcb0 	bl	0x596f0   ; $fpu_bstp
+   524:  d10083b4 	sub	x20, x29, #0x20
+   528:  9100029f 	mov	sp, x20
+   52c:  12800000 	mov	w0, #0xffffffff            	// #-1
+   530:  52800001 	mov	w1, #0x0                   	// #0
+   534:  fd400a81 	ldr	d1, [x20, #16]
+   538:  9100029f 	mov	sp, x20
+   53c:  94001459 	bl	0x5f5b0   ; $th_lea_ro
+   540:  d10083b4 	sub	x20, x29, #0x20
+   544:  9100029f 	mov	sp, x20
+   548:  14000195 	b	0x5aaac
+   54c:  71000c1f 	cmp	w0, #0x3
+   550:  54000241 	b.ne	0x5a4a8  // b.any
+   554:  52800000 	mov	w0, #0x0                   	// #0
+   558:  9100029f 	mov	sp, x20
+   55c:  97fffca1 	bl	0x596f0   ; $fpu_bstp
+   560:  d10083b4 	sub	x20, x29, #0x20
+   564:  9100029f 	mov	sp, x20
+   568:  12800000 	mov	w0, #0xffffffff            	// #-1
+   56c:  52800001 	mov	w1, #0x0                   	// #0
+   570:  fd400a81 	ldr	d1, [x20, #16]
+   574:  9100029f 	mov	sp, x20
+   578:  9400144a 	bl	0x5f5b0   ; $th_lea_ro
+   57c:  d10083b4 	sub	x20, x29, #0x20
+   580:  9100029f 	mov	sp, x20
+   584:  9100029f 	mov	sp, x20
+   588:  97fffd26 	bl	0x59930   ; $fpu_exec_reg
+   58c:  d10083b4 	sub	x20, x29, #0x20
+   590:  9100029f 	mov	sp, x20
+   594:  14000182 	b	0x5aaac
+   598:  52800000 	mov	w0, #0x0                   	// #0
+   59c:  9100029f 	mov	sp, x20
+   5a0:  97fffc90 	bl	0x596f0   ; $fpu_bstp
+   5a4:  d10083b4 	sub	x20, x29, #0x20
+   5a8:  9100029f 	mov	sp, x20
+   5ac:  fd400a81 	ldr	d1, [x20, #16]
+   5b0:  b9401e80 	ldr	w0, [x20, #28]
+   5b4:  9100029f 	mov	sp, x20
+   5b8:  94000bee 	bl	0x5d480   ; $phys80_push_mem
+   5bc:  d10083b4 	sub	x20, x29, #0x20
+   5c0:  9100029f 	mov	sp, x20
+   5c4:  52800000 	mov	w0, #0x0                   	// #0
+   5c8:  9100029f 	mov	sp, x20
+   5cc:  97fffc95 	bl	0x59730   ; (export "set_fpu_direct")
+   5d0:  d10083b4 	sub	x20, x29, #0x20
+   5d4:  9100029f 	mov	sp, x20
+   5d8:  14000171 	b	0x5aaac
+   5dc:  34000be1 	cbz	w1, 0x5a668
+   5e0:  b9401e80 	ldr	w0, [x20, #28]
+   5e4:  350001c0 	cbnz	w0, 0x5a52c
+   5e8:  b9401a80 	ldr	w0, [x20, #24]
+   5ec:  9100029f 	mov	sp, x20
+   5f0:  97fe9768 	bl	0x2a0   ; $gl32_native
+   5f4:  d10083b4 	sub	x20, x29, #0x20
+   5f8:  9100029f 	mov	sp, x20
+   5fc:  d3407c00 	ubfx	x0, x0, #0, #32
+   600:  1e270000 	fmov	s0, w0
+   604:  1e22c000 	fcvt	d0, s0
+   608:  9100029f 	mov	sp, x20
+   60c:  97fffcbd 	bl	0x59810   ; $fpu_exec_mem
+   610:  d10083b4 	sub	x20, x29, #0x20
+   614:  9100029f 	mov	sp, x20
+   618:  14000161 	b	0x5aaac
+   61c:  7100081f 	cmp	w0, #0x2
+   620:  540001c1 	b.ne	0x5a568  // b.any
+   624:  52800000 	mov	w0, #0x0                   	// #0
+   628:  9100029f 	mov	sp, x20
+   62c:  97fffc6d 	bl	0x596f0   ; $fpu_bstp
+   630:  d10083b4 	sub	x20, x29, #0x20
+   634:  9100029f 	mov	sp, x20
+   638:  1e624000 	fcvt	s0, d0
+   63c:  1e260001 	fmov	w1, s0
+   640:  b9401a80 	ldr	w0, [x20, #24]
+   644:  9100029f 	mov	sp, x20
+   648:  97feaa42 	bl	0x4e60   ; $gs32
+   64c:  d10083b4 	sub	x20, x29, #0x20
+   650:  9100029f 	mov	sp, x20
+   654:  14000152 	b	0x5aaac
+   658:  71000c1f 	cmp	w0, #0x3
+   65c:  540001a1 	b.ne	0x5a5a0  // b.any
+   660:  9100029f 	mov	sp, x20
+   664:  97fffcef 	bl	0x59930   ; $fpu_exec_reg
+   668:  d10083b4 	sub	x20, x29, #0x20
+   66c:  9100029f 	mov	sp, x20
+   670:  1e624000 	fcvt	s0, d0
+   674:  1e260001 	fmov	w1, s0
+   678:  b9401a80 	ldr	w0, [x20, #24]
+   67c:  9100029f 	mov	sp, x20
+   680:  97feaa34 	bl	0x4e60   ; $gs32
+   684:  d10083b4 	sub	x20, x29, #0x20
+   688:  9100029f 	mov	sp, x20
+   68c:  14000144 	b	0x5aaac
+   690:  7100141f 	cmp	w0, #0x5
+   694:  54000141 	b.ne	0x5a5cc  // b.any
+   698:  b9401a80 	ldr	w0, [x20, #24]
+   69c:  9100029f 	mov	sp, x20
+   6a0:  97fe97d0 	bl	0x4f0   ; $gl16
+   6a4:  d10083b4 	sub	x20, x29, #0x20
+   6a8:  9100029f 	mov	sp, x20
+   6ac:  d3407c00 	ubfx	x0, x0, #0, #32
+   6b0:  d2990210 	mov	x16, #0xc810                	// #51216
+   6b4:  b8306ae0 	str	w0, [x23, x16]
+   6b8:  14000139 	b	0x5aaac
+   6bc:  71001c1f 	cmp	w0, #0x7
+   6c0:  54000121 	b.ne	0x5a5f4  // b.any
+   6c4:  d2990210 	mov	x16, #0xc810                	// #51216
+   6c8:  b8706ae1 	ldr	w1, [x23, x16]
+   6cc:  b9401a80 	ldr	w0, [x20, #24]
+   6d0:  9100029f 	mov	sp, x20
+   6d4:  97feb597 	bl	0x7c40   ; $gs16
+   6d8:  d10083b4 	sub	x20, x29, #0x20
+   6dc:  9100029f 	mov	sp, x20
+   6e0:  1400012f 	b	0x5aaac
+   6e4:  7100101f 	cmp	w0, #0x4
+   6e8:  540000e1 	b.ne	0x5a614  // b.any
+   6ec:  b9401a80 	ldr	w0, [x20, #24]
+   6f0:  9100029f 	mov	sp, x20
+   6f4:  94002163 	bl	0x62b90   ; $phys80_frndint
+   6f8:  d10083b4 	sub	x20, x29, #0x20
+   6fc:  9100029f 	mov	sp, x20
+   700:  14000127 	b	0x5aaac
+   704:  7100181f 	cmp	w0, #0x6
+   708:  54000181 	b.ne	0x5a648  // b.any
+   70c:  b9401a80 	ldr	w0, [x20, #24]
+   710:  9100029f 	mov	sp, x20
+   714:  94002107 	bl	0x62a40   ; $phys80_sqrt_exact
+   718:  d10083b4 	sub	x20, x29, #0x20
+   71c:  9100029f 	mov	sp, x20
+   720:  d2990210 	mov	x16, #0xc810                	// #51216
+   724:  b8706ae0 	ldr	w0, [x23, x16]
+   728:  32001400 	orr	w0, w0, #0x3f
+   72c:  d2990210 	mov	x16, #0xc810                	// #51216
+   730:  b8306ae0 	str	w0, [x23, x16]
+   734:  1400011a 	b	0x5aaac
+   738:  52800002 	mov	w2, #0x0                   	// #0
+   73c:  b9401e81 	ldr	w1, [x20, #28]
+   740:  2a0503e0 	mov	w0, w5
+   744:  9100029f 	mov	sp, x20
+   748:  97fffcee 	bl	0x59a10   ; $th_fpu_mem
+   74c:  d10083b4 	sub	x20, x29, #0x20
+   750:  9100029f 	mov	sp, x20
+   754:  14000112 	b	0x5aaac
+   758:  34000c80 	cbz	w0, 0x5a7f8
+   75c:  b9401e80 	ldr	w0, [x20, #28]
+   760:  35000180 	cbnz	w0, 0x5a6a0
+   764:  b9401a80 	ldr	w0, [x20, #24]
+   768:  9100029f 	mov	sp, x20
+   76c:  97fe972d 	bl	0x330   ; $gl64
+   770:  d10083b4 	sub	x20, x29, #0x20
+   774:  9100029f 	mov	sp, x20
+   778:  9e670000 	fmov	d0, x0
+   77c:  9100029f 	mov	sp, x20
+   780:  97fffc60 	bl	0x59810   ; $fpu_exec_mem
+   784:  d10083b4 	sub	x20, x29, #0x20
+   788:  9100029f 	mov	sp, x20
+   78c:  14000104 	b	0x5aaac
+   790:  7100081f 	cmp	w0, #0x2
+   794:  540001a1 	b.ne	0x5a6d8  // b.any
+   798:  52800000 	mov	w0, #0x0                   	// #0
+   79c:  9100029f 	mov	sp, x20
+   7a0:  97fffc10 	bl	0x596f0   ; $fpu_bstp
+   7a4:  d10083b4 	sub	x20, x29, #0x20
+   7a8:  9100029f 	mov	sp, x20
+   7ac:  9e660001 	fmov	x1, d0
+   7b0:  b9401a80 	ldr	w0, [x20, #24]
+   7b4:  9100029f 	mov	sp, x20
+   7b8:  97feab0a 	bl	0x52f0   ; $gs64
+   7bc:  d10083b4 	sub	x20, x29, #0x20
+   7c0:  9100029f 	mov	sp, x20
+   7c4:  140000f6 	b	0x5aaac
+   7c8:  71000c1f 	cmp	w0, #0x3
+   7cc:  54000181 	b.ne	0x5a70c  // b.any
+   7d0:  9100029f 	mov	sp, x20
+   7d4:  97fffc93 	bl	0x59930   ; $fpu_exec_reg
+   7d8:  d10083b4 	sub	x20, x29, #0x20
+   7dc:  9100029f 	mov	sp, x20
+   7e0:  9e660001 	fmov	x1, d0
+   7e4:  b9401a80 	ldr	w0, [x20, #24]
+   7e8:  9100029f 	mov	sp, x20
+   7ec:  97feaafd 	bl	0x52f0   ; $gs64
+   7f0:  d10083b4 	sub	x20, x29, #0x20
+   7f4:  9100029f 	mov	sp, x20
+   7f8:  140000e9 	b	0x5aaac
+   7fc:  71001c1f 	cmp	w0, #0x7
+   800:  54000221 	b.ne	0x5a754  // b.any
+   804:  d2990290 	mov	x16, #0xc814                	// #51220
+   808:  b8706ae0 	ldr	w0, [x23, x16]
+   80c:  5298fff0 	mov	w16, #0xc7ff                	// #51199
+   810:  0a100000 	and	w0, w0, w16
+   814:  d2990190 	mov	x16, #0xc80c                	// #51212
+   818:  b8706ae1 	ldr	w1, [x23, x16]
+   81c:  53155021 	lsl	w1, w1, #11
+   820:  2a010001 	orr	w1, w0, w1
+   824:  d2990290 	mov	x16, #0xc814                	// #51220
+   828:  b8306ae1 	str	w1, [x23, x16]
+   82c:  b9401a80 	ldr	w0, [x20, #24]
+   830:  9100029f 	mov	sp, x20
+   834:  97feb53f 	bl	0x7c40   ; $gs16
+   838:  d10083b4 	sub	x20, x29, #0x20
+   83c:  9100029f 	mov	sp, x20
+   840:  140000d7 	b	0x5aaac
+   844:  7100101f 	cmp	w0, #0x4
+   848:  540001a1 	b.ne	0x5a78c  // b.any
+   84c:  b9401a80 	ldr	w0, [x20, #24]
+   850:  9100029f 	mov	sp, x20
+   854:  9400210b 	bl	0x62b90   ; $phys80_frndint
+   858:  d10083b4 	sub	x20, x29, #0x20
+   85c:  9100029f 	mov	sp, x20
+   860:  b9401a80 	ldr	w0, [x20, #24]
+   864:  11007000 	add	w0, w0, #0x1c
+   868:  9100029f 	mov	sp, x20
+   86c:  94002171 	bl	0x62d40   ; $fpu_image_compare
+   870:  d10083b4 	sub	x20, x29, #0x20
+   874:  9100029f 	mov	sp, x20
+   878:  140000c9 	b	0x5aaac
+   87c:  7100181f 	cmp	w0, #0x6
+   880:  54000241 	b.ne	0x5a7d8  // b.any
+   884:  b9401a80 	ldr	w0, [x20, #24]
+   888:  9100029f 	mov	sp, x20
+   88c:  940020a9 	bl	0x62a40   ; $phys80_sqrt_exact
+   890:  d10083b4 	sub	x20, x29, #0x20
+   894:  9100029f 	mov	sp, x20
+   898:  b9401a80 	ldr	w0, [x20, #24]
+   89c:  11007000 	add	w0, w0, #0x1c
+   8a0:  9100029f 	mov	sp, x20
+   8a4:  94002133 	bl	0x62c80   ; $phys80_compare
+   8a8:  d10083b4 	sub	x20, x29, #0x20
+   8ac:  9100029f 	mov	sp, x20
+   8b0:  52806fe0 	mov	w0, #0x37f                 	// #895
+   8b4:  9100029f 	mov	sp, x20
+   8b8:  97fffb7a 	bl	0x595b0   ; $fpu_store_regs
+   8bc:  d10083b4 	sub	x20, x29, #0x20
+   8c0:  9100029f 	mov	sp, x20
+   8c4:  140000b6 	b	0x5aaac
+   8c8:  52800002 	mov	w2, #0x0                   	// #0
+   8cc:  b9401e81 	ldr	w1, [x20, #28]
+   8d0:  2a0503e0 	mov	w0, w5
+   8d4:  9100029f 	mov	sp, x20
+   8d8:  97fffc8a 	bl	0x59a10   ; $th_fpu_mem
+   8dc:  d10083b4 	sub	x20, x29, #0x20
+   8e0:  9100029f 	mov	sp, x20
+   8e4:  140000ae 	b	0x5aaac
+   8e8:  340008c2 	cbz	w2, 0x5a910
+   8ec:  b9401e80 	ldr	w0, [x20, #28]
+   8f0:  350001a0 	cbnz	w0, 0x5a834
+   8f4:  b9401a80 	ldr	w0, [x20, #24]
+   8f8:  9100029f 	mov	sp, x20
+   8fc:  97fe95fd 	bl	0x0   ; $gl32
+   900:  d10083b4 	sub	x20, x29, #0x20
+   904:  9100029f 	mov	sp, x20
+   908:  d3407c00 	ubfx	x0, x0, #0, #32
+   90c:  1e620000 	scvtf	d0, w0
+   910:  9100029f 	mov	sp, x20
+   914:  97fffbfb 	bl	0x59810   ; $fpu_exec_mem
+   918:  d10083b4 	sub	x20, x29, #0x20
+   91c:  9100029f 	mov	sp, x20
+   920:  1400009f 	b	0x5aaac
+   924:  7100081f 	cmp	w0, #0x2
+   928:  54000141 	b.ne	0x5a860  // b.any
+   92c:  52800401 	mov	w1, #0x20                  	// #32
+   930:  52800002 	mov	w2, #0x0                   	// #0
+   934:  52800003 	mov	w3, #0x0                   	// #0
+   938:  b9401a80 	ldr	w0, [x20, #24]
+   93c:  9100029f 	mov	sp, x20
+   940:  940023e8 	bl	0x637f0   ; $th_push_m32
+   944:  d10083b4 	sub	x20, x29, #0x20
+   948:  9100029f 	mov	sp, x20
+   94c:  14000094 	b	0x5aaac
+   950:  71000c1f 	cmp	w0, #0x3
+   954:  54000141 	b.ne	0x5a88c  // b.any
+   958:  52800401 	mov	w1, #0x20                  	// #32
+   95c:  52800022 	mov	w2, #0x1                   	// #1
+   960:  52800003 	mov	w3, #0x0                   	// #0
+   964:  b9401a80 	ldr	w0, [x20, #24]
+   968:  9100029f 	mov	sp, x20
+   96c:  940023dd 	bl	0x637f0   ; $th_push_m32
+   970:  d10083b4 	sub	x20, x29, #0x20
+   974:  9100029f 	mov	sp, x20
+   978:  14000089 	b	0x5aaac
+   97c:  7100141f 	cmp	w0, #0x5
+   980:  540000e1 	b.ne	0x5a8ac  // b.any
+   984:  b9401a80 	ldr	w0, [x20, #24]
+   988:  9100029f 	mov	sp, x20
+   98c:  94002a2d 	bl	0x65150   ; $th_mov_m16_r16
+   990:  d10083b4 	sub	x20, x29, #0x20
+   994:  9100029f 	mov	sp, x20
+   998:  14000081 	b	0x5aaac
+   99c:  71001c1f 	cmp	w0, #0x7
+   9a0:  54000201 	b.ne	0x5a8f0  // b.any
+   9a4:  d2990190 	mov	x16, #0xc80c                	// #51212
+   9a8:  b8706ae1 	ldr	w1, [x23, x16]
+   9ac:  b9401a80 	ldr	w0, [x20, #24]
+   9b0:  9100029f 	mov	sp, x20
+   9b4:  940029bf 	bl	0x64fc0   ; $th_alu_r16_m16_ro
+   9b8:  d10083b4 	sub	x20, x29, #0x20
+   9bc:  9100029f 	mov	sp, x20
+   9c0:  d297c090 	mov	x16, #0xbe04                	// #48644
+   9c4:  b8706ae0 	ldr	w0, [x23, x16]
+   9c8:  350000a0 	cbnz	w0, 0x5a8ec
+   9cc:  9100029f 	mov	sp, x20
+   9d0:  97fffc14 	bl	0x59930   ; $fpu_exec_reg
+   9d4:  d10083b4 	sub	x20, x29, #0x20
+   9d8:  9100029f 	mov	sp, x20
+   9dc:  14000070 	b	0x5aaac
+   9e0:  52800002 	mov	w2, #0x0                   	// #0
+   9e4:  b9401e81 	ldr	w1, [x20, #28]
+   9e8:  2a0503e0 	mov	w0, w5
+   9ec:  9100029f 	mov	sp, x20
+   9f0:  97fffc44 	bl	0x59a10   ; $th_fpu_mem
+   9f4:  d10083b4 	sub	x20, x29, #0x20
+   9f8:  9100029f 	mov	sp, x20
+   9fc:  14000068 	b	0x5aaac
+   a00:  2a0503e0 	mov	w0, w5
+   a04:  71001c1f 	cmp	w0, #0x7
+   a08:  54000ba1 	b.ne	0x5aa8c  // b.any
+   a0c:  b9401e80 	ldr	w0, [x20, #28]
+   a10:  350001c0 	cbnz	w0, 0x5a958
+   a14:  b9401a80 	ldr	w0, [x20, #24]
+   a18:  9100029f 	mov	sp, x20
+   a1c:  97fe96f1 	bl	0x4f0   ; $gl16
+   a20:  d10083b4 	sub	x20, x29, #0x20
+   a24:  9100029f 	mov	sp, x20
+   a28:  d3407c00 	ubfx	x0, x0, #0, #32
+   a2c:  13003c00 	sxth	w0, w0
+   a30:  1e620000 	scvtf	d0, w0
+   a34:  9100029f 	mov	sp, x20
+   a38:  97fffbb2 	bl	0x59810   ; $fpu_exec_mem
+   a3c:  d10083b4 	sub	x20, x29, #0x20
+   a40:  9100029f 	mov	sp, x20
+   a44:  14000056 	b	0x5aaac
+   a48:  7100081f 	cmp	w0, #0x2
+   a4c:  54000141 	b.ne	0x5a984  // b.any
+   a50:  52800201 	mov	w1, #0x10                  	// #16
+   a54:  52800002 	mov	w2, #0x0                   	// #0
+   a58:  52800003 	mov	w3, #0x0                   	// #0
+   a5c:  b9401a80 	ldr	w0, [x20, #24]
+   a60:  9100029f 	mov	sp, x20
+   a64:  9400239f 	bl	0x637f0   ; $th_push_m32
+   a68:  d10083b4 	sub	x20, x29, #0x20
+   a6c:  9100029f 	mov	sp, x20
+   a70:  1400004b 	b	0x5aaac
+   a74:  71000c1f 	cmp	w0, #0x3
+   a78:  54000141 	b.ne	0x5a9b0  // b.any
+   a7c:  52800201 	mov	w1, #0x10                  	// #16
+   a80:  52800022 	mov	w2, #0x1                   	// #1
+   a84:  52800003 	mov	w3, #0x0                   	// #0
+   a88:  b9401a80 	ldr	w0, [x20, #24]
+   a8c:  9100029f 	mov	sp, x20
+   a90:  94002394 	bl	0x637f0   ; $th_push_m32
+   a94:  d10083b4 	sub	x20, x29, #0x20
+   a98:  9100029f 	mov	sp, x20
+   a9c:  14000040 	b	0x5aaac
+   aa0:  7100101f 	cmp	w0, #0x4
+   aa4:  540000e1 	b.ne	0x5a9d0  // b.any
+   aa8:  b9401a80 	ldr	w0, [x20, #24]
+   aac:  9100029f 	mov	sp, x20
+   ab0:  94002110 	bl	0x62e00   ; $phys80_scale
+   ab4:  d10083b4 	sub	x20, x29, #0x20
+   ab8:  9100029f 	mov	sp, x20
+   abc:  14000038 	b	0x5aaac
+   ac0:  7100141f 	cmp	w0, #0x5
+   ac4:  54000261 	b.ne	0x5aa20  // b.any
+   ac8:  b9401a80 	ldr	w0, [x20, #24]
+   acc:  9100029f 	mov	sp, x20
+   ad0:  97fe9654 	bl	0x330   ; $gl64
+   ad4:  d10083b4 	sub	x20, x29, #0x20
+   ad8:  9100029f 	mov	sp, x20
+   adc:  f9000a80 	str	x0, [x20, #16]
+   ae0:  9e620000 	scvtf	d0, x0
+   ae4:  9100029f 	mov	sp, x20
+   ae8:  97fffb86 	bl	0x59810   ; $fpu_exec_mem
+   aec:  d10083b4 	sub	x20, x29, #0x20
+   af0:  9100029f 	mov	sp, x20
+   af4:  52800000 	mov	w0, #0x0                   	// #0
+   af8:  f9400a81 	ldr	x1, [x20, #16]
+   afc:  9100029f 	mov	sp, x20
+   b00:  97ffee90 	bl	0x56450   ; $fpu_pack_tag_word
+   b04:  d10083b4 	sub	x20, x29, #0x20
+   b08:  9100029f 	mov	sp, x20
+   b0c:  14000024 	b	0x5aaac
+   b10:  7100181f 	cmp	w0, #0x6
+   b14:  540000e1 	b.ne	0x5aa40  // b.any
+   b18:  b9401a80 	ldr	w0, [x20, #24]
+   b1c:  9100029f 	mov	sp, x20
+   b20:  94002144 	bl	0x62f40   ; $th_cld
+   b24:  d10083b4 	sub	x20, x29, #0x20
+   b28:  9100029f 	mov	sp, x20
+   b2c:  1400001c 	b	0x5aaac
+   b30:  71001c1f 	cmp	w0, #0x7
+   b34:  54000141 	b.ne	0x5aa6c  // b.any
+   b38:  52800801 	mov	w1, #0x40                  	// #64
+   b3c:  52800022 	mov	w2, #0x1                   	// #1
+   b40:  52800003 	mov	w3, #0x0                   	// #0
+   b44:  b9401a80 	ldr	w0, [x20, #24]
+   b48:  9100029f 	mov	sp, x20
+   b4c:  94002365 	bl	0x637f0   ; $th_push_m32
+   b50:  d10083b4 	sub	x20, x29, #0x20
+   b54:  9100029f 	mov	sp, x20
+   b58:  14000011 	b	0x5aaac
+   b5c:  52800002 	mov	w2, #0x0                   	// #0
+   b60:  b9401e81 	ldr	w1, [x20, #28]
+   b64:  2a0503e0 	mov	w0, w5
+   b68:  9100029f 	mov	sp, x20
+   b6c:  97fffbe5 	bl	0x59a10   ; $th_fpu_mem
+   b70:  d10083b4 	sub	x20, x29, #0x20
+   b74:  9100029f 	mov	sp, x20
+   b78:  14000009 	b	0x5aaac
+   b7c:  2a0003e5 	mov	w5, w0
+   b80:  52800002 	mov	w2, #0x0                   	// #0
+   b84:  b9401e81 	ldr	w1, [x20, #28]
+   b88:  2a0503e0 	mov	w0, w5
+   b8c:  9100029f 	mov	sp, x20
+   b90:  97fffbdc 	bl	0x59a10   ; $th_fpu_mem
+   b94:  d10083b4 	sub	x20, x29, #0x20
+   b98:  9100029f 	mov	sp, x20
+   b9c:  91008294 	add	x20, x20, #0x20
+   ba0:  9100029f 	mov	sp, x20
+   ba4:  a8c17bfd 	ldp	x29, x30, [sp], #16
+   ba8:  910003f4 	mov	x20, sp
+   bac:  d65f03c0 	ret
+   bb0:  d4a00000 	.inst	0xd4a00000 ; undefined
+   bb4:  d4a00000 	.inst	0xd4a00000 ; undefined
+   bb8:  17fffd1d 	b	0x59f3c

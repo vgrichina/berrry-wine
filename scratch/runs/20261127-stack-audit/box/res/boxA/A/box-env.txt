@@ -1,0 +1,9 @@
+Fri Nov 27 08:42:16 AM UTC 2026
+ 08:42:16 up  1:12,  3 users,  load average: 1.50, 1.33, 1.13
+4
+model name	: AMD EPYC
+Linux box-node-5d6d8e2dfe0a2681 6.8.0-117-generic #117-Ubuntu SMP PREEMPT_DYNAMIC Tue May  5 19:26:24 UTC 2026 x86_64 x86_64 x86_64 GNU/Linux
+v24.22.1
+13.6.233.17-node.58
+-1
+cpu  398220 1060 22583 1317511 3436 0 864 49 0 0

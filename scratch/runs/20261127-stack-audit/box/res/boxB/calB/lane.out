@@ -1,0 +1,15 @@
+spelunky_classic_hd-off-r0         rc=0 user=20.81 ins=229837407431 api=535928 b=67799 sha=28aa1728c441e8b2 load=0.02 wall=21
+diablo_shareware-off-r0            rc=0 user=19.77 ins=205286409120 api=520000 b=32012 sha=a1c47410068b22d9 load=0.30 wall=20
+gta2_demo-off-r0                   rc=1 user=0.71 ins=4372429356 api=null b=null sha=null load=0.50 wall=1
+mw3-off-r0                         rc=0 user=20.68 ins=363215709406 api=170524 b=469557 sha=d4a42fa36fd80025 load=0.50 wall=21
+quake2_demo-off-r0                 rc=0 user=20.92 ins=525006276954 api=1262743 b=11233 sha=9a80a296dd142365 load=0.90 wall=21
+hexen2_demo-off-r0                 rc=0 user=21.46 ins=476328061169 api=617772 b=33298 sha=52e5f829cbc16f0a load=0.93 wall=21
+halflife_uplink-off-r0             rc=0 user=23.87 ins=343283780719 api=428567 b=4206 sha=db0ce12c8672c3b7 load=0.95 wall=21
+jazz2_demo-off-r0                  rc=0 user=21.08 ins=296262482606 api=5432 b=29074 sha=007bc758e298430f load=1.26 wall=21
+pinball-off-r0                     rc=0 user=20.11 ins=189056627165 api=3445073 b=198984 sha=73f1e68507a264e5 load=1.18 wall=21
+moorhuhn_3-off-r0                  rc=0 user=20 ins=288299780403 api=8359 b=310130 sha=31e5172c3e590f18 load=1.21 wall=21
+ALLDONE
+Fri Nov 27 07:47:38 AM UTC 2026
+ 07:47:38 up 18 min,  2 users,  load average: 1.21, 0.71, 0.40
+cpu  32850 1010 7507 385268 3407 0 864 2973 0 0
+LANEDONE

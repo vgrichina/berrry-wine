@@ -1,0 +1,36 @@
+WAT manifest OK: src/main.watx includes all 151 src/*.wat in sorted order (missing/duplicate includes are compiler-enforced)
+api_table OK: 5000 entries, id === index, append-only vs HEAD.
+gen_big5_table --check: 01c-big5-tables.generated.wat is current (20193 encode entries; header + invariants (sources not cached: offline check))
+gen_api_table --check: api_table.json and 01b-api-hashes.generated.wat are current (5000 APIs)
+dispatch table OK: 09b2-dispatch-table.generated.wat matches api_table.json (5000 APIs).
+check-watx-provenance: OK (all 23 required files present and matching, manifest sealed against CHANGELOG.md)
+CLAUDE.md size: 23201/32768 bytes
+region declarations OK: 299 declared, all agree with their $NAME/$NAME_SIZE globals
+check-wat-fragments: 151 fragments OK (all self-balanced, no exceptions)
+test-scratch-deps: ok (no tracked test reads scratch/runs)
+no-python: ok (791 legacy .py, 8 legacy callers; allowlist only shrinks)
+aw-census: ratchet ok — STUB 0, DIVERGENT 3, BOTH_STUB 0
+check-region-decls: owners ok — 299 symbol owners verified
+wat-dup-census: ratchet ok — 112/115 exact groups, 414/460 members
+/private/tmp/wa-stack/tools/callback-ownership-census.js:229
+          Object.keys(review).some(k => !['file', 'name', 'baseSHA256', 'sha256', 'reason'].includes(k))) throw Error(`invalid feature review anchor ${id}`);
+                                                                                                          ^
+
+Error: invalid feature review anchor src/07d-uop-engine.wat:$uop_fast
+    at chainReviews (/private/tmp/wa-stack/tools/callback-ownership-census.js:229:113)
+    at loadReviews (/private/tmp/wa-stack/tools/callback-ownership-census.js:240:19)
+    at main (/private/tmp/wa-stack/tools/callback-ownership-census.js:253:19)
+    at Object.<anonymous> (/private/tmp/wa-stack/tools/callback-ownership-census.js:261:30)
+    at Module._compile (node:internal/modules/cjs/loader:1929:14)
+    at Object..js (node:internal/modules/cjs/loader:2060:10)
+    at Module.load (node:internal/modules/cjs/loader:1651:32)
+    at Module._load (node:internal/modules/cjs/loader:1443:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+
+Node.js v24.21.0
+
+build step FAILED: callback-census (exit 1)
+  node tools/callback-ownership-census.js
+build-run-steps: cancelled after the failure: compile
+build-run-steps: not started: 35 step(s)

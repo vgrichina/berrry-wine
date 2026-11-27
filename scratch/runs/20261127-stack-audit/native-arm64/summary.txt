@@ -1,0 +1,16 @@
+m-fpu_exec_mem-sm.txt      bytes=2120 insns=530 stack=2 bl=62 br/blr=0
+m-fpu_exec_mem-v8.txt      bytes=10720 insns=2674 stack=464 bl=174 br/blr=14
+m-th_uop_enter-sm.txt      bytes=1440 insns=360 stack=23 bl=10 br/blr=4
+m-th_uop_enter-v8.txt      bytes=6176 insns=1542 stack=450 bl=43 br/blr=4
+m-uop_fast-sm.txt          bytes=11512 insns=2878 stack=2 bl=3 br/blr=6
+m-uop_fast-v8.txt          bytes=9440 insns=2358 stack=123 bl=16 br/blr=9
+m-uop_run-sm.txt           bytes=1556 insns=389 stack=2 bl=17 br/blr=0
+m-uop_run-v8.txt           bytes=9248 insns=2308 stack=731 bl=90 br/blr=7
+s-fpu_exec_mem-sm.txt      bytes=3004 insns=751 stack=2 bl=75 br/blr=0
+s-fpu_exec_mem-v8.txt      bytes=15584 insns=3896 stack=587 bl=205 br/blr=18
+s-th_uop_enter-sm.txt      bytes=1512 insns=378 stack=26 bl=10 br/blr=5
+s-th_uop_enter-v8.txt      bytes=7104 insns=1771 stack=239 bl=40 br/blr=38
+s-uop_fast-sm.txt          bytes=15016 insns=3754 stack=16 bl=16 br/blr=6
+s-uop_fast-v8.txt          bytes=16768 insns=4190 stack=235 bl=38 br/blr=10
+s-uop_run-sm.txt           bytes=1604 insns=401 stack=2 bl=17 br/blr=0
+s-uop_run-v8.txt           bytes=9504 insns=2370 stack=760 bl=100 br/blr=6
