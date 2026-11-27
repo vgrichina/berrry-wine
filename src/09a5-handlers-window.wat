@@ -8027,6 +8027,81 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
   )
 
+  ;; Partial SendMessageCallbackA: scalar WM_FONTCHANGE broadcast with no
+  ;; completion proc, within this VM and on the calling thread only.
+  ;; Other routes fail explicitly until sent-message/completion queues exist.
+  (func $handle_SendMessageCallbackA (param $arg0 i32) (param $arg1 i32)
+      (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (local $sp i32) (local $snapshot i32) (local $p i32)
+    (local $i i32) (local $n i32) (local $h i32) (local $error i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (block $finish
+      ;; Six args: arg4 is lpResultCallBack; dwData is [sp+24]. There is
+      ;; nothing to do with dwData when no completion proc is requested.
+      (local.set $error (i32.const 50)) ;; explicit emulator ERROR_NOT_SUPPORTED
+      (br_if $finish (i32.ne (local.get $arg0) (i32.const 0xFFFF)))
+      (br_if $finish (i32.ne (local.get $arg1) (i32.const 0x001D)))
+      (br_if $finish (i32.ne (local.get $arg2) (i32.const 0)))
+      (br_if $finish (i32.ne (local.get $arg3) (i32.const 0)))
+      (br_if $finish (i32.ne (local.get $arg4) (i32.const 0)))
+      (br_if $finish (global.get $code16))
+      (br_if $finish (global.get $host_shadow))
+      (local.set $snapshot (call $heap_alloc
+        (i32.mul (global.get $MAX_WINDOWS) (i32.const 16))))
+      (if (i32.eqz (local.get $snapshot))
+        (then (local.set $error (i32.const 8)) (br $finish)))
+      ;; Snapshot stable identities before callbacks; include hidden/disabled
+      ;; top-level windows and owned popups, exclude WS_CHILD/message-only.
+      ;; Preflight all target threads before producing any send side effects.
+      (block $collected (loop $collect
+        (br_if $collected (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
+        (local.set $h (call $wnd_slot_hwnd (local.get $i)))
+        (if (i32.and (i32.and (i32.ne (local.get $h) (i32.const 0))
+                (i32.eqz (call $wnd_lookup_retired (local.get $h))))
+              (i32.and
+                (i32.eqz (i32.and (call $wnd_get_style (local.get $h))
+                  (i32.const 0x40000000)))
+                (i32.ne (call $wnd_get_parent (local.get $h)) (i32.const -3))))
+          (then
+            (br_if $finish (i32.ne (call $wnd_get_thread (local.get $h))
+              (global.get $current_thread_id)))
+            (br_if $finish (call $win16_is_far_proc (call $wnd_table_get (local.get $h))))
+            (local.set $p (call $g2w (i32.add (local.get $snapshot)
+              (i32.mul (local.get $n) (i32.const 16)))))
+            (i32.store (local.get $p) (local.get $h))
+            (i64.store offset=8 (local.get $p) (call $wnd_lookup_generation (local.get $h)))
+            (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $collect)))
+      (local.set $i (i32.const 0))
+      (block $sent (loop $send
+        (br_if $sent (i32.ge_u (local.get $i) (local.get $n)))
+        (local.set $p (call $g2w (i32.add (local.get $snapshot)
+          (i32.mul (local.get $i) (i32.const 16)))))
+        (local.set $h (i32.load (local.get $p)))
+        ;; A preceding recipient may have destroyed/replaced another target.
+        (if (i32.and
+              (i32.and (i64.ne (i64.load offset=8 (local.get $p)) (i64.const 0))
+                (i32.eqz (call $wnd_lookup_retired (local.get $h))))
+              (i64.eq (i64.load offset=8 (local.get $p))
+                (call $wnd_lookup_generation (local.get $h))))
+          (then
+            (br_if $finish (i32.ne (call $wnd_get_thread (local.get $h))
+              (global.get $current_thread_id)))
+            (drop (call $wnd_send_message (local.get $h) (local.get $arg1)
+              (local.get $arg2) (local.get $arg3)))
+            ;; LRESULT=0 is a valid wndproc result, not API failure.
+            (if (i32.eqz (global.get $wnd_send_completed))
+              (then (local.set $error (i32.const 1460)) (br $finish)))))
+        (local.set $i (i32.add (local.get $i) (i32.const 1)))
+        (br $send)))
+      (local.set $error (i32.const 0)))
+    (if (local.get $snapshot) (then (call $heap_free (local.get $snapshot))))
+    (if (local.get $error) (then (global.set $last_error (local.get $error))))
+    (i32.store (global.get $reg_base) (i32.eqz (local.get $error)))
+    ;; Leave return EIP to ordinary thunk dispatch, consume return+6 args.
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 28))))
+
   ;; CreateMDIWindowA(class, title, style, x, y, cx, cy, hwndClient, hInst,
   ;; lParam): USER's direct form of WM_MDICREATE (VB5CCE.EXE creates its code
   ;; and form windows this way). Build the MDICREATESTRUCT the child's

@@ -42365,5 +42365,39 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 5000,
+    "name": "SendMessageCallbackA",
+    "nargs": 6,
+    "convention": "stdcall",
+    "hash": 492799888,
+    "args": [
+      {
+        "name": "hWnd",
+        "type": "HWND"
+      },
+      {
+        "name": "Msg",
+        "type": "UINT"
+      },
+      {
+        "name": "wParam",
+        "type": "WPARAM"
+      },
+      {
+        "name": "lParam",
+        "type": "LPARAM"
+      },
+      {
+        "name": "lpResultCallBack",
+        "type": "LPVOID"
+      },
+      {
+        "name": "dwData",
+        "type": "ULONG_PTR"
+      }
+    ],
+    "ret": "BOOL"
   }
 ]
