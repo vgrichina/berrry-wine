@@ -1560,7 +1560,7 @@
   ;; or an empty RECT for a clean Win32 window. Paint scheduling alone does
   ;; not establish an update region. Preserve the historical Win16 fallback.
   (func $handle_GetUpdateRect (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $rv i32) (local $wa i32) (local $cs i32)
+    (local $rv i32) (local $wa i32) (local $cs i32) (local $hdc i32)
     (if (local.get $arg1)
       (then
         (local.set $wa (call $g2w (local.get $arg1)))
@@ -1582,6 +1582,21 @@
             (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
               (then (local.set $rv (global.get $paint_pending)))))))))
       (else (local.set $rv (call $update_get_rect (local.get $arg0) (i32.const 0)))))
+    ;; Snapshot the bounding RECT/result before callbacks. This query never
+    ;; validates damage; preserve the historical Win16 and invalid-HWND paths.
+    (if (i32.and (i32.ne (local.get $rv) (i32.const 0))
+          (i32.and (i32.eqz (global.get $code16))
+            (i32.and (i32.ne (call $wnd_table_get (local.get $arg0)) (i32.const 0))
+              (i32.and (i32.ne (local.get $arg2) (i32.const 0))
+                (i32.ne (i32.and (call $nc_flags_test (local.get $arg0)) (i32.const 2)) (i32.const 0))))))
+      (then
+        (local.set $hdc (call $host_alloc_window_dc (local.get $arg0) (i32.const 0)))
+        (if (local.get $hdc)
+          (then
+            (call $dc_apply_client_clip (local.get $hdc) (local.get $arg0))
+            (if (call $update_clip_dc (local.get $arg0) (local.get $hdc))
+              (then (drop (call $paint_send_erase (local.get $arg0) (local.get $hdc)))))
+            (drop (call $host_release_dc (local.get $hdc)))))))
     (i32.store offset=0 (global.get $reg_base) (local.get $rv))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
   )
