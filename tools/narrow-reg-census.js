@@ -94,8 +94,8 @@ const KINDS = {
   inl16: new RegExp(String.raw`\(\s*i32\.store16(?:\s+offset=\d+)?\s*` + RB, 'g'),
   mrg8: /\(\s*set-(?:reg8|al|ah)\s/g,
   mrg16: /\(\s*set-(?:reg16|ax|cx|dx)\s/g,
-  get8: /\(\s*call\s+\$get_reg8\b/g,
-  get16: /\(\s*call\s+\$get_reg16\b/g,
+  get8: /\(\s*(?:call\s+\$get_reg8\b|get-reg8\s)/g,
+  get16: /\(\s*(?:call\s+\$get_reg16\b|get-reg16\s)/g,
   ld8: new RegExp(String.raw`\(\s*i32\.load8_[su](?:\s+offset=\d+)?\s*` + RB, 'g'),
   ld16: new RegExp(String.raw`\(\s*i32\.load16_[su](?:\s+offset=\d+)?\s*` + RB, 'g'),
 };
@@ -191,8 +191,10 @@ for (const file of logs) {
   // The window's uop-tier block count, from the --hist-json the log names.
   let uop = null;
   const jm = text.match(/wrote histogram JSON to (\S+)/);
-  if (jm && fs.existsSync(jm[1])) {
-    const j = JSON.parse(fs.readFileSync(jm[1], 'utf8'));
+  // A log copied off another machine: look for the JSON beside it.
+  const jp = jm && [jm[1], path.join(path.dirname(file), path.basename(jm[1]))].find(p => fs.existsSync(p));
+  if (jp) {
+    const j = JSON.parse(fs.readFileSync(jp, 'utf8'));
     if (j.uop) {
       const share = (100 * j.uop.blocks / (j.uop.blocks + j.blockHits)).toFixed(1);
       uop = `uop tier ran ${j.uop.blocks} blocks vs ${j.blockHits} threaded block entries: ${share}% of blocks never dispatch a handler`;
