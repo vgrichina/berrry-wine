@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "11220790ad1b6ead4bd290dfc34046a9688cc8ecb30a71933be2d6633d4b89ed",
+      "sha256": "fa2c07aa87c34da7b23b46c2b39388ce79d43351ab0283400825d84e54bcdf6a",
+      "reason": "20261127 held capture retirement repair: resolve authoritative same-process live capture before cached DOWN fallback for physical UP. Retain existing lifetime/generation rejection in _resolveCaptureTarget and _dispatchMouseEvent. Consume owed press before synchronous guest dispatch. Public RegisterClass/CreateWindowEx/SetCapture/SetParent/DestroyWindow/PeekMessage/DispatchMessage x86 regression demonstrates old-origin UP190,90 versus current10,10, lost UP after old-parent destruction, and wrong original child after capture transfer. Literal geometry/event oracle, actual guest UP recorder, physical DI down/up balance, capture destruction controls in run20261127-mouse-capture-retirement-root. No new callback producer, invocation scope, endpoint, queue ownership or scheduling change; nonlocal ownership remains pending."
+    }
+  ]
+}
