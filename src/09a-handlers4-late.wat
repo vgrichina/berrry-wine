@@ -777,6 +777,10 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
             (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
               (then (global.set $paint_pending (i32.const 0)))
               (else (call $paint_flag_clear_hwnd (local.get $arg0))))))))
+    ;; RDW_NOERASE cancels the pending erase, independently of damage. Do this
+    ;; after validation succeeds so capacity failure preserves the transaction.
+    (if (i32.and (local.get $arg3) (i32.const 0x20))
+      (then (call $nc_flags_clear (local.get $arg0) (i32.const 2))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20))) (return)
   )
