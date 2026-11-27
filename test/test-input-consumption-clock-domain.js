@@ -19,6 +19,8 @@ const initialization = source.slice(start, end);
 // Use the production parser with no CLI flags, leaving that observer disabled.
 const flagParser = source.match(/^const hasFlag = .*;$/m)?.[0];
 assert(flagParser, 'production flag parser');
+const argumentParser = source.match(/^const getArg = \(name, def\) => \{[\s\S]*?^\};/m)?.[0];
+assert(argumentParser, 'production argument parser');
 
 function fixture(code, { enabled = true, real = false, startup = true } = {}) {
   const batchClock = createBatchClock(200);
@@ -39,7 +41,7 @@ function fixture(code, { enabled = true, real = false, startup = true } = {}) {
     Date: { now: () => now }, DX_LOCK_PAUSE: {}, VBLANK: {},
     ctx: { sharedAudio: {} }, h: {}, logs: [], console: { log() {} },
   });
-  vm.runInContext(flagParser + '\n' + code, c);
+  vm.runInContext(flagParser + '\n' + argumentParser + '\n' + code, c);
   const api = vm.runInContext('({guestClock, startupClock, inputConsumptionTrace})', c);
   return { ...api, h: c.h, ctx: c.ctx, logs: c.logs, batchClock,
     setNow: n => { now = n; }, probes: () => probes };
