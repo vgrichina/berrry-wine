@@ -5265,6 +5265,28 @@
       (then (return (i32.const -1))))
     (i32.eqz (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))))
 
+  ;; Exact HRGN subtraction, with the same 1 empty / 0 pending / -1 failure
+  ;; convention as update_try_validate_rect. Borrow the source bands only for
+  ;; the synchronous sweep; neither the store nor any DC retains its handle.
+  (func $update_subtract_region (param $hwnd i32) (param $hrgn i32) (result i32)
+    (local $slot i32) (local $record i32) (local $cs i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return (i32.const 1))))
+    (if (i32.eqz (local.get $hrgn))
+      (then
+        (local.set $cs (call $host_get_window_client_size (local.get $hwnd)))
+        (return (call $update_try_validate_rect (local.get $hwnd) (i32.const 0) (i32.const 0)
+          (i32.and (local.get $cs) (i32.const 0xFFFF)) (i32.shr_u (local.get $cs) (i32.const 16))))))
+    (local.set $record (call $gdi_rgn_record (local.get $hrgn)))
+    ;; The public contract requires a created region. Preserve the historical
+    ;; invalid-handle no-op rather than inventing a new compatibility result.
+    (if (local.get $record)
+      (then
+        (if (i32.eqz (call $update_apply_bands (local.get $hwnd)
+              (call $gdi_rgn_bands (local.get $record)) (i32.load offset=28 (local.get $record)) (i32.const 4)))
+          (then (return (i32.const -1))))))
+    (i32.eqz (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))))
+
   ;; $invalidate_hwnd(hwnd): mark $hwnd dirty so a WM_PAINT gets delivered on
   ;; the next GetMessageA cycle. For the main top-level, GetMessageA reads
   ;; $paint_pending directly; for child controls we set the slot's PAINT_FLAGS

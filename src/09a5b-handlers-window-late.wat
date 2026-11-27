@@ -3539,30 +3539,20 @@ Layout(hdc) -> DWORD — return 0 (LTR layout)
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
 
-  ;; 4166: ValidateRgn(hwnd, hrgn) -> BOOL. The update region is kept as one
-  ;; rectangle, so this validates hrgn's bounding box, the same reduction
-  ;; InvalidateRgn makes; hrgn NULL validates the whole client area, as
-  ;; ValidateRect(hwnd, NULL) does. A NULL hwnd is TRUE and changes nothing.
+  ;; 4166: ValidateRgn(hwnd, hrgn) -> BOOL. Subtract the exact region in one
+  ;; publication; capacity failure leaves damage and notification state intact.
+  ;; hrgn NULL validates the client area. A NULL hwnd remains a TRUE no-op.
   ;; Dark Earth's demo calls it after drawing its window itself.
   (func $handle_ValidateRgn (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $cs i32) (local $box i32) (local $empty i32) (local $l i32) (local $t i32) (local $r i32) (local $b i32)
+    (local $empty i32)
     (if (local.get $arg0)
       (then
-        (if (local.get $arg1)
+        (local.set $empty (call $update_subtract_region (local.get $arg0) (local.get $arg1)))
+        (if (i32.lt_s (local.get $empty) (i32.const 0))
           (then
-            (local.set $box (call $paint_scratch_take))
-            (if (call $gdi_rgn_get_box (local.get $arg1) (local.get $box))
-              (then
-                (local.set $l (load.field PaintRect left (local.get $box)))
-                (local.set $t (load.field.memarg PaintRect top (local.get $box)))
-                (local.set $r (load.field.memarg PaintRect right (local.get $box)))
-                (local.set $b (load.field.memarg PaintRect bottom (local.get $box))))))
-          (else
-            (local.set $cs (call $host_get_window_client_size (local.get $arg0)))
-            (local.set $r (i32.and (local.get $cs) (i32.const 0xFFFF)))
-            (local.set $b (i32.shr_u (local.get $cs) (i32.const 16)))))
-        (local.set $empty (call $update_validate_rect (local.get $arg0)
-          (local.get $l) (local.get $t) (local.get $r) (local.get $b)))
+            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12)))
+            (return)))
         (if (local.get $empty)
           (then
             (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
