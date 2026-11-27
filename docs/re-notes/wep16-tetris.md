@@ -1,5 +1,33 @@
 # Tetris for Windows (WEP1 / Win16)
 
+## Modal About keyboard preprocessing — 2026-11-27
+
+Ordinary Enter is valid: ABOUTTET.DLL dialog resources 100 and 101 both
+declare a native BUTTON `&OK`, ID 1, style `0x50030001`
+(`BS_DEFPUSHBUTTON | WS_TABSTOP`). The guest command branch at segment
+1:01AF accepts IDOK/IDCANCEL and calls USER.88 EndDialog. The earlier renderer
+observation `20261127-tetris-published-play-root` left About visible because
+the Win16 modal pump dispatched Enter directly to that button without dialog
+keyboard preprocessing. Its direct `dlg-cmd:1` gameplay test bypassed the bug.
+
+The pump now queries WM_GETDLGCODE before handling Enter/Escape/Tab/arrows.
+Far guest queries return through an invocation-owned stack record containing
+both MSG layouts and window generations; the shared Win32 synchronous sender
+would instead post the far query and prematurely return zero. Requested keys
+remain with the guest, navigation uses the shared traversal helpers, and
+commands use the Win16 WM_COMMAND layout. Focused tests cover a real nested
+DialogBoxIndirect inside the query, target destruction, disabled buttons,
+focused pushbutton/default selection and exact restoration of the modal SP.
+
+Evidence and original-game verification: `scratch/runs/20261127-tetris-modal-keyboard-fix-root`.
+The clean-candidate locked build and focused regression passed. A single
+original Tetris run replaced only `dlg-cmd:1` with renderer Enter down/up at
+40/41; F2 at 55/56 and Down at 170/171 retained every existing pixel oracle.
+About disappeared, the caption activated, the first piece settled at the
+bottom and the preview piece spawned. All three captures were inspected.
+The run exited normally in 1.1 seconds under CLI 35s / process-group watchdog
+55s / cleanup 65s limits; no leaked process was reported.
+
 ## Gameplay regression correction — 2026-09-19
 
 The old test's first failure required an active blue main caption while the

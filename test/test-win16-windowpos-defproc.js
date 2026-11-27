@@ -4,6 +4,23 @@ const assert = require('assert');
 const { bootRenderHarness } = require('./render-helper');
 
 const extraWat = `
+  (func (export "test_key_button") (param $dlg i32) (param $id i32) (param $style i32) (result i32)
+    (call $ctrl_create_child (local.get $dlg) (i32.const 1) (local.get $id)
+      (i32.const 0) (i32.const 0) (i32.const 40) (i32.const 20) (local.get $style) (i32.const 0)))
+  (func (export "test_key_subclass") (param $h i32) (param $proc i32)
+    (call $wnd_table_set (local.get $h) (local.get $proc)))
+  (func (export "test_modal_key") (param $dlg i32) (param $target i32) (param $vk i32)
+    (call $post_queue_reset)
+    (global.set $win16_dlg_ended (i32.const 0))
+    (global.set $focus_hwnd (local.get $target))
+    (drop (call $dialog_proc_set (local.get $dlg) (call $wnd_table_get (local.get $dlg))))
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x110800))
+    (call $gs16 (i32.const 0x110800) (call $win16_h16 (local.get $dlg)))
+    (call $zero_memory (call $g2w (i32.const 0x110a00)) (i32.const 28))
+    (call $gs32 (i32.const 0x110a00) (local.get $target))
+    (call $gs32 (i32.const 0x110a04) (i32.const 0x100))
+    (call $gs32 (i32.const 0x110a08) (local.get $vk))
+    (call $win16_dlg_deliver_message (i32.const 0x110a00)))
   (func (export "test_retire_window") (param $h i32) (call $wnd_table_remove (local.get $h)))
   (func (export "test_destroy_handle") (param $h16 i32)
     (call $post_queue_reset)
@@ -1382,5 +1399,86 @@ const pack = (x, y) => ((x & 0xffff) | (y << 16)) >>> 0;
       assert.strictEqual(e.test_alive(e.test_widen(nested)), 0, 'nested dialog also retired');
     }
   }
-  console.log('PASS Win16 WINDOWPOS/focus, task/modal mouse and modal completion callbacks');
+  // The modal pump must preprocess renderer WM_KEYDOWN before dispatch. A
+  // native BUTTON does not turn Enter into a dialog WM_COMMAND by itself.
+  const keyDlg = e.test_window(0x200);
+  const keyOK = e.test_key_button(keyDlg, 1, 0x50010001);
+  const keyCancel = e.test_key_button(keyDlg, 2, 0x50010000);
+  function modalKey(target, vk) {
+    e.guest_write32(0x110900, 0);
+    e.test_modal_key(keyDlg, target, vk);
+    const parked = e.test_modal_parked();
+    e.set_bp(parked);
+    for (let n = 0; n < 1000; ++n) {
+      if (e.get_eip() !== parked) e.run(1);
+      if (e.get_eip() === parked && e.get_esp() === 0x110800) break;
+      if (e.get_eip() === parked) e.test_modal_step();
+    }
+    e.set_bp(0);
+    assert.strictEqual(e.get_eip(), parked, 'keyboard callback returns to modal pump');
+    assert.strictEqual(e.get_esp(), 0x110800, 'keyboard continuation restores modal frame');
+    assert.strictEqual(e.test_post_count(), 0, 'keyboard queries and commands are never deferred posts');
+    return Array.from({length: e.guest_read32(0x110900)}, (_, n) => ({
+      msg: e.guest_read32(0x110904 + n * 8) & 0xffff,
+      wp: e.guest_read32(0x110906 + n * 8) & 0xffff,
+      lp: e.guest_read32(0x110908 + n * 8) >>> 0,
+    })).filter(m => [0x87, 0x100, 0x111].includes(m.msg));
+  }
+  assert.deepStrictEqual(modalKey(keyOK, 13), [{msg: 0x111, wp: 1, lp: e.test_narrow(keyOK)}],
+    'ordinary Enter on native OK becomes Win16 BN_CLICKED/IDOK');
+  assert.strictEqual(modalKey(keyCancel, 13).at(-1).wp, 2, 'focused pushbutton overrides template default');
+  assert.strictEqual(modalKey(keyOK, 27).at(-1).wp, 2, 'Escape becomes IDCANCEL');
+  assert.deepStrictEqual(modalKey(keyOK, 9), []);
+  assert.strictEqual(e.test_focus(), keyCancel, 'Tab moves to next dialog tabstop');
+  assert.deepStrictEqual(modalKey(keyCancel, 0x26), []);
+  assert.strictEqual(e.test_focus(), keyOK, 'Up navigates the dialog group');
+  // A real far subclass owns WM_GETDLGCODE and can retain any of these keys.
+  const wantAll = recorder();
+  wantAll.splice(wantAll.length - 7, 2, 0xb8, 4, 0);
+  writeCode(0xe800, wantAll);
+  e.test_key_subclass(keyOK, 0x000fe800);
+  const retained = modalKey(keyOK, 13);
+  assert.deepStrictEqual(retained.map(m => m.msg), [0x87, 0x100],
+    'DLGC_WANTALLKEYS preserves far guest key delivery');
+  const msg16 = retained[0].lp;
+  assert.strictEqual(msg16 >>> 16, 0x17, 'WM_GETDLGCODE receives a stack far MSG');
+  // The retained query pointer described the invocation-owned Win16 MSG.
+  const msgGuest = 0x110000 + (msg16 & 0xffff);
+  assert.strictEqual(e.guest_read32(msgGuest) & 0xffff, e.test_narrow(keyOK));
+  assert.strictEqual(e.guest_read32(msgGuest + 2) & 0xffff, 0x100);
+  assert.strictEqual(e.guest_read32(msgGuest + 4) & 0xffff, 13);
+  function keySubclass(offset, flags, action = []) {
+    const body = action.length ? [0x81, 0x7e, 0x0c, 0x87, 0,
+      0x75, action.length, ...action] : [];
+    const code = recorder(body);
+    code.splice(code.length - 7, 2, 0xb8, ...word(flags));
+    writeCode(offset, code);
+    e.test_key_subclass(keyOK, 0x000f0000 | offset);
+  }
+  keySubclass(0xe900, 2);
+  assert.deepStrictEqual(modalKey(keyOK, 9).map(m => m.msg), [0x87, 0x100], 'DLGC_WANTTAB retains Tab');
+  keySubclass(0xea00, 1);
+  assert.deepStrictEqual(modalKey(keyOK, 0x28).map(m => m.msg), [0x87, 0x100], 'DLGC_WANTARROWS retains arrows');
+  // The far query opens and ends a real nested DialogBoxIndirect. Its pump
+  // and destruction callbacks must leave the outer MSG/continuation intact.
+  const openNestedKey = [0x6a, 0, 0x68, ...word(template),
+    0x68, ...word(e.test_narrow(keyDlg)), 0x6a, 0x0f, 0x68, 0, 0xb8,
+    0x9a, ...word(e.test_user_thunk(218)), 0x1f, 0,
+    0x36, 0xa3, 0x50, 0x0f];
+  keySubclass(0xeb00, 4, openNestedKey);
+  assert.deepStrictEqual(modalKey(keyOK, 13).map(m => m.msg), [0x87, 0x100], 'nested modal query retains the outer key');
+  assert.strictEqual(e.guest_read32(0x110f50) & 0xffff, 99, 'nested dialog returns its own EndDialog result');
+  e.test_native_control(keyOK);
+  e.test_disable(keyCancel);
+  assert.deepStrictEqual(modalKey(keyOK, 27), [], 'disabled Cancel swallows Escape');
+  const checkBox = e.test_key_button(keyDlg, 3, 0x50010003);
+  assert.strictEqual(modalKey(checkBox, 13).at(-1).wp, 1, 'checkbox focus preserves template default OK');
+  e.test_disable(keyOK);
+  assert.deepStrictEqual(modalKey(checkBox, 13), [], 'disabled default swallows Enter');
+  const retireKey = [0x68, ...word(e.test_narrow(keyOK)),
+    0x9a, ...word(destroyThunk), 0x1f, 0];
+  keySubclass(0xec00, 0, retireKey);
+  assert.deepStrictEqual(modalKey(keyOK, 13).map(m => m.msg), [0x87], 'query retiring target suppresses stale default command');
+  assert.strictEqual(e.test_alive(keyOK), 0, 'far query really destroyed its input target');
+  console.log('PASS Win16 WINDOWPOS/focus, task/modal mouse, modal completion and keyboard callbacks');
 })().catch(error => { console.error(error); process.exit(1); });

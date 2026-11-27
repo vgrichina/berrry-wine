@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09e2-win16-dialog.wat",
+      "name": "$win16_dlg_pump",
+      "baseSHA256": "89b90d0d61a823f72378d3f6ccf75e74c3091ff7f3118b5af8fbed9c1c3aa759",
+      "sha256": "3e23ce1a46aa39c60e1b52b66406ba1eb784b84e1305e39349e86dae9a53361c",
+      "reason": "Win16 modal keyboard preprocessing resumes a far WM_GETDLGCODE through the existing modal thunk. A zero HWND tags an 80-byte invocation-owned guest-stack frame above the modal record; it contains both MSG layouts and dialog/target generation snapshots. Nested DialogBoxIndirect/EndDialog keeps its own modal and query records. Completion validates both generations, discards the keyboard record before focus or command callbacks, respects DLGC_WANTALLKEYS/WANTTAB/WANTARROWS and suppresses delivery after target retirement. No new global pending keyboard state or nested synchronous run. test/test-win16-windowpos-defproc.js proves ordinary Enter/Escape/Tab/arrows, far requested keys, actual nested modal result99, target destruction, no posted queries and exact restored SP. Original Tetris Enter/F2/Down verification is recorded in run 20261127-tetris-modal-keyboard-fix-root. Broader invocation ownership remains pending."
+    }
+  ]
+}

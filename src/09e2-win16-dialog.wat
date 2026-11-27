@@ -625,6 +625,10 @@
     (local $dlg i32) (local $proc i32) (local $scratch i32) (local $packed i32)
     (local $hwnd i32) (local $msg i32) (local $owner i32) (local $restore_owner i32)
     (local $dlg_x i32) (local $dlg_y i32) (local $dlg_w i32) (local $dlg_h i32)
+    ;; A zero HWND tags the invocation-owned keyboard query frame. A far
+    ;; WM_GETDLGCODE may itself pump a nested dialog before returning here.
+    (if (i32.eqz (call $gl16 (i32.load offset=16 (global.get $reg_base))))
+      (then (call $win16_dlg_key_complete) (return)))
     (local.set $dlg (call $win16_h32 (call $gl16 (i32.load offset=16 (global.get $reg_base)))))
     (local.set $proc (call $dialog_proc_get (local.get $dlg)))
 
@@ -725,6 +729,8 @@
         (call $win16_dlg_park)
         (global.set $yield_flag (i32.const 1))
         (return)))
+    (if (call $win16_dlg_key_start (local.get $dlg) (local.get $scratch))
+      (then (return)))
     (if (call $win16_dlg_route (local.get $dlg) (local.get $proc) (local.get $hwnd)
           (local.get $msg)
           (call $win16_msg_wparam16
@@ -732,6 +738,127 @@
           (call $win16_msg_lparam16_cmd (local.get $msg)
             (call $gl32 (i32.add (local.get $scratch) (i32.const 8)))
             (call $gl32 (i32.add (local.get $scratch) (i32.const 12)))))
+      (then (return)))
+    (call $win16_dlg_park))
+
+  ;; DialogBox owns IsDialogMessage's keyboard preprocessing. Do not call the
+  ;; Win32 synchronous helper: it posts far WM_GETDLGCODE and returns zero
+  ;; before the guest has answered. Keep both MSG layouts and window lifetimes
+  ;; on this invocation's stack, above the ordinary modal record:
+  ;; tag/padding(4), dlg(4), target(4), generations(16), MSG32(28), MSG16(18).
+  (func $win16_dlg_key_start (param $dlg i32) (param $msg i32) (result i32)
+    (local $target i32) (local $vk i32) (local $sp i32) (local $proc i32)
+    (if (i32.ne (call $gl32 (i32.add (local.get $msg) (i32.const 4))) (i32.const 0x100))
+      (then (return (i32.const 0))))
+    (local.set $vk (call $gl32 (i32.add (local.get $msg) (i32.const 8))))
+    (if (i32.eqz (i32.or
+          (i32.or (i32.eq (local.get $vk) (i32.const 13)) (i32.eq (local.get $vk) (i32.const 27)))
+          (i32.or (i32.eq (local.get $vk) (i32.const 9))
+            (i32.and (i32.ge_u (local.get $vk) (i32.const 0x25))
+                     (i32.le_u (local.get $vk) (i32.const 0x28))))))
+      (then (return (i32.const 0))))
+    (local.set $target (call $gl32 (local.get $msg)))
+    (if (i32.eqz (i32.or (i32.eq (local.get $target) (local.get $dlg))
+          (call $wnd_is_child (local.get $dlg) (local.get $target))))
+      (then (return (i32.const 0))))
+    (local.set $sp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 80)))
+    (i32.store offset=16 (global.get $reg_base) (local.get $sp))
+    (call $zero_memory (call $g2w (local.get $sp)) (i32.const 80))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 4)) (local.get $dlg))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 8)) (local.get $target))
+    (i64.store offset=12 (call $g2w (local.get $sp)) (call $wnd_lookup_generation (local.get $dlg)))
+    (i64.store offset=20 (call $g2w (local.get $sp)) (call $wnd_lookup_generation (local.get $target)))
+    (call $memcpy (call $g2w (i32.add (local.get $sp) (i32.const 28)))
+      (call $g2w (local.get $msg)) (i32.const 28))
+    (call $gs16 (i32.add (local.get $sp) (i32.const 56)) (call $win16_h16 (local.get $target)))
+    (call $gs16 (i32.add (local.get $sp) (i32.const 58)) (i32.const 0x100))
+    (call $gs16 (i32.add (local.get $sp) (i32.const 60)) (local.get $vk))
+    (call $gs32 (i32.add (local.get $sp) (i32.const 62))
+      (call $gl32 (i32.add (local.get $msg) (i32.const 12))))
+    (call $memcpy (call $g2w (i32.add (local.get $sp) (i32.const 66)))
+      (call $g2w (i32.add (local.get $msg) (i32.const 16))) (i32.const 4))
+    (call $gs16 (i32.add (local.get $sp) (i32.const 70))
+      (call $gl32 (i32.add (local.get $msg) (i32.const 20))))
+    (call $gs16 (i32.add (local.get $sp) (i32.const 72))
+      (call $gl32 (i32.add (local.get $msg) (i32.const 24))))
+    (local.set $proc (call $wnd_table_get (local.get $target)))
+    (if (call $win16_is_far_proc (local.get $proc))
+      (then
+        (call $win16_enter_wndproc (local.get $proc) (call $win16_h16 (local.get $target))
+          (i32.const 0x87) (local.get $vk)
+          (i32.or (i32.shl (global.get $sreg_ss) (i32.const 16))
+            (i32.and (i32.sub (i32.add (local.get $sp) (i32.const 56)) (global.get $seg_base_ss)) (i32.const 0xFFFF)))
+          (global.get $WIN16_THUNK_SEL) (global.get $WIN16_DLG_PUMP)))
+      (else
+        ;; DefDlgProc's own WM_GETDLGCODE is zero. Avoid the marker's shared
+        ;; path, which would post a query to a far DLGPROC.
+        (i32.store (global.get $reg_base)
+          (if (result i32) (i32.eq (local.get $proc) (global.get $WNDPROC_DIALOG))
+            (then (i32.const 0))
+            (else (call $wnd_send_message (local.get $target) (i32.const 0x87)
+              (local.get $vk) (i32.add (local.get $sp) (i32.const 28))))))
+        (call $win16_dlg_key_complete)))
+    (i32.const 1))
+
+  (func $win16_dlg_key_complete
+    (local $sp i32) (local $dlg i32) (local $target i32) (local $vk i32)
+    (local $code i32) (local $btn i32) (local $id i32) (local $keep i32)
+    (local.set $sp (i32.load offset=16 (global.get $reg_base)))
+    (local.set $dlg (call $gl32 (i32.add (local.get $sp) (i32.const 4))))
+    (local.set $target (call $gl32 (i32.add (local.get $sp) (i32.const 8))))
+    (local.set $vk (call $gl32 (i32.add (local.get $sp) (i32.const 36))))
+    (local.set $code (i32.and (i32.load (global.get $reg_base)) (i32.const 0xFFFF)))
+    ;; Pop before focus/command callbacks, which may create another dialog.
+    (i32.store offset=16 (global.get $reg_base) (i32.add (local.get $sp) (i32.const 80)))
+    (if (i32.or (global.get $win16_dlg_ended)
+          (i32.or
+            (i64.ne (i64.load offset=12 (call $g2w (local.get $sp))) (call $wnd_lookup_generation (local.get $dlg)))
+            (i64.ne (i64.load offset=20 (call $g2w (local.get $sp))) (call $wnd_lookup_generation (local.get $target)))))
+      (then (call $win16_dlg_park) (return)))
+    (local.set $keep (i32.and (local.get $code) (i32.const 4)))
+    (if (i32.eq (local.get $vk) (i32.const 9))
+      (then (local.set $keep (i32.or (local.get $keep) (i32.and (local.get $code) (i32.const 2))))))
+    (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0x25)) (i32.le_u (local.get $vk) (i32.const 0x28)))
+      (then (local.set $keep (i32.or (local.get $keep) (i32.and (local.get $code) (i32.const 1))))))
+    (if (local.get $keep)
+      (then
+        (if (call $win16_dlg_route (local.get $dlg) (call $dialog_proc_get (local.get $dlg))
+              (local.get $target) (i32.const 0x100) (local.get $vk)
+              (call $gl32 (i32.add (local.get $sp) (i32.const 40))))
+          (then (return)))
+        (call $win16_dlg_park) (return)))
+    (if (i32.or (i32.eq (local.get $vk) (i32.const 9))
+          (i32.and (i32.ge_u (local.get $vk) (i32.const 0x25)) (i32.le_u (local.get $vk) (i32.const 0x28))))
+      (then
+        (local.set $btn
+          (if (result i32) (i32.eq (local.get $vk) (i32.const 9))
+            (then (call $dialog_next_tabstop (local.get $dlg) (local.get $target)
+              (select (i32.const -1) (i32.const 1)
+                (i32.and (call $host_get_key_down_state (i32.const 0x10)) (i32.const 0x8000)))))
+            (else (call $dialog_next_group_item (local.get $dlg) (local.get $target)
+              (select (i32.const -1) (i32.const 1) (i32.le_u (local.get $vk) (i32.const 0x26)))))))
+        (if (local.get $btn)
+          (then
+            (call $win16_cont_push
+              (i32.or (i32.shl (global.get $WIN16_THUNK_SEL) (i32.const 16)) (global.get $WIN16_DLG_PUMP)) (i32.const 0))
+            (call $win16_focus_start (local.get $btn) (i32.const 0)) (return)))
+        (call $win16_dlg_park) (return)))
+    (local.set $id (select (i32.const 2) (i32.const 1) (i32.eq (local.get $vk) (i32.const 27))))
+    (local.set $btn (call $ctrl_find_by_id (local.get $dlg) (local.get $id)))
+    (if (i32.eq (local.get $vk) (i32.const 13))
+      (then
+        ;; Only pushbuttons claim Enter, not checkboxes/radios/group boxes.
+        (if (i32.and (local.get $code) (i32.const 0x30))
+          (then (local.set $btn (local.get $target)))
+          (else
+            (local.set $target (call $dialog_first_default_button (local.get $dlg)))
+            (if (local.get $target) (then (local.set $btn (local.get $target))))))
+        (if (local.get $btn) (then (local.set $id (call $ctrl_table_get_id (local.get $btn)))))))
+    (if (i32.and (i32.ne (local.get $btn) (i32.const 0))
+          (call $ctrl_style_disabled (call $wnd_get_style (local.get $btn))))
+      (then (call $win16_dlg_park) (return)))
+    (if (call $win16_dlg_route (local.get $dlg) (call $dialog_proc_get (local.get $dlg))
+          (local.get $dlg) (i32.const 0x111) (local.get $id) (call $win16_h16 (local.get $btn)))
       (then (return)))
     (call $win16_dlg_park))
 
