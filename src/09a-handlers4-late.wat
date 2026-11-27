@@ -744,6 +744,11 @@ rushOrgEx(hdc, x, y, lppt) — canonical WAT-owned brush origin.
         (if (i32.and (i32.ne (local.get $ok) (i32.const 0))
               (call $update_get_rect (local.get $arg0) (i32.const 0)))
           (then
+            ;; RDW_ERASE belongs to the committed update, never a failed
+            ;; union. BeginPaint/query owns delivery; absent flags keep any
+            ;; earlier erase request intact, as with InvalidateRgn.
+            (if (i32.and (local.get $arg3) (i32.const 0x4))
+              (then (call $nc_flags_set (local.get $arg0) (i32.const 2))))
             (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
               (then (global.set $paint_pending (i32.const 1)))
               (else (call $paint_flag_set (local.get $arg0))))
