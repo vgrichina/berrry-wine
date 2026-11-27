@@ -29,6 +29,28 @@ const fs = require('fs');
 const path = require('path');
 
 const DEFAULT_COMBINED = path.join(__dirname, '..', 'build', 'combined.wat');
+const DEFAULT_FACTS = path.join(__dirname, '..', 'build', 'watx-facts.json');
+
+// The compiler's own function table (build/watx-facts.json, written by the
+// same compile as build/wine-assembly.wasm). The text walk below cannot see
+// functions the compiler creates or that sit inside a wrapper form: on the
+// 2026-11 build it found 15123 definitions where the module has 17582, every
+// index past #398 was named wrongly, and a perf profile's hottest function
+// ($uop_fast) came back as "set_uop_poor_work". Use this whenever it exists;
+// lines are filled in from the walk by name where the walk saw the function.
+function facts(factsPath = DEFAULT_FACTS, source = null) {
+  if (!fs.existsSync(factsPath)) return null;
+  const mod = JSON.parse(fs.readFileSync(factsPath, 'utf8')).module;
+  if (!mod || !Array.isArray(mod.functions) || !Array.isArray(mod.imports)) return null;
+  const walked = source ? scan(source) : null;
+  const lineOf = new Map();
+  if (walked) for (const f of walked.imports.concat(walked.defined)) if (!lineOf.has(f.name)) lineOf.set(f.name, f.line);
+  const imports = mod.imports.filter(i => i.kind === 'func').sort((a, b) => a.index - b.index)
+    .map(i => ({ name: i.target || `import:${i.name}`, line: lineOf.get(i.target) || 0, host: i.name }));
+  const defined = mod.functions.slice().sort((a, b) => a.index - b.index)
+    .map(f => ({ name: f.name, line: lineOf.get(f.name) || 0, depth: 0 }));
+  return { imports, defined, lines: walked ? walked.lines : [], fromFacts: true };
+}
 
 function scan(source) {
   const imports = [];
@@ -96,7 +118,10 @@ function main() {
   }
 
   const source = fs.readFileSync(COMBINED, 'utf8');
-  const { imports, defined, lines } = scan(source);
+  // --combined= names a saved module's text, so only the default build uses
+  // the compiler's table; --walk forces the text walk.
+  const table = (!combinedArg && !args.includes('--walk') && facts(DEFAULT_FACTS, source)) || scan(source);
+  const { imports, defined, lines } = table;
   const wantBody = args.includes('--body');
   const byName = args.find(a => a.startsWith('--name='));
 
@@ -140,12 +165,18 @@ function main() {
     }
 
     const found = defined[at];
-    const next = defined[at + 1];
+    if (!found.line) {
+      console.log(`#${index} is ${found.name} (compiler-generated or not found in combined.wat)`);
+      continue;
+    }
+    // With the compiler's table the next index may be a generated function
+    // the text has no line for, so the body ends at the next text definition.
+    const after = defined.slice(at + 1).find(f => f.line > found.line);
     console.log(`#${index} is ${found.name} at combined.wat:${found.line}` +
-      (next ? ` (next function starts at line ${next.line})` : ''));
+      (after ? ` (next function starts at line ${after.line})` : ''));
 
     if (wantBody) {
-      const end = next ? next.line - 1 : lines.length;
+      const end = after ? after.line - 1 : lines.length;
       for (let i = found.line - 1; i < end; i += 1) {
         console.log(`${i + 1}\t${lines[i]}`);
       }
@@ -159,4 +190,4 @@ function main() {
 // re-deriving it (tools/wasm-native.js). Running the file still runs the CLI.
 if (require.main === module) main();
 
-module.exports = { scan };
+module.exports = { scan, facts, DEFAULT_FACTS };

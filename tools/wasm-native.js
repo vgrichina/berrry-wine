@@ -44,7 +44,7 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
-const { scan } = require('./func-index');
+const { scan, facts } = require('./func-index');
 
 const ROOT = path.join(__dirname, '..');
 const DEFAULT_WASM = path.join(ROOT, 'build', 'wine-assembly.wasm');
@@ -81,7 +81,10 @@ function nameTable(watPath) {
       : `${watPath} is missing (--wat=)`);
     process.exit(1);
   }
-  const { imports, defined } = scan(fs.readFileSync(watPath, 'utf8'));
+  // The shipped build is named from the compiler's own table (see facts() in
+  // tools/func-index.js); the text walk misnames every index past the first
+  // compiler-generated function. `--wat=` modules keep the walk.
+  const { imports, defined } = (watPath === COMBINED && facts()) || scan(fs.readFileSync(watPath, 'utf8'));
   const byIndex = new Map();
   imports.forEach((f, i) => byIndex.set(i, f.name));
   defined.forEach((f, i) => byIndex.set(imports.length + i, f.name));

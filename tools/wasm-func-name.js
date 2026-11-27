@@ -54,6 +54,19 @@ for (let i = 0; i < lines.length; i++) {
   }
 }
 
+// The source walk cannot see compiler-generated functions, so on the shipped
+// build every index past the first one is misnamed. Without --wat=, name from
+// the compiler's own table (tools/func-index.js facts()) when it exists.
+if (!watArg) {
+  const t = require('./func-index.js').facts();
+  if (t) {
+    const lineOf = new Map(defs.map(d => [d.name, d.line]));
+    imports.length = 0; defs.length = 0;
+    for (const f of t.imports) imports.push({ name: 'import:' + f.host, line: 0 });
+    for (const f of t.defined) defs.push({ name: f.name, line: lineOf.get(f.name) || 0 });
+  }
+}
+
 console.log(`${imports.length} imports, ${defs.length} defined functions in ${wat}`);
 
 // Reverse lookup: --find=$name prints the index a profile would show.
