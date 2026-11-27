@@ -801,7 +801,7 @@ const { bootRenderHarness } = require('./render-helper');
     near(sampleLOD(ctx,.25),[0,1,0,1],'minification uses point filter before level blend');
     const snapshot=new Uint8Array(mem.buffer,ctx+57376,48).slice();
     const saved=Array.from(new Uint32Array(mem.buffer,m.desc,16));
-    for(const [offset,value] of [[0,2],[4,0],[4,13],[8,0xfffffff0],[12,99],[16,0],[20,5],[28,3],[32,0],[36,3],[40,0x7fc00000],[48,12],[52,0],[56,2049],[60,2]]) {
+    for(const [offset,value] of [[0,2],[4,0],[4,13],[8,0xfffffff0],[12,99],[16,0],[20,6],[28,3],[32,0],[36,3],[40,0x7fc00000],[48,12],[52,0],[56,2049],[60,2]]) {
       u32.set(saved,m.desc/4);u32[(m.desc+offset)/4]=value;
       assert.strictEqual(e.d3d_shader_vm_bind_texture_mips(ctx,0,m.desc),0,`bad mip descriptor+${offset}`);
       assert.deepStrictEqual(new Uint8Array(mem.buffer,ctx+57376,48),snapshot,'failed bind preserves active sampler');
