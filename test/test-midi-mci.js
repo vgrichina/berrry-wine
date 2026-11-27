@@ -142,13 +142,18 @@ class FakeNode {
   constructor() {
     this.connections = [];
     this.disconnected = false;
+    this.connectCalls = 0;
+    this.disconnectCalls = 0;
   }
   connect(node) {
+    this.connectCalls++;
     this.connections.push(node);
     return node;
   }
   disconnect() {
     this.disconnected = true;
+    this.disconnectCalls++;
+    this.connections = [];
   }
 }
 
@@ -527,6 +532,107 @@ try {
   assert.strictEqual(realTiny.masterVol, 0.35);
   assert(realTinyCtx._audioCtx.started.length > 0, 'real TinySynth should start fake Web Audio nodes');
   assert(realTiny.notetab.length > 0, 'real TinySynth should accept scheduled note-on events');
+  // These are node identity/parameter checks on the real bundled synth,
+  // using only public imports to change playback state. No sound is measured.
+  const rh = realTinyImports.host, ac = realTinyCtx._audioCtx;
+  const openOut = device => {
+    const handle = rh.midi_out_open(device, 0, 0, 0);
+    assert(handle > 0);
+    return handle;
+  };
+  const note = handle => assert.strictEqual(rh.midi_out_short_msg(handle, 0x00643C90), 0);
+  const volume = (handle, value) => {
+    assert.strictEqual(rh.midi_out_set_volume(handle, value), 0);
+    assert.strictEqual(rh.midi_out_get_volume(handle, 0x240), 0);
+    assert.strictEqual(new DataView(mem.buffer).getUint32(0x240, true), value >>> 0);
+  };
+  const scalar = value => ((value & 0xffff) + (value >>> 16)) / (2 * 65535);
+  const routed = (dev, value) => {
+    assert(dev.tinySynth instanceof RealWebAudioTinySynth);
+    assert(dev.master, 'TinySynth must use the selected midiOut master');
+    assert.strictEqual(dev.tinySynth.dest, dev.master);
+    assert.deepStrictEqual(dev.tinySynth.comp.connections, [dev.master]);
+    assert.deepStrictEqual(dev.master.connections, [ac._wineMidiBus]);
+    assert.strictEqual(dev.master.gain.value, scalar(value));
+    assert.strictEqual(dev.tinySynth.masterVol, 0.35);
+    assert.strictEqual(dev.tinySynth.out.gain.value, 0.35);
+  };
+  const a = openOut(0);
+  volume(a, 0); // Before the synth and its first ordinary note exist.
+  note(a);
+  const da = realTinyCtx._midiOut.devices.get(a), sa = da.tinySynth;
+  routed(da, 0);
+  assert(sa.notetab.length > 0, 'bundled synth receives the note');
+  const firstMaster = da.master, firstOut = sa.out, firstLfo = sa.lfo;
+  const firstComp = sa.comp, firstConnects = firstComp.connectCalls;
+  const intervalsAfterA = realTinyIntervals.length;
+  for (const value of [0x80008000, 0xffffffff, 0, 0x1234abcd]) {
+    volume(a, value);
+    note(a);
+    routed(da, value);
+    assert.strictEqual(da.tinySynth, sa);
+    assert.strictEqual(da.master, firstMaster);
+    assert.strictEqual(sa.comp.connectCalls, firstConnects, 'same destination needs no reconnect');
+    assert.strictEqual(sa.comp.disconnectCalls, 0);
+  }
+  const b = openOut(-1), db = realTinyCtx._midiOut.devices.get(b);
+  note(b);
+  routed(db, 0xffffffff);
+  assert.notStrictEqual(db.tinySynth, sa);
+  volume(b, 0x40004000);
+  routed(db, 0x40004000);
+  routed(da, 0x1234abcd);
+  for (const device of [0, -1]) {
+    volume(device, 0x80008000);
+    routed(da, 0x80008000);
+    routed(db, 0x80008000);
+  }
+  assert.strictEqual(rh.midi_out_reset(a), 0);
+  assert.strictEqual(da.master, null);
+  assert.deepStrictEqual(firstMaster.connections, []);
+  volume(a, 0);
+  note(a);
+  routed(da, 0);
+  assert.notStrictEqual(da.master, firstMaster);
+  assert.strictEqual(sa.comp, firstComp);
+  assert.strictEqual(sa.out, firstOut);
+  assert.strictEqual(sa.lfo, firstLfo);
+  assert.strictEqual(firstComp.connectCalls, firstConnects + 1);
+  assert.strictEqual(firstComp.disconnectCalls, 1);
+  const resetMaster = da.master, intervalsBeforeReuse = realTinyIntervals.length;
+  assert.strictEqual(rh.midi_out_close(a), 0);
+  assert.deepStrictEqual(resetMaster.connections, []);
+  const c = openOut(0), dc = realTinyCtx._midiOut.devices.get(c);
+  assert.strictEqual(dc.volume, 0x80008000, 'new handle inherits current default');
+  volume(c, 0x20002000);
+  note(c);
+  routed(dc, 0x20002000);
+  assert.strictEqual(dc.tinySynth, sa, 'closed synth is actually reused from pool');
+  assert.notStrictEqual(dc.master, resetMaster);
+  assert.strictEqual(sa.comp, firstComp);
+  assert.strictEqual(sa.out, firstOut);
+  assert.strictEqual(sa.lfo, firstLfo);
+  assert.strictEqual(firstComp.connectCalls, firstConnects + 2);
+  assert.strictEqual(firstComp.disconnectCalls, 2);
+  assert.strictEqual(realTinyIntervals.length, intervalsBeforeReuse, 'pool rebind adds no synth timer');
+  assert.strictEqual(realTinyIntervals.length, intervalsAfterA + 1, 'only sibling created another synth');
+  routed(db, 0x80008000);
+  // MCI and the desktop buses keep their separate gain layers.
+  assert.strictEqual(realTiny.dest, ac._wineMidiBus);
+  assert.deepStrictEqual(realTiny.comp.connections, [ac._wineMidiBus]);
+  assert.strictEqual(realTiny.out.gain.value, 0.35);
+  rh.audio_mixer_set_volume(2, 0x40004000);
+  assert.strictEqual(ac._wineMidiBus.gain.value, scalar(0x40004000));
+  rh.audio_mixer_set_mute(2, 1);
+  assert.strictEqual(ac._wineMidiBus.gain.value, 0);
+  routed(dc, 0x20002000);
+  rh.audio_mixer_set_mute(2, 0);
+  rh.audio_mixer_set_volume(0, 0x80008000);
+  assert.strictEqual(ac._wineMaster.gain.value, scalar(0x80008000));
+  assert.strictEqual(ac._wineMidiBus.gain.value, scalar(0x40004000));
+  assert.strictEqual(rh.midi_out_close(b), 0);
+  assert.strictEqual(rh.midi_out_close(c), 0);
+  console.log('PASS  bundled TinySynth midiOut volume, independent handles, reset and pool destinations');
   assert.strictEqual(realTinyImports.host.mci_command(realTinyId, 0x0804, 0, 0), 0);
   assert.strictEqual(realTiny.notetab.length, 0, 'MCI close should clear real TinySynth notes');
   globalThis.setInterval = oldSetInterval;
@@ -551,6 +657,12 @@ try {
   const beforeDirect = ctx._voices._ac.started.length;
   assert.strictEqual(imports.host.midi_out_short_msg(hmo, 0x00643C90), 0, 'note-on should succeed');
   assert.strictEqual(ctx._voices._ac.started.length, beforeDirect + 1, 'direct MIDI note-on should schedule an oscillator');
+  const fallbackDev = ctx._midiOut.devices.get(hmo);
+  assert.strictEqual(fallbackDev.tinySynth, null);
+  assert.strictEqual(fallbackDev.master.gain.value, 0x8000 / 0xffff);
+  assert.deepStrictEqual(fallbackDev.active.get('0:60').gain.connections, [fallbackDev.master]);
+  assert.strictEqual(imports.host.midi_out_set_volume(hmo, 0), 0);
+  assert.strictEqual(fallbackDev.master.gain.value, 0, 'oscillator still uses the existing volume master');
   assert.strictEqual(imports.host.midi_out_short_msg(hmo, 0x00003C80), 0, 'note-off should succeed');
   assert.strictEqual(imports.host.midi_out_reset(hmo), 0);
   assert.strictEqual(imports.host.midi_out_close(hmo), 0);

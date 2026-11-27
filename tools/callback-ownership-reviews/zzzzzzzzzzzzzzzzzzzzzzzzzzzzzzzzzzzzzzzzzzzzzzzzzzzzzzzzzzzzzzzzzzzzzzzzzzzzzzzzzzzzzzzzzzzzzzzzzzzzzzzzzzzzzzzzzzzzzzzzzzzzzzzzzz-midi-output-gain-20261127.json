@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "eb480c01e2e2a678fe9b2045b761ccb59415e19037b0dcba4866f5b2d49897fb",
+      "sha256": "bbe9be7c581fdaa9e52a366074757ff2ae82f7e5d3122028033e3a1d1446b9aa",
+      "reason": "Reviewed 20261127 midiOut TinySynth output gain only: initial setAudioContext routes to the existing per-output master; after reset or pooled reuse, reconnect only the actual synth compressor when its destination differs from the current master. Fixed synth master gain, voice/channel state, timer initialization, MCI sequence bus, oscillator fallback and desktop mixer buses retained. Public createHostImports regression uses bundled TinySynth and the existing richer FakeAudioContext for node identities/parameters, with zero-before-note, later volume changes, separate handles/device/MAPPER defaults, reset and close/pool reuse. No callback producer, guest reentry, notification, scheduling or memory-transport change; existing callback ownership remains pending. No measured sound or Windows stereo balance claim. Run 20261127-midi-output-gain-repair-root."
+    }
+  ]
+}
