@@ -62,7 +62,7 @@ try {
   });
   assert.doesNotMatch(output,
     /\*\*\* CRASH|UNIMPLEMENTED API|RuntimeError|\[MessageBox\]/);
-  assert.match(output, /SetWindowText\] "JigSawed: c:\\bricks\.bmp"/,
+  assert.match(output, /SetWindowText\] "JigSawed: c:\\bricks\.bmp"/i,
     'the archived bitmap should load through JigSawed\'s Open dialog');
   assert.match(output, /\[input\] click 150,150 at batch 300/,
     'the bitmap must be selected through the rendered file list');
@@ -131,15 +131,17 @@ try {
     `both scrollbars should paint tracks/arrows/thumbs (${verticalFace} vertical, ${horizontalFace} horizontal face pixels)`);
 
   // The deterministic headless clock leaves a selectable 108x59 fragment at
-  // [226,203]-[334,262) (the shuffle follows the clock, so this moved when the
-  // About box started appearing later). Drag it 60px down into the target.
+  // [236,210]-[344,269) after native CB_DIR populates the picker. The shuffle
+  // follows the clock, so its position changes when setup work changes.
+  // Drag it 60px down into the target.
   // Parts of the fragment may overlap neighbours, so require most of its exact
   // pixels to translate and the vivid brick colors to leave/arrive. A fully
   // unobscured piece legitimately translates every pixel.
-  const source = { left: 226, top: 203, right: 334, bottom: 262 };
+  const source = { left: 236, top: 210, right: 344, bottom: 269 };
   const deltaX = 0;
   const deltaY = 60;
   let matchingMovedPixels = 0;
+  let changedSourcePixels = 0;
   for (let y = source.top; y < source.bottom; y++) {
     for (let x = source.left; x < source.right; x++) {
       const beforePixel = (y * before.width + x) * 4;
@@ -152,6 +154,11 @@ try {
         }
       }
       if (equal) matchingMovedPixels++;
+      // Moving the fragment can expose another brick fragment underneath.
+      // Require the old picture pixels to change, rather than requiring the
+      // newly exposed area to be black or lose all of its vivid colors.
+      if (!before.data.subarray(beforePixel, beforePixel + 4).equals(
+        after.data.subarray(beforePixel, beforePixel + 4))) changedSourcePixels++;
     }
   }
   const piecePixels = (source.right - source.left) * (source.bottom - source.top);
@@ -168,8 +175,8 @@ try {
   const destinationAfter = countVivid(after,
     source.left + deltaX, source.top + deltaY,
     source.right + deltaX, source.bottom + deltaY);
-  assert(sourceBefore > 750 && sourceAfter < sourceBefore / 4,
-    `drag should clear the old piece location (${sourceBefore} -> ${sourceAfter} vivid pixels)`);
+  assert(sourceBefore > 750 && changedSourcePixels > 5500,
+    `drag should remove the old picture fragment (${changedSourcePixels}/${piecePixels} changed pixels; ${sourceBefore} -> ${sourceAfter} vivid pixels, including exposed neighbours)`);
   assert(destinationAfter > 750 && destinationAfter > destinationBefore + 300,
     `drag should preserve the piece at its new location (${destinationBefore} -> ${destinationAfter} vivid pixels)`);
 

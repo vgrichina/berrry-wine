@@ -4,6 +4,98 @@
 // Explicit caller geometry; no ordering, drives, owner-draw or automatic sizing claims.
 const fs=require('node:fs'),path=require('node:path'),cp=require('node:child_process'),http=require('node:http'),assert=require('node:assert/strict'),crypto=require('node:crypto'),zlib=require('node:zlib');
 const root=path.resolve(__dirname,'..'),sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+// --controls exercises the real native combo/list and VFS, plus USER.122's
+// Pascal far-pointer bridge. The original physical SIMPLE test below stays
+// available with its existing invocation and geometry assertions.
+const directoryWat=String.raw`
+  (func (export "dir_init16")
+    (global.set $is_win16 (i32.const 1))
+    (global.set $WIN16_THUNK_SEL (call $win16_index_to_sel (i32.const 3)))
+    (call $win16_seg_set (i32.const 1) (i32.const 0x100000) (i32.const 65536) (i32.const 0) (i32.const 1))
+    (call $win16_seg_set (i32.const 2) (i32.const 0x110000) (i32.const 65536) (i32.const 1) (i32.const 2))
+    (call $win16_seg_set (i32.const 3) (i32.const 0x120000) (i32.const 65536) (i32.const 0) (i32.const 3))
+    (global.set $code16 (i32.const 1))
+    (call $win16_set_sreg (i32.const 1) (call $win16_index_to_sel (i32.const 1)))
+    (call $win16_set_sreg (i32.const 2) (call $win16_index_to_sel (i32.const 2))))
+  (func (export "dir_user122") (param $h i32) (param $flags i32) (param $spec i32) (result i32)
+    (local $proc i32)
+    (local.set $proc (call $win16_builtin_wndproc_for (local.get $h)))
+    ;; Keep a real guest subclass installed: USER.122 must call underneath it.
+    (call $wnd_table_set (local.get $h) (i32.const 0x000f0123))
+    (call $memcpy (call $g2w (i32.const 0x110900)) (call $g2w (local.get $spec))
+      (i32.add (call $strlen (call $g2w (local.get $spec))) (i32.const 1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.const 0x110800))
+    (call $gs16 (i32.const 0x110800) (i32.const 0x90))
+    (call $gs16 (i32.const 0x110802) (call $win16_index_to_sel (i32.const 1)))
+    (call $gs32 (i32.const 0x110804) (i32.const 0x00170900))
+    (call $gs16 (i32.const 0x110808) (local.get $flags))
+    (call $gs16 (i32.const 0x11080a) (i32.const 0x405))
+    (call $gs16 (i32.const 0x11080c) (call $win16_h16 (local.get $h)))
+    (call $gs32 (i32.const 0x11080e) (local.get $proc))
+    (drop (call $win16_user (i32.const 122)))
+    ;; Remove only our temporary subclass after checking it survived.
+    (if (i32.ne (call $wnd_table_get (local.get $h)) (i32.const 0x000f0123)) (then (unreachable)))
+    (call $wnd_table_set (local.get $h) (global.get $WNDPROC_CTRL_NATIVE))
+    (i32.or (i32.load (global.get $reg_base))
+      (i32.shl (i32.load offset=8 (global.get $reg_base)) (i32.const 16))))
+  (func (export "dir_in_call32") (result i32) (global.get $win16_in_call32))
+  (func (export "dir_frame") (result i64) (global.get $win16_bridge_frame))
+`;
+async function controls(){
+ const {bootRenderHarness}=require('./render-helper'),RegionMap=require('../lib/region-map.generated');
+ let h,diagnostic;
+ h=await bootRenderHarness({extraWat:directoryWat,extraHostOverrides:{crash_unimplemented:p=>{
+  const b=new Uint8Array(h.memory.buffer);let end=p;while(b[end])++end;
+  diagnostic=Buffer.from(b.subarray(p,end)).toString('latin1');
+ }}});const e=h.exports,v=h.hostCtx.vfs;
+ const bytes=new Uint8Array(h.memory.buffer),wa=g=>RegionMap.g2w(g,e.get_image_base());
+ const str=s=>{const g=e.guest_alloc(s.length+1);bytes.set(Buffer.from(s+'\0'),wa(g));return g;};
+ const read=g=>{const p=wa(g);let q=p;while(bytes[q])++q;return Buffer.from(bytes.subarray(p,q)).toString('latin1');};
+ const msg=(c,m,w=0,l=0)=>e.send_message(c,m,w,l),out=e.guest_alloc(300);
+ const rows=c=>Array.from({length:msg(c,0x146)},(_,i)=>{const n=msg(c,0x148,i,out);assert.equal(n,read(out).length);assert.equal(msg(c,0x149,i),n);return read(out);});
+ const spec=str('c:\\cbdir-test\\*.txt'),none=str('c:\\cbdir-test\\missing.*');
+ v.dirs.add('c:\\cbdir-test');v.dirs.add('c:\\cbdir-test\\subdir');
+ // Deliberately nonalphabetical creation order and mixed attributes.
+ for(const [name,attrs] of [['zulu.txt',0x20],['alpha.txt',0x80],['readonly.txt',1],['hidden.txt',2],['system.txt',4]])v.files.set('c:\\cbdir-test\\'+name,{data:new Uint8Array([65]),attrs});
+ v.driveTypes=new Map([['z',3],['a',2]]);
+ for(const style of [0x81,0x223,0x323]){
+  const sorted=!!(style&0x100);
+  const c=e.test_create_combobox(5,5,180,120,style);assert(c);const lb=e.combobox_get_lb_hwnd(c);assert(lb);
+  msg(c,0x143,0,str('middle'));msg(c,0x14e,0);msg(c,0x151,0,0x1234);
+  assert.equal(msg(c,0x145,0,spec),2);
+  const expected=sorted?['alpha.txt','middle','zulu.txt']:['middle','alpha.txt','zulu.txt'];
+  assert.deepEqual(rows(c),expected);const sel=sorted?1:0;
+  assert.equal(msg(c,0x147),sel);assert.equal(e.send_message(lb,0x188,0,0),sel);
+  assert.equal(msg(c,0x150,sel),0x1234);for(let i=0;i<3;++i)if(i!==sel)assert.equal(msg(c,0x150,i),0);
+  msg(c,0xd,300,out);assert.equal(read(out),'middle');
+  assert.equal(msg(c,0x145,0,none),-1);assert.deepEqual(rows(c),expected);
+  // Drive enumeration must work even when the wildcard found nothing.
+  assert.equal(msg(c,0x145,0xc000,none),sorted?3:6);
+  const drives=['[-a-]','[-c-]','[-d-]','[-z-]'];
+  assert.deepEqual(rows(c),sorted?[...drives,...expected]:[...expected,...drives]);
+  assert.equal(msg(c,0x147),sorted?5:0);assert.equal(msg(c,0x150,sorted?5:0),0x1234);
+ }
+ const c=e.test_create_combobox(5,5,180,120,0x323),all=str('c:\\cbdir-test\\*.*');
+ const enumerate=(flags,s=spec)=>{msg(c,0x14b);const ret=msg(c,0x145,flags,s);return {ret,rows:rows(c)};};
+ assert.deepEqual(enumerate(0x8001),{ret:0,rows:['readonly.txt']});
+ assert.deepEqual(enumerate(0x8002),{ret:0,rows:['hidden.txt']});
+ assert.deepEqual(enumerate(0x8004),{ret:0,rows:['system.txt']});
+ assert.deepEqual(enumerate(0x8020),{ret:0,rows:['zulu.txt']});
+ assert.deepEqual(enumerate(1),{ret:2,rows:['alpha.txt','readonly.txt','zulu.txt']});
+ assert.deepEqual(enumerate(0x8010,all),{ret:1,rows:['[..]','[subdir]']});
+ assert.equal(v.findHandles.size,0,'all enumerators closed');
+ e.dir_init16();msg(c,0x14b);
+ const frame=e.dir_frame();
+ assert.equal(e.dir_user122(c,0,spec),1);assert.deepEqual(rows(c),['alpha.txt','zulu.txt']);
+ assert.equal(e.dir_in_call32(),0);assert.equal(e.dir_frame(),frame);assert.equal(e.get_esp(),0x110812);assert.equal(e.get_eip(),0x100090);
+ assert.equal(e.dir_user122(c,0xc000,none),3);assert.deepEqual(rows(c),['[-a-]','[-c-]','[-d-]','[-z-]','alpha.txt','zulu.txt']);
+ assert.equal(e.dir_in_call32(),0);assert.equal(e.dir_frame(),frame);assert.equal(e.get_esp(),0x110812);assert.equal(e.get_eip(),0x100090);
+ assert.equal(msg(c,0x147),-1);assert.equal(v.findHandles.size,0);
+ const owner=e.test_create_combobox(5,5,180,120,0x13);
+ assert.throws(()=>msg(owner,0x145,0,spec),/unreachable|CB_DIR/);
+ assert.equal(diagnostic,'CB_DIR');
+ console.log('PASS CB_DIR SIMPLE/string0x223/sorted0x323 files/drives/attributes/strings/return/selection/data; USER122 far0x405 balanced bridge');
+}
 const source=String.raw`
 typedef unsigned long U;typedef void* P;
 #define API __declspec(dllimport) __stdcall
@@ -117,5 +209,5 @@ async function main(out,{expectOld=false}={}){
  if(!expectOld){assert.deepEqual(failures,[]);save('assertions.json',{states:states.length,failures,productionBrowserCPU:true,fourPlanes:states.every(s=>s.fourPlanes.nativeDesktop)});console.log('PASS CB_DIR public strings/state/native selection/fixed GDI/four planes',states.length);}
  }finally{save('browser.log.json',logs);await Promise.allSettled(pending);if(browser){await browser.close();save('browser-wait.json',await wait);}if(server)await new Promise(r=>server.close(r));if(process.env.COMBO_DIRECTORY_RETAIN_TRANSIENTS)save('transients-retained.json',{root:transient.root,downloads:transient.downloads,waits:wait?[await wait]:[]});else save('transients.json',await transient.cleanup(out));if(display)await display.close();}
 }
-if(require.main===module)main(process.argv[2]?path.resolve(process.argv[2]):fs.mkdtempSync('/dev/shm/combobox-directory-'),{expectOld:process.argv.includes('--expect-old')}).catch(e=>{console.error(e.stack);process.exitCode=1;});module.exports={fixture,main};
+if(require.main===module)(process.argv.includes('--controls')?controls():main(process.argv[2]?path.resolve(process.argv[2]):fs.mkdtempSync('/dev/shm/combobox-directory-'),{expectOld:process.argv.includes('--expect-old')})).catch(e=>{console.error(e.stack);process.exitCode=1;});module.exports={fixture,main,controls};
 

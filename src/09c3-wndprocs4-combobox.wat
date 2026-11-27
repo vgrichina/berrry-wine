@@ -393,6 +393,9 @@
     (local $paint_state_g i32)
     (local $prev_lb i32) (local $prev_edit i32) (local $prev_popup i32)
     (local $prev_font i32)
+    (local $dir_buf i32) (local $dir_w i32) (local $dir_text i32)
+    (local $dir_find i32) (local $dir_attrs i32) (local $dir_last i32)
+    (local $dir_mask i32) (local $dir_drive i32)
 
     ;; Dialog navigation must leave selection arrows to WM_KEYDOWN below.
     ;; Keep Tab with the dialog manager; character input belongs to the combo.
@@ -1071,21 +1074,94 @@
             (i32.const 16)
             (i32.eq (local.get $wParam) (i32.const -1))))))
 
-    ;; ---------- CB_DIR: ordinary ANSI, unsorted CBS_SIMPLE strings ----------
-    ;; Microsoft Visual C++ 4 (September 1995), Vol3 p172; WIN32.HLP
-    ;; topics 3503/3607: matching file names append; return the last index.
-    ;; Reuse LB_DIR for flags=0. Keep unqualified styles/attributes fail-fast.
+    ;; ---------- CB_DIR: ANSI strings, including sorted dropdown lists ----------
+    ;; https://learn.microsoft.com/en-us/windows/win32/controls/cb-dir
+    ;; Add through CB_ADDSTRING, not LB_DIR: sorted insertion must also move
+    ;; the combo's selection mirror. LB_DIR has no mapped-drive enumeration.
     (if (i32.eq (local.get $msg) (i32.const 0x0145))   ;; CB_DIR
       (then
-        (if (i32.and
-              (i32.and (i32.eq (local.get $variant) (i32.const 1))
-                (i32.eqz (call $wnd_unicode_get (local.get $hwnd))))
-              (i32.and (i32.eqz (local.get $wParam))
-                (i32.eqz (i32.and (call $cb_style (local.get $state_w))
-                  (i32.const 0x6130))))) ;; owner-draw, sort, upper/lowercase
-          (then (return (call $wnd_send_message (local.get $lb)
-            (i32.const 0x018D) (local.get $wParam) (local.get $lParam)))))
-        (call $crash_unimplemented (i32.const 0x100))))
+        (local.set $style (call $cb_style (local.get $state_w)))
+        (if (i32.or (call $wnd_unicode_get (local.get $hwnd))
+              (i32.or (i32.ne (i32.and (local.get $style) (i32.const 0x6000)) (i32.const 0))
+                (i32.and (i32.ne (i32.and (local.get $style) (i32.const 0x30)) (i32.const 0))
+                  (i32.eqz (i32.and (local.get $style) (i32.const 0x200)))))) ;; non-string owner-draw or case conversion
+          (then
+            ;; Allocate the diagnostic, rather than passing a literal address
+            ;; into unrelated string storage (previously reported "win.ini").
+            (local.set $dir_buf (call $heap_alloc (i32.const 8)))
+            (local.set $dir_w (call $g2w (local.get $dir_buf)))
+            (i32.store (local.get $dir_w) (i32.const 0x445f4243)) ;; CB_D
+            (i32.store offset=4 (local.get $dir_w) (i32.const 0x5249)) ;; IR\0
+            (call $crash_unimplemented (local.get $dir_w))))
+        (if (i32.or (i32.eqz (local.get $lParam))
+              (i32.ne (i32.and (local.get $wParam) (i32.const -49208)) (i32.const 0))) ;; ~0xc037
+          (then (return (i32.const -1))))
+        ;; WIN32_FIND_DATAA followed by an independent, bracketable name.
+        (local.set $dir_buf (call $heap_alloc (i32.const 600)))
+        (if (i32.eqz (local.get $dir_buf)) (then (return (i32.const -2))))
+        (local.set $dir_w (call $g2w (local.get $dir_buf)))
+        (local.set $dir_text (i32.add (local.get $dir_buf) (i32.const 320)))
+        (local.set $dir_last (i32.const -1))
+        (local.set $dir_find (call $host_fs_find_first_file
+          (call $g2w (local.get $lParam)) (local.get $dir_buf) (i32.const 0)))
+        (block $cbdir_done
+          (if (i32.ne (local.get $dir_find) (i32.const -1))
+            (then
+              (block $cbdir_files_done (loop $cbdir_files
+                (local.set $dir_attrs (i32.load (local.get $dir_w)))
+                ;; Hidden/system/read-only entries require their DDL bits;
+                ;; directories require DDL_DIRECTORY. Archive alone is a
+                ;; normal read/write file unless EXCLUSIVE requests otherwise.
+                (if (i32.and
+                      (i32.eqz (i32.and (i32.and (local.get $dir_attrs) (i32.const 0x17))
+                        (i32.xor (local.get $wParam) (i32.const -1))))
+                      (i32.or (i32.eqz (i32.and (local.get $wParam) (i32.const 0x8000)))
+                        (i32.ne (i32.and (i32.and (local.get $dir_attrs) (local.get $wParam))
+                          (i32.const 0x37)) (i32.const 0))))
+                  (then
+                    (local.set $slen (call $strlen (i32.add (local.get $dir_w) (i32.const 44))))
+                    ;; Omit "."; a host-provided ".." remains a real row.
+                    (if (i32.and (i32.lt_u (local.get $slen) (i32.const 260))
+                          (i32.ne (i32.load16_u offset=44 (local.get $dir_w)) (i32.const 46)))
+                      (then
+                        (local.set $name_ptr (call $g2w (local.get $dir_text)))
+                        (if (i32.and (local.get $dir_attrs) (i32.const 0x10))
+                          (then
+                            (i32.store8 (local.get $name_ptr) (i32.const 91))
+                            (call $memcpy (i32.add (local.get $name_ptr) (i32.const 1))
+                              (i32.add (local.get $dir_w) (i32.const 44)) (local.get $slen))
+                            (i32.store16 (i32.add (local.get $name_ptr)
+                              (i32.add (local.get $slen) (i32.const 1))) (i32.const 93)))
+                          (else (call $memcpy (local.get $name_ptr)
+                            (i32.add (local.get $dir_w) (i32.const 44))
+                            (i32.add (local.get $slen) (i32.const 1)))))
+                        (local.set $dir_last (call $combobox_wndproc (local.get $hwnd)
+                          (i32.const 0x0143) (i32.const 0) (local.get $dir_text)))
+                        (br_if $cbdir_files_done (i32.lt_s (local.get $dir_last) (i32.const 0)))))))
+                (br_if $cbdir_files_done (i32.eqz (call $host_fs_find_next_file
+                  (local.get $dir_find) (local.get $dir_buf) (i32.const 0))))
+                (br $cbdir_files)))
+              (drop (call $host_fs_find_close (local.get $dir_find)))
+              (br_if $cbdir_done (i32.eq (local.get $dir_last) (i32.const -2)))))
+          ;; Drives are independent of wildcard matches (including no matches).
+          (if (i32.and (local.get $wParam) (i32.const 0x4000))
+            (then
+              (local.set $dir_mask (call $host_fs_logical_drive_mask))
+              (block $cbdir_drives_done (loop $cbdir_drives
+                (br_if $cbdir_drives_done (i32.ge_u (local.get $dir_drive) (i32.const 26)))
+                (if (i32.and (local.get $dir_mask) (i32.shl (i32.const 1) (local.get $dir_drive)))
+                  (then
+                    (local.set $name_ptr (call $g2w (local.get $dir_text)))
+                    (i32.store (local.get $name_ptr) (i32.or (i32.const 0x2d002d5b)
+                      (i32.shl (i32.add (local.get $dir_drive) (i32.const 97)) (i32.const 16))))
+                    (i32.store16 offset=4 (local.get $name_ptr) (i32.const 93))
+                    (local.set $dir_last (call $combobox_wndproc (local.get $hwnd)
+                      (i32.const 0x0143) (i32.const 0) (local.get $dir_text)))
+                    (br_if $cbdir_drives_done (i32.lt_s (local.get $dir_last) (i32.const 0)))))
+                (local.set $dir_drive (i32.add (local.get $dir_drive) (i32.const 1)))
+                (br $cbdir_drives))))))
+        (call $heap_free (local.get $dir_buf))
+        (return (local.get $dir_last))))
 
     ;; The container router deliberately stops at COMBOBOX. SIMPLE therefore
     ;; forwards field clicks to its EDIT, using the child's inset coordinates.
