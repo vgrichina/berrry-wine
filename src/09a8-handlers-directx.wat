@@ -6935,12 +6935,10 @@
         (global.set $vblank_wait_active (i32.const 0))))
     (local.set $entry (call $dx_from_this (local.get $arg0)))
     (local.set $back_guest (load.field DxObject misc0 (local.get $entry)))
-    ;; With a render Worker still drawing this frame, queue the swap behind
-    ;; those draws and return: the guest simulates the next frame while this
-    ;; one rasterizes. The present waits for the next fence, and a second
-    ;; Flip fences first, so at most one frame is ever in flight.
-    (if (i32.and (i32.eq (local.get $count) (i32.const 2))
-                 (i32.eq (local.get $steps) (i32.const 1)))
+    ;; With GPU draws outstanding, the GPU stream rotates the chain and
+    ;; presents the new front from GPU memory (any chain length; a
+    ;; TargetOverride that skips members keeps the CPU path).
+    (if (i32.eq (local.get $steps) (i32.const 1))
       (then
         (local.set $back_entry (call $dx_from_this (local.get $back_guest)))
         (if (call $d3dim_worker_try_flip (local.get $entry) (local.get $back_entry))
@@ -6963,9 +6961,9 @@
         (local.set $source_observed (call $host_gpu_gl_call (i32.const 0x20008)
           (local.get $entry) (local.get $back_entry)))
         ;; A Flip rotates memory associations, not COM identities or role caps.
-        ;; TargetOverride rotates by its distance from the front. Two members
-        ;; still swap exactly as before; larger chains fence the two-surface
-        ;; worker fast path and rotate every member here.
+        ;; TargetOverride rotates by its distance from the front. $d3g_flip
+        ;; rotates the same way for one step; this is the path for everything
+        ;; it declines (no GPU draws pending, a skipping TargetOverride, ...).
         (block $rotated (loop $rotate
           (br_if $rotated (i32.eqz (local.get $steps)))
           (local.set $tmp_dib (load.field DxObject misc1 (local.get $entry)))

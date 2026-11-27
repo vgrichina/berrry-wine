@@ -11,6 +11,17 @@ retained-GDI finding remains an unsupported limitation; default stays off.
 The cross-instance correction is described below.
 The findings below describe the original audited revision.
 
+## Default promotion (2026-11-26, gps/d6)
+
+D3DIM lazy Lock is now the WAT default on every host, matching Glide and
+D3D9. The retained-DC case below is fixed: `$gdi_surface_descriptor` settles
+an armed entry over a DX surface's bits before GDI reads or writes them
+(`test/test-d3dim-gps-lazy-discard.js` case 5 fails without it). Opt out
+with `--no-d3dim-lazy-sync` / `?no-lazy-sync`.
+`tools/audit-d3dim-lazy-sync.js` predates GPU stream v2. It fakes
+readback through `gpu_gl_call`, so its first eager control assertion now
+fails. The regressions under test/ supersede it.
+
 ## Shared-thread correction (2026-09-29)
 
 Pending Lock range and deferred-work state now live in the allocated

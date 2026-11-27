@@ -2277,15 +2277,22 @@
     (call $d3g_stat (local.get $pb) (i32.const 6) (i32.const 1))
     (drop (call $d3g_kick (local.get $pb) (global.get $GPS_KICK_ASYNC))))
 
-  ;; 0x20003 {front, back}: a GPU Flip. Swap the chain's DIBs (the colour
-  ;; targets follow them) and PRESENT the new front, with no readback.
+  ;; 0x20003 {front, back}: a GPU Flip, back = the member attached to the
+  ;; front (the one that becomes visible). Rotate the chain's DIBs one step
+  ;; toward the front exactly as the CPU Flip does (a swap for two members;
+  ;; Re-Volt's triple buffer rotates three), the colour targets following
+  ;; their DIBs, and PRESENT the new front, with no readback.
   ;; 3 = flipped and presented; 0 = take the synchronous CPU path.
   (func $d3g_flip (param $pb i32) (param $desc i32) (result i32)
     (local $front i32) (local $back i32) (local $t i32) (local $hwnd i32) (local $w i32) (local $hgt i32)
     (local $px i32) (local $py i32) (local $pw i32) (local $ph i32) (local $cx i32) (local $cy i32)
-    (local $cw i32) (local $ch i32) (local $tmp i32)
+    (local $cw i32) (local $ch i32) (local $tmp i32) (local $cursor i32) (local $next i32)
     (local.set $front (i32.load (local.get $desc)))
     (local.set $back (i32.load offset=4 (local.get $desc)))
+    ;; The rotation walks the chain from the front: back must be its next member.
+    (if (i32.eqz (load.field DxObject misc0 (local.get $front))) (then (return (i32.const 0))))
+    (if (i32.ne (call $dx_from_this (load.field DxObject misc0 (local.get $front))) (local.get $back))
+      (then (return (i32.const 0))))
     (local.set $t (call $d3g_find (local.get $pb) (load.field DxObject misc1 (local.get $back))))
     (if (i32.eqz (local.get $t)) (then (return (i32.const 0))))
     (local.set $w (load.field DxObject width (local.get $front)))
@@ -2316,11 +2323,18 @@
       (then (return (i32.const 0))))
     (call $d3g_prepare (local.get $pb) (local.get $t) (i32.const 0))
     (call $d3g_present_ready (local.get $pb))
-    (call $page_watch_write (local.get $front) (i32.const 32))
-    (call $page_watch_write (local.get $back) (i32.const 32))
+    ;; The Flip handler validated the chain (every misc0 a live member).
     (local.set $tmp (load.field DxObject misc1 (local.get $front)))
-    (store.field DxObject misc1 (local.get $front) (load.field DxObject misc1 (local.get $back)))
-    (store.field DxObject misc1 (local.get $back) (local.get $tmp))
+    (local.set $cursor (local.get $front))
+    (block $tail (loop $shift
+      (call $page_watch_write (local.get $cursor) (i32.const 32))
+      (local.set $next (load.field DxObject misc0 (local.get $cursor)))
+      (br_if $tail (i32.eqz (local.get $next)))
+      (local.set $next (call $dx_from_this (local.get $next)))
+      (store.field DxObject misc1 (local.get $cursor) (load.field DxObject misc1 (local.get $next)))
+      (local.set $cursor (local.get $next))
+      (br $shift)))
+    (store.field DxObject misc1 (local.get $cursor) (local.get $tmp))
     (call $d3g_present (local.get $pb) (i32.load offset=28 (local.get $t))
       (local.get $px) (local.get $py) (local.get $pw) (local.get $ph) (local.get $hwnd) (i32.const 0) (i32.const 0) (local.get $front))
     (call $d3g_stat (local.get $pb) (i32.const 10) (i32.const 1))

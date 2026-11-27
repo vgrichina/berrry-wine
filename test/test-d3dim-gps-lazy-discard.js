@@ -9,7 +9,10 @@
 //   pixels dropped; the next GPU use uploads the whole new DIB (a full
 //   readback afterwards shows the CPU's pixels where the GPU had drawn);
 // - a partial copy, or a copy whose source is the locked surface itself,
-//   still reads back on first touch.
+//   still reads back on first touch;
+// - GDI through a DC bound before the Lock armed (it reads the bits with no
+//   guest translation) settles the entry: it reads the GPU pixels, not a
+//   stale DIB, and the Unlock does not report the Lock untouched.
 const assert = require('assert');
 const { bootGpsDevice } = require('./helpers/d3dim-gps-device');
 
@@ -25,6 +28,13 @@ const WAT = String.raw`
 (func (export "lz_w2g") (param $wa i32) (result i32) (call $w2g (local.get $wa)))
 (func (export "lz_movs") (param $edi i32) (param $esi i32) (param $n i32)
  (call $rep_movs_mem (local.get $edi) (local.get $esi) (local.get $n) (i32.const 4)))
+(func (export "lz_hdc") (param $s i32) (result i32) (local $hdc i32)
+ (local.set $hdc (i32.add (i32.const 0x200000) (call $dx_slot_of (call $dx_from_this (local.get $s)))))
+ (drop (call $gdi_dx_dc_bind (local.get $hdc)))
+ (local.get $hdc))
+(func (export "lz_getpixel") (param $hdc i32) (param $x i32) (param $y i32) (result i32)
+ (call $handle_GetPixel (local.get $hdc) (local.get $x) (local.get $y) (i32.const 0) (i32.const 0) (i32.const 0))
+ (i32.load (global.get $reg_base)))
 (func (export "lz_stos") (param $edi i32) (param $n i32) (param $v i32)
  (call $rep_stos_mem (local.get $edi) (local.get $n) (i32.const 4) (i64.extend_i32_u (local.get $v))))
 `;
@@ -101,6 +111,18 @@ const WAT = String.raw`
   assert.strictEqual(g.stat(43), 2);
   assert.strictEqual(at(1, 1), GREEN);
   e.lz_unlock(rt);
+
+  // 5. A surface DC bound before the Lock: GetPixel must see the GPU pixel.
+  const hdc = e.lz_hdc(rt);
+  draw(0xffff0000, [[0, 0], [40, 0], [0, 40]]);
+  e.lz_lock(rt);
+  assert.strictEqual(e.lz_armed(), bytes, 'Lock armed lazily');
+  lazy = lazyReads();
+  const px = e.lz_getpixel(hdc, 1, 1) >>> 0;
+  assert.strictEqual(px, 0x0000ff, `GetPixel through a retained DC reads the GPU red, got ${px.toString(16)}`);
+  assert.strictEqual(lazyReads(), lazy + 1, 'the GDI access settled the lazy Lock');
+  assert.strictEqual(e.lz_armed(), 0);
+  assert.strictEqual(e.lz_unlock(rt), 0, 'a GDI-touched Lock is not untouched');
 
   assert.deepStrictEqual(g.errors, []);
   console.log(`PASS lazy Lock + whole-surface REP MOVS/STOS reads nothing back: ${JSON.stringify({ overwritten: g.stat(43), readbacks: g.stat(2), lazy: lazyReads() })}`);

@@ -5382,9 +5382,11 @@ async function main() {
   // tools/page-probes/measure-guest-rate.js reads the same counter in a browser.
   const guestBlocks = () => instance.exports.get_blocks_now
     ? instance.exports.get_blocks_now() >>> 0 : 0;
-  // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
-  // turns it off there); the WAT default and the CLI default are off.
-  if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
+  // Lazy Lock sync is the WAT default on every host (the browser's
+  // ?no-lazy-sync turns it off there); --no-d3dim-lazy-sync is the CLI's
+  // opt-out. --d3dim-lazy-sync is accepted and changes nothing.
+  if (hasFlag('no-d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(0);
+  else if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
   if (GUEST_PAGE_STATS) {
     if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
       throw new Error('--guest-page-stats requires the offline artifact from ' +

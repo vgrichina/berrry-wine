@@ -203,7 +203,7 @@ Without this, every new backend would have to reimplement the 846 lines of
     - Survey and readbacks per frame, base → branch, WebGL executor at fixed batch budgets:
       - Forsaken: 56 → 16 readbacks (bltDst 48 → 4).
       - MW3: 0.96 → 0.18 per frame (bltDst 7 → 0). What is left is Lock.
-      - gta2_demo: 173, all Lock(WAIT) of the back buffer, which the guest genuinely reads.
+      - gta2_demo: 173, all Lock(WAIT) of the back buffer. (D6 CORRECTION: the guest never touches them; see D6.)
       - dx_flip3dtl and dx_boids: 0 → 0.
     - Pixels: md5-identical on flip3dtl, boids and gta2. MW3 differs by ±1 only: a frame presented from the DIB (565 shift) on base and from the GPU (bit-replicated) on the branch. Forsaken differs in its animated menu elements after 6 fewer flips.
     - Not done:
@@ -216,14 +216,26 @@ Without this, every new backend would have to reimplement the 846 lines of
 - **D5. DX6/7 multi-stage texture stages and specular through the 09aj cascade.** Removes the software fallback.
   - **Status (2026-11-26, branch gps/d5-tss): done for what the device carries.** `$d3g_draw` no longer hand-builds a stage-0 shader: `$d3g_stage_key` reads the cascade (stage 0 from describe, later stages raw via `$d3dim_tss_load`) and `$d3g_fixed_shader` lowers it through `$d3d_fixed_compile_cascade6`, the D3D9 fixed-function compiler, then canonicalizes to core IR (executors stay API-neutral). Every DX6/7 COLOROP/ALPHAOP and argument (DIFFUSE, CURRENT, TEXTURE, TFACTOR, SPECULAR, COMPLEMENT, ALPHAREPLICATE) and SPECULARENABLE are honoured; TEXTUREFACTOR is CONSTS c0 (fog colour c7), so a TFACTOR fade reuses one shader; colour-key kill and vertex fog are appended to the core IR / cascade. An out-of-range op or arg traps as decline reason 7.
   - The census (`scratch/runs/20261126-gps-d5/census/`) found no declines anywhere before D5 either: the gaps were silent approximations, chiefly Giants' 48k MODULATE(TEXTURE, TFACTOR) draws read as MODULATE(TEXTURE, DIFFUSE) and ALPHAOP DISABLE drawn as MODULATE. Giants' loading screen is now drawn at full brightness. `d3dim_gps_stat` 46..49 count multi-stage draws, stage>0 cuts, draws the old lowering approximated, and sixth-stage cuts (`[d3dim-gps] stages` in run.js).
+  - D6 (2026-11-26, branch gps/d6): the D3DIM rows still behind stat 47 stay at 0 on every route measured (mw3, gta2_demo, Forsaken, Re-Volt, dx_flip3dtl, dx_boids, plus the D5 census), so stage>0 textures were not started.
   - Not done, deliberately: stage>0 textures. SetTexture on stage>0 is still dropped, the vertex path carries one UV set and the caps advertise one stage, so a later stage that samples ends the cascade there (stat 47). No app in the census uses stage>0. Multi-texture needs per-stage texture binding, TEXCOORDINDEX-driven UV sets in the vertex layout and caps raised together. Test: `test/test-d3dim-gps-stages.js` (software and headless-WebGL executors against computed D3D values).
+
+- **D6. Readback cleanup (branch gps/d6 = gps/d3-2d + gps/d5-tss).**
+  - **Status (2026-11-26): done.** Evidence: `scratch/runs/20261126-gps-d6/`.
+    - One D3DIM/GL/D3D9 ring consumer per process. A guest thread's `createHostImports` used to build its own Bridge: a fresh executor that had never seen main's CREATEs. That was Re-Volt's "color target 11 was never created". The thread now kicks main's bridge through `gpsProcessBridge` (PROCESS_SHARED_KEYS), as Glide already did. A GpsError on a cooperative guest thread now fails the run (rc 1). It used to be swallowed as a thread crash while WAT spinlocks were held, and main then spun forever.
+    - D3DIM lazy Lock is the WAT default on every host, as Glide and D3D9 already were. The CLI opts out with `--no-d3dim-lazy-sync`, the browser with `?no-lazy-sync`. GDI on a surface DC bound before the Lock now settles the entry in `$gdi_surface_descriptor` (the audit's retained-DC limitation).
+      - MW3@8000: 55 readbacks → 3 (51 Locks are whole-surface REP MOVS overwrites, discarded), md5 equal to eager at 4 budgets.
+      - gta2_demo@8000: 90 Lock readbacks → 0 (180/180 lazy Locks untouched).
+    - GPU Flip for any chain length (steps 1). `$d3g_flip` rotates every member's DIB as the CPU Flip does. Re-Volt's triple buffer took the CPU path with one cpuPresent readback per Flip. At 55 s: 25407 readbacks (1.8 GB) → 537 (getDC 531), and 0 → 27077 GPU presents.
+    - gta2 and Re-Volt pixels are equal to the eager/CPU path at RGB565 precision only. The GPU present shows the 8-bit target, not the 16-bit surface's quantized DIB (maxDelta 7). The same holds for every app already GPU-presenting a 16-bit chain. A quantize-on-present for 16-bit primaries is open.
+    - Forsaken's D3 pixel diff is not a rendering difference. Every frame of batches 410-428 on the branch is md5-identical to some base frame: the menu animation cycles through 6 states. A control build, whose only change is an 8 KB larger producer block, diverges from the branch the same way (1357 px, the same bbox). Guest heap addresses shift, the guest's work per batch shifts, and so timeGetTime differs at the same call index.
+    - GPU→GPU COPY for Blt was not done: no route measured issues a bltSrc readback once Locks are lazy. MW3's 2-3 disappear.
 
 **Risks:**
 
 - These semantics live only in JS today, and WAT must take them over:
   - the page-watch dirty versions (PageLease);
   - garbage collection of live surfaces;
-  - Flip chains longer than 2;
+  - Flip chains longer than 2 (GPU path since D6);
   - the staleness ordering of GPU and CPU presents.
 - A guest that keeps a pointer after Lock sees stale pixels more often.
 - Mixed GPU and software draws within a frame thrash until D5.

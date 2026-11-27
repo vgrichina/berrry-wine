@@ -62,6 +62,12 @@ only queries and T1 does everything else.
   shared board lock), and `seq` comes from one device counter, so a device
   driven by two threads in one frame ping-pongs but stays correct.
 - A ring is never bound to its creating thread.
+- On the host there is one consumer (Bridge and executor) per ring per
+  process. A guest thread's host imports reach the main context's bridge
+  through `gpsProcessBridge` (D3DIM, GL, D3D9) or `glideBridge`, both in
+  `PROCESS_SHARED_KEYS`. A second executor would never see the CREATEs
+  another thread's records made. An executor error (GpsError) on a guest
+  thread fails the run instead of being taken as that thread's crash.
 
 ## Ring directory entry
 
@@ -139,8 +145,11 @@ translation of that range settles the entry: D3DIM materializes it, while
 Glide and D3D9 drop the mutex, take their own producer lock and read back.
 A whole-range REP MOVS/STOS discards the entry. An Unlock that finds its
 entry still armed skips both the readback and the upload. Glide
-`grLfbLock` and D3D9 back-buffer LockRect arm unconditionally; D3DIM still
-arms only when the host enables `d3dim_lazy_enable`. The counters are
+`grLfbLock` and D3D9 back-buffer LockRect arm unconditionally. D3DIM arms
+by default too; a host opts out with `d3dim_lazy_enable(0)` (CLI
+`--no-d3dim-lazy-sync`, browser `?no-lazy-sync`). GDI never translates
+guest addresses, so `$gdi_surface_descriptor` settles an armed entry over a
+DX surface's bits before GDI touches them. The counters are
 `gps_stat(api, 8..11)`: armed, touched, untouched and overwritten. Run
 20261121-gps-coherence has the measurements.
 

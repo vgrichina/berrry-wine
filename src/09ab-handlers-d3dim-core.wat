@@ -791,10 +791,15 @@
   ;; pixels even when this instance has never drawn, so CPU barriers must query
   ;; the owner rather than consulting only this instance's pending flag.
   (global $d3dim_gpu_cooperative (mut i32) (i32.const 0))
-  ;; Opt-in experiment. Only DIB-backed,
-  ;; nonprimary Locks qualify; host/other-surface barriers remain eager.
-  ;; Translation is conservative: an address proof may synchronize early.
-  (global $d3dim_lazy_on (mut i32) (i32.const 0))
+  ;; Lazy Lock: on by default on every host, as Glide grLfbLock and D3D9
+  ;; LockRect always arm; a host opts out with d3dim_lazy_enable(0) (the
+  ;; browser's ?no-lazy-sync, the CLI's --no-d3dim-lazy-sync). Only
+  ;; DIB-backed, nonprimary, page-aligned Locks qualify, and only when the
+  ;; executor takes the 0x20007 publish; host/other-surface barriers remain
+  ;; eager. Translation is conservative: an address proof may synchronize
+  ;; early. GDI on a previously bound surface DC settles the entry in
+  ;; $gdi_surface_descriptor.
+  (global $d3dim_lazy_on (mut i32) (i32.const 1))
   (global $d3dim_lazy_armed (mut i32) (i32.const 0))
   (global $d3dim_lazy_touched (mut i32) (i32.const 0))
   (global $d3dim_lazy_untouched (mut i32) (i32.const 0))
