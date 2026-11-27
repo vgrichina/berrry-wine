@@ -1126,24 +1126,22 @@
     (local $flags i32)
     (local.set $flags (i32.load (call $g2w
       (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 36)))))  ;; ret + 8 args
-    (drop (call $icon_draw_handle
+    (i32.store offset=0 (global.get $reg_base) (call $icon_draw_handle
       (local.get $arg3) (local.get $arg0)
       (local.get $arg1) (local.get $arg2)
       (local.get $arg4)
       (i32.load (call $g2w (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24))))
       (local.get $flags)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 40)))  ;; 9 args + ret
   )
 
   ;; DrawIcon(hdc, x, y, hIcon) — 4 args stdcall. The fixed-size sibling of
   ;; DrawIconEx: always the icon's natural size, always the full composite.
   (func $handle_DrawIcon (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (drop (call $icon_draw_handle
+    (i32.store offset=0 (global.get $reg_base) (call $icon_draw_handle
       (local.get $arg3) (local.get $arg0)
       (local.get $arg1) (local.get $arg2)
       (i32.const 0) (i32.const 0) (global.get $DI_NORMAL)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))  ;; ret + 4 args
   )
 

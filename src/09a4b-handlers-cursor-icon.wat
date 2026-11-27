@@ -174,11 +174,13 @@
         (drop (call $gdi_native_select_object (local.get $ok)
                 (i32.and (i32.load offset=4 (local.get $p))
                   (i32.const 0x7FFFFFFF))))
-        (drop (call $gdi_native_bitblt (local.get $hdc) (local.get $x) (local.get $y)
+        ;; The icon record is no longer needed; retain the blit result across
+        ;; temporary DC deletion, whose result must not mask a drawing failure.
+        (local.set $p (call $gdi_native_bitblt (local.get $hdc) (local.get $x) (local.get $y)
                 (local.get $cx) (local.get $cy) (local.get $ok)
                 (i32.const 0) (i32.const 0) (i32.const 0x00CC0020)))
         (drop (call $gdi_dc_delete (local.get $ok)))
-        (return (i32.const 1))))
+        (return (local.get $p))))
     ;; Opaque system/named handles had no drawable pixels before being copied;
     ;; their independent copy remains intentionally opaque too.
     (if (i32.eq (i32.load (local.get $p)) (global.get $ICON_FROM_OPAQUE))
