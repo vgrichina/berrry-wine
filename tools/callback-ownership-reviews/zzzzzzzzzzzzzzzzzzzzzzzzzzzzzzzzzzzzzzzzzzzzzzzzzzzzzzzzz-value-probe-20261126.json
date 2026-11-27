@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/13-exports.wat",
+      "name": "$run",
+      "baseSHA256": "47a412c8028db6238f732af81747e22a5875ea0a4b360d67f7dea0438aa971e7",
+      "sha256": "93148cf96007e6c23072e9447aa907a83e59c193673feb298a4e39a3447a489e",
+      "reason": "Review 20261126 --value-probe: inside the existing --count hit loop, a slot whose bit is set in $count_probe_mask (0 unless the harness arms it) also calls the existing host log_eip import with tag -256-slot. The host reads registers and guest memory only; nothing writes EIP, registers or the guest stack, no pointer is retained, no callback, exception boundary or target is added. General callback ownership remains pending."
+    }
+  ]
+}

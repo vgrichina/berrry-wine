@@ -3929,6 +3929,9 @@
   (global $HIT_COUNT_BASE i32 (region.addr $HIT_COUNT_BASE 0))
   (global $HIT_COUNT_BASE_SIZE i32 (region.size $HIT_COUNT_BASE))
   (global $hit_count_n (mut i32) (i32.const 0))
+  ;; Bit N set: slot N is a --value-probe as well as a counter, and each hit
+  ;; calls $host_log_eip(-256-N) with the registers still at block entry.
+  (global $count_probe_mask (mut i32) (i32.const 0))
   ;; Slot 0 of the hit counters also remembers WHO reached the address: the
   ;; first and most recent $dbg_prev_eip seen there. A count answers "is this
   ;; reached"; a virtual call reached through a vtable slot has no static

@@ -1,0 +1,115 @@
+
+0x40674c@[esp]  hits 1940679
+   31.0%     601104  ret 0x5291a7  extension call 0x5290fc
+   31.0%     601104  ret 0x5292a6  extension call 0x5290fc
+   11.3%     219019  ret 0x4a8a85  var list lookup 0x4a8a30: entry + copy-out
+   10.8%     208817  ret 0x5278ab  eval dispatch 0x52786c
+    3.6%      69791  ret 0x5271f9  call node 0x526fc0
+    2.2%      43102  ret 0x406820  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    2.2%      43102  ret 0x528be2  code exec 0x528b3c
+    2.2%      42576  ret 0x4a8999  var list: other (set 0x4a88d4 ...)
+    2.1%      40479  ret 0x527bb7  assignment 0x527920
+    1.8%      35050  ret 0x51f062  
+
+0x4064e8@[esp]  hits 3037656
+   80.7%    2449978  ret 0x4065e8  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    8.7%     265377  ret 0x527858  binary node 0x5277c0
+    3.5%     107022  ret 0x527217  call node 0x526fc0
+    3.2%      97336  ret 0x527fe5  repeat/if/while/do/for
+    1.5%      44674  ret 0x527da6  assignment 0x527920
+    1.4%      43102  ret 0x528c35  code exec 0x528b3c
+    0.4%      11229  ret 0x527490  var owner/index eval 0x527280
+    0.2%       6893  ret 0x529b96  interp other
+    0.2%       5874  ret 0x52979b  interp other
+    0.0%       1360  ret 0x404aab  
+
+0x406448@[esp]  hits 157870
+   67.8%     107022  ret 0x52701a  call node 0x526fc0
+   23.8%      37569  ret 0x529138  extension call 0x5290fc
+    4.4%       6894  ret 0x5299f0  interp other
+    3.7%       5874  ret 0x529610  interp other
+    0.2%        338  ret 0x54cbd5  
+    0.1%        169  ret 0x529c14  interp other
+    0.0%          4  ret 0x568b18  
+
+0x406534@[esp]  hits 214869
+   49.8%     107022  ret 0x52722d  call node 0x526fc0
+   24.8%      53274  ret 0x40650d  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+   17.5%      37569  ret 0x5292dd  extension call 0x5290fc
+    3.2%       6893  ret 0x529b88  interp other
+    2.7%       5874  ret 0x52978d  interp other
+    1.3%       2704  ret 0x4065d2  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    0.5%       1014  ret 0x41d68a  
+    0.2%        338  ret 0x54ccb5  
+    0.1%        169  ret 0x529dca  interp other
+    0.0%          4  ret 0x518743  
+
+0x406418@[esp]  hits 477332
+   55.6%     265374  ret 0x5277de  binary node 0x5277c0
+   20.4%      97333  ret 0x527f46  repeat/if/while/do/for
+    9.4%      44674  ret 0x52794c  assignment 0x527920
+    9.0%      43102  ret 0x528b5a  code exec 0x528b3c
+    2.4%      11229  ret 0x5272a1  var owner/index eval 0x527280
+    1.4%       6894  ret 0x5299fe  interp other
+    1.2%       5874  ret 0x52961e  interp other
+    0.2%        973  ret 0x528378  with 0x528358
+    0.1%        676  ret 0x551366  
+    0.1%        507  ret 0x53a8d3  
+
+0x4a8a30@[esp]  hits 219359
+   89.3%     195799  ret 0x525e18  instance var get 0x525de8
+   10.7%      23560  ret 0x525b43  global get/set wrappers 0x525b24/0x525b34
+
+0x4aee7c@[esp]  hits 652347
+   99.2%     646881  ret 0x539c35  
+    0.3%       1865  ret 0x53a846  
+    0.3%       1718  ret 0x53aa9e  
+    0.3%       1714  ret 0x539c87  
+    0.0%        169  ret 0x53aba2  
+
+0x4aceec@[esp]  hits 554305
+  100.0%     554305  ret 0x4e4014  GM: collision scan 0x4e3ed0
+
+0x4a88d4@[esp]  hits 42576
+   96.4%      41025  ret 0x525e6a  instance var set 0x525e20
+    3.6%       1551  ret 0x525b33  global get/set wrappers 0x525b24/0x525b34
+
+0x403498@[esp]  hits 143706
+   10.4%      14909  ret 0x570170  
+    9.2%      13230  ret 0x55078d  
+    7.8%      11229  ret 0x5272f7  var owner/index eval 0x527280
+    4.8%       6966  ret 0x527354  var owner/index eval 0x527280
+    4.8%       6966  ret 0x527384  var owner/index eval 0x527280
+    4.8%       6966  ret 0x5273b6  var owner/index eval 0x527280
+    4.7%       6760  ret 0x4a3b63  
+    4.7%       6729  ret 0x55c077  
+    4.1%       5915  ret 0x4a3e0f  
+    3.9%       5590  ret 0x55c480  
+
+0x528b3c@[esp]  hits 43102
+   87.2%      37569  ret 0x528d09  code exec 0x528b3c
+   12.8%       5533  ret 0x528cc9  code exec 0x528b3c
+
+0x405988@[esp]  hits 80221
+   18.6%      14909  ret 0x570183  
+   18.6%      14909  ret 0x4b0ad2  
+   18.6%      14909  ret 0x4b0af9  
+   10.1%       8112  ret 0x40e802  
+   10.1%       8112  ret 0x40e825  
+    5.9%       4732  ret 0x40e86b  
+    5.9%       4732  ret 0x40e88e  
+    1.7%       1352  ret 0x40eadc  
+    1.7%       1352  ret 0x405d37  
+    1.3%       1014  ret 0x49a7d4  
+
+0x405934@[esp]  hits 109791
+   38.6%      42423  ret 0x405a4c  
+   34.2%      37569  ret 0x5292c7  extension call 0x5290fc
+   13.6%      14909  ret 0x570198  
+    4.3%       4732  ret 0x406583  RTL: record init/finalize/copy (0x4064xx-0x4068xx)
+    1.2%       1352  ret 0x40ea4f  
+    1.2%       1352  ret 0x49a737  
+    1.2%       1352  ret 0x49a7fe  
+    1.2%       1352  ret 0x549acc  
+    1.2%       1352  ret 0x5543b8  
+    0.9%       1014  ret 0x51956b  

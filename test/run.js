@@ -1649,6 +1649,14 @@ const showCStringAddrs = SHOW_CSTRING ? SHOW_CSTRING.split(',').map(s => parseIn
 const breakApis = BREAK_API ? BREAK_API.split(',') : [];
 const skipAddrs = SKIP_SPEC ? SKIP_SPEC.split(',').map(s => parseInt(s, 16)) : [];
 const countAddrs = COUNT_SPEC ? COUNT_SPEC.split(',').map(s => parseInt(s, 16)) : [];
+// --value-probe=ADDR@EXPR[;...] (lib/value-probe.js): histogram of guest values
+// at a block entry, on the count slots after --count's. A bare --value-probe
+// only installs the hook, for `ctl eval 'valueProbe.arm(...)'`.
+const VALUE_PROBE_SPEC = getArg('value-probe', null);
+const VALUE_PROBE_ON = VALUE_PROBE_SPEC !== null || hasFlag('value-probe');
+const VALUE_PROBE_FROM = parseInt(getArg('value-probe-from', '0'), 10) || 0;
+const VALUE_PROBE_OUT = getArg('value-probe-out', null);
+let valueProbeImpl = null;
 if (countAddrs.length > 16) { console.error('--count supports max 16 addresses'); process.exit(1); }
 
 // --trace-esp=LO[-HI]: parse hex range. Empty string ("--trace-esp") = whole address space.
@@ -5278,6 +5286,13 @@ async function main() {
     };
   }
   // MORROWIND_NAME_IMPORT_END
+  if (VALUE_PROBE_ON) {
+    const priorEip = h.log_eip;
+    h.log_eip = pc => {
+      if (valueProbeImpl && valueProbeImpl.onTag(pc | 0)) return;
+      if (priorEip) priorEip(pc);
+    };
+  }
   if (serviceClock) batchClock.wrapImports(imports.host);
   const cliObservation = CLI_NATIVE_OBSERVATION ? new (require('../lib/cli-observation-lease').CliObservationLease)({
     memory, module: wasmModule,
@@ -11258,6 +11273,14 @@ async function main() {
     // module-relative slot stays unresolved until its DLL loads, so this cannot
     // be a batch-0-only job.
     if (batch === 0) armCounts();
+    if (VALUE_PROBE_ON && batch === 0 && !valueProbeImpl) {
+      const { ValueProbe } = require('../lib/value-probe');
+      valueProbeImpl = new ValueProbe({ exports: instance.exports, g2w, memory, firstSlot: countAddrs.length });
+      globalThis.valueProbe = valueProbeImpl;
+    }
+    if (valueProbeImpl && VALUE_PROBE_SPEC && batch === VALUE_PROBE_FROM) {
+      console.log(`[value-probe] armed at batch ${batch}: ${valueProbeImpl.arm(VALUE_PROBE_SPEC)}`);
+    }
     if (PRESENT_FRAMES) presentFramesTick(batch);
     // Breakpoint check (EIP before run)
     if (breakAddrs.length && breakAddrs.includes(eipBefore)) {
@@ -12976,6 +12999,7 @@ if (VERBOSE) {
   }
 
   reportHitCounts('Hit counts:');
+  if (valueProbeImpl && VALUE_PROBE_OUT) console.log(`[value-probe] ${valueProbeImpl.write(VALUE_PROBE_OUT)}`);
   // The Delphi helper fold (on unless --no-delphi-fold): printed only when it
   // fired, so a non-Delphi app's log is unchanged.
   if (instance.exports.delphi_fold_stat && (instance.exports.delphi_fold_stat(0) || instance.exports.delphi_fold_stat(1) || instance.exports.delphi_fold_stat(2))) {

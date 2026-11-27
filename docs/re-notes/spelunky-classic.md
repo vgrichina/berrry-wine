@@ -578,6 +578,147 @@ GM8 structures used by `probes/gm-state.js`:
 - Var lookup 0x4a8a30 scans that list backwards. Its callers are global get
   0x525b34 and global set (ret 0x525e18).
 
+## GML interpreter: structures and census, 2026-11-26
+
+Evidence: `scratch/runs/20261126-gml-re/` (branch `opt/gml-re`). Taken with the
+new `--value-probe` (docs/tracing.md) in a `--control --frozen` session at the
+tutorial level. Probes arm `$dbg_any`, so the uop tier is off: every number
+below is a **guest-exact count or a guest-instruction share**, not CPU time.
+The window is one run/jump/whip cycle of 168–169 GM steps.
+
+Correction to the note above: the main caller of var lookup 0x4a8a30 is the
+instance get 0x525de8 (ret 0x525e18, 89%); the global get 0x525b34 is 11%.
+
+### Structure map
+
+- **Value**: 24 bytes, RTTI 0x5436f0. +0 tag (0 real, 1 string), +8 f64, +0x10 LStr.
+- **Node**: 0x38 bytes.
+  - +0 kind, +4 id (var id / op / function index), +8 owner.
+  - +0x10 constant value.
+  - +0x28 child count, +0x2c → holder, `[holder]` = inline child array (stride 0x38).
+  - +0x30 source position.
+- **Expression eval** 0x52786c (eax ctx, edx node, ecx result) is a compare chain, not a vtable:
+
+  | Kind | Meaning | Handler |
+  |---|---|---|
+  | 5 | constant | CopyRecord from +0x10 |
+  | 6 | call | 0x526fc0 |
+  | 8 | simple var | 0x527530 |
+  | 7 | var with owner/index expressions | 0x527530 → 0x527280 |
+  | 1010 | unary | 0x52777c → 0x52649c |
+  | 1011 | binary | 0x5277c0 → 0x5265a4 |
+
+  - Unary ops: 203 `!`, 210 `+`, 211 `-`, 220 `~`.
+  - Binary ops: 201 `&&`, 202 `||`, 101/204..209 comparisons (also on strings), 210 `+` (also string concat), 211 `-`, 212 `*`, 213 `/`, 214 div/mod. 215..222 go through the jump table at 0x526633.
+- **Statements** 0x5288ac (table 0x5288d0):
+
+  | Kind | Meaning | Handler or return value |
+  |---|---|---|
+  | 13 | if | 0x527f28 |
+  | 16 | while | |
+  | 17 | do-until | |
+  | 18 | for | 0x5281f8 |
+  | 20 | repeat | |
+  | 21 | exit | returns −2 |
+  | 22 | break | returns −3 |
+  | 23 | continue | returns −4 |
+  | 24 | with | 0x528358; self/other swap at 0x52831c |
+  | 25 | return | |
+  | 26 | switch | 0x5286b4 |
+  | 30 | var decl | |
+  | 101 | assignment | 0x527920; child0 is the lvalue, op [+4]: 0x65 `=`, 0x66.. compound |
+  | 1000 | block | |
+
+- **ctx**: [+0] self, [+4] other, [+8] locals, [+0xc] code object.
+- **Code execution** 0x528b3c (eax self, edx other, ecx code). code+4 kind: 3 constant, 2 expression, else statement. The root is at code+0x10 and is CopyRecord'd to the stack on every execution.
+- **Variable read** 0x527530 switches on owner+7 (table 0x5275ac):
+
+  | Owner | Meaning |
+  |---|---|
+  | −7 | local |
+  | −6 | unqualified: a byte flag at `[0x6d2a6c][id-100000]` says global, else self |
+  | −5 | global |
+  | −2 | other |
+  | −1 | self |
+  | −3, or ≥ 0 | all / object / instance-id iteration, 0x525e74 |
+
+- **Instance get** 0x525de8. An id below 10000 is a builtin variable and calls the Delphi getter `[0x6c8e1c+id*80]`. Otherwise it looks the id up in the instance list `[inst+0x104]` with 0x4a8a30.
+- **Var list** 0x4a8a30 (eax list, edx id, ecx array index).
+  - Rows are 40 bytes: +0 id, +8 value, +0x20 array.
+  - Lookup is a **linear backward scan** over `[list+4]`, with `[list+8]` rows (loop 0x4a8a4c..0x4a8a5f).
+  - The array index `i*32000+j` is split with two `idiv`.
+  - Set 0x4a88d4.
+- **Calls** 0x526fc0.
+  - Arguments go into a stack array of **16 Values**: InitializeArray and FinalizeArray run for every call, whatever the argc.
+  - id < 100000: builtin `[[0x58fbe8]]+id*80`, handler at +0x44.
+  - 100000 ≤ id < 500000: **script** 0x5290fc. Its code object is `[[0x58f13c]+i*4]+8`. The call saves all 16 `argumentN` Values (16 CopyRecords), copies argc in, zeroes the rest, runs the code, then restores 16 more.
+  - id ≥ 500000: extension 0x51da48.
+- **Names**:
+  - Builtin function: ShortString at `[[0x58fbe8]]+id*80`.
+  - Builtin variable: ShortString at `0x6c8dd8+id*80`.
+  - User variable: LStr at `[[0x58f134]+(id-100000)*4]`.
+  - `scratch/runs/20261126-gml-re/gml-dump.js` reads all three.
+
+### Census (per GM step, tutorial gameplay)
+
+- 5,470 expression evals, 1,190 statements, 640 function calls (65% builtin, 35% script), 255 code executions (87% are script calls).
+- **1,300 var-list lookups costing 161,000 scan iterations**, about 124 per lookup.
+  - The player's instance list has 204 variables.
+  - The hot ones are near the front, so the backward scan crosses almost all of them: `state` 167 rows, `ON_GROUND` 191.
+  - The ALL-CAPS "constants" (`ON_GROUND`, `RUNNING`, …) are instance variables set in the create event.
+  - The global list has 299 rows.
+- **Node kinds**: var 37% (simple 35.8%, owner/index 1.2%), binary 28.7%, const 22.5% (92% real), call 9.9%, unary 2.0%.
+- **Var reads**:
+  - 91% are unqualified (owner −6), 5% `global.`, 4% `obj.`.
+  - 56% user variables in an instance list, 34.5% builtin variables through Delphi getters (`x`, `y`, `sprite_index`, `room`).
+  - 95% of results are reals.
+- **Operators**: `&&` 21%, comparisons 32%, `||` 13%, `+`/`-` 20%, `!` 6%, `*` `/` 1%.
+- **Statements**: if 48%, assignment 22%, return 16%, call 8%, block 5%, with 0.5%.
+- **Numeric-only subtrees** (real constants, vars, arithmetic and comparisons, no call or string anywhere):
+  - 70% of expression roots.
+  - 72% of eval entries fall inside such a root.
+- **Hottest calls**:
+  - `room_get_name` plus script #211: 14.7k each, called together (a room-name test in a script).
+  - `round` 13.4k, `collision_point` 6.6k, `instance_exists` 5.5k, script #56 5.3k, script #20 3.8k (the collision-bounds getter).
+  - `collision_rectangle` 3.3k, `collision_line` 3.2k (counts are per window).
+- **Concentration**: 84 distinct code objects ran.
+  - Share of interpreter work: top 1 16%, top 5 51%, top 10 68%, top 20 84%.
+  - Nesting stays under about 3 script levels (the ESP spread at 0x528b3c is ~1.8 KB).
+- **RTL traffic**:
+  - 11.5k CopyRecord per step: 62% script-call argument save and restore, 11% var-lookup copy-out, 11% constant eval.
+  - 18k FinalizeRecord per step, 80% from FinalizeArray. Most of it is the 16-Value call/script argument arrays.
+  - The Delphi fold runs FinalizeRecord and CopyRecord natively, but **FinalizeArray almost always falls back**: 4.3k native vs 3.96M fallback since boot.
+
+### Guest-instruction shares (uop tier off, 169 steps, 882 M weighted insns)
+
+`blocks.js setB/hist.json EXE --hle=<fold entries>` (fold HLE blocks weigh 1):
+
+| Share | What |
+|---|---|
+| **21.6%** | var-list backward scan loop 0x4a8a4c/0x4a8a5b (27.2 M iterations) |
+| ~13–15% | object instance table: nth 0x4aeee0 (2.63 M calls, each also calls DynArray length 0x406d64), 0x4aee7c, 0x4aee54 |
+| ~14% | GML tree walk itself (eval 2.4, var-read node 2.5, binary node + op 3.7, call node 1.6, script call 2.2, statements/assign/code exec ~2.5) |
+| ~6.5% | RTL record + LStr remaining after the Delphi fold |
+| ~5.5% | collision: bbox test 0x4aceec 3.0 + scan 0x4e3ed0 2.5 (+ collision-event pass 0x539bb4 ~2) |
+| rest | unlabelled runner pages 0x4b0000 (6.5%, hot 0x4b03c0), 0x4af000, 0x55c000, … |
+
+On main, the uop tier runs the scan loop as a resident program (the 20261126 census shows 204 blocks per entry at 0x4a8a4c), so its CPU share there is below its 21.6% instruction share. The old attribute.js "uop%" column undercounted it at 1.8%.
+
+### Recommendation: (c) targeted folds, not a GML evaluator
+
+1. **Var-list lookup fold**: about 20% of guest instructions; the largest single lever and exact by construction.
+   - Run the 0x4a8a30 scan natively, as a Delphi-fold-style HLE on the loop or on the whole lookup.
+   - Optionally add a validated per-list index hint keyed by list, checked by `rows[i].id == id` with no later duplicate.
+   - Exit state is esi/ebx/edi/ecx plus the last cmp's flags. Charge the branch clock per iteration, as the Init/Move folds do, so `--branch-clock` stays invariant.
+   - A generic strided-search idiom in the loop matcher would also catch it.
+2. **Instance-table fold**: about 10–13%. 0x4aeee0 / 0x4aee7c / 0x4aee54 are pure bounds-checked dynarray reads; fold them with DynArray length.
+3. **FinalizeArray fold coverage**: a few %. Find why the 16-Value argument arrays fall back.
+4. **(a) Native numeric GML evaluator**: it can remove at most the ~14% tree walk, and only the numeric 72% of it.
+   - It still pays the var lookups (item 1).
+   - It must reimplement or fall back on the builtin-variable getters (34.5% of reads), GM's real/string semantics and error paths.
+   - Revisit only after items 1–2.
+5. **(b) Partial evaluation**: no. Its targets are tree shape and constants, while the cost is in lookups and instance loops.
+
 ## Ruled out
 
 - The crash labelled `UNIMPLEMENTED API: ... KERNEL32.DLL#18` during splash
