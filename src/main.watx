@@ -163,6 +163,7 @@
 (include "09e2-win16-dialog.wat")
 (include "09f-win16-ddeml.wat")
 (include "10-helpers-delphi-fold.wat")
+(include "10-helpers-msvc-routines.wat")
 (include "10-helpers.wat")
 (include "10a-gdi-bitmap.wat")
 (include "10b-gdi-font.wat")

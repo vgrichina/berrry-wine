@@ -12985,6 +12985,13 @@ if (VERBOSE) {
       `6 InitializeRecord 7 InitializeArray 8 Move-FILD 9 Move-REP) ` +
       [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => `${k}:${f(10 + k)}/${f(20 + k)}`).join(' '));
   }
+  // MSVC CRT memcpy/memmove (--known-routines=MASK): printed only when it fired.
+  if (instance.exports.known_routine_stat && (instance.exports.known_routine_stat(0) || instance.exports.known_routine_stat(1))) {
+    const f = (k) => instance.exports.known_routine_stat(k) >>> 0;
+    console.log(`Known routines: native=${f(0)} fallback=${f(1)} smc_drops=${f(2)} native_MB=${f(3)} ` +
+      `by-id native/fallback (1 memcpy-msvc6 2 memcpy-msvc71 3 memmove-msvc4) ` +
+      [1, 2, 3].map((k) => `${k}:${f(10 + k)}/${f(20 + k)}`).join(' '));
+  }
 
   if (DUMP_VFS && ctx.vfs) {
     console.log('\n[VFS] Files (' + ctx.vfs.files.size + '):');

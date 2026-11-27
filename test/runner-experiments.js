@@ -178,6 +178,10 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
   // instead of handler 395 (10-helpers-delphi-fold.wat). On by default;
   // decode-time, so set before the first decode and on every thread.
   const NO_DELPHI_FOLD = hasFlag('no-delphi-fold');
+  // --known-routines=MASK: MSVC CRT memcpy/memmove run natively (handler 396,
+  // 10-helpers-msvc-routines.wat; bit = entry id of tools/known-routines.json,
+  // 14 = all). Off by default; decode-time, every thread.
+  const KNOWN_ROUTINES = Number(getArg('known-routines', '0')) | 0;
   // --no-uop-nobump: turn off the page index's no-bump mark (01-header
   // PAGE_INDEX_NOBUMP) -- heads with a settled uop verdict stop counting
   // toward hotness and taken Jccs into them keep the inline fast path.
@@ -406,6 +410,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (smcWanted()) inheritWasm('set_smc_same_block', 1);
     if (sseFastWanted()) inheritWasm('set_sse_fast', 1);
     if (NO_DELPHI_FOLD) inheritWasm('set_delphi_fold', 0);
+    if (KNOWN_ROUTINES) inheritWasm('set_known_routines', KNOWN_ROUTINES);
     if (uopWanted()) inheritWasm('set_uop', 1);
     if (NO_UOP_NOBUMP) inheritWasm('set_uop_nobump', 0);
     if (aggrWanted()) inheritWasm('set_aggressive_stack', 1);
@@ -445,6 +450,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
     if (smcWanted() && available('set_smc_same_block')) set('set_smc_same_block', 1);
     if (sseFastWanted() && available('set_sse_fast')) set('set_sse_fast', 1);
     if (NO_DELPHI_FOLD && available('set_delphi_fold')) set('set_delphi_fold', 0);
+    if (KNOWN_ROUTINES && available('set_known_routines')) set('set_known_routines', KNOWN_ROUTINES);
     if (NO_UOP_NOBUMP && available('set_uop_nobump')) set('set_uop_nobump', 0);
     if (uopWanted() && available('set_uop') && ctx) {
       if (UOP_CENSUS && available('set_uop_census')) set('set_uop_census', 1);

@@ -2003,6 +2003,8 @@
       ;; delphi-fold.wat), so a program exits to it rather than lowering it.
       (if (call $dfold_at (local.get $a))
         (then (call $uc_unsup (local.get $R))))
+      (if (call $kr_at (local.get $a))
+        (then (call $uc_unsup (local.get $R))))
       (if (i32.eq (call $uc_kind (local.get $R)) (i32.const 28))
         (then (call $uc_jt_targets (local.get $R))))
       (br_if $l (i32.eqz (call $uc_kind (local.get $R))))

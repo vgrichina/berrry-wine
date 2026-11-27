@@ -3025,7 +3025,13 @@
           (then
             (return
               (call $publish_block (local.get $start_eip) (local.get $tstart)
-                    (global.get $dfold_cover_end)))))))
+                    (global.get $dfold_cover_end)))))
+        ;; likewise an MSVC CRT memcpy/memmove (10-helpers-msvc-routines.wat)
+        (if (call $kr_emit (local.get $start_eip))
+          (then
+            (return
+              (call $publish_block (local.get $start_eip) (local.get $tstart)
+                    (global.get $kr_cover_end)))))))
 
     ;; A 16-bit task can only execute inside the selector arena. Landing
     ;; outside it means a far pointer was used as a linear address somewhere,

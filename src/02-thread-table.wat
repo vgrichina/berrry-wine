@@ -457,7 +457,7 @@
     $th_dec_m8_abs_jnz        ;; 393: DEC byte [abs] + JNZ rel8
     $th_shr_ebp_1_jcc_b       ;; 394: SHR EBP,1 + JB/JAE rel8 (op=0/1)
     $th_delphi_rtti           ;; 395: Delphi System RTTI/LStr helper, native (10-helpers-delphi-fold; was SMACK_HUFF, retired)
-    $th_retired_fold          ;; 396: retired (was Storm PKWARE bit-reservoir helper; uop tier is as fast)
+    $th_msvc_routine          ;; 396: MSVC CRT memcpy/memmove, native (10-helpers-msvc-routines; was Storm PKWARE, retired)
     $th_aam                   ;; 397: AAM imm8
     $th_port_io               ;; 398: IN/OUT accumulator, imm8/DX port
     $th_enter                 ;; 399: ENTER imm16,0 (32-bit frame)

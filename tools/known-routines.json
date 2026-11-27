@@ -1,0 +1,18 @@
+{
+  "comment": "Known-routine entries of src/10-helpers-msvc-routines.wat. Each is matched on its WHOLE body: 16 head bytes, an FNV-1a over the body with the absolute in-body addresses (jump tables, jmp [table+r*4] operands) left out, and each of those equal to entry + rel. `node tools/kr-sig.js wat` regenerates the WAT signature block from these reference bodies; `node tools/kr-sig.js find --root=DIR` counts them across a corpus. impl names the native form: entries with the same impl share it (and differ only in bytes that cannot change the exit state). k is the length of the body's first instruction, the fallback's resume offset.",
+  "entries": [
+    { "id": 1, "name": "memcpy", "variant": "msvc6", "impl": "vc6-memcpy", "len": "0x335", "fixups": 46, "k": 1,
+      "ref": { "path": "test/binaries/candidates/gta2-demo/installed/Program_Executable_Files/gta2.exe", "va": "0x5deb70",
+               "sha256": "97ad743b6ec9ea1be95282053c3127084acd764a7f37a3e57e2268af52d02ae3" },
+      "also": ["starcraft.exe 0x4b66b0 (StarCraft shareware)"] },
+    { "id": 2, "name": "memcpy", "variant": "msvc71", "impl": "vc6-memcpy", "len": "0x33d", "fixups": 46, "k": 1,
+      "ref": { "path": "test/binaries/win98-games-a-d/Black and White 2-DX9-D3D/installed/BW2Demo.exe", "va": "0xad50d0",
+               "sha256": "65130510233cfc9e53758bab8480a3cfeeb6b1043de9774ab6e066191b2bb433" },
+      "also": ["BW2Demo.exe 0xad9400 (memmove, same bytes)"],
+      "differs": "the three-byte up lead does `add esi,1 / add edi,1` where msvc6 has `inc esi / inc edi`; a CMP overwrites the flags right after, so the exit state is the same function of the inputs" },
+    { "id": 3, "name": "memmove", "variant": "msvc4", "impl": "vc4-memmove", "len": "0x14e", "fixups": 12, "k": 1,
+      "ref": { "path": "test/binaries/candidates/heroes-2-demo/files/H2DEMOW.EXE", "va": "0x4d35f0",
+               "sha256": "d1ae170c8e1138913bcdb9e9e04b59d9b0b4be0c61b93043de6496876d55b87e" },
+      "also": ["H2DEMOW.EXE 0x4d3b90 (memcpy, same bytes)"] }
+  ]
+}

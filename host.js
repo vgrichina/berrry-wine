@@ -3448,6 +3448,10 @@ class WineAssembly {
     // ?no-delphi-fold turns it off. Decode-time.
     const delphiFold = (window.WineSuperops && window.WineSuperops.delphiFold === false) ? 0 : 1;
     if (this.instance.exports.set_delphi_fold) this.instance.exports.set_delphi_fold(delphiFold);
+    // ?known-routines=MASK: MSVC CRT memcpy/memmove run natively (handler 396,
+    // bit = entry id; off by default). Decode-time.
+    const knownRoutines = (window.WineSuperops && window.WineSuperops.knownRoutines) | 0;
+    if (this.instance.exports.set_known_routines) this.instance.exports.set_known_routines(knownRoutines);
     // Trace heads: hot heads with no back edge become forward traces
     // (07e $uc_form_trace) instead of no-backedge declines. On by default;
     // ?no-uop-trace-heads turns them off.
@@ -3552,6 +3556,9 @@ class WineAssembly {
       }
       if (this.instance.exports.set_delphi_fold) {
         await this.guestWorker.callExport('set_delphi_fold', delphiFold);
+      }
+      if (this.instance.exports.set_known_routines) {
+        await this.guestWorker.callExport('set_known_routines', knownRoutines);
       }
       if (this.instance.exports.set_uop_trace_heads) {
         await this.guestWorker.callExport('set_uop_trace_heads', uopTraceHeads);
@@ -3743,6 +3750,7 @@ class WineAssembly {
     this.threadManager.recordInheritedWasmGlobal('set_uop_sse', uopSse);
     this.threadManager.recordInheritedWasmGlobal('set_smc_same_block', smcSameBlock);
     this.threadManager.recordInheritedWasmGlobal('set_delphi_fold', delphiFold);
+    this.threadManager.recordInheritedWasmGlobal('set_known_routines', knownRoutines);
     this.threadManager.recordInheritedWasmGlobal('set_uop_trace_heads', uopTraceHeads);
     // The bisect mask has to reach every guest thread for the same reason the
     // fold flags do: a thread decodes in its own instance, so a mask set only

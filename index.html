@@ -2712,6 +2712,10 @@ Resource-aware Win98 emulator
     // bodies instead of natively (on by default, decode-time; read at launch,
     // host.js; src/10-helpers-delphi-fold.wat).
     if (new URLSearchParams(location.search).has('no-delphi-fold')) window.WineSuperops.delphiFold = false;
+    // ?known-routines=MASK: MSVC CRT memcpy/memmove natively (bit = entry id
+    // of tools/known-routines.json; off by default, decode-time; host.js,
+    // src/10-helpers-msvc-routines.wat).
+    if (new URLSearchParams(location.search).has('known-routines')) window.WineSuperops.knownRoutines = Number(new URLSearchParams(location.search).get('known-routines')) | 0;
     // Trace heads: hot heads with no back edge become forward traces (on by
     // default, compile-time; read at launch, host.js). ?no-uop-trace-heads
     // turns them off; ?uop-trace-heads is still accepted and changes nothing.
