@@ -23,7 +23,7 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x1000, 0x1040, 0x4010, 0x7FFF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x1000, 0x1040, 0x4010, 0x7FFF, 0x8000, 0xFFFF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -598,6 +598,33 @@ async function invalidation() {
     }
     e.set_branch_clock(0);
     ok(`0x800 dynamic RET: ret / ret 4 from a compiled callee, 24 returns each, exact with the flags, whole and in 7-block batches, with and without a compiled continuation (${dyn} RETX sites, ${chains} chained returns), and never into a flushed way's reused address (${reused} runs)`);
+  }
+
+  // A1 (0x8000): the main instance's arena follows the bit, programs placed
+  // in the big one run exactly, and clearing the bit puts the 1MB layout back
+  {
+    e.set_uop_opt(0x7FF);
+    const small = e.uop_layout(0) >>> 0, smallBytes = e.uop_layout(1) >>> 0;
+    assert.strictEqual(smallBytes, 0xDE000, '1MB arena layout unchanged');
+    const code = loop([[0x01, 0x07], [0x83, 0xC7, 0x04]]);
+    const at = fresh(code);
+    e.set_uop(0); fill(); const want = run(at, R); e.set_uop(1);
+    e.set_uop_opt(0xFFFF);
+    const big = e.uop_layout(0) >>> 0, bigBytes = e.uop_layout(1) >>> 0;
+    assert(big !== small && bigBytes > 3 * smallBytes, `big arena 0x${big.toString(16)} +0x${bigBytes.toString(16)}`);
+    let placed = 0;
+    for (let k = 0; k < 6; k++) {
+      const at2 = fresh(code);
+      const pc = e.uop_compile(at2) >>> 0;
+      assert(pc >= big && pc < big + bigBytes, `program placed in the big arena (0x${pc.toString(16)})`);
+      e.uop_install(at2, pc);
+      fill(); assert.strictEqual(run(at2, R), want, `A1 program ${k} exact`);
+      placed++;
+    }
+    e.set_uop_opt(0x7FF);
+    assert.strictEqual(e.uop_layout(0) >>> 0, small, 'clearing 0x8000 returns to $UOP_ARENA');
+    assert.strictEqual(e.uop_layout(1) >>> 0, smallBytes, '... with its layout');
+    ok(`0x8000 A1: main arena 0x${small.toString(16)}+0x${smallBytes.toString(16)} -> 0x${big.toString(16)}+0x${bigBytes.toString(16)} and back, ${placed} programs exact`);
   }
   e.set_uop_opt(0);
   e.set_uop(0);

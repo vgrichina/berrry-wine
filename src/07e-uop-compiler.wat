@@ -6519,7 +6519,7 @@
                          (i32.gt_u (i32.add (i32.add (global.get $UOP_HDR) (i32.const 64))
                                             (i32.add (i32.shl (call $uc_encode_words) (i32.const 2))
                                                      (i32.shl (global.get $uc_nwin) (i32.const 4))))
-                                   (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))))
+                                   (call $uop_prog_cap))))
       (then
         (global.set $uc_c2_off (i32.const 1))
         (global.set $uc_r2_off (i32.const 1))
@@ -6896,7 +6896,7 @@
     (if (local.get $stamp)
       (then (local.set $bytes (i32.add (local.get $bytes)
               (select (i32.const 48) (i32.const 16) (i32.ne (i32.and (local.get $stamp) (i32.const 48)) (i32.const 0)))))))
-    (if (i32.gt_u (local.get $bytes) (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))
+    (if (i32.gt_u (local.get $bytes) (call $uop_prog_cap))
       (then (return (call $uc_decline (i32.const 24)))))
     (block $placed (loop $retry
       (if (i32.gt_u (i32.add (global.get $uop_alloc) (local.get $bytes)) (global.get $uop_code_bytes))
@@ -7131,11 +7131,14 @@
   ;; An unchanged mask changes nothing (set_uop_opt(0) on a fresh instance is
   ;; the tier as it was: test-uop-opt-identity.js).
   (func (export "set_uop_opt") (param $mask i32)
-    (local.set $mask (i32.and (local.get $mask) (i32.const 0x7FFF)))
+    (local.set $mask (i32.and (local.get $mask) (i32.const 0xFFFF)))
     (if (i32.eq (local.get $mask) (global.get $uop_opt)) (then (return)))
     (global.set $uop_opt (local.get $mask))
     (memory.fill (global.get $UOP_FOLD_WRITTEN) (i32.const 0) (i32.const 256))
     (memory.fill (global.get $UOP_FOLD_PAGES) (i32.const 0) (i32.const 512))
+    ;; A1 (0x8000): the main instance's arena follows the bit ($uop_arena_pick
+    ;; flushes everything itself when it switches)
+    (if (call $uop_arena_pick (local.get $mask)) (then (return)))
     (call $uop_flush_all))
   (func (export "get_uop_opt") (result i32) (global.get $uop_opt))
   ;; C2's bounds (--uop-c2=COPIES[:INSNS]): peeled iterations per program

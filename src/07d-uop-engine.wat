@@ -210,7 +210,20 @@
   (global $uop_wins_off   (mut i32) (i32.const 0x000E2000)) ;; 1024 x 16 bytes, unused by compiled programs (each owns its slots)
   (global $uop_map_off    (mut i32) (i32.const 0x000E6000)) ;; 2048 sets x 2 ways x {eip, pc}
   (global $uop_ranges_off (mut i32) (i32.const 0x000EE000)) ;; 4096 x {lo, hi, pc}
-  (global $UOP_RANGES_MAX i32 (i32.const 4096))
+  (global $UOP_RANGES_MAX (mut i32) (i32.const 4096))
+  ;; A1 (--uop-opt 0x8000): the main thread's big arena. A bigger arena
+  ;; scales the range table (8192) and the start bitmap with it; a program's
+  ;; own size cap stays the 1MB arena's ($UOP_PROG_CAP), so the bit changes
+  ;; how many programs are live between flushes, never what one compiles to.
+  (global $UOP_ARENA_BIG i32 (region.addr $UOP_ARENA_BIG 0))
+  (global $UOP_ARENA_BIG_SIZE i32 (region.size $UOP_ARENA_BIG))
+  (global $UOP_PROG_CAP i32 (i32.const 0x37800))
+  ;; The biggest program the lowering places: a quarter of the code area,
+  ;; never more than a quarter of the 1MB arena's.
+  (func $uop_prog_cap (result i32)
+    (local $q i32)
+    (local.set $q (i32.shr_u (global.get $uop_code_bytes) (i32.const 2)))
+    (select (global.get $UOP_PROG_CAP) (local.get $q) (i32.gt_u (local.get $q) (global.get $UOP_PROG_CAP))))
   ;; The code-write filter, 16KB after the ranges' 4096 x 12 bytes: 2048 i64
   ;; words, one per hashed guest page, bit L set when some range recorded
   ;; since the last rebuild covers 64-byte line L of a page hashing to that
@@ -227,7 +240,7 @@
   ;; the dead header's own head EIP left in that program's padding. See
   ;; $uop_live.
   (global $uop_starts_off (mut i32) (i32.const 0x000FE000))
-  (global $UOP_STARTS_BYTES i32 (i32.const 0x2000))
+  (global $UOP_STARTS_BYTES (mut i32) (i32.const 0x2000))
   ;; A range was removed since the filter was last rebuilt, so it may hold
   ;; bits no live range owns (a conservative, not a wrong, answer).
   (global $uop_cw_stale (mut i32) (i32.const 0))
@@ -3250,15 +3263,42 @@
   ;; carved out of memory that held another thread's threaded code, so the map
   ;; is garbage until this clears it.
   (func $uop_set_arena (param $base i32) (param $size i32)
+    (local $big i32)
+    ;; Up to 1MB (the main arena, a worker's 256KB) the layout is the fixed
+    ;; $UOP_TAIL one. Bigger (A1's $UOP_ARENA_BIG): 8192 ranges and a start
+    ;; bitmap of size/128, so the tail grows with the code it describes.
+    (local.set $big (i32.gt_u (local.get $size) (i32.const 0x00100000)))
+    (global.set $UOP_RANGES_MAX (select (i32.const 8192) (i32.const 4096) (local.get $big)))
+    (global.set $UOP_STARTS_BYTES
+      (select (i32.shr_u (local.get $size) (i32.const 7)) (i32.const 0x2000) (local.get $big)))
     (global.set $uop_arena (local.get $base))
-    (global.set $uop_code_bytes (i32.sub (local.get $size) (global.get $UOP_TAIL)))
+    (global.set $uop_code_bytes
+      (i32.sub (local.get $size)
+        (i32.add (i32.add (i32.const 0x14000) (i32.mul (global.get $UOP_RANGES_MAX) (i32.const 12)))
+                 (global.get $UOP_STARTS_BYTES))))
     (global.set $uop_temps_off (global.get $uop_code_bytes))
     (global.set $uop_wins_off (i32.add (global.get $uop_code_bytes) (i32.const 0x4000)))
     (global.set $uop_map_off (i32.add (global.get $uop_code_bytes) (i32.const 0x8000)))
     (global.set $uop_ranges_off (i32.add (global.get $uop_code_bytes) (i32.const 0x10000)))
-    (global.set $uop_cwmap_off (i32.add (global.get $uop_code_bytes) (i32.const 0x1C000)))
-    (global.set $uop_starts_off (i32.add (global.get $uop_code_bytes) (i32.const 0x20000)))
+    (global.set $uop_cwmap_off (i32.add (global.get $uop_ranges_off)
+                                        (i32.mul (global.get $UOP_RANGES_MAX) (i32.const 12))))
+    (global.set $uop_starts_off (i32.add (global.get $uop_cwmap_off) (global.get $UOP_CWMAP_BYTES)))
     (call $uop_flush_all))
+  ;; A1: the main instance's arena for mask bit 0x8000. A worker's arena is
+  ;; its tid slot and never changes. Answers whether it switched (the switch
+  ;; flushes everything, as $uop_set_arena does).
+  (func $uop_arena_pick (param $mask i32) (result i32)
+    (local $want i32)
+    (if (i32.and (i32.ne (global.get $uop_arena) (global.get $UOP_ARENA))
+                 (i32.ne (global.get $uop_arena) (global.get $UOP_ARENA_BIG)))
+      (then (return (i32.const 0))))
+    (local.set $want (select (global.get $UOP_ARENA_BIG) (global.get $UOP_ARENA)
+                             (i32.ne (i32.and (local.get $mask) (i32.const 0x8000)) (i32.const 0))))
+    (if (i32.eq (local.get $want) (global.get $uop_arena)) (then (return (i32.const 0))))
+    (call $uop_set_arena (local.get $want)
+      (select (global.get $UOP_ARENA_BIG_SIZE) (global.get $UOP_ARENA_SIZE)
+              (i32.eq (local.get $want) (global.get $UOP_ARENA_BIG))))
+    (i32.const 1))
 
   ;; The enter op, first in the head block's threaded code. Its operand is
   ;; the program header. Anything it cannot vouch for falls through into the

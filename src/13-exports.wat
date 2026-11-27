@@ -2318,7 +2318,10 @@
         (global.set $THREAD_BASE (region.addr $THREAD_CACHE_BASE 0))
         (global.set $THREAD_END (i32.add (global.get $THREAD_BASE)
           (global.get $THREAD_CACHE_MAIN_BYTES)))
-        (call $uop_set_arena (global.get $UOP_ARENA) (global.get $UOP_ARENA_SIZE))
+        ;; --uop-opt 0x8000 (A1): the big main arena
+        (if (i32.and (global.get $uop_opt) (i32.const 0x8000))
+          (then (call $uop_set_arena (global.get $UOP_ARENA_BIG) (global.get $UOP_ARENA_BIG_SIZE)))
+          (else (call $uop_set_arena (global.get $UOP_ARENA) (global.get $UOP_ARENA_SIZE))))
         (global.set $spill_base (region.addr $THREAD_SPILL 0))
         (global.set $spill_end (region.addr $THREAD_SPILL 0x80000))))
     (global.set $spill_active (i32.const 0))

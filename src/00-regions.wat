@@ -417,6 +417,12 @@
   ;; register files, so nothing placed before it moves.
   (region.declare $UOP_C2SCRATCH (size 0x00066000) (align 0x00001000)
     (owner "07e-uop-compiler.wat:$UOP_C2SCRATCH"))
+  ;; --uop-opt 0x8000 (A1): the main thread's arena when the bit is set,
+  ;; three times $UOP_ARENA (07d $uop_arena_pick). Declared last of the uop
+  ;; regions so nothing placed before it moves; it fills the gap below
+  ;; $GUEST_FIXED_POOL_B that $PE_STAGING is too big for.
+  (region.declare $UOP_ARENA_BIG (size 0x00300000) (align 0x00001000)
+    (owner "07d-uop-engine.wat:$UOP_ARENA_BIG"))
   (region.declare-derived $GUEST_STACK (base (g2w 0x07400000)) (size 0x00100000) (align 0x00001000)
     (owner "01-header.wat:$GUEST_STACK"))
   (region.declare-derived $THUNK_BASE (base (g2w 0x07500000)) (size 0x00040000) (align 0x00001000)
