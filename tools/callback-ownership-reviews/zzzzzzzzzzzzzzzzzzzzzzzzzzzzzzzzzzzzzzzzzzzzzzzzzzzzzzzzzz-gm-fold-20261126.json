@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/worker-imports.js",
+      "name": "host-file",
+      "baseSHA256": "777e77bc38d30ceb59a4ca7644fd9dc7a830b76e2f4f05088c69063b3c2cdca7",
+      "sha256": "8fc6cb825c288a1825134ae8f7512dfd8dc843cdbf62c94fee940c48c1d23bd4",
+      "reason": "Review 20261126 GM fold: worker-imports adds the set_gm_fold/get_gm_fold decode-time mask to the inherited setter list, beside set_delphi_fold; no host entry, run call or callback boundary changes. General callback ownership remains pending."
+    },
+    {
+      "file": "src/10-helpers-delphi-fold.wat",
+      "name": "$th_delphi_rtti",
+      "baseSHA256": "708f0a24cd0bd60493cd28edb193f66e6fd425bf5ce36b83423b858f7bb27322",
+      "sha256": "de5ff63d5523f46f03a9eef7b035d328476a17773900124d09bf6f432cfff399",
+      "reason": "Review 20261126 GM fold: handler 395 also runs the Game Maker runner variable-list scan loop (id 10), the instance-table reads (11-13) and _FinalizeArray over one-AnsiString records natively. EIP writes are unchanged (same six sites and targets): the new non-RET exits set the existing local $entry and leave through the one $eip = $entry write with $branch_end; the helper paths end in the body RET op; no callback frame, invocation identity preserved. General callback ownership remains pending."
+    }
+  ]
+}

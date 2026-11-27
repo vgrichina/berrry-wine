@@ -29,6 +29,14 @@
 // runs every size class of the FILD form, and of Game Maker 7's REP MOVSD form
 // (from Metrojd, placed at a VA of its own), apart and overlapping both ways.
 //
+// The GM fold (same handler, ids 10-13 and _FinalizeArray over records,
+// set_gm_fold mask): Spelunky Classic's Game Maker 8 runner bytes for the
+// variable-list scan (0x4a8a46.., placed as a stub that returns at the loop
+// exit), the 2-D and 1-D instance-table reads (0x4aee54..0x4aef21, called at
+// their own VAs) and _FinalizeArray over RValue arrays (the 16-Value GML
+// argument arrays), each element's release shared, literal, nil, last
+// (the guest's record loop resumes at that element) or repeated.
+//
 // Needs test/binaries/candidates/spelunky-classic (skips when absent); the
 // REP Move cases need candidates/metrojd/metrojd_gm7.exe.
 
@@ -72,15 +80,20 @@ const MOVE = 0x4030a8;
 const IR = 0x406418, IA = 0x406448;
 const REPMV = STUB + 0x100, DFSTUB = STUB + 0x80;
 const MJ = path.join(ROOT, 'test/binaries/candidates/metrojd/metrojd_gm7.exe');
+// GM fold: the var scan as a stub (dec esi; cmp esi,0; jl X; the loop; X: ret),
+// and the instance-table reads at their own VAs
+const VSCAN = STUB + 0x200, VSCAN_HEAD = VSCAN + 6;
+const I2W = 0x4aeee0, I2B = 0x4aee7c, I1 = 0x4aee54;
 const REP_BODY = fs.existsSync(MJ) ? peImage(MJ)(0x402a90, 0x40) : null;
 const le32 = (v) => [v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF];
 // delphi_fold_stat keys
 const NATIVE = 0, FALLBACK = 1, PARTIAL = 2, SMC_DROPS = 4;
 
-async function delphiInstance(img, on, branchClock) {
+async function delphiInstance(img, on, branchClock, gmMask) {
   const inst = await bench.newInstance();
   const { e, mem, g2w } = inst;
-  for (const [va, len] of [[0x401000, 0x6000], [0x5436e0, 0x80], [0x589720, 0x20]]) mem.set(img(va, len), g2w(va));
+  for (const [va, len] of [[0x401000, 0x6000], [0x5436e0, 0x80], [0x589720, 0x20], [0x4aee40, 0x100]]) mem.set(img(va, len), g2w(va));
+  mem.set([...img(0x4a8a46, 0x1B), 0xC3], g2w(VSCAN));
   // FreeMem stub: [eax-8] (the AnsiString refcount word) = 0xDEAD, eax = 0
   mem.set([0xC7, 0x40, 0xF8, 0xAD, 0xDE, 0, 0, 0x31, 0xC0, 0xC3], g2w(STUB));
   // poke stub: xor byte [edx], 1 ; ret -- a guest store, so it goes through
@@ -95,6 +108,7 @@ async function delphiInstance(img, on, branchClock) {
   }
   e.set_uop(0);
   e.set_delphi_fold(on ? 1 : 0);
+  if (gmMask !== undefined) e.set_gm_fold(gmMask);
   if (e.get_delphi_fold() !== (on ? 1 : 0)) fail('set_delphi_fold did not take');
   e.set_branch_clock(branchClock ? 1 : 0);
   return inst;
@@ -289,6 +303,77 @@ if (REP_BODY) {
   CASES.push({ name: 'REP Move under DF=1', entry: DFSTUB, want: 'f', buf: pattern, regs: { eax: BUF + 0x300, edx: BUF + 0x100, ecx: 8 } });
 }
 
+// ---- GM fold cases ----
+// Var list at BUF: [+4] rows, [+8] count; rows of 40 bytes, id at +0. The
+// stub enters with esi = count, eax = list, edx = id, ecx = -1.
+const vlist = (base, ids) => (w) => {
+  w(BUF + 4, base); w(BUF + 8, ids.length);
+  ids.forEach((id, i) => { w(base + 40 * i, id); w(base + 40 * i + 8, 0x1000 + i); });
+};
+const ids = (n, f) => Array.from({ length: n }, (_, i) => f(i));
+const VS = [
+  ['varscan hit middle', ids(50, (i) => 100000 + i), 100020, BUF + 0x100],
+  ['varscan hit duplicate (last wins)', ids(50, (i) => (i === 5 || i === 30 ? 777 : 100000 + i)), 777, BUF + 0x100],
+  ['varscan hit top row', ids(50, (i) => 100000 + i), 100049, BUF + 0x100],
+  ['varscan hit row 0', ids(150, (i) => 100000 + i), 100000, BUF + 0x100],
+  ['varscan miss', ids(150, (i) => 100000 + i), 5, BUF + 0x100],
+  ['varscan one row hit', [42], 42, BUF + 0x100],
+  ['varscan one row miss', [42], 43, BUF + 0x100],
+  ['varscan row id straddles a page', ids(30, (i) => 100000 + i), 100003, BUF + 0xFFD - 40 * 10],
+  ['varscan miss across pages', ids(60, (i) => 100000 + i), 9, BUF + 0xFFD - 40 * 10],
+];
+for (const [name, list, id, base] of VS) {
+  CASES.push({ name, entry: VSCAN, want: 'n', buf: vlist(base, list), regs: { eax: BUF, edx: id, ecx: -1, esi: list.length } });
+}
+CASES.push({ name: 'varscan empty list', entry: VSCAN, want: '-', buf: vlist(BUF + 0x100, []), regs: { eax: BUF, edx: 1, ecx: -1, esi: 0 } });
+// Instance table at BUF: 2-D counts A = [+C], rows B = [+D] (C/D 0x84/0x80
+// or 0x7C/0x78); A is a dynarray (length at A-4) of per-row counts.
+const itab = (C, D, nil) => (w) => {
+  const A = BUF + 0x208, B = BUF + 0x300;
+  if (!nil) { w(BUF + C, A); w(A - 4, 3); }
+  w(BUF + D, B);
+  [2, 0, 4].forEach((c, i) => { w(A + 4 * i, c); w(B + 4 * i, BUF + 0x400 + 0x40 * i); });
+  for (let k = 0; k < 0x30; k += 4) w(BUF + 0x400 + k * 4, 0xC0DE0000 + k);
+};
+for (const [label, entry, C, D] of [['inst2w', I2W, 0x84, 0x80], ['inst2b', I2B, 0x7C, 0x78], ['inst1', I1, 0x7C, 0x78]]) {
+  const two = entry !== I1;
+  const pts = two ? [[-1, 0], [3, 0], [7, 1], [0, -1], [0, 2], [1, 0], [0, 1], [2, 3], [2, 0]] : [[-1, 0], [3, 0], [0, 0], [2, 0]];
+  for (const [i, j] of pts) CASES.push({ name: `${label} [${i}][${j}]`, entry, want: 'n', buf: itab(C, D), regs: { eax: BUF, edx: i, ecx: j } });
+  CASES.push({ name: `${label} nil table`, entry, want: 'n', buf: itab(C, D, true), regs: { eax: BUF, edx: 0, ecx: 0 } });
+}
+// _FinalizeArray over RValue (0x18 bytes, string at +0x10): per element a
+// release kind -- null nil, 's' shared (rc 3), 'l' literal, 'f' last ref (rc
+// 1), 'd' rc 2, or a number naming an earlier element whose string it repeats.
+const rvals = (spec) => (w) => {
+  const at = [];
+  spec.forEach((k, i) => {
+    w(BUF + 0x18 * i, 1); w(BUF + 0x18 * i + 8, 0x3FF00000 + i);
+    let p = 0;
+    if (k === 's') p = str(w, BUF + 0x1000 + 0x20 * i, 3, 'sh' + i);
+    if (k === 'l') p = str(w, BUF + 0x1000 + 0x20 * i, -1, 'lt' + i);
+    if (k === 'f') p = str(w, BUF + 0x1000 + 0x20 * i, 1, 'fr' + i);
+    if (k === 'd') p = str(w, BUF + 0x1000 + 0x20 * i, 2, 'du' + i);
+    if (typeof k === 'number') p = at[k];
+    at.push(p);
+    w(BUF + 0x18 * i + 0x10, p);
+  });
+};
+const sixteen = (f) => Array.from({ length: 16 }, (_, i) => f(i));
+for (const [name, spec, want] of [
+  ['FinalizeArray RValue x16 nil', sixteen(() => null), 'n'],
+  ['FinalizeArray RValue x16 mixed', sixteen((i) => ['s', null, 'l', null][i & 3]), 'n'],
+  ['FinalizeArray RValue x16 one string 16 times', sixteen((i) => (i ? 0 : 's')), 'p'],
+  ['FinalizeArray RValue x1', ['s'], 'n'],
+  ['FinalizeArray RValue x16 last ref at 5', sixteen((i) => (i === 5 ? 'f' : i & 1 ? 's' : null)), 'p'],
+  ['FinalizeArray RValue x16 last ref at 15', sixteen((i) => (i === 15 ? 'f' : null)), 'p'],
+  ['FinalizeArray RValue last ref at 0', ['f', 's', null], 'f'],
+  ['FinalizeArray RValue repeated rc 2', [null, 's', 'd', 2, null], 'p'],
+  ['FinalizeArray RValue repeated rc 3 and a literal', ['s', null, 0, 'l', 3], 'n'],
+  ['FinalizeArray RValue x100 nil', Array.from({ length: 100 }, () => null), 'n'],
+]) CASES.push({ name, entry: H.farr, want, buf: rvals(spec), regs: { eax: BUF, edx: RVALUE, ecx: spec.length } });
+CASES.push({ name: 'FinalizeArray RToken x2', entry: H.farr, want: 'f',
+  buf: (w) => { w(BUF + 0x20, str(w, BUF + 0x1000, 4, 'tk')); }, regs: { eax: BUF, edx: RTOKEN, ecx: 2 } });
+
 function compare(a, b, withBlocks) {
   const diffs = [];
   if (!a.ok || !b.ok) diffs.push('did not return');
@@ -312,6 +397,7 @@ async function casesUnder(img, branchClock) {
     if (c.want === 'n' && (dn < 1 || df || dp)) diffs.push(`want native, got native=${dn} partial=${dp} fallback=${df}`);
     if (c.want === 'f' && df < 1) diffs.push(`want fallback, got native=${dn} fallback=${df}`);
     if (c.want === 'p' && (dp < 1 || df)) diffs.push(`want partial, got partial=${dp} fallback=${df}`);
+    if (c.want === '-' && (dn || df || dp)) diffs.push(`want no fold, got native=${dn} partial=${dp} fallback=${df}`);
     if (off.e.delphi_fold_stat(NATIVE) + off.e.delphi_fold_stat(FALLBACK) + off.e.delphi_fold_stat(PARTIAL)) {
       diffs.push('the fold fired with set_delphi_fold(0)');
     }
@@ -403,18 +489,22 @@ async function main() {
   // outside that cover. The next call must run the patched guest code. The
   // patched byte (+0x10 of _LStrClr) turns its `jl` at +0xF into another
   // condition, which an off/on mismatch would show.
-  const ID = { [H.clr]: 1, [H.asg]: 2, [H.frec]: 3, [H.farr]: 4, [H.crec]: 5, [IR]: 6, [IA]: 7, [MOVE]: 8, [REPMV]: 9 };
+  const ID = { [H.clr]: 1, [H.asg]: 2, [H.frec]: 3, [H.farr]: 4, [H.crec]: 5, [IR]: 6, [IA]: 7, [MOVE]: 8, [REPMV]: 9,
+    [VSCAN]: 10, [I2W]: 11, [I2B]: 12, [I1]: 13 };
+  // delphi_fold_stat keys: 11-19 / 21-29 native / fallback for 1-9, 30-33 /
+  // 40-43 for the GM ids 10-13
+  const NK = (id) => (id < 10 ? 10 + id : 20 + id), FK = (id) => (id < 10 ? 20 + id : 30 + id);
   const smcPair = (label, name, target, matchOk = false) => {
     const c = byName(name), id = ID[c.entry];
     return pair(img, label, c, async (inst, isOn) => {
       layoutBuf(inst, c.buf);
       call(inst, c.entry, c.regs);
-      if (isOn && inst.e.delphi_fold_stat(10 + id) < 1 && inst.e.delphi_fold_stat(PARTIAL) < 1) fail(`${label}: warm-up was not folded`);
+      if (isOn && inst.e.delphi_fold_stat(NK(id)) < 1 && inst.e.delphi_fold_stat(PARTIAL) < 1) fail(`${label}: warm-up was not folded`);
       const d0 = inst.e.delphi_fold_stat(SMC_DROPS);
       poke(inst, target);
       inst.smcDrops = inst.e.delphi_fold_stat(SMC_DROPS) - d0;
-      inst.nativeBefore = inst.e.delphi_fold_stat(10 + id);
-      inst.fallbackBefore = inst.e.delphi_fold_stat(20 + id);
+      inst.nativeBefore = inst.e.delphi_fold_stat(NK(id));
+      inst.fallbackBefore = inst.e.delphi_fold_stat(FK(id));
     }, (d) => {
       // The patched helper (the call's own entry) must not run natively; an
       // intact helper it calls may (_CopyRecord's guest body calls _LStrAsg).
@@ -422,9 +512,9 @@ async function main() {
       // leaves _CopyRecord's own bytes intact).
       const e = d.on.e;
       if (!d.on.smcDrops) return 'the poke dropped no range group';
-      if (e.delphi_fold_stat(10 + id) !== d.on.nativeBefore) return 'the patched helper still ran natively';
-      if (!matchOk && e.delphi_fold_stat(20 + id) !== d.on.fallbackBefore) return 'the patched helper still matched';
-      if (matchOk && e.delphi_fold_stat(20 + id) === d.on.fallbackBefore) return 'did not fall back';
+      if (e.delphi_fold_stat(NK(id)) !== d.on.nativeBefore) return 'the patched helper still ran natively';
+      if (!matchOk && e.delphi_fold_stat(FK(id)) !== d.on.fallbackBefore) return 'the patched helper still matched';
+      if (matchOk && e.delphi_fold_stat(FK(id)) === d.on.fallbackBefore) return 'did not fall back';
       return '';
     });
   };
@@ -458,6 +548,31 @@ async function main() {
         dv.setInt32(inst.g2w(H.crec + 0x111), REPMV - (H.crec + 0x115), true);
       },
       (d) => (d.native < 1 || d.fallback ? `want native, got native=${d.native} fallback=${d.fallback}` : ''));
+  }
+  // GM fold: the var scan's cmp edx,[edi+ebx*8] -> cmp edx,[edi+ebx*8+..]
+  // (its jnz at +9 -> jz), an instance read's jge, _FinalizeRecord under the
+  // record loop (FinalizeArray still matches and must fall back).
+  await smcPair('SMC mid-loop: varscan +0x9', 'varscan hit middle', VSCAN_HEAD + 0x9);
+  await smcPair('SMC mid-body: inst2w +0x1D', 'inst2w [1][0]', I2W + 0x1D);
+  await smcPair('SMC mid-body: inst1 +0x17', 'inst1 [2][0]', I1 + 0x17);
+  await smcPair('SMC callee: record FinalizeArray via FinalizeRecord', 'FinalizeArray RValue x16 mixed', H.frec + 0x1D, true);
+  // set_gm_fold(0): the GM ids are left alone and the record arrays fall
+  // back, while the Delphi helpers still fold
+  {
+    const off = await delphiInstance(img, false, true), on = await delphiInstance(img, true, true, 0);
+    let bad = 0;
+    for (const n of ['varscan hit middle', 'inst2w [1][0]', 'inst1 [2][0]', 'FinalizeArray RValue x16 mixed', 'LStrClr shared']) {
+      const c = byName(n);
+      layoutBuf(off, c.buf); layoutBuf(on, c.buf);
+      const st = [30, 31, 33, 34, 0].map((k) => on.e.delphi_fold_stat(k));
+      const a = call(off, c.entry, c.regs), b = call(on, c.entry, c.regs);
+      const moved = [30, 31, 33, 34, 0].map((k, i) => on.e.delphi_fold_stat(k) - st[i]);
+      const diffs = compare(a, b, true);
+      if (moved.slice(0, 4).some((x) => x)) diffs.push('a GM fold ran under set_gm_fold(0): ' + moved.join(','));
+      if (n === 'LStrClr shared' && moved[4] < 1) diffs.push('the Delphi fold stopped too');
+      if (diffs.length) { bad++; console.log(`gm_fold 0: ${n} FAIL ${diffs.join(', ')}`); }
+    }
+    if (bad) fails++; else console.log(`${'set_gm_fold(0) leaves the GM ids alone'.padEnd(43)} ok`);
   }
   const smc = (target, name) => async (inst) => {
     const c = byName(name);

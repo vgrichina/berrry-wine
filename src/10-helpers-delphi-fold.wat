@@ -77,14 +77,35 @@
   (global $dfold_f5 (mut i32) (i32.const 0))
   ;; $dfold_emit's result: one past the HLE block's page-index cover.
   (global $dfold_cover_end (mut i32) (i32.const 0))
+  ;; The GM fold (Game Maker 5/7/8 runner routines, ids 10-13, and
+  ;; _FinalizeArray over records): a mask under $delphi_fold, decode-time
+  ;; like it. Bit 0 the variable-list scan, bit 1 the instance-table reads,
+  ;; bit 2 _FinalizeArray's record loop. --gm-fold=MASK (13-exports
+  ;; set_gm_fold); --no-delphi-fold turns these off too.
+  (global $gm_fold (mut i32) (i32.const 7))
+  ;; native / fallback per GM id (10-13), record arrays finished natively /
+  ;; run natively up to an element the guest takes, and the scan's trips
+  (global $gmf_n10 (mut i32) (i32.const 0)) (global $gmf_n11 (mut i32) (i32.const 0))
+  (global $gmf_n12 (mut i32) (i32.const 0)) (global $gmf_n13 (mut i32) (i32.const 0))
+  (global $gmf_f10 (mut i32) (i32.const 0)) (global $gmf_f11 (mut i32) (i32.const 0))
+  (global $gmf_f12 (mut i32) (i32.const 0)) (global $gmf_f13 (mut i32) (i32.const 0))
+  (global $gmf_rec (mut i32) (i32.const 0)) (global $gmf_rec_part (mut i32) (i32.const 0))
+  (global $gmf_trips (mut i32) (i32.const 0))
+  ;; the scan's trips per entry off the branch clock (a corrupt count must
+  ;; not hold the run loop forever: the rest resumes at the loop head)
+  (global $GMF_CHUNK i32 (i32.const 0x10000))
+  ;; the largest record array _FinalizeArray takes natively
+  (global $GMF_REC_MAX i32 (i32.const 0x10000))
 
   ;; ---- signatures ----------------------------------------------------------
   (func $d_in4 (param $o i32) (param $s i32) (result i32)
     (i32.lt_u (i32.sub (local.get $o) (local.get $s)) (i32.const 4)))
   ;; length of the body's first instruction (the fallback's resume offset)
   (func $d_k (param $id i32) (result i32)
-    (if (i32.eq (local.get $id) (i32.const 4)) (then (return (i32.const 3))))
-    (if (i32.or (i32.eq (local.get $id) (i32.const 5)) (i32.eq (local.get $id) (i32.const 9)))
+    (if (i32.or (i32.eq (local.get $id) (i32.const 4)) (i32.eq (local.get $id) (i32.const 10)))
+      (then (return (i32.const 3))))
+    (if (i32.or (i32.or (i32.eq (local.get $id) (i32.const 5)) (i32.eq (local.get $id) (i32.const 9)))
+                (i32.ge_u (local.get $id) (i32.const 11)))
       (then (return (i32.const 1))))
     (i32.const 2))
   ;; Is body offset $o inside a rel32 operand left out of id's hash?
@@ -119,11 +140,19 @@
     (if (i32.eq (local.get $id) (i32.const 8))
       (then (return (i32.or (call $d_in4 (local.get $o) (i32.const 0x11))
                             (i32.lt_u (i32.sub (local.get $o) (i32.const 0x38)) (i32.const 0x24))))))
+    ;; the Game Maker instance-table reads: the CALL to DynArray length
+    (if (i32.ge_u (local.get $id) (i32.const 11))
+      (then (if (i32.le_u (local.get $id) (i32.const 13))
+              (then (return (call $d_in4 (local.get $o) (call $gmf_call_off (local.get $id))))))))
     (i32.const 0))
   ;; Bodies: 1 _LStrClr, 2 _LStrAsg, 3 _FinalizeRecord, 4 _FinalizeArray,
   ;; 5 _CopyRecord, 6 _InitializeRecord, 7 _InitializeArray, 8 System.Move
   ;; (FILD/FISTP form, with its jump table), 9 System.Move (REP MOVSD form).
-  ;; 3 and 6 share their first dword (the same prologue).
+  ;; Game Maker runner (the "GM fold", 5/7/8 alike, $gm_fold): 10 the
+  ;; variable-list backward scan loop, 11/12 the bounds-checked 2-D instance
+  ;; table reads (disp32 / disp8 fields), 13 the 1-D one, 14 the DynArray
+  ;; length they call (matched as a callee only, never folded itself).
+  ;; 3 and 6 share their first dword (the same prologue), so do 5, 11 and 12.
   (func $d_len (param $id i32) (result i32)
     (if (i32.eq (local.get $id) (i32.const 1)) (then (return (i32.const 0x23))))
     (if (i32.eq (local.get $id) (i32.const 2)) (then (return (i32.const 0x43))))
@@ -133,6 +162,11 @@
     (if (i32.eq (local.get $id) (i32.const 6)) (then (return (i32.const 0x2F))))
     (if (i32.eq (local.get $id) (i32.const 7)) (then (return (i32.const 0x93))))
     (if (i32.eq (local.get $id) (i32.const 8)) (then (return (i32.const 0xFD))))
+    (if (i32.eq (local.get $id) (i32.const 10)) (then (return (i32.const 0x15))))
+    (if (i32.eq (local.get $id) (i32.const 11)) (then (return (i32.const 0x41))))
+    (if (i32.eq (local.get $id) (i32.const 12)) (then (return (i32.const 0x38))))
+    (if (i32.eq (local.get $id) (i32.const 13)) (then (return (i32.const 0x25))))
+    (if (i32.eq (local.get $id) (i32.const 14)) (then (return (i32.const 0x08))))
     (i32.const 0x40))
   (func $d_first (param $id i32) (result i32)
     (if (i32.eq (local.get $id) (i32.const 1)) (then (return (i32.const 0xd285108b))))
@@ -143,6 +177,11 @@
     (if (i32.eq (local.get $id) (i32.const 6)) (then (return (i32.const 0x8a53c931))))
     (if (i32.eq (local.get $id) (i32.const 7)) (then (return (i32.const 0x840fc985))))
     (if (i32.eq (local.get $id) (i32.const 8)) (then (return (i32.const 0x3174d039))))
+    (if (i32.eq (local.get $id) (i32.const 10)) (then (return (i32.const 0x8bb61c8d))))
+    (if (i32.or (i32.eq (local.get $id) (i32.const 11)) (i32.eq (local.get $id) (i32.const 12)))
+      (then (return (i32.const 0x55575653))))
+    (if (i32.eq (local.get $id) (i32.const 13)) (then (return (i32.const 0x8b575653))))
+    (if (i32.eq (local.get $id) (i32.const 14)) (then (return (i32.const 0x0374c085))))
     (i32.const 0xc6895756))
   (func $d_fnv (param $id i32) (result i32)
     (if (i32.eq (local.get $id) (i32.const 1)) (then (return (i32.const 0xcacb444e))))
@@ -153,6 +192,11 @@
     (if (i32.eq (local.get $id) (i32.const 6)) (then (return (i32.const 0x9323153d))))
     (if (i32.eq (local.get $id) (i32.const 7)) (then (return (i32.const 0x5b56943e))))
     (if (i32.eq (local.get $id) (i32.const 8)) (then (return (i32.const 0xfdefbda4))))
+    (if (i32.eq (local.get $id) (i32.const 10)) (then (return (i32.const 0x988ad2c0))))
+    (if (i32.eq (local.get $id) (i32.const 11)) (then (return (i32.const 0xeab1a823))))
+    (if (i32.eq (local.get $id) (i32.const 12)) (then (return (i32.const 0xa935754b))))
+    (if (i32.eq (local.get $id) (i32.const 13)) (then (return (i32.const 0x67490794))))
+    (if (i32.eq (local.get $id) (i32.const 14)) (then (return (i32.const 0x567cdfc7))))
     (i32.const 0xfa2e0fd2))
   ;; Does body $id start at guest address $ga?
   (func $d_sig (param $ga i32) (param $id i32) (result i32)
@@ -184,10 +228,22 @@
     (local.set $id (i32.const 1))
     (loop $l
       (if (i32.eq (local.get $w) (call $d_first (local.get $id)))
-        (then (if (call $d_check (local.get $eip) (local.get $id)) (then (return (local.get $id))))))
+        (then (if (call $gmf_wanted (local.get $id))
+                (then (if (call $d_check (local.get $eip) (local.get $id)) (then (return (local.get $id))))))))
       (local.set $id (i32.add (local.get $id) (i32.const 1)))
-      (br_if $l (i32.le_u (local.get $id) (i32.const 9))))
+      (br_if $l (i32.le_u (local.get $id) (i32.const 13))))
     (i32.const 0))
+  ;; Is helper id switched on? 1-9 by $delphi_fold alone; the GM ids by
+  ;; their $gm_fold bit too (bit 0 the var scan, bit 1 the instance reads).
+  (func $gmf_wanted (param $id i32) (result i32)
+    (if (i32.lt_u (local.get $id) (i32.const 10)) (then (return (i32.const 1))))
+    (if (i32.eq (local.get $id) (i32.const 10))
+      (then (return (i32.and (global.get $gm_fold) (i32.const 1)))))
+    (i32.ne (i32.and (global.get $gm_fold) (i32.const 2)) (i32.const 0)))
+  ;; the instance reads' CALL DynArray-length rel32 offset
+  (func $gmf_call_off (param $id i32) (result i32)
+    (select (i32.const 0x17) (select (i32.const 0x14) (i32.const 0x11) (i32.eq (local.get $id) (i32.const 12)))
+            (i32.eq (local.get $id) (i32.const 11))))
   ;; Body $id at $eip, and the callees whose semantics its native form includes.
   (func $d_check (param $eip i32) (param $id i32) (result i32)
     (local $fa i32)
@@ -210,6 +266,8 @@
         (if (i32.eqz (call $d_sig (local.get $fa) (i32.const 6))) (then (return (i32.const 0))))
         (return (call $d_ia_pair (local.get $eip) (local.get $fa)))))
     (if (i32.eq (local.get $id) (i32.const 8)) (then (return (call $d_move_table_ok (local.get $eip)))))
+    (if (i32.ge_u (local.get $id) (i32.const 11))
+      (then (return (call $d_sig (call $d_rel (local.get $eip) (call $gmf_call_off (local.get $id))) (i32.const 14)))))
     (i32.const 1))
   ;; _InitializeArray at $ia (signature) calling itself and _InitializeRecord
   ;; at $ir, which calls it back.
@@ -324,6 +382,8 @@
       (then (return (call $dfold_reg_one (call $d_rel (local.get $ga) (i32.const 0x21)) (i32.const 7)))))
     (if (i32.eq (local.get $id) (i32.const 7))
       (then (return (call $dfold_reg_one (call $d_rel (local.get $ga) (i32.const 0x87)) (i32.const 6)))))
+    (if (i32.ge_u (local.get $id) (i32.const 11))
+      (then (return (call $dfold_reg_one (call $d_rel (local.get $ga) (call $gmf_call_off (local.get $id))) (i32.const 14)))))
     (i32.const 1))
   (func $dfold_reg_one (param $ga i32) (param $id i32) (result i32)
     (call $dfold_reg (local.get $ga) (i32.add (local.get $ga) (call $d_len (local.get $id)))))
@@ -380,9 +440,23 @@
         (if (call $d_check (local.get $mv) (i32.const 9))
           (then (if (call $dfold_reg_one (local.get $mv) (i32.const 9))
                   (then (local.set $op (i32.or (local.get $op) (i32.const 0x200)))))))))
+    ;; _FinalizeArray over records (bit 10, $gm_fold bit 2): its record loop
+    ;; calls _FinalizeRecord (+0xB0), which must be the System unit's and
+    ;; call this _FinalizeArray back (+0x21) -- the per-element native form
+    ;; is that pair's
+    (if (i32.and (i32.eq (local.get $id) (i32.const 4))
+                 (i32.ne (i32.and (global.get $gm_fold) (i32.const 4)) (i32.const 0)))
+      (then
+        (local.set $mv (call $d_rel (local.get $eip) (i32.const 0xB0)))
+        (if (call $d_sig (local.get $mv) (i32.const 3))
+          (then (if (i32.eq (call $d_rel (local.get $mv) (i32.const 0x21)) (local.get $eip))
+                  (then (if (call $dfold_reg_one (local.get $mv) (i32.const 3))
+                          (then (local.set $op (i32.or (local.get $op) (i32.const 0x400)))))))))))
     (call $te (i32.const 395) (local.get $op))
     (call $te_raw (local.get $eip))
-    (call $te (i32.const 41) (i32.const 0))
+    ;; the var scan is a loop inside its function, not a helper: no RET, its
+    ;; handler always leaves through $branch_end
+    (if (i32.ne (local.get $id) (i32.const 10)) (then (call $te (i32.const 41) (i32.const 0))))
     (global.set $dfold_cover_end (i32.add (local.get $eip) (call $d_k (local.get $id))))
     (i32.const 1))
 
@@ -434,8 +508,11 @@
   ;; The register/flag tail of a claimed release (s != 0): `mov ecx,[edx-8];
   ;; dec ecx; jl` then, for a counted string, `lock dec [edx-8]` -- both leave
   ;; the flags of rc-1.
+  ;; DEC keeps CF, which is the body's earlier TEST EDX,EDX's: 0, whatever
+  ;; the caller's CF was (the lazy DEC reads CF when it is recorded).
   (func $d_released (param $rc i32)
     (i32.store offset=4 (global.get $reg_base) (i32.sub (local.get $rc) (i32.const 1)))
+    (call $set_flags_logic (i32.const 0))
     (call $set_flags_dec (local.get $rc) (i32.sub (local.get $rc) (i32.const 1)))
     (global.set $flag_sign_shift (i32.const 31)))
   ;; _LStrClr on [p] = s (refcount rc), its release already claimed.
@@ -515,6 +592,10 @@
         (if (i32.eq (local.get $id) (i32.const 7)) (then (global.set $dfold_f7 (i32.add (global.get $dfold_f7) (i32.const 1)))))
         (if (i32.eq (local.get $id) (i32.const 8)) (then (global.set $dfold_f8 (i32.add (global.get $dfold_f8) (i32.const 1)))))
         (if (i32.eq (local.get $id) (i32.const 9)) (then (global.set $dfold_f9 (i32.add (global.get $dfold_f9) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 10)) (then (global.set $gmf_f10 (i32.add (global.get $gmf_f10) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 11)) (then (global.set $gmf_f11 (i32.add (global.get $gmf_f11) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 12)) (then (global.set $gmf_f12 (i32.add (global.get $gmf_f12) (i32.const 1)))))
+        (if (i32.eq (local.get $id) (i32.const 13)) (then (global.set $gmf_f13 (i32.add (global.get $gmf_f13) (i32.const 1)))))
         (return)))
     (global.set $dfold_native (i32.add (global.get $dfold_native) (i32.const 1)))
     (if (i32.eq (local.get $id) (i32.const 1)) (then (global.set $dfold_n1 (i32.add (global.get $dfold_n1) (i32.const 1)))))
@@ -525,7 +606,11 @@
     (if (i32.eq (local.get $id) (i32.const 6)) (then (global.set $dfold_n6 (i32.add (global.get $dfold_n6) (i32.const 1)))))
     (if (i32.eq (local.get $id) (i32.const 7)) (then (global.set $dfold_n7 (i32.add (global.get $dfold_n7) (i32.const 1)))))
     (if (i32.eq (local.get $id) (i32.const 8)) (then (global.set $dfold_n8 (i32.add (global.get $dfold_n8) (i32.const 1)))))
-    (if (i32.eq (local.get $id) (i32.const 9)) (then (global.set $dfold_n9 (i32.add (global.get $dfold_n9) (i32.const 1))))))
+    (if (i32.eq (local.get $id) (i32.const 9)) (then (global.set $dfold_n9 (i32.add (global.get $dfold_n9) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 10)) (then (global.set $gmf_n10 (i32.add (global.get $gmf_n10) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 11)) (then (global.set $gmf_n11 (i32.add (global.get $gmf_n11) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 12)) (then (global.set $gmf_n12 (i32.add (global.get $gmf_n12) (i32.const 1)))))
+    (if (i32.eq (local.get $id) (i32.const 13)) (then (global.set $gmf_n13 (i32.add (global.get $gmf_n13) (i32.const 1))))))
   (func $dfold_partial_tick
     (global.set $dfold_partial (i32.add (global.get $dfold_partial) (i32.const 1))))
 
@@ -917,12 +1002,16 @@
     (local $nx_fn i32) (local $nx_op i32)
     (local $id i32) (local $eax i32) (local $ecx i32) (local $edx i32) (local $f i32) (local $s i32) (local $d i32)
     (local $size i32) (local $off i32) (local $entry i32) (local $esp i32) (local $rs i32) (local $rd i32)
+    (local $i i32) (local $n i32) (local $k i32) (local $v i32) (local $ga i32) (local $pg i32) (local $wd i32)
+    (local $acc i32) (local $p i32) (local $c i32)
     (local.set $id (i32.and (local.get $op) (i32.const 0xFF)))
     (local.set $eax (i32.load (global.get $reg_base)))
     (local.set $ecx (i32.load offset=4 (global.get $reg_base)))
     (local.set $edx (i32.load offset=8 (global.get $reg_base)))
     ;; the body's entry address, in the op's one extra word
     (local.set $entry (read-thread-word))
+    ;; every exit that is not a RET resumes at $entry (the GM paths set it)
+    (block $resume
     (block $fallback
       ;; 1 _LStrClr(eax = @s)
       (if (i32.eq (local.get $id) (i32.const 1))
@@ -1010,6 +1099,81 @@
                   (global.set $flag_sign_shift (i32.const 31))
                   (call $dfold_tick (local.get $id) (i32.const 0))
                   (dispatch-next)))
+          ;; n records (kind 0x0E) with one AnsiString field each: the
+          ;; record loop at +0xA7 calls _FinalizeRecord per element, whose
+          ;; native form is id 3's. The decoder checked that pair (bit 10).
+          (if (i32.and (i32.ne (i32.and (local.get $op) (i32.const 0x400)) (i32.const 0))
+                       (i32.eq (call $gl8 (local.get $edx)) (i32.const 0x0E)))
+            (then
+              (br_if $fallback (i32.gt_u (i32.sub (local.get $ecx) (i32.const 1))
+                                         (i32.sub (global.get $GMF_REC_MAX) (i32.const 1))))
+              (local.set $f (call $d_one_str_field (local.get $edx)))
+              (br_if $fallback (i32.eqz (local.get $f)))
+              (local.set $off (i32.sub (local.get $f) (i32.const 1)))
+              (local.set $n (local.get $ecx))
+              (local.set $c (call $gl8 (i32.add (local.get $edx) (i32.const 1))))   ;; name length
+              (local.set $size (call $gl32 (i32.add (i32.add (local.get $edx) (local.get $c)) (i32.const 2))))
+              ;; jz, then the kind chain's five Jccs to the record loop
+              (local.set $acc (i32.const 6))
+              (local.set $p (local.get $eax))
+              (block $stop (loop $el
+                (br_if $stop (i32.ge_u (local.get $k) (local.get $n)))
+                (local.set $ga (i32.add (local.get $p) (local.get $off)))
+                (local.set $s (call $gl32 (local.get $ga)))
+                ;; a release that would free, or one the native form does
+                ;; not take: the guest's loop runs this element on
+                (br_if $stop (call $d_last (local.get $s)))
+                (local.set $rs (call $d_rc (local.get $s)))
+                (br_if $stop (i32.eqz (call $d_rel_ok (local.get $s) (local.get $rs))))
+                ;; CALL _FinalizeRecord, its body (CALL _FinalizeArray, that
+                ;; one's jz jz jg CALL _LStrClr, _LStrClr, RET, JMP, RET; the
+                ;; field loop's jg), its RET, the record loop's jg = 12 +
+                ;; _LStrClr's own; after the last, the JMP to the exit
+                (local.set $v (i32.add (i32.const 12) (call $d_clr_pre (local.get $s) (local.get $rs))))
+                (br_if $stop (i32.eqz (call $d_can (i32.add (i32.add (local.get $acc) (local.get $v))
+                  (i32.eq (local.get $k) (i32.sub (local.get $n) (i32.const 1)))))))
+                (br_if $stop (i32.eqz (call $d_claim (local.get $s) (local.get $rs))))
+                (i32.store offset=4 (global.get $reg_base) (i32.const 1))
+                (call $d_clr_claimed (local.get $ga) (local.get $s) (local.get $rs))
+                (local.set $acc (i32.add (local.get $acc) (local.get $v)))
+                (local.set $p (i32.add (local.get $p) (local.get $size)))
+                (local.set $k (i32.add (local.get $k) (i32.const 1)))
+                (br $el)))
+              (br_if $fallback (i32.eqz (local.get $k)))
+              ;; flags: _FinalizeRecord's ADD ESI,8 (CF), then the DECs
+              (local.set $c (i32.add (i32.add (local.get $edx) (local.get $c)) (i32.const 0xA)))
+              (call $set_flags_add (local.get $c) (i32.const 8) (i32.add (local.get $c) (i32.const 8)))
+              (call $set_flags_dec (i32.add (i32.sub (local.get $n) (local.get $k)) (i32.const 1))
+                                   (i32.sub (local.get $n) (local.get $k)))
+              (if (i32.eq (local.get $k) (local.get $n))
+                (then
+                  ;; pops restore EAX = p and EBX/ESI/EDI/EBP; ECX/EDX are
+                  ;; the last _LStrClr's
+                  (call $d_charge (i32.add (local.get $acc) (i32.const 1)))
+                  (i32.store (global.get $reg_base) (local.get $eax))
+                  (global.set $gmf_rec (i32.add (global.get $gmf_rec) (i32.const 1)))
+                  (call $dfold_tick (local.get $id) (i32.const 0))
+                  (dispatch-next)))
+              ;; element k goes to the guest: the record loop's state at its
+              ;; top (+0xA7) after k elements -- the frame (EAX EBX ESI EDI,
+              ;; then EBP), EBX = the next element, ESI = typeinfo, EDI =
+              ;; n-k, EBP = name length, EAX = the last element (what
+              ;; _FinalizeRecord returns); the jg into it is the resume's
+              (call $d_charge (i32.sub (local.get $acc) (i32.const 1)))
+              (call $d_push (local.get $eax))
+              (call $d_push (i32.load offset=12 (global.get $reg_base)))
+              (call $d_push (i32.load offset=24 (global.get $reg_base)))
+              (call $d_push (i32.load offset=28 (global.get $reg_base)))
+              (call $d_push (i32.load offset=20 (global.get $reg_base)))
+              (i32.store offset=12 (global.get $reg_base) (local.get $p))
+              (i32.store offset=24 (global.get $reg_base) (local.get $edx))
+              (i32.store offset=28 (global.get $reg_base) (i32.sub (local.get $n) (local.get $k)))
+              (i32.store offset=20 (global.get $reg_base) (call $gl8 (i32.add (local.get $edx) (i32.const 1))))
+              (i32.store (global.get $reg_base) (i32.sub (local.get $p) (local.get $size)))
+              (global.set $gmf_rec_part (i32.add (global.get $gmf_rec_part) (i32.const 1)))
+              (call $dfold_partial_tick)
+              (local.set $entry (i32.add (local.get $entry) (i32.const 0xA7)))
+              (br $resume)))
           (br_if $fallback (i32.ne (local.get $ecx) (i32.const 1)))
           (br_if $fallback (i32.ne (call $gl8 (local.get $edx)) (i32.const 0xA)))
           (local.set $s (call $gl32 (local.get $eax)))
@@ -1193,6 +1357,127 @@
           (call $d_move_run (local.get $id) (local.get $eax) (local.get $edx) (local.get $ecx))
           (call $dfold_tick (local.get $id) (i32.const 0))
           (dispatch-next)))
+      ;; 10 the Game Maker variable-list scan, at its loop head:
+      ;;   L: lea ebx,[esi+esi*4]; mov edi,[eax+4]; cmp edx,[edi+ebx*8]
+      ;;      jnz N; mov ecx,esi; jmp X
+      ;;   N: dec esi; cmp esi,-1; jnz L
+      ;;   X: (entry+0x15)
+      ;; rows of 40 bytes at [eax+4], id at +0, scanned from index ESI down
+      ;; for EDX. Every trip is two branches (jnz jnz, or jnz jmp on a hit);
+      ;; the last is the exit's own transfer. Pure reads, so it can stop at
+      ;; the head after any whole trip -- where the threaded loop stops when
+      ;; the budget runs out on its back edge.
+      (if (i32.eq (local.get $id) (i32.const 10))
+        (then
+          (local.set $i (i32.load offset=24 (global.get $reg_base)))
+          (br_if $fallback (i32.lt_s (local.get $i) (i32.const 0)))
+          ;; the trips the budget pays for: n whole trips need 2n-1 of it
+          (local.set $n (global.get $GMF_CHUNK))
+          (if (global.get $branch_clock)
+            (then
+              (local.set $c (select (i32.shr_s (i32.add (global.get $block_budget) (i32.const 1)) (i32.const 1))
+                                    (i32.const 0) (i32.gt_s (global.get $block_budget) (i32.const 0))))
+              (if (i32.lt_u (local.get $c) (local.get $n)) (then (local.set $n (local.get $c))))))
+          (br_if $fallback (i32.eqz (local.get $n)))
+          (local.set $d (call $gl32 (i32.add (local.get $eax) (i32.const 4))))
+          ;; one translation per guest page: $wd = wasm - guest on page $pg
+          (local.set $pg (i32.const 1))
+          (block $hit (block $miss (block $head
+            (loop $trip
+              (br_if $head (i32.ge_u (local.get $k) (local.get $n)))
+              (local.set $ga (i32.add (local.get $d) (i32.mul (local.get $i) (i32.const 40))))
+              (if (i32.gt_u (i32.and (local.get $ga) (i32.const 0xFFF)) (i32.const 0xFFC))
+                (then (local.set $v (call $gl32 (local.get $ga))))
+                (else
+                  (if (i32.ne (i32.and (local.get $ga) (i32.const 0xFFFFF000)) (local.get $pg))
+                    (then
+                      (local.set $wd (call $g2w (local.get $ga)))
+                      (if (i32.eq (local.get $wd) (global.get $NULL_SENTINEL))
+                        (then (local.set $pg (i32.const 1)))
+                        (else (local.set $pg (i32.and (local.get $ga) (i32.const 0xFFFFF000)))))
+                      (local.set $wd (i32.sub (local.get $wd) (local.get $ga)))))
+                  (local.set $v (i32.load (i32.add (local.get $ga) (local.get $wd))))))
+              (local.set $k (i32.add (local.get $k) (i32.const 1)))
+              (br_if $hit (i32.eq (local.get $v) (local.get $edx)))
+              (local.set $i (i32.sub (local.get $i) (i32.const 1)))
+              (br_if $miss (i32.eq (local.get $i) (i32.const -1)))
+              (br $trip)))
+            ;; out of budget (or the chunk) on a back edge: at the head
+            (i32.store offset=12 (global.get $reg_base) (i32.mul (i32.add (local.get $i) (i32.const 1)) (i32.const 5)))
+            (i32.store offset=24 (global.get $reg_base) (local.get $i))
+            (i32.store offset=28 (global.get $reg_base) (local.get $d))
+            (call $set_flags_sub (local.get $i) (i32.const -1) (i32.add (local.get $i) (i32.const 1)))
+            (global.set $flag_sign_shift (i32.const 31))
+            (call $d_charge (i32.sub (i32.shl (local.get $k) (i32.const 1)) (i32.const 1)))
+            (global.set $gmf_trips (i32.add (global.get $gmf_trips) (local.get $k)))
+            (call $dfold_partial_tick)
+            (br $resume))
+          ;; not found: ESI = -1, EBX = 0 (the last trip's row 0), ECX kept
+          (i32.store offset=12 (global.get $reg_base) (i32.const 0))
+          (i32.store offset=24 (global.get $reg_base) (i32.const -1))
+          (i32.store offset=28 (global.get $reg_base) (local.get $d))
+          (call $set_flags_sub (i32.const -1) (i32.const -1) (i32.const 0))
+          (global.set $flag_sign_shift (i32.const 31))
+          (call $d_charge (i32.sub (i32.shl (local.get $k) (i32.const 1)) (i32.const 1)))
+          (global.set $gmf_trips (i32.add (global.get $gmf_trips) (local.get $k)))
+          (call $dfold_tick (local.get $id) (i32.const 0))
+          (local.set $entry (i32.add (local.get $entry) (i32.const 0x15)))
+          (br $resume))
+          ;; found at row i: ECX = ESI = i, EBX = 5i, flags of the equal CMP
+          (i32.store offset=4 (global.get $reg_base) (local.get $i))
+          (i32.store offset=12 (global.get $reg_base) (i32.mul (local.get $i) (i32.const 5)))
+          (i32.store offset=24 (global.get $reg_base) (local.get $i))
+          (i32.store offset=28 (global.get $reg_base) (local.get $d))
+          (call $set_flags_sub (local.get $edx) (local.get $v) (i32.const 0))
+          (global.set $flag_sign_shift (i32.const 31))
+          (call $d_charge (i32.sub (i32.shl (local.get $k) (i32.const 1)) (i32.const 1)))
+          (global.set $gmf_trips (i32.add (global.get $gmf_trips) (local.get $k)))
+          (call $dfold_tick (local.get $id) (i32.const 0))
+          (local.set $entry (i32.add (local.get $entry) (i32.const 0x15)))
+          (br $resume)))
+      ;; 11/12 the 2-D instance-table read (eax = obj, edx = i, ecx = j):
+      ;; 0 <= i < length([obj+C]) and 0 <= j < [obj+C][i] ? [[obj+D]+4i]+4j]
+      ;; : 0, C/D = 0x84/0x80 (11) or 0x7C/0x78 (12). 13 the 1-D one (eax =
+      ;; obj, edx = i): 0 <= i < length([obj+0x7C]) ? [[obj+0x7C]+4i] : 0.
+      ;; EBX ESI EDI (EBP) come back popped, ECX/EDX untouched; the flags
+      ;; are the last test or cmp's. Branches before the RET: i < 0 1 (jl);
+      ;; then jl, CALL, length's jz and RET, jge = 5; then jl 6; then jge 7.
+      (if (i32.ge_u (local.get $id) (i32.const 11))
+        (then
+          (local.set $v (i32.const 0))
+          (if (i32.lt_s (local.get $edx) (i32.const 0))
+            (then (local.set $c (i32.const 1)) (call $set_flags_logic (local.get $edx)))
+            (else
+              (local.set $ga (call $gl32 (i32.add (local.get $eax)
+                (select (i32.const 0x84) (i32.const 0x7C) (i32.eq (local.get $id) (i32.const 11))))))
+              (local.set $n (if (result i32) (local.get $ga)
+                (then (call $gl32 (i32.sub (local.get $ga) (i32.const 4)))) (else (i32.const 0))))
+              (local.set $c (i32.const 5))
+              (call $set_flags_sub (local.get $edx) (local.get $n) (i32.sub (local.get $edx) (local.get $n)))
+              (if (i32.lt_s (local.get $edx) (local.get $n))
+                (then
+                  (if (i32.eq (local.get $id) (i32.const 13))
+                    (then (local.set $v (call $gl32 (i32.add (local.get $ga) (i32.shl (local.get $edx) (i32.const 2))))))
+                    (else
+                      (local.set $c (i32.const 6))
+                      (if (i32.lt_s (local.get $ecx) (i32.const 0))
+                        (then (call $set_flags_logic (local.get $ecx)))
+                        (else
+                          (local.set $c (i32.const 7))
+                          (local.set $n (call $gl32 (i32.add (local.get $ga) (i32.shl (local.get $edx) (i32.const 2)))))
+                          (call $set_flags_sub (local.get $ecx) (local.get $n) (i32.sub (local.get $ecx) (local.get $n)))
+                          (if (i32.lt_s (local.get $ecx) (local.get $n))
+                            (then
+                              (local.set $ga (call $gl32 (i32.add (local.get $eax)
+                                (select (i32.const 0x80) (i32.const 0x78) (i32.eq (local.get $id) (i32.const 11))))))
+                              (local.set $ga (call $gl32 (i32.add (local.get $ga) (i32.shl (local.get $edx) (i32.const 2)))))
+                              (local.set $v (call $gl32 (i32.add (local.get $ga) (i32.shl (local.get $ecx) (i32.const 2)))))))))))))))
+          (br_if $fallback (i32.eqz (call $d_can (local.get $c))))
+          (call $d_charge (local.get $c))
+          (global.set $flag_sign_shift (i32.const 31))
+          (i32.store (global.get $reg_base) (local.get $v))
+          (call $dfold_tick (local.get $id) (i32.const 0))
+          (dispatch-next)))
       (unreachable))
     ;; Back to the guest body: perform its first instruction, resume after it.
     ;; That instruction is no branch: the resume's transfer is refunded.
@@ -1223,11 +1508,18 @@
     (if (i32.eq (local.get $id) (i32.const 8))      ;; cmp eax,edx
       (then (call $set_flags_sub (local.get $eax) (local.get $edx) (i32.sub (local.get $eax) (local.get $edx)))
             (local.set $entry (i32.add (local.get $entry) (i32.const 2)))))
+    (if (i32.eq (local.get $id) (i32.const 10))     ;; lea ebx,[esi+esi*4]
+      (then (i32.store offset=12 (global.get $reg_base) (i32.mul (i32.load offset=24 (global.get $reg_base)) (i32.const 5)))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 3)))))
+    (if (i32.ge_u (local.get $id) (i32.const 11))   ;; push ebx
+      (then (call $d_push (i32.load offset=12 (global.get $reg_base)))
+            (local.set $entry (i32.add (local.get $entry) (i32.const 1)))))
     (if (i32.eq (local.get $id) (i32.const 9))      ;; push esi
       (then (local.set $esp (i32.sub (i32.load offset=16 (global.get $reg_base)) (i32.const 4)))
             (call $gs32 (local.get $esp) (i32.load offset=24 (global.get $reg_base)))
             (i32.store offset=16 (global.get $reg_base) (local.get $esp))
             (local.set $entry (i32.add (local.get $entry) (i32.const 1)))))
+    )
     (global.set $eip (local.get $entry))
     (return_call $branch_end))
 
@@ -1236,6 +1528,11 @@
   (func (export "set_delphi_fold") (param $on i32)
     (global.set $delphi_fold (i32.ne (local.get $on) (i32.const 0))))
   (func (export "get_delphi_fold") (result i32) (global.get $delphi_fold))
+  ;; --gm-fold=MASK: bit 0 var scan, 1 instance reads, 2 record arrays.
+  ;; Decode-time per instance, like set_delphi_fold.
+  (func (export "set_gm_fold") (param $mask i32)
+    (global.set $gm_fold (i32.and (local.get $mask) (i32.const 7))))
+  (func (export "get_gm_fold") (result i32) (global.get $gm_fold))
   ;; 0 native, 1 fallback, 2 partial, 3 CAS lost, 4 SMC group drops,
   ;; 11-19 native per helper id, 21-29 fallback per id
   ;; (1 _LStrClr 2 _LStrAsg 3 _FinalizeRecord 4 _FinalizeArray 5 _CopyRecord
@@ -1264,4 +1561,17 @@
     (if (i32.eq (local.get $k) (i32.const 27)) (then (return (global.get $dfold_f7))))
     (if (i32.eq (local.get $k) (i32.const 28)) (then (return (global.get $dfold_f8))))
     (if (i32.eq (local.get $k) (i32.const 29)) (then (return (global.get $dfold_f9))))
+    ;; GM fold: 30-33 native per id 10-13, 40-43 fallback, 34 record arrays
+    ;; native, 35 record arrays resumed in the guest loop, 36 scan trips
+    (if (i32.eq (local.get $k) (i32.const 30)) (then (return (global.get $gmf_n10))))
+    (if (i32.eq (local.get $k) (i32.const 31)) (then (return (global.get $gmf_n11))))
+    (if (i32.eq (local.get $k) (i32.const 32)) (then (return (global.get $gmf_n12))))
+    (if (i32.eq (local.get $k) (i32.const 33)) (then (return (global.get $gmf_n13))))
+    (if (i32.eq (local.get $k) (i32.const 34)) (then (return (global.get $gmf_rec))))
+    (if (i32.eq (local.get $k) (i32.const 35)) (then (return (global.get $gmf_rec_part))))
+    (if (i32.eq (local.get $k) (i32.const 36)) (then (return (global.get $gmf_trips))))
+    (if (i32.eq (local.get $k) (i32.const 40)) (then (return (global.get $gmf_f10))))
+    (if (i32.eq (local.get $k) (i32.const 41)) (then (return (global.get $gmf_f11))))
+    (if (i32.eq (local.get $k) (i32.const 42)) (then (return (global.get $gmf_f12))))
+    (if (i32.eq (local.get $k) (i32.const 43)) (then (return (global.get $gmf_f13))))
     (i32.const 0))
