@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/07d-uop-engine.wat",
+      "name": "$uop_fast",
+      "baseSHA256": "7d1dea1a588fa8f3eb2f8f5e535dba28fca58d452097d82826c29213edaac9c4",
+      "sha256": "a8367d2c700ccd4900fb788738eed0b9c140bebc8f165001ed0e5086640dea90",
+      "reason": "Review 20261127 --uop-opt 0x10000 V2c / 0x20000 C3 (opt-in, off unless the mask bit is set): four native ops are added to the uop engine's br_table, 143 XSWSAHF (FNSTSW AX and SAHF in one op: fpu_sw, AX and the raw flag record, $get_of read first) and 144-146 RECSUB/RECADD/RECAND (a flag record that derives its result or addend in the op). Each writes flag globals, fpu_sw or the AX register slot and advances $pc; none writes EIP, exits, calls back into the guest or touches a callback frame, guest stack, HWND, hook or message queue. Callback ownership remains pending."
+    }
+  ]
+}

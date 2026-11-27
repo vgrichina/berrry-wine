@@ -687,6 +687,9 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
       // variant-hits / megamorphic are S1's (0x200); c2-copies / c2-programs
       // C2's (0x400): peeled iterations, programs that have any; r2-contexts /
       // r2-programs R2's (0x800): call-site contexts, programs that kept any.
+      // v2c-fused: FNSTSW AX + SAHF pairs lowered as one XSWSAHF (0x10000);
+      // c3-edge-recs: Jcc block-end records moved onto one edge or dropped
+      // (0x40000); c3-fused-recs: records whose SUB/AND went into the op (0x20000).
       if (x.uop_opt_stat) {
         const os = (k) => x.uop_opt_stat(k) >>> 0;
         log(`uop opt: mask=0x${(x.get_uop_opt ? x.get_uop_opt() >>> 0 : 0).toString(16)} enters=${st(4)} ` +
@@ -694,7 +697,7 @@ function createRunnerExperiments({ hasFlag, getArg, env = process.env, log = con
           `loads-deleted=${os(7)} stores-deleted=0 folds=${os(7)} fold-dwords=${os(10)} jcc-folded=${os(8)} ` +
           `variants=${os(11)} variant-hits=${os(13)} megamorphic=${os(12)} icg-megamorphic=${st(21)} lock-sites=${os(4)} sahf-sites=${os(5)} ret-exits=${os(6)} ` +
           `c2-copies=${os(14)} c2-programs=${os(15)} r2-contexts=${os(16)} r2-programs=${os(17)} ` +
-          `sahf-jcc=${os(18)} m1-loads=${os(19)} ret-dyn=${os(20)} ret-chain=${os(21)} fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
+          `sahf-jcc=${os(18)} m1-loads=${os(19)} ret-dyn=${os(20)} ret-chain=${os(21)} v2c-fused=${os(22)} c3-edge-recs=${os(23)} c3-fused-recs=${os(24)} fs-programs=${os(9)} seams-skipped=${os(1)} decline-hits=${os(3)} stamp-drops=${os(0)}`);
       }
       if (UOP_R2_WINDOW !== null && x.uop_r2_last_head) log(`uop r2 window: last head 0x${(x.uop_r2_last_head() >>> 0).toString(16)}`);
       if (x.get_uop_nobump_skips) log(`uop nobump: skips=${x.get_uop_nobump_skips() >>> 0}`);

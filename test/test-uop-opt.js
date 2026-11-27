@@ -23,7 +23,9 @@ const path = require('path');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
-const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x1000, 0x1040, 0x4010, 0x7FFF, 0x8000, 0xFFFF];
+const ARMS = [0, 0x1, 0x2, 0x4, 0x8, 0x10, 0x20, 0x40, 0x80, 0xC0, 0x140, 0x1FF, 0x240, 0x3FF, 0x640, 0x7FF, 0x840, 0xFFF, 0x1000, 0x1040, 0x4010, 0x7FFF, 0x8000, 0xFFFF,
+  // 0x10000 V2c, 0x20000 / 0x40000 C3 (docs/design/uop-optimizer-pipeline.md 10.10)
+  0x10010, 0x1FFFF, 0x20000, 0x40000, 0x60000, 0x6FFFF, 0x7FFFF];
 
 const extraWat = String.raw`
   (func (export "test_vprotect")
@@ -445,7 +447,7 @@ async function invalidation() {
   // supply, over random floats (NaNs included: C3=C2=C0=1), against threaded
   // code; SAHF inline and the Jcc off AH
   {
-    let fused = 0;
+    let fused = 0, v2c = 0;
     for (let cc = 2; cc <= 11; cc++) {
       const body = Uint8Array.from([0xD9, 0x06, 0xD8, 0x5E, 0x04, 0xDF, 0xE0, 0x9E, 0x0F, 0x80 | cc, ...d32(3),
         0x83, 0x07, 0x01, 0x83, 0xC6, 0x04, 0x83, 0xC7, 0x04, 0x49, 0x75, 0xE6 - 0x100 + 0x100 - 0x0, 0xC3]);
@@ -454,15 +456,17 @@ async function invalidation() {
       const RR = { eax: 0, ebx: 0, ecx: 300, edx: 0, ebp: 0, esi: a.buf, edi: a.buf + 0x10000 };
       e.set_uop(0); fill(); const want = run(fresh(body), RR);
       e.set_uop(1);
-      for (const mask of [0x10, 0x4010, 0x7FFF]) {
+      for (const mask of [0x10, 0x4010, 0x7FFF, 0x10010, 0x14010, 0x7FFFF]) {
         e.set_uop_opt(mask);
-        const f0 = st(18);
+        const f0 = st(18), v0 = st(22);
         const { at } = compiled(body);
         if (mask & 0x4000) { assert(st(18) > f0, `cc ${cc}: the Jcc read AH`); fused += st(18) - f0; }
+        // 0x10000: FNSTSW AX + SAHF become one op whatever reads the flags
+        if (mask & 0x10000) { assert(st(22) > v0, `cc ${cc}: V2c fused`); v2c += st(22) - v0; } else assert.strictEqual(st(22), v0);
         fill(); assert.strictEqual(run(at, RR), want, `fnstsw/sahf/j${cc} mask 0x${mask.toString(16)}`);
       }
     }
-    ok(`0x4000 fnstsw/sahf/jcc: cc 2-11 exact over 300 random float compares (${fused} Jcc read off AH)`);
+    ok(`0x4000 fnstsw/sahf/jcc: cc 2-11 exact over 300 random float compares (${fused} Jcc read off AH, ${v2c} V2c fusions)`);
   }
   // 0x1000 M1: repeated loads within a block become register MOVs; a store
   // to the same bytes, through another base (aliased here: EDI == ESI + 4 in

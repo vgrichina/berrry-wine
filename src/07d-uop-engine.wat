@@ -1688,6 +1688,7 @@
     (loop $L
       (block $svc
       (block $miss
+      (block $c146 (block $c145 (block $c144 (block $c143
       (block $n142 (block $n141 (block $n140 (block $n139 (block $n138 (block $n137 (block $n136 (block $n135 (block $n134 (block $n133 (block $n132 (block $n131 (block $n130 (block $n129 (block $n128 (block $n127 (block $n126 (block $n125 (block $n124 (block $n123 (block $n122 (block $n121 (block $n120
       (block $c113 (block $c112 (block $c111 (block $c109 (block $c108
       (block $c107 (block $c106 (block $xar (block $c105 (block $c104 (block $c103 (block $c102
@@ -1733,6 +1734,8 @@
                   $c0 $c0 $c0 $c0 $c0 $c0
                   ;; 120-142 native SSE (--uop-sse-native)
                   $n120 $n121 $n122 $n123 $n124 $n125 $n126 $n127 $n128 $n129 $n130 $n131 $n132 $n133 $n134 $n135 $n136 $n137 $n138 $n139 $n140 $n141 $n142
+                  ;; 143 XSWSAHF (--uop-opt 0x10000), 144-146 fused records (0x20000)
+                  $c143 $c144 $c145 $c146
                   $c0
                   (i32.load (local.get $pc))))
         ;; 0 EXIT eip
@@ -2945,6 +2948,54 @@
         ;; 142 XMOVSD d s (sub 37 between registers): the low qword
         (i64.store (ux-xd) (i64.load (ux-xs)))
         (local.set $pc (i32.add (local.get $pc) (i32.const 12))) (br $L))
+        ;; 143 XSWSAHF -- --uop-opt 0x10000 V2c: FNSTSW AX (107) then SAHF
+        ;; (111) in one op, $load_eflags's raw record built from AH directly.
+        ;; OF is the one flag SAHF keeps, read before the record changes;
+        ;; DF and the other kept bits round-trip through $build_eflags /
+        ;; $load_eflags unchanged, which leaves $eflags_extra masked as it.
+        (global.set $fpu_sw (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xC7FF))
+                                    (i32.shl (global.get $fpu_top) (i32.const 11))))
+        (i32.store16 (global.get $reg_base) (global.get $fpu_sw))
+        (local.set $v (i32.and (i32.shr_u (global.get $fpu_sw) (i32.const 8)) (i32.const 0xFF)))
+        (global.set $flag_b (call $get_of))
+        (global.set $eflags_extra (i32.and (global.get $eflags_extra) (i32.const 0x003F7300)))
+        (global.set $flag_op (i32.const 9))
+        (global.set $flag_a (i32.or (i32.or (i32.and (local.get $v) (i32.const 1))
+                                            (i32.and (i32.shr_u (local.get $v) (i32.const 1)) (i32.const 2)))
+                                    (i32.or (i32.and (i32.shr_u (local.get $v) (i32.const 2)) (i32.const 4))
+                                            (i32.and (i32.shr_u (local.get $v) (i32.const 4)) (i32.const 8)))))
+        (global.set $flag_res (select (i32.const 0)
+                                      (select (i32.const 0x80000001) (i32.const 1) (i32.and (local.get $v) (i32.const 0x80)))
+                                      (i32.and (local.get $v) (i32.const 0x40))))
+        (global.set $flag_sign_shift (i32.const 31))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 4))) (br $L))
+        ;; 144 RECSUB a b shift mask -- --uop-opt 0x20000 C3: REC 2 a b
+        ;; ((a - b) & mask) shift, the SUB (and ANDI) it needed folded in
+        (local.set $v (i32.load (i32.load offset=4 (local.get $pc))))
+        (local.set $w (i32.load (i32.load offset=8 (local.get $pc))))
+        (global.set $flag_op (i32.const 2))
+        (global.set $flag_a (local.get $v))
+        (global.set $flag_b (local.get $w))
+        (global.set $flag_res (i32.and (i32.sub (local.get $v) (local.get $w)) (i32.load offset=16 (local.get $pc))))
+        (global.set $flag_sign_shift (i32.load offset=12 (local.get $pc)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 20))) (br $L))
+        ;; 145 RECADD r b shift mask: REC 1 ((r - b) & mask) b r shift
+        (local.set $v (i32.load (i32.load offset=4 (local.get $pc))))
+        (local.set $w (i32.load (i32.load offset=8 (local.get $pc))))
+        (global.set $flag_op (i32.const 1))
+        (global.set $flag_a (i32.and (i32.sub (local.get $v) (local.get $w)) (i32.load offset=16 (local.get $pc))))
+        (global.set $flag_b (local.get $w))
+        (global.set $flag_res (local.get $v))
+        (global.set $flag_sign_shift (i32.load offset=12 (local.get $pc)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 20))) (br $L))
+        ;; 146 RECAND x y shift: REC 3 0 0 (x & y) shift
+        (global.set $flag_op (i32.const 3))
+        (global.set $flag_a (i32.const 0))
+        (global.set $flag_b (i32.const 0))
+        (global.set $flag_res (i32.and (i32.load (i32.load offset=4 (local.get $pc)))
+                                       (i32.load (i32.load offset=8 (local.get $pc)))))
+        (global.set $flag_sign_shift (i32.load offset=12 (local.get $pc)))
+        (local.set $pc (i32.add (local.get $pc) (i32.const 16))) (br $L))
       ;; A memory access left its window: $uop_run re-guards (a call).
       (global.set $uop_io_ga (local.get $ga))
       (global.set $uop_io_w (local.get $w))

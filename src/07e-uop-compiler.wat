@@ -3147,6 +3147,9 @@
   (func $uc_o3 (param $c i32) (param $a i64) (param $b i64) (param $d i64)
     (call $uc_emit (local.get $c) (i32.const 3) (local.get $a) (local.get $b) (local.get $d)
                    (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0)))
+  (func $uc_o4 (param $c i32) (param $a i64) (param $b i64) (param $d i64) (param $e i64)
+    (call $uc_emit (local.get $c) (i32.const 4) (local.get $a) (local.get $b) (local.get $d)
+                   (local.get $e) (i64.const 0) (i64.const 0) (i64.const 0)))
   (func $uc_o5 (param $c i32) (param $a i64) (param $b i64) (param $d i64) (param $e i64) (param $f i64)
     (call $uc_emit (local.get $c) (i32.const 5) (local.get $a) (local.get $b) (local.get $d)
                    (local.get $e) (local.get $f) (i64.const 0) (i64.const 0)))
@@ -3366,6 +3369,12 @@
     (if (i32.eq (local.get $k) (i32.const 16)) (then (return (global.get $uc_t_retd))))
     ;; 17 RETX transfers that continued into the next program (07d $uop_ret_chain)
     (if (i32.eq (local.get $k) (i32.const 17)) (then (return (global.get $uop_ret_chains))))
+    ;; 18 V2c FNSTSW+SAHF pairs fused into XSWSAHF (0x10000), 19 C3 block-end
+    ;; records moved onto the one edge that needs them or dropped (0x40000),
+    ;; 20 C3 records whose operand arithmetic went into the record op (0x20000)
+    (if (i32.eq (local.get $k) (i32.const 18)) (then (return (global.get $uc_t_v2c))))
+    (if (i32.eq (local.get $k) (i32.const 19)) (then (return (global.get $uc_t_c3e))))
+    (if (i32.eq (local.get $k) (i32.const 20)) (then (return (global.get $uc_t_c3r))))
     (i32.const 0))
   ;; --uop-opt 0x002's RET exit, under the branch clock only. The exit
   ;; deopts to the RET mid-block on every entry, and threaded code resuming
@@ -3389,6 +3398,10 @@
     (global.set $uc_n_m1 (i32.const 0))
     (global.set $uc_n_ahcc (i32.const 0))
     (global.set $uc_sahf_next (i32.const 0))
+    (global.set $uc_n_v2c (i32.const 0))
+    (global.set $uc_v2c_eip (i32.const 0))
+    (global.set $uc_n_c3e (i32.const 0))
+    (global.set $uc_n_c3r (i32.const 0))
     (global.set $uc_n_retx (i32.const 0))
     (global.set $uc_n_retd (i32.const 0))
     (global.set $uc_n_fold (i32.const 0))
@@ -4188,9 +4201,31 @@
     ;; threaded handler itself (SSER: handler 212, which ignores its operand)
     (if (i32.eq (local.get $k) (i32.const 35))
       (then
+        ;; --uop-opt 0x10000 V2c: an FNSTSW AX whose op 107 is the last item
+        ;; (no label, check or op in between) is taken back, and this SAHF
+        ;; becomes XSWSAHF, both in one op with no flag calls but $get_of.
+        ;; The record below still runs first; it reads only flag-producer
+        ;; operands (snapshotted at their producer), never the AX written.
+        (local.set $a
+          (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x10000)) (i32.const 0))
+                   (i32.and (i32.eq (global.get $uc_v2c_eip) (global.get $uc_x_eip))
+                            (i32.and (i32.eq (i32.add (global.get $uc_v2c_at) (i32.const 16)) (global.get $uc_nitems))
+                                     (i32.eq (i32.load (i32.add (global.get $UC_ITEMS) (global.get $uc_v2c_at)))
+                                             (i32.const 107))))))
+        (global.set $uc_v2c_eip (i32.const 0))
+        (if (local.get $a)
+          (then (global.set $uc_nitems (global.get $uc_v2c_at))
+                (global.set $uc_nops (i32.sub (global.get $uc_nops) (i32.const 1)))))
         (local.set $n (call $uc_rec (global.get $uc_x_m) (global.get $uc_x_md)
                                     (global.get $uc_x_c) (global.get $uc_x_cd)))
         (if (local.get $n) (then (return (local.get $n))))
+        (if (local.get $a)
+          (then (call $uc_emit (i32.const 143) (i32.const 0) (i64.const 0) (i64.const 0) (i64.const 0)
+                               (i64.const 0) (i64.const 0) (i64.const 0) (i64.const 0))
+                (global.set $uc_n_v2c (i32.add (global.get $uc_n_v2c) (i32.const 1)))
+                (global.set $uc_n_sahf (i32.add (global.get $uc_n_sahf) (i32.const 1)))
+                (global.set $uc_sahf_next (i32.load offset=4 (local.get $R)))
+                (return (i32.const 0))))
         ;; --uop-opt 0x4000: the handler's body as one inline op (SAHFI), and
         ;; the next instruction, if a Jcc, reads its condition off AH
         (if (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x4000)) (i32.const 0))
@@ -4744,9 +4779,13 @@
       (then (local.set $code (i32.or (i32.and (local.get $code) (i32.const 0xFFFF))
                                      (i32.and (local.get $nat) (i32.const 0xFFFF0000))))))
     (if (i32.eqz (local.get $form))
-      (then (call $uc_o1 (select (i32.and (local.get $nat) (i32.const 0xFF)) (i32.const 90) (local.get $nat))
-                         (call $uc_aN (local.get $code)))
-            (return (i32.const 0))))
+      (then
+        (if (i32.eq (local.get $nat) (i32.const 107))
+          (then (global.set $uc_v2c_at (global.get $uc_nitems))
+                (global.set $uc_v2c_eip (i32.load offset=4 (local.get $R)))))
+        (call $uc_o1 (select (i32.and (local.get $nat) (i32.const 0xFF)) (i32.const 90) (local.get $nat))
+                     (call $uc_aN (local.get $code)))
+        (return (i32.const 0))))
     (call $uc_emit (select (i32.and (local.get $nat) (i32.const 0xFF))
                            (select (i32.const 89) (i32.const 88) (i32.eq (local.get $form) (i32.const 2)))
                            (local.get $nat))
@@ -5092,7 +5131,7 @@
   ;; Write the lazy flag record for state (m, md, c, cd) into the globals.
   (func $uc_rec (param $m i32) (param $md i32) (param $c i32) (param $cd i32) (result i32)
     (local $rk i32) (local $w i32) (local $sh i64) (local $Z i64) (local $A i64) (local $B i64)
-    (local $Rv i64) (local $cf i64) (local $err i32)
+    (local $Rv i64) (local $cf i64) (local $err i32) (local $pa i32) (local $pb i32)
     (if (i32.eq (local.get $m) (global.get $UC_G)) (then (return (i32.const 0))))
     (if (i32.eq (local.get $m) (global.get $UC_D)) (then (return (i32.const 15))))
     (local.set $rk (call $uc_rkind (local.get $m)))
@@ -5104,6 +5143,10 @@
       (then
         (local.set $Rv (call $uc_valof (call $uc_pref (local.get $m) (i32.const 3) (local.get $md)) (local.get $w) (i32.const 0)))
         (local.set $B (call $uc_valof (call $uc_pref (local.get $m) (i32.const 2) (local.get $md)) (local.get $w) (i32.const 0)))
+        ;; --uop-opt 0x20000 C3: RECADD derives the addend itself
+        (if (call $uc_c3r_on)
+          (then (call $uc_o4 (i32.const 145) (local.get $Rv) (local.get $B) (local.get $sh) (call $uc_aN (call $uc_c3_mask (local.get $w))))
+                (return (i32.const 0))))
         (local.set $A (call $uc_scratch))
         (call $uc_o3 (i32.const 4) (local.get $A) (local.get $Rv) (local.get $B))
         (if (i32.lt_u (local.get $w) (i32.const 32))
@@ -5121,6 +5164,10 @@
       (then
         (local.set $A (call $uc_valof (call $uc_pref (local.get $m) (i32.const 1) (local.get $md)) (local.get $w) (i32.const 0)))
         (local.set $B (call $uc_valof (call $uc_pref (local.get $m) (i32.const 2) (local.get $md)) (local.get $w) (i32.const 0)))
+        ;; --uop-opt 0x20000 C3: RECSUB derives the difference itself
+        (if (call $uc_c3r_on)
+          (then (call $uc_o4 (i32.const 144) (local.get $A) (local.get $B) (local.get $sh) (call $uc_aN (call $uc_c3_mask (local.get $w))))
+                (return (i32.const 0))))
         (local.set $Rv (call $uc_scratch))
         (call $uc_o3 (i32.const 4) (local.get $Rv) (local.get $A) (local.get $B))
         (if (i32.lt_u (local.get $w) (i32.const 32))
@@ -5134,6 +5181,23 @@
         (return (i32.const 0))))
     (if (i32.eq (local.get $rk) (i32.const 1))
       (then
+        ;; --uop-opt 0x20000 C3: RECAND ands the two operands itself (TEST
+        ;; of a register with itself needs no AND and keeps REC)
+        (if (call $uc_c3r_on)
+          (then
+            (local.set $pa (call $uc_pref (local.get $m) (i32.const 1) (local.get $md)))
+            (local.set $pb (call $uc_pref (local.get $m) (i32.const 2) (local.get $md)))
+            (if (i32.eqz (i32.and (i32.and (i32.eqz (i32.load (local.get $pa))) (i32.eqz (i32.load (local.get $pb))))
+                                  (i32.and (i32.eq (i32.load offset=4 (local.get $pa)) (i32.load offset=4 (local.get $pb)))
+                                           (i32.eq (i32.load offset=12 (local.get $pa)) (i32.load offset=12 (local.get $pb))))))
+              (then
+                (call $uc_o3 (i32.const 146)
+                  (call $uc_valof (local.get $pa) (local.get $w) (i32.const 0))
+                  (if (result i64) (i32.eq (i32.load (local.get $pb)) (i32.const 2))
+                    (then (call $uc_aC (i32.and (i32.load offset=4 (local.get $pb)) (call $uc_c3_mask (local.get $w)))))
+                    (else (call $uc_valof (local.get $pb) (local.get $w) (i32.const 0))))
+                  (local.get $sh))
+                (return (i32.const 0))))))
         (local.set $Rv (call $uc_test_res (local.get $m) (local.get $md) (local.get $w)))
         (call $uc_o5 (i32.const 28) (call $uc_aN (i32.const 3)) (local.get $Z) (local.get $Z) (local.get $Rv) (local.get $sh))
         (return (i32.const 0))))
@@ -5178,6 +5242,12 @@
         (return (i32.const 0))))
     (i32.const 17))
 
+  (func $uc_c3r_on (result i32)
+    (if (result i32) (i32.and (global.get $uop_opt) (i32.const 0x20000))
+      (then (global.set $uc_n_c3r (i32.add (global.get $uc_n_c3r) (i32.const 1))) (i32.const 1))
+      (else (i32.const 0))))
+  (func $uc_c3_mask (param $w i32) (result i32)
+    (select (i32.const -1) (call $uc_mask (local.get $w)) (i32.ge_u (local.get $w) (i32.const 32))))
   (func $uc_test_res (param $p i32) (param $d i32) (param $w i32) (result i64)
     (local $A i32) (local $B i32) (local $t i64) (local $x i64) (local $y i64)
     (local.set $A (call $uc_pref (local.get $p) (i32.const 1) (local.get $d)))
@@ -5210,6 +5280,29 @@
   (global $uc_sahf_next (mut i32) (i32.const 0))
   (global $uc_n_ahcc (mut i32) (i32.const 0))
   (global $uc_t_ahcc (mut i32) (i32.const 0))
+  ;; --uop-opt 0x10000 V2c: where the last FNSTSW AX's op 107 item starts
+  ;; and the address after it, so a SAHF right behind it can take it back
+  (global $uc_v2c_at (mut i32) (i32.const 0))
+  (global $uc_v2c_eip (mut i32) (i32.const 0))
+  (global $uc_n_v2c (mut i32) (i32.const 0))
+  (global $uc_t_v2c (mut i32) (i32.const 0))
+  (global $uc_n_c3e (mut i32) (i32.const 0))
+  (global $uc_t_c3e (mut i32) (i32.const 0))
+  (global $uc_n_c3r (mut i32) (i32.const 0))
+  (global $uc_t_c3r (mut i32) (i32.const 0))
+  ;; --uop-opt 0x40000: does the block that starts at instruction t never
+  ;; look at the flags it is entered with? Only when its first instruction
+  ;; writes the whole record from registers alone (ALU other than ADC/SBB,
+  ;; TEST) and nothing there can exit (liveness bit 8 clear): then nothing
+  ;; reads, materializes or keys a stub on the entry state.
+  (func $uc_c3_dead_in (param $t i32) (result i32)
+    (local $k i32)
+    (if (i32.eqz (local.get $t)) (then (return (i32.const 1))))
+    (if (call $uc_flag (local.get $t) (i32.const 8)) (then (return (i32.const 0))))
+    (local.set $k (call $uc_kind (local.get $t)))
+    (if (i32.eq (local.get $k) (i32.const 4)) (then (return (i32.const 1))))
+    (i32.and (i32.eq (local.get $k) (i32.const 1))
+             (i32.ge_u (i32.sub (i32.load offset=12 (local.get $t)) (i32.const 2)) (i32.const 2))))
   (func $uc_ahmask (param $i i32) (result i32)
     (if (i32.eqz (local.get $i)) (then (return (i32.const 0x100))))
     (if (i32.eq (local.get $i) (i32.const 1)) (then (return (i32.const 0x4000))))
@@ -5756,6 +5849,7 @@
     (local $err i32) (local $next i64) (local $l i64) (local $rae i32) (local $dest i64)
     (local $m i32) (local $md i32) (local $c i32) (local $cd i32) (local $am i32) (local $amd i32)
     (local $ac i32) (local $acd i32) (local $tgt i32) (local $nx i32) (local $t i32)
+    (local $e3 i32) (local $tT i32) (local $tN i32) (local $nT i32) (local $nN i32) (local $r3 i32)
     (block $cdone (loop $cloop
       (br_if $cdone (i32.ge_u (local.get $ci) (global.get $uc_ncopies)))
       (local.set $cp (i32.add (i32.add (global.get $UC_MISC) (i32.const 0xD00)) (i32.shl (local.get $ci) (i32.const 4))))
@@ -5884,13 +5978,47 @@
                   (then (call $uc_check (i32.const 1) (local.get $tgt) (i32.const 0) (i32.const 0)))
                   (else (call $uc_check (i32.const 2) (i32.load offset=20 (local.get $R)) (local.get $tgt) (local.get $nx)))))
               (if (local.get $err) (then (return (local.get $err))))
-              (if (local.get $rae)
+              ;; --uop-opt 0x40000 C3: a merge this block records for is
+              ;; often only one of the Jcc's two successors. e3 0: the record
+              ;; before the branch, as ever; 1: neither successor ever looks
+              ;; at the state it is entered with ($uc_c3_dead_in; an exit's
+              ;; stub materializes from the state itself), so no record;
+              ;; 2: only the taken one, so the branch is inverted to the
+              ;; fall-through and the record is on the taken arm; 3: only the
+              ;; fall-through, so the record follows the branch.
+              (local.set $e3 (i32.const 0))
+              (if (i32.and (i32.ne (local.get $rae) (i32.const 0))
+                           (i32.and (i32.ne (i32.and (global.get $uop_opt) (i32.const 0x40000)) (i32.const 0))
+                                    (i32.eq (call $uc_kind (local.get $R)) (i32.const 15))))
+                (then
+                  (local.set $tT (call $uc_in_loopc (local.get $tgt) (call $uc_sctx (local.get $R) (i32.const 0))))
+                  (local.set $tN (call $uc_in_loopc (local.get $nx) (call $uc_ctx (local.get $R))))
+                  (local.set $nT (i32.eqz (call $uc_c3_dead_in (local.get $tT))))
+                  (local.set $nN (i32.eqz (call $uc_c3_dead_in (local.get $tN))))
+                  (if (i32.eqz (i32.or (local.get $nT) (local.get $nN))) (then (local.set $e3 (i32.const 1))))
+                  (if (i32.and (local.get $nT) (i32.and (i32.eqz (local.get $nN)) (i32.ne (local.get $tN) (i32.const 0))))
+                    (then (local.set $e3 (i32.const 2))))
+                  (if (i32.and (i32.eqz (local.get $nT)) (local.get $nN)) (then (local.set $e3 (i32.const 3))))
+                  (if (local.get $e3) (then (global.set $uc_n_c3e (i32.add (global.get $uc_n_c3e) (i32.const 1)))))))
+              (local.set $r3 (i32.and (i32.ne (local.get $rae) (i32.const 0)) (i32.eqz (local.get $e3))))
+              (if (local.get $r3)
                 (then (local.set $err (call $uc_rec (local.get $m) (local.get $md) (local.get $c) (local.get $cd)))
                       (if (local.get $err) (then (return (local.get $err))))))
-              (local.set $am (select (global.get $UC_G) (local.get $m) (local.get $rae)))
-              (local.set $amd (select (i32.const 0) (local.get $md) (local.get $rae)))
-              (local.set $ac (select (global.get $UC_G) (local.get $c) (local.get $rae)))
-              (local.set $acd (select (i32.const 0) (local.get $cd) (local.get $rae)))
+              (local.set $am (select (global.get $UC_G) (local.get $m) (local.get $r3)))
+              (local.set $amd (select (i32.const 0) (local.get $md) (local.get $r3)))
+              (local.set $ac (select (global.get $UC_G) (local.get $c) (local.get $r3)))
+              (local.set $acd (select (i32.const 0) (local.get $cd) (local.get $r3)))
+              (if (i32.eq (local.get $e3) (i32.const 2))
+                (then
+                  (local.set $err (call $uc_cond (local.get $am) (local.get $m) (local.get $md) (local.get $c) (local.get $cd)
+                                                 (i32.xor (i32.load offset=20 (local.get $R)) (i32.const 1))
+                                                 (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $nx) (call $uc_ctx (local.get $R)))))
+                  (if (local.get $err) (then (return (local.get $err))))
+                  (local.set $err (call $uc_rec (local.get $m) (local.get $md) (local.get $c) (local.get $cd)))
+                  (if (local.get $err) (then (return (local.get $err))))
+                  (call $uc_goto (local.get $pfx) (local.get $peel) (local.get $tgt) (call $uc_sctx (local.get $R) (i32.const 0)) (local.get $next))
+                  (local.set $n (i32.add (local.get $n) (i32.const 1)))
+                  (br $iloop)))
               (local.set $dest
                 (if (result i64) (call $uc_in_loopc (local.get $tgt) (call $uc_sctx (local.get $R) (i32.const 0)))
                   (then (call $uc_tl (local.get $pfx) (local.get $peel) (local.get $tgt) (call $uc_sctx (local.get $R) (i32.const 0))))
@@ -5904,6 +6032,9 @@
               (local.set $err (call $uc_cond (local.get $am) (local.get $m) (local.get $md) (local.get $c) (local.get $cd)
                                              (i32.load offset=20 (local.get $R)) (local.get $dest)))
               (if (local.get $err) (then (return (local.get $err))))
+              (if (i32.eq (local.get $e3) (i32.const 3))
+                (then (local.set $err (call $uc_rec (local.get $m) (local.get $md) (local.get $c) (local.get $cd)))
+                      (if (local.get $err) (then (return (local.get $err))))))
               (if (call $uc_in_loopc (local.get $nx) (call $uc_ctx (local.get $R)))
                 (then (call $uc_goto (local.get $pfx) (local.get $peel) (local.get $nx) (call $uc_ctx (local.get $R)) (local.get $next)))
                 (else (local.set $err (call $uc_inline_stub (local.get $nx) (local.get $am) (local.get $amd) (local.get $ac) (local.get $acd)))
@@ -7087,6 +7218,9 @@
     (global.set $uc_t_lock (i32.add (global.get $uc_t_lock) (global.get $uc_n_lock)))
     (global.set $uc_t_sahf (i32.add (global.get $uc_t_sahf) (global.get $uc_n_sahf)))
     (global.set $uc_t_ahcc (i32.add (global.get $uc_t_ahcc) (global.get $uc_n_ahcc)))
+    (global.set $uc_t_v2c (i32.add (global.get $uc_t_v2c) (global.get $uc_n_v2c)))
+    (global.set $uc_t_c3e (i32.add (global.get $uc_t_c3e) (global.get $uc_n_c3e)))
+    (global.set $uc_t_c3r (i32.add (global.get $uc_t_c3r) (global.get $uc_n_c3r)))
     (global.set $uc_t_m1 (i32.add (global.get $uc_t_m1) (global.get $uc_n_m1)))
     (global.set $uc_t_retx (i32.add (global.get $uc_t_retx) (global.get $uc_n_retx)))
     (global.set $uc_t_retd (i32.add (global.get $uc_t_retd) (global.get $uc_n_retd)))
@@ -7246,7 +7380,7 @@
   ;; An unchanged mask changes nothing (set_uop_opt(0) on a fresh instance is
   ;; the tier as it was: test-uop-opt-identity.js).
   (func (export "set_uop_opt") (param $mask i32)
-    (local.set $mask (i32.and (local.get $mask) (i32.const 0xFFFF)))
+    (local.set $mask (i32.and (local.get $mask) (i32.const 0x7FFFF)))
     (if (i32.eq (local.get $mask) (global.get $uop_opt)) (then (return)))
     (global.set $uop_opt (local.get $mask))
     (memory.fill (global.get $UOP_FOLD_WRITTEN) (i32.const 0) (i32.const 256))

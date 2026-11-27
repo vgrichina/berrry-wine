@@ -1218,6 +1218,68 @@ CASES.push({
     [0xD9, 0x46, 0x0C], [0xD8, 0x46, 0x10], [0xD9, 0x9F, ...d32(0x4010)], // native again
     ...X87_TAIL],
 });
+// ---- --uop-opt 0x10000 V2c: FNSTSW AX + SAHF as one op (07d 143) ----
+// Each x87 compare form, then sixteen FNSTSW AX / SAHF / Jcc groups, one per
+// condition (the OF ones read the OF the skipped ADD left, which SAHF keeps),
+// then SETcc / ADC / SBB / the AX FNSTSW wrote, all off the last SAHF. The
+// floats cycle 0, -0, 1, -1, +inf, -inf, qNaN, -qNaN, 1, 2, a denormal, -2,
+// 1 (13 values: consecutive pairs hit equal, ordered and unordered both
+// ways). Without 0x10 SAHF declines the head as on main.
+// dynamicEntry: each Jcc target is an in-loop entry threaded code splits at
+// later, so under the block clock the hot run's stops differ with 0x10 alone
+// (opt-c1-fold's reason); the branch clock checks every stop.
+const V2C_F32 = [0, 0x80000000, 0x3F800000, 0xBF800000, 0x7F800000, 0xFF800000, 0x7FC00000, 0xFFC00001,
+  0x3F800000, 0x40000000, 0x00000001, 0xC0000000, 0x3F800000];
+const v2cSetup = (mem, g2w, a) => {
+  const dv = new DataView(mem.buffer);
+  for (let k = 0; k < 700; k++) dv.setUint32(g2w(a.buf + 4 * k), V2C_F32[k % 13], true);
+};
+const V2C_GROUPS = [];
+for (let c = 0; c < 16; c++) V2C_GROUPS.push([0xDF, 0xE0], 0x9E, J(c, 'v' + c), [0x83, 0x47, 4 * c, 0x01], L('v' + c));
+const V2C_READ = [[0xDF, 0xE0], 0x9E, [0x0F, 0x92, 0x47, 0x40], [0x0F, 0x94, 0x47, 0x41], [0x0F, 0x9A, 0x47, 0x42],
+  [0x0F, 0x96, 0x47, 0x43], [0x0F, 0x9C, 0x47, 0x47], [0x83, 0x57, 0x44, 0x00], [0x83, 0x5F, 0x48, 0x00], [0x89, 0x47, 0x4C]];
+const V2C_TAIL = [[0x83, 0xC6, 0x04], [0x83, 0xC7, 0x50], 0x49, JFAR(cc.NZ, 'l'), 0xC3];
+for (const [form, pre, cmp, post] of [
+  ['fcomp-m32', [[0xD9, 0x06]], [0xD8, 0x5E, 0x04], []],                          // fld; fcomp dword [esi+4]
+  ['fcom-m32', [[0xD9, 0x06]], [0xD8, 0x56, 0x04], [[0xDD, 0xD8]]],               // fcom dword; fstp st0 after
+  ['fcom-st1', [[0xD9, 0x46, 0x04], [0xD9, 0x06]], [0xD8, 0xD1], [[0xDE, 0xD9]]], // fcom st1; fcompp after
+  ['fucomp-st1', [[0xD9, 0x46, 0x04], [0xD9, 0x06]], [0xDD, 0xE9], [[0xDD, 0xD8]]],
+  ['fucompp', [[0xD9, 0x46, 0x04], [0xD9, 0x06]], [0xDA, 0xE9], []],
+  ['fcompp', [[0xD9, 0x46, 0x04], [0xD9, 0x06]], [0xDE, 0xD9], []],
+  ['ftst', [[0xD9, 0x06]], [0xD9, 0xE4], [[0xDD, 0xD8]]],
+]) {
+  CASES.push({ name: 'opt-v2c-' + form, regs: { ecx: 600 }, head: 'l', declines: true, optCompiles: 0x10, dynamicEntry: true,
+    optWant: { mask: 0x10010, want: { optV2c: '>0' } }, setup: v2cSetup,
+    code: [[0xDB, 0xE3], L('l'), ...pre, cmp, ...V2C_GROUPS, ...V2C_READ, ...post, ...V2C_TAIL] });
+}
+// FNSTSW AX not followed by SAHF (a TEST AH between): no fusion, exact.
+CASES.push({ name: 'opt-v2c-nofuse', regs: { ecx: 600 }, head: 'l', declines: true, optCompiles: 0x10,
+  optWant: { mask: 0x10010, want: { optV2c: 0, optSahf: '>0' } }, setup: v2cSetup,
+  code: [[0xDB, 0xE3], L('l'), [0xD9, 0x06], [0xD8, 0x5E, 0x04], [0xDF, 0xE0], [0xF6, 0xC4, 0x41], 0x9E,
+    J(cc.BE, 'n'), [0x83, 0x07, 0x01], L('n'), [0x0F, 0x92, 0x47, 0x04], [0x89, 0x47, 0x08], ...V2C_TAIL] });
+
+// ---- --uop-opt 0x20000 / 0x40000 C3: flag records ----
+// A merge M whose two predecessors leave different flags and which reads
+// them (SETcc, ADC): each predecessor's Jcc records at its block end. With
+// 0x40000 the record goes on the one edge into M; the other successor (K, T)
+// starts with a full flag producer, so its entry flags are never seen. Jb M
+// needs only its taken edge (the branch is inverted), Jl K only its
+// fallthrough. 0x20000 makes each record one op (RECSUB / RECADD / RECAND).
+// 32-bit cmp, narrow cmp with test imm8, add with test r,r.
+const c3Merge = (p1, p2) => [L('l'), [0x8B, 0x06], [0x8B, 0x56, 0x04], ...p1, J(cc.B, 'M'), ...p2, J(cc.L, 'K'),
+  L('M'), [0x0F, 0x92, 0x07], [0x0F, 0x9F, 0x47, 0x01], [0x83, 0xD3, 0x00], JMP('T'),
+  L('K'), [0x85, 0xD2], [0x0F, 0x94, 0x47, 0x02],
+  L('T'), [0x01, 0x5F, 0x04], [0x83, 0xC6, 0x04], [0x83, 0xC7, 0x08], 0x49, J(cc.NZ, 'l'), 0xC3];
+for (const [form, p1, p2] of [
+  ['cmp32', [[0x39, 0xD0]], [[0x3D, ...d32(0x40000000)]]],     // cmp eax,edx; cmp eax,imm32
+  ['cmp8-test', [[0x38, 0xD0]], [[0xA8, 0x0F]]],              // cmp al,dl; test al,0Fh
+  ['add-test', [[0x01, 0xD0]], [[0x85, 0xC2]]],               // add eax,edx; test edx,eax
+  ['cmp16', [[0x66, 0x39, 0xD0]], [[0x66, 0x85, 0xC2]]],      // cmp ax,dx; test dx,ax
+]) {
+  CASES.push({ name: 'opt-c3-' + form, regs: { ecx: N }, head: 'l',
+    optWant: { mask: 0x60000, want: { optC3e: '>0', optC3r: '>0' } }, code: c3Merge(p1, p2) });
+}
+
 // LEAVE alone: an EBP frame around a load and a store, the frame torn down
 // with LEAVE; --no-uop-leave declines the same loop.
 const leaveLoop = [L('l'), CALL('f'), 0x49, J(cc.NZ, 'l'), 0xC3,
@@ -1372,7 +1434,9 @@ function runCase(inst, c, a, codeAddr, mode) {
                 x87svc: 400,
                 // 07d uop_opt_stat (the --uop-opt ledger; 0 on a build without it)
                 optStamp: 500, optSeams: 501, optSvc: 502, optDecl: 503, optLock: 504, optSahf: 505,
-                optRetx: 506, optFold: 507, optJcc: 508, optFs: 509, optFdw: 510 };
+                optRetx: 506, optFold: 507, optJcc: 508, optFs: 509, optFdw: 510,
+                // 0x10000 V2c fused FNSTSW+SAHF, 0x40000 C3 edge-placed records, 0x20000 fused records
+                optV2c: 522, optC3e: 523, optC3r: 524 };
   const ctrOf = (i) => (i >= 500 ? (e.uop_opt_stat ? e.uop_opt_stat(i - 500) >>> 0 : 0)
     : i < 0 ? e.uop_cstat(-i) : i === 400 ? e.uop_x87_ops() >>> 0 : i >= 300 ? e.uop_mcopy_stats(i - 300)
     : i >= 200 ? e.uop_mcopy_cstat(i - 200) : i >= 100 ? e.uop_bulk_stats(i - 100) : e.uop_stats(i));
