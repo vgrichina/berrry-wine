@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/renderer-input.js",
+      "name": "host-file",
+      "baseSHA256": "4739ee0132337d1d1551c936da6632332174baff9a2dff44216904038ac4cdb8",
+      "sha256": "11220790ad1b6ead4bd290dfc34046a9688cc8ecb30a71933be2d6633d4b89ed",
+      "reason": "Reviewed 20261127 mouse-UP origin repair: after clearing the owed press, synchronously read existing _mouseMsgOriginScreen only when the recipient is the identical live renderer window record. Preserve cached origin for native-only targets and leave _dispatchMouseEvent identity/exited rejection intact. No callback producer, retained target, queue ownership, scheduling, invocation lifetime or export boundary changes. Current production browser forwarding with Win98Renderer/RasterCanvas and actual host move_window reproduces stale UP15,13 versus MOVE10,10; fixed/moving left/right remaining-button and live-modifier regression, complete queue prefix/neighbor guards, public destroy/reuse/replacement and actual WineAssembly Stop lifetime controls pass in 20261127-mouseup-origin-repair-root. Native-only child geometry is not newly qualified; nonlocal ownership remains pending."
+    }
+  ]
+}
