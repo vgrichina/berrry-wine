@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "947e2ed7a63aabe8df28696d12f9ac719c4614f853567e20273700cdf8edfe92",
+      "sha256": "9dc1f21f29afed844a9e2bbd8c96f9da7c29be6798387aa7b29af42db0c1563f",
+      "reason": "20261127-dsound-seek-consumption-root: public COM mono8/stereo16 acquired PCM sink proves stale queue sources overlap live seek and Stop/seek/Play. Stop every pending short-ring queue source before replacing its record on Play/seek and on Stop. Existing worklet, circular Unlock spans, queue timing and foreign MIDI remain independent; ownership pending. No hardware/reference timing claim."
+    }
+  ]
+}
