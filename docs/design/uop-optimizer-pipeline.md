@@ -908,6 +908,7 @@ fold-epoch hook in `$invalidate_code_range` (04). Run evidence:
 | `0x1000` | M1 | Redundant loads (§10.8). Within a straight-line run, a load whose {base, index, scale, disp, width, extension} a full register already holds becomes a MOV from that register. |
 | `0x2000` | C3 | Reserved; nothing built (§10.8). |
 | `0x4000` | V2b | `sahf` is inline op 111 SAHFI (`$th_sahf`'s body in `$uop_fast`), and a Jcc straight after it (B/AE, E/NE, BE/A, S/NS, P/NP) tests EAX's bits with ANDI + BNEZ/BEQZ. OF-reading conditions stay on BCC. |
+| `0x8000` | A1 | The main instance's uop arena is `$UOP_ARENA_BIG` (3 MB, code area 0x2CE000, 8192 ranges, start bitmap size/128) instead of `$UOP_ARENA` (1 MB). Workers keep their 256 KB slots, and the per-program cap stays the 1 MB arena's. Flipping the bit swaps arenas (`$uop_arena_pick`), which starts an empty generation. §10.9. |
 
 Assumption block. It sits after the program's window slots, flagged by header nwin's top bit (`$uop_stamp_at`); it was at header +36 first, which `--uop-census` already owns, and the census's exit counters made every program look stale -- 123K flushes in a 23500-batch census run, not a real limit.
 - **Stamp bits:** 1 = `LOCK_MODE` 0, 2 = `fs_base` (+4), 4 = fold epoch (+8), 8 = branch clock.
@@ -1203,3 +1204,54 @@ Exact matrix, branch clock, spel/spelhd/metro/h2/sc (`final/`). Every arm's API 
 - arms 0 and `0x7fff` on the final 6d34dd458, which adds direct f64 (`final/head.log`).
 
 The arm-0 frames and API counts are also equal across all builds, and with `--no-uop`. `test-uop-opt-identity` against main 28b658ece passes (arena 2d5f694d7ec61b34).
+
+### 10.9 Fourth pass: R2's compile blow-up, A1, and the box leave-one-out (2026-11-27)
+
+Evidence: `scratch/runs/20261126-uop-opt-r2/` (`counts1.tsv` … `counts3.tsv`, `box/{ra,rb,rai,rbi,raj}/`, `native-arm64/`, `native-x64/`).
+
+**The blow-up was flush thrash, not R2.** Spelunky Classic's hot working set is about 1050 installed heads of about 7.5 KB each. The 1 MB main arena holds about 120 programs per generation, so every arena-full flush recompiles the hot set. Even `0x77ff` has 56% repeat compiles (census). RETX and ret chaining reach more code per second and so raise the flush rate. The call-site contexts are not the cause: `--uop-r2-window=0:0` compiles more, not less.
+
+All rows below: Spelunky Classic, 32700 batches, branch clock. Every row has 3413254 API calls and end frame `6a4436d8e792d22f`. *Threaded ops* is the threaded-handler histogram from batch 21000.
+
+| Arm | compiled | flushes | ret-chain | th_uop_enter | th_pop_run_ret | threaded ops |
+|---|---|---|---|---|---|---|
+| `0x7ff` | 3702 | 20 | 0 | 64.5M | 11.3M | 524M |
+| `0x77ff` | 3349 | 18 | 0 | 69.2M | 11.4M | 541M |
+| `0x7fff` | 5167 | 30 | 60.5M | 51.3M | 15.0M | 449M |
+| `0xffff` (A1) | 1175 | **0** | 65.7M | 51.6M | 13.5M | **334M** |
+| `0xf7ff` | 1082 | 0 | 0 | 64.1M | 12.0M | 443M |
+| `0xffff`, R2 window 0:0 | 1192 | 0 | 65.3M | 44.0M | 13.5M | 317M |
+
+**A1 (`0x8000`)** is the fix (§10.1). It is a 3 MB `$UOP_ARENA_BIG`, placed in the gap below `GUEST_FIXED_POOL_B`, so no other region moves. The 1 MB layout is unchanged, which keeps mask 0 byte-identical (`test-uop-opt-identity`). `test-uop-opt` has an A1 case: switch arenas, place programs in the big one, switch back.
+
+**Box timing** (two ascii.dev boxes, x86-64, one lane each). Each arm is fixed work, measured as whole-run `/usr/bin/time` user CPU, with arms interleaved and rotated. Both boxes were noisy this time, with per-arm spreads of 10–40% against about 3% on earlier boxes. So only large effects resolve. The tables give the median and, in brackets, min-of-n, both against the reference arm.
+
+Spelunky Classic (box A, null band 3.3% median / 2.3% min):
+
+| Arm | n | vs null n1 | vs reference |
+|---|---|---|---|
+| `0x7ff` | 6 | −9.4% (−3.1%) | |
+| `0x7fff` | 6 | −14.2% (−5.0%) | |
+| `0x77ff` (−R2) | 6 | | vs `0x7fff` +4.5% (+3.2%) |
+| `0x7fff` + lazy | 6 | | vs `0x7fff` +0.1% (−2.9%) |
+| `0xffff` | 6 | −15.2% (−7.3%) | vs `0x7fff` on the same build −1.9% (−3.0%) |
+| `0xf7ff` (−R2) | 6 | | vs `0xffff` +3.5% (+2.9%) |
+| `0x87ff` (−M1, −SAHFI) | 6 | | vs `0xffff` +3.5% (+3.2%) |
+| `0xffff` + lazy | 6 | −18.2% (−11.7%) | vs `0xffff` −3.5% (−4.7%) |
+| `0xffff` `--no-fpu-direct` | 6 | | vs `0xffff` +2.5% (−1.0%) |
+
+StarCraft (box B, null band 5.3% / 8.1%): no arm is outside the band against null. `0xffff` is +0.7% (+4.6%), and `0xffff` against `0x7fff` on the same build is −4.8% (−2.6%). Lazy re-guard costs +5.6% (+7.7%) against `0xffff`, as in the earlier sweep (+3.9%). `--no-fpu-direct` is +3.1% (+4.2%).
+
+Per-bit leave-one-out on `0xffff` (Spelunky, box A, n=4, band 4.1%; StarCraft partial): only R1 (`0x002`) resolves. Removing it costs +9.4% (+11.8%) on Spelunky. Every other single bit is inside the band on both workloads. The second, tighter Spelunky pass (`raj`) was cut short at n=1–2 when the boxes were released, so it is not used.
+
+**Exactness.** Every box run of every arm has the same end frame per workload: Spelunky `6a4436d8e792d22f` across 86 + 64 runs, StarCraft `81ef8c8536c09d9f` across all runs. Each also has the same API and batch count, and the null builds (main bc5f3b2fb) agree. All runs use `--branch-clock`. `test-uop-opt` passes on 24 arms × 2 clocks, including `0x8000` and `0xffff`. `test-uop-opt-identity` gives mask unset = mask 0.
+
+**Native code**, tested a87cf7e23 against main bc5f3b2fb. Mask arms share one module.
+- **Dispatch head.** The `$uop_fast` head has the same shape in both engines and on both architectures: the interrupt-flag test, the op load, the bounds check against 0x72 (was 0x6f), and a jump table. Every arm jumps straight back to it.
+- **V8 x86-64 `$uop_fast`.** It grows from 4077 to 5121 instructions, and its stack references from 143 to 287. The added spills are in the long arms: back-edge pieces with a stack slot go from 18 to 25. Short arms (≤16 instructions) with a stack slot fall from 11 to 4.
+- **SpiderMonkey x86-64 `$uop_fast`.** 4043 → 3695 instructions.
+- **`$th_uop_enter`.** V8 x86-64 1454 → 1559 instructions, and stack references fall from 303 to 240. arm64 V8 1542 → 1771.
+- **New and grown functions.** `$uop_ret_chain` is new: 313 V8 / 101 Ion instructions on x86-64. `$fpu_exec_mem` V8 x86-64 grows 2417 → 3473 (direct f64, §10.8).
+- **Engines.** Node 24 (V8 13.6), with jsvu V8 16.0 and SpiderMonkey C162 on the box. Ion C155 and V8 15.4 on arm64.
+
+**Recommended default: `0xffff`** (every built bit plus A1). Direct f64 stays on, and lazy re-guard stays off: it wins on Spelunky and loses on StarCraft, so it is an app-policy candidate rather than a default. R2 (`0x800`) pays on Spelunky in both builds (+3.5–4.5% when removed). R1 is the one bit the leave-one-out resolves. The remaining bits are not shown to cost anything; none is shown to pay on its own at this noise. A quieter box should repeat the leave-one-out before any is dropped.

@@ -3,6 +3,10 @@
 Status: design + phase-0 prototype, 2026-09-26. Off by default; nothing ships
 from this document until phase 0 says the engine is worth building.
 
+The optimizer passes over this tier (`--uop-opt=MASK`, including the 3 MB
+main arena bit `0x8000` and the recommended mask `0xffff`) are documented in
+[design/uop-optimizer-pipeline.md §10](design/uop-optimizer-pipeline.md).
+
 ## 1. Why the block executor did not pay, measured in machine code
 
 The H454/H458 block executor (`src/07c-block-exec.wat`, `--block-exec`) was
