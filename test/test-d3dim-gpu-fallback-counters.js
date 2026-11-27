@@ -164,9 +164,8 @@ const extraWat = String.raw`
   ex.test_set_rs(dev, 27, 0);
   draw('SRCBLEND ignored with blending off', 4, 3, 3, { drawn: 1 });
 
-  // Textured. Stage-0 operands follow the old software rasterizer's rule
-  // (any selector, SPECULAR included, gets its approximation), so they never
-  // decline.
+  // Textured. Every DX6/7 stage-0 operand (SPECULAR included) lowers
+  // through the 09aj cascade (D5), so none declines.
   const api = require('../src/api_table.json').find(e => e.name === 'IDirect3DTexture2_GetHandle');
   const handle = (s, at) => { assert.strictEqual(ex.test_get_handle(api.id, s, dev, at) >>> 0, 0); return gr(at); };
   const texture = surface(4, 4, 16, RGB565);
@@ -175,9 +174,9 @@ const extraWat = String.raw`
   assert.strictEqual(ex.test_set_tss(dev, 2, 4) >>> 0, 0);  // COLORARG1 = SPECULAR
   draw('COLORARG1 SPECULAR', 4, 3, 3, { drawn: 1 });
   assert.strictEqual(ex.test_set_tss(dev, 2, 2) >>> 0, 0);
-  // COLORARG2 = TFACTOR (giants): ARG2 is the texture only for TEXTURE,
-  // diffuse otherwise. Same pixels as
-  // COLORARG2 = DIFFUSE, drawn on the GPU with no fallback.
+  // COLORARG2 = TFACTOR (giants): MODULATE(TEXTURE, TEXTUREFACTOR), not the
+  // pre-D5 approximation that read it as diffuse. TFACTOR is opaque green
+  // here, so the half-red diffuse and the TFACTOR results tell apart.
   {
     // A fresh texture, filled before its first upload (raw stores bump no
     // page-watch generation, so a cached texture would not see them).
@@ -193,15 +192,18 @@ const extraWat = String.raw`
       gf(o + 24, 0.5); gf(o + 28, 0.5);
     });
     const vary = [];
+    ex.test_set_rs(dev, 60, 0xff00ff00);
     for (const [label, arg2] of [['COLORARG2 DIFFUSE', 0], ['COLORARG2 TFACTOR', 3], ['COLORARG2 TEXTURE', 2]]) {
       assert.strictEqual(ex.test_set_tss(dev, 3, arg2) >>> 0, 0);
       draw(label, 4, 3, 3, { drawn: 1 }, dev, TRI);
       vary.push(v.getUint16(rtDib + (4 * W + 4) * 2, true));
     }
     assert.notStrictEqual(vary[0], 0, 'the probe pixel is covered');
-    assert.strictEqual(vary[1], vary[0], `TFACTOR as ARG2 reads diffuse (0x${vary[1].toString(16)} vs 0x${vary[0].toString(16)})`);
+    assert(vary[1] !== vary[0] && (vary[1] & 0xf81f) === 0 && (vary[1] & 0x7e0) !== 0,
+      `TFACTOR as ARG2 reads TEXTUREFACTOR: grey x green (0x${vary[1].toString(16)}; diffuse gives 0x${vary[0].toString(16)})`);
     assert.notStrictEqual(vary[2], vary[0], 'TEXTURE as ARG2 reads the texture (the probe tells them apart)');
     assert.strictEqual(ex.test_set_tss(dev, 3, 0) >>> 0, 0);
+    ex.test_set_rs(dev, 60, 0);
   }
   draw('lines ignore the texture', 2, 3, 2, { drawn: 1 });
   ex.test_set_rs(dev, 1, 0);

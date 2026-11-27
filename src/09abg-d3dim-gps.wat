@@ -25,7 +25,7 @@
   ;; ================================================================
   (global $D3DIM_GPS i32 (region.addr $D3DIM_GPS 0))
   (global $D3DIM_GPS_SIZE i32 (region.size $D3DIM_GPS))
-  (global $D3G_PB_SIZE i32 (i32.const 24384))
+  (global $D3G_PB_SIZE i32 (i32.const 28560))
   ;; The CPU-access site asking for the next readback (stats 16 + site).
   (global $d3dim_fence_site (mut i32) (i32.const 0))
   (global $D3G_RING_BYTES i32 (i32.const 1048576))
@@ -60,7 +60,8 @@
   ;; GetDCs (stat 45), 23356 targets currently deferred (not a stat).
   ;; At 23360: 32 window publication owners, 32 bytes each: hwnd, primary
   ;; entry, current DIB, RT, actual PRESENT record sequence, surface creator,
-  ;; CPU-present stamp.
+  ;; CPU-present stamp. At 24384..28560: the texture-stage shaders (D5,
+  ;; $d3g_fixed_shader): CONSTS TFACTOR, stage stats 46..49, key and cache.
 
   (func $d3g_fail
     (call $host_log_i32 (i32.const 0x44334750))
@@ -79,7 +80,8 @@
   ;; (no DIB, over 2048, not 16/32bpp, or the target table full), 1 texture
   ;; not uploadable, 2 Z function out of range, 3 blend factor out of range,
   ;; 4 no depth surface, 5 clear target not creatable, 6 clear background
-  ;; without texture words, 7 unused.
+  ;; without texture words, 7 texture-stage state no DX6/7 device accepts
+  ;; (an operation or argument out of range) or the cascade rejected.
   (func $d3g_decline (param $pb i32) (param $why i32)
     (local $a i32)
     (call $d3g_stat (local.get $pb) (i32.const 1) (i32.const 1))
@@ -785,27 +787,33 @@
     (i32.store offset=584 (local.get $pb) (local.get $tex))
     (i32.store offset=588 (local.get $pb) (local.get $sampler)))
 
-  ;; CONSTS c0 = 0.5 (colour-key threshold), c1 = fog colour (D3DCOLOR).
-  (func $d3g_consts (param $pb i32) (param $fog i32)
+  ;; D3DCOLOR $color as four floats r, g, b, a at $c.
+  (func $d3g_argb4 (param $c i32) (param $color i32)
+    (f32.store (local.get $c) (f32.div (f32.convert_i32_u (i32.and (i32.shr_u (local.get $color) (i32.const 16)) (i32.const 255))) (f32.const 255)))
+    (f32.store offset=4 (local.get $c) (f32.div (f32.convert_i32_u (i32.and (i32.shr_u (local.get $color) (i32.const 8)) (i32.const 255))) (f32.const 255)))
+    (f32.store offset=8 (local.get $c) (f32.div (f32.convert_i32_u (i32.and (local.get $color) (i32.const 255))) (f32.const 255)))
+    (f32.store offset=12 (local.get $c) (f32.div (f32.convert_i32_u (i32.shr_u (local.get $color) (i32.const 24))) (f32.const 255))))
+
+  ;; CONSTS for the fixed-function stage shaders ($d3g_fixed_shader):
+  ;; c0 = TEXTUREFACTOR, c7 = fog colour (D3DCOLORs); c1..c6 are the
+  ;; cascade's own DEFs (half, stage constants) and are sent as zero.
+  (func $d3g_consts (param $pb i32) (param $tfactor i32) (param $fog i32)
     (local $p i32) (local $c i32)
     (if (i32.and (i32.ne (i32.load offset=72 (local.get $pb)) (i32.const 0))
-                 (i32.eq (i32.load offset=592 (local.get $pb)) (local.get $fog))) (then (return)))
+                 (i32.and (i32.eq (i32.load offset=592 (local.get $pb)) (local.get $fog))
+                          (i32.eq (i32.load offset=24384 (local.get $pb)) (local.get $tfactor)))) (then (return)))
     (i32.store offset=72 (local.get $pb) (i32.const 1))
     (i32.store offset=592 (local.get $pb) (local.get $fog))
-    (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_CONSTS) (i32.add (size-of GpsConsts) (i32.const 32))))
+    (i32.store offset=24384 (local.get $pb) (local.get $tfactor))
+    (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_CONSTS) (i32.add (size-of GpsConsts) (i32.const 128))))
     (store.field GpsConsts stage (local.get $p) (global.get $GPS_STAGE_PS))
     (store.field GpsConsts pad (local.get $p) (i32.const 0))
     (store.field GpsConsts first (local.get $p) (i32.const 0))
-    (store.field GpsConsts count (local.get $p) (i32.const 2))
+    (store.field GpsConsts count (local.get $p) (i32.const 8))
     (local.set $c (i32.add (local.get $p) (size-of GpsConsts)))
-    (f32.store (local.get $c) (f32.const 0.5))
-    (f32.store offset=4 (local.get $c) (f32.const 0.5))
-    (f32.store offset=8 (local.get $c) (f32.const 0.5))
-    (f32.store offset=12 (local.get $c) (f32.const 0.5))
-    (f32.store offset=16 (local.get $c) (f32.div (f32.convert_i32_u (i32.and (i32.shr_u (local.get $fog) (i32.const 16)) (i32.const 255))) (f32.const 255)))
-    (f32.store offset=20 (local.get $c) (f32.div (f32.convert_i32_u (i32.and (i32.shr_u (local.get $fog) (i32.const 8)) (i32.const 255))) (f32.const 255)))
-    (f32.store offset=24 (local.get $c) (f32.div (f32.convert_i32_u (i32.and (local.get $fog) (i32.const 255))) (f32.const 255)))
-    (f32.store offset=28 (local.get $c) (f32.div (f32.convert_i32_u (i32.shr_u (local.get $fog) (i32.const 24))) (f32.const 255)))
+    (memory.fill (local.get $c) (i32.const 0) (i32.const 128))
+    (call $d3g_argb4 (local.get $c) (local.get $tfactor))
+    (call $d3g_argb4 (i32.add (local.get $c) (i32.const 112)) (local.get $fog))
     (drop (call $d3g_end (local.get $p))))
 
   ;; Sampler for packed au | av<<4 | min<<8 | mag<<12 | mip<<16.
@@ -846,8 +854,11 @@
       (then (return (i32.const 1))))
     (local.get $a))
 
-  ;; ---- Fixed-function stage 0 -> pixel shader IR -------------------------
-  ;; Key: bit0 textured, 1-4 colorop, 5-8 alphaop, 9-12 arg is texture
+  ;; ---- Internal quad / point pixel shader IR ------------------------------
+  ;; Draws use $d3g_fixed_shader (D5); this hand-built form remains for the
+  ;; producer's own keyed BltFast quads and points. Its kill (0x2000) and fog
+  ;; (0x4000) forms read c0 = 0.5 and c1 = fog, which $d3g_consts no longer
+  ;; binds (c0 is TFACTOR, c7 fog): no caller sets them. Key: bit0 textured, 1-4 colorop, 5-8 alphaop, 9-12 arg is texture
   ;; (carg1, carg2, aarg1, aarg2), 13 colour-key kill, 14 vertex fog,
   ;; 15 projected texcoord (texld .dz), bit31 set.
   (func $d3g_dst (param $reg i32) (param $mask i32) (result i32)
@@ -940,6 +951,297 @@
     (if (i32.load (local.get $e)) (then (call $d3g_release (local.get $pb) (i32.load offset=4 (local.get $e)))))
     (i32.store (local.get $e) (local.get $key))
     (i32.store offset=4 (local.get $e) (local.get $id))
+    (local.get $id))
+
+  ;; ---- DX6/7 texture stages -> 09aj cascade -> core IR (D5) ---------------
+  ;; A draw's texture-stage cascade is lowered by the shared 09aj cascade
+  ;; compiler, the one the D3D9 fixed-function path uses: every DX6/7
+  ;; D3DTEXTUREOP (SELECTARG1 .. DOTPRODUCT3, incl. MODULATE2X/4X,
+  ;; ADDSIGNED(2X), BLEND*ALPHA(PM), PREMODULATE, MODULATEALPHA_ADDCOLOR..,
+  ;; BUMPENVMAP(L)) on COLOROP and ALPHAOP, every COLORARG/ALPHAARG
+  ;; (DIFFUSE, CURRENT, TEXTURE, TFACTOR, SPECULAR, with COMPLEMENT and
+  ;; ALPHAREPLICATE), and SPECULARENABLE. Executors see only core IR.
+  ;; TEXTUREFACTOR is not baked in: the cascade's DEF c0 is removed and c0
+  ;; is bound by CONSTS (fog colour in c7), so a TFACTOR fade reuses one
+  ;; shader. Only stage 0 has a texture and texture coordinates in the
+  ;; stream (the caps advertise one stage and SetTexture keeps stage 0), so
+  ;; a later stage that reads TEXTURE ends the cascade there (stat 47), as
+  ;; D3D ends it at a stage with nothing to sample; later stages that
+  ;; combine without a texture run. Producer block at 24384: +0 CONSTS
+  ;; TFACTOR, +4 cache round robin, +8..+20 stats 46..49 (multi-stage draws,
+  ;; stage>0 cut for its texture, draws the pre-D5 stage-0 lowering
+  ;; approximated, sixth stage cut), +24 the key (56 B), +80 the cache:
+  ;; 64 x 64 B {shader id, key length, key}.
+  (func $d3g_stage_stat (param $pb i32) (param $k i32)
+    (local $a i32)
+    (local.set $a (i32.add (i32.add (local.get $pb) (i32.const 24392)) (i32.shl (local.get $k) (i32.const 2))))
+    (i32.store (local.get $a) (i32.add (i32.load (local.get $a)) (i32.const 1))))
+
+  ;; Stage $s value of D3DTEXTURESTAGESTATETYPE $type (1..6): stage 0 from
+  ;; describe (legacy TEXTUREMAPBLEND already lowered there), others raw.
+  (func $d3g_tss (param $d i32) (param $state i32) (param $s i32) (param $type i32) (result i32)
+    (if (i32.eqz (local.get $s)) (then
+      (if (i32.eq (local.get $type) (i32.const 1)) (then (return (i32.load offset=88 (local.get $d)))))
+      (if (i32.eq (local.get $type) (i32.const 4)) (then (return (i32.load offset=92 (local.get $d)))))
+      (return (i32.load (i32.add (i32.add (local.get $d) (i32.const 164))
+        (i32.shl (select (i32.sub (local.get $type) (i32.const 2)) (i32.sub (local.get $type) (i32.const 3))
+          (i32.lt_u (local.get $type) (i32.const 4))) (i32.const 2)))))))
+    (call $d3dim_tss_load (local.get $state) (local.get $s) (local.get $type)))
+
+  ;; Does operation $op read its ARG$slot (1 or 2)? (09aj's rule.)
+  (func $d3g_arg_used (param $op i32) (param $slot i32) (result i32)
+    (if (i32.or (i32.eq (local.get $op) (i32.const 1))
+          (i32.or (i32.eq (local.get $op) (i32.const 22)) (i32.eq (local.get $op) (i32.const 23))))
+      (then (return (i32.const 0))))
+    (if (i32.eq (local.get $slot) (i32.const 1)) (then (return (i32.ne (local.get $op) (i32.const 3)))))
+    (i32.and (i32.ne (local.get $op) (i32.const 2)) (i32.ne (local.get $op) (i32.const 17))))
+
+  ;; A stage argument for the key: 0 when the operation ignores it, else the
+  ;; D3DTA value. DX6/7 selectors are DIFFUSE..SPECULAR plus COMPLEMENT and
+  ;; ALPHAREPLICATE; anything else (TEMP, CONSTANT are DX8+) declines (7).
+  (func $d3g_key_arg (param $pb i32) (param $op i32) (param $slot i32) (param $v i32) (result i32)
+    (if (i32.eqz (call $d3g_arg_used (local.get $op) (local.get $slot))) (then (return (i32.const 0))))
+    (if (i32.or (i32.gt_u (local.get $v) (i32.const 63)) (i32.gt_u (i32.and (local.get $v) (i32.const 15)) (i32.const 4)))
+      (then (call $d3g_decline (local.get $pb) (i32.const 7))))
+    (local.get $v))
+
+  (func $d3g_base_is (param $v i32) (param $b i32) (result i32)
+    (i32.eq (i32.and (local.get $v) (i32.const 15)) (local.get $b)))
+
+  ;; Did the pre-D5 lowering approximate this argument (TFACTOR, SPECULAR or
+  ;; a modifier read as diffuse or texture)?
+  (func $d3g_arg_approx (param $v i32) (result i32)
+    (i32.or (i32.ne (i32.and (local.get $v) (i32.const 0x30)) (i32.const 0))
+      (i32.or (call $d3g_base_is (local.get $v) (i32.const 3)) (call $d3g_base_is (local.get $v) (i32.const 4)))))
+
+  ;; Build the draw's shader key at pb+24408; returns its length.
+  ;; w0 = 0x80000000 | stages | colour-key kill << 4 | vertex fog << 5 |
+  ;; projected << 6 | SPECULARENABLE << 7 | texture 0 << 8 ($flags is the
+  ;; draw key: 0x2000 kill, 0x4000 fog, 0x8000 projected); then per stage
+  ;; {COLOROP | ALPHAOP << 8 | texture << 16, CARG1 | CARG2 << 8 |
+  ;; AARG1 << 16 | AARG2 << 24}.
+  (func $d3g_stage_key (param $pb i32) (param $d i32) (param $state i32) (param $textured i32) (param $flags i32)
+      (result i32)
+    (local $key i32) (local $s i32) (local $n i32) (local $cop i32) (local $aop i32) (local $w i32)
+    (local $c1 i32) (local $c2 i32) (local $a1 i32) (local $a2 i32) (local $bound i32) (local $approx i32)
+    (local $spec i32)
+    (local.set $key (i32.add (local.get $pb) (i32.const 24408)))
+    (block $done (loop $stages
+      (local.set $cop (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 1)))
+      (br_if $done (i32.eq (local.get $cop) (i32.const 1)))
+      (if (i32.eq (local.get $s) (i32.const 5)) (then
+        (call $d3g_stage_stat (local.get $pb) (i32.const 3))
+        (br $done)))
+      (local.set $aop (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 4)))
+      (if (i32.or (i32.or (i32.lt_u (local.get $cop) (i32.const 2)) (i32.gt_u (local.get $cop) (i32.const 24)))
+                  (i32.or (i32.lt_u (local.get $aop) (i32.const 1)) (i32.gt_u (local.get $aop) (i32.const 24))))
+        (then (call $d3g_decline (local.get $pb) (i32.const 7))))
+      (local.set $bound (i32.and (i32.eqz (local.get $s)) (i32.ne (local.get $textured) (i32.const 0))))
+      ;; D3D ends the cascade at a stage whose raw COLORARG1 is TEXTURE with
+      ;; nothing bound (also 09aj's rule). Past stage 0 that is also the
+      ;; texture the stream does not carry, so it counts as a cut (47).
+      (if (i32.and (i32.eqz (local.get $bound))
+            (call $d3g_base_is (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 2)) (i32.const 2)))
+        (then
+          (if (local.get $s) (then (call $d3g_stage_stat (local.get $pb) (i32.const 1))))
+          (br $done)))
+      (local.set $c1 (call $d3g_key_arg (local.get $pb) (local.get $cop) (i32.const 1)
+        (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 2))))
+      (local.set $c2 (call $d3g_key_arg (local.get $pb) (local.get $cop) (i32.const 2)
+        (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 3))))
+      (local.set $a1 (call $d3g_key_arg (local.get $pb) (local.get $aop) (i32.const 1)
+        (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 5))))
+      (local.set $a2 (call $d3g_key_arg (local.get $pb) (local.get $aop) (i32.const 2)
+        (call $d3g_tss (local.get $d) (local.get $state) (local.get $s) (i32.const 6))))
+      ;; A stage that samples with no texture in the stream ends the cascade.
+      (if (i32.and (i32.eqz (local.get $bound))
+            (i32.or
+              (i32.or (i32.or (call $d3g_base_is (local.get $c1) (i32.const 2)) (call $d3g_base_is (local.get $c2) (i32.const 2)))
+                      (i32.or (call $d3g_base_is (local.get $a1) (i32.const 2)) (call $d3g_base_is (local.get $a2) (i32.const 2))))
+              (i32.or (i32.or (i32.eq (local.get $cop) (i32.const 13)) (i32.eq (local.get $cop) (i32.const 15)))
+                (i32.or (i32.or (i32.eq (local.get $aop) (i32.const 13)) (i32.eq (local.get $aop) (i32.const 15)))
+                        (i32.or (i32.eq (local.get $cop) (i32.const 22)) (i32.eq (local.get $cop) (i32.const 23)))))))
+        (then
+          (if (local.get $s) (then (call $d3g_stage_stat (local.get $pb) (i32.const 1))))
+          (br $done)))
+      ;; Pre-D5 stage 0 kept COLOROP {SELECTARG1, SELECTARG2, MODULATE, ADD,
+      ;; BLENDTEXTUREALPHA} and ALPHAOP {the same but ADD}, as MODULATE else.
+      (if (i32.or (i32.or (i32.ne (local.get $s) (i32.const 0))
+                          (i32.or (i32.eqz (i32.and (i32.shr_u (i32.const 0x209C) (local.get $cop)) (i32.const 1)))
+                                  (i32.eqz (i32.and (i32.shr_u (i32.const 0x201C) (local.get $aop)) (i32.const 1)))))
+            (i32.or (i32.or (call $d3g_arg_approx (local.get $c1)) (call $d3g_arg_approx (local.get $c2)))
+                    (i32.or (call $d3g_arg_approx (local.get $a1)) (call $d3g_arg_approx (local.get $a2)))))
+        (then (local.set $approx (i32.const 1))))
+      (local.set $w (i32.add (local.get $key) (i32.add (i32.const 4) (i32.shl (local.get $n) (i32.const 3)))))
+      (i32.store (local.get $w) (i32.or (i32.or (local.get $cop) (i32.shl (local.get $aop) (i32.const 8)))
+        (i32.shl (local.get $bound) (i32.const 16))))
+      (i32.store offset=4 (local.get $w) (i32.or (i32.or (local.get $c1) (i32.shl (local.get $c2) (i32.const 8)))
+        (i32.or (i32.shl (local.get $a1) (i32.const 16)) (i32.shl (local.get $a2) (i32.const 24)))))
+      (local.set $n (i32.add (local.get $n) (i32.const 1)))
+      (local.set $s (i32.add (local.get $s) (i32.const 1)))
+      (br $stages)))
+    (local.set $spec (i32.ne (call $gl32 (i32.add (local.get $state) (i32.const 372))) (i32.const 0)))
+    (if (i32.gt_u (local.get $n) (i32.const 1)) (then (call $d3g_stage_stat (local.get $pb) (i32.const 0))))
+    (if (i32.or (local.get $approx) (local.get $spec)) (then (call $d3g_stage_stat (local.get $pb) (i32.const 2))))
+    (i32.store (local.get $key) (i32.or (i32.or (i32.const 0x80000000) (local.get $n))
+      (i32.or
+        (i32.or (select (i32.const 0x10) (i32.const 0) (i32.and (local.get $flags) (i32.const 0x2000)))
+                (select (i32.const 0x20) (i32.const 0) (i32.and (local.get $flags) (i32.const 0x4000))))
+        (i32.or
+          (i32.or (select (i32.const 0x40) (i32.const 0) (i32.and (local.get $flags) (i32.const 0x8000)))
+                  (select (i32.const 0x80) (i32.const 0) (local.get $spec)))
+          (select (i32.const 0x100) (i32.const 0) (local.get $textured))))))
+    (i32.add (i32.const 4) (i32.shl (local.get $n) (i32.const 3))))
+
+  ;; Remove the cascade's DEF of c$index (TFACTOR is c0, bound by CONSTS).
+  (func $d3g_drop_def (param $ir i32) (param $index i32)
+    (local $n i32) (local $i i32) (local $ins i32)
+    (local.set $n (i32.load offset=16 (local.get $ir)))
+    (block $done (loop $find
+      (br_if $done (i32.ge_u (local.get $i) (local.get $n)))
+      (local.set $ins (i32.add (i32.add (local.get $ir) (i32.const 32)) (i32.shl (local.get $i) (i32.const 7))))
+      (if (i32.and (i32.eq (i32.load (local.get $ins)) (i32.const 81))
+            (i32.and (i32.eq (i32.load offset=16 (local.get $ins)) (i32.const 2))
+                     (i32.eq (i32.load offset=20 (local.get $ins)) (local.get $index))))
+        (then
+          (memory.copy (local.get $ins) (i32.add (local.get $ins) (i32.const 128))
+            (i32.shl (i32.sub (i32.sub (local.get $n) (local.get $i)) (i32.const 1)) (i32.const 7)))
+          (local.set $n (i32.sub (local.get $n) (i32.const 1)))
+          (i32.store offset=16 (local.get $ir) (local.get $n))
+          (i32.store offset=20 (local.get $ir) (i32.add (local.get $n) (i32.const 2)))
+          (i32.store offset=24 (local.get $ir) (i32.add (i32.const 32) (i32.shl (local.get $n) (i32.const 7))))
+          (return)))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br $find))))
+
+  ;; One core IR record {op, arity, operands (bank, index, selector, modifier)}
+  ;; appended to canonical IR $core (its allocation holds the canonicalizer's
+  ;; worst case, far beyond a few records; checked anyway).
+  (func $d3g_core_rec (param $core i32) (param $op i32) (param $arity i32) (result i32)
+    (local $n i32) (local $rec i32)
+    (local.set $n (i32.load offset=16 (local.get $core)))
+    (if (i32.gt_u (i32.add (i32.const 32) (i32.shl (i32.add (local.get $n) (i32.const 1)) (i32.const 7)))
+                  (i32.load offset=8 (i32.sub (local.get $core) (i32.const 16))))
+      (then (call $d3g_fail)))
+    (local.set $rec (i32.add (i32.add (local.get $core) (i32.const 32)) (i32.shl (local.get $n) (i32.const 7))))
+    (memory.fill (local.get $rec) (i32.const 0) (i32.const 128))
+    (i32.store (local.get $rec) (local.get $op))
+    (i32.store offset=4 (local.get $rec) (i32.const 1))
+    (i32.store offset=8 (local.get $rec) (local.get $arity))
+    (i32.store offset=16 (local.get $core) (i32.add (local.get $n) (i32.const 1)))
+    (i32.store offset=24 (local.get $core) (i32.add (i32.const 32) (i32.shl (i32.add (local.get $n) (i32.const 1)) (i32.const 7))))
+    (local.get $rec))
+  (func $d3g_core_opnd (param $rec i32) (param $j i32) (param $bank i32) (param $index i32) (param $sel i32) (param $mod i32)
+    (local.set $rec (i32.add (local.get $rec) (i32.add (i32.const 16) (i32.shl (local.get $j) (i32.const 4)))))
+    (i32.store (local.get $rec) (local.get $bank))
+    (i32.store offset=4 (local.get $rec) (local.get $index))
+    (i32.store offset=8 (local.get $rec) (local.get $sel))
+    (i32.store offset=12 (local.get $rec) (local.get $mod)))
+
+  ;; Colour-key kill, appended to the core IR: ps1.1's texkill tests
+  ;; coordinates, the key is texel alpha. r24 = t0.a - 0.5 (r8 is the t0
+  ;; result, c8.y the canonicalizer's 0.5); kill when it is negative.
+  (func $d3g_core_keykill (param $core i32)
+    (local $rec i32)
+    (local.set $rec (call $d3g_core_rec (local.get $core) (i32.const 2) (i32.const 3)))
+    (call $d3g_core_opnd (local.get $rec) (i32.const 0) (i32.const 0) (i32.const 24) (i32.const 15) (i32.const 0))
+    (call $d3g_core_opnd (local.get $rec) (i32.const 1) (i32.const 0) (i32.const 8) (i32.const 0xFF) (i32.const 0))
+    (call $d3g_core_opnd (local.get $rec) (i32.const 2) (i32.const 2) (i32.const 8) (i32.const 0x55) (i32.const 1))
+    (local.set $rec (call $d3g_core_rec (local.get $core) (i32.const 65) (i32.const 1)))
+    (call $d3g_core_opnd (local.get $rec) (i32.const 0) (i32.const 0) (i32.const 24) (i32.const 15) (i32.const 0)))
+
+  ;; The SHADER id for the key $d3g_stage_key built ($len bytes).
+  (func $d3g_fixed_shader (param $pb i32) (param $len i32) (result i32)
+    (local $key i32) (local $i i32) (local $e i32) (local $d i32) (local $tab i32) (local $r i32)
+    (local $n i32) (local $w i32) (local $x i32) (local $bundle i32) (local $ps i32) (local $core i32)
+    (local $id i32) (local $p i32) (local $bytes i32)
+    (local.set $key (i32.add (local.get $pb) (i32.const 24408)))
+    (loop $scan
+      (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 24464)) (i32.shl (local.get $i) (i32.const 6))))
+      (if (i32.and (i32.ne (i32.load (local.get $e)) (i32.const 0)) (i32.eq (i32.load offset=4 (local.get $e)) (local.get $len)))
+        (then (if (call $d3g_row_eq (i32.add (local.get $e) (i32.const 8)) (local.get $key) (local.get $len))
+          (then (return (i32.load (local.get $e)))))))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $scan (i32.lt_u (local.get $i) (global.get $D3G_SHADER_CACHE))))
+    ;; DFX1 + 192-byte cascade6 rows in the IR scratch, as 09akg packs them.
+    (local.set $w (i32.load (local.get $key)))
+    (local.set $n (i32.and (local.get $w) (i32.const 15)))
+    (local.set $d (i32.load offset=32 (local.get $pb)))
+    (local.set $tab (i32.add (local.get $d) (i32.const 288)))
+    (memory.fill (local.get $d) (i32.const 0) (i32.const 1440))
+    (i32.store (local.get $d) (i32.const 0x44465831))
+    (i32.store offset=4 (local.get $d) (i32.const 1))
+    (i32.store offset=8 (local.get $d) (select (i32.const 8) (i32.const 0) (i32.and (local.get $w) (i32.const 0x100))))
+    (i32.store offset=16 (local.get $d) (i32.const 1))
+    (i32.store offset=20 (local.get $d) (i32.const 2))
+    (i32.store offset=56 (local.get $d) (i32.const 1))
+    (local.set $i (i32.const 0))
+    (loop $rows
+      (local.set $r (i32.add (local.get $tab) (i32.mul (local.get $i) (i32.const 192))))
+      (if (i32.lt_u (local.get $i) (local.get $n))
+        (then
+          (local.set $p (i32.load (i32.add (local.get $key) (i32.add (i32.const 4) (i32.shl (local.get $i) (i32.const 3))))))
+          (local.set $x (i32.load (i32.add (local.get $key) (i32.add (i32.const 8) (i32.shl (local.get $i) (i32.const 3))))))
+          (i32.store (local.get $r) (i32.and (local.get $p) (i32.const 255)))
+          (i32.store offset=12 (local.get $r) (i32.and (i32.shr_u (local.get $p) (i32.const 8)) (i32.const 255)))
+          (i32.store offset=28 (local.get $r) (i32.and (i32.shr_u (local.get $p) (i32.const 16)) (i32.const 1)))
+          (i32.store offset=4 (local.get $r) (i32.and (local.get $x) (i32.const 255)))
+          (i32.store offset=8 (local.get $r) (i32.and (i32.shr_u (local.get $x) (i32.const 8)) (i32.const 255)))
+          (i32.store offset=16 (local.get $r) (i32.and (i32.shr_u (local.get $x) (i32.const 16)) (i32.const 255)))
+          (i32.store offset=20 (local.get $r) (i32.shr_u (local.get $x) (i32.const 24))))
+        (else
+          ;; No stage: one DISABLE row, so the result is the diffuse colour.
+          (i32.store (local.get $r) (i32.const 1))
+          (i32.store offset=12 (local.get $r) (i32.const 1))))
+      (i32.store offset=32 (local.get $r) (i32.const 16))
+      (i32.store offset=40 (local.get $r) (local.get $i))
+      (i32.store offset=48 (local.get $r) (i32.const 1))
+      (i32.store offset=52 (local.get $r) (i32.const 1))
+      (i32.store offset=128 (local.get $r) (i32.const 16))
+      (local.set $i (i32.add (local.get $i) (i32.const 1)))
+      (br_if $rows (i32.lt_u (local.get $i) (local.get $n))))
+    ;; Row 0: no VS oD1; SPECULAR reads v1; SPECULARENABLE adds v1.rgb.
+    (i32.store offset=160 (local.get $tab) (i32.const 17))
+    (i32.store offset=164 (local.get $tab) (select (i32.const 3) (i32.const 1) (i32.and (local.get $w) (i32.const 0x80))))
+    (local.set $bundle (call $d3d_fixed_compile_cascade6 (local.get $d) (local.get $tab)
+      (select (local.get $n) (i32.const 1) (local.get $n)) (i32.const 2) (i32.const 0)))
+    (if (i32.eqz (local.get $bundle)) (then (call $d3g_decline (local.get $pb) (i32.const 7))))
+    (local.set $ps (i32.load offset=8 (local.get $bundle)))
+    (call $d3g_drop_def (local.get $ps) (i32.const 0))
+    (if (i32.and (local.get $w) (i32.const 0x20)) (then
+      ;; D3D vertex fog: specular alpha is the fraction of the colour kept.
+      (call $d3d_fixed_op (local.get $ps) (i32.const 18) (i32.const 0) (i32.const 0) (i32.const 7) (i32.const 0)
+        (call $d3d_fixed_source (i32.const 1) (i32.const 1) (i32.const 255) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 0) (i32.const 0) (i32.const 228) (i32.const 0))
+        (call $d3d_fixed_source (i32.const 2) (i32.const 7) (i32.const 228) (i32.const 0)))))
+    ;; Projected U/w,V/w,Q/w planes: stage 0 samples with the core DZ form.
+    (global.set $cn_projected (select (i32.const 3) (i32.const 0) (i32.and (local.get $w) (i32.const 0x40))))
+    (local.set $core (call $d3d_shader_ir_canonicalize (local.get $ps)))
+    (global.set $cn_projected (i32.const 0))
+    (local.set $x (i32.load offset=20 (local.get $bundle)))
+    (call $d3d_fixed_free (local.get $bundle))
+    (if (i32.eqz (local.get $core)) (then (call $d3g_decline (local.get $pb) (i32.const 7))))
+    (if (i32.and (i32.ne (i32.and (local.get $w) (i32.const 0x10)) (i32.const 0))
+                 (i32.ne (i32.and (local.get $x) (i32.const 1)) (i32.const 0)))
+      (then (call $d3g_core_keykill (local.get $core))))
+    (local.set $bytes (i32.load offset=24 (local.get $core)))
+    (local.set $id (call $d3g_new_id (local.get $pb)))
+    (local.set $p (call $d3g_begin (local.get $pb) (global.get $GPS_OP_SHADER) (i32.add (size-of GpsShader) (local.get $bytes))))
+    (store.field GpsShader id (local.get $p) (local.get $id))
+    (store.field GpsShader stage (local.get $p) (global.get $GPS_STAGE_PS))
+    (store.field GpsShader pad (local.get $p) (i32.const 0))
+    (store.field GpsShader pad2 (local.get $p) (i32.const 0))
+    (store.field GpsShader ir_bytes (local.get $p) (local.get $bytes))
+    (memory.copy (i32.add (local.get $p) (size-of GpsShader)) (local.get $core) (local.get $bytes))
+    (call $d3d_shader_ir_free (local.get $core))
+    (drop (call $d3g_end (local.get $p)))
+    (local.set $i (i32.load offset=24388 (local.get $pb)))
+    (i32.store offset=24388 (local.get $pb) (i32.rem_u (i32.add (local.get $i) (i32.const 1)) (global.get $D3G_SHADER_CACHE)))
+    (local.set $e (i32.add (i32.add (local.get $pb) (i32.const 24464)) (i32.shl (local.get $i) (i32.const 6))))
+    (if (i32.load (local.get $e)) (then (call $d3g_release (local.get $pb) (i32.load (local.get $e)))))
+    (i32.store (local.get $e) (local.get $id))
+    (i32.store offset=4 (local.get $e) (local.get $len))
+    (memory.copy (i32.add (local.get $e) (i32.const 8)) (local.get $key) (local.get $len))
     (local.get $id))
 
   ;; ---- Textures ----------------------------------------------------------
@@ -1480,18 +1782,13 @@
     (call $d3g_stat (local.get $pb) (i32.const 12) (local.get $count))
     (i32.const 1))
 
-  (func $d3g_opmap (param $v i32) (result i32)
-    (if (result i32) (i32.or (i32.or (i32.eq (local.get $v) (i32.const 2)) (i32.eq (local.get $v) (i32.const 3)))
-          (i32.eq (local.get $v) (i32.const 13)))
-      (then (local.get $v)) (else (i32.const 4))))
-
   ;; 0x20000: the draw record {this, primitive, vertex type, vertices,
   ;; count, state}. 1 = lowered into the stream, 0 = nothing to draw (too few
   ;; vertices, or no target/state to describe). Everything else traps.
   (func $d3g_draw (param $pb i32) (param $desc i32) (result i32)
     (local $this i32) (local $prim i32) (local $vtype i32) (local $verts i32) (local $count i32)
     (local $lines i32) (local $istride i32) (local $dw i32) (local $d i32) (local $t i32)
-    (local $textured i32) (local $tex i32) (local $smp i32) (local $key i32) (local $a i32)
+    (local $textured i32) (local $tex i32) (local $smp i32) (local $key i32) (local $state i32)
     (local $flat i32) (local $depthless i32) (local $zen i32) (local $zfunc i32) (local $zwrite i32)
     (local $cull i32) (local $blend i32) (local $sb i32) (local $db i32) (local $afunc i32)
     (local $l40 i32) (local $os i32) (local $ds i32) (local $ps i32) (local $wrap i32) (local $m i32)
@@ -1536,21 +1833,8 @@
                  (i32.ne (i32.load offset=44 (local.get $d)) (i32.const 0))))))
     (local.set $wrap (i32.load offset=132 (local.get $d)))
     (if (local.get $textured) (then
-      ;; Stage 0 operands, by the software rasterizer's rule
-      ;; ($d3dim_stage_operation), so a draw reads the same operands on
-      ;; either path: ARG1 (k 0, 2) is diffuse for DIFFUSE/CURRENT and the
-      ;; texture otherwise; ARG2 (k 1, 3) is the texture for exactly TEXTURE
-      ;; and diffuse otherwise. Any other selector (TFACTOR, SPECULAR,
-      ;; modifiers) gets the software path's approximation, not a decline.
-      (local.set $k (i32.const 0))
-      (loop $args
-        (local.set $a (i32.load (i32.add (i32.add (local.get $d) (i32.const 164)) (i32.shl (local.get $k) (i32.const 2)))))
-        (if (if (result i32) (i32.and (local.get $k) (i32.const 1))
-              (then (i32.eq (local.get $a) (i32.const 2)))
-              (else (i32.gt_u (local.get $a) (i32.const 1))))
-          (then (local.set $key (i32.or (local.get $key) (i32.shl (i32.const 0x200) (local.get $k))))))
-        (local.set $k (i32.add (local.get $k) (i32.const 1)))
-        (br_if $args (i32.lt_u (local.get $k) (i32.const 4))))
+      ;; The stage operations and arguments are the key $d3g_stage_key
+      ;; builds below; this block binds stage 0's texture and sampler.
       (local.set $tex (call $d3g_texture (local.get $pb) (local.get $d) (i32.load (local.get $t))))
       (if (i32.eqz (local.get $tex)) (then (call $d3g_decline (local.get $pb) (i32.const 1)) (return (i32.const 0))))
       (local.set $smp (call $d3g_sampler (local.get $pb)
@@ -1563,10 +1847,7 @@
                 (i32.load offset=184 (local.get $d))) (i32.const 12)))
             (i32.shl (select (i32.load offset=188 (local.get $d)) (i32.const 2) (i32.le_u (i32.load offset=188 (local.get $d)) (i32.const 2)))
               (i32.const 16))))))
-      (local.set $key (i32.or (local.get $key) (i32.or (i32.const 1)
-        (i32.or (i32.shl (select (i32.const 7) (call $d3g_opmap (i32.load offset=88 (local.get $d)))
-                  (i32.eq (i32.load offset=88 (local.get $d)) (i32.const 7))) (i32.const 1))
-                (i32.shl (call $d3g_opmap (i32.load offset=92 (local.get $d))) (i32.const 5))))))
+      (local.set $key (i32.or (local.get $key) (i32.const 1)))
       (if (i32.and (i32.ne (i32.load offset=52 (local.get $d)) (i32.const 0)) (i32.eqz (i32.load offset=160 (local.get $d))))
         (then (local.set $key (i32.or (local.get $key) (i32.const 0x2000)))))
       (local.set $l40 (i32.ge_u (local.get $vtype) (i32.const 4)))
@@ -1612,10 +1893,12 @@
     (call $d3g_scissor_draw (local.get $pb) (local.get $d) (local.get $zen) (local.get $zfunc) (local.get $zwrite)
       (local.get $cull) (local.get $blend) (local.get $sb) (local.get $db) (local.get $afunc)
       (i32.and (i32.load offset=120 (local.get $d)) (i32.const 255)) (i32.ne (i32.and (local.get $key) (i32.const 0x8000)) (i32.const 0)))
-    (local.set $ps (call $d3g_shader (local.get $pb) (local.get $key)))
+    (local.set $state (call $d3ddev_state (local.get $this)))
+    (local.set $ps (call $d3g_fixed_shader (local.get $pb)
+      (call $d3g_stage_key (local.get $pb) (local.get $d) (local.get $state) (local.get $textured) (local.get $key))))
     (call $d3g_bind (local.get $pb) (local.get $tex) (local.get $smp))
-    (if (i32.and (local.get $key) (i32.const 0x6000))
-      (then (call $d3g_consts (local.get $pb) (i32.load offset=128 (local.get $d)))))
+    (call $d3g_consts (local.get $pb) (call $gl32 (i32.add (local.get $state) (i32.const 496)))
+      (i32.load offset=128 (local.get $d)))
     ;; Vertices: expanded per primitive, so each keeps its provoking colour
     ;; and its own wrap correction.
     (local.set $flat (i32.or (local.get $lines) (i32.eq (i32.load offset=112 (local.get $d)) (i32.const 1))))
@@ -3040,7 +3323,11 @@
   (func (export "d3dim_gps_stat") (param $i i32) (result i32)
     (local $pb i32)
     (local.set $pb (i32.load offset=8 (global.get $D3DIM_GPS)))
-    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 46))) (then (return (i32.const 0))))
+    (if (i32.or (i32.eqz (local.get $pb)) (i32.ge_u (local.get $i) (i32.const 50))) (then (return (i32.const 0))))
+    ;; 46..49: texture-stage stats ($d3g_stage_stat).
+    (if (i32.ge_u (local.get $i) (i32.const 46))
+      (then (return (i32.load (i32.add (i32.add (local.get $pb) (i32.const 24392))
+        (i32.shl (i32.sub (local.get $i) (i32.const 46)) (i32.const 2)))))))
     (if (i32.eq (local.get $i) (i32.const 45)) (then (return (i32.load offset=23352 (local.get $pb)))))
     (if (i32.eq (local.get $i) (i32.const 44)) (then (return (i32.load offset=23348 (local.get $pb)))))
     (if (i32.eq (local.get $i) (i32.const 43)) (then (return (i32.load offset=23344 (local.get $pb)))))
