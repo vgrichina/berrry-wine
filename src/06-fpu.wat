@@ -875,14 +875,8 @@
         (local.set $a (f64.load (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3)))))
         (if (i32.lt_u (i32.sub (local.get $reg) (i32.const 2)) (i32.const 2))
           (then
-            (if (i32.or (f64.ne (local.get $a) (local.get $a)) (f64.ne (local.get $val) (local.get $val)))
-              (then (call $fpu_set_exc (i32.const 0x01))))
-            (global.set $fpu_sw
-              (i32.or (i32.and (global.get $fpu_sw) (i32.const 0xB8FF))
-                      (if (result i32) (f64.lt (local.get $a) (local.get $val)) (then (i32.const 0x0100))
-                        (else (if (result i32) (f64.gt (local.get $a) (local.get $val)) (then (i32.const 0))
-                          (else (select (i32.const 0x4000) (i32.const 0x4500)
-                                        (f64.eq (local.get $a) (local.get $val)))))))))
+            ;; main's exact compare: the physical image first, f64 otherwise
+            (call $fpu_image_compare (local.get $a) (local.get $val) (i32.const -1) (i32.const 0))
             (if (i32.eq (local.get $reg) (i32.const 3))
               (then
                 (if (i32.eqz (i32.and (i32.shr_u (global.get $fpu_tag) (local.get $p)) (i32.const 1)))
@@ -900,11 +894,14 @@
               (else (if (result f64) (i32.eq (local.get $reg) (i32.const 5)) (then (f64.sub (local.get $val) (local.get $a)))
                 (else (call $fpu_arith (local.get $a) (local.get $val) (local.get $reg)))))))))
         ;; $fpu_set 0: TOP re-read, as the original's argument order leaves it
+        (if (global.get $eip_redirected) (then (return)))
         (local.set $p (global.get $fpu_top))
         (f64.store (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3))) (local.get $a))
         (local.set $m (i32.shl (i32.const 1) (local.get $p)))
         (global.set $fpu_raw_tag (i32.and (global.get $fpu_raw_tag) (i32.xor (i32.const 0xFF) (local.get $m))))
         (global.set $fpu_tag (i32.or (global.get $fpu_tag) (local.get $m)))
+        (call $phys80_invalidate (local.get $p))
+        (call $phys80_materialize (local.get $p))
         (return)))
     ;; FLD m64 (DD /0), FLD m32 (D9 /0), FILD m32 (DB /0): the operand
     ;; loaded first, then $fpu_push inline
@@ -918,6 +915,7 @@
             (else (if (result f64) (i32.eq (local.get $group) (i32.const 1))
               (then (f64.promote_f32 (f32.reinterpret_i32 (call $gl32_native (local.get $addr)))))
               (else (f64.convert_i32_s (call $gl32 (local.get $addr))))))))
+        (if (global.get $eip_redirected) (then (return)))
         (local.set $p (i32.and (i32.sub (global.get $fpu_top) (i32.const 1)) (i32.const 7)))
         (global.set $fpu_top (local.get $p))
         (local.set $m (i32.shl (i32.const 1) (local.get $p)))
@@ -926,6 +924,8 @@
         (f64.store (i32.add (global.get $fpu_base) (i32.shl (local.get $p) (i32.const 3))) (local.get $val))
         (global.set $fpu_raw_tag (i32.and (global.get $fpu_raw_tag) (i32.xor (i32.const 0xFF) (local.get $m))))
         (global.set $fpu_tag (i32.or (global.get $fpu_tag) (local.get $m)))
+        (call $phys80_invalidate (local.get $p))
+        (call $phys80_materialize (local.get $p))
         (return)))
     ;; Group 0 (D8) / Group 4 (DC) with --no-fpu-direct
     (if (i32.or (i32.eq (local.get $group) (i32.const 0)) (i32.eq (local.get $group) (i32.const 4)))

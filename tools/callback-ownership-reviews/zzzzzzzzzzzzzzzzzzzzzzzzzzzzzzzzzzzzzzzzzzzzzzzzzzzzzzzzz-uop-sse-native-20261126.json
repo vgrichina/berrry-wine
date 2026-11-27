@@ -1,26 +1,4 @@
 {
   "version": 1,
-  "revisions": [
-    {
-      "file": "host.js",
-      "name": "host-file",
-      "baseSHA256": "173828497480cdd8e5703edbe69abc0a97791d71d1a9217f4920f2b5079ddf6d",
-      "sha256": "a0858a13476420b32b37699bc1ee5434b42b4f5790b238328e057d2ffa5669ef",
-      "reason": "Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending. Re-anchored on the uop-opt review at the opt/uop-flags merge (both sides kept: uop-opt ops 111-113 and set_uop_opt, SSE-native ops 120-142 and set_uop_sse_native)."
-    },
-    {
-      "file": "lib/worker-imports.js",
-      "name": "host-file",
-      "baseSHA256": "b0f91b6e6823b23dc23680cfe600164d0929eeaf0603bb512161207b4f02faf1",
-      "sha256": "6db03c92ddeb54f5ed200cbbb2eb105cf45bd565a69f52b058643ae1ead5a6bf",
-      "reason": "Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending. Re-anchored on the uop-opt review at the opt/uop-flags merge (both sides kept: uop-opt ops 111-113 and set_uop_opt, SSE-native ops 120-142 and set_uop_sse_native)."
-    },
-    {
-      "file": "src/07d-uop-engine.wat",
-      "name": "$uop_fast",
-      "baseSHA256": "8529abb5c8364d3481cfb5811947fef45dfbdad4640ae381d58a7b10de3070ee",
-      "sha256": "7d1dea1a588fa8f3eb2f8f5e535dba28fca58d452097d82826c29213edaac9c4",
-      "reason": "Review 20261126 --uop-sse-native (opt-in, off by default, only with --uop-sse): the uop tier gains native SSE ops 120-142 that run the 06c handler arm inline on the XMM file (memory forms through 109's window guard and service op), and the host plumbs set_uop_sse_native like set_uop_sse. No EIP write, callback frame, guest stack, HWND lifetime, hook or message delivery changed; callback ownership remains pending. Re-anchored on the uop-opt review at the opt/uop-flags merge (both sides kept: uop-opt ops 111-113 and set_uop_opt, SSE-native ops 120-142 and set_uop_sse_native)."
-    }
-  ]
+  "revisions": []
 }

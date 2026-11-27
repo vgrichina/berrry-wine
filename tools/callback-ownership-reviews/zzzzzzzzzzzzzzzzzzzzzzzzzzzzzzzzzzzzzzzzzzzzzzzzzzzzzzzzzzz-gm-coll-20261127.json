@@ -2,13 +2,6 @@
   "version": 1,
   "revisions": [
     {
-      "file": "lib/worker-imports.js",
-      "name": "host-file",
-      "baseSHA256": "8fc6cb825c288a1825134ae8f7512dfd8dc843cdbf62c94fee940c48c1d23bd4",
-      "sha256": "12122ba903e5de7a2894c6717d84a073ec22d03f4bc76336ebe7a9c9dc304054",
-      "reason": "Review 20261127 GM collision fold: comment only -- the set_gm_fold mask's default is now 0x1F; the inherited setter list, host entries, run calls and callback boundaries are unchanged. General callback ownership remains pending."
-    },
-    {
       "file": "src/10-helpers-delphi-fold.wat",
       "name": "$th_delphi_rtti",
       "baseSHA256": "69400e90f1cb0f4b6ec86971481d4aa708ffd136c58d3343cad920122dd0a2f2",
