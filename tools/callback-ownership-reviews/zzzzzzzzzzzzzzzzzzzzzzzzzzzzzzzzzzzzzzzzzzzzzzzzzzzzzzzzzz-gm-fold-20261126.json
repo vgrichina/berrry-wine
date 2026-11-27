@@ -12,8 +12,8 @@
       "file": "src/10-helpers-delphi-fold.wat",
       "name": "$th_delphi_rtti",
       "baseSHA256": "708f0a24cd0bd60493cd28edb193f66e6fd425bf5ce36b83423b858f7bb27322",
-      "sha256": "de5ff63d5523f46f03a9eef7b035d328476a17773900124d09bf6f432cfff399",
-      "reason": "Review 20261126 GM fold: handler 395 also runs the Game Maker runner variable-list scan loop (id 10), the instance-table reads (11-13) and _FinalizeArray over one-AnsiString records natively. EIP writes are unchanged (same six sites and targets): the new non-RET exits set the existing local $entry and leave through the one $eip = $entry write with $branch_end; the helper paths end in the body RET op; no callback frame, invocation identity preserved. General callback ownership remains pending."
+      "sha256": "69400e90f1cb0f4b6ec86971481d4aa708ffd136c58d3343cad920122dd0a2f2",
+      "reason": "Review 20261126 GM fold: handler 395 also runs the Game Maker runner variable-list scan loop (id 10), the instance-table reads (11-13) and _FinalizeArray over one-AnsiString records natively. EIP writes are unchanged (same six sites and targets): the native paths live in $gmf_run, which writes no EIP and returns fall-back / done / not-mine / a resume address; the handler sets the existing local $entry from it and leave through the one $eip = $entry write with $branch_end; the helper paths end in the body RET op; no callback frame, invocation identity preserved. General callback ownership remains pending."
     }
   ]
 }
