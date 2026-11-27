@@ -11,6 +11,46 @@ retained-GDI finding remains an unsupported limitation; default stays off.
 The cross-instance correction is described below.
 The findings below describe the original audited revision.
 
+## Default promotion (2026-11-26, gps/d6)
+
+D3DIM lazy Lock is now the WAT default on every host, matching Glide and
+D3D9. The retained-DC case below is fixed: `$gdi_surface_descriptor` settles
+an armed entry over a DX surface's bits before GDI reads or writes them
+(`test/test-d3dim-gps-lazy-discard.js` case 5 fails without it). Opt out
+with `--no-d3dim-lazy-sync` / `?no-lazy-sync`.
+The access-path reproducer this audit used, `tools/audit-d3dim-lazy-sync.js`,
+predated GPU stream v2: it faked readback through `gpu_gl_call`, so its
+first eager control assertion failed. It was deleted on 2026-11-27 (gps/d7);
+`test/test-d3dim-gps-lazy-discard.js`, `test/test-d3dim-surface-fence.js`
+and `test/test-dx-flip-lazy-flush.js` cover these paths against the real
+GPS readback. Recover the tool from git history (before gps/d7) to rerun
+the original audit.
+
+Browser smoke of the default (2026-11-27, gps/d7). The setup was Threads
+mode, `tools/dev-server.js --isolate`, SwiftShader WebGL and
+`tools/web-input-probe.js`, with sessions of 45-71 s and no page errors.
+
+| App | Readbacks |
+|---|---|
+| dx_flip3dtl | 0 per frame |
+| gta2_demo menu | 1 lazy first-touch per frame (the guest touches its locked back buffer) |
+| gta2_demo gameplay | 2 in about 600 frames |
+| nfs2se_glide_demo | 0 |
+| quake2_demo | 0 |
+
+Evidence: `scratch/runs/20261127-gps-d7/browser/`.
+
+Correction (2026-11-27, gps/d8): the gta2_demo menu row above is wrong
+about the cause. The guest never touches its locked back buffer (headless:
+lazy armed 567, touched 0, untouched 567). The readback came from
+`$D3DIM_LAZY_SHARED`+16 staying set after the untouched Unlock: the
+frame's opaque Blts onto the back buffer were then refused GPU replay
+(`$d3g_cpu_write_ok`) and read it back. `$d3dim_lazy_settled_locked` now
+clears the word whenever the last D3DIM entry leaves the table. The menu
+now takes 0 readbacks with identical pixels (CLI, WebGL and software
+executors; this is not a browser re-smoke). See gpu-stream-v2-migration.md,
+D8.
+
 ## Shared-thread correction (2026-09-29)
 
 Pending Lock range and deferred-work state now live in the allocated
@@ -54,7 +94,7 @@ unsupported as described below. The gameplay benchmark still restricts its
 measurement to its existing single-producer route; it is not a whole-corpus
 multithreaded performance measurement.
 
-Run `node tools/audit-d3dim-lazy-sync.js`. It compiles the canonical source,
+Run `node tools/audit-d3dim-lazy-sync.js` (deleted in gps/d7, see above). It compiled the canonical source,
 uses real WAT access paths, and substitutes a deterministic GPU readback
 (two RGB565 pixels, red/green). It reports observed hazards rather than
 asserting that the current bugs are desirable. Eager and ordinary same-instance

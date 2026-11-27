@@ -6,7 +6,8 @@
 // (lib/gpu-stream-software.js). The flip chain's DIBs swap, the colour target
 // follows its DIB, the new front is PRESENTed from GPU memory, and the drawn
 // pixels land in the DIB they were drawn into only when a CPU reader fences
-// those bytes. Measured on Deus Ex's D3DDrv: a synchronous readback per
+// those bytes. A longer chain rotates every member one step, as the CPU
+// Flip does (Re-Volt's triple buffer). Measured on Deus Ex's D3DDrv: a synchronous readback per
 // present was 28 ms of every frame.
 //
 // The JS WebGL executor's pixel-pack-buffer readback, its fence-sync polling,
@@ -21,6 +22,9 @@ const { bootRenderHarness } = require('./render-helper');
 const extraWat = `
   (func (export "flip_flags") (param $this i32) (param $flags i32)
     (store.field DxObject flags (call $dx_from_this (local.get $this)) (local.get $flags)))
+  ;; Attach $next behind $this in a flip chain (misc0 = the next member's COM pointer).
+  (func (export "flip_attach") (param $this i32) (param $next i32)
+    (store.field DxObject misc0 (call $dx_from_this (local.get $this)) (local.get $next)))
   (func (export "flip_cpu_note") (call $d3dim_cpu_present_note))
   (func (export "flip_slot") (param $this i32) (result i32)
     (call $dx_slot_of (call $dx_from_this (local.get $this))))
@@ -153,6 +157,7 @@ const extraWat = `
   const dibA = ex.flip_dib(back) >>> 0, dibB = ex.flip_dib(front) >>> 0;
   fill(dibA, 0); fill(dibB, 0x22);
   ex.flip_flags(front, 1);
+  ex.flip_attach(front, back);
   assert.strictEqual(ex.flip_paint(back, RED), 1, 'the producer takes the clear of the back buffer');
 
   // The flip: DIBs swap, nothing reads back, nothing is owed.
@@ -290,11 +295,36 @@ const extraWat = `
   assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), ex.flip_slot(front));
   ex.flip_cpu_note();
   assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), -1, 'later actual CPU present revokes GPU scan-out pin');
+  ex.flip_attach(front, 0);
   assert.strictEqual(ex.flip_release(front), 0);
   assert.strictEqual(ex.d3dim_gps_window_primary_slot(0x1234), -1, 'retirement revokes native GPU primary pin');
   assert.strictEqual(ex.d3dim_gps_window_present(0x1234, finalFrame.rt), 0, 'retired primary revokes its actual PRESENT');
 
+  // A three-member chain: one Flip rotates every DIB one step toward the
+  // front and presents the member behind it, with no readback.
+  const f3 = ex.flip_surface(W, H), b3 = ex.flip_surface(W, H), c3 = ex.flip_surface(W, H);
+  ex.flip_flags(f3, 1); ex.flip_attach(f3, b3); ex.flip_attach(b3, c3);
+  const [d0, d1, d2] = [f3, b3, c3].map(x => ex.flip_dib(x) >>> 0);
+  assert.strictEqual(ex.flip_try(f3, c3), 0, 'a member that is not the front\'s next declines');
+  assert.strictEqual(ex.flip_paint(b3, RED), 1);
+  r = readbacks(); f0 = flips();
+  assert.strictEqual(ex.flip_try(f3, b3), 1, 'a triple buffer flips on the GPU');
+  assert.deepStrictEqual([f3, b3, c3].map(x => ex.flip_dib(x) >>> 0), [d1, d2, d0], 'every member rotated one step');
+  assert.strictEqual(flips(), f0 + 1);
+  assert.strictEqual(readbacks(), r, 'no readback on a triple-buffer Flip');
+  assert.deepStrictEqual(Array.from(frames.at(-1).pixels.subarray(0, 4)), [255, 0, 0, 255], 'the drawn member presented');
+  assert.strictEqual(ex.flip_paint(b3, GREEN), 1);
+  assert.strictEqual(ex.flip_try(f3, b3), 1);
+  assert.deepStrictEqual([f3, b3, c3].map(x => ex.flip_dib(x) >>> 0), [d2, d0, d1]);
+  assert.strictEqual(readbacks(), r);
+  assert.deepStrictEqual(Array.from(frames.at(-1).pixels.subarray(0, 4)), [0, 255, 0, 255]);
+  ex.flip_reader(f3);
+  assert.strictEqual(readbacks(), r + 1);
+  assert.deepStrictEqual(bytes(d2), green, 'the presented frame lands in its own DIB');
+  ex.flip_reader(c3);
+  assert.deepStrictEqual(bytes(d1), red, 'the older frame stays in the DIB it was drawn into');
+
   assert.deepStrictEqual(calls, [], 'the WAT producer never calls the host gpu_gl_call');
   assert(kicks > 0, 'records went through the GPU stream consumer');
-  console.log('PASS D3DIM GPU Flip: DIB swap, GPU present, readback only for the front reader, two-frame order, declines');
+  console.log('PASS D3DIM GPU Flip: DIB swap, GPU present, readback only for the front reader, two-frame order, declines, triple-buffer rotation');
 })().catch(e => { console.error(e); process.exitCode = 1; });

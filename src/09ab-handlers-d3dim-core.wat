@@ -303,6 +303,48 @@
     (call $d3dim_site_fence (local.get $dst) (i32.const 3))
     (i32.const 0))
 
+  ;; Blt($dst <- $src, $drect, $srect, dwFlags) will copy on the CPU: the
+  ;; $d3dim_blt_fast_fence contract for the Blt shapes $d3dim_gps_blt_end
+  ;; replays exactly. Equal-size rects (a stretch is nearest-neighbour on
+  ;; the CPU), no clipper (a region list skips pixels), flags within
+  ;; DDBLT_KEYSRC | ASYNC | WAIT | DONOTWAIT (no DDFX, ROP, override keys or
+  ;; fills), and not the keyed 32x32 copy that first saves a software
+  ;; cursor's background out of the destination's DIB.
+  (func $d3dim_blt_fence (param $dst i32) (param $src i32) (param $drect i32) (param $srect i32)
+      (param $flags i32) (result i32)
+    (local $dw i32) (local $dh i32) (local $sw i32) (local $sh i32) (local $trans i32)
+    (call $d3dim_site_fence (local.get $src) (i32.const 2))
+    (block $no
+      (br_if $no (i32.ne (i32.and (local.get $flags) (i32.const 0xF6FF7DFF)) (i32.const 0)))
+      (br_if $no (i32.ne (call $dx_surface_clipper_get (local.get $dst)) (i32.const 0)))
+      (if (local.get $drect)
+        (then
+          (local.set $dw (i32.sub (call $gl32 (i32.add (local.get $drect) (i32.const 8))) (call $gl32 (local.get $drect))))
+          (local.set $dh (i32.sub (call $gl32 (i32.add (local.get $drect) (i32.const 12)))
+            (call $gl32 (i32.add (local.get $drect) (i32.const 4))))))
+        (else
+          (local.set $dw (load.field DxObject width (local.get $dst)))
+          (local.set $dh (load.field DxObject height (local.get $dst)))))
+      (if (local.get $srect)
+        (then
+          (local.set $sw (i32.sub (call $gl32 (i32.add (local.get $srect) (i32.const 8))) (call $gl32 (local.get $srect))))
+          (local.set $sh (i32.sub (call $gl32 (i32.add (local.get $srect) (i32.const 12)))
+            (call $gl32 (i32.add (local.get $srect) (i32.const 4))))))
+        (else
+          (local.set $sw (load.field DxObject width (local.get $src)))
+          (local.set $sh (load.field DxObject height (local.get $src)))))
+      (br_if $no (i32.or (i32.ne (local.get $dw) (local.get $sw)) (i32.ne (local.get $dh) (local.get $sh))))
+      ;; The CPU keys only when the source has a key: DDBLTFAST_SRCCOLORKEY's bit.
+      (local.set $trans (i32.and
+        (i32.ne (i32.and (local.get $flags) (i32.const 0x8000)) (i32.const 0))
+        (i32.ne (i32.and (load.field DxObject flags (local.get $src)) (i32.const 0x100)) (i32.const 0))))
+      (br_if $no (i32.and (local.get $trans)
+        (i32.and (i32.eq (local.get $dw) (i32.const 32)) (i32.eq (local.get $dh) (i32.const 32)))))
+      (br_if $no (i32.eqz (call $d3dim_gps_blt_begin (local.get $dst) (local.get $src) (local.get $trans))))
+      (return (i32.const 1)))
+    (call $d3dim_site_fence (local.get $dst) (i32.const 3))
+    (i32.const 0))
+
   ;; Queue a flip-chain DIB swap behind the draws still on the render Worker,
   ;; so the frame keeps rasterizing into the buffer it started in while the
   ;; guest runs on. Only worth it with draws outstanding: with none, the
@@ -749,10 +791,15 @@
   ;; pixels even when this instance has never drawn, so CPU barriers must query
   ;; the owner rather than consulting only this instance's pending flag.
   (global $d3dim_gpu_cooperative (mut i32) (i32.const 0))
-  ;; Opt-in experiment. Only DIB-backed,
-  ;; nonprimary Locks qualify; host/other-surface barriers remain eager.
-  ;; Translation is conservative: an address proof may synchronize early.
-  (global $d3dim_lazy_on (mut i32) (i32.const 0))
+  ;; Lazy Lock: on by default on every host, as Glide grLfbLock and D3D9
+  ;; LockRect always arm; a host opts out with d3dim_lazy_enable(0) (the
+  ;; browser's ?no-lazy-sync, the CLI's --no-d3dim-lazy-sync). Only
+  ;; DIB-backed, nonprimary, page-aligned Locks qualify, and only when the
+  ;; executor takes the 0x20007 publish; host/other-surface barriers remain
+  ;; eager. Translation is conservative: an address proof may synchronize
+  ;; early. GDI on a previously bound surface DC settles the entry in
+  ;; $gdi_surface_descriptor.
+  (global $d3dim_lazy_on (mut i32) (i32.const 1))
   (global $d3dim_lazy_armed (mut i32) (i32.const 0))
   (global $d3dim_lazy_touched (mut i32) (i32.const 0))
   (global $d3dim_lazy_untouched (mut i32) (i32.const 0))
@@ -829,8 +876,24 @@
   (func $d3dim_lazy_unlock (param $entry i32) (result i32)
     (if (call $gps_lazy_disarm (global.get $GPS_API_D3DIM) (local.get $entry)) (then
       (global.set $d3dim_lazy_untouched (i32.add (global.get $d3dim_lazy_untouched) (i32.const 1)))
+      (call $gps_lazy_enter)
+      (call $d3dim_lazy_settled_locked)
+      (call $gps_lazy_leave)
       (return (i32.const 1))))
     (i32.const 0))
+  ;; An entry left the table: untouched at Unlock, discarded by a whole-range
+  ;; overwrite, or touched and its own range read back. Either way the fence
+  ;; its Lock skipped is paid or no longer owed.
+  ;; With no other D3DIM entry armed, +16 drops too. While it stays set,
+  ;; every pixel-free barrier (Flip's CPU swap, $d3dim_gpu_barrier) reads
+  ;; back every dirty target, and $d3g_cpu_write_ok refuses the GPU replay
+  ;; of a CPU Blt / colour fill, which then reads its destination back --
+  ;; GTA2's menu Locks its back buffer twice a frame, never touches it, then
+  ;; covers it with two opaque Blts: one readback per frame for nothing.
+  ;; Ranged fences keep their eager $d3dim_worker_pending path. Mutex held.
+  (func $d3dim_lazy_settled_locked
+    (if (i32.eqz (call $gps_lazy_find_key (global.get $GPS_API_D3DIM) (i32.const 0)))
+      (then (i32.atomic.store (region.addr $D3DIM_LAZY_SHARED 16) (i32.const 0)))))
   (global $d3dim_gpu_desc (mut i32) (i32.const 0))
   (global $d3dim_gpu_scratch (mut i32) (i32.const 0))
   (global $d3dim_gpu_scratch_cap (mut i32) (i32.const 0))

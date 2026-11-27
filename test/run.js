@@ -5382,9 +5382,11 @@ async function main() {
   // tools/page-probes/measure-guest-rate.js reads the same counter in a browser.
   const guestBlocks = () => instance.exports.get_blocks_now
     ? instance.exports.get_blocks_now() >>> 0 : 0;
-  // --d3dim-lazy-sync: lazy Lock sync, the browser default (?no-lazy-sync
-  // turns it off there); the WAT default and the CLI default are off.
-  if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
+  // Lazy Lock sync is the WAT default on every host (the browser's
+  // ?no-lazy-sync turns it off there); --no-d3dim-lazy-sync is the CLI's
+  // opt-out. --d3dim-lazy-sync is accepted and changes nothing.
+  if (hasFlag('no-d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(0);
+  else if (hasFlag('d3dim-lazy-sync')) instance.exports.d3dim_lazy_enable(1);
   if (GUEST_PAGE_STATS) {
     if (!instance.exports.reset_guest_page_stats || !instance.exports.get_guest_page_stat) {
       throw new Error('--guest-page-stats requires the offline artifact from ' +
@@ -12189,10 +12191,15 @@ if (VERBOSE) {
       + ` lazyLocks armed=${instance.exports.get_d3dim_lazy_armed?.() ?? 0}`
       + ` touched=${instance.exports.get_d3dim_lazy_touched?.() ?? 0}`
       + ` untouched=${instance.exports.get_d3dim_lazy_untouched?.() ?? 0}`
-      + ` overwritten=${st(43)} texEdgeVerified=${st(44)} getDCDeferred=${st(45)}`);
+      + ` overwritten=${st(43)} texEdgeVerified=${st(44)} getDCDeferred=${st(45)}`
+      + ` gdiOpaqueBlt=${st(50)} gdiOpaqueLanded=${st(51)}`);
     // Software declines by reason ($d3g_decline).
-    const why = ['stageArg', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground'];
+    const why = ['target', 'texture', 'zfunc', 'blendFactor', 'noDepth', 'clearTarget', 'clearBackground', 'stage'];
     console.log('[d3dim-gps] decline reasons ' + why.map((n, i) => `${n}=${st(35 + i)}`).join(' '));
+    // Texture-stage lowering (D5): draws with more than one stage, stages
+    // cut because they sample a texture stage>0 does not carry, draws the
+    // pre-D5 stage-0 lowering approximated, sixth stage cut.
+    console.log(`[d3dim-gps] stages multiStage=${st(46)} stageTexCut=${st(47)} lowered=${st(48)} overflow=${st(49)}`);
     const bridge = ctx.getD3dimBridge && ctx.getD3dimBridge();
     if (bridge && bridge.stats) console.log('[d3dim-gps] bridge ' + JSON.stringify(bridge.stats));
   }

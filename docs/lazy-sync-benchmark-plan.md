@@ -3,7 +3,7 @@
 This is the broader benchmark specification. The implemented low-level browser
 suite and first measured results are in [lazy-sync-synthetic-results.md](lazy-sync-synthetic-results.md),
 including its explicit end-to-end coverage limits. This plan extends the access-path reproducer in
-`tools/audit-d3dim-lazy-sync.js`. Workload sizes below are chosen fixtures;
+`tools/audit-d3dim-lazy-sync.js` (deleted in gps/d7; see lazy-sync-audit.md). Workload sizes below are chosen fixtures;
 only the MW3 Lock pattern is based on the preceding real-game measurements.
 
 ## Two layers and explicit comparison arms

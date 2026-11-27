@@ -58,7 +58,7 @@
 ;; Point mip ties round upward; linear interpolates adjacent levels. Nonfinite
 ;; LOD/invalid binding returns NaN. Implicit mip TEX requires execution mask15.
 ;; Texture descriptor (36 bytes copied on bind): WASM pixels,width,height,pitch,
-;; format(0 RGBA,21 BGRA,22 BGRX,62 X8L8V8U8,63 Q8W8V8U8), addressU/addressV(1wrap,2mirror,3clamp,4border),
+;; format(0 RGBA,21 BGRA,22 BGRX,62 X8L8V8U8,63 Q8W8V8U8), addressU/addressV(1wrap,2mirror,3clamp,4border,5mirror-once),
 ;; filter(1point,2linear), ARGB border. Pixel bytes remain externally retained.
 ;; TEX/TEXCOORD use immutable interpolated t inputs copied at PC0 to v16..v19.
 ;; Missing textures return status-3 before retiring the sampling instruction.
@@ -1257,7 +1257,7 @@
   (local.set $i (i32.const 16))
   (loop $modes
     (if (i32.or (i32.lt_u (i32.load (i32.add (local.get $desc) (local.get $i))) (i32.const 1))
-      (i32.gt_u (i32.load (i32.add (local.get $desc) (local.get $i))) (i32.const 4))) (then (return (i32.const 0))))
+      (i32.gt_u (i32.load (i32.add (local.get $desc) (local.get $i))) (i32.const 5))) (then (return (i32.const 0))))
     (local.set $i (i32.add (local.get $i) (i32.const 4))) (br_if $modes (i32.lt_u (local.get $i) (i32.const 24))))
   (local.set $i (i32.const 28))
   (loop $filters
@@ -1400,6 +1400,10 @@
   (if (i32.eq (local.get $mode) (i32.const 3)) (then
     (if (i32.lt_s (local.get $x) (i32.const 0)) (then (return (i32.const 0))))
     (return (select (i32.sub (local.get $n) (i32.const 1)) (local.get $x) (i32.ge_u (local.get $x) (local.get $n))))))
+  ;; Mirror-once: mirror about texel edge 0 (tap -1 is texel 0), then clamp.
+  (if (i32.eq (local.get $mode) (i32.const 5)) (then
+    (if (i32.lt_s (local.get $x) (i32.const 0)) (then (local.set $x (i32.sub (i32.const -1) (local.get $x)))))
+    (return (select (i32.sub (local.get $n) (i32.const 1)) (local.get $x) (i32.ge_u (local.get $x) (local.get $n))))))
   (select (i32.const -1) (local.get $x) (i32.ge_u (local.get $x) (local.get $n))))
 
 (func $d3d_shader_vm_texel (param $desc i32) (param $x i32) (param $y i32) (param $comp i32) (result f32)
@@ -1436,6 +1440,8 @@
   (if (i32.eq (local.get $mode) (i32.const 2)) (then
     (local.set $u (f32.sub (local.get $u) (f32.mul (f32.floor (f32.mul (local.get $u) (f32.const 0.5))) (f32.const 2))))
     (return (select (f32.sub (f32.const 2) (local.get $u)) (local.get $u) (f32.gt (local.get $u) (f32.const 1))))))
+  ;; Mirror-once (D3DTADDRESS_MIRRORONCE): |u|, then clamped to 1.
+  (if (i32.eq (local.get $mode) (i32.const 5)) (then (return (f32.min (f32.abs (local.get $u)) (f32.const 1)))))
   ;; Far-out border samples have no in-range taps. Bounded coordinates prevent
   ;; integer overflow even for finite shader values outside native repeat caps.
   (f32.min (f32.max (local.get $u) (select (f32.const 0) (f32.const -1) (i32.eq (local.get $mode) (i32.const 3))))
