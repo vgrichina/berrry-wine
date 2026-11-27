@@ -12219,15 +12219,6 @@
             (global.set $di_mouse_data_last_buttons (local.get $buttons))))
         (local.set $queued (call $di_mouse_event_count))
         (local.set $diff (i32.xor (local.get $buttons) (global.get $di_mouse_data_last_buttons)))
-        (local.set $available
-          (i32.add
-            (local.get $queued)
-            (if (result i32) (i32.eqz (local.get $queued))
-              (then
-                (i32.add (i32.add (i32.ne (i32.and (local.get $diff) (i32.const 1)) (i32.const 0))
-                                  (i32.ne (i32.and (local.get $diff) (i32.const 2)) (i32.const 0)))
-                         (i32.ne (i32.and (local.get $diff) (i32.const 0x10)) (i32.const 0))))
-              (else (i32.const 0)))))
         (local.set $requested
           (if (result i32) (local.get $arg3)
             (then (call $gl32 (local.get $arg3)))
@@ -12239,16 +12230,8 @@
         (if (i32.and (i32.ne (local.get $capacity) (i32.const 0))
                      (i32.gt_u (local.get $requested) (local.get $capacity)))
           (then (local.set $requested (local.get $capacity))))
-        (if (i32.and (i32.eqz (local.get $arg2))
-                     (i32.ne (i32.and (local.get $arg4) (i32.const 1)) (i32.const 0)))
-          (then
-            (if (local.get $arg3)
-              (then (call $gs32 (local.get $arg3)
-                (select (local.get $available) (local.get $requested)
-                  (i32.lt_u (local.get $available) (local.get $requested))))))
-            (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-            (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))
-            (return)))
+        ;; NULL PEEK must walk the same selected objects as an output PEEK.
+        ;; Counting raw FIFO words includes objects omitted by a custom format.
         (local.set $commit (i32.eqz (i32.and (local.get $arg4) (i32.const 1))))
         (local.set $delivered (i32.const 0))
         (local.set $peek_sequence (global.get $di_mouse_data_sequence))
@@ -12346,7 +12329,8 @@
                 (call $di_mouse_event_stamp (local.get $event) (local.get $event_type)))
               ;; PEEK advances only its local sequence. Returning multiple
               ;; records must preserve the sequence a later removal returns.
-              (if (i32.eqz (local.get $commit)) (then
+              (if (i32.and (i32.eqz (local.get $commit))
+                           (i32.ne (local.get $arg2) (i32.const 0))) (then
                 (call $gs32 (i32.add (local.get $arg2)
                   (i32.add (i32.mul (local.get $delivered) (local.get $arg1)) (i32.const 12)))
                   (local.get $peek_sequence))))
