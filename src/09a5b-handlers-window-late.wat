@@ -3519,32 +3519,23 @@ Layout(hdc) -> DWORD — return 0 (LTR layout)
 
   ;; 694: InvalidateRgn(hwnd, hrgn, bErase). hrgn=NULL → full client rect.
   (func $handle_InvalidateRgn (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $cs i32) (local $rt i32) (local $box i32)
+    (local $ok i32)
     (if (i32.eqz (local.get $arg0))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 1))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)))
-    (if (local.get $arg1)
+    (local.set $ok (call $update_add_region (local.get $arg0) (local.get $arg1)))
+    ;; Publish erase/notification state only after a complete exact union.
+    ;; Empty input on a clean window must not manufacture a paint request.
+    (if (i32.and (i32.ne (local.get $ok) (i32.const 0))
+          (call $update_get_rect (local.get $arg0) (i32.const 0)))
       (then
-        (local.set $box (call $paint_scratch_take))
-        (local.set $rt (call $gdi_rgn_get_box (local.get $arg1) (local.get $box)))
-        (if (local.get $rt)
-          (then
-            (call $update_invalidate_rect (local.get $arg0)
-              (load.field PaintRect left (local.get $box))
-              (load.field.memarg PaintRect top (local.get $box))
-              (load.field.memarg PaintRect right (local.get $box))
-              (load.field.memarg PaintRect bottom (local.get $box))))))
-      (else
-        (local.set $cs (call $host_get_window_client_size (local.get $arg0)))
-        (call $update_invalidate_rect (local.get $arg0) (i32.const 0) (i32.const 0)
-          (i32.and (local.get $cs) (i32.const 0xFFFF))
-          (i32.shr_u (local.get $cs) (i32.const 16)))))
-    (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
-      (then (global.set $paint_pending (i32.const 1)))
-      (else (call $paint_flag_set (local.get $arg0))))
-    (call $host_invalidate (local.get $arg0))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+        (if (local.get $arg2) (then (call $nc_flags_set (local.get $arg0) (i32.const 2))))
+        (if (i32.eq (local.get $arg0) (global.get $main_hwnd))
+          (then (global.set $paint_pending (i32.const 1)))
+          (else (call $paint_flag_set (local.get $arg0))))
+        (call $host_invalidate (local.get $arg0))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) (return)
   )
 

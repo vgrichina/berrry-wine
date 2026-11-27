@@ -5032,23 +5032,29 @@
   ;; explicitly rather than silently losing damage or widening it to a bbox.
   (func $update_apply_rect (param $hwnd i32) (param $l i32) (param $t i32)
         (param $r i32) (param $b i32) (param $mode i32) (result i32)
-    (local $slot i32) (local $p i32) (local $rect i32) (local $count i32)
-    (local $i i32) (local $q i32)
+    (local $rect i32)
     (if (i32.or (i32.le_s (local.get $r) (local.get $l))
                 (i32.le_s (local.get $b) (local.get $t)))
       (then (return (i32.const 1))))
-    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
-    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return (i32.const 1))))
-    (local.set $p (call $update_rect_addr_for_slot (local.get $slot)))
     (local.set $rect (call $paint_scratch_take))
     (store.field PaintRect left (local.get $rect) (local.get $l))
     (store.field.memarg PaintRect top (local.get $rect) (local.get $t))
     (store.field.memarg PaintRect right (local.get $rect) (local.get $r))
     (store.field.memarg PaintRect bottom (local.get $rect) (local.get $b))
+    (call $update_apply_bands (local.get $hwnd) (local.get $rect) (i32.const 1) (local.get $mode)))
+
+  ;; One publication point for rectangle and HRGN callers. The sweep writes
+  ;; scratch only; failed unions/subtractions leave the complete store intact.
+  (func $update_apply_bands (param $hwnd i32) (param $bands i32)
+        (param $bands_count i32) (param $mode i32) (result i32)
+    (local $slot i32) (local $p i32) (local $count i32) (local $i i32) (local $q i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.eq (local.get $slot) (i32.const -1)) (then (return (i32.const 1))))
+    (local.set $p (call $update_rect_addr_for_slot (local.get $slot)))
     (local.set $count (call $gdi_rgn_boolean_sweep
       (i32.add (local.get $p) (i32.const 16))
       (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot)))
-      (local.get $rect) (i32.const 1) (local.get $mode)))
+      (local.get $bands) (local.get $bands_count) (local.get $mode)))
     (if (i32.lt_s (local.get $count) (i32.const 0)) (then (return (i32.const 0))))
     (memory.copy (i32.add (local.get $p) (i32.const 16)) (global.get $GDI_REGION_WORK)
       (i32.shl (local.get $count) (i32.const 4)))
@@ -5073,6 +5079,58 @@
           (br $bbox)))))
     (i32.store8 (call $update_flag_addr_for_slot (local.get $slot)) (local.get $count))
     (i32.const 1))
+
+  ;; Copy and clip input bands into the third existing work buffer. The
+  ;; Boolean sweep uses only buffers zero/one, and no callback can run here.
+  ;; No public HRGN is allocated, retained, mutated or consumed. NULL is the
+  ;; full client rectangle; an empty region contributes no rectangles.
+  (func $update_add_region (param $hwnd i32) (param $hrgn i32) (result i32)
+    (local $record i32) (local $src i32) (local $dst i32) (local $count i32)
+    (local $i i32) (local $n i32) (local $cs i32) (local $w i32) (local $h i32)
+    (local $l i32) (local $t i32) (local $r i32) (local $b i32) (local $p i32)
+    (if (local.get $hrgn)
+      (then
+        (local.set $record (call $gdi_rgn_record (local.get $hrgn)))
+        ;; Preserve the historical no-op for invalid handles. The documented
+        ;; contract requires a region created by a region function.
+        (if (i32.eqz (local.get $record)) (then (return (i32.const 1))))
+        (local.set $src (call $gdi_rgn_bands (local.get $record)))
+        (local.set $count (i32.load offset=28 (local.get $record)))))
+    (local.set $cs (call $wnd_get_client_size_packed (local.get $hwnd)))
+    (local.set $w (i32.and (local.get $cs) (i32.const 0xFFFF)))
+    (local.set $h (i32.shr_u (local.get $cs) (i32.const 16)))
+    (local.set $dst (i32.add (global.get $GDI_REGION_WORK)
+      (i32.mul (global.get $GDI_REGION_RECT_STRIDE) (i32.const 2))))
+    (if (i32.eqz (local.get $hrgn))
+      (then
+        (i64.store (local.get $dst) (i64.const 0))
+        (i32.store offset=8 (local.get $dst) (local.get $w))
+        (i32.store offset=12 (local.get $dst) (local.get $h))
+        (local.set $n (i32.and (i32.gt_u (local.get $w) (i32.const 0))
+          (i32.gt_u (local.get $h) (i32.const 0)))))
+      (else
+        (block $done (loop $clip
+          (br_if $done (i32.ge_u (local.get $i) (local.get $count)))
+          (local.set $p (i32.add (local.get $src) (i32.shl (local.get $i) (i32.const 4))))
+          (local.set $l (i32.load (local.get $p)))
+          (local.set $t (i32.load offset=4 (local.get $p)))
+          (local.set $r (i32.load offset=8 (local.get $p)))
+          (local.set $b (i32.load offset=12 (local.get $p)))
+          (if (i32.lt_s (local.get $l) (i32.const 0)) (then (local.set $l (i32.const 0))))
+          (if (i32.lt_s (local.get $t) (i32.const 0)) (then (local.set $t (i32.const 0))))
+          (if (i32.gt_s (local.get $r) (local.get $w)) (then (local.set $r (local.get $w))))
+          (if (i32.gt_s (local.get $b) (local.get $h)) (then (local.set $b (local.get $h))))
+          (if (i32.and (i32.lt_s (local.get $l) (local.get $r)) (i32.lt_s (local.get $t) (local.get $b)))
+            (then
+              (local.set $p (i32.add (local.get $dst) (i32.shl (local.get $n) (i32.const 4))))
+              (i32.store (local.get $p) (local.get $l))
+              (i32.store offset=4 (local.get $p) (local.get $t))
+              (i32.store offset=8 (local.get $p) (local.get $r))
+              (i32.store offset=12 (local.get $p) (local.get $b))
+              (local.set $n (i32.add (local.get $n) (i32.const 1)))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $clip)))))
+    (call $update_apply_bands (local.get $hwnd) (local.get $dst) (local.get $n) (i32.const 2)))
 
   (func $update_invalidate_rect (param $hwnd i32) (param $l i32) (param $t i32) (param $r i32) (param $b i32)
     (if (i32.eqz (call $update_apply_rect (local.get $hwnd) (local.get $l) (local.get $t)
