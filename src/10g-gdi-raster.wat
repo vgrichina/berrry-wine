@@ -7900,7 +7900,7 @@
       (local.get $right) (local.get $bottom)))
 
   ;; ScrollDC: https://learn.microsoft.com/windows/win32/api/winuser/nf-winuser-scrolldc
-  ;; Support identity logical/device mappings only. In particular dx/dy are
+  ;; Support identity mappings and translated MM_TEXT. In particular dx/dy are
   ;; device units, never transformed through BitBlt's logical HDC adapter.
   ;; Every fallible region operation precedes pixels and caller outputs.
   (func $gdi_scrolldc (param $hdc i32) (param $dx i32) (param $dy i32)
@@ -7910,7 +7910,7 @@
     (local $cl i32) (local $ct i32) (local $cr i32) (local $cb i32)
     (local $ml i32) (local $mt i32) (local $mr i32) (local $mb i32)
     (local $area i32) (local $moved i32) (local $exposed i32) (local $record i32)
-    (local $ok i32)
+    (local $ok i32) (local $tx i32) (local $ty i32)
     (global.set $last_error (i32.const 6))
     (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
     (if (i32.eqz (local.get $dc)) (then (return (i32.const 0))))
@@ -7932,10 +7932,23 @@
       (then (return (i32.const 0))))
     (if (i32.eqz (call $gdi_raster_surface_valid (local.get $desc)))
       (then (return (i32.const 0))))
-    (if (i32.load offset=32 (local.get $desc)) (then (return (i32.const 0))))
-    (if (i32.load offset=36 (local.get $desc)) (then (return (i32.const 0))))
-    (if (i32.load offset=48 (local.get $desc)) (then (return (i32.const 0))))
-    (if (i32.load offset=52 (local.get $desc)) (then (return (i32.const 0))))
+    ;; Retain the published zero-origin identity path in other mapping modes;
+    ;; only MM_TEXT gains origin translation. The extent guards still reject scale.
+    (if (i32.and
+          (i32.ne (load.field.memarg GdiDcState map_mode (local.get $dc)) (i32.const 1))
+          (i32.ne (i32.or
+            (i32.or (i32.load offset=32 (local.get $desc)) (i32.load offset=36 (local.get $desc)))
+            (i32.or (i32.load offset=48 (local.get $desc)) (i32.load offset=52 (local.get $desc)))) (i32.const 0)))
+      (then (return (i32.const 0))))
+    ;; Validate before subtraction so even canceling extreme origins cannot wrap.
+    (if (i32.eqz (call $gdi_scrolldc_coord (i32.load offset=32 (local.get $desc)))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (i32.load offset=36 (local.get $desc)))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (i32.load offset=48 (local.get $desc)))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (i32.load offset=52 (local.get $desc)))) (then (return (i32.const 0))))
+    (local.set $tx (i32.sub (i32.load offset=48 (local.get $desc)) (i32.load offset=32 (local.get $desc))))
+    (local.set $ty (i32.sub (i32.load offset=52 (local.get $desc)) (i32.load offset=36 (local.get $desc))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $tx))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $ty))) (then (return (i32.const 0))))
     (if (i32.or (i32.eqz (i32.load offset=40 (local.get $desc))) (i32.ne (i32.load offset=40 (local.get $desc)) (i32.load offset=56 (local.get $desc)))) (then (return (i32.const 0))))
     (if (i32.or (i32.eqz (i32.load offset=44 (local.get $desc))) (i32.ne (i32.load offset=44 (local.get $desc)) (i32.load offset=60 (local.get $desc)))) (then (return (i32.const 0))))
     (local.set $size (call $gdi_dc_target_size (local.get $hdc)))
@@ -7964,6 +7977,29 @@
     (if (i32.or (i32.lt_s (local.get $cb) (i32.const -1048576)) (i32.gt_s (local.get $cb) (i32.const 1048576))) (then (return (i32.const 0))))
     (if (i32.or (i32.lt_s (local.get $dx) (i32.const -1048576)) (i32.gt_s (local.get $dx) (i32.const 1048576))) (then (return (i32.const 0))))
     (if (i32.or (i32.lt_s (local.get $dy) (i32.const -1048576)) (i32.gt_s (local.get $dy) (i32.const 1048576))) (then (return (i32.const 0))))
+    ;; RECT inputs are logical; NULL defaults already describe the full client
+    ;; area in device coordinates. Clip regions and outputs are device/client
+    ;; coordinates, independent of the HDC mapping and shared-surface origin.
+    (if (local.get $scroll) (then
+      (local.set $l (i32.add (local.get $l) (local.get $tx)))
+      (local.set $t (i32.add (local.get $t) (local.get $ty)))
+      (local.set $r (i32.add (local.get $r) (local.get $tx)))
+      (local.set $b (i32.add (local.get $b) (local.get $ty)))
+    ))
+    (if (local.get $clip) (then
+      (local.set $cl (i32.add (local.get $cl) (local.get $tx)))
+      (local.set $ct (i32.add (local.get $ct) (local.get $ty)))
+      (local.set $cr (i32.add (local.get $cr) (local.get $tx)))
+      (local.set $cb (i32.add (local.get $cb) (local.get $ty)))
+    ))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $l))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $t))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $r))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $b))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $cl))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $ct))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $cr))) (then (return (i32.const 0))))
+    (if (i32.eqz (call $gdi_scrolldc_coord (local.get $cb))) (then (return (i32.const 0))))
     (if (i32.lt_s (local.get $l) (i32.const 0)) (then (local.set $l (i32.const 0))))
     (if (i32.lt_s (local.get $t) (i32.const 0)) (then (local.set $t (i32.const 0))))
     (if (i32.gt_s (local.get $r) (i32.and (local.get $size) (i32.const 0xFFFF)))
@@ -8032,6 +8068,11 @@
     (if (local.get $area) (then (drop (call $gdi_rgn_delete (local.get $area)))))
     (if (local.get $moved) (then (drop (call $gdi_rgn_delete (local.get $moved)))))
     (local.get $ok))
+
+  ;; Bound ScrollDC translation arithmetic before allocating or writing.
+  (func $gdi_scrolldc_coord (param $value i32) (result i32)
+    (i32.and (i32.ge_s (local.get $value) (i32.const -1048576))
+      (i32.le_s (local.get $value) (i32.const 1048576))))
 
   ;; Intersections keep reversed/empty bounds empty; CreateRectRgn normalizes.
   (func $gdi_scrolldc_region (param $l i32) (param $t i32) (param $r i32) (param $b i32) (result i32)
