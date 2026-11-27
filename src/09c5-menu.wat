@@ -2274,18 +2274,20 @@
   (func $menu_enable_position_global (export "menu_enable_position_global")
         (param $hmenu i32) (param $pos i32) (param $disabled i32) (result i32)
     (local $i i32) (local $hwnd i32) (local $blob i32) (local $it i32)
-    (local $tidx i32) (local $flags i32) (local $prev i32)
+    (local $tidx i32) (local $flags i32) (local $prev i32) (local $owner i32)
+    (local.set $owner (call $menu_hwnd_from_handle (local.get $hmenu)))
     (local.set $prev (i32.const -1))
     (local.set $tidx (i32.sub (i32.shr_u (local.get $hmenu) (i32.const 16)) (i32.const 1)))
     (if (i32.lt_s (local.get $tidx) (i32.const 0)) (then (return (local.get $prev))))
     (block $done (loop $scan
       (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
       (local.set $hwnd (load.field WndRecord hwnd (call $wnd_record_addr (local.get $i))))
-      (if (local.get $hwnd)
+      (if (i32.and (i32.ne (local.get $hwnd) (i32.const 0))
+            (i32.eq (local.get $hwnd) (local.get $owner)))
         (then
           (local.set $blob (call $menu_blob_w (local.get $hwnd)))
-          ;; Every window's bar is visited, so the dropdown and the position
-          ;; must both exist in THIS bar before a child record is addressed:
+          ;; Only the supplied handle's owner may change. The dropdown and
+          ;; position must both exist before a child record is addressed:
           ;; $child_item_w trusts its indices, and a bar with fewer dropdowns
           ;; than $tidx would hand it an offset read from past the bar table.
           (if (i32.and (i32.ne (local.get $blob) (i32.const 0))
@@ -2380,14 +2382,17 @@
         (param $hmenu i32) (param $item i32) (param $flags i32) (result i32)
     (local $i i32) (local $hwnd i32) (local $blob i32) (local $bar_count i32)
     (local $bar i32) (local $hdr_off i32) (local $ret i32) (local $r i32)
-    (local $disabled i32)
+    (local $disabled i32) (local $owner i32)
+    (local.set $owner (call $menu_hwnd_from_handle (local.get $hmenu)))
     (local.set $ret (i32.const -1))
     (local.set $disabled (i32.and (local.get $flags) (i32.const 3)))
     (block $done
       (loop $wins
         (br_if $done (i32.ge_u (local.get $i) (global.get $MAX_WINDOWS)))
         (local.set $hwnd (load.field WndRecord hwnd (call $wnd_record_addr (local.get $i))))
-        (if (local.get $hwnd)
+        ;; Command IDs are local to this menu's owner, not every window.
+        (if (i32.and (i32.ne (local.get $hwnd) (i32.const 0))
+              (i32.eq (local.get $hwnd) (local.get $owner)))
           (then
             (local.set $blob (call $menu_blob_w (local.get $hwnd)))
             (if (local.get $blob)
