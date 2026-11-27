@@ -11,6 +11,10 @@ const calls = {
   palette: ['IDirectDraw_CreatePalette', 5],
   attach: ['IDirectDrawSurface_SetPalette', 2],
   entries: ['IDirectDrawPalette_SetEntries', 5],
+  unlock: ['IDirectDrawSurface_Unlock', 2],
+  lock: ['IDirectDrawSurface_Lock', 5],
+  release: ['IDirectDrawPalette_Release', 1],
+  getPalette: ['IDirectDrawSurface_GetPalette', 2],
 };
 const extraWat = Object.entries(calls).map(([name, [handler, argc]]) => `
   (func (export "pr_${name}") ${Array.from({ length: argc }, (_, i) => `(param $a${i} i32)`).join(' ')} (result i32)
@@ -26,8 +30,8 @@ const extraWat = Object.entries(calls).map(([name, [handler, argc]]) => `
     (load.field DxObject misc1 (call $dx_from_this (local.get $s))))
   (func (export "pr_refs") (param $p i32) (result i32)
     (load.field DxObject refcount (call $dx_from_this (local.get $p))))
-  (func (export "pr_present") (param $s i32)
-    (call $dx_present (call $dx_from_this (local.get $s))))
+  (func (export "pr_type") (param $p i32) (result i32)
+    (load.field DxObject type (call $dx_from_this (local.get $p))))
 `;
 
 (async () => {
@@ -69,18 +73,28 @@ const extraWat = Object.entries(calls).map(([name, [handler, argc]]) => `
   const a = palette([0x00332211, 0x00665544, 0x00998877]);
   const b = palette([0x001ec80a, 0x0028b414, 0x0032a01e]);
   const bits = e.pr_bits(primary) >>> 0;
+  const present = () => {
+    e.guest_write32(0x413000, 108);
+    ok(e.pr_lock(primary, 0, 0x413000, 0, 0));
+    ok(e.pr_unlock(primary, 0));
+  };
   // Frozen literal indices and expected RGBA, including an untouched entry.
   bytes.set([17, 18, 19, 17], bits);
   const originalBits = Array.from(bytes.slice(bits, bits + 1024));
   const aColors = [17, 34, 51, 255, 68, 85, 102, 255, 119, 136, 153, 255, 17, 34, 51, 255];
   const bColors = [10, 200, 30, 255, 20, 180, 40, 255, 30, 160, 50, 255, 10, 200, 30, 255];
   const updatedColors = [201, 31, 41, 255, 51, 61, 211, 255, 30, 160, 50, 255, 201, 31, 41, 255];
+  // The production host's unattached 8bpp fallback is grayscale. Establish
+  // that same literal contract before any palette has ever been attached.
+  const unboundColors = [17, 17, 17, 255, 18, 18, 18, 255, 19, 19, 19, 255, 17, 17, 17, 255];
   const pixels = () => {
     h.renderer.repaint();
     return Array.from(h.canvas.getContext('2d').getImageData(0, 0, 4, 1).data);
   };
+  present();
+  check('fresh unattached primary uses unbound fallback', pixels(), unboundColors);
   ok(e.pr_attach(primary, a));
-  e.pr_present(primary);
+  present();
   check('initial primary colors', pixels(), aColors);
   const before = presents;
   ok(e.pr_attach(offscreen, b));
@@ -111,6 +125,28 @@ const extraWat = Object.entries(calls).map(([name, [handler, argc]]) => `
   check('rebind original palette restores its colors', pixels(), aColors);
   check('rebind restores reference ownership', [e.pr_refs(a), e.pr_refs(b)], [3, 1]);
   check('all indexed pixels remain untouched', Array.from(bytes.slice(bits, bits + 1024)), originalBits);
+  const beforeDetach = presents;
+  ok(e.pr_attach(primary, 0));
+  check('primary detach clears current display palette', e.get_dx_primary_pal_wa(), 0);
+  check('primary detach recolors retained canvas with unbound fallback', pixels(), unboundColors);
+  check('primary detach presents once', presents - beforeDetach, 1);
+  check('primary detach releases only its attachment', [e.pr_refs(a), e.pr_refs(b)], [2, 1]);
+  check('detached primary has no palette', e.pr_getPalette(primary, out) >>> 0, 0x8876023c);
+  check('detached primary returns null palette', e.guest_read32(out), 0);
+  present();
+  check('subsequent public Unlock uses unbound fallback', pixels(), unboundColors);
+  check('caller Release preserves offscreen palette lifetime', e.pr_release(a), 1);
+  ok(e.pr_attach(primary, a));
+  check('surface-owned palette can be rebound after caller Release', pixels(), aColors);
+  check('GetPalette returns current shared object', e.pr_getPalette(primary, out), 0);
+  check('GetPalette object identity', e.guest_read32(out), a);
+  check('release fetched palette reference', e.pr_release(e.guest_read32(out)), 2);
+  ok(e.pr_attach(offscreen, 0));
+  check('offscreen detach preserves primary-owned palette', [e.pr_refs(a), pixels()], [1, aColors]);
+  ok(e.pr_attach(primary, 0));
+  check('final attachment release retires palette', e.pr_type(a), 0);
+  check('retired palette cannot color retained display', pixels(), unboundColors);
+  check('detach and lifetime operations preserve every index byte', Array.from(bytes.slice(bits, bits + 1024)), originalBits);
   console.log(JSON.stringify({ checks, passed: checks.filter(c => c.pass).length, total: checks.length }, null, 2));
   assert(checks.every(c => c.pass), 'DirectDraw palette rebind checks');
 })().catch(err => { console.error(err.stack || err); process.exitCode = 1; });

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-imports.js",
+      "name": "host-file",
+      "baseSHA256": "cde111c701d96897c8344b66d089cd13f249626ae03f496a3fe79343735d162c",
+      "sha256": "13137ace6bec97cb295622b96fd1fd34ae0e47164b83ac7e4c71311bd49bbb5f",
+      "reason": "Review 20261127 palette detach: synchronous indexed presentation refresh discards decoded palette tuples and nearest-index cache when the current canonical palette pointer/count is empty. It then uses the existing unbound pixel-format fallback, exactly as a fresh surface does. No callback, guest reference, owner, continuation, scheduling or restoration boundary is introduced or moved. Canonical DirectDraw palette attachment AddRef/Release ownership remains unchanged. Public COM Lock/Unlock, SetPalette, GetPalette and Release regression proves literal RGBA after detach and rebind, shared lifetime after caller Release and unchanged index storage; run 20261127-palette-rebind-gameplay-root. General invocation ownership remains pending."
+    }
+  ]
+}

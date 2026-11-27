@@ -7893,11 +7893,11 @@
       (if (i32.and (load.field DxObject flags (local.get $surf_entry)) (i32.const 1)) (then
         (call $dx_primary_pal_set (local.get $pal_wa))
         (if (local.get $pal_entry) (then
-          (call $dx_sync_indexed_desktop_palette (local.get $pal_entry))
-          ;; Rebinding changes displayed colors even when the indexed DIB is
-          ;; unchanged. Refresh the host's retained canvas just as SetEntries
-          ;; does; offscreen attachments and same-object binds stay idle.
-          (call $dx_present (local.get $surf_entry))))))
+          (call $dx_sync_indexed_desktop_palette (local.get $pal_entry))))
+        ;; Rebinding or detaching changes displayed colors even when the
+        ;; indexed DIB is unchanged. Refresh the retained canvas before the
+        ;; old attachment is released; offscreen and same-object binds stay idle.
+        (call $dx_present (local.get $surf_entry))))
       (if (local.get $old) (then
         (drop (call $dx_palette_release_ref (call $dx_from_this (local.get $old))))))))
     (i32.store offset=0 (global.get $reg_base) (i32.const 0))
