@@ -71,5 +71,106 @@ function cases() {
  const exhausted=fixture();exhausted.sharedAudio.beepNext=0x80000000;
  assert.equal(exhausted.host.beep_start(500,100),-8);assert.equal(exhausted.ac.nodes.length,0);
 }
-if(require.main===module){cases();console.log('Beep output token scheduling, completion, cancellation and failure: PASS');}
-module.exports={audioContext,cases};
+function idleLeaseCases() {
+ const fs=require('node:fs'),path=require('node:path');
+ const source=fs.readFileSync(path.join(__dirname,'..','host.js'),'utf8');
+ const grab=name=>{
+  const match=source.match(new RegExp(`\\n  ${name}\\(\\)\\s*\\{[\\s\\S]*?\\n  \\}`));
+  assert(match,`actual host ${name} method exists`);return match[0].trim();
+ };
+ const threshold=source.match(/static AUDIO_IDLE_SUSPEND_MS = (\d+);/);
+ assert(threshold,'actual host idle threshold exists');
+ const idleMs=Number(threshold[1]);
+ let tick,cleared;
+ const document={hidden:false};
+ const methods=new Function('WineAssembly','setInterval','clearInterval','document',`return {
+  ${['_isAudioHot','_audioNeedsContext','_startAudioIdleWatch','_stopAudioIdleWatch','_maybePauseForHidden'].map(grab).join(',\n')}
+ };`)({AUDIO_IDLE_SUSPEND_MS:idleMs},(fn,ms)=>{assert.equal(ms,2000);tick=fn;return 123;},id=>{cleared=id;},document);
+ // Use production token creation and lifecycle, with a controlled output clock
+ // and timer boundary. These are the real host methods, not a copied policy.
+ const setup=()=>{
+  const f=fixture();let now=1000;
+  f.ac.suspends=0;f.ac.suspend=()=>{f.ac.suspends++;f.ac.state='suspended';};
+  const shell={...methods,_sharedAudio:f.sharedAudio,_audioCtx:f.ac,
+   hostCtx:f.ctx,_audioSchedulerNow:()=>now,_isNetworked:()=>false,
+   _cancelDelayedStep(){this.canceledStep=true;},running:true};
+  shell._startAudioIdleWatch();
+  const fire=()=>tick();
+  const advance=ms=>{now+=ms;shell._audioCtx.currentTime+=ms/1000;fire();};
+  const expectIdle=label=>{
+   assert.equal(shell._audioNeedsContext(),false,label+' releases predicate');
+   fire();advance(idleMs-1);assert.equal(shell._audioCtx.state,'running',label+' gets idle grace');
+   advance(1);assert.equal(shell._audioCtx.state,'suspended',label+' permits watcher suspension');
+  };
+  return {...f,shell,fire,advance,expectIdle};
+ };
+ {
+  const f=setup(),{shell,host:h,ac,sharedAudio}=f;
+  f.fire();assert(shell._audioIdleSince,'ordinary idle countdown starts');
+  const id=h.beep_start(750,60000);assert(id>0);
+  assert.equal(sharedAudio.beepTones.get(id).ac,shell._audioCtx);
+  f.fire();assert.equal(shell._audioIdleSince,0,'accepted Beep clears a preceding idle countdown');
+  for(let elapsed=2000;elapsed<60000;elapsed+=2000){
+   f.advance(2000);
+   assert.equal(shell._audioNeedsContext(),true,'long Beep retains context beyond idle threshold');
+   assert.equal(shell._isAudioHot(),false,'Beep does not select PCM scheduling slices');
+   assert.equal(h.beep_status(id,0),0,'watcher leaves accepted output pending');
+   assert.equal(ac.suspends,0);
+  }
+  document.hidden=true;
+  assert.equal(shell._maybePauseForHidden(),true,'Beep retains existing background-pause policy');
+  assert(shell.canceledStep);document.hidden=false;
+  f.advance(2000);
+  assert.equal(ac.currentTime,sharedAudio.beepTones.get(id).end);
+  assert.equal(sharedAudio.beepTones.get(id).status,0,'expiry test delays ended and status delivery');
+  f.expectIdle('expired pending token');
+  assert.equal(sharedAudio.beepTones.get(id).status,0,'lease predicate never completes a token');
+ }
+ for(const terminal of ['ended','canceled','retired','shutdown']){
+  const f=setup(),id=f.host.beep_start(750,60000);assert(id>0);f.fire();
+  if(terminal==='ended'){
+   f.ac.currentTime=f.sharedAudio.beepTones.get(id).end;f.ac.nodes.at(-1).onended();
+   assert.equal(f.sharedAudio.beepTones.get(id).status,1,'ended record retained until release');
+  }else if(terminal==='canceled'){
+   assert.equal(f.host.beep_cancel(id),-995);
+   assert.equal(f.sharedAudio.beepTones.get(id).status,-995,'canceled record retained until release');
+  }else if(terminal==='retired')f.host.beep_retire_thread(1,2,0);
+  else f.host.beep_shutdown();
+  f.expectIdle(terminal+' token');
+ }
+ {
+  const f=setup(),old=f.host.beep_start(750,60000);assert(old>0);f.fire();
+  const replacement=audioContext();replacement.suspend=()=>{replacement.state='suspended';};
+  f.shell._audioCtx=replacement;f.ctx._voices._ensureCtx=()=>replacement;
+  // Exercise the hostCtx shared-state fallback too; records come from real starts.
+  delete f.shell._sharedAudio;
+  assert.equal(f.shell._audioNeedsContext(),false,'old-context pending token cannot lease replacement');
+  const current=f.host.beep_start(800,60000);assert(current>old);f.fire();
+  f.advance(idleMs+2000);assert.equal(replacement.state,'running','current tone leases replacement');
+  assert.equal(f.host.beep_cancel(current),-995);
+  assert.equal(f.sharedAudio.beepTones.get(old).status,0,'old context still has pending output');
+  f.expectIdle('replacement with only old pending and current canceled records');
+ }
+ {
+  const f=setup(),first=f.host.beep_start(750,60000),second=f.host.beep_start(800,60000);
+  assert(first>0&&second>first);f.fire();f.host.beep_cancel(first);
+  f.advance(idleMs+2000);assert.equal(f.ac.state,'running','another pending tone retains lease');
+  f.host.beep_cancel(second);f.expectIdle('last pending tone canceled');
+ }
+ {
+  const f=setup(),id=f.host.beep_start(750,60000);assert(id>0);
+  for(const state of ['suspended','closed']){
+   f.ac.state=state;f.fire();assert.equal(f.shell._audioNeedsContext(),false,state+' context is not leased');
+   assert.equal(f.shell._audioIdleSince,0);assert.equal(f.ac.suspends,0);
+  }
+  assert.equal(f.host.beep_status(id,0),-995,'external interruption still aborts output');
+  f.ac.state='running';f.sharedAudio.waveOutHotUntilMs=100000;
+  assert.equal(f.shell._isAudioHot(),true,'PCM still selects short scheduling slices');
+  document.hidden=true;assert.equal(f.shell._maybePauseForHidden(),false,'PCM still prevents background pause');
+  document.hidden=false;
+  f.shell._stopAudioIdleWatch();assert.equal(cleared,123);assert.equal(f.shell._audioIdleTimer,0);
+ }
+ console.log('Beep actual host idle predicate/watcher, long lease, terminal/replacement controls and background/PCM policy: PASS');
+}
+if(require.main===module){cases();console.log('Beep output token scheduling, completion, cancellation and failure: PASS');idleLeaseCases();}
+module.exports={audioContext,cases,idleLeaseCases};

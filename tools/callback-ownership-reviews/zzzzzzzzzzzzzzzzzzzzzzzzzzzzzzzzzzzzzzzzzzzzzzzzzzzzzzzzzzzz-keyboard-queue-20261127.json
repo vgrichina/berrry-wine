@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_PeekMessageA_fetch",
+      "baseSHA256": "97685ac0fb9fc40e88e94f874569ae17a0432da36a5b62249d45d24ae6840dad",
+      "sha256": "6813328b7222f5882869508beb8d58d099dd5954a28edfe103a2f60f6a141d34",
+      "reason": "Review 20261127 keyboard queue state: the existing PM_REMOVE-only note receives the original hardware message code even when hot-key matching returns WM_HOTKEY. No PM_NOREMOVE advancement, callback/EIP target, stack-frame or ownership-write change; the existing callback producer shape and pending ownership remain unchanged."
+    },
+    {
+      "file": "src/13-exports.wat",
+      "name": "export:init_thread",
+      "baseSHA256": "a814b6018fde816198318ca9282c4417bab71bbad8ce3138944d4b2aa401a38a",
+      "sha256": "da5b84914c925ebab13658cf7723fe1cd3747480545ffcff4aeb8e6f547bbc87",
+      "reason": "Review 20261127 keyboard queue state: reset four per-instance down-bit globals on thread reuse. Existing callback/EIP targets, stack frames, ownership writes and boundary shape are unchanged; ownership remains pending."
+    }
+  ]
+}

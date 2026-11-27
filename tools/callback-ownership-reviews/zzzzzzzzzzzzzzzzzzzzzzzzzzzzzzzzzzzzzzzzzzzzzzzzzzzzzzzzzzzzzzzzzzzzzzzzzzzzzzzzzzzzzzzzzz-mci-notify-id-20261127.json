@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "lib/host-audio.js",
+      "name": "host-file",
+      "baseSHA256": "f2816a965f630807c33c22b3b2321f82feb8a648adcd90249884431e4a49bdf1",
+      "sha256": "71460c619dd0407b45da5ec87345cb07eeddadf5ff6f358e213b04482de566fc",
+      "reason": "MCI notification identity only: after successful public command open, WAT finalizes the backend MCI_OPEN with the assigned reusable guest slot in MCI_OPEN_PARMS.wDeviceID. The host retains that scalar separately from its monotonically allocated internal device ID and uses it for existing MM_MCINOTIFY posts; direct host and string opens retain the original host ID fallback. No new callback producer, export reentry, scheduler, owner scope, guest context restoration or nonlocal API. Existing pending-notify retirement and post_window_message routing are unchanged; ownership remains pending. Full public A/W x86 command and real queue/DispatchMessage/WndProc success, abort, supersession, no-notify and lower-slot reuse controls: scratch/runs/20261127-mci-notify-id-fix-root. This anchored review preserves the preceding foreign MIDI header mapping WIP without authorizing its integration. 20261127 reanchored over incoming main preserving its reviewed changes."
+    }
+  ]
+}

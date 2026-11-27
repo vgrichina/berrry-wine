@@ -59,6 +59,11 @@ const extraWat = String.raw`
    (i32.sub (local.get $thunk) (global.get $thunk_guest_base)) (i32.const 3))))
 `;
 const digest = b => crypto.createHash('sha256').update(b).digest('hex');
+// No keyboard input has been removed in this mapping fixture. Keyboard high
+// bits therefore remain up in this thread, regardless of the host snapshot.
+// Mouse bytes and every low bit still exercise the exact host/scatter path.
+const syncByte = (value, vk) => [1,2,4,5,6].includes(vk) ? value : value & 0x7f;
+const syncKeys = bytes => Buffer.from(bytes.map(syncByte));
 function prepare(h, tid, initializeHeap) {
  const e=h.exports;
  e.init_thread(tid,0x400000,0,0,0,0,0);
@@ -130,8 +135,9 @@ async function main(prebuiltModule=null) {
   for(const [at,n]of spans)mem.fill(0xa5,at,at+n);
   bytes(stackArea,256).fill(0xcc);bytes(unrelated,256).fill(0x6b);
   const expected=spans.map(([at,n])=>Buffer.from(mem.subarray(at,at+n)));
-  const want=mode==='physical'?physical:mode==='zero'?Buffer.alloc(256):mode==='ones'?Buffer.alloc(256,255):
+  const hostWant=mode==='physical'?physical:mode==='zero'?Buffer.alloc(256):mode==='ones'?Buffer.alloc(256,255):
    mode==='fail-clean'?Buffer.alloc(256,0xa5):mode==='fail-partial'?Buffer.concat([Buffer.from([0x12,0x34,0x56]),Buffer.alloc(253,0xa5)]):byteValues;
+  const want=mode.startsWith('fail')?hostWant:syncKeys(hostWant);
   for(let i=0;i<256;i++){const at=wa(p+i),j=spans.findIndex(([start,n])=>at>=start&&at<start+n);assert.ok(j>=0);expected[j][at-spans[j][0]]=want[i];}
   for(let i=0;i<8;i++)view.setUint32(regs+i*4,0x41320000+i,true);
   view.setUint32(regs+16,stack,true);e.guest_write32(stack,0x12345678);e.guest_write32(stack+4,p);
@@ -163,13 +169,13 @@ async function main(prebuiltModule=null) {
  // NULL retains the pre-existing g2w(0) host route, with no Windows pointer claim.
  const nullPointer=wa(0);
  mode='physical';let before=hostCalls;assert.equal(call(h,0),1);assert.equal(hostCalls-before,1);
- assert.equal(pointers.at(-1),nullPointer);assert.deepEqual(Buffer.from(mem.subarray(nullPointer,nullPointer+256)),physical);
+ assert.equal(pointers.at(-1),nullPointer);assert.deepEqual(Buffer.from(mem.subarray(nullPointer,nullPointer+256)),syncKeys(physical));
  for(mode of ['fail-clean','fail-partial','values']){
   mem.fill(0x5b,nullPointer,nullPointer+256);before=hostCalls;
   assert.equal(call(h,0),mode==='values'?7:0);assert.equal(hostCalls-before,1);assert.equal(pointers.at(-1),nullPointer);
   // The existing miss translator zeroes the sentinel's first DWORD before
   // handing it to the host. Read physical bytes without translating again.
-  const want=mode==='values'?byteValues:Buffer.concat([
+  const want=mode==='values'?syncKeys(byteValues):Buffer.concat([
    mode==='fail-clean'?Buffer.alloc(4):Buffer.from([0x12,0x34,0x56,0]),Buffer.alloc(252,0x5b)]);
   assert.deepEqual(Buffer.from(mem.subarray(nullPointer,nullPointer+256)),want,'NULL preserves existing host BOOL and partial writes');
  }
@@ -189,8 +195,8 @@ async function main(prebuiltModule=null) {
  assert.notEqual(outerPointer,innerPointer,'distinct LIVE same-instance buffers');
  assert.equal(outerPointer&255,0);assert.equal(innerPointer&255,0);
  assert.equal(outerPointer>>>12,(outerPointer+255)>>>12);
- assert.equal(e.ks_live(),live);assert.deepEqual(Buffer.from(bytes(direct,256)),byteValues);
- assert.deepEqual(Buffer.from(bytes(inner,256)),Buffer.alloc(256,255));
+ assert.equal(e.ks_live(),live);assert.deepEqual(Buffer.from(bytes(direct,256)),syncKeys(byteValues));
+ assert.deepEqual(Buffer.from(bytes(inner,256)),syncKeys(Buffer.alloc(256,255)));
  const reused=new Set();for(let i=0;i<64;i++){assert.equal(call(h,direct),7);reused.add(pointers.at(-1));assert.equal(e.ks_live(),live);}
  assert.ok(reused.size<=2,'freed staging allocations reused');
  // A real allocator free-list block itself straddles separately backed pages.
@@ -203,7 +209,7 @@ async function main(prebuiltModule=null) {
  const seeded=e.ks_seed_free(stageBase)>>>0;assert.equal(seeded,stageBase+3972);
  const stageLive=e.ks_live();assert.equal(call(h,direct),7);
  assert.equal(pointers.at(-1),wa(stageBase+4096),'sparse staging aligns into second backing page');
- assert.deepEqual(Buffer.from(bytes(direct,256)),byteValues);assert.equal(e.ks_live(),stageLive);
+ assert.deepEqual(Buffer.from(bytes(direct,256)),syncKeys(byteValues));assert.equal(e.ks_live(),stageLive);
  assert.deepEqual(Buffer.from(mem.subarray(stageBacking[1],stageBacking[1]+4096)),stageCanary,'sparse staging preserves complete decoy');
  // The production host catches a renderer exception after writing a prefix.
  mode='physical';harness.renderer.peekKeyDownState=vk=>{if(vk===3)throw Error('controlled key lookup failure');return table[vk];};
@@ -214,13 +220,13 @@ async function main(prebuiltModule=null) {
  r._physicalKeys={65:false,66:true};r._asyncKeys={65:true,66:false};r._asyncPressedKeys={65:true,66:true};
  const savedInput=JSON.stringify([r._physicalKeys,r._asyncKeys,r._asyncPressedKeys,r.inputQueue]);
  mode='physical';for(let i=0;i<3;i++){
-  assert.equal(call(h,direct),1);assert.equal(e.guest_read8(direct+65),0);assert.equal(e.guest_read8(direct+66),128);
+  assert.equal(call(h,direct),1);assert.equal(e.guest_read8(direct+65),0);assert.equal(e.guest_read8(direct+66),0);
   assert.equal(JSON.stringify([r._physicalKeys,r._asyncKeys,r._asyncPressedKeys,r.inputQueue]),savedInput,'snapshot preserves physical/message/latch/input state');
  }
  assert.equal(r.getAsyncKeyState(65)&1,1,'released async press still present after snapshots');
  assert.equal(r.getAsyncKeyState(65)&1,0,'async low press bit consumes only on async query');
  r._activeInputEvent={keyStateSnapshot:new Uint32Array([0,0,2,0,0,0,0,0])};
- assert.equal(call(h,direct),1);assert.equal(e.guest_read8(direct+65),128);assert.equal(e.guest_read8(direct+66),0,'existing message-time snapshot preserved');
+ assert.equal(call(h,direct),1);assert.equal(e.guest_read8(direct+65),0);assert.equal(e.guest_read8(direct+66),0,'renderer event cannot replace this thread\'s queue state');
  r._activeInputEvent=null;
  await concurrent(harness.module,harness.memory);
  await allocationFailure();
@@ -275,7 +281,7 @@ async function worker(){
    return 1;
   }}});
  const s=prepare(h,index+2,false),out=s.alloc(256),live=s.e.ks_live();
- assert.equal(call(s,out),1);assert.ok(s.bytes(out,256).every(v=>v===(index?0xd7:0x39)));
+ assert.equal(call(s,out),1);assert.ok(s.bytes(out,256).every((v,vk)=>v===syncByte(index?0xd7:0x39,vk)));
  parentPort.postMessage({pointer,calls,balanced:s.e.ks_live()===live});
 }
 if(require.main===module)(isMainThread?main():worker()).catch(e=>{console.error(e);process.exitCode=1;});

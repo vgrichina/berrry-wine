@@ -41,8 +41,98 @@ const extraWat = String.raw`
       (i32.shr_u (i32.sub (local.get $p) (global.get $thunk_guest_base)) (i32.const 3))))
 `;
 
+// Show/Hide nesting and owner semantics:
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-hidecaret
+async function visibilityExercise(module) {
+  const failures = [];
+  let checks = 0;
+  const equal = (actual, expected, label) => {
+    checks++;
+    if (JSON.stringify(actual) !== JSON.stringify(expected)) failures.push({ label, actual, expected });
+  };
+  const names = ['CreateCaret', 'DestroyCaret', 'ShowCaret', 'HideCaret', 'SetCaretPos'];
+  async function setup() {
+    const h = await bootRenderHarness({ prebuiltModule: module, fonts: 'none', width: 80, height: 60 });
+    const e = h.exports, view = new DataView(h.memory.buffer);
+    const image = 0x400000, thunk = 0x7500000, stack = 0x510000;
+    e.init_thread(0, image, image, 0x600000, thunk, thunk + names.length * 8, names.length, 0);
+    e.set_api_log(0);
+    const wa = p => e.guest_to_wasm(p) >>> 0;
+    names.forEach((name, i) => view.setUint32(wa(thunk) + i * 8 + 4, table.find(a => a.name === name).id, true));
+    for (const hwnd of [0x10001, 0x10002]) {
+      e.wnd_table_set(hwnd, 0x401000);
+      h.renderer.windows[hwnd] = { hwnd, visible: true, wasm: h.instance,
+        x: 0, y: 0, w: 80, h: 60, clientRect: { x: 0, y: 0 } };
+    }
+    h.renderer._computeClientRect = () => {};
+    // Pin the on phase so visibility assertions never depend on wall time.
+    h.renderer._scheduleCaretBlink = () => {};
+    h.call = (name, args = []) => {
+      [0, ...args].forEach((n, i) => view.setUint32(wa(stack) + i * 4, n >>> 0, true));
+      e.clear_yield(); e.set_esp(stack); e.set_eip(thunk + names.indexOf(name) * 8); e.run(100);
+      assert.equal(e.get_eip(), 0, name + ' public thunk returned');
+      assert.equal(e.get_esp() >>> 0, stack + 4 + args.length * 4, name + ' stdcall');
+      return e.get_eax() >>> 0;
+    };
+    h.check = (visible, owner, label) => {
+      const r = h.renderer, ctx = h.canvas.getContext('2d');
+      ctx.globalCompositeOperation = 'source-over'; ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, 80, 60);
+      const state = r._caretBlinkState.get(h.instance);
+      if (state) state.phase = true;
+      r._paintCaretOverlay();
+      equal(e.get_caret_visible(), visible ? 1 : 0, label + ' renderer export');
+      equal(e.get_caret_hwnd() >>> 0, owner, label + ' owner');
+      equal(!!r.caretRect(), visible, label + ' renderer anchor');
+      const pixel = Array.from(ctx.getImageData(0, 0, 1, 1).data).slice(0, 3);
+      equal(pixel, visible ? [0, 0, 0] : [255, 255, 255], label + ' actual inverted canvas pixel');
+    };
+    return h;
+  }
+  const a = await setup(), b = await setup();
+  const owner = 0x10001, other = 0x10002;
+  a.check(false, 0, 'fresh');
+  equal(a.call('ShowCaret', [0]), 0, 'no caret NULL Show fails');
+  equal(a.call('HideCaret', [0]), 0, 'no caret NULL Hide fails');
+  a.check(false, 0, 'no caret calls');
+  a.call('CreateCaret', [owner, 0, 2, 13]); a.check(false, owner, 'created hidden');
+  a.call('ShowCaret', [owner]); a.check(true, owner, 'shown once');
+  a.call('HideCaret', [owner]); a.call('HideCaret', [owner]);
+  a.call('ShowCaret', [owner]); a.check(false, owner, 'two hides one show');
+  a.call('ShowCaret', [0]); a.check(true, owner, 'NULL balances second hide');
+  equal(a.call('ShowCaret', [other]), 0, 'foreign Show fails');
+  equal(a.call('HideCaret', [other]), 0, 'foreign Hide fails');
+  a.check(true, owner, 'foreign calls preserve owner and visibility');
+  a.call('HideCaret', [0]); a.check(false, owner, 'NULL hides current owner');
+  a.call('ShowCaret', [other]); a.check(false, owner, 'foreign Show cannot repay hide');
+  a.call('ShowCaret', [0]); a.check(true, owner, 'NULL restores current owner');
+  // Shows while already visible do not prepay future hides.
+  a.call('ShowCaret', [owner]); a.call('ShowCaret', [0]);
+  a.call('HideCaret', [owner]); a.check(false, owner, 'extra shows no credit');
+  a.call('ShowCaret', [owner]); a.check(true, owner, 'one hide balanced');
+  for (let i = 0; i < 5; i++) a.call('HideCaret', [i & 1 ? 0 : owner]);
+  for (let i = 0; i < 4; i++) { a.call('ShowCaret', [0]); a.check(false, owner, 'depth five repayment ' + i); }
+  a.call('CreateCaret', [other, 0, 2, 13]); a.check(false, other, 'replacement resets debt');
+  a.call('ShowCaret', [0]); a.check(true, other, 'replacement first show');
+  b.check(false, 0, 'independent instance starts hidden');
+  b.call('CreateCaret', [owner, 0, 2, 13]); b.call('ShowCaret', [0]);
+  b.call('HideCaret', [0]); b.call('HideCaret', [0]);
+  a.check(true, other, 'other instance hide leaves first visible');
+  a.call('HideCaret', [0]); a.call('HideCaret', [0]);
+  a.check(false, other, 'hide debt before destruction');
+  a.call('DestroyCaret'); a.check(false, 0, 'destroy clears renderer');
+  b.call('ShowCaret', [0]); b.check(false, owner, 'other instance retains hide debt');
+  a.call('CreateCaret', [owner, 0, 2, 13]); a.call('ShowCaret', [0]);
+  a.check(true, owner, 'destroy create resets debt');
+  b.call('ShowCaret', [0]); b.check(true, owner, 'other instance balances independently');
+  a.call('DestroyCaret'); b.call('DestroyCaret');
+  a.check(false, 0, 'final destroy a'); b.check(false, 0, 'final destroy b');
+  console.log(JSON.stringify({ visibilityChecks: checks, failures }));
+  assert.equal(failures.length, 0, 'public caret nesting/owner and renderer pixels');
+  return checks;
+}
+
 async function exercise() {
-  const { exports: e, memory } = await bootRenderHarness({ extraWat, fonts: 'none' });
+  const { exports: e, memory, module } = await bootRenderHarness({ extraWat, fonts: 'none' });
   e.init_thread(1, 0x400000, 0, 0, 0, 0, 0);
   e.heap_init(0x800000);
   e.caret_mapping_init();
@@ -166,7 +256,8 @@ async function exercise() {
       seed(); query(0, null, hex + ' null compatibility repeat=' + repeat, 'contiguous');
     }
   }
-  const result = { calls, controlChecks, splitChecks, backing, failures };
+  const visibilityChecks = await visibilityExercise(module);
+  const result = { calls, controlChecks, splitChecks, backing, failures, visibilityChecks };
   console.log(JSON.stringify(result));
   return result;
 }

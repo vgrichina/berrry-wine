@@ -112,10 +112,18 @@
   ;; must not make one: in worker mode that call blocks in Atomics.wait for the
   ;; main thread, which may itself be spinning for this lock.
   (func $timer_set (param $hwnd i32) (param $id i32) (param $interval i32) (param $callback i32)
+    (drop (call $timer_set_id (local.get $hwnd) (local.get $id)
+      (local.get $interval) (local.get $callback))))
+
+  ;; Return the allocated ID to SetTimer; internal window-timer callers do not
+  ;; need it. Allocation and publication share the table lock so an automatic
+  ;; ID cannot replace a caller's explicit thread-timer ID.
+  (func $timer_set_id (param $hwnd i32) (param $id i32) (param $interval i32) (param $callback i32) (result i32)
     (local $i i32)
     (local $addr i32)
     (local $free_slot i32)
     (local $owner_tid i32)
+    (local $auto_id i32)
     (global.set $tick_count (call $host_get_ticks))
     (local.set $owner_tid (call $wnd_get_thread (local.get $hwnd)))
     (if (i32.eqz (local.get $owner_tid))
@@ -123,11 +131,15 @@
     (local.set $free_slot (i32.const -1))
     (local.set $i (i32.const 0))
     (call $lock_wnd_acquire)
+    (local.set $auto_id (i32.and (i32.eqz (local.get $hwnd)) (i32.eqz (local.get $id))))
+    (if (local.get $auto_id)
+      (then (local.set $id (call $timer_next_auto_id))))
     (block $break
       (loop $loop
         (br_if $break (i32.ge_u (local.get $i) (global.get $TIMER_MAX)))
         (local.set $addr (i32.add (global.get $TIMER_TABLE) (i32.mul (local.get $i) (global.get $TIMER_ENTRY_SIZE))))
-        ;; Check if this slot matches (same hwnd + id) — update in place.
+        ;; Window identity is hwnd + id; NULL-hwnd identity also includes the
+        ;; calling thread. Equal IDs in distinct thread queues are independent.
         ;; Either half may legitimately be zero, so only the zero/zero pair is
         ;; empty.
         (if (i32.and
@@ -136,8 +148,21 @@
                 (i32.ne (i32.load (i32.add (local.get $addr) (i32.const 4))) (i32.const 0)))
               (i32.and
                 (i32.eq (i32.load (local.get $addr)) (local.get $hwnd))
-                (i32.eq (i32.load (i32.add (local.get $addr) (i32.const 4))) (local.get $id))))
+                (i32.and
+                  (i32.eq (i32.load (i32.add (local.get $addr) (i32.const 4))) (local.get $id))
+                  (i32.or
+                    (i32.ne (local.get $hwnd) (i32.const 0))
+                    (i32.eq (i32.load (i32.add (global.get $TIMER_SHARED)
+                      (i32.add (i32.const 0x10) (i32.mul (local.get $i) (i32.const 4)))))
+                      (local.get $owner_tid))))))
           (then
+            ;; Automatic IDs must allocate a new timer, never update one.
+            (if (local.get $auto_id)
+              (then
+                (local.set $id (call $timer_next_auto_id))
+                (local.set $i (i32.const 0))
+                (local.set $free_slot (i32.const -1))
+                (br $loop)))
             ;; Existing records follow the same publish protocol as inserts:
             ;; hide the id while rewriting the payload, then publish it last.
             (i32.atomic.store offset=4 (local.get $addr) (i32.const 0))
@@ -149,7 +174,7 @@
               (local.get $owner_tid))
             (i32.atomic.store offset=4 (local.get $addr) (local.get $id))
             (call $lock_wnd_release)
-            (return)
+            (return (local.get $id))
           )
         )
         ;; Track first free slot (only hwnd=0,id=0 is empty).
@@ -180,6 +205,7 @@
       )
     )
     (call $lock_wnd_release)
+    (local.get $id)
   )
 
   ;; $timer_kill(hwnd, id) — remove a timer, return 1 if found
@@ -200,7 +226,13 @@
                 (i32.ne (i32.load (i32.add (local.get $addr) (i32.const 4))) (i32.const 0)))
               (i32.and
                 (i32.eq (i32.load (local.get $addr)) (local.get $hwnd))
-                (i32.eq (i32.load (i32.add (local.get $addr) (i32.const 4))) (local.get $id))))
+                (i32.and
+                  (i32.eq (i32.load (i32.add (local.get $addr) (i32.const 4))) (local.get $id))
+                  (i32.or
+                    (i32.ne (local.get $hwnd) (i32.const 0))
+                    (i32.eq (i32.load (i32.add (global.get $TIMER_SHARED)
+                      (i32.add (i32.const 0x10) (i32.mul (local.get $i) (i32.const 4)))))
+                      (global.get $current_thread_id))))))
           (then
             ;; Clear both identity fields to mark the slot empty. The id is the
             ;; field another thread's scan tests, so publish that one atomically.

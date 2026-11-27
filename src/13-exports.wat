@@ -2283,6 +2283,7 @@
     ;; A reused Worker instance must not retain heap-backed queue overflow from
     ;; its previous guest thread. Do this before replacing allocator cursors.
     (call $post_queue_reset)
+    (call $input_sync_keyboard_reset)
     ;; Which page-index split this process chose (set_page_index_layout).
     (call $page_index_layout_apply)
     ;; The three per-thread arenas are split, not strided: the main thread

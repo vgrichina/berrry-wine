@@ -142,7 +142,7 @@
     (owner "09c0-window-table.wat:$class_record_addr"))
   (region.declare $TIMER_TABLE (size 0x00000140) (align 0x00000100)
     (stride $TIMER_ENTRY_SIZE (count $TIMER_MAX))
-    (owner "09a-handlers.wat:$timer_set"))
+    (owner "09a-handlers.wat:$timer_set_id"))
   (region.declare $ACCEL_TABLES (size 0x00000400) (align 0x00000100)
     (stride $ACCEL_TABLE_STRIDE (count $ACCEL_TABLE_COUNT))
     (owner "09a5-handlers-window.wat:$accel_table_record_locked"))
@@ -728,7 +728,7 @@
     (owner "01-header.wat:$IOCP_TABLE"))
   ;; +0x50..0x5F: the winmm timer thread (09a-handlers.wat $MM_TIMER_THREAD).
   (region.declare $TIMER_SHARED (size 0x00000060) (align 0x00000100)
-    (owner "09a-handlers.wat:$timer_set"))
+    (owner "09a-handlers.wat:$timer_set_id"))
   (region.declare $EXTRA_CMDLINE_BUFFER (size 0x00000100) (align 0x00000100)
     (owner "10-helpers.wat:$EXTRA_CMDLINE_BUFFER"))
   (region.declare $TLS_NEXT_INDEX_SHARED (size 0x00000040) (align 0x00000100)

@@ -6297,6 +6297,13 @@ class WineAssembly {
     const shared = this._sharedAudio || (this.hostCtx && this.hostCtx.sharedAudio);
     if (!shared) return false;
     if ((Number(shared.midiHotUntilMs) || 0) > this._audioSchedulerNow()) return true;
+    // Beep is scheduled ahead; retain its context without selecting PCM slices.
+    const ac = this._audioCtx;
+    if (ac && ac.state === 'running' && shared.beepTones) {
+      for (const tone of shared.beepTones.values()) {
+        if (tone && tone.status === 0 && tone.ac === ac && ac.currentTime < tone.end) return true;
+      }
+    }
     // cdaudio is excluded: it already has its own term in _isAudioHot() via
     // cdAudioHotUntilMs, and its devices stay 'playing' across a stopped disc.
     const mci = shared.mci;

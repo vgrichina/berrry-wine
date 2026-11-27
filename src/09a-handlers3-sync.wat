@@ -87,8 +87,91 @@
   ;; Per instance, so per guest thread like USER's per-queue state.
   (global $input_sync_mk (mut i32) (i32.const 0))
 
+  ;; Keyboard state belongs to this guest thread's removed-input timeline.
+  ;; Globals keep the 256 down bits private even when instances share memory
+  ;; and a renderer. Neither physical releases nor another thread's host poll
+  ;; may retract a key while this thread handles its earlier WM_KEYDOWN.
+  (global $input_sync_keys0 (mut i64) (i64.const 0))
+  (global $input_sync_keys1 (mut i64) (i64.const 0))
+  (global $input_sync_keys2 (mut i64) (i64.const 0))
+  (global $input_sync_keys3 (mut i64) (i64.const 0))
+
+  (func $input_sync_keyboard_reset
+    (global.set $input_sync_keys0 (i64.const 0))
+    (global.set $input_sync_keys1 (i64.const 0))
+    (global.set $input_sync_keys2 (i64.const 0))
+    (global.set $input_sync_keys3 (i64.const 0)))
+
+  (func $input_sync_key_word (param $vk i32) (result i64)
+    (select
+      (select (global.get $input_sync_keys0) (global.get $input_sync_keys1)
+        (i32.lt_u (local.get $vk) (i32.const 64)))
+      (select (global.get $input_sync_keys2) (global.get $input_sync_keys3)
+        (i32.lt_u (local.get $vk) (i32.const 192)))
+      (i32.lt_u (local.get $vk) (i32.const 128))))
+
+  (func $input_sync_key_down (param $vk i32) (result i32)
+    (if (i32.gt_u (local.get $vk) (i32.const 255)) (then (return (i32.const 0))))
+    (i32.shl (i32.wrap_i64 (i64.and
+      (i64.shr_u (call $input_sync_key_word (local.get $vk))
+        (i64.extend_i32_u (i32.and (local.get $vk) (i32.const 63))))
+      (i64.const 1))) (i32.const 15)))
+
+  (func $input_sync_key_set (param $vk i32) (param $down i32)
+    (local $mask i64) (local $word i64)
+    (if (i32.gt_u (local.get $vk) (i32.const 255)) (then (return)))
+    (local.set $mask (i64.shl (i64.const 1)
+      (i64.extend_i32_u (i32.and (local.get $vk) (i32.const 63)))))
+    (local.set $word (i64.or
+      (i64.and (call $input_sync_key_word (local.get $vk))
+        (i64.xor (local.get $mask) (i64.const -1)))
+      (select (local.get $mask) (i64.const 0) (local.get $down))))
+    (if (i32.lt_u (local.get $vk) (i32.const 64))
+      (then (global.set $input_sync_keys0 (local.get $word)) (return)))
+    (if (i32.lt_u (local.get $vk) (i32.const 128))
+      (then (global.set $input_sync_keys1 (local.get $word)) (return)))
+    (if (i32.lt_u (local.get $vk) (i32.const 192))
+      (then (global.set $input_sync_keys2 (local.get $word)) (return)))
+    (global.set $input_sync_keys3 (local.get $word)))
+
+  (func $input_sync_keyboard_note (param $msg i32) (param $vk i32) (param $lp i32)
+    (local $down i32) (local $side i32) (local $generic i32)
+    ;; Clearing bits 0 and 2 admits only KEYDOWN/UP and SYSKEYDOWN/UP.
+    (if (i32.ne (i32.and (local.get $msg) (i32.const -6)) (i32.const 0x0100))
+      (then (return)))
+    (if (i32.ge_u (local.get $vk) (i32.const 256)) (then (return)))
+    (local.set $down (i32.eqz (i32.and (local.get $msg) (i32.const 1))))
+    (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0x10))
+                 (i32.le_u (local.get $vk) (i32.const 0x12)))
+      (then
+        (local.set $generic (local.get $vk))
+        ;; Shift's scan distinguishes sides; Ctrl/Alt use the extended bit.
+        (local.set $side (i32.add
+          (i32.add (i32.const 0xA0) (i32.shl
+            (i32.sub (local.get $vk) (i32.const 0x10)) (i32.const 1)))
+          (if (result i32) (i32.eq (local.get $vk) (i32.const 0x10))
+            (then (i32.eq (i32.and (i32.shr_u (local.get $lp) (i32.const 16))
+              (i32.const 0xFF)) (i32.const 0x36)))
+            (else (i32.ne (i32.and (local.get $lp) (i32.const 0x01000000)) (i32.const 0))))))
+        (call $input_sync_key_set (local.get $side) (local.get $down)))
+      (else
+        (call $input_sync_key_set (local.get $vk) (local.get $down))
+        (if (i32.and (i32.ge_u (local.get $vk) (i32.const 0xA0))
+                     (i32.le_u (local.get $vk) (i32.const 0xA5)))
+          (then (local.set $generic (i32.add (i32.const 0x10)
+            (i32.shr_u (i32.sub (local.get $vk) (i32.const 0xA0)) (i32.const 1))))))))
+    (if (local.get $generic)
+      (then
+        (local.set $side (i32.add (i32.const 0xA0)
+          (i32.shl (i32.sub (local.get $generic) (i32.const 0x10)) (i32.const 1))))
+        (call $input_sync_key_set (local.get $generic)
+          (i32.or (call $input_sync_key_down (local.get $side))
+            (call $input_sync_key_down (i32.add (local.get $side) (i32.const 1))))))))
+
   ;; Called where a hardware input message is removed from the queue.
   (func $input_sync_note (param $msg i32) (param $wparam i32)
+    (call $input_sync_keyboard_note (local.get $msg) (local.get $wparam)
+      (global.get $pending_input_lparam))
     (if (i32.and (i32.ge_u (local.get $msg) (i32.const 0x0200))
                  (i32.le_u (local.get $msg) (i32.const 0x020D)))
       (then (global.set $input_sync_mk
@@ -105,11 +188,11 @@
 
   ;; 302: GetKeyState(nVirtKey) → SHORT — 1 arg stdcall
   (func $handle_GetKeyState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    ;; Return the current high-bit down state without consuming
-    ;; GetAsyncKeyState's one-shot press latch. Toggle-key low bits are not
-    ;; tracked yet. Keyboard keys still read the device; mouse buttons are
-    ;; also down while the last retrieved mouse message says so (above).
-    (i32.store offset=0 (global.get $reg_base) (i32.or
+    ;; Keyboard queries never consume or read the independent async latch.
+    ;; Keep the existing mouse device/MK_* reconciliation unchanged.
+    (i32.store offset=0 (global.get $reg_base)
+      (if (result i32) (call $input_sync_vk_mk (local.get $arg0))
+        (then (i32.or
         (i32.and
           (call $host_get_key_down_state (local.get $arg0))
           (i32.const 0x8000))
@@ -117,6 +200,7 @@
           (i32.ne (i32.and (global.get $input_sync_mk)
                     (call $input_sync_vk_mk (local.get $arg0)))
                   (i32.const 0)))))
+        (else (call $input_sync_key_down (local.get $arg0)))))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
   )
 
@@ -326,8 +410,8 @@
   ;; SDL polls this every frame to build its keyboard snapshot. Snapshot the
   ;; complete table in one host call: in a guest Worker, calling the scalar
   ;; get_key_down_state import 256 times parked and woke the Worker 256 times.
-  ;; The host still uses the non-consuming physical/down-state view, preserving
-  ;; GetAsyncKeyState's separate one-shot low press bit.
+  ;; Retain the host's mouse/low-bit view, then replace keyboard down bits
+  ;; with this thread's queue state without consuming any async press bits.
   (func $handle_GetKeyboardState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $allocation i32) (local $stage i32) (local $result i32) (local $i i32)
     (if (local.get $arg0)
@@ -358,6 +442,19 @@
       ;; Preserve the existing NULL translation/host behavior.
       (else (local.set $stage (call $g2w (local.get $arg0)))))
     (local.set $result (call $host_get_keyboard_state (local.get $stage)))
+    (if (local.get $result)
+      (then
+        (local.set $i (i32.const 0))
+        (block $synced (loop $sync
+          (br_if $synced (i32.ge_u (local.get $i) (i32.const 256)))
+          (if (i32.eqz (call $input_sync_vk_mk (local.get $i)))
+            (then
+              (i32.store8 (i32.add (local.get $stage) (local.get $i))
+                (i32.or
+                  (i32.and (i32.load8_u (i32.add (local.get $stage) (local.get $i))) (i32.const 0x7F))
+                  (i32.shr_u (call $input_sync_key_down (local.get $i)) (i32.const 8))))))
+          (local.set $i (i32.add (local.get $i) (i32.const 1)))
+          (br $sync)))))
     (if (local.get $allocation)
       (then
         (local.set $i (i32.const 0))
@@ -375,9 +472,9 @@
   ;; SetKeyboardState(LPBYTE lpKeyState[256]) → BOOL — 1 arg stdcall.
   ;; Only the high bit of each entry contributes to our modeled down state;
   ;; toggle bits remain intentionally unmodeled. The host setter updates the
-  ;; same async-key backing consumed by subsequent keyboard-state queries.
+  ;; existing host backing as well as this thread's synchronous table.
   (func $handle_SetKeyboardState (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $i i32)
+    (local $i i32) (local $down i32)
     (if (i32.eqz (local.get $arg0))
       (then
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
@@ -385,9 +482,10 @@
         (return)))
     (block $done (loop $keys
       (br_if $done (i32.ge_u (local.get $i) (i32.const 256)))
-      (call $host_set_key_down_state (local.get $i)
-        (i32.and (call $gl8 (i32.add (local.get $arg0) (local.get $i)))
-                 (i32.const 0x80)))
+      (local.set $down (i32.and (call $gl8 (i32.add (local.get $arg0) (local.get $i)))
+        (i32.const 0x80)))
+      (call $input_sync_key_set (local.get $i) (local.get $down))
+      (call $host_set_key_down_state (local.get $i) (local.get $down))
       (local.set $i (i32.add (local.get $i) (i32.const 1)))
       (br $keys)))
     (i32.store offset=0 (global.get $reg_base) (i32.const 1))

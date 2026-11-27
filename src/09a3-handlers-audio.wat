@@ -2674,6 +2674,8 @@
         (local.set $slot_addr (call $mci_slot_addr (local.get $slot)))
         (i32.store (local.get $slot_addr) (local.get $host_id))
         (i32.store (i32.add (local.get $params_wa) (i32.const 4)) (local.get $slot))
+        ;; Notifications carry the reusable guest slot, not the host ID.
+        (drop (call $host_mci_command (local.get $host_id) (i32.const 0x0803) (i32.const 0) (local.get $params_wa)))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))
@@ -2804,6 +2806,8 @@
         (local.set $slot_addr (call $mci_slot_addr (local.get $slot)))
         (i32.store (local.get $slot_addr) (local.get $host_id))
         (i32.store (i32.add (local.get $params_wa) (i32.const 4)) (local.get $slot))
+        ;; Notifications carry the reusable guest slot, not the host ID.
+        (drop (call $host_mci_command (local.get $host_id) (i32.const 0x0803) (i32.const 0) (local.get $params_wa)))
         (i32.store offset=0 (global.get $reg_base) (i32.const 0))
         (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 20)))
         (return)))

@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "host.js",
+      "name": "host-file",
+      "baseSHA256": "dcdbb21c82a03a4a58154ddde7c72237876a14d36b135afa7396b3696d143176",
+      "sha256": "c0e7829da35bf2b529eb004ab6880a0c372b9dfd2bc6ca6e13a392a5012e29c5",
+      "reason": "20261127 Beep idle lease: _audioNeedsContext synchronously reads existing shared beepTones and retains only status 0 records on the exact currently running AudioContext before their scheduled end. No new callback, timer, guest entry, continuation, record mutation, wake/resume, cancellation or owner lifetime is introduced. The existing idle watcher resets its silence timestamp while the predicate is true; terminal, expired and old-context records release the lease. _isAudioHot, PCM/MIDI scheduling and background pause remain unchanged. Production token lifecycle plus actual host predicate/watch regression passes, rejects pre-fix and all four missing conditions; five existing Beep suites and MIDI idle suite pass. Broader invocation ownership remains pending. Evidence: scratch/runs/20261127-beep-idle-lease-fix-root. 20261127 reanchored over incoming main preserving its reviewed changes."
+    }
+  ]
+}

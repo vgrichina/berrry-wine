@@ -2634,19 +2634,22 @@
 
   ;; 188: SetTimer
   (func $timer_next_auto_id (result i32)
-    (i32.add (i32.const 0x1001)
-      (i32.atomic.rmw.add offset=4 (global.get $TIMER_SHARED) (i32.const 1))))
+    (local $id i32)
+    (loop $next
+      (local.set $id (i32.add (i32.const 0x1001)
+        (i32.atomic.rmw.add offset=4 (global.get $TIMER_SHARED) (i32.const 1))))
+      ;; Zero denotes an empty NULL-hwnd slot, even when the counter wraps.
+      (br_if $next (i32.eqz (local.get $id))))
+    (local.get $id))
 
   (func $handle_SetTimer (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
     (local $tid i32)
-    (local.set $tid (local.get $arg1))
     ;; Only thread timers need an auto-generated ID. A window timer retains
     ;; the caller's ID verbatim, including zero, because WM_TIMER and
     ;; KillTimer identify it with that same value.
-    (if (i32.and (i32.eqz (local.get $arg0)) (i32.eqz (local.get $tid)))
-      (then
-        (local.set $tid (call $timer_next_auto_id))))
-    (call $timer_set (local.get $arg0) (local.get $tid) (local.get $arg2) (local.get $arg3))
+    ;; Resolve automatic IDs under the same lock as table insertion.
+    (local.set $tid (call $timer_set_id (local.get $arg0) (local.get $arg1)
+      (local.get $arg2) (local.get $arg3)))
     ;; Window-timer success is boolean; do not turn an ID-zero timer into an
     ;; apparent failure even though its delivered/stored ID stays zero.
     (i32.store offset=0 (global.get $reg_base) (select (i32.const 1) (local.get $tid)

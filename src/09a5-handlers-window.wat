@@ -5566,8 +5566,7 @@
   (func $keyboard_hook_from_queue
       (param $msg_ptr i32) (param $ncode i32) (param $arg_bytes i32) (result i32)
     (local $msg i32) (local $ret i32)
-    (if (i32.or (i32.eqz (global.get $user_queue_input_flags))
-                (i32.eqz (global.get $keyboard_hook_proc)))
+    (if (i32.eqz (global.get $user_queue_input_flags))
       (then (return (i32.const 0))))
     (local.set $msg (call $gl32 (i32.add (local.get $msg_ptr) (i32.const 4))))
     (if (i32.eqz
@@ -5576,6 +5575,15 @@
                     (i32.eq (local.get $msg) (i32.const 0x0101)))
             (i32.or (i32.eq (local.get $msg) (i32.const 0x0104))
                     (i32.eq (local.get $msg) (i32.const 0x0105)))))
+      (then (return (i32.const 0))))
+    ;; Forwarded hardware input advances the owner's table only on removal,
+    ;; even when no keyboard hook is installed. Posted key-shaped MSGs have
+    ;; no hardware flag and never enter this path.
+    (if (i32.eqz (local.get $ncode))
+      (then (call $input_sync_keyboard_note (local.get $msg)
+        (call $gl32 (i32.add (local.get $msg_ptr) (i32.const 8)))
+        (call $gl32 (i32.add (local.get $msg_ptr) (i32.const 12))))))
+    (if (i32.eqz (global.get $keyboard_hook_proc))
       (then (return (i32.const 0))))
     (local.set $ret (call $gl32 (i32.load offset=16 (global.get $reg_base))))
     (i32.store offset=16 (global.get $reg_base)
@@ -5981,6 +5989,7 @@
     (local.set $msg (i32.and (local.get $packed) (i32.const 0xFFFF)))
     (global.set $user_queue_input_flags (i32.const 1))
     (global.set $input_return_token (global.get $pending_input_token))
+    (call $input_sync_note (local.get $msg) (i32.shr_u (local.get $packed) (i32.const 16)))
     (local.set $hotkey_msg (local.get $msg))
     (local.set $hotkey (call $hotkey_match
       (local.get $hotkey_msg) (i32.shr_u (local.get $packed) (i32.const 16))))
@@ -6002,7 +6011,6 @@
     (i32.shr_u (local.get $packed) (i32.const 16)))
     (call $gs32 (i32.add (local.get $msg_ptr) (i32.const 12))
     (global.get $pending_input_lparam))
-    (call $input_sync_note (local.get $msg) (i32.shr_u (local.get $packed) (i32.const 16)))
     (call $msg_store_input_tail
       (local.get $msg_ptr)
       (local.get $tmp)
@@ -6363,7 +6371,7 @@
             (global.set $input_return_token (global.get $pending_input_token))
             (if (i32.and (local.get $arg4) (i32.const 1))
               (then (global.set $pending_input_packed (i32.const 0))
-                (call $input_sync_note (local.get $msg)
+                (call $input_sync_note (i32.and (local.get $packed) (i32.const 0xFFFF))
                   (i32.shr_u (local.get $packed) (i32.const 16)))
                 (call $native_user_event (i32.const 8) (local.get $packed))))
             (if (local.get $hotkey)

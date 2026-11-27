@@ -102,3 +102,122 @@ assert.strictEqual(imports.mci_command(id, 0x0804, 0, 0), 0);
 assert.deepStrictEqual(posted, [[HWND, MM_MCINOTIFY, 4, id]], 'MCI_NOTIFY_ABORTED on close');
 
 console.log('PASS MCI sequencer MM_MCINOTIFY on the guest clock (successful once, pump-driven, no-flag, stop/close aborted, superseded)');
+
+// Public guest A/W commands must report the reusable guest device ID, even
+// after host IDs diverge. Use the full module, real host window posting,
+// PeekMessage and DispatchMessage into an x86 WndProc; no message collector.
+async function guestNotifications() {
+  const fs = require('fs');
+  const path = require('path');
+  const { bootRenderHarness } = require('./render-helper');
+  const apis = require('../src/api_table.json');
+  const extraWat = String.raw`
+    (func (export "mn_thunk") (param $id i32) (result i32)
+      (local $p i32)
+      (global.set $thunk_guest_base (call $w2g (global.get $THUNK_BASE)))
+      (local.set $p (i32.add (global.get $THUNK_BASE) (i32.mul (global.get $num_thunks) (i32.const 8))))
+      (i32.store (local.get $p) (i32.const 0)) (i32.store offset=4 (local.get $p) (local.get $id))
+      (global.set $num_thunks (i32.add (global.get $num_thunks) (i32.const 1)))
+      (call $update_thunk_end) (call $w2g (local.get $p)))
+    (func (export "mn_window") (param $proc i32) (result i32)
+      (local $h i32) (local.set $h (global.get $next_hwnd))
+      (global.set $next_hwnd (i32.add (local.get $h) (i32.const 1)))
+      (call $wnd_table_set (local.get $h) (local.get $proc)) (local.get $h))
+  `;
+  let now = 1000;
+  const h = await bootRenderHarness({ fonts: 'none', extraWat,
+    beforeInstantiate(ctx) {
+      ctx.audioClockMs = () => now;
+      ctx.readFile = p => /music1\.mid$/i.test(p) ? midi : null;
+    },
+  });
+  const e = h.exports;
+  // Initialize the actual guest/thunk arena; no PE application code is run.
+  const pe = fs.readFileSync(path.join(__dirname, 'binaries/calc.exe'));
+  new Uint8Array(h.memory.buffer).set(pe, e.get_staging());
+  assert(e.load_pe(pe.length)); e.init_dx_com_thunks();
+  const put = (p, v) => e.guest_write32(p, v);
+  const get = p => e.guest_read32(p) >>> 0;
+  const bytes32 = v => [v & 255, v >>> 8 & 255, v >>> 16 & 255, v >>> 24 & 255];
+  const bytes = (p, code) => code.forEach((v, i) => e.guest_write8(p + i, v));
+  const thunks = new Map();
+  function call(name, ...args) {
+    if (!thunks.has(name)) thunks.set(name, e.mn_thunk(apis.find(a => a.name === name).id) >>> 0);
+    // Fresh code per call avoids mutating already-decoded guest instructions.
+    const stub = e.guest_alloc(128) >>> 0, code = [];
+    for (const a of args.slice().reverse()) code.push(0x68, ...bytes32(a));
+    code.push(0xb8, ...bytes32(thunks.get(name)), 0xff, 0xd0, 0xc2, 16, 0);
+    bytes(stub, code);
+    const esp = e.get_esp() >>> 0;
+    e.call_func(stub, 0, 0, 0, 0);
+    for (let i = 0; i < 10 && e.get_eip(); i++) e.run(1000);
+    assert.strictEqual(e.get_eip(), 0, `${name} returned within the instruction bound`);
+    assert.strictEqual(e.get_esp() >>> 0, esp, `${name} restored the guest stack`);
+    return e.get_eax() >>> 0;
+  }
+  const obs = e.guest_alloc(32) >>> 0, proc = e.guest_alloc(128) >>> 0;
+  const code = [0xff, 0x05, ...bytes32(obs)]; // inc dword [callback count]
+  for (let i = 0; i < 4; i++) // copy actual WndProc arguments
+    code.push(0x8b, 0x44, 0x24, 4 + i * 4, 0xa3, ...bytes32(obs + 4 + i * 4));
+  code.push(0x31, 0xc0, 0xc2, 16, 0); bytes(proc, code);
+  const hwnd = e.mn_window(proc) >>> 0;
+  h.renderer.createWindow(hwnd, 0x10cf0000, 0, 0, 100, 100, 'MCI notify', 0, h.instance, h.memory);
+  const msg = e.guest_alloc(32) >>> 0;
+  function receive(status, id, label) {
+    const count = get(obs);
+    assert.strictEqual(call('PeekMessageA', msg, hwnd, MM_MCINOTIFY, MM_MCINOTIFY, 1), 1, label);
+    assert.deepStrictEqual([0, 4, 8, 12].map(o => get(msg + o)), [hwnd, MM_MCINOTIFY, status, id], `${label}: MSG`);
+    call('DispatchMessageA', msg);
+    assert.strictEqual(get(obs), count + 1, `${label}: WndProc called once`);
+    assert.deepStrictEqual([4, 8, 12, 16].map(o => get(obs + o)), [hwnd, MM_MCINOTIFY, status, id], `${label}: x86 WndProc`);
+  }
+  function empty(label) {
+    assert.strictEqual(call('PeekMessageA', msg, hwnd, MM_MCINOTIFY, MM_MCINOTIFY, 1), 0, label);
+  }
+  const advance = () => { now += 1000; h.hostCtx.pumpAudioCompletions(); };
+  const rows = [];
+  for (const wide of [false, true]) {
+    const api = wide ? 'mciSendCommandW' : 'mciSendCommandA';
+    const type = e.guest_alloc(64) >>> 0, file = e.guest_alloc(64) >>> 0;
+    function text(p, s) {
+      for (let i = 0; i <= s.length; i++) {
+        e.guest_write8(p + i * (wide ? 2 : 1), s.charCodeAt(i) || 0);
+        if (wide) e.guest_write8(p + i * 2 + 1, 0);
+      }
+    }
+    text(type, 'sequencer'); text(file, 'music1.mid');
+    const params = e.guest_alloc(32) >>> 0, playParams = e.guest_alloc(16) >>> 0;
+    put(playParams, hwnd); put(params + 8, type); put(params + 12, file);
+    const cmd = (id, op, flags = 0, p = 0) => assert.strictEqual(call(api, id, op, flags, p), 0, `${api} ${op.toString(16)}`);
+    const open = () => {
+      put(params + 4, 0xcccccccc); cmd(0, 0x803, 0x2200, params);
+      const id = get(params + 4); assert(id > 0 && id < 16);
+      return id;
+    };
+    const play = (id, flags = 1) => cmd(id, 0x806, flags, playParams);
+    const first = open(); play(first); advance(); receive(1, first, `${api} initial success`);
+    empty('initial success once'); cmd(first, 0x804);
+    const id = open(); assert.strictEqual(id, first, 'guest slot reused after close');
+    const hostId = Math.max(...h.hostCtx._mci.devices.keys());
+    assert.notStrictEqual(hostId, id, 'host ID diverges from reopened guest slot');
+    play(id); advance(); receive(1, id, `${api} reopened success`); advance(); empty('success once');
+    play(id); cmd(id, 0x808); receive(4, id, `${api} stop aborted`); advance(); empty('no late success after stop');
+    play(id); play(id); receive(2, id, `${api} superseded`); advance(); receive(1, id, `${api} replacement success`); empty('replacement once');
+    play(id, 0); advance(); empty('no notify flag, no success');
+    play(id, 0); cmd(id, 0x808); empty('no notify flag, no abort');
+    play(id); cmd(id, 0x804); receive(4, id, `${api} close aborted`); advance(); empty('no late success after close');
+    const reopened = open(); assert.strictEqual(reopened, id);
+    play(reopened, 0); cmd(reopened, 0x804); advance(); empty('no notify close');
+    // Keep a higher slot live while the lower slot is closed and reused.
+    const low = open(), high = open(); assert.notStrictEqual(low, high);
+    cmd(low, 0x804);
+    const reused = open(); assert.strictEqual(reused, low);
+    play(high); play(reused); advance();
+    receive(1, high, `${api} concurrent higher slot`);
+    receive(1, reused, `${api} concurrent reused lower slot`);
+    empty('concurrent completions once'); cmd(high, 0x804); cmd(reused, 0x804);
+    rows.push({ api, guestId: id, hostId, statuses: [1, 4, 2, 1, 4] });
+  }
+  console.log('PASS public guest MCI notification identity through MSG and x86 WndProc', JSON.stringify(rows));
+}
+guestNotifications().catch(error => { console.error(error); process.exitCode = 1; });

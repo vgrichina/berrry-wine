@@ -16,7 +16,10 @@ function read(file) {
 }
 function form(text, marker) {
   text = text.replace(/;;[^\n]*/g, '');
-  const start = text.indexOf(marker);
+  let start = text.indexOf(marker);
+  // A helper such as pending_gap must not select pending_gap_at instead.
+  while (start >= 0 && marker.startsWith('(func $') &&
+      !/[\s)]/.test(text[start + marker.length])) start = text.indexOf(marker, start + 1);
   assert(start >= 0, marker);
   let depth = 0;
   for (let i = start; i < text.length; i++) {
@@ -55,14 +58,20 @@ const ownership = cache.slice(cache.indexOf(';; BEGIN CALLBACK INVOCATION OWNERS
 bodies.push(handlers.slice(handlers.indexOf(';; BEGIN MM CALLBACK OWNERSHIP'),
   handlers.indexOf(';; END MM CALLBACK OWNERSHIP')));
 for (const name of ['fire_audio_callback_bound', 'fire_wave_out_callback_bound',
-  'fire_midi_out_callback_bound', 'wave_callback_restore_wait']) {
+  'fire_midi_out_callback_bound', 'wave_callback_restore_wait', 'callback_feed_emit']) {
   bodies.push(form(exportsSource, `(func $${name}`));
+}
+// Invocation/audio admission calls the real gap recorder even when unarmed.
+const alu = read('src/05-alu.wat');
+for (const name of ['pending_gap', 'pending_gap_at', 'pending_failure', 'dao_fail']) {
+  bodies.push(form(alu, `(func $${name}`));
 }
 // Use the unchanged production arm, including active/wait/yield bookkeeping.
 bodies.push(`(func $finish (export "finish") (param $name_rva i32)
   ${form(dispatch, '(if (i32.eq (local.get $name_rva) (i32.const 0xCACA000A))')})`);
-const globals = [...new Set([...bodies.join('\n').matchAll(/\(global\.(?:get|set) \$(\w+)/g)].map(m => m[1]))];
+const globals = [...new Set([...(`${ownership}\n${bodies.join('\n')}`).matchAll(/\(global\.(?:get|set) \$(\w+)/g)].map(m => m[1]))];
 const declared = new Set([...(`${ownership}\n${bodies.join('\n')}`).matchAll(/\(global \$(\w+)/g)].map(m => m[1]));
+declared.add('current_thread_id'); // Explicit fixture thread binding below.
 const source = `
  (memory 2 2 shared) (export "memory" (memory 0))
  (region.declare-fixed $CALLBACK_OWNERSHIP (base 0x9000) (size 0x2110) (align 16))
@@ -70,6 +79,7 @@ const source = `
  (global $current_thread_id (mut i32) (i32.const 1))
  (func $host_beep_process_begin (param i32 i32) (result i32) (i32.const 1))
  (func $host_beep_thread_begin (param i32 i32 i32 i32 i32) (result i32) (i32.const 1))
+ (func $host_log_i32 (param i32) (unreachable)) ;; Unarmed diagnostics must not log.
  ${ownership}
  ${globals.filter(g => !declared.has(g)).map(g => `(global $${g} (mut i32) (i32.const ${g === 'reg_base' ? 64 : 0}))`).join('\n')}
  ${globals.map(g => `(export "${g}" (global $${g}))`).join('\n')}

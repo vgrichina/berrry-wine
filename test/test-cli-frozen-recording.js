@@ -9,6 +9,10 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const { spawn, spawnSync, execFile } = require('child_process');
+const assert = require('assert');
+const { Worker } = require('worker_threads');
+const { CliVideoRecorder } = require('../lib/cli-recorder');
+const { createCanvas } = require('../lib/raster-canvas');
 
 const ROOT = path.join(__dirname, '..');
 const RUN = path.join(__dirname, 'run.js');
@@ -67,7 +71,123 @@ const waitFor = async (label, probe) => {
   throw new Error(`timed out waiting for ${label}\n${childOut.slice(-3000)}`);
 };
 
+// Observe the real pre-encoder file from another event loop: finish() runs a
+// synchronous real ffmpeg mux and then unlinks it. No encoder or mixer mocks.
+async function mixedPcmControls() {
+  const mono = values => values.flatMap(v => [v, v]);
+  const chunk = (samples, extra = {}) => ({ samples, sampleRate: 44100,
+    channels: 1, bits: 16, guestStartMs: 0, ...extra });
+  // Literal expectations use round(normalized sample * 32767). At 22050 Hz
+  // the quarter-source-frame start visits 1/4,3/4,...,13/4: seven emissions.
+  // At 16000 Hz the positions are 1/2 + i*160/441, i=0..8, with last-frame hold.
+  const cases = [
+    { name: 'wholly earlier and exact endpoint add neither PCM nor duration',
+      chunks: [chunk([30000, 30000, 30000, 30000], { sampleRate: 1, guestStartMs: -5000 }),
+        chunk([30000, 30000, 30000, 30000], { sampleRate: 1000, guestStartMs: -4 })], pcm: [] },
+    { name: 'integer crossing joins a following positive chunk without old prefix',
+      chunks: [chunk([30000, -30000, 8192, 16384], { guestStartMs: -2000 / 44100 }),
+        chunk([24576], { guestStartMs: 2000 / 44100 })], pcm: mono([8192, 16384, 24575]) },
+    { name: 'fractional source phase and floor emission count at 22050 Hz',
+      chunks: [chunk([0, 8192, 16384, 24576], { sampleRate: 22050, guestStartMs: -250 / 22050 })],
+      pcm: mono([2048, 6144, 10240, 14336, 18431, 22527, 24575]) },
+    { name: 'fractional 16000 Hz stereo phase and channel separation',
+      chunks: [chunk([0, 0, 8192, -8192, 16384, -16384, 24576, -24576],
+        { sampleRate: 16000, channels: 2, guestStartMs: -500 / 16000 })],
+      pcm: [4096, -4096, 7068, -7068, 10040, -10040, 13012, -13012,
+        15984, -15984, 18956, -18956, 21928, -21928, 24575, -24575, 24575, -24575] },
+    { name: 'retained suffix shorter than one output interval emits nothing',
+      chunks: [chunk([30000], { sampleRate: 22050, guestStartMs: -875 / 22050 })], pcm: [] },
+    { name: 'positive fractional placement, mono8 gains, overlap and clipping',
+      chunks: [chunk([128, 160, 192, 224], { bits: 8, sampleRate: 22050,
+        guestStartMs: 1600 / 44100, gainL: 2, gainR: 0 }),
+        chunk([16384, -16384], { guestStartMs: 5000 / 44100, gainL: 1, gainR: 0.5 })],
+      pcm: [0, 0, 0, 0, 0, 0, 8192, 0, 16384, 0, 32767, 8192,
+        16384, -8192, 32767, 0, 32767, 0, 32767, 0] },
+    { name: 'origin stereo gains and incomplete interleaved frame',
+      chunks: [chunk([8192, -16384, 24576], { channels: 2, gainL: 0.5, gainR: 0.25 })],
+      pcm: [4096, -4096] },
+    { name: 'fractional positive audio duration ceils allocation but floors emissions',
+      chunks: [chunk(Array(67).fill(8192), { sampleRate: 16000 })],
+      frames: 185, pcm: mono(Array(184).fill(8192)) },
+    { name: 'crossing audio duration excludes prefix and retains silent allocation tail',
+      // 67.5 * 441/160 = 186.046875 output intervals remain.
+      chunks: [chunk(Array(68).fill(8192), { sampleRate: 16000, guestStartMs: -500 / 16000 })],
+      frames: 187, pcm: mono(Array(186).fill(8192)) },
+  ];
+  for (let index = 0; index < cases.length; index++) {
+    const control = cases[index];
+    const canvas = createCanvas(2, 2);
+    const recorder = new CliVideoRecorder(canvas, {
+      path: path.join(tmpDir, `pcm-${index}.mp4`), fps: 240, startGuestMs: 0,
+    });
+    const frames = control.frames || 184; // ceil(44100/240), one video frame
+    const collector = new Worker(`
+      const fs = require('fs');
+      const { parentPort, workerData } = require('worker_threads');
+      let fd;
+      const watchdog = setTimeout(() => { throw new Error('WAV collector timed out'); }, 15000);
+      const poll = setInterval(() => {
+        try {
+          if (fd === undefined) fd = fs.openSync(workerData.file, 'r');
+          if (fs.fstatSync(fd).size !== workerData.size) return;
+          const wav = Buffer.alloc(workerData.size);
+          if (fs.readSync(fd, wav, 0, wav.length, 0) !== wav.length) return;
+          fs.closeSync(fd);
+          clearInterval(poll); clearTimeout(watchdog);
+          parentPort.postMessage(wav);
+        } catch (error) { if (error.code !== 'ENOENT') throw error; }
+      }, 1);
+      parentPort.postMessage('ready');
+    `, { eval: true, workerData: { file: recorder.wavPath, size: 44 + frames * 4 } });
+    const ready = new Promise((resolve, reject) => {
+      collector.once('message', resolve); collector.once('error', reject);
+    });
+    const collected = new Promise((resolve, reject) => {
+      collector.on('message', value => { if (value !== 'ready') resolve(Buffer.from(value)); });
+      collector.once('error', reject);
+    });
+    // Attach a handler immediately, including if capture or finish fails first.
+    collected.catch(() => {});
+    try {
+      assert.strictEqual(await ready, 'ready');
+      const inputs = control.chunks.map(({ samples, ...metadata }) => {
+        const bytes = metadata.bits === 8 ? Buffer.from(samples) : Buffer.alloc(samples.length * 2);
+        if (metadata.bits === 16) samples.forEach((sample, i) => bytes.writeInt16LE(sample, i * 2));
+        const saved = Buffer.from(bytes);
+        recorder.pcm({ ...metadata, bytes });
+        return { bytes, saved };
+      });
+      await recorder.capture(canvas);
+      const summary = await recorder.finish();
+      const wav = await collected;
+      assert.strictEqual(wav.toString('ascii', 0, 4), 'RIFF');
+      assert.strictEqual(wav.readUInt32LE(4), wav.length - 8);
+      assert.strictEqual(wav.toString('ascii', 8, 16), 'WAVEfmt ');
+      assert.strictEqual(wav.readUInt32LE(16), 16);
+      assert.strictEqual(wav.readUInt16LE(20), 1);
+      assert.strictEqual(wav.readUInt16LE(22), 2);
+      assert.strictEqual(wav.readUInt32LE(24), 44100);
+      assert.strictEqual(wav.readUInt32LE(28), 176400);
+      assert.strictEqual(wav.readUInt16LE(32), 4);
+      assert.strictEqual(wav.readUInt16LE(34), 16);
+      assert.strictEqual(wav.toString('ascii', 36, 40), 'data');
+      assert.strictEqual(wav.readUInt32LE(40), frames * 4);
+      const expected = Buffer.alloc(frames * 4);
+      control.pcm.forEach((sample, i) => expected.writeInt16LE(sample, i * 2));
+      assert.deepStrictEqual(wav.subarray(44), expected, control.name);
+      for (const { bytes, saved } of inputs) assert.deepStrictEqual(bytes, saved);
+      assert.strictEqual(summary.frames, 1);
+      assert(fs.statSync(summary.path).size > 0, 'real ffmpeg mux completed');
+      check(control.name, true);
+    } finally {
+      await collector.terminate();
+      if (recorder.child.exitCode === null) recorder.child.kill('SIGKILL');
+    }
+  }
+}
+
 (async () => {
+  await mixedPcmControls();
   await waitFor('control server', async () => childOut.includes('[control] listening') || undefined);
   const before = JSON.parse(await ctl('snapshot'));
   check('CLI starts frozen before its first batch',

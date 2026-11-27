@@ -6,6 +6,7 @@
 const assert = require('assert');
 const fs = require('fs');
 const path = require('path');
+const vm = require('vm');
 
 // 760b79f moved the DOM input bridge out of the page template into
 // lib/browser-input.js. Read both: the CSS that disables touch gestures is
@@ -51,7 +52,64 @@ assert(html.includes('const MIN_BACKING_WIDTH = SINGLE_APP_MODE ? 400 : 640'),
   'small screens should still get at least a 640px emulated backing width unless single-app mode');
 assert(html.includes('displayW') && html.includes('displayH'), 'canvas backing size should be separate from CSS display size');
 assert(html.includes('Math.max(1, MIN_BACKING_WIDTH / displayW)'), 'narrow viewports should scale backing height proportionally');
-assert(html.includes("canvas.style.width = displayW + 'px'"), 'fullscreen CSS width should use physical display width, not minimum backing width');
+// CSS owns the display box, including fullscreen exit before JS gets its
+// fullscreenchange callback. resizeCanvas only sizes pixel stores and scales
+// the icon overlay. Exercise that contract rather than requiring the retired
+// inline width assignment (which left stale fullscreen pixels on exit).
+// The CSS cascade itself is covered by test-fullscreen-canvas-css.js.
+{
+  const start = html.indexOf('    let lastStageShare = 1;');
+  const endMarker = '    window.resizeCanvas = resizeCanvas;';
+  const end = html.indexOf(endMarker, start);
+  assert(start >= 0 && end > start, 'page sizing functions must be available');
+  const sizingSource = html.slice(start, end + endMarker.length);
+  for (const singleApp of [false, true]) {
+    const screen = { width: 0, height: 0, style: {} };
+    const present = { width: 0, height: 0, style: {} };
+    const wrap = { style: {}, getBoundingClientRect() {
+      return { width: this.clientWidth, height: this.clientHeight };
+    } };
+    const icons = { style: {} };
+    const elements = { screen, 'screen-present': present, 'screen-wrap': wrap,
+      'desktop-icons': icons };
+    const document = { getElementById: id => elements[id], fullscreenElement: null,
+      body: { classList: { contains: () => false } } };
+    const window = { devicePixelRatio: 2 };
+    vm.runInNewContext(sizingSource, {
+      window, document, SINGLE_APP_MODE: singleApp, keyboardController: null,
+      wine: null, sharedRenderer: null, console: { log() {} },
+      applySingleAppMode() {}, syncWindowedPageFullscreen() {},
+    });
+    // A narrow portrait viewport requires a wider guest backing store. Rotate
+    // while fullscreen, then leave it: neither transition may pin CSS pixels.
+    for (const [width, height, fullscreen] of [
+      [360, 640, false], [360, 640, true], [720, 360, true], [360, 640, false],
+    ]) {
+      wrap.clientWidth = screen.clientWidth = window.innerWidth = width;
+      wrap.clientHeight = screen.clientHeight = window.innerHeight = height;
+      window.visualViewport = { width, height };
+      document.fullscreenElement = fullscreen ? wrap : null;
+      window.resizeCanvas();
+      if (width < height) assert(screen.width > width,
+        'narrow CSS viewports must retain the larger emulated desktop');
+      assert(Math.abs(screen.width / width - screen.height / height) <= 1 / Math.min(width, height),
+        'minimum backing dimensions must preserve the viewport aspect ratio');
+      assert.strictEqual(present.width, width * window.devicePixelRatio,
+        'presentation pixels track CSS display width and device pixel ratio');
+      assert.strictEqual(present.height, height * window.devicePixelRatio,
+        'presentation pixels track CSS display height and device pixel ratio');
+      assert.strictEqual(icons.style.width, screen.width + 'px');
+      assert.strictEqual(icons.style.height, screen.height + 'px');
+      assert.strictEqual(icons.style.transform,
+        `scale(${width / screen.width}, ${height / screen.height})`,
+        'guest icon coordinates must scale into the CSS display box');
+      for (const element of [screen, present, wrap]) {
+        assert.deepStrictEqual(element.style, {},
+          'sizing must leave display geometry to CSS across fullscreen and rotation');
+      }
+    }
+  }
+}
 assert(html.includes("desktopIcons.style.width = w + 'px'"), 'desktop icon overlay should use guest backing width');
 assert(html.includes('desktopIcons.style.transform = `scale(${sx}, ${sy})`'), 'desktop icon overlay should scale with the canvas');
 assert(html.includes("window.visualViewport.addEventListener('resize', resizeCanvas)"), 'mobile browser chrome viewport changes should resize the canvas');

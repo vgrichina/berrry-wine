@@ -1442,6 +1442,10 @@
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16))) ;; 3 args stdcall
   )
 
+  ;; CreateCaret starts hidden; each HideCaret needs a matching ShowCaret.
+  ;; Keep the renderer-facing latch Boolean and the nesting state private.
+  (global $caret_hide_count (mut i32) (i32.const 1))
+
   (func $caret_schedule_repaint
     (local $hwnd i32) (local $top i32)
     (local.set $hwnd (global.get $caret_hwnd))
@@ -1486,6 +1490,8 @@
   ;; to leave a visible caret stroke in the renderer. The renderer composites
   ;; this state after normal back-canvas paint and owns blink/inverted erasure.
   (func $handle_CreateCaret (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (call $caret_schedule_repaint)
+    (global.set $caret_hide_count (i32.const 1))
     (global.set $caret_hwnd (local.get $arg0))
     (global.set $caret_x (i32.const 0))
     (global.set $caret_y (i32.const 0))
@@ -1501,6 +1507,7 @@
   )
 
   (func $handle_DestroyCaret (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (global.set $caret_hide_count (i32.const 1))
     (global.set $caret_visible (i32.const 0))
     (call $caret_schedule_repaint)
     (global.set $caret_hwnd (i32.const 0))
@@ -1509,22 +1516,34 @@
   )
 
   (func $handle_HideCaret (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (i32.or
+    (local $valid i32)
+    (local.set $valid (i32.and
+      (i32.ne (global.get $caret_hwnd) (i32.const 0))
+      (i32.or
           (i32.eqz (local.get $arg0))
-          (i32.eq (local.get $arg0) (global.get $caret_hwnd)))
+          (i32.eq (local.get $arg0) (global.get $caret_hwnd)))))
+    (if (local.get $valid)
       (then
+        (global.set $caret_hide_count (i32.add (global.get $caret_hide_count) (i32.const 1)))
         (global.set $caret_visible (i32.const 0))
         (call $caret_schedule_repaint)))
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (i32.store offset=0 (global.get $reg_base) (local.get $valid))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) ;; 1 arg stdcall
   )
 
   (func $handle_ShowCaret (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (if (local.get $arg0)
-      (then (global.set $caret_hwnd (local.get $arg0))))
-    (global.set $caret_visible (i32.const 1))
-    (call $caret_schedule_repaint)
-    (i32.store offset=0 (global.get $reg_base) (i32.const 1))
+    (local $valid i32)
+    (local.set $valid (i32.and
+      (i32.ne (global.get $caret_hwnd) (i32.const 0))
+      (i32.or (i32.eqz (local.get $arg0))
+        (i32.eq (local.get $arg0) (global.get $caret_hwnd)))))
+    (if (local.get $valid)
+      (then
+        (if (global.get $caret_hide_count)
+          (then (global.set $caret_hide_count (i32.sub (global.get $caret_hide_count) (i32.const 1)))))
+        (global.set $caret_visible (i32.eqz (global.get $caret_hide_count)))
+        (call $caret_schedule_repaint)))
+    (i32.store offset=0 (global.get $reg_base) (local.get $valid))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8))) ;; 1 arg stdcall
   )
 

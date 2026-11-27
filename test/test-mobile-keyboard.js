@@ -238,4 +238,120 @@ assert.strictEqual(canvasShift({ ...PHONE, focus: { top: 100, bottom: 700 } }), 
   assert.strictEqual(changes.length, 2, 'reset reports the transition it made');
 }
 
-console.log('PASS  on-screen keyboard lifts the guest instead of resizing it');
+// Exercise the full browser bridge through registered public event routes.
+// The DOM and renderer sink are test doubles; this does not assert which
+// event ordering a real phone emits. Literal unit/keystroke arrays are the
+// oracle, so a lost low surrogate cannot hide behind a rendered glyph.
+function textInputFixture() {
+  const fs = require('fs');
+  const path = require('path');
+  const vm = require('vm');
+  let document;
+  class Target {
+    constructor(tagName) {
+      this.tagName = tagName;
+      this.listeners = new Map();
+      this.value = '';
+    }
+    addEventListener(type, fn, options) {
+      const entries = this.listeners.get(type) || [];
+      entries.push({ fn, capture: options === true || !!options?.capture });
+      this.listeners.set(type, entries);
+    }
+    setAttribute() {}
+    focus() { document.activeElement = this; }
+    closest() { return null; }
+  }
+  const window = new Target();
+  document = new Target();
+  const canvas = new Target('CANVAS'), proxy = new Target('TEXTAREA');
+  document.body = new Target('BODY');
+  document.documentElement = new Target('HTML');
+  document.getElementById = id => id === 'mobile-keyboard-proxy' ? proxy : null;
+  const calls = [];
+  const renderer = {
+    handleKeyDown: vk => calls.push(['down', vk]),
+    handleKeyPress: unit => calls.push(['char', unit]),
+    handleKeyUp: vk => calls.push(['up', vk]),
+    handleCompositionStart: () => calls.push(['compositionstart']),
+    handleCompositionEnd: text => calls.push(['compositionend', text]),
+  };
+  const context = { window, document, Node: Target,
+    setInterval() {}, clearInterval() {}, setTimeout() {}, clearTimeout() {} };
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../lib/browser-input.js'), 'utf8'),
+    context, { filename: 'browser-input.js' });
+  window.browserInput.wireCanvasInput(canvas, renderer, { runningApps: [] });
+  function dispatch(target, type, props = {}) {
+    const event = { type, target, defaultPrevented: false,
+      preventDefault() { this.defaultPrevented = true; }, ...props };
+    const route = [window, document, target];
+    for (const node of route) {
+      for (const entry of node.listeners.get(type) || []) if (entry.capture) entry.fn(event);
+    }
+    for (const node of route.reverse()) {
+      for (const entry of node.listeners.get(type) || []) if (!entry.capture) entry.fn(event);
+    }
+    return event;
+  }
+  return { calls, canvas, proxy, dispatch, Target };
+}
+
+for (const route of ['beforeinput', 'input']) {
+  for (const [text, units, proxyCalls] of [
+    ['\u{1f600}', [0xd83d, 0xde00], [['char', 0xd83d], ['char', 0xde00]]],
+    ['A\u{1f600}\u{1f642}é', [0x41, 0xd83d, 0xde00, 0xd83d, 0xde42, 0xe9],
+      [['down', 0x41], ['char', 0x41], ['up', 0x41], ['char', 0xd83d],
+        ['char', 0xde00], ['char', 0xd83d], ['char', 0xde42], ['char', 0xe9]]],
+    ['Ab7,é', [0x41, 0x62, 0x37, 0x2c, 0xe9],
+      [['down', 0x41], ['char', 0x41], ['up', 0x41],
+        ['down', 0x42], ['char', 0x62], ['up', 0x42],
+        ['down', 0x37], ['char', 0x37], ['up', 0x37], ['char', 0x2c], ['char', 0xe9]]],
+    ['', [], []],
+    ['\ud800x\udc00', [0xd800, 0x78, 0xdc00],
+      [['char', 0xd800], ['down', 0x58], ['char', 0x78], ['up', 0x58], ['char', 0xdc00]]],
+  ]) {
+    const f = textInputFixture();
+    f.proxy.focus();
+    f.proxy.value = text;
+    const e = f.dispatch(route === 'input' ? f.proxy : f.canvas, route, { data: text });
+    assert.deepStrictEqual(f.calls, route === 'input' ? proxyCalls : units.map(c => ['char', c]),
+      `${route} preserves exact UTF-16 units and existing BMP key pairs`);
+    assert.strictEqual(f.proxy.value, '', `${route} clears the proxy`);
+    assert.strictEqual(e.defaultPrevented, route === 'beforeinput' && !!text);
+  }
+}
+
+for (const trigger of ['keydown', 'composition']) {
+  const f = textInputFixture();
+  f.proxy.focus();
+  if (trigger === 'keydown') {
+    assert.strictEqual(f.dispatch(f.proxy, 'keydown',
+      { key: 'a', code: 'KeyA', keyCode: 65 }).defaultPrevented, true);
+  } else {
+    f.dispatch(f.proxy, 'compositionstart');
+    f.dispatch(f.proxy, 'compositionend', { data: '\u{1f600}' });
+  }
+  const expected = trigger === 'keydown'
+    ? [['down', 65], ['char', 97]]
+    : [['compositionstart'], ['compositionend', '\u{1f600}']];
+  f.proxy.value = '\u{1f600}';
+  assert.strictEqual(f.dispatch(f.proxy, 'beforeinput', { data: '\u{1f600}' }).defaultPrevented, true);
+  assert.strictEqual(f.proxy.value, '');
+  f.proxy.value = '\u{1f600}';
+  f.dispatch(f.proxy, 'input');
+  assert.strictEqual(f.proxy.value, '');
+  assert.deepStrictEqual(f.calls, expected, `${trigger} suppresses both duplicate text events`);
+  // The counter must expire: a subsequent admitted event still sends both units.
+  f.dispatch(f.canvas, 'beforeinput', { data: '\u{1f600}' });
+  assert.deepStrictEqual(f.calls, [...expected, ['char', 0xd83d], ['char', 0xde00]]);
+}
+
+{
+  const f = textInputFixture();
+  const pageInput = new f.Target('INPUT');
+  const e = f.dispatch(pageInput, 'beforeinput', { data: '\u{1f600}' });
+  assert.deepStrictEqual(f.calls, [], 'ordinary page inputs retain their text');
+  assert.strictEqual(e.defaultPrevented, false);
+}
+
+console.log('PASS  on-screen keyboard geometry and browser UTF-16 text event routes');
