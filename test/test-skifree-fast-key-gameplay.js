@@ -183,39 +183,44 @@ const renderer = {
   handleKeyPress: (code) => events.push(['char', code]),
 };
 
-TouchControls.install({ document: global.document, renderer });
-TouchControls.setLayout(ski.touchControls);
+try {
+  TouchControls.install({ document: global.document, renderer });
+  TouchControls.setLayout(ski.touchControls);
 
-const flat = [];
-(function walk(node) { for (const c of node.children) { flat.push(c); walk(c); } })(TouchControls.el);
-const buttons = flat.filter(el => el.className === 'tc-btn');
-const byLabel = (label) => {
-  const el = buttons.find(b => b.textContent === label);
-  assert.ok(el, `the ski32 overlay renders a "${label}" button`);
-  return el;
-};
+  const flat = [];
+  (function walk(node) { for (const c of node.children) { flat.push(c); walk(c); } })(TouchControls.el);
+  const buttons = flat.filter(el => el.className === 'tc-btn');
+  const byLabel = (label) => {
+    const el = buttons.find(b => b.textContent === label);
+    assert.ok(el, `the ski32 overlay renders a "${label}" button`);
+    return el;
+  };
 
-const fastBtn = byLabel('Fast');
-events.length = 0;
-fastBtn.dispatch('touchstart', touchEvent([touch(1)]));
-fastBtn.dispatch('touchend', touchEvent([touch(1)]));
-assert.deepStrictEqual(events, [['down', FAST_VK], ['char', FAST_CHAR]],
-  'the release waits out the minimum key hold');
-TouchControls.releaseAll();   // delivers the deferred release now
-assert.deepStrictEqual(events, [['down', FAST_VK], ['char', FAST_CHAR], ['up', FAST_VK]],
-  'tapping Fast sends the WM_CHAR the game reads, not only the virtual key ' +
-  'it discards — and sends it exactly once per tap');
+  const fastBtn = byLabel('Fast');
+  events.length = 0;
+  fastBtn.dispatch('touchstart', touchEvent([touch(1)]));
+  fastBtn.dispatch('touchend', touchEvent([touch(1)]));
+  assert.deepStrictEqual(events, [['down', FAST_VK], ['char', FAST_CHAR]],
+    'the release waits out the minimum key hold');
+  TouchControls.releaseAll();   // delivers the deferred release now
+  assert.deepStrictEqual(events, [['down', FAST_VK], ['char', FAST_CHAR], ['up', FAST_VK]],
+    'tapping Fast sends the WM_CHAR the game reads, not only the virtual key ' +
+    'it discards — and sends it exactly once per tap');
 
-const newGameBtn = byLabel('New game');
-events.length = 0;
-newGameBtn.dispatch('touchstart', touchEvent([touch(2)]));
-newGameBtn.dispatch('touchend', touchEvent([touch(2)]));
-assert.ok(events.some(e => e[0] === 'down' && e[1] === 0x71),
-  'New game still presses F2');
-assert.ok(!events.some(e => e[0] === 'char'),
-  'New game sends no character — F2 is a virtual key in this binary');
+  const newGameBtn = byLabel('New game');
+  events.length = 0;
+  newGameBtn.dispatch('touchstart', touchEvent([touch(2)]));
+  newGameBtn.dispatch('touchend', touchEvent([touch(2)]));
+  assert.ok(events.some(e => e[0] === 'down' && e[1] === 0x71),
+    'New game still presses F2');
+  assert.ok(!events.some(e => e[0] === 'char'),
+    'New game sends no character — F2 is a virtual key in this binary');
 
-console.log('ok  overlay: the registry\'s Fast pill emits char 0x66 once per tap');
+  console.log('ok  overlay: the registry\'s Fast pill emits char 0x66 once per tap');
+} finally {
+  // The overlay owns a layout polling timer, listeners, and deferred keyups.
+  TouchControls.destroy();
+}
 
 // --- 3. the running guest -------------------------------------------------
 
