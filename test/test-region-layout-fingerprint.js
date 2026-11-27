@@ -23,11 +23,120 @@ const { execFileSync } = require('child_process');
 
 const ROOT = path.join(__dirname, '..');
 const H = require('../tools/region-layout-hash.js');
-const { layout } = require('../tools/region-layout.js');
 const RegionMap = require('../lib/region-map.generated.js');
 
 let checks = 0;
 const check = (cond, what) => { assert.ok(cond, what); checks++; };
+
+// Byte-only CLI preflight fixtures are independent of the compiler, built
+// artifacts and guest binaries. The preload makes accidental engine/compiler
+// use or process launches in the CLI fail, including on successful checks.
+const fixtureDir = fs.mkdtempSync(path.join(require('os').tmpdir(), 'region-preflight-'));
+try {
+  const write = (name, bytes) => {
+    const file = path.join(fixtureDir, name);
+    fs.writeFileSync(file, bytes);
+    return file;
+  };
+  const preload = write('no-engine.cjs', `
+    const fail = () => { throw new Error('forbidden engine/compiler/app launch'); };
+    for (const key of ['Module', 'Instance', 'compile', 'instantiate', 'validate', 'compileStreaming', 'instantiateStreaming']) WebAssembly[key] = fail;
+    for (const key of ['spawn', 'spawnSync', 'exec', 'execSync', 'execFile', 'execFileSync', 'fork']) require('child_process')[key] = fail;
+    const Module = require('module'), load = Module._load;
+    Module._load = function (id, ...args) {
+      if (/region-layout\\.js|compile-wat|build-compile|test[\\/]run\\.js/.test(id)) fail();
+      return load.call(this, id, ...args);
+    };
+  `);
+  const header = Buffer.from([0, 97, 115, 109, 1, 0, 0, 0]);
+  const hash = '0123456789abcdef', otherHash = 'fedcba9876543210';
+  const stamped = write('stamped.wasm', H.appendSection(header, hash));
+  const unstamped = write('unstamped.wasm', header);
+  const matchingMirror = write('matching.cjs', `module.exports = { LAYOUT_HASH: '${hash}' };`);
+  const otherMirror = write('other.cjs', `module.exports = { LAYOUT_HASH: '${otherHash}' };`);
+  const cli = (args, envMirror) => {
+    let status = 0, output;
+    const env = { ...process.env };
+    delete env.WINE_REGION_MAP;
+    if (envMirror) env.WINE_REGION_MAP = envMirror;
+    try {
+      output = execFileSync(process.execPath, ['--require', preload,
+        path.join(ROOT, 'tools/region-layout-hash.js'), ...args],
+      { cwd: fixtureDir, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    } catch (err) {
+      status = err.status;
+      output = `${err.stdout || ''}${err.stderr || ''}`;
+    }
+    check(!/forbidden engine/.test(output), 'preflight does not compile/instantiate/launch');
+    return { status, output };
+  };
+  const args = ['--check', `--wasm=${stamped}`];
+  let result = cli([...args, `--mirror=${matchingMirror}`]);
+  check(result.status === 0 && /layout MATCH/.test(result.output), 'explicit matching mirror succeeds');
+  result = cli(args, matchingMirror);
+  check(result.status === 0 && result.output.includes(matchingMirror), 'environment selects actual mirror');
+  result = cli([...args, `--mirror=${matchingMirror}`], otherMirror);
+  check(result.status === 0, 'explicit mirror overrides environment');
+  result = cli(args, otherMirror);
+  check(result.status === 1 && /MISMATCH/.test(result.output) &&
+    result.output.includes(hash) && result.output.includes(otherHash) &&
+    result.output.includes(stamped) && result.output.includes(otherMirror), 'mismatch names both files and hashes');
+  const canonicalFixture = write('canonical.wasm', H.appendSection(header, RegionMap.LAYOUT_HASH));
+  result = cli(['--check', `--wasm=${canonicalFixture}`]);
+  check(result.status === 0 && result.output.includes(path.join(ROOT, 'lib/region-map.generated.js')),
+    'no override selects repository mirror even from another working directory');
+  result = cli(['--check', `--wasm=${unstamped}`, `--mirror=${matchingMirror}`]);
+  check(result.status === 1 && /UNKNOWN/.test(result.output) && /UNSTAMPED/.test(result.output),
+    'unstamped means unknown, never a compatibility pass');
+  const unrelated = Buffer.concat([Buffer.from([0, 0x83, 1, 1, 120]), Buffer.alloc(129)]);
+  const middle = write('middle.wasm', Buffer.concat([header, unrelated, H.encodeSection(hash), unrelated]));
+  result = cli(['--check', `--wasm=${middle}`, `--mirror=${matchingMirror}`]);
+  check(result.status === 0, 'walks multibyte lengths and finds stamp between unrelated sections');
+  result = cli([`--wasm=${stamped}`]);
+  check(result.status === 0 && result.output.trim() === hash, 'legacy stamp reporting is unchanged');
+  result = cli([`--wasm=${unstamped}`]);
+  check(result.status === 1 && /carries no/.test(result.output), 'legacy unstamped reporting is unchanged');
+
+  const badFixtures = [
+    Buffer.alloc(0), Buffer.from('not wasm'),
+    Buffer.from([0, 97, 115, 109, 2, 0, 0, 0]),
+    Buffer.concat([header, Buffer.from([0, 0x80])]),
+    Buffer.concat([header, Buffer.from([0, 0xff, 0xff, 0xff, 0xff, 0x10])]),
+    Buffer.concat([header, Buffer.from([0, 0x80, 0x80, 0x80, 0x80, 0x80, 0])]),
+    Buffer.concat([header, Buffer.from([0, 5, 0])]),
+    Buffer.concat([header, Buffer.from([0, 1, 5])]),
+    Buffer.concat([header, Buffer.from([0, 0])]),
+    Buffer.concat([header, Buffer.from([0, 2, 1, 0xff])]),
+    Buffer.concat([header, Buffer.from([255, 0])]),
+    H.appendSection(header, ''), H.appendSection(header, 'bad'),
+    Buffer.concat([header, H.encodeSection(hash), H.encodeSection(hash)]),
+    Buffer.concat([header, H.encodeSection(hash), Buffer.from([0, 0x80])]),
+  ];
+  for (const [i, bytes] of badFixtures.entries()) {
+    result = cli(['--check', `--wasm=${write(`bad-${i}.wasm`, bytes)}`, `--mirror=${matchingMirror}`]);
+    check(result.status === 2 && !/layout MATCH/.test(result.output), `malformed fixture ${i} is invalid input`);
+  }
+  const invalidMirror = write('invalid.cjs', 'module.exports = {};');
+  for (const badArgs of [
+    ['--check'], ['--check', '--wasm'], ['--check', '--wasm='],
+    [...args, '--lines'], [...args, '--shake'], [...args, '--check'],
+    [...args, '--unknown'], [...args, '--check=false'],
+    [...args, '--mirror='], [`--mirror=${matchingMirror}`],
+    [...args, `--mirror=${invalidMirror}`], [...args, '--mirror=missing.cjs'],
+    ['--check', '--wasm=missing.wasm', `--mirror=${matchingMirror}`],
+  ]) {
+    result = cli(badArgs);
+    check(result.status === 2, `invalid invocation is rejected: ${badArgs.join(' ')}`);
+  }
+} finally {
+  fs.rmSync(fixtureDir, { recursive: true, force: true });
+}
+
+if (process.argv.includes('--preflight-only')) {
+  console.log(`PASS byte-only region layout preflight (${checks} checks)`);
+  process.exit(0);
+}
+const { layout } = require('../tools/region-layout.js');
 
 // 1. The hash is a function of the PLACEMENT and nothing else: same regions in
 //    a different order hash the same, one region moved hashes differently.

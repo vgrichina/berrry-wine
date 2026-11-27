@@ -28,6 +28,11 @@
 //   node tools/region-layout-hash.js --shake=gap      # a shaken one's
 //   node tools/region-layout-hash.js --wasm=FILE      # what an artifact carries
 //   node tools/region-layout-hash.js --lines          # the hashed text itself
+//   node tools/region-layout-hash.js --check --wasm=FILE [--mirror=FILE]
+//     Compare bytes with the selected host mirror (default: WINE_REGION_MAP,
+//     then lib/region-map.generated.js). No compiler, WASM engine or app runs.
+//     Exit 0: stamps match; 1: mismatch or unstamped (compatibility unknown);
+//     2: invalid input. This checks layout identity, not full WASM validity.
 'use strict';
 
 const crypto = require('crypto');
@@ -158,7 +163,56 @@ function readSection(wasmBytes) {
 
 // ---------------------------------------------------------------------------
 
+// Preflight is stricter than the legacy reporting reader: a truncated file,
+// duplicate stamp or malformed hash must never look like a compatible pair.
+// Only section framing is inspected; code and other payloads remain opaque.
+function preflightStamp(bytes) {
+  if (bytes.length < 8 || !bytes.subarray(0, 8).equals(Buffer.from([0, 97, 115, 109, 1, 0, 0, 0]))) {
+    throw new Error('invalid WASM magic/version');
+  }
+  let p = 8, stamp = null;
+  const length = (limit) => {
+    let value = 0;
+    for (let i = 0; i < 5; i++) {
+      if (p >= limit) throw new Error('truncated WASM length');
+      const b = bytes[p++];
+      if (i === 4 && (b & 0xf0)) throw new Error('invalid WASM u32 length');
+      value += (b & 0x7f) * 2 ** (7 * i);
+      if (!(b & 0x80)) return value;
+    }
+    throw new Error('invalid WASM length');
+  };
+  while (p < bytes.length) {
+    const id = bytes[p++];
+    if (id > 13) throw new Error(`invalid WASM section id ${id}`);
+    const size = length(bytes.length), end = p + size;
+    if (end > bytes.length) throw new Error('truncated WASM section');
+    if (id === 0) {
+      const nameSize = length(end), nameEnd = p + nameSize;
+      if (nameEnd > end) throw new Error('truncated WASM custom section name');
+      const name = new TextDecoder('utf-8', { fatal: true }).decode(bytes.subarray(p, nameEnd));
+      if (name === SECTION_NAME) {
+        if (stamp !== null) throw new Error(`duplicate '${SECTION_NAME}' section`);
+        stamp = bytes.toString('utf8', nameEnd, end);
+        if (!/^[0-9a-f]{16}$/.test(stamp)) throw new Error(`invalid '${SECTION_NAME}' fingerprint`);
+      }
+    }
+    p = end;
+  }
+  return stamp;
+}
+
 function main() {
+  const args = process.argv.slice(2);
+  const seen = new Set();
+  for (const a of args) {
+    const match = /^--(wasm|shake|lines|check|mirror)(?:=(.*))?$/.exec(a);
+    if (!match || seen.has(match[1])) throw new Error(`invalid or duplicate argument: ${a}`);
+    seen.add(match[1]);
+    if (['wasm', 'mirror'].includes(match[1]) && !match[2]) throw new Error(`${a}: requires a file path`);
+    if (['check', 'lines'].includes(match[1]) && match[2] !== undefined) throw new Error(`${a}: takes no value`);
+    if (match[1] === 'shake' && match[2] === '') throw new Error(`${a}: requires a shake mode`);
+  }
   const arg = (n) => {
     const hit = process.argv.find(a => a === `--${n}` || a.startsWith(`--${n}=`));
     if (!hit) return null;
@@ -166,6 +220,32 @@ function main() {
     return eq < 0 ? true : hit.slice(eq + 1);
   };
   const wasm = arg('wasm');
+  if (arg('mirror') && !arg('check')) throw new Error('--mirror requires --check');
+  if (arg('check')) {
+    if (!wasm || arg('lines') || arg('shake')) throw new Error('--check requires --wasm=FILE and cannot use --lines or --shake');
+    const path = require('path');
+    const mirror = path.resolve(arg('mirror') || process.env.WINE_REGION_MAP ||
+      path.join(__dirname, '../lib/region-map.generated.js'));
+    // Use the host's own mirror selection, including its override mechanism.
+    // Explicit --mirror wins over the environment for this CLI invocation.
+    process.env.WINE_REGION_MAP = mirror;
+    const selected = require('../lib/region-map.generated.js');
+    if (!selected || typeof selected.LAYOUT_HASH !== 'string' ||
+        !/^[0-9a-f]{16}$/.test(selected.LAYOUT_HASH)) throw new Error(`invalid mirror LAYOUT_HASH: ${mirror}`);
+    const found = preflightStamp(require('fs').readFileSync(wasm));
+    console.log(`wasm   ${path.resolve(wasm)}: ${found === null ? 'UNSTAMPED' : found}`);
+    console.log(`mirror ${mirror}: ${selected.LAYOUT_HASH}`);
+    if (found === null) {
+      console.error(`region-layout-hash: compatibility UNKNOWN: no '${SECTION_NAME}' stamp; preflight cannot certify this pair`);
+      return 1;
+    }
+    if (found !== selected.LAYOUT_HASH) {
+      console.error('region-layout-hash: region layout MISMATCH');
+      return 1;
+    }
+    console.log('region-layout-hash: region layout MATCH (stamp compatibility only)');
+    return 0;
+  }
   if (wasm) {
     const found = readSection(require('fs').readFileSync(wasm));
     if (!found) {
