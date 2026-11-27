@@ -42491,5 +42491,23 @@
       }
     ],
     "ret": "BOOL"
+  },
+  {
+    "id": 5003,
+    "name": "ExcludeUpdateRgn",
+    "convention": "stdcall",
+    "hash": 3927824383,
+    "ret": "int",
+    "nargs": 2,
+    "args": [
+      {
+        "name": "hdc",
+        "type": "HDC"
+      },
+      {
+        "name": "hwnd",
+        "type": "HWND"
+      }
+    ]
   }
 ]

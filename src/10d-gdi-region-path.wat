@@ -4379,6 +4379,74 @@
   (global $gdi_object_miss (mut i32) (i32.const 0))
   (global $gdi_object_miss2 (mut i32) (i32.const 0))
   (global $gdi_object_miss_gen (mut i32) (i32.const -1))
+  ;; ExcludeUpdateRgn operates on pending client damage in device units, not
+  ;; logical drawing coordinates. For a client display DC of this HWND the
+  ;; exact USER bands already have the clip's origin, even for positioned
+  ;; children or a changed mapping. A window-origin DC needs only the physical
+  ;; client-to-window offset, as do existing GetDCEx parent clips. Do not apply
+  ;; the logical mapping to those bands. Other HWND associations are unsupported.
+  ;;
+  ;; Prepare a complete replacement before touching application state. USER's
+  ;; visible/GetDCEx clip, pending damage, erase debt and paint flags are never
+  ;; written. The ordinary app clip owns the result (SaveDC/reset/release).
+  (func $gdi_exclude_update_rgn (param $hdc i32) (param $hwnd i32) (result i32)
+    (local $slot i32) (local $dc i32) (local $entry i32) (local $old i32)
+    (local $copy i32) (local $record i32) (local $count i32) (local $result i32)
+    (local $damage i32) (local $bands i32) (local $n i32) (local $dx i32) (local $dy i32)
+    (local.set $slot (call $wnd_table_find (local.get $hwnd)))
+    (if (i32.lt_s (local.get $slot) (i32.const 0))
+      (then (global.set $last_error (i32.const 1400)) (return (i32.const 0))))
+    (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
+    (if (i32.eqz (local.get $dc))
+      (then (global.set $last_error (i32.const 6)) (return (i32.const 0))))
+    (if (i32.ne (i32.and (load.field.memarg GdiDcState window_binding (local.get $dc))
+          (i32.const 0x7FFFFFFF)) (local.get $hwnd))
+      (then (global.set $last_error (i32.const 50)) (return (i32.const 0))))
+    (local.set $entry (call $gdi_dc_clip_entry (local.get $hdc) (i32.const 0)))
+    (if (local.get $entry) (then (local.set $old (i32.load offset=4 (local.get $entry)))))
+    (block $fail
+      (local.set $bands (i32.add (call $update_rect_addr_for_slot (local.get $slot)) (i32.const 16)))
+      (local.set $n (i32.load8_u (call $update_flag_addr_for_slot (local.get $slot))))
+      (if (i32.lt_s (load.field.memarg GdiDcState window_binding (local.get $dc)) (i32.const 0))
+        (then
+          (local.set $dx (i32.sub (call $wnd_client_screen_x (local.get $hwnd)) (call $wnd_window_screen_x (local.get $hwnd))))
+          (local.set $dy (i32.sub (call $wnd_client_screen_y (local.get $hwnd)) (call $wnd_window_screen_y (local.get $hwnd))))
+          (if (i32.or (local.get $dx) (local.get $dy))
+            (then
+              (local.set $damage (call $gdi_rgn_alloc_rect (i32.const 0) (i32.const 0) (i32.const 0) (i32.const 0)))
+              (br_if $fail (i32.eqz (local.get $damage)))
+              (br_if $fail (i32.eqz (call $update_copy_rgn (local.get $hwnd) (local.get $damage))))
+              (br_if $fail (i32.eqz (call $gdi_rgn_offset (local.get $damage) (local.get $dx) (local.get $dy))))
+              (local.set $bands (call $gdi_rgn_bands (call $gdi_rgn_record (local.get $damage))))))))
+      (local.set $copy (call $gdi_dc_clip_default_region (local.get $hdc)))
+      (br_if $fail (i32.eqz (local.get $copy)))
+      (if (local.get $old)
+        (then (br_if $fail (i32.eqz (call $gdi_rgn_combine
+          (local.get $copy) (local.get $old) (i32.const 0) (i32.const 5))))))
+      (local.set $record (call $gdi_rgn_record (local.get $copy)))
+      (local.set $count (call $gdi_rgn_boolean_sweep
+        (call $gdi_rgn_bands (local.get $record)) (i32.load offset=28 (local.get $record))
+        (local.get $bands) (local.get $n) (i32.const 4)))
+      (br_if $fail (i32.lt_s (local.get $count) (i32.const 0)))
+      (local.set $result (call $gdi_rgn_set_buffer
+        (local.get $record) (global.get $GDI_REGION_WORK) (local.get $count)))
+      (br_if $fail (i32.eqz (local.get $result)))
+      (local.set $entry (call $gdi_dc_clip_entry (local.get $hdc) (i32.const 1)))
+      (br_if $fail (i32.eqz (local.get $entry)))
+      (i32.store offset=4 (local.get $entry) (local.get $copy))
+      (if (local.get $old) (then (drop (call $gdi_rgn_delete (local.get $old)))))
+      (if (local.get $damage) (then (drop (call $gdi_rgn_delete (local.get $damage)))))
+      (return (local.get $result)))
+    (if (local.get $copy) (then (drop (call $gdi_rgn_delete (local.get $copy)))))
+    (if (local.get $damage) (then (drop (call $gdi_rgn_delete (local.get $damage)))))
+    (global.set $last_error (i32.const 8))
+    (i32.const 0))
+
+  (func $handle_ExcludeUpdateRgn (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
+    (i32.store offset=0 (global.get $reg_base)
+      (call $gdi_exclude_update_rgn (local.get $arg0) (local.get $arg1)))
+    (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 12))))
+
   (func $gdi_object_record (param $handle i32) (result i32)
     (local $i i32) (local $p i32)
     (if (i32.eqz (local.get $handle)) (then (return (i32.const 0))))
