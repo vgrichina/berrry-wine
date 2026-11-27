@@ -10,6 +10,213 @@ const { compileSrcWasm } = require('./compile-src');
 // $DIB_BACKING_BASE, from the map declared in src/00-regions.wat.
 const RegionMap = require('../lib/region-map.generated.js');
 
+// Resolve GDI32 entrypoints and enter the public stdcall dispatcher. The only
+// pixel oracle below is a solid, null-pen axis-aligned rectangle, COPY mode.
+const polygonMappingWat = `
+  (func (export "polygon_init")
+    (global.set $thunk_guest_base (i32.add (global.get $image_base)
+      (i32.sub (global.get $THUNK_BASE) (global.get $GUEST_BASE))))
+    (call $update_thunk_end))
+  (func (export "polygon_regs") (result i32) (global.get $reg_base))
+  (func (export "polygon_module") (param i32) (result i32)
+    (call $handle_GetModuleHandleA (local.get 0) (i32.const 0) (i32.const 0)
+      (i32.const 0) (i32.const 0) (i32.const 0)) (i32.load (global.get $reg_base)))
+  (func (export "polygon_resolve") (param i32 i32) (result i32)
+    (call $handle_GetProcAddress (local.get 0) (local.get 1) (i32.const 0)
+      (i32.const 0) (i32.const 0) (i32.const 0)) (i32.load (global.get $reg_base)))
+  (func (export "polygon_dispatch") (param i32)
+    (global.set $eip (i32.const 0x456789ab))
+    (call $win32_dispatch (i32.shr_u (i32.sub (local.get 0)
+      (global.get $thunk_guest_base)) (i32.const 3))))
+  (func (export "polygon_lease") (param i32) (result i32)
+    (call $guest_span_in (local.get 0) (i32.const 16380)))
+  (func (export "polygon_release") (param i32)
+    (call $guest_span_release (local.get 0) (i32.const 16380)))
+  (func (export "polygon_protect") (param i32 i32 i32 i32) (result i32)
+    (call $handle_VirtualProtect (local.get 0) (local.get 1) (local.get 2)
+      (local.get 3) (i32.const 0) (i32.const 0))
+    (i32.load (global.get $reg_base)))
+`;
+
+async function polygonGuestMapping(options = {}) {
+  const { bootRenderHarness } = require('./render-helper');
+  const apiTable = require('../src/api_table.json');
+  const h = await bootRenderHarness({ extraWat: polygonMappingWat, fonts: 'none', width: 16, height: 12 });
+  const { exports: e, memory } = h;
+  e.init_thread(1, 0x400000, 0, 0, 0, 0, 0);
+  e.heap_init(0x800000);
+  e.polygon_init();
+  e.set_api_log(0);
+  const mem = new Uint8Array(memory.buffer), dv = new DataView(memory.buffer);
+  const wa = p => e.guest_to_wasm(p) >>> 0;
+  const alloc = n => { const p = e.guest_alloc(n) >>> 0; assert(p); return p; };
+  const put = (p, b) => b.forEach((v, i) => e.guest_write8((p + i) >>> 0, v));
+  const string = s => { const b = Buffer.from(s + '\0'), p = alloc(b.length); put(p, b); return p; };
+  const frame = alloc(256), stack = frame + 64, regs = e.polygon_regs() >>> 0;
+  const entries = new Map();
+  for (const [dll, names] of [
+    ['GDI32.DLL', ['Polygon', 'BeginPath', 'EndPath', 'FillPath', 'GetPath', 'AbortPath', 'SelectObject', 'CreateSolidBrush', 'DeleteObject']],
+    ['USER32.DLL', ['GetDC', 'ReleaseDC']],
+  ]) {
+    dv.setUint32(regs + 16, stack, true);
+    const module = e.polygon_module(string(dll)) >>> 0;
+    assert(module);
+    for (const name of names) {
+      dv.setUint32(regs + 16, stack, true);
+      const thunk = e.polygon_resolve(module, string(name)) >>> 0;
+      const row = apiTable.find(r => r.name === name);
+      assert(thunk && row, name);
+      assert.strictEqual(row.convention, 'stdcall');
+      assert.strictEqual(e.guest_read32(thunk + 4), row.id);
+      entries.set(name, { thunk, nargs: row.nargs });
+    }
+  }
+  let calls = 0, rows = 0;
+  const failures = [];
+  function call(name, args) {
+    const { thunk, nargs } = entries.get(name);
+    assert.strictEqual(args.length, nargs);
+    mem.fill(0x6d, wa(frame), wa(frame) + 256);
+    e.guest_write32(stack, 0x12345678);
+    args.forEach((v, i) => e.guest_write32(stack + 4 + i * 4, v));
+    const before = mem.slice(wa(frame), wa(frame) + 256);
+    const seed = [0x81234567, 0x12345678, 0x23456789, 0x3456789a, stack, 0x456789ab, 0x56789abc, 0x6789abcd];
+    seed.forEach((v, i) => dv.setUint32(regs + i * 4, v, true));
+    e.polygon_dispatch(thunk);
+    calls++;
+    assert.strictEqual(e.get_esp() >>> 0, stack + 4 + nargs * 4, name + ' ESP');
+    assert.strictEqual(e.get_eip() >>> 0, 0x456789ab, name + ' EIP');
+    for (const i of [1, 2, 3, 5, 6, 7]) assert.strictEqual(dv.getUint32(regs + i * 4, true), seed[i], name + ' preserved register');
+    assert.deepStrictEqual(mem.slice(wa(frame), wa(frame) + 256), before, name + ' entire stack');
+    return e.get_eax() >>> 0;
+  }
+  const hwnd = 0x10001;
+  h.renderer.createWindow(hwnd, 0x10000000, 0, 0, 16, 12, 'Polygon guest mapping', 0);
+  e.wnd_table_set(hwnd, 0); e.ctrl_set_geom(hwnd, 0, 0, 16, 12);
+  e.wnd_set_style_export(hwnd, 0x10000000); e.test_gdi_client_rect_set(hwnd, 0, 0, 16, 12);
+  const dc = call('GetDC', [hwnd]); assert(dc);
+  const brush = call('CreateSolidBrush', [0x0000ff00]); assert(brush);
+  call('SelectObject', [dc, 0x30018]); // NULL_PEN
+  call('SelectObject', [dc, brush]);
+  const record = e.test_gdi_window_surface_record(hwnd) >>> 0;
+  const bits = dv.getUint32(record + 16, true), stride = dv.getUint32(record + 20, true);
+  assert(bits && stride); assert.strictEqual(dv.getUint32(record + 24, true), 32);
+  const surface = Buffer.from(memory.buffer, bits, stride * 12);
+  const direct = alloc(8192), adjacent = 0x31000000, split = 0x30000000;
+  const decoys = [0x28000000, 0x29000000];
+  for (const p of [split, ...decoys, split + 4096]) assert.strictEqual(e.test_virtual_map_commit(p, 4096) >>> 0, p);
+  assert.strictEqual(e.test_virtual_map_commit(adjacent, 8192) >>> 0, adjacent);
+  assert.strictEqual(wa(decoys[0]), wa(split) + 4096);
+  assert.notStrictEqual(wa(split + 4096), wa(split) + 4096);
+  assert.strictEqual(wa(adjacent + 4096), wa(adjacent) + 4096);
+  const backing = [[wa(direct), 8192], [wa(adjacent), 8192], [wa(split), 4096],
+    [wa(split + 4096), 4096], ...decoys.map(p => [wa(p), 4096]), [wa(0), 128]]
+    .map(([p, n]) => Buffer.from(memory.buffer, p, n));
+  const rectangle = Buffer.alloc(32);
+  [2, 2, 10, 2, 10, 8, 2, 8].forEach((v, i) => rectangle.writeInt32LE(v, i * 4));
+  const expected = Buffer.alloc(surface.length, 0x33);
+  for (let y = 2; y < 8; y++) for (let x = 2; x < 10; x++) {
+    const p = y * stride + x * 4;
+    expected[p] = 0; expected[p + 1] = 255; expected[p + 2] = 0; expected[p + 3] = 0;
+  }
+  const oldProtection = alloc(4);
+  const pathPoints = alloc(32768), pathTypes = alloc(4096);
+  function protect(p, n, mode) {
+    // Fragmented pages are separate reservations; protect each reservation.
+    for (let page = p & ~4095; page < p + n; page += 4096)
+      assert.strictEqual(e.polygon_protect(page, 4096, mode, oldProtection), 1);
+  }
+  function query(p, pathMode, label, count = 4, wanted = 1, pixels = expected,
+    input = count === 4 ? rectangle : null, readOnly = false, pathOnly = false) {
+    rows++;
+    backing.forEach((b, i) => b.fill(i === 6 ? 0 : 0x91 + i));
+    if (p && input) put(p, input);
+    if (readOnly) protect(p, input.length, 2); // PAGE_READONLY
+    const before = backing.map(b => Buffer.from(b));
+    surface.fill(0x33);
+    if (pathMode) assert.strictEqual(call('BeginPath', [dc]), 1);
+    const result = call('Polygon', [dc, p, count]);
+    if (result !== wanted) failures.push({ label, kind: 'BOOL', result, wanted });
+    if (pathMode) {
+      assert(surface.every(v => v === 0x33), 'path recording must defer drawing');
+      assert.strictEqual(call('EndPath', [dc]), 1);
+      if (wanted && pathOnly) {
+        assert.strictEqual(call('GetPath', [dc, pathPoints, pathTypes, count]), count);
+        assert.deepStrictEqual(Buffer.from(mem.slice(wa(pathPoints), wa(pathPoints) + input.length)), input);
+        const types = Buffer.alloc(count, 2); types[0] = 6; types[count - 1] |= 1;
+        assert.deepStrictEqual(Buffer.from(mem.slice(wa(pathTypes), wa(pathTypes) + count)), types);
+        assert.strictEqual(call('AbortPath', [dc]), 1);
+      } else if (wanted) {
+        const filled = call('FillPath', [dc]);
+        if (filled !== 1) failures.push({ label, kind: 'FillPath BOOL', result: filled, wanted: 1 });
+      }
+      else assert.strictEqual(call('AbortPath', [dc]), 1);
+    }
+    if (!surface.equals(pixels)) failures.push({ label, kind: 'pixels', actual: surface.toString('hex') });
+    backing.forEach((b, i) => assert.deepStrictEqual(b, before[i], label + ' entire input/decoy backing ' + i));
+    if (readOnly) protect(p, input.length, 4);
+    assert.strictEqual(e.guest_span_cursor_bytes(), 0);
+    assert.strictEqual(e.guest_span_overflow_count(), 0);
+  }
+  // Every byte cut includes LONG fields split after bytes 1, 2 and 3;
+  // direct and adjacent sparse pages are independent affine controls.
+  for (const pathMode of [false, true]) for (const cut of [32, ...Array.from({ length: 31 }, (_, i) => i + 1)]) {
+    for (const [label, p] of [['direct', direct], ['adjacent', adjacent], ['split', split]])
+      query(p + 4096 - cut, pathMode, `${label}/cut${cut}/path${pathMode}`);
+  }
+  for (const pathMode of [false, true]) for (const p of [adjacent, split])
+    query(p + 4093, pathMode, `read-only/${p}/path${pathMode}`, 4, 1, expected, rectangle, true);
+  if (options.capture) options.capture(h.renderer.getWindowCanvas(hwnd).canvas.toBuffer('image/png'));
+  const unchanged = Buffer.alloc(surface.length, 0x33);
+  for (const pathMode of [false, true]) for (const count of [0, 1, -1, 2 ** 29, 0x40000000])
+    query(split + 4093, pathMode, `invalid count ${count}/path${pathMode}`, count, 0, unchanged);
+  // Null and wrapping arrays must not be turned into backing-store pointers.
+  for (const pathMode of [false, true]) {
+    query(0, pathMode, 'null empty', 0, 0, unchanged);
+    query(0, pathMode, 'null points', 4, 0, unchanged);
+    query(0xfffffff0, pathMode, 'address wrap', 4, 0, unchanged, null);
+    query(split + 4093, pathMode, 'consumer count bound', pathMode ? 4097 : 209, 0, unchanged);
+  }
+  // A valid path may exceed the 16KB arena. Observe its complete POINT/type
+  // output through GetPath, independently of the fill engine's count limit.
+  const large = 0x33000000, largeDecoy = 0x34000000;
+  for (let i = 0; i < 6; i++) {
+    assert.strictEqual(e.test_virtual_map_commit(large + i * 4096, 4096) >>> 0, large + i * 4096);
+    assert.strictEqual(e.test_virtual_map_commit(largeDecoy + i * 4096, 4096) >>> 0, largeDecoy + i * 4096);
+    backing.push(Buffer.from(memory.buffer, wa(large + i * 4096), 4096));
+    backing.push(Buffer.from(memory.buffer, wa(largeDecoy + i * 4096), 4096));
+  }
+  const many = Buffer.concat(Array.from({ length: 513 }, () => rectangle));
+  for (let i = 0; i < 3; i++) {
+    const net = e.heap_stat(0) - e.heap_stat(1);
+    query(large + 4093, true, 'large path ' + i, 2052, 1, unchanged, many, true, true);
+    // Path storage persists after consumption; after the first call its
+    // capacity is stable, so subsequent calls must balance their temporary.
+    if (i) assert.strictEqual(e.heap_stat(0) - e.heap_stat(1), net);
+  }
+  query(split + 4093, true, 'two-point path consumer control', 2, 1, unchanged, rectangle.subarray(0, 16), true, true);
+  // Leave four arena bytes free: a nested caller's live lease cannot be
+  // overwritten, released or mistaken for Polygon's temporary storage.
+  const lease = e.polygon_lease(large + 4093) >>> 0;
+  assert.strictEqual(e.guest_span_cursor_bytes(), 16380);
+  const leasedBytes = mem.slice(lease, lease + 16380);
+  surface.fill(0x33);
+  put(split + 4093, rectangle);
+  const inputBefore = backing.map(b => Buffer.from(b));
+  assert.strictEqual(call('Polygon', [dc, split + 4093, 4]), 1);
+  assert.deepStrictEqual(surface, expected);
+  assert.strictEqual(e.guest_span_cursor_bytes(), 16380);
+  assert.deepStrictEqual(mem.slice(lease, lease + 16380), leasedBytes);
+  backing.forEach((b, i) => assert.deepStrictEqual(b, inputBefore[i]));
+  e.polygon_release(lease);
+  assert.strictEqual(e.guest_span_cursor_bytes(), 0);
+  call('ReleaseDC', [hwnd, dc]);
+  call('DeleteObject', [brush]);
+  const summary = { rows, calls, failures };
+  console.log('Polygon guest mapping ' + JSON.stringify(summary));
+  return summary;
+}
+
 async function main() {
   const root = path.join(__dirname, '..');
   const wasm = compileSrcWasm();
@@ -262,7 +469,11 @@ async function main() {
   console.log(`\n${passed}/${passed} checks passed`);
 }
 
-main().catch(error => {
+module.exports = { polygonGuestMapping, polygonMappingWat };
+if (require.main === module) polygonGuestMapping().then(summary => {
+  assert.strictEqual(summary.failures.length, 0, 'public Polygon guest mapping');
+  return main();
+}).catch(error => {
   console.error(error.stack || error);
   process.exit(1);
 });

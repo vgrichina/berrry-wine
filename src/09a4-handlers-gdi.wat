@@ -3726,23 +3726,47 @@
 
   ;; 451: Polygon(hdc, lpPoints, nCount) — 3 args stdcall
   (func $handle_Polygon (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (local $desc i32) (local $points_wa i32)
-    (local.set $points_wa (call $g2w (local.get $arg1)))
-    (if (call $gdi_dc_path_is_open (local.get $arg0))
-      (then
-        (i32.store offset=0 (global.get $reg_base) (call $gdi_dc_path_record_polygon
-          (local.get $arg0) (local.get $points_wa) (local.get $arg2)))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))
-        (return)))
-    (local.set $desc (global.get $GDI_LINE_DESC))
-    (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $desc))
-      (then (i32.store offset=0 (global.get $reg_base) (call $gdi_polygon_desc
-        (local.get $arg0) (local.get $desc) (local.get $points_wa) (local.get $arg2)
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 4) (i32.const 0x30017))
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 8) (i32.const 0x30010))
-        (call $gdi_dc_get_rop2 (local.get $arg0))
-        (call $gdi_dc_get_field (local.get $arg0) (i32.const 76) (i32.const 1)))))
-      (else (i32.store offset=0 (global.get $reg_base) (i32.const 0))))
+    (local $desc i32) (local $points_wa i32) (local $path i32)
+    (local $len i32) (local $copy_g i32) (local $offset i32) (local $ok i32)
+    (local.set $path (call $gdi_dc_path_is_open (local.get $arg0)))
+    (block $done
+      ;; Match each consumer's count limits before sizing or reading input.
+      (br_if $done (i32.eqz (local.get $arg1)))
+      (br_if $done (i32.lt_u (local.get $arg2)
+        (select (i32.const 2) (i32.const 3) (local.get $path))))
+      (br_if $done (i32.gt_u (local.get $arg2)
+        (select (i32.const 4096) (global.get $GDI_REGION_MAX_RECTS) (local.get $path))))
+      (local.set $len (i32.shl (local.get $arg2) (i32.const 3)))
+      (br_if $done (i32.gt_u (local.get $arg1)
+        (i32.sub (i32.const -1) (i32.sub (local.get $len) (i32.const 1)))))
+      (local.set $points_wa (call $g2w_affine_span (local.get $arg1) (local.get $len)))
+      (if (i32.eq (local.get $points_wa) (global.get $NULL_SENTINEL))
+        (then
+          ;; Path input can exceed the fixed span arena. Keep the temporary
+          ;; invocation-owned, and translate each LONG even across page cuts.
+          (local.set $copy_g (call $heap_alloc (local.get $len)))
+          (br_if $done (i32.eqz (local.get $copy_g)))
+          (local.set $points_wa (call $g2w_affine_span (local.get $copy_g) (local.get $len)))
+          (br_if $done (i32.eq (local.get $points_wa) (global.get $NULL_SENTINEL)))
+          (loop $copy
+            (i32.store (i32.add (local.get $points_wa) (local.get $offset))
+              (call $gl32 (i32.add (local.get $arg1) (local.get $offset))))
+            (local.set $offset (i32.add (local.get $offset) (i32.const 4)))
+            (br_if $copy (i32.lt_u (local.get $offset) (local.get $len))))))
+      (if (local.get $path)
+        (then (local.set $ok (call $gdi_dc_path_record_polygon
+          (local.get $arg0) (local.get $points_wa) (local.get $arg2))))
+        (else
+          (local.set $desc (global.get $GDI_LINE_DESC))
+          (if (call $gdi_surface_descriptor (local.get $arg0) (local.get $desc))
+            (then (local.set $ok (call $gdi_polygon_desc
+              (local.get $arg0) (local.get $desc) (local.get $points_wa) (local.get $arg2)
+              (call $gdi_dc_get_field (local.get $arg0) (i32.const 4) (i32.const 0x30017))
+              (call $gdi_dc_get_field (local.get $arg0) (i32.const 8) (i32.const 0x30010))
+              (call $gdi_dc_get_rop2 (local.get $arg0))
+              (call $gdi_dc_get_field (local.get $arg0) (i32.const 76) (i32.const 1)))))))))
+    (if (local.get $copy_g) (then (call $heap_free (local.get $copy_g))))
+    (i32.store offset=0 (global.get $reg_base) (local.get $ok))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 16)))  ;; stdcall, 3 args + ret
   )
 
