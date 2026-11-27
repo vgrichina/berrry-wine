@@ -6742,15 +6742,6 @@
     (call $callback_feed_emit (i32.const 2))
     (global.set $steps (i32.const 0))
     (return)))
-    ;; Thread messages have hwnd == NULL. Real DispatchMessage does not route
-    ;; them through a window proc; applications either handle them in their
-    ;; message loop or the dispatch is a no-op. The MM_TIMER pseudo-message
-    ;; above is our one hwnd-free callback exception.
-    (if (i32.eqz (call $gl32 (local.get $arg0)))
-      (then
-        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
-        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
-        (return)))
     ;; WM_TIMER with callback (lParam != 0): call callback(hwnd, WM_TIMER, timerID, tickcount)
     (if (i32.and (i32.eq (call $gl32 (i32.add (local.get $arg0) (i32.const 4))) (i32.const 0x0113))
     (i32.ne (call $gl32 (i32.add (local.get $arg0) (i32.const 12))) (i32.const 0)))
@@ -6771,6 +6762,13 @@
     (global.set $eip (call $gl32 (i32.add (local.get $arg0) (i32.const 12)))) ;; callback addr
     (global.set $steps (i32.const 0))
     (return)))
+    ;; Ordinary thread messages have no window proc. TIMERPROC and the
+    ;; MM_TIMER callback above also support hwnd == NULL and dispatch first.
+    (if (i32.eqz (call $gl32 (local.get $arg0)))
+      (then
+        (i32.store offset=0 (global.get $reg_base) (i32.const 0))
+        (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 8)))
+        (return)))
     ;; Registered tabs likewise keep their guest wndproc for layout and normal
     ;; messages, but WAT mirrors input/state and owns their shared-surface paint.
     (if (call $tab_native_is (call $gl32 (local.get $arg0)))

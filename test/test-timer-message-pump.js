@@ -140,6 +140,33 @@ async function checkPublicThreadTimers(module) {
   a.call('DispatchMessageA', [a.msg]);
   check('TIMERPROC ran with correct args', Array.from({ length: 5 }, (_, i) => view.getUint32(a.wa(out) + i * 4, true)), [1, hwnd, 0x113, id, 3100]);
   a.kill(id, hwnd);
+  // Public NULL-window timers also dispatch TIMERPROC, before the ordinary
+  // thread-message no-op. Cover both retrieval APIs and an allocated timer ID.
+  let callbacks = 1;
+  for (const get of [false, true]) {
+    now += 1000;
+    const timer = a.set(0, 100, cb);
+    assert.ok(timer);
+    now += 100;
+    if (!get) {
+      check('NULL callback PM_NOREMOVE', a.pump(0), [0, 0x113, timer, cb]);
+      check('retrieval does not invoke TIMERPROC', view.getUint32(a.wa(out), true), callbacks);
+    }
+    check('NULL callback timer message', a.pump(1, get), [0, 0x113, timer, cb]);
+    a.call('DispatchMessageA', [a.msg]);
+    check('NULL TIMERPROC ran with correct args',
+      Array.from({ length: 5 }, (_, i) => view.getUint32(a.wa(out) + i * 4, true)),
+      [++callbacks, 0, 0x113, timer, now]);
+    a.kill(timer);
+  }
+  // A callback-shaped lParam on an ordinary NULL message is still a no-op,
+  // as is WM_TIMER without TIMERPROC. Never route either into a WndProc.
+  for (const message of [0, 0x401, 0x113]) {
+    [0, message, id, message === 0x113 ? 0 : cb].forEach((v, i) =>
+      view.setUint32(a.wa(a.msg) + i * 4, v, true));
+    check('ordinary NULL dispatch returns zero', a.call('DispatchMessageA', [a.msg]), 0);
+    check('ordinary NULL dispatch does not invoke callback', view.getUint32(a.wa(out), true), callbacks);
+  }
   console.log('PASS public USER timers: thread isolation, allocation, windows, callback, phase, message pumping');
   function u32(v) { return [v & 255, (v >>> 8) & 255, (v >>> 16) & 255, v >>> 24]; }
 

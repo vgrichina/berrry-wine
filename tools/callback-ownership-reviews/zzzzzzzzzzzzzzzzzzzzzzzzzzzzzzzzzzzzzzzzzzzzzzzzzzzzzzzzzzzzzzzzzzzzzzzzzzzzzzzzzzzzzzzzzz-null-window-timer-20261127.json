@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "revisions": [
+    {
+      "file": "src/09a5-handlers-window.wat",
+      "name": "$handle_DispatchMessageA",
+      "baseSHA256": "cb479065b8b6c20b4fd199cbfdd1177d724b02b906f1b4f24b4479789fdba34d",
+      "sha256": "78e47f0e39a6ab8d877d9445c9022644bbb2dcc5cca13fc4bd3b4920663c9b14",
+      "reason": "Review 20261127 NULL-window TIMERPROC: move the ordinary NULL-hwnd no-op below the existing WM_TIMER/nonzero-lParam callback branch. Public SetTimer(NULL) callbacks now use the same guest stack args, original caller return address, EIP target and steps reset as window TIMERPROC; no new callback frame or lifetime is introduced. Ordinary NULL messages, NULL WM_TIMER without callback and multimedia callback routing retain their existing behavior. Ownership remains pending; no nonlocal API enabled."
+    }
+  ]
+}
