@@ -77,22 +77,29 @@ async function main() {
     {s:[12,2,2,10],c:null,d:[2,3]},
     {s:[2,2,12,10],c:[20,20,25,25],d:[2,3]},
   ];
+  // MM_TEXT maps logical RECTs by viewport - window origin. Outputs and
+  // pixels remain in device coordinates; reuse every original scenario.
+  const origins=[[[0,0],[0,0]],[[2,3],[0,0]],[[0,0],[2,3]]];
   let cases=0;
   for(const [kind,dc] of [['memory',memoryDC],['window',windowDC]])
-    for(const scenario of scenarios) for(const selected of [false,true]) for(const outputs of [0,1,2,3,4,5]) {
+    for(const [viewport,window] of origins) for(const scenario of scenarios) for(const selected of [false,true]) for(const outputs of [0,1,2,3,4,5]) {
       const label=`${kind}/${cases++}`;
       api('SelectClipRgn',dc,0);
       for(let y=0;y<14;y++) for(let x=0;x<16;x++) api('SetPixel',dc,x,y,color(x,y));
       api('ValidateRect',hwnd,0);rect(damage,[0,12,1,13]);api('InvalidateRect',hwnd,damage,1);
       api('GetUpdateRgn',hwnd,update,0);
       if(selected) assert(api('SelectClipRgn',dc,app));
+      assert(api('SetViewportOrgEx',dc,...viewport,0));
+      assert(api('SetWindowOrgEx',dc,...window,0));
       const saved=api('SaveDC',dc);assert(saved);
       rect(input,scenario.s||[0,0,16,14]);rect(clip,scenario.c||[0,0,16,14]);
       rect(output,[71,72,73,74]);w(output+16,0x76543210);api('SetRectRgn',region,91,92,97,99);
       const outPtr=outputs===4?input:outputs===5?clip:outputs&2?output:0;
       const outRgn=outputs&1||outputs>=4?region:0;
       assert.strictEqual(api('ScrollDC',dc,...scenario.d,scenario.s?input:0,scenario.c?clip:0,outRgn,outPtr),1,label+' BOOL');
-      const s=scenario.s||[0,0,16,14],c=scenario.c||[0,0,16,14];
+      const tx=viewport[0]-window[0],ty=viewport[1]-window[1];
+      const map=a=>a?[a[0]+tx,a[1]+ty,a[2]+tx,a[3]+ty]:[0,0,16,14];
+      const s=map(scenario.s),c=map(scenario.c);
       const source=(x,y)=>inside([0,0,16,14],x,y)&&inside(s,x,y);
       const visible=(x,y)=>!selected||(inside([1,1,15,13],x,y)&&!inside([6,4,9,9],x,y));
       const expected=[],copied=[];
@@ -122,16 +129,17 @@ async function main() {
       assert.strictEqual(api('GetClipRgn',dc,retained),selected?1:0);
       if(selected) assert.strictEqual(api('EqualRgn',retained,app),1);
       api('SelectClipRgn',dc,0);
+      assert(api('SetViewportOrgEx',dc,0,0,0));
+      assert(api('SetWindowOrgEx',dc,0,0,0));
       for(let y=0;y<14;y++) for(let x=0;x<16;x++) {
         assert.strictEqual(api('GetPixel',dc,x,y),copied[y*16+x]?color(x-scenario.d[0],y-scenario.d[1]):color(x,y),label+' pixel '+x+','+y);
         checks++;
       }
     }
   rect(input,[2,2,12,10]);rect(clip,[2,2,12,10]);
-  for(const action of ['bad DC','bad region','origin','scale','extreme']) {
+  for(const action of ['bad DC','bad region','scale','extreme']) {
     const saved=api('SaveDC',memoryDC);
     rect(output,[71,72,73,74]);api('SetRectRgn',region,91,92,97,99);
-    if(action==='origin') api('SetViewportOrgEx',memoryDC,2,3,0);
     if(action==='scale') {api('SetMapMode',memoryDC,8);api('SetViewportExtEx',memoryDC,2,3,0);}
     assert.strictEqual(api('ScrollDC',action==='bad DC'?0xdead:memoryDC,action==='extreme'?0x7fffffff:2,3,
       input,clip,action==='bad region'?0xdead:region,output),0,action);
