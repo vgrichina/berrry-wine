@@ -70,7 +70,9 @@ const WAT = String.raw`
  (call $d3dim_gpu_call (i32.const 0x20001) (local.get $wa) (local.get $len)))
 `;
 
-async function bootGpsDevice({ extraWat = '' } = {}) {
+// makeExecutor({ getExports, getMemory }) replaces the software executor
+// (e.g. a WebGL executor on a headless GL context).
+async function bootGpsDevice({ extraWat = '', makeExecutor = null } = {}) {
   let ex, memory, executor = null, ring = null, ringAddr = 0;
   const errors = [], kicks = { n: 0 }, hostCalls = [];
   const h = await bootRenderHarness({ fonts: 'none', extraWat: WAT + extraWat,
@@ -79,7 +81,8 @@ async function bootGpsDevice({ extraWat = '' } = {}) {
       gpu_gl_call: (...args) => { hostCalls.push(args); return 0; },
       gpu_stream_kick: (addr, mode) => {
         addr >>>= 0; kicks.n++;
-        if (!executor) executor = new Executor({ getExports: () => ex, getMemory: () => memory.buffer });
+        if (!executor) executor = makeExecutor ? makeExecutor({ getExports: () => ex, getMemory: () => memory.buffer })
+          : new Executor({ getExports: () => ex, getMemory: () => memory.buffer });
         if (!ring || ringAddr !== addr) { ring = new GS.Ring(() => memory.buffer, addr); ringAddr = addr; }
         GS.drain([ring], executor);
         if ((mode | 0) === GS.CONST.KICK_CLOSE) { executor.close(); executor = null; ring = null; ringAddr = 0; }
