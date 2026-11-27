@@ -2448,6 +2448,14 @@ GetTopWindow(hWnd) — 1 arg stdcall
               (then (call $dc_apply_client_clip_unlocked (local.get $hdc) (local.get $arg0)))
               (else (call $dc_apply_client_clip (local.get $hdc) (local.get $arg0))))))))))
     (if (i32.and (i32.ne (local.get $hdc) (i32.const 0))
+          (i32.ne (i32.and (local.get $arg2) (i32.const 24)) (i32.const 0)))
+      (then
+        (if (i32.eqz (call $gdi_getdcex_hierarchy_apply (local.get $hdc)
+              (call $gdi_dc_system_clip_handle (local.get $hdc)) (local.get $arg2)))
+          (then
+            (drop (call $host_release_dc (local.get $hdc)))
+            (local.set $hdc (i32.const 0))))))
+    (if (i32.and (i32.ne (local.get $hdc) (i32.const 0))
           (i32.ne (i32.and (local.get $arg2) (i32.const 0xC0)) (i32.const 0)))
       (then
         (if (i32.and (i32.ne (local.get $arg0) (i32.const 0))
@@ -2465,6 +2473,12 @@ GetTopWindow(hWnd) — 1 arg stdcall
               (select (i32.const 1) (i32.const 4)
                 (i32.ne (i32.and (local.get $arg2) (i32.const 0x80)) (i32.const 0)))
               (local.get $x) (local.get $y)))
+          (then
+            (drop (call $host_release_dc (local.get $hdc)))
+            (local.set $hdc (i32.const 0))))))
+    (if (local.get $hdc)
+      (then
+        (if (i32.eqz (call $gdi_getdcex_hierarchy_retain (local.get $hdc) (local.get $arg2)))
           (then
             (drop (call $host_release_dc (local.get $hdc)))
             (local.set $hdc (i32.const 0))))))

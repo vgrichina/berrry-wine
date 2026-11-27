@@ -1011,6 +1011,12 @@
   (func $gdi_getdcex_clip_apply (param $hdc i32) (param $clip i32) (result i32)
     (local $record i32)
     (local.set $record (call $gdi_getdcex_clip_record (local.get $hdc)))
+    (if (i32.eqz (call $gdi_getdcex_hierarchy_apply (local.get $hdc) (local.get $clip)
+          (if (result i32) (local.get $record)
+            (then (i32.shr_u (i32.and (i32.load offset=4 (local.get $record))
+              (i32.const 0x60000000)) (i32.const 26)))
+            (else (i32.const 0)))))
+      (then (return (i32.const 0))))
     (if (local.get $record)
       (then (return (call $gdi_rgn_combine
         (local.get $clip) (local.get $clip) (i32.load offset=24 (local.get $record))
@@ -1073,6 +1079,106 @@
     (if (local.get $clip) (then (drop (call $gdi_rgn_delete (local.get $clip)))))
     (if (local.get $copy) (then (drop (call $gdi_rgn_delete (local.get $copy)))))
     (i32.const 0))
+
+  ;; Explicit GetDCEx hierarchy exclusions supplement the ordinary USER
+  ;; visible region. Retain them in spare bits 29/30 of the immutable operand's
+  ;; tag; the existing tag lookup ignores those bits and ReleaseDC deletes the
+  ;; operand as before. With no supplied HRGN, an empty RGN_DIFF operand is an
+  ;; identity operation that gives the flags the same acquisition lifetime.
+  (func $gdi_getdcex_hierarchy_retain (param $hdc i32) (param $flags i32) (result i32)
+    (local $record i32)
+    (if (i32.eqz (i32.and (local.get $flags) (i32.const 24)))
+      (then (return (i32.const 1))))
+    (local.set $record (call $gdi_getdcex_clip_record (local.get $hdc)))
+    (if (i32.eqz (local.get $record))
+      (then
+        (if (i32.eqz (call $gdi_getdcex_clip_install (local.get $hdc)
+              (i32.const 0) (i32.const 4) (i32.const 0) (i32.const 0)))
+          (then (return (i32.const 0))))
+        (local.set $record (call $gdi_getdcex_clip_record (local.get $hdc)))))
+    (i32.store offset=4 (local.get $record)
+      (i32.or (i32.load offset=4 (local.get $record))
+        (i32.shl (i32.and (local.get $flags) (i32.const 24)) (i32.const 26))))
+    (i32.const 1))
+
+  ;; Operate on the caller's temporary/system region directly. In particular,
+  ;; do not change HWND styles or application clipping. Every subtraction is
+  ;; checked before GetDCEx transfers ownership of a supplied HRGN.
+  (func $gdi_getdcex_hierarchy_apply
+      (param $hdc i32) (param $clip i32) (param $flags i32) (result i32)
+    (local $dc i32) (local $binding i32) (local $hwnd i32)
+    (local $ox i32) (local $oy i32) (local $cx i32) (local $cy i32)
+    (local $slot i32) (local $other i32) (local $child i32) (local $wh i32)
+    (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
+    (local $rect i32) (local $ok i32) (local $bound i32)
+    (if (i32.eqz (i32.and (local.get $flags) (i32.const 24)))
+      (then (return (i32.const 1))))
+    (local.set $dc (call $gdi_dc_state_entry (local.get $hdc) (i32.const 0)))
+    (if (i32.eqz (local.get $dc)) (then (return (i32.const 0))))
+    (local.set $binding (i32.load offset=92 (local.get $dc)))
+    (local.set $hwnd (i32.and (local.get $binding) (i32.const 0x7FFFFFFF)))
+    (if (i32.eqz (local.get $hwnd)) (then (return (i32.const 1))))
+    (if (i32.eqz (local.get $clip)) (then (return (i32.const 0))))
+    (local.set $cx (call $wnd_client_screen_x (local.get $hwnd)))
+    (local.set $cy (call $wnd_client_screen_y (local.get $hwnd)))
+    (if (i32.lt_s (local.get $binding) (i32.const 0))
+      (then
+        (local.set $ox (call $wnd_window_screen_x (local.get $hwnd)))
+        (local.set $oy (call $wnd_window_screen_y (local.get $hwnd))))
+      (else
+        (local.set $ox (local.get $cx)) (local.set $oy (local.get $cy))))
+    (block $done (loop $scan
+      (br_if $done (i32.ge_u (local.get $slot) (global.get $MAX_WINDOWS)))
+      (local.set $other (call $wnd_slot_hwnd (local.get $slot)))
+      (local.set $child (i32.and
+        (i32.ne (i32.and (local.get $flags) (i32.const 8)) (i32.const 0))
+        (i32.and (i32.ne (local.get $other) (i32.const 0))
+          (i32.eq (call $wnd_get_parent (local.get $other)) (local.get $hwnd)))))
+      (if (i32.and
+            (i32.or (local.get $child)
+              (i32.and (i32.ne (i32.and (local.get $flags) (i32.const 16)) (i32.const 0))
+                (call $wnd_z_is_above_sibling (local.get $hwnd) (local.get $other))))
+            (call $wnd_is_effectively_visible (local.get $other)))
+        (then
+          (local.set $wh (call $ctrl_get_wh_packed (local.get $other)))
+          (local.set $left (call $wnd_window_screen_x (local.get $other)))
+          (local.set $top (call $wnd_window_screen_y (local.get $other)))
+          (local.set $right (i32.add (local.get $left)
+            (i32.and (local.get $wh) (i32.const 0xFFFF))))
+          (local.set $bottom (i32.add (local.get $top)
+            (i32.shr_u (local.get $wh) (i32.const 16))))
+          ;; Children are visible only inside this window's client rectangle,
+          ;; including when the requested DC's origin is nonclient.
+          (if (local.get $child)
+            (then
+              (if (i32.lt_s (local.get $left) (local.get $cx))
+                (then (local.set $left (local.get $cx))))
+              (if (i32.lt_s (local.get $top) (local.get $cy))
+                (then (local.set $top (local.get $cy))))
+              (local.set $bound (i32.add (local.get $cx)
+                (call $wnd_client_w_for_clip (local.get $hwnd))))
+              (if (i32.gt_s (local.get $right) (local.get $bound))
+                (then (local.set $right (local.get $bound))))
+              (local.set $bound (i32.add (local.get $cy)
+                (call $wnd_client_h_for_clip (local.get $hwnd))))
+              (if (i32.gt_s (local.get $bottom) (local.get $bound))
+                (then (local.set $bottom (local.get $bound))))))
+          (if (i32.and (i32.lt_s (local.get $left) (local.get $right))
+                (i32.lt_s (local.get $top) (local.get $bottom)))
+            (then
+              (local.set $rect (call $gdi_rgn_alloc_rect
+                (i32.sub (local.get $left) (local.get $ox))
+                (i32.sub (local.get $top) (local.get $oy))
+                (i32.sub (local.get $right) (local.get $ox))
+                (i32.sub (local.get $bottom) (local.get $oy))))
+              (if (i32.eqz (local.get $rect)) (then (return (i32.const 0))))
+              (local.set $ok (call $gdi_rgn_combine
+                (local.get $clip) (local.get $clip) (local.get $rect) (i32.const 4)))
+              (drop (call $gdi_rgn_delete (local.get $rect)))
+              (if (i32.eqz (local.get $ok)) (then (return (i32.const 0))))))))
+      (local.set $slot (i32.add (local.get $slot) (i32.const 1)))
+      (br $scan)))
+    (i32.const 1))
 
   (func $gdi_dc_system_clip_rect (param $hdc i32)
         (param $left i32) (param $top i32) (param $right i32) (param $bottom i32)
