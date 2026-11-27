@@ -2496,14 +2496,9 @@
 
 ;; 142: DrawTextA(hdc, lpString, nCount, lpRect, uFormat)
   (func $handle_DrawTextA (param $arg0 i32) (param $arg1 i32) (param $arg2 i32) (param $arg3 i32) (param $arg4 i32) (param $name_ptr i32)
-    (i32.store offset=0 (global.get $reg_base) (call $gdi_native_draw_text
-      (local.get $arg0)
-      (call $g2w (local.get $arg1))
-      (local.get $arg2)
-      (call $g2w (local.get $arg3))
-      (local.get $arg4)
-      (i32.const 0) ;; isWide = 0
-    ))
+    (i32.store offset=0 (global.get $reg_base) (call $draw_text_ex
+      (local.get $arg0) (local.get $arg1) (local.get $arg2)
+      (local.get $arg3) (local.get $arg4) (i32.const 0) (i32.const 0)))
     (i32.store offset=16 (global.get $reg_base) (i32.add (i32.load offset=16 (global.get $reg_base)) (i32.const 24)))  ;; stdcall, 5 args
   )
 
@@ -2518,12 +2513,55 @@
     (local $left i32) (local $top i32) (local $right i32) (local $bottom i32)
     (local $left_margin i32) (local $right_margin i32) (local $tab_chars i32)
     (local $result i32) (local $drawn i32) (local $calculated_right i32)
-    (local.set $text (call $g2w (local.get $text_guest)))
-    (local.set $rect (call $g2w (local.get $rect_guest)))
+    (local $text_bytes i32) (local $text_copy i32) (local $i i32)
+    ;; Resolve -1 through guest loads before handing a contiguous buffer to
+    ;; the physical backend. Counts remain ANSI bytes or UTF-16 code units.
+    (if (local.get $text_guest)
+      (then (local.set $text (call $g2w (local.get $text_guest)))))
+    (if (i32.and (i32.ne (local.get $text_guest) (i32.const 0))
+          (i32.eq (local.get $count) (i32.const -1)))
+      (then
+        (local.set $count (i32.const 0))
+        (block $length_done (loop $length
+          (br_if $length_done (i32.ge_u (local.get $count) (i32.const 65536)))
+          (br_if $length_done (i32.eqz
+            (if (result i32) (local.get $wide)
+              (then (call $gl16 (i32.add (local.get $text_guest)
+                (i32.shl (local.get $count) (i32.const 1)))))
+              (else (call $gl8 (i32.add (local.get $text_guest) (local.get $count)))))))
+          (local.set $count (i32.add (local.get $count) (i32.const 1)))
+          (br $length)))))
+    (if (i32.and (i32.ne (local.get $text_guest) (i32.const 0))
+          (i32.le_u (local.get $count) (i32.const 65536)))
+      (then
+        (local.set $text_bytes (local.get $count))
+        ;; DT_MODIFYSTRING permits four extra characters, including NUL.
+        (if (i32.and (local.get $format) (i32.const 0x10000))
+          (then (local.set $text_bytes (i32.add (local.get $text_bytes) (i32.const 4)))))
+        (local.set $text_bytes (i32.shl (local.get $text_bytes) (local.get $wide)))
+        (if (local.get $text_bytes) (then
+          (local.set $text (call $g2w_affine_span (local.get $text_guest) (local.get $text_bytes)))
+          (if (i32.eq (local.get $text) (global.get $NULL_SENTINEL)) (then
+            ;; Leave room for RECT/params leases. Long or nested calls use a
+            ;; private heap copy rather than overflowing the fixed span arena.
+            (if (i32.le_u (i32.add (local.get $text_bytes) (i32.const 36))
+                  (i32.sub (global.get $GUEST_SPAN_SCRATCH_SIZE) (global.get $guest_span_cursor)))
+              (then (local.set $text (call $guest_span_in (local.get $text_guest) (local.get $text_bytes))))
+              (else
+                (local.set $text_copy (call $heap_alloc (local.get $text_bytes)))
+                (if (i32.eqz (local.get $text_copy)) (then (return (i32.const 0))))
+                (local.set $text (call $g2w (local.get $text_copy)))
+                (loop $copy_text
+                  (i32.store8 (i32.add (local.get $text) (local.get $i))
+                    (call $gl8 (i32.add (local.get $text_guest) (local.get $i))))
+                  (local.set $i (i32.add (local.get $i) (i32.const 1)))
+                  (br_if $copy_text (i32.lt_u (local.get $i) (local.get $text_bytes))))))))))))
+    (local.set $rect (call $guest_span_in (local.get $rect_guest) (size-of Rect)))
     (if (local.get $params_guest)
       (then
-        (local.set $params (call $g2w (local.get $params_guest)))
-        (local.set $valid (i32.ge_u (i32.load (local.get $params)) (i32.const 20)))))
+        (local.set $valid (i32.ge_u (call $gl32 (local.get $params_guest)) (i32.const 20)))
+        (if (local.get $valid) (then
+          (local.set $params (call $guest_span_in (local.get $params_guest) (i32.const 20)))))))
     (if (i32.and (local.get $valid) (i32.ne (local.get $rect_guest) (i32.const 0)))
       (then
         (local.set $left (load.field Rect left (local.get $rect)))
@@ -2573,6 +2611,25 @@
             (store.field.memarg Rect top (local.get $rect) (local.get $top))
             (store.field.memarg Rect right (local.get $rect) (local.get $right))
             (store.field.memarg Rect bottom (local.get $rect) (local.get $bottom))))))
+    (if (local.get $valid)
+      (then (call $guest_span_writeback (local.get $params_guest) (local.get $params) (i32.const 20))))
+    (if (i32.and (local.get $format) (i32.const 0x400))
+      (then (call $guest_span_writeback (local.get $rect_guest) (local.get $rect) (size-of Rect)))
+      (else (call $guest_span_release (local.get $rect) (size-of Rect))))
+    (if (local.get $text_copy)
+      (then
+        (if (i32.and (local.get $format) (i32.const 0x10000)) (then
+          (local.set $i (i32.const 0))
+          (loop $write_text
+            (call $gs8 (i32.add (local.get $text_guest) (local.get $i))
+              (i32.load8_u (i32.add (local.get $text) (local.get $i))))
+            (local.set $i (i32.add (local.get $i) (i32.const 1)))
+            (br_if $write_text (i32.lt_u (local.get $i) (local.get $text_bytes))))))
+        (call $heap_free (local.get $text_copy)))
+      (else
+        (if (i32.and (local.get $format) (i32.const 0x10000))
+          (then (call $guest_span_writeback (local.get $text_guest) (local.get $text) (local.get $text_bytes)))
+          (else (call $guest_span_release (local.get $text) (local.get $text_bytes))))))
     (local.get $result))
 
   ;; DrawTextExA(hdc, lpString, nCount, lpRect, uFormat, lpDTParams)
